@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Core from '@/components/Core'
 import System from '@/components/System'
+import Master from '@/components/Master'
 
 Vue.use(Router)
 
@@ -25,6 +26,16 @@ export default new Router({
     path: '/Core/Home',
     name: 'Home',
     component: Core.Home
+  },
+  {
+    path: '/Master/CustomField',
+    name: 'CustomField',
+    component: Master.CustomField
+  },
+  {
+    path: '/Master/Flow',
+    name: 'Flow',
+    component: Master.Flow
   },
   {
     path: '/System/User',

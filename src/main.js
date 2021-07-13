@@ -29,7 +29,7 @@ Vue.mixin({
       PK: '', // Primary Key
       ApplicationKey: '', // Token
       IPPotocalENV_Production: 'https://www.betaskthai.com/hrm',
-      IPPotocalENV_Developer: 'http://localhost:5000',
+      IPPotocalENV_Developer: 'http://localhost:5004',
       main_profile: {
         userLineuserId: 'U97a2b1814542579b9e5d7c1b891538ab',
         pictureUrl: 'https://profile.line-scdn.net/0hI98EFerAFhYFPD-Dk3VpQTl5GHtyEhBefVoNdiA_SSMtWFdIbV0KIiU9HCApCFUSbVxZJSZpSyQh',
@@ -53,6 +53,11 @@ Vue.mixin({
     format_date (value) {
       if (value) {
         return moment(String(value)).format('DD/MM/YYYY HH:mm:ss')
+      }
+    },
+    format_dateNotime (value) {
+      if (value) {
+        return moment(String(value)).format('DD/MM/YYYY')
       }
     },
     // YYYY-MM-DD
@@ -243,6 +248,9 @@ Vue.mixin({
           this.dataReady = true
           this.dataItem = response.data
           this.export_data = response.data
+          if (this.dataItem.length === 0 || this.dataItem.status === false) {
+            this.dataItem = []
+          }
         })
         // eslint-disable-next-line handle-callback-err
         .catch((error) => {
@@ -268,7 +276,7 @@ Vue.mixin({
           this.dataReady = true
           if (response.data) {
             Object.assign(this.formUpdate, response.data)
-            delete this.formUpdate[FIELD_PK_NAME]
+            // delete this.formUpdate[FIELD_PK_NAME]
             delete this.formUpdate['LAST_DATE']
             delete this.formUpdate['CREATE_DATE']
             delete this.formUpdate['RECORD_STATUS']

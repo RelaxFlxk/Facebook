@@ -12,16 +12,256 @@ export default {
 
 <style>
 @font-face {
-  font-family: "Kanit";
-  src: local("Kanit"),
-   url(./forn/Kanit-Regular.ttf) format("truetype");
+  font-family: Kittithada;
+  src: url('/static/fonts/Kittithada/PSL242pro.ttf');
 }
-/* #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+@font-face {
+  font-family: KittithadaBold;
+  src: url('/static/fonts/Kittithada/PSL245pro.ttf');
+}
+*, .v-application {
+  font-family: Kittithada;
+  font-size: 22px !important;
+}
+:root {
+  --nav-bg: #1B437C;
+  --nav-text: #ffffff;
+  --nav-text-active: #173053;
+  --panel-bg: #173053;
+  --panel-text: #ffffff;
+  --table-head-bg: #173053;
+  --table-head-text: #ffffff;
+  --table-body-row-even: #B1C9EA;
+  --table-body-row-odd: #ffffff;
+  --table-body-text: #1B437C;
+  --btn-general-color: #ffffff;
+  --date-picker-head: #B1C9EA;
+  --date-picker-footer: #173053;
+  --date-picker-table-head: #5C99DB;
+  --date-picker-table-body: #1B437C;
+}
+.KittithadaBold {
+  font-family: KittithadaBold !important;
+}
+.nav-bg {
+  background-color: var(--nav-bg) !important;
+}
+h1 {
+  font-size: 2.5rem !important;
+}
+h2 {
+  font-size: 2rem !important;
+}
+h3 {
+  font-family: Kittithada;
+  font-size: 1.55rem !important;
+}
+.h3-Bold {
+  font-family: KittithadaBold;
+  font-size: 1.65rem !important;
+}
+h4 {
+  font-family: Kittithada;
+  font-size: 1.15rem !important;
+}
+.svg-container {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+  height: auto;
+  padding-bottom: 39%;
+  vertical-align: top;
+  overflow: hidden;
+}
+.svg-content {
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.chart-text-up {
+  color: #09B66D !important;
+}
+.chart-text-down {
+  color: #FF3D57 !important;
+}
+.svg-container > svg text {
+  fill: #617087;
+  font-size: 15px !important;
+  text-anchor: center;
+}
+.bar {
+  fill: var(--nav-bg);
+}
+.grid {
+  fill: none;
+  stroke: #444;
+  stroke-width: 1.5px;
+}
+.chartHead {
+  font-size: 1.65rem!important;
+  font-weight: 300;
+  letter-spacing: .0125em!important;
+}
+.nav-text-active {
+  color: var(--nav-text-active) !important;
+}
+.nav-text {
+  color: var(--nav-text) !important;
+}
+/* table tr:first-child th:first-child {
+  border-top-left-radius: 10px;
+}
+table tr:first-child th:last-child {
+  border-top-right-radius: 10px;
+}
+table tr:last-child td:first-child {
+  border-bottom-left-radius: 10px;
+}
+table tr:last-child td:last-child {
+  border-bottom-right-radius: 10px;
 } */
+.v-application a {
+  color: var(--nav-bg);
+}
+.theme--light.v-btn.v-btn--has-bg {
+  background-color: var(--nav-bg);
+}
+.v-navigation-drawer__content {
+  background-color: var(--nav-bg);
+}
+.v-application--is-ltr .v-list-group--no-action>.v-list-group__items>.v-list-item {
+  padding-left: 45px;
+}
+.v-application--is-ltr .v-list-item__action:first-child, .v-application--is-ltr .v-list-item__icon:first-child {
+  margin-right: 15px;
+}
+/* .theme--light.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled) */
+
+.v-list-item__title, .v-btn__content {
+  color: var(--nav-text) !important;
+  font-family: KittithadaBold;
+  font-size: 22px !important;
+}
+.v-select-list {
+  background-color: var(--nav-bg) !important;
+}
+.v-input--selection-controls__input>.v-icon {
+  color: var(--nav-bg) !important;
+}
+.v-picker {
+  background-color: var(--date-picker-footer) !important;
+}
+.v-date-picker-header {
+  background-color: var(--date-picker-head)
+}
+.v-date-picker-table {
+  background-color: var(--date-picker-head);
+}
+.v-date-picker-table > table > thead {
+  background-color: var(--date-picker-table-head);
+}
+.v-date-picker-table > table > tbody {
+  background-color: var(--date-picker-table-body);
+}
+
+.v-list-group__header {
+  background-color: var(--nav-bg) !important;
+}
+.theme--light.v-icon {
+  color: var(--nav-text);
+}
+.menu-head {
+  color: var(--nav-text);
+  font-family: KittithadaBold;
+  font-size: 26px !important;
+}
+.v-list-item--active {
+  background-color: var(--nav-text-active);
+}
+.theme--light.v-app-bar.v-toolbar.v-sheet {
+  background-color: var(--nav-bg);
+  color: var(--nav-text);
+}
+.v-expansion-panel-header {
+  background-color: var(--panel-bg);
+  color: var(--panel-text);
+  font-weight: bold;
+}
+.v-expansion-panel--active>.v-expansion-panel-header {
+  min-height: 48px;
+}
+.v-breadcrumbs {
+  font-weight: bold;
+}
+.v-data-table-header {
+  background-color: var(--table-head-bg);
+}
+.theme--light.v-data-table>.v-data-table__wrapper>table>thead>tr>th {
+  color: var(--table-head-text);
+}
+.v-data-table>.v-data-table__wrapper>table>tbody>tr>td {
+  padding: 8px 5px 8px 15px;
+}
+.v-data-table>.v-data-table__wrapper>table>tbody>tr:nth-child(even) {background: var(--table-body-row-even)}
+.v-data-table>.v-data-table__wrapper>table>tbody>tr:nth-child(odd) {background: var(--table-body-row-odd)}
+.v-data-table>.v-data-table__wrapper>table>tbody>tr>td {
+  color: var(--table-body-text);
+}
+.theme--light.v-data-table .v-data-table-header th.sortable.active, .theme--light.v-data-table .v-data-table-header th.sortable.active .v-data-table-header__icon, .theme--light.v-data-table .v-data-table-header th.sortable:hover {
+  color: var(--table-head-text);
+}
+.theme--light.v-data-table .v-data-table-header th.sortable .v-data-table-header__icon {
+  color: var(--table-head-text) !important;
+}
+.btn {
+  color: var(--btn-general-color);
+}
+.nav-button {
+  color: var(--nav-text);
+  background-color: var(--nav-bg);
+}
+.shopname {
+  font-size: 26px !important;
+  font-weight: bold;
+}
+.theme--light.v-card {
+  border-radius: 11px;
+}
+.v-card__subtitle, .v-card__text, .v-card__title {
+  padding: 0px;
+}
+.v-text-field {
+  padding: 16px;
+}
+.v-card_color {
+  background-color: var(--nav-text-active);
+  width: 350px;
+  height: 600px;
+}
+.v-margit_button {
+  margin-top: 15px;
+}
+.v-margit_img {
+  margin-top:150px;
+}
+.v-margit_img_reward {
+  margin-top:90px;
+}
+.v-margit_text_add {
+  margin-top:10px;
+}
+.v_text_add {
+  color: var(--nav-text-active);
+  Width: 170px;
+  Height: 50px;
+}
+.v_text_edit {
+  Width: 255px;
+  Height: 52px;
+}
+.v-img-margit {
+  Width: 128.19px;
+  Height: 84px;
+}
 </style>
