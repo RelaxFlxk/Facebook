@@ -74,12 +74,33 @@
                       </v-row>
                        <v-row justify="center">
                          <v-data-table
+                            dense
                             :headers="headers"
                             :items="desserts"
-                            sort-by="calories"
+                            hide-default-footer
                             class="elevation-1"
                           >
+                            <template  v-slot:[`item.actions`]="{ item }">
+                              <v-icon
+                                small
+                                color="red"
+                                @click="deleteItem(item)"
+                              >
+                                mdi-delete
+                              </v-icon>
+                            </template>
                           </v-data-table>
+                          <v-dialog v-model="dialogDeleteF" max-width="500px">
+                              <v-card>
+                                <v-card-title>คุณต้องการลบใช่หรือไม่</v-card-title>
+                                <v-card-actions>
+                                  <v-spacer></v-spacer>
+                                  <v-btn color="red" @click="closeDelete">Cancel</v-btn>
+                                  <v-btn color="#173053" @click="deleteItemConfirm">OK</v-btn>
+                                  <v-spacer></v-spacer>
+                                </v-card-actions>
+                              </v-card>
+                            </v-dialog>
                           <v-dialog
                                 v-model="dialogAddField"
                                 max-width="500px"
@@ -277,7 +298,6 @@
                   :headers="columns"
                   :items="dataItem"
                   :search="searchAll2"
-                  :items-per-page="10"
                 >
                    <template v-slot:[`item.CREATE_DATE`]="{ item }">
                       {{ format_dateNotime(item.CREATE_DATE) }}
@@ -387,6 +407,7 @@ export default {
       dialogAddField: false,
       dialogAdd: false,
       dialogEdit: false,
+      dialogDeleteF: false,
       dialogDelete: false,
       dialogImport: false,
       // END Dialog Config ADD EDIT DELETE
@@ -414,7 +435,8 @@ export default {
         {
           text: 'Field Name',
           value: 'fieldName'
-        }
+        },
+        { text: 'AC', value: 'actions', sortable: false }
       ],
       desserts: [],
       editedItemSelete: [],
@@ -475,6 +497,24 @@ export default {
             this.editedItemSelete.push(d)
           }
         }
+      })
+    },
+    deleteItem (item) {
+      this.dialogDeleteF = true
+      this.editedIndex = this.desserts.indexOf(item)
+      this.editedItem = Object.assign({}, item)
+      // this.dialogDeleteF = true
+      console.log(this.editedItem)
+    },
+    deleteItemConfirm () {
+      this.desserts.splice(this.editedIndex, 1)
+      this.closeDelete()
+    },
+    closeDelete () {
+      this.dialogDeleteF = false
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem)
+        this.editedIndex = -1
       })
     },
     save () {
