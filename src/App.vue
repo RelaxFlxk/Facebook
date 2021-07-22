@@ -246,7 +246,7 @@ table tr:last-child td:last-child {
   margin-top:150px;
 }
 .v-margit_img_reward {
-  margin-top:90px;
+  margin-top:20px;
 }
 .v-margit_text_add {
   margin-top:10px;

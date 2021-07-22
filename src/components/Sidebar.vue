@@ -164,6 +164,7 @@ export default {
       this.system = [
         { title: 'CustomField', icon: 'mdi-account-edit', to: '/Master/CustomField' },
         { title: 'Flow', icon: 'mdi-cash-register', to: '/Master/Flow' },
+        { title: 'FlowStep', icon: 'mdi-cash-register', to: '/Master/FlowStep' },
         { title: 'รายชื่อร้านค้า', icon: 'mdi-playlist-check', to: '/System/ListShop' },
         { title: 'กลุ่มผู้ใช้งาน', icon: 'mdi-account-group', to: '/System/UserTypeGroup' },
         { title: 'Vgroup', icon: 'mdi-account-group', to: '/System/VgroupMapCoin' }
