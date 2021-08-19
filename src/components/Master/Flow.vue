@@ -15,14 +15,204 @@
           </v-col>
         </v-row>
         <v-row>
-          <!-- Dialog export / import -->
-          <!-- <v-col cols="12">
-            <v-btn color="primary" depressed @click="dialogAdd = true, validate('ADD')">
-              <v-icon left>mdi-text-box-plus</v-icon>
-              Add
-            </v-btn>
-          </v-col> -->
-          <!-- ADD -->
+         <!-- step -->
+          <v-dialog v-model="dialogStep" persistent max-width="50%">
+            <v-card>
+              <v-form ref="form_update" v-model="validUpdate" lazy-validation>
+              <v-card-text>
+                <v-container>
+                  <v-col class="text-right">
+                      <v-btn small color="#E0E0E0" @click="(dialogStep = false), clearData()">
+                        <v-icon color="#173053">mdi-close</v-icon>
+                      </v-btn>
+                  </v-col>
+                  <v-row justify="center">
+                    <v-col cols="5">
+                     <v-card-text size="35px"><strong>{{ formUpdate.flowName }}</strong></v-card-text>
+                    </v-col>
+                    <v-col cols="12" class="v-margit_button text-center">
+                      <v-btn color="primary" depressed @click="dialogAddStepTitle = true">
+                        <v-icon left>mdi-text-box-plus</v-icon>
+                        Add StepTitle
+                      </v-btn>
+                    </v-col>
+                     <!-- ADD -->
+                    <v-dialog v-model="dialogAddStepTitle" persistent max-width="50%">
+                      <v-card>
+                        <v-card-text>
+                          <v-container>
+                            <v-col class="text-right">
+                                <v-btn small color="#E0E0E0" @click="(dialogAddStepTitle = false)">
+                                  <v-icon color="#173053">mdi-close</v-icon>
+                                </v-btn>
+                            </v-col>
+                            <v-row justify="center">
+
+                                <v-col cols="6" class="v-margit_text_add mt-1">
+                              <v-col class="text-center">
+                                <v-img class="v_text_add" :src="require('@/assets/Grouptitle.svg')"></v-img>
+                                </v-col>
+                              <v-col cols="12">
+                                <v-row style="height: 35px">
+                                <v-subheader id="subtext">title</v-subheader>
+                                </v-row>
+                                <v-row style="height: 70px">
+                                <v-text-field
+                                  v-model="formAddStep.stepTitle"
+                                  placeholder="Title"
+                                  dense
+                                  required
+                                ></v-text-field>
+                                </v-row>
+                              </v-col>
+                                <v-col id="margin">
+                                <v-row justify="center">
+                                <v-btn
+                                  elevation="2"
+                                  x-large
+                                  color="#173053"
+                                  @click="addDataStep()"
+                                >
+                                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                                  เพิ่ม
+                                </v-btn>
+                                </v-row>
+                                </v-col>
+                                </v-col>
+
+                            </v-row>
+                          </v-container>
+                        </v-card-text>
+                      </v-card>
+                    </v-dialog>
+                    <!-- end add -->
+                    <v-col cols="12">
+                       <v-row justify="center">
+                         <v-data-table
+                         class="table-striped table-bordered elevation-1"
+                            dense
+                            :headers="columnsStep"
+                            :items="stepItemSelete"
+                            hide-default-footer
+                          >
+                            <template  v-slot:[`item.actions2`]="{ item, index }">
+                    <v-btn v-show="index !== 0"
+                      color="green"
+                      fab
+                      x-small
+                      @click="actionUp(item.stepId)"
+                    >
+                      <v-icon dark> mdi-arrow-up-bold </v-icon>
+                    </v-btn>
+                    <v-btn
+                      color="red"
+                      fab
+                      x-small
+                      @click="actionDown(item.stepId)"
+                    >
+                      <v-icon dark> mdi-arrow-down-bold </v-icon>
+                    </v-btn>
+                  </template>
+                  <template v-slot:[`item.action`]="{ item }">
+                    <v-btn
+                      color="question"
+                      fab
+                      x-small
+                      @click.stop="(dialogEditStep = true), getStepTitle(item), validate('UPDATE')"
+                    >
+                      <v-icon dark> mdi-tools </v-icon>
+                    </v-btn>
+                    <v-btn
+                      color="red"
+                      dark
+                      fab
+                      x-small
+                      @click.stop="(dialogDelete = true), getDataById(item)"
+                    >
+                      <v-icon> mdi-delete </v-icon>
+                    </v-btn>
+                  </template>
+                          </v-data-table>
+                          <v-dialog v-model="dialogDeleteF" max-width="500px">
+                              <v-card>
+                                <v-card-title>คุณต้องการลบใช่หรือไม่</v-card-title>
+                                <v-card-actions>
+                                  <v-spacer></v-spacer>
+                                  <v-btn color="red" @click="dialogDeleteF = false">Cancel</v-btn>
+                                  <v-btn color="#173053" @click="deleteItemConfirm(item)">OK</v-btn>
+                                  <v-spacer></v-spacer>
+                                </v-card-actions>
+                              </v-card>
+                            </v-dialog>
+                          <!-- <v-dialog
+                                v-model="dialogAddField"
+                                max-width="500px"
+                              >
+                                <v-card>
+                                  <v-card-text>
+                                    <v-container>
+                                      <v-row>
+                                        <v-col
+                                          cols="12"
+                                        >
+                                        <v-row style="height: 35px">
+                                          <v-subheader id="subtext">Field Name</v-subheader>
+                                        </v-row>
+                                        <v-row style="height: 50px">
+                                            <v-select
+                                            v-model="editedItem.fieldName"
+                                            :items="stepItemSelete"
+                                            item-text="text"
+                                            dense
+                                            return-object
+                                            ></v-select>
+                                          </v-row>
+                                        </v-col>
+                                      </v-row>
+                                    </v-container>
+                                  </v-card-text>
+
+                                  <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn
+                                      color="#173053"
+                                       @click="dialogAddField =false"
+                                    >
+                                      Cancel
+                                    </v-btn>
+                                    <v-btn
+                                      color="#173053"
+                                      @click="save(editedItem)"
+                                    >
+                                      Save
+                                    </v-btn>
+                                  </v-card-actions>
+                                </v-card>
+                              </v-dialog> -->
+                       </v-row>
+                    </v-col>
+                      <v-col id="margin">
+                      <v-row justify="center">
+                      <v-btn
+                        elevation="2"
+                        x-large
+                        color="#173053"
+                        :disabled="!validUpdate"
+                        @click="editData()"
+                      >
+                        <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                        บันทึก
+                      </v-btn>
+                      </v-row>
+                      </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+              </v-form>
+            </v-card>
+          </v-dialog>
+          <!-- end  -->
+
           <v-dialog v-model="dialogAdd" persistent max-width="60%">
             <v-card>
               <v-form ref="form_add" v-model="validAdd" lazy-validation>
@@ -215,7 +405,7 @@
                         color="primary"
                         dark
                         x-small
-                        @click="dialogAddField =true,editedItem.fieldName = '', editedItem.fieldId = ''"
+                        @click="dialogAddField =true,editedItem2.fieldName = '', editedItem2.fieldId = ''"
                         class="mb-2"
                       >
                         Register Field Edit
@@ -266,7 +456,7 @@
                                         </v-row>
                                         <v-row style="height: 50px">
                                             <v-select
-                                            v-model="editedItem.fieldName"
+                                            v-model="editedItem2.fieldName"
                                             :items="editedItemSelete"
                                             item-text="text"
                                             dense
@@ -288,7 +478,7 @@
                                     </v-btn>
                                     <v-btn
                                       color="#173053"
-                                      @click="save(editedItem)"
+                                      @click="save(editedItem2)"
                                     >
                                       Save
                                     </v-btn>
@@ -322,142 +512,32 @@
           <!-- end  -->
 
           <!-- step -->
-          <v-dialog v-model="dialogStep" persistent max-width="60%">
-            <v-card>
+          <v-dialog v-model="dialogEditStep" persistent max-width="60%">
+             <v-card>
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
               <v-card-text>
                 <v-container>
                   <v-col class="text-right">
-                      <v-btn small color="#E0E0E0" @click="(dialogStep = false), clearData()">
+                      <v-btn small color="#E0E0E0" @click="(dialogEditStep = false)">
                         <v-icon color="#173053">mdi-close</v-icon>
                       </v-btn>
                   </v-col>
                   <v-row justify="center">
-                    <v-col cols="5">
+                      <v-col cols="6" class="v-margit_text_add mt-1">
+                    <v-col class="text-center">
+                      <v-img class="v_text_edit" :src="require('@/assets/GroupEditTitle.svg')"></v-img>
+                      </v-col>
+                    <v-col cols="12">
                       <v-row style="height: 35px">
-                      <v-subheader id="subtext">title</v-subheader>
+                      <v-subheader id="subtext">StepTitle</v-subheader>
                       </v-row>
                       <v-row style="height: 70px">
-                      <v-text-field id="subtext"
-                        v-model="formUpdate.flowName"
+                      <v-text-field
+                        v-model="formUpdateStep.stepTitle"
                         dense
                         required
-                        :rules="[
-                          rules.required
-                        ]"
                       ></v-text-field>
                       </v-row>
-                    </v-col>
-                    <v-col cols="12">
-                      <!-- <v-row style="height: 50px" justify="center">
-                      <v-btn
-                        color="primary"
-                        dark
-                        x-small
-                        @click="dialogAddField =true,editedItem.fieldName = '', editedItem.fieldId = ''"
-                        class="mb-2"
-                      >
-                        Register Field Edit
-                      </v-btn>
-                      </v-row> -->
-                       <v-row justify="center">
-                         <v-data-table
-                         class="table-striped table-bordered elevation-1"
-                            dense
-                            :headers="headers2"
-                            :items="desserts"
-                            hide-default-footer
-                          >
-                            <template  v-slot:[`item.actions`]="{ item }">
-                              <v-icon
-                                small
-                                color="green"
-                                @click="actionUp(item)"
-                              >
-                                mdi-arrow-up-bold-circle
-                              </v-icon>
-                              <v-icon
-                                small
-                                color="red"
-                                @click="actionDown()"
-                              >
-                                mdi-arrow-down-bold-circle
-                              </v-icon>
-                              </template>
-                              <template  v-slot:[`item.actions2`]="{ item }">
-                              <v-icon
-                                small
-                                color="green"
-                                @click="deleteItem(item)"
-                              >
-                                mdi-pencil
-                              </v-icon>
-                              <v-icon
-                                small
-                                color="red"
-                                @click="deleteItem(item)"
-                              >
-                                mdi-delete
-                              </v-icon>
-                            </template>
-                          </v-data-table>
-                          <v-dialog v-model="dialogDeleteF" max-width="500px">
-                              <v-card>
-                                <v-card-title>คุณต้องการลบใช่หรือไม่</v-card-title>
-                                <v-card-actions>
-                                  <v-spacer></v-spacer>
-                                  <v-btn color="red" @click="dialogDeleteF = false">Cancel</v-btn>
-                                  <v-btn color="#173053" @click="deleteItemConfirm(item)">OK</v-btn>
-                                  <v-spacer></v-spacer>
-                                </v-card-actions>
-                              </v-card>
-                            </v-dialog>
-                          <!-- <v-dialog
-                                v-model="dialogAddField"
-                                max-width="500px"
-                              >
-                                <v-card>
-                                  <v-card-text>
-                                    <v-container>
-                                      <v-row>
-                                        <v-col
-                                          cols="12"
-                                        >
-                                        <v-row style="height: 35px">
-                                          <v-subheader id="subtext">Field Name</v-subheader>
-                                        </v-row>
-                                        <v-row style="height: 50px">
-                                            <v-select
-                                            v-model="editedItem.fieldName"
-                                            :items="stepItemSelete"
-                                            item-text="text"
-                                            dense
-                                            return-object
-                                            ></v-select>
-                                          </v-row>
-                                        </v-col>
-                                      </v-row>
-                                    </v-container>
-                                  </v-card-text>
-
-                                  <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn
-                                      color="#173053"
-                                       @click="dialogAddField =false"
-                                    >
-                                      Cancel
-                                    </v-btn>
-                                    <v-btn
-                                      color="#173053"
-                                      @click="save(editedItem)"
-                                    >
-                                      Save
-                                    </v-btn>
-                                  </v-card-actions>
-                                </v-card>
-                              </v-dialog> -->
-                       </v-row>
                     </v-col>
                       <v-col id="margin">
                       <v-row justify="center">
@@ -465,21 +545,22 @@
                         elevation="2"
                         x-large
                         color="#173053"
-                        :disabled="!validUpdate"
                         @click="editData()"
                       >
                         <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                        บันทึก
+                        แก้ไข
                       </v-btn>
                       </v-row>
                       </v-col>
+                      </v-col>
+
                   </v-row>
                 </v-container>
               </v-card-text>
               </v-form>
             </v-card>
           </v-dialog>
-          <!-- end  -->
+          <!-- end step -->
 
           <!-- delete -->
           <v-dialog v-model="dialogDelete" persistent max-width="80%">
@@ -554,7 +635,8 @@
                       color="#4CAF50"
                       fab
                       x-small
-                      @click.stop="(dialogStep = true), getDataById(item)"
+                      @click="(dialogStep = true), getStepFlow(item)"
+
                     >
                       <v-icon dark> mdi-debug-step-over </v-icon>
                     </v-btn>
@@ -663,6 +745,8 @@ export default {
       dialogDelete: false,
       dialogImport: false,
       dialogStep: false,
+      dialogAddStepTitle: false,
+      dialogEditStep: false,
       // END Dialog Config ADD EDIT DELETE
       panel: [0],
       panel1: [1],
@@ -672,8 +756,17 @@ export default {
       searchAll2: '',
       formAdd: {
         flowCode: '',
+        flowId: '',
         flowName: '',
         flowfieldName: [],
+        CREATE_USER: '',
+        LAST_USER: ''
+      },
+      formAddStep: {
+        stepId: '',
+        flowId: '',
+        stepTitle: '',
+        sortNo: '',
         CREATE_USER: '',
         LAST_USER: ''
       },
@@ -688,6 +781,14 @@ export default {
         flowName: '',
         LAST_USER: ''
       },
+      formUpdateStep: {
+        stepId: '',
+        flowId: '',
+        stepTitle: '',
+        sortNo: '',
+        CREATE_USER: '',
+        LAST_USER: ''
+      },
       formUpdateItem: {
         flowCode: '',
         fieldId: '',
@@ -698,6 +799,12 @@ export default {
         flowName: '',
         LAST_USER: ''
       },
+      columnsStep: [
+        { text: 'ID', value: 'stepId' },
+        { text: 'Title', value: 'stepTitle' },
+        { text: ' ', value: 'actions2', sortable: false, align: 'center' },
+        { text: 'Action', value: 'action', sortable: false, align: 'center' }
+      ],
       headers: [
         {
           text: 'Field Id',
@@ -725,6 +832,10 @@ export default {
       desserts: [],
       editedItemSelete: [],
       editedItem: {
+        fieldId: '',
+        fieldName: ''
+      },
+      editedItem2: {
         fieldId: '',
         fieldName: ''
       },
@@ -768,15 +879,82 @@ export default {
     this.dataReady = false
     // Get Data
     await this.getCustomField()
-    await this.getStepTitle()
+    // await this.getStepFlow()
     await this.getDataGlobal(this.DNS_IP, this.path)
   },
   methods: {
-    actionUp (item) {
-      this.stepTitle = this.stepTitle.indexOf(item - 1)
+    async actionUp (stepId) {
+      console.log('stepId', stepId)
+      console.log('this.stepItemSelete', this.stepItemSelete)
+      let stepItem = this.stepItemSelete
+      this.stepItemSelete = []
+      let index = stepItem.findIndex(e => e.stepId === stepId)
+      console.log('index', index)
+      if (index !== -1 && index < stepItem.length + 1) {
+        let el = stepItem[index]
+        console.log('????', el)
+        this.stepItemSelete[index] = stepItem[index - 1]
+        this.stepItemSelete[index - 1] = el
+        this.stepItemSelete[index].sortNo = stepItem[index - 1].sortNo + 1
+        this.stepItemSelete[index - 1].sortNo = el.sortNo - 1
+        console.log('sortNo', this.stepItemSelete[index - 1].sortNo)
+        console.log('el:', el)
+        // this.updateActionDown(this.stepItemSelete)
+        console.log('movedown', this.stepItemSelete)
+        // console.log(stepItem)
+      }
+      await this.updateActionDown(this.stepItemSelete, stepItem[0])
+      console.log(this.stepItemSelete)
     },
-    actionDown (item) {
-      this.stepTitle = this.stepTitle.indexOf(item + 1)
+    async actionDown (stepId) {
+      console.log('stepId', stepId)
+      console.log('this.stepItemSelete', this.stepItemSelete)
+      let stepItem = this.stepItemSelete
+      this.stepItemSelete = []
+      let index = stepItem.findIndex(e => e.stepId === stepId)
+      console.log('index', index)
+      if (index !== -1 && index < stepItem.length - 1) {
+        let el = stepItem[index]
+        console.log('????', el)
+        this.stepItemSelete[index] = stepItem[index + 1]
+        this.stepItemSelete[index + 1] = el
+        this.stepItemSelete[index].sortNo = stepItem[index + 1].sortNo - 1
+        this.stepItemSelete[index + 1].sortNo = el.sortNo + 1
+        console.log('sortNo', this.stepItemSelete[index + 1].sortNo)
+        console.log('el:', el)
+        // this.updateActionDown(this.stepItemSelete)
+        console.log('movedown', this.stepItemSelete)
+        // console.log(stepItem)
+      }
+      await this.updateActionDown(this.stepItemSelete, stepItem[0])
+      console.log(this.stepItemSelete)
+    },
+    async updateActionDown (dt, flowId) {
+      console.log('dt', dt)
+
+      var newArray = dt.filter(val => val)
+      console.log(newArray)
+      await axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + "/flowStep/" + "editStep",
+          newArray,
+          {
+            headers: {
+              'Application-Key': this.$session.getAll().ApplicationKey
+            }
+          }
+        )
+        .then(async (response) => {
+          // Debug response
+          console.log('addDataGlobal DNS_IP + PATH + "add"', response)
+          this.getStepFlow(flowId)
+        })
+      // eslint-disable-next-line handle-callback-err
+        .catch((error) => {
+          console.log('error function addDataGlobal : ', error)
+          this.dataReady = true
+        })
     },
     getCustomField () {
       this.editedItemSelete = []
@@ -788,20 +966,6 @@ export default {
             d.text = d.fieldName
             d.value = d.fieldName
             this.editedItemSelete.push(d)
-          }
-        }
-      })
-    },
-    getStepTitle () {
-      this.stepItemSelete = []
-      axios.get(this.DNS_IP + '/flowStep/get').then((response) => {
-        let rs = response.data
-        if (rs.length > 0) {
-          for (var i = 0; i < rs.length; i++) {
-            var d = rs[i]
-            d.text = d.stepTitle
-            d.value = d.stepTitle
-            this.stepItemSelete.push(d)
           }
         }
       })
@@ -850,11 +1014,23 @@ export default {
       this.dataReady = false
       this.searchDataAllGlobal(this.DNS_IP, this.path, search)
     },
-    // async getDataById (item) {
-    //   console.log('item', item)
-    //   this.dataReady = false
-    //   await this.getDataByIdGlobal(this.DNS_IP, this.path, 'flowCode', item.flowCode)
-    // },
+    getStepFlow (dt) {
+      this.stepItemSelete = []
+      this.formAddStep.flowId = dt.flowId
+      axios.get(this.DNS_IP + '/flowStep/get?flowId=' + dt.flowId).then((response) => {
+        let rs = response.data
+        if (rs.length > 0) {
+          for (var i = 0; i < rs.length; i++) {
+            var d = rs[i]
+            d.text = d.stepTitle
+            d.value = d.stepTitle
+            this.stepItemSelete.push(d)
+            this.formUpdateStep.stepTitle = response.data[0].stepTitle
+          }
+        }
+        // this.formUpdateStep.stepTitle = response.data.stepTitle
+      })
+    },
     async getDataById (item) {
       this.editedItemSelete = []
       this.desserts = []
@@ -873,7 +1049,6 @@ export default {
         )
         .then(async (response) => {
           console.log('get flowCode : ', response.data[0].flowfieldName)
-          console.log('flowww', response.data[0].flowName)
           this.dataReady = true
           if (response.data) {
             Object.assign(this.formUpdate, response.data)
@@ -882,6 +1057,7 @@ export default {
             this.desserts = JSON.parse(response.data[0].flowfieldName)
             // this.getDataCompany()
             this.getCustomField(this.formUpdate.fieldName)
+            this.getStepTitle(this.formUpdateStep.stepTitle)
             this.dataReady = true
           }
         })
@@ -943,6 +1119,66 @@ export default {
         })
         .catch((error) => {
           console.log('error function addData : ', error)
+          this.dataReady = true
+        })
+    },
+    async addDataStep () {
+      this.dataReady = false
+      // this.formAdd.flowCode = this.generateCodeGlobal()
+      // console.log('forAdd', this.formAddStep)
+      this.$swal({
+        title: 'ต้องการ เพิ่มข้อมูล ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async (result) => {
+          // this.formAddStep.CREATE_USER = this.session.data.userName
+          // this.formAddStep.LAST_USER = this.session.data.userName
+          delete this.formAddStep['stepId']
+          this.formAddStep.sortNo = this.stepItemSelete.length + 1
+          // this.formAdd.flowCode = this.generateCodeGlobal()
+          // this.formAdd.stepTitle = this.stepTitle
+          console.log('stepTitle', this.formAddStep.stepTitle)
+          console.log('stepId', this.formAddStep.stepId)
+          console.log('forAdd', this.formAddStep)
+          await axios
+            .post(
+              // eslint-disable-next-line quotes
+              this.DNS_IP + "/flowStep/" + "add",
+              this.formAddStep,
+              {
+                headers: {
+                  'Application-Key': this.$session.getAll().ApplicationKey
+                }
+              }
+            )
+            .then(async (response) => {
+              // Debug response
+              console.log('addDataGlobal DNS_IP + PATH + "add"', response)
+
+              // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              // Close Dialog
+              this.dialogAddStepTitle = false
+              this.dataReady = true
+              this.getStepFlow(this.formAddStep)
+
+              // Load Data
+              // await this.clearData()
+              await this.getDataGlobal(this.DNS_IP, this.path)
+              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+            })
+          // eslint-disable-next-line handle-callback-err
+            .catch((error) => {
+              console.log('error function addDataGlobal : ', error)
+              this.dataReady = true
+            })
+        })
+        .catch((error) => {
+          console.log('error function addDataStep : ', error)
           this.dataReady = true
         })
     },
@@ -1047,6 +1283,11 @@ export default {
           this.formUpdate[key] = ''
         }
       }
+    },
+    viewFlowStep (dt) {
+      this.$router.push(
+        '/Master/FlowStep?Code=' + dt.flowCode
+      )
     }
   }
 }
