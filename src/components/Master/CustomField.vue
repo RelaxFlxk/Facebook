@@ -8,22 +8,15 @@
             <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
           </v-col>
           <v-col cols="6" class="v-margit_button text-right">
-            <v-btn color="primary" depressed @click="dialogAdd = true, validate('ADD')">
+            <v-btn color="primary" depressed @click="dialogAdd = true, validate('ADD'), validate('ADDOPTION')">
               <v-icon left>mdi-text-box-plus</v-icon>
               Add
             </v-btn>
           </v-col>
         </v-row>
         <v-row>
-          <!-- Dialog export / import -->
-          <!-- <v-col cols="12">
-            <v-btn color="primary" depressed @click="dialogAdd = true, validate('ADD')">
-              <v-icon left>mdi-text-box-plus</v-icon>
-              Add
-            </v-btn>
-          </v-col> -->
           <!-- ADD -->
-          <v-dialog v-model="dialogAdd" persistent max-width="60%">
+          <v-dialog v-model="dialogAdd" persistent max-width="80%">
             <v-card>
               <v-form ref="form_add" v-model="validAdd" lazy-validation>
               <v-card-text>
@@ -38,6 +31,24 @@
                         <v-col class="text-center">
                       <v-img  class="v-margit_img_reward" :src="require('@/assets/GroupLevel.svg')" max-width="330"></v-img>
                       </v-col>
+                      <v-card-text v-if="formAdd.fieldType">
+                      <v-data-table
+                        :headers="columnsOption"
+                        :items="dataItemOption"
+                      >
+                        <template v-slot:[`item.action`]="{ item }">
+                          <v-btn
+                            color="red"
+                            dark
+                            fab
+                            x-small
+                            @click="deleteOption(item)"
+                          >
+                            <v-icon> mdi-delete </v-icon>
+                          </v-btn>
+                        </template>
+                      </v-data-table>
+                    </v-card-text>
                     </v-col>
 
                       <v-col cols="6" class="v-margit_text_add mt-1">
@@ -64,15 +75,132 @@
                       <v-row style="height: 35px">
                       <v-subheader id="subtext">type</v-subheader>
                       </v-row>
+
                       <v-row style="height: 50px">
                         <v-select
-                        v-model="formAdd.fieldType"
+                        v-model="formAdd.optionField"
                         :items="selectTypeField"
                         dense
                         :rules="[rules.required]"
                         ></v-select>
                       </v-row>
+
+                      <v-row style="height: 35px" v-if="formAdd.optionField === 'optionField'">
+                      <v-subheader id="subtext">optionField</v-subheader>
+                      </v-row>
+                      <v-row style="height: 50px" v-if="formAdd.optionField === 'optionField'">
+                        <v-select
+                        v-model="formAdd.fieldType"
+                        :items="selectOptionField"
+                        small-chips
+                        dense
+                        :rules="[rules.required]"
+                        ></v-select>
+                      </v-row>
                     </v-col>
+
+                    <v-form ref="form_addOption" v-model="validAddOption" lazy-validation>
+                    <v-row>
+                    <v-col cols="6">
+                      <v-row style="height: 35px" v-if="formAdd.optionField">
+                      <v-subheader id="subtext" >Text:</v-subheader >
+                      </v-row>
+                      <v-row style="height: 50px" v-if="formAdd.optionField">
+                      <v-text-field
+                        v-model="formAddOption.optionText"
+                        placeholder="Text"
+                        dense
+                        required
+                        :rules="[
+                          rules.required
+                        ]"
+                      ></v-text-field>
+                      </v-row>
+                    </v-col>
+                     <v-col cols="6">
+                      <v-row style="height: 35px" v-if="formAdd.optionField">
+                      <v-subheader id="subtext">Value:</v-subheader>
+                      </v-row>
+                      <v-row style="height: 50px" v-if="formAdd.optionField">
+                      <v-text-field
+                        v-model="formAddOption.optionValue"
+                        placeholder="Value"
+                        dense
+                        required
+                        :rules="[
+                          rules.required
+                        ]"
+                      ></v-text-field>
+                      </v-row>
+                    </v-col>
+                    </v-row>
+                     </v-form>
+                    <br>
+
+                    <v-row justify="center" v-if="formAdd.optionField">
+                      <v-btn
+                        elevation="2"
+                        x-large
+                        color="#173053"
+                        :disabled="!validAddOption"
+                        @click="addDataOption(formAddOption), clearDataOption()"
+                      >
+                        <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                        ADD
+                      </v-btn>
+                      </v-row>
+                      <!-- checkbox -->
+                     <v-container v-if="formAdd.optionField"
+                        class="px-0"
+                        fluid
+                      >
+                        <v-checkbox
+                          v-model="checkbox"
+                          :label="`Checkbox Condition: ${checkbox.toString()}`"
+                        ></v-checkbox>
+                      </v-container>
+                      <!-- checkbox -->
+                      <v-row style="height: 35px" v-if="checkbox === true">
+                      <v-subheader id="subtext">Field</v-subheader>
+                      </v-row>
+                      <v-row style="height: 50px" v-if="checkbox === true">
+                        <v-select
+                        v-model="formAdd.conditionField"
+                        :items="selectConditionField"
+                        small-chips
+                        dense
+                        :rules="[rules.required]"
+                        ></v-select>
+                      </v-row>
+                      <!-- END -->
+                        <v-row style="height: 35px" v-if="checkbox === true">
+                      <v-subheader id="subtext">Value:</v-subheader>
+                      </v-row>
+                      <v-row style="height: 50px" v-if="checkbox === true">
+                      <v-text-field
+                        v-model="formAdd.conditionValue"
+                        placeholder="Value"
+                        dense
+                        required
+                        :rules="[
+                          rules.required
+                        ]"
+                      ></v-text-field>
+                      </v-row>
+                      <!-- checkbox -->
+                      <v-container
+                        class="px-0"
+                        fluid
+                      >
+                        <v-checkbox
+                          v-model="formAdd.showCard"
+                          label="Checkbox แสดงบน card"
+                        ></v-checkbox>
+                      </v-container>
+                      <!-- checkbox -->
+                      <!-- END -->
+                    </v-col>
+                      <!-- END Radio buttun -->
                       <v-col id="margin">
                       <v-row justify="center">
                       <v-btn
@@ -81,6 +209,94 @@
                         color="#173053"
                         :disabled="!validAdd"
                         @click="addData()"
+                      >
+                        <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                        เพิ่ม
+                      </v-btn>
+                      </v-row>
+                      </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+              </v-form>
+            </v-card>
+          </v-dialog>
+          <!-- end add -->
+
+          <!-- edit -->
+          <v-dialog v-model="dialogEdit" persistent max-width="70%">
+            <v-card>
+              <v-form ref="form_update" v-model="validUpdate" lazy-validation>
+              <v-card-text>
+                <v-container>
+                  <v-col class="text-right">
+                      <v-btn small color="#E0E0E0" @click="(dialogEdit = false), clearData()">
+                        <v-icon color="#173053">mdi-close</v-icon>
+                      </v-btn>
+                  </v-col>
+                  <v-row justify="center">
+                    <v-col class="text-center">
+                    <v-col class="text-center">
+                      <v-img class="v_text_add" :src="require('@/assets/GroupEditTitle.svg')"></v-img>
+                      </v-col>
+                    <v-col cols="12">
+                      <v-row style="height: 35px">
+                      <v-subheader id="subtext">title</v-subheader>
+                      </v-row>
+                      <v-row style="height: 50px">
+                      <v-text-field
+                        v-model="formUpdate.fieldName"
+                        placeholder="Title"
+                        dense
+                        required
+                        :rules="[
+                          rules.required
+                        ]"
+                      ></v-text-field>
+                      </v-row>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-row style="height: 35px">
+                      <v-subheader id="subtext">type</v-subheader>
+                      </v-row>
+
+                      <v-row style="height: 50px">
+                        <v-select
+                        v-model="formUpdate.fieldType"
+                        :items="selectTypeField"
+                        dense
+                        :rules="[rules.required]"
+                        ></v-select>
+                      </v-row>
+
+                      <v-row style="height: 35px">
+                      <v-subheader id="subtext">optionField</v-subheader>
+                      </v-row>
+                      <v-row style="height: 50px">
+                        <v-card-text>
+                            <v-chip v-for="i in formUpdate.optionField" :key="i">{{ i.value }}</v-chip>
+                        </v-card-text>
+                      </v-row>
+                      <v-row style="height: 35px">
+                      <v-subheader id="subtext">conditionField</v-subheader>
+                      </v-row>
+                      <v-row style="height: 50px">
+                      <v-text-field
+                        v-model="formUpdate.conditionField"
+                        placeholder="Title"
+                        dense
+                        required
+                      ></v-text-field>
+                      </v-row>
+                    </v-col>
+                      <v-col id="margin">
+                      <v-row justify="center">
+                      <v-btn
+                        elevation="2"
+                        x-large
+                        color="#173053"
+                        :disabled="!validUpdate"
+                         @click="editData()"
                       >
                         <v-icon left>mdi-checkbox-marked-circle</v-icon>
                         เพิ่ม
@@ -98,7 +314,7 @@
           <!-- end add -->
 
           <!-- edit -->
-          <v-dialog v-model="dialogEdit" persistent max-width="50%">
+          <!-- <v-dialog v-model="dialogEdit" persistent max-width="50%">
             <v-card class="text-center">
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
               <v-card-text>
@@ -136,13 +352,29 @@
                         dense
                         :rules="[rules.required]"
                         ></v-select>
+                        <v-col cols="12">
+                         <v-row style="height: 35px">
+                          <v-subheader id="subtext">optionField</v-subheader>
+                          </v-row>
+                          <v-row style="height: 50px">
+                        <v-select
+                        v-model="formUpdate.optionField"
+                        :items="selectOptionField"
+                        multiple
+                        small-chips
+                        dense
+                        :rules="[rules.required]"
+                        ></v-select>
+                          </v-row>
+                        </v-col>
                       </v-row>
                     </v-col>
                   </v-row>
                 </v-container>
               </v-card-text>
               </v-form>
-              <v-card-actions>
+              <br>
+              <br>
                 <v-col id="margin">
                   <v-row justify="center">
                   <v-btn
@@ -157,9 +389,9 @@
                 </v-btn>
                   </v-row>
                   </v-col>
-              </v-card-actions>
+                  <br>
             </v-card>
-          </v-dialog>
+          </v-dialog> -->
           <!-- end edit -->
 
           <!-- delete -->
@@ -174,7 +406,7 @@
                     <v-col cols="12">
                       <v-text-field
                         label="รหัส Filed*"
-                        v-model="formUpdate.fieldId"
+                        v-model="formUpdate.fieldName"
                         readonly
                       ></v-text-field>
                     </v-col>
@@ -225,6 +457,13 @@
                   :search="searchAll2"
                   :items-per-page="10"
                 >
+                <template v-slot:[`item.shett`]="{ item }">
+                    <v-select
+                        v-model="item.optionField"
+                        :items="item.optionField"
+                        dense
+                        ></v-select>
+                  </template>
                    <template v-slot:[`item.CREATE_DATE`]="{ item }">
                       {{ format_dateNotime(item.CREATE_DATE) }}
                   </template>
@@ -313,8 +552,20 @@ export default {
       selectTypeField: [
         { text: 'Text', value: 'text' },
         { text: 'Number', value: 'number' },
-        { text: 'Datetime', value: 'dateTime' }
+        { text: 'Datetime', value: 'dateTime' },
+        { text: 'optionField', value: 'optionField' }
       ],
+      selectOptionField: [
+        { text: 'Autocompletes', value: 'Autocompletes' },
+        { text: 'Selects', value: 'Selects' },
+        { text: 'Radio buttons', value: 'Radio' }
+      ],
+      headers: [
+        { text: 'Text', value: 'optionText' },
+        { text: 'Value', value: 'optionValue' }
+      ],
+      dialogDeleteF: false,
+      editedItemSelete: [],
       // End Menu Config
       dataReady: true,
       canvas: true,
@@ -329,10 +580,15 @@ export default {
       dialogEdit: false,
       dialogDelete: false,
       dialogImport: false,
+      dialogAddField: false,
       // END Dialog Config ADD EDIT DELETE
       panel: [0],
       panel1: [1],
       session: this.$session.getAll(),
+      column: null,
+      radios: null,
+      checkbox: false,
+      checkbox1: false,
       // Search All
       searchAll: '',
       searchAll2: '',
@@ -340,14 +596,35 @@ export default {
         fieldName: '',
         fieldType: '',
         CREATE_USER: '',
-        LAST_USER: ''
+        LAST_USER: '',
+        optionField: '',
+        optionText: '',
+        optionValue: '',
+        conditionField: '',
+        conditionValue: '',
+        showCard: false
       },
       formUpdate: {
         fieldId: '',
         fieldName: '',
         fieldType: '',
-        LAST_USER: ''
+        LAST_USER: '',
+        optionField: '',
+        optionText: '',
+        optionValue: '',
+        conditionField: '',
+        conditionValue: ''
       },
+      formAddOption: {
+        optionText: '',
+        optionValue: ''
+      },
+      formUpdateOption: {
+        optionText: '',
+        optionValue: ''
+      },
+      desserts: [],
+      editedItemOption: [],
       rules: {
         numberRules: value =>
           (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
@@ -367,14 +644,24 @@ export default {
       // Data Table Config
       columns: [
         { text: 'ID', value: 'fieldId' },
-        { text: 'Name', value: 'fieldName' },
-        { text: 'ประเภท', value: 'fieldType' },
-        { text: 'วันที่สร้าง', value: 'CREATE_DATE' },
-        { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
+        { text: 'ชื่อ Field', value: 'fieldName' },
+        { text: 'ประเภท Field', value: 'fieldType' },
+        // { text: 'OptionField', value: 'optionField', align: 'center' },
+        { text: 'conditionValue', value: 'conditionValue', align: 'center' },
+        // { text: 'ConditionField', value: 'conditionField', align: 'center' },
+        // { text: 'วันที่สร้าง', value: 'CREATE_DATE' },
+        // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
         { text: 'Action', value: 'action', sortable: false, align: 'center' }
       ],
       dataItem: [],
+      columnsOption: [
+        { text: 'Text', value: 'text' },
+        { text: 'Value', value: 'value' }
+      ],
+      dataItemOption: [],
+      selectConditionField: [],
       validAdd: true,
+      validAddOption: true,
       validUpdate: true,
       filesAdd: null,
       filesUpdate: null
@@ -385,6 +672,8 @@ export default {
     // this.getGetToken(this.DNS_IP)
     this.dataReady = false
     // Get Data
+    this.getOption()
+    this.getCondition()
     this.getDataGlobal(this.DNS_IP, this.path)
   },
   methods: {
@@ -394,6 +683,12 @@ export default {
           this.$nextTick(() => {
             let self = this
             self.$refs.form_add.validate()
+          })
+          break
+        case 'ADDOPTION':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_addOption.validate()
           })
           break
         case 'UPDATE':
@@ -408,11 +703,6 @@ export default {
       }
     },
     async searchDataAll () {
-      //
-      //
-      // สำหรับ ค้นหาแบบ LIKE Search
-      // ต้องระบุ Field ที่จะส่งไปให้ตรงกับ Model
-      //
       var search =
         '?levelId=' + this.searchAll +
          '&name=' + this.searchAll +
@@ -421,13 +711,80 @@ export default {
       this.dataReady = false
       this.searchDataAllGlobal(this.DNS_IP, this.path, search)
     },
+    // async getDataById (item) {
+    //   console.log(item)
+    //   this.dataReady = false
+    //   await this.getDataByIdGlobal(this.DNS_IP, this.path, 'fieldId', item.fieldId)
+    //     .then(async (response) => {
+    //       if (response.data) {
+    //         Object.assign(this.formUpdate, response.data)
+    //         this.formUpdate.optionField = JSON.parse(this.formUpdate.optionField)
+    //       }
+    //     })
+    //     // eslint-disable-next-line handle-callback-err
+    //     .catch((error) => {
+    //       this.dataReady = true
+    //       console.log(error)
+    //     })
+    // },
     async getDataById (item) {
+      console.log('dataItem', this.dataItem)
+      await axios
+        .get(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + this.path + "getID?fieldId" + "=" + item.fieldId
+        )
+        .then(async (response) => {
+          if (response.data) {
+            Object.assign(this.formUpdate, response.data)
+            this.formUpdate.optionField = JSON.parse(this.formUpdate.optionField)
+            this.formUpdate.fieldType = this.formUpdate.fieldType
+          }
+        })
+        // eslint-disable-next-line handle-callback-err
+        .catch((error) => {
+          this.dataReady = true
+          console.log(error)
+        })
+    },
+    async addDataOption (item) {
       console.log(item)
-      this.dataReady = false
-      await this.getDataByIdGlobal(this.DNS_IP, this.path, 'fieldId', item.fieldId)
+      this.dataItemOption.push({'text': item.optionText, 'value': item.optionValue})
+      this.clearDataOption()
+    },
+    getOption () {
+      this.dataItemOption = []
+      axios.get(this.DNS_IP + '/customField/get').then((response) => {
+        let rs = response.data
+        if (rs.length > 0) {
+          for (var i = 0; i < rs.length; i++) {
+            var d = rs[i]
+            d.text = d.optionField
+            d.value = d.optionField
+            this.editedItemOption.push(d)
+          }
+        }
+      })
+    },
+    getCondition () {
+      this.dataItemCondition = []
+      axios.get(this.DNS_IP + '/customField/get').then((response) => {
+        let rs = response.data
+        if (rs.length > 0) {
+          for (var i = 0; i < rs.length; i++) {
+            var d = rs[i]
+            d.text = d.fieldName
+            d.value = d.fieldName
+            this.selectConditionField.push(d)
+          }
+        }
+      })
     },
     async addData () {
+      console.log('dataItemOption', JSON.stringify(this.dataItemOption))
       this.dataReady = false
+      // this.formAdd.optionField = JSON.stringify(this.formAdd.optionField)
+      console.log('optionField', this.formAdd.optionField)
 
       this.$swal({
         title: 'ต้องการ เพิ่มข้อมูล ใช่หรือไม่?',
@@ -441,38 +798,36 @@ export default {
         .then(async (result) => {
           this.formAdd.CREATE_USER = this.session.data.userName
           this.formAdd.LAST_USER = this.session.data.userName
-          await axios
-            .post(
-              // eslint-disable-next-line quotes
-              this.DNS_IP + this.path + "add",
-              this.formAdd
-            //   {
-            //     headers: {
-            //       'Application-Key': this.$session.getAll().ApplicationKey
-            //     }
-            //   }
-            )
-            .then(async (response) => {
-              // Debug response
-              console.log('addDataGlobal DNS_IP + PATH + "add"', response)
-
-              // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-              // Close Dialog
-              this.dialogAdd = false
-
-              // Load Data
-              await this.clearData()
-              await this.getDataGlobal(this.DNS_IP, this.path)
-              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-            })
-          // eslint-disable-next-line handle-callback-err
-            .catch((error) => {
-              console.log('error function addDataGlobal : ', error)
-              this.dataReady = true
-            })
+          if (this.formAdd.optionField === 'Autocompletes' || 'Selects') {
+            this.formAdd.optionField = JSON.stringify(this.dataItemOption)
+          }
+          this.add(this.formAdd)
         })
         .catch((error) => {
           console.log('error function addData : ', error)
+          this.dataReady = true
+        })
+    },
+    async add (dt) {
+      await axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + this.path + "add",
+          dt
+        )
+        .then(async (response) => {
+          console.log('addDataGlobal DNS_IP + PATH + "add"', response)
+          this.dialogAdd = false
+
+          // Load Data
+          await this.clearData()
+          await this.getDataGlobal(this.DNS_IP, this.path)
+          this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+          this.dataReady = true
+        })
+      // eslint-disable-next-line handle-callback-err
+        .catch((error) => {
+          console.log('error function addDataGlobal : ', error)
           this.dataReady = true
         })
     },
@@ -529,17 +884,28 @@ export default {
           console.log('error function editDataGlobal : ', error)
         })
     },
+    // async deleteData () {
+    //   this.formUpdate.LAST_USER = this.session.data.userName
+    //   console.log('DELETE PK : ', this.formUpdate.levelId)
+    //   //
+    //   //
+    //   // สำหรับ ลบข้อมูล
+    //   // ต้องระบุ  Last User ว่าใครเป็นคนลบล่าสุด
+    //   //
+    //   // this.formUpdate.LAST_USER = this.$session.getAll().data.userName
+    //   this.dataReady = false
+    //   this.deleteDataGlobal(this.DNS_IP, this.path, this.formUpdate.levelId, this.session.data.shopId)
+    // },
     async deleteData () {
-      this.formUpdate.LAST_USER = this.session.data.userName
-      console.log('DELETE PK : ', this.formUpdate.levelId)
+      console.log('DELETE PK : ', this.PK)
       //
       //
       // สำหรับ ลบข้อมูล
       // ต้องระบุ  Last User ว่าใครเป็นคนลบล่าสุด
       //
-      // this.formUpdate.LAST_USER = this.$session.getAll().data.userName
+      this.formUpdate.LAST_USER = this.$session.getAll().data.userName
       this.dataReady = false
-      this.deleteDataGlobal(this.DNS_IP, this.path, this.formUpdate.levelId, this.session.data.shopId)
+      this.deleteDataGlobal(this.DNS_IP, this.path, this.PK)
     },
     async clearData () {
       // eslint-disable-next-line no-redeclare
@@ -555,13 +921,20 @@ export default {
       //     this.search[key] = ''
       //   }
       // }
+    },
+    async clearDataOption () {
+      for (var key in this.formAddOption) {
+        if (this.formAddOption[key]) {
+          this.formAddOption[key] = ''
+        }
+      }
     }
   }
 }
 </script>
 <style scope>
 #margin {
-  margin-top: 50px;
+  margin-top: 150px;
   margin-bottom: 40px;
 }
 .v_text_edit {

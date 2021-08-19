@@ -38,6 +38,16 @@ export default new Router({
     component: Master.Flow
   },
   {
+    path: '/Master/FlowStep',
+    name: 'FlowStep',
+    component: Master.FlowStep
+  },
+  {
+    path: '/Master/RegisterAdd',
+    name: 'RegisterAdd',
+    component: Master.RegisterAdd
+  },
+  {
     path: '/System/User',
     name: 'User',
     component: System.User
