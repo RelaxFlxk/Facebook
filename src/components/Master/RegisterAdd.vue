@@ -128,7 +128,7 @@
                               <br/>
 
                               <!-- datatable -->
-                              <v-col cols="12">
+                              <!-- <v-col cols="12">
                                  <v-row justify="center" v-if="formAdd.flowCode">
                                    <v-card-title>
                                 <strong>เลือกข้อมูลที่จะแสดงในCard</strong>
@@ -149,7 +149,7 @@
                           </template>
                           </v-data-table>
                        </v-row>
-                    </v-col>
+                    </v-col> -->
                      <!-- datatable -->
 
                               <br/>
@@ -227,11 +227,11 @@ export default {
         }
       ],
       showCard: false,
-      headers: [
-        { text: 'Field Id', value: 'fieldId' },
-        { text: 'Field Name', value: 'fieldName' },
-        { text: 'AC', value: 'showCard' }
-      ],
+      // headers: [
+      //   { text: 'Field Id', value: 'fieldId' },
+      //   { text: 'Field Name', value: 'fieldName' },
+      //   { text: 'AC', value: 'showCard' }
+      // ],
       options2: {
         locale: 'en-US',
         prefix: '',
@@ -353,27 +353,29 @@ export default {
         for (var i = 0; i < flowfieldName.length; i++) {
           var d = flowfieldName[i]
           var s = {}
-          s.fieldId = d.fieldId
-          s.flowId = tt[0].flowId
-          s.fieldName = d.fieldName
-          s.optionField = d.optionField
-          s.conditionField = d.conditionField
-          s.fieldType = d.fieldType
-          s.fieldValue = ''
-          s.CREATE_USER = ''
-          s.LAST_USER = ''
-          s.showCard = false
-          s.conditionValue = d.value
-          if (d.conditionField !== '') {
-            s.conditionFieldId = this.flowfieldNameitem.filter((row) => { return row.fieldName === d.conditionField })[0]['fieldId']
-          } else {
-            s.conditionField = ''
-          }
-          this.form1[d.fieldId] = ''
+          if (d.showCard) {
+            s.fieldId = d.fieldId
+            s.flowId = tt[0].flowId
+            s.fieldName = d.fieldName
+            s.optionField = d.optionField
+            s.conditionField = d.conditionField
+            s.fieldType = d.fieldType
+            s.fieldValue = ''
+            s.CREATE_USER = ''
+            s.LAST_USER = ''
+            s.showCard = false
+            s.conditionValue = d.value
+            if (d.conditionField !== '') {
+              s.conditionFieldId = this.flowfieldNameitem.filter((row) => { return row.fieldName === d.conditionField })[0]['fieldId']
+            } else {
+              s.conditionField = ''
+            }
+            this.form1[d.fieldId] = ''
 
-          this.flowfieldNameitem.push(s)
+            this.flowfieldNameitem.push(s)
+          }
+          console.log(this.flowfieldNameitem)
         }
-        console.log(this.flowfieldNameitem)
       })
     },
     validate (Action) {

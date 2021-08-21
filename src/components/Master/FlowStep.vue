@@ -115,7 +115,6 @@ export default {
     this.dataReady = false
     // Get Data
     await this.getDataFlow()
-    await this.getJobData()
   },
   methods: {
     getDataFlow () {
@@ -145,16 +144,19 @@ export default {
               d.value = d.stepTitle
               this.stepItemSelete.push(d)
             }
+            console.log(this.formUpdate)
+            this.getJobData()
           }
         })
     },
     async getJobData () {
       this.JobDataItem = []
       axios
-        .get(this.DNS_IP + '/job/get' + this.form.jobId)
+        .get(this.DNS_IP + '/job/get?flowId=' + this.formUpdate.flowName)
         .then(async (response) => {
           this.dataReady = true
           var jobs = []
+          console.log('res', response.data)
           if (response.data) {
             response.data.forEach(element => {
               if (jobs.indexOf(element.jobId) === -1) {
