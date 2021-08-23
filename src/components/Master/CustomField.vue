@@ -646,11 +646,7 @@ export default {
         { text: 'ID', value: 'fieldId' },
         { text: 'ชื่อ Field', value: 'fieldName' },
         { text: 'ประเภท Field', value: 'fieldType' },
-        // { text: 'OptionField', value: 'optionField', align: 'center' },
-        { text: 'conditionValue', value: 'conditionValue', align: 'center' },
-        // { text: 'ConditionField', value: 'conditionField', align: 'center' },
-        // { text: 'วันที่สร้าง', value: 'CREATE_DATE' },
-        // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
+        // { text: 'conditionValue', value: 'conditionValue', align: 'center' },
         { text: 'Action', value: 'action', sortable: false, align: 'center' }
       ],
       dataItem: [],
@@ -711,22 +707,6 @@ export default {
       this.dataReady = false
       this.searchDataAllGlobal(this.DNS_IP, this.path, search)
     },
-    // async getDataById (item) {
-    //   console.log(item)
-    //   this.dataReady = false
-    //   await this.getDataByIdGlobal(this.DNS_IP, this.path, 'fieldId', item.fieldId)
-    //     .then(async (response) => {
-    //       if (response.data) {
-    //         Object.assign(this.formUpdate, response.data)
-    //         this.formUpdate.optionField = JSON.parse(this.formUpdate.optionField)
-    //       }
-    //     })
-    //     // eslint-disable-next-line handle-callback-err
-    //     .catch((error) => {
-    //       this.dataReady = true
-    //       console.log(error)
-    //     })
-    // },
     async getDataById (item) {
       console.log('dataItem', this.dataItem)
       await axios
@@ -854,11 +834,6 @@ export default {
               // eslint-disable-next-line quotes
               this.DNS_IP + this.path + "edit/" + ID,
               this.formUpdate
-              // {
-              //   headers: {
-              //     'Application-Key': this.$session.getAll().ApplicationKey
-              //   }
-              // }
             )
             .then(async (response) => {
               // Debug response
@@ -884,25 +859,8 @@ export default {
           console.log('error function editDataGlobal : ', error)
         })
     },
-    // async deleteData () {
-    //   this.formUpdate.LAST_USER = this.session.data.userName
-    //   console.log('DELETE PK : ', this.formUpdate.levelId)
-    //   //
-    //   //
-    //   // สำหรับ ลบข้อมูล
-    //   // ต้องระบุ  Last User ว่าใครเป็นคนลบล่าสุด
-    //   //
-    //   // this.formUpdate.LAST_USER = this.$session.getAll().data.userName
-    //   this.dataReady = false
-    //   this.deleteDataGlobal(this.DNS_IP, this.path, this.formUpdate.levelId, this.session.data.shopId)
-    // },
     async deleteData () {
       console.log('DELETE PK : ', this.PK)
-      //
-      //
-      // สำหรับ ลบข้อมูล
-      // ต้องระบุ  Last User ว่าใครเป็นคนลบล่าสุด
-      //
       this.formUpdate.LAST_USER = this.$session.getAll().data.userName
       this.dataReady = false
       this.deleteDataGlobal(this.DNS_IP, this.path, this.PK)
@@ -914,13 +872,6 @@ export default {
           this.formAdd[key] = ''
         }
       }
-
-      // eslint-disable-next-line no-redeclare
-      // for (var key in this.search) {
-      //   if (this.search[key]) {
-      //     this.search[key] = ''
-      //   }
-      // }
     },
     async clearDataOption () {
       for (var key in this.formAddOption) {

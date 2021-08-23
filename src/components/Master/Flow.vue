@@ -36,7 +36,7 @@
                         Add StepTitle
                       </v-btn>
                     </v-col>
-                     <!-- ADD -->
+                     <!-- ADD steptitle-->
                     <v-dialog v-model="dialogAddStepTitle" persistent max-width="50%">
                       <v-card>
                         <v-card-text>
@@ -85,7 +85,60 @@
                         </v-card-text>
                       </v-card>
                     </v-dialog>
-                    <!-- end add -->
+                    <!-- end ADD step -->
+
+                    <!--edit step -->
+                      <v-dialog v-model="dialogEditStep" persistent max-width="60%">
+                        <v-card>
+                          <v-form ref="form_update" v-model="validUpdate" lazy-validation>
+                          <v-card-text>
+                            <v-container>
+                              <v-col class="text-right">
+                                  <v-btn small color="#E0E0E0" @click="(dialogEditStep = false)">
+                                    <v-icon color="#173053">mdi-close</v-icon>
+                                  </v-btn>
+                              </v-col>
+                              <v-row justify="center">
+                                  <v-col cols="6" class="v-margit_text_add mt-1">
+                                <v-col class="text-center">
+                                  <v-img class="v_text_edit" :src="require('@/assets/GroupEditTitle.svg')"></v-img>
+                                  </v-col>
+                                <v-col cols="12">
+                                  <v-row style="height: 35px">
+                                  <v-subheader id="subtext">StepTitle</v-subheader>
+                                  </v-row>
+                                  <v-row style="height: 70px">
+                                  <v-text-field
+                                    v-model="formUpdateStep.stepTitle"
+                                    dense
+                                    required
+                                  ></v-text-field>
+                                  </v-row>
+                                </v-col>
+                                  <v-col id="margin">
+                                  <v-row justify="center">
+                                  <v-btn
+                                    elevation="2"
+                                    x-large
+                                    color="#173053"
+                                    @click="editDataStep()"
+                                  >
+                                    <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                                    แก้ไข
+                                  </v-btn>
+                                  </v-row>
+                                  </v-col>
+                                  </v-col>
+
+                              </v-row>
+                            </v-container>
+                          </v-card-text>
+                          </v-form>
+                        </v-card>
+                      </v-dialog>
+                      <!-- end EDIT step -->
+
+                    <!-- datatable step -->
                     <v-col cols="12">
                        <v-row justify="center">
                          <v-data-table
@@ -133,6 +186,7 @@
                     </v-btn>
                   </template>
                           </v-data-table>
+                          <!-- delete step -->
                           <v-dialog v-model="dialogDeleteF" max-width="500px">
                               <v-card>
                                 <v-card-title>คุณต้องการลบใช่หรือไม่</v-card-title>
@@ -144,6 +198,7 @@
                                 </v-card-actions>
                               </v-card>
                             </v-dialog>
+                            <!-- END delete step -->
                           <!-- <v-dialog
                                 v-model="dialogAddField"
                                 max-width="500px"
@@ -191,7 +246,7 @@
                               </v-dialog> -->
                        </v-row>
                     </v-col>
-                      <v-col id="margin">
+                      <!-- <v-col id="margin">
                       <v-row justify="center">
                       <v-btn
                         elevation="2"
@@ -204,8 +259,10 @@
                         บันทึก
                       </v-btn>
                       </v-row>
-                      </v-col>
+                      </v-col> -->
                   </v-row>
+                  <br>
+                  <p></p>
                 </v-container>
               </v-card-text>
               </v-form>
@@ -213,6 +270,7 @@
           </v-dialog>
           <!-- end  -->
 
+          <!-- add  -->
           <v-dialog v-model="dialogAdd" persistent max-width="60%">
             <v-card>
               <v-form ref="form_add" v-model="validAdd" lazy-validation>
@@ -279,6 +337,11 @@
                                 mdi-delete
                               </v-icon>
                             </template>
+                            <template v-slot:[`item.showCard`]="{ item }">
+                            <v-simple-checkbox
+                              v-model="item.showCard"
+                            ></v-simple-checkbox>
+                          </template>
                           </v-data-table>
                           <v-dialog v-model="dialogDeleteF" max-width="500px">
                               <v-card>
@@ -428,6 +491,11 @@
                                 mdi-delete
                               </v-icon>
                             </template>
+                            <template v-slot:[`item.showCard`]="{ item }">
+                            <v-simple-checkbox
+                              v-model="item.showCard"
+                            ></v-simple-checkbox>
+                          </template>
                           </v-data-table>
                           <v-dialog v-model="dialogDeleteF" max-width="500px">
                               <v-card>
@@ -510,57 +578,6 @@
             </v-card>
           </v-dialog>
           <!-- end  -->
-
-          <!-- step -->
-          <v-dialog v-model="dialogEditStep" persistent max-width="60%">
-             <v-card>
-              <v-form ref="form_update" v-model="validUpdate" lazy-validation>
-              <v-card-text>
-                <v-container>
-                  <v-col class="text-right">
-                      <v-btn small color="#E0E0E0" @click="(dialogEditStep = false)">
-                        <v-icon color="#173053">mdi-close</v-icon>
-                      </v-btn>
-                  </v-col>
-                  <v-row justify="center">
-                      <v-col cols="6" class="v-margit_text_add mt-1">
-                    <v-col class="text-center">
-                      <v-img class="v_text_edit" :src="require('@/assets/GroupEditTitle.svg')"></v-img>
-                      </v-col>
-                    <v-col cols="12">
-                      <v-row style="height: 35px">
-                      <v-subheader id="subtext">StepTitle</v-subheader>
-                      </v-row>
-                      <v-row style="height: 70px">
-                      <v-text-field
-                        v-model="formUpdateStep.stepTitle"
-                        dense
-                        required
-                      ></v-text-field>
-                      </v-row>
-                    </v-col>
-                      <v-col id="margin">
-                      <v-row justify="center">
-                      <v-btn
-                        elevation="2"
-                        x-large
-                        color="#173053"
-                        @click="editData()"
-                      >
-                        <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                        แก้ไข
-                      </v-btn>
-                      </v-row>
-                      </v-col>
-                      </v-col>
-
-                  </v-row>
-                </v-container>
-              </v-card-text>
-              </v-form>
-            </v-card>
-          </v-dialog>
-          <!-- end step -->
 
           <!-- delete -->
           <v-dialog v-model="dialogDelete" persistent max-width="80%">
@@ -781,6 +798,16 @@ export default {
         flowName: '',
         LAST_USER: ''
       },
+      formUpdateItemFlow: {
+        fieldId: '',
+        fieldName: '',
+        flowfieldName: [],
+        flowfieldId: '',
+        fieldType: '',
+        flowId: '',
+        flowName: '',
+        LAST_USER: ''
+      },
       formUpdateStep: {
         stepId: '',
         flowId: '',
@@ -805,6 +832,7 @@ export default {
         { text: ' ', value: 'actions2', sortable: false, align: 'center' },
         { text: 'Action', value: 'action', sortable: false, align: 'center' }
       ],
+      showCard: false,
       headers: [
         {
           text: 'Field Id',
@@ -814,7 +842,8 @@ export default {
           text: 'Field Name',
           value: 'fieldName'
         },
-        { text: 'AC', value: 'actions', sortable: false }
+        { text: 'AC', value: 'actions', sortable: false },
+        { text: 'AC', value: 'showCard' }
       ],
       sortBy: false,
       headers2: [
@@ -965,6 +994,7 @@ export default {
             var d = rs[i]
             d.text = d.fieldName
             d.value = d.fieldName
+            d.showCard = false
             this.editedItemSelete.push(d)
           }
         }
@@ -1051,14 +1081,17 @@ export default {
           console.log('get flowCode : ', response.data[0].flowfieldName)
           this.dataReady = true
           if (response.data) {
-            Object.assign(this.formUpdate, response.data)
+            // Object.assign(this.formUpdate, response.data)
             this.formUpdate.flowName = response.data[0].flowName
+            this.formUpdate.flowId = response.data[0].flowId
+            this.formUpdate.flowCode = response.data[0].flowCode
             this.fieldType = this.formUpdate.fieldType
             this.desserts = JSON.parse(response.data[0].flowfieldName)
             // this.getDataCompany()
             this.getCustomField(this.formUpdate.fieldName)
-            this.getStepTitle(this.formUpdateStep.stepTitle)
+            // this.getStepTitle(this.formUpdateStep.stepTitle)
             this.dataReady = true
+            console.log(this.formUpdate)
           }
         })
         // eslint-disable-next-line handle-callback-err
@@ -1183,32 +1216,11 @@ export default {
         })
     },
     async editData () {
-      // Config User ทำรายการล่าสุด
-      this.formUpdateItem.LAST_USER = this.$session.getAll().data.userName
-      // End Config User ทำรายการล่าสุด
-
-      for (var key in this.formUpdateItem) {
-        for (var key2 in this.formUpdate) {
-          if (key === key2) {
-            this.formUpdateItem[key] = this.formUpdate[key2]
-          }
-        }
-      }
-      console.log('formUpdateItem', this.formUpdateItem)
-
-      // Debug
-      console.log('EDIT PK : ', this.PK)
-      console.log('formUpdateItem', JSON.stringify(this.formUpdateItem))
-      // End Debug
-      // สำหรับ แก้ไขข้อมูล
-      // ต้องระบุ  Last User ว่าใครเป็นคนแก้ไขล่าสุด
-      //
+      console.log(55555)
+      console.log(this.formUpdate)
+      console.log(this.desserts)
+      // this.editDataGlobal(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
       this.dataReady = false
-      this.editDataSubmit(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
-    },
-    async editDataSubmit (DNS_IP, PATH, ID, DT) {
-      let id = this.formUpdate['fieldId']
-      let dt = this.formUpdate
       this.$swal({
         title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',
         type: 'question',
@@ -1219,15 +1231,20 @@ export default {
         cancelButtonText: 'ไม่'
       })
         .then(async (result) => {
-          let ds = {
-            flowName: dt.flowName,
-            fieldName: JSON.stringify(dt.fieldName)
-          }
+          this.formUpdate.LAST_USER = this.session.data.userName
+          this.formUpdate.flowfieldName = JSON.stringify(this.desserts)
+          var ID = this.formUpdate.flowId
+          delete this.formUpdate['flowId']
+          delete this.formUpdate['fieldId']
+          delete this.formUpdate['fieldName']
+          delete this.formUpdate['fieldType']
+          delete this.formUpdate['flowfieldId']
+
           await axios
             .post(
               // eslint-disable-next-line quotes
-              this.DNS_IP + this.path + "edit/" + id,
-              ds
+              this.DNS_IP + this.path + "edit/" + ID,
+              this.formUpdate
               // {
               //   headers: {
               //     'Application-Key': this.$session.getAll().ApplicationKey
@@ -1238,13 +1255,14 @@ export default {
               // Debug response
               console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
 
-              this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
+              // this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
               // Close Dialog
               this.dialogEdit = false
 
               // Load Data
-              await this.getDataGlobal(this.DNS_IP, this.path)
               // await this.reloadData()
+              await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.flowId)
+              this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
             })
             // eslint-disable-next-line handle-callback-err
             .catch((error) => {
@@ -1257,17 +1275,42 @@ export default {
           console.log('error function editDataGlobal : ', error)
         })
     },
+    // async deleteData () {
+    //   this.formUpdate.LAST_USER = this.session.data.userName
+    //   this.dataReady = false
+    //   this.deleteDataGlobal(this.DNS_IP, this.path, this.formUpdate.flowId, this.session.data.shopId)
+    // },
     async deleteData () {
-      this.formUpdate.LAST_USER = this.session.data.userName
-      console.log('DELETE PK : ', this.formUpdate.levelId)
-      //
-      //
-      // สำหรับ ลบข้อมูล
-      // ต้องระบุ  Last User ว่าใครเป็นคนลบล่าสุด
-      //
-      // this.formUpdate.LAST_USER = this.$session.getAll().data.userName
-      this.dataReady = false
-      this.deleteDataGlobal(this.DNS_IP, this.path, this.formUpdate.levelId, this.session.data.shopId)
+      this.$swal({
+        title: 'ต้องการ ลบข้อมูล ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#fa0202',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async result => {
+          this.formUpdate.LAST_USER = this.session.data.userName
+          await axios
+            .post(
+            // eslint-disable-next-line quotes
+              this.DNS_IP + this.path + "delete/" + this.formUpdate
+            )
+            .then(async (response) => {
+              this.$swal('เรียบร้อย', 'ลบข้อมูลเรียบร้อย', 'success')
+            })
+            // eslint-disable-next-line handle-callback-err
+            .catch((error) => {
+              this.dataReady = true
+              console.log('error function deleteDataGlobal : ', error)
+            })
+        })
+        .catch((error) => {
+          this.dataReady = true
+          // this.$swal('ผิดพลาด', 'ผิดพลาด -2', 'error')
+          console.log('error function deleteDataGlobal : ', error)
+        })
     },
     async clearData () {
       // eslint-disable-next-line no-redeclare

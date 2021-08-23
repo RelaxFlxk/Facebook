@@ -441,6 +441,7 @@ export default {
               // Debug response
               console.log('addDataGlobal DNS_IP + /job/add', response)
               console.log('data', response)
+              console.log('ssss', this.flowfieldNameitem)
 
               // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
               // Close Dialog
