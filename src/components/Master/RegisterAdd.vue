@@ -23,7 +23,7 @@
                   v-model="formAdd.flowCode"
                   :items="editedItemSelete"
                   label="Selects"
-                  @change="flowfieldtest()"
+                  @change="flowfieldtest() , pushmessagToGroup(formAdd.flowCode) "
                   >
                   </v-select>
                       <v-subheader>SHOWFORM
@@ -126,32 +126,6 @@
                               </div>
                               <br/>
                               <br/>
-
-                              <!-- datatable -->
-                              <!-- <v-col cols="12">
-                                 <v-row justify="center" v-if="formAdd.flowCode">
-                                   <v-card-title>
-                                <strong>เลือกข้อมูลที่จะแสดงในCard</strong>
-                              </v-card-title>
-                                 </v-row>
-                              <br>
-                       <v-row justify="center" v-if="formAdd.flowCode">
-                         <v-data-table
-                            dense
-                            :headers="headers"
-                            :items="flowfieldNameitem"
-                            class="elevation-1"
-                          >
-                            <template v-slot:[`item.showCard`]="{ item }">
-                            <v-simple-checkbox
-                              v-model="item.showCard"
-                            ></v-simple-checkbox>
-                          </template>
-                          </v-data-table>
-                       </v-row>
-                    </v-col> -->
-                     <!-- datatable -->
-
                               <br/>
                               <br/>
                               <v-btn depressed
@@ -210,6 +184,8 @@ export default {
       PK: '',
       path: '/flow/', // Path Model
       // Menu Config
+      dtitem: [],
+      GroupId: [],
       editedItemSelete: [],
       flowfieldNameitem: [],
       flowCode: '',
@@ -227,11 +203,6 @@ export default {
         }
       ],
       showCard: false,
-      // headers: [
-      //   { text: 'Field Id', value: 'fieldId' },
-      //   { text: 'Field Name', value: 'fieldName' },
-      //   { text: 'AC', value: 'showCard' }
-      // ],
       options2: {
         locale: 'en-US',
         prefix: '',
@@ -257,12 +228,6 @@ export default {
       menu3: false,
       menu4: false,
       dialogDeleteF: false,
-      // Dialog Config ADD EDIT DELETE IMPORT
-      // dialogAdd: false,
-      // dialogEdit: false,
-      // dialogDelete: false,
-      // dialogImport: false,
-      // END Dialog Config ADD EDIT DELETE
       panel: [0],
       panel1: [1],
       session: this.$session.getAll(),
@@ -343,6 +308,34 @@ export default {
         }console.log(this.editedItemSelete)
       })
     },
+    pushmessagToGroup (flowCode) {
+      this.GroupId = []
+      axios.get(this.DNS_IP + '/LineGroupFlow/get?flowCode=' + flowCode).then((response) => {
+        let rs = response.data
+        if (rs.length > 0) {
+          for (var i = 0; i < rs.length; i++) {
+            var d = rs[i]
+            this.GroupId.push(d.GroupId)
+          }
+        }
+        console.log('GroupId', this.GroupId)
+      })
+    },
+    flexData (item) {
+      if (item.length > 0) {
+        for (var i = 0; i < item.length; i++) {
+          var d = item[i]
+          if (d.showCard === false) {
+            var t = {
+              'type': 'text',
+              'text': d.fieldName + ':' + d.fieldValue,
+              'size': 'md'
+            }
+            this.dtitem.push(t)
+          }
+        }
+      }
+    },
     flowfieldtest () {
       this.flowfieldNameitem = []
       axios.get(this.DNS_IP + '/flowField/get?flowCode=' + this.formAdd.flowCode).then((response) => {
@@ -371,7 +364,6 @@ export default {
               s.conditionField = ''
             }
             this.form1[d.fieldId] = ''
-
             this.flowfieldNameitem.push(s)
           }
           console.log(this.flowfieldNameitem)
@@ -423,35 +415,73 @@ export default {
         cancelButtonText: 'ไม่'
       })
         .then(async (result) => {
+          var GG = this.GroupId
           this.formAdd.CREATE_USER = this.session.data.userName
           this.formAdd.LAST_USER = this.session.data.userName
-          console.log(this.flowfieldNameitem)
+          this.flexData(this.flowfieldNameitem)
+          var dtitem = this.dtitem
           await axios
             .post(
               // eslint-disable-next-line quotes
               this.DNS_IP + '/job/add',
               this.flowfieldNameitem
-            //   {
-            //     headers: {
-            //       'Application-Key': this.$session.getAll().ApplicationKey
-            //     }
-            //   }
+
             )
             .then(async (response) => {
               // Debug response
               console.log('addDataGlobal DNS_IP + /job/add', response)
               console.log('data', response)
-              console.log('ssss', this.flowfieldNameitem)
-
-              // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              for (var i = 0; i < GG.length; i++) {
+                var d = GG[i]
+                var flex = {
+                  'to': d,
+                  'messages': [
+                    {
+                      'type': 'flex',
+                      'contents': {
+                        'type': 'bubble',
+                        'body': {
+                          'type': 'box',
+                          'layout': 'vertical',
+                          'contents': dtitem
+                        },
+                        'footer': {
+                          'type': 'box',
+                          'layout': 'vertical',
+                          'contents': [
+                            {
+                              'type': 'separator',
+                              'color': '#000000'
+                            },
+                            {
+                              'type': 'button',
+                              'action': {
+                                'type': 'uri',
+                                'label': 'action',
+                                'uri': 'http://linecorp.com/'
+                              },
+                              'style': 'secondary',
+                              'height': 'sm',
+                              'margin': 'md'
+                            }
+                          ]
+                        }
+                      },
+                      'altText': 'Flex Message'
+                    }
+                  ]}
+                console.log('ssssssssssss', flex)
+                await axios
+                  .post(
+                    this.DNS_IP + '/LineGroupFlow/pushmessage', flex
+                  )
+              }
               // Close Dialog
               // this.dialogAdd = false
-
               // Load Data
-              await this.clearData()
-
               // await this.getDataGlobal(this.DNS_IP, this.path)
               this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              await this.clearData()
             })
           // eslint-disable-next-line handle-callback-err
             .catch((error) => {
@@ -475,6 +505,7 @@ export default {
     }
   }
 }
+
 </script>
 <style scope>
 #margin {
