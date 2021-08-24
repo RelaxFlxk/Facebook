@@ -19,16 +19,18 @@
               <v-row>
                 <v-col cols="12" >
                 <v-subheader>Flow</v-subheader>
-                  <v-select
+                  <v-autocomplete
                   v-model="formAdd.flowCode"
                   :items="editedItemSelete"
                   label="Selects"
                   @change="flowfieldtest() , pushmessagToGroup(formAdd.flowCode) "
                   >
-                  </v-select>
-                      <v-subheader>SHOWFORM
-                      </v-subheader>
-                      <v-card>
+                  </v-autocomplete>
+                      <!-- <v-subheader>SHOWFORM
+                      </v-subheader> -->
+                      <v-card v-show="formAdd.flowCode !== '' "
+                      class="mx-auto"
+                      max-width="500">
                           <v-container>
                             <v-row>
                               <v-col cols="1"></v-col>
@@ -48,6 +50,8 @@
                                   <v-text-field
                                     v-model="p.fieldValue"
                                     :label="p.fieldName"
+                                    :rules = "numberRules"
+
                                   ></v-text-field>
                                   </div>
                                   <div v-if="p.fieldType == 'dateTime'">
@@ -125,9 +129,6 @@
                                   </div>
                               </div>
                               <br/>
-                              <br/>
-                              <br/>
-                              <br/>
                               <v-btn depressed
                               @click="addData()">
                                   Save
@@ -184,6 +185,7 @@ export default {
       PK: '',
       path: '/flow/', // Path Model
       // Menu Config
+      dtname: [],
       dtitem: [],
       GroupId: [],
       editedItemSelete: [],
@@ -300,7 +302,7 @@ export default {
         let rs = response.data
         if (rs.length > 0) {
           for (var i = 0; i < rs.length; i++) {
-            var d = rs[i]
+            let d = rs[i]
             d.text = d.flowName
             d.value = d.flowCode
             this.editedItemSelete.push(d)
@@ -314,7 +316,7 @@ export default {
         let rs = response.data
         if (rs.length > 0) {
           for (var i = 0; i < rs.length; i++) {
-            var d = rs[i]
+            let d = rs[i]
             this.GroupId.push(d.GroupId)
           }
         }
@@ -323,15 +325,38 @@ export default {
     },
     flexData (item) {
       if (item.length > 0) {
-        for (var i = 0; i < item.length; i++) {
-          var d = item[i]
-          if (d.showCard === false) {
-            var t = {
+        let showCD = item.filter((dt) => {
+          return dt.showCard === true
+        })
+        for (let i = 0; i < showCD.length; i++) {
+          let d = showCD[i]
+          if (d.fieldName === 'ชื่อ') {
+            let dtitem = {
               'type': 'text',
-              'text': d.fieldName + ':' + d.fieldValue,
-              'size': 'md'
+              'text': 'คุณ' + '' + '' + d.fieldValue,
+              'align': 'start',
+              'size': 'lg',
+              'weight': 'bold'
             }
-            this.dtitem.push(t)
+            this.dtname.push(dtitem)
+          } else {
+            let n = [ {
+              'type': 'text',
+              'text': d.fieldName + ':'
+            },
+            {
+              'type': 'text',
+              'text': d.fieldValue,
+              'align': 'start'
+            }]
+            var flex = {
+              'type': 'box',
+              'layout': 'baseline',
+              'contents': n,
+              'spacing': 'none',
+              'margin': 'md'
+            }
+            this.dtitem.push(flex)
           }
         }
       }
@@ -344,28 +369,26 @@ export default {
         var flowfieldName = []
         flowfieldName = JSON.parse(tt[0].flowfieldName)
         for (var i = 0; i < flowfieldName.length; i++) {
-          var d = flowfieldName[i]
-          var s = {}
-          if (d.showCard) {
-            s.fieldId = d.fieldId
-            s.flowId = tt[0].flowId
-            s.fieldName = d.fieldName
-            s.optionField = d.optionField
-            s.conditionField = d.conditionField
-            s.fieldType = d.fieldType
-            s.fieldValue = ''
-            s.CREATE_USER = ''
-            s.LAST_USER = ''
-            s.showCard = false
-            s.conditionValue = d.value
-            if (d.conditionField !== '') {
-              s.conditionFieldId = this.flowfieldNameitem.filter((row) => { return row.fieldName === d.conditionField })[0]['fieldId']
-            } else {
-              s.conditionField = ''
-            }
-            this.form1[d.fieldId] = ''
-            this.flowfieldNameitem.push(s)
+          let d = flowfieldName[i]
+          let s = {}
+          s.fieldId = d.fieldId
+          s.flowId = tt[0].flowId
+          s.fieldName = d.fieldName
+          s.optionField = d.optionField
+          s.conditionField = d.conditionField
+          s.fieldType = d.fieldType
+          s.fieldValue = ''
+          s.CREATE_USER = ''
+          s.LAST_USER = ''
+          s.showCard = d.showCard
+          s.conditionValue = d.value
+          if (d.conditionField !== '') {
+            s.conditionFieldId = this.flowfieldNameitem.filter((row) => { return row.fieldName === d.conditionField })[0]['fieldId']
+          } else {
+            s.conditionField = ''
           }
+          this.form1[d.fieldId] = ''
+          this.flowfieldNameitem.push(s)
           console.log(this.flowfieldNameitem)
         }
       })
@@ -419,7 +442,10 @@ export default {
           this.formAdd.CREATE_USER = this.session.data.userName
           this.formAdd.LAST_USER = this.session.data.userName
           this.flexData(this.flowfieldNameitem)
-          var dtitem = this.dtitem
+          var Text = JSON.stringify(this.dtitem)
+          var flexitem = JSON.parse(Text)
+          console.log('checkdata', this.flowfieldNameitem)
+          console.log('showflex', flexitem)
           await axios
             .post(
               // eslint-disable-next-line quotes
@@ -432,37 +458,47 @@ export default {
               console.log('addDataGlobal DNS_IP + /job/add', response)
               console.log('data', response)
               for (var i = 0; i < GG.length; i++) {
-                var d = GG[i]
+                var dtgroupId = GG[i]
                 var flex = {
-                  'to': d,
+                  'to': dtgroupId,
                   'messages': [
                     {
                       'type': 'flex',
                       'contents': {
                         'type': 'bubble',
+                        'size': 'kilo',
+                        'direction': 'ltr',
                         'body': {
-                          'type': 'box',
-                          'layout': 'vertical',
-                          'contents': dtitem
-                        },
-                        'footer': {
                           'type': 'box',
                           'layout': 'vertical',
                           'contents': [
                             {
-                              'type': 'separator',
-                              'color': '#000000'
+                              'type': 'box',
+                              'layout': 'baseline',
+                              'contents': this.dtname
                             },
                             {
-                              'type': 'button',
-                              'action': {
-                                'type': 'uri',
-                                'label': 'action',
-                                'uri': 'http://linecorp.com/'
-                              },
-                              'style': 'secondary',
-                              'height': 'sm',
-                              'margin': 'md'
+                              'type': 'box',
+                              'layout': 'vertical',
+                              'contents': flexitem
+                            },
+                            {
+                              'type': 'box',
+                              'layout': 'vertical',
+                              'contents': [
+                                {
+                                  'type': 'button',
+                                  'action': {
+                                    'type': 'postback',
+                                    'label': 'QR CODE',
+                                    'data': 'hello'
+                                  },
+                                  'style': 'secondary',
+                                  'height': 'sm',
+                                  'offsetTop': 'none'
+                                }
+                              ],
+                              'margin': 'xl'
                             }
                           ]
                         }
@@ -475,13 +511,17 @@ export default {
                   .post(
                     this.DNS_IP + '/LineGroupFlow/pushmessage', flex
                   )
+                  .then(
+                    this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success'),
+                    this.clearData()
+                  )
               }
               // Close Dialog
               // this.dialogAdd = false
               // Load Data
               // await this.getDataGlobal(this.DNS_IP, this.path)
-              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-              await this.clearData()
+              // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              // await this.clearData()
             })
           // eslint-disable-next-line handle-callback-err
             .catch((error) => {
