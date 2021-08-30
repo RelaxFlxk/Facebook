@@ -1216,7 +1216,6 @@ export default {
         })
     },
     async editData () {
-      console.log(55555)
       console.log(this.formUpdate)
       console.log(this.desserts)
       // this.editDataGlobal(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
@@ -1245,11 +1244,6 @@ export default {
               // eslint-disable-next-line quotes
               this.DNS_IP + this.path + "edit/" + ID,
               this.formUpdate
-              // {
-              //   headers: {
-              //     'Application-Key': this.$session.getAll().ApplicationKey
-              //   }
-              // }
             )
             .then(async (response) => {
               // Debug response

@@ -26,6 +26,41 @@
           ></v-select>
         </v-col>
 
+          <v-row justify="center">
+            <v-dialog
+              v-model="dialog"
+              max-width="300px"
+            >
+              <v-card>
+                <v-card-title>เปลี่ยนสถานะ</v-card-title>
+                <v-divider></v-divider>
+                <v-card-text>
+                  <v-row>
+                    <v-select
+                    v-model="formUpdate.stepTitle"
+                    :items="stepItemSelete"
+                    item-text="text"
+                    item-value="stepId"
+                    dense
+                    return-object
+                    ></v-select>
+                  </v-row>
+                </v-card-text>
+                <v-divider></v-divider>
+                <v-card-actions>
+                  <v-btn
+                    dense
+                    color="#004D40"
+                    text
+                    @click="onUpdate()"
+                  >
+                    Save
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </v-row>
+
         <v-row>
           <v-col cols="3" v-for="(itemsStep, indexStep) in stepItemSelete" :key="indexStep">
             <v-card>
@@ -34,11 +69,10 @@
               </v-card-title>
               <v-divider></v-divider>
               <v-list dense>
-                 <draggable class="list-group" group="people" @change="log">
+                 <!-- <draggable class="list-group" group="people" @change="log" @end="onUpdate"> -->
                   <div class="column is-3" v-for="(itemsJob, indexJob) in allJob.filter((row) => {return row.stepId == itemsStep.stepId})" :key="indexJob">
                 <v-list-item>
                     <v-alert
-                      dismissible
                       color="cyan"
                       border="left"
                       elevation="2"
@@ -47,10 +81,20 @@
                   <div class="column is-3" v-for="(items, index) in JobDataItem.filter((row) => {return row.jobId == itemsJob.jobId})" :key="index">
                     <strong>{{ items.fieldName }}: </strong>{{ items.fieldValue}}<br>
                   </div>
+                  <v-spacer></v-spacer>
+                    <v-col class="shrink">
+                      <v-btn
+                        color="info"
+                        outlined
+                        @click="dialog = true"
+                      >
+                        Okay
+                      </v-btn>
+                    </v-col>
                     </v-alert>
                 </v-list-item>
                   </div>
-                  </draggable>
+                  <!-- </draggable> -->
               </v-list>
             </v-card>
           </v-col>
@@ -87,9 +131,12 @@ export default {
           href: '/Master/Flow'
         }
       ],
+      dialogm1: false,
+      dialog: false,
       session: this.$session.getAll(),
       stepItemSelete: [],
       DataFlowName: [],
+      ItemSelete: [],
       formUpdate: {
         stepId: '',
         flowId: '',
@@ -97,7 +144,9 @@ export default {
         stepTitle: '',
         sortNo: '',
         CREATE_USER: '',
-        LAST_USER: ''
+        LAST_USER: '',
+        endDate: '',
+        jobId: ''
       },
       JobDataItem: [],
       allJob: [],
@@ -117,6 +166,12 @@ export default {
     await this.getDataFlow()
   },
   methods: {
+    async add () {
+      this.$router.push('/Master/RegisterAdd')
+    },
+    log: function (evt) {
+      window.console.log(evt)
+    },
     getDataFlow () {
       this.DataFlowName = []
       axios.get(this.DNS_IP + '/flow/get').then(response => {
@@ -158,6 +213,7 @@ export default {
           var jobs = []
           console.log('res', response.data)
           if (response.data) {
+            this.formUpdate.stepId = response.data[0].stepId
             response.data.forEach(element => {
               if (jobs.indexOf(element.jobId) === -1) {
                 jobs.push(element.jobId)
@@ -168,11 +224,47 @@ export default {
           }
         })
     },
-    async add () {
-      this.$router.push('/Master/RegisterAdd')
-    },
-    log: function (evt) {
-      window.console.log(evt)
+    async onUpdate () {
+      console.log('formUpdate', this.formUpdate)
+      console.log('stepItemSelete', this.stepItemSelete)
+      this.dataReady = false
+      this.$swal({
+        title: 'ต้องการ แก้ไขสถานะ ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async (result) => {
+          this.formUpdate.LAST_USER = this.session.data.userName
+          var ID = this.formUpdate.stepId
+          delete this.formUpdate['flowId']
+          delete this.formUpdate['flowName']
+          delete this.formUpdate['sortNo']
+          await axios
+            .post(
+              // eslint-disable-next-line quotes
+              this.DNS_IP + "/job/edit/" + ID,
+              this.formUpdate
+            )
+            .then(async (response) => {
+              // Debug response
+              console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
+              this.dialog = false
+              this.$swal('เรียบร้อย', 'แก้ไขสถานะ เรียบร้อย', 'success')
+            })
+            // eslint-disable-next-line handle-callback-err
+            .catch((error) => {
+              this.dataReady = true
+              console.log('error function editDataGlobal : ', error)
+            })
+        })
+        .catch((error) => {
+          this.dataReady = true
+          console.log('error function editDataGlobal : ', error)
+        })
     }
   }
 }

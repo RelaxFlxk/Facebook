@@ -31,7 +31,7 @@
                         <v-col class="text-center">
                       <v-img  class="v-margit_img_reward" :src="require('@/assets/GroupLevel.svg')" max-width="330"></v-img>
                       </v-col>
-                      <v-card-text v-if="formAdd.fieldType">
+                      <v-card-text v-if="formAdd.optionField === 'optionField'">
                       <v-data-table
                         :headers="columnsOption"
                         :items="dataItemOption"
@@ -102,10 +102,10 @@
                     <v-form ref="form_addOption" v-model="validAddOption" lazy-validation>
                     <v-row>
                     <v-col cols="6">
-                      <v-row style="height: 35px" v-if="formAdd.optionField">
+                      <v-row style="height: 35px" v-if="formAdd.optionField === 'optionField'">
                       <v-subheader id="subtext" >Text:</v-subheader >
                       </v-row>
-                      <v-row style="height: 50px" v-if="formAdd.optionField">
+                      <v-row style="height: 50px" v-if="formAdd.optionField === 'optionField'">
                       <v-text-field
                         v-model="formAddOption.optionText"
                         placeholder="Text"
@@ -118,10 +118,10 @@
                       </v-row>
                     </v-col>
                      <v-col cols="6">
-                      <v-row style="height: 35px" v-if="formAdd.optionField">
+                      <v-row style="height: 35px" v-if="formAdd.optionField === 'optionField'">
                       <v-subheader id="subtext">Value:</v-subheader>
                       </v-row>
-                      <v-row style="height: 50px" v-if="formAdd.optionField">
+                      <v-row style="height: 50px" v-if="formAdd.optionField === 'optionField'">
                       <v-text-field
                         v-model="formAddOption.optionValue"
                         placeholder="Value"
@@ -137,7 +137,7 @@
                      </v-form>
                     <br>
 
-                    <v-row justify="center" v-if="formAdd.optionField">
+                    <v-row justify="center" v-if="formAdd.optionField === 'optionField'">
                       <v-btn
                         elevation="2"
                         x-large
@@ -187,17 +187,6 @@
                         ]"
                       ></v-text-field>
                       </v-row>
-                      <!-- checkbox -->
-                      <v-container
-                        class="px-0"
-                        fluid
-                      >
-                        <v-checkbox
-                          v-model="formAdd.showCard"
-                          label="Checkbox แสดงบน card"
-                        ></v-checkbox>
-                      </v-container>
-                      <!-- checkbox -->
                       <!-- END -->
                     </v-col>
                       <!-- END Radio buttun -->
@@ -601,8 +590,7 @@ export default {
         optionText: '',
         optionValue: '',
         conditionField: '',
-        conditionValue: '',
-        showCard: false
+        conditionValue: ''
       },
       formUpdate: {
         fieldId: '',
