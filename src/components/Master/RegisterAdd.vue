@@ -489,9 +489,9 @@ export default {
                                 {
                                   'type': 'button',
                                   'action': {
-                                    'type': 'postback',
+                                    'type': 'uri',
                                     'label': 'QR CODE',
-                                    'data': 'hello'
+                                    'uri': 'http://localhost:8080/Master/JobQrCode?jobNo=' + response.data.jobNo
                                   },
                                   'style': 'secondary',
                                   'height': 'sm',
@@ -537,6 +537,9 @@ export default {
     async clearData () {
       // eslint-disable-next-line no-redeclare
       this.formAdd.flowCode = ''
+      this.dtname = []
+      this.dtitem = []
+      this.GroupId = []
       for (var key in this.flowfieldNameitem) {
         if (this.flowfieldNameitem[key]) {
           this.flowfieldNameitem[key] = ''

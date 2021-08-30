@@ -48,6 +48,11 @@ export default new Router({
     component: Master.RegisterAdd
   },
   {
+    path: '/Master/JobQrCode',
+    name: 'JobQrCode',
+    component: Master.JobQrCode
+  },
+  {
     path: '/System/User',
     name: 'User',
     component: System.User
