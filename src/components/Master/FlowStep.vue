@@ -137,6 +137,7 @@ export default {
       stepItemSelete: [],
       DataFlowName: [],
       ItemSelete: [],
+      userId: '',
       formUpdate: {
         stepId: '',
         flowId: '',
@@ -212,8 +213,11 @@ export default {
           this.dataReady = true
           var jobs = []
           console.log('res', response.data)
+          // console.log('userId', this.formUpdate.userId === 'NULL')
           if (response.data) {
             this.formUpdate.stepId = response.data[0].stepId
+            this.formUpdate.flowId = response.data[0].flowId
+            this.userId = response.data[0].userId
             response.data.forEach(element => {
               if (jobs.indexOf(element.jobId) === -1) {
                 jobs.push(element.jobId)
@@ -222,11 +226,13 @@ export default {
             })
             this.JobDataItem = response.data
           }
+          console.log('JobDataItem', this.JobDataItem)
+          console.log('JobLEN', this.userId)
         })
     },
     async onUpdate () {
+      this.formUpdate.stepId = this.formUpdate.stepTitle.stepId
       console.log('formUpdate', this.formUpdate)
-      console.log('stepItemSelete', this.stepItemSelete)
       this.dataReady = false
       this.$swal({
         title: 'ต้องการ แก้ไขสถานะ ใช่หรือไม่?',
@@ -239,10 +245,13 @@ export default {
       })
         .then(async (result) => {
           this.formUpdate.LAST_USER = this.session.data.userName
-          var ID = this.formUpdate.stepId
+          var ID = this.formUpdate.flowName
           delete this.formUpdate['flowId']
           delete this.formUpdate['flowName']
           delete this.formUpdate['sortNo']
+          delete this.formUpdate['jobId']
+          delete this.formUpdate['CREATE_USER']
+          delete this.formUpdate['stepTitle']
           await axios
             .post(
               // eslint-disable-next-line quotes
@@ -254,6 +263,14 @@ export default {
               console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
               this.dialog = false
               this.$swal('เรียบร้อย', 'แก้ไขสถานะ เรียบร้อย', 'success')
+              this.allJob.map((row, index) => {
+                if (row.jobId === this.formUpdate.stepId) {
+                  this.allJob[index].stepId = this.formUpdate.stepTitle.stepId
+                }
+              })
+              console.log(this.allJob)
+              console.log(this.formUpdate.jobId)
+              console.log(this.formUpdate.stepId)
             })
             // eslint-disable-next-line handle-callback-err
             .catch((error) => {
