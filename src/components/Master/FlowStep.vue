@@ -84,7 +84,7 @@
                   <v-spacer></v-spacer>
                     <v-col class="shrink">
                       <v-btn
-                        color="info"
+                       class="colorB"
                         outlined
                         @click="dialog = true"
                       >
@@ -103,7 +103,11 @@
     </v-main>
   </div>
 </template>
-
+<style scoped>
+.colorB {
+  color: blue;
+}
+</style>
 <script>
 import axios from 'axios' // api
 import draggable from 'vuedraggable'
@@ -175,6 +179,7 @@ export default {
     },
     getDataFlow () {
       this.DataFlowName = []
+      console.log('DataFlowName', this.DataFlowName)
       axios.get(this.DNS_IP + '/flow/get').then(response => {
         let rs = response.data
         if (rs.length > 0) {
@@ -184,15 +189,18 @@ export default {
             d.value = d.flowId
             this.DataFlowName.push(d)
           }
+        } else {
+          this.DataFlowName = []
         }
       })
     },
-    getStepFlow () {
+    async getStepFlow () {
       this.stepItemSelete = []
-      axios
+      await axios
         .get(this.DNS_IP + '/flowStep/get?flowId=' + this.formUpdate.flowName)
-        .then(response => {
+        .then(async response => {
           let rs = response.data
+          console.log('rs', rs)
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
@@ -200,13 +208,14 @@ export default {
               d.value = d.stepTitle
               this.stepItemSelete.push(d)
             }
-            console.log(this.formUpdate)
-            this.getJobData()
+            console.log('stepItemSelete', this.formUpdate)
+            await this.getJobData()
           }
         })
     },
     async getJobData () {
       this.JobDataItem = []
+      this.allJob = []
       axios
         .get(this.DNS_IP + '/job/get?flowId=' + this.formUpdate.flowName)
         .then(async (response) => {
@@ -217,6 +226,7 @@ export default {
           if (response.data) {
             this.formUpdate.stepId = response.data[0].stepId
             this.formUpdate.flowId = response.data[0].flowId
+            this.formUpdate.jobId = response.data[0].jobId
             this.userId = response.data[0].userId
             response.data.forEach(element => {
               if (jobs.indexOf(element.jobId) === -1) {
@@ -232,7 +242,10 @@ export default {
     },
     async onUpdate () {
       this.formUpdate.stepId = this.formUpdate.stepTitle.stepId
+      console.log('stepId', this.formUpdate.stepTitle.stepId)
+      console.log('id', this.formUpdate.jobId)
       console.log('formUpdate', this.formUpdate)
+      console.log('allJob', this.allJob)
       this.dataReady = false
       this.$swal({
         title: 'ต้องการ แก้ไขสถานะ ใช่หรือไม่?',
@@ -245,13 +258,14 @@ export default {
       })
         .then(async (result) => {
           this.formUpdate.LAST_USER = this.session.data.userName
-          var ID = this.formUpdate.flowName
+          var ID = this.formUpdate.jobId
           delete this.formUpdate['flowId']
           delete this.formUpdate['flowName']
+          delete this.formUpdate['jobId']
           delete this.formUpdate['sortNo']
           delete this.formUpdate['jobId']
           delete this.formUpdate['CREATE_USER']
-          delete this.formUpdate['stepTitle']
+          // delete this.formUpdate['stepTitle']
           await axios
             .post(
               // eslint-disable-next-line quotes
@@ -264,11 +278,11 @@ export default {
               this.dialog = false
               this.$swal('เรียบร้อย', 'แก้ไขสถานะ เรียบร้อย', 'success')
               this.allJob.map((row, index) => {
-                if (row.jobId === this.formUpdate.stepId) {
-                  this.allJob[index].stepId = this.formUpdate.stepTitle.stepId
+                if (row.jobId === ID) {
+                  this.allJob[index].stepId = this.formUpdate.stepId
                 }
               })
-              console.log(this.allJob)
+              console.log('allJob', this.allJob)
               console.log(this.formUpdate.jobId)
               console.log(this.formUpdate.stepId)
             })
