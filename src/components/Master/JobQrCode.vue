@@ -103,7 +103,7 @@ export default {
     getjob () {
       this.jobitem = []
       if (this.jobNo !== '') {
-        axios.get(this.DNS_IP + '/job/get?jobNo=' + this.jobNo).then((response) => {
+        axios.get(this.DNS_IP + '/job/getJobNo?jobNo=' + this.jobNo).then((response) => {
           let rs = response.data
           let Id = ''
           if (rs.length > 0) {
