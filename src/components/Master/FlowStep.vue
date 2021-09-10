@@ -32,28 +32,24 @@
               max-width="300px"
             >
               <v-card>
-                <v-card-title>เปลี่ยนสถานะ</v-card-title>
-                <v-divider></v-divider>
+                <v-card-title class="text-h5 grey lighten-2">
+                  เปลี่ยนสถานะ
+                </v-card-title>
+                <br>
                 <v-card-text>
-                  <v-row>
                     <v-select
+                    outlined
+                    dense
                     v-model="formUpdate.stepTitle"
                     :items="stepItemSelete"
                     item-text="text"
                     item-value="stepId"
-                    dense
                     return-object
                     ></v-select>
-                  </v-row>
                 </v-card-text>
                 <v-divider></v-divider>
                 <v-card-actions>
-                  <v-btn
-                    dense
-                    color="#004D40"
-                    text
-                    @click="onUpdate()"
-                  >
+                   <v-btn color="primary" depressed  @click="onUpdate()">
                     Save
                   </v-btn>
                 </v-card-actions>
@@ -64,11 +60,15 @@
         <v-row>
           <v-col cols="3" v-for="(itemsStep, indexStep) in stepItemSelete" :key="indexStep">
             <v-card>
-              <v-card-title class="text-center">
-                <h3>{{ itemsStep.stepTitle }}</h3>
+              <v-toolbar
+              color="primary"
+              dark
+            >
+              <v-card-title class="text-h6 lighten-2 pa-3">
+                {{ itemsStep.stepTitle }}
               </v-card-title>
-              <v-divider></v-divider>
-              <v-list dense>
+              </v-toolbar>
+                <v-list dense>
                  <!-- <draggable class="list-group" group="people" @change="log" @end="onUpdate"> -->
                   <div class="column is-3" v-for="(itemsJob, indexJob) in allJob.filter((row) => {return row.stepId == itemsStep.stepId})" :key="indexJob">
                 <v-list-item>
@@ -82,13 +82,9 @@
                     <strong>{{ items.fieldName }}: </strong>{{ items.fieldValue}}<br>
                   </div>
                   <v-spacer></v-spacer>
-                    <v-col class="shrink">
-                      <v-btn
-                       class="colorB"
-                        outlined
-                        @click="dialog = true"
-                      >
-                        Okay
+                    <v-col cols="6" class="v-margit_button text-right">
+                      <v-btn color="primary" depressed @click="dialog = true">
+                        เปลี่ยนสถานะ
                       </v-btn>
                     </v-col>
                     </v-alert>
@@ -103,11 +99,6 @@
     </v-main>
   </div>
 </template>
-<style scoped>
-.colorB {
-  color: blue;
-}
-</style>
 <script>
 import axios from 'axios' // api
 import draggable from 'vuedraggable'

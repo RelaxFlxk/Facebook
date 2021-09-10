@@ -163,9 +163,6 @@ import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
 import Menu from '../System/Menu.vue'
-// import JsonExcel from 'vue-json-excel' // https://www.npmjs.com/package/vue-json-excel
-// import XLSX from 'xlsx' // import xlsx
-// import readXlsxFile from 'read-excel-file'
 // import moment from 'moment' // แปลง date
 
 export default {
@@ -173,12 +170,6 @@ export default {
     'left-menu-admin': adminLeftMenu,
     VuetifyMoney,
     Menu
-    // downloadExcel: JsonExcel,
-    // XLSX,
-    // readXlsxFile
-  },
-  created () {
-    // setInterval(this.getNowGlobal, 1000)
   },
   data () {
     return {
@@ -212,13 +203,6 @@ export default {
         length: 9,
         precision: 0
       },
-      selectTypeField: [
-        { text: 'Text', value: 'text' },
-        { text: 'Number', value: 'number' },
-        { text: 'Datetime', value: 'dateTime' },
-        { text: 'Dropdown', value: 'dropdown' },
-        { text: 'Radio_buttons', value: 'Radio_buttons' }
-      ],
 
       // End Menu Config
       dataReady: true,
@@ -226,16 +210,7 @@ export default {
       dateTime: '', // Generate DateTime
       date: new Date().toISOString().substr(0, 10),
       menu: false,
-      menu2: false,
-      menu3: false,
-      menu4: false,
-      dialogDeleteF: false,
-      panel: [0],
-      panel1: [1],
       session: this.$session.getAll(),
-      // Search All
-      searchAll: '',
-      searchAll2: '',
       formAdd: {
         flowId: '',
         fieldId: [],
@@ -245,32 +220,8 @@ export default {
         CREATE_USER: '',
         LAST_USER: ''
       },
-      formUpdate: {
-        fieldId: '',
-        fieldName: '',
-        fieldType: '',
-        LAST_USER: '',
-        flowCode: ''
-      },
-      formSelect: {
-        flowId: '',
-        flowCode: '',
-        flowName: ''
-      },
       rules: {
-        numberRules: value =>
-          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
-          'กรุณากรอกตัวเลข 0 ถึง 9',
-        counterTel: value => value.length <= 10 || 'Max 10 characters',
-        IDcardRules: value =>
-          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999999) ||
-          'กรุณากรอกตัวเลข 0 ถึง 9',
-        required: value => !!value || 'กรุณากรอก.',
-        counterIDcard: value => value.length <= 13 || 'Max 13 characters',
-        email: value => {
-          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-          return pattern.test(value) || 'Invalid e-mail.'
-        }
+        required: value => !!value || 'กรุณากรอก.'
       },
       // End Form Config ADD EDIT
       // Data Table Config
@@ -284,9 +235,6 @@ export default {
       dataItem: [],
       validAdd: false,
       validUpdate: false
-      // filesAdd: null,
-      // filesUpdate: null
-      // End Data Table Config
     }
   },
   async mounted () {
@@ -412,20 +360,6 @@ export default {
           break
       }
     },
-    async searchDataAll () {
-      var search =
-        '?levelId=' + this.searchAll +
-         '&name=' + this.searchAll +
-         '&Point=' + this.searchAll +
-         '&priviledge=' + this.searchAll
-      this.dataReady = false
-      this.searchDataAllGlobal(this.DNS_IP, this.path, search)
-    },
-    // async getDataById (item) {
-    //   console.log(item)
-    //   this.dataReady = false
-    //   await this.getDataByIdGlobal(this.DNS_IP, this.path, 'flow', item.flowId)
-    // },
     async addData (p) {
       this.dataReady = false
       this.$swal({
@@ -513,15 +447,10 @@ export default {
                   )
                   .then(
                     this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success'),
-                    this.clearData()
+                    this.clearData(),
+                    this.$router.push('/Master/FlowStep')
                   )
               }
-              // Close Dialog
-              // this.dialogAdd = false
-              // Load Data
-              // await this.getDataGlobal(this.DNS_IP, this.path)
-              // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-              // await this.clearData()
             })
           // eslint-disable-next-line handle-callback-err
             .catch((error) => {

@@ -302,87 +302,6 @@
           </v-dialog>
           <!-- end add -->
 
-          <!-- edit -->
-          <!-- <v-dialog v-model="dialogEdit" persistent max-width="50%">
-            <v-card class="text-center">
-              <v-form ref="form_update" v-model="validUpdate" lazy-validation>
-              <v-card-text>
-                <v-container>
-                  <v-col class="text-right">
-                      <v-btn small color="#E0E0E0" @click="(dialogEdit = false), clearData()">
-                        <v-icon color="#173053">mdi-close</v-icon>
-                      </v-btn>
-                  </v-col>
-                  <v-row justify="center">
-                    <v-col cols="12">
-                      <v-row style="height: 35px">
-                      <v-subheader id="subtext">title</v-subheader>
-                      </v-row>
-                      <v-row style="height: 50px">
-                      <v-text-field
-                        v-model="formUpdate.fieldName"
-                        placeholder="Title"
-                        dense
-                        required
-                        :rules="[
-                          rules.required
-                        ]"
-                      ></v-text-field>
-                      </v-row>
-                    </v-col>
-                    <v-col cols="12">
-                      <v-row style="height: 35px">
-                      <v-subheader id="subtext">type</v-subheader>
-                      </v-row>
-                      <v-row style="height: 50px">
-                        <v-select
-                        v-model="formUpdate.fieldType"
-                        :items="selectTypeField"
-                        dense
-                        :rules="[rules.required]"
-                        ></v-select>
-                        <v-col cols="12">
-                         <v-row style="height: 35px">
-                          <v-subheader id="subtext">optionField</v-subheader>
-                          </v-row>
-                          <v-row style="height: 50px">
-                        <v-select
-                        v-model="formUpdate.optionField"
-                        :items="selectOptionField"
-                        multiple
-                        small-chips
-                        dense
-                        :rules="[rules.required]"
-                        ></v-select>
-                          </v-row>
-                        </v-col>
-                      </v-row>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card-text>
-              </v-form>
-              <br>
-              <br>
-                <v-col id="margin">
-                  <v-row justify="center">
-                  <v-btn
-                  elevation="2"
-                  x-large
-                  color="#173053"
-                 :disabled="!validUpdate"
-                  @click="editData()"
-                >
-                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                  แก้ไข
-                </v-btn>
-                  </v-row>
-                  </v-col>
-                  <br>
-            </v-card>
-          </v-dialog> -->
-          <!-- end edit -->
-
           <!-- delete -->
           <v-dialog v-model="dialogDelete" persistent max-width="80%">
             <v-card>
@@ -847,11 +766,46 @@ export default {
           console.log('error function editDataGlobal : ', error)
         })
     },
-    async deleteData () {
-      console.log('DELETE PK : ', this.PK)
-      this.formUpdate.LAST_USER = this.$session.getAll().data.userName
+    async deleteData (DNS_IP, PATH, ID) {
       this.dataReady = false
-      this.deleteDataGlobal(this.DNS_IP, this.path, this.PK)
+      this.$swal({
+        title: 'ต้องการ ลบข้อมูล ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async (result) => {
+          this.formUpdate.LAST_USER = this.session.data.userName
+          var ID = this.formUpdate.fieldId
+          delete this.formUpdate['fieldId']
+          delete this.formUpdate['LAST_DATE']
+          delete this.formUpdate['CREATE_DATE']
+          await axios
+            .post(
+              // eslint-disable-next-line quotes
+              this.DNS_IP + this.path + "delete/" + ID,
+              this.formUpdate
+            )
+            .then(async (response) => {
+              // Debug response
+              console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
+              this.dialogDelete = false
+              await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
+              this.$swal('เรียบร้อย', 'ลบข้อมูล เรียบร้อย', 'success')
+            })
+            // eslint-disable-next-line handle-callback-err
+            .catch((error) => {
+              this.dataReady = true
+              console.log('error function editDataGlobal : ', error)
+            })
+        })
+        .catch((error) => {
+          this.dataReady = true
+          console.log('error function editDataGlobal : ', error)
+        })
     },
     async clearData () {
       // eslint-disable-next-line no-redeclare

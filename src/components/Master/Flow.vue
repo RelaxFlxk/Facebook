@@ -28,7 +28,7 @@
                   </v-col>
                   <v-row justify="center">
                     <v-col cols="5">
-                     <v-card-text size="35px"><strong>{{ formUpdate.flowName }}</strong></v-card-text>
+                     <v-card-text size="35px"><strong>ชื่อ FLOW : {{ formUpdate.flowName }}</strong></v-card-text>
                     </v-col>
                     <v-col cols="12" class="v-margit_button text-center">
                       <v-btn color="primary" depressed @click="dialogAddStepTitle = true">
@@ -121,7 +121,7 @@
                                     elevation="2"
                                     x-large
                                     color="#173053"
-                                    @click="editDataStep()"
+                                    @click="editDataStepTitle()"
                                   >
                                     <v-icon left>mdi-checkbox-marked-circle</v-icon>
                                     แก้ไข
@@ -180,86 +180,27 @@
                       dark
                       fab
                       x-small
-                      @click.stop="(dialogDelete = true), getDataById(item)"
+                      @click.stop="(dialogDeleteStepTitle = true), getDataById(item)"
                     >
                       <v-icon> mdi-delete </v-icon>
                     </v-btn>
                   </template>
                           </v-data-table>
                           <!-- delete step -->
-                          <v-dialog v-model="dialogDeleteF" max-width="500px">
+                          <v-dialog v-model="dialogDeleteStepTitle" max-width="500px">
                               <v-card>
                                 <v-card-title>คุณต้องการลบใช่หรือไม่</v-card-title>
                                 <v-card-actions>
                                   <v-spacer></v-spacer>
-                                  <v-btn color="red" @click="dialogDeleteF = false">Cancel</v-btn>
-                                  <v-btn color="#173053" @click="deleteItemConfirm(item)">OK</v-btn>
+                                  <v-btn color="red" @click="dialogDeleteStepTitle = false">Cancel</v-btn>
+                                  <v-btn color="#173053" @click="deleteStepTitle()">OK</v-btn>
                                   <v-spacer></v-spacer>
                                 </v-card-actions>
                               </v-card>
                             </v-dialog>
                             <!-- END delete step -->
-                          <!-- <v-dialog
-                                v-model="dialogAddField"
-                                max-width="500px"
-                              >
-                                <v-card>
-                                  <v-card-text>
-                                    <v-container>
-                                      <v-row>
-                                        <v-col
-                                          cols="12"
-                                        >
-                                        <v-row style="height: 35px">
-                                          <v-subheader id="subtext">Field Name</v-subheader>
-                                        </v-row>
-                                        <v-row style="height: 50px">
-                                            <v-select
-                                            v-model="editedItem.fieldName"
-                                            :items="stepItemSelete"
-                                            item-text="text"
-                                            dense
-                                            return-object
-                                            ></v-select>
-                                          </v-row>
-                                        </v-col>
-                                      </v-row>
-                                    </v-container>
-                                  </v-card-text>
-
-                                  <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn
-                                      color="#173053"
-                                       @click="dialogAddField =false"
-                                    >
-                                      Cancel
-                                    </v-btn>
-                                    <v-btn
-                                      color="#173053"
-                                      @click="save(editedItem)"
-                                    >
-                                      Save
-                                    </v-btn>
-                                  </v-card-actions>
-                                </v-card>
-                              </v-dialog> -->
                        </v-row>
                     </v-col>
-                      <!-- <v-col id="margin">
-                      <v-row justify="center">
-                      <v-btn
-                        elevation="2"
-                        x-large
-                        color="#173053"
-                        :disabled="!validUpdate"
-                        @click="editData()"
-                      >
-                        <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                        บันทึก
-                      </v-btn>
-                      </v-row>
-                      </v-col> -->
                   </v-row>
                   <br>
                   <p></p>
@@ -695,26 +636,16 @@
 import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
-// import JsonExcel from 'vue-json-excel' // https://www.npmjs.com/package/vue-json-excel
-// import XLSX from 'xlsx' // import xlsx
-// import readXlsxFile from 'read-excel-file'
-// import moment from 'moment' // แปลง date
 
 export default {
   components: {
     'left-menu-admin': adminLeftMenu,
     VuetifyMoney
-    // downloadExcel: JsonExcel,
-    // XLSX,
-    // readXlsxFile
   },
   computed: {
     formTitle () {
       return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
     }
-  },
-  created () {
-    // setInterval(this.getNowGlobal, 1000)
   },
   data () {
     return {
@@ -764,6 +695,7 @@ export default {
       dialogStep: false,
       dialogAddStepTitle: false,
       dialogEditStep: false,
+      dialogDeleteStepTitle: false,
       // END Dialog Config ADD EDIT DELETE
       panel: [0],
       panel1: [1],
@@ -870,19 +802,7 @@ export default {
       },
       stepItemSelete: [],
       rules: {
-        numberRules: value =>
-          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
-          'กรุณากรอกตัวเลข 0 ถึง 9',
-        counterTel: value => value.length <= 10 || 'Max 10 characters',
-        IDcardRules: value =>
-          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999999) ||
-          'กรุณากรอกตัวเลข 0 ถึง 9',
-        required: value => !!value || 'กรุณากรอก.',
-        counterIDcard: value => value.length <= 13 || 'Max 13 characters',
-        email: value => {
-          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-          return pattern.test(value) || 'Invalid e-mail.'
-        }
+        required: value => !!value || 'กรุณากรอก.'
       },
       // End Form Config ADD EDIT
       // Data Table Config
@@ -897,18 +817,14 @@ export default {
       dataItem: [],
       validAdd: true,
       validUpdate: true,
-      filesAdd: null,
-      filesUpdate: null,
       editedIndex: -1
       // End Data Table Config
     }
   },
   async mounted () {
-    // this.getGetToken(this.DNS_IP)
     this.dataReady = false
     // Get Data
     await this.getCustomField()
-    // await this.getStepFlow()
     await this.getDataGlobal(this.DNS_IP, this.path)
   },
   methods: {
@@ -1030,20 +946,6 @@ export default {
           break
       }
     },
-    async searchDataAll () {
-      //
-      //
-      // สำหรับ ค้นหาแบบ LIKE Search
-      // ต้องระบุ Field ที่จะส่งไปให้ตรงกับ Model
-      //
-      var search =
-        '?levelId=' + this.searchAll +
-         '&name=' + this.searchAll +
-         '&Point=' + this.searchAll +
-         '&priviledge=' + this.searchAll
-      this.dataReady = false
-      this.searchDataAllGlobal(this.DNS_IP, this.path, search)
-    },
     getStepFlow (dt) {
       this.stepItemSelete = []
       this.formAddStep.flowId = dt.flowId
@@ -1058,7 +960,6 @@ export default {
             this.formUpdateStep.stepTitle = response.data[0].stepTitle
           }
         }
-        // this.formUpdateStep.stepTitle = response.data.stepTitle
       })
     },
     async getDataById (item) {
@@ -1134,13 +1035,10 @@ export default {
             .then(async (response) => {
               // Debug response
               console.log('addDataGlobal DNS_IP + PATH + "add"', response)
-
-              // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
               // Close Dialog
               this.dialogAdd = false
 
               // Load Data
-              // await this.clearData()
               await this.getDataGlobal(this.DNS_IP, this.path)
               this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
             })
@@ -1269,41 +1167,90 @@ export default {
           console.log('error function editDataGlobal : ', error)
         })
     },
-    // async deleteData () {
-    //   this.formUpdate.LAST_USER = this.session.data.userName
-    //   this.dataReady = false
-    //   this.deleteDataGlobal(this.DNS_IP, this.path, this.formUpdate.flowId, this.session.data.shopId)
-    // },
-    async deleteData () {
+    async editDataStepTitle () {
+      console.log(this.formUpdateStep)
+      this.dataReady = false
       this.$swal({
-        title: 'ต้องการ ลบข้อมูล ใช่หรือไม่?',
+        title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',
         type: 'question',
         showCancelButton: true,
-        confirmButtonColor: '#fa0202',
+        confirmButtonColor: '#3085d6',
         cancelButtonColor: '#b3b1ab',
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
       })
-        .then(async result => {
-          this.formUpdate.LAST_USER = this.session.data.userName
+        .then(async (result) => {
+          this.formUpdateStep.LAST_USER = this.session.data.userName
+          var ID = this.formUpdateStep.stepId
+          delete this.formUpdateStep['flowId']
+          delete this.formUpdateStep['LAST_USER']
+          delete this.formUpdateStep['CREATE_USER']
+          delete this.formUpdateStep['stepTitle']
           await axios
             .post(
-            // eslint-disable-next-line quotes
-              this.DNS_IP + this.path + "delete/" + this.formUpdate
+              // eslint-disable-next-line quotes
+              this.DNS_IP + "/flowStep/edit/" + ID,
+              this.formUpdateStep
             )
             .then(async (response) => {
-              this.$swal('เรียบร้อย', 'ลบข้อมูลเรียบร้อย', 'success')
+              // Debug response
+              console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
+              this.dialogEditStep = false
+
+              // Load Data
+              await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
+              this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
             })
             // eslint-disable-next-line handle-callback-err
             .catch((error) => {
               this.dataReady = true
-              console.log('error function deleteDataGlobal : ', error)
+              console.log('error function editDataGlobal : ', error)
             })
         })
         .catch((error) => {
           this.dataReady = true
-          // this.$swal('ผิดพลาด', 'ผิดพลาด -2', 'error')
-          console.log('error function deleteDataGlobal : ', error)
+          console.log('error function editDataGlobal : ', error)
+        })
+    },
+    async deleteData (DNS_IP, PATH, ID) {
+      this.dataReady = false
+      this.$swal({
+        title: 'ต้องการ ลบข้อมูล ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async (result) => {
+          this.formUpdate.LAST_USER = this.session.data.userName
+          var ID = this.formUpdate.flowId
+          delete this.formUpdate['fieldId']
+          delete this.formUpdate['LAST_DATE']
+          delete this.formUpdate['CREATE_DATE']
+          await axios
+            .post(
+              // eslint-disable-next-line quotes
+              this.DNS_IP + this.path + "delete/" + ID,
+              this.formUpdate
+            )
+            .then(async (response) => {
+              // Debug response
+              console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
+              this.dialogDelete = false
+              await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
+              this.$swal('เรียบร้อย', 'ลบข้อมูล เรียบร้อย', 'success')
+            })
+            // eslint-disable-next-line handle-callback-err
+            .catch((error) => {
+              this.dataReady = true
+              console.log('error function editDataGlobal : ', error)
+            })
+        })
+        .catch((error) => {
+          this.dataReady = true
+          console.log('error function editDataGlobal : ', error)
         })
     },
     async clearData () {
