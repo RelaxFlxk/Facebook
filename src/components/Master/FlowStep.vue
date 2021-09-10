@@ -231,6 +231,15 @@ export default {
           console.log('JobLEN', this.userId)
         })
     },
+    async pushmessage (jobId) {
+      await axios
+        .post(
+          this.DNS_IP + '/job/pushMsg/' + jobId
+        )
+        .then(
+          console.log(jobId)
+        )
+    },
     async onUpdate () {
       this.formUpdate.stepId = this.formUpdate.stepTitle.stepId
       console.log('stepId', this.formUpdate.stepTitle.stepId)
@@ -252,9 +261,7 @@ export default {
           var ID = this.formUpdate.jobId
           delete this.formUpdate['flowId']
           delete this.formUpdate['flowName']
-          delete this.formUpdate['jobId']
           delete this.formUpdate['sortNo']
-          delete this.formUpdate['jobId']
           delete this.formUpdate['CREATE_USER']
           // delete this.formUpdate['stepTitle']
           await axios
@@ -273,6 +280,7 @@ export default {
                   this.allJob[index].stepId = this.formUpdate.stepId
                 }
               })
+              this.pushmessage(this.formUpdate.jobId)
               console.log('allJob', this.allJob)
               console.log(this.formUpdate.jobId)
               console.log(this.formUpdate.stepId)
