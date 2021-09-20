@@ -4,8 +4,20 @@
     <v-main>
       <div class="col-md-12 ml-sm-auto col-lg-12 px-4">
         <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
-        {{session.data}}
+        <!-- {{session.data}} -->
       </div>
+        <v-row >
+          <v-col cols="6">
+                <div class="content">
+                  <BarChart/>
+                </div>
+          </v-col>
+           <v-col cols="6">
+                <div class="content">
+                  <LineChart/>
+                </div>
+          </v-col>
+        </v-row>
     </v-main>
   </div>
 </template>
@@ -15,6 +27,8 @@ import adminLeftMenu from '../Sidebar.vue' // เมนู
 import JsonExcel from 'vue-json-excel' // https://www.npmjs.com/package/vue-json-excel
 import XLSX from 'xlsx' // import xlsx
 import readXlsxFile from 'read-excel-file'
+import BarChart from '../Dashbord/BarPerfor.vue'
+import LineChart from '../Dashbord/LinePerfor.vue'
 // import moment from 'moment' // แปลง date
 
 export default {
@@ -23,7 +37,9 @@ export default {
     'left-menu-admin': adminLeftMenu,
     downloadExcel: JsonExcel,
     XLSX,
-    readXlsxFile
+    readXlsxFile,
+    BarChart,
+    LineChart
   },
   created () {
     // setInterval(this.getNow, 1000)
@@ -543,4 +559,11 @@ export default {
 }
 </script>
 <style scope>
+.main{
+  background-color: #F5F5F5;
+  border-radius: 1rem;
+}
+.content{
+  padding: 1rem;
+}
 </style>
