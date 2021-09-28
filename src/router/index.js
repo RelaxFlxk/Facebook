@@ -53,6 +53,11 @@ export default new Router({
     component: Master.JobQrCode
   },
   {
+    path: '/Master/WorkShop',
+    name: 'WorkShop',
+    component: Master.WorkShop
+  },
+  {
     path: '/System/User',
     name: 'User',
     component: System.User

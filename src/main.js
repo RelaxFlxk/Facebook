@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import vuetify from '@/plugins/vuetify'
 import VueSweetAlert from 'vue-sweetalert'
+import Swal from 'sweetalert2'
 import VueSession from 'vue-session'
 import VueMask from 'v-mask'
 import 'bootstrap/dist/css/bootstrap.css'
@@ -13,6 +14,7 @@ import axios from 'axios' // api
 import moment from 'moment' // แปลง date
 
 Vue.config.productionTip = false
+Vue.use(Swal)
 Vue.use(VueSweetAlert)
 Vue.use(VueSession)
 Vue.use(VueMask)
