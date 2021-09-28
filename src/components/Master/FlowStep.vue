@@ -56,8 +56,9 @@
               </v-card>
             </v-dialog>
           </v-row>
-        <v-row>
-          <v-col cols="3" v-for="(element , work ) in Layout" :key="work">
+        <div class="workRow">
+          <v-row>
+          <v-col class="colum" v-for="(element , work ) in Layout" :key="work">
                <div v-for="(item , indexitem) in Layout[work].workData" :key="indexitem">
                 <v-card>
                   <v-toolbar
@@ -68,7 +69,7 @@
                       {{item.stepTitle}}
                     </v-card-title>
                   </v-toolbar>
-                    <div class="column is-3" v-for="(itemsJob, indexJob) in allJob.filter((row) => {return row.stepId == item.stepId})" :key="indexJob">
+                    <div  v-for="(itemsJob, indexJob) in allJob.filter((row) => {return row.stepId == item.stepId})" :key="indexJob">
                       <v-list-item>
                       <v-alert
                         color="cyan"
@@ -76,7 +77,7 @@
                         elevation="2"
                         colored-border
                       >
-                    <div class="column is-3" v-for="(items, index) in JobDataItem.filter((row) => {return row.jobId == itemsJob.jobId})" :key="index">
+                    <div  v-for="(items, index) in JobDataItem.filter((row) => {return row.jobId == itemsJob.jobId})" :key="index">
                       <strong>{{ items.fieldName }}: </strong>{{ items.fieldValue}}<br>
                     </div>
                     <v-spacer></v-spacer>
@@ -92,6 +93,8 @@
                </div>
              </v-col>
         </v-row>
+        </div>
+
         <!-- <v-row>
           <v-col cols="3" v-for="(itemsStep, indexStep) in stepItemSelete" :key="indexStep">
             <v-card>
@@ -363,7 +366,19 @@ export default {
 <style scoped>
 .v-card{
   margin-top: 1rem;
-  width: 250px;
+  width: 225px;
   min-height: 300px;
+  max-height: max-content;
+}
+.workRow{
+  display: inline-block;
+  width: max-content;
+  height: max-content;
+}
+.colum{
+  margin-top: 1rem;
+  width: 250px;
+  background-color: #f0eeee;
+  margin-left: 5px;
 }
 </style>
