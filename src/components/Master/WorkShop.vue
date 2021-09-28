@@ -2,7 +2,7 @@
   <div>
     <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
     <v-main>
-      <v-container>
+      <div class="stepLayout">
         <v-row>
         <v-col cols="12" sm="4">
           <h5>SELECT</h5>
@@ -14,25 +14,17 @@
             outlined
             @change="getLayout()"
           ></v-select>
-            <v-btn v-show="stepData.length > 0 || Layout.length > 0 " color="primary" @click="AddColum ()">
-              <v-icon left>mdi-text-box-plus</v-icon>
-                Colum
-            </v-btn>
-            <v-btn v-show="Layout.length > 0" color="error" @click="DeleteColum ()">
-              <v-icon left>mdi-text-box-minus</v-icon>
-                Colum
-            </v-btn>
         </v-col>
       </v-row>
-      </v-container>
+      </div>
         <div class="workLayout">
           <v-row class="rowstep">
               <draggable v-model="stepData" group="workshop">
               <div v-for="(element , step) in stepData" :key="step">
-                <v-card class="rowIncolum">
-                    <div>
-                      {{element.stepTitle}}
-                    </div>
+                <v-card class="rowIncolum" elevation="12">
+                  <v-card-text>
+                    <h2>{{element.stepTitle}}</h2>
+                  </v-card-text>
                 </v-card>
               </div>
             </draggable>
@@ -40,13 +32,27 @@
                 <v-col cols="12" class="Layoutcolum">
                 <draggable  v-model="Layout[i].workData" group="workshop" @change="UpdateworkShop ()">
                   <div v-for="(element , workData) in Layout[i].workData" :key="workData">
-                    <v-card class="rowIncolum">
-                      <div>{{element.stepTitle}}</div>
+                    <v-card class="rowIncolum" elevation="12">
+                      <v-card-text>
+                        <h2>{{element.stepTitle}}</h2>
+                      </v-card-text>
                     </v-card>
                   </div>
                 </draggable>
                 </v-col>
             </div>
+            <v-col >
+              <div v-show="stepData.length > 0 || Layout.length > 0">
+                <v-btn class="mx-2" elevation="12" fab dark small color="primary" @click="AddColum ()">
+                  <v-icon dark> mdi-plus </v-icon>
+              </v-btn>
+              </div>
+              <div v-show="Layout.length > 0">
+                <v-btn class="mx-2" elevation="12" fab dark small color="error" @click="DeleteColum ()">
+                <v-icon dark> mdi-minus </v-icon>
+              </v-btn>
+              </div>
+            </v-col>
             </v-row>
         </div>
     </v-main>
@@ -289,6 +295,12 @@ export default {
   flex-wrap: wrap;
   display: flex;
 }
+.stepLayout{
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  padding-left: 1rem;
+  width: 100%;
+}
 .workLayout{
   margin-top: 1rem;
   margin-bottom: 2rem;
@@ -300,11 +312,11 @@ body{
   white-space: normal;
 }
 .rowIncolum{
-  margin-top: 2px;
+  margin-top: 10px;
   margin-left: 1px;
   padding: 20px 20px 20px 20px;
   height: 100px;
-  width: 160px;
+  width: 220px;
   border-style: groove;
   border-color: #000002;
   background-color: #FFFFFF;

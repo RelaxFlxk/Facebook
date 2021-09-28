@@ -22,7 +22,7 @@
             required
             dense
             outlined
-            @change="getStepFlow()"
+            @change="getStepFlow() , getLayout()"
           ></v-select>
         </v-col>
 
@@ -56,8 +56,43 @@
               </v-card>
             </v-dialog>
           </v-row>
-
         <v-row>
+          <v-col cols="3" v-for="(element , work ) in Layout" :key="work">
+               <div v-for="(item , indexitem) in Layout[work].workData" :key="indexitem">
+                <v-card>
+                  <v-toolbar
+                    color="primary"
+                    dark
+                  >
+                    <v-card-title class="cardData text-h6 lighten-2 pa-3">
+                      {{item.stepTitle}}
+                    </v-card-title>
+                  </v-toolbar>
+                    <div class="column is-3" v-for="(itemsJob, indexJob) in allJob.filter((row) => {return row.stepId == item.stepId})" :key="indexJob">
+                      <v-list-item>
+                      <v-alert
+                        color="cyan"
+                        border="left"
+                        elevation="2"
+                        colored-border
+                      >
+                    <div class="column is-3" v-for="(items, index) in JobDataItem.filter((row) => {return row.jobId == itemsJob.jobId})" :key="index">
+                      <strong>{{ items.fieldName }}: </strong>{{ items.fieldValue}}<br>
+                    </div>
+                    <v-spacer></v-spacer>
+                      <v-col cols="6" class="v-margit_button text-right">
+                        <v-btn color="primary" depressed @click="dialog = true">
+                          เปลี่ยนสถานะ
+                        </v-btn>
+                      </v-col>
+                      </v-alert>
+                  </v-list-item>
+                    </div>
+                </v-card>
+               </div>
+             </v-col>
+        </v-row>
+        <!-- <v-row>
           <v-col cols="3" v-for="(itemsStep, indexStep) in stepItemSelete" :key="indexStep">
             <v-card>
               <v-toolbar
@@ -65,11 +100,11 @@
               dark
             >
               <v-card-title class="text-h6 lighten-2 pa-3">
-                {{ itemsStep.stepTitle }}
+                {{itemsStep.stepTitle}}
               </v-card-title>
               </v-toolbar>
                 <v-list dense>
-                 <!-- <draggable class="list-group" group="people" @change="log" @end="onUpdate"> -->
+                 <draggable class="list-group" group="people" @change="log" @end="onUpdate">
                   <div class="column is-3" v-for="(itemsJob, indexJob) in allJob.filter((row) => {return row.stepId == itemsStep.stepId})" :key="indexJob">
                 <v-list-item>
                     <v-alert
@@ -90,11 +125,11 @@
                     </v-alert>
                 </v-list-item>
                   </div>
-                  <!-- </draggable> -->
+                  </draggable>
               </v-list>
             </v-card>
           </v-col>
-        </v-row>
+        </v-row> -->
       </div>
     </v-main>
   </div>
@@ -114,6 +149,8 @@ export default {
   },
   data () {
     return {
+      Layout: [],
+      DataflowId: '',
       breadcrumbs: [
         {
           text: 'Home',
@@ -184,6 +221,30 @@ export default {
           this.DataFlowName = []
         }
       })
+    },
+    async getLayout () {
+      this.Layout = []
+      console.log('flowName', this.formUpdate.flowName)
+      await axios.get(this.DNS_IP + '/WorkShopLayout/get?flowId=' + this.formUpdate.flowName)
+        .then((response) => {
+          let rs = response.data
+          for (let i = 0; i < rs.length; i++) {
+            let d = rs[i]
+            var workData = []
+            workData = JSON.parse(d.workData)
+            this.Layout.push(
+              {
+                workShopId: d.workShopId,
+                workColum: d.workColum,
+                workData: workData
+              }
+            )
+          }
+          console.log('this.Layout', this.Layout)
+        })
+        .catch((error) => {
+          console.log('error function addDataGlobal : ', error)
+        })
     },
     async getStepFlow () {
       this.stepItemSelete = []
@@ -299,3 +360,10 @@ export default {
   }
 }
 </script>
+<style scoped>
+.v-card{
+  margin-top: 1rem;
+  width: 250px;
+  min-height: 300px;
+}
+</style>

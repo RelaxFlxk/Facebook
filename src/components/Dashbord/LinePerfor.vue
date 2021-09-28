@@ -1,5 +1,5 @@
 <template>
-  <v-card class="main" title="Line" >
+  <v-card  title="Line" >
     <v-container >
       <v-row >
         <v-col cols="6">
