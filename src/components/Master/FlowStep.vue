@@ -58,9 +58,6 @@
                     v-model="formUpdate.empStep"
                     :items="empSeleteStep"
                     label="ชื่อ คนรับผิดชอบ"
-                    item-text="text"
-                    item-value="stepId"
-                    return-object
                     ></v-autocomplete>
                 </v-card-text>
                 <v-divider></v-divider>
@@ -142,10 +139,10 @@
                     <div  v-for="(items, index) in JobDataItem.filter((row) => {return row.jobId == itemsJob.jobId})" :key="index">
                       <strong>{{ items.fieldName }}: </strong>{{ items.fieldValue}}<br>
                     </div>
-                    <strong>ผู้รับผิดชอบ :{{ formUpdate.empStep }}</strong>
+                    <strong>ผู้รับผิดชอบ :{{ JobDataItem.filter((row) => {return row.jobId == itemsJob.jobId})[0].empStep }}</strong>
                     <v-spacer></v-spacer>
                       <v-col cols="6" class="v-margit_button text-right">
-                        <v-btn color="primary" depressed @click="dialog = true">
+                        <v-btn color="primary" depressed @click="dialog = true, setUpdate(itemsJob)">
                           เปลี่ยนสถานะ
                         </v-btn>
                       </v-col>
@@ -158,45 +155,7 @@
         </v-row>
         </div>
 
-        <v-row>
-          <v-col cols="3" v-for="(itemsStep, indexStep) in stepItemSelete" :key="indexStep">
-            <v-card>
-              <v-toolbar
-              color="primary"
-              dark
-            >
-              <v-card-title class="text-h6 lighten-2 pa-3">
-                {{itemsStep.stepTitle}}
-              </v-card-title>
-              </v-toolbar>
-                <v-list dense>
-                 <draggable class="list-group" group="people" @change="log" @end="onUpdate">
-                  <div class="column is-3" v-for="(itemsJob, indexJob) in allJob.filter((row) => {return row.stepId == itemsStep.stepId})" :key="indexJob">
-                <v-list-item>
-                    <v-alert
-                      color="cyan"
-                      border="left"
-                      elevation="2"
-                      colored-border
-                    >
-                  <div class="column is-3" v-for="(items, index) in JobDataItem.filter((row) => {return row.jobId == itemsJob.jobId})" :key="index">
-                    <strong>{{ items.fieldName }}: </strong>{{ items.fieldValue}}<br>
-                  </div>
-                  <v-spacer></v-spacer>
-                    <v-col cols="6" class="v-margit_button text-right">
-                      <v-btn color="primary" depressed @click="dialog = true">
-                        เปลี่ยนสถานะ
-                      </v-btn>
-                    </v-col>
-                    </v-alert>
-                </v-list-item>
-                  </div>
-                  </draggable>
-              </v-list>
-            </v-card>
-          </v-col>
-        </v-row>
-      </div>
+       </div>
     </v-main>
   </div>
 </template>
@@ -346,9 +305,10 @@ export default {
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
-              d.text = d.empFirst_NameTH
-              d.value = d.empFirst_NameTH
-              this.empSeleteStep.push(d)
+              var s = {}
+              s.text = d.empFirst_NameTH
+              s.value = d.empFirst_NameTH
+              this.empSeleteStep.push(s)
             }
             console.log('empSeleteStep', this.formUpdate)
             await this.getJobData()
@@ -394,12 +354,17 @@ export default {
           console.log(jobId)
         )
     },
+    async setUpdate (item) {
+      this.formUpdate.jobId = item.jobId
+    },
     async onUpdate () {
       this.formUpdate.stepId = this.formUpdate.stepTitle.stepId
       console.log('stepId', this.formUpdate.stepTitle.stepId)
       console.log('id', this.formUpdate.jobId)
       console.log('formUpdate', this.formUpdate)
       console.log('allJob', this.allJob)
+      console.log('empSeleteStep', this.empSeleteStep)
+      console.log('empStep', this.formUpdate.empStep)
       this.dataReady = false
       this.$swal({
         title: 'ต้องการ แก้ไขสถานะ ใช่หรือไม่?',
@@ -465,12 +430,6 @@ export default {
 }
 </script>
 <style scoped>
-.v-card{
-  margin-top: 1rem;
-  width: 225px;
-  min-height: 300px;
-  max-height: max-content;
-}
 .workRow{
   display: inline-block;
   width: max-content;
