@@ -7,6 +7,7 @@
           <v-col cols="6" class="text-left">
             <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
           </v-col>
+          <!--ปุ่ม เพิ่มช้อมูล ไปที่หน้า RegisterAdd -->
           <v-col cols="6" class="v-margit_button text-right">
             <v-btn color="primary" depressed @click="add()">
               <v-icon left>mdi-text-box-plus</v-icon>
@@ -15,6 +16,7 @@
           </v-col>
         </v-row>
 
+        <!-- select flow-->
         <v-col cols="12" sm="4">
           <v-select
             :items="DataFlowName"
@@ -26,6 +28,7 @@
           ></v-select>
         </v-col>
 
+        <!-- เปลี่ยนสถานะ step-->
           <v-row justify="center">
             <v-dialog
               v-model="dialog"
@@ -42,10 +45,23 @@
                     dense
                     v-model="formUpdate.stepTitle"
                     :items="stepItemSelete"
+                    label="ขั้นตอนต่อไป"
                     item-text="text"
                     item-value="stepId"
                     return-object
                     ></v-select>
+                </v-card-text>
+                <v-card-text>
+                    <v-autocomplete
+                    outlined
+                    dense
+                    v-model="formUpdate.empStep"
+                    :items="empSeleteStep"
+                    label="ชื่อ คนรับผิดชอบ"
+                    item-text="text"
+                    item-value="stepId"
+                    return-object
+                    ></v-autocomplete>
                 </v-card-text>
                 <v-divider></v-divider>
                 <v-card-actions>
@@ -56,6 +72,51 @@
               </v-card>
             </v-dialog>
           </v-row>
+          <!-- end เปลี่ยนสถานะ step -->
+
+          <!-- DIALOG ADD -->
+          <v-dialog v-model="dialogAdd" persistent max-width="50%">
+            <v-card>
+              <v-card-title>
+                <span class="headline">แก้ไขข้อมูล</span>
+              </v-card-title>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <div class="column is-3" v-for="(itemsEdit, index) in JobDataItem" :key="index">
+                    <strong>{{ itemsEdit.fieldName }}: </strong>
+                    <v-col cols="12">
+                      <v-text-field
+                      v-model="itemsEdit.fieldValue"
+                      required dense />
+                    </v-col>
+                    </div>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="primary" depressed
+                  @click="dialogAdd = false,clearData()"
+                >
+                  <v-icon left> mdi-cancel</v-icon>
+                  ปิด
+                </v-btn>
+                <v-btn
+                  elevation="2"
+                  depressed
+                  color="success"
+                  @click="addData()"
+                >
+                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                  แก้ไข
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <!-- end add -->
+
         <div class="workRow">
           <v-row>
           <v-col class="colum" v-for="(element , work ) in Layout" :key="work">
@@ -77,9 +138,11 @@
                         elevation="2"
                         colored-border
                       >
+                      <v-icon right color="green darken-2" depressed @click="dialogAdd = true"> mdi-pencil </v-icon>
                     <div  v-for="(items, index) in JobDataItem.filter((row) => {return row.jobId == itemsJob.jobId})" :key="index">
                       <strong>{{ items.fieldName }}: </strong>{{ items.fieldValue}}<br>
                     </div>
+                    <strong>ผู้รับผิดชอบ :{{ formUpdate.empStep }}</strong>
                     <v-spacer></v-spacer>
                       <v-col cols="6" class="v-margit_button text-right">
                         <v-btn color="primary" depressed @click="dialog = true">
@@ -95,7 +158,7 @@
         </v-row>
         </div>
 
-        <!-- <v-row>
+        <v-row>
           <v-col cols="3" v-for="(itemsStep, indexStep) in stepItemSelete" :key="indexStep">
             <v-card>
               <v-toolbar
@@ -132,7 +195,7 @@
               </v-list>
             </v-card>
           </v-col>
-        </v-row> -->
+        </v-row>
       </div>
     </v-main>
   </div>
@@ -153,7 +216,6 @@ export default {
   data () {
     return {
       Layout: [],
-      DataflowId: '',
       breadcrumbs: [
         {
           text: 'Home',
@@ -166,10 +228,12 @@ export default {
           href: '/Master/Flow'
         }
       ],
-      dialogm1: false,
+      DataflowId: '',
       dialog: false,
+      dialogAdd: false,
       session: this.$session.getAll(),
       stepItemSelete: [],
+      empSeleteStep: [],
       DataFlowName: [],
       ItemSelete: [],
       userId: '',
@@ -182,7 +246,10 @@ export default {
         CREATE_USER: '',
         LAST_USER: '',
         endDate: '',
-        jobId: ''
+        jobId: '',
+        empStep: '',
+        departmentStep: '',
+        branchStep: ''
       },
       JobDataItem: [],
       allJob: [],
@@ -200,6 +267,7 @@ export default {
     this.dataReady = false
     // Get Data
     await this.getDataFlow()
+    await this.getEmpSelect()
   },
   methods: {
     async add () {
@@ -268,6 +336,25 @@ export default {
           }
         })
     },
+    async getEmpSelect () {
+      this.empSeleteStep = []
+      await axios
+        .get(this.DNS_IP + '/empSelect/get')
+        .then(async response => {
+          let rs = response.data
+          console.log('rs', rs)
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              d.text = d.empFirst_NameTH
+              d.value = d.empFirst_NameTH
+              this.empSeleteStep.push(d)
+            }
+            console.log('empSeleteStep', this.formUpdate)
+            await this.getJobData()
+          }
+        })
+    },
     async getJobData () {
       this.JobDataItem = []
       this.allJob = []
@@ -282,6 +369,9 @@ export default {
             this.formUpdate.stepId = response.data[0].stepId
             this.formUpdate.flowId = response.data[0].flowId
             this.formUpdate.jobId = response.data[0].jobId
+            this.formUpdate.empStep = response.data[0].empStep
+            this.formUpdate.departmentStep = response.data[0].departmentStep
+            this.formUpdate.branchStep = response.data[0].branchStep
             this.userId = response.data[0].userId
             response.data.forEach(element => {
               if (jobs.indexOf(element.jobId) === -1) {
@@ -359,6 +449,17 @@ export default {
           this.dataReady = true
           console.log('error function editDataGlobal : ', error)
         })
+    },
+    async clearData () {
+      // eslint-disable-next-line no-redeclare
+      for (var key in this.formEdit) {
+        console.log('Key', key)
+        console.log('Value', this.formEdit)
+
+        if (this.formEdit[key]) {
+          this.formEdit[key] = ''
+        }
+      }
     }
   }
 }

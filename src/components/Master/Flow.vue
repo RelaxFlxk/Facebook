@@ -716,6 +716,7 @@ export default {
         flowId: '',
         stepTitle: '',
         sortNo: '',
+        sortStep: '',
         CREATE_USER: '',
         LAST_USER: ''
       },
@@ -745,6 +746,7 @@ export default {
         flowId: '',
         stepTitle: '',
         sortNo: '',
+        sortStep: '',
         CREATE_USER: '',
         LAST_USER: ''
       },
@@ -846,7 +848,6 @@ export default {
         console.log('el:', el)
         // this.updateActionDown(this.stepItemSelete)
         console.log('movedown', this.stepItemSelete)
-        // console.log(stepItem)
       }
       await this.updateActionDown(this.stepItemSelete, stepItem[0])
       console.log(this.stepItemSelete)
@@ -1071,8 +1072,6 @@ export default {
           // this.formAddStep.LAST_USER = this.session.data.userName
           delete this.formAddStep['stepId']
           this.formAddStep.sortNo = this.stepItemSelete.length + 1
-          // this.formAdd.flowCode = this.generateCodeGlobal()
-          // this.formAdd.stepTitle = this.stepTitle
           console.log('stepTitle', this.formAddStep.stepTitle)
           console.log('stepId', this.formAddStep.stepId)
           console.log('forAdd', this.formAddStep)
@@ -1090,15 +1089,12 @@ export default {
             .then(async (response) => {
               // Debug response
               console.log('addDataGlobal DNS_IP + PATH + "add"', response)
-
-              // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
               // Close Dialog
               this.dialogAddStepTitle = false
               this.dataReady = true
               this.getStepFlow(this.formAddStep)
 
               // Load Data
-              // await this.clearData()
               await this.getDataGlobal(this.DNS_IP, this.path)
               this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
             })
@@ -1116,7 +1112,6 @@ export default {
     async editData () {
       console.log(this.formUpdate)
       console.log(this.desserts)
-      // this.editDataGlobal(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
       this.dataReady = false
       this.$swal({
         title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',
@@ -1146,13 +1141,10 @@ export default {
             .then(async (response) => {
               // Debug response
               console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
-
-              // this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
               // Close Dialog
               this.dialogEdit = false
 
               // Load Data
-              // await this.reloadData()
               await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.flowId)
               this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
             })

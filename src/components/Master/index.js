@@ -4,6 +4,7 @@ import FlowStep from './FlowStep'
 import RegisterAdd from './RegisterAdd'
 import JobQrCode from './JobQrCode'
 import WorkShop from './WorkShop'
+import Employee from './Employee'
 
 export default {
   CustomField,
@@ -11,5 +12,6 @@ export default {
   FlowStep,
   RegisterAdd,
   JobQrCode,
-  WorkShop
+  WorkShop,
+  Employee
 }

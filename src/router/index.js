@@ -91,6 +91,11 @@ export default new Router({
     path: '/System/Token',
     name: 'Token',
     component: System.Token
+  },
+  {
+    path: '/Master/Employee',
+    name: 'Employee',
+    component: Master.Employee
   }
   ]
 })
