@@ -716,7 +716,6 @@ export default {
         flowId: '',
         stepTitle: '',
         sortNo: '',
-        sortStep: '',
         CREATE_USER: '',
         LAST_USER: ''
       },
@@ -746,7 +745,6 @@ export default {
         flowId: '',
         stepTitle: '',
         sortNo: '',
-        sortStep: '',
         CREATE_USER: '',
         LAST_USER: ''
       },
