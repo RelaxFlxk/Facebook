@@ -12,7 +12,8 @@ export default {
           yAxes: [
             {
               ticks: {
-                beginAtZero: true
+                beginAtZero: true,
+                min: 0
               }
             }
           ]

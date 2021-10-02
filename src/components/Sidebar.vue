@@ -162,11 +162,10 @@ export default {
       this.master = []
       this.tool = []
       this.system = [
-        { title: 'CustomField', icon: 'mdi-account-edit', to: '/Master/CustomField' },
-        { title: 'Flow', icon: 'mdi-cash-register', to: '/Master/Flow' },
-        { title: 'FlowList', icon: 'mdi-cash-register', to: '/Master/FlowStep' },
-        { title: 'JobQrCode', icon: 'mdi-cash-register', to: '/Master/JobQrCode' },
-        { title: 'WorkShop', icon: 'mdi-cash-register', to: '/Master/WorkShop' },
+        { title: 'ข้อมูลลงทะเบียนลูกค้า', icon: 'mdi-account-edit', to: '/Master/CustomField' },
+        { title: 'ขั้นตอนบริการ', icon: 'mdi-cash-register', to: '/Master/Flow' },
+        { title: 'กระดานการทำงาน', icon: 'mdi-cash-register', to: '/Master/FlowStep' },
+        { title: 'จัดโครงสร้างกระดาน', icon: 'dashboard', to: '/Master/WorkShop' },
         { title: 'จัดการพนักงาน', icon: 'mdi-playlist-check', to: '/Master/Employee' }
         // { title: 'รายชื่อร้านค้า', icon: 'mdi-playlist-check', to: '/System/ListShop' },
         // { title: 'กลุ่มผู้ใช้งาน', icon: 'mdi-account-group', to: '/System/UserTypeGroup' },

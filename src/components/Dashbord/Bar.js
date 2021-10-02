@@ -13,14 +13,16 @@ export default {
             id: 'A',
             position: 'left',
             ticks: {
-              beginAtZero: true
+              beginAtZero: true,
+              min: 0
             }
           }, {
             id: 'B',
             type: 'linear',
             position: 'right',
             ticks: {
-              beginAtZero: true
+              beginAtZero: true,
+              min: 0
             }
           }]
         },
