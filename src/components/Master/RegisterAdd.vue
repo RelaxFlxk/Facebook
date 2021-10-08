@@ -1,4 +1,3 @@
-/* eslint-disable vue/return-in-computed-property */
 <template>
   <div>
     <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
@@ -18,16 +17,34 @@
               <v-form>
               <v-row>
                 <v-col cols="12" >
-                <v-subheader>Flow</v-subheader>
-                  <v-autocomplete
+               <v-sheet tile height="54" class="d-flex">
+                  <v-col cols="12" sm="4">
+                  <v-select
                   v-model="formAdd.flowCode"
                   :items="editedItemSelete"
-                  label="Selects"
+                  label="เลือกขั้นตอนบริการ"
+                  dense
+                  outlined
+                  hide-details
                   @change="flowfieldtest() , pushmessagToGroup(formAdd.flowCode) "
                   >
-                  </v-autocomplete>
-                      <!-- <v-subheader>SHOWFORM
-                      </v-subheader> -->
+                  </v-select>
+                  </v-col>
+
+                  <!-- สาขา -->
+                    <v-col cols="12" sm="4">
+                    <v-select
+                      :items="DataBranchName"
+                      v-model="masBranchName"
+                      @change="getStepFlow() , getLayout()"
+                      dense
+                      outlined
+                      hide-details
+                      label="สาขา"
+                    ></v-select>
+                    </v-col>
+                   </v-sheet>
+                    <br>
                       <v-card v-show="formAdd.flowCode !== '' "
                       class="mx-auto"
                       max-width="500">
@@ -132,6 +149,35 @@
                                   </div>
                                   </div>
                               </div>
+
+    <v-col cols="12">
+      <v-menu
+          ref="menu"
+          v-model="menu"
+          :close-on-content-click="false"
+          transition="scale-transition"
+          offset-y
+          max-width="290px"
+          min-width="auto"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+              v-model="delivDate"
+              label="วันที่นัดส่งรถลูกค้า"
+              persistent-hint
+              prepend-icon="mdi-calendar"
+              v-bind="attrs"
+              v-on="on"
+            ></v-text-field>
+          </template>
+          <v-date-picker
+            v-model="delivDate"
+            no-title
+            @input="menu = false"
+          ></v-date-picker>
+        </v-menu>
+    </v-col>
+
                               <br/>
                               <v-btn depressed
                               @click="addData()">
@@ -200,6 +246,9 @@ export default {
         }
       ],
       showCard: false,
+      DataBranchName: [],
+      masBranchName: '',
+      delivDate: '',
       options2: {
         locale: 'en-US',
         prefix: '',
@@ -262,6 +311,7 @@ export default {
     this.dataReady = false
     // Get Data
     this.getCustomField()
+    this.getDataBranch()
   },
   methods: {
     getCustomField () {
@@ -276,6 +326,23 @@ export default {
             this.editedItemSelete.push(d)
           }
         }console.log(this.editedItemSelete)
+      })
+    },
+    getDataBranch () {
+      this.DataBranchName = []
+      console.log('DataBranchName', this.DataBranchName)
+      axios.get(this.DNS_IP + '/master_branch/get').then(response => {
+        let rs = response.data
+        if (rs.length > 0) {
+          for (var i = 0; i < rs.length; i++) {
+            var d = rs[i]
+            d.text = d.masBranchName
+            d.value = d.masBranchID
+            this.DataBranchName.push(d)
+          }
+        } else {
+          this.DataBranchName = []
+        }
       })
     },
     pushmessagToGroup (flowCode) {

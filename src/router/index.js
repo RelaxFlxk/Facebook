@@ -101,6 +101,16 @@ export default new Router({
     path: '/Master/Employee',
     name: 'Employee',
     component: Master.Employee
+  },
+  {
+    path: '/Master/Branch',
+    name: 'Branch',
+    component: Master.Branch
+  },
+  {
+    path: '/Master/Company',
+    name: 'Company',
+    component: Master.Company
   }
   ]
 })

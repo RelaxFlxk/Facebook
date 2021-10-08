@@ -164,10 +164,12 @@ export default {
       this.system = [
         { title: 'ข้อมูลลงทะเบียนลูกค้า', icon: 'mdi-account-edit', to: '/Master/CustomField' },
         { title: 'Booking', icon: 'mdi-account-edit', to: '/Master/BookingField' },
-        { title: 'ขั้นตอนบริการ', icon: 'mdi-cash-register', to: '/Master/Flow' },
+        { title: 'สถานะการบริการ', icon: 'mdi-cash-register', to: '/Master/Flow' },
         { title: 'กระดานการทำงาน', icon: 'mdi-cash-register', to: '/Master/FlowStep' },
         { title: 'จัดโครงสร้างกระดาน', icon: 'dashboard', to: '/Master/WorkShop' },
-        { title: 'จัดการพนักงาน', icon: 'mdi-playlist-check', to: '/Master/Employee' }
+        { title: 'จัดการพนักงาน', icon: 'mdi-playlist-check', to: '/Master/Employee' },
+        { title: 'จัดการสาขา', icon: 'mdi-playlist-check', to: '/Master/Branch' },
+        { title: 'จัดการบริษัท', icon: 'mdi-playlist-check', to: '/Master/Company' }
         // { title: 'รายชื่อร้านค้า', icon: 'mdi-playlist-check', to: '/System/ListShop' },
         // { title: 'กลุ่มผู้ใช้งาน', icon: 'mdi-account-group', to: '/System/UserTypeGroup' },
         // { title: 'Vgroup', icon: 'mdi-account-group', to: '/System/VgroupMapCoin' }

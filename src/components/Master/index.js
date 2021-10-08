@@ -6,6 +6,8 @@ import JobQrCode from './JobQrCode'
 import WorkShop from './WorkShop'
 import Employee from './Employee'
 import BookingField from './BookingField'
+import Branch from './Branch'
+import Company from './Company'
 
 export default {
   CustomField,
@@ -15,5 +17,7 @@ export default {
   JobQrCode,
   WorkShop,
   Employee,
-  BookingField
+  BookingField,
+  Branch,
+  Company
 }

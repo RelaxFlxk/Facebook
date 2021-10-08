@@ -7,26 +7,50 @@
           <v-col cols="6" class="text-left">
             <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
           </v-col>
-          <!--ปุ่ม เพิ่มช้อมูล ไปที่หน้า RegisterAdd -->
-          <v-col cols="6" class="v-margit_button text-right">
-            <v-btn color="primary" depressed @click="add()">
-              <v-icon left>mdi-text-box-plus</v-icon>
-              Add
-            </v-btn>
-          </v-col>
         </v-row>
 
         <!-- select flow-->
-        <v-col cols="12" sm="4">
+        <v-sheet tile height="54" class="d-flex">
+          <!-- ประเภทบริการ -->
+          <v-col cols="12" sm="4">
           <v-select
             :items="DataFlowName"
             v-model="formUpdate.flowName"
-            required
+            @change="getStepFlow() , getLayout()"
             dense
             outlined
-            @change="getStepFlow() , getLayout()"
+            hide-details
+            label="ประเภทบริการ"
+            class="ma-2"
           ></v-select>
-        </v-col>
+          </v-col>
+          <!-- สาขา -->
+          <v-col cols="12" sm="4">
+          <v-select
+            :items="DataBranchName"
+            v-model="masBranchName"
+            @change="getStepFlow() , getLayout()"
+            dense
+            outlined
+            hide-details
+            label="สาขา"
+            class="ma-2"
+          ></v-select>
+          </v-col>
+          <v-btn class="ma-2 mt-5" color="primary" depressed @click="newCars()">
+              <v-icon left>mdi-text-box-plus</v-icon>
+              รับรถใหม่
+            </v-btn>
+          <v-btn class="ma-2 mt-5" color="primary" depressed @click="editLayout()">
+            <v-icon left>mdi-text-box-plus</v-icon>
+            แก้ไข Layout
+          </v-btn>
+          <v-btn style="margin-top: 20px" color="primary" depressed @click="editStep()">
+              <v-icon left>mdi-text-box-plus</v-icon>
+              แก้ไข ขั้นตอน
+            </v-btn>
+        </v-sheet>
+        <v-divider></v-divider>
 
         <!-- เปลี่ยนสถานะ step-->
           <v-row justify="center">
@@ -114,6 +138,45 @@
           </v-dialog>
           <!-- end add -->
 
+          <!-- DIALOG Delete -->
+          <v-dialog v-model="dialogDelete" persistent max-width="50%">
+            <v-card>
+              <v-card-title>
+                <span class="headline">ค่าใช้จ่ายทั้งหมด</span>
+              </v-card-title>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="12">
+                      <v-text-field
+                      required dense />
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="primary" depressed
+                  @click="dialogDelete = false,clearData()"
+                >
+                  <v-icon left> mdi-cancel</v-icon>
+                  ปิด
+                </v-btn>
+                <v-btn
+                  elevation="2"
+                  depressed
+                  color="success"
+                  @click="addData()"
+                >
+                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                  ลบ
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <!-- end add -->
+
         <div class="workRow">
           <v-row>
           <v-col class="colum" v-for="(element , work ) in Layout" :key="work">
@@ -123,7 +186,7 @@
                     color="primary"
                     dark
                   >
-                    <v-card-title class="cardData text-h6 lighten-2 pa-3">
+                    <v-card-title class=" text pa-3">
                       {{item.stepTitle}}
                     </v-card-title>
                   </v-toolbar>
@@ -134,10 +197,13 @@
                         border="left"
                         elevation="2"
                         colored-border
+                        dismissible
                       >
                       <v-icon right color="green darken-2" depressed @click="dialogAdd = true"> mdi-pencil </v-icon>
+                      <v-icon right color="#CDDC39" depressed> mdi-car </v-icon>
+                      <v-icon right color="red" depressed @click="dialogDelete = true"> mdi-delete </v-icon>
                     <div  v-for="(items, index) in JobDataItem.filter((row) => {return row.jobId == itemsJob.jobId})" :key="index">
-                      <strong>{{ items.fieldName }}: </strong>{{ items.fieldValue}}<br>
+                      {{ items.fieldValue}}<br>
                     </div>
                     <strong>ผู้รับผิดชอบ :{{ JobDataItem.filter((row) => {return row.jobId == itemsJob.jobId})[0].empStep }}</strong>
                     <v-spacer></v-spacer>
@@ -190,12 +256,15 @@ export default {
       DataflowId: '',
       dialog: false,
       dialogAdd: false,
+      dialogDelete: false,
       session: this.$session.getAll(),
       stepItemSelete: [],
       empSeleteStep: [],
       DataFlowName: [],
+      DataBranchName: [],
       ItemSelete: [],
       userId: '',
+      masBranchName: '',
       formUpdate: {
         stepId: '',
         flowId: '',
@@ -226,11 +295,18 @@ export default {
     this.dataReady = false
     // Get Data
     await this.getDataFlow()
+    await this.getDataBranch()
     await this.getEmpSelect()
   },
   methods: {
-    async add () {
+    async newCars () {
       this.$router.push('/Master/RegisterAdd')
+    },
+    async editStep () {
+      this.$router.push('/Master/Flow')
+    },
+    async editLayout () {
+      this.$router.push('/Master/WorkShop')
     },
     log: function (evt) {
       window.console.log(evt)
@@ -249,6 +325,23 @@ export default {
           }
         } else {
           this.DataFlowName = []
+        }
+      })
+    },
+    getDataBranch () {
+      this.DataBranchName = []
+      console.log('DataBranchName', this.DataBranchName)
+      axios.get(this.DNS_IP + '/master_branch/get').then(response => {
+        let rs = response.data
+        if (rs.length > 0) {
+          for (var i = 0; i < rs.length; i++) {
+            var d = rs[i]
+            d.text = d.masBranchName
+            d.value = d.masBranchID
+            this.DataBranchName.push(d)
+          }
+        } else {
+          this.DataBranchName = []
         }
       })
     },
@@ -397,6 +490,9 @@ export default {
               this.allJob.map((row, index) => {
                 if (row.jobId === ID) {
                   this.allJob[index].stepId = this.formUpdate.stepId
+                  // this.getEmpSelect()
+                  // this.getStepFlow()
+                  // this.getLayout()
                 }
               })
               this.pushmessage(this.formUpdate.jobId)

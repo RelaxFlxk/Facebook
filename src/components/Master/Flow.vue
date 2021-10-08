@@ -166,6 +166,11 @@
                       <v-icon dark> mdi-arrow-down-bold </v-icon>
                     </v-btn>
                   </template>
+                   <template v-slot:[`item.sendCard`]="{ item }">
+                    <v-simple-checkbox
+                      v-model="item.sendCard"
+                    ></v-simple-checkbox>
+                  </template>
                   <template v-slot:[`item.action`]="{ item }">
                     <v-btn
                       color="question"
@@ -199,6 +204,14 @@
                               </v-card>
                             </v-dialog>
                             <!-- END delete step -->
+
+                            <v-col cols="12" class="v-margit_button text-center">
+                      <v-btn color="primary" depressed @click="editDataStepTitle()">
+                        <v-icon left>mdi-text-box-plus</v-icon>
+                        save
+                      </v-btn>
+                    </v-col>
+
                        </v-row>
                     </v-col>
                   </v-row>
@@ -593,7 +606,7 @@
                       color="#4CAF50"
                       fab
                       x-small
-                      @click="(dialogStep = true), getStepFlow(item)"
+                      @click="(dialogStep = true), getDataById(item), getStepFlow(item)"
 
                     >
                       <v-icon dark> mdi-debug-step-over </v-icon>
@@ -762,9 +775,11 @@ export default {
         { text: 'ID', value: 'stepId' },
         { text: 'Title', value: 'stepTitle' },
         { text: ' ', value: 'actions2', sortable: false, align: 'center' },
-        { text: 'Action', value: 'action', sortable: false, align: 'center' }
+        { text: 'Action', value: 'action', sortable: false, align: 'center' },
+        { text: 'AC', value: 'sendCard' }
       ],
       showCard: false,
+      sendCard: false,
       headers: [
         {
           text: 'Field Id',
@@ -900,6 +915,10 @@ export default {
           this.dataReady = true
         })
     },
+    async updateSendCard () {
+      console.log('updateSendCard')
+      console.log('SendCard', this.sendCard)
+    },
     getCustomField () {
       this.editedItemSelete = []
       axios.get(this.DNS_IP + '/customField/get').then((response) => {
@@ -955,6 +974,7 @@ export default {
             var d = rs[i]
             d.text = d.stepTitle
             d.value = d.stepTitle
+            d.sendCard = false
             this.stepItemSelete.push(d)
             this.formUpdateStep.stepTitle = response.data[0].stepTitle
           }

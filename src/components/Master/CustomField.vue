@@ -16,7 +16,7 @@
         </v-row>
         <v-row>
           <!-- ADD -->
-          <v-dialog v-model="dialogAdd" persistent max-width="80%">
+          <v-dialog v-model="dialogAdd" persistent max-width="50%">
             <v-card>
               <v-form ref="form_add" v-model="validAdd" lazy-validation>
               <v-card-text>
