@@ -42,6 +42,7 @@
                                   <v-text-field
                                      v-model="p.fieldValue"
                                     :label="p.fieldName"
+                                    :rules ="[rules.required]"
                                   ></v-text-field>
                                   </div>
                                   <br/>
@@ -50,7 +51,7 @@
                                   <v-text-field
                                     v-model="p.fieldValue"
                                     :label="p.fieldName"
-                                    :rules = "numberRules"
+                                    :rules ="[rules.required]"
 
                                   ></v-text-field>
                                   </div>
@@ -64,6 +65,7 @@
                                     offset-y
                                     max-width="290px"
                                     min-width="auto"
+                                    :rules ="[rules.required]"
                                   >
                                     <template v-slot:activator="{ on, attrs }">
                                       <v-text-field
@@ -75,6 +77,7 @@
                                         v-bind="attrs"
                                         @blur="date = parseDate(dateFormatted)"
                                         v-on="on"
+                                        :rules ="[rules.required]"
                                       ></v-text-field>
                                     </template>
                                     <v-date-picker
@@ -94,6 +97,7 @@
                                       dense
                                       filled
                                       label="Search"
+                                      :rules ="[rules.required]"
                                     ></v-autocomplete>
                                   </v-col>
                                   <v-col cols="8" v-if="p.fieldType== 'Selects'">
@@ -221,7 +225,23 @@ export default {
         LAST_USER: ''
       },
       rules: {
-        required: value => !!value || 'กรุณากรอก.'
+        numberRules: value =>
+          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
+          'กรุณากรอกตัวเลข 0 ถึง 9',
+        counterTel: value => value.length <= 10 || 'Max 10 characters',
+        IDcardRules: value =>
+          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999999) ||
+          'กรุณากรอกตัวเลข 0 ถึง 9',
+        required: value => !!value || 'กรุณากรอก.',
+        resizeImag: value =>
+          !value ||
+          value.size < 2000000 ||
+          'Avatar size should be less than 2 MB!',
+        counterIDcard: value => value.length <= 13 || 'Max 13 characters',
+        email: value => {
+          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+          return pattern.test(value) || 'Invalid e-mail.'
+        }
       },
       // End Form Config ADD EDIT
       // Data Table Config

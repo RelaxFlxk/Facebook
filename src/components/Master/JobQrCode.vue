@@ -77,7 +77,7 @@ export default {
     return {
       PK: '',
       path: '/Job/',
-      pathToweb: 'http://localhost:4000?jobId=',
+      pathToweb: 'http://localhost:8081/JobConfirm?jobId=',
       userId: '',
       jobNo: this.$route.query.jobNo,
       skip: {

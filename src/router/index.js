@@ -58,6 +58,11 @@ export default new Router({
     component: Master.WorkShop
   },
   {
+    path: '/Master/BookingField',
+    name: 'BookingField',
+    component: Master.BookingField
+  },
+  {
     path: '/System/User',
     name: 'User',
     component: System.User

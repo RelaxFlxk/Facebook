@@ -5,7 +5,7 @@
       <div class="stepLayout">
         <v-row>
         <v-col cols="12" sm="4">
-          <h5>SELECT</h5>
+          <h5>เลือกประเภทงาน</h5>
           <v-select
           v-model="DataflowId"
             :items="DataFlowName"

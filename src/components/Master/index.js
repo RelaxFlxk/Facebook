@@ -5,6 +5,7 @@ import RegisterAdd from './RegisterAdd'
 import JobQrCode from './JobQrCode'
 import WorkShop from './WorkShop'
 import Employee from './Employee'
+import BookingField from './BookingField'
 
 export default {
   CustomField,
@@ -13,5 +14,6 @@ export default {
   RegisterAdd,
   JobQrCode,
   WorkShop,
-  Employee
+  Employee,
+  BookingField
 }

@@ -1109,7 +1109,7 @@ export default {
     },
     async editData () {
       console.log(this.formUpdate)
-      console.log(this.desserts)
+      console.log(JSON.stringify(this.desserts))
       this.dataReady = false
       this.$swal({
         title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',

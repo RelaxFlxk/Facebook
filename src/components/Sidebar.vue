@@ -163,6 +163,7 @@ export default {
       this.tool = []
       this.system = [
         { title: 'ข้อมูลลงทะเบียนลูกค้า', icon: 'mdi-account-edit', to: '/Master/CustomField' },
+        { title: 'Booking', icon: 'mdi-account-edit', to: '/Master/BookingField' },
         { title: 'ขั้นตอนบริการ', icon: 'mdi-cash-register', to: '/Master/Flow' },
         { title: 'กระดานการทำงาน', icon: 'mdi-cash-register', to: '/Master/FlowStep' },
         { title: 'จัดโครงสร้างกระดาน', icon: 'dashboard', to: '/Master/WorkShop' },
