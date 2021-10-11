@@ -149,6 +149,7 @@
                   <v-row>
                     <v-col cols="12">
                       <v-text-field
+                      v-model="formDelete.totalPrice"
                       required dense />
                     </v-col>
                   </v-row>
@@ -167,7 +168,7 @@
                   elevation="2"
                   depressed
                   color="success"
-                  @click="addData()"
+                  @click="deleteDataPrice()"
                 >
                   <v-icon left>mdi-checkbox-marked-circle</v-icon>
                   ลบ
@@ -197,10 +198,9 @@
                         border="left"
                         elevation="2"
                         colored-border
-                        dismissible
                       >
                       <v-icon right color="green darken-2" depressed @click="dialogAdd = true"> mdi-pencil </v-icon>
-                      <v-icon right color="#CDDC39" depressed> mdi-car </v-icon>
+                      <v-icon right color="#CDDC39" depressed @click="updateStatusCars"> mdi-car </v-icon>
                       <v-icon right color="red" depressed @click="dialogDelete = true"> mdi-delete </v-icon>
                     <div  v-for="(items, index) in JobDataItem.filter((row) => {return row.jobId == itemsJob.jobId})" :key="index">
                       {{ items.fieldValue}}<br>
@@ -288,6 +288,10 @@ export default {
         fieldId: '',
         fieldValue: '',
         fieldName: ''
+      },
+      formDelete: {
+        jobId: '',
+        totalPrice: ''
       }
     }
   },
@@ -521,6 +525,74 @@ export default {
           this.formEdit[key] = ''
         }
       }
+    },
+    async addData () {
+    },
+    async updateStatusCars () {
+      this.$swal({
+        title: 'อัพเดท สถานะรถ ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+      await axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + "/job/" + "editStatus/"
+        )
+        .then(async (response) => {
+          // Debug response
+          console.log('DNS_IP + /job/editStatus/', response)
+
+          this.$swal('เรียบร้อย', 'success')
+        })
+      // eslint-disable-next-line handle-callback-err
+        .catch((error) => {
+          this.dataReady = true
+          console.log('error function deleteDataGlobal : ', error)
+        })
+    },
+    async deleteDataPrice (d) {
+      this.$swal({
+        title: 'ให้บริการ เสร็จเรียบร้อยแล้ว ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#fa0202',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async (result) => {
+          let ds = {
+            totalPrice: d.totalPrice,
+            RECORD_STATUS: 'D'
+          }
+          await axios
+            .post(
+              // eslint-disable-next-line quotes
+              this.DNS_IP + "/job/" + "editPrice/" + d.jobId, ds
+            )
+            .then(async (response) => {
+              // Debug response
+              console.log('DNS_IP + /job/edit/', response)
+
+              this.$swal('เรียบร้อย', 'ลบข้อมูลเรียบร้อย', 'success')
+              this.clearData()
+            })
+          // eslint-disable-next-line handle-callback-err
+            .catch((error) => {
+              this.dataReady = true
+              console.log('error function deleteDataGlobal : ', error)
+            })
+        })
+        .catch((error) => {
+          this.dataReady = true
+          this.$swal('ผิดพลาด', 'ผิดพลาด -2', 'error')
+          console.log('error function deleteDataGlobal : ', error)
+        })
     }
   }
 }
