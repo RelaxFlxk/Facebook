@@ -8,6 +8,8 @@ import Employee from './Employee'
 import BookingField from './BookingField'
 import Branch from './Branch'
 import Company from './Company'
+import BookingList from './BookingList'
+import JobList from './JobList'
 
 export default {
   CustomField,
@@ -19,5 +21,7 @@ export default {
   Employee,
   BookingField,
   Branch,
-  Company
+  Company,
+  BookingList,
+  JobList
 }

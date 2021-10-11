@@ -130,7 +130,7 @@ export default {
     }
   },
   async mounted () {
-    this.getGetToken(this.DNS_IP)
+    // this.getGetToken(this.DNS_IP)
     console.log('ApplicationKey HRM', this.$session.getAll().ApplicationKey)
   },
   methods: {

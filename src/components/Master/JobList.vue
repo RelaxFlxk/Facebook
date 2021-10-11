@@ -1,0 +1,473 @@
+<template>
+  <div>
+    <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
+    <v-main>
+      <div class="pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4">
+        <v-row>
+          <v-col cols="6" class="text-left">
+            <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
+          </v-col>
+        </v-row>
+        <!-- select flow-->
+        <v-row>
+          <v-col cols="12">
+        <v-sheet tile height="54" class="d-flex">
+          <!-- ประเภทบริการ -->
+          <v-col cols="12" sm="4">
+          <v-select
+            :items="DataFlowName"
+            v-model="formUpdate.flowId"
+            @change="getStepFlow()"
+            dense
+            outlined
+            hide-details
+            label="ประเภทบริการ"
+            class="ma-2"
+          ></v-select>
+          </v-col>
+          <!-- สาขา -->
+          <v-col cols="12" sm="4">
+          <v-select
+            :items="DataBranchName"
+            v-model="masBranchName"
+            @change="getStepFlow()"
+            dense
+            outlined
+            hide-details
+            label="สาขา"
+            class="ma-2"
+          ></v-select>
+          </v-col>
+        </v-sheet>
+          </v-col>
+        </v-row>
+        <v-row>
+          <!-- ADD -->
+          <v-dialog v-model="dialogAdd" persistent max-width="70%">
+            <v-card class="text-center">
+              <v-form ref="form_add" v-model="validAdd" lazy-validation>
+              </v-form>
+              <v-card-actions id="v-step-1">
+                <v-col id="margin">
+                  <v-row justify="center">
+                    <v-btn
+                      elevation="2"
+                      x-large
+                      color="#173053"
+                      :disabled="!validAdd"
+                      @click="addData()"
+                    >
+                      <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                      เพิ่ม
+                    </v-btn>
+                  </v-row>
+                </v-col>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <!-- end add -->
+          <!-- data table -->
+          <v-col cols="12">
+            <v-card elevation="7" v-if="dataReady">
+              <v-card-title>
+                <v-text-field
+                  v-model="searchAll2"
+                  append-icon="mdi-magnify"
+                  label="Search"
+                  single-line
+                  hide-details
+                ></v-text-field>
+              </v-card-title>
+              <v-card-text>
+                <v-data-table
+                  :headers="columns"
+                  :items="dataItem"
+                  :search="searchAll2"
+                  :items-per-page="10"
+                >
+                  <template v-slot:[`item.CREATE_DATE`]="{ item }">
+                    {{ format_dateNotime(item.CREATE_DATE) }}
+                  </template>
+                  <template v-slot:[`item.LAST_DATE`]="{ item }">
+                    {{ format_dateNotime(item.LAST_DATE) }}
+                  </template>
+                  <template v-slot:[`item.dueDate`]="{ item }">
+                    {{ format_date(item.dueDate) }}
+                  </template>
+                  <template v-slot:[`item.action`]="{ item }">
+                    <v-btn
+                      color="question"
+                      fab
+                      id="v-step-2"
+                      small
+                      @click.stop="
+                        (dialogEdit = true),
+                          getDataById(item),
+                          validate('UPDATE');
+                      "
+                    >
+                      <v-icon dark> mdi-account-convert </v-icon>
+                    </v-btn>
+                    <v-btn
+                      color="red"
+                      dark
+                      fab
+                      small
+                      @click.stop="(dialogDelete = true), getDataById(item);"
+                    >
+                      <v-icon> mdi-delete </v-icon>
+                    </v-btn>
+                  </template>
+                </v-data-table>
+              </v-card-text>
+            </v-card>
+            <div v-if="!dataReady" class="text-center">
+              <v-progress-circular
+                indeterminate
+                color="primary"
+              ></v-progress-circular>
+            </div>
+          </v-col>
+          <!-- end data table -->
+        </v-row>
+      </div>
+    </v-main>
+  </div>
+</template>
+<script>
+import axios from 'axios' // api
+import draggable from 'vuedraggable'
+import adminLeftMenu from '../Sidebar.vue' // เมนู
+import VuetifyMoney from '../VuetifyMoney.vue'
+
+export default {
+  name: 'JobList',
+  components: {
+    draggable,
+    'left-menu-admin': adminLeftMenu,
+    VuetifyMoney
+  },
+  data () {
+    return {
+      Layout: [],
+      dataReady: false,
+      menuDate: false,
+      date: '',
+      time: '',
+      session: this.$session.getAll(),
+      fieldNameItem: [],
+      DataflowId: '',
+      masBranchName: '',
+      breadcrumbs: [
+        {
+          text: 'Home',
+          disabled: false,
+          href: '/Core/Home'
+        },
+        {
+          text: 'Flow',
+          disabled: false,
+          href: '/Master/JobList'
+        }
+      ],
+      DataBranchName: [],
+      DataFlowName: [],
+      // Data Table Config
+      searchAll2: '',
+      columns: [
+        { text: 'Booking Id', value: 'bookingId' },
+        { text: 'ชื่อบริการ', value: 'flowName' },
+        { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+        // { text: 'วันที่สร้าง', value: 'CREATE_DATE' },
+        // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
+        { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
+      ],
+      dataItem: this.stepItemSelete,
+      stepItemSelete: [],
+      JobDataItem: [],
+      allJob: [],
+      // End Data Table Config
+      formAdd: {
+        bookingId: null,
+        fieldId: '',
+        fieldValue: '',
+        flowId: null,
+        masBranchID: null,
+        dueDate: '',
+        shopId: this.$session.getAll().data.shopId
+      },
+      formUpdate: {
+        stepId: '',
+        flowId: '',
+        flowName: '',
+        stepTitle: '',
+        sortNo: '',
+        CREATE_USER: '',
+        LAST_USER: '',
+        endDate: '',
+        jobId: '',
+        empStep: '',
+        departmentStep: '',
+        branchStep: ''
+      },
+      validUpdate: true,
+      validAdd: true,
+      // Dialog Config ADD EDIT DELETE IMPORT
+      dialogAdd: false,
+      dialogEdit: false,
+      dialogDelete: false,
+      rules: {
+        numberRules: value =>
+          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
+          'กรุณากรอกตัวเลข 0 ถึง 9',
+        counterTel: value => value.length <= 10 || 'Max 10 characters',
+        IDcardRules: value =>
+          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999999) ||
+          'กรุณากรอกตัวเลข 0 ถึง 9',
+        required: value => !!value || 'กรุณากรอก.',
+        resizeImag: value =>
+          !value ||
+          value.size < 2000000 ||
+          'Avatar size should be less than 2 MB!',
+        counterIDcard: value => value.length <= 13 || 'Max 13 characters',
+        email: value => {
+          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+          return pattern.test(value) || 'Invalid e-mail.'
+        }
+      }
+    }
+  },
+  async mounted () {
+    // this.dataReady = false
+    this.getDataFlow()
+    this.getDataBranch()
+    // this.getJobList()
+  },
+  methods: {
+    validate (Action) {
+      switch (Action) {
+        case 'ADD':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_add.validate()
+          })
+          break
+        case 'UPDATE':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_update.validate()
+          })
+          break
+
+        default:
+          break
+      }
+    },
+    async getDataFlow () {
+      this.DataFlowName = []
+      // console.log('DataFlowName', this.DataFlowName)
+      axios
+        .get(this.DNS_IP + '/flow/get?shopId=' + this.session.data.shopId)
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              let s = {}
+              s.text = d.flowName
+              s.value = d.flowId
+              this.DataFlowName.push(s)
+              // console.log('this.DataFlowName', this.DataFlowName)
+            }
+            this.dataReady = true
+          } else {
+            this.DataFlowName = []
+          }
+        })
+    },
+    async getDataBranch () {
+      this.DataBranchName = []
+      // console.log('branch', this.branch)
+      axios
+        .get(this.DNS_IP + '/master_branch/get?shopId=' + this.session.data.shopId)
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              let s = {}
+              s.text = d.masBranchName
+              s.value = d.masBranchID
+              this.DataBranchName.push(s)
+              // console.log('dtdtdtdt', this.branch)
+            }
+          } else {
+            this.DataBranchName = []
+          }
+        })
+    },
+    async getJobList () {
+      // Clear Data ทุกครั้ง
+      this.dataItem = []
+      // Clear ช่องค้นหา
+      this.searchAll2 = ''
+      await axios
+        .get(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + "/flowStep/get?shopId=" + this.session.data.shopId
+        )
+        .then(async response => {
+          console.log('getData', response.data)
+          this.dataReady = true
+          this.dataItem = response.data
+          if (this.dataItem.length === 0 || this.dataItem.status === false) {
+            this.dataItem = []
+            // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
+          }
+        })
+        // eslint-disable-next-line handle-callback-err
+        .catch(error => {
+          console.log(error)
+          this.dataReady = true
+          //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
+        })
+    },
+    async getStepFlow () {
+      this.stepItemSelete = []
+      await axios
+        .get(this.DNS_IP + '/flowStep/get?flowId=' + this.formUpdate.flowId + '&shopId=' + this.session.data.shopId)
+        .then(async response => {
+          let rs = response.data
+          console.log('rs', rs)
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              d.text = d.stepTitle
+              d.value = d.stepTitle
+              this.stepItemSelete.push(d)
+            }
+            this.dataReady = true
+            console.log('stepItemSelete', this.stepItemSelete)
+            await this.getJobData()
+          }
+        })
+    },
+    async getJobData () {
+      this.JobDataItem = []
+      this.allJob = []
+      axios
+        .get(this.DNS_IP + '/job/get?flowId=' + this.formUpdate.flowId + '&shopId=' + this.session.data.shopId)
+        .then(async (response) => {
+          this.dataReady = true
+          var jobs = []
+          console.log('res', response.data)
+          // console.log('userId', this.formUpdate.userId === 'NULL')
+          if (response.data) {
+            this.formUpdate.stepId = response.data[0].stepId
+            this.formUpdate.flowId = response.data[0].flowId
+            this.formUpdate.jobId = response.data[0].jobId
+            this.formUpdate.empStep = response.data[0].empStep
+            this.formUpdate.departmentStep = response.data[0].departmentStep
+            this.formUpdate.branchStep = response.data[0].branchStep
+            this.userId = response.data[0].userId
+            response.data.forEach(element => {
+              if (jobs.indexOf(element.jobId) === -1) {
+                jobs.push(element.jobId)
+                this.allJob.push({jobId: element.jobId, stepId: element.stepId})
+              }
+            })
+            this.JobDataItem = response.data
+          }
+          console.log('JobDataItem', this.JobDataItem)
+          console.log('JobLEN', this.userId)
+        })
+    },
+    clearDataAdd () {
+      this.date = ''
+      this.time = ''
+      this.fieldNameItem = []
+      this.DataflowId = ''
+      this.formAdd.bookingId = null
+      this.formAdd.fieldId = ''
+      this.formAdd.fieldValue = ''
+      this.formAdd.flowId = null
+      this.formAdd.masBranchID = null
+      this.formAdd.dueDate = ''
+      this.formAdd.shopId = this.$session.getAll().data.shopId
+      this.dialogAdd = false
+    },
+    async getDataById (dt) {
+      console.log(this.DNS_IP + '/BookingData/getID?bookingDataId=' + dt.bookingDataId)
+      await axios
+        .get(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + '/BookingData/getID?bookingDataId=' + dt.bookingDataId
+        )
+        .then(async (response) => {
+          console.log('get id : ', response)
+          this.dataReady = true
+          if (response.data) {
+            Object.assign(this.formUpdate, response.data)
+            delete this.formUpdate['RECORD_STATUS']
+            console.log('getDataById', this.formUpdate)
+          }
+        })
+        // eslint-disable-next-line handle-callback-err
+        .catch((error) => {
+          this.dataReady = true
+          console.log('error function getDataById : ', error)
+        //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
+        })
+    },
+    async deleteDataGlobal () {
+      this.$swal({
+        title: 'ต้องการ ลบข้อมูล ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#fa0202',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async (result) => {
+          this.formUpdate.LAST_USER = this.$session.getAll().data.userName
+          await axios
+            .post(
+              // eslint-disable-next-line quotes
+              this.DNS_IP + "/BookingData/delete/" + this.formUpdate.bookingDataId,
+              this.formUpdate
+            )
+            .then(async (response) => {
+              // Debug response
+              console.log('DNS_IP + PATH + "delete/"', response)
+              console.log('status', status)
+
+              this.$swal('เรียบร้อย', 'ลบข้อมูลเรียบร้อย', 'success')
+              // Close Dialog
+              this.dialogDelete = false
+
+              // Load Data
+              if (status !== '') {
+                await this.getDataFlow()
+              }
+              if (status === '') {
+                await this.getDataFlow()
+              }
+            })
+            // eslint-disable-next-line handle-callback-err
+            .catch((error) => {
+              this.dataReady = true
+              this.$swal('ผิดพลาด', 'ผิดพลาด -1', 'error')
+              console.log('error function deleteDataGlobal : ', error)
+            //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
+            })
+        })
+        .catch((error) => {
+          this.dataReady = true
+          this.$swal('ผิดพลาด', 'ผิดพลาด -2', 'error')
+          console.log('error function deleteDataGlobal : ', error)
+        })
+    }
+  }
+}
+</script>

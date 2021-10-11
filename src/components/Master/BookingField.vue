@@ -84,7 +84,7 @@ export default {
     return {
       itemdetell: [],
       session: this.$session.getAll(),
-      shopId: 'MS2021100857563483',
+      shopId: this.$session.getAll().data.shopId,
       bookingField: [],
       Fielditem: [],
       showCard: false,

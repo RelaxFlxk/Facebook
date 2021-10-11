@@ -140,9 +140,7 @@ export default {
   computed: {},
   mounted () {
     this.items = []
-    if (this.session.data.userTypeGroup === 'Admin') {
-      this.adminChk()
-    }
+    this.adminChk()
     // if (this.session.data.userTypeGroup === 'Shop Admin') {
     //   this.shopAdminChk()
     // }
@@ -163,9 +161,11 @@ export default {
       this.tool = []
       this.system = [
         { title: 'ข้อมูลลงทะเบียนลูกค้า', icon: 'mdi-account-edit', to: '/Master/CustomField' },
-        { title: 'Booking', icon: 'mdi-account-edit', to: '/Master/BookingField' },
+        { title: 'Booking Setting', icon: 'mdi-account-edit', to: '/Master/BookingField' },
+        { title: 'Booking List', icon: 'mdi-account-edit', to: '/Master/BookingList' },
         { title: 'สถานะการบริการ', icon: 'mdi-cash-register', to: '/Master/Flow' },
         { title: 'กระดานการทำงาน', icon: 'mdi-cash-register', to: '/Master/FlowStep' },
+        { title: 'List กระดานการทำงาน', icon: 'mdi-cash-register', to: '/Master/JobList' },
         { title: 'จัดโครงสร้างกระดาน', icon: 'dashboard', to: '/Master/WorkShop' },
         { title: 'จัดการพนักงาน', icon: 'mdi-playlist-check', to: '/Master/Employee' },
         { title: 'จัดการสาขา', icon: 'mdi-playlist-check', to: '/Master/Branch' },

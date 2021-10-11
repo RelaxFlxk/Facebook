@@ -63,6 +63,16 @@ export default new Router({
     component: Master.BookingField
   },
   {
+    path: '/Master/BookingList',
+    name: 'BookingList',
+    component: Master.BookingList
+  },
+  {
+    path: '/Master/JobList',
+    name: 'JobList',
+    component: Master.JobList
+  },
+  {
     path: '/System/User',
     name: 'User',
     component: System.User
