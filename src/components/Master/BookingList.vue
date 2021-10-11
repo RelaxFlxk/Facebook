@@ -192,6 +192,88 @@
             </v-card>
           </v-dialog>
           <!-- end add -->
+
+          <!-- delete -->
+          <v-dialog v-model="dialogDelete" persistent max-width="80%">
+            <v-card>
+              <v-card-title>
+                <span class="headline">ลบข้อมูลนี้</span>
+              </v-card-title>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="12">
+                      <v-text-field
+                        label="รหัส Booking No"
+                        v-model="formUpdate.bookNo"
+                        readonly
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  elevation="2"
+                  x-large
+                  color="dark darken-1"
+                  @click="dialogDelete = false"
+                >
+                  <v-icon left> mdi-cancel</v-icon>
+                  ปิด
+                </v-btn>
+                <v-btn
+                  elevation="2"
+                  x-large
+                  color="red darken-1"
+                  @click="deleteData()"
+                >
+                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                  ลบ
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <!-- end delete -->
+
+          <!-- edit -->
+          <v-dialog v-model="dialogEdit" persistent max-width="30%">
+            <v-card class="text-center">
+              <v-card-title>นำเข้าตารางงาน</v-card-title>
+                <v-card-text>
+                  <v-container>
+                    <v-col v-for="(item , indexitem) in BookingDataItem" :key="indexitem" cols="12">
+                      {{item.fieldName}} : {{item.fieldValue}}
+                    </v-col>
+                  </v-container>
+                </v-card-text>
+              <v-card-actions id="v-step-3">
+                <v-col id="margin">
+                  <v-row justify="center">
+                    <v-btn
+                      elevation="2"
+                      small
+                      color="#173053"
+                      @click="addDataJob()"
+                    >
+                      <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                      นำเข้าตารางงาน
+                    </v-btn>
+                    <v-btn
+                        small
+                        color="red"
+                        @click=";(dialogEdit = false)"
+                      >
+                        <v-icon color="#173053">mdi-close</v-icon>
+                      </v-btn>
+                  </v-row>
+                </v-col>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <!-- end -->
+
           <!-- data table -->
           <v-col cols="12">
             <v-card elevation="7" v-if="dataReady">
@@ -228,8 +310,7 @@
                       small
                       @click.stop="
                         (dialogEdit = true),
-                          getDataById(item),
-                          validate('UPDATE');
+                          getBookingData(item)
                       "
                     >
                       <v-icon dark> mdi-account-plus </v-icon>
@@ -275,6 +356,7 @@ export default {
   },
   data () {
     return {
+      BookingDataItem: [],
       Layout: [],
       dataReady: false,
       menuDate: false,
@@ -300,7 +382,7 @@ export default {
       // Data Table Config
       searchAll2: '',
       columns: [
-        { text: 'Booking Id', value: 'bookingId' },
+        { text: 'Booking Id', value: 'bookNo' },
         { text: 'ชื่อบริการ', value: 'flowName' },
         { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
         // { text: 'วันที่สร้าง', value: 'CREATE_DATE' },
@@ -323,8 +405,19 @@ export default {
         masBranchName: '',
         tel: '',
         map: '',
-        shopId: ''
+        shopId: '',
+        bookNo: ''
       },
+      // formDataBooking: {
+      //   bookingDataId: '',
+      //   bookNo: '',
+      //   fieldName: '',
+      //   fieldValue: '',
+      //   flowId: '',
+      //   masBranchID: '',
+      //   optionField: '',
+      //   dueDate: ''
+      // },
       validUpdate: true,
       validAdd: true,
       // Dialog Config ADD EDIT DELETE IMPORT
@@ -496,17 +589,20 @@ export default {
     },
     async addData () {
       let rs = this.fieldNameItem
+      console.log('dddddddddddd', this.fieldNameItem)
       let Add = []
       for (let i = 0; i < rs.length; i++) {
         let d = rs[i]
         let update = {}
         update.masBranchID = this.formAdd.masBranchID
-        update.bookingId = this.formAdd.bookingId
+        update.bookingFieldId = this.formAdd.bookingFieldId
         update.flowId = this.formAdd.flowId
         update.fieldId = d.fieldId
         update.fieldValue = d.fieldValue
         update.shopId = d.shopId
         update.dueDate = this.date + ' ' + this.time
+        update.userId = this.$session.getAll().data.userName
+        update.pageName = 'BookingList'
         Add.push(update)
       }
       console.log('Add', Add)
@@ -519,19 +615,21 @@ export default {
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
       })
-        .then(async result => {
+        .then(async (result) => {
           axios
-            .post(this.DNS_IP + '/BookingData/add', Add)
+            .post(
+              this.DNS_IP + '/Booking/add', Add
+            )
             .then(response => {
               this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
               this.clearDataAdd()
               console.log('addDataGlobal DNS_IP + /job/add', response)
             })
-            .catch(error => {
+            .catch((error) => {
               console.log('error function addData : ', error)
             })
         })
-        .catch(error => {
+        .catch((error) => {
           console.log('Cencel : ', error)
         })
     },
@@ -548,13 +646,14 @@ export default {
       this.formAdd.dueDate = ''
       this.formAdd.shopId = this.$session.getAll().data.shopId
       this.dialogAdd = false
+      this.getBookingList()
     },
     async getDataById (dt) {
-      console.log(this.DNS_IP + '/BookingData/getID?bookingDataId=' + dt.bookingDataId)
+      console.log(this.DNS_IP + '/Booking/getID?bookNo=' + dt.bookNo)
       await axios
         .get(
           // eslint-disable-next-line quotes
-          this.DNS_IP + '/BookingData/getID?bookingDataId=' + dt.bookingDataId
+          this.DNS_IP + '/Booking/getID?bookNo=' + dt.bookNo
         )
         .then(async (response) => {
           console.log('get id : ', response)
@@ -572,7 +671,7 @@ export default {
         //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
         })
     },
-    async deleteDataGlobal () {
+    async deleteData () {
       this.$swal({
         title: 'ต้องการ ลบข้อมูล ใช่หรือไม่?',
         type: 'question',
@@ -587,7 +686,7 @@ export default {
           await axios
             .post(
               // eslint-disable-next-line quotes
-              this.DNS_IP + "/BookingData/delete/" + this.formUpdate.bookingDataId,
+              this.DNS_IP + "/Booking/delete/" + this.formUpdate.bookNo,
               this.formUpdate
             )
             .then(async (response) => {
@@ -601,10 +700,10 @@ export default {
 
               // Load Data
               if (status !== '') {
-                await this.getDataFlow()
+                await this.getBookingList()
               }
               if (status === '') {
-                await this.getDataFlow()
+                await this.getBookingList()
               }
             })
             // eslint-disable-next-line handle-callback-err
@@ -619,6 +718,57 @@ export default {
           this.dataReady = true
           this.$swal('ผิดพลาด', 'ผิดพลาด -2', 'error')
           console.log('error function deleteDataGlobal : ', error)
+        })
+    },
+    async getBookingData (dt) {
+      this.BookingDataItem = []
+      await axios
+        .get(this.DNS_IP + '/BookingDataSelect/get?bookNo=' + dt.bookNo)
+        .then(async (response) => {
+          let rs = response.data
+          if (response.data) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              d.shopId = this.session.data.shopId
+              d.userName = this.$session.getAll().data.userName
+              this.BookingDataItem.push(d)
+            }
+            console.log('BookingDataItem', this.BookingDataItem)
+          }
+        })
+    },
+    addDataJob () {
+      this.$swal({
+        title: 'ต้องการนำรายการนี้ เข้าตารางใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async result => {
+          await axios
+            .post(
+              this.DNS_IP + '/job/add',
+              this.BookingDataItem
+            )
+            .then(async response => {
+              if (response.data.status) {
+                var dt = {
+                  bookNo: this.BookingDataItem[0].bookNo,
+                  statusJob: 'job'
+                }
+                await axios
+                  .post(
+                    this.DNS_IP + '/Booking/editStatus/' + this.BookingDataItem[0].bookNo,
+                    dt
+                  )
+                  .then(async response => {
+                    this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
+                  })
+              }
+            })
         })
     }
   }

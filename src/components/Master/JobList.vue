@@ -16,8 +16,7 @@
           <v-col cols="12" sm="4">
           <v-select
             :items="DataFlowName"
-            v-model="formUpdate.flowId"
-            @change="getStepFlow()"
+            v-model="searchFlowId"
             dense
             outlined
             hide-details
@@ -26,46 +25,66 @@
           ></v-select>
           </v-col>
           <!-- สาขา -->
-          <v-col cols="12" sm="4">
+          <!-- <v-col cols="12" sm="4">
           <v-select
             :items="DataBranchName"
             v-model="masBranchName"
-            @change="getStepFlow()"
             dense
             outlined
             hide-details
             label="สาขา"
             class="ma-2"
           ></v-select>
+          </v-col> -->
+          <v-col cols="12" sm="4">
+          <v-btn
+            color="#173053"
+            @click="searchData()"
+          >
+            <v-icon left>mdi-database-search</v-icon>
+            ค้นหา
+          </v-btn>
           </v-col>
         </v-sheet>
           </v-col>
         </v-row>
         <v-row>
-          <!-- ADD -->
-          <v-dialog v-model="dialogAdd" persistent max-width="70%">
+          <!-- edit -->
+          <v-dialog v-model="dialogEdit" persistent max-width="30%">
             <v-card class="text-center">
-              <v-form ref="form_add" v-model="validAdd" lazy-validation>
-              </v-form>
-              <v-card-actions id="v-step-1">
+              <v-card-title>นำเข้าตารางงาน</v-card-title>
+                <v-card-text>
+                  <v-container>
+                    <v-col v-for="(item , indexitem) in JobDataItem" :key="indexitem" cols="12">
+                      {{item.fieldName}} : {{item.fieldValue}}
+                    </v-col>
+                  </v-container>
+                </v-card-text>
+              <v-card-actions id="v-step-3">
                 <v-col id="margin">
                   <v-row justify="center">
                     <v-btn
                       elevation="2"
-                      x-large
+                      small
                       color="#173053"
-                      :disabled="!validAdd"
-                      @click="addData()"
+                      @click="changDataJob()"
                     >
                       <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                      เพิ่ม
+                      เปลี่ยนสถานะ
                     </v-btn>
+                    <v-btn
+                        small
+                        color="red"
+                        @click=";(dialogEdit = false)"
+                      >
+                        <v-icon color="#173053">mdi-close</v-icon>
+                      </v-btn>
                   </v-row>
                 </v-col>
               </v-card-actions>
             </v-card>
           </v-dialog>
-          <!-- end add -->
+          <!-- end -->
           <!-- data table -->
           <v-col cols="12">
             <v-card elevation="7" v-if="dataReady">
@@ -102,7 +121,7 @@
                       small
                       @click.stop="
                         (dialogEdit = true),
-                          getDataById(item),
+                          getJobData(item),
                           validate('UPDATE');
                       "
                     >
@@ -175,17 +194,18 @@ export default {
       // Data Table Config
       searchAll2: '',
       columns: [
-        { text: 'Booking Id', value: 'bookingId' },
+        { text: 'Job No.', value: 'jobNo' },
         { text: 'ชื่อบริการ', value: 'flowName' },
-        { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+        { text: 'ขั้นตอนการทำงาน', value: 'stepTitle' },
         // { text: 'วันที่สร้าง', value: 'CREATE_DATE' },
         // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
         { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
       ],
-      dataItem: this.stepItemSelete,
+      dataItem: [],
       stepItemSelete: [],
       JobDataItem: [],
       allJob: [],
+      searchFlowId: '',
       // End Data Table Config
       formAdd: {
         bookingId: null,
@@ -241,7 +261,7 @@ export default {
     // this.dataReady = false
     this.getDataFlow()
     this.getDataBranch()
-    // this.getJobList()
+    this.searchData()
   },
   methods: {
     validate (Action) {
@@ -332,55 +352,34 @@ export default {
           //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
         })
     },
-    async getStepFlow () {
-      this.stepItemSelete = []
+    async searchData () {
+      this.dataItem = []
       await axios
-        .get(this.DNS_IP + '/flowStep/get?flowId=' + this.formUpdate.flowId + '&shopId=' + this.session.data.shopId)
+        .get(this.DNS_IP + '/job/getList?flowId=' + this.searchFlowId + '&shopId=' + this.session.data.shopId)
         .then(async response => {
+          this.dataItem = response.data
+          console.log('searchData', response.data)
+        })
+    },
+    async getJobData (dt) {
+      this.JobDataItem = []
+      await axios
+        .get(this.DNS_IP + '/jobData/get?jobNo=' + dt.jobNo)
+        .then(async (response) => {
           let rs = response.data
-          console.log('rs', rs)
-          if (rs.length > 0) {
+          if (response.data) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
-              d.text = d.stepTitle
-              d.value = d.stepTitle
-              this.stepItemSelete.push(d)
+              d.shopId = this.session.data.shopId
+              d.userName = this.$session.getAll().data.userName
+              this.JobDataItem.push(d)
             }
-            this.dataReady = true
-            console.log('stepItemSelete', this.stepItemSelete)
-            await this.getJobData()
+            console.log('JobDataItem', this.JobDataItem)
           }
         })
     },
-    async getJobData () {
-      this.JobDataItem = []
-      this.allJob = []
-      axios
-        .get(this.DNS_IP + '/job/get?flowId=' + this.formUpdate.flowId + '&shopId=' + this.session.data.shopId)
-        .then(async (response) => {
-          this.dataReady = true
-          var jobs = []
-          console.log('res', response.data)
-          // console.log('userId', this.formUpdate.userId === 'NULL')
-          if (response.data) {
-            this.formUpdate.stepId = response.data[0].stepId
-            this.formUpdate.flowId = response.data[0].flowId
-            this.formUpdate.jobId = response.data[0].jobId
-            this.formUpdate.empStep = response.data[0].empStep
-            this.formUpdate.departmentStep = response.data[0].departmentStep
-            this.formUpdate.branchStep = response.data[0].branchStep
-            this.userId = response.data[0].userId
-            response.data.forEach(element => {
-              if (jobs.indexOf(element.jobId) === -1) {
-                jobs.push(element.jobId)
-                this.allJob.push({jobId: element.jobId, stepId: element.stepId})
-              }
-            })
-            this.JobDataItem = response.data
-          }
-          console.log('JobDataItem', this.JobDataItem)
-          console.log('JobLEN', this.userId)
-        })
+    changDataJob () {
+
     },
     clearDataAdd () {
       this.date = ''
