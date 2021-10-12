@@ -53,13 +53,35 @@
           <v-dialog v-model="dialogEdit" persistent max-width="30%">
             <v-card class="text-center">
               <v-card-title>นำเข้าตารางงาน</v-card-title>
+              <v-form ref="form_update" v-model="validUpdate" lazy-validation>
                 <v-card-text>
                   <v-container>
                     <v-col v-for="(item , indexitem) in JobDataItem" :key="indexitem" cols="12">
                       {{item.fieldName}} : {{item.fieldValue}}
                     </v-col>
+                    <v-col cols='12'>
+                      <v-select
+                        outlined
+                        dense
+                        v-model="stepId"
+                        :items="stepItemSelete"
+                        label="ขั้นตอนต่อไป"
+                        :rules="[rules.required]"
+                        ></v-select>
+                    </v-col>
+                    <v-col cols='12'>
+                      <v-autocomplete
+                      outlined
+                      dense
+                      v-model="empStep"
+                      :items="empSeleteStep"
+                      :rules="[rules.required]"
+                      label="ชื่อ คนรับผิดชอบ"
+                      ></v-autocomplete>
+                    </v-col>
                   </v-container>
                 </v-card-text>
+              </v-form>
               <v-card-actions id="v-step-3">
                 <v-col id="margin">
                   <v-row justify="center">
@@ -67,6 +89,7 @@
                       elevation="2"
                       small
                       color="#173053"
+                      :disabled="!validUpdate"
                       @click="changDataJob()"
                     >
                       <v-icon left>mdi-checkbox-marked-circle</v-icon>
@@ -205,7 +228,13 @@ export default {
       stepItemSelete: [],
       JobDataItem: [],
       allJob: [],
+      empSeleteStep: [],
       searchFlowId: '',
+      empStep: '',
+      stepId: '',
+      stepIdOld: '',
+      flowId: '',
+      jobId: '',
       // End Data Table Config
       formAdd: {
         bookingId: null,
@@ -261,6 +290,7 @@ export default {
     // this.dataReady = false
     this.getDataFlow()
     this.getDataBranch()
+    this.getEmpSelect()
     this.searchData()
   },
   methods: {
@@ -282,6 +312,43 @@ export default {
         default:
           break
       }
+    },
+    async getStepFlow () {
+      this.stepItemSelete = []
+      await axios
+        .get(this.DNS_IP + '/flowStep/get?flowId=' + this.flowId)
+        .then(async response => {
+          let rs = response.data
+          console.log('rs', rs)
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              d.text = d.stepTitle
+              d.value = d.stepId
+              this.stepItemSelete.push(d)
+            }
+            console.log('stepItemSelete', this.stepItemSelete)
+          }
+        })
+    },
+    async getEmpSelect () {
+      this.empSeleteStep = []
+      await axios
+        .get(this.DNS_IP + '/empSelect/getSelect?shopId=' + this.session.data.shopId)
+        .then(async response => {
+          let rs = response.data
+          console.log('rs', rs)
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              var s = {}
+              s.text = d.empFirst_NameTH + ' ' + d.empLast_NameTH
+              s.value = d.empFirst_NameTH
+              this.empSeleteStep.push(s)
+            }
+            console.log('empSeleteStep', this.empSeleteStep)
+          }
+        })
     },
     async getDataFlow () {
       this.DataFlowName = []
@@ -353,12 +420,14 @@ export default {
         })
     },
     async searchData () {
+      this.dataReady = false
       this.dataItem = []
       await axios
         .get(this.DNS_IP + '/job/getList?flowId=' + this.searchFlowId + '&shopId=' + this.session.data.shopId)
         .then(async response => {
           this.dataItem = response.data
           console.log('searchData', response.data)
+          this.dataReady = true
         })
     },
     async getJobData (dt) {
@@ -374,12 +443,51 @@ export default {
               d.userName = this.$session.getAll().data.userName
               this.JobDataItem.push(d)
             }
+            this.flowId = rs[0].flowId
+            this.jobId = rs[0].jobId
+            this.stepId = rs[0].stepId
+            this.stepIdOld = rs[0].stepId
+            this.getStepFlow()
             console.log('JobDataItem', this.JobDataItem)
           }
         })
     },
     changDataJob () {
-
+      if (this.stepIdOld !== this.stepId) {
+        console.log('stepTitle', this.stepId, this.stepIdOld)
+        this.dataReady = false
+        this.$swal({
+          title: 'ต้องการ แก้ไขสถานะ ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        })
+          .then(async (result) => {
+            var dt = {
+              stepId: this.stepId,
+              empStep: this.empStep
+            }
+            var ID = this.jobId
+            await axios
+              .post(
+              // eslint-disable-next-line quotes
+                this.DNS_IP + "/job/edit/" + ID,
+                dt
+              )
+              .then(async (response) => {
+              // Debug response
+                console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
+                this.dialogEdit = false
+                this.$swal('เรียบร้อย', 'แก้ไขสถานะ เรียบร้อย', 'success')
+                this.searchData()
+              })
+          })
+      } else {
+        this.$swal('ผิดพลาด', 'ขั้นตอนที่ท่านเลือกช้ำกับตอนแรก', 'error')
+      }
     },
     clearDataAdd () {
       this.date = ''
@@ -396,27 +504,11 @@ export default {
       this.dialogAdd = false
     },
     async getDataById (dt) {
-      console.log(this.DNS_IP + '/BookingData/getID?bookingDataId=' + dt.bookingDataId)
-      await axios
-        .get(
-          // eslint-disable-next-line quotes
-          this.DNS_IP + '/BookingData/getID?bookingDataId=' + dt.bookingDataId
-        )
-        .then(async (response) => {
-          console.log('get id : ', response)
-          this.dataReady = true
-          if (response.data) {
-            Object.assign(this.formUpdate, response.data)
-            delete this.formUpdate['RECORD_STATUS']
-            console.log('getDataById', this.formUpdate)
-          }
-        })
-        // eslint-disable-next-line handle-callback-err
-        .catch((error) => {
-          this.dataReady = true
-          console.log('error function getDataById : ', error)
-        //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
-        })
+      if (dt) {
+        Object.assign(this.formUpdate, dt)
+        delete this.formUpdate['RECORD_STATUS']
+        console.log('getDataById', this.formUpdate)
+      }
     },
     async deleteDataGlobal () {
       this.$swal({
