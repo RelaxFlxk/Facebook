@@ -13,6 +13,16 @@
               style="z-index:8;"
               id="v-step-0"
               depressed
+              @click="$router.push('./Qrcodereader')"
+            >
+              <v-icon left>mdi-text-box-plus</v-icon>
+              Qr Code
+            </v-btn>
+            <v-btn
+              color="primary"
+              style="z-index:8;"
+              id="v-step-0"
+              depressed
               @click="(dialogAdd = true), validate('ADD'), getBookingField()"
             >
               <v-icon left>mdi-text-box-plus</v-icon>
@@ -356,6 +366,7 @@ export default {
   },
   data () {
     return {
+      bookNo: '',
       BookingDataItem: [],
       Layout: [],
       dataReady: false,
@@ -447,6 +458,7 @@ export default {
   },
   async mounted () {
     this.dataReady = false
+    await this.scanQrcode()
     this.getDataFlow()
     this.getDataBranch()
     this.getBookingList()
@@ -469,6 +481,18 @@ export default {
 
         default:
           break
+      }
+    },
+    async scanQrcode () {
+      this.bookNo = this.$route.query.bookNo
+      if (this.bookNo === undefined) {
+        console.log('11111111111111', this.bookNo)
+      } else {
+        let dt = {
+          bookNo: this.bookNo
+        }
+        this.getBookingData(dt)
+        this.dialogEdit = true
       }
     },
     async getDataFlow () {
@@ -766,6 +790,8 @@ export default {
                   )
                   .then(async response => {
                     this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
+                    this.dialogEdit = false
+                    this.$router.push('/Master/BookingList')
                   })
               }
             })

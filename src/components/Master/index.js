@@ -10,7 +10,7 @@ import Branch from './Branch'
 import Company from './Company'
 import BookingList from './BookingList'
 import JobList from './JobList'
-
+import Qrcodereader from './Qrcodereader.vue'
 export default {
   CustomField,
   Flow,
@@ -23,5 +23,6 @@ export default {
   Branch,
   Company,
   BookingList,
-  JobList
+  JobList,
+  Qrcodereader
 }
