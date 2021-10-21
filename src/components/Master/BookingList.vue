@@ -458,6 +458,7 @@ export default {
   },
   async mounted () {
     this.dataReady = false
+    this.beforeCreate()
     await this.scanQrcode()
     this.getDataFlow()
     this.getDataBranch()
@@ -481,6 +482,11 @@ export default {
 
         default:
           break
+      }
+    },
+    beforeCreate () {
+      if (!this.$session.exists()) {
+        this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo)
       }
     },
     async scanQrcode () {

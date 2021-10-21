@@ -79,6 +79,7 @@ export default {
   data () {
     return {
       session: this.$session.getAll(),
+      bookNo: this.$route.query.bookNo,
       sheet: false,
       profile: [],
       privacyConfigDetail: '',
@@ -119,6 +120,13 @@ export default {
           }
         }
       })
+    },
+    async checkbookNo () {
+      if (this.bookNo !== '') {
+        this.$router.push('/Master/BookingList?bookNo=' + this.bookNo)
+      } else {
+        this.$router.push('/Core/Home')
+      }
     },
     async getProfile () {
       let _this = this
@@ -198,7 +206,7 @@ export default {
           if (response.data[0]) {
             this.$session.start()
             this.$session.set('data', response.data[0])
-            this.$router.push('/Core/Home')
+            this.checkbookNo()
           } else {
             this.dataReady = true
             this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง1', 'error')
