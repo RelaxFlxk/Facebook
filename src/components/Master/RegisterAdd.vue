@@ -34,9 +34,9 @@
                   <!-- สาขา -->
                     <v-col cols="12" sm="4">
                     <v-select
+                      v-model="formAdd.masBranchName"
                       :items="DataBranchName"
-                      v-model="masBranchName"
-                      @change="getStepFlow() , getLayout()"
+                      @change="flowfieldtest() , pushmessagToGroup(formAdd.masBranchName) "
                       dense
                       outlined
                       hide-details
@@ -45,7 +45,7 @@
                     </v-col>
                    </v-sheet>
                     <br>
-                      <v-card v-show="formAdd.flowCode !== '' "
+                      <v-card v-show="formAdd.flowCode && formAdd.masBranchName !== '' "
                       class="mx-auto"
                       max-width="500">
                           <v-container>
@@ -162,7 +162,7 @@
         >
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
-              v-model="delivDate"
+              v-model="endDate"
               label="วันที่นัดส่งรถลูกค้า"
               persistent-hint
               prepend-icon="mdi-calendar"
@@ -171,7 +171,7 @@
             ></v-text-field>
           </template>
           <v-date-picker
-            v-model="delivDate"
+            v-model="endDate"
             no-title
             @input="menu = false"
           ></v-date-picker>
@@ -247,8 +247,6 @@ export default {
       ],
       showCard: false,
       DataBranchName: [],
-      masBranchName: '',
-      delivDate: '',
       options2: {
         locale: 'en-US',
         prefix: '',
@@ -263,7 +261,10 @@ export default {
       dateTime: '', // Generate DateTime
       date: new Date().toISOString().substr(0, 10),
       menu: false,
+      endDate: '',
+      checkCar: 'False',
       session: this.$session.getAll(),
+      shopId: this.$session.getAll().data.shopId,
       formAdd: {
         flowId: '',
         fieldId: [],
@@ -271,7 +272,8 @@ export default {
         optionField: '',
         flowCode: '',
         CREATE_USER: '',
-        LAST_USER: ''
+        LAST_USER: '',
+        masBranchName: ''
       },
       rules: {
         numberRules: value =>
@@ -314,9 +316,9 @@ export default {
     this.getDataBranch()
   },
   methods: {
-    getCustomField () {
+    async getCustomField () {
       this.editedItemSelete = []
-      axios.get(this.DNS_IP + '/flow/get').then((response) => {
+      axios.get(this.DNS_IP + '/flow/get?shopId=' + this.shopId).then((response) => {
         let rs = response.data
         if (rs.length > 0) {
           for (var i = 0; i < rs.length; i++) {
@@ -331,7 +333,7 @@ export default {
     getDataBranch () {
       this.DataBranchName = []
       console.log('DataBranchName', this.DataBranchName)
-      axios.get(this.DNS_IP + '/master_branch/get').then(response => {
+      axios.get(this.DNS_IP + '/master_branch/get?shopId=' + this.shopId).then(response => {
         let rs = response.data
         if (rs.length > 0) {
           for (var i = 0; i < rs.length; i++) {
@@ -340,8 +342,6 @@ export default {
             d.value = d.masBranchID
             this.DataBranchName.push(d)
           }
-        } else {
-          this.DataBranchName = []
         }
       })
     },
@@ -416,6 +416,9 @@ export default {
           s.CREATE_USER = ''
           s.LAST_USER = ''
           s.showCard = d.showCard
+          s.shopId = 'MS2021101348536490'
+          s.endDate = d.endDate
+          s.checkCar = d.checkCar
           s.conditionValue = d.value
           if (d.conditionField !== '') {
             s.conditionFieldId = this.flowfieldNameitem.filter((row) => { return row.fieldName === d.conditionField })[0]['fieldId']
@@ -462,17 +465,19 @@ export default {
           var GG = this.GroupId
           this.formAdd.CREATE_USER = this.session.data.userName
           this.formAdd.LAST_USER = this.session.data.userName
+          this.shopId = this.$session.getAll().data.shopId
+          this.endDate = this.endDate
+          this.checkCar = this.checkCar
           this.flexData(this.flowfieldNameitem)
           var Text = JSON.stringify(this.dtitem)
           var flexitem = JSON.parse(Text)
           console.log('checkdata', this.flowfieldNameitem)
+          console.log('checkCar', this.checkCar)
           console.log('showflex', flexitem)
           await axios
             .post(
               // eslint-disable-next-line quotes
-              this.DNS_IP + '/job/add',
-              this.flowfieldNameitem
-
+              this.DNS_IP + '/job/add', this.flowfieldNameitem
             )
             .then(async (response) => {
               // Debug response
@@ -534,8 +539,8 @@ export default {
                   )
                   .then(
                     this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success'),
-                    this.clearData(),
-                    this.$router.push('/Master/FlowStep')
+                    this.clearData()
+                    // this.$router.push('/Master/FlowStep')
                   )
               }
             })

@@ -11,6 +11,7 @@ import Company from './Company'
 import BookingList from './BookingList'
 import JobList from './JobList'
 import Qrcodereader from './Qrcodereader.vue'
+import PaymentType from './PaymentType.vue'
 export default {
   CustomField,
   Flow,
@@ -24,5 +25,6 @@ export default {
   Company,
   BookingList,
   JobList,
-  Qrcodereader
+  Qrcodereader,
+  PaymentType
 }

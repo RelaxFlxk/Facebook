@@ -4,8 +4,10 @@
     <v-main>
       <div class="pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4">
         <v-row>
-          <v-col cols="6" class="text-left">
-            <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
+          <v-col cols="12" class="text-center">
+            <p class="text-h4 text--primary">
+              {{formUpdate.flowName}} ({{masBranchName}})
+            </p>
           </v-col>
         </v-row>
 
@@ -178,7 +180,7 @@
           </v-dialog>
           <!-- end add -->
 
-        <div class="workRow">
+        <div class="workRow" v-show="formUpdate.flowName && masBranchName !== ''">
           <v-row>
           <v-col class="colum" v-for="(element , work ) in Layout" :key="work">
                <div v-for="(item , indexitem) in Layout[work].workData" :key="indexitem">
@@ -188,30 +190,54 @@
                     dark
                   >
                     <v-card-title class=" text pa-3">
-                      {{item.stepTitle}}
+                      {{item.stepTitle}} ({{allJob.filter((row) => {return row.stepId == item.stepId}).length}})
                     </v-card-title>
                   </v-toolbar>
                     <div  v-for="(itemsJob, indexJob) in allJob.filter((row) => {return row.stepId == item.stepId})" :key="indexJob">
                       <v-list-item>
-                      <v-alert
+                      <v-alert class="allFrame"
                         color="cyan"
                         border="left"
                         elevation="2"
                         colored-border
                       >
-                      <v-icon right color="green darken-2" depressed @click="dialogAdd = true"> mdi-pencil </v-icon>
-                      <v-icon right color="#CDDC39" depressed @click="updateStatusCars"> mdi-car </v-icon>
-                      <v-icon right color="red" depressed @click="dialogDelete = true"> mdi-delete </v-icon>
-                    <div  v-for="(items, index) in JobDataItem.filter((row) => {return row.jobId == itemsJob.jobId})" :key="index">
+                    <div class="bodyFrame" v-for="(items, index) in JobDataItem.filter((row) => {return row.jobId == itemsJob.jobId})" :key="index">
                       {{ items.fieldValue}}<br>
                     </div>
                     <strong>ผู้รับผิดชอบ :{{ JobDataItem.filter((row) => {return row.jobId == itemsJob.jobId})[0].empStep }}</strong>
                     <v-spacer></v-spacer>
-                      <v-col cols="6" class="v-margit_button text-right">
-                        <v-btn color="primary" depressed @click="dialog = true, setUpdate(itemsJob)">
-                          เปลี่ยนสถานะ
-                        </v-btn>
-                      </v-col>
+                    <v-row>
+                    <div>
+                    <v-icon right color="green darken-2" depressed @click="dialogAdd = true"> mdi-circle-edit-outline </v-icon>
+
+                    {{allJob.filter((row) => {return row.stepId == item.stepId})[0].checkCar}}
+
+                      <v-icon v-if="allJob.filter((row) => {return row.stepId == item.stepId})[0].checkCar == 'False'"
+                          right color="#CDDC39"
+                          depressed
+                          @click="updateStatusCars(itemsJob.jobId, 'False')"
+                      > mdi-car </v-icon>
+
+                      <v-icon v-if="allJob.filter((row) => {return row.stepId == item.stepId})[0].checkCar == 'True'"
+                          right color="#9E9E9E"
+                          depressed
+                          @click="updateStatusCars(itemsJob.jobId, 'True')"
+                      > mdi-car </v-icon>
+
+                      <v-icon right color="red" depressed @click="dialogDelete = true"> mdi-delete </v-icon>
+                    </div>
+                    <div class="text-center">
+                    <div class="my-2">
+                      <v-btn depressed @click="dialog = true, setUpdate(itemsJob)"
+                        x-small
+                        color="secondary"
+                        dark
+                      >
+                        เปลี่ยนสถานะ
+                      </v-btn>
+                    </div>
+                    </div>
+                    </v-row>
                       </v-alert>
                   </v-list-item>
                     </div>
@@ -258,6 +284,7 @@ export default {
       dialogAdd: false,
       dialogDelete: false,
       session: this.$session.getAll(),
+      shopId: this.$session.getAll().data.shopId,
       stepItemSelete: [],
       empSeleteStep: [],
       DataFlowName: [],
@@ -277,7 +304,8 @@ export default {
         jobId: '',
         empStep: '',
         departmentStep: '',
-        branchStep: ''
+        branchStep: '',
+        checkCar: ''
       },
       JobDataItem: [],
       allJob: [],
@@ -290,8 +318,14 @@ export default {
         fieldName: ''
       },
       formDelete: {
-        jobId: '',
+        jobNo: '',
+        shopId: this.$session.getAll().data.shopId,
         totalPrice: ''
+      },
+      formUpdateCar: {
+        jobNo: '360043981634784276004',
+        shopId: 'MS2021101348536490',
+        checkCar: ''
       }
     }
   },
@@ -318,13 +352,13 @@ export default {
     getDataFlow () {
       this.DataFlowName = []
       console.log('DataFlowName', this.DataFlowName)
-      axios.get(this.DNS_IP + '/flow/get').then(response => {
+      axios.get(this.DNS_IP + '/flow/get?shopId=' + this.shopId).then(response => {
         let rs = response.data
         if (rs.length > 0) {
           for (var i = 0; i < rs.length; i++) {
             var d = rs[i]
             d.text = d.flowName
-            d.value = d.flowId
+            d.value = d.flowName
             this.DataFlowName.push(d)
           }
         } else {
@@ -335,13 +369,13 @@ export default {
     getDataBranch () {
       this.DataBranchName = []
       console.log('DataBranchName', this.DataBranchName)
-      axios.get(this.DNS_IP + '/master_branch/get').then(response => {
+      axios.get(this.DNS_IP + '/master_branch/get?shopId=' + this.shopId).then(response => {
         let rs = response.data
         if (rs.length > 0) {
           for (var i = 0; i < rs.length; i++) {
             var d = rs[i]
             d.text = d.masBranchName
-            d.value = d.masBranchID
+            d.value = d.masBranchName
             this.DataBranchName.push(d)
           }
         } else {
@@ -352,7 +386,7 @@ export default {
     async getLayout () {
       this.Layout = []
       console.log('flowName', this.formUpdate.flowName)
-      await axios.get(this.DNS_IP + '/WorkShopLayout/get?flowId=' + this.formUpdate.flowName)
+      await axios.get(this.DNS_IP + '/WorkShopLayout/get?flowName=' + this.formUpdate.flowName)
         .then((response) => {
           let rs = response.data
           for (let i = 0; i < rs.length; i++) {
@@ -376,7 +410,7 @@ export default {
     async getStepFlow () {
       this.stepItemSelete = []
       await axios
-        .get(this.DNS_IP + '/flowStep/get?flowId=' + this.formUpdate.flowName)
+        .get(this.DNS_IP + '/flowStep/get?flowName=' + this.formUpdate.flowName)
         .then(async response => {
           let rs = response.data
           console.log('rs', rs)
@@ -416,7 +450,7 @@ export default {
       this.JobDataItem = []
       this.allJob = []
       axios
-        .get(this.DNS_IP + '/job/get?flowId=' + this.formUpdate.flowName)
+        .get(this.DNS_IP + '/job/get?flowName=' + this.formUpdate.flowName)
         .then(async (response) => {
           this.dataReady = true
           var jobs = []
@@ -429,11 +463,12 @@ export default {
             this.formUpdate.empStep = response.data[0].empStep
             this.formUpdate.departmentStep = response.data[0].departmentStep
             this.formUpdate.branchStep = response.data[0].branchStep
+            this.formUpdate.checkCar = response.data[0].checkCar
             this.userId = response.data[0].userId
             response.data.forEach(element => {
               if (jobs.indexOf(element.jobId) === -1) {
                 jobs.push(element.jobId)
-                this.allJob.push({jobId: element.jobId, stepId: element.stepId})
+                this.allJob.push({jobId: element.jobId, stepId: element.stepId, checkCar: element.checkCar})
               }
             })
             this.JobDataItem = response.data
@@ -494,9 +529,6 @@ export default {
               this.allJob.map((row, index) => {
                 if (row.jobId === ID) {
                   this.allJob[index].stepId = this.formUpdate.stepId
-                  // this.getEmpSelect()
-                  // this.getStepFlow()
-                  // this.getLayout()
                 }
               })
               this.pushmessage(this.formUpdate.jobId)
@@ -526,9 +558,9 @@ export default {
         }
       }
     },
-    async addData () {
-    },
-    async updateStatusCars () {
+    async updateStatusCars (item, status) {
+      console.log(this.formUpdate.jobId)
+      console.log(item)
       this.$swal({
         title: 'อัพเดท สถานะรถ ใช่หรือไม่?',
         type: 'question',
@@ -538,24 +570,37 @@ export default {
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
       })
-      await axios
-        .post(
-          // eslint-disable-next-line quotes
-          this.DNS_IP + "/job/" + "editStatus/"
-        )
         .then(async (response) => {
-          // Debug response
-          console.log('DNS_IP + /job/editStatus/', response)
-
-          this.$swal('เรียบร้อย', 'success')
-        })
-      // eslint-disable-next-line handle-callback-err
-        .catch((error) => {
-          this.dataReady = true
-          console.log('error function deleteDataGlobal : ', error)
+          var ID = item
+          var statusUse = ''
+          if (status === 'True') {
+            statusUse = 'False'
+          } else {
+            statusUse = 'True'
+          }
+          let ds = {
+            jobNo: this.formUpdateCar.jobNo,
+            shopId: this.formUpdateCar.shopId,
+            checkCar: statusUse,
+            LAST_USER: this.session.data.userName,
+            statusUpdateCar: 'True'
+          }
+          console.log('ds', ds)
+          await axios
+            .post(
+              this.DNS_IP + '/job/editStatus/' + ID, ds
+            )
+            .then(async response => {
+              this.$swal('เรียบร้อย', 'อัพเดท สถานะรถ เรียบร้อย', 'success')
+              console.log('shopId:', this.shopId)
+              console.log('form:', this.formUpdateCar)
+            })
         })
     },
-    async deleteDataPrice (d) {
+    deleteDataPrice () {
+      this.jobNo = ''
+      console.log('shopId:', this.shopId)
+      console.log('form:', this.formDelete)
       this.$swal({
         title: 'ให้บริการ เสร็จเรียบร้อยแล้ว ใช่หรือไม่?',
         type: 'question',
@@ -565,33 +610,26 @@ export default {
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
       })
-        .then(async (result) => {
+        .then(async (response) => {
+          var ID = this.formUpdate.jobId
           let ds = {
-            totalPrice: d.totalPrice,
-            RECORD_STATUS: 'D'
+            jobNo: this.formDelete.jobNo,
+            shopId: this.formDelete.shopId,
+            totalPrice: this.formDelete.totalPrice,
+            LAST_USER: this.session.data.userName,
+            statusDelete: 'true'
           }
+          console.log('ds', ds)
           await axios
             .post(
-              // eslint-disable-next-line quotes
-              this.DNS_IP + "/job/" + "editPrice/" + d.jobId, ds
+              this.DNS_IP + '/job/editPrice/' + ID, ds
             )
-            .then(async (response) => {
-              // Debug response
-              console.log('DNS_IP + /job/edit/', response)
-
-              this.$swal('เรียบร้อย', 'ลบข้อมูลเรียบร้อย', 'success')
-              this.clearData()
+            .then(async response => {
+              this.$swal('เรียบร้อย', 'ลบข้อมูล เรียบร้อย', 'success')
+              this.dialogDelete = false
+              console.log('shopId:', this.shopId)
+              console.log('form:', this.formDelete)
             })
-          // eslint-disable-next-line handle-callback-err
-            .catch((error) => {
-              this.dataReady = true
-              console.log('error function deleteDataGlobal : ', error)
-            })
-        })
-        .catch((error) => {
-          this.dataReady = true
-          this.$swal('ผิดพลาด', 'ผิดพลาด -2', 'error')
-          console.log('error function deleteDataGlobal : ', error)
         })
     }
   }
@@ -608,5 +646,13 @@ export default {
   width: 250px;
   background-color: #f0eeee;
   margin-left: 5px;
+}
+.allFrame{
+  padding-top: 0px;
+  width: 100%;
+  height: max-content;
+}
+.bodyFrame {
+  padding-top: 1px;
 }
 </style>

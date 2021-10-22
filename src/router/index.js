@@ -126,6 +126,11 @@ export default new Router({
     path: '/Master/Company',
     name: 'Company',
     component: Master.Company
+  },
+  {
+    path: '/Master/PaymentType',
+    name: 'PaymentType',
+    component: Master.PaymentType
   }
   ]
 })

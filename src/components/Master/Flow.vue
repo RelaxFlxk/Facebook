@@ -722,7 +722,8 @@ export default {
         flowName: '',
         flowfieldName: [],
         CREATE_USER: '',
-        LAST_USER: ''
+        LAST_USER: '',
+        shopId: ''
       },
       formAddStep: {
         stepId: '',
@@ -1038,6 +1039,7 @@ export default {
           this.formAdd.LAST_USER = this.session.data.userName
           this.formAdd.flowCode = this.generateCodeGlobal()
           this.formAdd.flowfieldName = JSON.stringify(this.desserts)
+          this.formAdd.shopId = this.$session.getAll().data.shopId
           console.log('flowfieldName', this.formAdd.flowfieldName)
           console.log('forAdd', this.formAdd)
           await axios
@@ -1093,6 +1095,7 @@ export default {
           console.log('stepTitle', this.formAddStep.stepTitle)
           console.log('stepId', this.formAddStep.stepId)
           console.log('forAdd', this.formAddStep)
+          this.formAdd.shopId = this.$session.getAll().data.shopId
           await axios
             .post(
               // eslint-disable-next-line quotes

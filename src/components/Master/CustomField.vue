@@ -509,7 +509,8 @@ export default {
         optionText: '',
         optionValue: '',
         conditionField: '',
-        conditionValue: ''
+        conditionValue: '',
+        shopId: this.$session.getAll().data.shopId
       },
       formUpdate: {
         fieldId: '',
@@ -520,7 +521,8 @@ export default {
         optionText: '',
         optionValue: '',
         conditionField: '',
-        conditionValue: ''
+        conditionValue: '',
+        shopId: ''
       },
       formAddOption: {
         optionText: '',
@@ -604,15 +606,6 @@ export default {
         default:
           break
       }
-    },
-    async searchDataAll () {
-      var search =
-        '?levelId=' + this.searchAll +
-         '&name=' + this.searchAll +
-         '&Point=' + this.searchAll +
-         '&priviledge=' + this.searchAll
-      this.dataReady = false
-      this.searchDataAllGlobal(this.DNS_IP, this.path, search)
     },
     async getDataById (item) {
       console.log('dataItem', this.dataItem)

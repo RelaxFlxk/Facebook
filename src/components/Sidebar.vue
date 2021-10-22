@@ -169,7 +169,8 @@ export default {
         { title: 'จัดโครงสร้างกระดาน', icon: 'dashboard', to: '/Master/WorkShop' },
         { title: 'จัดการพนักงาน', icon: 'mdi-playlist-check', to: '/Master/Employee' },
         { title: 'จัดการสาขา', icon: 'mdi-playlist-check', to: '/Master/Branch' },
-        { title: 'จัดการบริษัท', icon: 'mdi-playlist-check', to: '/Master/Company' }
+        { title: 'จัดการบริษัท', icon: 'mdi-playlist-check', to: '/Master/Company' },
+        { title: 'ประเภทการชำระเงิน', icon: 'mdi-playlist-check', to: '/Master/PaymentType' }
         // { title: 'รายชื่อร้านค้า', icon: 'mdi-playlist-check', to: '/System/ListShop' },
         // { title: 'กลุ่มผู้ใช้งาน', icon: 'mdi-account-group', to: '/System/UserTypeGroup' },
         // { title: 'Vgroup', icon: 'mdi-account-group', to: '/System/VgroupMapCoin' }
