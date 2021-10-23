@@ -112,6 +112,7 @@ export default {
     getDataFlow () {
       this.DataFlowName = []
       console.log('DataFlowName', this.DataFlowName)
+      console.log('shopId', this.shopId)
       axios.get(this.DNS_IP + '/flow/get?shopId=' + this.shopId).then(response => {
         let rs = response.data
         if (rs.length > 0) {

@@ -456,9 +456,13 @@ export default {
       }
     }
   },
+  beforeCreate () {
+    if (!this.$session.exists()) {
+      this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo)
+    }
+  },
   async mounted () {
     this.dataReady = false
-    this.beforeCreate()
     await this.scanQrcode()
     this.getDataFlow()
     this.getDataBranch()
@@ -484,15 +488,10 @@ export default {
           break
       }
     },
-    beforeCreate () {
-      if (!this.$session.exists()) {
-        this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo)
-      }
-    },
     async scanQrcode () {
       this.bookNo = this.$route.query.bookNo
       if (this.bookNo === undefined) {
-        console.log('11111111111111', this.bookNo)
+        // console.log('11111111111111', this.bookNo)
       } else {
         let dt = {
           bookNo: this.bookNo
@@ -797,7 +796,7 @@ export default {
                   .then(async response => {
                     this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
                     this.dialogEdit = false
-                    this.$router.push('/Master/BookingList')
+                    this.getBookingList()
                   })
               }
             })
