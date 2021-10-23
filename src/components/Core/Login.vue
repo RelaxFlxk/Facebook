@@ -79,7 +79,9 @@ export default {
   data () {
     return {
       session: this.$session.getAll(),
-      bookNo: this.$route.query.bookNo,
+      queryData: '',
+      bookNo: '',
+      jobNo: '',
       sheet: false,
       profile: [],
       privacyConfigDetail: '',
@@ -122,8 +124,14 @@ export default {
       })
     },
     async checkbookNo () {
-      if (this.bookNo !== '') {
-        this.$router.push('/Master/BookingList?bookNo=' + this.bookNo)
+      if (this.$route.query.bookNo) {
+        this.bookNo = this.$route.query.bookNo
+        this.queryData = 'bookNo'
+        this.$router.push('/Master/BookingList?' + this.queryData + '=' + this.bookNo)
+      } else if (this.$route.query.jobNo) {
+        this.jobNo = this.$route.query.jobNo
+        this.queryData = 'jobNo'
+        this.$router.push('/Master/jobQrCode?' + this.queryData + '=' + this.jobNo)
       } else {
         this.$router.push('/Core/Home')
       }

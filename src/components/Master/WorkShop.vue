@@ -89,12 +89,14 @@ export default {
       DataflowId: '',
       DataFlowName: [],
       session: this.$session.getAll(),
+      shopId: this.$session.getAll().data.shopId,
       fromAdd: {
         workColum: null,
         workData: '',
         flowId: null,
         CREATE_USER: '',
-        LAST_USER: ''
+        LAST_USER: '',
+        shopId: ''
       },
       numberRules: [ (v) => (!isNaN(parseFloat(v)) && v >= 0 && v <= 9999999999) ]
     }
@@ -110,7 +112,7 @@ export default {
     getDataFlow () {
       this.DataFlowName = []
       console.log('DataFlowName', this.DataFlowName)
-      axios.get(this.DNS_IP + '/flow/get').then(response => {
+      axios.get(this.DNS_IP + '/flow/get?shopId=' + this.shopId).then(response => {
         let rs = response.data
         if (rs.length > 0) {
           for (var i = 0; i < rs.length; i++) {
@@ -126,7 +128,7 @@ export default {
     },
     async getLayout () {
       this.Layout = []
-      await axios.get(this.DNS_IP + '/WorkShopLayout/get?flowId=' + this.DataflowId)
+      await axios.get(this.DNS_IP + '/WorkShopLayout/get?flowId=' + this.DataflowId + '&shopId=' + this.shopId)
         .then((response) => {
           let rs = response.data
           for (let i = 0; i < rs.length; i++) {
@@ -152,7 +154,7 @@ export default {
     async getStep (flowId) {
       this.stepData = []
       await axios
-        .get(this.DNS_IP + '/flowStep/get?flowId=' + flowId)
+        .get(this.DNS_IP + '/flowStep/get?flowId=' + flowId + '&shopId=' + this.shopId)
         .then(async response => {
           let rs = response.data
           const dt = rs.map((item) => {
@@ -253,6 +255,7 @@ export default {
           this.fromAdd.workData = '[]'
           this.fromAdd.workColum = this.Layout.length + 1
           this.fromAdd.flowId = this.DataflowId
+          this.fromAdd.shopId = this.shopId
           console.log('fromAdd', this.fromAdd)
           await axios
             .post(

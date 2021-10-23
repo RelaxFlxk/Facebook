@@ -13,8 +13,8 @@
           <div class=" text-center">
            <br/>
              <br>
-             <h2>QR CODE</h2>
-            <qrcode-vue :value="value" :size="size" level="H" />
+             <h2 style="font-weight: 900; color:#FFA000">ติดตามสถานะ!</h2>
+            <qrcode-vue :value="value" :size="size" level="H" :foreground="foreground" />
          </div>
       </v-col>
     </v-row>
@@ -33,7 +33,7 @@
                 mdi-checkbox-marked-circle
                 </v-icon>
                 </v-btn>
-                <v-btn small class="ma-2" color="error" dark >
+                <v-btn small class="ma-2" color="error" @click="clearData()" dark >
                     Close
                     <v-icon dark right>
                         mdi-minus-circle
@@ -93,13 +93,21 @@ export default {
       ],
       session: this.$session.getAll(),
       value: '',
-      size: 200
+      size: 200,
+      foreground: '#173053'
     }
   },
   async mounted () {
-    this.getjob()
+    await this.beforeCreate()
   },
   methods: {
+    beforeCreate () {
+      if (!this.$session.exists()) {
+        this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo)
+      } else {
+        this.getjob()
+      }
+    },
     getjob () {
       this.jobitem = []
       if (this.jobNo !== '') {
@@ -166,7 +174,7 @@ export default {
     },
     async clearData () {
       // eslint-disable-next-line no-redeclare
-      await window.close()
+      this.$router.push('/Core/Home')
     }
   }
 }
@@ -182,6 +190,7 @@ export default {
   Height: 52px;
 }
 .QrBg{
-  background-color: #1B437C;
+  background-color: #173053;
+  height: 100vh;
 }
 </style>
