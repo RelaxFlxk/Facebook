@@ -3,7 +3,7 @@
     <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
     <v-main>
       <div class="pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4">
-        <v-row>
+        <v-row v-if="formUpdate.flowName && masBranchName">
           <v-col cols="12" class="text-center">
             <p class="text-h4 text--primary">
               {{formUpdate.flowName}} ({{masBranchName}})
@@ -184,7 +184,7 @@
           <v-row>
           <v-col class="colum" v-for="(element , work ) in Layout" :key="work">
                <div v-for="(item , indexitem) in Layout[work].workData" :key="indexitem">
-                <v-card>
+                <v-card class="mb-6">
                   <v-toolbar
                     color="primary"
                     dark
@@ -193,54 +193,48 @@
                       {{item.stepTitle}} ({{allJob.filter((row) => {return row.stepId == item.stepId}).length}})
                     </v-card-title>
                   </v-toolbar>
-                    <div  v-for="(itemsJob, indexJob) in allJob.filter((row) => {return row.stepId == item.stepId})" :key="indexJob">
-                      <v-list-item>
-                      <v-alert class="allFrame"
+
+                  <div  v-for="(itemsJob, indexJob) in allJob.filter((row) => {return row.stepId == item.stepId})" :key="indexJob">
+                    <v-list-item>
+                      <v-alert class="allFrame pb-3"
                         color="cyan"
                         border="left"
                         elevation="2"
                         colored-border
                       >
-                    <div class="bodyFrame" v-for="(items, index) in JobDataItem.filter((row) => {return row.jobId == itemsJob.jobId})" :key="index">
-                      {{ items.fieldValue}}<br>
-                    </div>
-                    <strong>ผู้รับผิดชอบ :{{ JobDataItem.filter((row) => {return row.jobId == itemsJob.jobId})[0].empStep }}</strong>
-                    <v-spacer></v-spacer>
-                    <v-row>
-                    <div>
-                    <v-icon right color="green darken-2" depressed @click="dialogAdd = true"> mdi-circle-edit-outline </v-icon>
+                        <div class="bodyFrame" v-for="(items, index) in JobDataItem.filter((row) => {return row.jobId == itemsJob.jobId})" :key="index">
+                          {{ items.fieldValue}}<br>
+                        </div>
+                        <v-icon large color="black"> mdi-account</v-icon> <strong>{{ JobDataItem.filter((row) => {return row.jobId == itemsJob.jobId})[0].empStep }}</strong>
+                        <v-spacer></v-spacer>
+                        <v-container class="grey lighten-4" style="position:absolute; width:30px; right:0px; top:0px;">
+                          <v-row class="pl-1">
+                              <v-icon v-if="allJob.filter((row) => {return row.stepId == item.stepId})[0].checkCar == 'False'"
+                                color="#CDDC39"
+                                depressed
+                                @click="updateStatusCars(itemsJob.jobId, 'False')"
+                              > mdi-car </v-icon>
 
-                    {{allJob.filter((row) => {return row.stepId == item.stepId})[0].checkCar}}
-
-                      <v-icon v-if="allJob.filter((row) => {return row.stepId == item.stepId})[0].checkCar == 'False'"
-                          right color="#CDDC39"
-                          depressed
-                          @click="updateStatusCars(itemsJob.jobId, 'False')"
-                      > mdi-car </v-icon>
-
-                      <v-icon v-if="allJob.filter((row) => {return row.stepId == item.stepId})[0].checkCar == 'True'"
-                          right color="#9E9E9E"
-                          depressed
-                          @click="updateStatusCars(itemsJob.jobId, 'True')"
-                      > mdi-car </v-icon>
-
-                      <v-icon right color="red" depressed @click="dialogDelete = true"> mdi-delete </v-icon>
-                    </div>
-                    <div class="text-center">
-                    <div class="my-2">
-                      <v-btn depressed @click="dialog = true, setUpdate(itemsJob)"
-                        x-small
-                        color="secondary"
-                        dark
-                      >
-                        เปลี่ยนสถานะ
-                      </v-btn>
-                    </div>
-                    </div>
-                    </v-row>
+                              <v-icon v-else
+                                color="green"
+                                depressed
+                                @click="updateStatusCars(itemsJob.jobId, 'True')"
+                              > mdi-car </v-icon>
+                          </v-row>
+                          <v-row class="pt-2 pl-1">
+                            <v-icon large color="primary" dark @click="dialogAdd = true"> mdi-circle-edit-outline </v-icon>
+                          </v-row>
+                          <v-row class="pt-2 pl-1">
+                              <v-icon large color="primary" @click="dialog = true, setUpdate(itemsJob)"> mdi-list-status</v-icon>
+                          </v-row>
+                          <v-row class="pt-2 pl-1">
+                              <v-icon large color="green" @click="dialogDelete = true"> mdi-check-bold</v-icon>
+                          </v-row>
+                        </v-container>
                       </v-alert>
-                  </v-list-item>
-                    </div>
+                    </v-list-item>
+                  </div>
+
                 </v-card>
                </div>
              </v-col>
