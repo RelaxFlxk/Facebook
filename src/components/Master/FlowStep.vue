@@ -40,15 +40,15 @@
           ></v-select>
           </v-col>
           <v-btn class="ma-2 mt-5" color="primary" depressed @click="newCars()">
-              <v-icon left>mdi-text-box-plus</v-icon>
+              <v-icon left>mdi-account-plus</v-icon>
               รับรถใหม่
             </v-btn>
           <v-btn class="ma-2 mt-5" color="primary" depressed @click="editLayout()">
-            <v-icon left>mdi-text-box-plus</v-icon>
+            <v-icon left>mdi-application-cog</v-icon>
             แก้ไข Layout
           </v-btn>
           <v-btn style="margin-top: 20px" color="primary" depressed @click="editStep()">
-              <v-icon left>mdi-text-box-plus</v-icon>
+              <v-icon left>mdi-application-cog</v-icon>
               แก้ไข ขั้นตอน
             </v-btn>
         </v-sheet>

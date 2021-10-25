@@ -220,23 +220,23 @@ export default {
       ]
       this.booking = [
         { title: 'รายชื่อลูกค้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingList' },
-        { title: 'ข้อมูลหน้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingField' }
+        { title: 'ข้อมูลหน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingField' }
       ]
       this.workflow = [
-        { title: 'รับรถลูกค้ารายใหม่', icon: 'mdi-account-edit', to: '/Master/RegisterAdd' },
-        { title: 'กระดานการทำงาน', icon: 'mdi-cash-register', to: '/Master/FlowStep' },
-        { title: 'จัดการสถานะการบริการ', icon: 'mdi-cash-register', to: '/Master/Flow' },
-        { title: 'List กระดานการทำงาน', icon: 'mdi-cash-register', to: '/Master/JobList' },
+        { title: 'รับรถลูกค้ารายใหม่', icon: 'mdi-account-plus', to: '/Master/RegisterAdd' },
+        { title: 'กระดานการทำงาน', icon: 'mdi-clipboard-check-multiple-outline', to: '/Master/FlowStep' },
+        { title: 'จัดการสถานะการบริการ', icon: 'mdi-transit-connection-variant', to: '/Master/Flow' },
+        { title: 'List กระดานการทำงาน', icon: 'mdi-application-cog', to: '/Master/JobList' },
         { title: 'จัดโครงสร้างกระดาน', icon: 'dashboard', to: '/Master/WorkShop' }
         // { title: 'รายชื่อร้านค้า', icon: 'mdi-playlist-check', to: '/System/ListShop' },
         // { title: 'กลุ่มผู้ใช้งาน', icon: 'mdi-account-group', to: '/System/UserTypeGroup' },
         // { title: 'Vgroup', icon: 'mdi-account-group', to: '/System/VgroupMapCoin' }
       ]
       this.corporate = [
-        { title: 'สาขา', icon: 'mdi-playlist-check', to: '/Master/Branch' },
-        { title: 'พนักงาน', icon: 'mdi-playlist-check', to: '/Master/Employee' },
-        { title: 'ประเภทการชำระเงิน', icon: 'mdi-playlist-check', to: '/Master/PaymentType' },
-        { title: 'จัดการบริษัท', icon: 'mdi-playlist-check', to: '/Master/Company' }
+        { title: 'สาขา', icon: 'mdi-home-group', to: '/Master/Branch' },
+        { title: 'พนักงาน', icon: 'mdi-account-multiple', to: '/Master/Employee' },
+        { title: 'ประเภทการชำระเงิน', icon: 'mdi-credit-card-outline', to: '/Master/PaymentType' },
+        { title: 'จัดการบริษัท', icon: 'mdi-home-city', to: '/Master/Company' }
       ]
       // this.master = [
       //   // { title: 'Code 4', icon: 'mdi-numeric-4-circle', to: '/insurance/AllocateProspectiveCode4' },
