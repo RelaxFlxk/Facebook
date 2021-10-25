@@ -119,16 +119,16 @@ export default {
     async getBookingField () {
       this.bookingField = []
       axios.get(this.DNS_IP + '/BookingField/get?shopId=' + this.shopId).then((response) => {
-        let rs = response.data
+        // let rs = response.data
         // console.log('rs', rs)
-        if (rs.length > 0) {
-          this.$swal('คุณได้เพิ่มข้อมูลแล้ว', ' ', 'success')
-            .then(() => {
-              window.close()
-            })
-        } else {
-          this.getCustomField()
-        }
+        // if (rs.length > 0) {
+        //   this.$swal('คุณได้เพิ่มข้อมูลแล้ว', ' ', 'success')
+        //     .then(() => {
+        //       window.close()
+        //     })
+        // } else {
+        this.getCustomField()
+        // }
       })
         .catch((error) => {
           console.log('error function addData : ', error)
