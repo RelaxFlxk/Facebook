@@ -29,46 +29,47 @@
           <v-list-item-title class="menu-head">Dashboard</v-list-item-title>
         </v-list-item>
       </v-list>
-      <v-list-group
+    <v-list-group
       dense
-        :value="true"
-        prepend-icon="mdi-shopping"
-        color="white"
-        no-action
-        v-if="master.length > 0"
-      >
-      <template v-slot:activator>
-          <v-list-item-title class="menu-head">จัดการข้อมูลร้าน</v-list-item-title>
-        </template>
+      :value="true"
+      prepend-icon="mdi-shopping"
+      color="white"
+      no-action
+      v-if="master.length > 0"
+    >
+    <template v-slot:activator>
+        <v-list-item-title class="menu-head">จัดการข้อมูลร้าน</v-list-item-title>
+      </template>
 
-        <v-list-item
-        dense
-          v-for="(item, i) in master"
-          :key="i"
-          :to="item.to"
-          router
-          exact
-        >
-          <v-list-item-icon>
-            <v-icon v-text="item.icon" dense  color="white"></v-icon>
-          </v-list-item-icon>
-          <v-list-item-title dense v-text="item.title"></v-list-item-title>
-        </v-list-item>
-      </v-list-group>
+      <v-list-item
+      dense
+        v-for="(item, i) in master"
+        :key="i"
+        :to="item.to"
+        router
+        exact
+      >
+        <v-list-item-icon>
+          <v-icon v-text="item.icon" dense  color="white"></v-icon>
+        </v-list-item-icon>
+        <v-list-item-title dense v-text="item.title"></v-list-item-title>
+      </v-list-item>
+    </v-list-group>
+
     <v-list-group
       dense
         :value="true"
         prepend-icon="mdi-toolbox "
         color="white"
         no-action
-        v-if="system.length > 0"
+        v-if="booking.length > 0"
       >
       <template v-slot:activator>
-          <v-list-item-title class="menu-head">จัดการข้อมูลระบบ</v-list-item-title>
-        </template>
+        <v-list-item-title class="menu-head">ระบบนัดหมาย</v-list-item-title>
+      </template>
 
         <v-list-item
-          v-for="(item, i) in system"
+          v-for="(item, i) in booking"
           :key="i"
           :to="item.to"
           router
@@ -80,21 +81,76 @@
           </v-list-item-icon>
           <v-list-item-title dense v-text="item.title"></v-list-item-title>
         </v-list-item>
-      </v-list-group>
+    </v-list-group>
+
+    <v-list-group
+      dense
+        :value="true"
+        prepend-icon="mdi-toolbox "
+        color="white"
+        no-action
+        v-if="workflow.length > 0"
+      >
+      <template v-slot:activator>
+        <v-list-item-title class="menu-head">จัดการงานในศูนย์</v-list-item-title>
+      </template>
+
+        <v-list-item
+          v-for="(item, i) in workflow"
+          :key="i"
+          :to="item.to"
+          router
+          exact
+          dense
+        >
+          <v-list-item-icon>
+            <v-icon v-text="item.icon" dense  color="white"></v-icon>
+          </v-list-item-icon>
+          <v-list-item-title dense v-text="item.title"></v-list-item-title>
+        </v-list-item>
+    </v-list-group>
+
+    <v-list-group
+      dense
+        :value="true"
+        prepend-icon="mdi-toolbox "
+        color="white"
+        no-action
+        v-if="customer.length > 0"
+      >
+      <template v-slot:activator>
+        <v-list-item-title class="menu-head">ข้อมูลลูกค้า</v-list-item-title>
+      </template>
+
+        <v-list-item
+          v-for="(item, i) in customer"
+          :key="i"
+          :to="item.to"
+          router
+          exact
+          dense
+        >
+          <v-list-item-icon>
+            <v-icon v-text="item.icon" dense  color="white"></v-icon>
+          </v-list-item-icon>
+          <v-list-item-title dense v-text="item.title"></v-list-item-title>
+        </v-list-item>
+    </v-list-group>
+
     <v-list-group
       dense
         :value="true"
         prepend-icon="mdi-qrcode-scan"
         color="white"
         no-action
-        v-if="tool.length > 0"
+        v-if="corporate.length > 0"
       >
       <template v-slot:activator>
-          <v-list-item-title class="menu-head">จัดการคะแนน</v-list-item-title>
+          <v-list-item-title class="menu-head">ข้อมูลบริษัท</v-list-item-title>
         </template>
 
         <v-list-item
-          v-for="(item, i) in tool"
+          v-for="(item, i) in corporate"
           :key="i"
           :to="item.to"
           router
@@ -131,9 +187,11 @@ export default {
       drawer: true,
       mini: false,
       session: this.$session.getAll(),
-      system: [],
+      workflow: [],
       master: [],
-      tool: [],
+      corporate: [],
+      customer: [],
+      booking: [],
       items: []
     }
   },
@@ -156,24 +214,29 @@ export default {
       this.$router.push('/Core/Login?access=' + this.$session.getAll().AccessKey)
     },
     adminChk () {
-      this.system = []
       this.master = []
-      this.tool = []
-      this.system = [
-        { title: 'ข้อมูลลงทะเบียนลูกค้า', icon: 'mdi-account-edit', to: '/Master/CustomField' },
-        { title: 'Booking Setting', icon: 'mdi-account-edit', to: '/Master/BookingField' },
-        { title: 'Booking List', icon: 'mdi-account-edit', to: '/Master/BookingList' },
-        { title: 'สถานะการบริการ', icon: 'mdi-cash-register', to: '/Master/Flow' },
+      this.customer = [
+        { title: 'ข้อมูลลงทะเบียนลูกค้า', icon: 'mdi-account-edit', to: '/Master/CustomField' }
+      ]
+      this.booking = [
+        { title: 'รายชื่อลูกค้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingList' },
+        { title: 'ข้อมูลหน้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingField' }
+      ]
+      this.workflow = [
+        { title: 'รับรถลูกค้ารายใหม่', icon: 'mdi-account-edit', to: '/Master/RegisterAdd' },
         { title: 'กระดานการทำงาน', icon: 'mdi-cash-register', to: '/Master/FlowStep' },
+        { title: 'จัดการสถานะการบริการ', icon: 'mdi-cash-register', to: '/Master/Flow' },
         { title: 'List กระดานการทำงาน', icon: 'mdi-cash-register', to: '/Master/JobList' },
-        { title: 'จัดโครงสร้างกระดาน', icon: 'dashboard', to: '/Master/WorkShop' },
-        { title: 'จัดการพนักงาน', icon: 'mdi-playlist-check', to: '/Master/Employee' },
-        { title: 'จัดการสาขา', icon: 'mdi-playlist-check', to: '/Master/Branch' },
-        { title: 'จัดการบริษัท', icon: 'mdi-playlist-check', to: '/Master/Company' },
-        { title: 'ประเภทการชำระเงิน', icon: 'mdi-playlist-check', to: '/Master/PaymentType' }
+        { title: 'จัดโครงสร้างกระดาน', icon: 'dashboard', to: '/Master/WorkShop' }
         // { title: 'รายชื่อร้านค้า', icon: 'mdi-playlist-check', to: '/System/ListShop' },
         // { title: 'กลุ่มผู้ใช้งาน', icon: 'mdi-account-group', to: '/System/UserTypeGroup' },
         // { title: 'Vgroup', icon: 'mdi-account-group', to: '/System/VgroupMapCoin' }
+      ]
+      this.corporate = [
+        { title: 'สาขา', icon: 'mdi-playlist-check', to: '/Master/Branch' },
+        { title: 'พนักงาน', icon: 'mdi-playlist-check', to: '/Master/Employee' },
+        { title: 'ประเภทการชำระเงิน', icon: 'mdi-playlist-check', to: '/Master/PaymentType' },
+        { title: 'จัดการบริษัท', icon: 'mdi-playlist-check', to: '/Master/Company' }
       ]
       // this.master = [
       //   // { title: 'Code 4', icon: 'mdi-numeric-4-circle', to: '/insurance/AllocateProspectiveCode4' },
