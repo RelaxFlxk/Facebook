@@ -672,7 +672,7 @@ export default {
           href: '/Core/Home'
         },
         {
-          text: 'Flow',
+          text: 'เพิ่ม/ลบ สถานะการบริการ',
           disabled: false,
           href: '/Master/Flow'
         }

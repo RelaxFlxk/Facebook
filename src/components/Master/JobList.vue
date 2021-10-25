@@ -207,7 +207,7 @@ export default {
           href: '/Core/Home'
         },
         {
-          text: 'Flow',
+          text: 'เพิ่ม/ลบ กระดานการทำงาน',
           disabled: false,
           href: '/Master/JobList'
         }

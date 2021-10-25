@@ -253,7 +253,7 @@ export default {
           href: '/Core/Home'
         },
         {
-          text: 'Payment',
+          text: 'ช่องทางการชำระเงิน',
           disabled: false,
           href: '/Master/PaymentType'
         }

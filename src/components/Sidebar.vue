@@ -224,9 +224,9 @@ export default {
       ]
       this.workflow = [
         { title: 'รับรถลูกค้ารายใหม่', icon: 'mdi-account-plus', to: '/Master/RegisterAdd' },
-        { title: 'กระดานการทำงาน', icon: 'mdi-clipboard-check-multiple-outline', to: '/Master/FlowStep' },
-        { title: 'จัดการสถานะการบริการ', icon: 'mdi-transit-connection-variant', to: '/Master/Flow' },
-        { title: 'List กระดานการทำงาน', icon: 'mdi-application-cog', to: '/Master/JobList' },
+        { title: 'จัดการงานบนกระดาน', icon: 'mdi-clipboard-check-multiple-outline', to: '/Master/FlowStep' },
+        { title: 'เพิ่ม/ลบ กระดาน', icon: 'mdi-application-cog', to: '/Master/JobList' },
+        { title: 'เพิ่ม/ลบ สถานะการบริการ', icon: 'mdi-transit-connection-variant', to: '/Master/Flow' },
         { title: 'จัดโครงสร้างกระดาน', icon: 'dashboard', to: '/Master/WorkShop' }
         // { title: 'รายชื่อร้านค้า', icon: 'mdi-playlist-check', to: '/System/ListShop' },
         // { title: 'กลุ่มผู้ใช้งาน', icon: 'mdi-account-group', to: '/System/UserTypeGroup' },
@@ -235,7 +235,7 @@ export default {
       this.corporate = [
         { title: 'สาขา', icon: 'mdi-home-group', to: '/Master/Branch' },
         { title: 'พนักงาน', icon: 'mdi-account-multiple', to: '/Master/Employee' },
-        { title: 'ประเภทการชำระเงิน', icon: 'mdi-credit-card-outline', to: '/Master/PaymentType' },
+        { title: 'ช่องทางการชำระเงิน', icon: 'mdi-credit-card-outline', to: '/Master/PaymentType' },
         { title: 'จัดการบริษัท', icon: 'mdi-home-city', to: '/Master/Company' }
       ]
       // this.master = [

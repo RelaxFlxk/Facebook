@@ -240,7 +240,7 @@ export default {
           href: '/Core/Home'
         },
         {
-          text: 'AddFormJob',
+          text: 'รับรถลูกค้ารายใหม่',
           disabled: false,
           href: '/Master/CustomTable'
         }

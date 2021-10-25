@@ -34,7 +34,7 @@
              min-height="50%"
             >
             <v-col cols="12" class="text-center">
-              <h4 class="text-center">โปรดเลือกข้อมูลที่ต้องการแสดง</h4>
+              <h4 class="text-center">เลือกข้อมูลที่ลูกค้าต้องกรอกเพื่อนัดหมาย</h4>
                 <v-data-table
                 v-model="itemdetell"
                   :headers="FieldSelect"
