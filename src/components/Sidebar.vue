@@ -140,7 +140,7 @@
     <v-list-group
       dense
         :value="true"
-        prepend-icon="mdi-qrcode-scan"
+        prepend-icon="mdi-toolbox"
         color="white"
         no-action
         v-if="corporate.length > 0"

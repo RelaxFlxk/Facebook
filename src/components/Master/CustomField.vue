@@ -445,7 +445,7 @@ export default {
           href: '/Core/Home'
         },
         {
-          text: 'Custom Field',
+          text: 'ข้อมูลลงทะเบียนลูกค้า',
           disabled: false,
           href: '/Master/CustomField'
         }
