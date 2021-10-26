@@ -222,7 +222,7 @@ Vue.mixin({
         })
       return RUNCODE
     },
-    async getDataGlobal (DNS_IP, PATH) {
+    async getDataGlobal (DNS_IP, PATH, shopId) {
       // Clear Data ทุกครั้ง
       this.dataItem = []
       // Clear ข้อมูลใน Import
@@ -235,7 +235,7 @@ Vue.mixin({
       await axios
         .get(
           // eslint-disable-next-line quotes
-          DNS_IP + PATH + "get",
+          DNS_IP + PATH + "get?shopId=" + shopId,
           {
             headers: {
               'Application-Key': this.$session.getAll().ApplicationKey

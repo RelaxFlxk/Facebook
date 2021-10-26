@@ -713,6 +713,7 @@ export default {
       panel: [0],
       panel1: [1],
       session: this.$session.getAll(),
+      shopId: this.$session.getAll().data.shopId,
       // Search All
       searchAll: '',
       searchAll2: '',
@@ -731,7 +732,8 @@ export default {
         stepTitle: '',
         sortNo: '',
         CREATE_USER: '',
-        LAST_USER: ''
+        LAST_USER: '',
+        shopId: ''
       },
       formUpdate: {
         flowCode: '',
@@ -742,7 +744,8 @@ export default {
         fieldType: '',
         flowId: '',
         flowName: '',
-        LAST_USER: ''
+        LAST_USER: '',
+        shopId: ''
       },
       formUpdateItemFlow: {
         fieldId: '',
@@ -752,7 +755,9 @@ export default {
         fieldType: '',
         flowId: '',
         flowName: '',
-        LAST_USER: ''
+        LAST_USER: '',
+        sortNo: '',
+        shopId: ''
       },
       formUpdateStep: {
         stepId: '',
@@ -760,7 +765,8 @@ export default {
         stepTitle: '',
         sortNo: '',
         CREATE_USER: '',
-        LAST_USER: ''
+        LAST_USER: '',
+        shopId: ''
       },
       formUpdateItem: {
         flowCode: '',
@@ -841,7 +847,7 @@ export default {
     this.dataReady = false
     // Get Data
     await this.getCustomField()
-    await this.getDataGlobal(this.DNS_IP, this.path)
+    await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
   },
   methods: {
     async actionUp (stepId) {
@@ -922,7 +928,7 @@ export default {
     },
     getCustomField () {
       this.editedItemSelete = []
-      axios.get(this.DNS_IP + '/customField/get').then((response) => {
+      axios.get(this.DNS_IP + '/customField/get?shopId=' + this.shopId).then((response) => {
         let rs = response.data
         if (rs.length > 0) {
           for (var i = 0; i < rs.length; i++) {
@@ -968,7 +974,7 @@ export default {
     getStepFlow (dt) {
       this.stepItemSelete = []
       this.formAddStep.flowId = dt.flowId
-      axios.get(this.DNS_IP + '/flowStep/get?flowId=' + dt.flowId).then((response) => {
+      axios.get(this.DNS_IP + '/flowStep/get?flowId=' + dt.flowId + '&shopId=' + this.shopId).then((response) => {
         let rs = response.data
         if (rs.length > 0) {
           for (var i = 0; i < rs.length; i++) {
@@ -991,7 +997,7 @@ export default {
       await axios
         .get(
           // eslint-disable-next-line quotes
-          this.DNS_IP + this.path + "getCode?" + 'flowCode' + "=" + item.flowCode,
+          this.DNS_IP + this.path + "getCode?" + 'flowCode' + "=" + item.flowCode + '&shopId=' + this.shopId,
           {
             headers: {
               'Application-Key': this.$session.getAll().ApplicationKey
@@ -1006,6 +1012,7 @@ export default {
             this.formUpdate.flowName = response.data[0].flowName
             this.formUpdate.flowId = response.data[0].flowId
             this.formUpdate.flowCode = response.data[0].flowCode
+            this.shopId = this.$session.getAll().data.shopId
             this.fieldType = this.formUpdate.fieldType
             this.desserts = JSON.parse(response.data[0].flowfieldName)
             // this.getDataCompany()
@@ -1166,7 +1173,7 @@ export default {
               this.dialogEdit = false
 
               // Load Data
-              await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.flowId)
+              await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
               this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
             })
             // eslint-disable-next-line handle-callback-err

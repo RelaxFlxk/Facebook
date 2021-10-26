@@ -9,6 +9,7 @@
           </v-col>
         </v-row>
         <v-row>
+          {{$session.getAll().data.shopId}}
           <!-- FromDataShow -->
             <v-col clos="5">
               <template>
@@ -26,7 +27,7 @@
                   dense
                   outlined
                   hide-details
-                  @change="flowfieldtest() , pushmessagToGroup(formAdd.flowCode) "
+                  @change="flowfieldtest(formAdd.flowCode) , pushmessagToGroup(formAdd.flowCode) "
                   >
                   </v-select>
                   </v-col>
@@ -53,7 +54,7 @@
                               <v-col cols="1"></v-col>
                               <v-col cols="12">
                               <div v-for="(p , index) in flowfieldNameitem" :key="index">
-                                <div v-show="((p.conditionField == '') || (flowfieldNameitem.filter((row) => { return row.fieldName === p.conditionField })[0]['fieldValue'] == p.conditionValue))">
+                                <div>
                                   <div v-if="p.fieldType == 'text'">
                                     <p>{{form1[p.fieldId]}}</p>
                                   <v-text-field
@@ -347,7 +348,7 @@ export default {
     },
     pushmessagToGroup (flowCode) {
       this.GroupId = []
-      axios.get(this.DNS_IP + '/LineGroupFlow/get?flowCode=' + flowCode).then((response) => {
+      axios.get(this.DNS_IP + '/LineGroupFlow/get?shopId=' + this.shopId).then((response) => {
         let rs = response.data
         if (rs.length > 0) {
           for (var i = 0; i < rs.length; i++) {
@@ -396,13 +397,14 @@ export default {
         }
       }
     },
-    flowfieldtest () {
+    flowfieldtest (item) {
       this.flowfieldNameitem = []
-      axios.get(this.DNS_IP + '/flowField/get?flowCode=' + this.formAdd.flowCode).then((response) => {
+      axios.get(this.DNS_IP + '/flowField/get?flowCode=' + this.formAdd.flowCode + '&shopId=' + this.shopId).then((response) => {
         let tt = response.data
-        console.log(tt)
+        console.log('tt', tt)
         var flowfieldName = []
         flowfieldName = JSON.parse(tt[0].flowfieldName)
+        console.log('flowfieldName', flowfieldName)
         for (var i = 0; i < flowfieldName.length; i++) {
           let d = flowfieldName[i]
           let s = {}
@@ -416,18 +418,18 @@ export default {
           s.CREATE_USER = ''
           s.LAST_USER = ''
           s.showCard = d.showCard
-          s.shopId = 'MS2021101348536490'
+          s.shopId = d.shopId
           s.endDate = d.endDate
           s.checkCar = 'False'
           s.conditionValue = d.value
-          if (d.conditionField !== '') {
-            s.conditionFieldId = this.flowfieldNameitem.filter((row) => { return row.fieldName === d.conditionField })[0]['fieldId']
-          } else {
-            s.conditionField = ''
-          }
+          // if (d.conditionField !== '') {
+          //   s.conditionFieldId = this.flowfieldNameitem.filter((row) => { return row.fieldName === d.conditionField })[0]['fieldId']
+          // } else {
+          //   s.conditionField = ''
+          // }
           this.form1[d.fieldId] = ''
           this.flowfieldNameitem.push(s)
-          console.log(this.flowfieldNameitem)
+          console.log('flowfieldNameitem', this.flowfieldNameitem)
         }
       })
     },
@@ -465,19 +467,21 @@ export default {
           var GG = this.GroupId
           this.formAdd.CREATE_USER = this.session.data.userName
           this.formAdd.LAST_USER = this.session.data.userName
-          this.shopId = this.$session.getAll().data.shopId
+          this.flowfieldNameitem.shopId = this.$session.getAll().data.shopId
           this.endDate = this.endDate
           this.checkCar = this.checkCar
           this.flexData(this.flowfieldNameitem)
           var Text = JSON.stringify(this.dtitem)
           var flexitem = JSON.parse(Text)
-          console.log('checkdata', this.flowfieldNameitem)
+          console.log('flowfieldNameitem', this.flowfieldNameitem)
           console.log('checkCar', this.checkCar)
+          console.log('endDate', this.endDate)
+          console.log('shopId', this.shopId)
           console.log('showflex', flexitem)
           await axios
             .post(
               // eslint-disable-next-line quotes
-              this.DNS_IP + '/job/add', this.flowfieldNameitem
+              this.DNS_IP + '/job/add', this.flowfieldNameitem, this.shopId, this.endDate, this.checkCar
             )
             .then(async (response) => {
               // Debug response
