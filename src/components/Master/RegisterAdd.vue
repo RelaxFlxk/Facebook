@@ -418,7 +418,7 @@ export default {
           s.showCard = d.showCard
           s.shopId = 'MS2021101348536490'
           s.endDate = d.endDate
-          s.checkCar = d.checkCar
+          s.checkCar = 'False'
           s.conditionValue = d.value
           if (d.conditionField !== '') {
             s.conditionFieldId = this.flowfieldNameitem.filter((row) => { return row.fieldName === d.conditionField })[0]['fieldId']

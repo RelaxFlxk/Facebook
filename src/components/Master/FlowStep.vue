@@ -9,6 +9,35 @@
               {{formUpdate.flowName}} ({{masBranchName}})
             </p>
           </v-col>
+          <v-row>
+              <v-col cols="12" class="text-center">
+            นัดส่ง:
+            <div class="text-center">
+              <v-chip
+                class="ma-2"
+                color="primary"
+              >
+                ภายใน 2 วัน
+              </v-chip>
+
+              <v-chip
+                class="ma-2"
+                color="red"
+                text-color="white"
+              >
+                ภายใน 4 วัน
+              </v-chip>
+
+              <v-chip
+                class="ma-2"
+                color="green"
+                text-color="white"
+              >
+                มากกว่า 4 วัน
+              </v-chip>
+            </div>
+              </v-col>
+            </v-row>
         </v-row>
 
         <!-- select flow-->
@@ -22,6 +51,7 @@
             dense
             outlined
             hide-details
+            value="IT"
             label="ประเภทบริการ"
             class="ma-2"
           ></v-select>
@@ -35,6 +65,7 @@
             dense
             outlined
             hide-details
+            value="สาขาบางกอกน้อย"
             label="สาขา"
             class="ma-2"
           ></v-select>
@@ -206,6 +237,14 @@
                           {{ items.fieldValue}}<br>
                         </div>
                         <v-icon large color="black"> mdi-account</v-icon> <strong>{{ JobDataItem.filter((row) => {return row.jobId == itemsJob.jobId})[0].empStep }}</strong>
+                        <v-chip
+                              class="ma-2"
+                              draggable
+                              justify="center"
+                              align="center"
+                            >
+                              endDate
+                            </v-chip>
                         <v-spacer></v-spacer>
                         <v-container class="grey lighten-4" style="position:absolute; width:30px; right:0px; top:0px;">
                           <v-row class="pl-1">
@@ -285,11 +324,11 @@ export default {
       DataBranchName: [],
       ItemSelete: [],
       userId: '',
-      masBranchName: '',
+      masBranchName: 'สาขาบางกอกน้อย',
       formUpdate: {
         stepId: '',
         flowId: '',
-        flowName: '',
+        flowName: 'IT',
         stepTitle: '',
         sortNo: '',
         CREATE_USER: '',
