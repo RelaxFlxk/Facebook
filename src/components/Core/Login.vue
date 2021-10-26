@@ -26,6 +26,10 @@
             <v-btn color="teal" @click="onSubmit()" dark large block
               >Login</v-btn
             >
+            <br>
+            <v-btn color="warning" @click="dialog = true, validate('UPDATE')" dark large block
+              >Forgot password</v-btn
+            >
           </template>
           <template v-if="!hidePrivacy">
             <v-bottom-sheet v-model="sheet" max-width="95%" scrollable>
@@ -56,6 +60,55 @@
           </template>
         </v-container>
       </div>
+      <v-dialog
+        v-model="dialog"
+        persistent
+        max-width="500"
+      >
+        <v-card>
+          <v-card-title class="text-h5">
+            ลืม Password
+          </v-card-title>
+          <v-form ref="form_update" v-model="validUpdate" lazy-validation>
+          <v-card-text>
+            <v-text-field
+              prepend-icon="mdi-account"
+              v-model="form.newUserName"
+              label="Username"
+              :rules="[rules.email]"
+              required
+            ></v-text-field>
+            <!-- <v-text-field
+              prepend-icon="mdi-lock"
+              v-model="form.newUserPassword"
+              label="Password"
+              :rules="[rules.required]"
+              required
+            ></v-text-field> -->
+          </v-card-text>
+          </v-form>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="red darken-1"
+              text
+              @click="dialog = false"
+            >
+              ยกเลิก
+            </v-btn>
+            <v-btn
+              elevation="2"
+              x-large
+              color="#173053"
+              @click="onSubmitForgot()"
+              :disabled="!validUpdate"
+            >
+              <v-icon left>mdi-checkbox-marked-circle</v-icon>
+              บันทึก
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
       <div v-if="!dataReady" class="text-center">
         <v-progress-circular
           indeterminate
@@ -82,11 +135,31 @@ export default {
       queryData: '',
       bookNo: '',
       jobNo: '',
+      dialog: false,
       sheet: false,
       profile: [],
       privacyConfigDetail: '',
       privacyConfigCode: '',
       menu: [],
+      rules: {
+        numberRules: value =>
+          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
+          'กรุณากรอกตัวเลข 0 ถึง 9',
+        counterTel: value => value.length <= 10 || 'Max 10 characters',
+        IDcardRules: value =>
+          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999999) ||
+          'กรุณากรอกตัวเลข 0 ถึง 9',
+        required: value => !!value || 'กรุณากรอก.',
+        resizeImag: value =>
+          !value ||
+          value.size < 2000000 ||
+          'Avatar size should be less than 2 MB!',
+        counterIDcard: value => value.length <= 13 || 'Max 13 characters',
+        email: value => {
+          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+          return pattern.test(value) || 'Invalid e-mail.'
+        }
+      },
       formCheckPrivacy: {
         privacyConfigCode: '',
         userCode: '',
@@ -97,10 +170,13 @@ export default {
         userLineId: '',
         userLinepictureUrl: '',
         userName: '',
-        userPassword: ''
+        newUserName: '',
+        userPassword: '',
+        newUserPassword: ''
       },
       dataReady: true,
-      hidePrivacy: true
+      hidePrivacy: true,
+      validUpdate: true
     }
   },
   // eslint-disable-next-line space-before-function-paren
@@ -110,6 +186,25 @@ export default {
     this.$session.clear()
   },
   methods: {
+    validate (Action) {
+      switch (Action) {
+        case 'ADD':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_add.validate()
+          })
+          break
+        case 'UPDATE':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_update.validate()
+          })
+          break
+
+        default:
+          break
+      }
+    },
     async checkLiffLogin () {
       await this.$liff.ready.then(async () => {
         if (process.env.NODE_ENV === 'development') {
@@ -215,6 +310,45 @@ export default {
             this.$session.start()
             this.$session.set('data', response.data[0])
             this.checkbookNo()
+          } else {
+            this.dataReady = true
+            this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง1', 'error')
+          }
+        })
+        // eslint-disable-next-line handle-callback-err
+        .catch((error) => {
+          this.dataReady = true
+          console.log(error)
+          this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง2', 'error')
+        })
+    },
+    async onSubmitForgot () {
+      this.dataReady = false
+      this.form.type = 'username'
+      console.log(JSON.stringify(this.form))
+      await axios
+        .get(
+          // eslint-disable-next-line quotes
+          this.DNS_IP +
+            '/system_user/get?userName=' +
+            this.form.newUserName
+        )
+        .then(async (response) => {
+          if (response.data[0]) {
+            let dt = {
+              'email': response.data[0].userName,
+              'status': 'forgot',
+              'userId': response.data[0].userId
+            }
+            await axios
+              .post(
+                'http://localhost:5001/betask-loyalty/asia-southeast1/sendMail', dt
+              )
+              .then(async response => {
+                this.dialog = false
+                this.$swal('เรียบร้อย', 'กรุณาตรวจสอบ Email ของท่าน', 'success')
+                this.$router.push('/')
+              })
           } else {
             this.dataReady = true
             this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง1', 'error')

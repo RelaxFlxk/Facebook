@@ -113,6 +113,21 @@ export default new Router({
     component: System.Token
   },
   {
+    path: '/System/EditShop',
+    name: 'EditShop',
+    component: System.EditShop
+  },
+  {
+    path: '/System/ListMember',
+    name: 'ListMember',
+    component: System.ListMember
+  },
+  {
+    path: '/ConfirmPass',
+    name: 'ConfirmPass',
+    component: System.ConfirmPass
+  },
+  {
     path: '/Master/Employee',
     name: 'Employee',
     component: Master.Employee

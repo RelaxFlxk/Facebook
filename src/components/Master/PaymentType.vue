@@ -323,10 +323,10 @@ export default {
     }
   },
   async mounted () {
-    this.getGetToken(this.DNS_IP)
+    // this.getGetToken(this.DNS_IP)
     this.dataReady = false
     // Get Data
-    this.getDataGlobal(this.DNS_IP, this.path)
+    this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
   },
   methods: {
     async getDataById (item) {
@@ -389,7 +389,7 @@ export default {
 
               // Load Data
               await this.clearData()
-              await this.getDataGlobal(this.DNS_IP, this.path)
+              await this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
             })
           // eslint-disable-next-line handle-callback-err
             .catch((error) => {
@@ -467,7 +467,7 @@ export default {
               this.dialogEdit = false
 
               // Load Data
-              await this.getDataGlobal(DNS_IP, PATH)
+              await this.getDataGlobal(DNS_IP, PATH, this.$session.getAll().data.shopId)
             })
             // eslint-disable-next-line handle-callback-err
             .catch((error) => {

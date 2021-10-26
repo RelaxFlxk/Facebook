@@ -5,7 +5,9 @@ import Privacy from './Privacy'
 import PrivacyCheck from './PrivacyCheck'
 import Running from './Running'
 import Token from './Token'
-
+import EditShop from './EditShop'
+import ConfirmPass from './ConfirmPass'
+import ListMember from './ListMember'
 export default {
   User,
   Menu,
@@ -13,5 +15,8 @@ export default {
   Privacy,
   PrivacyCheck,
   Running,
-  Token
+  Token,
+  EditShop,
+  ConfirmPass,
+  ListMember
 }

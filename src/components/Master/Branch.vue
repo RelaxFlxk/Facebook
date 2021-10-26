@@ -502,10 +502,10 @@ export default {
     }
   },
   async mounted () {
-    this.getGetToken(this.DNS_IP)
+    // this.getGetToken(this.DNS_IP)
     this.dataReady = false
     // Get Data
-    this.getDataGlobal(this.DNS_IP, this.path)
+    this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
     this.getDataCompany()
   },
   methods: {
@@ -597,7 +597,7 @@ export default {
 
               // Load Data
               await this.clearData()
-              await this.getDataGlobal(this.DNS_IP, this.path)
+              await this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
             })
           // eslint-disable-next-line handle-callback-err
             .catch((error) => {
@@ -685,7 +685,7 @@ export default {
 
               // Load Data
               await this.reloadData()
-              await this.getDataGlobal(DNS_IP, PATH)
+              await this.getDataGlobal(DNS_IP, PATH, this.$session.getAll().data.shopId)
             })
             // eslint-disable-next-line handle-callback-err
             .catch((error) => {
@@ -906,7 +906,7 @@ export default {
           }
           console.log(checkError)
           if (checkError === true) {
-            await this.getDataGlobal(this.DNS_IP, this.path)
+            await this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
           } else {
             this.dataItemImport = []
             this.dataItemImportChecKHide = true

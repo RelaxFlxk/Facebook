@@ -579,7 +579,7 @@ export default {
     // Get Data
     this.getOption()
     this.getCondition()
-    this.getDataGlobal(this.DNS_IP, this.path)
+    this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
   },
   methods: {
     validate (Action) {
