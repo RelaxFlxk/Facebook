@@ -419,7 +419,7 @@ export default {
     async getLayout () {
       this.Layout = []
       console.log('flowName', this.formUpdate.flowName)
-      await axios.get(this.DNS_IP + '/WorkShopLayout/get?flowName=' + this.formUpdate.flowName)
+      await axios.get(this.DNS_IP + '/WorkShopLayout/get?flowName=' + this.formUpdate.flowName + '&shopId=' + this.shopId)
         .then((response) => {
           let rs = response.data
           for (let i = 0; i < rs.length; i++) {
@@ -443,7 +443,7 @@ export default {
     async getStepFlow () {
       this.stepItemSelete = []
       await axios
-        .get(this.DNS_IP + '/flowStep/get?flowName=' + this.formUpdate.flowName)
+        .get(this.DNS_IP + '/flowStep/get?flowName=' + this.formUpdate.flowName + '&shopId=' + this.shopId)
         .then(async response => {
           let rs = response.data
           console.log('rs', rs)
@@ -451,7 +451,7 @@ export default {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
               d.text = d.stepTitle
-              d.value = d.stepTitle
+              d.value = d.stepId
               this.stepItemSelete.push(d)
             }
             console.log('stepItemSelete', this.formUpdate)
@@ -483,7 +483,7 @@ export default {
       this.JobDataItem = []
       this.allJob = []
       axios
-        .get(this.DNS_IP + '/job/get?flowName=' + this.formUpdate.flowName)
+        .get(this.DNS_IP + '/job/get?flowName=' + this.formUpdate.flowName + '&shopId=' + this.shopId)
         .then(async (response) => {
           this.dataReady = true
           var jobs = []
@@ -508,6 +508,7 @@ export default {
           }
           console.log('JobDataItem', this.JobDataItem)
           console.log('JobLEN', this.userId)
+          console.log('allJob', this.allJob)
         })
     },
     async pushmessage (jobId) {
