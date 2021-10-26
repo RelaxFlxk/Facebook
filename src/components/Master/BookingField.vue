@@ -8,6 +8,7 @@
             <v-card class="content"
                 min-height="100%"
             >
+            <h5 class="text-center" style="color:red;">(ตัวอย่าง)</h5>
             <h4 class="text-center">นัดหมายเข้ารับบริการ</h4>
              <div v-for="(itemFix , indexFix) in fixtureField" :key="indexFix">
                   <v-text-field
@@ -30,39 +31,67 @@
             </v-card>
           </v-col>
           <v-col cols="12" md="8" sm="8" class="main">
-            <v-card
-             min-height="50%"
-            >
-            <v-col cols="12" class="text-center">
-              <h4 class="text-center">เลือกข้อมูลที่ลูกค้าต้องกรอกเพื่อนัดหมาย</h4>
-                <v-data-table
-                v-model="itemdetell"
-                  :headers="FieldSelect"
-                  :items="Fielditem"
-                  rounded="xl"
-                  hide-default-footer
-                  class="elevation-10"
-                >
-                <template v-slot:[`item.showCard`]="{ item }">
-                <v-simple-checkbox
-                  v-model="item.showCard"
-                ></v-simple-checkbox>
-                </template>
-                </v-data-table>
-            </v-col>
-            <v-col cols="12" class="text-center">
-              <v-btn
-                elevation="5"
-                color="success"
-                @click="addBooking()"
-              >SAVE</v-btn>
-              <v-btn
-                elevation="5"
-                color="error"
-                @click="addBooking()"
-              >CANCEL</v-btn>
-            </v-col>
-            </v-card>
+                      <v-row>
+              <v-col cols="12" md="12" sm="12">
+                <div v-if="Redirect !== ''">
+                  <v-card class="p-3" height="200px">
+                  <h3 class="text-center">ลิ้งสำหรับลูกค้า</h3>
+                  <v-card-text>
+                    <v-row align-content="center">
+                      <v-col cols="10">
+                        <v-text-field
+                        v-model="Redirect"
+                        id="myInput"
+                        label="Plese Copy"
+                        >
+                        </v-text-field>
+                      </v-col>
+                      <v-col cols="2" class="text-center" style="margin-top:1rem;" align="left">
+                        <v-btn
+                          small
+                          fab
+                          @click="FunCopy()"
+                        >
+                          <v-icon>mdi-content-copy</v-icon>
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+                  </v-card-text>
+                </v-card>
+                </div>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" md="12" sm="12">
+                <v-card min-height="50%">
+                    <v-col cols="12" class="text-center">
+                      <h4 class="text-center">โปรดเลือกข้อมูลที่ต้องการแสดง</h4>
+                      <v-data-table
+                        v-model="itemdetell"
+                        :headers="FieldSelect"
+                        :items="Fielditem"
+                        rounded="xl"
+                        hide-default-footer
+                        class="elevation-10"
+                      >
+                        <template v-slot:[`item.showCard`]="{ item }">
+                          <v-simple-checkbox
+                            v-model="item.showCard"
+                          ></v-simple-checkbox>
+                        </template>
+                      </v-data-table>
+                    </v-col>
+                    <v-col cols="12" class="text-center">
+                      <v-btn elevation="5" color="success" @click="addBooking()"
+                        >SAVE</v-btn
+                      >
+                      <v-btn elevation="5" color="error"
+                        >CANCEL</v-btn
+                      >
+                    </v-col>
+                  </v-card>
+              </v-col>
+            </v-row>
           </v-col>
         </v-row>
         </v-container>
@@ -83,8 +112,10 @@ export default {
   data () {
     return {
       itemdetell: [],
+      Redirect: 'http://localhost:8081/booking?shopId=' + this.$session.getAll().data.shopId,
       session: this.$session.getAll(),
       shopId: this.$session.getAll().data.shopId,
+      IdUpdate: '',
       bookingField: [],
       Fielditem: [],
       showCard: false,
@@ -113,49 +144,95 @@ export default {
     }
   },
   async mounted () {
-    this.getBookingField()
+    await this.getBookingField()
   },
   methods: {
     async getBookingField () {
-      this.bookingField = []
-      axios.get(this.DNS_IP + '/BookingField/get?shopId=' + this.shopId).then((response) => {
-        // let rs = response.data
-        // console.log('rs', rs)
-        // if (rs.length > 0) {
-        //   this.$swal('คุณได้เพิ่มข้อมูลแล้ว', ' ', 'success')
-        //     .then(() => {
-        //       window.close()
-        //     })
-        // } else {
-        this.getCustomField()
-        // }
+      let itemIncustomField = []
+      await axios.get(this.DNS_IP + '/BookingField/get?shopId=' + this.shopId).then((response) => {
+        let rs = response.data
+        this.IdUpdate = rs[0].bookingFieldId
+        console.log('this.IdUpdate', this.IdUpdate)
+        console.log('rs', rs)
+        if (rs.length > 0) {
+          let bookingData = []
+          bookingData = JSON.parse(rs[0].flowfieldName)
+          for (let i = 0; i < bookingData.length; i++) {
+            let d = bookingData[i]
+            itemIncustomField.push(d.fieldId)
+          }
+          console.log('item', itemIncustomField)
+          this.getCustomField(itemIncustomField)
+        } else {
+
+        }
       })
         .catch((error) => {
           console.log('error function addData : ', error)
         })
     },
-    async getCustomField () {
-      this.Fielditem = []
-      await axios
-        .get(this.DNS_IP + '/customField/get?shopId=' + this.shopId)
-        .then(async response => {
-          let rs = response.data
-          for (let i = 0; i < rs.length; i++) {
-            let d = rs[i]
-            let s = {}
-            s.fieldId = d.fieldId
-            s.fieldName = d.fieldName
-            this.Fielditem.push(s)
-          }
-          console.log('flowfield', this.Fielditem)
-        })
-        .catch((error) => {
-          console.log('error function addData : ', error)
-        })
+    async getCustomField (item) {
+      let checkdata = []
+      await axios.get(this.DNS_IP + '/customField/get?shopId=' + this.shopId).then(response => {
+        let dt = response.data
+        for (let i = 0; i < dt.length; i++) {
+          let d = dt[i]
+          checkdata.push(d.fieldId)
+        }
+      }).catch((error) => {
+        console.log('error function addData : ', error)
+      })
+      let fieldAll = checkdata.filter(function (x) { return !item.includes(x) })
+      if (item.length > 0) {
+        await axios.get(this.DNS_IP + '/customField/fieldId?fieldId=' + item)
+          .then(async response => {
+            let rs = response.data
+            // let aa = []
+            for (let i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              let s = {}
+              s.fieldId = d.fieldId
+              s.fieldName = d.fieldName
+              s.fieldType = d.fieldType
+              s.optionField = d.optionField
+              s.shopId = d.shopId
+              s.fieldValue = ''
+              s.showCard = true
+              this.Fielditem.push(s)
+              console.log('s', this.Fielditem)
+            }
+          })
+          .catch((error) => {
+            console.log('error function addData : ', error)
+          })
+      }
+      if (fieldAll.length > 0) {
+        await axios.get(this.DNS_IP + '/customField/fieldId?fieldId=' + fieldAll)
+          .then(async response => {
+            let rs = response.data
+            // let aa = []
+            for (let i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              let s = {}
+              s.fieldId = d.fieldId
+              s.fieldName = d.fieldName
+              s.fieldType = d.fieldType
+              s.optionField = d.optionField
+              s.shopId = d.shopId
+              s.fieldValue = ''
+              s.showCard = false
+              this.Fielditem.push(s)
+            }
+          })
+          .catch((error) => {
+            console.log('error function addData : ', error)
+          })
+      }
     },
     async addBooking () {
       let booking = {}
       let UpdateField = []
+      // this.Redirect = this.DNS_IP + '/booking?shopId=' + this.$route.query.shopId
       for (let i = 0; i < this.Fielditem.length; i++) {
         let d = this.Fielditem[i]
         if (d.showCard === true) {
@@ -176,21 +253,26 @@ export default {
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
       })
-        .then(async (result) => {
+        .then(async result => {
           axios
-            .post(
-              this.DNS_IP + '/BookingField/add', booking
-            )
+            .post(this.DNS_IP + '/BookingField/edit/' + this.IdUpdate, booking)
             .then(response => {
+              this.$swal('บันทึกข้อมูลเรียบร้อย', ' ', 'success')
               console.log('addDataGlobal DNS_IP + /job/add', response)
             })
-            .catch((error) => {
+            .catch(error => {
               console.log('error function addData : ', error)
             })
         })
-        .catch((error) => {
+        .catch(error => {
           console.log('Cencel : ', error)
         })
+    },
+    FunCopy () {
+      var copyText = document.getElementById('myInput')
+      copyText.select()
+      copyText.setSelectionRange(0, 99999)
+      navigator.clipboard.writeText(copyText.value)
     }
   }
 }
