@@ -26,7 +26,7 @@
                   dense
                   outlined
                   hide-details
-                  @change="flowfieldtest(formAdd.flowCode) , pushmessagToGroup(formAdd.flowCode) "
+                  @change="flowfieldtest(formAdd.flowCode)"
                   >
                   </v-select>
                   </v-col>
@@ -36,7 +36,7 @@
                     <v-select
                       v-model="formAdd.masBranchName"
                       :items="DataBranchName"
-                      @change="flowfieldtest() , pushmessagToGroup(formAdd.masBranchName) "
+                      @change="flowfieldtest()"
                       dense
                       outlined
                       hide-details
@@ -345,57 +345,6 @@ export default {
         }
       })
     },
-    pushmessagToGroup (flowCode) {
-      this.GroupId = []
-      axios.get(this.DNS_IP + '/LineGroupFlow/get?shopId=' + this.shopId).then((response) => {
-        let rs = response.data
-        if (rs.length > 0) {
-          for (var i = 0; i < rs.length; i++) {
-            let d = rs[i]
-            this.GroupId.push(d.GroupId)
-          }
-        }
-        console.log('GroupId', this.GroupId)
-      })
-    },
-    flexData (item) {
-      if (item.length > 0) {
-        let showCD = item.filter((dt) => {
-          return dt.showCard === true
-        })
-        for (let i = 0; i < showCD.length; i++) {
-          let d = showCD[i]
-          if (d.fieldName === 'ชื่อ') {
-            let dtitem = {
-              'type': 'text',
-              'text': 'คุณ' + '' + '' + d.fieldValue,
-              'align': 'start',
-              'size': 'lg',
-              'weight': 'bold'
-            }
-            this.dtname.push(dtitem)
-          } else {
-            let n = [ {
-              'type': 'text',
-              'text': d.fieldName + ':'
-            },
-            {
-              'type': 'text',
-              'text': d.fieldValue,
-              'align': 'start'
-            }]
-            var flex = {
-              'type': 'box',
-              'layout': 'baseline',
-              'contents': n,
-              'spacing': 'none',
-              'margin': 'md'
-            }
-            this.dtitem.push(flex)
-          }
-        }
-      }
-    },
     flowfieldtest (item) {
       this.flowfieldNameitem = []
       axios.get(this.DNS_IP + '/flowField/get?flowCode=' + this.formAdd.flowCode + '&shopId=' + this.shopId).then((response) => {
@@ -467,18 +416,13 @@ export default {
         cancelButtonText: 'ไม่'
       })
         .then(async (result) => {
-          var GG = this.GroupId
           this.shopId = this.shopId
           this.endDate = this.endDate
           this.checkCar = this.checkCar
-          this.flexData(this.flowfieldNameitem)
-          var Text = JSON.stringify(this.dtitem)
-          var flexitem = JSON.parse(Text)
           console.log('flowfieldNameitem', this.flowfieldNameitem)
           console.log('checkCar', this.checkCar)
           console.log('endDate', this.endDate)
           console.log('shopId', this.shopId)
-          console.log('showflex', flexitem)
           await axios
             .post(
               // eslint-disable-next-line quotes
@@ -488,66 +432,15 @@ export default {
               // Debug response
               console.log('addDataGlobal DNS_IP + /job/add', response)
               console.log('data', response)
-              for (var i = 0; i < GG.length; i++) {
-                var dtgroupId = GG[i]
-                var flex = {
-                  'to': dtgroupId,
-                  'messages': [
-                    {
-                      'type': 'flex',
-                      'contents': {
-                        'type': 'bubble',
-                        'size': 'kilo',
-                        'direction': 'ltr',
-                        'body': {
-                          'type': 'box',
-                          'layout': 'vertical',
-                          'contents': [
-                            {
-                              'type': 'box',
-                              'layout': 'baseline',
-                              'contents': this.dtname
-                            },
-                            {
-                              'type': 'box',
-                              'layout': 'vertical',
-                              'contents': flexitem
-                            },
-                            {
-                              'type': 'box',
-                              'layout': 'vertical',
-                              'contents': [
-                                {
-                                  'type': 'button',
-                                  'action': {
-                                    'type': 'uri',
-                                    'label': 'QR CODE',
-                                    'uri': 'http://localhost:8080/Master/JobQrCode?jobNo=' + response.data.jobNo
-                                  },
-                                  'style': 'secondary',
-                                  'height': 'sm',
-                                  'offsetTop': 'none'
-                                }
-                              ],
-                              'margin': 'xl'
-                            }
-                          ]
-                        }
-                      },
-                      'altText': 'Flex Message'
-                    }
-                  ]}
-                console.log('ssssssssssss', flex)
-                await axios
-                  .post(
-                    this.DNS_IP + '/LineGroupFlow/pushmessage', flex
-                  )
-                  .then(
-                    this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success'),
-                    this.clearData()
-                    // this.$router.push('/Master/FlowStep')
-                  )
-              }
+              await axios
+                .post(
+                  this.DNS_IP + '/job/pushQr/' + response.data.jobNo
+                )
+                .then(
+                  this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success'),
+                  this.clearData()
+                  // this.$router.push('/Master/FlowStep')
+                )
             })
           // eslint-disable-next-line handle-callback-err
             .catch((error) => {
@@ -563,9 +456,8 @@ export default {
     async clearData () {
       // eslint-disable-next-line no-redeclare
       this.formAdd.flowCode = ''
+      this.formAdd.masBranchName = ''
       this.dtname = []
-      this.dtitem = []
-      this.GroupId = []
       for (var key in this.flowfieldNameitem) {
         if (this.flowfieldNameitem[key]) {
           this.flowfieldNameitem[key] = ''

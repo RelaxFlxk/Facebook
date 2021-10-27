@@ -80,6 +80,7 @@ export default {
       pathToweb: 'http://localhost:8081/JobConfirm?jobId=',
       userId: '',
       jobNo: this.$route.query.jobNo,
+      shopId: this.$session.getAll().data.shopId,
       skip: {
         userId: 'user-skip'
       },
@@ -127,7 +128,7 @@ export default {
             }
           }
           this.userId = Id
-          this.value = this.pathToweb + this.jobitem[0].Id
+          this.value = this.pathToweb + this.jobitem[0].Id + '&shopId=' + this.shopId
           console.log(this.jobitem)
           console.log(this.value)
           console.log('UserId', this.userId)

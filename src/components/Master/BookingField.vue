@@ -5,9 +5,8 @@
       <v-container>
         <v-row>
           <v-col cols="12" md="4" sm="4" class="main">
-            <v-card class="content"
-                min-height="100%"
-            >
+            <div class="Bar">
+              <v-card class="content p-3" height="700px">
             <h5 class="text-center" style="color:red;">(ตัวอย่าง)</h5>
             <h4 class="text-center">นัดหมายเข้ารับบริการ</h4>
              <div v-for="(itemFix , indexFix) in fixtureField" :key="indexFix">
@@ -28,7 +27,16 @@
                  </div>
                 </div>
               </form>
+              <div class="text-center">
+                  <v-btn elevation="10" color="primary" readonly small
+                    >SAVE</v-btn
+                  >
+                  <v-btn elevation="10" color="error" readonly small
+                    >CANCEL</v-btn
+                  >
+                </div>
             </v-card>
+            </div>
           </v-col>
           <v-col cols="12" md="8" sm="8" class="main">
                       <v-row>
@@ -279,15 +287,21 @@ export default {
 </script>
 
 <style scoped>
-.main{
+.main {
   margin-top: 1rem;
   min-height: 700px;
 }
-.Review{
-  padding: 20px,20px,20px,20px;
-}
-.content{
+.Bar {
   padding: 20px;
+  background-color: #173053;
+  height: 100%;
+}
+.Review {
+  padding: 20px, 20px, 20px, 20px;
+}
+.content {
+  overflow: auto;
+  white-space: normal;
 }
 
 </style>
