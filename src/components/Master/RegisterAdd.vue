@@ -9,7 +9,6 @@
           </v-col>
         </v-row>
         <v-row>
-          {{$session.getAll().data.shopId}}
           <!-- FromDataShow -->
             <v-col clos="5">
               <template>
@@ -418,8 +417,8 @@ export default {
           s.CREATE_USER = ''
           s.LAST_USER = ''
           s.showCard = d.showCard
-          s.shopId = d.shopId
-          s.endDate = d.endDate
+          s.shopId = this.shopId
+          s.endDate = ''
           s.checkCar = 'False'
           s.conditionValue = d.value
           // if (d.conditionField !== '') {
@@ -453,6 +452,10 @@ export default {
       }
     },
     async addData (p) {
+      this.flowfieldNameitem[0].endDate = this.endDate
+      this.flowfieldNameitem[0].CREATE_USER = this.session.data.userName
+      this.flowfieldNameitem[0].LAST_USER = this.session.data.userName
+      console.log('flowfieldNameitem', this.flowfieldNameitem)
       this.dataReady = false
       this.$swal({
         title: 'ต้องการ เพิ่มข้อมูล ใช่หรือไม่?',
@@ -465,9 +468,7 @@ export default {
       })
         .then(async (result) => {
           var GG = this.GroupId
-          this.formAdd.CREATE_USER = this.session.data.userName
-          this.formAdd.LAST_USER = this.session.data.userName
-          this.flowfieldNameitem.shopId = this.$session.getAll().data.shopId
+          this.shopId = this.shopId
           this.endDate = this.endDate
           this.checkCar = this.checkCar
           this.flexData(this.flowfieldNameitem)
@@ -481,7 +482,7 @@ export default {
           await axios
             .post(
               // eslint-disable-next-line quotes
-              this.DNS_IP + '/job/add', this.flowfieldNameitem, this.shopId, this.endDate, this.checkCar
+              this.DNS_IP + '/job/add', this.flowfieldNameitem
             )
             .then(async (response) => {
               // Debug response

@@ -128,7 +128,7 @@
           </v-row>
           <!-- end เปลี่ยนสถานะ step -->
 
-          <!-- DIALOG ADD -->
+          <!-- DIALOG แก้ไขข้อมูล ใน card -->
           <v-dialog v-model="dialogAdd" persistent max-width="50%">
             <v-card>
               <v-card-title>
@@ -171,7 +171,7 @@
           </v-dialog>
           <!-- end add -->
 
-          <!-- DIALOG Delete -->
+          <!-- DIALOG ค่าใช้จ่าย -->
           <v-dialog v-model="dialogDelete" persistent max-width="50%">
             <v-card>
               <v-card-title>
@@ -237,18 +237,19 @@
                           {{ items.fieldValue}}<br>
                         </div>
                         <v-icon large color="black"> mdi-account</v-icon> <strong>{{ JobDataItem.filter((row) => {return row.jobId == itemsJob.jobId})[0].empStep }}</strong>
-                        <v-chip
+
+                          <v-chip
                               class="ma-2"
                               draggable
                               justify="center"
                               align="center"
                             >
-                              endDate
-                            </v-chip>
+                              {{totalDateDiff}}
+                          </v-chip>
                         <v-spacer></v-spacer>
                         <v-container class="grey lighten-4" style="position:absolute; width:30px; right:0px; top:0px;">
                           <v-row class="pl-1">
-                              <v-icon v-if="allJob.filter((row) => {return row.stepId == item.stepId})[0].checkCar == 'False'"
+                              <v-icon v-if="allJob.filter((row) => {return row.jobId == itemsJob.jobId})[0].checkCar == 'False'"
                                 color="#CDDC39"
                                 depressed
                                 @click="updateStatusCars(itemsJob.jobId, 'False')"
@@ -321,9 +322,11 @@ export default {
       stepItemSelete: [],
       empSeleteStep: [],
       DataFlowName: [],
+      TotalDate: [],
       DataBranchName: [],
       ItemSelete: [],
       userId: '',
+      totalDateDiff: '',
       masBranchName: 'สาขาบางกอกน้อย',
       formUpdate: {
         stepId: '',
@@ -493,10 +496,12 @@ export default {
             this.formUpdate.stepId = response.data[0].stepId
             this.formUpdate.flowId = response.data[0].flowId
             this.formUpdate.jobId = response.data[0].jobId
+            this.formUpdate.jobNo = response.data[0].jobNo
             this.formUpdate.empStep = response.data[0].empStep
             this.formUpdate.departmentStep = response.data[0].departmentStep
             this.formUpdate.branchStep = response.data[0].branchStep
             this.formUpdate.checkCar = response.data[0].checkCar
+            this.totalDateDiff = response.data[0].totalDateDiff
             this.userId = response.data[0].userId
             response.data.forEach(element => {
               if (jobs.indexOf(element.jobId) === -1) {
@@ -509,6 +514,7 @@ export default {
           console.log('JobDataItem', this.JobDataItem)
           console.log('JobLEN', this.userId)
           console.log('allJob', this.allJob)
+          console.log('totalDateDiff', this.totalDateDiff)
         })
     },
     async pushmessage (jobId) {
@@ -544,6 +550,7 @@ export default {
         .then(async (result) => {
           this.formUpdate.LAST_USER = this.session.data.userName
           var ID = this.formUpdate.jobId
+          var flowName = this.formUpdate.flowName
           delete this.formUpdate['flowId']
           delete this.formUpdate['flowName']
           delete this.formUpdate['sortNo']
@@ -558,17 +565,24 @@ export default {
             .then(async (response) => {
               // Debug response
               console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
+              // this.dialog = false
+              // this.$swal('เรียบร้อย', 'แก้ไขสถานะ เรียบร้อย', 'success')
+              // this.getStepFlow()
+              // this.getLayout()
+              // this.allJob.map((row, index) => {
+              //   if (row.jobId === ID) {
+              //     this.allJob[index].stepId = this.formUpdate.stepId
+              //   }
+              // })
+              this.formUpdate.flowName = flowName
+              await this.pushmessage(this.formUpdate.jobId)
               this.dialog = false
               this.$swal('เรียบร้อย', 'แก้ไขสถานะ เรียบร้อย', 'success')
-              this.allJob.map((row, index) => {
-                if (row.jobId === ID) {
-                  this.allJob[index].stepId = this.formUpdate.stepId
-                }
-              })
-              this.pushmessage(this.formUpdate.jobId)
-              console.log('allJob', this.allJob)
-              console.log(this.formUpdate.jobId)
-              console.log(this.formUpdate.stepId)
+              this.getStepFlow()
+              this.getLayout()
+              // console.log('allJob', this.allJob)
+              // console.log(this.formUpdate.jobId)
+              // console.log(this.formUpdate.stepId)
             })
             // eslint-disable-next-line handle-callback-err
             .catch((error) => {
@@ -626,6 +640,8 @@ export default {
             )
             .then(async response => {
               this.$swal('เรียบร้อย', 'อัพเดท สถานะรถ เรียบร้อย', 'success')
+              this.getStepFlow()
+              this.getLayout()
               console.log('shopId:', this.shopId)
               console.log('form:', this.formUpdateCar)
             })
@@ -660,6 +676,8 @@ export default {
             )
             .then(async response => {
               this.$swal('เรียบร้อย', 'ลบข้อมูล เรียบร้อย', 'success')
+              this.getStepFlow()
+              this.getLayout()
               this.dialogDelete = false
               console.log('shopId:', this.shopId)
               console.log('form:', this.formDelete)

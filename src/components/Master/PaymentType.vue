@@ -276,13 +276,14 @@ export default {
       panel: [0],
       panel1: [1],
       session: this.$session.getAll(),
+      shopId: this.$session.getAll().data.shopId,
       // Search All
       searchAll: '',
       searchAll2: '',
       formAdd: {
         payTypeCode: '',
         payTypeName: '',
-        shopId: 'MS2021101348536490'
+        shopId: this.$session.getAll().data.shopId
       },
       formUpdate: {
         payTypeCode: '',
