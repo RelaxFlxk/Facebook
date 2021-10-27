@@ -118,12 +118,12 @@ export default {
         .get(
           // eslint-disable-next-line quotes
           this.DNS_IP +
-            '/system_user/get?userId=' +
-            this.$route.query.userId
+            '/token_email/get?status=wait&token=' +
+            this.$route.query.token
         )
         .then(async (response) => {
           if (response.data[0]) {
-            var ID = response.data[0].userId
+            var ID = response.data[0].refId
             var dt = {
               userPassword: this.form.newUserPassword
             }
@@ -134,24 +134,40 @@ export default {
                 dt
               )
               .then(async res => {
-                // if (res.status === true) {
-                let dt = {
-                  'email': response.data[0].userName,
-                  'status': 'confirm',
-                  'user': response.data[0].userName,
-                  'pass': this.form.newUserPassword
+                if (res.data.status === true) {
+                  let dt = {
+                    'status': 'use',
+                    'LAST_USER': response.data[0].CREATE_USER
+                  }
+                  await axios
+                    .post(
+                      this.DNS_IP + '/token_email/edit/' + this.$route.query.token, dt
+                    )
+                    .then(async response1 => {
+                      if (response1.data.status) {
+                        let dt = {
+                          'email': response.data[0].CREATE_USER,
+                          'status': 'confirm',
+                          'user': response.data[0].CREATE_USER,
+                          'pass': this.form.newUserPassword
+                        }
+                        await axios
+                          .post(
+                            'http://localhost:5001/betask-loyalty/asia-southeast1/sendMail', dt
+                          )
+                          .then(async response => {
+                            this.$swal('เรียบร้อย', 'กรุณาเข้าสู่ระบบด้วยรหัสใหม่', 'success')
+                            this.$router.push('/Core/Login')
+                          })
+                      }
+                    })
+                } else {
+                  this.$swal('ผิดพลาด', 'กรุณาทำรายการใหม่', 'error')
                 }
-                await axios
-                  .post(
-                    'http://localhost:5001/betask-loyalty/asia-southeast1/sendMail', dt
-                  )
-                  .then(async response => {
-                  })
-                // }
               })
           } else {
             this.dataReady = true
-            this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง1', 'error')
+            this.$swal('ผิดพลาด', 'ท่านได้เปลี่ยนรหัสผ่านจากลิ้งนี้แล้ว กรุณาทำรายการใหม่', 'error')
           }
         })
         // eslint-disable-next-line handle-callback-err

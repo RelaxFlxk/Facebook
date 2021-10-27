@@ -30,7 +30,7 @@ Vue.mixin({
       DNS_IP: '',
       PK: '', // Primary Key
       ApplicationKey: '', // Token
-      IPPotocalENV_Production: 'https://www.betaskthai.com/hrm',
+      IPPotocalENV_Production: 'https://api-belinked.betaskthai.com',
       IPPotocalENV_Developer: 'http://localhost:5004',
       main_profile: {
         userLineuserId: 'U97a2b1814542579b9e5d7c1b891538ab',

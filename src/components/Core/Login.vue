@@ -323,9 +323,9 @@ export default {
         })
     },
     async onSubmitForgot () {
-      this.dataReady = false
+      // this.dataReady = false
       this.form.type = 'username'
-      console.log(JSON.stringify(this.form))
+      // console.log(JSON.stringify(this.form))
       await axios
         .get(
           // eslint-disable-next-line quotes
@@ -335,19 +335,44 @@ export default {
         )
         .then(async (response) => {
           if (response.data[0]) {
+            var md5 = require('md5')
+            let autogen = await this.generateCodeGlobal
+            let token = md5(autogen)
+
             let dt = {
-              'email': response.data[0].userName,
-              'status': 'forgot',
-              'userId': response.data[0].userId
+              'refId': response.data[0].userId,
+              'typeJob': 'forgot',
+              'status': 'wait',
+              'token': token,
+              'CREATE_USER': response.data[0].userName,
+              'LAST_USER': response.data[0].userName
             }
             await axios
               .post(
-                'http://localhost:5001/betask-loyalty/asia-southeast1/sendMail', dt
+                this.DNS_IP + '/token_email/add', dt
               )
-              .then(async response => {
-                this.dialog = false
-                this.$swal('เรียบร้อย', 'กรุณาตรวจสอบ Email ของท่าน', 'success')
-                this.$router.push('/')
+              .then(async response1 => {
+                console.log('response1', response1.data.status)
+                if (response1.data.status) {
+                  let dt = {
+                    'email': response.data[0].userName,
+                    'status': 'forgot',
+                    'token': token
+                  }
+                  await axios
+                    .post(
+                      'http://localhost:5001/betask-loyalty/asia-southeast1/sendMail', dt
+                    )
+                    .then(async response => {
+                      this.dialog = false
+                      this.$swal('เรียบร้อย', 'กรุณาตรวจสอบ Email ของท่าน', 'success')
+                      // location.reload()
+                      this.form.newUserName = ''
+                    })
+                } else {
+                  this.$swal('ผิดพลาด', 'กรุณาทำรายการใหม่', 'error')
+                  this.form.newUserName = ''
+                }
               })
           } else {
             this.dataReady = true

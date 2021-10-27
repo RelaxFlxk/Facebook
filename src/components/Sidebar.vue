@@ -211,7 +211,7 @@ export default {
       console.log(this.$session.getAll())
       // this.$session.destroy()
       // this.$session.clear()
-      this.$router.push('/Core/Login?access=' + this.$session.getAll().AccessKey)
+      this.$router.push('/Core/Login')
     },
     adminChk () {
       this.master = []
