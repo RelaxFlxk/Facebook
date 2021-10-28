@@ -630,7 +630,7 @@ export default {
         update.fieldValue = d.fieldValue
         update.shopId = d.shopId
         update.dueDate = this.date + ' ' + this.time
-        update.userId = this.$session.getAll().data.userName
+        update.userId = 'user-skip'
         update.pageName = 'BookingList'
         Add.push(update)
       }

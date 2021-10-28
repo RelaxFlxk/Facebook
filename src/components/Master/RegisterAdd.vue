@@ -432,9 +432,12 @@ export default {
               // Debug response
               console.log('addDataGlobal DNS_IP + /job/add', response)
               console.log('data', response)
+              let updateStatusSend = {
+                updateStatusSend: 'false'
+              }
               await axios
                 .post(
-                  this.DNS_IP + '/job/pushQr/' + response.data.jobNo
+                  this.DNS_IP + '/job/pushQr/' + response.data.jobNo, updateStatusSend
                 )
                 .then(
                   this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success'),
