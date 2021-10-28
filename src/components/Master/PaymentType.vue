@@ -354,9 +354,9 @@ export default {
       this.formAdd.payTypeCode = this.code + this.generateCodeGlobal()
 
       this.dataReady = false
-      this.submitAdd()
+      this.submitAdd(this.DNS_IP, this.path, this.formAdd)
     },
-    async submitAdd () {
+    async submitAdd (DNS_IP, PATH, ID, DT) {
       this.dataReady = false
 
       this.$swal({
@@ -372,7 +372,7 @@ export default {
           await axios
             .post(
               // eslint-disable-next-line quotes
-              this.DNS_IP + this.path + "add",
+              DNS_IP + PATH + "add",
               this.formAdd,
               {
                 headers: {
@@ -490,10 +490,9 @@ export default {
       //
       this.formUpdate.LAST_USER = this.$session.getAll().data.userName
       this.dataReady = false
-      this.deleteDataGlobal(this.DNS_IP, this.path, this.PK)
+      this.deleteDataGlobal(this.DNS_IP, this.path, this.PK, this.$session.getAll().data.shopId)
     },
     async clearData () {
-      this.getDataCompany()
       // eslint-disable-next-line no-redeclare
       for (var key in this.formAdd) {
         if (this.formAdd[key]) {

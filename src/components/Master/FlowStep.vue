@@ -3,41 +3,41 @@
     <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
     <v-main>
       <div class="pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4">
-        <v-row v-if="formUpdate.flowName && masBranchName">
+        <v-row v-if="formUpdate.flowName">
           <v-col cols="12" class="text-center">
             <p class="text-h4 text--primary">
               {{formUpdate.flowName}} ({{masBranchName}})
             </p>
           </v-col>
           <v-row>
-              <v-col cols="12" class="text-center">
-            นัดส่ง:
-            <div class="text-center">
-              <v-chip
-                class="ma-2"
-                color="primary"
-              >
-                ภายใน 2 วัน
-              </v-chip>
+            <v-col cols="12" class="text-center">
+          นัดส่ง:
+          <div class="text-center">
+            <v-chip
+              class="ma-2"
+              color="primary"
+            >
+              ภายใน 2 วัน
+            </v-chip>
 
-              <v-chip
-                class="ma-2"
-                color="red"
-                text-color="white"
-              >
-                ภายใน 4 วัน
-              </v-chip>
+            <v-chip
+              class="ma-2"
+              color="red"
+              text-color="white"
+            >
+              ภายใน 4 วัน
+            </v-chip>
 
-              <v-chip
-                class="ma-2"
-                color="green"
-                text-color="white"
-              >
-                มากกว่า 4 วัน
-              </v-chip>
-            </div>
-              </v-col>
-            </v-row>
+            <v-chip
+              class="ma-2"
+              color="green"
+              text-color="white"
+            >
+              มากกว่า 4 วัน
+            </v-chip>
+          </div>
+            </v-col>
+          </v-row>
         </v-row>
 
         <!-- select flow-->
@@ -129,7 +129,7 @@
           <!-- end เปลี่ยนสถานะ step -->
 
           <!-- DIALOG แก้ไขข้อมูล ใน card -->
-          <v-dialog v-model="dialogAdd" persistent max-width="50%">
+          <v-dialog v-model="dialogEdit" persistent max-width="50%">
             <v-card>
               <v-card-title>
                 <span class="headline">แก้ไขข้อมูล</span>
@@ -137,14 +137,43 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <div class="column is-3" v-for="(itemsEdit, index) in JobDataItem" :key="index">
-                    <strong>{{ itemsEdit.fieldName }}: </strong>
+                     <div class="column is-3" v-for="(itemsEdit, index) in JobDataItem.filter((row) => {return row.jobId == formUpdate.jobId})" :key="index">
+                       <strong>{{ itemsEdit.fieldName }}: </strong>
                     <v-col cols="12">
                       <v-text-field
                       v-model="itemsEdit.fieldValue"
                       required dense />
                     </v-col>
                     </div>
+
+                    <v-col cols="12">
+                      <v-menu
+                          ref="menu"
+                          v-model="menu"
+                          :close-on-content-click="false"
+                          transition="scale-transition"
+                          offset-y
+                          max-width="290px"
+                          min-width="auto"
+                        >
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-text-field
+                              v-model="formUpdate.endDate"
+                              label="วันที่นัดส่งรถลูกค้า"
+                              persistent-hint
+                              prepend-icon="mdi-calendar"
+                              v-bind="attrs"
+                              v-on="on"
+                            ></v-text-field>
+                          </template>
+                          <v-date-picker
+                            v-model="formUpdate.endDate"
+                            no-title
+                            @input="menu = false"
+                          ></v-date-picker>
+                        </v-menu>
+                    </v-col>
+
                   </v-row>
                 </v-container>
               </v-card-text>
@@ -152,7 +181,7 @@
                 <v-spacer></v-spacer>
                 <v-btn
                   color="primary" depressed
-                  @click="dialogAdd = false,clearData()"
+                  @click="dialogEdit = false,clearData()"
                 >
                   <v-icon left> mdi-cancel</v-icon>
                   ปิด
@@ -161,7 +190,7 @@
                   elevation="2"
                   depressed
                   color="success"
-                  @click="addData()"
+                  @click="editData()"
                 >
                   <v-icon left>mdi-checkbox-marked-circle</v-icon>
                   แก้ไข
@@ -237,17 +266,20 @@
                           {{ items.fieldValue}}<br>
                         </div>
                         <v-icon large color="black"> mdi-account</v-icon> <strong>{{ JobDataItem.filter((row) => {return row.jobId == itemsJob.jobId})[0].empStep }}</strong>
-
-                          <v-chip
+                        <!-- diffDate -->
+                          <v-chip v-if="allJob.filter((row) => {return row.jobId == itemsJob.jobId})"
                               class="ma-2"
+                              color="primary"
                               draggable
                               justify="center"
                               align="center"
                             >
-                              {{totalDateDiff}}
+                              {{itemsJob.totalDateDiff}}
                           </v-chip>
+                          <!-- end diffDate -->
                         <v-spacer></v-spacer>
                         <v-container class="grey lighten-4" style="position:absolute; width:30px; right:0px; top:0px;">
+                          <!-- update satatus car -->
                           <v-row class="pl-1">
                               <v-icon v-if="allJob.filter((row) => {return row.jobId == itemsJob.jobId})[0].checkCar == 'False'"
                                 color="#CDDC39"
@@ -261,8 +293,9 @@
                                 @click="updateStatusCars(itemsJob.jobId, 'True')"
                               > mdi-car </v-icon>
                           </v-row>
+                          <!-- end update satatus car -->
                           <v-row class="pt-2 pl-1">
-                            <v-icon large color="primary" dark @click="dialogAdd = true"> mdi-circle-edit-outline </v-icon>
+                            <v-icon large color="primary" dark @click="dialogEdit = true, setUpdate(itemsJob)"> mdi-circle-edit-outline </v-icon>
                           </v-row>
                           <v-row class="pt-2 pl-1">
                               <v-icon large color="primary" @click="dialog = true, setUpdate(itemsJob)"> mdi-list-status</v-icon>
@@ -290,13 +323,16 @@ import axios from 'axios' // api
 import draggable from 'vuedraggable'
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
+import Menu from '../System/Menu.vue'
+import moment from 'moment' // แปลง date
 
 export default {
   name: 'hello',
   components: {
     draggable,
     'left-menu-admin': adminLeftMenu,
-    VuetifyMoney
+    VuetifyMoney,
+    Menu
   },
   data () {
     return {
@@ -315,8 +351,10 @@ export default {
       ],
       DataflowId: '',
       dialog: false,
-      dialogAdd: false,
+      dialogEdit: false,
       dialogDelete: false,
+      date: new Date().toISOString().substr(0, 10),
+      menu: false,
       session: this.$session.getAll(),
       shopId: this.$session.getAll().data.shopId,
       stepItemSelete: [],
@@ -327,11 +365,11 @@ export default {
       ItemSelete: [],
       userId: '',
       totalDateDiff: '',
-      masBranchName: 'สาขาบางกอกน้อย',
+      masBranchName: '',
       formUpdate: {
         stepId: '',
         flowId: '',
-        flowName: 'IT',
+        flowName: 'งาน',
         stepTitle: '',
         sortNo: '',
         CREATE_USER: '',
@@ -359,9 +397,15 @@ export default {
         totalPrice: ''
       },
       formUpdateCar: {
-        jobNo: '360043981634784276004',
-        shopId: 'MS2021101348536490',
+        jobNo: '',
+        shopId: this.$session.getAll().data.shopId,
         checkCar: ''
+      },
+      formEditData: {
+        jobNo: '',
+        shopId: this.$session.getAll().data.shopId,
+        fieldValue: '',
+        endDate: ''
       }
     }
   },
@@ -502,11 +546,12 @@ export default {
             this.formUpdate.branchStep = response.data[0].branchStep
             this.formUpdate.checkCar = response.data[0].checkCar
             this.totalDateDiff = response.data[0].totalDateDiff
+            this.formUpdate.endDate = response.data[0].endDate
             this.userId = response.data[0].userId
             response.data.forEach(element => {
               if (jobs.indexOf(element.jobId) === -1) {
                 jobs.push(element.jobId)
-                this.allJob.push({jobId: element.jobId, stepId: element.stepId, checkCar: element.checkCar})
+                this.allJob.push({jobId: element.jobId, stepId: element.stepId, checkCar: element.checkCar, totalDateDiff: element.totalDateDiff, endDate: element.endDate})
               }
             })
             this.JobDataItem = response.data
@@ -526,8 +571,16 @@ export default {
           console.log(jobId)
         )
     },
+    momenDate (value) {
+      if (value) {
+        return moment(String(value)).format('YYYY-MM-DD')
+      }
+    },
     async setUpdate (item) {
+      console.log(this.formUpdate)
+      console.log(item)
       this.formUpdate.jobId = item.jobId
+      this.formUpdate.endDate = this.momenDate(item.endDate)
     },
     async onUpdate () {
       this.formUpdate.stepId = this.formUpdate.stepTitle.stepId
@@ -681,6 +734,51 @@ export default {
               this.dialogDelete = false
               console.log('shopId:', this.shopId)
               console.log('form:', this.formDelete)
+            })
+        })
+    },
+    async editData () {
+      console.log(this.JobDataItem.filter((row) => { return row.jobId === this.formUpdate.jobId }))
+      this.jobNo = ''
+      console.log('shopId', this.shopId)
+      console.log('formEditData', this.formEditData)
+      this.$swal({
+        title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async (result) => {
+          // var ID = this.formUpdate.jobId
+          let rs = this.JobDataItem.filter((row) => { return row.jobId === this.formUpdate.jobId })
+          let dt = []
+          for (var i = 0; i < rs.length; i++) {
+            var d = rs[i]
+            var s = {}
+            s.jobNo = d.jobNo
+            s.jobId = d.jobId
+            s.fieldId = d.fieldId
+            s.fieldValue = d.fieldValue
+            s.endDate = this.formUpdate.endDate
+            s.LAST_USER = d.LAST_USER
+            dt.push(s)
+          }
+          console.log('dt', dt)
+          await axios
+            .post(
+              // eslint-disable-next-line quotes
+              this.DNS_IP + "/jobData/editData", dt
+            )
+            .then(async (response) => {
+              this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
+              this.getStepFlow()
+              this.getLayout()
+              this.dialogEdit = false
+              console.log('shopId:', this.shopId)
+              console.log('form:', this.formEditData)
             })
         })
     }

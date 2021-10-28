@@ -379,7 +379,7 @@ Vue.mixin({
           console.log('error function editDataGlobal : ', error)
         })
     },
-    async deleteDataGlobal (DNS_IP, PATH, ID) {
+    async deleteDataGlobal (DNS_IP, PATH, ID, shopId) {
       this.$swal({
         title: 'ต้องการ ลบข้อมูล ใช่หรือไม่?',
         type: 'question',
@@ -410,7 +410,7 @@ Vue.mixin({
               this.dialogDelete = false
 
               // Load Data
-              await this.getDataGlobal(DNS_IP, PATH)
+              await this.getDataGlobal(DNS_IP, PATH, shopId)
             })
             // eslint-disable-next-line handle-callback-err
             .catch((error) => {
