@@ -126,9 +126,9 @@ export default {
     VuetifyLogo
   },
   name: 'Login',
-  beforeCreate () {
-    this.$liff.init({ liffId: this.$liff_id_login }, function (data) {})
-  },
+  // beforeCreate () {
+  //   this.$liff.init({ liffId: this.$liff_id_login }, function (data) {})
+  // },
   data () {
     return {
       session: this.$session.getAll(),
@@ -181,7 +181,7 @@ export default {
   },
   // eslint-disable-next-line space-before-function-paren
   async mounted() {
-    await this.checkLiffLogin()
+    // await this.checkLiffLogin()
     this.$session.destroy()
     this.$session.clear()
   },
