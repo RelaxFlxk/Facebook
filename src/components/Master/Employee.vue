@@ -490,9 +490,12 @@ export default {
       // End Form Config ADD EDIT
       // Data Table Config
       columns: [
+        { text: 'id', value: 'empId', align: 'center' },
         { text: 'ชื่อ-นามสกุล', value: 'empFull_NameTH', align: 'center' },
-        { text: 'แผนก', value: 'positionName', align: 'center' },
-        { text: 'สาขา', value: 'masBranchName', align: 'center' },
+        // { text: 'แผนก', value: 'positionName', align: 'center' },
+        // { text: 'สาขา', value: 'masBranchName', align: 'center' },
+        { text: 'วันที่สร้าง', value: 'CREATE_DATE' },
+        { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
         { text: 'Action', value: 'action', sortable: false, align: 'center' }
       ],
       dataItem: [],
@@ -521,10 +524,10 @@ export default {
     }
   },
   async mounted () {
-    this.getGetToken(this.DNS_IP)
+    // this.getGetToken(this.DNS_IP)
     this.dataReady = false
     // Get Data
-    this.getDataGlobal(this.DNS_IP, this.path)
+    this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
   },
   methods: {
     validate (Action) {
@@ -783,7 +786,7 @@ export default {
           }
           console.log(checkError)
           if (checkError === true) {
-            await this.getDataGlobal(this.DNS_IP, this.path)
+            await this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
           } else {
             this.dataItemImport = []
             this.dataItemImportChecKHide = true
