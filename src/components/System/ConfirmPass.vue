@@ -153,7 +153,7 @@ export default {
                         }
                         await axios
                           .post(
-                            'http://localhost:5001/betask-loyalty/asia-southeast1/sendMail', dt
+                            'https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Welcome-sendMail', dt
                           )
                           .then(async response => {
                             this.$swal('เรียบร้อย', 'กรุณาเข้าสู่ระบบด้วยรหัสใหม่', 'success')

@@ -361,7 +361,7 @@ export default {
                   }
                   await axios
                     .post(
-                      'http://localhost:5001/betask-loyalty/asia-southeast1/sendMail', dt
+                      'https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Welcome-sendMail', dt
                     )
                     .then(async response => {
                       this.dialog = false
