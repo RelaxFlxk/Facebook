@@ -3,16 +3,21 @@
     <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
     <v-main>
       <div class="pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4">
-        <v-row v-if="formUpdate.flowName">
-          <v-col cols="12" class="text-center">
+        <v-row>
+          <v-col cols="6" class="text-right" v-if="formUpdate.flowName">
             <p class="text-h4 text--primary">
-              {{formUpdate.flowName}} ({{masBranchName}})
+              {{formUpdate.flowName}}
             </p>
           </v-col>
+          <v-col cols="6" v-if="masBranchName">
+            <p class="text-h4 text--primary">
+              ({{masBranchName}})
+            </p>
+          </v-col>
+          </v-row>
           <v-row>
             <v-col cols="12" class="text-center">
-          นัดส่ง:
-          <div class="text-center">
+           <v-title class="text-h6 text-center">นัดส่ง:</v-title>
             <v-chip
               class="ma-2"
               color="primary"
@@ -35,10 +40,8 @@
             >
               มากกว่า 4 วัน
             </v-chip>
-          </div>
             </v-col>
           </v-row>
-        </v-row>
 
         <!-- select flow-->
         <v-sheet tile height="54" class="d-flex">
@@ -51,7 +54,6 @@
             dense
             outlined
             hide-details
-            value="IT"
             label="ประเภทบริการ"
             class="ma-2"
           ></v-select>
@@ -267,7 +269,7 @@
                         </div>
                         <v-icon large color="black"> mdi-account</v-icon> <strong>{{ JobDataItem.filter((row) => {return row.jobId == itemsJob.jobId})[0].empStep }}</strong>
                         <!-- diffDate -->
-                          <v-chip v-if="allJob.filter((row) => {return row.jobId == itemsJob.jobId})"
+                          <!-- <v-chip v-if="allJob.filter((row) => {return row.jobId == itemsJob.jobId})"
                               class="ma-2"
                               color="primary"
                               draggable
@@ -275,7 +277,36 @@
                               align="center"
                             >
                               {{itemsJob.totalDateDiff}}
-                          </v-chip>
+                          </v-chip> -->
+            <v-chip v-if="allJob.filter((row) => {return row.jobId == itemsJob.jobId}).length <= 2"
+              class="ma-2"
+              color="primary"
+              draggable
+              justify="center"
+              align="center"
+            >
+              {{itemsJob.totalDateDiff}}
+            </v-chip>
+            <v-chip v-else-if="allJob.filter((row) => {return row.jobId == itemsJob.jobId}).length <= 4"
+              class="ma-2"
+              color="red"
+              text-color="white"
+              draggable
+              justify="center"
+              align="center"
+            >
+              {{itemsJob.totalDateDiff}}
+            </v-chip>
+            <v-chip v-else-if="allJob.filter((row) => {return row.jobId == itemsJob.jobId}).length >= 4"
+              class="ma-2"
+              color="green"
+              text-color="white"
+              draggable
+              justify="center"
+              align="center"
+            >
+              {{itemsJob.totalDateDiff}}
+            </v-chip>
                           <!-- end diffDate -->
                         <v-spacer></v-spacer>
                         <v-container class="grey lighten-4" style="position:absolute; width:30px; right:0px; top:0px;">
@@ -369,7 +400,7 @@ export default {
       formUpdate: {
         stepId: '',
         flowId: '',
-        flowName: 'งาน',
+        flowName: 'กระดานงาน',
         stepTitle: '',
         sortNo: '',
         CREATE_USER: '',
@@ -700,6 +731,15 @@ export default {
             })
         })
     },
+    async pushmessagePrice (jobNo) {
+      await axios
+        .post(
+          this.DNS_IP + '/job/pushClosejob/' + jobNo
+        )
+        .then(
+          console.log(jobNo)
+        )
+    },
     deleteDataPrice () {
       this.jobNo = ''
       console.log('shopId:', this.shopId)
@@ -728,6 +768,7 @@ export default {
               this.DNS_IP + '/job/editPrice/' + ID, ds
             )
             .then(async response => {
+              await this.pushmessagePrice(this.formUpdate.jobId)
               this.$swal('เรียบร้อย', 'ลบข้อมูล เรียบร้อย', 'success')
               this.getStepFlow()
               this.getLayout()
