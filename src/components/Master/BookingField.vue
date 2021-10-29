@@ -120,7 +120,7 @@ export default {
   data () {
     return {
       itemdetell: [],
-      Redirect: 'http://localhost:8081/booking?shopId=' + this.$session.getAll().data.shopId,
+      Redirect: 'https://betask-linked.web.app/booking?shopId=' + this.$session.getAll().data.shopId,
       session: this.$session.getAll(),
       shopId: this.$session.getAll().data.shopId,
       IdUpdate: '',

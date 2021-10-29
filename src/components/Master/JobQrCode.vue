@@ -77,7 +77,7 @@ export default {
     return {
       PK: '',
       path: '/Job/',
-      pathToweb: 'http://localhost:8081/JobConfirm?jobId=',
+      pathToweb: 'https://betask-linked.web.app/JobConfirm?jobId=',
       userId: '',
       jobNo: this.$route.query.jobNo,
       shopId: this.$session.getAll().data.shopId,
