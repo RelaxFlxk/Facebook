@@ -131,10 +131,10 @@ table tr:last-child td:last-child {
   background-color: var(--nav-bg);
 }
 .v-application--is-ltr .v-list-group--no-action>.v-list-group__items>.v-list-item {
-  padding-left: 45px;
+  padding-left: 45px !important;
 }
 .v-application--is-ltr .v-list-item__action:first-child, .v-application--is-ltr .v-list-item__icon:first-child {
-  margin-right: 15px;
+  margin-right: 15px !important;
 }
 /* .theme--light.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled) */
 

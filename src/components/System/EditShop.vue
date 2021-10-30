@@ -188,9 +188,9 @@
                   <template v-slot:[`item.expireDate`]="{ item }">
                     {{ format_dateNotime(item.expireDate) }}
                   </template>
-                  <template v-slot:[`item.logo`]="{ item }">
+                  <template v-slot:[`item.shopImge`]="{ item }">
                     <v-avatar color="primary" size="40">
-                      <img :src="item.logo" alt="img"
+                      <img :src="item.shopImge" alt="img"
                     /></v-avatar>
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
