@@ -20,14 +20,15 @@
            <v-title class="text-h6 text-center">นัดส่ง:</v-title>
             <v-chip
               class="ma-2"
-              color="primary"
+              color="red"
+              text-color="white"
             >
               ภายใน 2 วัน
             </v-chip>
 
             <v-chip
               class="ma-2"
-              color="red"
+              color="primary"
               text-color="white"
             >
               ภายใน 4 วัน
@@ -269,44 +270,35 @@
                         </div>
                         <v-icon large color="black"> mdi-account</v-icon> <strong>{{ JobDataItem.filter((row) => {return row.jobId == itemsJob.jobId})[0].empStep }}</strong>
                         <!-- diffDate -->
-                          <!-- <v-chip v-if="allJob.filter((row) => {return row.jobId == itemsJob.jobId})"
-                              class="ma-2"
-                              color="primary"
-                              draggable
-                              justify="center"
-                              align="center"
-                            >
-                              {{itemsJob.totalDateDiff}}
-                          </v-chip> -->
-            <v-chip v-if="allJob.filter((row) => {return row.jobId == itemsJob.jobId}).length <= 2"
-              class="ma-2"
-              color="primary"
-              draggable
-              justify="center"
-              align="center"
-            >
-              {{itemsJob.totalDateDiff}}
-            </v-chip>
-            <v-chip v-else-if="allJob.filter((row) => {return row.jobId == itemsJob.jobId}).length <= 4"
-              class="ma-2"
-              color="red"
-              text-color="white"
-              draggable
-              justify="center"
-              align="center"
-            >
-              {{itemsJob.totalDateDiff}}
-            </v-chip>
-            <v-chip v-else-if="allJob.filter((row) => {return row.jobId == itemsJob.jobId}).length >= 4"
-              class="ma-2"
-              color="green"
-              text-color="white"
-              draggable
-              justify="center"
-              align="center"
-            >
-              {{itemsJob.totalDateDiff}}
-            </v-chip>
+                          <v-chip v-if="parseInt(itemsJob.totalDateDiff) <= 2"
+                            class="ma-2"
+                            color="red"
+                            draggable
+                            justify="center"
+                            align="center"
+                          >
+                            {{itemsJob.totalDateDiff}}
+                          </v-chip>
+                          <v-chip v-else-if="parseInt(itemsJob.totalDateDiff) <= 4 && parseInt(itemsJob.totalDateDiff) >=2"
+                            class="ma-2"
+                            color="primary"
+                            text-color="white"
+                            draggable
+                            justify="center"
+                            align="center"
+                          >
+                            {{itemsJob.totalDateDiff}}
+                          </v-chip>
+                          <v-chip v-else-if="parseInt(itemsJob.totalDateDiff) >= 4"
+                            class="ma-2"
+                            color="green"
+                            text-color="white"
+                            draggable
+                            justify="center"
+                            align="center"
+                          >
+                            {{itemsJob.totalDateDiff}}
+                          </v-chip>
                           <!-- end diffDate -->
                         <v-spacer></v-spacer>
                         <v-container class="grey lighten-4" style="position:absolute; width:30px; right:0px; top:0px;">
@@ -540,7 +532,7 @@ export default {
     async getEmpSelect () {
       this.empSeleteStep = []
       await axios
-        .get(this.DNS_IP + '/empSelect/get')
+        .get(this.DNS_IP + '/empSelect/get?shopId=' + this.shopId)
         .then(async response => {
           let rs = response.data
           console.log('rs', rs)
@@ -594,9 +586,10 @@ export default {
         })
     },
     async pushmessage (jobId) {
+      let updateStatusSend = { updateStatusSend: 'false' }
       await axios
         .post(
-          this.DNS_IP + '/job/pushMsg/' + jobId
+          this.DNS_IP + '/job/pushMsg/' + jobId, updateStatusSend
         )
         .then(
           console.log(jobId)
@@ -845,5 +838,9 @@ export default {
 }
 .bodyFrame {
   padding-top: 1px;
+}
+body{
+  overflow:auto;
+  white-space: normal;
 }
 </style>

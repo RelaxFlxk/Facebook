@@ -34,7 +34,7 @@
                   <div v-for="(element , workData) in Layout[i].workData" :key="workData">
                     <v-card class="rowIncolum" elevation="12">
                       <v-card-text>
-                        <h2>{{element.stepTitle}}</h2>
+                        <h3>{{element.stepTitle}}</h3>
                       </v-card-text>
                     </v-card>
                   </div>
