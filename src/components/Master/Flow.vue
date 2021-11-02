@@ -724,7 +724,7 @@ export default {
         flowfieldName: [],
         CREATE_USER: '',
         LAST_USER: '',
-        shopId: ''
+        shopId: this.$session.getAll().data.shopId
       },
       formAddStep: {
         stepId: '',
@@ -926,7 +926,7 @@ export default {
       console.log('updateSendCard')
       console.log('SendCard', this.sendCard)
     },
-    getCustomField () {
+    async getCustomField () {
       this.editedItemSelete = []
       axios.get(this.DNS_IP + '/customField/get?shopId=' + this.shopId).then((response) => {
         let rs = response.data
@@ -988,6 +988,12 @@ export default {
         }
       })
     },
+    async setUpdate (item) {
+      console.log(this.formUpdate)
+      console.log(item)
+      this.formUpdate.jobId = item.jobId
+      this.formUpdate.endDate = this.momenDate(item.endDate)
+    },
     async getDataById (item) {
       this.editedItemSelete = []
       this.desserts = []
@@ -1046,8 +1052,9 @@ export default {
           this.formAdd.LAST_USER = this.session.data.userName
           this.formAdd.flowCode = this.generateCodeGlobal()
           this.formAdd.flowfieldName = JSON.stringify(this.desserts)
-          this.formAdd.shopId = this.$session.getAll().data.shopId
+          this.formAdd.shopId = this.shopId
           console.log('flowfieldName', this.formAdd.flowfieldName)
+          console.log('shopId', this.shopId)
           console.log('forAdd', this.formAdd)
           await axios
             .post(
@@ -1067,7 +1074,7 @@ export default {
               this.dialogAdd = false
 
               // Load Data
-              await this.getDataGlobal(this.DNS_IP, this.path)
+              await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
               this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
             })
           // eslint-disable-next-line handle-callback-err
@@ -1102,7 +1109,7 @@ export default {
           console.log('stepTitle', this.formAddStep.stepTitle)
           console.log('stepId', this.formAddStep.stepId)
           console.log('forAdd', this.formAddStep)
-          this.formAdd.shopId = this.$session.getAll().data.shopId
+          this.formAdd.shopId = this.shopId
           await axios
             .post(
               // eslint-disable-next-line quotes
@@ -1123,7 +1130,7 @@ export default {
               this.getStepFlow(this.formAddStep)
 
               // Load Data
-              await this.getDataGlobal(this.DNS_IP, this.path)
+              await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
               this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
             })
           // eslint-disable-next-line handle-callback-err
@@ -1287,11 +1294,6 @@ export default {
           this.formUpdate[key] = ''
         }
       }
-    },
-    viewFlowStep (dt) {
-      this.$router.push(
-        '/Master/FlowStep?Code=' + dt.flowCode
-      )
     }
   }
 }

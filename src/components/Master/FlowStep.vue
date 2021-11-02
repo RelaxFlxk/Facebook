@@ -324,7 +324,7 @@
                               <v-icon large color="primary" @click="dialog = true, setUpdate(itemsJob)"> mdi-list-status</v-icon>
                           </v-row>
                           <v-row class="pt-2 pl-1">
-                              <v-icon large color="green" @click="dialogDelete = true"> mdi-check-bold</v-icon>
+                              <v-icon large color="green" @click="dialogDelete = true, setUpdate(itemsJob)"> mdi-check-bold</v-icon>
                           </v-row>
                         </v-container>
                       </v-alert>
@@ -560,17 +560,17 @@ export default {
           console.log('res', response.data)
           // console.log('userId', this.formUpdate.userId === 'NULL')
           if (response.data) {
-            this.formUpdate.stepId = response.data[0].stepId
-            this.formUpdate.flowId = response.data[0].flowId
-            this.formUpdate.jobId = response.data[0].jobId
-            this.formUpdate.jobNo = response.data[0].jobNo
-            this.formUpdate.empStep = response.data[0].empStep
-            this.formUpdate.departmentStep = response.data[0].departmentStep
-            this.formUpdate.branchStep = response.data[0].branchStep
-            this.formUpdate.checkCar = response.data[0].checkCar
-            this.totalDateDiff = response.data[0].totalDateDiff
-            this.formUpdate.endDate = response.data[0].endDate
-            this.userId = response.data[0].userId
+            // this.formUpdate.stepId = response.data[0].stepId
+            // this.formUpdate.flowId = response.data[0].flowId
+            // this.formUpdate.jobId = response.data[0].jobId
+            // this.formUpdate.jobNo = response.data[0].jobNo
+            // this.formUpdate.empStep = response.data[0].empStep
+            // this.formUpdate.departmentStep = response.data[0].departmentStep
+            // this.formUpdate.branchStep = response.data[0].branchStep
+            // this.formUpdate.checkCar = response.data[0].checkCar
+            // this.totalDateDiff = response.data[0].totalDateDiff
+            // this.formUpdate.endDate = response.data[0].endDate
+            // this.userId = response.data[0].userId
             response.data.forEach(element => {
               if (jobs.indexOf(element.jobId) === -1) {
                 jobs.push(element.jobId)
@@ -725,9 +725,10 @@ export default {
         })
     },
     async pushmessagePrice (jobNo) {
+      let updateStatusSend = { updateStatusSend: 'false' }
       await axios
         .post(
-          this.DNS_IP + '/job/pushClosejob/' + jobNo
+          this.DNS_IP + '/job/pushClosejob/' + jobNo, updateStatusSend
         )
         .then(
           console.log(jobNo)

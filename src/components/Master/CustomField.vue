@@ -31,7 +31,7 @@
                         <v-col class="text-center">
                       <v-img  class="v-margit_img_reward" :src="require('@/assets/GroupLevel.svg')" max-width="330"></v-img>
                       </v-col>
-                      <v-card-text v-if="formAdd.optionField === 'optionField'">
+                      <v-card-text v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
                       <v-data-table
                         :headers="columnsOption"
                         :items="dataItemOption"
@@ -78,17 +78,17 @@
 
                       <v-row style="height: 50px">
                         <v-select
-                        v-model="formAdd.optionField"
+                        v-model="formAdd.fieldType"
                         :items="selectTypeField"
                         dense
                         :rules="[rules.required]"
                         ></v-select>
                       </v-row>
 
-                      <v-row style="height: 35px" v-if="formAdd.optionField === 'optionField'">
+                      <v-row style="height: 35px" v-if="formAdd.fieldType !== 'text'">
                       <v-subheader id="subtext">optionField</v-subheader>
                       </v-row>
-                      <v-row style="height: 50px" v-if="formAdd.optionField === 'optionField'">
+                      <v-row style="height: 50px" v-if="formAdd.fieldType !== 'text'">
                         <v-select
                         v-model="formAdd.fieldType"
                         :items="selectOptionField"
@@ -102,10 +102,10 @@
                     <v-form ref="form_addOption" v-model="validAddOption" lazy-validation>
                     <v-row>
                     <v-col cols="6">
-                      <v-row style="height: 35px" v-if="formAdd.optionField === 'optionField'">
+                      <v-row style="height: 35px" v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
                       <v-subheader id="subtext" >Text:</v-subheader >
                       </v-row>
-                      <v-row style="height: 50px" v-if="formAdd.optionField === 'optionField'">
+                      <v-row style="height: 50px" v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
                       <v-text-field
                         v-model="formAddOption.optionText"
                         placeholder="Text"
@@ -118,10 +118,10 @@
                       </v-row>
                     </v-col>
                      <v-col cols="6">
-                      <v-row style="height: 35px" v-if="formAdd.optionField === 'optionField'">
+                      <v-row style="height: 35px" v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
                       <v-subheader id="subtext">Value:</v-subheader>
                       </v-row>
-                      <v-row style="height: 50px" v-if="formAdd.optionField === 'optionField'">
+                      <v-row style="height: 50px" v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
                       <v-text-field
                         v-model="formAddOption.optionValue"
                         placeholder="Value"
@@ -137,7 +137,7 @@
                      </v-form>
                     <br>
 
-                    <v-row justify="center" v-if="formAdd.optionField === 'optionField'">
+                    <v-row justify="center" v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
                       <v-btn
                         elevation="2"
                         x-large
@@ -493,6 +493,7 @@ export default {
       panel: [0],
       panel1: [1],
       session: this.$session.getAll(),
+      shopId: this.$session.getAll().data.shopId,
       column: null,
       radios: null,
       checkbox: false,
@@ -526,11 +527,13 @@ export default {
       },
       formAddOption: {
         optionText: '',
-        optionValue: ''
+        optionValue: '',
+        shopId: ''
       },
       formUpdateOption: {
         optionText: '',
-        optionValue: ''
+        optionValue: '',
+        shopId: ''
       },
       desserts: [],
       editedItemOption: [],
@@ -612,7 +615,7 @@ export default {
       await axios
         .get(
           // eslint-disable-next-line quotes
-          this.DNS_IP + this.path + "getID?fieldId" + "=" + item.fieldId
+          this.DNS_IP + this.path + "getID?fieldId" + "=" + item.fieldId + '&shopId=' + this.shopId
         )
         .then(async (response) => {
           if (response.data) {
@@ -634,17 +637,18 @@ export default {
     },
     getOption () {
       this.dataItemOption = []
-      axios.get(this.DNS_IP + '/customField/get').then((response) => {
-        let rs = response.data
-        if (rs.length > 0) {
-          for (var i = 0; i < rs.length; i++) {
-            var d = rs[i]
-            d.text = d.optionField
-            d.value = d.optionField
-            this.editedItemOption.push(d)
+      axios.get(this.DNS_IP + '/customField/get?shopId=' + this.shopId)
+        .then((response) => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              d.text = d.optionField
+              d.value = d.optionField
+              this.editedItemOption.push(d)
+            }
           }
-        }
-      })
+        })
     },
     getCondition () {
       this.dataItemCondition = []
@@ -688,22 +692,26 @@ export default {
           this.dataReady = true
         })
     },
-    async add (dt) {
+    async add () {
       await axios
         .post(
           // eslint-disable-next-line quotes
           this.DNS_IP + this.path + "add",
-          dt
+          this.formAdd,
+          {
+            headers: {
+              'Application-Key': this.$session.getAll().ApplicationKey
+            }
+          }
         )
         .then(async (response) => {
           console.log('addDataGlobal DNS_IP + PATH + "add"', response)
+          this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
           this.dialogAdd = false
 
           // Load Data
           await this.clearData()
-          await this.getDataGlobal(this.DNS_IP, this.path)
-          this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-          this.dataReady = true
+          await this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
         })
       // eslint-disable-next-line handle-callback-err
         .catch((error) => {
