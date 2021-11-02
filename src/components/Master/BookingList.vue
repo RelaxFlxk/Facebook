@@ -793,7 +793,9 @@ export default {
                     this.DNS_IP + '/Booking/editStatus/' + this.BookingDataItem[0].bookNo,
                     dt
                   )
-                  .then(async response => {
+                  .then(async response1 => {
+                    console.log('response', response.data)
+                    await this.pushMsg(response.data.jobNo)
                     this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
                     this.dialogEdit = false
                     this.getBookingList()
@@ -801,6 +803,31 @@ export default {
               }
             })
         })
+    },
+    async pushMsg (jobNo) {
+      const result = await axios.get(this.DNS_IP + '/member/get?shopId=' + this.session.data.shopId + '&liffUserId=' + this.BookingDataItem[0].userId)
+      console.log('result', result.data.status)
+      if (result.data.status === false) {
+        let statusSend = {
+          statusSend: 'false'
+        }
+        await axios.post(this.DNS_IP + '/job/updateJobNo/' + jobNo, statusSend)
+        console.log('statusSend', 'false')
+      } else {
+        let statusSend = {
+          statusSend: 'true'
+        }
+        await axios.post(this.DNS_IP + '/job/updateJobNo/' + jobNo, statusSend)
+          .then(async response => {
+            // let lineUserId = result.data[0].lineUserId
+            console.log('statusSend', 'true')
+            let updateStatusSend = {
+              updateStatusSend: 'false'
+            }
+            await axios.post(this.DNS_IP + '/job/pushMsg/' + response.data.jobId, updateStatusSend)
+          })
+      }
+      // this.clearData()
     }
   }
 }
