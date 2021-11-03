@@ -574,7 +574,7 @@ export default {
             response.data.forEach(element => {
               if (jobs.indexOf(element.jobId) === -1) {
                 jobs.push(element.jobId)
-                this.allJob.push({jobId: element.jobId, stepId: element.stepId, checkCar: element.checkCar, totalDateDiff: element.totalDateDiff, endDate: element.endDate})
+                this.allJob.push({jobId: element.jobId, jobNo: element.jobNo, stepId: element.stepId, checkCar: element.checkCar, totalDateDiff: element.totalDateDiff, endDate: element.endDate})
               }
             })
             this.JobDataItem = response.data
@@ -605,6 +605,7 @@ export default {
       console.log(item)
       this.formUpdate.jobId = item.jobId
       this.formUpdate.endDate = this.momenDate(item.endDate)
+      this.formDelete.jobNo = item.jobNo
     },
     async onUpdate () {
       this.formUpdate.stepId = this.formUpdate.stepTitle.stepId
@@ -751,7 +752,7 @@ export default {
           var ID = this.formUpdate.jobId
           let ds = {
             jobNo: this.formDelete.jobNo,
-            shopId: this.formDelete.shopId,
+            shopId: this.shopId,
             totalPrice: this.formDelete.totalPrice,
             LAST_USER: this.session.data.userName,
             statusDelete: 'true'
@@ -762,7 +763,7 @@ export default {
               this.DNS_IP + '/job/editPrice/' + ID, ds
             )
             .then(async response => {
-              await this.pushmessagePrice(this.formUpdate.jobId)
+              await this.pushmessagePrice(this.formDelete.jobNo)
               this.$swal('เรียบร้อย', 'ลบข้อมูล เรียบร้อย', 'success')
               this.getStepFlow()
               this.getLayout()
