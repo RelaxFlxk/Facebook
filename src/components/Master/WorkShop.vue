@@ -32,9 +32,18 @@
                 <v-col cols="12" class="Layoutcolum">
                 <draggable  v-model="Layout[i].workData" group="workshop" @change="UpdateworkShop ()">
                   <div v-for="(element , workData) in Layout[i].workData" :key="workData">
-                    <v-card class="rowIncolum" elevation="12">
-                      <v-card-text>
-                        <h3>{{element.stepTitle}}</h3>
+                    <v-card
+                    class="mb-12"
+                    width="220"
+                   >
+                     <v-toolbar
+                    color="primary"
+                    dark
+                    >
+                    {{element.stepTitle}}
+                    </v-toolbar>
+                      <v-card-text class="text pa-3" >
+
                       </v-card-text>
                     </v-card>
                   </div>
@@ -292,7 +301,7 @@ export default {
   min-height: 600px;
   width: 250px;
   border-color: #ffffff;
-  background-color: #1B437C;
+  background-color: #f0eeee;
   display:flex;
 }
 .layout{
