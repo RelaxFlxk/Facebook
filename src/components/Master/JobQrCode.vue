@@ -80,7 +80,6 @@ export default {
       pathToweb: 'https://liff.line.me/1656581804-GAvJw4qy?jobId=',
       userId: '',
       jobNo: this.$route.query.jobNo,
-      shopId: this.$session.getAll().data.shopId,
       skip: {
         userId: 'user-skip'
       },
@@ -126,13 +125,15 @@ export default {
               Id = d.userId
               this.jobitem.push(s)
             }
+            this.userId = Id
+            this.value = this.pathToweb + this.jobitem[0].Id + '&shopId=' + this.$session.getAll().data.shopId
+            console.log(this.jobitem)
+            console.log(this.value)
+            console.log('UserId', this.userId)
+            this.getUserId()
+          } else {
+            this.$swal('กรุณา', 'ติดต่อเจ้าหน้าที่', 'success')
           }
-          this.userId = Id
-          this.value = this.pathToweb + this.jobitem[0].Id + '&shopId=' + this.shopId
-          console.log(this.jobitem)
-          console.log(this.value)
-          console.log('UserId', this.userId)
-          this.getUserId()
         })
       }
     },
