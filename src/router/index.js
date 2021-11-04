@@ -68,6 +68,11 @@ export default new Router({
     component: Master.BookingList
   },
   {
+    path: '/Master/Rating',
+    name: 'Rating',
+    component: Master.Rating
+  },
+  {
     path: '/Master/Qrcodereader',
     name: 'Qrcodereader',
     component: Master.Qrcodereader
