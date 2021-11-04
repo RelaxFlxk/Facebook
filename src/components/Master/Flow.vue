@@ -37,7 +37,7 @@
                       </v-btn>
                     </v-col>
                      <!-- ADD steptitle-->
-                    <v-dialog v-model="dialogAddStepTitle" persistent max-width="50%">
+                    <v-dialog v-model="dialogAddStepTitle" persistent max-width="30%">
                       <v-card>
                         <v-card-text>
                           <v-container>
@@ -88,7 +88,7 @@
                     <!-- end ADD step -->
 
                     <!--edit step -->
-                      <v-dialog v-model="dialogEditStep" persistent max-width="60%">
+                      <v-dialog v-model="dialogEditStep" persistent max-width="30%">
                         <v-card>
                           <v-form ref="form_update" v-model="validUpdate" lazy-validation>
                           <v-card-text>
@@ -121,7 +121,7 @@
                                     elevation="2"
                                     x-large
                                     color="#173053"
-                                    @click="editDataStepTitle()"
+                                    @click="editStepTitle()"
                                   >
                                     <v-icon left>mdi-checkbox-marked-circle</v-icon>
                                     แก้ไข
@@ -167,16 +167,18 @@
                     </v-btn>
                   </template>
                    <template v-slot:[`item.sendCard`]="{ item }">
-                    <v-simple-checkbox
+                    <v-checkbox
+                      false-value = 'False'
+                      true-value = 'True'
                       v-model="item.sendCard"
-                    ></v-simple-checkbox>
+                    ></v-checkbox>
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
                     <v-btn
                       color="question"
                       fab
                       x-small
-                      @click.stop="(dialogEditStep = true), getStepTitle(item), validate('UPDATE')"
+                      @click.stop="(dialogEditStep = true), getUpdate(item), validate('UPDATE')"
                     >
                       <v-icon dark> mdi-tools </v-icon>
                     </v-btn>
@@ -185,7 +187,7 @@
                       dark
                       fab
                       x-small
-                      @click.stop="(dialogDeleteStepTitle = true), getDataById(item)"
+                      @click.stop="(dialogDeleteStepTitle = true), getUpdate(item)"
                     >
                       <v-icon> mdi-delete </v-icon>
                     </v-btn>
@@ -733,7 +735,17 @@ export default {
         sortNo: '',
         CREATE_USER: '',
         LAST_USER: '',
-        shopId: ''
+        shopId: '',
+        sendCard: 'True'
+      },
+      formUpdateStep: {
+        stepId: '',
+        flowId: '',
+        stepTitle: '',
+        sortNo: '',
+        LAST_USER: '',
+        shopId: '',
+        sendCard: ''
       },
       formUpdate: {
         flowCode: '',
@@ -757,15 +769,6 @@ export default {
         flowName: '',
         LAST_USER: '',
         sortNo: '',
-        shopId: ''
-      },
-      formUpdateStep: {
-        stepId: '',
-        flowId: '',
-        stepTitle: '',
-        sortNo: '',
-        CREATE_USER: '',
-        LAST_USER: '',
         shopId: ''
       },
       formUpdateItem: {
@@ -981,18 +984,19 @@ export default {
             var d = rs[i]
             d.text = d.stepTitle
             d.value = d.stepTitle
-            d.sendCard = false
+            d.sendCard = d.sendCard || 'False'
             this.stepItemSelete.push(d)
-            this.formUpdateStep.stepTitle = response.data[0].stepTitle
+            this.formUpdateStep.stepTitle = response.data.stepTitle
           }
         }
       })
     },
-    async setUpdate (item) {
-      console.log(this.formUpdate)
-      console.log(item)
-      this.formUpdate.jobId = item.jobId
-      this.formUpdate.endDate = this.momenDate(item.endDate)
+    async getUpdate (item) {
+      console.log('อันแรก', this.formUpdateStep)
+      console.log('อันสอง', item)
+      this.formUpdateStep.stepId = item.stepId
+      this.formUpdateStep.flowId = item.flowId
+      this.formUpdateStep.stepTitle = item.stepTitle
     },
     async getDataById (item) {
       this.editedItemSelete = []
@@ -1090,8 +1094,7 @@ export default {
     },
     async addDataStep () {
       this.dataReady = false
-      // this.formAdd.flowCode = this.generateCodeGlobal()
-      // console.log('forAdd', this.formAddStep)
+      console.log('forAdd', this.formAddStep)
       this.$swal({
         title: 'ต้องการ เพิ่มข้อมูล ใช่หรือไม่?',
         type: 'question',
@@ -1102,14 +1105,15 @@ export default {
         cancelButtonText: 'ไม่'
       })
         .then(async (result) => {
-          // this.formAddStep.CREATE_USER = this.session.data.userName
-          // this.formAddStep.LAST_USER = this.session.data.userName
+          this.formAddStep.CREATE_USER = this.session.data.userName
+          this.formAddStep.LAST_USER = this.session.data.userName
           delete this.formAddStep['stepId']
           this.formAddStep.sortNo = this.stepItemSelete.length + 1
+          this.formAddStep.shopId = this.shopId
           console.log('stepTitle', this.formAddStep.stepTitle)
           console.log('stepId', this.formAddStep.stepId)
+          console.log('shopId', this.shopId)
           console.log('forAdd', this.formAddStep)
-          this.formAdd.shopId = this.shopId
           await axios
             .post(
               // eslint-disable-next-line quotes
@@ -1195,7 +1199,7 @@ export default {
         })
     },
     async editDataStepTitle () {
-      console.log(this.formUpdateStep)
+      console.log('stepItemSelete', this.stepItemSelete)
       this.dataReady = false
       this.$swal({
         title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',
@@ -1207,26 +1211,25 @@ export default {
         cancelButtonText: 'ไม่'
       })
         .then(async (result) => {
-          this.formUpdateStep.LAST_USER = this.session.data.userName
-          var ID = this.formUpdateStep.stepId
-          delete this.formUpdateStep['flowId']
-          delete this.formUpdateStep['LAST_USER']
-          delete this.formUpdateStep['CREATE_USER']
-          delete this.formUpdateStep['stepTitle']
+          console.log('formUpdateStep', this.formUpdateStep)
+          console.log('shopId', this.shopId)
           await axios
             .post(
               // eslint-disable-next-line quotes
-              this.DNS_IP + "/flowStep/edit/" + ID,
-              this.formUpdateStep
+              this.DNS_IP + "/flowStep/" + "editStep",
+              this.stepItemSelete,
+              {
+                headers: {
+                  'Application-Key': this.$session.getAll().ApplicationKey
+                }
+              }
             )
             .then(async (response) => {
               // Debug response
               console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
-              this.dialogEditStep = false
-
-              // Load Data
-              await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
               this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
+              this.dialogStep = false
+              await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
             })
             // eslint-disable-next-line handle-callback-err
             .catch((error) => {
@@ -1268,6 +1271,95 @@ export default {
               this.dialogDelete = false
               await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
               this.$swal('เรียบร้อย', 'ลบข้อมูล เรียบร้อย', 'success')
+            })
+            // eslint-disable-next-line handle-callback-err
+            .catch((error) => {
+              this.dataReady = true
+              console.log('error function editDataGlobal : ', error)
+            })
+        })
+        .catch((error) => {
+          this.dataReady = true
+          console.log('error function editDataGlobal : ', error)
+        })
+    },
+    async deleteStepTitle () {
+      console.log('stepId', this.formUpdateStep.stepId)
+      this.dataReady = false
+      this.$swal({
+        title: 'ต้องการ ลบข้อมูล ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async (result) => {
+          this.formUpdateStep.LAST_USER = this.session.data.userName
+          var ID = this.formUpdateStep.stepId
+          await axios
+            .post(
+              // eslint-disable-next-line quotes
+              this.DNS_IP + "/flowStep/" + "delete/" + ID,
+              this.formUpdateStep,
+              {
+                headers: {
+                  'Application-Key': this.$session.getAll().ApplicationKey
+                }
+              }
+            )
+            .then(async (response) => {
+              // Debug response
+              console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
+              console.log('flowid', this.formUpdateStep.flowId)
+              this.$swal('เรียบร้อย', 'ลบข้อมูล เรียบร้อย', 'success')
+              this.dialogDeleteStepTitle = false
+              await this.getStepFlow({'flowId': this.formUpdateStep.flowId})
+              await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
+            })
+            // eslint-disable-next-line handle-callback-err
+            .catch((error) => {
+              this.dataReady = true
+              console.log('error function editDataGlobal : ', error)
+            })
+        })
+        .catch((error) => {
+          this.dataReady = true
+          console.log('error function editDataGlobal : ', error)
+        })
+    },
+    async editStepTitle () {
+      this.$swal({
+        title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async (result) => {
+          this.formUpdateStep.LAST_USER = this.session.data.userName
+          var ID = this.formUpdateStep.stepId
+          var dt = {
+            stepTitle: this.formUpdateStep.stepTitle,
+            LAST_USER: this.formUpdateStep.LAST_USER
+          }
+          await axios
+            .post(
+              // eslint-disable-next-line quotes
+              this.DNS_IP + "/flowStep/" + "edit/" + ID,
+              dt
+            )
+            .then(async (response) => {
+              // Debug response
+              console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
+              // Close Dialog
+              // Load Data
+              this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
+              this.dialogEditStep = false
+              await this.getStepFlow({'flowId': this.formUpdateStep.flowId})
             })
             // eslint-disable-next-line handle-callback-err
             .catch((error) => {
