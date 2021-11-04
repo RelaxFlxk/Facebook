@@ -120,7 +120,7 @@ export default {
   data () {
     return {
       itemdetell: [],
-      Redirect: 'https://liff.line.me/1656581804-R2Ozrj3D?shopId=' + this.$session.getAll().data.shopId,
+      Redirect: 'https://liff.line.me/1656581804-7KRQyqo5/Booking?shopId=' + this.$session.getAll().data.shopId,
       session: this.$session.getAll(),
       shopId: this.$session.getAll().data.shopId,
       IdUpdate: '',

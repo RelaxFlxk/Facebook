@@ -77,7 +77,7 @@ export default {
     return {
       PK: '',
       path: '/Job/',
-      pathToweb: 'https://liff.line.me/1656581804-GAvJw4qy?jobId=',
+      pathToweb: 'https://liff.line.me/1656581804-7KRQyqo5/JobConfirm?jobId=',
       userId: '',
       jobNo: this.$route.query.jobNo,
       skip: {
