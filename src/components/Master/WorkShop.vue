@@ -300,8 +300,8 @@ export default {
   margin-left: 5px;
   min-height: 600px;
   width: 250px;
-  border-color: #ffffff;
-  background-color: #f0eeee;
+  border-color: #ffffff !important;
+  background-color: #f0eeee !important;
   display:flex;
 }
 .layout{
@@ -332,11 +332,11 @@ body{
   width: 220px;
   border-style: groove;
   border-color: #000002;
-  background-color: #FFFFFF;
+  background-color: #FFFFFF !important;
   display:flex;
 }
 .rowStepworkshop{
   background-color: rgb(92, 90, 90);
-  min-width: 100px;
+  min-width: 100px !important;
 }
 </style>

@@ -1,7 +1,12 @@
 <template>
   <div>
     <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
-    <v-main>
+    <v-main >
+      <v-row>
+          <v-col cols="6" class="text-left">
+            <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
+          </v-col>
+        </v-row>
       <v-container>
         <v-row>
           <v-col cols="12" md="4" sm="4" class="main">
@@ -28,11 +33,8 @@
                 </div>
               </form>
               <div class="text-center">
-                  <v-btn elevation="10" color="primary" readonly small
-                    >SAVE</v-btn
-                  >
-                  <v-btn elevation="10" color="error" readonly small
-                    >CANCEL</v-btn
+                  <v-btn elevation="10" color="#1B437C" readonly small block
+                    >ทำการนัดหมาย</v-btn
                   >
                 </div>
             </v-card>
@@ -40,22 +42,25 @@
           </v-col>
           <v-col cols="12" md="8" sm="8" class="main">
                       <v-row>
-              <v-col cols="12" md="12" sm="12">
+              <v-col cols="12" md="12" sm="12" >
                 <div v-if="Redirect !== ''">
-                  <v-card class="p-3" height="200px">
-                  <h3 class="text-center">ลิ้งสำหรับลูกค้า</h3>
+                  <v-card class="p-3" height="200px" style="background-color:#050C42;">
+                  <h3 class="text-center" style="color:#FFFFFF;">ลิ้งสำหรับลูกค้า</h3>
                   <v-card-text>
                     <v-row align-content="center">
                       <v-col cols="10">
                         <v-text-field
                         v-model="Redirect"
                         id="myInput"
-                        label="Plese Copy"
+                        style="background-color:#050C42;"
+                        solo
+                        dense
                         >
                         </v-text-field>
                       </v-col>
-                      <v-col cols="2" class="text-center" style="margin-top:1rem;" align="left">
+                      <v-col cols="2" class="text-lelf" >
                         <v-btn
+                          color="#1B437C"
                           small
                           fab
                           @click="FunCopy()"
@@ -90,10 +95,10 @@
                       </v-data-table>
                     </v-col>
                     <v-col cols="12" class="text-center">
-                      <v-btn elevation="5" color="success" @click="addBooking()"
+                      <v-btn elevation="5" color="#1B437C" @click="addBooking()"
                         >SAVE</v-btn
                       >
-                      <v-btn elevation="5" color="error"
+                      <v-btn elevation="5" color="#1B437C" outlined
                         >CANCEL</v-btn
                       >
                     </v-col>
@@ -127,6 +132,18 @@ export default {
       bookingField: [],
       Fielditem: [],
       showCard: false,
+      breadcrumbs: [
+        {
+          text: 'Home',
+          disabled: false,
+          href: '/Core/Home'
+        },
+        {
+          text: 'ข้อมูลนัดหมาย',
+          disabled: false,
+          href: '/Master/BookingField'
+        }
+      ],
       fixtureField: [
         {
           fieldName: 'ประเภทบริการ'
@@ -293,7 +310,7 @@ export default {
 }
 .Bar {
   padding: 20px;
-  background-color: #173053;
+  background-color: #FFFFFF;
   height: 100%;
 }
 .Review {

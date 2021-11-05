@@ -805,7 +805,9 @@ export default {
         })
     },
     async pushMsg (jobNo) {
-      const result = await axios.get(this.DNS_IP + '/member/get?shopId=' + this.session.data.shopId + '&liffUserId=' + this.BookingDataItem[0].userId)
+      const result = await axios.get(this.DNS_IP + '/member/get?shopId=' + this.session.data.shopId + '&liffUserId=' + this.BookingDataItem[0].userId).catch((error) => {
+        console.log('error function addData : ', error)
+      })
       console.log('result', result.data.status)
       if (result.data.status === false) {
         let statusSend = {
@@ -824,7 +826,9 @@ export default {
             let updateStatusSend = {
               updateStatusSend: 'false'
             }
-            await axios.post(this.DNS_IP + '/job/pushMsg/' + response.data.jobId, updateStatusSend)
+            await axios.post(this.DNS_IP + '/job/pushMsg/' + response.data.jobId, updateStatusSend).catch((error) => {
+              console.log('error function addData : ', error)
+            })
           })
       }
       // this.clearData()

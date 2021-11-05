@@ -4,29 +4,38 @@
     <v-main>
       <div class="pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4">
         <v-row>
+          <v-col cols="6" class="text-left">
+            <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
+          </v-col>
+        </v-row>
+        <v-row>
           <v-dialog
       v-model="dialog"
       persistent
-      max-width="750"
+      max-width="850"
     >
       <v-card class="p-3">
         <v-timeline>
           <v-timeline-item
             v-for="(item , index) in timelineitem" :key="index"
-            color="red lighten-2"
+            color="#173053"
             small
           >
             <template v-slot:opposite>
-              <span>ผู้รับผิดชอบ {{item.empStep}}</span>
+              <span>{{item.DTCREATE_DATE}}</span>
             </template>
-            <v-card class="elevation-2">
-              <v-card-title class="text-h5">
+            <v-card class="elevation-2 p-3">
+              <v-card-title class="text-h6" style="color:#1C457C;">
+                ขั้นตอน {{item.stepTitle}}
               </v-card-title>
-              <v-card-text>
-                วันที่เริ่ม {{item.CREATE_DATE}}
+              <v-card-text style="color:#32CD32;">
+                ผู้รับผิดชอบ {{item.empStep}}
               </v-card-text>
-              <v-card-text>
-                วันที่เปลี่ยน {{item.endDate}}
+              <v-card-text >
+                เวลาการทำงาน {{item.timediff}} นาที
+              </v-card-text>
+              <v-card-text >
+                วันที่เปลี่ยน {{item.DTLAST_DATE}}
               </v-card-text>
             </v-card>
           </v-timeline-item>
@@ -34,7 +43,7 @@
         <br>
         <div class="text-center">
           <v-btn
-            small class="ma-2" color="primary"
+            small class="ma-2" color="#173053"
             @click="dialog = false"
           >
             Close
@@ -100,6 +109,18 @@ export default {
   },
   data () {
     return {
+      breadcrumbs: [
+        {
+          text: 'Home',
+          disabled: false,
+          href: '/Core/Home'
+        },
+        {
+          text: 'ข้อมูลนัดหมาย',
+          disabled: false,
+          href: '/Master/Rating'
+        }
+      ],
       dialog: false,
       session: this.$session.getAll(),
       shopId: this.$session.getAll().data.shopId,
@@ -129,13 +150,12 @@ export default {
               let d = rs[i]
               let s = {}
               s.refId = d.refId
-              s.rating = d.rating
+              s.rating = parseInt(d.rating)
               s.comment = d.comment
               s.typeWork = d.typeWork
               this.Ratingitem.push(s)
             }
           }
-          console.log('rs', rs)
         }).catch((error) => {
           console.log('error function addData : ', error)
         })
@@ -145,13 +165,18 @@ export default {
       await axios
         .get(this.DNS_IP + '/job_logCloseJob/' + item.refId).then((response) => {
           let rs = response.data
+          console.log('rs', rs)
           if (rs.length > 0) {
             for (let i = 0; i < rs.length; i++) {
               let d = rs[i]
               let s = {}
               s.empStep = d.empStep
               s.endDate = d.endDate
-              s.CREATE_DATE = d.CREATE_DATE
+              s.totalPrice = s.totalPrice
+              s.DTCREATE_DATE = d.DTCREATE_DATE.split(' ')[0]
+              s.DTLAST_DATE = d.DTLAST_DATE.split(' ')[0]
+              s.stepTitle = d.stepTitle
+              s.timediff = d.timediff
               this.timelineitem.push(s)
             }
           }
