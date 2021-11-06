@@ -298,10 +298,10 @@ export default {
 .Layoutcolum{
   margin-top: 2px;
   margin-left: 5px;
-  min-height: 600px;
-  width: 250px;
-  border-color: #ffffff !important;
-  background-color: #f0eeee !important;
+  min-height: 600px !important;
+  width: 250px !important;
+  border-color: #ffffff ;
+  background-color: #f0eeee ;
   display:flex;
 }
 .layout{
@@ -328,11 +328,11 @@ body{
   margin-top: 10px;
   margin-left: 1px;
   padding: 20px 20px 20px 20px;
-  height: 100px;
-  width: 220px;
+  height: 100px !important;
+  width: 220px !important;
   border-style: groove;
   border-color: #000002;
-  background-color: #FFFFFF !important;
+  background-color: #FFFFFF ;
   display:flex;
 }
 .rowStepworkshop{

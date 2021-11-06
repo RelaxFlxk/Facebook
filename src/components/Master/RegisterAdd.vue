@@ -443,7 +443,9 @@ export default {
                   this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success'),
                   this.clearData()
                   // this.$router.push('/Master/FlowStep')
-                )
+                ).catch((error) => {
+                  console.log('error function addDataGlobal : ', error)
+                })
             })
           // eslint-disable-next-line handle-callback-err
             .catch((error) => {

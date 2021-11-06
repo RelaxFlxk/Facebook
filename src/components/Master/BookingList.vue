@@ -69,10 +69,11 @@
              required> -->
                         <v-row>
                           <v-col cols="6">
-                            <v-menu
+                            <!-- <v-menu
                               ref="menu"
                               v-model="menuDate"
                               :close-on-content-click="false"
+                              :nudge-right="40"
                               :return-value.sync="date"
                               :rules="[rules.required]"
                               transition="scale-transition"
@@ -96,14 +97,8 @@
                                 v-model="date"
                                 no-title
                                 scrollable
-                                :min="
-                                  new Date(
-                                    Date.now() -
-                                      new Date().getTimezoneOffset() * 60000
-                                  )
-                                    .toISOString()
-                                    .substr(0, 10)
-                                "
+                                @click="$refs.menu.save(date)"
+                                :min="new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10)"
                               >
                                 <v-spacer></v-spacer>
                                 <v-btn
@@ -121,6 +116,32 @@
                                   OK
                                 </v-btn>
                               </v-date-picker>
+                            </v-menu> -->
+                            <v-menu
+                              v-model="menuDate"
+                              :close-on-content-click="false"
+                              :nudge-right="40"
+                              transition="scale-transition"
+                              offset-y
+                              min-width="auto"
+                            >
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-text-field
+                                  v-model="date"
+                                  label="วันที่"
+                                  prepend-icon="mdi-calendar"
+                                  readonly
+                                  v-bind="attrs"
+                                  v-on="on"
+                                  required
+                                  :rules="[rules.required]"
+                                ></v-text-field>
+                              </template>
+                              <v-date-picker
+                                v-model="date"
+                                @input="menuDate = false"
+                                :min="new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10)"
+                              ></v-date-picker>
                             </v-menu>
                           </v-col>
                           <v-col cols="6">

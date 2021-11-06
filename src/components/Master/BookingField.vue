@@ -98,7 +98,7 @@
                       <v-btn elevation="5" color="#1B437C" @click="addBooking()"
                         >SAVE</v-btn
                       >
-                      <v-btn elevation="5" color="#1B437C" outlined
+                      <v-btn elevation="5" color="#1B437C" outlined style="text-color:#1B437C"
                         >CANCEL</v-btn
                       >
                     </v-col>
