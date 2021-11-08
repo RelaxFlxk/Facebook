@@ -18,17 +18,17 @@
         <v-timeline>
           <v-timeline-item
             v-for="(item , index) in timelineitem" :key="index"
-            color="#173053"
+            color="#FFA000"
             small
           >
             <template v-slot:opposite>
               <span>{{item.DTCREATE_DATE}}</span>
             </template>
             <v-card class="elevation-2 p-3">
-              <v-card-title class="text-h6" style="color:#1C457C;">
+              <v-card-title class="text-h6" style="color:#173053;">
                 ขั้นตอน {{item.stepTitle}}
               </v-card-title>
-              <v-card-text style="color:#32CD32;">
+              <v-card-text style="color:#1C457C;">
                 ผู้รับผิดชอบ {{item.empStep}}
               </v-card-text>
               <v-card-text >
