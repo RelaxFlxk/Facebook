@@ -125,7 +125,7 @@ table tr:last-child td:last-child {
   color: var(--nav-bg);
 }
 .theme--light.v-btn.v-btn--has-bg {
-  background-color: var(--nav-bg);
+  background-color: var(--nav-bg) ;
 }
 .v-navigation-drawer__content {
   background-color: var(--nav-bg);
@@ -138,7 +138,7 @@ table tr:last-child td:last-child {
 }
 /* .theme--light.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled) */
 
-.v-list-item__title, .v-btn__content {
+.v-list-item__title{
   color: var(--nav-text) !important;
   font-family: KittithadaBold;
   font-size: 22px !important;

@@ -33,7 +33,7 @@
                 </div>
               </form>
               <div class="text-center">
-                  <v-btn elevation="10" color="#1B437C" readonly small block
+                  <v-btn elevation="10" color="#1B437C" readonly small block dark
                     >ทำการนัดหมาย</v-btn
                   >
                 </div>
@@ -63,6 +63,7 @@
                           color="#1B437C"
                           small
                           fab
+                          dark
                           @click="FunCopy()"
                         >
                           <v-icon>mdi-content-copy</v-icon>
@@ -95,10 +96,10 @@
                       </v-data-table>
                     </v-col>
                     <v-col cols="12" class="text-center">
-                      <v-btn elevation="5" color="#1B437C" @click="addBooking()"
+                      <v-btn elevation="5" color="#1B437C" dark @click="addBooking()"
                         >SAVE</v-btn
                       >
-                      <v-btn elevation="5" color="#1B437C" outlined
+                      <v-btn elevation="5" color="#1B437C" outlined class="a"
                         >CANCEL</v-btn
                       >
                     </v-col>
@@ -304,6 +305,9 @@ export default {
 </script>
 
 <style scoped>
+span.v-btn__content {
+  color: #1B437C !important;
+}
 .main {
   margin-top: 1rem;
   min-height: 700px;
