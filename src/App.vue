@@ -242,6 +242,9 @@ table tr:last-child td:last-child {
 .v-margit_button {
   margin-top: 15px;
 }
+.v-margit_button_right {
+  margin-top: -8px;
+}
 .v-margit_img {
   margin-top:150px;
 }
@@ -263,5 +266,22 @@ table tr:last-child td:last-child {
 .v-img-margit {
   Width: 128.19px;
   Height: 84px;
+}
+.v-img-D {
+  size: 26px !important;
+  Width: 100px;
+  Height: 60px;
+}
+.v-img-next {
+  height: 100px;
+  width: 135px;
+}
+.v-img-rental {
+  height: 160px;
+  width: 104px;
+}
+.v_text_new {
+  height: 43px;
+  width: 174px;
 }
 </style>

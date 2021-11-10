@@ -16,15 +16,13 @@
         </v-row>
         <v-row>
          <!-- step -->
-          <v-dialog v-model="dialogStep" persistent max-width="50%">
+          <v-dialog v-model="dialogStep" persistent max-width="40%">
             <v-card>
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
               <v-card-text>
                 <v-container>
                   <v-col class="text-right">
-                      <v-btn small color="#E0E0E0" @click="(dialogStep = false), clearData()">
-                        <v-icon color="#173053">mdi-close</v-icon>
-                      </v-btn>
+                        <v-icon small color="#173053" @click="(dialogStep = false), clearData()">mdi-close</v-icon>
                   </v-col>
                   <v-row justify="center">
                     <v-col cols="5">
@@ -37,29 +35,34 @@
                       </v-btn>
                     </v-col>
                      <!-- ADD steptitle-->
-                    <v-dialog v-model="dialogAddStepTitle" persistent max-width="30%">
+                    <v-dialog v-model="dialogAddStepTitle" persistent max-width="25%">
                       <v-card>
                         <v-card-text>
                           <v-container>
                             <v-col class="text-right">
-                                <v-btn small color="#E0E0E0" @click="(dialogAddStepTitle = false)">
-                                  <v-icon color="#173053">mdi-close</v-icon>
-                                </v-btn>
+                              <v-icon small color="#173053" @click="(dialogAddStepTitle = false)">mdi-close</v-icon>
                             </v-col>
                             <v-row justify="center">
 
-                                <v-col cols="6" class="v-margit_text_add mt-1">
-                              <v-col class="text-center">
+                                <v-col cols="12" class="v-margit_text_add mt-1">
+                                  <center>
+                              <v-col>
+                                <v-img id="v_img_add" :src="require('@/assets/AddTitleStep.svg')"></v-img>
+                                </v-col>
+                                  </center>
+                                  <center>
+                              <v-col>
                                 <v-img class="v_text_add" :src="require('@/assets/Grouptitle.svg')"></v-img>
                                 </v-col>
+                                  </center>
                               <v-col cols="12">
                                 <v-row style="height: 35px">
-                                <v-subheader id="subtext">title</v-subheader>
+                                <v-subheader id="subtext">หัวข้อ</v-subheader>
                                 </v-row>
-                                <v-row style="height: 70px">
+                                <v-row class="mt-5">
                                 <v-text-field
                                   v-model="formAddStep.stepTitle"
-                                  placeholder="Title"
+                                  placeholder="หัวข้อ"
                                   dense
                                   required
                                 ></v-text-field>
@@ -68,6 +71,7 @@
                                 <v-col id="margin">
                                 <v-row justify="center">
                                 <v-btn
+                                  dark
                                   elevation="2"
                                   x-large
                                   color="#173053"
@@ -88,24 +92,29 @@
                     <!-- end ADD step -->
 
                     <!--edit step -->
-                      <v-dialog v-model="dialogEditStep" persistent max-width="30%">
+                      <v-dialog v-model="dialogEditStep" persistent max-width="25%">
                         <v-card>
                           <v-form ref="form_update" v-model="validUpdate" lazy-validation>
                           <v-card-text>
                             <v-container>
                               <v-col class="text-right">
-                                  <v-btn small color="#E0E0E0" @click="(dialogEditStep = false)">
-                                    <v-icon color="#173053">mdi-close</v-icon>
-                                  </v-btn>
+                                    <v-icon color="#173053"  @click="(dialogEditStep = false)">mdi-close</v-icon>
                               </v-col>
                               <v-row justify="center">
-                                  <v-col cols="6" class="v-margit_text_add mt-1">
-                                <v-col class="text-center">
-                                  <v-img class="v_text_edit" :src="require('@/assets/GroupEditTitle.svg')"></v-img>
+                                  <v-col cols="12" class="v-margit_text_add mt-1">
+                                    <center>
+                                <v-col>
+                                  <v-img id="v_img_edit" :src="require('@/assets/EditTitleNew.png')"></v-img>
                                   </v-col>
+                                    </center>
+                                    <center>
+                                <v-col>
+                                  <v-img id="v_text_edits" :src="require('@/assets/GroupEditTitle.svg')"></v-img>
+                                  </v-col>
+                                    </center>
                                 <v-col cols="12">
-                                  <v-row style="height: 35px">
-                                  <v-subheader id="subtext">StepTitle</v-subheader>
+                                  <v-row style="height: 55px">
+                                  <v-subheader id="subtext">ขั้นตอนบริการ</v-subheader>
                                   </v-row>
                                   <v-row style="height: 70px">
                                   <v-text-field
@@ -118,6 +127,7 @@
                                   <v-col id="margin">
                                   <v-row justify="center">
                                   <v-btn
+                                    dark
                                     elevation="2"
                                     x-large
                                     color="#173053"
@@ -155,7 +165,7 @@
                       x-small
                       @click="actionUp(item.stepId)"
                     >
-                      <v-icon dark> mdi-arrow-up-bold </v-icon>
+                      <v-icon color="#FFFFFF"> mdi-arrow-up-bold </v-icon>
                     </v-btn>
                     <v-btn
                       color="red"
@@ -163,7 +173,7 @@
                       x-small
                       @click="actionDown(item.stepId)"
                     >
-                      <v-icon dark> mdi-arrow-down-bold </v-icon>
+                      <v-icon color="#FFFFFF"> mdi-arrow-down-bold </v-icon>
                     </v-btn>
                   </template>
                    <template v-slot:[`item.sendCard`]="{ item }">
@@ -180,7 +190,7 @@
                       x-small
                       @click.stop="(dialogEditStep = true), getUpdate(item), validate('UPDATE')"
                     >
-                      <v-icon dark> mdi-tools </v-icon>
+                      <v-icon color="#FFFFFF"> mdi-tools </v-icon>
                     </v-btn>
                     <v-btn
                       color="red"
@@ -196,13 +206,17 @@
                           <!-- delete step -->
                           <v-dialog v-model="dialogDeleteStepTitle" max-width="500px">
                               <v-card>
-                                <v-card-title>คุณต้องการลบใช่หรือไม่</v-card-title>
-                                <v-card-actions>
-                                  <v-spacer></v-spacer>
-                                  <v-btn color="red" @click="dialogDeleteStepTitle = false">Cancel</v-btn>
-                                  <v-btn color="#173053" @click="deleteStepTitle()">OK</v-btn>
-                                  <v-spacer></v-spacer>
-                                </v-card-actions>
+                                <v-col class="text-center">
+                                  <!-- <v-img :src="require('@/assets/EditTitleStep.svg')"></v-img> -->
+                                  <v-icon color="#FD8087" class="mdi-48px"> mdi-minus-circle-outline </v-icon>
+                                  </v-col>
+                                <v-col class="text-center">
+                                  <h3 class="text-h6">คุณต้องการลบใช่หรือไม่</h3>
+                                </v-col>
+                                <v-col class="text-center">
+                                  <v-btn dark color="#FD8087" @click="deleteStepTitle()">ลบ</v-btn>
+                                  <v-btn dark color="#1B437C" @click="dialogDeleteStepTitle = false">ยกเลิก</v-btn>
+                                </v-col>
                               </v-card>
                             </v-dialog>
                             <!-- END delete step -->
@@ -227,20 +241,18 @@
           <!-- end  -->
 
           <!-- add  -->
-          <v-dialog v-model="dialogAdd" persistent max-width="60%">
+          <v-dialog v-model="dialogAdd" persistent max-width="50%">
             <v-card>
               <v-form ref="form_add" v-model="validAdd" lazy-validation>
               <v-card-text>
                 <v-container>
                   <v-col class="text-right">
-                      <v-btn small color="#E0E0E0" @click="(dialogAdd = false), clearData()">
-                        <v-icon color="#173053">mdi-close</v-icon>
-                      </v-btn>
+                    <v-icon small color="#173053" @click="(dialogAdd = false), clearData()">mdi-close</v-icon>
                   </v-col>
                   <v-row justify="center">
                     <v-col cols="5" class="text-center">
                         <v-col class="text-center">
-                      <v-img  class="v-margit_img_reward" :src="require('@/assets/GroupLevel.svg')" max-width="330"></v-img>
+                      <v-img  class="v-margit_img_reward" :src="require('@/assets/stepflowAdd.jpg')" max-width="330"></v-img>
                       </v-col>
                     </v-col>
 
@@ -312,7 +324,7 @@
                             </v-dialog>
                           <v-dialog
                                 v-model="dialogAddField"
-                                max-width="500px"
+                                max-width="450px"
                               >
                                 <v-card>
                                   <v-card-text>
@@ -321,11 +333,18 @@
                                         <v-col
                                           cols="12"
                                         >
+                                        <center>
+                                        <v-col>
+                                          <v-img id="v-img-fieldName" :src="require('@/assets/maintenance.png')"></v-img>
+                                        </v-col>
+                                        </center>
                                         <v-row style="height: 35px">
                                           <v-subheader id="subtext">Field Name</v-subheader>
                                         </v-row>
+                                        <br>
                                         <v-row style="height: 50px">
                                             <v-select
+                                            outlined
                                             v-model="editedItem.fieldName"
                                             :items="editedItemSelete"
                                             item-text="text"
@@ -341,12 +360,14 @@
                                   <v-card-actions>
                                     <v-spacer></v-spacer>
                                     <v-btn
+                                    dark
                                       color="#173053"
                                        @click="dialogAddField =false"
                                     >
                                       Cancel
                                     </v-btn>
                                     <v-btn
+                                    dark
                                       color="#173053"
                                       @click="save(editedItem)"
                                     >
@@ -360,6 +381,7 @@
                       <v-col id="margin">
                       <v-row justify="center">
                       <v-btn
+                        dark
                         elevation="2"
                         x-large
                         color="#173053"
@@ -382,26 +404,26 @@
           <!-- end add -->
 
           <!-- edit -->
-          <v-dialog v-model="dialogEdit" persistent max-width="60%">
+          <v-dialog v-model="dialogEdit" persistent max-width="50%">
             <v-card>
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
               <v-card-text>
                 <v-container>
                   <v-col class="text-right">
-                      <v-btn small color="#E0E0E0" @click="(dialogEdit = false), clearData()">
-                        <v-icon color="#173053">mdi-close</v-icon>
-                      </v-btn>
+                     <v-col class="text-right">
+                    <v-icon small color="#173053" @click="(dialogEdit = false), clearData()">mdi-close</v-icon>
+                  </v-col>
                   </v-col>
                   <v-row justify="center">
                     <v-col cols="5" class="text-center">
-                        <v-col class="text-center">
-                      <v-img  class="v-margit_img_reward" :src="require('@/assets/GroupLevel.svg')" max-width="330"></v-img>
+                        <v-col >
+                      <v-img id="v-img-cars" :src="require('@/assets/cars.png')"></v-img>
                       </v-col>
                     </v-col>
 
                       <v-col cols="6" class="v-margit_text_add mt-1">
                     <v-col class="text-center">
-                      <v-img class="v_text_edit" :src="require('@/assets/GroupEditTitle.svg')"></v-img>
+                      <v-img id="v_text_edits" :src="require('@/assets/GroupEditTitle.svg')"></v-img>
                       </v-col>
                     <v-col cols="12">
                       <v-row style="height: 35px">
@@ -514,6 +536,7 @@
                       <v-col id="margin">
                       <v-row justify="center">
                       <v-btn
+                        dark
                         elevation="2"
                         x-large
                         color="#173053"
@@ -536,45 +559,58 @@
           <!-- end  -->
 
           <!-- delete -->
-          <v-dialog v-model="dialogDelete" persistent max-width="80%">
+          <v-dialog v-model="dialogDelete" max-width="450px">
             <v-card>
-              <v-card-title>
+              <br>
+              <center>
+              <v-col class="text-center v-img-D">
+                <v-img :src="require('@/assets/DeleteFlow.svg')"></v-img>
+              </v-col>
+              </center>
+              <br>
+              <v-col class="text-center">
                 <span class="headline">ลบข้อมูลนี้</span>
-              </v-card-title>
+              </v-col>
               <v-card-text>
                 <v-container>
                   <v-row>
                     <v-col cols="12">
-                      <v-text-field
-                        label="รหัส Filed*"
-                        v-model="formUpdate.flowName"
-                        readonly
-                      ></v-text-field>
+                      <v-row style="height: 35px">
+                        <v-subheader id="subtext">รหัส Filed</v-subheader>
+                      </v-row>
+                      <v-row style="height: 70px">
+                        <v-text-field
+                          v-model="formUpdate.flowName"
+                          readonly
+                        ></v-text-field>
+                      </v-row>
                     </v-col>
                   </v-row>
                 </v-container>
               </v-card-text>
-              <v-card-actions>
+              <v-col class="text-center">
                 <v-spacer></v-spacer>
                 <v-btn
+                  dark
                   elevation="2"
                   x-large
-                  color="dark darken-1"
-                  @click="dialogDelete = false"
-                >
-                  <v-icon left> mdi-cancel</v-icon>
-                  ปิด
-                </v-btn>
-                <v-btn
-                  elevation="2"
-                  x-large
-                  color="red darken-1"
+                  color="#FD8087"
                   @click="deleteData()"
                 >
                   <v-icon left>mdi-checkbox-marked-circle</v-icon>
                   ลบ
                 </v-btn>
-              </v-card-actions>
+                <v-btn
+                  dark
+                  elevation="2"
+                  x-large
+                  color="#1B437C"
+                  @click="dialogDelete = false"
+                >
+                  <v-icon left> mdi-cancel</v-icon>
+                  ยกเลิก
+                </v-btn>
+              </v-col>
             </v-card>
           </v-dialog>
           <!-- end delete -->
@@ -611,7 +647,7 @@
                       @click="(dialogStep = true), getDataById(item), getStepFlow(item)"
 
                     >
-                      <v-icon dark> mdi-debug-step-over </v-icon>
+                      <v-icon color="#FFFFFF"> mdi-debug-step-over </v-icon>
                     </v-btn>
                     <v-btn
                       color="question"
@@ -619,7 +655,7 @@
                       x-small
                       @click.stop="(dialogEdit = true), getDataById(item), validate('UPDATE')"
                     >
-                      <v-icon dark> mdi-tools </v-icon>
+                      <v-icon color="#FFFFFF"> mdi-tools </v-icon>
                     </v-btn>
                     <v-btn
                       color="red"
@@ -791,16 +827,9 @@ export default {
       showCard: false,
       sendCard: false,
       headers: [
-        {
-          text: 'Field Id',
-          value: 'fieldId'
-        },
-        {
-          text: 'Field Name',
-          value: 'fieldName'
-        },
-        { text: 'AC', value: 'actions', sortable: false },
-        { text: 'AC', value: 'showCard' }
+        { text: 'AC', value: 'showCard' },
+        { text: 'ข้อมูล', value: 'fieldName' },
+        { text: 'AC', value: 'actions', sortable: false }
       ],
       sortBy: false,
       headers2: [
@@ -906,7 +935,7 @@ export default {
       await axios
         .post(
           // eslint-disable-next-line quotes
-          this.DNS_IP + "/flowStep/" + "editStep",
+          this.DNS_IP + "/flowStep/" + "updateAction",
           newArray,
           {
             headers: {
@@ -1080,6 +1109,7 @@ export default {
               // Load Data
               await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
               this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              this.clearData()
             })
           // eslint-disable-next-line handle-callback-err
             .catch((error) => {
@@ -1396,13 +1426,33 @@ export default {
   margin-bottom: 40px;
 }
 .v_text_edit {
-  Width: 255px;
+  Width: 298px;
   Height: 52px;
   font-size: 10px !important;
+}
+#v_img_edit {
+  height: 135px;
+  width: 114px;
+}
+#v_img_add {
+  height: 139px;
+  width: 140px;
+}
+#v_text_edits {
+  height: 43px;
+  width: 198px;
 }
 #subtext {
   color: #173053;
   font-size: 30px !important;
   font-weight: bold;
+}
+#v-img-fieldName {
+  height: 90px;
+  width: 90px;
+}
+#v-img-cars {
+  height: 280.2578125px;
+  width: 401.6603088378906px;
 }
 </style>

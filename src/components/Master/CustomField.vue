@@ -16,21 +16,21 @@
         </v-row>
         <v-row>
           <!-- ADD -->
-          <v-dialog v-model="dialogAdd" persistent max-width="50%">
+          <v-dialog v-model="dialogAdd" persistent max-width="60%">
             <v-card>
               <v-form ref="form_add" v-model="validAdd" lazy-validation>
               <v-card-text>
                 <v-container>
                   <v-col class="text-right">
-                      <v-btn small color="#E0E0E0" @click="(dialogAdd = false), clearData()">
-                        <v-icon color="#173053">mdi-close</v-icon>
-                      </v-btn>
+                    <v-icon color="#173053" @click="(dialogAdd = false), clearData()">mdi-close</v-icon>
                   </v-col>
                   <v-row justify="center">
-                    <v-col cols="5" class="text-center">
-                        <v-col class="text-center">
-                      <v-img  class="v-margit_img_reward" :src="require('@/assets/GroupLevel.svg')" max-width="330"></v-img>
+                    <v-col cols="6" class="text-center">
+                      <center>
+                      <v-col>
+                      <v-img :src="require('@/assets/editCustomfield.png')"></v-img>
                       </v-col>
+                      </center>
                       <v-card-text v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
                       <v-data-table
                         :headers="columnsOption"
@@ -127,9 +127,7 @@
                         placeholder="Value"
                         dense
                         required
-                        :rules="[
-                          rules.required
-                        ]"
+                        :rules="[rules.required]"
                       ></v-text-field>
                       </v-row>
                     </v-col>
@@ -141,6 +139,7 @@
                       <v-btn
                         elevation="2"
                         x-large
+                        dark
                         color="#173053"
                         :disabled="!validAddOption"
                         @click="addDataOption(formAddOption), clearDataOption()"
@@ -149,8 +148,9 @@
                         ADD
                       </v-btn>
                       </v-row>
+
                       <!-- checkbox -->
-                     <v-container v-if="formAdd.optionField"
+                     <v-container v-if="formAdd.fieldType"
                         class="px-0"
                         fluid
                       >
@@ -160,6 +160,7 @@
                         ></v-checkbox>
                       </v-container>
                       <!-- checkbox -->
+
                       <v-row style="height: 35px" v-if="checkbox === true">
                       <v-subheader id="subtext">Field</v-subheader>
                       </v-row>
@@ -195,6 +196,7 @@
                       <v-btn
                         elevation="2"
                         x-large
+                        dark
                         color="#173053"
                         :disabled="!validAdd"
                         @click="addData()"
@@ -213,7 +215,7 @@
           <!-- end add -->
 
           <!-- edit -->
-          <v-dialog v-model="dialogEdit" persistent max-width="70%">
+          <!-- <v-dialog v-model="dialogEdit" persistent max-width="70%">
             <v-card>
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
               <v-card-text>
@@ -281,6 +283,7 @@
                       <v-col id="margin">
                       <v-row justify="center">
                       <v-btn
+                      dark
                         elevation="2"
                         x-large
                         color="#173053"
@@ -299,49 +302,258 @@
               </v-card-text>
               </v-form>
             </v-card>
+          </v-dialog> -->
+          <v-dialog v-model="dialogEdit" persistent max-width="60%">
+            <v-card>
+              <v-form ref="form_update" v-model="validUpdate" lazy-validation>
+              <v-card-text>
+                <v-container>
+                  <v-col class="text-right">
+                    <v-icon color="#173053" @click="(dialogEdit = false), clearData()">mdi-close</v-icon>
+                  </v-col>
+                  <v-row justify="center">
+                    <v-col cols="6" class="text-center">
+                      <center>
+                      <v-col>
+                      <v-img :src="require('@/assets/editCustomfield.png')"></v-img>
+                      </v-col>
+                      </center>
+                      <v-card-text v-if="formUpdate.fieldName && formUpdate.fieldType !== 'text'">
+                      <v-data-table
+                        :headers="columnsOption"
+                        :items="dataItemOption"
+                      >
+                        <template v-slot:[`item.action`]="{ item }">
+                          <v-btn
+                            color="red"
+                            dark
+                            fab
+                            x-small
+                            @click="deleteOption(item)"
+                          >
+                            <v-icon> mdi-delete </v-icon>
+                          </v-btn>
+                        </template>
+                      </v-data-table>
+                    </v-card-text>
+                    </v-col>
+
+                      <v-col cols="6" class="v-margit_text_add mt-1">
+                    <v-col>
+                      <v-img id="v_textEdit" :src="require('@/assets/GroupEditTitle.svg')"></v-img>
+                      </v-col>
+                    <v-col cols="12">
+                      <v-row style="height: 35px">
+                      <v-subheader id="subtext">title</v-subheader>
+                      </v-row>
+                      <v-row style="height: 50px">
+                      <v-text-field
+                        v-model="formUpdate.fieldName"
+                        placeholder="Title"
+                        dense
+                        required
+                        :rules="[
+                          rules.required
+                        ]"
+                      ></v-text-field>
+                      </v-row>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-row style="height: 35px">
+                      <v-subheader id="subtext">type</v-subheader>
+                      </v-row>
+
+                      <v-row style="height: 50px">
+                        <v-select
+                        v-model="formUpdate.fieldType"
+                        :items="selectTypeField"
+                        dense
+                        :rules="[rules.required]"
+                        ></v-select>
+                      </v-row>
+
+                      <v-row style="height: 35px" v-if="formUpdate.fieldType !== 'text'">
+                      <v-subheader id="subtext">optionField</v-subheader>
+                      </v-row>
+                      <v-row style="height: 50px" v-if="formUpdate.fieldType !== 'text'">
+                        <v-select
+                        v-model="formUpdate.fieldType"
+                        :items="selectOptionField"
+                        small-chips
+                        dense
+                        :rules="[rules.required]"
+                        ></v-select>
+                      </v-row>
+                    </v-col>
+
+                    <v-form ref="form_addOption" v-model="validAddOption" lazy-validation>
+                    <v-row>
+                    <v-col cols="6">
+                      <v-row style="height: 35px" v-if="formUpdate.fieldName && formUpdate.fieldType !== 'text'">
+                      <v-subheader id="subtext" >Text:</v-subheader >
+                      </v-row>
+                      <v-row style="height: 50px" v-if="formUpdate.fieldName && formUpdate.fieldType !== 'text'">
+                      <v-text-field
+                        v-model="formUpdateOption.optionText"
+                        placeholder="Text"
+                        dense
+                        required
+                        :rules="[
+                          rules.required
+                        ]"
+                      ></v-text-field>
+                      </v-row>
+                    </v-col>
+                     <v-col cols="6">
+                      <v-row style="height: 35px" v-if="formUpdate.fieldName && formUpdate.fieldType !== 'text'">
+                      <v-subheader id="subtext">Value:</v-subheader>
+                      </v-row>
+                      <v-row style="height: 50px" v-if="formUpdate.fieldName && formUpdate.fieldType !== 'text'">
+                      <v-text-field
+                        v-model="formUpdateOption.optionValue"
+                        placeholder="Value"
+                        dense
+                        required
+                        :rules="[rules.required]"
+                      ></v-text-field>
+                      </v-row>
+                    </v-col>
+                    </v-row>
+                     </v-form>
+                    <br>
+
+                    <v-row justify="center" v-if="formUpdate.fieldName && formUpdate.fieldType !== 'text'">
+                      <v-btn
+                        elevation="2"
+                        x-large
+                        dark
+                        color="#173053"
+                        :disabled="!validAddOption"
+                        @click="addDataOption(formUpdateOption), clearDataOption()"
+                      >
+                        <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                        ADD
+                      </v-btn>
+                      </v-row>
+
+                      <!-- checkbox -->
+                     <v-container v-if="formUpdate.fieldType"
+                        class="px-0"
+                        fluid
+                      >
+                        <v-checkbox
+                          v-model="checkbox"
+                          :label="`Checkbox Condition: ${checkbox.toString()}`"
+                        ></v-checkbox>
+                      </v-container>
+                      <!-- checkbox -->
+
+                      <v-row style="height: 35px" v-if="checkbox === true">
+                      <v-subheader id="subtext">Field</v-subheader>
+                      </v-row>
+                      <v-row style="height: 50px" v-if="checkbox === true">
+                        <v-select
+                        v-model="formUpdate.conditionField"
+                        :items="selectConditionField"
+                        small-chips
+                        dense
+                        :rules="[rules.required]"
+                        ></v-select>
+                      </v-row>
+                      <!-- END -->
+                        <v-row style="height: 35px" v-if="checkbox === true">
+                      <v-subheader id="subtext">Value:</v-subheader>
+                      </v-row>
+                      <v-row style="height: 50px" v-if="checkbox === true">
+                      <v-text-field
+                        v-model="formUpdate.conditionValue"
+                        placeholder="Value"
+                        dense
+                        required
+                        :rules="[
+                          rules.required
+                        ]"
+                      ></v-text-field>
+                      </v-row>
+                      <!-- END -->
+                    </v-col>
+                      <!-- END Radio buttun -->
+                      <v-col id="margin">
+                      <v-row justify="center">
+                      <v-btn
+                         dark
+                        elevation="2"
+                        x-large
+                        color="#173053"
+                        :disabled="!validUpdate"
+                         @click="editData()"
+                      >
+                        <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                        เพิ่ม
+                      </v-btn>
+                      </v-row>
+                      </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+              </v-form>
+            </v-card>
           </v-dialog>
           <!-- end add -->
 
           <!-- delete -->
-          <v-dialog v-model="dialogDelete" persistent max-width="80%">
+          <v-dialog v-model="dialogDelete" max-width="450px">
             <v-card>
-              <v-card-title>
+              <br>
+              <center>
+              <v-col class="text-center v-img-D">
+                <v-img :src="require('@/assets/DeleteFlow.svg')"></v-img>
+              </v-col>
+              </center>
+              <br>
+              <v-col class="text-center">
                 <span class="headline">ลบข้อมูลนี้</span>
-              </v-card-title>
+              </v-col>
               <v-card-text>
                 <v-container>
                   <v-row>
                     <v-col cols="12">
-                      <v-text-field
-                        label="รหัส Filed*"
-                        v-model="formUpdate.fieldName"
-                        readonly
-                      ></v-text-field>
+                      <v-row style="height: 35px">
+                        <v-subheader id="subtext">รหัส Filed</v-subheader>
+                      </v-row>
+                      <v-row style="height: 70px">
+                        <v-text-field
+                          v-model="formUpdate.fieldName"
+                          readonly
+                        ></v-text-field>
+                      </v-row>
                     </v-col>
                   </v-row>
                 </v-container>
               </v-card-text>
-              <v-card-actions>
+              <v-col class="text-center">
                 <v-spacer></v-spacer>
                 <v-btn
+                  dark
                   elevation="2"
                   x-large
-                  color="dark darken-1"
-                  @click="dialogDelete = false"
-                >
-                  <v-icon left> mdi-cancel</v-icon>
-                  ปิด
-                </v-btn>
-                <v-btn
-                  elevation="2"
-                  x-large
-                  color="red darken-1"
+                  color="#FD8087"
                   @click="deleteData()"
                 >
                   <v-icon left>mdi-checkbox-marked-circle</v-icon>
                   ลบ
                 </v-btn>
-              </v-card-actions>
+                <v-btn
+                  dark
+                  elevation="2"
+                  x-large
+                  color="#1B437C"
+                  @click="dialogDelete = false"
+                >
+                  <v-icon left> mdi-cancel</v-icon>
+                  ยกเลิก
+                </v-btn>
+              </v-col>
             </v-card>
           </v-dialog>
           <!-- end delete -->
@@ -385,7 +597,7 @@
                       x-small
                       @click.stop="(dialogEdit = true), getDataById(item), validate('UPDATE')"
                     >
-                      <v-icon dark> mdi-tools </v-icon>
+                      <v-icon color="#FFFFFF"> mdi-tools </v-icon>
                     </v-btn>
                     <v-btn
                       color="red"
@@ -830,6 +1042,10 @@ export default {
 #margin {
   margin-top: 150px;
   margin-bottom: 40px;
+}
+#v_textEdit {
+  height: 43px;
+  width: 198px;
 }
 .v_text_edit {
   Width: 255px;

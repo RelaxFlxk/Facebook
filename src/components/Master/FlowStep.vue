@@ -16,8 +16,7 @@
           </v-col>
           </v-row>
           <v-row>
-            <v-col cols="12" class="text-center">
-           <v-title class="text-h6 text-center">นัดส่ง:</v-title>
+           <v-card-title class="text-h6" style="margin-left: 500px; margin-bottom: 10px;">นัดส่ง:</v-card-title>
             <v-chip
               class="ma-2"
               color="red"
@@ -41,13 +40,12 @@
             >
               มากกว่า 4 วัน
             </v-chip>
-            </v-col>
           </v-row>
 
         <!-- select flow-->
         <v-sheet tile height="54" class="d-flex">
           <!-- ประเภทบริการ -->
-          <v-col cols="12" sm="4">
+          <v-col cols="12" sm="3">
           <v-select
             :items="DataFlowName"
             v-model="formUpdate.flowName"
@@ -60,7 +58,7 @@
           ></v-select>
           </v-col>
           <!-- สาขา -->
-          <v-col cols="12" sm="4">
+          <v-col cols="12" sm="3">
           <v-select
             :items="DataBranchName"
             v-model="masBranchName"
@@ -73,6 +71,7 @@
             class="ma-2"
           ></v-select>
           </v-col>
+          <v-col cols="6" class="v-margit_button_right text-right">
           <v-btn class="ma-2 mt-5" color="primary" depressed @click="newCars()">
               <v-icon left>mdi-account-plus</v-icon>
               รับรถใหม่
@@ -81,10 +80,11 @@
             <v-icon left>mdi-application-cog</v-icon>
             แก้ไข Layout
           </v-btn>
-          <v-btn style="margin-top: 20px" color="primary" depressed @click="editStep()">
+          <v-btn class="ma-2 mt-5" color="primary" depressed @click="editStep()">
               <v-icon left>mdi-application-cog</v-icon>
               แก้ไข ขั้นตอน
             </v-btn>
+          </v-col>
         </v-sheet>
         <v-divider></v-divider>
 
@@ -92,54 +92,90 @@
           <v-row justify="center">
             <v-dialog
               v-model="dialog"
-              max-width="300px"
+              max-width="500px"
             >
               <v-card>
-                <v-card-title class="text-h5 grey lighten-2">
-                  เปลี่ยนสถานะ
-                </v-card-title>
-                <br>
-                <v-card-text>
-                    <v-select
-                    outlined
-                    dense
-                    v-model="formUpdate.stepTitle"
-                    :items="stepItemSelete"
-                    label="ขั้นตอนต่อไป"
-                    item-text="text"
-                    item-value="stepId"
-                    return-object
-                    ></v-select>
-                </v-card-text>
-                <v-card-text>
-                    <v-autocomplete
-                    outlined
-                    dense
-                    v-model="formUpdate.empStep"
-                    :items="empSeleteStep"
-                    label="ชื่อ คนรับผิดชอบ"
-                    ></v-autocomplete>
-                </v-card-text>
-                <v-divider></v-divider>
-                <v-card-actions>
-                   <v-btn color="primary" depressed  @click="onUpdate()">
+                <v-col class="text-right">
+                      <v-btn small color="#E0E0E0" @click="(dialog = false), clearData()">
+                        <v-icon color="#173053">mdi-close</v-icon>
+                      </v-btn>
+                  </v-col>
+                <center>
+              <v-col class="text-center v-img-next">
+                <v-img :src="require('@/assets/NextStepNew.png')"></v-img>
+              </v-col>
+              </center>
+              <v-col class="text-center">
+                <span class="headline">เปลี่ยนสถานะ</span>
+              </v-col>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="12">
+                      <v-row style="height: 45px">
+                        <v-subheader id="subtextTitle">ขั้นตอนต่อไป</v-subheader>
+                      </v-row>
+                      <v-row style="height: 30px">
+                        <v-select
+                          dense
+                          v-model="formUpdate.stepTitle"
+                          :items="stepItemSelete"
+                          item-text="text"
+                          item-value="stepId"
+                          return-object
+                        ></v-select>
+                      </v-row>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-row style="height: 45px">
+                        <v-subheader id="subtextTitle">ชื่อพนักงานที่รับผิดชอบ</v-subheader>
+                      </v-row>
+                      <v-row style="height: 30px">
+                        <v-autocomplete
+                          dense
+                          v-model="formUpdate.empStep"
+                          :items="empSeleteStep"
+                        ></v-autocomplete>
+                      </v-row>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+                <v-col class="text-center">
+                   <v-btn color="#1B437C" depressed dark @click="onUpdate()">
                     Save
                   </v-btn>
-                </v-card-actions>
+                </v-col>
+                <br>
               </v-card>
             </v-dialog>
           </v-row>
           <!-- end เปลี่ยนสถานะ step -->
 
           <!-- DIALOG แก้ไขข้อมูล ใน card -->
+
           <v-dialog v-model="dialogEdit" persistent max-width="50%">
             <v-card>
-              <v-card-title>
-                <span class="headline">แก้ไขข้อมูล</span>
-              </v-card-title>
+              <v-form ref="form_edit" lazy-validation>
               <v-card-text>
                 <v-container>
-                  <v-row>
+                  <v-col class="text-right">
+                      <v-btn small color="#E0E0E0" @click="(dialogEdit = false), clearData()">
+                        <v-icon color="#173053">mdi-close</v-icon>
+                      </v-btn>
+                  </v-col>
+                  <v-row justify="center">
+                    <v-col cols="5" class="text-center">
+                        <v-col class="text-center">
+                      <v-img  class="v-margit_img_reward" :src="require('@/assets/EditCard.png')" max-width="330"></v-img>
+                      </v-col>
+                    </v-col>
+
+                      <v-col cols="6" class="v-margit_text_add mt-1">
+                    <v-col class="text-center">
+                      <v-img class="v_text_edit" :src="require('@/assets/GroupEditTitle.svg')"></v-img>
+                      </v-col>
+                    <v-col cols="12">
                      <div class="column is-3" v-for="(itemsEdit, index) in JobDataItem.filter((row) => {return row.jobId == formUpdate.jobId})" :key="index">
                        <strong>{{ itemsEdit.fieldName }}: </strong>
                     <v-col cols="12">
@@ -148,8 +184,10 @@
                       required dense />
                     </v-col>
                     </div>
-
+                    </v-col>
                     <v-col cols="12">
+                      <v-row style="height: 50px" justify="center">
+                      <v-col cols="12">
                       <v-menu
                           ref="menu"
                           v-model="menu"
@@ -177,68 +215,79 @@
                         </v-menu>
                     </v-col>
 
+                      </v-row>
+                    </v-col>
+                      </v-col>
+
                   </v-row>
                 </v-container>
               </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn
-                  color="primary" depressed
-                  @click="dialogEdit = false,clearData()"
-                >
-                  <v-icon left> mdi-cancel</v-icon>
-                  ปิด
-                </v-btn>
-                <v-btn
-                  elevation="2"
-                  depressed
-                  color="success"
-                  @click="editData()"
-                >
-                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                  แก้ไข
-                </v-btn>
-              </v-card-actions>
+              <br>
+              <v-col class="text-center">
+                       <v-btn
+                        dark
+                        elevation="2"
+                        depressed
+                        color="#1B437C"
+                        @click="editData()"
+                      >
+                        <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                        แก้ไข
+                      </v-btn>
+                      </v-col>
+              </v-form>
             </v-card>
           </v-dialog>
-          <!-- end add -->
+          <!-- END DIALOG แก้ไขข้อมูล ใน card -->
 
           <!-- DIALOG ค่าใช้จ่าย -->
-          <v-dialog v-model="dialogDelete" persistent max-width="50%">
+          <v-dialog v-model="dialogDelete" persistent max-width="400px">
             <v-card>
-              <v-card-title>
-                <span class="headline">ค่าใช้จ่ายทั้งหมด</span>
-              </v-card-title>
+              <center>
+              <v-col>
+                <v-img id="v-img-car" :src="require('@/assets/sendcar.png')"></v-img>
+              </v-col>
+              </center>
+              <v-col class="text-center">
+                <span class="headline">ค่าใช้จ่าย</span>
+              </v-col>
               <v-card-text>
                 <v-container>
                   <v-row>
                     <v-col cols="12">
-                      <v-text-field
-                      v-model="formDelete.totalPrice"
-                      required dense />
+                      <v-row style="height: 35px">
+                        <v-subheader id="subtextTitle">ค่าใช้จ่ายทั้งหมด</v-subheader>
+                      </v-row>
+                      <v-row style="height: 70px">
+                        <v-text-field
+                          v-model="formDelete.totalPrice"
+                          readonly
+                        ></v-text-field>
+                      </v-row>
                     </v-col>
                   </v-row>
                 </v-container>
               </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
+              <v-col class="text-center">
                 <v-btn
+                  dark
+                  elevation="2"
+                  depressed
+                  color="#1B437C"
+                  @click="deleteDataPrice()"
+                >
+                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                  เพิ่ม
+                </v-btn>
+                   <v-btn
                   color="primary" depressed
                   @click="dialogDelete = false,clearData()"
                 >
                   <v-icon left> mdi-cancel</v-icon>
-                  ปิด
+                  ยกเลิก
                 </v-btn>
-                <v-btn
-                  elevation="2"
-                  depressed
-                  color="success"
-                  @click="deleteDataPrice()"
-                >
-                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                  ลบ
-                </v-btn>
-              </v-card-actions>
+                </v-col>
+                <br>
             </v-card>
           </v-dialog>
           <!-- end add -->
@@ -305,26 +354,26 @@
                           <!-- update satatus car -->
                           <v-row class="pl-1">
                               <v-icon v-if="allJob.filter((row) => {return row.jobId == itemsJob.jobId})[0].checkCar == 'False'"
-                                color="#CDDC39"
+                                color="#9E9E9E"
                                 depressed
                                 @click="updateStatusCars(itemsJob.jobId, 'False')"
                               > mdi-car </v-icon>
 
                               <v-icon v-else
-                                color="green"
+                                color="#4F93D0"
                                 depressed
                                 @click="updateStatusCars(itemsJob.jobId, 'True')"
                               > mdi-car </v-icon>
                           </v-row>
                           <!-- end update satatus car -->
                           <v-row class="pt-2 pl-1">
-                            <v-icon large color="primary" dark @click="dialogEdit = true, setUpdate(itemsJob)"> mdi-circle-edit-outline </v-icon>
+                            <v-icon large color="#DE6467" dark @click="dialogEdit = true, setUpdate(itemsJob)"> mdi-square-edit-outline </v-icon>
                           </v-row>
                           <v-row class="pt-2 pl-1">
-                              <v-icon large color="primary" @click="dialog = true, setUpdate(itemsJob)"> mdi-list-status</v-icon>
+                              <v-icon large color="#FED966" @click="dialog = true, setUpdate(itemsJob)"> mdi-layers-triple </v-icon>
                           </v-row>
                           <v-row class="pt-2 pl-1">
-                              <v-icon large color="green" @click="dialogDelete = true, setUpdate(itemsJob)"> mdi-check-bold</v-icon>
+                              <v-icon large color="#84C650" @click="dialogDelete = true, setUpdate(itemsJob)"> mdi-tag </v-icon>
                           </v-row>
                         </v-container>
                       </v-alert>
@@ -441,7 +490,7 @@ export default {
   },
   methods: {
     async newCars () {
-      this.$router.push('/Master/RegisterAdd')
+      this.$router.push('/Master/RegisterAdd?shopId=' + this.shopId)
     },
     async editStep () {
       this.$router.push('/Master/Flow')
@@ -694,7 +743,7 @@ export default {
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#b3b1ab',
         confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
+        cancelButtonText: 'ยกเลิก'
       })
         .then(async (response) => {
           var ID = item
@@ -837,6 +886,15 @@ export default {
   padding-top: 0px;
   width: 100%;
   height: max-content;
+}
+#subtextTitle {
+  color: #173053;
+  font-size: 20px !important;
+  font-weight: bold;
+}
+#v-img-car {
+  height: 60px;
+  width: 64px;
 }
 .bodyFrame {
   padding-top: 1px;

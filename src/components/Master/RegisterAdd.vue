@@ -13,11 +13,13 @@
             <v-col clos="5">
               <template>
               <div class="text-center">
-              <v-card>
+
               <v-form>
               <v-row>
                 <v-col cols="12" >
                <v-sheet tile height="54" class="d-flex">
+
+                 <!-- เลือกขั้นตอนบริการ -->
                   <v-col cols="12" sm="4">
                   <v-select
                   v-model="formAdd.flowCode"
@@ -45,13 +47,21 @@
                     </v-col>
                    </v-sheet>
                     <br>
-                      <v-card v-show="formAdd.flowCode && formAdd.masBranchName !== '' "
+                      <!-- <v-card v-show="formAdd.flowCode && formAdd.masBranchName !== '' "
                       class="mx-auto"
-                      max-width="500">
+                      max-width="500"> -->
+                       <v-card v-show="formAdd.flowCode && formAdd.masBranchName !== '' " max-width="450%">
                           <v-container>
-                            <v-row>
-                              <v-col cols="1"></v-col>
-                              <v-col cols="12">
+                            <v-row justify="center">
+                              <v-col cols="6">
+                                <v-col style="margin-left: 1px;">
+                              <v-img :src="require('@/assets/newcarAdd.png')"></v-img>
+                              </v-col>
+                            </v-col>
+                              <v-col cols="6">
+                                 <v-col class="text-center">
+                              <v-img class="v_text_new" :src="require('@/assets/NewcarText.png')"></v-img>
+                              </v-col>
                               <div v-for="(p , index) in flowfieldNameitem" :key="index">
                                 <div>
                                   <div v-if="p.fieldType == 'text'">
@@ -179,11 +189,11 @@
     </v-col>
 
                               <br/>
-                              <v-btn depressed
+                              <v-btn depressed dark color=red
                               @click="addData()">
                                   Save
                                 </v-btn>
-                                <v-btn depressed
+                                <v-btn depressed dark color="#1B437C"
                               @click="clearData()">
                                   Clear
                                 </v-btn>
@@ -196,7 +206,7 @@
                 </v-col>
                 </v-row>
               </v-form>
-              </v-card>
+
                    </div>
               </template>
             </v-col>
