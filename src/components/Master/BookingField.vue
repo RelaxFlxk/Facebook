@@ -11,8 +11,9 @@
         <v-row>
           <v-col cols="12" md="4" sm="4" class="main">
             <div class="Bar">
-              <v-card class="content p-3" height="700px">
+              <v-card class="content p-3" height="700px" style="background: linear-gradient(180deg, #FFFFFF 0%, #E1F3FF 100%);">
             <h5 class="text-center" style="color:red;">(ตัวอย่าง)</h5>
+            <v-img :src="require('@/assets/Booking.png')" class="a" style="width:56.3px;height:67.03px"></v-img>
             <h4 class="text-center">นัดหมายเข้ารับบริการ</h4>
              <div v-for="(itemFix , indexFix) in fixtureField" :key="indexFix">
                   <v-text-field
@@ -21,6 +22,62 @@
                   disabled
                   ></v-text-field>
                 </div>
+                <v-row>
+              <v-col cols="6">
+            <v-menu
+              ref="menu"
+              v-model="menuDate"
+              :close-on-content-click="false"
+              :return-value.sync="date"
+              transition="scale-transition"
+              offset-y
+              required
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="date"
+                  label="วันที่"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                  required
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="date"
+                no-title
+                scrollable
+                :min="(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)"
+              >
+                <v-spacer></v-spacer>
+                <v-btn
+                  text
+                  color="primary"
+                  @click="menuDate = false"
+                >
+                  Cancel
+                </v-btn>
+                <v-btn
+                  text
+                  color="primary"
+                >
+                  OK
+                </v-btn>
+              </v-date-picker>
+            </v-menu>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field
+                  v-model="time"
+                  label="เวลา"
+                  type="time"
+                  suffix=""
+                  required
+                ></v-text-field>
+              </v-col>
+            </v-row>
               <form class="Review">
                 <div v-for="(item , index) in Fielditem" :key="index">
                  <div v-if="item.showCard == true">
@@ -45,6 +102,7 @@
               <v-col cols="12" md="12" sm="12" >
                 <div v-if="Redirect !== ''">
                   <v-card class="p-3" height="200px" style="background-color:#050C42;">
+                    <v-img :src="require('@/assets/linkicon.png')" class="a" style="width:29px;height:29px"></v-img>
                   <h3 class="text-center" style="color:#FFFFFF;">ลิ้งสำหรับลูกค้า</h3>
                   <v-card-text>
                     <v-row align-content="center">
@@ -99,9 +157,9 @@
                       <v-btn elevation="5" color="#1B437C" dark @click="addBooking()"
                         >SAVE</v-btn
                       >
-                      <v-btn elevation="5" color="#1B437C" outlined class="a"
+                      <!-- <v-btn elevation="5" color="#1B437C" outlined class="a"
                         >CANCEL</v-btn
-                      >
+                      > -->
                     </v-col>
                   </v-card>
               </v-col>
@@ -131,6 +189,9 @@ export default {
       shopId: this.$session.getAll().data.shopId,
       IdUpdate: '',
       bookingField: [],
+      menuDate: false,
+      date: '',
+      time: '',
       Fielditem: [],
       showCard: false,
       breadcrumbs: [
@@ -151,9 +212,6 @@ export default {
         },
         {
           fieldName: 'สาขา'
-        },
-        {
-          fieldName: 'วันที่/เวลา'
         }
       ],
       FieldSelect: [
@@ -316,6 +374,7 @@ span.v-btn__content {
   padding: 20px;
   background-color: #FFFFFF;
   height: 100%;
+  width: 380px;
 }
 .Review {
   padding: 20px, 20px, 20px, 20px;
@@ -323,6 +382,12 @@ span.v-btn__content {
 .content {
   overflow: auto;
   white-space: normal;
+}
+.a{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 0px;
 }
 
 </style>

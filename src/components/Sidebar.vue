@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-app-bar fixed app>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"/>
+      <v-app-bar-nav-icon dark @click.stop="drawer = !drawer" />
         <!-- <v-toolbar-title v-text="title" /> -->
           <v-col cols="11" class='text-right'>
             <v-list-item-avatar>
@@ -169,6 +169,7 @@
           <v-btn block
             text
             tile
+            dark
             class="nav-button"
             @click.prevent="logout()">
             <v-icon color="white">mdi-logout</v-icon>&nbsp;&nbsp;ออกจากระบบ
