@@ -9,7 +9,7 @@
         </v-row>
       <v-container>
         <v-row>
-          <v-col cols="12" md="4" sm="4" class="main">
+          <v-col cols="12" md="5" sm="5" class="main">
             <div class="Bar">
               <v-card class="content p-3" height="700px" style="background: linear-gradient(180deg, #FFFFFF 0%, #E1F3FF 100%);">
             <h5 class="text-center" style="color:red;">(ตัวอย่าง)</h5>
@@ -97,8 +97,8 @@
             </v-card>
             </div>
           </v-col>
-          <v-col cols="12" md="8" sm="8" class="main">
-                      <v-row>
+          <v-col cols="12" md="7" sm="7" class="main">
+            <v-row>
               <v-col cols="12" md="12" sm="12" >
                 <div v-if="Redirect !== ''">
                   <v-card class="p-3" height="200px" style="background-color:#050C42;">
@@ -371,10 +371,10 @@ span.v-btn__content {
   min-height: 700px;
 }
 .Bar {
-  padding: 20px;
+  padding: 10px;
   background-color: #FFFFFF;
   height: 100%;
-  width: 380px;
+  width: 400px;
 }
 .Review {
   padding: 20px, 20px, 20px, 20px;
@@ -388,6 +388,9 @@ span.v-btn__content {
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 0px;
+}
+.continer{
+  padding: 20px, 20px, 20px, 20px;
 }
 
 </style>
