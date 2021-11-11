@@ -1,65 +1,74 @@
 <template>
-  <div id="login">
-    <v-card elevation="15" max-width="600" class="mx-auto my-12">
-      <div
-        class="d-flex flex-column justify-space-between align-center"
-        v-if="dataReady"
-      >
-        <v-container>
-          <vuetify-logo />
-          <br />
-          <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-          <br />
-          <v-text-field
-            prepend-icon="mdi-account"
-            v-model="form.userName"
-            label="Username"
-          ></v-text-field>
-          <v-text-field
-            prepend-icon="mdi-lock"
-            v-model="form.userPassword"
-            label="Password"
-            type="password"
-          ></v-text-field>
-          <br />
-          <template v-if="hidePrivacy">
-            <v-btn color="teal" @click="onSubmit()" dark large block
-              >Login</v-btn
-            >
-            <br>
-            <v-btn color="warning" @click="dialog = true, validate('UPDATE')" dark large block
-              >Forgot password</v-btn
-            >
-          </template>
-          <template v-if="!hidePrivacy">
-            <v-bottom-sheet v-model="sheet" max-width="95%" scrollable>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn color="teal" dark v-bind="attrs" v-on="on" block>
-                  Login
-                </v-btn>
-              </template>
-              <v-sheet>
-                <v-btn class="mt-6" text color="error" @click="sheet = !sheet">
-                  close
-                </v-btn>
-                <div>
-                  <v-card id="xxxxxx">
-                    <div class="a" v-html="privacyConfigDetail"></div>
-                    <v-btn
-                      color="teal"
-                      @click="onSubmitPrivacy()"
-                      dark
-                      large
-                      block
-                      >ยอมรับเงื่อนไข - Agree</v-btn
-                    >
-                  </v-card>
-                </div>
-              </v-sheet>
-            </v-bottom-sheet>
-          </template>
-        </v-container>
-      </div>
+  <div id="login" class="bgPage">
+    <v-row>
+      <v-col  cols="6"  class="text-center mt-15">
+        <v-img
+          class="ma-15"
+          :src="require('@/assets/logIn.svg')"
+        ></v-img>
+      </v-col>
+      <v-col cols="6" class="text-center mt-16">
+        <v-row class="mt-15" justify="center" no-gutters>
+          <v-col cols="10">
+             <v-img
+              width="120px"
+              :src="require('@/assets/Welcome.svg')"
+            ></v-img>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="10">
+            <v-row style="height: 25px">
+              <v-subheader id="subtext">Username</v-subheader>
+            </v-row>
+            <v-row style="height: 65px">
+              <v-text-field
+                prepend-icon="mdi-account"
+                v-model="form.userName"
+              ></v-text-field>
+            </v-row>
+          </v-col>
+          <v-col cols="10">
+            <v-row style="height: 25px">
+              <v-subheader id="subtext">Password</v-subheader>
+            </v-row>
+            <v-row style="height: 75px">
+               <v-text-field
+                prepend-icon="mdi-lock"
+                v-model="form.userPassword"
+                type="password"
+              ></v-text-field>
+            </v-row>
+          </v-col>
+          <v-col cols="10" id="margin">
+            <v-row justify="center">
+              <v-btn
+                elevation="2"
+                x-large
+                color="#173053"
+                block
+                dark
+                @click="onSubmit()"
+              >
+                <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                เข้าสู่ระบบ
+              </v-btn>
+            </v-row>
+          </v-col>
+          <v-col cols="5">
+          </v-col>
+          <v-col cols="5">
+            <v-btn text @click="dialog = true, validate('UPDATE')">
+              Forgot Password?
+            </v-btn>
+            <!-- <v-list-tile @click="dialog = true, validate('UPDATE')">Forgot Password?</v-list-tile> -->
+          </v-col>
+          <v-col cols="10">
+            <h6>Don’t have an account yet? <a href="https://betask-linked.web.app/register">Sign up!</a></h6>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
       <v-dialog
         v-model="dialog"
         persistent
@@ -115,7 +124,6 @@
           color="primary"
         ></v-progress-circular>
       </div>
-    </v-card>
   </div>
 </template>
 <script>
@@ -489,6 +497,14 @@ export default {
 }
 </script>
 <style scoped>
+.bgPage {
+  background: linear-gradient(180deg, #FFFFFF 10%, #E1F3FF 100%);
+  position: absolute;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;
+}
 h1,
 h2 {
   font-weight: normal;
