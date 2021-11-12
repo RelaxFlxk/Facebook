@@ -69,55 +69,70 @@
         </v-row>
       </v-col>
     </v-row>
-      <v-dialog
-        v-model="dialog"
-        persistent
-        max-width="500"
-      >
-        <v-card>
-          <v-card-title class="text-h5">
-            ลืม Password
-          </v-card-title>
-          <v-form ref="form_update" v-model="validUpdate" lazy-validation>
+    <v-dialog
+      v-model="dialog"
+      persistent
+      max-width="445"
+    >
+      <v-card>
+        <v-container>
           <v-card-text>
-            <v-text-field
-              prepend-icon="mdi-account"
-              v-model="form.newUserName"
-              label="Username"
-              :rules="[rules.email]"
-              required
-            ></v-text-field>
-            <!-- <v-text-field
-              prepend-icon="mdi-lock"
-              v-model="form.newUserPassword"
-              label="Password"
-              :rules="[rules.required]"
-              required
-            ></v-text-field> -->
+              <v-row class="mb-6" justify="center">
+                <v-col md="auto">
+                  <v-img :src="require('@/assets/forget.svg')" class="a" style="width:306px;height:206px"></v-img>
+                </v-col>
+              </v-row>
           </v-card-text>
-          </v-form>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn
-              color="red darken-1"
-              text
-              @click="dialog = false"
+          <v-card-text>
+              <v-row class="mb-6" justify="center" no-gutters>
+                <v-col md="auto">
+                  <h1 style="color:black;"><strong>Forget Password?</strong></h1>
+                </v-col>
+              </v-row>
+          <v-form ref="form_update" v-model="validUpdate" lazy-validation>
+          <v-row
+              class="mb-6"
+              justify="center"
+              no-gutters
             >
-              ยกเลิก
-            </v-btn>
+              <v-col lg="12">
+                <v-text-field
+                  prepend-icon="mdi-account"
+                  v-model="form.newUserName"
+                  label="Username"
+                  :rules="[rules.email]"
+                  required
+                ></v-text-field>
+              </v-col>
+              <v-col lg="12">
+                <h6>Enter you email address and we will send you an email for reset password</h6>
+              </v-col>
+          </v-row>
+          </v-form>
+        </v-card-text>
+        <v-row justify="center" no-gutter>
+               <v-col md="auto">
             <v-btn
               elevation="2"
               x-large
-              color="#173053"
+              dark
+              color="#1B437C"
               @click="onSubmitForgot()"
               :disabled="!validUpdate"
             >
               <v-icon left>mdi-checkbox-marked-circle</v-icon>
-              บันทึก
+              Reset Password
             </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+              </v-col>
+            </v-row>
+            <v-row justify="center" no-gutter>
+               <v-col md="auto">
+            <h6>Return to <a style="color:#173154;" @click="dialog = false">Signin</a></h6>
+               </v-col>
+            </v-row>
+        </v-container>
+      </v-card>
+    </v-dialog>
       <div v-if="!dataReady" class="text-center">
         <v-progress-circular
           indeterminate
