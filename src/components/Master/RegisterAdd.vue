@@ -160,7 +160,8 @@
                                   </div>
                               </div>
 
-    <v-col cols="12">
+  <v-row>
+    <v-col cols="6">
       <v-menu
           ref="menu"
           v-model="menu"
@@ -187,6 +188,17 @@
           ></v-date-picker>
         </v-menu>
     </v-col>
+
+              <v-col cols="6">
+                <v-text-field
+                  v-model="endTime"
+                  label="เวลา"
+                  type="time"
+                  suffix=""
+                  required
+                ></v-text-field>
+              </v-col>
+            </v-row>
 
                               <br/>
                               <v-btn depressed dark color=red
@@ -272,6 +284,7 @@ export default {
       date: new Date().toISOString().substr(0, 10),
       menu: false,
       endDate: '',
+      endTime: '',
       checkCar: 'False',
       session: this.$session.getAll(),
       shopId: this.$session.getAll().data.shopId,
@@ -378,6 +391,7 @@ export default {
           s.showCard = d.showCard
           s.shopId = this.shopId
           s.endDate = ''
+          s.endTime = ''
           s.checkCar = 'False'
           s.conditionValue = d.value
           // if (d.conditionField !== '') {
@@ -412,6 +426,7 @@ export default {
     },
     async addData (p) {
       this.flowfieldNameitem[0].endDate = this.endDate
+      this.flowfieldNameitem[0].endTime = this.endTime
       this.flowfieldNameitem[0].CREATE_USER = this.session.data.userName
       this.flowfieldNameitem[0].LAST_USER = this.session.data.userName
       console.log('flowfieldNameitem', this.flowfieldNameitem)
@@ -428,10 +443,12 @@ export default {
         .then(async (result) => {
           this.shopId = this.shopId
           this.endDate = this.endDate
+          this.endTime = this.endTime
           this.checkCar = this.checkCar
           console.log('flowfieldNameitem', this.flowfieldNameitem)
           console.log('checkCar', this.checkCar)
           console.log('endDate', this.endDate)
+          console.log('endTime', this.endTime)
           console.log('shopId', this.shopId)
           await axios
             .post(

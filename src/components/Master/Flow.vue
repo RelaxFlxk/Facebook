@@ -446,7 +446,7 @@
                         color="primary"
                         dark
                         x-small
-                        @click="dialogAddField =true,editedItem2.fieldName = '', editedItem2.fieldId = ''"
+                        @click="dialogEditField =true,editedItem2.fieldName = '', editedItem2.fieldId = ''"
                         class="mb-2"
                       >
                         Register Field Edit
@@ -487,7 +487,7 @@
                               </v-card>
                             </v-dialog>
                           <v-dialog
-                                v-model="dialogAddField"
+                                v-model="dialogEditField"
                                 max-width="500px"
                               >
                                 <v-card>
@@ -497,6 +497,11 @@
                                         <v-col
                                           cols="12"
                                         >
+                                        <center>
+                                        <v-col>
+                                          <v-img id="v-img-fieldName" :src="require('@/assets/maintenance.png')"></v-img>
+                                        </v-col>
+                                        </center>
                                         <v-row style="height: 35px">
                                           <v-subheader id="subtext">Field Name</v-subheader>
                                         </v-row>
@@ -518,7 +523,7 @@
                                     <v-spacer></v-spacer>
                                     <v-btn
                                       color="#173053"
-                                       @click="dialogAddField =false"
+                                       @click="dialogEditField =false"
                                     >
                                       Cancel
                                     </v-btn>
@@ -738,6 +743,7 @@ export default {
       menu4: false,
       // Dialog Config ADD EDIT DELETE IMPORT
       dialogAddField: false,
+      dialogEditField: false,
       dialogAdd: false,
       dialogEdit: false,
       dialogDeleteF: false,

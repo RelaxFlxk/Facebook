@@ -15,150 +15,166 @@
           </v-col>
 
           <!-- ADD -->
-          <v-dialog v-model="dialogAdd" persistent max-width="80%">
+          <v-dialog v-model="dialogAdd" persistent max-width="30%">
             <v-card>
-              <v-card-title>
-                <span class="headline">เพิ่มข้อมูล</span>
-              </v-card-title>
+              <v-col class="text-right">
+                    <v-icon small color="#173053" @click="(dialogAdd = false), clearData()">mdi-close</v-icon>
+                  </v-col>
+              <center>
+              <v-col>
+                <v-img id="v_img_addpay" :src="require('@/assets/Groupadd.png')" max-width="330"></v-img>
+              </v-col>
+              </center>
+              <center>
+                <v-col>
+                  <v-img class="v_text_add" :src="require('@/assets/Grouptitle.svg')"></v-img>
+                </v-col>
+              </center>
               <v-card-text>
                 <v-container>
                   <v-row>
                     <v-container fluid>
+                      <v-col>
+                      <v-row style="height: 35px">
+                      <v-subheader id="subtext">ประเภทการชำระเงิน</v-subheader>
+                      </v-row>
+                      </v-col>
                       <v-textarea
                          rows="3" row-height="25"
-                         label="ประเภทการชำระเงิน"
                         v-model="formAdd.payTypeName"
                       ></v-textarea>
                     </v-container>
                   </v-row>
                 </v-container>
               </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
+
+                <center>
+                  <v-col class="text-center">
                 <v-btn
                   elevation="2"
                   x-large
-                  color="dark darken-1"
-                  text
-                  @click="dialogAdd = false,clearData()"
-                >
-                  <v-icon left> mdi-cancel</v-icon>
-                  ปิด
-                </v-btn>
-                <v-btn
-                  elevation="2"
-                  x-large
-                  color="success"
-                  text
+                  dark
+                  color="#1B437C"
                   @click="addData()"
                 >
                   <v-icon left>mdi-checkbox-marked-circle</v-icon>
                   เพิ่ม
                 </v-btn>
-              </v-card-actions>
+                  </v-col>
+                </center>
             </v-card>
           </v-dialog>
           <!-- end add -->
 
           <!-- edit -->
-          <v-dialog v-model="dialogEdit" persistent max-width="80%">
+          <v-dialog v-model="dialogEdit" persistent max-width="30%">
             <v-card>
-              <v-card-title>
-                <span class="headline">แก้ไขข้อมูล</span>
-              </v-card-title>
+              <v-col class="text-right">
+                    <v-icon small color="#173053" @click="(dialogEdit = false), clearData()">mdi-close</v-icon>
+                  </v-col>
+              <center>
+              <v-col>
+                <v-img id="v_img_addpay" :src="require('@/assets/payment.png')" max-width="330"></v-img>
+              </v-col>
+              </center>
+              <center>
+                <v-col>
+                  <v-img id="v_text_edits" :src="require('@/assets/GroupEditTitle.svg')"></v-img>
+                </v-col>
+              </center>
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="6">
-                      <v-text-field
-                        label="รหัส ประเภทการชำระเงิน*"
-                        v-model="formUpdate.payTypeCode"
-                        :rules="nameRules"
-                        :counter="50"
-                        maxlength="50"
-
-                        readonly
-                      ></v-text-field>
-                    </v-col>
                     <v-container fluid>
+                      <v-col>
+                      <v-row style="height: 35px">
+                      <v-subheader id="subtext">ประเภทการชำระเงิน</v-subheader>
+                      </v-row>
+                      </v-col>
                       <v-textarea
                          rows="3" row-height="25"
-                         label="ประเภทการชำระเงิน"
                         v-model="formUpdate.payTypeName"
                       ></v-textarea>
                     </v-container>
                   </v-row>
                 </v-container>
               </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
+
+                <center>
+                  <v-col class="text-center">
                 <v-btn
                   elevation="2"
                   x-large
-                  color="blue darken-1"
-                  text
-                  @click="dialogEdit = false"
-                >
-                  <v-icon left> mdi-cancel</v-icon>
-                  ปิด
-                </v-btn>
-                <v-btn
-                  elevation="2"
-                  x-large
-                  color="success"
-                  text
-                  @click="editData()"
+                  dark
+                  color="#1B437C"
+                   @click="editData()"
                 >
                   <v-icon left>mdi-checkbox-marked-circle</v-icon>
                   แก้ไข
                 </v-btn>
-              </v-card-actions>
+                  </v-col>
+                </center>
             </v-card>
           </v-dialog>
           <!-- end edit -->
 
           <!-- delete -->
-          <v-dialog v-model="dialogDelete" persistent max-width="80%">
+          <v-dialog v-model="dialogDelete" max-width="450px">
             <v-card>
-              <v-card-title>
+              <br>
+              <center>
+              <v-col>
+                <v-img id="v-img-cash" :src="require('@/assets/cash.png')"></v-img>
+              </v-col>
+              </center>
+              <v-col class="text-center">
                 <span class="headline">ลบข้อมูลนี้</span>
-              </v-card-title>
+              </v-col>
               <v-card-text>
                 <v-container>
                   <v-row>
-                   <v-container fluid>
+                    <v-col cols="12">
+                      <v-row style="height: 35px">
+                        <v-subheader id="subtext">ประเภทการชำระเงิน</v-subheader>
+                      </v-row>
+                      <v-row style="height: 70px">
+                        <v-container fluid>
                       <v-textarea
                          rows="3" row-height="25"
-                         label="ประเภทการชำระเงิน"
                         v-model="formUpdate.payTypeName"
                       ></v-textarea>
                     </v-container>
+                      </v-row>
+                    </v-col>
                   </v-row>
                 </v-container>
               </v-card-text>
-              <v-card-actions>
+              <br>
+              <br>
+              <br>
+              <v-col class="text-center">
                 <v-spacer></v-spacer>
                 <v-btn
+                  dark
                   elevation="2"
                   x-large
-                  color="dark darken-1"
-                  text
-                  @click="dialogDelete = false"
-                >
-                  <v-icon left> mdi-cancel</v-icon>
-                  ปิด
-                </v-btn>
-                <v-btn
-                  elevation="2"
-                  x-large
-                  color="red darken-1"
-                  text
+                  color="#FD8087"
                   @click="deleteData()"
                 >
                   <v-icon left>mdi-checkbox-marked-circle</v-icon>
                   ลบ
                 </v-btn>
-              </v-card-actions>
+                <v-btn
+                  dark
+                  elevation="2"
+                  x-large
+                  color="#1B437C"
+                  @click="dialogDelete = false"
+                >
+                  <v-icon left> mdi-cancel</v-icon>
+                  ยกเลิก
+                </v-btn>
+              </v-col>
             </v-card>
           </v-dialog>
           <!-- end delete -->
@@ -504,4 +520,21 @@ export default {
 }
 </script>
 <style scope>
+#v_img_addpay {
+  height: 99px;
+  width: 112px;
+}
+#subtext {
+  color: #173053;
+  font-size: 30px !important;
+  font-weight: bold;
+}
+#v_text_edits {
+  height: 43px;
+  width: 198px;
+}
+#v-img-cash {
+  height: 60px;
+  width: 60px;
+}
 </style>

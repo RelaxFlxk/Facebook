@@ -5,7 +5,7 @@
       <div class="pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4">
         <v-row>
           <v-col cols="6" class="text-right" v-if="formUpdate.flowName">
-            <p class="text-h4 text--primary">
+            <p id="textTitleB">
               {{formUpdate.flowName}}
             </p>
           </v-col>
@@ -187,7 +187,7 @@
                     </v-col>
                     <v-col cols="12">
                       <v-row style="height: 50px" justify="center">
-                      <v-col cols="12">
+                      <v-col cols="6">
                       <v-menu
                           ref="menu"
                           v-model="menu"
@@ -214,7 +214,15 @@
                           ></v-date-picker>
                         </v-menu>
                     </v-col>
-
+                    <v-col cols="6">
+                <v-text-field
+                  v-model="formUpdate.endTime"
+                  label="เวลา"
+                  type="time"
+                  suffix=""
+                  required
+                ></v-text-field>
+              </v-col>
                       </v-row>
                     </v-col>
                       </v-col>
@@ -256,13 +264,20 @@
                   <v-row>
                     <v-col cols="12">
                       <v-row style="height: 35px">
+                        <v-col class="text-center">
                         <v-subheader id="subtextTitle">ค่าใช้จ่ายทั้งหมด</v-subheader>
+                        </v-col>
                       </v-row>
                       <v-row style="height: 70px">
-                        <v-text-field
+                        <v-col class="text-center">
+                        <VuetifyMoney
                           v-model="formDelete.totalPrice"
-                          readonly
-                        ></v-text-field>
+                          placeholder="Amount"
+                          dense
+                          required
+                          :rules="[rules.required]"
+                          v-bind:options="options2" />
+                        </v-col>
                       </v-row>
                     </v-col>
                   </v-row>
@@ -421,6 +436,20 @@ export default {
           href: '/Master/Flow'
         }
       ],
+      options2: {
+        locale: 'en-US',
+        prefix: '',
+        suffix: '',
+        length: 9,
+        precision: 0
+      },
+      rules: {
+        numberRules: value =>
+          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
+          'กรุณากรอกตัวเลข 0 ถึง 9',
+        counterTel: value => value.length <= 10 || 'Max 10 characters',
+        required: value => !!value || 'กรุณากรอก.'
+      },
       DataflowId: '',
       dialog: false,
       dialogEdit: false,
@@ -441,12 +470,13 @@ export default {
       formUpdate: {
         stepId: '',
         flowId: '',
-        flowName: 'กระดานงาน',
+        flowName: 'กระดานทำงาน',
         stepTitle: '',
         sortNo: '',
         CREATE_USER: '',
         LAST_USER: '',
         endDate: '',
+        endTime: '',
         jobId: '',
         empStep: '',
         departmentStep: '',
@@ -477,7 +507,8 @@ export default {
         jobNo: '',
         shopId: this.$session.getAll().data.shopId,
         fieldValue: '',
-        endDate: ''
+        endDate: '',
+        endTime: ''
       }
     }
   },
@@ -623,7 +654,7 @@ export default {
             response.data.forEach(element => {
               if (jobs.indexOf(element.jobId) === -1) {
                 jobs.push(element.jobId)
-                this.allJob.push({jobId: element.jobId, jobNo: element.jobNo, stepId: element.stepId, checkCar: element.checkCar, totalDateDiff: element.totalDateDiff, endDate: element.endDate})
+                this.allJob.push({jobId: element.jobId, jobNo: element.jobNo, stepId: element.stepId, checkCar: element.checkCar, totalDateDiff: element.totalDateDiff, endDate: element.endDate, endTime: element.endTime})
               }
             })
             this.JobDataItem = response.data
@@ -631,6 +662,7 @@ export default {
           console.log('JobDataItem', this.JobDataItem)
           console.log('JobLEN', this.userId)
           console.log('allJob', this.allJob)
+          console.log('endTime', this.formUpdate.endDate)
           console.log('totalDateDiff', this.totalDateDiff)
         })
     },
@@ -654,6 +686,7 @@ export default {
       console.log(item)
       this.formUpdate.jobId = item.jobId
       this.formUpdate.endDate = this.momenDate(item.endDate)
+      this.formUpdate.endTime = this.momenDate(item.endTime)
       this.formDelete.jobNo = item.jobNo
     },
     async onUpdate () {
@@ -848,6 +881,7 @@ export default {
             s.fieldId = d.fieldId
             s.fieldValue = d.fieldValue
             s.endDate = this.formUpdate.endDate
+            s.endTime = this.formUpdate.endTime
             s.LAST_USER = d.LAST_USER
             dt.push(s)
           }
@@ -891,6 +925,13 @@ export default {
   color: #173053;
   font-size: 20px !important;
   font-weight: bold;
+}
+#textTitleB {
+  color: #173053;
+  font-size: 40px !important;
+  font-weight: bold;
+  font-family: Roboto;
+  font-style: normal;
 }
 #v-img-car {
   height: 60px;
