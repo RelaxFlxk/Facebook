@@ -96,18 +96,16 @@
             >
               <v-card>
                 <v-col class="text-right">
-                      <v-btn small color="#E0E0E0" @click="(dialog = false), clearData()">
-                        <v-icon color="#173053">mdi-close</v-icon>
-                      </v-btn>
-                  </v-col>
+                  <v-icon color="#173053" @click="(dialog = false), clearData()">mdi-close</v-icon>
+                </v-col>
                 <center>
-              <v-col class="text-center v-img-next">
-                <v-img :src="require('@/assets/NextStepNew.png')"></v-img>
+              <v-col class="text-center">
+                <v-img :src="require('@/assets/UpDateStatus.png')"></v-img>
               </v-col>
               </center>
-              <v-col class="text-center">
+              <!-- <v-col class="text-center">
                 <span class="headline">เปลี่ยนสถานะ</span>
-              </v-col>
+              </v-col> -->
               <v-card-text>
                 <v-container>
                   <v-row>
@@ -324,6 +322,7 @@
                   <div  v-for="(itemsJob, indexJob) in allJob.filter((row) => {return row.stepId == item.stepId})" :key="indexJob">
                     <v-list-item>
                       <v-alert class="allFrame pb-3"
+                        style="min-height: 105px;"
                         color="cyan"
                         border="left"
                         elevation="2"

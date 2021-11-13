@@ -569,7 +569,7 @@
               <br>
               <center>
               <v-col class="text-center v-img-D">
-                <v-img :src="require('@/assets/DeleteFlow.svg')"></v-img>
+                <v-img :src="require('@/assets/GroupDelete.png')"></v-img>
               </v-col>
               </center>
               <br>
@@ -657,10 +657,11 @@
                     <v-btn
                       color="question"
                       fab
+                      dark
                       x-small
                       @click.stop="(dialogEdit = true), getDataById(item), validate('UPDATE')"
                     >
-                      <v-icon color="#FFFFFF"> mdi-tools </v-icon>
+                      <v-icon> mdi-tools </v-icon>
                     </v-btn>
                     <v-btn
                       color="red"
