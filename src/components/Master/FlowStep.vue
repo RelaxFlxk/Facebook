@@ -685,7 +685,7 @@ export default {
       console.log(item)
       this.formUpdate.jobId = item.jobId
       this.formUpdate.endDate = this.momenDate(item.endDate)
-      this.formUpdate.endTime = this.momenDate(item.endTime)
+      this.formUpdate.endTime = item.endTime
       this.formDelete.jobNo = item.jobNo
     },
     async onUpdate () {

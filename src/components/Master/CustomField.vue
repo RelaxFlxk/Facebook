@@ -502,15 +502,14 @@
           <!-- end add -->
 
           <!-- delete -->
-          <v-dialog v-model="dialogDelete" max-width="450px">
+          <v-dialog v-model="dialogDelete" max-width="355px">
             <v-card>
               <br>
-              <center>
-              <v-col class="text-center v-img-D">
-                <v-img :src="require('@/assets/GroupDelete.png')"></v-img>
-              </v-col>
-              </center>
-              <br>
+             <v-row class="mb-6" justify="center">
+                <v-col md="auto">
+                  <v-img :src="require('@/assets/GroupDelete.png')" class="a" style="width:55.05px;height:63px"></v-img>
+                </v-col>
+              </v-row>
               <v-col class="text-center">
                 <span class="headline">ลบข้อมูลนี้</span>
               </v-col>
