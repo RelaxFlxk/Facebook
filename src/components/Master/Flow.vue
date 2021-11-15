@@ -985,7 +985,9 @@ export default {
       this.$delete(this.desserts, x)
     },
     save (item) {
-      this.desserts.push(item.fieldName)
+      console.log(item.fieldName.fieldId)
+      this.desserts.push({fieldId: item.fieldName.fieldId})
+      console.log(this.desserts)
       var x = this.editedItemSelete.indexOf(item.fieldName)
       this.$delete(this.editedItemSelete, x)
       this.dialogAddField = false
@@ -1076,6 +1078,13 @@ export default {
     async addData () {
       this.dataReady = false
       // this.formAdd.flowCode = this.generateCodeGlobal()
+      this.formAdd.CREATE_USER = this.session.data.userName
+      this.formAdd.LAST_USER = this.session.data.userName
+      this.formAdd.flowCode = this.generateCodeGlobal()
+      this.formAdd.flowfieldName = JSON.stringify(this.desserts)
+      this.formAdd.shopId = this.shopId
+      console.log('flowfieldName', this.formAdd.flowfieldName)
+      console.log('shopId', this.shopId)
       console.log('forAdd', this.formAdd)
       this.$swal({
         title: 'ต้องการ เพิ่มข้อมูล ใช่หรือไม่?',

@@ -216,94 +216,6 @@
           <!-- end add -->
 
           <!-- edit -->
-          <!-- <v-dialog v-model="dialogEdit" persistent max-width="70%">
-            <v-card>
-              <v-form ref="form_update" v-model="validUpdate" lazy-validation>
-              <v-card-text>
-                <v-container>
-                  <v-col class="text-right">
-                      <v-btn small color="#E0E0E0" @click="(dialogEdit = false), clearData()">
-                        <v-icon color="#173053">mdi-close</v-icon>
-                      </v-btn>
-                  </v-col>
-                  <v-row justify="center">
-                    <v-col class="text-center">
-                    <v-col class="text-center">
-                      <v-img class="v_text_add" :src="require('@/assets/GroupEditTitle.svg')"></v-img>
-                      </v-col>
-                    <v-col cols="12">
-                      <v-row style="height: 35px">
-                      <v-subheader id="subtext">title</v-subheader>
-                      </v-row>
-                      <v-row style="height: 50px">
-                      <v-text-field
-                        v-model="formUpdate.fieldName"
-                        placeholder="Title"
-                        dense
-                        required
-                        :rules="[
-                          rules.required
-                        ]"
-                      ></v-text-field>
-                      </v-row>
-                    </v-col>
-                    <v-col cols="12">
-                      <v-row style="height: 35px">
-                      <v-subheader id="subtext">type</v-subheader>
-                      </v-row>
-
-                      <v-row style="height: 50px">
-                        <v-select
-                        v-model="formUpdate.fieldType"
-                        :items="selectTypeField"
-                        dense
-                        :rules="[rules.required]"
-                        ></v-select>
-                      </v-row>
-
-                      <v-row style="height: 35px">
-                      <v-subheader id="subtext">optionField</v-subheader>
-                      </v-row>
-                      <v-row style="height: 50px">
-                        <v-card-text>
-                            <v-chip v-for="i in formUpdate.optionField" :key="i">{{ i.value }}</v-chip>
-                        </v-card-text>
-                      </v-row>
-                      <v-row style="height: 35px">
-                      <v-subheader id="subtext">conditionField</v-subheader>
-                      </v-row>
-                      <v-row style="height: 50px">
-                      <v-text-field
-                        v-model="formUpdate.conditionField"
-                        placeholder="Title"
-                        dense
-                        required
-                      ></v-text-field>
-                      </v-row>
-                    </v-col>
-                      <v-col id="margin">
-                      <v-row justify="center">
-                      <v-btn
-                      dark
-                        elevation="2"
-                        x-large
-                        color="#173053"
-                        :disabled="!validUpdate"
-                         @click="editData()"
-                      >
-                        <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                        เพิ่ม
-                      </v-btn>
-                      </v-row>
-                      </v-col>
-                      </v-col>
-
-                  </v-row>
-                </v-container>
-              </v-card-text>
-              </v-form>
-            </v-card>
-          </v-dialog> -->
           <v-dialog v-model="dialogEdit" persistent max-width="60%">
             <v-card>
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
@@ -871,7 +783,7 @@ export default {
           for (var i = 0; i < rs.length; i++) {
             var d = rs[i]
             d.text = d.fieldName
-            d.value = d.fieldName
+            d.value = d.fieldId
             this.selectConditionField.push(d)
           }
         }
