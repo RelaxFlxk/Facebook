@@ -57,6 +57,11 @@ Vue.mixin({
         return moment(String(value)).format('DD/MM/YYYY HH:mm:ss')
       }
     },
+    format_dateFUllTime (value) {
+      if (value) {
+        return moment(String(value)).format('YYYY-MM-DD HH:mm:ss')
+      }
+    },
     format_dateNotime (value) {
       if (value) {
         return moment(String(value)).format('DD/MM/YYYY')
@@ -66,6 +71,12 @@ Vue.mixin({
     momenDate_1 (value) {
       if (value) {
         return moment(String(value)).format('YYYY-MM-DD')
+      }
+    },
+    // HH:MM:ss
+    momenTime (value) {
+      if (value) {
+        return moment(String(value)).format('HH:mm:ss')
       }
     },
     getGetToken (DNS_IP) {

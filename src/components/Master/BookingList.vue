@@ -65,58 +65,8 @@
                           required
                           :rules="[rules.required]"
                         ></v-select>
-                        <!-- <input type="time" id="appt" name="appt"
-             required> -->
                         <v-row>
                           <v-col cols="6">
-                            <!-- <v-menu
-                              ref="menu"
-                              v-model="menuDate"
-                              :close-on-content-click="false"
-                              :nudge-right="40"
-                              :return-value.sync="date"
-                              :rules="[rules.required]"
-                              transition="scale-transition"
-                              offset-y
-                              required
-                              min-width="auto"
-                            >
-                              <template v-slot:activator="{ on, attrs }">
-                                <v-text-field
-                                  v-model="date"
-                                  label="วันที่"
-                                  prepend-icon="mdi-calendar"
-                                  readonly
-                                  v-bind="attrs"
-                                  v-on="on"
-                                  required
-                                  :rules="[rules.required]"
-                                ></v-text-field>
-                              </template>
-                              <v-date-picker
-                                v-model="date"
-                                no-title
-                                scrollable
-                                @click="$refs.menu.save(date)"
-                                :min="new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10)"
-                              >
-                                <v-spacer></v-spacer>
-                                <v-btn
-                                  text
-                                  color="primary"
-                                  @click="menuDate = false"
-                                >
-                                  Cancel
-                                </v-btn>
-                                <v-btn
-                                  text
-                                  color="primary"
-                                  @click="$refs.menu.save(date)"
-                                >
-                                  OK
-                                </v-btn>
-                              </v-date-picker>
-                            </v-menu> -->
                             <v-menu
                               v-model="menuDate"
                               :close-on-content-click="false"
@@ -285,6 +235,7 @@
                     <v-btn
                       elevation="2"
                       small
+                      dark
                       color="#173053"
                       @click="addDataJob()"
                     >
@@ -294,6 +245,7 @@
                     <v-btn
                         small
                         color="red"
+                        dark
                         @click=";(dialogEdit = false)"
                       >
                         <v-icon color="#173053">mdi-close</v-icon>
@@ -304,6 +256,77 @@
             </v-card>
           </v-dialog>
           <!-- end -->
+
+          <v-dialog v-model="dialogChange" persistent max-width="70%">
+            <v-card class="text-center">
+              <v-card-title>เปลี่ยนเวลานัดหมาย</v-card-title>
+              <v-form
+                  ref="form_change"
+                  v-model="validChange"
+                  lazy-validation
+                >
+                <v-card-text>
+                  <v-row>
+                    <v-col cols="6">
+                      <v-menu
+                        v-model="menuDateChange"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="auto"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            v-model="formChange.date"
+                            label="วันที่"
+                            prepend-icon="mdi-calendar"
+                            readonly
+                            v-bind="attrs"
+                            v-on="on"
+                            required
+                            :rules="[rules.required]"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker
+                          v-model="formChange.date"
+                          @input="menuDateChange = false"
+                          :min="new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10)"
+                        ></v-date-picker>
+                      </v-menu>
+                    </v-col>
+                    <v-col cols="6">
+                      <v-text-field
+                        v-model="formChange.time"
+                        label="เวลา"
+                        type="time"
+                        suffix="th-th"
+                        required
+                      :rules ="[rules.required]"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <div class="text-center">
+                    <v-btn
+                        elevation="10"
+                        color="#173053" dark
+                        small
+                        :disabled="!validChange"
+                        @click="changeChk(dataChange)"
+                      >SAVE</v-btn>
+                      <v-btn
+                        elevation="10"
+                        color="#173053" outlined
+                        style="background-color:#FFFFFF"
+                        small
+                        @click="dialogChange=false"
+                      >CANCEL</v-btn>
+                </div>
+                </v-card-text>
+                <br>
+                </v-form>
+            </v-card>
+          </v-dialog>
 
           <!-- data table -->
           <v-col cols="12">
@@ -334,8 +357,36 @@
                     {{ format_date(item.dueDate) }}
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
+                    <!-- confirm -->
                     <v-btn
-                      color="question"
+                      color="success"
+                      fab
+                      id="v-step-2"
+                      :disabled = item.chkConfirm
+                      small
+                      @click.stop="confirmChk(item)"
+                    >
+                      <v-icon dark> mdi-check </v-icon>
+                    </v-btn>
+                    <v-btn
+                      color="error"
+                      fab
+                      id="v-step-2"
+                      small
+                      :disabled = item.chkCancel
+                      @click.stop="cancelChk(item)"
+                    >
+                      <v-icon dark> mdi-close </v-icon>
+                    </v-btn>
+                    <v-btn
+                      color="warning"
+                      id="v-step-2"
+                      small
+                      @click.stop="setDataChang(item)">
+                      เปลี่ยนเวลา
+                    </v-btn>
+                    <v-btn
+                      color="primary"
                       fab
                       id="v-step-2"
                       small
@@ -392,6 +443,7 @@ export default {
       Layout: [],
       dataReady: false,
       menuDate: false,
+      menuDateChange: false,
       date: '',
       time: '',
       session: this.$session.getAll(),
@@ -440,6 +492,11 @@ export default {
         shopId: '',
         bookNo: ''
       },
+      formChange: {
+        date: '',
+        time: ''
+      },
+      dataChange: {},
       // formDataBooking: {
       //   bookingDataId: '',
       //   bookNo: '',
@@ -452,10 +509,12 @@ export default {
       // },
       validUpdate: true,
       validAdd: true,
+      validChange: true,
       // Dialog Config ADD EDIT DELETE IMPORT
       dialogAdd: false,
       dialogEdit: false,
       dialogDelete: false,
+      dialogChange: false,
       rules: {
         numberRules: value =>
           (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
@@ -502,6 +561,12 @@ export default {
           this.$nextTick(() => {
             let self = this
             self.$refs.form_update.validate()
+          })
+          break
+        case 'CHANGE':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_change.validate()
           })
           break
 
@@ -576,7 +641,20 @@ export default {
         .then(async response => {
           console.log('getData', response.data)
           this.dataReady = true
-          this.dataItem = response.data
+          for (let i = 0; i < response.data.length; i++) {
+            let d = response.data[i]
+            d.chkConfirm = false
+            d.chkCancel = false
+            if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
+              d.chkConfirm = true
+              d.chkCancel = false
+            }
+            if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
+              d.chkConfirm = false
+              d.chkCancel = true
+            }
+            this.dataItem.push(d)
+          }
           if (this.dataItem.length === 0 || this.dataItem.status === false) {
             this.dataItem = []
             // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
@@ -853,6 +931,130 @@ export default {
           })
       }
       // this.clearData()
+    },
+    confirmChk (item) {
+      console.log('item', item)
+      this.$swal({
+        title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async (result) => {
+          var dt = {
+            bookNo: item.bookNo,
+            contactDate: this.format_dateFUllTime(new Date()),
+            status: 'confirm',
+            statusUse: 'use',
+            shopId: this.$session.getAll().data.shopId,
+            CREATE_USER: this.session.data.userName,
+            LAST_USER: this.session.data.userName
+          }
+          axios
+            .post(
+              this.DNS_IP + '/booking_transaction/add', dt
+            )
+            .then(response => {
+              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              this.clearDataAdd()
+              console.log('addDataGlobal', response)
+            })
+            .catch((error) => {
+              console.log('error function addData : ', error)
+            })
+        })
+    },
+    cancelChk (item) {
+      // console.log('item', item)
+      this.$swal({
+        title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async (result) => {
+          var dt = {
+            bookNo: item.bookNo,
+            contactDate: this.format_dateFUllTime(new Date()),
+            status: 'cancel',
+            statusUse: 'use',
+            shopId: this.$session.getAll().data.shopId,
+            CREATE_USER: this.session.data.userName,
+            LAST_USER: this.session.data.userName
+          }
+          axios
+            .post(
+              this.DNS_IP + '/booking_transaction/add', dt
+            )
+            .then(response => {
+              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              console.log('addDataGlobal', response)
+            })
+            .catch((error) => {
+              console.log('error function addData : ', error)
+            })
+        })
+    },
+    async changeChk (item) {
+      console.log('item', item)
+      console.log('formChange', this.formChange)
+      this.$swal({
+        title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async (result) => {
+          var dtChange = {
+            dueDate: this.formChange.date + ' ' + this.formChange.time
+          }
+          await axios
+            .post(
+              // eslint-disable-next-line quotes
+              this.DNS_IP + "/BookingData/edit/" + item.bookNo,
+              dtChange
+            )
+            .then(async (response) => {
+              var dt = {
+                bookNo: item.bookNo,
+                contactDate: this.format_dateFUllTime(new Date()),
+                status: 'change',
+                statusUse: 'use',
+                shopId: this.$session.getAll().data.shopId,
+                CREATE_USER: this.session.data.userName,
+                LAST_USER: this.session.data.userName,
+                changDate: this.formChange.date + ' ' + this.formChange.time
+              }
+              await axios
+                .post(
+                  this.DNS_IP + '/booking_transaction/add', dt
+                )
+                .then(response => {
+                  this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+                  this.dialogChange = false
+                  console.log('addDataGlobal', response)
+                })
+                .catch((error) => {
+                  console.log('error function addData : ', error)
+                })
+            })
+        })
+    },
+    setDataChang (item) {
+      this.dataChange = item
+      this.formChange.date = this.momenDate_1(item.dueDate)
+      this.formChange.time = this.momenTime(item.dueDate)
+      this.dialogChange = true
+      console.log(this.formChange)
     }
   }
 }
