@@ -33,6 +33,7 @@
                       </center>
                       <v-card-text v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
                       <v-data-table
+                          dark
                         :headers="columnsOption"
                         :items="dataItemOption"
                       >
@@ -591,7 +592,7 @@
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
                     <v-btn
-                      color="question"
+                      color="#1B437C"
                       fab
                       dark
                       x-small

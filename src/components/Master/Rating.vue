@@ -43,7 +43,7 @@
         <br>
         <div class="text-center">
           <v-btn
-            small class="ma-2" color="#173053"
+            small class="ma-2" color="#173053" dark
             @click="dialog = false"
           >
             Close
@@ -81,12 +81,13 @@
             </template>
             <template v-slot:[`item.action`]="{ item }">
               <v-btn
-                color="question"
+                color="#173053"
                 fab
                 small
+                dark
                 @click="getJobitem(item) , dialog=true"
               >
-                <v-icon dark> mdi-account-convert </v-icon>
+                <v-icon > mdi-account-convert </v-icon>
               </v-btn>
             </template>
             </v-data-table>

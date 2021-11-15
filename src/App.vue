@@ -195,10 +195,10 @@ table tr:last-child td:last-child {
   font-weight: bold;
 }
 .v-data-table-header {
-  background-color: var(--table-head-bg);
+  background-color: var(--table-head-bg) !important;
 }
 .theme--light.v-data-table>.v-data-table__wrapper>table>thead>tr>th {
-  color: var(--table-head-text);
+  color: var(--table-head-text)!important;
 }
 .v-data-table>.v-data-table__wrapper>table>tbody>tr>td {
   padding: 8px 5px 8px 15px;
@@ -206,10 +206,10 @@ table tr:last-child td:last-child {
 .v-data-table>.v-data-table__wrapper>table>tbody>tr:nth-child(even) {background: var(--table-body-row-even)}
 .v-data-table>.v-data-table__wrapper>table>tbody>tr:nth-child(odd) {background: var(--table-body-row-odd)}
 .v-data-table>.v-data-table__wrapper>table>tbody>tr>td {
-  color: var(--table-body-text);
+  color: var(--table-body-text) !important;
 }
 .theme--light.v-data-table .v-data-table-header th.sortable.active, .theme--light.v-data-table .v-data-table-header th.sortable.active .v-data-table-header__icon, .theme--light.v-data-table .v-data-table-header th.sortable:hover {
-  color: var(--table-head-text);
+  color: var(--table-head-text) !important;
 }
 .theme--light.v-data-table .v-data-table-header th.sortable .v-data-table-header__icon {
   color: var(--table-head-text) !important;
