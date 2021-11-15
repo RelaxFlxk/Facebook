@@ -8,7 +8,7 @@
             <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
           </v-col>
           <v-col cols="6" class="v-margit_button text-right">
-            <v-btn color="primary" depressed @click="dialogAdd = true, validate('ADD')">
+            <v-btn color="primary" depressed @click="dialogAdd = true, validate('ADD'), desserts = []">
               <v-icon left>mdi-text-box-plus</v-icon>
               Add
             </v-btn>
@@ -986,11 +986,12 @@ export default {
     },
     save (item) {
       console.log(item.fieldName.fieldId)
-      this.desserts.push({fieldId: item.fieldName.fieldId})
+      this.desserts.push({fieldId: item.fieldName.fieldId, fieldName: item.fieldName.fieldName})
       console.log(this.desserts)
       var x = this.editedItemSelete.indexOf(item.fieldName)
       this.$delete(this.editedItemSelete, x)
       this.dialogAddField = false
+      this.dialogEditField = false
     },
     validate (Action) {
       switch (Action) {
@@ -1028,6 +1029,21 @@ export default {
         }
       })
     },
+    getField (dt) {
+      console.log(dt)
+      this.desserts = []
+      axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + '/flow/getCustomfield', dt
+        ).then((response) => {
+          let rs = response.data
+          console.log(rs)
+          if (rs.length > 0) {
+            this.desserts = response.data
+          }
+        })
+    },
     async getUpdate (item) {
       console.log('อันแรก', this.formUpdateStep)
       console.log('อันสอง', item)
@@ -1061,7 +1077,8 @@ export default {
             this.formUpdate.flowCode = response.data[0].flowCode
             this.shopId = this.$session.getAll().data.shopId
             this.fieldType = this.formUpdate.fieldType
-            this.desserts = JSON.parse(response.data[0].flowfieldName)
+            // this.desserts = JSON.parse(response.data[0].flowfieldName)
+            await this.getField(JSON.parse(response.data[0].flowfieldName))
             // this.getDataCompany()
             this.getCustomField(this.formUpdate.fieldName)
             // this.getStepTitle(this.formUpdateStep.stepTitle)
