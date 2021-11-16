@@ -959,7 +959,7 @@ export default {
             )
             .then(response => {
               this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-              this.clearDataAdd()
+              this.getBookingList()
               console.log('addDataGlobal', response)
             })
             .catch((error) => {
@@ -995,6 +995,7 @@ export default {
             .then(response => {
               this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
               console.log('addDataGlobal', response)
+              this.getBookingList()
             })
             .catch((error) => {
               console.log('error function addData : ', error)
@@ -1042,6 +1043,7 @@ export default {
                   this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
                   this.dialogChange = false
                   console.log('addDataGlobal', response)
+                  this.getBookingList()
                 })
                 .catch((error) => {
                   console.log('error function addData : ', error)
