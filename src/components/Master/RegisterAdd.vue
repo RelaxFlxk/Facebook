@@ -65,55 +65,23 @@
                               <div v-for="(p , index) in flowfieldNameitem" :key="index">
                                 <div>
                                   <div v-if="p.fieldType == 'text'">
-                                    <p>{{form1[p.fieldId]}}</p>
+                                    <br>
                                   <v-text-field
                                      v-model="p.fieldValue"
                                     :label="p.fieldName"
                                     :rules ="[rules.required]"
+                                    outlined
                                   ></v-text-field>
                                   </div>
-                                  <br/>
                                   <div v-if="p.fieldType == 'number'">
-                                  <p>{{p.fieldName}}</p>
+                                    <br>
+                                  <!-- <p>{{p.fieldName}}</p> -->
                                   <v-text-field
                                     v-model="p.fieldValue"
                                     :label="p.fieldName"
                                     :rules ="[rules.required]"
-
+                                    outlined
                                   ></v-text-field>
-                                  </div>
-                                  <div v-if="p.fieldType == 'dateTime'">
-                                    <p>{{p.fieldName}}</p>
-                                  <v-menu
-                                    ref="menu1"
-                                    v-model="menu1"
-                                    :close-on-content-click="false"
-                                    transition="scale-transition"
-                                    offset-y
-                                    max-width="290px"
-                                    min-width="auto"
-                                    :rules ="[rules.required]"
-                                  >
-                                    <template v-slot:activator="{ on, attrs }">
-                                      <v-text-field
-                                        v-model="p.fieldValue"
-                                        label="Date"
-                                        hint="MM/DD/YYYY format"
-                                        persistent-hint
-                                        prepend-icon="mdi-calendar"
-                                        v-bind="attrs"
-                                        @blur="date = parseDate(dateFormatted)"
-                                        v-on="on"
-                                        :rules ="[rules.required]"
-                                      ></v-text-field>
-                                    </template>
-                                    <v-date-picker
-                                      v-model="p.fieldValue"
-                                      no-title
-                                      @input="menu1 = false"
-                                    ></v-date-picker>
-                                  </v-menu>
-                                  <p>Date in ISO format: <strong>{{ date }}</strong></p>
                                   </div>
                                   <v-row>
                                   <v-col cols="8" v-if="p.fieldType== 'Autocompletes'">
@@ -142,14 +110,16 @@
                                   </v-col>
                                   </v-row>
                                   <div v-if="p.fieldType== 'Radio'">
-                                    <!-- <p>{{p.fieldName}}</p> -->
+                                    <br>
                                     <v-container fluid>
+                                      <p>{{p.fieldName}}</p>
                                       <v-radio-group row
                                       v-model="p.fieldValue">
                                         <template v-slot:label>
                                         </template>
-                                        <div v-for="radios in JSON.parse(p.optionField)" :key="radios.toISOString">
+                                        <div v-for="radios in JSON.parse(p.optionField)" :key="radios.toISOString" class="text-center">
                                         <v-radio
+
                                           :label="radios.text"
                                           :value="radios.value"
                                         ></v-radio>
@@ -369,41 +339,59 @@ export default {
       })
     },
     flowfieldtest (item) {
-      this.flowfieldNameitem = []
+      let itemIncustomField = []
       axios.get(this.DNS_IP + '/flowField/get?flowCode=' + this.formAdd.flowCode + '&shopId=' + this.shopId).then((response) => {
         let tt = response.data
-        console.log('tt', tt)
-        var flowfieldName = []
+        // console.log('tt', tt)
+        let flowId = tt[0].flowId
+        let flowfieldName = []
         flowfieldName = JSON.parse(tt[0].flowfieldName)
-        console.log('flowfieldName', flowfieldName)
-        for (var i = 0; i < flowfieldName.length; i++) {
-          let d = flowfieldName[i]
-          let s = {}
-          s.fieldId = d.fieldId
-          s.flowId = tt[0].flowId
-          s.fieldName = d.fieldName
-          s.optionField = d.optionField
-          s.conditionField = d.conditionField
-          s.fieldType = d.fieldType
-          s.fieldValue = ''
-          s.CREATE_USER = ''
-          s.LAST_USER = ''
-          s.showCard = d.showCard
-          s.shopId = this.shopId
-          s.endDate = ''
-          s.endTime = ''
-          s.checkCar = 'False'
-          s.conditionValue = d.value
-          // if (d.conditionField !== '') {
-          //   s.conditionFieldId = this.flowfieldNameitem.filter((row) => { return row.fieldName === d.conditionField })[0]['fieldId']
-          // } else {
-          //   s.conditionField = ''
-          // }
-          this.form1[d.fieldId] = ''
-          this.flowfieldNameitem.push(s)
-          console.log('flowfieldNameitem', this.flowfieldNameitem)
+        for (let a = 0; a < flowfieldName.length; a++) {
+          let d = flowfieldName[a]
+          itemIncustomField.push(d.fieldId)
         }
+        this.getCustomfield(itemIncustomField, flowId)
+        // console.log('itemIncustomField', itemIncustomField)
       })
+    },
+    async getCustomfield (item, flowId) {
+      this.flowfieldNameitem = []
+      await axios.get(this.DNS_IP + '/customField/fieldId?fieldId=' + item)
+        .then(async response => {
+          let rs = response.data
+          console.log('rs', rs)
+          for (var i = 0; i < rs.length; i++) {
+            let d = rs[i]
+            let s = {}
+            s.fieldId = d.fieldId
+            s.flowId = flowId
+            s.fieldName = d.fieldName
+            s.optionField = d.optionField
+            s.conditionField = d.conditionField
+            s.fieldType = d.fieldType
+            s.fieldValue = ''
+            s.CREATE_USER = ''
+            s.LAST_USER = ''
+            s.showCard = d.showCard
+            s.shopId = this.shopId
+            s.endDate = ''
+            s.endTime = ''
+            s.checkCar = 'False'
+            s.conditionValue = d.value
+            // if (d.conditionField !== '') {
+            //   s.conditionFieldId = this.flowfieldNameitem.filter((row) => { return row.fieldName === d.conditionField })[0]['fieldId']
+            // } else {
+            //   s.conditionField = ''
+            // }
+            this.form1[d.fieldId] = ''
+            this.flowfieldNameitem.push(s)
+          // console.log('flowfieldNameitem', this.flowfieldNameitem)
+          }
+          setTimeout(() => this.validate(), 500)
+        })
+        .catch((error) => {
+          console.log('error function addData : ', error)
+        })
     },
     validate (Action) {
       switch (Action) {

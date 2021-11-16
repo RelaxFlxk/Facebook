@@ -12,30 +12,26 @@
           <v-dialog
       v-model="dialog"
       persistent
-      max-width="850"
+      max-width="600"
     >
-      <v-card class="p-3">
+      <v-card class="p-3" style="background: linear-gradient(180deg, #FFFFFF 0%, #E1F3FF 100%);">
         <v-timeline>
           <v-timeline-item
             v-for="(item , index) in timelineitem" :key="index"
-            color="#FFA000"
+            color="#173053"
             small
           >
             <template v-slot:opposite>
               <span>{{item.DTCREATE_DATE}}</span>
             </template>
-            <v-card class="elevation-2 p-3">
+            <v-card class="elevation-2 p-2">
               <v-card-title class="text-h6" style="color:#173053;">
-                ขั้นตอน {{item.stepTitle}}
               </v-card-title>
-              <v-card-text style="color:#1C457C;">
-                ผู้รับผิดชอบ {{item.empStep}}
-              </v-card-text>
-              <v-card-text >
-                เวลาการทำงาน {{item.timediff}} นาที
-              </v-card-text>
-              <v-card-text >
-                วันที่เปลี่ยน {{item.DTLAST_DATE}}
+              <v-card-text>
+                <p style="margin-bottom: 0px; color:#173053;">ขั้นตอน {{item.stepTitle}}</p>
+                <p style="margin-bottom: 0px;"> ผู้รับผิดชอบ {{item.empStep}}</p>
+                <p style="margin-bottom: 0px;">เวลาการทำงาน {{item.timediff}} นาที</p>
+                <p style="margin-bottom: 0px;">วันที่เปลี่ยน {{item.DTLAST_DATE}}</p>
               </v-card-text>
             </v-card>
           </v-timeline-item>
