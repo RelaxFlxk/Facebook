@@ -83,6 +83,11 @@ export default new Router({
     component: Master.JobList
   },
   {
+    path: '/Master/CalendarBooking',
+    name: 'CalendarBooking',
+    component: Master.CalendarBooking
+  },
+  {
     path: '/System/User',
     name: 'User',
     component: System.User

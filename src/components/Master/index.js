@@ -13,6 +13,7 @@ import JobList from './JobList'
 import Qrcodereader from './Qrcodereader.vue'
 import PaymentType from './PaymentType.vue'
 import Rating from './Rating'
+import CalendarBooking from './CalendarBooking'
 export default {
   CustomField,
   Flow,
@@ -28,5 +29,6 @@ export default {
   JobList,
   Qrcodereader,
   PaymentType,
-  Rating
+  Rating,
+  CalendarBooking
 }
