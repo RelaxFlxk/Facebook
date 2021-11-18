@@ -465,6 +465,53 @@ export default {
       this.flowfieldNameitem[0].CREATE_USER = this.session.data.userName
       this.flowfieldNameitem[0].LAST_USER = this.session.data.userName
       console.log('flowfieldNameitem', this.flowfieldNameitem)
+      let Add = []
+      let fielditem = this.flowfieldNameitem
+      for (let i = 0; i < this.flowfieldNameitem.length; i++) {
+        let d = this.flowfieldNameitem[i]
+        let update = {}
+        if (d.conditionField === '' || d.conditionField === null) {
+          update.CREATE_USER = update.CREATE_USER
+          update.LAST_USER = update.LAST_USER
+          update.checkCar = d.checkCar
+          update.conditionField = d.conditionField
+          update.conditionValue = d.conditionValue
+          update.endDate = d.endDate
+          update.endTime = d.endTime
+          update.fieldId = d.fieldId
+          update.fieldName = d.fieldName
+          update.fieldType = d.fieldType
+          update.fieldValue = d.fieldValue
+          update.flowId = d.flowId
+          update.optionField = d.optionField
+          update.shopId = d.shopId
+          update.showCard = d.showCard
+          Add.push(update)
+        } else {
+          if (fielditem.filter((row) => { return row.fieldId === parseInt(d.conditionField) }).length > 0) {
+            console.log('this', fielditem)
+            if (d.conditionValue === fielditem.filter((row) => { return row.fieldId === parseInt(d.conditionField) })[0].fieldValue) {
+              update.CREATE_USER = update.CREATE_USER
+              update.LAST_USER = update.LAST_USER
+              update.checkCar = d.checkCar
+              update.conditionField = d.conditionField
+              update.conditionValue = d.conditionValue
+              update.endDate = d.endDate
+              update.endTime = d.endTime
+              update.fieldId = d.fieldId
+              update.fieldName = d.fieldName
+              update.fieldType = d.fieldType
+              update.fieldValue = d.fieldValue
+              update.flowId = d.flowId
+              update.optionField = d.optionField
+              update.shopId = d.shopId
+              update.showCard = d.showCard
+              Add.push(update)
+            }
+          }
+        }
+      }
+      console.log('Add', Add)
       this.dataReady = false
       this.$swal({
         title: 'ต้องการ เพิ่มข้อมูล ใช่หรือไม่?',
@@ -480,7 +527,7 @@ export default {
           this.endDate = this.endDate
           this.endTime = this.endTime
           this.checkCar = this.checkCar
-          console.log('flowfieldNameitem', this.flowfieldNameitem)
+          console.log('Add', Add)
           console.log('checkCar', this.checkCar)
           console.log('endDate', this.endDate)
           console.log('endTime', this.endTime)
@@ -488,7 +535,7 @@ export default {
           await axios
             .post(
               // eslint-disable-next-line quotes
-              this.DNS_IP + '/job/add', this.flowfieldNameitem
+              this.DNS_IP + '/job/add', Add
             )
             .then(async (response) => {
               // Debug response

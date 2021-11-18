@@ -221,7 +221,8 @@ export default {
       ]
       this.booking = [
         { title: 'รายชื่อลูกค้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingList' },
-        { title: 'ข้อมูลหน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingField' }
+        { title: 'ข้อมูลหน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingField' },
+        { title: 'ปฏิทินนัดหมาย', icon: 'mdi-account-edit', to: '/Master/CalendarBooking' }
       ]
       this.workflow = [
         { title: 'รับรถลูกค้ารายใหม่', icon: 'mdi-account-plus', to: '/Master/RegisterAdd' },

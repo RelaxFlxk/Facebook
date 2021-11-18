@@ -105,50 +105,127 @@
                             ></v-text-field>
                           </v-col>
                         </v-row>
-                        <div
-                          v-for="(item, index) in fieldNameItem"
-                          :key="index"
-                        >
-                          <div v-if="item.fieldType == 'text'">
-                            <v-text-field
-                              v-model="item.fieldValue"
-                              :label="item.fieldName"
-                              outlined
-                              required
-                              :rules="[rules.required]"
-                            ></v-text-field>
-                          </div>
-                          <div v-if="item.fieldType == 'number'">
-                            <v-text-field
-                              v-model="item.fieldValue"
-                              :label="item.fieldName"
-                              outlined
-                              required
-                              :rules="[rules.required]"
-                            ></v-text-field>
-                          </div>
-                          <div v-if="item.fieldType == 'Autocompletes'">
-                            <v-autocomplete
-                              v-model="item.fieldValue"
-                              :items="JSON.parse(item.optionField)"
-                              solo
-                              :label="item.fieldName"
-                              required
-                              :rules="[rules.required]"
-                            ></v-autocomplete>
-                          </div>
-                          <div v-if="item.fieldType == 'Selects'">
-                            <v-select
-                              v-model="item.fieldValue"
-                              :items="JSON.parse(item.optionField)"
-                              menu-props="auto"
-                              :label="item.fieldName"
-                              required
-                              :rules="[rules.required]"
-                              solo
-                            ></v-select>
-                          </div>
-                        </div>
+                        <div v-for="(item , index) in fieldNameItem" :key="index">
+              <div v-if="item.conditionField === '' || item.conditionField === null ">
+                <div v-if="item.fieldType == 'text'">
+                <v-text-field
+                v-model="item.fieldValue"
+                :label="item.fieldName"
+                outlined
+                required
+                :rules ="[rules.required]"
+                ></v-text-field>
+              </div>
+              <div v-if="item.fieldType == 'number'">
+                <v-text-field
+                v-model="item.fieldValue"
+                :label="item.fieldName"
+                outlined
+                required
+                :rules ="[rules.required]"
+                ></v-text-field>
+              </div>
+              <div v-if="item.fieldType== 'Autocompletes'">
+                <v-autocomplete
+                  v-model="item.fieldValue"
+                  :items="JSON.parse(item.optionField)"
+                  solo
+                  :label="item.fieldName"
+                  required
+                  :rules ="[rules.required]"
+                ></v-autocomplete>
+              </div>
+              <div v-if="item.fieldType== 'Selects'">
+                <p class="text-center" style="color:#173053;">{{item.fieldName}}</p>
+                <v-select
+                  v-model="item.fieldValue"
+                  :items="JSON.parse(item.optionField)"
+                  menu-props="auto"
+                  :label="item.fieldName"
+                  required
+                  :rules ="[rules.required]"
+                  solo
+                ></v-select>
+              </div>
+              <div v-if="item.fieldType== 'Radio'">
+                <v-container fluid>
+                  <p class="text-center" style="color:#173053;">{{item.fieldName}}</p>
+                  <v-radio-group
+                  column
+                v-model="item.fieldValue">
+                  <template v-slot:label>
+                  </template>
+                  <div v-for="radios in JSON.parse(item.optionField)" :key="radios.toISOString">
+                  <v-radio
+                    :label="radios.text"
+                    :value="radios.value"
+                  ></v-radio>
+                  </div>
+                </v-radio-group>
+                </v-container>
+              </div>
+              </div>
+            <div v-if="item.conditionField !== '' && fieldNameItem.filter((row) => { return row.fieldId === parseInt(item.conditionField)}).length > 0">
+              <div v-if="item.conditionValue === fieldNameItem.filter((row) => { return row.fieldId === parseInt(item.conditionField)})[0].fieldValue ">
+                <div v-if="item.fieldType == 'text'">
+                <v-text-field
+                v-model="item.fieldValue"
+                :label="item.fieldName"
+                outlined
+                required
+                :rules ="[rules.required]"
+                ></v-text-field>
+                </div>
+                <div v-if="item.fieldType == 'number'">
+                  <v-text-field
+                  v-model="item.fieldValue"
+                  :label="item.fieldName"
+                  outlined
+                  required
+                  :rules ="[rules.required]"
+                  ></v-text-field>
+                </div>
+                <div v-if="item.fieldType== 'Autocompletes'">
+                  <v-autocomplete
+                    v-model="item.fieldValue"
+                    :items="JSON.parse(item.optionField)"
+                    solo
+                    :label="item.fieldName"
+                    required
+                    :rules ="[rules.required]"
+                  ></v-autocomplete>
+                </div>
+                <div v-if="item.fieldType== 'Selects'">
+                  <p class="text-center">{{item.fieldName}}</p>
+                  <v-select
+                    v-model="item.fieldValue"
+                    :items="JSON.parse(item.optionField)"
+                    menu-props="auto"
+                    :label="item.fieldName"
+                    required
+                    :rules ="[rules.required]"
+                    solo
+                  ></v-select>
+                </div>
+                <div v-if="item.fieldType== 'Radio'">
+                  <p class="text-center">{{item.fieldName}}</p>
+                  <v-container fluid>
+                    <v-radio-group row
+                  v-model="item.fieldValue">
+                    <template v-slot:label>
+                    </template>
+                    <div v-for="radios in JSON.parse(item.optionField)" :key="radios.toISOString">
+                    <v-radio
+                      :label="radios.text"
+                      :value="radios.value"
+                    ></v-radio>
+                    </div>
+                  </v-radio-group>
+                  </v-container>
+                </div>
+                </div>
+              </div>
+            </div>
                       </v-col>
                     </v-row>
                   </v-container>
@@ -162,6 +239,7 @@
                       x-large
                       color="#173053"
                       :disabled="!validAdd"
+                      dark
                       @click="addData()"
                     >
                       <v-icon left>mdi-checkbox-marked-circle</v-icon>
@@ -704,6 +782,8 @@ export default {
             s.fieldName = d.fieldName
             s.fieldType = d.fieldType
             s.optionField = d.optionField
+            s.conditionField = d.conditionField
+            s.conditionValue = d.conditionValue
             s.shopId = d.shopId
             s.fieldValue = ''
             this.fieldNameItem.push(s)
@@ -719,19 +799,38 @@ export default {
       let rs = this.fieldNameItem
       console.log('dddddddddddd', this.fieldNameItem)
       let Add = []
+      let fielditem = this.fieldNameItem
       for (let i = 0; i < rs.length; i++) {
         let d = rs[i]
         let update = {}
-        update.masBranchID = this.formAdd.masBranchID
-        update.bookingFieldId = this.formAdd.bookingFieldId
-        update.flowId = this.formAdd.flowId
-        update.fieldId = d.fieldId
-        update.fieldValue = d.fieldValue
-        update.shopId = d.shopId
-        update.dueDate = this.date + ' ' + this.time
-        update.userId = 'user-skip'
-        update.pageName = 'BookingList'
-        Add.push(update)
+        if (d.conditionField === '' || d.conditionField === null) {
+          update.masBranchID = this.formAdd.masBranchID
+          update.bookingFieldId = this.formAdd.bookingFieldId
+          update.flowId = this.formAdd.flowId
+          update.fieldId = d.fieldId
+          update.fieldValue = d.fieldValue
+          update.shopId = d.shopId
+          update.dueDate = this.date + ' ' + this.time
+          update.userId = 'user-skip'
+          update.pageName = 'BookingList'
+          Add.push(update)
+        } else {
+          if (fielditem.filter((row) => { return row.fieldId === parseInt(d.conditionField) }).length > 0) {
+            console.log('this', fielditem)
+            if (d.conditionValue === fielditem.filter((row) => { return row.fieldId === parseInt(d.conditionField) })[0].fieldValue) {
+              update.masBranchID = this.formAdd.masBranchID
+              update.bookingFieldId = this.formAdd.bookingFieldId
+              update.flowId = this.formAdd.flowId
+              update.fieldId = d.fieldId
+              update.fieldValue = d.fieldValue
+              update.shopId = d.shopId
+              update.dueDate = this.date + ' ' + this.time
+              update.userId = 'user-skip'
+              update.pageName = 'BookingList'
+              Add.push(update)
+            }
+          }
+        }
       }
       console.log('Add', Add)
       this.$swal({
@@ -759,6 +858,15 @@ export default {
         })
         .catch((error) => {
           console.log('Cencel : ', error)
+        })
+    },
+    async pushMsglineGroup (bookNo) {
+      await axios
+        .post(
+          this.DNS_IP + '/Booking/pushMsgLineGroup/' + bookNo
+        )
+        .then(response => {
+          this.clearData()
         })
     },
     clearDataAdd () {
