@@ -9,19 +9,9 @@
           </v-col>
           <v-col cols="6"> </v-col>
         </v-row>
-        <v-row>
+        <v-row no-gutters>
           <v-col cols="12">
-            <v-card elevation="7" v-if="dataReady">
-              <v-card-text>
-                <v-sheet height="64">
-                  <v-toolbar dense>
-                    <v-toolbar-title v-if="$refs.calendar">{{
-                      $refs.calendar.title
-                    }}</v-toolbar-title>
-
-                    <v-spacer></v-spacer>
-
-                    <v-menu
+            <v-menu
                       v-model="menuDate"
                       :close-on-content-click="false"
                       :nudge-right="40"
@@ -41,7 +31,7 @@
                       </template>
                       <v-date-picker
                         v-model="today"
-                        @input="menuDate = false"
+                        @input="menuDate = false , getBookingList()"
                         :max="
                           new Date(
                             Date.now() - new Date().getTimezoneOffset() * 60000
@@ -51,9 +41,20 @@
                         "
                       ></v-date-picker>
                     </v-menu>
+          </v-col>
+          <v-col cols="12">
+            <v-card elevation="7" v-if="dataReady">
+              <v-card-text>
+                <v-sheet height="64">
+                  <v-toolbar dense>
+                    <v-toolbar-title v-if="$refs.calendar">{{
+                      $refs.calendar.title
+                    }}</v-toolbar-title>
+
+                    <v-spacer></v-spacer>
                   </v-toolbar>
                 </v-sheet>
-                <v-sheet height="400">
+                <v-sheet>
                   <v-calendar
                     ref="calendar"
                     :now="today"
@@ -83,9 +84,17 @@
                           <div class="text-overline mb-4">
                             {{ items.flowName }}
                           </div>
-                          <v-list-item-subtitle>{{
-                            format_date(items.dueDate)
-                          }}</v-list-item-subtitle>
+                          <v-list-item-subtitle>
+                            <p>วันที่นัดหมาย : {{format_date(items.dueDate)}}</p>
+                          </v-list-item-subtitle>
+                          <v-list-item-group
+                            :color="items.color"
+                          >
+                            <p>สถานะ ยืนยัน : {{items.statusBt || 'wait'}}</p>
+                          </v-list-item-group>
+                          <v-list-item-subtitle v-if="items.contactDateBt">
+                            <p>วันที่ ยืนยัน : {{format_date(items.contactDateBt)}}</p>
+                          </v-list-item-subtitle>
                         </v-list-item-content>
                       </v-list-item>
                     </v-card>
@@ -96,7 +105,7 @@
                   <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="primary" text @click="dialog = false">
-                      I accept
+                      ยืนยัน
                     </v-btn>
                   </v-card-actions>
                 </v-card>
@@ -144,7 +153,8 @@ export default {
       selectedOpen: false,
       menuDate: false,
       dialog: false,
-      dataCalendar: []
+      dataCalendar: [],
+      colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1']
     }
   },
   beforeCreate () {
@@ -161,19 +171,35 @@ export default {
       this.events = []
       // Clear ช่องค้นหา
       this.searchAll2 = ''
+      const dateSplit = this.today.split('-')
+      // console.log(dateSplit)
+      // const date = dateSplit[0].split('-')
+      const year = String(dateSplit[0])
+      const month = String(dateSplit[1])
       await axios
         .get(
           // eslint-disable-next-line quotes
           this.DNS_IP +
             '/booking_view/getCount?shopId=' +
-            this.$session.getAll().data.shopId
+            this.$session.getAll().data.shopId + '&dueDate=' + year + '-' + month
         )
         .then(async response => {
           console.log('getData', response.data)
           this.dataReady = true
           for (let i = 0; i < response.data.length; i++) {
             let d = response.data[i]
-            d.name = d.name.toString()
+            if (d.statusBt) {
+              if (d.statusBt === 'confirm') {
+                d.color = 'green'
+                d.name = d.statusBt + ' : ' + d.name.toString()
+              } else {
+                d.color = 'red'
+                d.name = d.statusBt + ' : ' + d.name.toString()
+              }
+            } else {
+              d.color = 'orange'
+              d.name = 'wait' + ' : ' + d.name.toString()
+            }
             this.events.push(d)
             console.log('events', this.events)
           }
@@ -204,7 +230,19 @@ export default {
         )
         .then(async response => {
           console.log('getData', response.data)
-          this.dataCalendar = response.data
+          for (let i = 0; i < response.data.length; i++) {
+            let d = response.data[i]
+            if (d.statusBt) {
+              if (d.statusBt === 'confirm') {
+                d.color = 'green'
+              } else {
+                d.color = 'red'
+              }
+            } else {
+              d.color = 'orange'
+            }
+            this.dataCalendar.push(d)
+          }
           this.dialog = true
         })
     }
