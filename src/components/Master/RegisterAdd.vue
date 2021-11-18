@@ -50,7 +50,7 @@
                       <!-- <v-card v-show="formAdd.flowCode && formAdd.masBranchName !== '' "
                       class="mx-auto"
                       max-width="500"> -->
-                       <v-card v-show="formAdd.flowCode && formAdd.masBranchName !== '' " max-width="450%">
+                       <v-card v-show="formAdd.flowCode && formAdd.masBranchName !== '' "  max-width="450%">
                           <v-container>
                             <v-row justify="center">
                               <v-col cols="6">
@@ -63,7 +63,8 @@
                               <v-img class="v_text_new" :src="require('@/assets/NewcarText.png')"></v-img>
                               </v-col>
                               <div v-for="(p , index) in flowfieldNameitem" :key="index">
-                                <div>
+                                <div v-show="p.conditionField === '' || p.conditionField === null ">
+                                  <div>
                                   <div v-if="p.fieldType == 'text'">
                                     <br>
                                   <v-text-field
@@ -84,7 +85,7 @@
                                   ></v-text-field>
                                   </div>
                                   <v-row>
-                                  <v-col cols="8" v-if="p.fieldType== 'Autocompletes'">
+                                  <v-col cols="12" v-if="p.fieldType== 'Autocompletes'">
                                     <p>{{p.fieldName}}</p>
                                     <v-autocomplete
                                       v-model="p.fieldValue"
@@ -95,7 +96,7 @@
                                       :rules ="[rules.required]"
                                     ></v-autocomplete>
                                   </v-col>
-                                  <v-col cols="8" v-if="p.fieldType== 'Selects'">
+                                  <v-col cols="12" v-if="p.fieldType== 'Selects'">
                                     <div>
                                     <p>{{p.fieldName}}</p>
                                     <v-select
@@ -113,13 +114,13 @@
                                     <br>
                                     <v-container fluid>
                                       <p>{{p.fieldName}}</p>
-                                      <v-radio-group row
+                                      <v-radio-group
+                                      column
                                       v-model="p.fieldValue">
                                         <template v-slot:label>
                                         </template>
                                         <div v-for="radios in JSON.parse(p.optionField)" :key="radios.toISOString" class="text-center">
                                         <v-radio
-
                                           :label="radios.text"
                                           :value="radios.value"
                                         ></v-radio>
@@ -128,6 +129,52 @@
                                     </v-container>
                                   </div>
                                   </div>
+                                </div>
+                                <div v-if="p.conditionField !== '' && flowfieldNameitem.filter((row) => { return row.fieldId === parseInt(p.conditionField)}).length > 0">
+                                  <div v-if="p.conditionValue === flowfieldNameitem.filter((row) => { return row.fieldId === parseInt(p.conditionField)})[0].fieldValue ">
+                                  <v-col cols="12" v-if="p.fieldType== 'Autocompletes'">
+                                    <p>{{p.fieldName}}</p>
+                                    <v-autocomplete
+                                      v-model="p.fieldValue"
+                                      :items="JSON.parse(p.optionField)"
+                                      dense
+                                      filled
+                                      label="Search"
+                                      :rules ="[rules.required]"
+                                    ></v-autocomplete>
+                                  </v-col>
+                                  <v-col cols="12" v-if="p.fieldType== 'Selects'">
+                                    <div>
+                                    <p>{{p.fieldName}}</p>
+                                    <v-select
+                                      v-model="p.fieldValue"
+                                      :items="JSON.parse(p.optionField)"
+                                      menu-props="auto"
+                                      label="Select"
+                                      hide-details
+                                      solo
+                                    ></v-select>
+                                    </div>
+                                    <div v-if="p.fieldType== 'Radio'">
+                                    <br>
+                                    <v-container fluid>
+                                      <p>{{p.fieldName}}</p>
+                                      <v-radio-group row
+                                      v-model="p.fieldValue">
+                                        <template v-slot:label>
+                                        </template>
+                                        <div v-for="radios in JSON.parse(p.optionField)" :key="radios.toISOString" class="text-center">
+                                        <v-radio
+                                          :label="radios.text"
+                                          :value="radios.value"
+                                        ></v-radio>
+                                        </div>
+                                      </v-radio-group>
+                                    </v-container>
+                                  </div>
+                                  </v-col>
+                                  </div>
+                                </div>
                               </div>
 
   <v-row>
@@ -377,15 +424,15 @@ export default {
             s.endDate = ''
             s.endTime = ''
             s.checkCar = 'False'
-            s.conditionValue = d.value
+            s.conditionValue = d.conditionValue
             // if (d.conditionField !== '') {
-            //   s.conditionFieldId = this.flowfieldNameitem.filter((row) => { return row.fieldName === d.conditionField })[0]['fieldId']
+            //   s.conditionFieldId = this.flowfieldNameitem.filter((row) => { return row.fieldId === d.conditionField })['fieldId']
             // } else {
             //   s.conditionField = ''
             // }
             this.form1[d.fieldId] = ''
             this.flowfieldNameitem.push(s)
-          // console.log('flowfieldNameitem', this.flowfieldNameitem)
+            console.log('flowfieldNameitem', this.flowfieldNameitem)
           }
           setTimeout(() => this.validate(), 500)
         })
