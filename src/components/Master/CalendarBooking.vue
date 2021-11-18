@@ -60,6 +60,7 @@
                     :now="today"
                     :value="today"
                     :events="events"
+                    locale="th-TH"
                     @click:event="showEvent"
                     color="primary"
                     type="month"
