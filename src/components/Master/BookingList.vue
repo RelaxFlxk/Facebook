@@ -444,7 +444,7 @@
                       small
                       @click.stop="confirmChk(item)"
                     >
-                      <v-icon dark> mdi-check </v-icon>
+                      <v-icon dark> mdi-phone-check </v-icon>
                     </v-btn>
                     <v-btn
                       color="error"
@@ -454,7 +454,7 @@
                       :disabled = item.chkCancel
                       @click.stop="cancelChk(item)"
                     >
-                      <v-icon dark> mdi-close </v-icon>
+                      <v-icon dark> mdi-phone-cancel </v-icon>
                     </v-btn>
                     <v-btn
                       color="warning"
@@ -547,7 +547,7 @@ export default {
         { text: 'Booking Id', value: 'bookNo' },
         { text: 'ชื่อบริการ', value: 'flowName' },
         { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-        // { text: 'วันที่สร้าง', value: 'CREATE_DATE' },
+        { text: 'สถานะนัดหมาย', value: 'statusBt' },
         // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
         { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
       ],
@@ -730,6 +730,11 @@ export default {
             if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
               d.chkConfirm = false
               d.chkCancel = true
+            }
+            if (d.statusBt) {
+              d.statusBt = d.statusBt
+            } else {
+              d.statusBt = 'wait'
             }
             this.dataItem.push(d)
           }

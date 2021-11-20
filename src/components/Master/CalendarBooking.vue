@@ -96,6 +96,28 @@
                           <v-list-item-subtitle v-if="items.contactDateBt">
                             <p>วันที่ ยืนยัน : {{format_date(items.contactDateBt)}}</p>
                           </v-list-item-subtitle>
+                          <v-list-item-subtitle>
+                          <v-btn
+                                color="success"
+                                fab
+                                id="v-step-2"
+                                :disabled = items.chkConfirm
+                                small
+                                @click.stop="confirmChk(items)"
+                              >
+                                <v-icon dark> mdi-phone-check </v-icon>
+                              </v-btn>
+                              <v-btn
+                                color="error"
+                                fab
+                                id="v-step-2"
+                                small
+                                :disabled = items.chkCancel
+                                @click.stop="cancelChk(items)"
+                              >
+                                <v-icon dark> mdi-phone-cancel </v-icon>
+                              </v-btn>
+                          </v-list-item-subtitle>
                         </v-list-item-content>
                       </v-list-item>
                     </v-card>
@@ -233,6 +255,16 @@ export default {
           console.log('getData', response.data)
           for (let i = 0; i < response.data.length; i++) {
             let d = response.data[i]
+            d.chkConfirm = false
+            d.chkCancel = false
+            if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
+              d.chkConfirm = true
+              d.chkCancel = false
+            }
+            if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
+              d.chkConfirm = false
+              d.chkCancel = true
+            }
             if (d.statusBt) {
               if (d.statusBt === 'confirm') {
                 d.color = 'green'
@@ -245,6 +277,119 @@ export default {
             this.dataCalendar.push(d)
           }
           this.dialog = true
+        })
+    },
+    async showEventre (event) {
+      this.dataCalendar = []
+      this.selectedEvent = event.event.start
+      console.log('selectedEvent', this.selectedEvent)
+      await axios
+        .get(
+          // eslint-disable-next-line quotes
+          this.DNS_IP +
+            '/booking_view/get?shopId=' +
+            this.session.data.shopId +
+            '&dueDate=' +
+            event.event.start
+        )
+        .then(async response => {
+          console.log('getData', response.data)
+          for (let i = 0; i < response.data.length; i++) {
+            let d = response.data[i]
+            d.chkConfirm = false
+            d.chkCancel = false
+            if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
+              d.chkConfirm = true
+              d.chkCancel = false
+            }
+            if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
+              d.chkConfirm = false
+              d.chkCancel = true
+            }
+            if (d.statusBt) {
+              if (d.statusBt === 'confirm') {
+                d.color = 'green'
+              } else {
+                d.color = 'red'
+              }
+            } else {
+              d.color = 'orange'
+            }
+            this.dataCalendar.push(d)
+          }
+          this.dialog = true
+        })
+    },
+    confirmChk (item) {
+      console.log('item', item)
+      this.$swal({
+        title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async (result) => {
+          var dt = {
+            bookNo: item.bookNo,
+            contactDate: this.format_dateFUllTime(new Date()),
+            status: 'confirm',
+            statusUse: 'use',
+            shopId: this.$session.getAll().data.shopId,
+            CREATE_USER: this.session.data.userName,
+            LAST_USER: this.session.data.userName
+          }
+          axios
+            .post(
+              this.DNS_IP + '/booking_transaction/add', dt
+            )
+            .then(response => {
+              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              this.getBookingList()
+              console.log('addDataGlobal', response)
+              this.dialog = false
+            })
+            .catch((error) => {
+              console.log('error function addData : ', error)
+            })
+        })
+    },
+    cancelChk (item) {
+      // console.log('item', item)
+      this.$swal({
+        title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async (result) => {
+          var dt = {
+            bookNo: item.bookNo,
+            contactDate: this.format_dateFUllTime(new Date()),
+            status: 'cancel',
+            statusUse: 'use',
+            shopId: this.$session.getAll().data.shopId,
+            CREATE_USER: this.session.data.userName,
+            LAST_USER: this.session.data.userName
+          }
+          axios
+            .post(
+              this.DNS_IP + '/booking_transaction/add', dt
+            )
+            .then(response => {
+              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              console.log('addDataGlobal', response)
+              this.getBookingList()
+              this.dialog = false
+            })
+            .catch((error) => {
+              console.log('error function addData : ', error)
+            })
         })
     }
   }
