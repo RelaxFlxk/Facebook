@@ -29,6 +29,34 @@
           <v-list-item-title class="menu-head">Dashboard</v-list-item-title>
         </v-list-item>
       </v-list>
+
+      <v-list-group
+      dense
+      :value="true"
+      prepend-icon="mdi-shopping"
+      color="white"
+      no-action
+      v-if="Dashboard.length > 0"
+    >
+    <template v-slot:activator>
+        <v-list-item-title class="menu-head">Dashboard</v-list-item-title>
+      </template>
+
+      <v-list-item
+      dense
+        v-for="(item, i) in Dashboard"
+        :key="i"
+        :to="item.to"
+        router
+        exact
+      >
+        <v-list-item-icon>
+          <v-icon v-text="item.icon" dense  color="white"></v-icon>
+        </v-list-item-icon>
+        <v-list-item-title dense v-text="item.title"></v-list-item-title>
+      </v-list-item>
+    </v-list-group>
+
     <v-list-group
       dense
       :value="true"
@@ -193,7 +221,8 @@ export default {
       corporate: [],
       customer: [],
       booking: [],
-      items: []
+      items: [],
+      Dashboard: []
     }
   },
   computed: {},
@@ -223,6 +252,9 @@ export default {
         { title: 'รายชื่อลูกค้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingList' },
         { title: 'ข้อมูลหน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingField' },
         { title: 'ปฏิทินนัดหมาย', icon: 'mdi-account-edit', to: '/Master/CalendarBooking' }
+      ]
+      this.Dashboard = [
+        { title: 'รายงาน', icon: 'mdi-application-settings', to: '/Dashbord/Report' }
       ]
       this.workflow = [
         { title: 'รับรถลูกค้ารายใหม่', icon: 'mdi-account-plus', to: '/Master/RegisterAdd' },

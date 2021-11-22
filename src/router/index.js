@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Core from '@/components/Core'
 import System from '@/components/System'
 import Master from '@/components/Master'
+import Dashbord from '@/components/Dashbord'
 
 Vue.use(Router)
 
@@ -156,6 +157,11 @@ export default new Router({
     path: '/Master/PaymentType',
     name: 'PaymentType',
     component: Master.PaymentType
+  },
+  {
+    path: '/Dashbord/Report',
+    name: 'PaymentType',
+    component: Dashbord.Report
   }
   ]
 })

@@ -36,7 +36,7 @@
                   <!-- สาขา -->
                     <v-col cols="12" sm="4">
                     <v-select
-                      v-model="formAdd.masBranchName"
+                      v-model="formAdd.masBranchID"
                       :items="DataBranchName"
                       @change="flowfieldtest()"
                       dense
@@ -47,10 +47,10 @@
                     </v-col>
                    </v-sheet>
                     <br>
-                      <!-- <v-card v-show="formAdd.flowCode && formAdd.masBranchName !== '' "
+                      <!-- <v-card v-show="formAdd.flowCode && formAdd.masBranchID !== '' "
                       class="mx-auto"
                       max-width="500"> -->
-                       <v-card v-show="formAdd.flowCode && formAdd.masBranchName !== '' "  max-width="450%">
+                       <v-card v-show="formAdd.flowCode && formAdd.masBranchID !== '' "  max-width="450%">
                           <v-container>
                             <v-row justify="center">
                               <v-col cols="6">
@@ -313,7 +313,7 @@ export default {
         flowCode: '',
         CREATE_USER: '',
         LAST_USER: '',
-        masBranchName: ''
+        masBranchID: ''
       },
       rules: {
         numberRules: value =>
@@ -471,6 +471,7 @@ export default {
         let d = this.flowfieldNameitem[i]
         let update = {}
         if (d.conditionField === '' || d.conditionField === null) {
+          update.masBranchID = this.formAdd.masBranchID
           update.CREATE_USER = update.CREATE_USER
           update.LAST_USER = update.LAST_USER
           update.checkCar = d.checkCar
@@ -491,6 +492,7 @@ export default {
           if (fielditem.filter((row) => { return row.fieldId === parseInt(d.conditionField) }).length > 0) {
             console.log('this', fielditem)
             if (d.conditionValue === fielditem.filter((row) => { return row.fieldId === parseInt(d.conditionField) })[0].fieldValue) {
+              update.masBranchID = this.formAdd.masBranchID
               update.CREATE_USER = update.CREATE_USER
               update.LAST_USER = update.LAST_USER
               update.checkCar = d.checkCar
@@ -570,7 +572,7 @@ export default {
     async clearData () {
       // eslint-disable-next-line no-redeclare
       this.formAdd.flowCode = ''
-      this.formAdd.masBranchName = ''
+      this.formAdd.masBranchID = ''
       this.dtname = []
       for (var key in this.flowfieldNameitem) {
         if (this.flowfieldNameitem[key]) {

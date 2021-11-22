@@ -89,6 +89,7 @@ export default {
       years: ([...Array(new Date().getFullYear() - 1989).keys()].map((e) => e + 1990)).reverse(),
       picker: null,
       pickeryear: null,
+      shopId: this.$session.getAll().data.shopId,
       select_M_or_Y: null,
       chartDataofMonth: null,
       chartDataofYear: null,
@@ -190,7 +191,7 @@ export default {
     getDataFlow () {
       this.DataFlowName = []
       console.log('DataFlowName', this.DataFlowName)
-      axios.get(this.DNS_IP + '/flow/get').then(response => {
+      axios.get(this.DNS_IP + '/flow/get?shopId=' + this.shopId).then(response => {
         let rs = response.data
         if (rs.length > 0) {
           for (let i = 0; i < rs.length; i++) {

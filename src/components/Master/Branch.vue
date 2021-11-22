@@ -126,14 +126,14 @@
 
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="6">
+                    <!-- <v-col cols="6">
                       <v-autocomplete
                         v-model="formAdd.masCompanyCode"
                         :items="Company"
                         label="บริษัท*"
                         :rules="nameSelect"
                       ></v-autocomplete>
-                    </v-col>
+                    </v-col> -->
                   </v-row>
                   </v-form>
                 </v-container>
@@ -180,17 +180,6 @@
                     lazy-validation
                   >
                   <v-row>
-                    <v-col cols="12">
-                      <v-text-field
-                        label="รหัส สาขา*"
-                        v-model="formUpdate.masBranchCode"
-                        :rules="nameRules"
-                        :counter="50"
-                        maxlength="50"
-
-                        readonly
-                      ></v-text-field>
-                    </v-col>
                     <v-col cols="6">
                       <v-text-field
                         label="สาขา"
@@ -200,14 +189,6 @@
                         maxlength="50"
 
                       ></v-text-field>
-                    </v-col>
-                     <v-col cols="6">
-                      <v-autocomplete
-                        v-model="formUpdate.masCompanyCode"
-                        :items="Company"
-                        label="บริษัท*"
-                        :rules="nameSelect"
-                      ></v-autocomplete>
                     </v-col>
                   </v-row>
                    </v-form>
@@ -250,27 +231,12 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12">
-                      <v-text-field
-                        label="รหัส สาขา*"
-                        v-model="formUpdate.masBranchCode"
-                        readonly
-                      ></v-text-field>
-                    </v-col>
                     <v-col cols="6">
                       <v-text-field
                         label="สาขา"
                         v-model="formUpdate.masBranchName"
                         readonly
                       ></v-text-field>
-                    </v-col>
-                     <v-col cols="6">
-                      <v-autocomplete
-                        v-model="formUpdate.masCompanyCode"
-                        :items="Company"
-                        label="masCompanyCode*"
-                        readonly
-                      ></v-autocomplete>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -417,33 +383,22 @@ export default {
       panel: [0],
       panel1: [1],
       session: this.$session.getAll(),
+      shopId: this.$session.getAll().data.shopId,
       // Search All
       searchAll: '',
       searchAll2: '',
-      // Search Advanced
-      search: {
-        masBranchCode: '',
-        masBranchName: '',
-        masCompanyCode: '',
-        create_date_start: '',
-        create_date_end: '',
-        last_date_start: '',
-        last_date_end: ''
-      },
       formAdd: {
         masBranchCode: '',
         masBranchName: '',
-        masCompanyCode: ''
+        shopId: this.$session.getAll().data.shopId
       },
       formUpdate: {
         masBranchCode: '',
-        masBranchName: '',
-        masCompanyCode: ''
+        masBranchName: ''
       },
       formUpdateItem: {
         masBranchCode: '',
-        masBranchName: '',
-        masCompanyCode: ''
+        masBranchName: ''
       },
       nameRules: [
         (v) => !!v || 'Name is required',
@@ -456,10 +411,7 @@ export default {
       // End Form Config ADD EDIT
       // Data Table Config
       columns: [
-        { text: 'ID', value: 'masBranchID' },
-        { text: 'รหัส สาขา', value: 'masBranchCode' },
         { text: 'สาขา', value: 'masBranchName' },
-        { text: 'บริษัท', value: 'masCompanyName' },
         { text: 'วันที่สร้าง', value: 'CREATE_DATE' },
         { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
         { text: 'Action', value: 'action', sortable: false, align: 'center' }
@@ -506,7 +458,6 @@ export default {
     this.dataReady = false
     // Get Data
     this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
-    this.getDataCompany()
   },
   methods: {
     validate (Action) {
@@ -556,8 +507,6 @@ export default {
         this.$swal('ผิดพลาด', 'กรอกชื่อ แผนก', 'error')
       } else if (this.formAdd.masBranchCode === '') {
         this.$swal('ผิดพลาด', 'กรุณาเลือก สาขา', 'error')
-      } else if (this.formAdd.masCompanyCode === '') {
-        this.$swal('ผิดพลาด', 'กรุณาเลือก บริษัท', 'error')
       } else {
         this.dataReady = false
         this.submitAdd()
@@ -614,14 +563,6 @@ export default {
       // Config User ทำรายการล่าสุด
       this.formUpdateItem.LAST_USER = this.$session.getAll().data.userName
       // End Config User ทำรายการล่าสุด
-
-      for (var key in this.formUpdateItem) {
-        for (var key2 in this.formUpdate) {
-          if (key === key2) {
-            this.formUpdateItem[key] = this.formUpdate[key2]
-          }
-        }
-      }
       console.log('this.formUpdateItem', this.formUpdateItem)
 
       // Debug
@@ -639,16 +580,8 @@ export default {
         this.formUpdateItem
       )
 
-      if (this.formUpdateItem.masBranchName === '') {
-        this.$swal('ผิดพลาด', 'กรอกชื่อ แผนก', 'error')
-      } else if (this.formUpdateItem.masBranchCode === '') {
-        this.$swal('ผิดพลาด', 'กรุณาเลือก สาขา', 'error')
-      } else if (this.formUpdateItem.masCompanyCode === '') {
-        this.$swal('ผิดพลาด', 'กรุณาเลือก บริษัท', 'error')
-      } else {
-        this.dataReady = false
-        this.submitEdit(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
-      }
+      this.dataReady = false
+      this.submitEdit(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
     },
     async submitEdit (DNS_IP, PATH, ID, DT) {
       // this.editDataGlobal(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
@@ -709,118 +642,12 @@ export default {
       this.dataReady = false
       this.deleteDataGlobal(this.DNS_IP, this.path, this.PK)
     },
-    async searchDataAll () {
-      //
-      //
-      // สำหรับ ค้นหาแบบ LIKE Search
-      // ต้องระบุ Field ที่จะส่งไปให้ตรงกับ Model
-      //
-      var search =
-        '?masBranchCode=' + this.searchAll +
-         '&masBranchName=' + this.searchAll +
-         '&masCompanyName=' + this.searchAll
-      this.dataReady = false
-      this.searchDataAllGlobal(this.DNS_IP, this.path, search)
-    },
-    async saerchDataAdvanced () {
-      var search = ''
-      var check = false
-      // config วันที่สร้าง วันที่แก้ไข
-      // config นำวันที่สิ้นสุดมาต่อ 23:59:59
-      if (this.search.create_date_start !== '' && this.search.create_date_end === '') {
-        this.search.create_date_end = this.search.create_date_start + ' 23:59:59'
-      } else {
-        if (this.search.create_date_start !== '') {
-          this.search.create_date_end = this.search.create_date_end + ' 23:59:59'
-        }
-      }
-
-      if (this.search.last_date_start !== '' && this.search.last_date_end === '') {
-        this.search.last_date_end = this.search.last_date_start + ' 23:59:59'
-      } else {
-        if (this.search.last_date_end !== '') {
-          this.search.last_date_end = this.search.last_date_end + ' 23:59:59'
-        }
-      }
-      for (var key in this.search) {
-        check = true
-        if (this.search[key]) {
-          if (search !== '') {
-            search += '&'
-          }
-          search += key + '=' + this.search[key]
-        }
-
-        if (this.search.last_date_start === '' && this.search.last_date_end !== '') {
-          check = false
-          this.$swal('ผิดพลาด', 'กรุณาเลือกวันที่แก้ไข เริ่มต้น', 'error')
-        }
-
-        if (this.search.create_date_start === '' && this.search.create_date_end !== '') {
-          check = false
-          this.$swal('ผิดพลาด', 'กรุณาเลือกวันที่สร้าง เริ่มต้น', 'error')
-        }
-      }
-      console.log('saerchDataAdvanced', search)
-      //
-      //
-      // สำหรับ ค้นหาแบบ กำหนดจาก form serach
-      //
-      if (check === true) {
-        this.dataReady = false
-
-        this.saerchDataAdvancedGlobal(this.DNS_IP, this.path, search)
-      } else {
-        this.dataReady = true
-      }
-    },
     async clearData () {
-      this.getDataCompany()
-      // eslint-disable-next-line no-redeclare
       for (var key in this.formAdd) {
         if (this.formAdd[key]) {
           this.formAdd[key] = ''
         }
       }
-
-      // eslint-disable-next-line no-redeclare
-      // for (var key in this.search) {
-      //   if (this.search[key]) {
-      //     this.search[key] = ''
-      //   }
-      // }
-    },
-    // บริษัท
-    async getDataCompany () {
-      // Clear Data ทุกครั้ง
-      this.Company = []
-      // console.log('getDataCompany')
-      await axios
-        .get(
-          // eslint-disable-next-line quotes
-          this.DNS_IP + "/master_company/" + "get",
-          {
-            headers: {
-              'Application-Key': this.$session.getAll().ApplicationKey
-            }
-          }
-        )
-        .then(async (response) => {
-          let rs = response.data
-          for (var i = 0; i < rs.length; i++) {
-            var d = rs[i]
-            var s = {}
-            s.value = d.masCompanyCode
-            s.text = d.masCompanyName
-            d = s
-            this.Company.push(d)
-          }
-          console.log('getDataCompany : ', this.Company)
-        })
-        // eslint-disable-next-line handle-callback-err
-        .catch((error) => {
-          console.log(error)
-        })
     },
     // * Option Import Excel
     // * ตั้งค่าจาก Data
