@@ -470,9 +470,11 @@
                               </v-icon>
                             </template>
                             <template v-slot:[`item.showCard`]="{ item }">
-                            <v-simple-checkbox
-                              v-model="item.showCard"
-                            ></v-simple-checkbox>
+                            <v-checkbox
+                            false-value = 'False'
+                            true-value = 'True'
+                            v-model="item.showCard"
+                          ></v-checkbox>
                           </template>
                           </v-data-table>
                           <v-dialog v-model="dialogDeleteF" max-width="500px">
@@ -830,12 +832,11 @@ export default {
         { text: 'Action', value: 'action', sortable: false, align: 'center' },
         { text: 'AC', value: 'sendCard' }
       ],
-      showCard: false,
       sendCard: false,
       headers: [
-        { text: 'AC', value: 'showCard' },
+        { text: 'Show', value: 'showCard' },
         { text: 'ข้อมูล', value: 'fieldName' },
-        { text: 'AC', value: 'actions', sortable: false }
+        { text: '  ', value: 'actions', sortable: false }
       ],
       sortBy: false,
       headers2: [
@@ -973,7 +974,8 @@ export default {
             var d = rs[i]
             d.text = d.fieldName
             d.value = d.fieldName
-            d.showCard = false
+            d.showCard = d.showCard
+
             this.editedItemSelete.push(d)
           }
         }
@@ -1211,8 +1213,14 @@ export default {
         })
     },
     async editData () {
-      console.log(this.formUpdate)
-      console.log(JSON.stringify(this.desserts))
+      // console.log('this.formUpdate', this.formUpdate)
+      let fieldId = []
+      for (let i = 0; i < this.desserts.length; i++) {
+        let d = this.desserts[i]
+        let s = {}
+        s.fieldId = d.fieldId
+        fieldId.push(s)
+      }
       this.dataReady = false
       this.$swal({
         title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',
@@ -1225,7 +1233,7 @@ export default {
       })
         .then(async (result) => {
           this.formUpdate.LAST_USER = this.session.data.userName
-          this.formUpdate.flowfieldName = JSON.stringify(this.desserts)
+          this.formUpdate.flowfieldName = JSON.stringify(fieldId)
           var ID = this.formUpdate.flowId
           delete this.formUpdate['flowId']
           delete this.formUpdate['fieldId']
@@ -1244,7 +1252,22 @@ export default {
               console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
               // Close Dialog
               this.dialogEdit = false
-
+              for (let i = 0; i < this.desserts.length; i++) {
+                let d = this.desserts[i]
+                let showcarditem = {}
+                if (d.showCard === undefined || d.showCard === '' || d.showCard === null || d.showCard === 'False') {
+                  showcarditem.showCard = 'False'
+                  console.log('1')
+                } else {
+                  showcarditem.showCard = d.showCard
+                  console.log('2')
+                }
+                axios.post(this.DNS_IP + '/customField/edit/' + d.fieldId, showcarditem).then(response => {
+                })
+                  .catch(error => {
+                    console.log('error function addData : ', error)
+                  })
+              }
               // Load Data
               await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
               this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')

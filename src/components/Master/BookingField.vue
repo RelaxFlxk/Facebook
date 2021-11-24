@@ -80,7 +80,7 @@
             </v-row>
               <form class="Review">
                 <div v-for="(item , index) in Fielditem" :key="index">
-                 <div v-if="item.showCard == true">
+                 <div v-if="item.showitem == true">
                   <v-text-field
                   :label="item.fieldName"
                   outlined
@@ -146,9 +146,9 @@
                         hide-default-footer
                         class="elevation-10"
                       >
-                        <template v-slot:[`item.showCard`]="{ item }">
+                        <template v-slot:[`item.showitem`]="{ item }">
                           <v-simple-checkbox
-                            v-model="item.showCard"
+                            v-model="item.showitem"
                           ></v-simple-checkbox>
                         </template>
                       </v-data-table>
@@ -193,7 +193,7 @@ export default {
       date: '',
       time: '',
       Fielditem: [],
-      showCard: false,
+      showitem: false,
       breadcrumbs: [
         {
           text: 'Home',
@@ -223,7 +223,7 @@ export default {
           text: 'Field Name',
           value: 'fieldName'
         },
-        { text: 'AC', value: 'showCard' }
+        { text: 'เลือกข้อมูล', value: 'showitem' }
       ]
     }
   },
@@ -281,7 +281,7 @@ export default {
               s.optionField = d.optionField
               s.shopId = d.shopId
               s.fieldValue = ''
-              s.showCard = true
+              s.showitem = true
               this.Fielditem.push(s)
               console.log('s', this.Fielditem)
             }
@@ -304,7 +304,7 @@ export default {
               s.optionField = d.optionField
               s.shopId = d.shopId
               s.fieldValue = ''
-              s.showCard = false
+              s.showitem = false
               this.Fielditem.push(s)
             }
           })
@@ -319,12 +319,13 @@ export default {
       // this.Redirect = this.DNS_IP + '/booking?shopId=' + this.$route.query.shopId
       for (let i = 0; i < this.Fielditem.length; i++) {
         let d = this.Fielditem[i]
-        if (d.showCard === true) {
+        if (d.showitem === true) {
           UpdateField.push({
             fieldId: d.fieldId
           })
         }
       }
+      console.log('update', this.Fielditem)
       booking.flowfieldName = JSON.stringify(UpdateField)
       booking.shopId = this.shopId
       console.log('dtbooking', booking)
@@ -341,6 +342,18 @@ export default {
           axios
             .post(this.DNS_IP + '/BookingField/edit/' + this.IdUpdate, booking)
             .then(response => {
+              for (let i = 0; i < this.Fielditem.length; i++) {
+                let d = this.Fielditem[i]
+                let showcarditem = {
+                  showCard: d.showcard
+                }
+                axios.post(this.DNS_IP + '/customField/edit/' + d.fieldId, showcarditem).then(response => {
+                })
+                  .catch(error => {
+                    console.log('error function addData : ', error)
+                  })
+              }
+
               this.$swal('บันทึกข้อมูลเรียบร้อย', ' ', 'success')
               console.log('addDataGlobal DNS_IP + /job/add', response)
             })

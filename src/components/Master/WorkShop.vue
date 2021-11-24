@@ -19,8 +19,8 @@
       </div>
         <div class="workLayout">
           <v-row class="rowstep">
-              <draggable v-model="stepData" group="workshop">
-              <div v-for="(element , step) in stepData" :key="step">
+              <draggable  v-model="stepData" group="workshop">
+              <div  v-for="(element , step) in stepData" :key="step">
                 <v-card class="rowIncolum" elevation="12">
                   <v-card-text>
                     <h2>{{element.stepTitle}}</h2>
@@ -28,10 +28,10 @@
                 </v-card>
               </div>
             </draggable>
-            <div v-for="(element , i ) in Layout" :key="i">
+            <div  v-for="(element , i ) in Layout" :key="i">
                 <v-col cols="12" class="Layoutcolum">
-                <draggable  v-model="Layout[i].workData" group="workshop" @change="UpdateworkShop ()">
-                  <div v-for="(element , workData) in Layout[i].workData" :key="workData">
+                <draggable v-model="Layout[i].workData" group="workshop" @change="UpdateworkShop ()">
+                  <div  v-for="(element , workData) in Layout[i].workData" :key="workData">
                     <v-card
                     class="mb-12"
                     width="220"

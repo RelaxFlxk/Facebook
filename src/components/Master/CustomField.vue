@@ -636,6 +636,7 @@ export default {
         optionValue: '',
         conditionField: '',
         conditionValue: '',
+        showCard: 'False',
         shopId: this.$session.getAll().data.shopId
       },
       formUpdate: {
