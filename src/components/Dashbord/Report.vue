@@ -6,6 +6,7 @@
         <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
         <v-row>
           <v-col cols="12">
+            {{day}}{{month}}{{year}}
             <v-sheet tile height="54" class="d-flex">
               <!-- วัน -->
               <v-select
@@ -139,12 +140,12 @@
          <v-row>
            <v-col cols="6">
               <v-card>
-                  กราฟแต่ละสาขา
+                  <LinechartBranch></LinechartBranch>
                 <canvas id="myChartx"></canvas>
             </v-card>
           </v-col>
           <v-col cols="6">
-            <v-row v-if="">
+            <v-row>
            <v-col cols="4">
              <center>
               <v-card class="mx-auto" elevation="5">
@@ -172,7 +173,7 @@
   </div>
 </template>
 <script>
-import axios from 'axios' // api
+// import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import JsonExcel from 'vue-json-excel' // https://www.npmjs.com/package/vue-json-excel
 import XLSX from 'xlsx' // import xlsx
@@ -182,6 +183,7 @@ import dayName from '../../assets/master/Date/day.json'
 import monthNameTH from '../../assets/master/Date/monthNameTH.json'
 import yearsNumber from '../../assets/master/Date/yearsNumber.json'
 import ChartBarBase from './Line.js'
+import LinechartBranch from './LinechartBranch.vue'
 
 export default {
   components: {
@@ -190,7 +192,8 @@ export default {
     XLSX,
     readXlsxFile,
     moment,
-    ChartBarBase
+    ChartBarBase,
+    LinechartBranch
   },
   created () {
     setInterval(this.getNowGlobal, 1000)
