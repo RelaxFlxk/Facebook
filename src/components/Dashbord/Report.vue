@@ -137,6 +137,12 @@
 
         </v-row>
         <v-divider class="mx-4"></v-divider>
+          <v-select
+          v-model="select"
+          :items="Branchitems"
+          label="Standard"
+          @change="getselectBranch ()"
+        ></v-select>
          <v-row>
            <v-col cols="6">
               <v-card>
@@ -145,26 +151,7 @@
             </v-card>
           </v-col>
           <v-col cols="6">
-            <v-row>
-           <v-col cols="4">
-             <center>
-              <v-card class="mx-auto" elevation="5">
-                <v-list-item two-line>
-                  <v-list-item-content>
-                      หนองแขม
-                  </v-list-item-content>
-                </v-list-item>
-
-                <v-card-text>
-                  <v-row align="center">
-                    <v-col class="text-h5" cols="12">{{dataItem.length}}/{{empCountAll}}</v-col>
-                  </v-row>
-                </v-card-text>
-
-              </v-card>
-             </center>
-            </v-col>
-              </v-row>
+            <CardBranch ref="modal1"></CardBranch>
           </v-col>
 
         </v-row>
@@ -184,6 +171,8 @@ import monthNameTH from '../../assets/master/Date/monthNameTH.json'
 import yearsNumber from '../../assets/master/Date/yearsNumber.json'
 import ChartBarBase from './Line.js'
 import LinechartBranch from './LinechartBranch.vue'
+import CardBranch from './CardBranch.vue'
+import axios from 'axios'
 
 export default {
   components: {
@@ -193,7 +182,8 @@ export default {
     readXlsxFile,
     moment,
     ChartBarBase,
-    LinechartBranch
+    LinechartBranch,
+    CardBranch
   },
   created () {
     setInterval(this.getNowGlobal, 1000)
@@ -204,6 +194,8 @@ export default {
       center: {},
       session: this.$session.getAll(),
       // Menu Config
+      select: '',
+      Branchitems: [],
       breadcrumbs: [
         {
           text: 'Home',
@@ -245,6 +237,31 @@ export default {
       day: '',
       empCountAll: 0,
       StepCountAll: 0
+    }
+  },
+  async mounted () {
+    this.getMasbranch()
+  },
+  methods: {
+    getselectBranch () {
+      this.$refs.modal1.getBranch(this.select)
+    },
+    async getMasbranch () {
+      this.Branchitems = []
+      axios.get(this.DNS_IP + '/master_branch/get?shopId=' + this.shopId).then(response => {
+        let rs = response.data
+        for (let i = 0; i < rs.length; i++) {
+          let d = rs[i]
+          let s = {}
+          s.text = d.masBranchName
+          s.value = d.masBranchID
+          this.Branchitems.push(s)
+        }
+        // console.log('this.Branchitems', this.Branchitems)
+      })
+        .catch((error) => {
+          console.log('error function addDataGlobal : ', error)
+        })
     }
   }
 }
