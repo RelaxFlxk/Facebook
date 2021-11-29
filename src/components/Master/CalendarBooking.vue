@@ -10,7 +10,7 @@
           <v-col cols="6"> </v-col>
         </v-row>
         <v-row no-gutters>
-          <v-col cols="12">
+          <v-col cols="4">
             <v-menu
                       v-model="menuDate"
                       :close-on-content-click="false"
@@ -41,6 +41,18 @@
                         "
                       ></v-date-picker>
                     </v-menu>
+          </v-col>
+          <v-col cols="4"></v-col>
+          <v-col cols="4">
+            <v-alert
+              color="primary"
+              dark
+              icon="mdi-account-clock"
+              border="left"
+              prominent
+            >
+              จำนวนลูกค้าต่อวัน : {{countCus || 0}}
+            </v-alert>
           </v-col>
           <v-col cols="12">
             <v-card elevation="7" v-if="dataReady">
@@ -171,6 +183,7 @@ export default {
       dataReady: true,
       today: new Date().toISOString().substr(0, 10),
       events: [],
+      countCus: 0,
       selectedEvent: {},
       selectedElement: null,
       selectedOpen: false,
@@ -209,27 +222,62 @@ export default {
         .then(async response => {
           console.log('getData', response.data)
           this.dataReady = true
-          for (let i = 0; i < response.data.length; i++) {
-            let d = response.data[i]
-            if (d.statusBt) {
-              if (d.statusBt === 'confirm') {
-                d.color = 'green'
-                d.name = d.statusBt + ' : ' + d.name.toString()
-              } else {
-                d.color = 'red'
-                d.name = d.statusBt + ' : ' + d.name.toString()
+          this.countCus = response.data[0].countCus
+          for (var i = 0; i < response.data.length; i++) {
+            var d = response.data[i]
+            var s = {}
+            console.log('d', d)
+            if (d.countCus > 0) {
+              s.start = d.start
+              d.d50 = parseInt((d.countCus / 100) * 50)
+              d.d70 = parseInt((d.countCus / 100) * 70)
+              d.d90 = parseInt((d.countCus / 100) * 90)
+              console.log('d.d', parseInt(d.name), d.d50, d.d70, d.d90)
+              if (parseInt(d.name) <= d.d50) {
+                console.log('50')
+                s.color = 'blue'
+                s.name = 'คล่อง : ' + d.name.toString() + '/' + d.countCus.toString()
+              } if (parseInt(d.name) <= d.d70 && parseInt(d.name) >= d.d50) {
+                console.log('70')
+                s.color = 'deep-purple'
+                s.name = 'ติดขัด : ' + d.name.toString() + '/' + d.countCus.toString()
+              } if (parseInt(d.name) <= d.d90 && parseInt(d.name) >= d.d70) {
+                console.log('90')
+                s.color = 'red accent-1'
+                s.name = 'ติดขัด : ' + d.name.toString() + '/' + d.countCus.toString()
+              } if (parseInt(d.name) === d.countCus) {
+                s.color = 'red'
+                s.name = 'เต็ม : ' + d.name.toString() + '/' + d.countCus.toString()
               }
-            } else {
-              d.color = 'orange'
-              d.name = 'wait' + ' : ' + d.name.toString()
+              this.events.push(s)
             }
-            this.events.push(d)
-            console.log('events', this.events)
           }
           if (this.events.length === 0 || this.events.status === false) {
             this.events = []
             // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
+          } else {
+            for (var x = 0; x < response.data.length; x++) {
+              var e = response.data[x]
+              var f = {}
+              // console.log(d)
+              if (f.statusBt) {
+                f.start = e.start
+                if (f.statusBt === 'confirm') {
+                  f.color = 'green'
+                  f.name = e.statusBt + ' : ' + e.name.toString()
+                } else {
+                  f.color = 'red'
+                  f.name = e.statusBt + ' : ' + e.name.toString()
+                }
+              } else {
+                f.start = e.start
+                f.color = 'orange'
+                f.name = 'wait' + ' : ' + e.name.toString()
+              }
+              this.events.push(f)
+            }
           }
+          console.log('events', this.events)
         })
         // eslint-disable-next-line handle-callback-err
         .catch(error => {

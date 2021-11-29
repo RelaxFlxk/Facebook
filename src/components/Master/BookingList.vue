@@ -545,6 +545,8 @@ export default {
       searchAll2: '',
       columns: [
         { text: 'Booking Id', value: 'bookNo' },
+        { text: 'ชื่อลูกค้า', value: 'cusName' },
+        { text: 'ทะเบียนรถ', value: 'cusReg' },
         { text: 'ชื่อบริการ', value: 'flowName' },
         { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
         { text: 'สถานะนัดหมาย', value: 'statusBt' },
@@ -721,22 +723,51 @@ export default {
           this.dataReady = true
           for (let i = 0; i < response.data.length; i++) {
             let d = response.data[i]
-            d.chkConfirm = false
-            d.chkCancel = false
+            let s = {}
+            s.bookNo = d.bookNo
+            s.flowName = d.flowName
+            s.dueDate = d.dueDate
+            s.chkConfirm = false
+            s.chkCancel = false
             if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
-              d.chkConfirm = true
-              d.chkCancel = false
+              s.chkConfirm = true
+              s.chkCancel = false
             }
             if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
-              d.chkConfirm = false
-              d.chkCancel = true
+              s.chkConfirm = false
+              s.chkCancel = true
             }
             if (d.statusBt) {
-              d.statusBt = d.statusBt
+              s.statusBt = d.statusBt
             } else {
-              d.statusBt = 'wait'
+              s.statusBt = 'wait'
             }
-            this.dataItem.push(d)
+            let dataBookingData = []
+            await axios
+              .get(
+                // eslint-disable-next-line quotes
+                this.DNS_IP + '/BookingData/get?bookNo=' + d.bookNo
+              )
+              .then(async (responses) => {
+                console.log('getData', responses.data)
+                dataBookingData = responses.data
+                // for (let i = 0; i < response.data.length; i++) {
+                //   let e = response.data[i]
+                //   if (e.fieldName === 'ชื่อ') {
+                //     s.cusName = s.fieldValue
+                //   }
+                //   if (e.fieldName === 'เลขทะเบียน') {
+                //     s.cusReg = s.fieldValue
+                //   }
+                // }
+              })
+            s.cusName = dataBookingData.filter(function (el) {
+              return el.fieldName === 'ชื่อ'
+            })[0].fieldValue
+            s.cusReg = dataBookingData.filter(function (el) {
+              return el.fieldName === 'เลขทะเบียน'
+            })[0].fieldValue
+            this.dataItem.push(s)
           }
           if (this.dataItem.length === 0 || this.dataItem.status === false) {
             this.dataItem = []

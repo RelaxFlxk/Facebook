@@ -101,19 +101,19 @@
             <v-row>
               <v-col cols="12" md="12" sm="12" >
                 <div v-if="Redirect !== ''">
-                  <v-card class="p-3" height="200px" style="background-color:#050C42;">
+                  <v-card class="p-3" height="300px" style="background-color:#050C42;">
                     <v-img :src="require('@/assets/linkicon.png')" class="a" style="width:29px;height:29px"></v-img>
                   <h3 class="text-center" style="color:#FFFFFF;">ลิ้งสำหรับลูกค้า</h3>
                   <v-card-text>
                     <v-row align-content="center">
                       <v-col cols="10">
                         <v-text-field
-                        v-model="Redirect"
-                        id="myInput"
-                        style="background-color:#050C42;"
-                        solo
-                        dense
-                        >
+                          v-model="Redirect"
+                          style="background-color:#050C42;"
+                          solo
+                          id="myInput"
+                          dense
+                          >
                         </v-text-field>
                       </v-col>
                       <v-col cols="2" class="text-lelf" >
@@ -126,6 +126,19 @@
                         >
                           <v-icon>mdi-content-copy</v-icon>
                         </v-btn>
+                      </v-col>
+                    </v-row>
+                    <v-row align-content="center">
+                      <v-col cols="4" class="text-lelf" >
+                        <h3 class="text-center" style="color:#FFFFFF;">จำนวนลูกค้าต่อวัน</h3>
+                      </v-col>
+                      <v-col cols="8">
+                        <VuetifyMoney
+                          v-model="countCus"
+                          placeholder=""
+                          dense
+                          required
+                          v-bind:options="options2" />
                       </v-col>
                     </v-row>
                   </v-card-text>
@@ -192,6 +205,14 @@ export default {
       menuDate: false,
       date: '',
       time: '',
+      countCus: 0,
+      options2: {
+        locale: 'en-US',
+        prefix: '',
+        suffix: '',
+        length: 9,
+        precision: 0
+      },
       Fielditem: [],
       showitem: false,
       breadcrumbs: [
@@ -240,6 +261,11 @@ export default {
         console.log('rs', rs)
         if (rs.length > 0) {
           let bookingData = []
+          if (rs[0].countCus) {
+            this.countCus = rs[0].countCus
+          } else {
+            this.countCus = 0
+          }
           bookingData = JSON.parse(rs[0].flowfieldName)
           for (let i = 0; i < bookingData.length; i++) {
             let d = bookingData[i]
@@ -328,6 +354,11 @@ export default {
       console.log('update', this.Fielditem)
       booking.flowfieldName = JSON.stringify(UpdateField)
       booking.shopId = this.shopId
+      if (this.countCus) {
+        booking.countCus = this.countCus
+      } else {
+        booking.countCus = 0
+      }
       console.log('dtbooking', booking)
       this.$swal({
         title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
