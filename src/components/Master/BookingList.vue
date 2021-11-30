@@ -31,6 +31,20 @@
             <!-- </v-overlay> -->
           </v-col>
         </v-row>
+        <v-row no-gutters>
+          <v-col cols="6" class="text-left">
+          </v-col>
+          <v-col cols="6" class="v-margit_button text-right">
+            <v-select
+              v-model="masBranchID"
+              :items="branch"
+              label="สาขา"
+              outlined
+              required
+              @change="getBookingList()"
+            ></v-select>
+          </v-col>
+        </v-row>
         <v-row>
           <!-- ADD -->
           <v-dialog v-model="dialogAdd" persistent max-width="70%">
@@ -516,6 +530,7 @@ export default {
   },
   data () {
     return {
+      masBranchID: '',
       bookNo: '',
       BookingDataItem: [],
       Layout: [],
@@ -622,7 +637,7 @@ export default {
     }
   },
   async mounted () {
-    this.dataReady = false
+    // this.dataReady = false
     await this.scanQrcode()
     this.getDataFlow()
     this.getDataBranch()
@@ -703,6 +718,7 @@ export default {
               this.branch.push(s)
               // console.log('dtdtdtdt', this.branch)
             }
+            this.masBranchID = this.branch[0].value
           } else {
             this.branch = []
           }
@@ -710,13 +726,14 @@ export default {
     },
     async getBookingList () {
       // Clear Data ทุกครั้ง
+      this.dataReady = false
       this.dataItem = []
       // Clear ช่องค้นหา
       this.searchAll2 = ''
       await axios
         .get(
           // eslint-disable-next-line quotes
-          this.DNS_IP + "/booking_view/get?shopId=" + this.session.data.shopId
+          this.DNS_IP + "/booking_view/get?shopId=" + this.session.data.shopId + '&masBranchID=' + this.masBranchID
         )
         .then(async response => {
           console.log('getData', response.data)
@@ -772,6 +789,8 @@ export default {
           if (this.dataItem.length === 0 || this.dataItem.status === false) {
             this.dataItem = []
             // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
+          } else {
+            this.dataReady = true
           }
         })
         // eslint-disable-next-line handle-callback-err
