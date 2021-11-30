@@ -42,7 +42,21 @@
                       ></v-date-picker>
                     </v-menu>
           </v-col>
-          <v-col cols="4"></v-col>
+          <v-col cols="4">
+            <v-select
+              :items="DataBranchName"
+              v-model="masBranchName"
+              @change="getBookingList()"
+              dense
+              outlined
+              hide-details
+              item-text="text"
+              item-value="value"
+              return-object
+              label="สาขา"
+              class="ma-2"
+            ></v-select>
+          </v-col>
           <v-col cols="4">
             <v-alert
               color="primary"
@@ -190,7 +204,9 @@ export default {
       menuDate: false,
       dialog: false,
       dataCalendar: [],
-      colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1']
+      colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
+      DataBranchName: [],
+      masBranchName: ''
     }
   },
   beforeCreate () {
@@ -199,10 +215,29 @@ export default {
     }
   },
   async mounted () {
-    await this.getBookingList()
+    // await this.getBookingList()
+    await this.getDataBranch()
   },
   methods: {
+    getDataBranch () {
+      this.DataBranchName = []
+      axios.get(this.DNS_IP + '/master_branch/get?shopId=' + this.$session.getAll().data.shopId).then(response => {
+        let rs = response.data
+        if (rs.length > 0) {
+          for (var i = 0; i < rs.length; i++) {
+            var d = rs[i]
+            d.text = d.masBranchName
+            d.value = d.masBranchName
+            this.DataBranchName.push(d)
+          }
+          this.masBranchName = this.DataBranchName[0].value
+        } else {
+          this.DataBranchName = []
+        }
+      })
+    },
     async getBookingList () {
+      console.log('masBranchName', this.masBranchName)
       // Clear Data ทุกครั้ง
       this.events = []
       // Clear ช่องค้นหา
@@ -217,37 +252,37 @@ export default {
           // eslint-disable-next-line quotes
           this.DNS_IP +
             '/booking_view/getCount?shopId=' +
-            this.$session.getAll().data.shopId + '&dueDate=' + year + '-' + month
+            this.$session.getAll().data.shopId + '&dueDate=' + year + '-' + month + '&masBranchName=' + this.masBranchName.text
         )
         .then(async response => {
           console.log('getData', response.data)
           this.dataReady = true
-          this.countCus = response.data[0].countCus
+          this.countCus = this.masBranchName.countCus
           for (var i = 0; i < response.data.length; i++) {
             var d = response.data[i]
             var s = {}
             console.log('d', d)
-            if (d.countCus > 0) {
+            if (this.countCus > 0) {
               s.start = d.start
-              d.d50 = parseInt((d.countCus / 100) * 50)
-              d.d70 = parseInt((d.countCus / 100) * 70)
-              d.d90 = parseInt((d.countCus / 100) * 90)
+              d.d50 = parseInt((this.countCus / 100) * 50)
+              d.d70 = parseInt((this.countCus / 100) * 70)
+              d.d90 = parseInt((this.countCus / 100) * 90)
               console.log('d.d', parseInt(d.name), d.d50, d.d70, d.d90)
               if (parseInt(d.name) <= d.d50) {
                 console.log('50')
                 s.color = 'blue'
-                s.name = 'คล่อง : ' + d.name.toString() + '/' + d.countCus.toString()
+                s.name = 'คล่อง : ' + d.name.toString() + '/' + this.countCus.toString()
               } if (parseInt(d.name) <= d.d70 && parseInt(d.name) >= d.d50) {
                 console.log('70')
                 s.color = 'deep-purple'
-                s.name = 'ติดขัด : ' + d.name.toString() + '/' + d.countCus.toString()
+                s.name = 'ติดขัด : ' + d.name.toString() + '/' + this.countCus.toString()
               } if (parseInt(d.name) <= d.d90 && parseInt(d.name) >= d.d70) {
                 console.log('90')
                 s.color = 'red accent-1'
-                s.name = 'ติดขัด : ' + d.name.toString() + '/' + d.countCus.toString()
-              } if (parseInt(d.name) === d.countCus) {
+                s.name = 'ติดขัด : ' + d.name.toString() + '/' + this.countCus.toString()
+              } if (parseInt(d.name) === this.countCus) {
                 s.color = 'red'
-                s.name = 'เต็ม : ' + d.name.toString() + '/' + d.countCus.toString()
+                s.name = 'เต็ม : ' + d.name.toString() + '/' + this.countCus.toString()
               }
               this.events.push(s)
             }

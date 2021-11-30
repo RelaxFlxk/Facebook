@@ -128,19 +128,19 @@
                         </v-btn>
                       </v-col>
                     </v-row>
-                    <v-row align-content="center">
+                    <!-- <v-row align-content="center">
                       <v-col cols="4" class="text-lelf" >
                         <h3 class="text-center" style="color:#FFFFFF;">จำนวนลูกค้าต่อวัน</h3>
                       </v-col>
                       <v-col cols="8">
                         <VuetifyMoney
                           v-model="countCus"
-                          placeholder=""
+                          placeholder="จำนวนคนเข้าใช้บริการ / วัน"
                           dense
                           required
                           v-bind:options="options2" />
                       </v-col>
-                    </v-row>
+                    </v-row> -->
                   </v-card-text>
                 </v-card>
                 </div>

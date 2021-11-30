@@ -126,14 +126,14 @@
 
                       ></v-text-field>
                     </v-col>
-                    <!-- <v-col cols="6">
-                      <v-autocomplete
-                        v-model="formAdd.masCompanyCode"
-                        :items="Company"
-                        label="บริษัท*"
-                        :rules="nameSelect"
-                      ></v-autocomplete>
-                    </v-col> -->
+                    <v-col cols="6">
+                      <VuetifyMoney
+                          label="จำนวนคนเข้าใช้บริการ / วัน"
+                          v-model="formAdd.countCus"
+                          placeholder="จำนวนคนเข้าใช้บริการ / วัน"
+                          required
+                          v-bind:options="options2" />
+                    </v-col>
                   </v-row>
                   </v-form>
                 </v-container>
@@ -189,6 +189,14 @@
                         maxlength="50"
 
                       ></v-text-field>
+                    </v-col>
+                    <v-col cols="6">
+                      <VuetifyMoney
+                          label="จำนวนคนเข้าใช้บริการ / วัน"
+                          v-model="formUpdate.countCus"
+                          placeholder="จำนวนคนเข้าใช้บริการ / วัน"
+                          required
+                          v-bind:options="options2" />
                     </v-col>
                   </v-row>
                    </v-form>
@@ -334,6 +342,7 @@ import adminLeftMenu from '../Sidebar.vue' // เมนู
 import JsonExcel from 'vue-json-excel' // https://www.npmjs.com/package/vue-json-excel
 import XLSX from 'xlsx' // import xlsx
 import readXlsxFile from 'read-excel-file'
+import VuetifyMoney from '../VuetifyMoney.vue'
 // import moment from 'moment' // แปลง date
 
 export default {
@@ -341,7 +350,8 @@ export default {
     'left-menu-admin': adminLeftMenu,
     downloadExcel: JsonExcel,
     XLSX,
-    readXlsxFile
+    readXlsxFile,
+    VuetifyMoney
   },
   created () {
     setInterval(this.getNowGlobal, 1000)
@@ -387,17 +397,26 @@ export default {
       // Search All
       searchAll: '',
       searchAll2: '',
+      options2: {
+        locale: 'en-US',
+        prefix: '',
+        suffix: '',
+        length: 9,
+        precision: 0
+      },
       formAdd: {
         masBranchCode: '',
         masBranchName: '',
+        countCus: 0,
         shopId: this.$session.getAll().data.shopId
       },
       formUpdate: {
         masBranchCode: '',
+        countCus: 0,
         masBranchName: ''
       },
       formUpdateItem: {
-        masBranchCode: '',
+        countCus: 0,
         masBranchName: ''
       },
       nameRules: [
@@ -412,6 +431,7 @@ export default {
       // Data Table Config
       columns: [
         { text: 'สาขา', value: 'masBranchName' },
+        { text: 'จำนวนคนเข้าใช้บริการ / วัน', value: 'countCus' },
         { text: 'วันที่สร้าง', value: 'CREATE_DATE' },
         { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
         { text: 'Action', value: 'action', sortable: false, align: 'center' }
@@ -488,6 +508,11 @@ export default {
       // Get ID /main.js
       this.dataReady = false
       this.getDataByIdGlobal(this.DNS_IP, this.path, 'masBranchID', item.masBranchID)
+      if (this.formUpdate.countCus) {
+        this.formUpdate.countCus = this.formUpdate.countCus
+      } else {
+        this.formUpdate.countCus = 0
+      }
     },
     async addData () {
       //
@@ -497,6 +522,11 @@ export default {
       //
       this.formAdd.CREATE_USER = this.$session.getAll().data.userName
       this.formAdd.LAST_USER = this.$session.getAll().data.userName
+      if (this.formAdd.countCus) {
+        this.formAdd.countCus = this.formAdd.countCus
+      } else {
+        this.formAdd.countCus = 0
+      }
 
       console.log('form', JSON.stringify(this.formAdd))
 
@@ -560,8 +590,15 @@ export default {
         })
     },
     async editData () {
+      this.formUpdateItem.countCus = this.formUpdate.countCus
+      this.formUpdateItem.masBranchName = this.formUpdate.masBranchName
       // Config User ทำรายการล่าสุด
       this.formUpdateItem.LAST_USER = this.$session.getAll().data.userName
+      if (this.formUpdate.countCus) {
+        this.formUpdate.countCus = this.formUpdate.countCus
+      } else {
+        this.formUpdate.countCus = 0
+      }
       // End Config User ทำรายการล่าสุด
       console.log('this.formUpdateItem', this.formUpdateItem)
 
@@ -573,12 +610,6 @@ export default {
       // ต้องระบุ  Last User ว่าใครเป็นคนแก้ไขล่าสุด
       //
       this.dataReady = false
-      await this.editDataGlobal(
-        this.DNS_IP,
-        this.path,
-        this.PK,
-        this.formUpdateItem
-      )
 
       this.dataReady = false
       this.submitEdit(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
@@ -617,7 +648,6 @@ export default {
               this.dialogEdit = false
 
               // Load Data
-              await this.reloadData()
               await this.getDataGlobal(DNS_IP, PATH, this.$session.getAll().data.shopId)
             })
             // eslint-disable-next-line handle-callback-err
@@ -643,11 +673,10 @@ export default {
       this.deleteDataGlobal(this.DNS_IP, this.path, this.PK)
     },
     async clearData () {
-      for (var key in this.formAdd) {
-        if (this.formAdd[key]) {
-          this.formAdd[key] = ''
-        }
-      }
+      this.formAdd.masBranchCode = ''
+      this.formAdd.masBranchName = ''
+      this.formAdd.countCus = 0
+      this.formAdd.shopId = this.$session.getAll().data.shopId
     },
     // * Option Import Excel
     // * ตั้งค่าจาก Data
