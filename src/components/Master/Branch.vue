@@ -670,7 +670,7 @@ export default {
       //
       this.formUpdate.LAST_USER = this.$session.getAll().data.userName
       this.dataReady = false
-      this.deleteDataGlobal(this.DNS_IP, this.path, this.PK)
+      this.deleteDataGlobal(this.DNS_IP, this.path, this.PK, this.$session.getAll().data.shopId)
     },
     async clearData () {
       this.formAdd.masBranchCode = ''
