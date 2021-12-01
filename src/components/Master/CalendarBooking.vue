@@ -215,13 +215,12 @@ export default {
     }
   },
   async mounted () {
-    // await this.getBookingList()
     await this.getDataBranch()
   },
   methods: {
     getDataBranch () {
       this.DataBranchName = []
-      axios.get(this.DNS_IP + '/master_branch/get?shopId=' + this.$session.getAll().data.shopId).then(response => {
+      axios.get(this.DNS_IP + '/master_branch/get?shopId=' + this.$session.getAll().data.shopId).then(async response => {
         let rs = response.data
         if (rs.length > 0) {
           for (var i = 0; i < rs.length; i++) {
@@ -230,7 +229,9 @@ export default {
             d.value = d.masBranchName
             this.DataBranchName.push(d)
           }
-          this.masBranchName = this.DataBranchName[0].value
+          this.masBranchName = this.DataBranchName[0]
+          console.log('DataBranchName', this.DataBranchName)
+          await this.getBookingList()
         } else {
           this.DataBranchName = []
         }
