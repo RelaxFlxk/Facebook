@@ -46,8 +46,8 @@
               <template v-slot:default>
                 <thead>
                   <tr style="background-color: #1b437c">
-                    <th class="text-center">สาขา</th>
-                    <th class="text-center">ชื่อ</th>
+                    <th class="text-left">สาขา</th>
+                    <th class="text-left">ชื่อ</th>
                     <th
                       class="text-center"
                       v-for="item in dataDate"
@@ -55,13 +55,24 @@
                     >
                       {{ item }}
                     </th>
+                    <th class="text-center">รวมทั้งหมด</th>
                   </tr>
                 </thead>
+                <tfoot>
+                  <tr style="background-color: #1b437c">
+                    <th class="text-left">รวมทั้งหมด</th>
+                    <th></th>
+                    <th class="text-center"></th>
+                    <th class="text-center"></th>
+                    <th class="text-center"></th>
+                    <th class="text-center"></th>
+                  </tr>
+               </tfoot>
                 <tbody>
                   <template v-for="item in datePushTest">
                     <tr v-for="itemB in item.value" :key="itemB">
-                      <td class="text-center">{{ item.masBranchName }}</td>
-                      <td class="text-center">{{ itemB.empStep }}</td>
+                      <td class="text-left">{{ item.masBranchName }}</td>
+                      <td class="text-left">{{ itemB.empStep }}</td>
                       <td
                         class="text-center"
                         v-for="item2 in itemB.value"

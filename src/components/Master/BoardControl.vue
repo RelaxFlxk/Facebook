@@ -3,10 +3,9 @@
     <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
     <v-main>
       <div class="pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4">
-
-            <v-col class="ma-2" id="text-Board">กระดานทำงาน</v-col>
-            <br>
-          <!-- <v-col cols="6" class="text-right" v-if="formUpdate.flowName">
+        <v-col class="ma-2" id="text-Board">กระดานทำงาน</v-col>
+        <br />
+        <!-- <v-col cols="6" class="text-right" v-if="formUpdate.flowName">
             <p id="textTitleB">
               {{ formUpdate.flowName }}
             </p>
@@ -53,7 +52,6 @@
           </v-col>
           <v-col cols="6" class="v-margit_button_right text-right">
             <v-btn
-
               class="ma-6 mt-5"
               id="textButton"
               text
@@ -70,7 +68,7 @@
               id="textButton"
               text
               depressed
-              @click="drawer = true"
+              @click="editLayout()"
             >
               <v-icon left>mdi-application-cog</v-icon>
               แก้ไข Layout
@@ -81,7 +79,7 @@
               id="textButton"
               text
               depressed
-              @click="drawer1 = true"
+              @click="editStep()"
             >
               <v-icon left>mdi-database-edit</v-icon>
               แก้ไข ขั้นตอน
@@ -96,42 +94,70 @@
           >
             นัดส่ง:
           </v-card-title>
+          <v-col cols="4">
+            <v-chip class="ma-2" color="#DE6467" text-color="white">
+              ภายใน 2 วัน
+            </v-chip>
 
-          <v-chip class="ma-2" color="#DE6467" text-color="white">
-            ภายใน 2 วัน
-          </v-chip>
+            <v-chip class="ma-2" color="#FED966" text-color="white">
+              ภายใน 4 วัน
+            </v-chip>
 
-          <v-chip class="ma-2" color="#FED966" text-color="white">
-            ภายใน 4 วัน
-          </v-chip>
-
-          <v-chip class="ma-2" color="#4F93D0" text-color="white">
-            มากกว่า 4 วัน
-          </v-chip>
-
+            <v-chip class="ma-2" color="#4F93D0" text-color="white">
+              มากกว่า 4 วัน
+            </v-chip>
+          </v-col>
           <!-- <v-col cols="8" class="text-right">
            <v-icon class="mr-1 text-right" color="#E65100" @click="SwitchCard()">
             mdi-format-align-justify
            </v-icon>
            List View
           </v-col> -->
-          <v-col cols="8" class="text-right">
-            {{ allJob.length }} records
-            <v-icon
-              class="mr-1 text-right"
+          <v-col cols="7" class="text-right" text color="#ABB1C7">
+            <v-btn
+              class="ma-6 mt-5"
+              id="textButton"
+              text
               color="#ABB1C7"
-              @click="SwitchCard()"
+              depressed
             >
+              {{ allJob.length }} records
+            </v-btn>
+            <v-icon color="#ABB1C7">
               mdi-power-on
             </v-icon>
-            <v-icon
-              class="mr-1 text-right"
-              color="#1B437C"
-              @click="SwitchCard()"
+            <v-btn
+              v-if="layout === 'grid'"
+              class="ma-6 mt-5"
+              id="textButton"
+              text
+              color="#ABB1C7"
+              depressed
+              @click="layout = 'list'"
             >
-              mdi-view-dashboard
-            </v-icon>
-            Grid View
+              <v-icon class="mr-1 text-right" color="#1B437C">
+                mdi-view-dashboard
+              </v-icon>
+              Grid View
+            </v-btn>
+            <v-btn
+              v-if="layout === 'list'"
+              class="ma-6 mt-5"
+              id="textButton"
+              text
+              color="#ABB1C7"
+              depressed
+              @click="layout = 'grid'"
+            >
+              <v-icon
+                class="mr-1 text-right"
+                color="#1B437C"
+                @click="SwitchCard()"
+              >
+                mdi-view-dashboard
+              </v-icon>
+              List View
+            </v-btn>
           </v-col>
         </v-row>
         <!-- <v-row
@@ -725,7 +751,9 @@
         </v-dialog>
         <!-- end add -->
 
+        <!-- GridView -->
         <div
+          v-if="layout === 'grid'"
           class="workRow"
           v-show="formUpdate.flowName && masBranchName !== ''"
         >
@@ -736,24 +764,28 @@
                 :key="indexitem"
               >
                 <v-card class="mb-2">
-                  <v-card
-                  id="cardTitle"
-                  elevation="12"
-                >
-                    <v-card-title
-                    class="ma-3"
-                    text
-                    color="#1B437C"
-                    >
-                      {{ item.stepTitle }} ({{
-                        allJob.filter(row => {
-                          return row.stepId == item.stepId
-                        }).length
-                      }})
+                  <v-card id="cardTitle" elevation="12">
+                    <v-card-title class="ma-3" text color="#1B437C">
+                      <v-row class=" allFrame pb-3">
+                        <v-col cols="8">
+                          <strong>{{ item.stepTitle }}</strong>
+                        </v-col>
+                        <v-col cols="4" class="text-right">
+                          <strong>{{
+                            allJob.filter(row => {
+                              return row.stepId == item.stepId
+                            }).length
+                          }}</strong>
+                          <v-icon color="#ABB1C7">
+                            mdi-dots-vertical
+                          </v-icon>
+                        </v-col>
+                      </v-row>
                     </v-card-title>
-</v-card>
+                  </v-card>
 
-                  <div class="mt-2"
+                  <div
+                    class="mt-2"
                     v-for="(itemsJob, indexJob) in allJob.filter(row => {
                       return row.stepId == item.stepId
                     })"
@@ -898,158 +930,168 @@
             </v-col>
           </v-row>
         </div>
-        <v-divider class="mx-4"></v-divider>
-        <!-- list view -->
-        <div v-for="(item, indexitem) in stepItemSelete" :key="indexitem">
-          <v-alert
-            class="allFrame pb-3 ml-4"
-            style="height: 38px;"
-            border="left"
-            elevation="2"
-          >
-            <v-row class=" allFrame pb-3">
-              <v-col cols="3">
-                {{ item.stepTitle }}
-              </v-col>
-              <v-col cols="9" class="text-right">
-                {{ item.stepTitle.length }}
-                <v-icon cols="10" class="text-right" color="#ABB1C7">
-                  mdi-dots-vertical
-                </v-icon>
-              </v-col>
-            </v-row>
-          </v-alert>
+
+        <!-- List view -->
+        <div v-if="layout === 'list'">
           <div
-            v-for="(itemsJob, indexJob) in allJob.filter(row => {
-              return row.stepId == item.stepId
-            })"
-            :key="indexJob"
+            class="mt-3"
+            v-for="(item, indexitem) in stepItemSelete"
+            :key="indexitem"
           >
-            <v-list-item>
-              <v-alert
-                class="allFrame pb-3"
-                style="height: 38px;"
-                color="cyan"
-                border="left"
-                elevation="2"
-                colored-border
-              >
-                <v-row class=" allFrame pb-3">
-                  <v-col cols="2">
-                    <!-- diffDate -->
-                    <v-chip
-                      v-if="parseInt(itemsJob.totalDateDiff) <= 2"
-                      class="ma-2"
-                      color="#DE6467"
-                      text-color="white"
-                      x-small
-                      draggable
-                      justify="center"
-                      align="center"
-                    >
-                      {{ itemsJob.totalDateDiff }} วัน
-                    </v-chip>
-                    <v-chip
-                      v-else-if="
-                        parseInt(itemsJob.totalDateDiff) <= 4 &&
-                          parseInt(itemsJob.totalDateDiff) >= 2
-                      "
-                      class="ma-2"
-                      color="#FED966"
-                      text-color="white"
-                      draggable
-                      x-small
-                      justify="center"
-                      align="center"
-                    >
-                      {{ itemsJob.totalDateDiff }} วัน
-                    </v-chip>
-                    <v-chip
-                      v-else-if="parseInt(itemsJob.totalDateDiff) >= 4"
-                      class="ma-2"
-                      color="#4F93D0"
-                      text-color="white"
-                      draggable
-                      x-small
-                      justify="center"
-                      align="center"
-                    >
-                      {{ itemsJob.totalDateDiff }} วัน
-                    </v-chip>
-                  </v-col>
-                  <!-- end diffDate -->
-                  <v-col cols="8" class="text-left">
-                    <v-chip
-                      outlined
-                      color="white"
-                      text-color="#212121"
-                      draggable
-                      small
-                      justify="center"
-                      align="center"
-                      v-for="(items, index) in JobDataItem.filter(row => {
-                        return row.jobId == itemsJob.jobId
-                      })"
-                      :key="index"
-                    >
-                      <strong>
-                        {{ items.fieldValue }}
-                      </strong>
-                    </v-chip>
-                  </v-col>
-                  <v-col cols="2" class="text-right">
-                    <!-- update satatus car -->
-                    <v-icon
-                      v-if="
-                        allJob.filter(row => {
+            <v-alert
+              class="allFrame pb-3 ml-4"
+              style="height: 38px;"
+              border="left"
+              elevation="2"
+            >
+              <v-row class=" allFrame pb-3">
+                <v-col cols="3">
+                  <strong>{{ item.stepTitle }}</strong>
+                </v-col>
+                <v-col cols="9" class="text-right">
+                  <strong>{{
+                    allJob.filter(row => {
+                      return row.stepId == item.stepId
+                    }).length
+                  }}</strong>
+                  <v-icon cols="10" class="text-right" color="#ABB1C7">
+                    mdi-dots-vertical
+                  </v-icon>
+                </v-col>
+              </v-row>
+            </v-alert>
+            <div
+              v-for="(itemsJob, indexJob) in allJob.filter(row => {
+                return row.stepId == item.stepId
+              })"
+              :key="indexJob"
+            >
+              <v-list-item>
+                <v-alert
+                  class="allFrame pb-3"
+                  style="height: 38px;"
+                  color="cyan"
+                  border="left"
+                  elevation="2"
+                  colored-border
+                >
+                  <v-row class=" allFrame pb-3">
+                    <v-col cols="2">
+                      <!-- diffDate -->
+                      <v-chip
+                        v-if="parseInt(itemsJob.totalDateDiff) <= 2"
+                        class="ma-2"
+                        color="#DE6467"
+                        text-color="white"
+                        x-small
+                        draggable
+                        justify="center"
+                        align="center"
+                      >
+                        {{ itemsJob.totalDateDiff }} วัน
+                      </v-chip>
+                      <v-chip
+                        v-else-if="
+                          parseInt(itemsJob.totalDateDiff) <= 4 &&
+                            parseInt(itemsJob.totalDateDiff) >= 2
+                        "
+                        class="ma-2"
+                        color="#FED966"
+                        text-color="white"
+                        draggable
+                        x-small
+                        justify="center"
+                        align="center"
+                      >
+                        {{ itemsJob.totalDateDiff }} วัน
+                      </v-chip>
+                      <v-chip
+                        v-else-if="parseInt(itemsJob.totalDateDiff) >= 4"
+                        class="ma-2"
+                        color="#4F93D0"
+                        text-color="white"
+                        draggable
+                        x-small
+                        justify="center"
+                        align="center"
+                      >
+                        {{ itemsJob.totalDateDiff }} วัน
+                      </v-chip>
+                    </v-col>
+                    <!-- end diffDate -->
+                    <v-col cols="8" class="text-left">
+                      <v-chip
+                        outlined
+                        color="white"
+                        text-color="#212121"
+                        draggable
+                        small
+                        justify="center"
+                        align="center"
+                        v-for="(items, index) in JobDataItem.filter(row => {
                           return row.jobId == itemsJob.jobId
-                        })[0].checkCar == 'False'
-                      "
-                      color="#9E9E9E"
-                      depressed
-                      @click="updateStatusCars(itemsJob.jobId, 'False')"
-                    >
-                      mdi-car
-                    </v-icon>
+                        })"
+                        :key="index"
+                      >
+                        <strong>
+                          {{ items.fieldValue }}
+                        </strong>
+                      </v-chip>
+                    </v-col>
+                    <v-col cols="2" class="text-right">
+                      <!-- update satatus car -->
+                      <v-icon
+                        v-if="
+                          allJob.filter(row => {
+                            return row.jobId == itemsJob.jobId
+                          })[0].checkCar == 'False'
+                        "
+                        color="#9E9E9E"
+                        depressed
+                        @click="updateStatusCars(itemsJob.jobId, 'False')"
+                      >
+                        mdi-car
+                      </v-icon>
 
-                    <v-icon
-                      v-else
-                      color="#4F93D0"
-                      depressed
-                      @click="updateStatusCars(itemsJob.jobId, 'True')"
-                    >
-                      mdi-car
-                    </v-icon>
-                    <!-- end update satatus car -->
-                    <v-icon
-                      large
-                      color="#DE6467"
-                      dark
-                      @click=";(dialogEdit = true), setUpdate(itemsJob)"
-                    >
-                      mdi-square-edit-outline
-                    </v-icon>
+                      <v-icon
+                        v-else
+                        color="#4F93D0"
+                        depressed
+                        @click="updateStatusCars(itemsJob.jobId, 'True')"
+                      >
+                        mdi-car
+                      </v-icon>
+                      <!-- end update satatus car -->
+                      <v-icon
+                        large
+                        color="#DE6467"
+                        dark
+                        @click=";(dialogEdit = true), setUpdate(itemsJob)"
+                      >
+                        mdi-square-edit-outline
+                      </v-icon>
 
-                    <v-icon
-                      large
-                      color="#FED966"
-                      @click=";(dialog = true), setUpdate(itemsJob)"
-                    >
-                      mdi-layers-triple
-                    </v-icon>
-                    <v-icon
-                      large
-                      color="#84C650"
-                      @click=";(dialogDelete = true), setUpdate(itemsJob)"
-                    >
-                      mdi-tag
-                    </v-icon>
-                  </v-col>
-                </v-row>
-              </v-alert>
-            </v-list-item>
+                      <v-icon
+                        large
+                        color="#FED966"
+                        @click=";(dialog = true), setUpdate(itemsJob)"
+                      >
+                        mdi-layers-triple
+                      </v-icon>
+                      <v-icon
+                        large
+                        color="#84C650"
+                        @click=";(dialogDelete = true), setUpdate(itemsJob)"
+                      >
+                        mdi-tag
+                      </v-icon>
+                    </v-col>
+                  </v-row>
+                </v-alert>
+              </v-list-item>
+            </div>
+            <br />
           </div>
-          <br>
         </div>
         <!-- END list view -->
       </div>
@@ -1075,6 +1117,7 @@ export default {
   data () {
     return {
       Layout: [],
+      layout: 'grid',
       breadcrumbs: [
         {
           text: 'Home',
@@ -1621,6 +1664,12 @@ export default {
         return moment(String(value)).format('YYYY-MM-DD')
       }
     },
+    async editStep () {
+      this.$router.push('/Master/Flow')
+    },
+    async editLayout () {
+      this.$router.push('/Master/WorkShop')
+    },
     async setUpdate (item) {
       console.log(this.formUpdate)
       console.log(item)
@@ -1887,7 +1936,6 @@ export default {
   font-style: normal;
   font-weight: bold;
   align-items: center;
-
 }
 #text-Board {
   position: absolute;
@@ -1898,12 +1946,12 @@ export default {
   line-height: 28px;
   display: flex;
   align-items: center;
-  color: #1B437C;
+  color: #1b437c;
 }
 #cardTitle {
   width: 224px;
   height: 50px;
-  background: #FFFFFF;
+  background: #ffffff;
   border-radius: 2px;
 }
 #v-text-editLayout {
