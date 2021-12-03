@@ -22,7 +22,7 @@
             small
           >
             <template v-slot:opposite>
-              <span>{{item.DTCREATE_DATE}}</span>
+              <span>{{format_dateNotime(item.DTCREATE_DATE)}}</span>
             </template>
             <v-card class="elevation-2 p-2">
               <v-card-title class="text-h6" style="color:#173053;">
@@ -31,7 +31,7 @@
                 <p style="margin-bottom: 0px; color:#173053;">ขั้นตอน {{item.stepTitle}}</p>
                 <p style="margin-bottom: 0px;"> ผู้รับผิดชอบ {{item.empStep}}</p>
                 <p style="margin-bottom: 0px;">เวลาการทำงาน {{item.timediff}} นาที</p>
-                <p style="margin-bottom: 0px;">วันที่เปลี่ยน {{item.DTLAST_DATE}}</p>
+                <p style="margin-bottom: 0px;">วันที่เปลี่ยน {{format_dateNotime(item.DTLAST_DATE)}}</p>
               </v-card-text>
             </v-card>
           </v-timeline-item>
@@ -170,8 +170,8 @@ export default {
               s.empStep = d.empStep
               s.endDate = d.endDate
               s.totalPrice = s.totalPrice
-              s.DTCREATE_DATE = d.DTCREATE_DATE.split(' ')[0]
-              s.DTLAST_DATE = d.DTLAST_DATE.split(' ')[0]
+              s.DTCREATE_DATE = d.CREATE_DATE
+              s.DTLAST_DATE = d.LAST_DATE
               s.stepTitle = d.stepTitle
               s.timediff = d.timediff
               this.timelineitem.push(s)

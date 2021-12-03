@@ -7,128 +7,55 @@
         <v-row>
           <v-col cols="12">
             <v-sheet tile height="54" class="d-flex">
- <v-col cols="3">
-    <v-select
-      v-model="masBranchName"
-      :items="BranchItem"
-      dense
-      outlined
-      hide-details
-      label="สาขา"
-      class="ma-3"
-    ></v-select>
-</v-col>
- <v-col cols="3">
-    <v-select
-      v-model="empStep"
-      :items="EmployeeItem"
-      dense
-      outlined
-      hide-details
-      label="พนักงาน"
-      class="ma-3"
-    ></v-select>
-</v-col>
-<v-col cols="6">
-     <date-range-picker
-            ref="picker"
-            :locale-data="{ firstDay: 1, format: 'yyyy-mm-dd' }"
-            v-model="dateRange"
-      />
-</v-col>
+                <v-col cols="3">
+                  <date-range-picker
+                  ref="picker"
+                  :locale-data="{ firstDay: 1, format: 'yyyy-mm-dd' }"
+                  v-model="dateRange"
+                  />
+
+                </v-col>
+                <v-col cols="2">
+                  <v-btn
+                    style="margin-bottom:20px;"
+                    small class="ma-2" color="#173053" dark
+                    @click="getBranch()"
+                  >
+                    ค้นหา
+                  </v-btn>
+                </v-col>
+                <v-col cols="7">
+                </v-col>
             </v-sheet>
           </v-col>
         </v-row>
 
         <v-divider class="mx-4"></v-divider>
         <v-row>
-          <center>
-          <v-col cols="12">
-            <v-row>
-            <v-col cols="6">
-              <center>
-              <v-card class="mx-auto" elevation="5">
-                <v-list-item two-line>
-                  <v-list-item-content>
-                      Total Job
-                  </v-list-item-content>
-                </v-list-item>
-
-                <v-card-text>
-                  <v-row align="center">
-                    <v-col class="text-h3" cols="12">{{dataItem.length}}/{{closeJob}}</v-col>
-                  </v-row>
-                </v-card-text>
-
-              </v-card>
-              </center>
-            </v-col>
-            </v-row>
-            <v-row>
-              <div cols="12" v-for="(items, index) in BranchItem" :key="index">
-            <v-col >
-              <center>
-              <v-card class="mx-auto" elevation="5">
-                <v-list-item two-line>
-                  <v-list-item-content>
-                      {{items.masBranchName}}
-                  </v-list-item-content>
-                </v-list-item>
-
-                <v-card-text>
-                  <v-row align="center">
-                    <v-col class="text-h3" cols="12">{{dataItem.length}}/{{closeJob}}</v-col>
-                  </v-row>
-                </v-card-text>
-
-              </v-card>
-              </center>
-            </v-col>
-              </div>
-            </v-row>
-          </v-col>
-          </center>
-        </v-row>
-        <v-divider class="mx-4"></v-divider>
-        <v-select
-          v-model="select"
-          :items="BranchItem"
-          dense
-          outlined
-          hide-details
-          @change="getselectBranch()"
-          label="สาขา"
-          class="ma-3"
-        ></v-select>
-         <v-row>
-           <v-col cols="6">
-              <v-card>
-                  <!-- <LinechartBranch></LinechartBranch> -->
-                  <CardBranch ref="modal1"></CardBranch>
-                <canvas id="myChartx"></canvas>
-            </v-card>
+          <v-col cols="6">
+            <LinechartBranch ref="modal2"></LinechartBranch>
           </v-col>
           <v-col cols="6">
-            <v-row>
-           <v-col cols="4">
-             <center>
-              <v-card class="mx-auto" elevation="5">
-                <v-list-item two-line>
-                  <v-list-item-content>
-                      หนองแขม
-                  </v-list-item-content>
-                </v-list-item>
-
-                <v-card-text>
-                  <v-row align="center">
-                    <v-col class="text-h5" cols="12">{{dataItem.length}}/{{stepCountAll}}</v-col>
-                  </v-row>
-                </v-card-text>
-
-              </v-card>
-             </center>
-            </v-col>
-              </v-row>
+              <CardBranch ref="modal1"></CardBranch>
+          </v-col>
+        </v-row>
+        <v-divider class="mx-4"></v-divider>
+            <v-select
+              v-model="masBranchName"
+              :items="BranchItem"
+              dense
+              outlined
+              hide-details
+              label="สาขา"
+              class="ma-3"
+              @change="getselectBranch()"
+            ></v-select>
+         <v-row>
+           <v-col cols="6">
+              <LinechartBranchSelect ref="modal3"></LinechartBranchSelect>
+          </v-col>
+          <v-col cols="6">
+            <CardBranchSelect ref="modal4"></CardBranchSelect>
           </v-col>
 
         </v-row>
@@ -152,6 +79,8 @@ import DateRangePicker from 'vue2-daterange-picker'
 // you need to import the CSS manually
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import CardBranch from './CardBranch.vue'
+import LinechartBranchSelect from './LinechartBranchSelect.vue'
+import CardBranchSelect from './CardBranchSelect.vue'
 
 export default {
   components: {
@@ -163,7 +92,9 @@ export default {
     ChartBarBase,
     LinechartBranch,
     DateRangePicker,
-    CardBranch
+    CardBranch,
+    LinechartBranchSelect,
+    CardBranchSelect
   },
   created () {
     setInterval(this.getNowGlobal, 1000)
@@ -238,11 +169,9 @@ export default {
     }
   },
   async mounted () {
-    console.log('shopId', this.shopId)
     this.dataReady = false
     await this.getDataBranch()
     await this.getEmpSelect()
-    await this.getDataCountStep()
   },
   methods: {
     async getEmpSelect () {
@@ -251,7 +180,6 @@ export default {
         .get(this.DNS_IP + '/empSelect/get?shopId=' + this.shopId)
         .then(async response => {
           let rs = response.data
-          console.log('rs', rs)
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
@@ -263,11 +191,17 @@ export default {
           }
         })
     },
+    getBranch () {
+      this.$refs.modal1.getBranchCard(this.masBranchName, this.dateRange)
+      this.$refs.modal2.getBranchLine(this.dateRange)
+    },
     getselectBranch () {
-      this.$refs.modal1.getBranch(this.select)
+      this.$refs.modal3.getBranchSelect(this.masBranchName, this.dateRange)
+      this.$refs.modal4.getBranchSelectCard(this.masBranchName, this.dateRange)
     },
     async getDataBranch () {
       this.BranchItem = []
+      this.masBranchName = ''
       await axios
         .get(this.DNS_IP + '/master_branch/get?shopId=' + this.shopId)
         .then(async (response) => {
@@ -275,45 +209,13 @@ export default {
           for (var i = 0; i < rs.length; i++) {
             var d = rs[i]
             d.text = d.masBranchName
-            d.value = d.masBranchId
+            d.value = d.masBranchName
             this.BranchItem.push(d)
           }
         })
         // eslint-disable-next-line handle-callback-err
         .catch((error) => {
           this.BranchItem = []
-        })
-    },
-    async getDataCountStep () {
-      this.dataReady = false
-      this.dataItem = []
-      this.totalJob = 0
-      this.closeJob = 0
-      // var Branch =
-      //   this.Branch === '' ? '' : '&masBranchId=' + this.Branch
-      await axios
-        .get(this.DNS_IP + '/job_log/getReport_branch'
-        )
-        .then(async (response) => {
-          console.log('dataItem', this.dataItem)
-          console.log('totalJob', this.totalJob)
-          console.log('closeJob', this.closeJob)
-          this.dataItem = response.data
-          let rs = this.dataItem
-          this.totalJob = rs.length
-          this.closeJob = rs.length
-          // for (var i = 0; i < rs.length; i++) {
-          //   var d = rs[i]
-          //   d.totalJob = this.totalJob += 1
-          //   d.closeJob = this.closeJob += 1
-          // }
-          console.log('dataItem', this.dataItem)
-          console.log('totalJob', this.totalJob)
-          console.log('closeJob', this.closeJob)
-        })
-        // eslint-disable-next-line handle-callback-err
-        .catch((error) => {
-          console.log(error)
         })
     }
   }

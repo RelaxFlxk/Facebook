@@ -17,9 +17,6 @@ export default {
       session: this.$session.getAll(),
       shopId: this.$session.getAll().data.shopId,
       chartData: null,
-      labels: [],
-      data: [],
-      Branchitems: [],
       dataitem: [],
       codeColor: ['#3333FF', '#FF0000', '#CC00FF', '#99FF00', '#6600FF', '#FFFF33', '#330033']
     }
@@ -27,64 +24,42 @@ export default {
   async mounted () {
   },
   methods: {
-    async getBranchLine (dateRange) {
+    async getBranchSelect (masBranchName, dateRange) {
+      this.dataitem = []
       let startDate = this.momenDate_1(dateRange.startDate)
       let endDate = this.momenDate_1(dateRange.endDate)
-      this.data = []
-      this.labels = []
-      this.dataitem = []
-      await this.getMasbranch()
+      // console.log('masBranchName', masBranchName)
       await axios.get(this.DNS_IP + '/job_log/getDashbord_total?startDate=' + startDate + '&endDate=' + endDate + '&shopId=' + this.shopId).then(response => {
         let rs = response.data
+        // console.log('rs', rs)
         if (rs.length > 0) {
           for (let i = 0; i < rs.length; i++) {
             let d = rs[i]
-            this.dataitem.push(d)
+            if (d.masBranchName === masBranchName) {
+              this.dataitem.push(d)
+            }
           }
           // console.log('this.dataitem', this.dataitem)
+          // console.log('this.dataitem', this.dataitem)
         }
+        this.getChart()
         // console.log('this.statusitem', this.statusitem)
-      })
-        .catch((error) => {
-          console.log('error function addDataGlobal : ', error)
-        })
-      await this.getChart()
-    },
-    async getMasbranch () {
-      this.Branchitems = []
-      await axios.get(this.DNS_IP + '/master_branch/get?shopId=' + this.shopId).then(response => {
-        let rs = response.data
-        for (let i = 0; i < rs.length; i++) {
-          let d = rs[i]
-          this.Branchitems.push(d.masBranchName)
-        }
-        // console.log('this.Branchitems', this.Branchitems)
       })
         .catch((error) => {
           console.log('error function addDataGlobal : ', error)
         })
     },
     async getChart () {
-      let item = []
       let datasetsitem = []
-      for (let i = 0; i < this.Branchitems.length; i++) {
-        let d = this.Branchitems[i]
-        item.push(this.dataitem.filter(row => row.masBranchName === d))
-      }
       // console.log('item', item)
-      for (let a = 0; a < item.length; a++) {
-        let d = item[a]
-        let s = {}
-        s.label = this.Branchitems[a]
-        s.data = d.map(item => { return item.totalJob })
-        s.fill = false
-        s.borderColor = this.codeColor[a]
-        s.tension = 0.1
-        // console.log('s', s)
-        datasetsitem.push(s)
-      }
-      const dupArr = this.dataitem.map(row => { return row.CREATE_DATE })
-      const labels = Array.from(new Set(dupArr))
+      let s = {}
+      s.label = this.dataitem[0].masBranchName
+      s.data = this.dataitem.map(item => { return item.totalJob })
+      s.fill = false
+      s.borderColor = '#FF0000'
+      s.tension = 0.1
+      datasetsitem.push(s)
+      const labels = this.dataitem.map(item => { return item.CREATE_DATE })
       this.chartData = {
         labels: labels,
         datasets: datasetsitem
