@@ -4,247 +4,327 @@
     <v-main>
       <div class="pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4">
         <v-row>
-          <v-col cols="6" class="text-left">
+          <v-col cols="6" class="text-left pa-0">
             <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
           </v-col>
         </v-row>
         <v-row>
           <!-- FromDataShow -->
-            <v-col clos="5">
-              <template>
+          <v-col clos="5" class="pa-0">
+            <template>
               <div class="text-center">
+                <v-form>
+                  <v-row>
+                    <v-col cols="12" class="pa-0">
+                      <v-sheet tile height="54" class="d-flex">
+                        <!-- เลือกขั้นตอนบริการ -->
+                        <v-col cols="12" sm="4">
+                          <v-select
+                            v-model="formAdd.flowCode"
+                            :items="editedItemSelete"
+                            label="เลือกขั้นตอนบริการ"
+                            dense
+                            outlined
+                            hide-details
+                            @change="flowfieldtest(formAdd.flowCode)"
+                          >
+                          </v-select>
+                        </v-col>
 
-              <v-form>
-              <v-row>
-                <v-col cols="12" >
-               <v-sheet tile height="54" class="d-flex">
-
-                 <!-- เลือกขั้นตอนบริการ -->
-                  <v-col cols="12" sm="4">
-                  <v-select
-                  v-model="formAdd.flowCode"
-                  :items="editedItemSelete"
-                  label="เลือกขั้นตอนบริการ"
-                  dense
-                  outlined
-                  hide-details
-                  @change="flowfieldtest(formAdd.flowCode)"
-                  >
-                  </v-select>
-                  </v-col>
-
-                  <!-- สาขา -->
-                    <v-col cols="12" sm="4">
-                    <v-select
-                      v-model="formAdd.masBranchID"
-                      :items="DataBranchName"
-                      @change="flowfieldtest()"
-                      dense
-                      outlined
-                      hide-details
-                      label="สาขา"
-                    ></v-select>
-                    </v-col>
-                   </v-sheet>
-                    <br>
+                        <!-- สาขา -->
+                        <v-col cols="12" sm="4">
+                          <v-select
+                            v-model="formAdd.masBranchID"
+                            :items="DataBranchName"
+                            @change="flowfieldtest()"
+                            dense
+                            outlined
+                            hide-details
+                            label="สาขา"
+                          ></v-select>
+                        </v-col>
+                      </v-sheet>
+                      <br />
                       <!-- <v-card v-show="formAdd.flowCode && formAdd.masBranchID !== '' "
                       class="mx-auto"
                       max-width="500"> -->
-                       <v-card v-show="formAdd.flowCode && formAdd.masBranchID !== '' "  max-width="450%">
-                          <v-container>
-                            <v-row justify="center">
-                              <v-col cols="6">
-                                <v-col style="margin-left: 1px;">
-                              <v-img :src="require('@/assets/newcarAdd.png')"></v-img>
+                      <v-card
+                        v-show="formAdd.flowCode && formAdd.masBranchID !== ''"
+                        max-width="450%"
+                      >
+                        <v-container>
+                          <v-row justify="center">
+                            <v-col cols="6" style="margin: auto 0;">
+                              <v-col style="margin-left: 1px;">
+                                <v-img
+                                  :src="require('@/assets/newcarAdd.png')"
+                                ></v-img>
                               </v-col>
                             </v-col>
-                              <v-col cols="6">
-                                 <v-col class="text-center">
-                              <v-img class="v_text_new" :src="require('@/assets/NewcarText.png')"></v-img>
+                            <v-col cols="6">
+                              <v-col class="text-center pa-0">
+                                <v-img
+                                  class="v_text_new"
+                                  :src="require('@/assets/NewcarText.png')"
+                                ></v-img>
                               </v-col>
-                              <div v-for="(p , index) in flowfieldNameitem" :key="index">
-                                <div v-show="p.conditionField === '' || p.conditionField === null ">
+                            <v-form ref="form_add" v-model="validAdd" lazy-validation>
+                              <div
+                                v-for="(p, index) in flowfieldNameitem"
+                                :key="index"
+                              >
+                                <div
+                                class="pa-0"
+                                  v-show="
+                                    p.conditionField === '' ||
+                                      p.conditionField === null
+                                  "
+                                >
                                   <div>
-                                  <div v-if="p.fieldType == 'text'">
-                                    <br>
-                                  <v-text-field
-                                     v-model="p.fieldValue"
-                                    :label="p.fieldName"
-                                    :rules ="[rules.required]"
-                                    outlined
-                                  ></v-text-field>
-                                  </div>
-                                  <div v-if="p.fieldType == 'number'">
-                                    <br>
-                                  <!-- <p>{{p.fieldName}}</p> -->
-                                  <v-text-field
-                                    v-model="p.fieldValue"
-                                    :label="p.fieldName"
-                                    :rules ="[rules.required]"
-                                    outlined
-                                  ></v-text-field>
-                                  </div>
-                                  <v-row>
-                                  <v-col cols="12" v-if="p.fieldType== 'Autocompletes'">
-                                    <p>{{p.fieldName}}</p>
-                                    <v-autocomplete
-                                      v-model="p.fieldValue"
-                                      :items="JSON.parse(p.optionField)"
-                                      dense
-                                      filled
-                                      label="Search"
-                                      :rules ="[rules.required]"
-                                    ></v-autocomplete>
-                                  </v-col>
-                                  <v-col cols="12" v-if="p.fieldType== 'Selects'">
-                                    <div>
-                                    <p>{{p.fieldName}}</p>
-                                    <v-select
-                                      v-model="p.fieldValue"
-                                      :items="JSON.parse(p.optionField)"
-                                      menu-props="auto"
-                                      label="Select"
-                                      hide-details
-                                      solo
-                                    ></v-select>
+                                    <div v-if="p.fieldType == 'text'">
+                                      <br />
+                                      <v-text-field
+                                        v-model="p.fieldValue"
+                                        :label="p.fieldName"
+                                        dense
+                                        :rules="[rules.required]"
+                                        outlined
+                                      ></v-text-field>
                                     </div>
-                                  </v-col>
-                                  </v-row>
-                                  <div v-if="p.fieldType== 'Radio'">
-                                    <br>
-                                    <v-container fluid>
-                                      <p>{{p.fieldName}}</p>
-                                      <v-radio-group
-                                      column
-                                      v-model="p.fieldValue">
-                                        <template v-slot:label>
-                                        </template>
-                                        <div v-for="radios in JSON.parse(p.optionField)" :key="radios.toISOString" class="text-center">
-                                        <v-radio
-                                          :label="radios.text"
-                                          :value="radios.value"
-                                        ></v-radio>
+                                    <div v-if="p.fieldType == 'number'">
+                                      <br />
+                                      <!-- <p>{{p.fieldName}}</p> -->
+                                      <v-text-field
+                                        v-model="p.fieldValue"
+                                        :label="p.fieldName"
+                                        dense
+                                        :rules="[rules.required]"
+                                        outlined
+                                      ></v-text-field>
+                                    </div>
+                                    <v-row>
+                                      <v-col
+                                        cols="12"
+                                        v-if="p.fieldType == 'Autocompletes'"
+                                      >
+                                        <p>{{ p.fieldName }}</p>
+                                        <v-autocomplete
+                                          v-model="p.fieldValue"
+                                          :items="JSON.parse(p.optionField)"
+                                          dense
+                                          filled
+                                          label="Search"
+                                          :rules="[rules.required]"
+                                        ></v-autocomplete>
+                                      </v-col>
+                                      <v-col
+                                        cols="12"
+                                        v-if="p.fieldType == 'Selects'"
+                                      >
+                                        <div>
+                                          <p>{{ p.fieldName }}</p>
+                                          <v-select
+                                            v-model="p.fieldValue"
+                                            :items="JSON.parse(p.optionField)"
+                                            menu-props="auto"
+                                            label="Select"
+                                            hide-details
+                                            outlined
+                                            dense
+                                          ></v-select>
                                         </div>
-                                      </v-radio-group>
-                                    </v-container>
-                                  </div>
+                                      </v-col>
+                                    </v-row>
+                                    <div v-if="p.fieldType == 'Radio'">
+                                      <br />
+                                      <v-container fluid>
+                                        <p>{{ p.fieldName }}</p>
+                                        <v-radio-group
+                                          column
+                                          v-model="p.fieldValue"
+                                        >
+                                          <template v-slot:label> </template>
+                                          <div
+                                            v-for="radios in JSON.parse(
+                                              p.optionField
+                                            )"
+                                            :key="radios.toISOString"
+                                            class="text-center"
+                                          >
+                                            <v-radio
+                                              :label="radios.text"
+                                              dense
+                                              :value="radios.value"
+                                            ></v-radio>
+                                          </div>
+                                        </v-radio-group>
+                                      </v-container>
+                                    </div>
                                   </div>
                                 </div>
-                                <div v-if="p.conditionField !== '' && flowfieldNameitem.filter((row) => { return row.fieldId === parseInt(p.conditionField)}).length > 0">
-                                  <div v-if="p.conditionValue === flowfieldNameitem.filter((row) => { return row.fieldId === parseInt(p.conditionField)})[0].fieldValue ">
-                                  <v-col cols="12" v-if="p.fieldType== 'Autocompletes'">
-                                    <p>{{p.fieldName}}</p>
-                                    <v-autocomplete
-                                      v-model="p.fieldValue"
-                                      :items="JSON.parse(p.optionField)"
-                                      dense
-                                      filled
-                                      label="Search"
-                                      :rules ="[rules.required]"
-                                    ></v-autocomplete>
-                                  </v-col>
-                                  <v-col cols="12" v-if="p.fieldType== 'Selects'">
-                                    <div>
-                                    <p>{{p.fieldName}}</p>
-                                    <v-select
-                                      v-model="p.fieldValue"
-                                      :items="JSON.parse(p.optionField)"
-                                      menu-props="auto"
-                                      label="Select"
-                                      hide-details
-                                      solo
-                                    ></v-select>
-                                    </div>
-                                    <div v-if="p.fieldType== 'Radio'">
-                                    <br>
-                                    <v-container fluid>
-                                      <p>{{p.fieldName}}</p>
-                                      <v-radio-group row
-                                      v-model="p.fieldValue">
-                                        <template v-slot:label>
-                                        </template>
-                                        <div v-for="radios in JSON.parse(p.optionField)" :key="radios.toISOString" class="text-center">
-                                        <v-radio
-                                          :label="radios.text"
-                                          :value="radios.value"
-                                        ></v-radio>
-                                        </div>
-                                      </v-radio-group>
-                                    </v-container>
-                                  </div>
-                                  </v-col>
+                                <div
+                                  v-if="
+                                    p.conditionField !== '' &&
+                                      flowfieldNameitem.filter(row => {
+                                        return (
+                                          row.fieldId ===
+                                          parseInt(p.conditionField)
+                                        );
+                                      }).length > 0
+                                  "
+                                >
+                                  <div
+                                    v-if="
+                                      p.conditionValue ===
+                                        flowfieldNameitem.filter(row => {
+                                          return (
+                                            row.fieldId ===
+                                            parseInt(p.conditionField)
+                                          );
+                                        })[0].fieldValue
+                                    "
+                                  >
+                                    <v-col
+                                      cols="12"
+                                      v-if="p.fieldType == 'Autocompletes'"
+                                    >
+                                      <p>{{ p.fieldName }}</p>
+                                      <v-autocomplete
+                                        v-model="p.fieldValue"
+                                        :items="JSON.parse(p.optionField)"
+                                        dense
+                                        filled
+                                        label="Search"
+                                        :rules="[rules.required]"
+                                      ></v-autocomplete>
+                                    </v-col>
+                                    <v-col
+                                      cols="12"
+                                      v-if="p.fieldType == 'Selects'"
+                                    >
+                                      <div>
+                                        <p>{{ p.fieldName }}</p>
+                                        <v-select
+                                          v-model="p.fieldValue"
+                                          :items="JSON.parse(p.optionField)"
+                                          menu-props="auto"
+                                          label="Select"
+                                          dense
+                                          hide-details
+                                          outlined
+                                        ></v-select>
+                                      </div>
+                                      <div v-if="p.fieldType == 'Radio'">
+                                        <br />
+                                        <v-container fluid>
+                                          <p>{{ p.fieldName }}</p>
+                                          <v-radio-group
+                                            row
+                                            v-model="p.fieldValue"
+                                          >
+                                            <template v-slot:label> </template>
+                                            <div
+                                              v-for="radios in JSON.parse(
+                                                p.optionField
+                                              )"
+                                              :key="radios.toISOString"
+                                              class="text-center"
+                                            >
+                                              <v-radio
+                                                :label="radios.text"
+                                                dense
+                                                :value="radios.value"
+                                              ></v-radio>
+                                            </div>
+                                          </v-radio-group>
+                                        </v-container>
+                                      </div>
+                                    </v-col>
                                   </div>
                                 </div>
                               </div>
+                              <br>
+                              <v-row>
+                                <v-col cols="6">
+                                  <v-menu
+                                    ref="menu"
+                                    v-model="menu"
+                                    :close-on-content-click="false"
+                                    transition="scale-transition"
+                                    offset-y
+                                    max-width="290px"
+                                    min-width="auto"
+                                  >
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-text-field
+                                        v-model="endDate"
+                                        label="วันที่นัดส่งรถลูกค้า"
+                                        persistent-hint
+                                        dense
+                                        outlined
+                                        required
+                                        :rules="[rules.required]"
+                                        prepend-icon="mdi-calendar"
+                                        v-bind="attrs"
+                                        v-on="on"
+                                      ></v-text-field>
+                                    </template>
+                                    <v-date-picker
+                                      v-model="endDate"
+                                      no-title
+                                      @input="menu = false"
+                                    ></v-date-picker>
+                                  </v-menu>
+                                </v-col>
 
-  <v-row>
-    <v-col cols="6">
-      <v-menu
-          ref="menu"
-          v-model="menu"
-          :close-on-content-click="false"
-          transition="scale-transition"
-          offset-y
-          max-width="290px"
-          min-width="auto"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="endDate"
-              label="วันที่นัดส่งรถลูกค้า"
-              persistent-hint
-              prepend-icon="mdi-calendar"
-              v-bind="attrs"
-              v-on="on"
-            ></v-text-field>
-          </template>
-          <v-date-picker
-            v-model="endDate"
-            no-title
-            @input="menu = false"
-          ></v-date-picker>
-        </v-menu>
-    </v-col>
-
-              <v-col cols="6">
-                <v-text-field
-                  v-model="endTime"
-                  label="เวลา"
-                  type="time"
-                  suffix=""
-                  required
-                ></v-text-field>
-              </v-col>
-            </v-row>
-
-                              <br/>
-                              <v-btn depressed dark color=red
-                              @click="addData()">
-                                  Save
-                                </v-btn>
-                                <v-btn depressed dark color="#1B437C"
-                              @click="clearData()">
-                                  Clear
-                                </v-btn>
-                              </v-col>
-                              <v-col cols="1"></v-col>
-                            </v-row>
-                          </v-container>
-                        </v-card>
-
-                </v-col>
-                </v-row>
-              </v-form>
-
-                   </div>
-              </template>
-            </v-col>
+                                <v-col cols="6">
+                                  <v-text-field
+                                    v-model="endTime"
+                                    label="เวลา"
+                                    type="time"
+                                    suffix=""
+                                    required
+                                    :rules="[rules.required]"
+                                    outlined
+                                    dense
+                                  ></v-text-field>
+                                </v-col>
+                              </v-row>
+                            </v-form>
+                              <div class="text-center">
+                              <v-btn
+                                depressed
+                                dark
+                                color="#1B437C"
+                                :disabled="!validAdd"
+                                @click="addData()"
+                              >
+                                รับรถใหม่
+                              </v-btn>
+                              <v-btn
+                                depressed
+                                dark
+                                color="red"
+                                @click="clearData()"
+                              >
+                                ล้างข้อมูล
+                              </v-btn>
+                              </div>
+                            </v-col>
+                            <v-col cols="1"></v-col>
+                          </v-row>
+                        </v-container>
+                      </v-card>
+                    </v-col>
+                  </v-row>
+                </v-form>
+              </div>
+            </template>
+          </v-col>
         </v-row>
-        </div>
+      </div>
     </v-main>
-
   </div>
-
 </template>
 
 <script>
@@ -356,54 +436,80 @@ export default {
     this.getDataBranch()
   },
   methods: {
+    validate (Action) {
+      switch (Action) {
+        case 'ADD':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_add.validate()
+          })
+          break
+        default:
+          break
+      }
+    },
     async getCustomField () {
       this.editedItemSelete = []
-      axios.get(this.DNS_IP + '/flow/get?shopId=' + this.shopId).then((response) => {
-        let rs = response.data
-        if (rs.length > 0) {
-          for (var i = 0; i < rs.length; i++) {
-            let d = rs[i]
-            d.text = d.flowName
-            d.value = d.flowCode
-            this.editedItemSelete.push(d)
+      axios
+        .get(this.DNS_IP + '/flow/get?shopId=' + this.shopId)
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              d.text = d.flowName
+              d.value = d.flowCode
+              this.editedItemSelete.push(d)
+            }
           }
-        }console.log(this.editedItemSelete)
-      })
+          console.log(this.editedItemSelete)
+        })
     },
     getDataBranch () {
       this.DataBranchName = []
       console.log('DataBranchName', this.DataBranchName)
-      axios.get(this.DNS_IP + '/master_branch/get?shopId=' + this.shopId).then(response => {
-        let rs = response.data
-        if (rs.length > 0) {
-          for (var i = 0; i < rs.length; i++) {
-            var d = rs[i]
-            d.text = d.masBranchName
-            d.value = d.masBranchID
-            this.DataBranchName.push(d)
+      axios
+        .get(this.DNS_IP + '/master_branch/get?shopId=' + this.shopId)
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              d.text = d.masBranchName
+              d.value = d.masBranchID
+              this.DataBranchName.push(d)
+            }
           }
-        }
-      })
+        })
     },
     flowfieldtest (item) {
       let itemIncustomField = []
-      axios.get(this.DNS_IP + '/flowField/get?flowCode=' + this.formAdd.flowCode + '&shopId=' + this.shopId).then((response) => {
-        let tt = response.data
-        // console.log('tt', tt)
-        let flowId = tt[0].flowId
-        let flowfieldName = []
-        flowfieldName = JSON.parse(tt[0].flowfieldName)
-        for (let a = 0; a < flowfieldName.length; a++) {
-          let d = flowfieldName[a]
-          itemIncustomField.push(d.fieldId)
-        }
-        this.getCustomfield(itemIncustomField, flowId)
-        // console.log('itemIncustomField', itemIncustomField)
-      })
+      axios
+        .get(
+          this.DNS_IP +
+            '/flowField/get?flowCode=' +
+            this.formAdd.flowCode +
+            '&shopId=' +
+            this.shopId
+        )
+        .then(response => {
+          let tt = response.data
+          // console.log('tt', tt)
+          let flowId = tt[0].flowId
+          let flowfieldName = []
+          flowfieldName = JSON.parse(tt[0].flowfieldName)
+          for (let a = 0; a < flowfieldName.length; a++) {
+            let d = flowfieldName[a]
+            itemIncustomField.push(d.fieldId)
+          }
+          this.getCustomfield(itemIncustomField, flowId)
+          // console.log('itemIncustomField', itemIncustomField)
+        })
     },
     async getCustomfield (item, flowId) {
       this.flowfieldNameitem = []
-      await axios.get(this.DNS_IP + '/customField/fieldId?fieldId=' + item)
+      await axios
+        .get(this.DNS_IP + '/customField/fieldId?fieldId=' + item)
         .then(async response => {
           let rs = response.data
           console.log('rs', rs)
@@ -434,30 +540,11 @@ export default {
             this.flowfieldNameitem.push(s)
             console.log('flowfieldNameitem', this.flowfieldNameitem)
           }
-          setTimeout(() => this.validate(), 500)
+          setTimeout(() => this.validate('ADD'), 500)
         })
-        .catch((error) => {
+        .catch(error => {
           console.log('error function addData : ', error)
         })
-    },
-    validate (Action) {
-      switch (Action) {
-        case 'ADD':
-          this.$nextTick(() => {
-            let self = this
-            self.$refs.form_add.validate()
-          })
-          break
-        case 'UPDATE':
-          this.$nextTick(() => {
-            let self = this
-            self.$refs.form_update.validate()
-          })
-          break
-
-        default:
-          break
-      }
     },
     async addData (p) {
       this.flowfieldNameitem[0].endDate = this.endDate
@@ -489,9 +576,18 @@ export default {
           update.showCard = d.showCard
           Add.push(update)
         } else {
-          if (fielditem.filter((row) => { return row.fieldId === parseInt(d.conditionField) }).length > 0) {
+          if (
+            fielditem.filter(row => {
+              return row.fieldId === parseInt(d.conditionField)
+            }).length > 0
+          ) {
             console.log('this', fielditem)
-            if (d.conditionValue === fielditem.filter((row) => { return row.fieldId === parseInt(d.conditionField) })[0].fieldValue) {
+            if (
+              d.conditionValue ===
+              fielditem.filter(row => {
+                return row.fieldId === parseInt(d.conditionField)
+              })[0].fieldValue
+            ) {
               update.masBranchID = this.formAdd.masBranchID
               update.CREATE_USER = update.CREATE_USER
               update.LAST_USER = update.LAST_USER
@@ -524,7 +620,7 @@ export default {
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
       })
-        .then(async (result) => {
+        .then(async result => {
           this.shopId = this.shopId
           this.endDate = this.endDate
           this.endTime = this.endTime
@@ -537,9 +633,10 @@ export default {
           await axios
             .post(
               // eslint-disable-next-line quotes
-              this.DNS_IP + '/job/add', Add
+              this.DNS_IP + "/job/add",
+              Add
             )
-            .then(async (response) => {
+            .then(async response => {
               // Debug response
               console.log('addDataGlobal DNS_IP + /job/add', response)
               console.log('data', response)
@@ -548,23 +645,25 @@ export default {
               }
               await axios
                 .post(
-                  this.DNS_IP + '/job/pushQr/' + response.data.jobNo, updateStatusSend
+                  this.DNS_IP + '/job/pushQr/' + response.data.jobNo,
+                  updateStatusSend
                 )
                 .then(
                   this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success'),
                   this.clearData()
                   // this.$router.push('/Master/FlowStep')
-                ).catch((error) => {
+                )
+                .catch(error => {
                   console.log('error function addDataGlobal : ', error)
                 })
             })
-          // eslint-disable-next-line handle-callback-err
-            .catch((error) => {
+            // eslint-disable-next-line handle-callback-err
+            .catch(error => {
               console.log('error function addDataGlobal : ', error)
               this.dataReady = true
             })
         })
-        .catch((error) => {
+        .catch(error => {
           console.log('error function addData : ', error)
           this.dataReady = true
         })
@@ -584,7 +683,6 @@ export default {
     }
   }
 }
-
 </script>
 <style scope>
 #margin {
@@ -592,7 +690,7 @@ export default {
   margin-bottom: 40px;
 }
 .v_text_edit {
-  Width: 255px;
-  Height: 52px;
+  width: 255px;
+  height: 52px;
 }
 </style>

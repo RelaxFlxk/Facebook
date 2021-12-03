@@ -8,559 +8,678 @@
             <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
           </v-col>
           <v-col cols="6" class="v-margit_button text-right">
-            <v-btn color="primary" depressed @click="dialogAdd = true, validate('ADD'), desserts = []">
+            <v-btn
+              color="primary"
+              depressed
+              @click="(dialogAdd = true), validate('ADD'), (desserts = [])"
+            >
               <v-icon left>mdi-text-box-plus</v-icon>
               Add
             </v-btn>
           </v-col>
         </v-row>
         <v-row>
-         <!-- step -->
-          <v-dialog v-model="dialogStep" persistent max-width="40%">
+          <!-- step -->
+          <v-dialog v-model="dialogStep" persistent max-width="70%">
             <v-card>
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
-              <v-card-text>
-                <v-container>
-                  <v-col class="text-right">
-                        <v-icon small color="#173053" @click="(dialogStep = false), clearData()">mdi-close</v-icon>
-                  </v-col>
-                  <v-row justify="center">
-                    <v-col cols="5">
-                     <v-card-text size="35px"><strong>ชื่อ FLOW : {{ formUpdate.flowName }}</strong></v-card-text>
+                <v-card-text>
+                  <v-container>
+                    <v-col class="text-right">
+                      <v-icon
+                        small
+                        color="#173053"
+                        @click="(dialogStep = false), clearData()"
+                        >mdi-close</v-icon
+                      >
                     </v-col>
-                    <v-col cols="12" class="v-margit_button text-center">
-                      <v-btn color="primary" depressed @click="dialogAddStepTitle = true">
-                        <v-icon left>mdi-text-box-plus</v-icon>
-                        Add StepTitle
-                      </v-btn>
-                    </v-col>
-                     <!-- ADD steptitle-->
-                    <v-dialog v-model="dialogAddStepTitle" persistent max-width="25%">
-                      <v-card>
-                        <v-card-text>
-                          <v-container>
-                            <v-col class="text-right">
-                              <v-icon small color="#173053" @click="(dialogAddStepTitle = false)">mdi-close</v-icon>
-                            </v-col>
-                            <v-row justify="center">
-
-                                <v-col cols="12" class="v-margit_text_add mt-1">
-                                  <center>
-                              <v-col>
-                                <v-img id="v_img_add" :src="require('@/assets/AddTitleStep.svg')"></v-img>
-                                </v-col>
-                                  </center>
-                                  <center>
-                              <v-col>
-                                <v-img class="v_text_add" :src="require('@/assets/Grouptitle.svg')"></v-img>
-                                </v-col>
-                                  </center>
-                              <v-col cols="12">
-                                <v-row style="height: 35px">
-                                <v-subheader id="subtext">หัวข้อ</v-subheader>
-                                </v-row>
-                                <v-row class="mt-5">
-                                <v-text-field
-                                  v-model="formAddStep.stepTitle"
-                                  placeholder="หัวข้อ"
-                                  dense
-                                  required
-                                ></v-text-field>
-                                </v-row>
-                              </v-col>
-                                <v-col id="margin">
-                                <v-row justify="center">
-                                <v-btn
-                                  dark
-                                  elevation="2"
-                                  x-large
-                                  color="#173053"
-                                  @click="addDataStep()"
-                                >
-                                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                                  เพิ่ม
-                                </v-btn>
-                                </v-row>
-                                </v-col>
-                                </v-col>
-
-                            </v-row>
-                          </v-container>
-                        </v-card-text>
-                      </v-card>
-                    </v-dialog>
-                    <!-- end ADD step -->
-
-                    <!--edit step -->
-                      <v-dialog v-model="dialogEditStep" persistent max-width="25%">
+                    <v-row class="mb-6" justify="center">
+                      <v-col md="auto">
+                        <v-img
+                        :src="require('@/assets/FlowStep.svg')"
+                      ></v-img>
+                      </v-col>
+                    </v-row>
+                    <v-row justify="center">
+                      <v-col md="auto">
+                        <h1 style="font-size:10vw;" class="underline-06">{{ formUpdate.flowName }}</h1>
+                      </v-col>
+                      <!-- ADD steptitle-->
+                      <v-dialog
+                        v-model="dialogAddStepTitle"
+                        persistent
+                        max-width="25%"
+                      >
                         <v-card>
-                          <v-form ref="form_update" v-model="validUpdate" lazy-validation>
                           <v-card-text>
                             <v-container>
                               <v-col class="text-right">
-                                    <v-icon color="#173053"  @click="(dialogEditStep = false)">mdi-close</v-icon>
+                                <v-icon
+                                  small
+                                  color="#173053"
+                                  @click="dialogAddStepTitle = false"
+                                  >mdi-close</v-icon
+                                >
                               </v-col>
                               <v-row justify="center">
-                                  <v-col cols="12" class="v-margit_text_add mt-1">
-                                    <center>
-                                <v-col>
-                                  <v-img id="v_img_edit" :src="require('@/assets/EditTitleNew.png')"></v-img>
+                                <v-col cols="12" class="v-margit_text_add mt-1">
+                                  <center>
+                                    <v-col>
+                                      <v-img
+                                        id="v_img_add"
+                                        :src="
+                                          require('@/assets/AddTitleStep.svg')
+                                        "
+                                      ></v-img>
+                                    </v-col>
+                                  </center>
+                                  <center>
+                                    <v-col>
+                                      <v-img
+                                        class="v_text_add"
+                                        :src="
+                                          require('@/assets/Grouptitle.svg')
+                                        "
+                                      ></v-img>
+                                    </v-col>
+                                  </center>
+                                  <v-col cols="12">
+                                    <v-row style="height: 35px">
+                                      <v-subheader id="subtext"
+                                        >หัวข้อ</v-subheader
+                                      >
+                                    </v-row>
+                                    <v-row class="mt-5">
+                                      <v-text-field
+                                        v-model="formAddStep.stepTitle"
+                                        placeholder="หัวข้อ"
+                                        dense
+                                        required
+                                      ></v-text-field>
+                                    </v-row>
                                   </v-col>
-                                    </center>
-                                    <center>
-                                <v-col>
-                                  <v-img id="v_text_edits" :src="require('@/assets/GroupEditTitle.svg')"></v-img>
-                                  </v-col>
-                                    </center>
-                                <v-col cols="12">
-                                  <v-row style="height: 55px">
-                                  <v-subheader id="subtext">ขั้นตอนบริการ</v-subheader>
-                                  </v-row>
-                                  <v-row style="height: 70px">
-                                  <v-text-field
-                                    v-model="formUpdateStep.stepTitle"
-                                    dense
-                                    required
-                                  ></v-text-field>
-                                  </v-row>
-                                </v-col>
                                   <v-col id="margin">
-                                  <v-row justify="center">
-                                  <v-btn
-                                    dark
-                                    elevation="2"
-                                    x-large
-                                    color="#173053"
-                                    @click="editStepTitle()"
-                                  >
-                                    <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                                    แก้ไข
-                                  </v-btn>
-                                  </v-row>
+                                    <v-row justify="center">
+                                      <v-btn
+                                        dark
+                                        elevation="2"
+                                        x-large
+                                        color="#173053"
+                                        @click="addDataStep()"
+                                      >
+                                        <v-icon left
+                                          >mdi-checkbox-marked-circle</v-icon
+                                        >
+                                        เพิ่ม
+                                      </v-btn>
+                                    </v-row>
                                   </v-col>
-                                  </v-col>
-
+                                </v-col>
                               </v-row>
                             </v-container>
                           </v-card-text>
+                        </v-card>
+                      </v-dialog>
+                      <!-- end ADD step -->
+
+                      <!--edit step -->
+                      <v-dialog
+                        v-model="dialogEditStep"
+                        persistent
+                        max-width="50%"
+                      >
+                        <v-card>
+                          <v-form
+                            ref="form_update"
+                            v-model="validUpdate"
+                            lazy-validation
+                          >
+                            <v-card-text>
+                              <v-container>
+                                <v-col class="text-right">
+                                  <v-icon
+                                    color="#173053"
+                                    @click="dialogEditStep = false"
+                                    >mdi-close</v-icon
+                                  >
+                                </v-col>
+                                <v-row justify="center">
+                                  <v-col
+                                    cols="12"
+                                    class="v-margit_text_add mt-1"
+                                  >
+                                    <center>
+                                      <v-col>
+                                        <v-img
+                                          id="v_img_edit"
+                                          :src="
+                                            require('@/assets/EditTitleNew.png')
+                                          "
+                                        ></v-img>
+                                      </v-col>
+                                    </center>
+                                    <center>
+                                      <v-col>
+                                        <v-img
+                                          id="v_text_edits"
+                                          :src="
+                                            require('@/assets/GroupEditTitle.svg')
+                                          "
+                                        ></v-img>
+                                      </v-col>
+                                    </center>
+                                    <v-col cols="12">
+                                      <v-row style="height: 55px">
+                                        <v-subheader id="subtext"
+                                          >ขั้นตอนบริการ</v-subheader
+                                        >
+                                      </v-row>
+                                      <v-row style="height: 70px">
+                                        <v-text-field
+                                          v-model="formUpdateStep.stepTitle"
+                                          dense
+                                          required
+                                        ></v-text-field>
+                                      </v-row>
+                                    </v-col>
+                                    <v-col id="margin">
+                                      <v-row justify="center">
+                                        <v-btn
+                                          dark
+                                          elevation="2"
+                                          x-large
+                                          color="#173053"
+                                          @click="editStepTitle()"
+                                        >
+                                          <v-icon left
+                                            >mdi-checkbox-marked-circle</v-icon
+                                          >
+                                          แก้ไข
+                                        </v-btn>
+                                      </v-row>
+                                    </v-col>
+                                  </v-col>
+                                </v-row>
+                              </v-container>
+                            </v-card-text>
                           </v-form>
                         </v-card>
                       </v-dialog>
                       <!-- end EDIT step -->
 
-                    <!-- datatable step -->
-                    <v-col cols="12">
-                       <v-row justify="center">
-                         <v-data-table
-                         class="table-striped table-bordered elevation-1"
+                      <!-- datatable step -->
+                      <v-col cols="12">
+                        <v-row justify="center">
+                          <v-data-table
+                            class="elevation-1 custom_table_class"
                             dense
                             :headers="columnsStep"
                             :items="stepItemSelete"
                             hide-default-footer
                           >
-                            <template  v-slot:[`item.actions2`]="{ item, index }">
-                    <v-btn v-show="index !== 0"
-                      color="green"
-                      fab
-                      x-small
-                      @click="actionUp(item.stepId)"
-                    >
-                      <v-icon color="#FFFFFF"> mdi-arrow-up-bold </v-icon>
-                    </v-btn>
-                    <v-btn
-                      color="red"
-                      fab
-                      x-small
-                      @click="actionDown(item.stepId)"
-                    >
-                      <v-icon color="#FFFFFF"> mdi-arrow-down-bold </v-icon>
-                    </v-btn>
-                  </template>
-                   <template v-slot:[`item.sendCard`]="{ item }">
-                    <v-checkbox
-                      false-value = 'False'
-                      true-value = 'True'
-                      v-model="item.sendCard"
-                    ></v-checkbox>
-                  </template>
-                  <template v-slot:[`item.action`]="{ item }">
-                    <v-btn
-                      color="question"
-                      fab
-                      dark
-                      x-small
-                      @click.stop="(dialogEditStep = true), getUpdate(item), validate('UPDATE')"
-                    >
-                      <v-icon color="#FFFFFF"> mdi-tools </v-icon>
-                    </v-btn>
-                    <v-btn
-                      color="red"
-                      dark
-                      fab
-                      x-small
-                      @click.stop="(dialogDeleteStepTitle = true), getUpdate(item)"
-                    >
-                      <v-icon> mdi-delete </v-icon>
-                    </v-btn>
-                  </template>
+                            <template
+                              v-slot:[`item.actions2`]="{ item, index }"
+                            >
+                              <v-btn
+                                v-show="index !== 0"
+                                color="173053"
+                                fab
+                                x-small
+                                outlined
+                                @click="actionUp(item.stepId)"
+                              >
+                                <v-icon color="#173053">
+                                  mdi-chevron-up
+                                </v-icon>
+                              </v-btn>
+                              <v-btn
+                                color="173053"
+                                fab
+                                x-small
+                                outlined
+                                @click="actionDown(item.stepId)"
+                              >
+                                <v-icon color="#173053">
+                                  mdi-chevron-down
+                                </v-icon>
+                              </v-btn>
+                            </template>
+                            <template v-slot:[`item.sendCard`]="{ item }">
+                              <v-checkbox
+                                false-value="False"
+                                true-value="True"
+                                v-model="item.sendCard"
+                              ></v-checkbox>
+                            </template>
+                            <template v-slot:[`item.action`]="{ item }">
+                              <v-btn
+                                color="question"
+                                fab
+                                dark
+                                x-small
+                                @click.stop="
+                                  (dialogEditStep = true),
+                                    getUpdate(item),
+                                    validate('UPDATE')
+                                "
+                              >
+                                <v-icon color="#FFFFFF"> mdi-tools </v-icon>
+                              </v-btn>
+                              <v-btn
+                                color="red"
+                                dark
+                                fab
+                                x-small
+                                @click.stop="
+                                  (dialogDeleteStepTitle = true),
+                                    getUpdate(item)
+                                "
+                              >
+                                <v-icon> mdi-delete </v-icon>
+                              </v-btn>
+                            </template>
                           </v-data-table>
                           <!-- delete step -->
-                          <v-dialog v-model="dialogDeleteStepTitle" max-width="500px">
-                              <v-card>
-                                <v-col class="text-center">
-                                  <!-- <v-img :src="require('@/assets/EditTitleStep.svg')"></v-img> -->
-                                  <v-icon color="#FD8087" class="mdi-48px"> mdi-minus-circle-outline </v-icon>
-                                  </v-col>
-                                <v-col class="text-center">
-                                  <h3 class="text-h6">คุณต้องการลบใช่หรือไม่</h3>
-                                </v-col>
-                                <v-col class="text-center">
-                                  <v-btn dark color="#FD8087" @click="deleteStepTitle()">ลบ</v-btn>
-                                  <v-btn dark color="#1B437C" @click="dialogDeleteStepTitle = false">ยกเลิก</v-btn>
-                                </v-col>
-                              </v-card>
-                            </v-dialog>
-                            <!-- END delete step -->
+                          <v-dialog
+                            v-model="dialogDeleteStepTitle"
+                            max-width="500px"
+                          >
+                            <v-card>
+                              <v-col class="text-center">
+                                <!-- <v-img :src="require('@/assets/EditTitleStep.svg')"></v-img> -->
+                                <v-icon color="#FD8087" class="mdi-48px">
+                                  mdi-minus-circle-outline
+                                </v-icon>
+                              </v-col>
+                              <v-col class="text-center">
+                                <h3 class="text-h6">คุณต้องการลบใช่หรือไม่</h3>
+                              </v-col>
+                              <v-col class="text-center">
+                                <v-btn
+                                  dark
+                                  color="#FD8087"
+                                  @click="deleteStepTitle()"
+                                  >ลบ</v-btn
+                                >
+                                <v-btn
+                                  dark
+                                  color="#1B437C"
+                                  @click="dialogDeleteStepTitle = false"
+                                  >ยกเลิก</v-btn
+                                >
+                              </v-col>
+                            </v-card>
+                          </v-dialog>
+                          <!-- END delete step -->
 
-                            <v-col cols="12" class="v-margit_button text-center">
-                      <v-btn color="primary" depressed @click="editDataStepTitle()">
-                        <v-icon left>mdi-text-box-plus</v-icon>
-                        save
-                      </v-btn>
-                    </v-col>
-
-                       </v-row>
-                    </v-col>
-                  </v-row>
-                  <br>
-                  <p></p>
-                </v-container>
-              </v-card-text>
+                          <v-col cols="12" class="v-margit_button text-center">
+                            <v-btn
+                              color="1B437C"
+                              depressed
+                              outlined
+                              @click="dialogAddStepTitle = true"
+                            >
+                              <v-icon left>mdi-text-box-plus</v-icon>
+                              เพิ่มขั้นตอน
+                            </v-btn>
+                            <v-btn
+                              color="1B437C"
+                              depressed
+                              dark
+                              @click="editDataStepTitle()"
+                            >
+                              <v-icon left>mdi-text-box-plus</v-icon>
+                              บันทึกข้อมูล
+                            </v-btn>
+                          </v-col>
+                        </v-row>
+                      </v-col>
+                    </v-row>
+                    <br />
+                    <p></p>
+                  </v-container>
+                </v-card-text>
               </v-form>
             </v-card>
           </v-dialog>
           <!-- end  -->
 
           <!-- add  -->
-          <v-dialog v-model="dialogAdd" persistent max-width="50%">
+          <v-dialog v-model="dialogAdd" persistent max-width="80%">
             <v-card>
               <v-form ref="form_add" v-model="validAdd" lazy-validation>
-              <v-card-text>
-                <v-container>
-                  <v-col class="text-right">
-                    <v-icon small color="#173053" @click="(dialogAdd = false), clearData()">mdi-close</v-icon>
-                  </v-col>
-                  <v-row justify="center">
-                    <v-col cols="5" class="text-center">
-                        <v-col class="text-center">
-                      <v-img  class="v-margit_img_reward" :src="require('@/assets/stepflowAdd.jpg')" max-width="330"></v-img>
-                      </v-col>
+                <v-card-text>
+                  <v-container>
+                    <v-col class="text-right">
+                      <v-icon
+                        small
+                        color="#173053"
+                        @click="(dialogAdd = false), clearData()"
+                        >mdi-close</v-icon
+                      >
                     </v-col>
+                    <v-row justify="center">
+                      <v-col cols="5" class="text-center">
+                        <v-col class="text-center" style="margin: auto 0;">
+                          <v-img
+                            class="v-margit_img_reward"
+                            :src="require('@/assets/stepflowAdd.jpg')"
+                            max-width="330"
+                          ></v-img>
+                        </v-col>
+                      </v-col>
 
                       <v-col cols="6" class="v-margit_text_add mt-1">
-                    <v-col class="text-center">
-                      <v-img class="v_text_add" :src="require('@/assets/Grouptitle.svg')"></v-img>
-                      </v-col>
-                    <v-col cols="12">
-                      <v-row style="height: 35px">
-                      <v-subheader id="subtext">title</v-subheader>
-                      </v-row>
-                      <v-row style="height: 70px">
-                      <v-text-field
-                        v-model="formAdd.flowName"
-                        placeholder="Title"
-                        dense
-                        required
-                        :rules="[
-                          rules.required
-                        ]"
-                      ></v-text-field>
-                      </v-row>
-                    </v-col>
-                    <v-col cols="12">
-                      <v-row style="height: 50px" justify="center">
-                      <v-btn
-                        color="primary"
-                        dark
-                        x-small
-                        @click="dialogAddField =true,editedItem.fieldName = '', editedItem.fieldId = ''"
-                        class="mb-2"
-                      >
-                        Register Field
-                      </v-btn>
-                      </v-row>
-                       <v-row justify="center">
-                         <v-data-table
-                            dense
-                            :headers="headers"
-                            :items="desserts"
-                            hide-default-footer
-                            class="elevation-1"
-                          >
-                            <template  v-slot:[`item.actions`]="{ item }">
-                              <v-icon
-                                small
-                                color="red"
-                                @click="deleteItem(item)"
-                              >
-                                mdi-delete
-                              </v-icon>
-                            </template>
-                            <template v-slot:[`item.showCard`]="{ item }">
-                            <v-simple-checkbox
-                              v-model="item.showCard"
-                            ></v-simple-checkbox>
-                          </template>
-                          </v-data-table>
-                          <v-dialog v-model="dialogDeleteF" max-width="500px">
+                        <v-col class="text-center">
+                          <v-img
+                            class="v_text_add"
+                            :src="require('@/assets/Grouptitle.svg')"
+                          ></v-img>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-row style="height: 35px">
+                            <v-subheader id="subtext">ชื่อขั้นตอน</v-subheader>
+                          </v-row>
+                          <v-row style="height: 70px">
+                            <v-text-field
+                              v-model="formAdd.flowName"
+                              placeholder="ชื่อขั้นตอน"
+                              dense
+                              required
+                              :rules="[rules.required]"
+                            ></v-text-field>
+                          </v-row>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-row style="height: 50px" justify="center">
+                            <v-btn
+                              color="primary"
+                              dark
+                              x-small
+                              @click="
+                                (dialogAddField = true),
+                                  (editedItem.fieldName = ''),
+                                  (editedItem.fieldId = '')
+                              "
+                              class="mb-2"
+                            >
+                              เพิ่ม ช่องกรอกข้อมูล
+                            </v-btn>
+                          </v-row>
+                          <v-row justify="center">
+                            <v-data-table
+                              dense
+                              :headers="headers"
+                              :items="desserts"
+                              hide-default-footer
+                              class="elevation-1 custom_table_class"
+                            >
+                              <template v-slot:[`item.actions`]="{ item }">
+                                <v-icon
+                                  small
+                                  color="#7F87A7"
+                                  @click="deleteItem(item)"
+                                >
+                                  mdi-delete
+                                </v-icon>
+                              </template>
+                              <template v-slot:[`item.showCard`]="{ item }">
+                                <v-checkbox
+                                  false-value="False"
+                                  true-value="True"
+                                  v-model="item.showCard"
+                                ></v-checkbox>
+                              </template>
+                            </v-data-table>
+                            <v-dialog
+                              v-model="dialogAddField"
+                              max-width="450px"
+                            >
                               <v-card>
-                                <v-card-title>คุณต้องการลบใช่หรือไม่</v-card-title>
-                                <v-card-actions>
-                                  <v-spacer></v-spacer>
-                                  <v-btn color="red" @click="dialogDeleteF = false">Cancel</v-btn>
-                                  <v-btn color="#173053" @click="deleteItemConfirm(item)">OK</v-btn>
-                                  <v-spacer></v-spacer>
-                                </v-card-actions>
-                              </v-card>
-                            </v-dialog>
-                          <v-dialog
-                                v-model="dialogAddField"
-                                max-width="450px"
-                              >
-                                <v-card>
-                                  <v-card-text>
-                                    <v-container>
-                                      <v-row>
-                                        <v-col
-                                          cols="12"
-                                        >
+                                <v-card-text>
+                                  <v-container>
+                                    <v-row>
+                                      <v-col cols="12">
                                         <center>
-                                        <v-col>
-                                          <v-img id="v-img-fieldName" :src="require('@/assets/maintenance.png')"></v-img>
-                                        </v-col>
+                                          <v-col>
+                                            <v-img
+                                              id="v-img-fieldName"
+                                              :src="
+                                                require('@/assets/maintenance.png')
+                                              "
+                                            ></v-img>
+                                          </v-col>
                                         </center>
                                         <v-row style="height: 35px">
-                                          <v-subheader id="subtext">Field Name</v-subheader>
+                                          <v-subheader id="subtext"
+                                            >ช่องกรอกข้อมูล</v-subheader
+                                          >
                                         </v-row>
-                                        <br>
+                                        <br />
                                         <v-row style="height: 50px">
-                                            <v-select
+                                          <v-select
                                             outlined
                                             v-model="editedItem.fieldName"
                                             :items="editedItemSelete"
                                             item-text="text"
                                             dense
                                             return-object
-                                            ></v-select>
-                                          </v-row>
-                                        </v-col>
-                                      </v-row>
-                                    </v-container>
-                                  </v-card-text>
+                                          ></v-select>
+                                        </v-row>
+                                      </v-col>
+                                    </v-row>
+                                  </v-container>
+                                </v-card-text>
 
-                                  <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn
+                                <v-card-actions>
+                                  <v-spacer></v-spacer>
+                                  <v-btn
                                     dark
-                                      color="#173053"
-                                       @click="dialogAddField =false"
-                                    >
-                                      Cancel
-                                    </v-btn>
-                                    <v-btn
+                                    color="#173053"
+                                    @click="dialogAddField = false"
+                                  >
+                                    ยกเลิก
+                                  </v-btn>
+                                  <v-btn
                                     dark
-                                      color="#173053"
-                                      @click="save(editedItem)"
-                                    >
-                                      Save
-                                    </v-btn>
-                                  </v-card-actions>
-                                </v-card>
-                              </v-dialog>
-                       </v-row>
-                    </v-col>
-                      <v-col id="margin">
-                      <v-row justify="center">
-                      <v-btn
-                        dark
-                        elevation="2"
-                        x-large
-                        color="#173053"
-                        :disabled="!validAdd"
-                        @click="addData()"
-                      >
-                        <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                        เพิ่ม
-                      </v-btn>
-                      </v-row>
+                                    color="#173053"
+                                    @click="save(editedItem)"
+                                  >
+                                    บันทึกข้อมูล
+                                  </v-btn>
+                                </v-card-actions>
+                              </v-card>
+                            </v-dialog>
+                          </v-row>
+                        </v-col>
+                        <br />
+                        <div class="text-center">
+                          <v-btn
+                            dark
+                            elevation="2"
+                            large
+                            color="#173053"
+                            :disabled="!validAdd"
+                            @click="addData()"
+                          >
+                            <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                            เพิ่ม
+                          </v-btn>
+                        </div>
                       </v-col>
-                      </v-col>
-
-                  </v-row>
-                </v-container>
-              </v-card-text>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
               </v-form>
             </v-card>
           </v-dialog>
           <!-- end add -->
 
           <!-- edit -->
-          <v-dialog v-model="dialogEdit" persistent max-width="50%">
+          <v-dialog v-model="dialogEdit" persistent max-width="80%">
             <v-card>
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
-              <v-card-text>
-                <v-container>
-                  <v-col class="text-right">
-                     <v-col class="text-right">
-                    <v-icon small color="#173053" @click="(dialogEdit = false), clearData()">mdi-close</v-icon>
-                  </v-col>
-                  </v-col>
-                  <v-row justify="center">
-                    <v-col cols="5" class="text-center">
-                        <v-col >
-                      <v-img id="v-img-cars" :src="require('@/assets/cars.png')"></v-img>
+                <v-card-text>
+                  <v-container>
+                    <v-col class="text-right">
+                      <v-col class="text-right">
+                        <v-icon
+                          small
+                          color="#173053"
+                          @click="(dialogEdit = false), clearData()"
+                          >mdi-close</v-icon
+                        >
                       </v-col>
                     </v-col>
+                    <v-row justify="center">
+                      <v-col cols="5" class="text-center"  style="margin: auto 0;">
+                        <v-col>
+                          <v-img
+                            id="v-img-cars"
+                            :src="require('@/assets/cars.png')"
+                          ></v-img>
+                        </v-col>
+                      </v-col>
 
                       <v-col cols="6" class="v-margit_text_add mt-1">
-                    <v-col class="text-center">
-                      <v-img id="v_text_edits" :src="require('@/assets/GroupEditTitle.svg')"></v-img>
-                      </v-col>
-                    <v-col cols="12">
-                      <v-row style="height: 35px">
-                      <v-subheader id="subtext">title</v-subheader>
-                      </v-row>
-                      <v-row style="height: 70px">
-                      <v-text-field
-                        v-model="formUpdate.flowName"
-                        dense
-                        required
-                        :rules="[
-                          rules.required
-                        ]"
-                      ></v-text-field>
-                      </v-row>
-                    </v-col>
-                    <v-col cols="12">
-                      <v-row style="height: 50px" justify="center">
-                      <v-btn
-                        color="primary"
-                        dark
-                        x-small
-                        @click="dialogEditField =true,editedItem2.fieldName = '', editedItem2.fieldId = ''"
-                        class="mb-2"
-                      >
-                        Register Field Edit
-                      </v-btn>
-                      </v-row>
-                       <v-row justify="center">
-                         <v-data-table
-                            dense
-                            :headers="headers"
-                            :items="desserts"
-                            hide-default-footer
-                            class="elevation-1"
-                          >
-                            <template  v-slot:[`item.actions`]="{ item }">
-                              <v-icon
-                                small
-                                color="red"
-                                @click="deleteItem(item)"
-                              >
-                                mdi-delete
-                              </v-icon>
-                            </template>
-                            <template v-slot:[`item.showCard`]="{ item }">
-                            <v-checkbox
-                            false-value = 'False'
-                            true-value = 'True'
-                            v-model="item.showCard"
-                          ></v-checkbox>
-                          </template>
-                          </v-data-table>
-                          <v-dialog v-model="dialogDeleteF" max-width="500px">
+                        <v-col class="text-center">
+                          <v-img
+                            id="v_text_edits"
+                            :src="require('@/assets/GroupEditTitle.svg')"
+                          ></v-img>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-row style="height: 35px">
+                            <v-subheader id="subtext">ชื่อขั้นตอน</v-subheader>
+                          </v-row>
+                          <v-row style="height: 70px">
+                            <v-text-field
+                              v-model="formUpdate.flowName"
+                              dense
+                              required
+                              :rules="[rules.required]"
+                            ></v-text-field>
+                          </v-row>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-row style="height: 50px" justify="center">
+                            <v-btn
+                              color="primary"
+                              dark
+                              x-small
+                              @click="
+                                (dialogEditField = true),
+                                  (editedItem2.fieldName = ''),
+                                  (editedItem2.fieldId = '')
+                              "
+                              class="mb-2"
+                            >
+                              เพิ่ม ช่องกรอกข้อมูล
+                            </v-btn>
+                          </v-row>
+                          <v-row justify="center">
+                            <v-data-table
+                              dense
+                              :headers="headers"
+                              :items="desserts"
+                              hide-default-footer
+                              class="elevation-1 custom_table_class"
+                            >
+                              <template v-slot:[`item.actions`]="{ item }">
+                                <v-icon
+                                  small
+                                  color="#7F87A7"
+                                  @click="deleteItem(item)"
+                                >
+                                  mdi-delete
+                                </v-icon>
+                              </template>
+                              <template v-slot:[`item.showCard`]="{ item }">
+                                <v-checkbox
+                                  false-value="False"
+                                  true-value="True"
+                                  v-model="item.showCard"
+                                ></v-checkbox>
+                              </template>
+                            </v-data-table>
+                            <v-dialog
+                              v-model="dialogEditField"
+                              max-width="500px"
+                            >
                               <v-card>
-                                <v-card-title>คุณต้องการลบใช่หรือไม่</v-card-title>
-                                <v-card-actions>
-                                  <v-spacer></v-spacer>
-                                  <v-btn color="red" @click="dialogDeleteF = false">Cancel</v-btn>
-                                  <v-btn color="#173053" @click="deleteItemConfirm(item)">OK</v-btn>
-                                  <v-spacer></v-spacer>
-                                </v-card-actions>
-                              </v-card>
-                            </v-dialog>
-                          <v-dialog
-                                v-model="dialogEditField"
-                                max-width="500px"
-                              >
-                                <v-card>
-                                  <v-card-text>
-                                    <v-container>
-                                      <v-row>
-                                        <v-col
-                                          cols="12"
-                                        >
+                                <v-card-text>
+                                  <v-container>
+                                    <v-row>
+                                      <v-col cols="12">
                                         <center>
-                                        <v-col>
-                                          <v-img id="v-img-fieldName" :src="require('@/assets/maintenance.png')"></v-img>
-                                        </v-col>
+                                          <v-col>
+                                            <v-img
+                                              id="v-img-fieldName"
+                                              :src="
+                                                require('@/assets/maintenance.png')
+                                              "
+                                            ></v-img>
+                                          </v-col>
                                         </center>
                                         <v-row style="height: 35px">
-                                          <v-subheader id="subtext">Field Name</v-subheader>
+                                          <v-subheader id="subtext"
+                                            >ช่องกรอกข้อมูล</v-subheader
+                                          >
                                         </v-row>
                                         <v-row style="height: 50px">
-                                            <v-select
+                                          <v-select
                                             v-model="editedItem2.fieldName"
                                             :items="editedItemSelete"
                                             item-text="text"
                                             dense
                                             return-object
-                                            ></v-select>
-                                          </v-row>
-                                        </v-col>
-                                      </v-row>
-                                    </v-container>
-                                  </v-card-text>
+                                          ></v-select>
+                                        </v-row>
+                                      </v-col>
+                                    </v-row>
+                                  </v-container>
+                                </v-card-text>
 
-                                  <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn
-                                      color="#173053"
-                                       @click="dialogEditField =false"
-                                    >
-                                      Cancel
-                                    </v-btn>
-                                    <v-btn
-                                      color="#173053"
-                                      @click="save(editedItem2)"
-                                    >
-                                      Save
-                                    </v-btn>
-                                  </v-card-actions>
-                                </v-card>
-                              </v-dialog>
-                       </v-row>
-                    </v-col>
-                      <v-col id="margin">
-                      <v-row justify="center">
-                      <v-btn
-                        dark
-                        elevation="2"
-                        x-large
-                        color="#173053"
-                        :disabled="!validUpdate"
-                        @click="editData()"
-                      >
-                        <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                        แก้ไข
-                      </v-btn>
-                      </v-row>
+                                <v-card-actions>
+                                  <v-spacer></v-spacer>
+                                  <v-btn
+                                    color="#173053"
+                                    dark
+                                    @click="dialogEditField = false"
+                                  >
+                                    ยกเลิก
+                                  </v-btn>
+                                  <v-btn
+                                    color="#173053"
+                                    dark
+                                    @click="save(editedItem2)"
+                                  >
+                                    บันทึกข้อมูล
+                                  </v-btn>
+                                </v-card-actions>
+                              </v-card>
+                            </v-dialog>
+                          </v-row>
+                        </v-col>
+                        <v-col id="margin">
+                          <v-row justify="center">
+                            <v-btn
+                              dark
+                              elevation="2"
+                              x-large
+                              color="#173053"
+                              :disabled="!validUpdate"
+                              @click="editData()"
+                            >
+                              <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                              แก้ไข
+                            </v-btn>
+                          </v-row>
+                        </v-col>
                       </v-col>
-                      </v-col>
-
-                  </v-row>
-                </v-container>
-              </v-card-text>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
               </v-form>
             </v-card>
           </v-dialog>
@@ -569,10 +688,14 @@
           <!-- delete -->
           <v-dialog v-model="dialogDelete" max-width="355px">
             <v-card>
-              <br>
+              <br />
               <v-row class="mb-6" justify="center">
                 <v-col md="auto">
-                  <v-img :src="require('@/assets/GroupDelete.png')" class="a" style="width:55.05px;height:63px"></v-img>
+                  <v-img
+                    :src="require('@/assets/GroupDelete.png')"
+                    class="a"
+                    style="width:55.05px;height:63px"
+                  ></v-img>
                 </v-col>
               </v-row>
               <v-col class="text-center">
@@ -623,7 +746,7 @@
           <!-- end delete -->
 
           <!-- data table -->
-         <v-col cols="12">
+          <v-col cols="12">
             <v-card elevation="7" v-if="dataReady">
               <v-card-title>
                 <v-text-field
@@ -640,19 +763,22 @@
                   :items="dataItem"
                   :search="searchAll2"
                 >
-                   <template v-slot:[`item.CREATE_DATE`]="{ item }">
-                      {{ format_dateNotime(item.CREATE_DATE) }}
+                  <template v-slot:[`item.CREATE_DATE`]="{ item }">
+                    {{ format_dateNotime(item.CREATE_DATE) }}
                   </template>
                   <template v-slot:[`item.LAST_DATE`]="{ item }">
-                      {{ format_dateNotime(item.LAST_DATE) }}
+                    {{ format_dateNotime(item.LAST_DATE) }}
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
                     <v-btn
                       color="#4CAF50"
                       fab
                       x-small
-                      @click="(dialogStep = true), getDataById(item), getStepFlow(item)"
-
+                      @click="
+                        (dialogStep = true),
+                          getDataById(item),
+                          getStepFlow(item)
+                      "
                     >
                       <v-icon color="#FFFFFF"> mdi-debug-step-over </v-icon>
                     </v-btn>
@@ -661,7 +787,11 @@
                       fab
                       dark
                       x-small
-                      @click.stop="(dialogEdit = true), getDataById(item), validate('UPDATE')"
+                      @click.stop="
+                        (dialogEdit = true),
+                          getDataById(item),
+                          validate('UPDATE')
+                      "
                     >
                       <v-icon> mdi-tools </v-icon>
                     </v-btn>
@@ -687,7 +817,7 @@
           </v-col>
           <!-- end data table -->
         </v-row>
-        </div>
+      </div>
     </v-main>
   </div>
 </template>
@@ -827,31 +957,19 @@ export default {
         LAST_USER: ''
       },
       columnsStep: [
+        { text: 'AC', value: 'sendCard' },
         { text: 'ID', value: 'stepId' },
-        { text: 'Title', value: 'stepTitle' },
+        { text: 'Title', value: 'stepTitle', align: 'center' },
         { text: ' ', value: 'actions2', sortable: false, align: 'center' },
-        { text: 'Action', value: 'action', sortable: false, align: 'center' },
-        { text: 'AC', value: 'sendCard' }
+        { text: 'Action', value: 'action', sortable: false, align: 'center' }
       ],
       sendCard: false,
       headers: [
-        { text: 'Show', value: 'showCard' },
+        { text: 'แสดงข้อมูลในการ์ด', value: 'showCard', sortable: false, align: 'center' },
         { text: 'ข้อมูล', value: 'fieldName' },
-        { text: '  ', value: 'actions', sortable: false }
+        { text: 'ลบข้อมูล', value: 'actions', sortable: false }
       ],
       sortBy: false,
-      headers2: [
-        {
-          text: 'Field Id',
-          value: 'fieldId'
-        },
-        {
-          text: 'Field Name',
-          value: 'fieldName'
-        },
-        { text: ' ', value: 'actions', sortable: false },
-        { text: ' ', value: 'actions2', sortable: false }
-      ],
       desserts: [],
       editedItemSelete: [],
       editedItem: {
@@ -951,13 +1069,13 @@ export default {
             }
           }
         )
-        .then(async (response) => {
+        .then(async response => {
           // Debug response
           console.log('addDataGlobal DNS_IP + PATH + "add"', response)
           this.getStepFlow(flowId)
         })
-      // eslint-disable-next-line handle-callback-err
-        .catch((error) => {
+        // eslint-disable-next-line handle-callback-err
+        .catch(error => {
           console.log('error function addDataGlobal : ', error)
           this.dataReady = true
         })
@@ -968,28 +1086,48 @@ export default {
     },
     async getCustomField () {
       this.editedItemSelete = []
-      axios.get(this.DNS_IP + '/customField/get?shopId=' + this.shopId).then((response) => {
-        let rs = response.data
-        if (rs.length > 0) {
-          for (var i = 0; i < rs.length; i++) {
-            var d = rs[i]
-            d.text = d.fieldName
-            d.value = d.fieldName
-            d.showCard = d.showCard
+      axios
+        .get(this.DNS_IP + '/customField/get?shopId=' + this.shopId)
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              d.text = d.fieldName
+              d.value = d.fieldName
+              d.showCard = d.showCard
 
-            this.editedItemSelete.push(d)
+              this.editedItemSelete.push(d)
+            }
           }
-        }
-      })
+        })
     },
     deleteItem (item) {
-      this.editedItemSelete.push(item)
-      var x = this.desserts.indexOf(item)
-      this.$delete(this.desserts, x)
+      console.log('item', item)
+      this.$swal({
+        title: 'ต้องการ ลบข้อมูล ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async result => {
+          this.editedItemSelete.push({
+            text: item.fieldName,
+            value: item.fieldName
+          })
+          var x = this.desserts.indexOf(item)
+          this.$delete(this.desserts, x)
+        })
     },
     save (item) {
       console.log(item.fieldName.fieldId)
-      this.desserts.push({fieldId: item.fieldName.fieldId, fieldName: item.fieldName.fieldName})
+      this.desserts.push({
+        fieldId: item.fieldName.fieldId,
+        fieldName: item.fieldName.fieldName
+      })
       console.log(this.desserts)
       var x = this.editedItemSelete.indexOf(item.fieldName)
       this.$delete(this.editedItemSelete, x)
@@ -1018,19 +1156,27 @@ export default {
     getStepFlow (dt) {
       this.stepItemSelete = []
       this.formAddStep.flowId = dt.flowId
-      axios.get(this.DNS_IP + '/flowStep/get?flowId=' + dt.flowId + '&shopId=' + this.shopId).then((response) => {
-        let rs = response.data
-        if (rs.length > 0) {
-          for (var i = 0; i < rs.length; i++) {
-            var d = rs[i]
-            d.text = d.stepTitle
-            d.value = d.stepTitle
-            d.sendCard = d.sendCard || 'False'
-            this.stepItemSelete.push(d)
-            this.formUpdateStep.stepTitle = response.data.stepTitle
+      axios
+        .get(
+          this.DNS_IP +
+            '/flowStep/get?flowId=' +
+            dt.flowId +
+            '&shopId=' +
+            this.shopId
+        )
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              d.text = d.stepTitle
+              d.value = d.stepTitle
+              d.sendCard = d.sendCard || 'False'
+              this.stepItemSelete.push(d)
+              this.formUpdateStep.stepTitle = response.data.stepTitle
+            }
           }
-        }
-      })
+        })
     },
     getField (dt) {
       console.log(dt)
@@ -1038,8 +1184,10 @@ export default {
       axios
         .post(
           // eslint-disable-next-line quotes
-          this.DNS_IP + '/flow/getCustomfield', dt
-        ).then((response) => {
+          this.DNS_IP + "/flow/getCustomfield",
+          dt
+        )
+        .then(response => {
           let rs = response.data
           console.log(rs)
           if (rs.length > 0) {
@@ -1063,14 +1211,20 @@ export default {
       await axios
         .get(
           // eslint-disable-next-line quotes
-          this.DNS_IP + this.path + "getCode?" + 'flowCode' + "=" + item.flowCode + '&shopId=' + this.shopId,
+          this.DNS_IP +
+            this.path +
+            'getCode?' +
+            'flowCode=' +
+            item.flowCode +
+            '&shopId=' +
+            this.shopId,
           {
             headers: {
               'Application-Key': this.$session.getAll().ApplicationKey
             }
           }
         )
-        .then(async (response) => {
+        .then(async response => {
           console.log('get flowCode : ', response.data[0].flowfieldName)
           this.dataReady = true
           if (response.data) {
@@ -1090,7 +1244,7 @@ export default {
           }
         })
         // eslint-disable-next-line handle-callback-err
-        .catch((error) => {
+        .catch(error => {
           this.dataReady = true
           console.log('error function getDataById : ', error)
         })
@@ -1115,7 +1269,7 @@ export default {
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
       })
-        .then(async (result) => {
+        .then(async result => {
           this.formAdd.CREATE_USER = this.session.data.userName
           this.formAdd.LAST_USER = this.session.data.userName
           this.formAdd.flowCode = this.generateCodeGlobal()
@@ -1135,24 +1289,28 @@ export default {
                 }
               }
             )
-            .then(async (response) => {
+            .then(async response => {
               // Debug response
               console.log('addDataGlobal DNS_IP + PATH + "add"', response)
               // Close Dialog
               this.dialogAdd = false
 
               // Load Data
-              await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
+              await this.getDataGlobal(
+                this.DNS_IP,
+                this.path,
+                this.session.data.shopId
+              )
               this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
               this.clearData()
             })
-          // eslint-disable-next-line handle-callback-err
-            .catch((error) => {
+            // eslint-disable-next-line handle-callback-err
+            .catch(error => {
               console.log('error function addDataGlobal : ', error)
               this.dataReady = true
             })
         })
-        .catch((error) => {
+        .catch(error => {
           console.log('error function addData : ', error)
           this.dataReady = true
         })
@@ -1169,7 +1327,7 @@ export default {
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
       })
-        .then(async (result) => {
+        .then(async result => {
           this.formAddStep.CREATE_USER = this.session.data.userName
           this.formAddStep.LAST_USER = this.session.data.userName
           delete this.formAddStep['stepId']
@@ -1190,7 +1348,7 @@ export default {
                 }
               }
             )
-            .then(async (response) => {
+            .then(async response => {
               // Debug response
               console.log('addDataGlobal DNS_IP + PATH + "add"', response)
               // Close Dialog
@@ -1199,16 +1357,20 @@ export default {
               this.getStepFlow(this.formAddStep)
 
               // Load Data
-              await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
+              await this.getDataGlobal(
+                this.DNS_IP,
+                this.path,
+                this.session.data.shopId
+              )
               this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
             })
-          // eslint-disable-next-line handle-callback-err
-            .catch((error) => {
+            // eslint-disable-next-line handle-callback-err
+            .catch(error => {
               console.log('error function addDataGlobal : ', error)
               this.dataReady = true
             })
         })
-        .catch((error) => {
+        .catch(error => {
           console.log('error function addDataStep : ', error)
           this.dataReady = true
         })
@@ -1232,7 +1394,7 @@ export default {
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
       })
-        .then(async (result) => {
+        .then(async result => {
           this.formUpdate.LAST_USER = this.session.data.userName
           this.formUpdate.flowfieldName = JSON.stringify(fieldId)
           var ID = this.formUpdate.flowId
@@ -1248,7 +1410,7 @@ export default {
               this.DNS_IP + this.path + "edit/" + ID,
               this.formUpdate
             )
-            .then(async (response) => {
+            .then(async response => {
               // Debug response
               console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
               // Close Dialog
@@ -1256,30 +1418,43 @@ export default {
               for (let i = 0; i < this.desserts.length; i++) {
                 let d = this.desserts[i]
                 let showcarditem = {}
-                if (d.showCard === undefined || d.showCard === '' || d.showCard === null || d.showCard === 'False') {
+                if (
+                  d.showCard === undefined ||
+                  d.showCard === '' ||
+                  d.showCard === null ||
+                  d.showCard === 'False'
+                ) {
                   showcarditem.showCard = 'False'
                   console.log('1')
                 } else {
                   showcarditem.showCard = d.showCard
                   console.log('2')
                 }
-                axios.post(this.DNS_IP + '/customField/edit/' + d.fieldId, showcarditem).then(response => {
-                })
+                axios
+                  .post(
+                    this.DNS_IP + '/customField/edit/' + d.fieldId,
+                    showcarditem
+                  )
+                  .then(response => {})
                   .catch(error => {
                     console.log('error function addData : ', error)
                   })
               }
               // Load Data
-              await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
+              await this.getDataGlobal(
+                this.DNS_IP,
+                this.path,
+                this.session.data.shopId
+              )
               this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
             })
             // eslint-disable-next-line handle-callback-err
-            .catch((error) => {
+            .catch(error => {
               this.dataReady = true
               console.log('error function editDataGlobal : ', error)
             })
         })
-        .catch((error) => {
+        .catch(error => {
           this.dataReady = true
           console.log('error function editDataGlobal : ', error)
         })
@@ -1296,7 +1471,7 @@ export default {
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
       })
-        .then(async (result) => {
+        .then(async result => {
           console.log('formUpdateStep', this.formUpdateStep)
           console.log('shopId', this.shopId)
           await axios
@@ -1310,20 +1485,24 @@ export default {
                 }
               }
             )
-            .then(async (response) => {
+            .then(async response => {
               // Debug response
               console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
               this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
               this.dialogStep = false
-              await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
+              await this.getDataGlobal(
+                this.DNS_IP,
+                this.path,
+                this.session.data.shopId
+              )
             })
             // eslint-disable-next-line handle-callback-err
-            .catch((error) => {
+            .catch(error => {
               this.dataReady = true
               console.log('error function editDataGlobal : ', error)
             })
         })
-        .catch((error) => {
+        .catch(error => {
           this.dataReady = true
           console.log('error function editDataGlobal : ', error)
         })
@@ -1339,7 +1518,7 @@ export default {
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
       })
-        .then(async (result) => {
+        .then(async result => {
           this.formUpdate.LAST_USER = this.session.data.userName
           var ID = this.formUpdate.flowId
           delete this.formUpdate['fieldId']
@@ -1351,20 +1530,24 @@ export default {
               this.DNS_IP + this.path + "delete/" + ID,
               this.formUpdate
             )
-            .then(async (response) => {
+            .then(async response => {
               // Debug response
               console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
               this.dialogDelete = false
-              await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
+              await this.getDataGlobal(
+                this.DNS_IP,
+                this.path,
+                this.session.data.shopId
+              )
               this.$swal('เรียบร้อย', 'ลบข้อมูล เรียบร้อย', 'success')
             })
             // eslint-disable-next-line handle-callback-err
-            .catch((error) => {
+            .catch(error => {
               this.dataReady = true
               console.log('error function editDataGlobal : ', error)
             })
         })
-        .catch((error) => {
+        .catch(error => {
           this.dataReady = true
           console.log('error function editDataGlobal : ', error)
         })
@@ -1381,7 +1564,7 @@ export default {
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
       })
-        .then(async (result) => {
+        .then(async result => {
           this.formUpdateStep.LAST_USER = this.session.data.userName
           var ID = this.formUpdateStep.stepId
           await axios
@@ -1395,22 +1578,26 @@ export default {
                 }
               }
             )
-            .then(async (response) => {
+            .then(async response => {
               // Debug response
               console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
               console.log('flowid', this.formUpdateStep.flowId)
               this.$swal('เรียบร้อย', 'ลบข้อมูล เรียบร้อย', 'success')
               this.dialogDeleteStepTitle = false
-              await this.getStepFlow({'flowId': this.formUpdateStep.flowId})
-              await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
+              await this.getStepFlow({ flowId: this.formUpdateStep.flowId })
+              await this.getDataGlobal(
+                this.DNS_IP,
+                this.path,
+                this.session.data.shopId
+              )
             })
             // eslint-disable-next-line handle-callback-err
-            .catch((error) => {
+            .catch(error => {
               this.dataReady = true
               console.log('error function editDataGlobal : ', error)
             })
         })
-        .catch((error) => {
+        .catch(error => {
           this.dataReady = true
           console.log('error function editDataGlobal : ', error)
         })
@@ -1425,7 +1612,7 @@ export default {
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
       })
-        .then(async (result) => {
+        .then(async result => {
           this.formUpdateStep.LAST_USER = this.session.data.userName
           var ID = this.formUpdateStep.stepId
           var dt = {
@@ -1438,22 +1625,22 @@ export default {
               this.DNS_IP + "/flowStep/" + "edit/" + ID,
               dt
             )
-            .then(async (response) => {
+            .then(async response => {
               // Debug response
               console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
               // Close Dialog
               // Load Data
               this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
               this.dialogEditStep = false
-              await this.getStepFlow({'flowId': this.formUpdateStep.flowId})
+              await this.getStepFlow({ flowId: this.formUpdateStep.flowId })
             })
             // eslint-disable-next-line handle-callback-err
-            .catch((error) => {
+            .catch(error => {
               this.dataReady = true
               console.log('error function editDataGlobal : ', error)
             })
         })
-        .catch((error) => {
+        .catch(error => {
           this.dataReady = true
           console.log('error function editDataGlobal : ', error)
         })
@@ -1482,8 +1669,8 @@ export default {
   margin-bottom: 40px;
 }
 .v_text_edit {
-  Width: 298px;
-  Height: 52px;
+  width: 298px;
+  height: 52px;
   font-size: 10px !important;
 }
 #v_img_edit {

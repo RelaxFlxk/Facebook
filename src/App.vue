@@ -201,12 +201,18 @@ table tr:last-child td:last-child {
   color: var(--table-head-text)!important;
 }
 .v-data-table>.v-data-table__wrapper>table>tbody>tr>td {
-  padding: 8px 5px 8px 15px;
+  padding: 0px 5px 0px 15px;
 }
 .v-data-table>.v-data-table__wrapper>table>tbody>tr:nth-child(even) {background: var(--table-body-row-even)}
 .v-data-table>.v-data-table__wrapper>table>tbody>tr:nth-child(odd) {background: var(--table-body-row-odd)}
 .v-data-table>.v-data-table__wrapper>table>tbody>tr>td {
   color: var(--table-body-text) !important;
+}
+.custom_table_class thead th:first-child {
+  border-radius: 10px 0 0 0;
+}
+.custom_table_class thead th:last-child {
+  border-radius: 0 10px 0 0;
 }
 .theme--light.v-data-table .v-data-table-header th.sortable.active, .theme--light.v-data-table .v-data-table-header th.sortable.active .v-data-table-header__icon, .theme--light.v-data-table .v-data-table-header th.sortable:hover {
   color: var(--table-head-text) !important;
@@ -283,5 +289,11 @@ table tr:last-child td:last-child {
 .v_text_new {
   height: 43px;
   width: 174px;
+}
+.underline-06 {
+  background-image: linear-gradient(90deg, #e67399, #f2a640);
+  background-position: bottom;
+  background-size: 100% 10%;
+  background-repeat: no-repeat;
 }
 </style>

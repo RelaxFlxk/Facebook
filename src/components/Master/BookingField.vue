@@ -1,134 +1,156 @@
 <template>
   <div>
     <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
-    <v-main >
+    <v-main>
       <v-row>
-          <v-col cols="6" class="text-left">
-            <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
-          </v-col>
-        </v-row>
+        <v-col cols="6" class="text-left">
+          <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
+        </v-col>
+      </v-row>
       <v-container>
         <v-row>
           <v-col cols="12" md="5" sm="5" class="main">
             <div class="Bar">
-              <v-card class="content p-3" height="700px" style="background: linear-gradient(180deg, #FFFFFF 0%, #E1F3FF 100%);">
-            <h5 class="text-center" style="color:red;">(ตัวอย่าง)</h5>
-            <v-img :src="require('@/assets/Booking.png')" class="a" style="width:56.3px;height:67.03px"></v-img>
-            <h4 class="text-center">นัดหมายเข้ารับบริการ</h4>
-             <div v-for="(itemFix , indexFix) in fixtureField" :key="indexFix">
+              <v-card
+                class="content p-3"
+                height="700px"
+                style="background: linear-gradient(180deg, #FFFFFF 0%, #E1F3FF 100%);"
+              >
+                <h5 class="text-center" style="color:red;">(ตัวอย่าง)</h5>
+                <v-img
+                  :src="require('@/assets/Booking.png')"
+                  class="a"
+                  style="width:56.3px;height:67.03px"
+                ></v-img>
+                <h4 class="text-center">นัดหมายเข้ารับบริการ</h4>
+                <div
+                  v-for="(itemFix, indexFix) in fixtureField"
+                  :key="indexFix"
+                >
                   <v-text-field
-                  :label="itemFix.fieldName"
-                  outlined
-                  disabled
+                    :label="itemFix.fieldName"
+                    outlined
+                    disabled
                   ></v-text-field>
                 </div>
                 <v-row>
-              <v-col cols="6">
-            <v-menu
-              ref="menu"
-              v-model="menuDate"
-              :close-on-content-click="false"
-              :return-value.sync="date"
-              transition="scale-transition"
-              offset-y
-              required
-              min-width="auto"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  v-model="date"
-                  label="วันที่"
-                  prepend-icon="mdi-calendar"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                  required
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                v-model="date"
-                no-title
-                scrollable
-                :min="(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)"
-              >
-                <v-spacer></v-spacer>
-                <v-btn
-                  text
-                  color="primary"
-                  @click="menuDate = false"
-                >
-                  Cancel
-                </v-btn>
-                <v-btn
-                  text
-                  color="primary"
-                >
-                  OK
-                </v-btn>
-              </v-date-picker>
-            </v-menu>
-              </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  v-model="time"
-                  label="เวลา"
-                  type="time"
-                  suffix=""
-                  required
-                ></v-text-field>
-              </v-col>
-            </v-row>
-              <form class="Review">
-                <div v-for="(item , index) in Fielditem" :key="index">
-                 <div v-if="item.showitem == true">
-                  <v-text-field
-                  :label="item.fieldName"
-                  outlined
-                  disabled
-                  ></v-text-field>
-                 </div>
-                </div>
-              </form>
-              <div class="text-center">
-                  <v-btn elevation="10" color="#1B437C" readonly small block dark
+                  <v-col cols="6">
+                    <v-menu
+                      ref="menu"
+                      v-model="menuDate"
+                      :close-on-content-click="false"
+                      :return-value.sync="date"
+                      transition="scale-transition"
+                      offset-y
+                      required
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          v-model="date"
+                          label="วันที่"
+                          prepend-icon="mdi-calendar"
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                          required
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        v-model="date"
+                        no-title
+                        scrollable
+                        :min="
+                          new Date(
+                            Date.now() - new Date().getTimezoneOffset() * 60000
+                          )
+                            .toISOString()
+                            .substr(0, 10)
+                        "
+                      >
+                        <v-spacer></v-spacer>
+                        <v-btn text color="primary" @click="menuDate = false">
+                          Cancel
+                        </v-btn>
+                        <v-btn text color="primary">
+                          OK
+                        </v-btn>
+                      </v-date-picker>
+                    </v-menu>
+                  </v-col>
+                  <v-col cols="6">
+                    <v-text-field
+                      v-model="time"
+                      label="เวลา"
+                      type="time"
+                      suffix=""
+                      required
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+                <form class="Review">
+                  <div v-for="(item, index) in Fielditem" :key="index">
+                    <div v-if="item.showitem == true">
+                      <v-text-field
+                        :label="item.fieldName"
+                        outlined
+                        disabled
+                      ></v-text-field>
+                    </div>
+                  </div>
+                </form>
+                <div class="text-center">
+                  <v-btn
+                    elevation="10"
+                    color="#1B437C"
+                    readonly
+                    small
+                    block
+                    dark
                     >ทำการนัดหมาย</v-btn
                   >
                 </div>
-            </v-card>
+              </v-card>
             </div>
           </v-col>
           <v-col cols="12" md="7" sm="7" class="main">
             <v-row>
-              <v-col cols="12" md="12" sm="12" >
+              <v-col cols="12" md="12" sm="12">
                 <div v-if="Redirect !== ''">
-                  <v-card class="p-3" height="300px" style="background-color:#050C42;">
-                    <v-img :src="require('@/assets/linkicon.png')" class="a" style="width:29px;height:29px"></v-img>
-                  <h3 class="text-center" style="color:#FFFFFF;">ลิ้งสำหรับลูกค้า</h3>
-                  <v-card-text>
-                    <v-row align-content="center">
-                      <v-col cols="10">
-                        <v-text-field
-                          v-model="Redirect"
-                          style="background-color:#050C42;"
-                          solo
-                          id="myInput"
-                          dense
+                  <v-card class="p-3" style="background-color:#050C42;">
+                    <v-img
+                      :src="require('@/assets/linkicon.png')"
+                      class="a"
+                      style="width:29px;height:29px"
+                    ></v-img>
+                    <h3 class="text-center" style="color:#FFFFFF;">
+                      ลิ้งสำหรับลูกค้า
+                    </h3>
+                    <v-card-text>
+                      <v-row align-content="center">
+                        <v-col cols="10">
+                          <v-text-field
+                            v-model="Redirect"
+                            style="background-color:#050C42;"
+                            solo
+                            id="myInput"
+                            dense
                           >
-                        </v-text-field>
-                      </v-col>
-                      <v-col cols="2" class="text-lelf" >
-                        <v-btn
-                          color="#1B437C"
-                          small
-                          fab
-                          dark
-                          @click="FunCopy()"
-                        >
-                          <v-icon>mdi-content-copy</v-icon>
-                        </v-btn>
-                      </v-col>
-                    </v-row>
-                    <!-- <v-row align-content="center">
+                          </v-text-field>
+                        </v-col>
+                        <v-col cols="2" class="text-lelf">
+                          <v-btn
+                            color="#1B437C"
+                            small
+                            fab
+                            dark
+                            @click="FunCopy()"
+                          >
+                            <v-icon>mdi-content-copy</v-icon>
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+                      <!-- <v-row align-content="center">
                       <v-col cols="4" class="text-lelf" >
                         <h3 class="text-center" style="color:#FFFFFF;">จำนวนลูกค้าต่อวัน</h3>
                       </v-col>
@@ -141,45 +163,49 @@
                           v-bind:options="options2" />
                       </v-col>
                     </v-row> -->
-                  </v-card-text>
-                </v-card>
+                    </v-card-text>
+                  </v-card>
                 </div>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12" md="12" sm="12">
                 <v-card min-height="50%">
-                    <v-col cols="12" class="text-center">
-                      <h4 class="text-center">โปรดเลือกข้อมูลที่ต้องการแสดง</h4>
-                      <v-data-table
-                        v-model="itemdetell"
-                        :headers="FieldSelect"
-                        :items="Fielditem"
-                        rounded="xl"
-                        hide-default-footer
-                        class="elevation-10"
-                      >
-                        <template v-slot:[`item.showitem`]="{ item }">
-                          <v-simple-checkbox
-                            v-model="item.showitem"
-                          ></v-simple-checkbox>
-                        </template>
-                      </v-data-table>
-                    </v-col>
-                    <v-col cols="12" class="text-center">
-                      <v-btn elevation="5" color="#1B437C" dark @click="addBooking()"
-                        >SAVE</v-btn
-                      >
-                      <!-- <v-btn elevation="5" color="#1B437C" outlined class="a"
+                  <v-col cols="12" class="text-center">
+                    <h4 class="text-center">โปรดเลือกข้อมูลที่ต้องการแสดง</h4>
+                    <v-data-table
+                      v-model="itemdetell"
+                      :headers="FieldSelect"
+                      :items="Fielditem"
+                      rounded="xl"
+                      hide-default-footer
+                      class="elevation-10"
+                    >
+                      <template v-slot:[`item.showitem`]="{ item }">
+                        <v-simple-checkbox
+                          v-model="item.showitem"
+                        ></v-simple-checkbox>
+                      </template>
+                    </v-data-table>
+                  </v-col>
+                  <v-col cols="12" class="text-center">
+                    <v-btn
+                      elevation="5"
+                      color="#1B437C"
+                      dark
+                      @click="addBooking()"
+                      >SAVE</v-btn
+                    >
+                    <!-- <v-btn elevation="5" color="#1B437C" outlined class="a"
                         >CANCEL</v-btn
                       > -->
-                    </v-col>
-                  </v-card>
+                  </v-col>
+                </v-card>
               </v-col>
             </v-row>
           </v-col>
         </v-row>
-        </v-container>
+      </v-container>
     </v-main>
   </div>
 </template>
@@ -197,7 +223,9 @@ export default {
   data () {
     return {
       itemdetell: [],
-      Redirect: 'https://liff.line.me/1656581804-7KRQyqo5/Booking?shopId=' + this.$session.getAll().data.shopId,
+      Redirect:
+        'https://liff.line.me/1656581804-7KRQyqo5/Booking?shopId=' +
+        this.$session.getAll().data.shopId,
       session: this.$session.getAll(),
       shopId: this.$session.getAll().data.shopId,
       IdUpdate: '',
@@ -254,47 +282,55 @@ export default {
   methods: {
     async getBookingField () {
       let itemIncustomField = []
-      await axios.get(this.DNS_IP + '/BookingField/get?shopId=' + this.shopId).then((response) => {
-        let rs = response.data
-        this.IdUpdate = rs[0].bookingFieldId
-        console.log('this.IdUpdate', this.IdUpdate)
-        console.log('rs', rs)
-        if (rs.length > 0) {
-          let bookingData = []
-          if (rs[0].countCus) {
-            this.countCus = rs[0].countCus
+      await axios
+        .get(this.DNS_IP + '/BookingField/get?shopId=' + this.shopId)
+        .then(response => {
+          let rs = response.data
+          console.log('rs', rs)
+          this.IdUpdate = rs[0].bookingFieldId
+          console.log('this.IdUpdate', this.IdUpdate)
+          console.log('rs', rs)
+          if (rs.length > 0) {
+            let bookingData = []
+            if (rs[0].countCus) {
+              this.countCus = rs[0].countCus
+            } else {
+              this.countCus = 0
+            }
+            bookingData = JSON.parse(rs[0].flowfieldName)
+            for (let i = 0; i < bookingData.length; i++) {
+              let d = bookingData[i]
+              itemIncustomField.push(d.fieldId)
+            }
+            console.log('item', itemIncustomField)
+            this.getCustomField(itemIncustomField)
           } else {
-            this.countCus = 0
           }
-          bookingData = JSON.parse(rs[0].flowfieldName)
-          for (let i = 0; i < bookingData.length; i++) {
-            let d = bookingData[i]
-            itemIncustomField.push(d.fieldId)
-          }
-          console.log('item', itemIncustomField)
-          this.getCustomField(itemIncustomField)
-        } else {
-
-        }
-      })
-        .catch((error) => {
+        })
+        .catch(error => {
           console.log('error function addData : ', error)
         })
     },
     async getCustomField (item) {
       let checkdata = []
-      await axios.get(this.DNS_IP + '/customField/get?shopId=' + this.shopId).then(response => {
-        let dt = response.data
-        for (let i = 0; i < dt.length; i++) {
-          let d = dt[i]
-          checkdata.push(d.fieldId)
-        }
-      }).catch((error) => {
-        console.log('error function addData : ', error)
+      await axios
+        .get(this.DNS_IP + '/customField/get?shopId=' + this.shopId)
+        .then(response => {
+          let dt = response.data
+          for (let i = 0; i < dt.length; i++) {
+            let d = dt[i]
+            checkdata.push(d.fieldId)
+          }
+        })
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
+      let fieldAll = checkdata.filter(function (x) {
+        return !item.includes(x)
       })
-      let fieldAll = checkdata.filter(function (x) { return !item.includes(x) })
       if (item.length > 0) {
-        await axios.get(this.DNS_IP + '/customField/fieldId?fieldId=' + item)
+        await axios
+          .get(this.DNS_IP + '/customField/fieldId?fieldId=' + item)
           .then(async response => {
             let rs = response.data
             // let aa = []
@@ -312,12 +348,13 @@ export default {
               console.log('s', this.Fielditem)
             }
           })
-          .catch((error) => {
+          .catch(error => {
             console.log('error function addData : ', error)
           })
       }
       if (fieldAll.length > 0) {
-        await axios.get(this.DNS_IP + '/customField/fieldId?fieldId=' + fieldAll)
+        await axios
+          .get(this.DNS_IP + '/customField/fieldId?fieldId=' + fieldAll)
           .then(async response => {
             let rs = response.data
             // let aa = []
@@ -334,7 +371,7 @@ export default {
               this.Fielditem.push(s)
             }
           })
-          .catch((error) => {
+          .catch(error => {
             console.log('error function addData : ', error)
           })
       }
@@ -378,8 +415,12 @@ export default {
                 let showcarditem = {
                   showCard: d.showcard
                 }
-                axios.post(this.DNS_IP + '/customField/edit/' + d.fieldId, showcarditem).then(response => {
-                })
+                axios
+                  .post(
+                    this.DNS_IP + '/customField/edit/' + d.fieldId,
+                    showcarditem
+                  )
+                  .then(response => {})
                   .catch(error => {
                     console.log('error function addData : ', error)
                   })
@@ -408,7 +449,7 @@ export default {
 
 <style scoped>
 span.v-btn__content {
-  color: #1B437C !important;
+  color: #1b437c !important;
 }
 .main {
   margin-top: 1rem;
@@ -416,7 +457,7 @@ span.v-btn__content {
 }
 .Bar {
   padding: 10px;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   height: 100%;
   width: 400px;
 }
@@ -427,14 +468,13 @@ span.v-btn__content {
   overflow: auto;
   white-space: normal;
 }
-.a{
+.a {
   display: block;
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 0px;
 }
-.continer{
+.continer {
   padding: 20px, 20px, 20px, 20px;
 }
-
 </style>

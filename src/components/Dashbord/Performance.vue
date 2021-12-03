@@ -4,7 +4,7 @@
     <v-main>
       <div class="col-md-12 ml-sm-auto col-lg-12 px-4">
         <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
-        <v-row>
+        <!-- <v-row>
           <v-col cols="12">
             <v-sheet tile height="54" class="d-flex">
               <v-col cols="3">
@@ -38,55 +38,29 @@
               </v-col>
             </v-sheet>
           </v-col>
-        </v-row>
-        <v-divider class="mx-4"></v-divider>
-         <v-row>
-          <v-col cols="12">
-            <v-simple-table>
-              <template v-slot:default>
-                <thead>
-                  <tr style="background-color: #1b437c">
-                    <th class="text-left">สาขา</th>
-                    <th class="text-left">ชื่อ</th>
-                    <th
-                      class="text-center"
-                      v-for="item in dataDate"
-                      :key="item"
-                    >
-                      {{ item }}
-                    </th>
-                    <th class="text-center">รวมทั้งหมด</th>
-                  </tr>
-                </thead>
-                <tfoot>
-                  <tr style="background-color: #1b437c">
-                    <th class="text-left">รวมทั้งหมด</th>
-                    <th></th>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
-                  </tr>
-               </tfoot>
-                <tbody>
-                  <template v-for="item in datePushTest">
-                    <tr v-for="itemB in item.value" :key="itemB">
-                      <td class="text-left">{{ item.masBranchName }}</td>
-                      <td class="text-left">{{ itemB.empStep }}</td>
-                      <td
-                        class="text-center"
-                        v-for="item2 in itemB.value"
-                        :key="item2.empStep"
-                      >
-                        {{ item2.value }}
-                      </td>
-                    </tr>
-                  </template>
-                </tbody>
+        </v-row> -->
+        <div id="app" class="container mt-5">
+          <!-- <h2 class="border-bottom pb-2 mb-4">
+            Pivot <small>(drag & drop UI + PivotTable)</small>
+          </h2> -->
+          <div class="mb-5">
+            <pivot
+              :data="data"
+              :fields="fields"
+              :showFooter="showFooter"
+              :available-field-keys="availableFieldKeys"
+              :row-field-keys="rowFieldKeys"
+              :col-field-keys="colFieldKeys"
+              :default-show-settings="defaultShowSettings"
+              :is-data-loading="isDataLoading"
+              :reducer="reducer"
+            >
+              <template slot="value" slot-scope="{ value }">
+                {{ value.toLocaleString() }}
               </template>
-            </v-simple-table>
-          </v-col>
-        </v-row>
+            </pivot>
+          </div>
+        </div>
       </div>
     </v-main>
   </div>
@@ -101,7 +75,7 @@ import moment from 'moment' // แปลง date
 import DateRangePicker from 'vue2-daterange-picker'
 // you need to import the CSS manually
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
-
+import { PivotTable, Pivot } from '@click2buy/vue-pivot-table'
 export default {
   components: {
     'left-menu-admin': adminLeftMenu,
@@ -109,21 +83,17 @@ export default {
     XLSX,
     readXlsxFile,
     moment,
-    DateRangePicker
+    DateRangePicker,
+    Pivot,
+    PivotTable
   },
-  created () {
-    setInterval(this.getNowGlobal, 1000)
-  },
+  // created () {
+  //   setInterval(this.getNowGlobal, 1000)
+  // },
   data () {
-    let startDate = new Date()
-    let endDate = new Date()
+    // let startDate = new Date()
+    // let endDate = new Date()
     return {
-      dataDate: [],
-      datePushTest: [],
-      dataTest: [],
-      PK: '',
-      path: '/job_log/',
-      center: {},
       session: this.$session.getAll(),
       // Menu Config
       breadcrumbs: [
@@ -138,165 +108,82 @@ export default {
           href: '/Dashbord/Report'
         }
       ],
-      shopId: this.$session.getAll().data.shopId,
-      dataReady: true,
-      date: new Date().toISOString().substr(0, 10),
-      EmployeeSelect: [],
-      empStep: '',
-      dateRange: { startDate, endDate },
-      format: 'yyyy-mm-dd',
-      firstDay: 0,
-      masBranchName: '',
-      BranchItem: []
+      data: [],
+
+      // Pivot params
+      fields: [
+        {
+          key: 'masBranchName',
+          getter: item => item.masBranchName,
+          label: 'สาขา',
+          valueFilter: true
+        },
+        {
+          key: 'empStep',
+          getter: item => item.empStep,
+          label: 'พนักงาน',
+          valueFilter: true
+        },
+        {
+          key: 'jobDate',
+          getter: item => item.jobDate,
+          label: 'วันที่เปิด Job',
+          valueFilter: true
+        }
+      ],
+      availableFieldKeys: [],
+      rowFieldKeys: ['masBranchName', 'empStep'],
+      colFieldKeys: ['jobDate'],
+      reducer: (sum, item) => sum + item.closeJob,
+      defaultShowSettings: false,
+      isDataLoading: false,
+      showFooter: true,
+
+      // Pivot table standalone field params
+      rowFields: [
+        {
+          getter: item => item.country,
+          label: 'Country'
+        },
+        {
+          getter: item => item.gender,
+          label: 'Gender'
+        }
+      ],
+      colFields: [
+        {
+          getter: item => item.year,
+          label: 'Year'
+        }
+      ],
+      shopId: this.$session.getAll().data.shopId
     }
   },
   async mounted () {
     console.log('shopId', this.shopId)
-    this.dataReady = false
     await this.getPerformance()
-    await this.getDataBranch()
-    await this.getEmployee()
-
-    var DateGroup = []
-
-    this.dataTest.forEach((uqDateValue) => {
-      DateGroup.push(uqDateValue.jobDate)
-    })
-    var uDate = [...new Set(DateGroup)]
-    console.log('uDate=>', uDate)
-    this.dataDate = uDate
-
-    const groupB = this.dataTest.reduce((groupB, value) => {
-      const masBranchName = value.masBranchName
-      if (!groupB[masBranchName]) {
-        groupB[masBranchName] = []
-      }
-      groupB[masBranchName].push(value)
-      return groupB
-    }, {})
-
-    // console.log('groupB', groupB)
-    // Edit: to add it in the array format instead
-    const groupArrays = Object.keys(groupB).map((masBranchName) => {
-      return {
-        masBranchName,
-        value: groupB[masBranchName]
-      }
-    })
-    groupArrays.forEach((element1) => {
-      const groupEmpStep = element1.value.reduce((groupEmpStep, value) => {
-        const empStep = value.empStep
-        if (!groupEmpStep[empStep]) {
-          groupEmpStep[empStep] = []
-        }
-        groupEmpStep[empStep].push(value)
-        return groupEmpStep
-      }, {})
-
-      const groupArrays2 = Object.keys(groupEmpStep).map((empStep) => {
-        return {
-          empStep,
-          value: groupEmpStep[empStep]
-        }
-      })
-
-      // console.log('groupArrays2', groupArrays2)
-      var dataGroup2 = []
-      groupArrays2.forEach((element2) => {
-        const groupDate = element2.value.reduce((groupDate, value) => {
-          const jobDate = value.jobDate
-          // console.log(jobDate)
-          // console.log(uDate)
-          uDate.forEach((dateElm) => {
-            // console.log(dateElm, jobDate)
-            if (jobDate === dateElm) {
-              if (!groupDate[jobDate]) {
-                groupDate[jobDate] = []
-              }
-              groupDate[jobDate].push(value)
-            } else {
-              if (!groupDate[dateElm]) {
-                groupDate[dateElm] = []
-              }
-              groupDate[dateElm].push(value)
-            }
-          })
-          return groupDate
-        }, {})
-
-        // console.log('groupDate', groupDate)
-        const groupArrays3 = Object.keys(groupDate).map((jobDate) => {
-          var i = 0
-          // console.log('groupDate[jobDate]', jobDate)
-          groupDate[jobDate].forEach(function (a) {
-            if (jobDate === a.jobDate) {
-              i += a.closeJob
-            }
-          })
-          return {
-            jobDate,
-            value: i
-          }
-        })
-        // console.log('groupArrays3', groupArrays3)
-        element2.value = groupArrays3
-        dataGroup2.push(element2)
-      })
-      element1.value = dataGroup2
-    })
-    this.datePushTest = groupArrays
   },
   methods: {
-    async getDataBranch () {
-      this.BranchItem = []
-      await axios
-        .get(this.DNS_IP + '/job_log/select_branch?shopId=' + this.shopId)
-        .then(async response => {
-          let rs = response.data
-          for (var i = 0; i < rs.length; i++) {
-            var d = rs[i]
-            d.text = d.masBranchName
-            d.value = d.masBranchID
-            this.BranchItem.push(d)
-          }
-        })
-        // eslint-disable-next-line handle-callback-err
-        .catch(error => {
-          this.BranchItem = []
-        })
-    },
     async getPerformance () {
-      this.dataTest = []
+      this.isDataLoading = false
+      this.data = []
       await axios
-        .get(this.DNS_IP + '/job_log/getReport_performance?shopId=' + this.shopId)
+        .get(
+          this.DNS_IP + '/job_log/getReport_performance?shopId=' + this.shopId
+        )
         .then(async response => {
           if (response.data) {
-            Object.assign(this.dataTest, response.data)
+            // Object.assign(this.data, response.data)
+            this.data = response.data
+          } else {
+            this.isDataLoading = true
           }
           console.log(response)
-          console.log('dataTest', this.dataTest)
+          console.log('data', this.data)
         })
         // eslint-disable-next-line handle-callback-err
         .catch(error => {
-          this.dataTest = []
-        })
-    },
-    async getEmployee () {
-      this.EmployeeSelect = []
-      await axios
-        .get(this.DNS_IP + '/job_log/select_employee?shopId=' + this.shopId)
-        .then(async response => {
-          let rs = response.data
-          for (var i = 0; i < rs.length; i++) {
-            var d = rs[i]
-            d.text = d.empStep
-            d.value = d.empStep
-            this.EmployeeSelect.push(d)
-          }
-        })
-        // eslint-disable-next-line handle-callback-err
-        .catch(error => {
-          this.EmployeeSelect = []
+          this.data = []
         })
     }
   }

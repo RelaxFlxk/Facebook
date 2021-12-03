@@ -172,6 +172,11 @@ export default new Router({
     path: '/Dashbord/Performance',
     name: 'Performance',
     component: Dashbord.Performance
+  },
+  {
+    path: '/Dashbord/PerformanceBK',
+    name: 'PerformanceBK',
+    component: Dashbord.PerformanceBK
   }
   ]
 })
