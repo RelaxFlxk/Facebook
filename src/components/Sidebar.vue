@@ -254,11 +254,14 @@ export default {
         { title: 'ปฏิทินนัดหมาย', icon: 'mdi-account-edit', to: '/Master/CalendarBooking' }
       ]
       this.Dashboard = [
-        { title: 'รายงาน', icon: 'mdi-application-settings', to: '/Dashbord/Report' }
+        { title: 'รายงาน', icon: 'mdi-application-settings', to: '/Dashbord/Report' },
+        { title: 'Performance', icon: 'mdi-application-settings', to: '/Dashbord/Performance' }
+
       ]
       this.workflow = [
         { title: 'รับรถลูกค้ารายใหม่', icon: 'mdi-account-plus', to: '/Master/RegisterAdd' },
-        { title: 'จัดการงานบนกระดาน', icon: 'mdi-clipboard-check-multiple-outline', to: '/Master/FlowStep' },
+        // { title: 'จัดการงานบนกระดาน', icon: 'mdi-clipboard-check-multiple-outline', to: '/Master/FlowStep' },
+        { title: 'กระดานการทำงาน', icon: 'mdi-clipboard-check-multiple-outline', to: '/Master/BoardControl' },
         // { title: 'เพิ่ม/ลบ กระดาน', icon: 'mdi-application-cog', to: '/Master/JobList' },
         { title: 'เพิ่ม/ลบ สถานะการบริการ', icon: 'mdi-transit-connection-variant', to: '/Master/Flow' },
         { title: 'จัดโครงสร้างกระดาน', icon: 'dashboard', to: '/Master/WorkShop' },

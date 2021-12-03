@@ -159,9 +159,19 @@ export default new Router({
     component: Master.PaymentType
   },
   {
+    path: '/Master/BoardControl',
+    name: 'BoardControl',
+    component: Master.BoardControl
+  },
+  {
     path: '/Dashbord/Report',
-    name: 'PaymentType',
+    name: 'Report',
     component: Dashbord.Report
+  },
+  {
+    path: '/Dashbord/Performance',
+    name: 'Performance',
+    component: Dashbord.Performance
   }
   ]
 })

@@ -14,6 +14,7 @@ import Qrcodereader from './Qrcodereader.vue'
 import PaymentType from './PaymentType.vue'
 import Rating from './Rating'
 import CalendarBooking from './CalendarBooking'
+import BoardControl from './BoardControl'
 export default {
   CustomField,
   Flow,
@@ -30,5 +31,6 @@ export default {
   Qrcodereader,
   PaymentType,
   Rating,
-  CalendarBooking
+  CalendarBooking,
+  BoardControl
 }

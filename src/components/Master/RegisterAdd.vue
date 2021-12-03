@@ -573,6 +573,8 @@ export default {
       // eslint-disable-next-line no-redeclare
       this.formAdd.flowCode = ''
       this.formAdd.masBranchID = ''
+      this.endDate = ''
+      this.endTime = ''
       this.dtname = []
       for (var key in this.flowfieldNameitem) {
         if (this.flowfieldNameitem[key]) {

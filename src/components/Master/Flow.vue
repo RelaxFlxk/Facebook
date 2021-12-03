@@ -187,6 +187,7 @@
                     <v-btn
                       color="question"
                       fab
+                      dark
                       x-small
                       @click.stop="(dialogEditStep = true), getUpdate(item), validate('UPDATE')"
                     >

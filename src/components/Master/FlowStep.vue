@@ -557,7 +557,7 @@ export default {
           for (var i = 0; i < rs.length; i++) {
             var d = rs[i]
             d.text = d.masBranchName
-            d.value = d.masBranchName
+            d.value = d.masBranchId
             this.DataBranchName.push(d)
           }
         } else {
