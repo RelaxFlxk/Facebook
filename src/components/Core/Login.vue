@@ -1,49 +1,58 @@
 <template>
   <div id="login" class="bgPage">
     <v-row>
-      <v-col  cols="6"  class="text-center mt-15">
+      <v-col  cols="6"  class="text-center pa-0 mt-15">
         <v-img
           class="ma-15"
           :src="require('@/assets/logIn.svg')"
         ></v-img>
       </v-col>
-      <v-col cols="6" class="text-center mt-16">
-        <v-row class="mt-15" justify="center" no-gutters>
+      <v-col cols="6" class="text-center pa-0 mt-16">
+        <v-row class="mb-6" justify="center" no-gutters>
+          <v-col md="auto">
+            <h2 class='v-subheader pr-16'>ยินดีตอนรับ!</h2>
+            <!-- <h1 style="color:black;"><strong>Forget Password?</strong></h1> -->
+          </v-col>
+        </v-row>
+        <!-- <v-row class="mt-15" justify="center" no-gutters>
           <v-col cols="10">
              <v-img
               width="120px"
               :src="require('@/assets/Welcome.svg')"
             ></v-img>
           </v-col>
-        </v-row>
+        </v-row> -->
         <v-row>
-          <v-col cols="10">
-            <v-row style="height: 25px">
-              <v-subheader id="subtext">Username</v-subheader>
+          <v-col cols="10" class='pa-0'>
+            <v-row>
+              <v-subheader class="pl-15" id="subtext">Username</v-subheader>
             </v-row>
-            <v-row style="height: 65px">
+            <v-row>
               <v-text-field
-                prepend-icon="mdi-account"
+                placeholder="Username"
+                solo
+                class='pl-15'
                 v-model="form.userName"
               ></v-text-field>
             </v-row>
           </v-col>
-          <v-col cols="10">
-            <v-row style="height: 25px">
-              <v-subheader id="subtext">Password</v-subheader>
+          <v-col cols="10" class='pa-0'>
+            <v-row>
+              <v-subheader class="pl-15" id="subtext">Password</v-subheader>
             </v-row>
-            <v-row style="height: 75px">
+            <v-row>
                <v-text-field
-                prepend-icon="mdi-lock"
+               class='pl-15'
+                placeholder="Password"
+                solo
                 v-model="form.userPassword"
                 type="password"
               ></v-text-field>
             </v-row>
           </v-col>
-          <v-col cols="10" id="margin">
-            <v-row justify="center">
+          <v-col cols="10" class='pl-15'>
+            <v-row>
               <v-btn
-                elevation="2"
                 x-large
                 color="#173053"
                 block
@@ -57,14 +66,14 @@
           </v-col>
           <v-col cols="5">
           </v-col>
-          <v-col cols="5">
+          <v-col cols="5" align="right">
             <v-btn text @click="dialog = true, validate('UPDATE')">
-              Forgot Password?
+              ลืมรหัสผ่าน?
             </v-btn>
             <!-- <v-list-tile @click="dialog = true, validate('UPDATE')">Forgot Password?</v-list-tile> -->
           </v-col>
           <v-col cols="10">
-            <h6>Don’t have an account yet? <a href="https://betask-linked.web.app/register">Sign up!</a></h6>
+            <h6>คุณได้ลงทะเบียนแล้วหรือยัง? <a href="https://betask-linked.web.app/register">ลงทะเบียน!</a></h6>
           </v-col>
         </v-row>
       </v-col>
