@@ -79,37 +79,42 @@
           <v-card-text>
               <v-row class="mb-6" justify="center">
                 <v-col md="auto">
-                  <v-img :src="require('@/assets/forget.svg')" class="a" style="width:306px;height:206px"></v-img>
+                  <v-img :src="require('@/assets/forgotPassword.svg')" class="a" style="width:103px;height:103px"></v-img>
                 </v-col>
               </v-row>
           </v-card-text>
           <v-card-text>
               <v-row class="mb-6" justify="center" no-gutters>
                 <v-col md="auto">
-                  <h1 style="color:black;"><strong>Forget Password?</strong></h1>
+                  <h1 style="font-size:10vw;" class="underline-06">Forget Password?</h1>
+                  <!-- <h1 style="color:black;"><strong>Forget Password?</strong></h1> -->
                 </v-col>
               </v-row>
           <v-form ref="form_update" v-model="validUpdate" lazy-validation>
+          <v-row no-gutter>
+            <v-subheader class="pl-16"><strong>Username/ Email</strong></v-subheader>
+          </v-row>
           <v-row
-              class="mb-6"
+          no-gutter
               justify="center"
-              no-gutters
             >
-              <v-col lg="12">
+              <v-col lg="12" class="pt-0 pb-0">
                 <v-text-field
                   prepend-icon="mdi-account"
                   v-model="form.newUserName"
                   label="Username"
+                  solo
                   :rules="[rules.email]"
                   required
                 ></v-text-field>
               </v-col>
-              <v-col lg="12">
-                <h6>Enter you email address and we will send you an email for reset password</h6>
+              <v-col lg="12" class="pa-0">
+                <v-subheader class="pl-16">Enter you email address and we will send you an email for reset password</v-subheader>
               </v-col>
           </v-row>
           </v-form>
         </v-card-text>
+        <br>
         <v-row justify="center" no-gutter>
                <v-col md="auto">
             <v-btn
@@ -127,7 +132,7 @@
             </v-row>
             <v-row justify="center" no-gutter>
                <v-col md="auto">
-            <h6>Return to <a style="color:#173154;" @click="dialog = false">Signin</a></h6>
+                <a class="v-subheader" @click="dialog = false">Return to Signin</a>
                </v-col>
             </v-row>
         </v-container>
@@ -554,6 +559,9 @@ a {
   margin-left: 10px;
   margin-right: 10px;
   margin-bottom: 60px;
+}
+.v-subheader {
+    color: #1B437C !important;
 }
 #xxxxxx {
   font-family: "Avenir", Helvetica, Arial, sans-serif;

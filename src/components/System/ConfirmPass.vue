@@ -1,32 +1,56 @@
 <template>
   <div id="login">
     <v-card elevation="15" max-width="600" class="mx-auto my-12">
-      <div
-        class="d-flex flex-column justify-space-between align-center"
-        v-if="dataReady"
-      >
-        <v-container>
-          <vuetify-logo />
-          <br />
-          <h1 class="h3 mb-3 font-weight-normal">Please Reset</h1>
-          <br />
+      <v-container>
+          <v-card-text>
+              <v-row class="mb-6" justify="center">
+                <v-col md="auto">
+                  <v-img :src="require('@/assets/forget.svg')" class="a" style="width:306px;height:206px"></v-img>
+                </v-col>
+              </v-row>
+          </v-card-text>
+          <v-card-text>
+              <v-row class="mb-6" justify="center" no-gutters>
+                <v-col md="auto">
+                  <h2 style="font-size:10vw;" class="underline-06">กรุณาใส่ รหัสผ่าน ที่ท่านต้องการ</h2>
+                  <!-- <h1 style="color:black;"><strong>Forget Password?</strong></h1> -->
+                </v-col>
+              </v-row>
           <v-form ref="form_update" v-model="validUpdate" lazy-validation>
+            <v-row no-gutter>
+            <v-subheader class="pl-16"><strong>Password</strong></v-subheader>
+          </v-row>
+          <v-row
+          no-gutter
+              justify="center"
+            >
+              <v-col lg="12" class="pt-0 pb-0">
           <v-text-field
               prepend-icon="mdi-lock"
+              solo
               v-model="form.newUserPassword"
               label="Password"
               :rules="[rules.required]"
               required
             ></v-text-field>
+              </v-col>
+          </v-row>
           </v-form>
+          </v-card-text>
           <br />
           <template >
-            <v-btn color="warning" :disabled="!validUpdate" @click="onSubmitForgot()" dark large block
-              >Reset Password</v-btn
+            <v-btn
+              elevation="2"
+              x-large
+              dark
+              color="#1B437C"
+              @click="onSubmitForgot()"
+              :disabled="!validUpdate"
             >
+              รีเซ็ตรหัสผ่าน
+            </v-btn>
           </template>
         </v-container>
-      </div>
     </v-card>
   </div>
 </template>
