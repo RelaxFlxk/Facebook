@@ -3,15 +3,31 @@
     <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
     <v-main>
       <div class="stepLayout">
+        <v-col cols="12" sm="8">
+            <h4 style="color:#1B437C">แก้ไขกระดานทำงาน</h4>
+          </v-col>
         <v-row>
-        <v-col cols="12" sm="4">
-          <h5>เลือกประเภทงาน</h5>
+          <v-col cols="6" sm="4">
           <v-select
-          v-model="DataflowId"
-            :items="DataFlowName"
+          v-model="DataBranchID"
+            :items="DataMasbranch"
+            label="เลือกสาขา"
             required
             dense
             outlined
+            background-color="#FFFFFF"
+            @change="getDataFlow()"
+          ></v-select>
+          </v-col>
+        <v-col cols="6" sm="4" v-if="DataBranchID !== ''">
+          <v-select
+          v-model="DataflowId"
+            :items="DataFlowName"
+            label="เลือกประเภทงาน"
+            required
+            dense
+            outlined
+            background-color="#FFFFFF"
             @change="getLayout()"
           ></v-select>
         </v-col>
@@ -21,11 +37,17 @@
           <v-row class="rowstep">
               <draggable  v-model="stepData" group="workshop">
               <div  v-for="(element , step) in stepData" :key="step">
-                <v-card class="rowIncolum" elevation="12">
-                  <v-card-text>
-                    <h2>{{element.stepTitle}}</h2>
-                  </v-card-text>
-                </v-card>
+                   <v-card
+                    class="mb-12"
+                    width="220"
+                   >
+                     <v-toolbar
+                    :color="codeColor[step]"
+                    dark
+                    >
+                    {{element.stepTitle}}
+                    </v-toolbar>
+                    </v-card>
               </div>
             </draggable>
             <div  v-for="(element , i ) in Layout" :key="i">
@@ -37,14 +59,11 @@
                     width="220"
                    >
                      <v-toolbar
-                    color="primary"
+                    :color="codeColor[i]"
                     dark
                     >
                     {{element.stepTitle}}
                     </v-toolbar>
-                      <v-card-text class="text pa-3" >
-
-                      </v-card-text>
                     </v-card>
                   </div>
                 </draggable>
@@ -52,13 +71,15 @@
             </div>
             <v-col >
               <div v-show="stepData.length > 0 || Layout.length > 0">
-                <v-btn class="mx-2" elevation="12" fab dark small color="primary" @click="AddColum ()">
+                <v-btn class="mx-2" elevation="2" outlined dark  color="primary" @click="AddColum ()">
                   <v-icon dark> mdi-plus </v-icon>
+                  เพิ่มกระดาษ
               </v-btn>
               </div>
               <div v-show="Layout.length > 0">
-                <v-btn class="mx-2" elevation="12" fab dark small color="error" @click="DeleteColum ()">
+                <v-btn class="mx-2" elevation="2" outlined dark color="error" @click="DeleteColum ()">
                 <v-icon dark> mdi-minus </v-icon>
+                ลบกระดาษ
               </v-btn>
               </div>
             </v-col>
@@ -96,6 +117,8 @@ export default {
       stepData: [],
       Layout: [],
       DataflowId: '',
+      DataBranchID: '',
+      DataMasbranch: [],
       DataFlowName: [],
       session: this.$session.getAll(),
       shopId: this.$session.getAll().data.shopId,
@@ -107,42 +130,78 @@ export default {
         LAST_USER: '',
         shopId: ''
       },
+      codeColor: [
+        'rgb(142, 202, 230)',
+        'rgb(33, 158, 188)',
+        'rgb(2, 48, 71)',
+        'rgb(241, 91, 76)',
+        'rgb(255, 183, 3)',
+        'rgb(251, 133, 0)',
+        'rgb(61,90,128)',
+        'rgb(152,193,217)',
+        'rgb(224,251,252)',
+        'rgb(255,212,91)',
+        'rgb(238,108,77)',
+        'rgb(41,50,65)'
+      ],
       numberRules: [ (v) => (!isNaN(parseFloat(v)) && v >= 0 && v <= 9999999999) ]
     }
   },
   async mounted () {
     this.showData()
-    await this.getDataFlow()
+    await this.getDataMasbranch()
   },
   methods: {
     showData () {
-      console.log('showcard', this.Layout)
+      // console.log('showcard', this.Layout)
     },
     getDataFlow () {
       this.DataFlowName = []
-      console.log('shopId', this.shopId)
+      this.DataflowId = ''
+      console.log('DataBranchID', this.DataBranchID)
       axios.get(this.DNS_IP + '/flow/get?shopId=' + this.shopId).then(response => {
         let rs = response.data
-        console.log('rs', rs)
+        // console.log('rs', rs)
         if (rs.length > 0) {
           for (var i = 0; i < rs.length; i++) {
             var d = rs[i]
             d.text = d.flowName
             d.value = d.flowId
             this.DataFlowName.push(d)
-            console.log('DataFlowName132', this.DataFlowName)
+            // console.log('DataFlowName132', this.DataFlowName)
           }
         } else {
           this.DataFlowName = []
-          console.log('DataFlowName136', this.DataFlowName)
+          // console.log('DataFlowName136', this.DataFlowName)
+        }
+      })
+    },
+    getDataMasbranch () {
+      this.DataMasbranch = []
+      console.log('shopId', this.shopId)
+      axios.get(this.DNS_IP + '/master_branch/get?shopId=' + this.shopId).then(response => {
+        let rs = response.data
+        console.log('rs', rs)
+        if (rs.length > 0) {
+          for (var i = 0; i < rs.length; i++) {
+            var d = rs[i]
+            d.text = d.masBranchName
+            d.value = d.masBranchID
+            this.DataMasbranch.push(d)
+            // console.log('DataMasbranch132', this.DataMasbranch)
+          }
+        } else {
+          this.DataMasbranch = []
+          // console.log('DataMasbranch', this.DataMasbranch)
         }
       })
     },
     async getLayout () {
       this.Layout = []
-      await axios.get(this.DNS_IP + '/WorkShopLayout/get?flowId=' + this.DataflowId + '&shopId=' + this.shopId)
+      await axios.get(this.DNS_IP + '/WorkShopLayout/get?flowId=' + this.DataflowId + '&shopId=' + this.shopId + '&masBranchID=' + this.DataBranchID)
         .then((response) => {
           let rs = response.data
+          // console.log('rs', rs)
           for (let i = 0; i < rs.length; i++) {
             let d = rs[i]
             var workData = []
@@ -157,7 +216,7 @@ export default {
           }
           const flowId = this.DataflowId
           this.getStep(flowId)
-          console.log('this.Layout', this.Layout)
+          // console.log('this.Layout', this.Layout)
         })
         .catch((error) => {
           console.log('error function addDataGlobal : ', error)
@@ -268,6 +327,7 @@ export default {
           this.fromAdd.workColum = this.Layout.length + 1
           this.fromAdd.flowId = this.DataflowId
           this.fromAdd.shopId = this.shopId
+          this.fromAdd.masBranchID = this.DataBranchID
           console.log('fromAdd', this.fromAdd)
           await axios
             .post(
@@ -293,7 +353,7 @@ export default {
 <style scope>
 .main{
   margin-top: 1rem;
-  background-color: #FFFFFF;
+  background-color: #E1F3FF;
   height: 800px;
   max-height: max-content;
 }
