@@ -40,6 +40,8 @@
           </v-col>
         </v-row>
         <v-divider class="mx-4"></v-divider>
+        <v-row>
+          <v-col cols="6">
             <v-select
               v-model="masBranchName"
               :items="BranchItem"
@@ -50,6 +52,23 @@
               class="ma-3"
               @change="getselectBranch()"
             ></v-select>
+          </v-col>
+          <v-col cols="6" v-if="masBranchName.length > 0">
+            <v-select
+              v-model="SelectFlowName"
+              :items="itemFlowName"
+              :menu-props="{ maxHeight: '400' }"
+              label="ประเภทงาน"
+              dense
+              outlined
+              multiple
+              hint="เลือกประเภทงานที่ต้องการสแดง"
+              persistent-hint
+              class="ma-3"
+              @change="SelectFlow ()"
+            ></v-select>
+          </v-col>
+        </v-row>
          <v-row>
            <v-col cols="6">
               <LinechartBranchSelect ref="modal3"></LinechartBranchSelect>
@@ -104,6 +123,8 @@ export default {
     let endDate = new Date()
     return {
       PK: '',
+      itemFlowName: [],
+      SelectFlowName: [],
       center: {},
       session: this.$session.getAll(),
       // Menu Config
@@ -172,6 +193,7 @@ export default {
     this.dataReady = false
     await this.getDataBranch()
     await this.getEmpSelect()
+    await this.getFlow()
   },
   methods: {
     async getEmpSelect () {
@@ -189,6 +211,26 @@ export default {
               this.EmployeeItem.push(s)
             }
           }
+        })
+    },
+    async SelectFlow () {
+      // console.log('this', this.SelectFlowName)
+      this.$refs.modal4.selectflowname(this.SelectFlowName)
+    },
+    async getFlow () {
+      this.itemFlowName = []
+      this.SelectFlowName = []
+      await axios.get(this.DNS_IP + '/flow/get?shopId=' + this.shopId).then(response => {
+        let rs = response.data
+        for (let i = 0; i < rs.length; i++) {
+          let d = rs[i]
+          this.itemFlowName.push(d.flowName)
+        }
+        this.SelectFlowName = this.itemFlowName
+        // console.log('rs2', this.itemFlowName)
+      })
+        .catch((error) => {
+          console.log('error function addDataGlobal : ', error)
         })
     },
     getBranch () {

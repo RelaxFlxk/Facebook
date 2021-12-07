@@ -1,7 +1,29 @@
 <template lang="">
 <div v-if="Carditem.length > 0">
   <div v-for="(item,index) in Carditem" :key="index">
-    <div :id="ID +  flowNameitem[index] "></div>
+    <div class="p-3" v-if="Carditem[index].length > 0" >
+      <v-card class="mx-auto" elevation="5" >
+          <v-row >
+          <v-col cols="12" >
+        <center>
+          <v-list-item two-line>
+            <v-list-item-content>
+                <p>{{flowNameitem[index]}}</p>
+            </v-list-item-content>
+          </v-list-item>
+          <v-row>
+            <v-col cols="2"></v-col>
+            <v-col cols="8"><div :id="ID + index"></div></v-col>
+            <v-col cols="2"></v-col>
+          </v-row>
+        </center>
+        </v-col>
+          <v-col cols="12">
+
+        </v-col>
+      </v-row>
+      </v-card>
+        </div>
   </div>
 </div>
     <!-- <div v-if="Carditem.length > 0">
@@ -54,17 +76,53 @@ export default {
       flowNameitem: [],
       dataitem: [],
       Carditem: [],
-      codeColor: ['#00CED1', '#48D1CC', '#40E0D0', '#00FFFF', '#7FFFD4', '#66CDAA', '#5F9EA0'],
+      codeColor: [
+        'rgb(142, 202, 230)',
+        'rgb(33, 158, 188)',
+        'rgb(2, 48, 71)',
+        'rgb(241, 91, 76)',
+        'rgb(255, 183, 3)',
+        'rgb(251, 133, 0)',
+        'rgb(61,90,128)',
+        'rgb(152,193,217)',
+        'rgb(224,251,252)',
+        'rgb(255,212,91)',
+        'rgb(238,108,77)',
+        'rgb(41,50,65)'
+      ],
       Chartitem: [],
-      data: [],
+      data: [{ label: 'Inquiries', value: 5000 },
+        { label: 'Applicants', value: 2500 },
+        { label: 'Admits', value: 500 },
+        { label: 'Deposits', value: 200 }],
       options: {
+        chart: {
+          width: 350,
+          height: 300,
+          curve: {
+            enabled: true
+          }
+        },
         block: {
           dynamicHeight: true,
-          minHeight: 15
+          minHeight: 50
         },
-        chart: {
-          inverted: true
-
+        label: {
+          enabled: true,
+          fontFamily: null,
+          fontSize: '14px',
+          fill: '#fff',
+          format: `{l}
+          {f}`
+        },
+        tooltip: {
+          enabled: false,
+          format: '{l}: {f}'
+        },
+        events: {
+          click: {
+            block: null
+          }
         }
       },
       ID: 'A'
@@ -88,7 +146,7 @@ export default {
           let d = rs[i]
           this.dataitem.push(d)
         }
-        console.log(' this.dataitem', this.dataitem)
+        // console.log(' this.dataitem', this.dataitem)
         this.getCard()
       })
         .catch((error) => {
@@ -103,7 +161,6 @@ export default {
           let d = rs[i]
           this.flowNameitem.push(d.flowName)
         }
-        console.log('rs2', this.flowNameitem)
       })
         .catch((error) => {
           console.log('error function addDataGlobal : ', error)
@@ -122,31 +179,33 @@ export default {
           s.value = ff.totalJob - ff.closeJob
           aa.push(s)
         }
-        console.log('aa', aa)
-        // this.Carditem.push(this.dataitem.filter(item => item.flowName === d)).map(function (row) {
-        //   return {
-        //     label: row.stepTitle,
-        //     value: row.totalJob
-        //   }
-        // })
-        // let s = {}
-        // s.flowName = this.dataitem.filter(item => item.flowName === d).map(row => { return row.flowName })[0]
-        // s.stepTitle = this.dataitem.filter(item => item.flowName === d).map(row => { return row.stepTitle })
-        // s.Jobitem = this.dataitem.filter(item => item.flowName === d).map(row => { return row.totalJob })
-        // s.closeJob = this.dataitem.filter(item => item.flowName === d).map(row => { return row.closeJob })
+        // console.log('aa', aa)
         this.Carditem.push(aa)
       }
-      console.log(' this.Carditem', JSON.stringify(this.Carditem))
-      // setTimeout(() => {
-      //   this.renderChart()
-      // }, 2000)
+      // console.log(' this.Carditem', this.Carditem)
+      setTimeout(() => {
+        this.renderChart()
+      }, 500)
+    },
+    async renderChart () {
+      let chart = []
+      for (let i = 0; i < this.Carditem.length; i++) {
+        chart.push('A' + i)
+
+        if (this.Carditem[i].length > 0) {
+          chart[i] = new D3Funnel('#' + this.ID + i)
+          chart[i].draw(this.Carditem[i], this.options)
+        }
+      }
+      // const chart = new D3Funnel('#' + this.ID + 1)
+      // chart.draw(this.Carditem[1], this.options)
+      // const chart2 = new D3Funnel('#' + this.ID + 1)
+      // chart2.draw(this.data, this.options)
+    },
+    async selectflowname (item) {
+      this.flowNameitem = item
+      this.getCard()
     }
-    // async renderChart () {
-    //   const chart = new D3Funnel('#' + this.ID + this.flowNameitem[0])
-    //   chart.draw(this.data, this.options)
-    //   const chart2 = new D3Funnel('#' + this.ID + this.flowNameitem[1])
-    //   chart2.draw(this.data, this.options)
-    // }
   }
 }
 </script>

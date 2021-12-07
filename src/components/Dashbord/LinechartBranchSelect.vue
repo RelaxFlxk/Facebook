@@ -18,7 +18,20 @@ export default {
       shopId: this.$session.getAll().data.shopId,
       chartData: null,
       dataitem: [],
-      codeColor: ['#3333FF', '#FF0000', '#CC00FF', '#99FF00', '#6600FF', '#FFFF33', '#330033']
+      codeColor: [
+        'rgb(142, 202, 230)',
+        'rgb(33, 158, 188)',
+        'rgb(2, 48, 71)',
+        'rgb(241, 91, 76)',
+        'rgb(255, 183, 3)',
+        'rgb(251, 133, 0)',
+        'rgb(61,90,128)',
+        'rgb(152,193,217)',
+        'rgb(224,251,252)',
+        'rgb(255,212,91)',
+        'rgb(238,108,77)',
+        'rgb(41,50,65)'
+      ]
     }
   },
   async mounted () {
@@ -56,7 +69,7 @@ export default {
       s.label = this.dataitem[0].masBranchName
       s.data = this.dataitem.map(item => { return item.totalJob })
       s.fill = false
-      s.borderColor = '#FF0000'
+      s.borderColor = 'rgb(251, 133, 0)'
       s.tension = 0.1
       datasetsitem.push(s)
       const labels = this.dataitem.map(item => { return item.CREATE_DATE })

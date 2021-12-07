@@ -3,10 +3,10 @@
       <v-row>
         <v-col cols="6">
         <center>
-        <v-card class="mx-auto" elevation="5">
+        <v-card class="mx-auto" elevation="5" :color="codeColor[3]">
           <v-list-item two-line>
             <v-list-item-content>
-                <p>งานทั้งหมด</p>
+                งานทั้งหมด
             </v-list-item-content>
           </v-list-item>
 
@@ -22,7 +22,7 @@
         <v-row >
           <v-col cols="12" v-for="(item , index) in statusitem" :key='index'>
             <center>
-            <v-card class="mx-auto" elevation="5">
+            <v-card class="mx-auto" elevation="5" :color="codeColor[index]">
               <v-list-item two-line>
                 <v-list-item-content>
                     {{item.masBranchName}}
@@ -59,7 +59,21 @@ export default {
       sumstatusitem: {
         totalJob: '',
         closeJob: ''
-      }
+      },
+      codeColor: [
+        'rgb(142, 202, 230)',
+        'rgb(33, 158, 188)',
+        'rgb(2, 48, 71)',
+        'rgb(241, 91, 76)',
+        'rgb(255, 183, 3)',
+        'rgb(251, 133, 0)',
+        'rgb(61,90,128)',
+        'rgb(152,193,217)',
+        'rgb(224,251,252)',
+        'rgb(255,212,91)',
+        'rgb(238,108,77)',
+        'rgb(41,50,65)'
+      ]
     }
   },
   async mounted () {
