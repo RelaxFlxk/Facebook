@@ -11,7 +11,7 @@
             <v-btn
               color="primary"
               depressed
-              @click="(dialogAdd = true), validate('ADD'), (desserts = [])"
+              @click="(dialogAdd = true), validate('ADD'), (desserts = []), getCustomField()"
             >
               <v-icon left>mdi-text-box-plus</v-icon>
               Add
@@ -1084,26 +1084,49 @@ export default {
       console.log('updateSendCard')
       console.log('SendCard', this.sendCard)
     },
-    async getCustomField () {
+    async getCustomField (chkForm, data) {
       this.editedItemSelete = []
       axios
         .get(this.DNS_IP + '/customField/get?shopId=' + this.shopId)
-        .then(response => {
+        .then(async response => {
           let rs = response.data
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
               d.text = d.fieldName
-              d.value = d.fieldName
+              d.value = d.fieldId
               d.showCard = d.showCard
-
-              this.editedItemSelete.push(d)
+              if (chkForm === 'edit') {
+                var chkDup = await data.filter(function (el) {
+                  return el.fieldName === d.fieldName
+                })
+                console.log('chkDup', chkDup)
+                if (chkDup.length === 0) {
+                  this.editedItemSelete.push(d)
+                }
+              } else {
+                this.editedItemSelete.push(d)
+              }
             }
+            console.log('this.formUpdate', data)
+            console.log('this.editedItemSelete', this.editedItemSelete)
           }
         })
     },
     deleteItem (item) {
       console.log('item', item)
+      var itemUseValue = ''
+      var itemUseText = ''
+      var itemUse = {}
+      if (item.fieldId) {
+        itemUseValue = item.fieldId
+        itemUseText = item.fieldName
+        itemUse = item
+      } else {
+        itemUseValue = item.fieldName.fieldId
+        itemUseText = item.fieldName.fieldName
+        itemUse = item.fieldName
+      }
       this.$swal({
         title: 'ต้องการ ลบข้อมูล ใช่หรือไม่?',
         type: 'question',
@@ -1115,24 +1138,47 @@ export default {
       })
         .then(async result => {
           this.editedItemSelete.push({
-            text: item.fieldName,
-            value: item.fieldName
+            text: itemUseText,
+            value: itemUseValue
           })
-          var x = this.desserts.indexOf(item)
+          var x = this.desserts.indexOf(itemUse)
           this.$delete(this.desserts, x)
+          // var dessert = this.desserts.filter(value => value.fieldId !== itemUseValue)
+          // this.desserts = dessert
+          console.log('itemUseValue', itemUseValue)
+          console.log('itemUseText', itemUseText)
+          console.log('desserts', this.desserts)
         })
     },
     save (item) {
-      console.log(item.fieldName.fieldId)
-      this.desserts.push({
-        fieldId: item.fieldName.fieldId,
-        fieldName: item.fieldName.fieldName
-      })
-      console.log(this.desserts)
-      var x = this.editedItemSelete.indexOf(item.fieldName)
-      this.$delete(this.editedItemSelete, x)
-      this.dialogAddField = false
-      this.dialogEditField = false
+      if (this.editedItemSelete.length > 0) {
+        console.log('item', item)
+        var itemUseValue = ''
+        var itemUseText = ''
+        var itemUse = {}
+        if (item.value) {
+          itemUseValue = item.value
+          itemUseText = item.text
+          itemUse = item
+        } else {
+          itemUseValue = item.fieldName.value
+          itemUseText = item.fieldName.text
+          itemUse = item.fieldName
+        }
+        this.desserts.push({
+          fieldId: itemUseValue,
+          fieldName: itemUseText,
+          showCard: 'False'
+        })
+        var x = this.editedItemSelete.indexOf(itemUse)
+        this.$delete(this.editedItemSelete, x)
+        this.dialogAddField = false
+        this.dialogEditField = false
+      } else {
+        this.$swal('ผิดพลาด', 'เนื่องจากไม่มี ช่องกรอกข้อมูล ที่จะให้เพิ่มแล้ว กรุณาตรวจสอบคว่มถูกต้อง', 'error')
+        this.dialogAddField = false
+        this.dialogEditField = false
+      }
     },
     validate (Action) {
       switch (Action) {
@@ -1237,7 +1283,7 @@ export default {
             // this.desserts = JSON.parse(response.data[0].flowfieldName)
             await this.getField(JSON.parse(response.data[0].flowfieldName))
             // this.getDataCompany()
-            this.getCustomField(this.formUpdate.fieldName)
+            this.getCustomField('edit', JSON.parse(response.data[0].flowfieldName))
             // this.getStepTitle(this.formUpdateStep.stepTitle)
             this.dataReady = true
             console.log(this.formUpdate)
