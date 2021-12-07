@@ -255,15 +255,52 @@ export default {
         }
       })
     },
-    async checkbookNo () {
+    async checkbookNo (dataitem) {
       if (this.$route.query.bookNo) {
-        this.bookNo = this.$route.query.bookNo
-        this.queryData = 'bookNo'
-        this.$router.push('/Master/BookingList?' + this.queryData + '=' + this.bookNo)
+        if (dataitem.shopId === this.$route.query.shopId) {
+          this.bookNo = this.$route.query.bookNo
+          this.queryData = 'bookNo'
+          console.log('dataitem.shopId', dataitem.shopId)
+          this.$router.push('/Master/BookingList?' + this.queryData + '=' + this.bookNo)
+        } else {
+          this.$swal({
+            title: 'ไม่มีข้อมูลการนัดหมาย?',
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#b3b1ab',
+            confirmButtonText: 'ใช่',
+            cancelButtonText: 'ไม่'
+          }).then(async () => {
+            this.$router.push('/Core/Login')
+          // await _this.getTokenCheck()
+          })
+            .catch(async () => {
+              this.$router.push('/Core/Login')
+            })
+        }
       } else if (this.$route.query.jobNo) {
-        this.jobNo = this.$route.query.jobNo
-        this.queryData = 'jobNo'
-        this.$router.push('/Master/jobQrCode?' + this.queryData + '=' + this.jobNo)
+        if (dataitem.shopId === this.$route.query.shopId) {
+          this.jobNo = this.$route.query.jobNo
+          this.queryData = 'jobNo'
+          this.$router.push('/Master/jobQrCode?' + this.queryData + '=' + this.jobNo)
+        } else {
+          this.$swal({
+            title: 'ข้อมูลงานไม่ถูกต้อง?',
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#b3b1ab',
+            confirmButtonText: 'ใช่',
+            cancelButtonText: 'ไม่'
+          }).then(async () => {
+            this.$router.push('/Core/Login')
+          // await _this.getTokenCheck()
+          })
+            .catch(async () => {
+              this.$router.push('/Core/Login')
+            })
+        }
       } else {
         this.$router.push('/Core/Home')
       }
@@ -346,7 +383,7 @@ export default {
           if (response.data[0]) {
             this.$session.start()
             this.$session.set('data', response.data[0])
-            this.checkbookNo()
+            this.checkbookNo(response.data[0])
           } else {
             this.dataReady = true
             this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง1', 'error')

@@ -739,7 +739,7 @@ export default {
   },
   beforeCreate () {
     if (!this.$session.exists()) {
-      this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo)
+      this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
     }
   },
   async mounted () {

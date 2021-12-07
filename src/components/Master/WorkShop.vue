@@ -120,19 +120,21 @@ export default {
     },
     getDataFlow () {
       this.DataFlowName = []
-      console.log('DataFlowName', this.DataFlowName)
       console.log('shopId', this.shopId)
       axios.get(this.DNS_IP + '/flow/get?shopId=' + this.shopId).then(response => {
         let rs = response.data
+        console.log('rs', rs)
         if (rs.length > 0) {
           for (var i = 0; i < rs.length; i++) {
             var d = rs[i]
             d.text = d.flowName
             d.value = d.flowId
             this.DataFlowName.push(d)
+            console.log('DataFlowName132', this.DataFlowName)
           }
         } else {
           this.DataFlowName = []
+          console.log('DataFlowName136', this.DataFlowName)
         }
       })
     },

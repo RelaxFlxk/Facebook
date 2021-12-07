@@ -103,7 +103,7 @@ export default {
   methods: {
     beforeCreate () {
       if (!this.$session.exists()) {
-        this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo)
+        this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId)
       } else {
         this.getjob()
       }
