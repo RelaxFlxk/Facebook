@@ -57,9 +57,12 @@
                             <v-col cols="6" style="margin: auto 0;">
                               <v-col style="margin-left: 1px;">
                                 <v-img
-                                  :src="require('@/assets/newcarAdd.png')"
+                                  :src="require('@/assets/OBJECTSINSECTCARS.svg')"
                                 ></v-img>
                               </v-col>
+                              <v-col>
+                      <v-img :src="require('@/assets/customtextAdd.svg')"></v-img>
+                      </v-col>
                             </v-col>
                             <v-col cols="6">
                               <v-col class="text-center pa-0">

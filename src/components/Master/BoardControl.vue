@@ -5,24 +5,16 @@
       <div class="pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4">
         <v-col class="ma-2" id="text-Board">กระดานทำงาน</v-col>
         <br />
-        <!-- <v-col cols="6" class="text-right" v-if="formUpdate.flowName">
-            <p id="textTitleB">
-              {{ formUpdate.flowName }}
-            </p>
-          </v-col>
-          <v-col cols="6" v-if="masBranchName">
-            <p class="text-h4 text--primary">({{ masBranchName }})</p>
-          </v-col> -->
 
         <!-- select flow-->
         <v-sheet tile height="54" class="d-flex mt-6">
           <!-- ประเภทบริการ -->
           <v-col cols="12" sm="3">
             <v-select
-              :items="DataFlowName"
+              :items="editedItemSelete"
               v-model="formUpdate.flowName"
               @change="
-                getStepFlow(), getLayout(), flowfieldtest(formUpdate.flowName)
+                getStepFlow(), getLayout()
               "
               dense
               outlined
@@ -38,8 +30,8 @@
           <v-col cols="12" sm="3">
             <v-select
               :items="DataBranchName"
-              v-model="masBranchName"
-              @change="getStepFlow(), getLayout(), flowfieldtest(masBranchName)"
+              v-model="masBranchID"
+              @change="getStepFlow(), getLayout()"
               dense
               outlined
               hide-details
@@ -57,7 +49,7 @@
               text
               color="#1B437C"
               depressed
-              @click=";(dialogAdd = true), flowfieldtest(masBranchName)"
+              @click="newCars()"
             >
               <v-icon left>mdi-car-2-plus</v-icon>
               รับรถใหม่
@@ -107,12 +99,7 @@
               มากกว่า 4 วัน
             </v-chip>
           </v-col>
-          <!-- <v-col cols="8" class="text-right">
-           <v-icon class="mr-1 text-right" color="#E65100" @click="SwitchCard()">
-            mdi-format-align-justify
-           </v-icon>
-           List View
-          </v-col> -->
+
           <v-col cols="7" class="text-right" text color="#ABB1C7">
             <v-btn
               class="ma-6 mt-5"
@@ -160,239 +147,7 @@
             </v-btn>
           </v-col>
         </v-row>
-        <!-- <v-row
-          align="center"
-          justify="end"
-        >
-          <span class="subheading mr-2">records</span>
-          <span class="mr-1">·</span>
-          <v-icon class="mr-1" color="#E65100">
-            mdi-collage
-          </v-icon>
-          <span class="subheading">45</span>
-        </v-row> -->
         <v-divider></v-divider>
-
-        <!-- ADD -->
-        <v-dialog v-model="dialogAdd" persistent max-width="50%">
-          <v-card max-width="450%">
-            <v-col class="text-right">
-              <v-icon
-                small
-                color="#173053"
-                @click=";(dialogAdd = false), clearData()"
-                >mdi-close</v-icon
-              >
-            </v-col>
-            <v-container>
-              <v-row justify="center">
-                <v-col cols="6">
-                  <v-col style="margin-left: 1px;">
-                    <v-img :src="require('@/assets/newcarAdd.png')"></v-img>
-                  </v-col>
-                </v-col>
-                <v-col cols="6">
-                  <v-col class="text-center">
-                    <v-img
-                      class="v_text_new"
-                      :src="require('@/assets/NewcarText.png')"
-                    ></v-img>
-                  </v-col>
-                  <div v-for="(p, index) in flowfieldNameitem" :key="index">
-                    <div
-                      v-show="
-                        p.conditionField === '' || p.conditionField === null
-                      "
-                    >
-                      <div>
-                        <div v-if="p.fieldType == 'text'">
-                          <br />
-                          <v-text-field
-                            v-model="p.fieldValue"
-                            :label="p.fieldName"
-                            :rules="[rules.required]"
-                            outlined
-                          ></v-text-field>
-                        </div>
-                        <div v-if="p.fieldType == 'number'">
-                          <br />
-                          <!-- <p>{{p.fieldName}}</p> -->
-                          <v-text-field
-                            v-model="p.fieldValue"
-                            :label="p.fieldName"
-                            :rules="[rules.required]"
-                            outlined
-                          ></v-text-field>
-                        </div>
-                        <v-row>
-                          <v-col
-                            cols="12"
-                            v-if="p.fieldType == 'Autocompletes'"
-                          >
-                            <p>{{ p.fieldName }}</p>
-                            <v-autocomplete
-                              v-model="p.fieldValue"
-                              :items="JSON.parse(p.optionField)"
-                              dense
-                              filled
-                              label="Search"
-                              :rules="[rules.required]"
-                            ></v-autocomplete>
-                          </v-col>
-                          <v-col cols="12" v-if="p.fieldType == 'Selects'">
-                            <div>
-                              <p>{{ p.fieldName }}</p>
-                              <v-select
-                                v-model="p.fieldValue"
-                                :items="JSON.parse(p.optionField)"
-                                menu-props="auto"
-                                label="Select"
-                                hide-details
-                                solo
-                              ></v-select>
-                            </div>
-                          </v-col>
-                        </v-row>
-                        <div v-if="p.fieldType == 'Radio'">
-                          <br />
-                          <v-container fluid>
-                            <p>{{ p.fieldName }}</p>
-                            <v-radio-group column v-model="p.fieldValue">
-                              <template v-slot:label> </template>
-                              <div
-                                v-for="radios in JSON.parse(p.optionField)"
-                                :key="radios.toISOString"
-                                class="text-center"
-                              >
-                                <v-radio
-                                  :label="radios.text"
-                                  :value="radios.value"
-                                ></v-radio>
-                              </div>
-                            </v-radio-group>
-                          </v-container>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      v-if="
-                        p.conditionField !== '' &&
-                          flowfieldNameitem.filter(row => {
-                            return row.fieldId === parseInt(p.conditionField)
-                          }).length > 0
-                      "
-                    >
-                      <div
-                        v-if="
-                          p.conditionValue ===
-                            flowfieldNameitem.filter(row => {
-                              return row.fieldId === parseInt(p.conditionField)
-                            })[0].fieldValue
-                        "
-                      >
-                        <v-col cols="12" v-if="p.fieldType == 'Autocompletes'">
-                          <p>{{ p.fieldName }}</p>
-                          <v-autocomplete
-                            v-model="p.fieldValue"
-                            :items="JSON.parse(p.optionField)"
-                            dense
-                            filled
-                            label="Search"
-                            :rules="[rules.required]"
-                          ></v-autocomplete>
-                        </v-col>
-                        <v-col cols="12" v-if="p.fieldType == 'Selects'">
-                          <div>
-                            <p>{{ p.fieldName }}</p>
-                            <v-select
-                              v-model="p.fieldValue"
-                              :items="JSON.parse(p.optionField)"
-                              menu-props="auto"
-                              label="Select"
-                              hide-details
-                              solo
-                            ></v-select>
-                          </div>
-                          <div v-if="p.fieldType == 'Radio'">
-                            <br />
-                            <v-container fluid>
-                              <p>{{ p.fieldName }}</p>
-                              <v-radio-group row v-model="p.fieldValue">
-                                <template v-slot:label> </template>
-                                <div
-                                  v-for="radios in JSON.parse(p.optionField)"
-                                  :key="radios.toISOString"
-                                  class="text-center"
-                                >
-                                  <v-radio
-                                    :label="radios.text"
-                                    :value="radios.value"
-                                  ></v-radio>
-                                </div>
-                              </v-radio-group>
-                            </v-container>
-                          </div>
-                        </v-col>
-                      </div>
-                    </div>
-                  </div>
-
-                  <v-row>
-                    <v-col cols="6">
-                      <v-menu
-                        ref="menu"
-                        v-model="menu"
-                        :close-on-content-click="false"
-                        transition="scale-transition"
-                        offset-y
-                        max-width="290px"
-                        min-width="auto"
-                      >
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-text-field
-                            v-model="endDate"
-                            label="วันที่นัดส่งรถลูกค้า"
-                            persistent-hint
-                            prepend-icon="mdi-calendar"
-                            v-bind="attrs"
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker
-                          v-model="endDate"
-                          no-title
-                          @input="menu = false"
-                        ></v-date-picker>
-                      </v-menu>
-                    </v-col>
-
-                    <v-col cols="6">
-                      <v-text-field
-                        v-model="endTime"
-                        label="เวลา"
-                        type="time"
-                        suffix=""
-                        required
-                      ></v-text-field>
-                    </v-col>
-                  </v-row>
-
-                  <center>
-                    <v-btn depressed dark color="#1B437C" @click="addData()">
-                      เพิ่ม
-                    </v-btn>
-                  </center>
-                  <!-- <v-btn depressed dark color="#1B437C"
-                              @click="clearData()">
-                                  Clear
-                                </v-btn> -->
-                </v-col>
-                <v-col cols="1"></v-col>
-              </v-row>
-            </v-container>
-          </v-card>
-        </v-dialog>
-        <!-- end add -->
 
         <!-- เปลี่ยนสถานะ step-->
         <v-row justify="center">
@@ -575,116 +330,6 @@
         </v-dialog>
         <!-- END DIALOG แก้ไขข้อมูล ใน card -->
 
-        <!-- แก้ไข layout -->
-        <v-navigation-drawer
-          v-model="drawer"
-          bottom
-          fixed
-          style="height: 1000px; width: 650px; Top -1px; left: 1250px;"
-          absolute
-          right
-        >
-          <v-col class="text-left">
-            <v-icon small color="#FFFFFF" @click="drawer = false"
-              >mdi-close</v-icon
-            >
-          </v-col>
-          <v-col>
-            <v-img
-              class="ml-5"
-              id="v-text-editLayout"
-              :src="require('@/assets/editLayout.png')"
-            ></v-img>
-          </v-col>
-          <!-- ประเภทบริการ -->
-          <v-col cols="12" sm="6">
-            <v-select
-              :items="DataFlowName"
-              v-model="formUpdate.flowName"
-              dense
-              dark
-              outlined
-              hide-details
-              label="ประเภทบริการ"
-              class="ma-2"
-            ></v-select>
-          </v-col>
-
-          <!-- แก้ไข layout -->
-          <v-col cols="12">
-            <v-row class="ml-5">
-              <v-data-table
-                class="table-striped table-bordered elevation-1"
-                dense
-                :headers="columnsStep"
-                :items="stepItemSelete"
-                hide-default-footer
-              >
-                <template v-slot:[`item.actions2`]="{ item, index }">
-                  <v-btn
-                    v-show="index !== 0"
-                    color="green"
-                    fab
-                    x-small
-                    @click="actionUp(item.stepId)"
-                  >
-                    <v-icon color="#FFFFFF"> mdi-arrow-up-bold </v-icon>
-                  </v-btn>
-                  <v-btn
-                    color="red"
-                    fab
-                    x-small
-                    @click="actionDown(item.stepId)"
-                  >
-                    <v-icon color="#FFFFFF"> mdi-arrow-down-bold </v-icon>
-                  </v-btn>
-                </template>
-              </v-data-table>
-            </v-row>
-          </v-col>
-          <!-- END แก้ไข layout -->
-        </v-navigation-drawer>
-        <!-- END แก้ไข layout -->
-
-        <!-- แก้ไขขั้นตอน -->
-        <v-navigation-drawer
-          v-model="drawer1"
-          bottom
-          fixed
-          style="height: 1000px; width: 650px; Top -1px; left: 1250px;"
-          absolute
-          right
-        >
-          <v-col class="text-left">
-            <v-icon small color="#FFFFFF" @click="drawer1 = false"
-              >mdi-close</v-icon
-            >
-          </v-col>
-          <v-col>
-            <v-img
-              color="#FFFFFF"
-              class="ml-5"
-              id="v-text-editLayout"
-              :src="require('@/assets/editStep2.png')"
-            ></v-img>
-          </v-col>
-          <v-col cols="12" sm="6">
-            <v-select
-              :items="DataBranchName"
-              v-model="masBranchName"
-              @change="getStepFlow(), getLayout(), flowfieldtest(masBranchName)"
-              dense
-              outlined
-              dark
-              hide-details
-              value="สาขาบางกอกน้อย"
-              label="สาขา"
-              class="ma-2"
-            ></v-select>
-          </v-col>
-        </v-navigation-drawer>
-        <!-- END แก้ไขขั้นตอน -->
-
         <!-- DIALOG ค่าใช้จ่าย -->
         <v-dialog v-model="dialogDelete" persistent max-width="400px">
           <v-card>
@@ -755,7 +400,7 @@
         <div
           v-if="layout === 'grid'"
           class="workRow"
-          v-show="formUpdate.flowName && masBranchName !== ''"
+          v-show="formUpdate.flowName && masBranchID"
         >
           <v-row>
             <v-col class="colum" v-for="(element, work) in Layout" :key="work">
@@ -765,10 +410,10 @@
               >
                 <v-card class="mb-2">
                   <v-card id="cardTitle" elevation="12">
-                    <v-card-title class="ma-3" text color="#1B437C">
-                      <v-row class=" allFrame pb-3">
+                    <v-card-title class="ma-3" text-color="red">
+                      <v-row class=" allFrame pb-3" color="red">
                         <v-col cols="8">
-                          <strong>{{ item.stepTitle }}</strong>
+                          <strong color="red">{{ item.stepTitle }}</strong>
                         </v-col>
                         <v-col cols="4" class="text-right">
                           <strong>{{
@@ -795,7 +440,7 @@
                       <v-alert
                         class="allFrame pb-3"
                         style="min-height: 105px;"
-                        color="cyan"
+                        :color="codeColor[work]"
                         border="left"
                         elevation="2"
                         colored-border
@@ -970,7 +615,7 @@
                 <v-alert
                   class="allFrame pb-3"
                   style="height: 38px;"
-                  color="cyan"
+                  :color="codeColor[indexJob]"
                   border="left"
                   elevation="2"
                   colored-border
@@ -1161,6 +806,7 @@ export default {
       endTime: '',
       editedItemSelete: [],
       flowfieldNameitem: [],
+      item_newcars: [],
       flowCode: '',
       form1: {},
       menu: false,
@@ -1169,17 +815,18 @@ export default {
       stepItemSelete: [],
       empSeleteStep: [],
       DataFlowName: [],
+      validAdd: false,
       TotalDate: [],
       DataBranchName: [],
       ItemSelete: [],
       userId: '',
       totalDateDiff: '',
-      masBranchName: '',
-      masBranchId: '',
+      masBranchID: '',
+      // masBranchId: '',
       formUpdate: {
         stepId: '',
         flowId: '',
-        flowName: 'กระดานทำงาน',
+        flowName: '',
         stepTitle: '',
         sortNo: '',
         CREATE_USER: '',
@@ -1202,6 +849,15 @@ export default {
         fieldValue: '',
         fieldName: ''
       },
+      codeColor: [
+        '#B82D15',
+        '#0028FA',
+        '#EB56F6',
+        '#FED966',
+        '#84C650',
+        '#6557A2',
+        '#50C6BF'
+      ],
       formDelete: {
         jobNo: '',
         shopId: this.$session.getAll().data.shopId,
@@ -1239,51 +895,6 @@ export default {
     this.getCustomField()
   },
   methods: {
-    async actionUp (stepId) {
-      console.log('stepId', stepId)
-      console.log('this.stepItemSelete', this.stepItemSelete)
-      let stepItem = this.stepItemSelete
-      this.stepItemSelete = []
-      let index = stepItem.findIndex(e => e.stepId === stepId)
-      console.log('index', index)
-      if (index !== -1 && index < stepItem.length + 1) {
-        let el = stepItem[index]
-        console.log('????', el)
-        this.stepItemSelete[index] = stepItem[index - 1]
-        this.stepItemSelete[index - 1] = el
-        this.stepItemSelete[index].sortNo = stepItem[index - 1].sortNo + 1
-        this.stepItemSelete[index - 1].sortNo = el.sortNo - 1
-        console.log('sortNo', this.stepItemSelete[index - 1].sortNo)
-        console.log('el:', el)
-        // this.updateActionDown(this.stepItemSelete)
-        console.log('movedown', this.stepItemSelete)
-      }
-      await this.updateActionDown(this.stepItemSelete, stepItem[0])
-      console.log(this.stepItemSelete)
-    },
-    async actionDown (stepId) {
-      console.log('stepId', stepId)
-      console.log('this.stepItemSelete', this.stepItemSelete)
-      let stepItem = this.stepItemSelete
-      this.stepItemSelete = []
-      let index = stepItem.findIndex(e => e.stepId === stepId)
-      console.log('index', index)
-      if (index !== -1 && index < stepItem.length - 1) {
-        let el = stepItem[index]
-        console.log('????', el)
-        this.stepItemSelete[index] = stepItem[index + 1]
-        this.stepItemSelete[index + 1] = el
-        this.stepItemSelete[index].sortNo = stepItem[index + 1].sortNo - 1
-        this.stepItemSelete[index + 1].sortNo = el.sortNo + 1
-        console.log('sortNo', this.stepItemSelete[index + 1].sortNo)
-        console.log('el:', el)
-        // this.updateActionDown(this.stepItemSelete)
-        console.log('movedown', this.stepItemSelete)
-        // console.log(stepItem)
-      }
-      await this.updateActionDown(this.stepItemSelete, stepItem[0])
-      console.log(this.stepItemSelete)
-    },
     async getCustomField () {
       this.editedItemSelete = []
       axios
@@ -1299,192 +910,6 @@ export default {
             }
           }
           console.log(this.editedItemSelete)
-        })
-    },
-    flowfieldtest (item) {
-      let itemIncustomField = []
-      axios
-        .get(
-          this.DNS_IP +
-            '/flowField/get?flowName=' +
-            this.formUpdate.flowName +
-            '&shopId=' +
-            this.shopId
-        )
-        .then(response => {
-          let tt = response.data
-          // console.log('tt', tt)
-          let flowId = tt[0].flowId
-          let flowfieldName = []
-          flowfieldName = JSON.parse(tt[0].flowfieldName)
-          for (let a = 0; a < flowfieldName.length; a++) {
-            let d = flowfieldName[a]
-            itemIncustomField.push(d.fieldId)
-          }
-          this.getCustomfield(itemIncustomField, flowId)
-          console.log('itemIncustomField', itemIncustomField)
-        })
-    },
-    async getCustomfield (item, flowId) {
-      this.flowfieldNameitem = []
-      await axios
-        .get(this.DNS_IP + '/customField/fieldId?fieldId=' + item)
-        .then(async response => {
-          let rs = response.data
-          console.log('rs', rs)
-          for (var i = 0; i < rs.length; i++) {
-            let d = rs[i]
-            let s = {}
-            s.fieldId = d.fieldId
-            s.flowId = flowId
-            s.fieldName = d.fieldName
-            s.optionField = d.optionField
-            s.conditionField = d.conditionField
-            s.fieldType = d.fieldType
-            s.fieldValue = ''
-            s.CREATE_USER = ''
-            s.LAST_USER = ''
-            s.showCard = d.showCard
-            s.shopId = this.shopId
-            s.endDate = ''
-            s.endTime = ''
-            s.checkCar = 'False'
-            s.conditionValue = d.conditionValue
-            // if (d.conditionField !== '') {
-            //   s.conditionFieldId = this.flowfieldNameitem.filter((row) => { return row.fieldId === d.conditionField })['fieldId']
-            // } else {
-            //   s.conditionField = ''
-            // }
-            this.form1[d.fieldId] = ''
-            this.flowfieldNameitem.push(s)
-            console.log('flowfieldNameitem', this.flowfieldNameitem)
-          }
-          setTimeout(() => this.validate(), 500)
-        })
-        .catch(error => {
-          console.log('error function addData : ', error)
-        })
-    },
-    async addData (p) {
-      this.flowfieldNameitem[0].endDate = this.endDate
-      this.flowfieldNameitem[0].endTime = this.endTime
-      this.flowfieldNameitem[0].CREATE_USER = this.session.data.userName
-      this.flowfieldNameitem[0].LAST_USER = this.session.data.userName
-      console.log('flowfieldNameitem', this.flowfieldNameitem)
-      let Add = []
-      let fielditem = this.flowfieldNameitem
-      for (let i = 0; i < this.flowfieldNameitem.length; i++) {
-        let d = this.flowfieldNameitem[i]
-        let update = {}
-        if (d.conditionField === '' || d.conditionField === null) {
-          update.masBranchID = this.masBranchID
-          update.CREATE_USER = update.CREATE_USER
-          update.LAST_USER = update.LAST_USER
-          update.checkCar = d.checkCar
-          update.conditionField = d.conditionField
-          update.conditionValue = d.conditionValue
-          update.endDate = d.endDate
-          update.endTime = d.endTime
-          update.fieldId = d.fieldId
-          update.fieldName = d.fieldName
-          update.fieldType = d.fieldType
-          update.fieldValue = d.fieldValue
-          update.flowId = d.flowId
-          update.optionField = d.optionField
-          update.shopId = d.shopId
-          update.showCard = d.showCard
-          Add.push(update)
-        } else {
-          if (
-            fielditem.filter(row => {
-              return row.fieldId === parseInt(d.conditionField)
-            }).length > 0
-          ) {
-            console.log('this', fielditem)
-            if (
-              d.conditionValue ===
-              fielditem.filter(row => {
-                return row.fieldId === parseInt(d.conditionField)
-              })[0].fieldValue
-            ) {
-              update.masBranchID = this.masBranchID
-              update.CREATE_USER = update.CREATE_USER
-              update.LAST_USER = update.LAST_USER
-              update.checkCar = d.checkCar
-              update.conditionField = d.conditionField
-              update.conditionValue = d.conditionValue
-              update.endDate = d.endDate
-              update.endTime = d.endTime
-              update.fieldId = d.fieldId
-              update.fieldName = d.fieldName
-              update.fieldType = d.fieldType
-              update.fieldValue = d.fieldValue
-              update.flowId = d.flowId
-              update.optionField = d.optionField
-              update.shopId = d.shopId
-              update.showCard = d.showCard
-              Add.push(update)
-            }
-          }
-        }
-      }
-      console.log('Add', Add)
-      this.dataReady = false
-      this.$swal({
-        title: 'ต้องการ เพิ่มข้อมูล ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      })
-        .then(async result => {
-          this.shopId = this.shopId
-          this.endDate = this.endDate
-          this.endTime = this.endTime
-          this.checkCar = this.checkCar
-          console.log('Add', Add)
-          console.log('checkCar', this.checkCar)
-          console.log('endDate', this.endDate)
-          console.log('endTime', this.endTime)
-          console.log('shopId', this.shopId)
-          await axios
-            .post(
-              // eslint-disable-next-line quotes
-              this.DNS_IP + '/job/add',
-              Add
-            )
-            .then(async response => {
-              // Debug response
-              console.log('addDataGlobal DNS_IP + /job/add', response)
-              console.log('data', response)
-              let updateStatusSend = {
-                updateStatusSend: 'false'
-              }
-              await axios
-                .post(
-                  this.DNS_IP + '/job/pushQr/' + response.data.jobNo,
-                  updateStatusSend
-                )
-                .then(
-                  this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success'),
-                  this.clearData()
-                  // this.$router.push('/Master/FlowStep')
-                )
-                .catch(error => {
-                  console.log('error function addDataGlobal : ', error)
-                })
-            })
-            // eslint-disable-next-line handle-callback-err
-            .catch(error => {
-              console.log('error function addDataGlobal : ', error)
-              this.dataReady = true
-            })
-        })
-        .catch(error => {
-          console.log('error function addData : ', error)
-          this.dataReady = true
         })
     },
     log: function (evt) {
@@ -1520,7 +945,7 @@ export default {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
               d.text = d.masBranchName
-              d.value = d.masBranchId
+              d.value = d.masBranchID
               this.DataBranchName.push(d)
             }
           } else {
@@ -1531,11 +956,13 @@ export default {
     async getLayout () {
       this.Layout = []
       console.log('flowName', this.formUpdate.flowName)
+      console.log('Branch' + this.masBranchID)
       await axios
         .get(
           this.DNS_IP +
             '/WorkShopLayout/get?flowName=' +
             this.formUpdate.flowName +
+            '&masBranchID=' + this.masBranchID +
             '&shopId=' +
             this.shopId
         )
@@ -1610,6 +1037,7 @@ export default {
           this.DNS_IP +
             '/job/get?flowName=' +
             this.formUpdate.flowName +
+            '&masBranchID=' + this.masBranchID +
             '&shopId=' +
             this.shopId
         )
@@ -1667,8 +1095,14 @@ export default {
     async editStep () {
       this.$router.push('/Master/Flow')
     },
+    async newCars () {
+      this.$router.push('/Master/RegisterAdd')
+    },
     async editLayout () {
       this.$router.push('/Master/WorkShop')
+    },
+    itemCars (item) {
+      this.item_newcars = item
     },
     async setUpdate (item) {
       console.log(this.formUpdate)
@@ -1949,9 +1383,8 @@ export default {
   color: #1b437c;
 }
 #cardTitle {
-  width: 224px;
-  height: 50px;
-  background: #ffffff;
+  width: auto;
+  height: auto;
   border-radius: 2px;
 }
 #v-text-editLayout {

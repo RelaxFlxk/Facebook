@@ -51,9 +51,9 @@
               :available-field-keys="availableFieldKeys"
               :row-field-keys="rowFieldKeys"
               :col-field-keys="colFieldKeys"
+              :reducer="reducer"
               :default-show-settings="defaultShowSettings"
               :is-data-loading="isDataLoading"
-              :reducer="reducer"
             >
               <template slot="value" slot-scope="{ value }">
                 {{ value.toLocaleString() }}
@@ -129,33 +129,21 @@ export default {
           getter: item => item.jobDate,
           label: 'วันที่เปิด Job',
           valueFilter: true
+        },
+        {
+          key: 'totall',
+          getter: item => item.totall,
+          label: 'Totall',
+          valueFilter: true
         }
       ],
       availableFieldKeys: [],
       rowFieldKeys: ['masBranchName', 'empStep'],
-      colFieldKeys: ['jobDate'],
+      colFieldKeys: ['jobDate', 'totall'],
       reducer: (sum, item) => sum + item.closeJob,
       defaultShowSettings: false,
       isDataLoading: false,
       showFooter: true,
-
-      // Pivot table standalone field params
-      rowFields: [
-        {
-          getter: item => item.country,
-          label: 'Country'
-        },
-        {
-          getter: item => item.gender,
-          label: 'Gender'
-        }
-      ],
-      colFields: [
-        {
-          getter: item => item.year,
-          label: 'Year'
-        }
-      ],
       shopId: this.$session.getAll().data.shopId
     }
   },

@@ -16,26 +16,32 @@
         </v-row>
         <v-row>
           <!-- ADD -->
-          <v-dialog v-model="dialogAdd" persistent max-width="60%">
+          <v-dialog v-model="dialogAdd" persistent max-width="50%">
             <v-card>
               <v-form ref="form_add" v-model="validAdd" lazy-validation>
               <v-card-text>
                 <v-container>
-                  <v-col class="text-right">
-                    <v-icon color="#173053" @click="(dialogAdd = false), clearData()">mdi-close</v-icon>
-                  </v-col>
                   <v-row justify="center">
+                    <!-- ซ้าย -->
                     <v-col cols="6" class="text-center">
                       <center>
+                      <v-col class="mt-16">
+                      <v-img id="img_add" :src="require('@/assets/customImgAdd.png')"></v-img>
+                      </v-col>
                       <v-col>
-                      <v-img :src="require('@/assets/editCustomfield.png')"></v-img>
+                      <v-img :src="require('@/assets/customtextAdd.svg')"></v-img>
                       </v-col>
                       </center>
-                      <v-card-text v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
-                      <v-data-table
-                          dark
-                        :headers="columnsOption"
-                        :items="dataItemOption"
+                      <v-card-text>
+                         <!-- v-if="formAdd.fieldName && formAdd.fieldType !== 'text'" -->
+
+                          <v-data-table
+                            v-show="formAdd.fieldType && fieldTypeSelect !== 'text'"
+                            class="elevation-1 custom_table_class"
+                            dense
+                            :headers="columnsOption"
+                            :items="dataItemOption"
+                            hide-default-footer
                       >
                         <template v-slot:[`item.action`]="{ item }">
                           <v-btn
@@ -51,8 +57,11 @@
                       </v-data-table>
                     </v-card-text>
                     </v-col>
-
+                    <!-- ขวา -->
                       <v-col cols="6" class="v-margit_text_add mt-1">
+                        <v-col class="text-right">
+                    <v-icon color="#173053" @click="(dialogAdd = false), clearData()">mdi-close</v-icon>
+                  </v-col>
                     <v-col class="text-center">
                       <v-img class="v_text_add" :src="require('@/assets/Grouptitle.svg')"></v-img>
                       </v-col>
@@ -79,17 +88,18 @@
 
                       <v-row style="height: 50px">
                         <v-select
-                        v-model="formAdd.fieldType"
+                        v-model="fieldTypeSelect"
                         :items="selectTypeField"
                         dense
+                        value = 'text'
                         :rules="[rules.required]"
                         ></v-select>
                       </v-row>
 
-                      <v-row style="height: 35px" v-if="formAdd.fieldType !== 'text'">
+                      <v-row style="height: 35px" v-if="fieldTypeSelect !== ' ' && fieldTypeSelect !== 'text'">
                       <v-subheader id="subtext">optionField</v-subheader>
                       </v-row>
-                      <v-row style="height: 50px" v-if="formAdd.fieldType !== 'text'">
+                      <v-row style="height: 50px" v-if="fieldTypeSelect !== ' ' && fieldTypeSelect !== 'text'">
                         <v-select
                         v-model="formAdd.fieldType"
                         :items="selectOptionField"
@@ -103,10 +113,10 @@
                     <v-form ref="form_addOption" v-model="validAddOption" lazy-validation>
                     <v-row>
                     <v-col cols="6">
-                      <v-row style="height: 35px" v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
+                      <v-row style="height: 35px" v-if="formAdd.fieldType">
                       <v-subheader id="subtext" >Text:</v-subheader >
                       </v-row>
-                      <v-row style="height: 50px" v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
+                      <v-row style="height: 50px" v-if="formAdd.fieldType">
                       <v-text-field
                         v-model="formAddOption.optionText"
                         placeholder="Text"
@@ -119,10 +129,10 @@
                       </v-row>
                     </v-col>
                      <v-col cols="6">
-                      <v-row style="height: 35px" v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
+                      <v-row style="height: 35px" v-if="formAdd.fieldType">
                       <v-subheader id="subtext">Value:</v-subheader>
                       </v-row>
-                      <v-row style="height: 50px" v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
+                      <v-row style="height: 50px" v-if="formAdd.fieldType">
                       <v-text-field
                         v-model="formAddOption.optionValue"
                         placeholder="Value"
@@ -136,7 +146,7 @@
                      </v-form>
                     <br>
 
-                    <v-row justify="center" v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
+                    <v-row justify="center" v-if="formAddOption.optionText && formAddOption.optionValue">
                       <v-btn
                         elevation="2"
                         x-large
@@ -151,7 +161,7 @@
                       </v-row>
 
                       <!-- checkbox -->
-                     <v-container v-if="formAdd.fieldType"
+                     <v-container
                         class="px-0"
                         fluid
                       >
@@ -227,8 +237,11 @@
                   <v-row justify="center">
                     <v-col cols="6" class="text-center">
                       <center>
+                      <v-col class="mt-16">
+                      <v-img :src="require('@/assets/imgEditCustom.svg')"></v-img>
+                      </v-col>
                       <v-col>
-                      <v-img :src="require('@/assets/editCustomfield.png')"></v-img>
+                      <v-img :src="require('@/assets/customtextAdd.svg')"></v-img>
                       </v-col>
                       </center>
                       <v-card-text v-if="formUpdate.fieldName && formUpdate.fieldType !== 'text'">
@@ -350,7 +363,7 @@
                       </v-row>
 
                       <!-- checkbox -->
-                     <v-container v-if="formUpdate.fieldType"
+                     <v-container
                         class="px-0"
                         fluid
                       >
@@ -575,6 +588,7 @@ export default {
           href: '/Master/CustomField'
         }
       ],
+      fieldTypeSelect: ' ',
       options2: {
         locale: 'en-US',
         prefix: '',
@@ -681,9 +695,9 @@ export default {
       // End Form Config ADD EDIT
       // Data Table Config
       columns: [
-        { text: 'ID', value: 'fieldId' },
-        { text: 'ชื่อ Field', value: 'fieldName' },
-        { text: 'ประเภท Field', value: 'fieldType' },
+        // { text: 'ID', value: 'fieldId' },
+        { text: 'ชื่อ Field', value: 'fieldName', align: 'center' },
+        { text: 'ประเภท Field', value: 'fieldType', align: 'center' },
         // { text: 'conditionValue', value: 'conditionValue', align: 'center' },
         { text: 'Action', value: 'action', sortable: false, align: 'center' }
       ],
@@ -778,7 +792,7 @@ export default {
     },
     getCondition () {
       this.dataItemCondition = []
-      axios.get(this.DNS_IP + '/customField/get').then((response) => {
+      axios.get(this.DNS_IP + '/customField/get?shopId=' + this.shopId).then((response) => {
         let rs = response.data
         if (rs.length > 0) {
           for (var i = 0; i < rs.length; i++) {
@@ -956,6 +970,12 @@ export default {
 #margin {
   margin-top: 150px;
   margin-bottom: 40px;
+}
+#img_add {
+  height: 343px;
+  width: 398.8671875px;
+  border-radius: 0px;
+
 }
 #v_textEdit {
   height: 43px;
