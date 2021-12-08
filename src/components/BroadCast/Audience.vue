@@ -14,7 +14,7 @@
               id="v-step-0"
               depressed
               dark
-              @click="(dialogAdd = true), validate('ADD'), formAdd.masBranchID = branch[0].value"
+              @click="(dialogAdd = true), validate('ADD'), formAdd.masBranchID = branch[0].value, formAdd.flowId = DataFlowName[0].value"
             >
               <v-icon left>mdi-text-box-plus</v-icon>
               เพิ่ม
@@ -112,6 +112,7 @@
                                   :items="optionAudiences"
                                   v-model="formAdd.audiencesSelect"
                                   dense
+                                  @change="chkAudiencesSelect()"
                                   solo
                                   :rules="[rules.required]"
                                 ></v-select>
@@ -120,30 +121,240 @@
                             <!-- <v-col cols="2" class="pb-0"></v-col> -->
                           </v-row>
                         </v-col>
-                        <v-col cols="12" class="pb-0">
+                        <v-col cols="12" class="pb-0" v-if="formAdd.audiencesSelect === 'typeJob'">
                           <v-row>
                             <v-col cols="12" class="pb-0">
                               <v-row>
+                                <v-col cols="12" class="pb-0">
+                                  <v-row>
+                                    <v-subheader id="subtext"
+                                    >เลือกสาขา</v-subheader
+                                    >
+                                  </v-row>
+                                  <v-row>
+                                    <v-select
+                                      v-model="formAdd.masBranchID"
+                                      :items="branch"
+                                      solo
+                                      dense
+                                    ></v-select>
+                                  </v-row>
+                                </v-col>
+                                <!-- <v-col cols="2" class="pb-0"></v-col> -->
+                              </v-row>
+                            </v-col>
+                            <v-col cols="12" class="pb-0">
+                               <v-row>
                                 <v-subheader id="subtext"
-                                >เลือกสาขา</v-subheader
+                                >เลือกบริการต้องการ</v-subheader
                                 >
                               </v-row>
                               <v-row>
-                                <v-select
-                                  v-model="formAdd.masBranchID"
-                                  :items="branch"
-                                  solo
-                                  dense
-                                  required
-                                  :rules="[rules.required]"
-                                ></v-select>
+                                <v-col cols="12" class="pa-0">
+                                  <v-select
+                                      v-model="formAdd.flowId"
+                                      :items="DataFlowName"
+                                      label="ประเภทบริการ"
+                                      outlined
+                                      dense
+                                    ></v-select>
+                                </v-col>
                               </v-row>
                             </v-col>
-                            <!-- <v-col cols="2" class="pb-0"></v-col> -->
+                            <v-col cols="12" class="pb-0">
+                              <v-row>
+                                <v-subheader id="subtext"
+                                >เลือกวันที่ที่ต้องการ</v-subheader
+                                >
+                              </v-row>
+                              <v-row>
+                                <v-col cols="2" class="pa-0 mt-n5">
+                                  <v-checkbox
+                                    label="วันที่รับงาน"
+                                    false-value="False"
+                                    true-value="True"
+                                    @change="chkboxDisable('open')"
+                                    v-model="formAdd.dateJobOpen"
+                                  ></v-checkbox>
+                                </v-col>
+                                <v-col cols="5" class="pa-0">
+                                  <v-menu
+                                    v-model="menu1"
+                                    :close-on-content-click="false"
+                                    :nudge-right="40"
+                                    transition="scale-transition"
+                                    offset-y
+                                    min-width="290px"
+                                  >
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-text-field
+                                        v-model="formAdd.startDate"
+                                        prepend-icon="mdi-calendar"
+                                        label=""
+                                        v-bind="attrs"
+                                        :disabled="disableOpen"
+                                        outlined
+                                        dense
+                                        v-on="on"
+                                      ></v-text-field>
+                                    </template>
+                                    <v-date-picker
+                                      v-model="formAdd.startDate"
+                                      :disabled="disableOpen"
+                                      :max="formAdd.endDate"
+                                      @input="menu1 = false"
+                                    ></v-date-picker>
+                                  </v-menu>
+                                </v-col>
+                                <v-col cols="5" class="pa-0">
+                                  <v-menu
+                                    v-model="menu2"
+                                    :close-on-content-click="false"
+                                    :nudge-right="40"
+                                    transition="scale-transition"
+                                    offset-y
+                                    min-width="290px"
+                                  >
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-text-field
+                                        v-model="formAdd.endDate"
+                                        prepend-icon="mdi-calendar"
+                                        label=""
+                                        v-bind="attrs"
+                                        :disabled="disableOpen"
+                                        outlined
+                                        dense
+                                        v-on="on"
+                                      ></v-text-field>
+                                    </template>
+                                    <v-date-picker
+                                      :min="formAdd.startDate"
+                                      :disabled="disableOpen"
+                                      v-model="formAdd.endDate"
+                                      @input="menu2 = false"
+                                    ></v-date-picker>
+                                  </v-menu>
+                                </v-col>
+                              </v-row>
+                            </v-col>
+                            <v-col cols="12" class="pb-0">
+                              <v-row>
+                                <v-subheader id="subtext"
+                                >เลือกวันที่ที่ต้องการ</v-subheader
+                                >
+                              </v-row>
+                              <v-row>
+                                <v-col cols="2" class="pa-0 mt-n5">
+                                  <v-checkbox
+                                    label="วันที่ปิดงาน"
+                                    false-value="False"
+                                    true-value="True"
+                                    @change="chkboxDisable('close')"
+                                    v-model="formAdd.dateJobClose"
+                                  ></v-checkbox>
+                                </v-col>
+                                <v-col cols="5" class="pa-0">
+                                  <v-menu
+                                    v-model="menu3"
+                                    :close-on-content-click="false"
+                                    :nudge-right="40"
+                                    transition="scale-transition"
+                                    offset-y
+                                    min-width="290px"
+                                  >
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-text-field
+                                        v-model="formAdd.startDateClose"
+                                        prepend-icon="mdi-calendar"
+                                        label=""
+                                        v-bind="attrs"
+                                        outlined
+                                        :disabled="disableClose"
+                                        dense
+                                        v-on="on"
+                                      ></v-text-field>
+                                    </template>
+                                    <v-date-picker
+                                      v-model="formAdd.startDateClose"
+                                      :disabled="disableClose"
+                                      :max="formAdd.endDateClose"
+                                      @input="menu3 = false"
+                                    ></v-date-picker>
+                                  </v-menu>
+                                </v-col>
+                                <v-col cols="5" class="pa-0">
+                                  <v-menu
+                                    v-model="menu4"
+                                    :close-on-content-click="false"
+                                    :nudge-right="40"
+                                    transition="scale-transition"
+                                    offset-y
+                                    min-width="290px"
+                                  >
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-text-field
+                                        v-model="formAdd.endDateClose"
+                                        prepend-icon="mdi-calendar"
+                                        label=""
+                                        v-bind="attrs"
+                                        outlined
+                                        :disabled="disableClose"
+                                        dense
+                                        v-on="on"
+                                      ></v-text-field>
+                                    </template>
+                                    <v-date-picker
+                                      :min="formAdd.startDateClose"
+                                      v-model="formAdd.endDateClose"
+                                      :disabled="disableClose"
+                                      @input="menu4 = false"
+                                    ></v-date-picker>
+                                  </v-menu>
+                                </v-col>
+                              </v-row>
+                            </v-col>
                           </v-row>
                         </v-col>
-                        <v-col cols="12" class="pb-0" v-if="formAdd.audiencesSelect !== 'rating'">
+                        <v-col cols="12" class="pb-0" v-if="formAdd.audiencesSelect === 'bookingDate'">
                           <v-row>
+                            <v-col cols="12" class="pb-0">
+                              <v-row>
+                                <v-col cols="12" class="pb-0">
+                                  <v-row>
+                                    <v-subheader id="subtext"
+                                    >เลือกสาขา</v-subheader
+                                    >
+                                  </v-row>
+                                  <v-row>
+                                    <v-select
+                                      v-model="formAdd.masBranchID"
+                                      :items="branch"
+                                      solo
+                                      dense
+                                    ></v-select>
+                                  </v-row>
+                                </v-col>
+                                <!-- <v-col cols="2" class="pb-0"></v-col> -->
+                              </v-row>
+                            </v-col>
+                            <v-col cols="12" class="pb-0">
+                               <v-row>
+                                <v-subheader id="subtext"
+                                >เลือกบริการต้องการ</v-subheader
+                                >
+                              </v-row>
+                              <v-row>
+                                <v-col cols="12" class="pa-0">
+                                  <v-select
+                                      v-model="formAdd.flowId"
+                                      :items="DataFlowName"
+                                      label="ประเภทบริการ"
+                                      outlined
+                                      dense
+                                    ></v-select>
+                                </v-col>
+                              </v-row>
+                            </v-col>
                             <v-col cols="12" class="pb-0">
                               <v-row>
                                 <v-subheader id="subtext"
@@ -235,6 +446,143 @@
                                     outlined
                                     v-bind:options="options2"
                                   />
+                                </v-col>
+                              </v-row>
+                            </v-col>
+                            <v-col cols="12" class="pb-0">
+                              <v-row>
+                                <v-subheader id="subtext"
+                                >เลือกวันที่ที่ต้องการ</v-subheader
+                                >
+                              </v-row>
+                              <v-row>
+                                <v-col cols="6" class="pa-0">
+                                  <v-menu
+                                    v-model="menu1"
+                                    :close-on-content-click="false"
+                                    :nudge-right="40"
+                                    transition="scale-transition"
+                                    offset-y
+                                    min-width="290px"
+                                  >
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-text-field
+                                        v-model="formAdd.startDate"
+                                        prepend-icon="mdi-calendar"
+                                        label=""
+                                        v-bind="attrs"
+                                        outlined
+                                        dense
+                                        v-on="on"
+                                      ></v-text-field>
+                                    </template>
+                                    <v-date-picker
+                                      v-model="formAdd.startDate"
+                                      :max="formAdd.endDate"
+                                      @input="menu1 = false"
+                                    ></v-date-picker>
+                                  </v-menu>
+                                </v-col>
+                                <v-col cols="6" class="pa-0">
+                                  <v-menu
+                                    v-model="menu2"
+                                    :close-on-content-click="false"
+                                    :nudge-right="40"
+                                    transition="scale-transition"
+                                    offset-y
+                                    min-width="290px"
+                                  >
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-text-field
+                                        v-model="formAdd.endDate"
+                                        prepend-icon="mdi-calendar"
+                                        label=""
+                                        v-bind="attrs"
+                                        outlined
+                                        dense
+                                        v-on="on"
+                                      ></v-text-field>
+                                    </template>
+                                    <v-date-picker
+                                      :min="formAdd.startDate"
+                                      v-model="formAdd.endDate"
+                                      @input="menu2 = false"
+                                    ></v-date-picker>
+                                  </v-menu>
+                                </v-col>
+                              </v-row>
+                            </v-col>
+                          </v-row>
+                        </v-col>
+                        <v-col cols="12" class="pb-0" v-if="formAdd.audiencesSelect === 'typeCustomField' && dataCustom.length > 0">
+                          <v-row>
+                            <v-col cols="12" class="pb-0">
+                              <v-row>
+                                <v-col cols="6">
+                                  <v-row>
+                                    <v-subheader id="subtext"
+                                    >เลือกช่องกรอกข้อมูล</v-subheader
+                                    >
+                                  </v-row>
+                                  <v-row>
+                                    <v-select
+                                      v-model="formAdd.fieldId"
+                                      :items="dataCustom"
+                                      @change="getDataOptionField()"
+                                      solo
+                                      dense
+                                    ></v-select>
+                                  </v-row>
+                                </v-col>
+                                <v-col cols="6">
+                                  <v-row>
+                                    <v-subheader id="subtext"
+                                    >เลือกข้อมูลของช่องกรอกข้อมูล</v-subheader
+                                    >
+                                  </v-row>
+                                  <v-row>
+                                    <v-select
+                                      v-model="formAdd.optionFieldValue"
+                                      :items="dataOptionField"
+                                      solo
+                                      dense
+                                    ></v-select>
+                                  </v-row>
+                                </v-col>
+                                <!-- <v-col cols="2" class="pb-0"></v-col> -->
+                              </v-row>
+                            </v-col>
+                            <v-col cols="12" class="pb-0">
+                              <v-row>
+                                <v-col cols="6">
+                                  <v-row>
+                                    <v-subheader id="subtext"
+                                    >เลือกแหล่งที่มาของข้อมูล</v-subheader
+                                    >
+                                  </v-row>
+                                  <v-row>
+                                    <v-select
+                                      v-model="formAdd.selectData"
+                                      :items="dataSelectData"
+                                      solo
+                                      dense
+                                    ></v-select>
+                                  </v-row>
+                                </v-col>
+                                <v-col cols="6" class="pb-0">
+                                  <v-row>
+                                    <v-subheader id="subtext"
+                                    >เลือกสาขา</v-subheader
+                                    >
+                                  </v-row>
+                                  <v-row>
+                                    <v-select
+                                      v-model="formAdd.masBranchID"
+                                      :items="branch"
+                                      solo
+                                      dense
+                                    ></v-select>
+                                  </v-row>
                                 </v-col>
                               </v-row>
                             </v-col>
@@ -683,6 +1031,8 @@ export default {
     return {
       menu1: false,
       menu2: false,
+      menu3: false,
+      menu4: false,
       path: '/audiences/', // Path Model
       returnLink: '/tool/Audience',
       session: this.$session.getAll(),
@@ -718,15 +1068,23 @@ export default {
         }
       },
       formAdd: {
+        selectData: 'booking',
+        flowId: '',
+        fieldId: '',
+        optionFieldValue: '',
         startDate: new Date().toISOString().substr(0, 10),
         endDate: new Date().toISOString().substr(0, 10),
+        startDateClose: new Date().toISOString().substr(0, 10),
+        endDateClose: new Date().toISOString().substr(0, 10),
         audiencesSelect: 'bookingDate',
         startRating: 0,
         endRating: 0,
         shopId: this.$session.getAll().data.shopId,
         CREATE_USER: '',
         LAST_USER: '',
-        masBranchID: ''
+        masBranchID: '',
+        dateJobOpen: 'False',
+        dateJobClose: 'False'
       },
       formUpdate2: null,
       formUpdate: {
@@ -756,11 +1114,15 @@ export default {
       ],
       optionAudiences: [
         { text: 'วันที่นัดหมาย', value: 'bookingDate' },
-        { text: 'วันที่รับงาน', value: 'openJobDate' },
-        { text: 'วันที่ปิดงาน', value: 'closeJobDate' },
-        { text: 'คะแนนความพึงพอใจ', value: 'rating' },
         { text: 'ประเภทบริการ', value: 'typeJob' },
+        // { text: 'วันที่รับงาน', value: 'openJobDate' },
+        // { text: 'วันที่ปิดงาน', value: 'closeJobDate' },
+        { text: 'คะแนนความพึงพอใจ', value: 'rating' },
         { text: 'ประเภทการกรอก', value: 'typeCustomField' }
+      ],
+      dataSelectData: [
+        { text: 'จากข้อมูล นัดหมาย', value: 'booking' },
+        { text: 'จากข้อมูล งาน', value: 'job' }
       ],
       // End Menu Config
       dataReady: true,
@@ -769,12 +1131,17 @@ export default {
       searchAll3: '',
       dialogAdd: false,
       dialogEdit: false,
+      disableOpen: true,
+      disableClose: true,
       dialogDelete: false,
       validUpdate: true,
       validAdd: true,
       dataLevel: [],
       ProductExchangeRate: [],
-      branch: []
+      branch: [],
+      DataFlowName: [],
+      dataCustom: [],
+      dataOptionField: []
     }
   },
   beforeCreate () {
@@ -784,6 +1151,7 @@ export default {
   },
   async mounted () {
     this.getDataBranch()
+    this.getDataFlow()
   },
   methods: {
     async getDataBranch () {
@@ -796,6 +1164,7 @@ export default {
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
+            this.branch.push({text: 'ทั้งหมด', value: 'allBr'})
             for (var i = 0; i < rs.length; i++) {
               let d = rs[i]
               let s = {}
@@ -805,10 +1174,91 @@ export default {
               // console.log('dtdtdtdt', this.branch)
             }
           } else {
-            this.branch = []
+            this.branch.push({text: 'ทั้งหมด', value: 'allBr'})
+            // this.branch = []
           }
         })
     },
+    getDataOptionField () {
+      this.dataOptionField = []
+      axios
+        .get(this.DNS_IP + '/customField/get?shopId=' + this.session.data.shopId + '&fieldId=' + this.formAdd.fieldId)
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            this.dataOptionField = JSON.parse(rs[0].optionField)
+            this.formAdd.optionFieldValue = this.dataOptionField[0].value
+            // for (var i = 0; i < rs.length; i++) {
+            //   var d = rs[i]
+            //   d.text = d.fieldName
+            //   d.value = d.fieldId
+            //   this.dataOptionField.push(d)
+            // }
+          } else {
+            this.dataOptionField = ''
+          }
+        })
+    },
+    getDataCustomField () {
+      this.dataCustom = []
+      axios
+        .get(this.DNS_IP + '/customField/get?shopId=' + this.session.data.shopId + "&fieldType='Selects','Radio'")
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            // this.dataCustom.push({text: 'ทั้งหมด', value: 'allField'})
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              d.text = d.fieldName
+              d.value = d.fieldId
+              this.dataCustom.push(d)
+            }
+            this.formAdd.fieldId = this.dataCustom[0].value
+            this.getDataOptionField()
+          } else {
+            this.dataCustom = []
+            this.$swal('ผิดพลาด', 'คุณไม่มี ประเภทการกรอก ที่ไม่ตรงเงื่อน', 'error')
+          }
+        })
+    },
+    getDataFlow () {
+      this.DataFlowName = []
+      axios
+        .get(this.DNS_IP + '/flow/get?shopId=' + this.session.data.shopId)
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            this.DataFlowName.push({text: 'ทั้งหมด', value: 'allFlow'})
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              d.text = d.flowName
+              d.value = d.flowId
+              this.DataFlowName.push(d)
+            }
+          } else {
+            this.DataFlowName.push({text: 'ทั้งหมด', value: 'allFlow'})
+          }
+        })
+    },
+    // getDataFlowBr (branch) {
+    //   this.DataFlowName = []
+    //   axios
+    //     .get(this.DNS_IP + '/flow/get?shopId=' + this.session.data.shopId)
+    //     .then(response => {
+    //       let rs = response.data
+    //       if (rs.length > 0) {
+    //         this.DataFlowName.push({text: 'ทั้งหมด', value: 'allFlow'})
+    //         for (var i = 0; i < rs.length; i++) {
+    //           var d = rs[i]
+    //           d.text = d.flowName
+    //           d.value = d.flowId
+    //           this.DataFlowName.push(d)
+    //         }
+    //       } else {
+    //         this.DataFlowName.push({text: 'ทั้งหมด', value: 'allFlow'})
+    //       }
+    //     })
+    // },
     validate (Action) {
       switch (Action) {
         case 'ADD':
@@ -828,23 +1278,116 @@ export default {
           break
       }
     },
+    // chkBranch () {
+    //   if (this.formAdd.audiencesSelect === 'typeJob') {
+    //     if (this.formAdd.masBranchID === 'allBr') {
+    //       this.getDataFlowBr('allBr')
+    //     } else {
+
+    //     }
+    //   }
+    // },
+    chkboxDisable (item) {
+      if (item === 'open') {
+        if (this.formAdd.dateJobOpen === 'True') {
+          this.disableOpen = false
+        } else {
+          this.disableOpen = true
+        }
+      } else if (item === 'close') {
+        if (this.formAdd.dateJobClose === 'True') {
+          this.disableClose = false
+        } else {
+          this.disableClose = true
+        }
+      }
+    },
+    chkAudiencesSelect () {
+      if (this.formAdd.audiencesSelect === 'typeCustomField') {
+        this.getDataCustomField()
+      }
+    },
     async getDataAdd () {
       this.valueAdd = 0
       this.dataAdd = 0
       var num = 0
       var url = ''
-      if (this.formAdd.audiencesSelect === 'bookingDate') {
-        url = this.DNS_IP + '/member/get?shopId=' + this.session.data.shopId
-      } else if (this.formAdd.audiencesSelect === 'openJobDate') {
-        url = this.DNS_IP + '/member/get?shopId=' + this.session.data.shopId
-      } else if (this.formAdd.audiencesSelect === 'closeJobDate') {
-        url = this.DNS_IP + '/member/get?shopId=' + this.session.data.shopId
-      } else if (this.formAdd.audiencesSelect === 'rating') {
-        url = this.DNS_IP + '/member/get?shopId=' + this.session.data.shopId
+      var branchId = ''
+      var flowId = ''
+      if (this.formAdd.masBranchID === 'allBr') {
+        branchId = ''
+      } else {
+        branchId = this.formAdd.masBranchID
       }
+      if (this.formAdd.flowId === 'allFlow') {
+        flowId = ''
+      } else {
+        flowId = this.formAdd.flowId
+      }
+      if (this.formAdd.audiencesSelect === 'bookingDate') {
+        url = this.DNS_IP + '/booking_view/getAudience?shopId=' +
+            this.session.data.shopId +
+            '&masBranchID=' +
+            branchId +
+            '&flowId=' +
+            flowId +
+            '&dateRange=' + this.formAdd.startDate + '/' + this.formAdd.endDate
+      } else if (this.formAdd.audiencesSelect === 'typeJob') {
+        console.log(this.formAdd.dateJobOpen, this.formAdd.dateJobClose)
+        if (this.formAdd.dateJobOpen === 'True' && this.formAdd.dateJobClose === 'True') {
+          url = this.DNS_IP + '/job/getAudience?shopId=' +
+            this.session.data.shopId +
+            '&masBranchID=' +
+            branchId +
+            '&flowId=' +
+            flowId +
+            '&dateRange=' + this.formAdd.startDate + '/' + this.formAdd.endDate +
+            '&dateRangeClose=' + this.formAdd.startDateClose + '/' + this.formAdd.endDateClose
+        } else if (this.formAdd.dateJobOpen === 'True' && this.formAdd.dateJobClose === 'False') {
+          url = this.DNS_IP + '/job/getAudience?shopId=' +
+            this.session.data.shopId +
+            '&masBranchID=' +
+            branchId +
+            '&flowId=' +
+            flowId +
+            '&dateRange=' + this.formAdd.startDate + '/' + this.formAdd.endDate
+        } else if (this.formAdd.dateJobOpen === 'False' && this.formAdd.dateJobClose === 'True') {
+          url = this.DNS_IP + '/job/getAudience?shopId=' +
+            this.session.data.shopId +
+            '&masBranchID=' +
+            branchId +
+            '&flowId=' +
+            flowId +
+            '&dateRangeClose=' + this.formAdd.startDateClose + '/' + this.formAdd.endDateClose
+        } else if (this.formAdd.dateJobOpen === 'False' && this.formAdd.dateJobClose === 'False') {
+          url = this.DNS_IP + '/job/getAudience?shopId=' +
+            this.session.data.shopId +
+            '&masBranchID=' +
+            branchId +
+            '&flowId=' +
+            flowId
+        }
+      } else if (this.formAdd.audiencesSelect === 'rating') {
+        url = this.DNS_IP + '/rating/getAudience?shopId=' +
+            this.session.data.shopId +
+            '&masBranchID=' +
+            branchId +
+            '&ratingRange=' + this.formAdd.startRating + '/' + this.formAdd.endRating +
+            '&dateRange=' + this.formAdd.startDate + '/' + this.formAdd.endDate
+      } else if (this.formAdd.audiencesSelect === 'typeCustomField') {
+        if (this.formAdd.selectData === 'booking') {
+          url = this.DNS_IP + '/BookingData/getAudience?shopId=' + this.session.data.shopId + '&fieldValue=' + this.formAdd.optionFieldValue +
+          '&masBranchID=' + branchId
+        } else if (this.formAdd.selectData === 'job') {
+          url = this.DNS_IP + '/jobData/getAudience?shopId=' + this.session.data.shopId + '&fieldValue=' + this.formAdd.optionFieldValue +
+          '&masBranchID=' + branchId
+        }
+      }
+      console.log(url)
       await axios
         .get(
-          url
+          // eslint-disable-next-line quotes
+          this.DNS_IP + '/member/get?shopId=' + this.session.data.shopId
         )
         .then(async response => {
           console.log('response', response.data)
@@ -856,6 +1399,20 @@ export default {
             this.valueAdd = 100
             this.dataAdd = num
           }
+          await axios
+            .get(
+              url
+            )
+            .then(async res => {
+              console.log('response', response.data)
+              if (res.data.status === false) {
+                this.valueAdd = parseInt((0 / num) * 100)
+                this.dataAdd = 0
+              } else {
+                this.valueAdd = parseInt((res.data.length / num) * 100)
+                this.dataAdd = res.data.length
+              }
+            })
         })
     },
     clearAdd () {
