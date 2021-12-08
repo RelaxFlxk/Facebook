@@ -9,7 +9,7 @@
       <v-col cols="12" md="6" class="text-center pa-0 mt-16">
         <v-row class="mb-6" justify="center" no-gutters>
           <v-col md="auto">
-            <h2 class='v-subheader pr-16'>ยินดีตอนรับ!</h2>
+            <h2 class='v-subheader pr-16'>ยินดีต้อนรับ!</h2>
           </v-col>
         </v-row>
         <!-- <v-row class="mt-15" justify="center" no-gutters>
