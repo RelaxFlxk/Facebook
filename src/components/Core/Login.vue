@@ -1,17 +1,15 @@
 <template>
-  <div id="login" class="bgPage">
+  <div id="login" style="margin: auto 0;" class="bgPage">
     <v-row>
-      <v-col  cols="6"  class="text-center pa-0 mt-15">
+      <v-col cols="12" md="6">
         <v-img
-          class="ma-15"
           :src="require('@/assets/logIn.svg')"
         ></v-img>
       </v-col>
-      <v-col cols="6" class="text-center pa-0 mt-16">
+      <v-col cols="12" md="6" class="text-center pa-0 mt-16">
         <v-row class="mb-6" justify="center" no-gutters>
           <v-col md="auto">
             <h2 class='v-subheader pr-16'>ยินดีตอนรับ!</h2>
-            <!-- <h1 style="color:black;"><strong>Forget Password?</strong></h1> -->
           </v-col>
         </v-row>
         <!-- <v-row class="mt-15" justify="center" no-gutters>
@@ -53,26 +51,24 @@
           <v-col cols="10" class='pl-15'>
             <v-row>
               <v-btn
-                x-large
                 color="#173053"
-                block
                 dark
                 @click="onSubmit()"
               >
                 <v-icon left>mdi-checkbox-marked-circle</v-icon>
                 เข้าสู่ระบบ
               </v-btn>
+              <v-btn text @click="dialog = true, validate('UPDATE')">
+              ลืมรหัสผ่าน?
+            </v-btn>
             </v-row>
           </v-col>
           <v-col cols="5">
           </v-col>
           <v-col cols="5" align="right">
-            <v-btn text @click="dialog = true, validate('UPDATE')">
-              ลืมรหัสผ่าน?
-            </v-btn>
             <!-- <v-list-tile @click="dialog = true, validate('UPDATE')">Forgot Password?</v-list-tile> -->
           </v-col>
-          <v-col cols="10">
+          <v-col cols="10" style="padding-left: 50px">
             <h6>คุณได้ลงทะเบียนแล้วหรือยัง? <a href="https://betask-linked.web.app/register">ลงทะเบียน!</a></h6>
           </v-col>
         </v-row>
@@ -177,6 +173,7 @@ export default {
       profile: [],
       privacyConfigDetail: '',
       privacyConfigCode: '',
+      widthScreen: window.screen.width,
       menu: [],
       rules: {
         numberRules: value =>
@@ -565,7 +562,7 @@ export default {
 <style scoped>
 .bgPage {
   background: linear-gradient(180deg, #FFFFFF 10%, #E1F3FF 100%);
-  position: absolute;
+  height: 100%;
   left: 0%;
   right: 0%;
   top: 0%;
@@ -601,10 +598,11 @@ a {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 100px;
+  padding: 130px 30px 30px 30px;
+  /* margin-top: 100px;
   margin-left: 10px;
   margin-right: 10px;
-  margin-bottom: 60px;
+  margin-bottom: 60px; */
 }
 .v-subheader {
     color: #1B437C !important;
@@ -620,4 +618,7 @@ a {
   margin-right: 10px;
   margin-bottom: 10px;
 }
+/* body {
+  background-color: lightgreen;
+} */
 </style>
