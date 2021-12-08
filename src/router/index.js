@@ -4,6 +4,7 @@ import Core from '@/components/Core'
 import System from '@/components/System'
 import Master from '@/components/Master'
 import Dashbord from '@/components/Dashbord'
+import BroadCast from '@/components/BroadCast'
 
 Vue.use(Router)
 
@@ -177,6 +178,16 @@ export default new Router({
     path: '/Dashbord/PerformanceBK',
     name: 'PerformanceBK',
     component: Dashbord.PerformanceBK
+  },
+  {
+    path: '/BroadCast/Audience',
+    name: 'Audience',
+    component: BroadCast.Audience
+  },
+  {
+    path: '/BroadCast/BroadCast',
+    name: 'BroadCast',
+    component: BroadCast.BroadCast
   }
   ]
 })

@@ -28,6 +28,17 @@
               <v-icon left>mdi-text-box-plus</v-icon>
               เพิ่ม
             </v-btn>
+            <v-btn
+              color="teal"
+              style="z-index:8;"
+              id="v-step-0"
+              dark
+              depressed
+              @click="(dialogExport = true), validate('EXPORT')"
+            >
+              <v-icon left>mdi-download</v-icon>
+              Export Data
+            </v-btn>
             <!-- </v-overlay> -->
           </v-col>
         </v-row>
@@ -45,6 +56,112 @@
           </v-col>
         </v-row>
         <v-row>
+          <!-- EXPORT -->
+          <v-dialog v-model="dialogExport" persistent max-width="70%">
+            <v-card class="text-center">
+              <v-form ref="form_export" v-model="validExport" lazy-validation>
+                <v-card-text>
+                  <v-container>
+                    <v-col class="text-right pa-0">
+                      <v-btn
+                        small
+                        color="#E0E0E0"
+                        @click="(dialogExport = false)"
+                      >
+                        <v-icon color="#173053">mdi-close</v-icon>
+                      </v-btn>
+                    </v-col>
+                    <v-row justify="center">
+                      <v-col
+                        cols="5"
+                        class="text-center"
+                        style="margin: auto 0;"
+                      >
+                        <v-col class="text-center">
+                          <v-img
+                            class="v-margit_img_reward"
+                            :src="require('@/assets/ExportExcel.svg')"
+                            max-width="470.37"
+                            max-height="247"
+                          ></v-img>
+                        </v-col>
+                      </v-col>
+
+                      <v-col cols="6" class="v-margit_text_add mt-0 pa-0">
+                        <v-col class="text-center pa-3 ml-2">
+                          <v-img
+                            class="v_text_add"
+                            :src="require('@/assets/Grouptitle.svg')"
+                          ></v-img>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-row>
+                            <v-col cols="6">
+                               <p>เลือกสาขา</p>
+                              <v-select
+                                v-model="masBranchIDExport"
+                                :items="branch"
+                                label=""
+                                outlined
+                                :rules="[rules.required]"
+                              ></v-select>
+                            </v-col>
+                            <v-col cols="6">
+                              <p>เลือกวันที่</p>
+                              <date-range-picker
+                                opens="left"
+                                :append-to-body='appendBody'
+                                ref="picker"
+                                :locale-data="localeData"
+                                v-model="dateRange"
+                                :rules="[rules.required]"
+                                @update="updateValuesExport()"
+                                >
+                                  <template #ranges="ranges">
+                                    <div class="ranges">
+                                      <ul>
+                                        <li v-for="(range, name) in ranges.ranges" :key="name" @click="ranges.clickRange(range)">
+                                          <b v-if="name === 'Today'">วันนี้</b>
+                                          <b v-if="name === 'Yesterday'">เมื่อวาน</b>
+                                          <b v-if="name === 'This month'">เดือนนี้</b>
+                                          <b v-if="name === 'This year'">ปีนี้ทั้งปี</b>
+                                          <b v-if="name === 'Last month'">เดือนที่แล้ว</b>
+                                        </li>
+                                        <!-- <li data-range-key="Today" tabindex="0" class="active" @click="ranges.clickRange('Today')">วันนี้ </li>
+                                        <li data-range-key="Yesterday" tabindex="0" class="" @click="ranges.clickRange('Yesterday')">เมื่อวาน </li>
+                                        <li data-range-key="This month" tabindex="0" class="" @click="ranges.clickRange('This month')">เดือนนี้ </li>
+                                        <li data-range-key="This year" tabindex="0" class="" @click="ranges.clickRange('This year')">ปีนี้ทั้งปี </li>
+                                        <li data-range-key="Last month" tabindex="0" class="" @click="ranges.clickRange('Last month')">เดือนที่แล้ว </li> -->
+                                      </ul>
+                                    </div>
+                                  </template>
+                                </date-range-picker>
+                            </v-col>
+                            </v-row>
+                        </v-col>
+                      </v-col>
+                    </v-row>
+                    <div class="text-center" v-if="export_data.length > 0">
+                      <v-btn color="yellow-light" @click="dialogExport = false">
+                        <v-icon left>mdi-download</v-icon>
+                        <download-excel
+                          class="btn btn-default"
+                          :data="export_data"
+                          :fields="export_fields"
+                          :type="exportType"
+                          :worksheet="exportWorksheet"
+                          :name="exportFileName"
+                        >
+                          Export Data
+                        </download-excel>
+                      </v-btn>
+                    </div>
+                  </v-container>
+                </v-card-text>
+              </v-form>
+            </v-card>
+          </v-dialog>
+          <!-- end add -->
           <!-- ADD -->
           <v-dialog v-model="dialogAdd" persistent max-width="70%">
             <v-card class="text-center">
@@ -626,20 +743,68 @@ import axios from 'axios' // api
 import draggable from 'vuedraggable'
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
+import JsonExcel from 'vue-json-excel' // https://www.npmjs.com/package/vue-json-excel
+import XLSX from 'xlsx' // import xlsx
+import readXlsxFile from 'read-excel-file'
+import DateRangePicker from 'vue2-daterange-picker'
+// you need to import the CSS manually
+import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 
 export default {
   name: 'BookingList',
   components: {
     draggable,
     'left-menu-admin': adminLeftMenu,
+    DateRangePicker,
+    downloadExcel: JsonExcel,
+    XLSX,
+    readXlsxFile,
     VuetifyMoney
   },
   data () {
+    let startDate = null
+    let endDate = null
     return {
+      export_fields: {
+        'Booking Id': 'bookNo',
+        'สาขา': 'masBranchName',
+        'ชื่อลูกค้า': 'cusName',
+        'ทะเบียนรถ': 'cusReg',
+        'วันและเวลานัดหมาย': 'dueDate',
+        'ชื่อบริการ': 'flowName',
+        'สถานะ ติดต่อ': 'statusBt',
+        'วันที่ ติดต่อ': 'contactDateBt',
+        // 'วันที่ แจ้งเปลี่ยน': 'changDateBt',
+        'สถานะนำเข้ากระดาน': 'statusUseBt',
+        'วันที่ สร้าง': 'CREATE_DATE',
+        'วันที่ แก้ไขล่าสุด': 'LAST_DATE'
+      },
+      exportType: 'xls',
+      exportFileName: 'BookingList' + new Date().toISOString().substr(0, 10).replace('/-/g', '') + '.xls',
+      exportWorksheet: 'WorkSheet',
+      export_data: [],
+      dateRange: {startDate, endDate},
+      localeData: {
+        // direction: 'ltr',
+        format: 'yyyy-mm-dd',
+        // separator: ' - ',
+        applyLabel: 'ยืนยัน',
+        cancelLabel: 'ยกเลิก',
+        // weekLabel: 'W',
+        // customRangeLabel: 'Custom Range',
+        // daysOfWeek: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+        daysOfWeek: ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'],
+        monthNames: ['ม.ค', 'ก.พ', 'มี.ค', 'เม.ย', 'พ.ค', 'มิ.ย', 'ก.ค', 'ส.ค', 'ก.ย', 'ต.ค', 'พ.ย', 'ธ.ค'],
+        // monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        firstDay: 1
+      },
       masBranchID: '',
+      masBranchIDExport: '',
       bookNo: '',
       BookingDataItem: [],
       Layout: [],
+      appendBody: true,
+      dialogExport: false,
       dataReady: false,
       menuDate: false,
       menuDateChange: false,
@@ -698,19 +863,10 @@ export default {
         time: ''
       },
       dataChange: {},
-      // formDataBooking: {
-      //   bookingDataId: '',
-      //   bookNo: '',
-      //   fieldName: '',
-      //   fieldValue: '',
-      //   flowId: '',
-      //   masBranchID: '',
-      //   optionField: '',
-      //   dueDate: ''
-      // },
       validUpdate: true,
       validAdd: true,
       validChange: true,
+      validExport: true,
       // Dialog Config ADD EDIT DELETE IMPORT
       dialogAdd: false,
       dialogEdit: false,
@@ -768,6 +924,12 @@ export default {
           this.$nextTick(() => {
             let self = this
             self.$refs.form_change.validate()
+          })
+          break
+        case 'EXPORT':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_export.validate()
           })
           break
 
@@ -832,6 +994,92 @@ export default {
           }
         })
     },
+    async updateValuesExport () {
+      this.export_data = []
+      console.log('dateRange', new Date(this.dateRange.endDate).toISOString().substr(0, 10))
+      await axios
+        .get(
+          // eslint-disable-next-line quotes
+          this.DNS_IP +
+            '/booking_view/get?shopId=' +
+            this.session.data.shopId +
+            '&masBranchID=' +
+            this.masBranchIDExport +
+            '&dateRange=' + new Date(this.dateRange.startDate).toISOString().substr(0, 10) + '/' + new Date(this.dateRange.endDate).toISOString().substr(0, 10)
+        )
+        .then(async response => {
+          console.log('getData', response.data)
+          this.dataReady = true
+          var exportdatas = []
+          for (let i = 0; i < response.data.length; i++) {
+            let d = response.data[i]
+            let s = {}
+            s.bookNo = d.bookNo
+            s.masBranchName = d.masBranchName
+            s.statusUseBt = d.statusUseBt || 'booking'
+            s.CREATE_DATE = d.CREATE_DATE
+            s.LAST_DATE = d.LAST_DATE
+            s.flowName = d.flowName
+            s.dueDate = d.dueDate
+            s.chkConfirm = false
+            s.chkCancel = false
+            if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
+              s.chkConfirm = true
+              s.chkCancel = false
+            }
+            if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
+              s.chkConfirm = false
+              s.chkCancel = true
+            }
+            if (d.statusBt) {
+              s.statusBt = d.statusBt
+            } else {
+              s.statusBt = 'wait'
+            }
+            let dataBookingData = []
+            await axios
+              .get(
+                // eslint-disable-next-line quotes
+                this.DNS_IP + "/BookingData/get?bookNo=" + d.bookNo
+              )
+              .then(async responses => {
+                // console.log('getData', responses.data)
+                dataBookingData = responses.data
+                // for (let i = 0; i < response.data.length; i++) {
+                //   let e = response.data[i]
+                //   if (e.fieldName === 'ชื่อ') {
+                //     s.cusName = s.fieldValue
+                //   }
+                //   if (e.fieldName === 'เลขทะเบียน') {
+                //     s.cusReg = s.fieldValue
+                //   }
+                // }
+              })
+            s.cusName = dataBookingData.filter(function (el) {
+              return el.fieldName === 'ชื่อ'
+            })[0].fieldValue
+            s.cusReg = dataBookingData.filter(function (el) {
+              return el.fieldName === 'เลขทะเบียน'
+            })[0].fieldValue
+            exportdatas.push(s)
+          }
+          this.export_data = exportdatas
+          console.log('exportdatas', exportdatas)
+          // if (exportdatas.length === 0 || exportdatas.status === false) {
+          //   this.export_data = []
+          //   // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
+          // } else {
+          //   // this.dataReady = true
+          //   this.export_data = exportdatas
+          // }
+        })
+        // eslint-disable-next-line handle-callback-err
+        .catch(error => {
+          console.log(error)
+          this.dataReady = true
+          //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
+        })
+    },
     async getBookingList () {
       // Clear Data ทุกครั้ง
       this.dataReady = false
@@ -848,7 +1096,7 @@ export default {
             this.masBranchID
         )
         .then(async response => {
-          console.log('getData', response.data)
+          // console.log('getData', response.data)
           this.dataReady = true
           for (let i = 0; i < response.data.length; i++) {
             let d = response.data[i]
@@ -878,7 +1126,7 @@ export default {
                 this.DNS_IP + "/BookingData/get?bookNo=" + d.bookNo
               )
               .then(async responses => {
-                console.log('getData', responses.data)
+                // console.log('getData', responses.data)
                 dataBookingData = responses.data
                 // for (let i = 0; i < response.data.length; i++) {
                 //   let e = response.data[i]
