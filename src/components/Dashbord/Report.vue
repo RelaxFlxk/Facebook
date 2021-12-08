@@ -5,43 +5,35 @@
       <div class="col-md-12 ml-sm-auto col-lg-12 px-4">
         <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
         <v-row>
-          <v-col cols="12">
-            <v-sheet tile height="54" class="d-flex">
-                <v-col cols="3">
-                  <date-range-picker
-                  ref="picker"
-                  :locale-data="{ firstDay: 1, format: 'yyyy-mm-dd' }"
-                  v-model="dateRange"
-                  />
-
+                <v-col cols="12">
+                  <div style="display: flex">
+                    <date-range-picker
+                    ref="picker"
+                    :locale-data="{ firstDay: 1, format: 'yyyy-mm-dd' }"
+                    v-model="dateRange"
+                    />
+                    <v-btn
+                      small class="ml-5 mt-2" color="#173053" dark
+                      @click="getBranch()"
+                    >
+                      ค้นหา
+                    </v-btn>
+                  </div>
                 </v-col>
-                <v-col cols="2">
-                  <v-btn
-                    style="margin-bottom:20px;"
-                    small class="ma-2" color="#173053" dark
-                    @click="getBranch()"
-                  >
-                    ค้นหา
-                  </v-btn>
-                </v-col>
-                <v-col cols="7">
-                </v-col>
-            </v-sheet>
-          </v-col>
         </v-row>
 
         <v-divider class="mx-4"></v-divider>
         <v-row>
-          <v-col cols="6">
+          <v-col cols="12" md="6">
             <LinechartBranch ref="modal2"></LinechartBranch>
           </v-col>
-          <v-col cols="6">
+          <v-col cols="12" md="6">
               <CardBranch ref="modal1"></CardBranch>
           </v-col>
         </v-row>
         <v-divider class="mx-4"></v-divider>
         <v-row>
-          <v-col cols="6">
+          <v-col cols="12" md="6">
             <v-select
               v-model="masBranchName"
               :items="BranchItem"
@@ -53,7 +45,7 @@
               @change="getselectBranch()"
             ></v-select>
           </v-col>
-          <v-col cols="6" v-if="masBranchName.length > 0">
+          <v-col cols="12" md="6" v-if="masBranchName.length > 0">
             <v-select
               v-model="SelectFlowName"
               :items="itemFlowName"
@@ -70,10 +62,10 @@
           </v-col>
         </v-row>
          <v-row>
-           <v-col cols="6">
+           <v-col cols="12" md="6">
               <LinechartBranchSelect ref="modal3"></LinechartBranchSelect>
           </v-col>
-          <v-col cols="6">
+          <v-col cols="12" md="6">
             <CardBranchSelect ref="modal4"></CardBranchSelect>
           </v-col>
 

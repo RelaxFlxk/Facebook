@@ -479,7 +479,7 @@
           <!-- end add -->
 
           <!-- delete -->
-          <v-dialog v-model="dialogDelete" persistent max-width="30%">
+          <v-dialog v-model="dialogDelete" persistent max-width="70%">
             <v-card>
               <v-card-title>
                 <span class="headline">ลบข้อมูลนี้</span>

@@ -1,8 +1,8 @@
 <template lang="">
-<div v-if="Carditem.length > 0">
-  <div v-for="(item,index) in Carditem" :key="index">
+<div v-if="Carditem.length > 0 ">
+  <div  v-if="widthScreen > 410" v-for="(item,index) in Carditem" :key="index">
     <div class="p-3" v-if="Carditem[index].length > 0" >
-      <v-card class="mx-auto" elevation="5" >
+      <v-card elevation="8" >
           <v-row >
           <v-col cols="12" >
         <center>
@@ -11,19 +11,40 @@
                 <p>{{flowNameitem[index]}}</p>
             </v-list-item-content>
           </v-list-item>
-          <v-row>
-            <v-col cols="2"></v-col>
-            <v-col cols="8"><div :id="ID + index"></div></v-col>
-            <v-col cols="2"></v-col>
-          </v-row>
+            <v-col align="center">
+              <div :id="ID + index"/>
+            </v-col>
         </center>
-        </v-col>
-          <v-col cols="12">
-
         </v-col>
       </v-row>
       </v-card>
         </div>
+  </div>
+  <div v-if="widthScreen < 410">
+    <v-row >
+    <div v-for="(item,index) in Carditem" :key="index">
+    <div style="position:absolute;
+                    top:13px;
+                    left:-25px;" class="p-3" v-if="Carditem[index].length > 0" >
+          <v-row >
+          <v-col cols="12" >
+        <v-card>
+        <center>
+          <v-list-item two-line>
+            <v-list-item-content>
+                <p>{{flowNameitem[index]}}</p>
+            </v-list-item-content>
+          </v-list-item>
+            <v-col align="center">
+              <div :id="ID + index"/>
+            </v-col>
+        </center>
+         </v-card>
+        </v-col>
+      </v-row>
+        </div>
+      </div>
+      </v-row>
   </div>
 </div>
     <!-- <div v-if="Carditem.length > 0">
@@ -67,7 +88,6 @@ export default {
   components: {
     'left-menu-admin': adminLeftMenu,
     D3Funnel
-
   },
   data () {
     return {
@@ -76,6 +96,7 @@ export default {
       flowNameitem: [],
       dataitem: [],
       Carditem: [],
+      widthScreen: window.screen.width,
       codeColor: [
         'rgb(142, 202, 230)',
         'rgb(33, 158, 188)',
@@ -91,10 +112,12 @@ export default {
         'rgb(41,50,65)'
       ],
       Chartitem: [],
-      data: [{ label: 'Inquiries', value: 5000 },
+      data: [
+        { label: 'Inquiries', value: 5000 },
         { label: 'Applicants', value: 2500 },
         { label: 'Admits', value: 500 },
-        { label: 'Deposits', value: 200 }],
+        { label: 'Deposits', value: 200 }
+      ],
       options: {
         chart: {
           width: 350,
@@ -102,10 +125,6 @@ export default {
           curve: {
             enabled: true
           }
-        },
-        block: {
-          dynamicHeight: true,
-          minHeight: 50
         },
         label: {
           enabled: true,
@@ -130,7 +149,6 @@ export default {
   },
   async mounted () {
     // await this.getBranch()
-
   },
   methods: {
     async getBranchSelectCard (masBranchName, dateRange) {
@@ -139,29 +157,43 @@ export default {
       await this.getFlow()
       let startDate = this.momenDate_1(dateRange.startDate)
       let endDate = this.momenDate_1(dateRange.endDate)
-      await axios.get(this.DNS_IP + '/job_log/getDashbord_selectBranch_card?startDate=' + startDate + '&endDate=' + endDate + '&shopId=' + this.shopId + '&masBranchName=' + masBranchName).then(response => {
-        let rs = response.data
-        // console.log('rs', rs)
-        for (let i = 0; i < rs.length; i++) {
-          let d = rs[i]
-          this.dataitem.push(d)
-        }
-        // console.log(' this.dataitem', this.dataitem)
-        this.getCard()
-      })
+      await axios
+        .get(
+          this.DNS_IP +
+            '/job_log/getDashbord_selectBranch_card?startDate=' +
+            startDate +
+            '&endDate=' +
+            endDate +
+            '&shopId=' +
+            this.shopId +
+            '&masBranchName=' +
+            masBranchName
+        )
+        .then((response) => {
+          let rs = response.data
+          // console.log('rs', rs)
+          for (let i = 0; i < rs.length; i++) {
+            let d = rs[i]
+            this.dataitem.push(d)
+          }
+          // console.log(' this.dataitem', this.dataitem)
+          this.getCard()
+        })
         .catch((error) => {
           console.log('error function addDataGlobal : ', error)
         })
       // console.log('this.statusitem', this.statusitem)
     },
     async getFlow () {
-      await axios.get(this.DNS_IP + '/flow/get?shopId=' + this.shopId).then(response => {
-        let rs = response.data
-        for (let i = 0; i < rs.length; i++) {
-          let d = rs[i]
-          this.flowNameitem.push(d.flowName)
-        }
-      })
+      await axios
+        .get(this.DNS_IP + '/flow/get?shopId=' + this.shopId)
+        .then((response) => {
+          let rs = response.data
+          for (let i = 0; i < rs.length; i++) {
+            let d = rs[i]
+            this.flowNameitem.push(d.flowName)
+          }
+        })
         .catch((error) => {
           console.log('error function addDataGlobal : ', error)
         })
@@ -172,8 +204,12 @@ export default {
         let d = this.flowNameitem[i]
         // console.log('d', d)
         let aa = []
-        for (let a = 0; a < this.dataitem.filter(item => item.flowName === d).length; a++) {
-          let ff = this.dataitem.filter(item => item.flowName === d)[a]
+        for (
+          let a = 0;
+          a < this.dataitem.filter((item) => item.flowName === d).length;
+          a++
+        ) {
+          let ff = this.dataitem.filter((item) => item.flowName === d)[a]
           let s = {}
           s.label = ff.stepTitle
           s.value = ff.totalJob - ff.closeJob
@@ -210,5 +246,4 @@ export default {
 }
 </script>
 <style lang="">
-
 </style>
