@@ -252,7 +252,7 @@ export default {
         .get(
           // eslint-disable-next-line quotes
           this.DNS_IP +
-            '/booking_view/getCount?shopId=' +
+            '/booking_view/getCountNotime?shopId=' +
             this.$session.getAll().data.shopId + '&dueDate=' + year + '-' + month + '&masBranchName=' + this.masBranchName.text
         )
         .then(async response => {
@@ -292,26 +292,35 @@ export default {
             this.events = []
             // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
           } else {
-            for (var x = 0; x < response.data.length; x++) {
-              var e = response.data[x]
-              var f = {}
-              // console.log(d)
-              if (f.statusBt) {
-                f.start = e.start
-                if (f.statusBt === 'confirm') {
-                  f.color = 'green'
-                  f.name = e.statusBt + ' : ' + e.name.toString()
-                } else {
-                  f.color = 'red'
-                  f.name = e.statusBt + ' : ' + e.name.toString()
+            await axios
+              .get(
+                // eslint-disable-next-line quotes
+                this.DNS_IP +
+            '/booking_view/getCount?shopId=' +
+            this.$session.getAll().data.shopId + '&dueDate=' + year + '-' + month + '&masBranchName=' + this.masBranchName.text
+              )
+              .then(async responses => {
+                for (var x = 0; x < responses.data.length; x++) {
+                  var e = responses.data[x]
+                  var f = {}
+                  // console.log(d)
+                  if (e.statusBt) {
+                    f.start = e.start
+                    if (e.statusBt === 'confirm') {
+                      f.color = 'green'
+                      f.name = e.statusBt + ' เวลา ' + e.timeDue + ' โมง : ' + e.name.toString()
+                    } else {
+                      f.color = 'red'
+                      f.name = e.statusBt + ' เวลา ' + e.timeDue + ' โมง : ' + e.name.toString()
+                    }
+                  } else {
+                    f.start = e.start
+                    f.color = 'orange'
+                    f.name = 'wait' + ' เวลา ' + e.timeDue + ' โมง : ' + e.name.toString()
+                  }
+                  this.events.push(f)
                 }
-              } else {
-                f.start = e.start
-                f.color = 'orange'
-                f.name = 'wait' + ' : ' + e.name.toString()
-              }
-              this.events.push(f)
-            }
+              })
           }
           console.log('events', this.events)
         })
