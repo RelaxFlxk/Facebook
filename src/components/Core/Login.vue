@@ -299,7 +299,7 @@ export default {
             })
         }
       } else {
-        this.$router.push('/Core/Home')
+        this.$router.push('/Dashbord/Report')
       }
     },
     async getProfile () {
@@ -500,7 +500,7 @@ export default {
               .then(async (response) => {
                 // เคย
                 // console.log(response)
-                // this.$router.push('/Core/Home')
+                // this.$router.push('/Dashbord/Report')
                 this.getMenu(this.formCheckPrivacy)
               })
               // eslint-disable-next-line handle-callback-err
@@ -515,7 +515,7 @@ export default {
                   .then(async (response) => {
                     // console.log(response)
                     this.getMenu(this.formCheckPrivacy)
-                    // this.$router.push('/Core/Home')
+                    // this.$router.push('/Dashbord/Report')
                   })
                   // eslint-disable-next-line handle-callback-err
                   .catch((error) => {
@@ -549,7 +549,7 @@ export default {
           )
           this.$session.set('menu', response.data)
           this.$session.set('AccessKey', this.$route.query.access)
-          this.$router.push('/Core/Home?access=' + this.$route.query.access)
+          this.$router.push('/Dashbord/Report?access=' + this.$route.query.access)
         })
         // eslint-disable-next-line handle-callback-err
         .catch((error) => {

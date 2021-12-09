@@ -1679,8 +1679,8 @@ export default {
       } else if (this.formAdd.audiencesSelect === 'rating') {
         url = this.DNS_IP + '/rating/getAudience?shopId=' +
             this.session.data.shopId +
-            '&masBranchID=' +
-            branchId +
+            // '&masBranchID=' +
+            // branchId +
             '&ratingRange=' + this.formAdd.startRating + '/' + this.formAdd.endRating +
             '&dateRange=' + this.formAdd.startDate + '/' + this.formAdd.endDate
       } else if (this.formAdd.audiencesSelect === 'typeCustomField') {
@@ -2167,8 +2167,8 @@ export default {
       } else if (this.formUpdate.audiencesSelect === 'rating') {
         url = this.DNS_IP + '/rating/getAudience?shopId=' +
             this.session.data.shopId +
-            '&masBranchID=' +
-            branchId +
+            // '&masBranchID=' +
+            // branchId +
             '&ratingRange=' + this.formUpdate.startRating + '/' + this.formUpdate.endRating +
             '&dateRange=' + this.formUpdate.startDate + '/' + this.formUpdate.endDate
       } else if (this.formUpdate.audiencesSelect === 'typeCustomField') {

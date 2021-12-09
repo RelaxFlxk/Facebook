@@ -11,7 +11,7 @@ import VueMask from 'v-mask'
 import 'bootstrap/dist/css/bootstrap.css'
 import vueXlsxTable from 'vue-xlsx-table'
 import axios from 'axios' // api
-import moment from 'moment' // แปลง date
+import moment from 'moment-timezone' // แปลง date
 
 Vue.config.productionTip = false
 Vue.use(Swal)
@@ -54,29 +54,31 @@ Vue.mixin({
   methods: {
     format_date (value) {
       if (value) {
-        return moment(String(value)).format('DD/MM/YYYY HH:mm:ss')
+        return moment.tz(String(value), 'Asia/Bangkok').format('DD/MM/YYYY HH:mm:ss')
       }
     },
     format_dateFUllTime (value) {
       if (value) {
-        return moment(String(value)).format('YYYY-MM-DD HH:mm:ss')
+        // moment.tz.add('Asia/Bangkok|ICT|-70|0|')
+        // return moment(new Date(value)).zone('UTC+7').format('YYYY-MM-DD HH:mm:ss')
+        return moment(moment(new Date(value)).tz('Asia/Bangkok')).format('YYYY-MM-DD HH:mm:ss')
       }
     },
     format_dateNotime (value) {
       if (value) {
-        return moment(String(value)).format('DD/MM/YYYY')
+        return moment.tz(String(value), 'Asia/Bangkok').format('DD/MM/YYYY')
       }
     },
     // YYYY-MM-DD
     momenDate_1 (value) {
       if (value) {
-        return moment(String(value)).format('YYYY-MM-DD')
+        return moment.tz(String(value), 'Asia/Bangkok').format('YYYY-MM-DD')
       }
     },
     // HH:MM:ss
     momenTime (value) {
       if (value) {
-        return moment(String(value)).format('HH:mm:ss')
+        return moment.tz(String(value), 'Asia/Bangkok').format('HH:mm:ss')
       }
     },
     getGetToken (DNS_IP) {

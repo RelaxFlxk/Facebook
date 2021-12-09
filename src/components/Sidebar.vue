@@ -21,14 +21,14 @@
           </v-col>
         </v-list-item>
       </v-list>
-      <v-list>
+      <!-- <v-list>
         <v-list-item to="/Core/Home">
           <v-list-item-icon>
             <v-icon color="white">mdi-view-grid</v-icon>
           </v-list-item-icon>
           <v-list-item-title class="menu-head">Dashboard</v-list-item-title>
         </v-list-item>
-      </v-list>
+      </v-list> -->
 
       <v-list-group
       dense
@@ -110,6 +110,33 @@
           <v-list-item-title dense v-text="item.title"></v-list-item-title>
         </v-list-item>
     </v-list-group>
+
+    <v-list-group
+      dense
+        :value="true"
+        prepend-icon="mdi-graph-outline"
+        color="white"
+        no-action
+        v-if="broadCast.length > 0"
+      >
+      <template v-slot:activator>
+          <v-list-item-title class="menu-head">เครื่องมือการตลาด</v-list-item-title>
+        </template>
+
+        <v-list-item
+          v-for="(item, i) in broadCast"
+          :key="i"
+          :to="item.to"
+          router
+          exact
+          dense
+        >
+          <v-list-item-icon>
+            <v-icon v-text="item.icon" dense color="white"></v-icon>
+          </v-list-item-icon>
+          <v-list-item-title v-text="item.title" dense color="white"></v-list-item-title>
+        </v-list-item>
+      </v-list-group>
 
     <v-list-group
       dense
@@ -221,6 +248,7 @@ export default {
       corporate: [],
       customer: [],
       booking: [],
+      broadCast: [],
       items: [],
       Dashboard: []
     }
@@ -276,6 +304,10 @@ export default {
         { title: 'พนักงาน', icon: 'mdi-account-multiple', to: '/Master/Employee' },
         { title: 'ช่องทางการชำระเงิน', icon: 'mdi-credit-card-outline', to: '/Master/PaymentType' },
         { title: 'จัดการบริษัท', icon: 'mdi-home-city', to: '/System/EditShop' }
+      ]
+      this.broadCast = [
+        { title: 'กลุ่มเป้าหมาย', icon: 'mdi-account-group', to: '/BroadCast/Audience' },
+        { title: 'บรอดแคสต์', icon: 'mdi-bullhorn', to: '/BroadCast/BroadCast' }
       ]
       // this.master = [
       //   // { title: 'Code 4', icon: 'mdi-numeric-4-circle', to: '/insurance/AllocateProspectiveCode4' },

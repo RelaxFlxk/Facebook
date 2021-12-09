@@ -11,89 +11,439 @@
             <v-btn
               color="#1B437C"
               depressed
+              dark
               @click="dialogSelect = true"
             >
               <v-icon left>mdi-text-box-plus</v-icon>
-              เลือก กิจกรรมหรือของรางวัลที่จะส่ง
+              เลือก กลุ่มเป้าหมาย
             </v-btn>
           </v-col>
         </v-row>
         <v-dialog v-model="dialogSelect" persistent max-width="60%">
           <v-card>
             <v-card-title class="text-h6">
-              เลือก กิจกรรมหรือของรางวัลที่จะส่ง
+              เลือก กลุ่มเป้าหมาย
             </v-card-title>
             <v-card-text>
               <v-row>
                 <v-col cols="12">
-                  <v-row style="height: 15px">
+                  <v-row >
                     <v-subheader id="subtext"
-                      >กรุณาเลือก แหล่งที่มาของข้อมูล</v-subheader
+                      >กลุ่มเป้าหมาย</v-subheader
                     >
                   </v-row>
-                  <v-row style="height: 65px">
+                  <v-row>
                     <v-select
-                      :items="selectItem"
-                      v-model="selectData"
+                      :items="selectItemAudience"
+                      v-model="selectDataAudience"
                       dense
-                      @change="selectDB()"
+                      @change="getDataById()"
                     ></v-select>
                   </v-row>
                 </v-col>
                 <v-col cols="12" v-if="showTabel">
-                  <v-card elevation="7" v-if="dataReady">
-                    <v-card-title>
-                      <v-text-field
-                        v-model="searchAll2"
-                        append-icon="mdi-magnify"
-                        label="Search"
-                        single-line
-                        dense
-                        hide-details
-                      ></v-text-field>
-                    </v-card-title>
-                    <v-card-text>
-                      <v-data-table
-                        :headers="columns"
-                        :items="dataItem"
-                        :search="searchAll2"
-                        :items-per-page="10"
-                        dense
-                      >
-                        <template v-slot:[`item.CREATE_DATE`]="{ item }">
-                          {{ format_dateNotime(item.CREATE_DATE) }}
-                        </template>
-                        <template v-slot:[`item.LAST_DATE`]="{ item }">
-                          {{ format_dateNotime(item.LAST_DATE) }}
-                        </template>
-                        <template v-slot:[`item.action`]="{ item }">
+                  <v-card elevation="7">
+                     <v-container>
+                    <v-row justify="center">
+                      <v-col cols="4" class="text-center pt-0">
+                        <v-card elevation="2" class="mx-auto">
+                          <v-container>
+                            <v-card-title>เป้าหมายโดยประมาณ</v-card-title>
+                            <v-card-text>
+                              <v-progress-circular
+                                :rotate="360"
+                                :size="100"
+                                :width="15"
+                                :value="valueAdd"
+                                color="teal"
+                              >
+                                {{ valueAdd }} %
+                              </v-progress-circular>
+                            </v-card-text>
+                            <v-card-text>ประมาณ {{ dataAdd }} คน</v-card-text>
+                          </v-container>
+                        </v-card>
+                        <!-- <div class="text-center">
                           <v-btn
-                            class="ma-2"
-                            color="question"
-                            small
-                            @click.stop="
-                              ;(dialogSelect = false), getDataById(item)
-                            "
+                            color="blue-grey"
+                            class="ma-2 white--text"
+                            @click="getDataUpdate()"
                           >
-                            เลือก
-                            <!-- <v-icon dark> mdi-arrange-send-to-back </v-icon> -->
+                            Update
+                            <v-icon right dark>
+                              mdi-cloud-upload
+                            </v-icon>
                           </v-btn>
-                        </template>
-                      </v-data-table>
-                    </v-card-text>
+                        </div> -->
+                      </v-col>
+                      <v-col cols="8" class="text-center pt-0">
+                        <v-col cols="12" class="pb-0">
+                          <v-row>
+                            <v-col cols="12" class="pb-0">
+                              <v-row>
+                                <v-subheader id="subtext"
+                                  >ชื่อกลุ่มเป้าหมาย</v-subheader
+                                >
+                              </v-row>
+                              <v-row>
+                                <v-text-field
+                                  v-model="formUpdate.audiencesName"
+                                  :counter="50"
+                                  maxlength="50"
+                                  solo
+                                  dense
+                                  readonly
+                                ></v-text-field>
+                              </v-row>
+                            </v-col>
+                          </v-row>
+                        </v-col>
+                        <v-col cols="12" class="pb-0">
+                          <v-row>
+                            <v-col cols="12" class="pb-0">
+                              <v-row>
+                                <v-subheader id="subtext"
+                                >เลือกกลุ่มเป้าหมาย</v-subheader
+                                >
+                              </v-row>
+                              <v-row>
+                                <v-text-field
+                                  v-model="formUpdate.audiencesSelect"
+                                  solo
+                                  dense
+                                  readonly
+                                ></v-text-field>
+                              </v-row>
+                            </v-col>
+                            <!-- <v-col cols="2" class="pb-0"></v-col> -->
+                          </v-row>
+                        </v-col>
+                        <v-col cols="12" class="pb-0" v-if="audiencesSelect === 'typeJob'">
+                          <v-row>
+                            <v-col cols="12" class="pb-0">
+                              <v-row>
+                                <v-col cols="12" class="pb-0">
+                                  <v-row>
+                                    <v-subheader id="subtext"
+                                    >เลือกสาขา</v-subheader
+                                    >
+                                  </v-row>
+                                  <v-row>
+                                    <v-text-field
+                                      v-model="formUpdate.masBranchID"
+                                      solo
+                                      dense
+                                      readonly
+                                    ></v-text-field>
+                                  </v-row>
+                                </v-col>
+                                <!-- <v-col cols="2" class="pb-0"></v-col> -->
+                              </v-row>
+                            </v-col>
+                            <v-col cols="12" class="pb-0">
+                               <v-row>
+                                <v-subheader id="subtext"
+                                >เลือกบริการต้องการ</v-subheader
+                                >
+                              </v-row>
+                              <v-row>
+                                <v-col cols="12" class="pa-0">
+                                  <v-text-field
+                                      v-model="formUpdate.flowId"
+                                      solo
+                                      dense
+                                      readonly
+                                    ></v-text-field>
+                                </v-col>
+                              </v-row>
+                            </v-col>
+                            <v-col cols="12" class="pb-0">
+                              <v-row>
+                                <v-subheader id="subtext"
+                                >เลือกวันที่ที่ต้องการ</v-subheader
+                                >
+                              </v-row>
+                              <v-row>
+                                <v-col cols="2" class="pa-0 mt-n5">
+                                  <v-checkbox
+                                    label="วันที่รับงาน"
+                                    false-value="False"
+                                    true-value="True"
+                                    readonly
+                                    v-model="formUpdate.dateJobOpen"
+                                  ></v-checkbox>
+                                </v-col>
+                                <v-col cols="5" class="pa-0">
+                                  <v-text-field
+                                      v-model="formUpdate.startDate"
+                                      solo
+                                      dense
+                                      readonly
+                                    ></v-text-field>
+                                </v-col>
+                                <v-col cols="5" class="pa-0">
+                                  <v-text-field
+                                      v-model="formUpdate.endDate"
+                                      solo
+                                      dense
+                                      readonly
+                                    ></v-text-field>
+                                </v-col>
+                              </v-row>
+                            </v-col>
+                            <v-col cols="12" class="pb-0">
+                              <v-row>
+                                <v-subheader id="subtext"
+                                >เลือกวันที่ที่ต้องการ</v-subheader
+                                >
+                              </v-row>
+                              <v-row>
+                                <v-col cols="2" class="pa-0 mt-n5">
+                                  <v-checkbox
+                                    label="วันที่ปิดงาน"
+                                    false-value="False"
+                                    readonly
+                                    true-value="True"
+                                    v-model="formUpdate.dateJobClose"
+                                  ></v-checkbox>
+                                </v-col>
+                                <v-col cols="5" class="pa-0">
+                                  <v-text-field
+                                      v-model="formUpdate.startDateClose"
+                                      solo
+                                      dense
+                                      readonly
+                                    ></v-text-field>
+                                </v-col>
+                                <v-col cols="5" class="pa-0">
+                                  <v-text-field
+                                    v-model="formUpdate.endDateClose"
+                                    solo
+                                    dense
+                                    readonly
+                                  ></v-text-field>
+                                </v-col>
+                              </v-row>
+                            </v-col>
+                          </v-row>
+                        </v-col>
+                        <v-col cols="12" class="pb-0" v-if="audiencesSelect === 'bookingDate'">
+                          <v-row>
+                            <v-col cols="12" class="pb-0">
+                              <v-row>
+                                <v-col cols="12" class="pb-0">
+                                  <v-row>
+                                    <v-subheader id="subtext"
+                                    >เลือกสาขา</v-subheader
+                                    >
+                                  </v-row>
+                                  <v-row>
+                                    <v-text-field
+                                      v-model="formUpdate.masBranchID"
+                                      solo
+                                      dense
+                                      readonly
+                                    ></v-text-field>
+                                  </v-row>
+                                </v-col>
+                                <!-- <v-col cols="2" class="pb-0"></v-col> -->
+                              </v-row>
+                            </v-col>
+                            <v-col cols="12" class="pb-0">
+                               <v-row>
+                                <v-subheader id="subtext"
+                                >เลือกบริการต้องการ</v-subheader
+                                >
+                              </v-row>
+                              <v-row>
+                                <v-col cols="12" class="pa-0">
+                                  <v-text-field
+                                      v-model="formUpdate.flowId"
+                                      solo
+                                      dense
+                                      readonly
+                                    ></v-text-field>
+                                </v-col>
+                              </v-row>
+                            </v-col>
+                            <v-col cols="12" class="pb-0">
+                              <v-row>
+                                <v-subheader id="subtext"
+                                >เลือกวันที่ที่ต้องการ</v-subheader
+                                >
+                              </v-row>
+                              <v-row>
+                                <v-col cols="6" class="pa-0">
+                                  <v-text-field
+                                    v-model="formUpdate.startDate"
+                                    solo
+                                    dense
+                                    readonly
+                                  ></v-text-field>
+                                </v-col>
+                                <v-col cols="6" class="pa-0">
+                                  <v-text-field
+                                    v-model="formUpdate.endDate"
+                                    solo
+                                    dense
+                                    readonly
+                                  ></v-text-field>
+                                </v-col>
+                              </v-row>
+                            </v-col>
+                          </v-row>
+                        </v-col>
+                          <v-col cols="12" class="pb-0" v-if="audiencesSelect === 'rating'">
+                          <v-row>
+                            <v-col cols="12" class="pb-0">
+                              <v-row>
+                                <v-subheader id="subtext"
+                                >เลือกคะแนนที่ต้องการ</v-subheader
+                                >
+                              </v-row>
+                              <v-row>
+                                <v-col cols="6" class="pt-0 pb-0">
+                                  <VuetifyMoney
+                                    v-model="formUpdate.startRating"
+                                    dense
+                                    required
+                                    readonly
+                                    outlined
+                                    v-bind:options="options2"
+                                  />
+                                </v-col>
+                                <v-col cols="6" class="pt-0 pb-0">
+                                  <VuetifyMoney
+                                    v-model="formUpdate.endRating"
+                                    dense
+                                    required
+                                    readonly
+                                    outlined
+                                    v-bind:options="options2"
+                                  />
+                                </v-col>
+                              </v-row>
+                            </v-col>
+                            <v-col cols="12" class="pb-0">
+                              <v-row>
+                                <v-subheader id="subtext"
+                                >เลือกวันที่ที่ต้องการ</v-subheader
+                                >
+                              </v-row>
+                              <v-row>
+                                <v-col cols="6" class="pa-0">
+                                  <v-text-field
+                                    v-model="formUpdate.startDate"
+                                    solo
+                                    dense
+                                    readonly
+                                  ></v-text-field>
+                                </v-col>
+                                <v-col cols="6" class="pa-0">
+                                  <v-text-field
+                                    v-model="formUpdate.endDate"
+                                    solo
+                                    dense
+                                    readonly
+                                  ></v-text-field>
+                                </v-col>
+                              </v-row>
+                            </v-col>
+                          </v-row>
+                        </v-col>
+                        <v-col cols="12" class="pb-0" v-if="audiencesSelect === 'typeCustomField' && dataCustom.length > 0">
+                          <v-row>
+                            <v-col cols="12" class="pb-0">
+                              <v-row>
+                                <v-col cols="6">
+                                  <v-row>
+                                    <v-subheader id="subtext"
+                                    >เลือกช่องกรอกข้อมูล</v-subheader
+                                    >
+                                  </v-row>
+                                  <v-row>
+                                    <v-text-field
+                                      v-model="formUpdate.fieldId"
+                                      solo
+                                      dense
+                                      readonly
+                                    ></v-text-field>
+                                  </v-row>
+                                </v-col>
+                                <v-col cols="6">
+                                  <v-row>
+                                    <v-subheader id="subtext"
+                                    >เลือกข้อมูลของช่องกรอกข้อมูล</v-subheader
+                                    >
+                                  </v-row>
+                                  <v-row>
+                                    <v-text-field
+                                      v-model="formUpdate.optionFieldValue"
+                                      solo
+                                      dense
+                                      readonly
+                                    ></v-text-field>
+                                  </v-row>
+                                </v-col>
+                                <!-- <v-col cols="2" class="pb-0"></v-col> -->
+                              </v-row>
+                            </v-col>
+                            <v-col cols="12" class="pb-0">
+                              <v-row>
+                                <v-col cols="6">
+                                  <v-row>
+                                    <v-subheader id="subtext"
+                                    >เลือกแหล่งที่มาของข้อมูล</v-subheader
+                                    >
+                                  </v-row>
+                                  <v-row>
+                                    <v-text-field
+                                      v-model="formUpdate.selectData"
+                                      solo
+                                      dense
+                                      readonly
+                                    ></v-text-field>
+                                  </v-row>
+                                </v-col>
+                                <v-col cols="6" class="pb-0">
+                                  <v-row>
+                                    <v-subheader id="subtext"
+                                    >เลือกสาขา</v-subheader
+                                    >
+                                  </v-row>
+                                  <v-row>
+                                    <v-text-field
+                                      v-model="formUpdate.masBranchID"
+                                      solo
+                                      dense
+                                      readonly
+                                    ></v-text-field>
+                                  </v-row>
+                                </v-col>
+                              </v-row>
+                            </v-col>
+                          </v-row>
+                        </v-col>
+                      </v-col>
+                    </v-row>
+                     </v-container>
+                    <!-- <div v-if="!dataReady" class="text-center">
+                      <v-progress-circular
+                        indeterminate
+                        color="primary"
+                      ></v-progress-circular>
+                    </div> -->
                   </v-card>
-                  <div v-if="!dataReady" class="text-center">
-                    <v-progress-circular
-                      indeterminate
-                      color="primary"
-                    ></v-progress-circular>
-                  </div>
                 </v-col>
               </v-row>
             </v-card-text>
             <v-card-actions>
+              <v-alert type="error" v-if="showTabel === true && dataAdd === 0">เนื่องจากไม่มีลูกค้าในกลุ่มเป้าหมายนี้</v-alert>
               <v-spacer></v-spacer>
-              <v-btn class="btn1 btn-color" @click="dialogSelect = false">
+              <v-btn dark color='#1B437C' v-if="showTabel === true && dataAdd > 0" @click="dataSelect = true, dialogSelect = false, validate('UPDATE')">
+                ตรวจสอบและเลือกกลุ่มเป้าหมายนี้
+              </v-btn>
+              <v-btn color='red' dark @click="dialogSelect = false, clearEdit()">
                 ปิด
               </v-btn>
             </v-card-actions>
@@ -105,7 +455,7 @@
               <v-card class="mx-auto" elevation="2" outlined shaped>
                 <v-container>
                   <v-card-title>
-                    <span class="text-h6">บรอดแคสต์</span>
+                    <span class="text-h6">บรอดแคสต์ กลุ่ม {{formUpdate.audiencesName}}</span>
                   </v-card-title>
                   <v-card-text>
                     <v-form
@@ -170,27 +520,39 @@
                         <v-col cols="8" class="text-center">
                           <v-row>
                             <v-col cols="12" class="text-center">
-                              <v-img
-                                aspect-ratio="6"
-                                contain
-                                :src="formUpdate.pictureUrl"
-                              ></v-img>
-                            </v-col>
-                            <v-col cols="12">
-                              <v-row style="height: 15px">
+                                <v-img
+                                  aspect-ratio="6"
+                                  contain
+                                  :src="formUpdate.pictureUrlPreview"
+                                ></v-img>
+                                <!-- <v-avatar size="100px"><img alt="Avatar" :src="formAdd.pictureUrl"></v-avatar> -->
+                                <br />
+                                <v-file-input
+                                  required
+                                  counter
+                                  show-size
+                                  :rules="[rules.resizeImag, rules.required]"
+                                  accept="image/png, image/jpeg, image/bmp"
+                                  prepend-icon="mdi-camera"
+                                  label="Image"
+                                  @change="selectImgUpdate"
+                                  v-model="filesUpdate"
+                                ></v-file-input>
+                              </v-col>
+                            <v-col cols="12" class="pb-0">
+                              <v-row>
                                 <v-subheader id="subtext"
-                                  >เลือก Audience</v-subheader
+                                  >ชื่อประกาศ</v-subheader
                                 >
                               </v-row>
-                              <v-row style="height: 65px">
-                                <v-select
-                                  :items="dataAudience"
-                                  v-model="selectAudience"
+                              <v-row>
+                                <v-text-field
+                                  v-model="formUpdate.broadcastName"
+                                  :counter="100"
+                                  maxlength="100"
                                   dense
-                                  required
                                   :rules="[rules.required]"
-                                  @change="getDataAdd()"
-                                ></v-select>
+                                ></v-text-field>
                               </v-row>
                             </v-col>
                             <v-col cols="12">
@@ -204,13 +566,26 @@
                                   auto-grow
                                   rows="2"
                                   name="input-7-4"
-                                  placeholder="ข้อความที่จะส่ง"
                                   counter
                                   dense
                                   required
                                   :rules="[rules.required]"
                                   v-model="formUpdate.title"
                                 ></v-textarea>
+                              </v-row>
+                            </v-col>
+                            <v-col cols="12" class="pb-0">
+                              <v-row>
+                                <v-subheader id="subtext"
+                                  >Link Web</v-subheader
+                                >
+                              </v-row>
+                              <v-row>
+                                <v-text-field
+                                  v-model="formUpdate.linkWeb"
+                                  dense
+                                  :rules="[rules.required]"
+                                ></v-text-field>
                               </v-row>
                             </v-col>
                           </v-row>
@@ -236,75 +611,9 @@
             </v-container>
           </v-col>
         </v-row>
-        <!-- <v-row v-if="!dataSelect">
-          <v-col cols="12">
-            <v-container>
-              <v-card class="mx-auto" elevation="2" outlined shaped>
-                <v-container>
-                  <v-card-title>
-                    <span class="text-h6">บรอดแคสต์</span>
-                  </v-card-title>
-                  <v-card-text>
-                    <v-stepper v-model="e1">
-                      <v-stepper-header>
-                        <v-stepper-step :complete="e1 > 1" step="1">
-                          step 1
-                        </v-stepper-step>
-
-                        <v-divider></v-divider>
-
-                        <v-stepper-step :complete="e1 > 2" step="2">
-                          step 2
-                        </v-stepper-step>
-
-                        <v-divider></v-divider>
-
-                        <v-stepper-step step="3">
-                          step 3
-                        </v-stepper-step>
-                      </v-stepper-header>
-
-                      <v-stepper-items>
-                        <v-stepper-content step="1">
-                          <v-card class="mx-auto" color="grey lighten-1">
-                            <v-img :src="require('@/assets/bc1.jpg')"></v-img>
-                          </v-card>
-
-                          <v-btn color="primary" @click="e1 = 2">
-                            Continue
-                          </v-btn>
-                        </v-stepper-content>
-
-                        <v-stepper-content step="2">
-                          <v-card class="mx-auto" color="grey lighten-1">
-                            <v-img :src="require('@/assets/bc2.jpg')"></v-img>
-                          </v-card>
-
-                          <v-btn color="primary" @click="e1 = 3">
-                            Continue
-                          </v-btn>
-                        </v-stepper-content>
-
-                        <v-stepper-content step="3">
-                          <v-card class="mx-auto" color="grey lighten-1">
-                            <v-img :src="require('@/assets/bc3.jpg')"></v-img>
-                          </v-card>
-
-                          <v-btn color="primary" @click="e1 = 1">
-                            Continue
-                          </v-btn>
-                        </v-stepper-content>
-                      </v-stepper-items>
-                    </v-stepper>
-                  </v-card-text>
-                </v-container>
-              </v-card>
-            </v-container>
-          </v-col>
-        </v-row> -->
-      <!-- data table -->
-          <v-col cols="12">
-            <v-card elevation="7" v-if="dataReady">
+        <v-row>
+        <v-col cols="12">
+            <v-card elevation="7">
               <v-card-title>
                 <v-text-field
                   v-model="searchAll2"
@@ -321,46 +630,25 @@
                   :search="searchAll2"
                   :items-per-page="10"
                 >
-                  <template v-slot:[`item.LAST_DATE`]="{ item }">
-                    {{ format_dateNotime(item.LAST_DATE) }}
-                  </template>
-                  <template v-slot:[`item.blogExpiryDate`]="{ item }">
-                    {{ format_dateNotime(item.blogExpiryDate) }}
+                  <template v-slot:[`item.CREATE_DATE`]="{ item }">
+                    {{ format_dateFUllTime(item.CREATE_DATE) }}
                   </template>
                   <template v-slot:[`item.pictureUrl`]="{ item }">
                     <v-avatar color="primary" size="40">
                       <img :src="item.pictureUrl" alt="img"
                     /></v-avatar>
                   </template>
-                  <!-- <template v-slot:[`item.action`]="{ item }">
-                    <v-btn
-                      color="question"
-                      fab
-                      x-small
-                      @click.stop="getDataById(item, 'edit')"
-                    >
-                      <v-icon dark> mdi-tools </v-icon>
-                    </v-btn>
-                    <v-btn
-                      color="red"
-                      dark
-                      fab
-                      x-small
-                      @click.stop="getDataById(item, 'delete')"
-                    >
-                      <v-icon> mdi-delete </v-icon>
-                    </v-btn>
-                  </template> -->
                 </v-data-table>
               </v-card-text>
             </v-card>
-            <div v-if="!dataReady" class="text-center">
+            <!-- <div v-if="!dataReady" class="text-center">
               <v-progress-circular
                 indeterminate
                 color="primary"
               ></v-progress-circular>
-            </div>
+            </div> -->
           </v-col>
+          </v-row>
           <!-- end data table -->
       </div>
     </v-main>
@@ -395,11 +683,23 @@ export default {
       dialogSelect: false,
       showTabel: false,
       validUpdate: true,
-      selectItem: ['ของรางวัล', 'กิจกรรม'],
-      selectData: '',
+      selectItemAudience: [],
+      itemAudience: [],
+      selectDataAudience: '',
       selectAudience: '',
+      options2: {
+        locale: 'en-US',
+        prefix: '',
+        suffix: '',
+        length: 1,
+        precision: 0
+      },
       rules: {
-        required: value => !!value || 'กรุณากรอก.'
+        required: value => !!value || 'กรุณากรอก.',
+        resizeImag: value =>
+          !value ||
+          value.size < 2000000 ||
+          'Avatar size should be less than 2 MB!'
       },
       // Menu Config
       breadcrumbs: [
@@ -414,72 +714,213 @@ export default {
           href: '/BroadCast/BroadCast'
         }
       ],
+      optionAudiences: [
+        { text: 'วันที่นัดหมาย', value: 'bookingDate' },
+        { text: 'ประเภทบริการ', value: 'typeJob' },
+        // { text: 'วันที่รับงาน', value: 'openJobDate' },
+        // { text: 'วันที่ปิดงาน', value: 'closeJobDate' },
+        { text: 'คะแนนความพึงพอใจ', value: 'rating' },
+        { text: 'ประเภทการกรอก', value: 'typeCustomField' }
+      ],
       columns: [
         { text: 'รูป', value: 'pictureUrl' },
+        { text: 'ชื่อประกาศ', value: 'broadcastName' },
         { text: 'กลุ่มเป้าหมาย', value: 'audiencesName' },
-        { text: 'ประเภท', value: 'module' },
-        { text: 'วันอัพเดท', value: 'LAST_DATE' }
+        { text: 'จำนวนการส่ง', value: 'countSend' },
+        { text: 'วันที่สร้าง', value: 'CREATE_DATE' }
+      ],
+      dataSelectData: [
+        { text: 'จากข้อมูล นัดหมาย', value: 'booking' },
+        { text: 'จากข้อมูล งาน', value: 'job' }
       ],
       dataItem: [],
-      formUpdate: {},
       dataAudience: [],
       dataUserLine: [],
+      optionFieldValue: [],
+      branch: [],
+      DataFlowName: [],
+      dataCustom: [],
+      dataOptionField: [],
+      itemEdit: [],
       idData: '',
       referId: '',
-      path: ''
+      path: '',
+      audiencesSelect: '',
+      filesUpdate: null,
+      formUpdate: {
+        broadcastName: '',
+        linkWeb: '',
+        pictureUrl: '',
+        pictureUrlPreview: '',
+        title: '',
+        id: '',
+        audiencesName: '',
+        selectData: 'booking', //
+        flowId: '', //
+        fieldId: '', //
+        optionFieldValue: '', //
+        startDate: '', //
+        endDate: '', //
+        startDateClose: '', //
+        endDateClose: '', //
+        audiencesSelect: 'bookingDate', //
+        startRating: 0, //
+        endRating: 0, //
+        shopId: this.$session.getAll().data.shopId, //
+        masBranchID: '', //
+        dateJobOpen: 'False', //
+        dateJobClose: 'False', //
+        CREATE_USER: '',
+        LAST_USER: '',
+        CREATE_DATE: ''
+      }
     }
   },
-  beforeCreate () {
-    if (!this.$session.exists()) {
-      this.$router.push('/Core/Login')
-    }
-  },
+  // beforeCreate () {
+  //   if (!this.$session.exists()) {
+  //     this.$router.push('/Core/Login')
+  //   }
+  // },
   async mounted () {
     // this.getGetToken(this.DNS_IP)
     this.dataReady = false
     // Get Data
+    // this.getDataList()
     this.getDataList()
+    this.getDataAudience()
+    this.getDataBranch()
+    this.getDataFlow()
+    this.getDataCustomField()
   },
   methods: {
-    async getDataList () {
-      this.dataReady = false
-      // Clear Data ทุกครั้ง
-      this.dataItem = []
-      // Clear ช่องค้นหา
-      this.searchAll = ''
-
-      await axios
-        .get(
-          // eslint-disable-next-line quotes
-          this.DNS_IP +
-            '/broadcast/get?RECORD_STATUS=N&shopId=' +
-            this.session.data.shopId,
-          {
-            headers: {
-              'Application-Key': this.$session.getAll().ApplicationKey
-            }
-          }
+    selectImgUpdate (event) {
+      if (this.filesUpdate) {
+        this.formUpdate.pictureUrlPreview = URL.createObjectURL(
+          this.filesUpdate
         )
-        .then(async response => {
-          // var dateObj = new Date(response.data.CREATE_DATE)
-          // var momentObj = moment(dateObj)
-          // response.data.CREATE_DATE = momentObj.format('YYYY-MM-DD')
-          if (response.data.length > 0) {
-            console.log('getData', response.data)
-            this.dataReady = true
-            this.dataItem = response.data
+      } else {
+        this.formUpdate.pictureUrlPreview = ''
+      }
+      // console.log(event)
+    },
+    async getDataList () {
+      this.dataItem = []
+      // console.log('branch', this.branch)
+      axios
+        .get(
+          this.DNS_IP + '/broadcast/getView?shopId=' + this.session.data.shopId
+        )
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            this.dataItem = rs
           } else {
-            // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
-            this.dataReady = true
+            this.dataItem = []
           }
-          // this.export_data = response.data
         })
-        // eslint-disable-next-line handle-callback-err
-        .catch(error => {
-          console.log(error)
-          this.$router.push('/system/Errorpage?returnLink=' + this.returnLink)
-          this.dataReady = true
+    },
+    async getDataBranch () {
+      this.branch = []
+      // console.log('branch', this.branch)
+      axios
+        .get(
+          this.DNS_IP + '/master_branch/get?shopId=' + this.session.data.shopId
+        )
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            this.branch.push({text: 'ทั้งหมด', value: 'allBr'})
+            for (var i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              let s = {}
+              s.text = d.masBranchName
+              s.value = d.masBranchID
+              this.branch.push(s)
+              // console.log('dtdtdtdt', this.branch)
+            }
+          } else {
+            this.branch.push({text: 'ทั้งหมด', value: 'allBr'})
+            // this.branch = []
+          }
         })
+    },
+    getDataFlow () {
+      this.DataFlowName = []
+      axios
+        .get(this.DNS_IP + '/flow/get?shopId=' + this.session.data.shopId)
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            this.DataFlowName.push({text: 'ทั้งหมด', value: 'allFlow'})
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              d.text = d.flowName
+              d.value = d.flowId
+              this.DataFlowName.push(d)
+            }
+          } else {
+            this.DataFlowName.push({text: 'ทั้งหมด', value: 'allFlow'})
+          }
+        })
+    },
+    // getDataOptionField (fieldId, optionFieldValues) {
+    //   this.dataOptionField = []
+    //   axios
+    //     .get(this.DNS_IP + '/customField/get?shopId=' + this.session.data.shopId + '&fieldId=' + fieldId)
+    //     .then(response => {
+    //       let rs = response.data
+    //       console.log('dataOptionField', rs[0].optionField)
+    //       if (rs.length > 0) {
+    //         this.dataOptionField = JSON.parse(rs[0].optionField, optionFieldValues)
+    //         this.formUpdate.optionFieldValue = this.dataOptionField.filter(el => el.value === optionFieldValues)
+    //         console.log(this.dataOptionField.filter(el => el.value === optionFieldValues))
+    //         // for (var i = 0; i < rs.length; i++) {
+    //         //   var d = rs[i]
+    //         //   d.text = d.fieldName
+    //         //   d.value = d.fieldId
+    //         //   this.dataOptionField.push(d)
+    //         // }
+    //       } else {
+    //         this.dataOptionField = ''
+    //       }
+    //     })
+    // },
+    getDataCustomField () {
+      this.dataCustom = []
+      axios
+        .get(this.DNS_IP + '/customField/get?shopId=' + this.session.data.shopId + "&fieldType='Selects','Radio'")
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            // this.dataCustom.push({text: 'ทั้งหมด', value: 'allField'})
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              d.text = d.fieldName
+              d.value = d.fieldId
+              this.dataCustom.push(d)
+            }
+            // this.formAdd.fieldId = this.dataCustom[0].value
+            // this.getDataOptionField()
+          } else {
+            this.dataCustom = []
+            // this.$swal('ผิดพลาด', 'คุณไม่มี ประเภทการกรอก ที่ไม่ตรงเงื่อน', 'error')
+          }
+        })
+    },
+    chkboxDisableUpdate (item) {
+      if (item === 'open') {
+        if (this.formUpdate.dateJobOpen === 'True') {
+          this.disableOpen = false
+        } else {
+          this.disableOpen = true
+        }
+      } else if (item === 'close') {
+        if (this.formUpdate.dateJobClose === 'True') {
+          this.disableClose = false
+        } else {
+          this.disableClose = true
+        }
+      }
     },
     validate (Action) {
       switch (Action) {
@@ -494,107 +935,265 @@ export default {
           break
       }
     },
-    async selectDB () {
-      this.columns = []
-      this.showTabel = false
-      if (this.selectData === 'ของรางวัล') {
-        this.columns = [
-          { text: 'ชื่อ', value: 'name' },
-          { text: 'คะแนน', value: 'point' },
-          { text: 'โควต้า', value: 'quota' },
-          { text: 'ระดับ', value: 'levelNm' },
-          { text: 'คำอธิบาย', value: 'description' },
-          { text: 'วันที่สร้าง', value: 'CREATE_DATE' },
-          { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
-          { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
-        ]
-        this.showTabel = true
-        await this.getDataGlobal(
-          this.DNS_IP,
-          '/reward/',
-          this.session.data.shopId,
-          this.returnLink
-        )
-        this.idData = 'rewardId'
-        this.path = '/reward/'
-      } else if (this.selectData === 'กิจกรรม') {
-        this.columns = [
-          { text: 'หัวข้อ', value: 'title' },
-          { text: 'ประเภท', value: 'type' },
-          { text: 'วันที่สร้าง', value: 'CREATE_DATE' },
-          { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
-          { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
-        ]
-        this.showTabel = true
-        await this.getDataGlobal(
-          this.DNS_IP,
-          '/activity/',
-          this.session.data.shopId,
-          this.returnLink
-        )
-        this.idData = 'activityId'
-        this.path = '/activity/'
-      }
-    },
-    async getDataById (item) {
-      this.dataReady = false
-      this.referId = ''
-      if (this.idData === 'rewardId') {
-        this.referId = item.rewardId
-      } else if (this.idData === 'activityId') {
-        this.referId = item.activityId
-      }
-      await this.getDataByIdGlobal(
-        this.DNS_IP,
-        this.path,
-        this.idData,
-        this.referId,
-        this.returnLink
-      )
-      this.dataSelect = true
-      await this.getAudience()
-      this.validate('UPDATE')
-      console.log(this.formUpdate)
-    },
-    async getAudience () {
-      // Clear Data ทุกครั้ง
-      this.dataAudience = []
-      // console.log('getDataTypeGroup')
-      await axios
+    async getDataAudience () {
+      this.selectItemAudience = []
+      this.itemAudience = []
+      // console.log('branch', this.branch)
+      axios
         .get(
-          this.DNS_IP + '/audiences/get?shopId=' + this.session.data.shopId
+          this.DNS_IP + '/audience/get?shopId=' + this.session.data.shopId
         )
-        .then(async response => {
+        .then(response => {
           let rs = response.data
-          for (var i = 0; i < rs.length; i++) {
-            var d = rs[i]
-            // var s = {}
-            d.value = d.id
-            d.text = d.audiencesName
-            console.log(d)
-            this.dataAudience.push(d)
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              let s = {}
+              s.text = d.audiencesName
+              s.value = d.id
+              this.selectItemAudience.push(s)
+              this.itemAudience.push(d)
+              // console.log('dtdtdtdt', this.branch)
+            }
+          } else {
+            this.selectItemAudience = []
+            this.itemAudience = []
           }
         })
-        .catch(error => {
-          console.log(error)
-          this.$router.push('/system/Errorpage?returnLink=' + this.returnLink)
-        })
     },
-    async getDataAdd () {
-      var data = this.dataAudience.filter(el => {
-        return el.id === this.selectAudience
-      })
-      var dataUse = data[0]
+    async getDataById () {
+      this.showTabel = false
+      var item = this.itemAudience.filter(el => el.id === this.selectDataAudience)[0]
+      this.itemEdit = this.itemAudience.filter(el => el.id === this.selectDataAudience)[0]
+      this.audiencesSelect = item.audiencesSelect
+      console.log('item', item)
+      this.formUpdate.id = item.id
+      var flowIds = ''
+      var masBranchIDs = ''
+      var fieldIds = ''
+      var optionFieldValues = ''
+      if (item.flowId) {
+        if (item.flowId === 'allFlow') {
+          flowIds = 'allFlow'
+        } else {
+          flowIds = parseInt(item.flowId)
+        }
+      } else {
+        flowIds = ''
+      }
+      if (item.masBranchID) {
+        if (item.masBranchID === 'allBr') {
+          masBranchIDs = 'allBr'
+        } else {
+          masBranchIDs = parseInt(item.masBranchID)
+        }
+      } else {
+        masBranchIDs = ''
+      }
+      if (item.fieldId) {
+        fieldIds = parseInt(item.fieldId)
+      } else {
+        fieldIds = ''
+      }
+      if (item.optionFieldValue) {
+        optionFieldValues = item.optionFieldValue
+      } else {
+        optionFieldValues = ''
+      }
+      if (item.audiencesSelect === 'bookingDate') {
+        this.formUpdate.audiencesName = item.audiencesName
+        this.formUpdate.flowId = this.DataFlowName.filter(el => el.value === flowIds)[0].text
+        this.formUpdate.startDate = new Date(item.startDate).toISOString().substr(0, 10)
+        this.formUpdate.endDate = new Date(item.endDate).toISOString().substr(0, 10)
+        this.formUpdate.audiencesSelect = this.optionAudiences.filter(el => el.value === item.audiencesSelect)[0].text
+        this.formUpdate.shopId = this.$session.getAll().data.shopId //
+        this.formUpdate.masBranchID = this.branch.filter(el => el.value === masBranchIDs)[0].text
+        this.formUpdate.CREATE_USER = item.CREATE_USER
+        this.formUpdate.LAST_USER = item.LAST_USER
+      } else if (item.audiencesSelect === 'typeJob') {
+        console.log(item.dateJobOpen, item.dateJobClose)
+        if (item.dateJobOpen === 'True' && item.dateJobClose === 'True') {
+          this.formUpdate.audiencesName = item.audiencesName
+          this.formUpdate.flowId = this.DataFlowName.filter(el => el.value === flowIds)[0].text
+          this.formUpdate.startDate = new Date(item.startDate).toISOString().substr(0, 10)
+          this.formUpdate.endDate = new Date(item.endDate).toISOString().substr(0, 10)
+          this.formUpdate.startDateClose = new Date(item.startDateClose).toISOString().substr(0, 10)
+          this.formUpdate.endDateClose = new Date(item.endDateClose).toISOString().substr(0, 10)
+          this.formUpdate.audiencesSelect = this.optionAudiences.filter(el => el.value === item.audiencesSelect)[0].text
+          this.formUpdate.shopId = this.$session.getAll().data.shopId
+          this.formUpdate.dateJobOpen = 'True' //
+          this.formUpdate.dateJobClose = 'True' //
+          this.formUpdate.masBranchID = this.branch.filter(el => el.value === masBranchIDs)[0].text
+          this.formUpdate.CREATE_USER = item.CREATE_USER
+          this.formUpdate.LAST_USER = item.LAST_USER
+          this.chkboxDisableUpdate('open')
+          this.chkboxDisableUpdate('close')
+        } else if (item.dateJobOpen === 'True' && item.dateJobClose === 'False') {
+          this.formUpdate.audiencesName = item.audiencesName
+          this.formUpdate.flowId = this.DataFlowName.filter(el => el.value === flowIds)[0].text
+          this.formUpdate.startDate = new Date(item.startDate).toISOString().substr(0, 10)
+          this.formUpdate.endDate = new Date(item.endDate).toISOString().substr(0, 10)
+          this.formUpdate.audiencesSelect = this.optionAudiences.filter(el => el.value === item.audiencesSelect)[0].text
+          this.formUpdate.shopId = this.$session.getAll().data.shopId
+          this.formUpdate.dateJobOpen = 'True' //
+          this.formUpdate.dateJobClose = 'False' //
+          this.formUpdate.masBranchID = this.branch.filter(el => el.value === masBranchIDs)[0].text
+          this.formUpdate.CREATE_USER = item.CREATE_USER
+          this.formUpdate.LAST_USER = item.LAST_USER
+          this.chkboxDisableUpdate('open')
+          this.chkboxDisableUpdate('close')
+        } else if (item.dateJobOpen === 'False' && item.dateJobClose === 'True') {
+          this.formUpdate.audiencesName = item.audiencesName
+          this.formUpdate.flowId = this.DataFlowName.filter(el => el.value === flowIds)[0].text
+          this.formUpdate.startDateClose = new Date(item.startDateClose).toISOString().substr(0, 10)
+          this.formUpdate.endDateClose = new Date(item.endDateClose).toISOString().substr(0, 10)
+          this.formUpdate.audiencesSelect = this.optionAudiences.filter(el => el.value === item.audiencesSelect)[0].text
+          this.formUpdate.shopId = this.$session.getAll().data.shopId
+          this.formUpdate.dateJobOpen = 'False' //
+          this.formUpdate.dateJobClose = 'True' //
+          this.formUpdate.masBranchID = this.branch.filter(el => el.value === masBranchIDs)[0].text
+          this.formUpdate.CREATE_USER = item.CREATE_USER
+          this.formUpdate.LAST_USER = item.LAST_USER
+          this.chkboxDisableUpdate('open')
+          this.chkboxDisableUpdate('close')
+        } else if (item.dateJobOpen === 'False' && item.dateJobClose === 'False') {
+          this.formUpdate.audiencesName = item.audiencesName
+          this.formUpdate.flowId = this.DataFlowName.filter(el => el.value === flowIds)[0].text
+          // this.formUpdate.endDateClose = item.endDateClose //
+          this.formUpdate.audiencesSelect = this.optionAudiences.filter(el => el.value === item.audiencesSelect)[0].text
+          this.formUpdate.shopId = this.$session.getAll().data.shopId
+          this.formUpdate.dateJobOpen = 'False' //
+          this.formUpdate.dateJobClose = 'False' //
+          this.formUpdate.masBranchID = this.branch.filter(el => el.value === masBranchIDs)[0].text
+          this.formUpdate.CREATE_USER = item.CREATE_USER
+          this.formUpdate.LAST_USER = item.LAST_USER
+          this.chkboxDisableUpdate('open')
+          this.chkboxDisableUpdate('close')
+        }
+      } else if (item.audiencesSelect === 'rating') {
+        this.formUpdate.audiencesName = item.audiencesName
+        this.formUpdate.startDate = new Date(item.startDate).toISOString().substr(0, 10)
+        this.formUpdate.endDate = new Date(item.endDate).toISOString().substr(0, 10)
+        this.formUpdate.audiencesSelect = this.optionAudiences.filter(el => el.value === item.audiencesSelect)[0].text
+        this.formUpdate.shopId = this.$session.getAll().data.shopId
+        this.formUpdate.startRating = parseInt(item.startRating)
+        this.formUpdate.endRating = parseInt(item.endRating)
+        this.formUpdate.CREATE_USER = item.CREATE_USER
+        this.formUpdate.LAST_USER = item.LAST_USER
+      } else if (item.audiencesSelect === 'typeCustomField') {
+        this.formUpdate.selectData = this.dataSelectData.filter(el => el.value === item.selectData)[0].text
+        if (item.selectData === 'booking') {
+          this.formUpdate.audiencesName = item.audiencesName
+          this.formUpdate.audiencesSelect = this.optionAudiences.filter(el => el.value === item.audiencesSelect)[0].text
+          this.formUpdate.shopId = this.$session.getAll().data.shopId
+          this.formUpdate.fieldId = this.dataCustom.filter(el => el.value === fieldIds)[0].text
+          this.formUpdate.optionFieldValue = optionFieldValues
+          // await this.getDataOptionField(fieldIds, optionFieldValues)
+          // this.formUpdate.selectData = item.selectData
+          this.formUpdate.masBranchID = this.branch.filter(el => el.value === masBranchIDs)[0].text
+          this.formUpdate.CREATE_USER = item.CREATE_USER
+          this.formUpdate.LAST_USER = item.LAST_USER
+        } else if (item.selectData === 'job') {
+          this.formUpdate.audiencesName = item.audiencesName
+          this.formUpdate.audiencesSelect = this.optionAudiences.filter(el => el.value === item.audiencesSelect)[0].text
+          this.formUpdate.shopId = this.$session.getAll().data.shopId
+          this.formUpdate.fieldId = this.dataCustom.filter(el => el.value === fieldIds)[0].text
+          this.formUpdate.optionFieldValue = optionFieldValues
+          // await this.getDataOptionField(fieldIds, optionFieldValues)
+          // this.formUpdate.selectData = item.selectData
+          this.formUpdate.masBranchID = this.branch.filter(el => el.value === masBranchIDs)[0].text
+          this.formUpdate.CREATE_USER = item.CREATE_USER
+          this.formUpdate.LAST_USER = item.LAST_USER
+        }
+      }
+      this.showTabel = true
+      this.getDataUpdate(item)
+      // this.dialogEdit = true
+    },
+    async getDataUpdate (item) {
+      this.dataUserLine = []
       this.valueAdd = 0
       this.dataAdd = 0
-      this.dataUserLine = []
       var num = 0
+      var url = ''
+      var branchId = ''
+      var flowId = ''
+      if (item.masBranchID === 'allBr') {
+        branchId = ''
+      } else {
+        branchId = item.masBranchID
+      }
+      if (item.flowId === 'allFlow') {
+        flowId = ''
+      } else {
+        flowId = item.flowId
+      }
+      if (item.audiencesSelect === 'bookingDate') {
+        url = this.DNS_IP + '/booking_view/getAudience?shopId=' +
+            this.session.data.shopId +
+            '&masBranchID=' +
+            branchId +
+            '&flowId=' +
+            flowId +
+            '&dateRange=' + this.formUpdate.startDate + '/' + this.formUpdate.endDate
+      } else if (item.audiencesSelect === 'typeJob') {
+        console.log(item.dateJobOpen, item.dateJobClose)
+        if (item.dateJobOpen === 'True' && item.dateJobClose === 'True') {
+          url = this.DNS_IP + '/job/getAudience?shopId=' +
+            this.session.data.shopId +
+            '&masBranchID=' +
+            branchId +
+            '&flowId=' +
+            flowId +
+            '&dateRange=' + this.formUpdate.startDate + '/' + this.formUpdate.endDate +
+            '&dateRangeClose=' + this.formUpdate.startDateClose + '/' + this.formUpdate.endDateClose
+        } else if (item.dateJobOpen === 'True' && item.dateJobClose === 'False') {
+          url = this.DNS_IP + '/job/getAudience?shopId=' +
+            this.session.data.shopId +
+            '&masBranchID=' +
+            branchId +
+            '&flowId=' +
+            flowId +
+            '&dateRange=' + this.formUpdate.startDate + '/' + this.formUpdate.endDate
+        } else if (item.dateJobOpen === 'False' && item.dateJobClose === 'True') {
+          url = this.DNS_IP + '/job/getAudience?shopId=' +
+            this.session.data.shopId +
+            '&masBranchID=' +
+            branchId +
+            '&flowId=' +
+            flowId +
+            '&dateRangeClose=' + this.formUpdate.startDateClose + '/' + this.formUpdate.endDateClose
+        } else if (item.dateJobOpen === 'False' && item.dateJobClose === 'False') {
+          url = this.DNS_IP + '/job/getAudience?shopId=' +
+            this.session.data.shopId +
+            '&masBranchID=' +
+            branchId +
+            '&flowId=' +
+            flowId
+        }
+      } else if (item.audiencesSelect === 'rating') {
+        url = this.DNS_IP + '/rating/getAudience?shopId=' +
+            this.session.data.shopId +
+            // '&masBranchID=' +
+            // branchId +
+            '&ratingRange=' + item.startRating + '/' + item.endRating +
+            '&dateRange=' + this.formUpdate.startDate + '/' + this.formUpdate.endDate
+      } else if (item.audiencesSelect === 'typeCustomField') {
+        if (item.selectData === 'booking') {
+          url = this.DNS_IP + '/BookingData/getAudience?shopId=' + this.session.data.shopId + '&fieldValue=' + item.optionFieldValue +
+          '&masBranchID=' + branchId
+        } else if (item.selectData === 'job') {
+          url = this.DNS_IP + '/jobData/getAudience?shopId=' + this.session.data.shopId + '&fieldValue=' + item.optionFieldValue +
+          '&masBranchID=' + branchId
+        }
+      }
+      console.log(url)
       await axios
         .get(
+          // eslint-disable-next-line quotes
           this.DNS_IP + '/member/get?shopId=' + this.session.data.shopId
         )
         .then(async response => {
-          console.log('response', response.data)
           if (response.data.status === false) {
             this.valueAdd = 0
             this.dataAdd = 0
@@ -602,168 +1201,63 @@ export default {
             num = response.data.length
             this.valueAdd = 100
             this.dataAdd = num
-            if (dataUse.audiencesLastUseAll === 0) {
-              dataUse.audiencesLastUseAll = ''
-            }
-            var url = ''
-            if (
-              (
-                dataUse.audiencesLevel +
-                dataUse.audiencesCoinStart +
-                dataUse.audiencesCoinEnd +
-                dataUse.audiencesExchangeRate +
-                dataUse.audiencesLastUseAll
-              ).length === 0
-            ) {
-              this.valueAdd = 100
-              this.dataAdd = num
-            } else if (
-              dataUse.audiencesCoinStart === 0 &&
-              dataUse.audiencesCoinEnd === 0 &&
-              dataUse.audiencesLastUseAll === 0 &&
-              this.formUpdate.audiencesExchangeRate === 0
-            ) {
-              if (dataUse.audiencesLevel === 'allLevel') {
-                url =
-                  this.DNS_IP +
-                  '/member/getAudience?shopId=' +
-                  this.session.data.shopId
-              } else {
-                url =
-                  this.DNS_IP +
-                  '/member/getAudience?shopId=' +
-                  this.session.data.shopId +
-                  '&levelId=' +
-                  dataUse.audiencesLevel
-              }
-            } else {
-              if (
-                parseInt(dataUse.audiencesCoinStart || '0') +
-                  parseInt(dataUse.audiencesCoinEnd || '0') >
-                0
-              ) {
-                if (
-                  parseInt(dataUse.audiencesCoinStart || '0') <
-                  parseInt(dataUse.audiencesCoinEnd || '0')
-                ) {
-                  if (dataUse.audiencesLevel === 'allLevel') {
-                    url =
-                      this.DNS_IP +
-                      '/member/getAudience?shopId=' +
-                      this.session.data.shopId +
-                      '&levelId=' +
-                      dataUse.audiencesLevel +
-                      '&coin=' +
-                      dataUse.audiencesCoinStart +
-                      ' ' +
-                      dataUse.audiencesCoinEnd +
-                      '&lastProductExchangeRateId=' +
-                      dataUse.audiencesExchangeRate
-                  } else {
-                    url =
-                      this.DNS_IP +
-                      '/member/getAudience?shopId=' +
-                      this.session.data.shopId +
-                      '&levelId=' +
-                      dataUse.audiencesLevel +
-                      '&coin=' +
-                      dataUse.audiencesCoinStart +
-                      ' ' +
-                      dataUse.audiencesCoinEnd +
-                      '&lastUes=' +
-                      dataUse.audiencesLastUseAll +
-                      '&lastProductExchangeRateId=' +
-                      dataUse.audiencesExchangeRate
-                  }
-                } else {
-                  if (dataUse.audiencesLevel === 'allLevel') {
-                    this.$swal(
-                      'ผิดพลาด',
-                      'กรุณาตั้ง Coin ไม่เกิน ให้มากกว่า Coin ขั้นต่ำ',
-                      'error'
-                    )
-                    url =
-                      this.DNS_IP +
-                      '/member/getAudience?shopId=' +
-                      this.session.data.shopId +
-                      '&lastUes=' +
-                      dataUse.audiencesLastUseAll +
-                      '&lastProductExchangeRateId=' +
-                      dataUse.audiencesExchangeRate
-                  } else {
-                    this.$swal(
-                      'ผิดพลาด',
-                      'กรุณาตั้ง Coin ไม่เกิน ให้มากกว่า Coin ขั้นต่ำ',
-                      'error'
-                    )
-                    url =
-                      this.DNS_IP +
-                      '/member/getAudience?shopId=' +
-                      this.session.data.shopId +
-                      '&levelId=' +
-                      dataUse.audiencesLevel +
-                      '&lastUes=' +
-                      dataUse.audiencesLastUseAll +
-                      '&lastProductExchangeRateId=' +
-                      dataUse.audiencesExchangeRate
-                  }
-                }
-              } else {
-                if (dataUse.audiencesLevel === 'allLevel') {
-                  url =
-                    this.DNS_IP +
-                    '/member/getAudience?shopId=' +
-                    this.session.data.shopId +
-                    '&lastUes=' +
-                    dataUse.audiencesLastUseAll +
-                    '&lastProductExchangeRateId=' +
-                    dataUse.audiencesExchangeRate
-                } else {
-                  url =
-                    this.DNS_IP +
-                    '/member/getAudience?shopId=' +
-                    this.session.data.shopId +
-                    '&levelId=' +
-                    dataUse.audiencesLevel +
-                    '&lastUes=' +
-                    dataUse.audiencesLastUseAll +
-                    '&lastProductExchangeRateId=' +
-                    dataUse.audiencesExchangeRate
-                }
-              }
-              await axios.get(url).then(async res => {
-                // console.log('res', res.data)
-                this.dataUserLine = []
-                if (res.data.status === false) {
-                  this.valueAdd = parseInt((0 / num) * 100)
-                  this.dataAdd = 0
-                  // console.log('memberCard1', res.data)
-                  for (var i = 0; i < num; i++) {
-                    var d = response.data[i]
-                    var s = {}
-                    s.lineUserId = d.lineUserId
-                    s.picture = d.picture
-                    s.name = d.name
-                    this.dataUserLine.push(s)
-                  }
-                } else {
-                  this.valueAdd = parseInt((res.data.length / num) * 100)
-                  this.dataAdd = res.data.length
-                  console.log('memberCard2', res.data)
-                  for (var x = 0; x < res.data.length; x++) {
-                    var dt = res.data[x]
-                    var ss = {}
-                    console.log(dt)
-                    ss.lineUserId = dt.lineUserId
-                    ss.picture = dt.picture
-                    ss.name = dt.name
-                    this.dataUserLine.push(ss)
-                  }
-                }
-              })
-            }
           }
+          await axios
+            .get(
+              url
+            )
+            .then(async res => {
+              console.log('response', res.data)
+              if (res.data.status === false) {
+                this.valueAdd = parseInt((0 / num) * 100)
+                this.dataAdd = 0
+                this.dataUserLine = []
+              } else {
+                this.valueAdd = parseInt((res.data.length / num) * 100)
+                this.dataAdd = res.data.length
+                for (var i = 0; i < res.data.length; i++) {
+                  var d = res.data[i]
+                  var s = {}
+                  s.lineUserId = d.lineUserId
+                  s.picture = d.memberPicture
+                  s.name = d.memberName
+                  this.dataUserLine.push(s)
+                }
+              }
+            })
         })
+    },
+    clearEdit () {
+      this.showTabel = false
+      this.filesUpdate = null
+      this.dataUserLine = []
+      this.formUpdate.pictureUrl = ''
+      this.formUpdate.linkWeb = ''
+      this.formUpdate.broadcastName = ''
+      this.formUpdate.pictureUrlPreview = ''
+      this.formUpdate.title = ''
+      this.selectDataAudience = ''
+      this.formUpdate.pictureUrl = ''
+      this.formUpdate.title = ''
+      this.formUpdate.id = ''
+      this.formUpdate.selectData = 'booking'
+      this.formUpdate.flowId = ''
+      this.formUpdate.audiencesName = ''
+      this.formUpdate.fieldId = ''
+      this.formUpdate.optionFieldValue = ''
+      this.formUpdate.startDate = ''
+      this.formUpdate.endDate = ''
+      this.formUpdate.startDateClose = ''
+      this.formUpdate.endDateClose = ''
+      this.formUpdate.audiencesSelect = 'bookingDate'
+      this.formUpdate.startRating = 0
+      this.formUpdate.endRating = 0
+      this.formUpdate.shopId = this.$session.getAll().data.shopId
+      this.formUpdate.masBranchID = ''
+      this.formUpdate.dateJobOpen = 'False'
+      this.formUpdate.dateJobClose = 'False'
+      this.formUpdate.CREATE_USER = ''
+      this.formUpdate.LAST_USER = ''
     },
     async sendPush () {
       this.$swal({
@@ -775,52 +1269,206 @@ export default {
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
       }).then(async result => {
-        var modules = ''
-        if (this.idData === 'rewardId') {
-          modules = 'ของรางวัล'
-        } else if (this.idData === 'activityId') {
-          modules = 'กิจกรรม'
+        if (this.filesUpdate) {
+          const _this = this
+          let params = new FormData()
+          params.append('file', this.filesUpdate)
+
+          await axios
+            .post(`https://api-beloyalty.betaskthai.com/file/upload/reward`, params)
+            .then(function (response) {
+              _this.formUpdate.pictureUrl = response.data
+              console.log('url Pic', response.data)
+            })
         }
-        var data = {
-          shopId: this.session.data.shopId,
-          audiencesId: this.selectAudience,
-          module: modules,
-          referId: this.referId,
-          pictureUrl: this.formUpdate.pictureUrl,
-          message: this.formUpdate.title,
-          subName: this.formUpdate.subName,
-          quota: this.formUpdate.quota,
-          point: this.formUpdate.point,
-          coin: this.formUpdate.coin,
-          endDateStr: this.formUpdate.endDateStr,
-          lineUserId: this.dataUserLine,
-          CREATE_USER: this.session.data.userName,
-          LAST_USER: this.session.data.userName
+        var item = this.itemEdit
+        this.formUpdate.CREATE_USER = this.$session.getAll().data.userName
+        this.formUpdate.LAST_USER = this.$session.getAll().data.userName
+        var dt = {}
+        if (item.audiencesSelect === 'bookingDate') {
+          dt = {
+            countSend: this.dataUserLine.length,
+            pictureUrl: this.formUpdate.pictureUrl,
+            linkWeb: this.formUpdate.linkWeb,
+            message: this.formUpdate.title,
+            broadcastName: this.formUpdate.broadcastName,
+            lineUserId: this.dataUserLine,
+            audiencesName: item.audiencesName,
+            flowId: item.flowId,
+            startDate: new Date(item.startDate).toISOString().substr(0, 10),
+            endDate: new Date(item.endDate).toISOString().substr(0, 10),
+            audiencesSelect: item.audiencesSelect,
+            shopId: this.$session.getAll().data.shopId, //
+            masBranchID: item.masBranchID,
+            CREATE_DATE: this.format_dateFUllTime(new Date()),
+            CREATE_USER: this.formUpdate.CREATE_USER,
+            LAST_USER: this.formUpdate.LAST_USER
+          }
+        } else if (item.audiencesSelect === 'typeJob') {
+          console.log(item.dateJobOpen, item.dateJobClose)
+          if (item.dateJobOpen === 'True' && item.dateJobClose === 'True') {
+            dt = {
+              countSend: this.dataUserLine.length,
+              linkWeb: this.formUpdate.linkWeb,
+              lineUserId: this.dataUserLine,
+              pictureUrl: this.formUpdate.pictureUrl,
+              message: this.formUpdate.title,
+              broadcastName: this.formUpdate.broadcastName,
+              audiencesName: item.audiencesName,
+              flowId: item.flowId,
+              startDate: new Date(item.startDate).toISOString().substr(0, 10),
+              endDate: new Date(item.endDate).toISOString().substr(0, 10),
+              startDateClose: new Date(item.startDateClose).toISOString().substr(0, 10),
+              endDateClose: new Date(item.endDateClose).toISOString().substr(0, 10),
+              audiencesSelect: item.audiencesSelect,
+              shopId: this.$session.getAll().data.shopId,
+              dateJobOpen: 'True', //
+              dateJobClose: 'True', //
+              masBranchID: item.masBranchID,
+              CREATE_DATE: this.format_dateFUllTime(new Date()),
+              CREATE_USER: this.formUpdate.CREATE_USER,
+              LAST_USER: this.formUpdate.LAST_USER
+            }
+          } else if (item.dateJobOpen === 'True' && item.dateJobClose === 'False') {
+            dt = {
+              countSend: this.dataUserLine.length,
+              linkWeb: this.formUpdate.linkWeb,
+              lineUserId: this.dataUserLine,
+              pictureUrl: this.formUpdate.pictureUrl,
+              message: this.formUpdate.title,
+              broadcastName: this.formUpdate.broadcastName,
+              audiencesName: item.audiencesName,
+              flowId: item.flowId,
+              startDate: new Date(item.startDate).toISOString().substr(0, 10),
+              endDate: new Date(item.endDate).toISOString().substr(0, 10),
+              audiencesSelect: item.audiencesSelect,
+              shopId: this.$session.getAll().data.shopId,
+              dateJobOpen: 'True', //
+              dateJobClose: 'False', //
+              masBranchID: item.masBranchID,
+              CREATE_DATE: this.format_dateFUllTime(new Date()),
+              CREATE_USER: this.formUpdate.CREATE_USER,
+              LAST_USER: this.formUpdate.LAST_USER
+            }
+          } else if (item.dateJobOpen === 'False' && item.dateJobClose === 'True') {
+            dt = {
+              countSend: this.dataUserLine.length,
+              linkWeb: this.formUpdate.linkWeb,
+              lineUserId: this.dataUserLine,
+              pictureUrl: this.formUpdate.pictureUrl,
+              message: this.formUpdate.title,
+              broadcastName: this.formUpdate.broadcastName,
+              audiencesName: item.audiencesName,
+              flowId: item.flowId,
+              startDateClose: new Date(item.startDateClose).toISOString().substr(0, 10),
+              endDateClose: new Date(item.endDateClose).toISOString().substr(0, 10),
+              audiencesSelect: item.audiencesSelect,
+              shopId: this.$session.getAll().data.shopId,
+              dateJobOpen: 'False', //
+              dateJobClose: 'True', //
+              masBranchID: item.masBranchID,
+              CREATE_DATE: this.format_dateFUllTime(new Date()),
+              CREATE_USER: this.formUpdate.CREATE_USER,
+              LAST_USER: this.formUpdate.LAST_USER
+            }
+          } else if (item.dateJobOpen === 'False' && item.dateJobClose === 'False') {
+            dt = {
+              countSend: this.dataUserLine.length,
+              linkWeb: this.formUpdate.linkWeb,
+              lineUserId: this.dataUserLine,
+              pictureUrl: this.formUpdate.pictureUrl,
+              message: this.formUpdate.title,
+              broadcastName: this.formUpdate.broadcastName,
+              audiencesName: item.audiencesName,
+              flowId: item.flowId,
+              // endDateClose: new Date(item.endDateClose).toISOString().substr(0, 10),
+              audiencesSelect: item.audiencesSelect,
+              shopId: this.$session.getAll().data.shopId,
+              dateJobOpen: 'False', //
+              dateJobClose: 'False', //
+              masBranchID: item.masBranchID,
+              CREATE_DATE: this.format_dateFUllTime(new Date()),
+              CREATE_USER: this.formUpdate.CREATE_USER,
+              LAST_USER: this.formUpdate.LAST_USER
+            }
+          }
+        } else if (item.audiencesSelect === 'rating') {
+          dt = {
+            countSend: this.dataUserLine.length,
+            linkWeb: this.formUpdate.linkWeb,
+            lineUserId: this.dataUserLine,
+            pictureUrl: this.formUpdate.pictureUrl,
+            message: this.formUpdate.title,
+            broadcastName: this.formUpdate.broadcastName,
+            audiencesName: item.audiencesName,
+            startDate: new Date(item.startDate).toISOString().substr(0, 10),
+            endDate: new Date(item.endDate).toISOString().substr(0, 10),
+            audiencesSelect: item.audiencesSelect,
+            shopId: this.$session.getAll().data.shopId,
+            startRating: item.startRating,
+            endRating: item.endRating,
+            CREATE_DATE: this.format_dateFUllTime(new Date()),
+            CREATE_USER: this.formUpdate.CREATE_USER,
+            LAST_USER: this.formUpdate.LAST_USER
+          }
+        } else if (item.audiencesSelect === 'typeCustomField') {
+          if (item.selectData === 'booking') {
+            dt = {
+              countSend: this.dataUserLine.length,
+              linkWeb: this.formUpdate.linkWeb,
+              lineUserId: this.dataUserLine,
+              pictureUrl: this.formUpdate.pictureUrl,
+              message: this.formUpdate.title,
+              broadcastName: this.formUpdate.broadcastName,
+              audiencesName: item.audiencesName,
+              audiencesSelect: item.audiencesSelect,
+              shopId: this.$session.getAll().data.shopId,
+              fieldId: item.fieldId,
+              optionFieldValue: item.optionFieldValue,
+              selectData: item.selectData,
+              masBranchID: item.masBranchID,
+              CREATE_DATE: this.format_dateFUllTime(new Date()),
+              CREATE_USER: this.formUpdate.CREATE_USER,
+              LAST_USER: this.formUpdate.LAST_USER
+            }
+          } else if (item.selectData === 'job') {
+            dt = {
+              countSend: this.dataUserLine.length,
+              linkWeb: this.formUpdate.linkWeb,
+              lineUserId: this.dataUserLine,
+              pictureUrl: this.formUpdate.pictureUrl,
+              message: this.formUpdate.title,
+              broadcastName: this.formUpdate.broadcastName,
+              audiencesName: item.audiencesName,
+              audiencesSelect: item.audiencesSelect,
+              shopId: this.$session.getAll().data.shopId,
+              fieldId: item.fieldId,
+              optionFieldValue: item.optionFieldValue,
+              selectData: item.selectData,
+              masBranchID: item.masBranchID,
+              CREATE_DATE: this.format_dateFUllTime(new Date()),
+              CREATE_USER: this.formUpdate.CREATE_USER,
+              LAST_USER: this.formUpdate.LAST_USER
+            }
+          }
         }
         await axios
           .post(
             // eslint-disable-next-line quotes
             this.DNS_IP + '/broadcast/add',
-            data
+            dt
           )
           .then(async response => {
             console.log('addDataGlobal DNS_IP + PATH + "add"', response)
             this.dataSelect = false
-            this.formUpdate = {}
-            this.dataUserLine = []
-            this.referId = ''
-            this.selectAudience = ''
-            this.valueAdd = 0
-            this.dataAdd = 0
-            this.dataAudience = []
-            this.dataUserLine = []
-            this.dataItem = []
             this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+            this.clearEdit()
+            this.getDataList()
           })
           // eslint-disable-next-line handle-callback-err
           .catch(error => {
             console.log(error)
-            this.$router.push('/system/Errorpage?returnLink=' + this.returnLink)
+            // this.$router.push('/system/Errorpage?returnLink=' + this.returnLink)
             this.dataReady = true
           })
       })
