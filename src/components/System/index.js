@@ -8,6 +8,7 @@ import Token from './Token'
 import EditShop from './EditShop'
 import ConfirmPass from './ConfirmPass'
 import ListMember from './ListMember'
+import ManageUser from './ManageUser'
 export default {
   User,
   Menu,
@@ -18,5 +19,6 @@ export default {
   Token,
   EditShop,
   ConfirmPass,
-  ListMember
+  ListMember,
+  ManageUser
 }

@@ -303,7 +303,8 @@ export default {
         { title: 'สาขา', icon: 'mdi-home-group', to: '/Master/Branch' },
         { title: 'พนักงาน', icon: 'mdi-account-multiple', to: '/Master/Employee' },
         { title: 'ช่องทางการชำระเงิน', icon: 'mdi-credit-card-outline', to: '/Master/PaymentType' },
-        { title: 'จัดการบริษัท', icon: 'mdi-home-city', to: '/System/EditShop' }
+        { title: 'จัดการบริษัท', icon: 'mdi-home-city', to: '/System/EditShop' },
+        { title: 'สมัครเเละจัดการยูเซอร์', icon: 'mdi-account-circle', to: '/System/ManageUser' }
       ]
       this.broadCast = [
         { title: 'กลุ่มเป้าหมาย', icon: 'mdi-account-group', to: '/BroadCast/Audience' },

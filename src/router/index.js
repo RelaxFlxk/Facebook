@@ -188,6 +188,11 @@ export default new Router({
     path: '/BroadCast/BroadCast',
     name: 'BroadCast',
     component: BroadCast.BroadCast
+  },
+  {
+    path: '/System/ManageUser',
+    name: 'ManageUser',
+    component: System.ManageUser
   }
   ]
 })
