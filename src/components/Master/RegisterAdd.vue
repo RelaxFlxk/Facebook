@@ -71,18 +71,9 @@
                                   :src="require('@/assets/NewcarText.png')"
                                 ></v-img>
                               </v-col>
-                            <v-form ref="form_add" v-model="validAdd" lazy-validation>
-                              <div
-                                v-for="(p, index) in flowfieldNameitem"
-                                :key="index"
-                              >
-                                <div
-                                class="pa-0"
-                                  v-show="
-                                    p.conditionField === '' ||
-                                      p.conditionField === null
-                                  "
-                                >
+                            <v-form ref="form" v-model="valid" lazy-validation>
+                              <div v-for="(p, index) in flowfieldNameitem" :key="index">
+                                <div class="pa-0" v-if="p.conditionField === '' || p.conditionField === null ">
                                   <div>
                                     <div v-if="p.fieldType == 'text'">
                                       <br />
@@ -109,43 +100,47 @@
                                       <v-col
                                         cols="12"
                                         v-if="p.fieldType == 'Autocompletes'"
+                                        style="padding-top: 0px;padding-bottom: 0px;"
                                       >
-                                        <p>{{ p.fieldName }}</p>
+                                      <br />
                                         <v-autocomplete
                                           v-model="p.fieldValue"
                                           :items="JSON.parse(p.optionField)"
                                           dense
                                           filled
-                                          label="Search"
+                                          :label="p.fieldName"
                                           :rules="[rules.required]"
                                         ></v-autocomplete>
                                       </v-col>
                                       <v-col
                                         cols="12"
                                         v-if="p.fieldType == 'Selects'"
+                                        style="padding-top: 0px;padding-bottom: 0px;"
                                       >
+                                      <br />
                                         <div>
-                                          <p>{{ p.fieldName }}</p>
                                           <v-select
                                             v-model="p.fieldValue"
                                             :items="JSON.parse(p.optionField)"
                                             menu-props="auto"
-                                            label="Select"
+                                            :label="p.fieldName"
                                             hide-details
                                             outlined
                                             dense
+                                            :rules="[rules.required]"
                                           ></v-select>
                                         </div>
                                       </v-col>
                                     </v-row>
-                                    <div v-if="p.fieldType == 'Radio'">
-                                      <br />
-                                      <v-container fluid>
-                                        <p>{{ p.fieldName }}</p>
-                                        <v-radio-group
-                                          column
-                                          v-model="p.fieldValue"
-                                        >
+                                    <div v-if="p.fieldType == 'Radio'" style="padding:0px;">
+                                        <br />
+                                        <v-container fluid style="padding:0px;">
+                                          <v-radio-group
+                                            row
+                                            v-model="p.fieldValue"
+                                            style="margin:0px;"
+                                            :rules="[rules.required]"
+                                          >
                                           <template v-slot:label> </template>
                                           <div
                                             v-for="radios in JSON.parse(
@@ -165,65 +160,41 @@
                                     </div>
                                   </div>
                                 </div>
-                                <div
-                                  v-if="
-                                    p.conditionField !== '' &&
-                                      flowfieldNameitem.filter(row => {
-                                        return (
-                                          row.fieldId ===
-                                          parseInt(p.conditionField)
-                                        );
-                                      }).length > 0
-                                  "
-                                >
-                                  <div
-                                    v-if="
-                                      p.conditionValue ===
-                                        flowfieldNameitem.filter(row => {
-                                          return (
-                                            row.fieldId ===
-                                            parseInt(p.conditionField)
-                                          );
-                                        })[0].fieldValue
-                                    "
-                                  >
-                                    <v-col
+                                <div  v-if="p.conditionField !== '' && flowfieldNameitem.filter(row => {return (row.fieldId === parseInt(p.conditionField));}).length > 0">
+                                  <div v-if="p.conditionValue === flowfieldNameitem.filter(row => {return (row.fieldId === parseInt(p.conditionField));})[0].fieldValue">
+                                    <div
                                       cols="12"
                                       v-if="p.fieldType == 'Autocompletes'"
                                     >
-                                      <p>{{ p.fieldName }}</p>
                                       <v-autocomplete
                                         v-model="p.fieldValue"
                                         :items="JSON.parse(p.optionField)"
                                         dense
                                         filled
-                                        label="Search"
+                                        :label="p.fieldName"
                                         :rules="[rules.required]"
                                       ></v-autocomplete>
-                                    </v-col>
-                                    <v-col
-                                      cols="12"
-                                      v-if="p.fieldType == 'Selects'"
-                                    >
-                                      <div>
-                                        <p>{{ p.fieldName }}</p>
+                                    </div>
+                                      <div v-if="p.fieldType == 'Selects'">
                                         <v-select
                                           v-model="p.fieldValue"
                                           :items="JSON.parse(p.optionField)"
                                           menu-props="auto"
-                                          label="Select"
+                                          :label="p.fieldName"
                                           dense
                                           hide-details
                                           outlined
+                                          :rules="[rules.required]"
                                         ></v-select>
                                       </div>
-                                      <div v-if="p.fieldType == 'Radio'">
+                                      <div v-if="p.fieldType === 'Radio'" style="padding:0px;">
                                         <br />
-                                        <v-container fluid>
-                                          <p>{{ p.fieldName }}</p>
+                                        <v-container fluid style="padding:0px;">
                                           <v-radio-group
                                             row
                                             v-model="p.fieldValue"
+                                            style="margin:0px;"
+                                            :rules="[rules.required]"
                                           >
                                             <template v-slot:label> </template>
                                             <div
@@ -242,7 +213,6 @@
                                           </v-radio-group>
                                         </v-container>
                                       </div>
-                                    </v-col>
                                   </div>
                                 </div>
                               </div>
@@ -299,7 +269,7 @@
                                 depressed
                                 dark
                                 color="#1B437C"
-                                :disabled="!validAdd"
+                                :disabled="!valid"
                                 @click="addData()"
                               >
                                 รับรถใหม่
@@ -427,6 +397,7 @@ export default {
         { text: 'Action', value: 'action', sortable: false, align: 'center' }
       ],
       dataItem: [],
+      valid: true,
       validAdd: false,
       validUpdate: false
     }
@@ -439,17 +410,11 @@ export default {
     this.getDataBranch()
   },
   methods: {
-    validate (Action) {
-      switch (Action) {
-        case 'ADD':
-          this.$nextTick(() => {
-            let self = this
-            self.$refs.form_add.validate()
-          })
-          break
-        default:
-          break
-      }
+    validate () {
+      this.$refs.form.validate()
+    },
+    reset () {
+      this.$refs.form.reset()
     },
     async getCustomField () {
       this.editedItemSelete = []
@@ -541,135 +506,159 @@ export default {
             // }
             this.form1[d.fieldId] = ''
             this.flowfieldNameitem.push(s)
-            console.log('flowfieldNameitem', this.flowfieldNameitem)
           }
-          setTimeout(() => this.validate('ADD'), 500)
+          var data1 = this.flowfieldNameitem.filter(el => parseInt(el.conditionField || 0) > 0)
+          // var data2 = []
+          for (let i = 0; i < data1.length; i++) {
+            let d = data1[i]
+            let indexC = this.flowfieldNameitem.findIndex(function (o) {
+              return o.fieldId === d.fieldId
+            })
+            let indexF = this.flowfieldNameitem.findIndex(function (o) {
+              return o.fieldId === parseInt(d.conditionField)
+            })
+            this.flowfieldNameitem.splice((indexF + 1), 0, this.flowfieldNameitem.splice(indexC, 1)[0])
+            // data2.push({'indexC': indexC, 'indexF': indexF})
+          }
+          // console.log('data1', data1)
+          // console.log('data2', data2)
+          // for (var x = 0; x < data2.length; x++) {
+          //   var s = data2[x]
+          //   this.fieldNameItem.splice((s.indexF + 1), 0, this.fieldNameItem.splice(s.indexC, 1)[0])
+          // }
+          console.log(this.fieldNameItem)
+          console.log('flowfieldNameitem', this.flowfieldNameitem)
+          // setTimeout(() => this.validate('ADD'), 500)
         })
         .catch(error => {
           console.log('error function addData : ', error)
         })
     },
     async addData (p) {
-      this.flowfieldNameitem[0].endDate = this.endDate
-      this.flowfieldNameitem[0].endTime = this.endTime
-      this.flowfieldNameitem[0].CREATE_USER = this.session.data.userName
-      this.flowfieldNameitem[0].LAST_USER = this.session.data.userName
-      console.log('flowfieldNameitem', this.flowfieldNameitem)
-      let Add = []
-      let fielditem = this.flowfieldNameitem
-      for (let i = 0; i < this.flowfieldNameitem.length; i++) {
-        let d = this.flowfieldNameitem[i]
-        let update = {}
-        if (d.conditionField === '' || d.conditionField === null) {
-          update.masBranchID = this.formAdd.masBranchID
-          update.CREATE_USER = update.CREATE_USER
-          update.LAST_USER = update.LAST_USER
-          update.checkCar = d.checkCar
-          update.conditionField = d.conditionField
-          update.conditionValue = d.conditionValue
-          update.endDate = d.endDate
-          update.endTime = d.endTime
-          update.fieldId = d.fieldId
-          update.fieldName = d.fieldName
-          update.fieldType = d.fieldType
-          update.fieldValue = d.fieldValue
-          update.flowId = d.flowId
-          update.optionField = d.optionField
-          update.shopId = d.shopId
-          update.showCard = d.showCard
-          Add.push(update)
-        } else {
-          if (
-            fielditem.filter(row => {
-              return row.fieldId === parseInt(d.conditionField)
-            }).length > 0
-          ) {
-            console.log('this', fielditem)
+      await this.validate('ADD')
+      console.log('this.', this.valid)
+      if (this.validAdd !== false) {
+        this.flowfieldNameitem[0].endDate = this.endDate
+        this.flowfieldNameitem[0].endTime = this.endTime
+        this.flowfieldNameitem[0].CREATE_USER = this.session.data.userName
+        this.flowfieldNameitem[0].LAST_USER = this.session.data.userName
+        console.log('flowfieldNameitem', this.flowfieldNameitem)
+        let Add = []
+        let fielditem = this.flowfieldNameitem
+        for (let i = 0; i < this.flowfieldNameitem.length; i++) {
+          let d = this.flowfieldNameitem[i]
+          let update = {}
+          if (d.conditionField === '' || d.conditionField === null) {
+            update.masBranchID = this.formAdd.masBranchID
+            update.CREATE_USER = update.CREATE_USER
+            update.LAST_USER = update.LAST_USER
+            update.checkCar = d.checkCar
+            update.conditionField = d.conditionField
+            update.conditionValue = d.conditionValue
+            update.endDate = d.endDate
+            update.endTime = d.endTime
+            update.fieldId = d.fieldId
+            update.fieldName = d.fieldName
+            update.fieldType = d.fieldType
+            update.fieldValue = d.fieldValue
+            update.flowId = d.flowId
+            update.optionField = d.optionField
+            update.shopId = d.shopId
+            update.showCard = d.showCard
+            Add.push(update)
+          } else {
             if (
-              d.conditionValue ===
+              fielditem.filter(row => {
+                return row.fieldId === parseInt(d.conditionField)
+              }).length > 0
+            ) {
+              console.log('this', fielditem)
+              if (
+                d.conditionValue ===
               fielditem.filter(row => {
                 return row.fieldId === parseInt(d.conditionField)
               })[0].fieldValue
-            ) {
-              update.masBranchID = this.formAdd.masBranchID
-              update.CREATE_USER = update.CREATE_USER
-              update.LAST_USER = update.LAST_USER
-              update.checkCar = d.checkCar
-              update.conditionField = d.conditionField
-              update.conditionValue = d.conditionValue
-              update.endDate = d.endDate
-              update.endTime = d.endTime
-              update.fieldId = d.fieldId
-              update.fieldName = d.fieldName
-              update.fieldType = d.fieldType
-              update.fieldValue = d.fieldValue
-              update.flowId = d.flowId
-              update.optionField = d.optionField
-              update.shopId = d.shopId
-              update.showCard = d.showCard
-              Add.push(update)
+              ) {
+                update.masBranchID = this.formAdd.masBranchID
+                update.CREATE_USER = update.CREATE_USER
+                update.LAST_USER = update.LAST_USER
+                update.checkCar = d.checkCar
+                update.conditionField = d.conditionField
+                update.conditionValue = d.conditionValue
+                update.endDate = d.endDate
+                update.endTime = d.endTime
+                update.fieldId = d.fieldId
+                update.fieldName = d.fieldName
+                update.fieldType = d.fieldType
+                update.fieldValue = d.fieldValue
+                update.flowId = d.flowId
+                update.optionField = d.optionField
+                update.shopId = d.shopId
+                update.showCard = d.showCard
+                Add.push(update)
+              }
             }
           }
         }
-      }
-      console.log('Add', Add)
-      this.dataReady = false
-      this.$swal({
-        title: 'ต้องการ เพิ่มข้อมูล ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      })
-        .then(async result => {
-          this.shopId = this.shopId
-          this.endDate = this.endDate
-          this.endTime = this.endTime
-          this.checkCar = this.checkCar
-          console.log('Add', Add)
-          console.log('checkCar', this.checkCar)
-          console.log('endDate', this.endDate)
-          console.log('endTime', this.endTime)
-          console.log('shopId', this.shopId)
-          await axios
-            .post(
+        console.log('Add', Add)
+        this.dataReady = false
+        this.$swal({
+          title: 'ต้องการ เพิ่มข้อมูล ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        })
+          .then(async result => {
+            this.shopId = this.shopId
+            this.endDate = this.endDate
+            this.endTime = this.endTime
+            this.checkCar = this.checkCar
+            console.log('Add', Add)
+            console.log('checkCar', this.checkCar)
+            console.log('endDate', this.endDate)
+            console.log('endTime', this.endTime)
+            console.log('shopId', this.shopId)
+            await axios
+              .post(
               // eslint-disable-next-line quotes
-              this.DNS_IP + "/job/add",
-              Add
-            )
-            .then(async response => {
+                this.DNS_IP + "/job/add",
+                Add
+              )
+              .then(async response => {
               // Debug response
-              console.log('addDataGlobal DNS_IP + /job/add', response)
-              console.log('data', response)
-              let updateStatusSend = {
-                updateStatusSend: 'false'
-              }
-              await axios
-                .post(
-                  this.DNS_IP + '/job/pushQr/' + response.data.jobNo,
-                  updateStatusSend
-                )
-                .then(
-                  this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success'),
-                  this.clearData()
+                console.log('addDataGlobal DNS_IP + /job/add', response)
+                console.log('data', response)
+                let updateStatusSend = {
+                  updateStatusSend: 'false'
+                }
+                await axios
+                  .post(
+                    this.DNS_IP + '/job/pushQr/' + response.data.jobNo,
+                    updateStatusSend
+                  )
+                  .then(
+                    this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success'),
+                    this.clearData()
                   // this.$router.push('/Master/FlowStep')
-                )
-                .catch(error => {
-                  console.log('error function addDataGlobal : ', error)
-                })
-            })
+                  )
+                  .catch(error => {
+                    console.log('error function addDataGlobal : ', error)
+                  })
+              })
             // eslint-disable-next-line handle-callback-err
-            .catch(error => {
-              console.log('error function addDataGlobal : ', error)
-              this.dataReady = true
-            })
-        })
-        .catch(error => {
-          console.log('error function addData : ', error)
-          this.dataReady = true
-        })
+              .catch(error => {
+                console.log('error function addDataGlobal : ', error)
+                this.dataReady = true
+              })
+          })
+          .catch(error => {
+            console.log('error function addData : ', error)
+            this.dataReady = true
+          })
+      }
     },
     async clearData () {
       // eslint-disable-next-line no-redeclare

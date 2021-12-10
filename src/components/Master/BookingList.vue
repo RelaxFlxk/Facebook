@@ -313,9 +313,6 @@
                                   ></v-autocomplete>
                                 </div>
                                 <div v-if="item.fieldType == 'Selects'">
-                                  <p class="text-center" style="color:#173053;">
-                                    {{ item.fieldName }}
-                                  </p>
                                   <v-select
                                     v-model="item.fieldValue"
                                     :items="JSON.parse(item.optionField)"
@@ -327,18 +324,13 @@
                                     outlined
                                   ></v-select>
                                 </div>
-                                <div v-if="item.fieldType == 'Radio'">
-                                  <v-container fluid>
-                                    <p
-                                      class="text-center"
-                                      style="color:#173053;"
-                                    >
-                                      {{ item.fieldName }}
-                                    </p>
+                                <div v-if="item.fieldType == 'Radio'" style="padding:0px;">
+                                  <v-container fluid style="padding:0px;">
                                     <v-radio-group
                                       column
                                       dense
                                       v-model="item.fieldValue"
+                                      style="margin:0px;"
                                     >
                                       <template v-slot:label> </template>
                                       <div
@@ -411,9 +403,6 @@
                                     ></v-autocomplete>
                                   </div>
                                   <div v-if="item.fieldType == 'Selects'">
-                                    <p class="text-center">
-                                      {{ item.fieldName }}
-                                    </p>
                                     <v-select
                                       v-model="item.fieldValue"
                                       :items="JSON.parse(item.optionField)"
@@ -425,15 +414,13 @@
                                       outlined
                                     ></v-select>
                                   </div>
-                                  <div v-if="item.fieldType == 'Radio'">
-                                    <p class="text-center">
-                                      {{ item.fieldName }}
-                                    </p>
-                                    <v-container fluid>
+                                  <div v-if="item.fieldType == 'Radio'" style="padding:0px;">
+                                    <v-container fluid style="padding:0px;">
                                       <v-radio-group
                                         row
                                         dense
                                         v-model="item.fieldValue"
+                                        style="margin:0px;"
                                       >
                                         <template v-slot:label> </template>
                                         <div
@@ -1206,6 +1193,26 @@ export default {
             this.fieldNameItem.push(s)
             // console.log('s', this.fieldNameItem)
           }
+          var data1 = this.fieldNameItem.filter(el => parseInt(el.conditionField || 0) > 0)
+          // var data2 = []
+          for (var i = 0; i < data1.length; i++) {
+            var d = data1[i]
+            var indexC = this.fieldNameItem.findIndex(function (o) {
+              return o.fieldId === d.fieldId
+            })
+            var indexF = this.fieldNameItem.findIndex(function (o) {
+              return o.fieldId === parseInt(d.conditionField)
+            })
+            this.fieldNameItem.splice((indexF + 1), 0, this.fieldNameItem.splice(indexC, 1)[0])
+            // data2.push({'indexC': indexC, 'indexF': indexF})
+          }
+          // console.log('data1', data1)
+          // console.log('data2', data2)
+          // for (var x = 0; x < data2.length; x++) {
+          //   var s = data2[x]
+          //   this.fieldNameItem.splice((s.indexF + 1), 0, this.fieldNameItem.splice(s.indexC, 1)[0])
+          // }
+          console.log(this.fieldNameItem)
           setTimeout(() => this.validate('ADD'), 500)
         })
         .catch(error => {

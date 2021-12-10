@@ -30,7 +30,7 @@
                   <v-text-field
                     :label="itemFix.fieldName"
                     outlined
-                    disabled
+
                   ></v-text-field>
                 </div>
                 <v-row>
@@ -91,25 +91,139 @@
                 <form class="Review">
                   <div v-for="(item, index) in Fielditem" :key="index">
                     <div v-if="item.showitem == true">
-                      <v-text-field
-                        :label="item.fieldName"
-                        outlined
-                        disabled
-                      ></v-text-field>
+              <div v-if="item.conditionField === '' || item.conditionField === null ">
+                <div v-if="item.fieldType == 'text'">
+                <v-text-field
+                v-model="item.fieldValue"
+                :label="item.fieldName"
+                outlined
+                required
+
+                ></v-text-field>
+              </div>
+              <div v-if="item.fieldType == 'number'">
+                <v-text-field
+                v-model="item.fieldValue"
+                :label="item.fieldName"
+                outlined
+                required
+
+                ></v-text-field>
+              </div>
+              <div v-if="item.fieldType== 'Autocompletes'">
+                <v-autocomplete
+                  v-model="item.fieldValue"
+                  :items="JSON.parse(item.optionField)"
+                  outlined
+                  :label="item.fieldName"
+                  required
+
+                ></v-autocomplete>
+              </div>
+              <div v-if="item.fieldType== 'Selects'">
+                <v-select
+                  v-model="item.fieldValue"
+                  :items="JSON.parse(item.optionField)"
+                  menu-props="auto"
+                  :label="item.fieldName"
+                  required
+
+                  outlined
+                ></v-select>
+              </div>
+              <div v-if="item.fieldType== 'Radio'" style="padding:0px;">
+                <v-container fluid style="padding:0px;">
+                  <v-radio-group
+                  column
+                v-model="item.fieldValue"
+                style="margin:0px;">
+                  <template v-slot:label>
+                  </template>
+                  <div v-for="radios in JSON.parse(item.optionField)" :key="radios.toISOString">
+                  <v-radio
+                    :label="radios.text"
+                    :value="radios.value"
+                  ></v-radio>
+                  </div>
+                </v-radio-group>
+                </v-container>
+              </div>
+              </div>
+            <div v-if="item.conditionField !== '' && Fielditem.filter((row) => { return row.fieldId === parseInt(item.conditionField)}).length > 0">
+              <div v-if="item.conditionValue === Fielditem.filter((row) => { return row.fieldId === parseInt(item.conditionField)})[0].fieldValue">
+                <div v-if="item.fieldType == 'text'">
+                <v-text-field
+                v-model="item.fieldValue"
+                :label="item.fieldName"
+                outlined
+                required
+
+                ></v-text-field>
+                </div>
+                <div v-if="item.fieldType == 'number'">
+                  <v-text-field
+                  v-model="item.fieldValue"
+                  :label="item.fieldName"
+                  outlined
+                  required
+
+                  ></v-text-field>
+                </div>
+                <div v-if="item.fieldType== 'Autocompletes'">
+                  <v-autocomplete
+                    v-model="item.fieldValue"
+                    :items="JSON.parse(item.optionField)"
+                    outlined
+                    :label="item.fieldName"
+                    required
+
+                  ></v-autocomplete>
+                </div>
+                <div v-if="item.fieldType== 'Selects'">
+                  <v-select
+                    v-model="item.fieldValue"
+                    :items="JSON.parse(item.optionField)"
+                    menu-props="auto"
+                    :label="item.fieldName"
+                    required
+
+                    outlined
+                  ></v-select>
+                </div>
+                <div v-if="item.fieldType== 'Radio'" style="padding:0px;">
+                  <v-container fluid style="padding:0px;">
+                    <v-radio-group row
+                  v-model="item.fieldValue"
+                  style="margin:0px;">
+                    <template v-slot:label>
+                    </template>
+                    <div v-for="radios in JSON.parse(item.optionField)" :key="radios.toISOString">
+                    <v-radio
+                      :label="radios.text"
+                      :value="radios.value"
+                    ></v-radio>
+                    </div>
+                  </v-radio-group>
+                  </v-container>
+                </div>
+                </div>
+              </div>
                     </div>
                   </div>
                 </form>
                 <div class="text-center">
-                  <v-btn
-                    elevation="10"
-                    color="#1B437C"
-                    readonly
-                    small
-                    block
-                    dark
-                    >ทำการนัดหมาย</v-btn
-                  >
-                </div>
+              <v-btn
+              elevation="10"
+              color="#173053" dark
+              small
+            >SAVE</v-btn>
+            <v-btn
+              elevation="10"
+              color="#173053" outlined
+              style="background-color:#FFFFFF"
+              small
+            >CANCEL</v-btn>
+            </div>
               </v-card>
             </div>
           </v-col>
@@ -341,11 +455,26 @@ export default {
               s.fieldName = d.fieldName
               s.fieldType = d.fieldType
               s.optionField = d.optionField
+              s.conditionField = d.conditionField
+              s.conditionValue = d.conditionValue
               s.shopId = d.shopId
               s.fieldValue = ''
               s.showitem = true
               this.Fielditem.push(s)
               console.log('s', this.Fielditem)
+            }
+            let data1 = this.Fielditem.filter(el => parseInt(el.conditionField || 0) > 0)
+            // let data2 = []
+            for (let i = 0; i < data1.length; i++) {
+              let d = data1[i]
+              let indexC = this.Fielditem.findIndex(function (o) {
+                return o.fieldId === d.fieldId
+              })
+              let indexF = this.Fielditem.findIndex(function (o) {
+                return o.fieldId === parseInt(d.conditionField)
+              })
+              this.Fielditem.splice((indexF + 1), 0, this.Fielditem.splice(indexC, 1)[0])
+            // data2.push({'indexC': indexC, 'indexF': indexF})
             }
           })
           .catch(error => {
@@ -365,10 +494,25 @@ export default {
               s.fieldName = d.fieldName
               s.fieldType = d.fieldType
               s.optionField = d.optionField
+              s.conditionField = d.conditionField
+              s.conditionValue = d.conditionValue
               s.shopId = d.shopId
               s.fieldValue = ''
               s.showitem = false
               this.Fielditem.push(s)
+            }
+            let data1 = this.Fielditem.filter(el => parseInt(el.conditionField || 0) > 0)
+            // let data2 = []
+            for (let i = 0; i < data1.length; i++) {
+              let d = data1[i]
+              let indexC = this.Fielditem.findIndex(function (o) {
+                return o.fieldId === d.fieldId
+              })
+              let indexF = this.Fielditem.findIndex(function (o) {
+                return o.fieldId === parseInt(d.conditionField)
+              })
+              this.Fielditem.splice((indexF + 1), 0, this.Fielditem.splice(indexC, 1)[0])
+            // data2.push({'indexC': indexC, 'indexF': indexF})
             }
           })
           .catch(error => {

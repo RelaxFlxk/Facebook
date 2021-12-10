@@ -40,10 +40,10 @@
                    <v-card
                     class="mb-12"
                     width="220"
+                    :text-color="codeColor[step]"
                    >
                      <v-toolbar
-                    :color="codeColor[step]"
-                    dark
+
                     >
                     {{element.stepTitle}}
                     </v-toolbar>
@@ -57,10 +57,10 @@
                     <v-card
                     class="mb-12"
                     width="220"
+                    :text-color="codeColor[i]"
                    >
                      <v-toolbar
-                    :color="codeColor[i]"
-                    dark
+
                     >
                     {{element.stepTitle}}
                     </v-toolbar>
