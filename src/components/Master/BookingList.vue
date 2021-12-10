@@ -887,9 +887,9 @@ export default {
   },
   async mounted () {
     // this.dataReady = false
+    await this.getDataBranch()
     await this.scanQrcode()
     this.getDataFlow()
-    this.getDataBranch()
     this.getBookingList()
   },
   methods: {
@@ -960,7 +960,7 @@ export default {
     async getDataBranch () {
       this.branch = []
       // console.log('branch', this.branch)
-      axios
+      await axios
         .get(
           this.DNS_IP + '/master_branch/get?shopId=' + this.session.data.shopId
         )
@@ -975,7 +975,6 @@ export default {
               this.branch.push(s)
               // console.log('dtdtdtdt', this.branch)
             }
-            this.masBranchID = this.branch[0].value
           } else {
             this.branch = []
           }
@@ -1069,6 +1068,12 @@ export default {
     },
     async getBookingList () {
       // Clear Data ทุกครั้ง
+      console.log('this.masBranchID1', this.masBranchID)
+      if (this.masBranchID !== '') {
+        this.masBranchID = this.masBranchID
+      } else {
+        this.masBranchID = this.branch[0].value
+      }
       this.dataReady = false
       this.dataItem = []
       // Clear ช่องค้นหา
@@ -1085,36 +1090,37 @@ export default {
         .then(async response => {
           // console.log('getData', response.data)
           this.dataReady = true
-          for (let i = 0; i < response.data.length; i++) {
-            let d = response.data[i]
-            let s = {}
-            s.bookNo = d.bookNo
-            s.flowName = d.flowName
-            s.dueDate = d.dueDate
-            s.chkConfirm = false
-            s.chkCancel = false
-            if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
-              s.chkConfirm = true
-              s.chkCancel = false
-            }
-            if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
+          if (response.data.length > 0) {
+            for (let i = 0; i < response.data.length; i++) {
+              let d = response.data[i]
+              let s = {}
+              s.bookNo = d.bookNo
+              s.flowName = d.flowName
+              s.dueDate = d.dueDate
               s.chkConfirm = false
-              s.chkCancel = true
-            }
-            if (d.statusBt) {
-              s.statusBt = d.statusBt
-            } else {
-              s.statusBt = 'wait'
-            }
-            let dataBookingData = []
-            await axios
-              .get(
+              s.chkCancel = false
+              if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
+                s.chkConfirm = true
+                s.chkCancel = false
+              }
+              if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
+                s.chkConfirm = false
+                s.chkCancel = true
+              }
+              if (d.statusBt) {
+                s.statusBt = d.statusBt
+              } else {
+                s.statusBt = 'wait'
+              }
+              let dataBookingData = []
+              await axios
+                .get(
                 // eslint-disable-next-line quotes
-                this.DNS_IP + "/BookingData/get?bookNo=" + d.bookNo
-              )
-              .then(async responses => {
+                  this.DNS_IP + "/BookingData/get?bookNo=" + d.bookNo
+                )
+                .then(async responses => {
                 // console.log('getData', responses.data)
-                dataBookingData = responses.data
+                  dataBookingData = responses.data
                 // for (let i = 0; i < response.data.length; i++) {
                 //   let e = response.data[i]
                 //   if (e.fieldName === 'ชื่อ') {
@@ -1124,14 +1130,15 @@ export default {
                 //     s.cusReg = s.fieldValue
                 //   }
                 // }
-              })
-            s.cusName = dataBookingData.filter(function (el) {
-              return el.fieldName === 'ชื่อ'
-            })[0].fieldValue
-            s.cusReg = dataBookingData.filter(function (el) {
-              return el.fieldName === 'เลขทะเบียน'
-            })[0].fieldValue
-            this.dataItem.push(s)
+                })
+              s.cusName = dataBookingData.filter(function (el) {
+                return el.fieldName === 'ชื่อ'
+              })[0].fieldValue
+              s.cusReg = dataBookingData.filter(function (el) {
+                return el.fieldName === 'เลขทะเบียน'
+              })[0].fieldValue
+              this.dataItem.push(s)
+            }
           }
           if (this.dataItem.length === 0 || this.dataItem.status === false) {
             this.dataItem = []

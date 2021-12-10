@@ -12,35 +12,33 @@
         <v-row no-gutters>
           <v-col cols="4">
             <v-menu
-                      v-model="menuDate"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          v-model="today"
-                          label="วันที่"
-                          prepend-icon="mdi-calendar"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        v-model="today"
-                        @input="menuDate = false , getBookingList()"
-                        :max="
-                          new Date(
-                            Date.now() - new Date().getTimezoneOffset() * 60000
-                          )
-                            .toISOString()
-                            .substr(0, 10)
-                        "
-                      ></v-date-picker>
-                    </v-menu>
+              v-model="menuDate"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="today"
+                  label="วันที่"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="today"
+                @input="(menuDate = false), getBookingList()"
+                :max="
+                  new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+                    .toISOString()
+                    .substr(0, 10)
+                "
+              ></v-date-picker>
+            </v-menu>
           </v-col>
           <v-col cols="4">
             <v-select
@@ -65,7 +63,7 @@
               border="left"
               prominent
             >
-              จำนวนลูกค้าต่อวัน : {{countCus || 0}}
+              จำนวนลูกค้าต่อวัน : {{ countCus || 0 }}
             </v-alert>
           </v-col>
           <v-col cols="12">
@@ -73,23 +71,71 @@
               <v-card-text>
                 <v-sheet height="64">
                   <v-toolbar dense>
+                    <v-btn
+                      fab
+                      text
+                      small
+                      color="grey darken-2"
+                      @click="prev()"
+                    >
+                      <v-icon small>
+                        mdi-chevron-left
+                      </v-icon>
+                    </v-btn>
+                    <v-btn
+                      fab
+                      text
+                      small
+                      color="grey darken-2"
+                      @click="next()"
+                    >
+                      <v-icon small>
+                        mdi-chevron-right
+                      </v-icon>
+                    </v-btn>
                     <v-toolbar-title v-if="$refs.calendar">{{
                       $refs.calendar.title
                     }}</v-toolbar-title>
 
                     <v-spacer></v-spacer>
+                    <v-menu
+                      bottom
+                      right
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          outlined
+                          color="grey darken-2"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <span>{{ typeToLabel[type] }}</span>
+                          <v-icon right>
+                            mdi-menu-down
+                          </v-icon>
+                        </v-btn>
+                      </template>
+                      <v-list>
+                        <v-list-item @click="type = 'week', getBookingList()">
+                          <v-list-item-title>Week</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item @click="type = 'month', getBookingList()">
+                          <v-list-item-title>Month</v-list-item-title>
+                        </v-list-item>
+                      </v-list>
+                    </v-menu>
                   </v-toolbar>
                 </v-sheet>
                 <v-sheet>
                   <v-calendar
                     ref="calendar"
                     :now="today"
-                    :value="today"
+                    v-model="today"
                     :events="events"
                     locale="th-TH"
                     @click:event="showEvent"
                     color="primary"
-                    type="month"
+                    :type="type"
                   ></v-calendar>
                 </v-sheet>
               </v-card-text>
@@ -112,37 +158,40 @@
                             {{ items.flowName }}
                           </div>
                           <v-list-item-subtitle>
-                            <p>วันที่นัดหมาย : {{format_date(items.dueDate)}}</p>
+                            <p>
+                              วันที่นัดหมาย : {{ format_date(items.dueDate) }}
+                            </p>
                           </v-list-item-subtitle>
-                          <v-list-item-group
-                            :color="items.color"
-                          >
-                            <p>สถานะ ยืนยัน : {{items.statusBt || 'wait'}}</p>
+                          <v-list-item-group :color="items.color">
+                            <p>สถานะ ยืนยัน : {{ items.statusBt || "wait" }}</p>
                           </v-list-item-group>
                           <v-list-item-subtitle v-if="items.contactDateBt">
-                            <p>วันที่ ยืนยัน : {{format_date(items.contactDateBt)}}</p>
+                            <p>
+                              วันที่ ยืนยัน :
+                              {{ format_date(items.contactDateBt) }}
+                            </p>
                           </v-list-item-subtitle>
                           <v-list-item-subtitle>
-                          <v-btn
-                                color="success"
-                                fab
-                                id="v-step-2"
-                                :disabled = items.chkConfirm
-                                small
-                                @click.stop="confirmChk(items)"
-                              >
-                                <v-icon dark> mdi-phone-check </v-icon>
-                              </v-btn>
-                              <v-btn
-                                color="error"
-                                fab
-                                id="v-step-2"
-                                small
-                                :disabled = items.chkCancel
-                                @click.stop="cancelChk(items)"
-                              >
-                                <v-icon dark> mdi-phone-cancel </v-icon>
-                              </v-btn>
+                            <v-btn
+                              color="success"
+                              fab
+                              id="v-step-2"
+                              :disabled="items.chkConfirm"
+                              small
+                              @click.stop="confirmChk(items)"
+                            >
+                              <v-icon dark> mdi-phone-check </v-icon>
+                            </v-btn>
+                            <v-btn
+                              color="error"
+                              fab
+                              id="v-step-2"
+                              small
+                              :disabled="items.chkCancel"
+                              @click.stop="cancelChk(items)"
+                            >
+                              <v-icon dark> mdi-phone-cancel </v-icon>
+                            </v-btn>
                           </v-list-item-subtitle>
                         </v-list-item-content>
                       </v-list-item>
@@ -204,9 +253,22 @@ export default {
       menuDate: false,
       dialog: false,
       dataCalendar: [],
-      colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
+      colors: [
+        'blue',
+        'indigo',
+        'deep-purple',
+        'cyan',
+        'green',
+        'orange',
+        'grey darken-1'
+      ],
       DataBranchName: [],
-      masBranchName: ''
+      masBranchName: '',
+      type: 'month',
+      typeToLabel: {
+        month: 'Month',
+        week: 'Week'
+      }
     }
   },
   beforeCreate () {
@@ -216,29 +278,49 @@ export default {
   },
   async mounted () {
     await this.getDataBranch()
+    this.$refs.calendar.checkChange()
   },
   methods: {
+    prev () {
+      this.$refs.calendar.prev()
+      this.getBookingList()
+    },
+    next () {
+      this.$refs.calendar.next()
+      this.getBookingList()
+    },
     getDataBranch () {
       this.DataBranchName = []
-      axios.get(this.DNS_IP + '/master_branch/get?shopId=' + this.$session.getAll().data.shopId).then(async response => {
-        let rs = response.data
-        if (rs.length > 0) {
-          for (var i = 0; i < rs.length; i++) {
-            var d = rs[i]
-            d.text = d.masBranchName
-            d.value = d.masBranchName
-            this.DataBranchName.push(d)
+      axios
+        .get(
+          this.DNS_IP +
+            '/master_branch/get?shopId=' +
+            this.$session.getAll().data.shopId
+        )
+        .then(async response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              d.text = d.masBranchName
+              d.value = d.masBranchName
+              this.DataBranchName.push(d)
+            }
+            this.masBranchName = this.DataBranchName[0]
+            console.log('DataBranchName', this.DataBranchName)
+            await this.getBookingList()
+          } else {
+            this.DataBranchName = []
           }
-          this.masBranchName = this.DataBranchName[0]
-          console.log('DataBranchName', this.DataBranchName)
-          await this.getBookingList()
-        } else {
-          this.DataBranchName = []
-        }
-      })
+        })
     },
     async getBookingList () {
       console.log('masBranchName', this.masBranchName)
+      // if (this.masBranchName) {
+      //   this.masBranchName = this.masBranchName
+      // } else {
+      //   this.masBranchName = this.DataBranchName[0]
+      // }
       // Clear Data ทุกครั้ง
       this.events = []
       // Clear ช่องค้นหา
@@ -248,88 +330,261 @@ export default {
       // const date = dateSplit[0].split('-')
       const year = String(dateSplit[0])
       const month = String(dateSplit[1])
-      await axios
-        .get(
+      if (this.type === 'month') {
+        await axios
+          .get(
           // eslint-disable-next-line quotes
-          this.DNS_IP +
+            this.DNS_IP +
             '/booking_view/getCountNotime?shopId=' +
-            this.$session.getAll().data.shopId + '&dueDate=' + year + '-' + month + '&masBranchName=' + this.masBranchName.text
-        )
-        .then(async response => {
-          console.log('getData', response.data)
-          this.dataReady = true
-          this.countCus = this.masBranchName.countCus
-          for (var i = 0; i < response.data.length; i++) {
-            var d = response.data[i]
-            var s = {}
-            console.log('d', d)
-            if (this.countCus > 0) {
-              s.start = d.start
-              d.d50 = parseInt((this.countCus / 100) * 50)
-              d.d70 = parseInt((this.countCus / 100) * 70)
-              d.d90 = parseInt((this.countCus / 100) * 90)
-              console.log('d.d', parseInt(d.name), d.d50, d.d70, d.d90)
-              if (parseInt(d.name) <= d.d50) {
-                console.log('50')
-                s.color = 'blue'
-                s.name = 'คล่อง : ' + d.name.toString() + '/' + this.countCus.toString()
-              } if (parseInt(d.name) <= d.d70 && parseInt(d.name) >= d.d50) {
-                console.log('70')
-                s.color = 'deep-purple'
-                s.name = 'ติดขัด : ' + d.name.toString() + '/' + this.countCus.toString()
-              } if (parseInt(d.name) <= d.d90 && parseInt(d.name) >= d.d70) {
-                console.log('90')
-                s.color = 'red accent-1'
-                s.name = 'ติดขัด : ' + d.name.toString() + '/' + this.countCus.toString()
-              } if (parseInt(d.name) === this.countCus) {
-                s.color = 'red'
-                s.name = 'เต็ม : ' + d.name.toString() + '/' + this.countCus.toString()
-              }
-              this.events.push(s)
-            }
-          }
-          if (this.events.length === 0 || this.events.status === false) {
-            this.events = []
-            // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
-          } else {
-            await axios
-              .get(
-                // eslint-disable-next-line quotes
-                this.DNS_IP +
-            '/booking_view/getCount?shopId=' +
-            this.$session.getAll().data.shopId + '&dueDate=' + year + '-' + month + '&masBranchName=' + this.masBranchName.text
-              )
-              .then(async responses => {
-                for (var x = 0; x < responses.data.length; x++) {
-                  var e = responses.data[x]
-                  var f = {}
-                  // console.log(d)
-                  if (e.statusBt) {
-                    f.start = e.start
-                    if (e.statusBt === 'confirm') {
-                      f.color = 'green'
-                      f.name = e.statusBt + ' เวลา ' + e.timeDue + ' โมง : ' + e.name.toString()
-                    } else {
-                      f.color = 'red'
-                      f.name = e.statusBt + ' เวลา ' + e.timeDue + ' โมง : ' + e.name.toString()
-                    }
-                  } else {
-                    f.start = e.start
-                    f.color = 'orange'
-                    f.name = 'wait' + ' เวลา ' + e.timeDue + ' โมง : ' + e.name.toString()
-                  }
-                  this.events.push(f)
+            this.$session.getAll().data.shopId +
+            '&dueDate=' +
+            year +
+            '-' +
+            month +
+            '&masBranchName=' +
+            this.masBranchName.text
+          )
+          .then(async response => {
+            console.log('getData', response.data)
+            this.dataReady = true
+            this.countCus = this.masBranchName.countCus
+            for (var i = 0; i < response.data.length; i++) {
+              var d = response.data[i]
+              var s = {}
+              console.log('d', d)
+              if (this.countCus > 0) {
+                s.start = d.start
+                d.d50 = parseInt((this.countCus / 100) * 50)
+                d.d70 = parseInt((this.countCus / 100) * 70)
+                d.d90 = parseInt((this.countCus / 100) * 90)
+                console.log('d.d', parseInt(d.name), d.d50, d.d70, d.d90)
+                if (parseInt(d.name) <= d.d50) {
+                  console.log('50')
+                  s.color = 'blue'
+                  s.name =
+                  'คล่อง : ' +
+                  d.name.toString() +
+                  '/' +
+                  this.countCus.toString()
                 }
-              })
-          }
-          console.log('events', this.events)
-        })
+                if (parseInt(d.name) <= d.d70 && parseInt(d.name) >= d.d50) {
+                  console.log('70')
+                  s.color = 'deep-purple'
+                  s.name =
+                  'ติดขัด : ' +
+                  d.name.toString() +
+                  '/' +
+                  this.countCus.toString()
+                }
+                if (parseInt(d.name) <= d.d90 && parseInt(d.name) >= d.d70) {
+                  console.log('90')
+                  s.color = 'red accent-1'
+                  s.name =
+                  'ติดขัด : ' +
+                  d.name.toString() +
+                  '/' +
+                  this.countCus.toString()
+                }
+                if (parseInt(d.name) === this.countCus) {
+                  s.color = 'red'
+                  s.name =
+                  'เต็ม : ' +
+                  d.name.toString() +
+                  '/' +
+                  this.countCus.toString()
+                }
+                this.events.push(s)
+              }
+            }
+            if (this.events.length === 0 || this.events.status === false) {
+              this.events = []
+            // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
+            } else {
+              await axios
+                .get(
+                // eslint-disable-next-line quotes
+                  this.DNS_IP +
+                  '/booking_view/getCount?shopId=' +
+                  this.$session.getAll().data.shopId +
+                  '&dueDate=' +
+                  year +
+                  '-' +
+                  month +
+                  '&masBranchName=' +
+                  this.masBranchName.text
+                )
+                .then(async responses => {
+                  for (var x = 0; x < responses.data.length; x++) {
+                    var e = responses.data[x]
+                    var f = {}
+                    // console.log(d)
+                    if (e.statusBt) {
+                      f.start = e.start
+                      if (e.statusBt === 'confirm') {
+                        f.color = 'green'
+                        f.name =
+                        e.statusBt +
+                        ' เวลา ' +
+                        e.timeDue +
+                        ' โมง : ' +
+                        e.name.toString()
+                      } else {
+                        f.color = 'red'
+                        f.name =
+                        e.statusBt +
+                        ' เวลา ' +
+                        e.timeDue +
+                        ' โมง : ' +
+                        e.name.toString()
+                      }
+                    } else {
+                      f.start = e.start
+                      f.color = 'orange'
+                      f.name =
+                      'wait' +
+                      ' เวลา ' +
+                      e.timeDue +
+                      ' โมง : ' +
+                      e.name.toString()
+                    }
+                    this.events.push(f)
+                  }
+                })
+            }
+            console.log('events', this.events)
+          })
         // eslint-disable-next-line handle-callback-err
-        .catch(error => {
-          console.log(error)
-          this.dataReady = true
+          .catch(error => {
+            console.log(error)
+            this.dataReady = true
           //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
-        })
+          })
+      } else if (this.type === 'week') {
+        await axios
+          .get(
+          // eslint-disable-next-line quotes
+            this.DNS_IP +
+            '/booking_view/getCountNotime?shopId=' +
+            this.$session.getAll().data.shopId +
+            '&dueDate=' +
+            year +
+            '-' +
+            month +
+            '&masBranchName=' +
+            this.masBranchName.text
+          )
+          .then(async response => {
+            console.log('getData', response.data)
+            this.dataReady = true
+            this.countCus = this.masBranchName.countCus
+            for (var i = 0; i < response.data.length; i++) {
+              var d = response.data[i]
+              var s = {}
+              console.log('d', d)
+              if (this.countCus > 0) {
+                s.start = d.start
+                d.d50 = parseInt((this.countCus / 100) * 50)
+                d.d70 = parseInt((this.countCus / 100) * 70)
+                d.d90 = parseInt((this.countCus / 100) * 90)
+                console.log('d.d', parseInt(d.name), d.d50, d.d70, d.d90)
+                if (parseInt(d.name) <= d.d50) {
+                  console.log('50')
+                  s.color = 'blue'
+                  s.name =
+                  'คล่อง : ' +
+                  d.name.toString() +
+                  '/' +
+                  this.countCus.toString()
+                }
+                if (parseInt(d.name) <= d.d70 && parseInt(d.name) >= d.d50) {
+                  console.log('70')
+                  s.color = 'deep-purple'
+                  s.name =
+                  'ติดขัด : ' +
+                  d.name.toString() +
+                  '/' +
+                  this.countCus.toString()
+                }
+                if (parseInt(d.name) <= d.d90 && parseInt(d.name) >= d.d70) {
+                  console.log('90')
+                  s.color = 'red accent-1'
+                  s.name =
+                  'ติดขัด : ' +
+                  d.name.toString() +
+                  '/' +
+                  this.countCus.toString()
+                }
+                if (parseInt(d.name) === this.countCus) {
+                  s.color = 'red'
+                  s.name =
+                  'เต็ม : ' +
+                  d.name.toString() +
+                  '/' +
+                  this.countCus.toString()
+                }
+                this.events.push(s)
+              }
+            }
+            if (this.events.length === 0 || this.events.status === false) {
+              this.events = []
+            // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
+            } else {
+              await axios
+                .get(
+                // eslint-disable-next-line quotes
+                  this.DNS_IP +
+                  '/booking_view/getCount?shopId=' +
+                  this.$session.getAll().data.shopId +
+                  '&dueDate=' +
+                  year +
+                  '-' +
+                  month +
+                  '&masBranchName=' +
+                  this.masBranchName.text
+                )
+                .then(async responses => {
+                  for (var x = 0; x < responses.data.length; x++) {
+                    var e = responses.data[x]
+                    var f = {}
+                    // console.log(d)
+                    if (e.statusBt) {
+                      f.start = e.start + ' ' + e.timeDue + ':00'
+                      f.end = e.start + ' ' + e.timeDue + ':30'
+                      if (e.statusBt === 'confirm') {
+                        f.color = 'green'
+                        f.name =
+                        e.statusBt +
+                        ' : ' +
+                        e.name.toString()
+                      } else {
+                        f.color = 'red'
+                        f.name =
+                        e.statusBt +
+                        ' : ' +
+                        e.name.toString()
+                      }
+                    } else {
+                      f.start = e.start + ' ' + e.timeDue + ':00'
+                      f.end = e.start + ' ' + e.timeDue + ':30'
+                      f.color = 'orange'
+                      f.name =
+                      'wait' +
+                      ' : ' +
+                      e.name.toString()
+                    }
+                    this.events.push(f)
+                  }
+                })
+            }
+            console.log('events', this.events)
+          })
+        // eslint-disable-next-line handle-callback-err
+          .catch(error => {
+            console.log(error)
+            this.dataReady = true
+          //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
+          })
+      }
     },
     async showEvent (event) {
       this.dataCalendar = []
@@ -423,31 +678,28 @@ export default {
         cancelButtonColor: '#b3b1ab',
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
+      }).then(async result => {
+        var dt = {
+          bookNo: item.bookNo,
+          contactDate: this.format_dateFUllTime(new Date()),
+          status: 'confirm',
+          statusUse: 'use',
+          shopId: this.$session.getAll().data.shopId,
+          CREATE_USER: this.session.data.userName,
+          LAST_USER: this.session.data.userName
+        }
+        axios
+          .post(this.DNS_IP + '/booking_transaction/add', dt)
+          .then(response => {
+            this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+            this.getBookingList()
+            console.log('addDataGlobal', response)
+            this.dialog = false
+          })
+          .catch(error => {
+            console.log('error function addData : ', error)
+          })
       })
-        .then(async (result) => {
-          var dt = {
-            bookNo: item.bookNo,
-            contactDate: this.format_dateFUllTime(new Date()),
-            status: 'confirm',
-            statusUse: 'use',
-            shopId: this.$session.getAll().data.shopId,
-            CREATE_USER: this.session.data.userName,
-            LAST_USER: this.session.data.userName
-          }
-          axios
-            .post(
-              this.DNS_IP + '/booking_transaction/add', dt
-            )
-            .then(response => {
-              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-              this.getBookingList()
-              console.log('addDataGlobal', response)
-              this.dialog = false
-            })
-            .catch((error) => {
-              console.log('error function addData : ', error)
-            })
-        })
     },
     cancelChk (item) {
       // console.log('item', item)
@@ -459,31 +711,28 @@ export default {
         cancelButtonColor: '#b3b1ab',
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
+      }).then(async result => {
+        var dt = {
+          bookNo: item.bookNo,
+          contactDate: this.format_dateFUllTime(new Date()),
+          status: 'cancel',
+          statusUse: 'use',
+          shopId: this.$session.getAll().data.shopId,
+          CREATE_USER: this.session.data.userName,
+          LAST_USER: this.session.data.userName
+        }
+        axios
+          .post(this.DNS_IP + '/booking_transaction/add', dt)
+          .then(response => {
+            this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+            console.log('addDataGlobal', response)
+            this.getBookingList()
+            this.dialog = false
+          })
+          .catch(error => {
+            console.log('error function addData : ', error)
+          })
       })
-        .then(async (result) => {
-          var dt = {
-            bookNo: item.bookNo,
-            contactDate: this.format_dateFUllTime(new Date()),
-            status: 'cancel',
-            statusUse: 'use',
-            shopId: this.$session.getAll().data.shopId,
-            CREATE_USER: this.session.data.userName,
-            LAST_USER: this.session.data.userName
-          }
-          axios
-            .post(
-              this.DNS_IP + '/booking_transaction/add', dt
-            )
-            .then(response => {
-              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-              console.log('addDataGlobal', response)
-              this.getBookingList()
-              this.dialog = false
-            })
-            .catch((error) => {
-              console.log('error function addData : ', error)
-            })
-        })
     }
   }
 }

@@ -539,6 +539,17 @@
                                   v-model="filesUpdate"
                                 ></v-file-input>
                               </v-col>
+                              <v-co cols="12">
+                                <v-btn
+                                  elevation="2"
+                                  x-large
+                                  color="success"
+                                  @click="testPicture()"
+                                >
+                                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                                  testPicture
+                                </v-btn>
+                              </v-co>
                             <v-col cols="12" class="pb-0">
                               <v-row>
                                 <v-subheader id="subtext"
@@ -1472,6 +1483,20 @@ export default {
             this.dataReady = true
           })
       })
+    },
+    testPicture () {
+      if (this.filesUpdate) {
+        const _this = this
+        let params = new FormData()
+        params.append('file', this.filesUpdate)
+
+        axios
+          .post(this.DNS_IP + `/file/upload/broadcast`, params)
+          .then(function (response) {
+            _this.formUpdate.pictureUrl = response.data
+            console.log('url Pic', response.data)
+          })
+      }
     }
   }
 }
