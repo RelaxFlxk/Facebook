@@ -36,7 +36,7 @@
                          <!-- v-if="formAdd.fieldName && formAdd.fieldType !== 'text'" -->
 
                           <v-data-table
-                            v-show="formAdd.fieldType && fieldTypeSelect !== 'text'"
+                            v-if="formAdd.fieldName != '' && formAdd.fieldType !== 'text'"
                             class="elevation-1 custom_table_class"
                             dense
                             :headers="columnsOption"
@@ -88,7 +88,7 @@
 
                       <v-row style="height: 50px">
                         <v-select
-                        v-model="fieldTypeSelect"
+                        v-model="formAdd.fieldType"
                         :items="selectTypeField"
                         dense
                         value = 'text'
@@ -96,10 +96,10 @@
                         ></v-select>
                       </v-row>
 
-                      <v-row style="height: 35px" v-if="fieldTypeSelect !== ' ' && fieldTypeSelect !== 'text'">
+                      <v-row style="height: 35px" v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
                       <v-subheader id="subtext">optionField</v-subheader>
                       </v-row>
-                      <v-row style="height: 50px" v-if="fieldTypeSelect !== ' ' && fieldTypeSelect !== 'text'">
+                      <v-row style="height: 50px" v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
                         <v-select
                         v-model="formAdd.fieldType"
                         :items="selectOptionField"
@@ -113,10 +113,10 @@
                     <v-form ref="form_addOption" v-model="validAddOption" lazy-validation>
                     <v-row>
                     <v-col cols="6">
-                      <v-row style="height: 35px" v-if="formAdd.fieldType">
+                      <v-row style="height: 35px" v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
                       <v-subheader id="subtext" >Text:</v-subheader >
                       </v-row>
-                      <v-row style="height: 50px" v-if="formAdd.fieldType">
+                      <v-row style="height: 50px" v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
                       <v-text-field
                         v-model="formAddOption.optionText"
                         placeholder="Text"
@@ -129,10 +129,10 @@
                       </v-row>
                     </v-col>
                      <v-col cols="6">
-                      <v-row style="height: 35px" v-if="formAdd.fieldType">
+                      <v-row style="height: 35px" v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
                       <v-subheader id="subtext">Value:</v-subheader>
                       </v-row>
-                      <v-row style="height: 50px" v-if="formAdd.fieldType">
+                      <v-row style="height: 50px" v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
                       <v-text-field
                         v-model="formAddOption.optionValue"
                         placeholder="Value"
@@ -232,7 +232,7 @@
               <v-card-text>
                 <v-container>
                   <v-col class="text-right">
-                    <v-icon color="#173053" @click="(dialogEdit = false), clearData()">mdi-close</v-icon>
+                    <v-icon color="#173053" @click="(dialogEdit = false), clearDataFormUpDate()">mdi-close</v-icon>
                   </v-col>
                   <v-row justify="center">
                     <v-col cols="6" class="text-center">
@@ -285,11 +285,11 @@
                       </v-row>
                     </v-col>
                     <v-col cols="12">
-                      <v-row style="height: 35px">
+                      <v-row style="height: 35px" v-if="formUpdate.fieldType == 'text'">
                       <v-subheader id="subtext">type</v-subheader>
                       </v-row>
 
-                      <v-row style="height: 50px">
+                      <v-row style="height: 50px" v-if="formUpdate.fieldType == 'text'">
                         <v-select
                         v-model="formUpdate.fieldType"
                         :items="selectTypeField"
@@ -304,7 +304,7 @@
                       <v-row style="height: 50px" v-if="formUpdate.fieldType !== 'text'">
                         <v-select
                         v-model="formUpdate.fieldType"
-                        :items="selectOptionField"
+                        :items="selectEditOptionField"
                         small-chips
                         dense
                         :rules="[rules.required]"
@@ -355,7 +355,7 @@
                         dark
                         color="#173053"
                         :disabled="!validAddOption"
-                        @click="addDataOption(formUpdateOption), clearDataOption()"
+                        @click="addDataOption(formUpdateOption), clearDataFormUpdateOption()"
                       >
                         <v-icon left>mdi-checkbox-marked-circle</v-icon>
                         ADD
@@ -365,40 +365,50 @@
                       <!-- checkbox -->
                      <v-container
                         class="px-0"
-                        fluid
                       >
                         <v-checkbox
+                          v-if="formUpdate.conditionField !== ''"
+                          v-model="checkboxTrue"
+                          :label="`Checkbox Condition: ${checkboxTrue.toString()}`"
+                        ></v-checkbox>
+                        <v-checkbox
+                          v-if="formUpdate.conditionField == ''"
                           v-model="checkbox"
                           :label="`Checkbox Condition: ${checkbox.toString()}`"
                         ></v-checkbox>
                       </v-container>
                       <!-- checkbox -->
 
-                      <v-row style="height: 35px" v-if="checkbox === true">
+                      <v-row style="height: 35px" v-if="checkboxTrue === true && checkbox == false">
                       <v-subheader id="subtext">Field</v-subheader>
                       </v-row>
-                      <v-row style="height: 50px" v-if="checkbox === true">
-                        <v-select
+                      <v-row style="height: 50px" v-if="checkboxTrue === true && checkbox == false">
+                        {{formUpdate.conditionField}}
+                        <!-- {{dataItem}} -->
+                        <!-- <v-select
                         v-model="formUpdate.conditionField"
                         :items="selectConditionField"
                         small-chips
                         dense
                         :rules="[rules.required]"
-                        ></v-select>
+                        ></v-select> -->
+                        <v-select
+                          item-text="fieldName"
+                          item-value="fieldId"
+                          v-model="formUpdate.conditionField"
+                          :items="dataItem"
+                          >
+                          </v-select>
                       </v-row>
                       <!-- END -->
-                        <v-row style="height: 35px" v-if="checkbox === true">
+                        <v-row style="height: 35px" v-if="checkboxTrue === true && checkbox == false">
                       <v-subheader id="subtext">Value:</v-subheader>
                       </v-row>
-                      <v-row style="height: 50px" v-if="checkbox === true">
+                      <v-row style="height: 50px" v-if="checkboxTrue === true && checkbox == false">
                       <v-text-field
                         v-model="formUpdate.conditionValue"
                         placeholder="Value"
                         dense
-                        required
-                        :rules="[
-                          rules.required
-                        ]"
                       ></v-text-field>
                       </v-row>
                       <!-- END -->
@@ -607,6 +617,14 @@ export default {
         { text: 'Selects', value: 'Selects' },
         { text: 'Radio buttons', value: 'Radio' }
       ],
+      selectEditOptionField: [
+        { text: 'Text', value: 'text' },
+        { text: 'Number', value: 'number' },
+        { text: 'Datetime', value: 'dateTime' },
+        { text: 'Autocompletes', value: 'Autocompletes' },
+        { text: 'Selects', value: 'Selects' },
+        { text: 'Radio buttons', value: 'Radio' }
+      ],
       headers: [
         { text: 'Text', value: 'optionText' },
         { text: 'Value', value: 'optionValue' }
@@ -637,6 +655,7 @@ export default {
       radios: null,
       checkbox: false,
       checkbox1: false,
+      checkboxTrue: true,
       // Search All
       searchAll: '',
       searchAll2: '',
@@ -645,7 +664,7 @@ export default {
         fieldType: '',
         CREATE_USER: '',
         LAST_USER: '',
-        optionField: '',
+        optionField: [],
         optionText: '',
         optionValue: '',
         conditionField: '',
@@ -658,7 +677,7 @@ export default {
         fieldName: '',
         fieldType: '',
         LAST_USER: '',
-        optionField: '',
+        optionField: [],
         optionText: '',
         optionValue: '',
         conditionField: '',
@@ -752,16 +771,27 @@ export default {
     },
     async getDataById (item) {
       console.log('dataItem', this.dataItem)
+      console.log('Item', item)
+      console.log('conditionField', typeof (this.formUpdate.conditionField))
+      this.dataItemOption = JSON.parse(item.optionField)
+      this.selectConditionField = item.conditionField
+      this.formUpdate.conditionField = ''
+      this.formUpdate.optionField = []
       await axios
         .get(
           // eslint-disable-next-line quotes
           this.DNS_IP + this.path + "getID?fieldId" + "=" + item.fieldId + '&shopId=' + this.shopId
         )
         .then(async (response) => {
+          console.log('getOptionField 777888: ', this.dataItemOption)
+          console.log('selectConditionField: ', this.selectConditionField)
           if (response.data) {
-            Object.assign(this.formUpdate, response.data)
-            this.formUpdate.optionField = JSON.parse(this.formUpdate.optionField)
+            // Object.assign(this.formUpdate, response.data)
+            this.formUpdate = response.data
+            this.formUpdate.optionField = JSON.parse(this.dataItemOption)
+            // this.formUpdate.optionField = JSON.parse(this.formUpdate.optionField)
             this.formUpdate.fieldType = this.formUpdate.fieldType
+            this.formUpdate.conditionField = parseInt(this.selectConditionField)
           }
         })
         // eslint-disable-next-line handle-callback-err
@@ -785,14 +815,14 @@ export default {
               var d = rs[i]
               d.text = d.optionField
               d.value = d.optionField
-              this.editedItemOption.push(d)
+              this.dataItemOption.push(d)
             }
           }
         })
     },
     getCondition () {
-      this.dataItemCondition = []
-      axios.get(this.DNS_IP + '/customField/get?shopId=' + this.shopId).then((response) => {
+      this.selectConditionField = []
+      axios.get(this.DNS_IP + '/customField/getConditionField?shopId=' + this.shopId).then((response) => {
         let rs = response.data
         if (rs.length > 0) {
           for (var i = 0; i < rs.length; i++) {
@@ -800,6 +830,7 @@ export default {
             d.text = d.fieldName
             d.value = d.fieldId
             this.selectConditionField.push(d)
+            console.log('selectConditionField', this.selectConditionField)
           }
         }
       })
@@ -861,6 +892,7 @@ export default {
     },
     async editData () {
       // this.editDataGlobal(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
+      console.log('dataItemOption', JSON.stringify(this.dataItemOption))
       this.dataReady = false
       this.$swal({
         title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',
@@ -873,6 +905,9 @@ export default {
       })
         .then(async (result) => {
           this.formUpdate.LAST_USER = this.session.data.userName
+          if (this.formUpdate.optionField === 'Autocompletes' || 'Selects') {
+            this.formUpdate.optionField = JSON.stringify(this.dataItemOption)
+          }
           var ID = this.formUpdate.fieldId
           delete this.formUpdate['fieldId']
           delete this.formUpdate['LAST_DATE']
@@ -960,6 +995,23 @@ export default {
       for (var key in this.formAddOption) {
         if (this.formAddOption[key]) {
           this.formAddOption[key] = ''
+        }
+      }
+    },
+    async clearDataFormUpdateOption () {
+      for (var key in this.formUpdateOption) {
+        if (this.formUpdateOption[key]) {
+          this.formUpdateOption[key] = ''
+        }
+      }
+    },
+    async clearDataFormUpDate () {
+      for (var key in this.formUpdate) {
+        console.log('Key', key)
+        console.log('Value', this.formUpdate)
+
+        if (this.formUpdate[key]) {
+          this.formUpdate[key] = ''
         }
       }
     }
