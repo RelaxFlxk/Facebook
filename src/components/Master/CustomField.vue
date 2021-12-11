@@ -8,7 +8,7 @@
             <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
           </v-col>
           <v-col cols="6" class="v-margit_button text-right">
-            <v-btn color="primary" depressed @click="dialogAdd = true, validate('ADD'), validate('ADDOPTION')">
+            <v-btn color="primary" depressed @click="dialogAdd = true, validate('ADD'), validate('ADDOPTION') ,checkbox ='false'">
               <v-icon left>mdi-text-box-plus</v-icon>
               Add
             </v-btn>
@@ -37,7 +37,7 @@
           </v-card>
         </v-dialog>
           <!-- ADD -->
-          <v-dialog v-model="dialogAdd" persistent max-width="50%">
+          <v-dialog v-model="dialogAdd" persistent max-width="80%" max-height="100%">
             <v-card>
               <v-form ref="form_add" v-model="validAdd" lazy-validation>
               <v-card-text>
@@ -53,7 +53,7 @@
                       <v-img :src="require('@/assets/customtextAdd.svg')"></v-img>
                       </v-col>
                       </center>
-                      <v-card-text v-if="formAdd.fieldType !== 'text' && formAdd.fieldType !== ''">
+                      <v-card-text v-if="formAdd.fieldType === 'optionField'">
                           <v-data-table
                             class="elevation-1 custom_table_class"
                             dense
@@ -117,13 +117,14 @@
                       </v-row>
                     </v-col>
                     <v-col cols="12">
-                      <v-row style="height: 35px" v-if="formAdd.fieldType == 'text' || formAdd.fieldType == ''">
+                      <v-row style="height: 35px">
                       <v-subheader id="subtext">type</v-subheader>
                       </v-row>
 
-                      <v-row style="height: 50px" v-if="formAdd.fieldType == 'text' || formAdd.fieldType == ''">
+                      <v-row style="height: 50px">
                         <v-select
                         v-model="formAdd.fieldType"
+                        @change="chkAddoptionFieldType()"
                         :items="selectTypeField"
                         dense
                         value = 'text'
@@ -131,12 +132,12 @@
                         ></v-select>
                       </v-row>
 
-                      <v-row style="height: 35px" v-if="formAdd.fieldType !== 'text' && formAdd.fieldType !== ''">
+                      <v-row style="height: 35px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
                       <v-subheader id="subtext">optionField</v-subheader>
                       </v-row>
-                      <v-row style="height: 50px" v-if="formAdd.fieldType !== 'text' && formAdd.fieldType !== ''">
+                      <v-row style="height: 50px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
                         <v-select
-                        v-model="formAdd.fieldType"
+                        v-model="formAdd.optionFieldType"
                         :items="selectOptionField"
                         small-chips
                         dense
@@ -148,10 +149,10 @@
                     <v-form ref="form_addOption" v-model="validAddOption" lazy-validation>
                     <v-row>
                     <v-col cols="6">
-                      <v-row style="height: 35px" v-if="formAdd.fieldType !== 'text' && formAdd.fieldType !== ''">
+                      <v-row style="height: 35px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
                       <v-subheader id="subtext" >Text:</v-subheader >
                       </v-row>
-                      <v-row style="height: 50px" v-if="formAdd.fieldType !== 'text' && formAdd.fieldType !== ''">
+                      <v-row style="height: 50px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
                       <v-text-field
                         v-model="formAddOption.optionText"
                         placeholder="Text"
@@ -164,10 +165,10 @@
                       </v-row>
                     </v-col>
                      <v-col cols="6">
-                      <v-row style="height: 35px" v-if="formAdd.fieldType !== 'text' && formAdd.fieldType !== ''">
+                      <v-row style="height: 35px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
                       <v-subheader id="subtext">Value:</v-subheader>
                       </v-row>
-                      <v-row style="height: 50px" v-if="formAdd.fieldType !== 'text' && formAdd.fieldType !== ''">
+                      <v-row style="height: 50px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
                       <v-text-field
                         v-model="formAddOption.optionValue"
                         placeholder="Value"
@@ -250,8 +251,8 @@
                       <!-- END -->
                     </v-col>
                       <!-- END Radio buttun -->
-                      <v-col id="margin">
-                      <v-row justify="center">
+                      <v-col cols="12">
+                      <div class="text-center">
                       <v-btn
                         elevation="2"
                         x-large
@@ -263,8 +264,9 @@
                         <v-icon left>mdi-checkbox-marked-circle</v-icon>
                         เพิ่ม
                       </v-btn>
-                      </v-row>
+                      </div>
                       </v-col>
+                      <br>
                   </v-row>
                 </v-container>
               </v-card-text>
@@ -274,13 +276,13 @@
           <!-- end add -->
 
           <!-- edit -->
-          <v-dialog v-model="dialogEdit" persistent max-width="60%">
+          <v-dialog v-model="dialogEdit" persistent max-width="80%" max-height="100%">
             <v-card>
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
               <v-card-text>
                 <v-container>
                   <v-col class="text-right">
-                    <v-icon color="#173053" @click="(dialogEdit = false), clearDataFormUpDate()">mdi-close</v-icon>
+                    <v-icon color="#173053" @click="(dialogEdit = false),checkbox ='false', clearDataFormUpDate()">mdi-close</v-icon>
                   </v-col>
                   <v-row justify="center">
                     <v-col cols="6" class="text-center">
@@ -292,7 +294,7 @@
                       <v-img :src="require('@/assets/customtextAdd.svg')"></v-img>
                       </v-col>
                       </center>
-                      <v-card-text v-if="formUpdate.fieldName && formUpdate.fieldType !== 'text'">
+                      <v-card-text v-if="formUpdate.fieldType === 'optionField'">
                       <v-data-table
                         :headers="columnsOption"
                         :items="dataItemOption"
@@ -339,26 +341,28 @@
                       </v-row>
                     </v-col>
                     <v-col cols="12">
-                      <v-row style="height: 35px" v-if="formUpdate.fieldType == 'text'">
+                      <v-row style="height: 35px">
                       <v-subheader id="subtext">type</v-subheader>
                       </v-row>
 
-                      <v-row style="height: 50px" v-if="formUpdate.fieldType == 'text'">
+                      <v-row style="height: 50px">
                         <v-select
                         v-model="formUpdate.fieldType"
                         :items="selectTypeField"
+                        @change="chkUpdateoptionFieldType()"
                         dense
                         :rules="[rules.required]"
                         ></v-select>
                       </v-row>
 
-                      <v-row style="height: 35px" v-if="formUpdate.fieldType !== 'text'">
+                      <v-row style="height: 35px" v-if="formUpdate.fieldType === 'optionField'">
                       <v-subheader id="subtext">optionField</v-subheader>
                       </v-row>
-                      <v-row style="height: 50px" v-if="formUpdate.fieldType !== 'text'">
+                      <v-row style="height: 50px" v-if="formUpdate.fieldType === 'optionField'">
                         <v-select
-                        v-model="formUpdate.fieldType"
+                        v-model="formUpdate.optionFieldType"
                         :items="selectEditOptionField"
+                        @change="chkfieldType()"
                         small-chips
                         dense
                         :rules="[rules.required]"
@@ -369,10 +373,10 @@
                     <v-form ref="form_addOption" v-model="validAddOption" lazy-validation>
                     <v-row>
                     <v-col cols="6">
-                      <v-row style="height: 35px" v-if="formUpdate.fieldName && formUpdate.fieldType !== 'text'">
+                      <v-row style="height: 35px" v-if="formUpdate.fieldType === 'optionField'">
                       <v-subheader id="subtext" >Text:</v-subheader >
                       </v-row>
-                      <v-row style="height: 50px" v-if="formUpdate.fieldName && formUpdate.fieldType !== 'text'">
+                      <v-row style="height: 50px" v-if="formUpdate.fieldType === 'optionField'">
                       <v-text-field
                         v-model="formUpdateOption.optionText"
                         placeholder="Text"
@@ -385,10 +389,10 @@
                       </v-row>
                     </v-col>
                      <v-col cols="6">
-                      <v-row style="height: 35px" v-if="formUpdate.fieldName && formUpdate.fieldType !== 'text'">
+                      <v-row style="height: 35px" v-if="formUpdate.fieldType === 'optionField'">
                       <v-subheader id="subtext">Value:</v-subheader>
                       </v-row>
-                      <v-row style="height: 50px" v-if="formUpdate.fieldName && formUpdate.fieldType !== 'text'">
+                      <v-row style="height: 50px" v-if="formUpdate.fieldType === 'optionField'">
                       <v-text-field
                         v-model="formUpdateOption.optionValue"
                         placeholder="Value"
@@ -402,7 +406,7 @@
                      </v-form>
                     <br>
 
-                    <v-row justify="center" v-if="formUpdate.fieldName && formUpdate.fieldType !== 'text'">
+                    <v-row justify="center" v-if="formUpdate.fieldType === 'optionField'">
                       <v-btn v-if="checkDataEdit"
                         elevation="2"
                         x-large
@@ -445,10 +449,8 @@
                       </v-row>
                       <v-row style="height: 50px" v-if="checkbox == 'true'">
                         <v-select
-                          item-text="fieldName"
-                          item-value="fieldId"
                           v-model="formUpdate.conditionField"
-                          :items="dataItem"
+                          :items="selectConditionField"
                           >
                           </v-select>
                       </v-row>
@@ -466,7 +468,7 @@
                       <!-- END -->
                     </v-col>
                       <!-- END Radio buttun -->
-                      <v-col id="margin">
+                      <v-col>
                       <v-row justify="center">
                       <v-btn
                          dark
@@ -477,12 +479,13 @@
                          @click="editData()"
                       >
                         <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                        เพิ่ม
+                        แก้ไข
                       </v-btn>
                       </v-row>
                       </v-col>
                   </v-row>
                 </v-container>
+                  <br>
               </v-card-text>
               </v-form>
             </v-card>
@@ -740,6 +743,7 @@ export default {
       formAdd: {
         fieldName: '',
         fieldType: '',
+        optionFieldType: '',
         CREATE_USER: '',
         LAST_USER: '',
         optionField: [],
@@ -754,6 +758,7 @@ export default {
         fieldId: '',
         fieldName: '',
         fieldType: '',
+        optionFieldType: '',
         LAST_USER: '',
         optionField: [],
         optionText: '',
@@ -795,7 +800,7 @@ export default {
         // { text: 'ID', value: 'fieldId' },
         { text: 'ชื่อ Field', value: 'fieldName', align: 'center' },
         { text: 'ประเภท Field', value: 'fieldType', align: 'center' },
-        { text: ' ', value: 'actions2', sortable: false, align: 'center' },
+        // { text: ' ', value: 'actions2', sortable: false, align: 'center' },
         // { text: 'conditionValue', value: 'conditionValue', align: 'center' },
         { text: 'Action', value: 'action', sortable: false, align: 'center' }
       ],
@@ -843,13 +848,27 @@ export default {
     this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
   },
   methods: {
-    editItem (item) {
-      this.checkDataEdit = false
-      this.formUpdateOption.optionText = item.text
-      this.formUpdateOption.optionValue = item.value
-      this.editedIndex = this.dataItemOption.indexOf(item)
-      // this.editedItem = Object.assign({}, item)
-      // this.dialogNewAccess = true
+    chkAddoptionFieldType () {
+      if (this.formAdd.fieldType === 'text' || this.formAdd.fieldType === 'number' || this.formAdd.fieldType === 'dateTime') {
+        this.formAdd.optionFieldType = ''
+      } else {
+        this.formAdd.optionFieldType = this.formAdd.optionFieldType
+      }
+    },
+    chkUpdateoptionFieldType () {
+      if (this.formUpdate.fieldType === 'text' || this.formUpdate.fieldType === 'number' || this.formUpdate.fieldType === 'dateTime') {
+        this.formUpdate.optionFieldType = ''
+      } else {
+        this.formUpdate.optionFieldType = this.formUpdate.optionFieldType
+      }
+    },
+    chkfieldType () {
+      if (this.formUpdate.optionFieldType === 'text' || this.formUpdate.optionFieldType === 'number' || this.formUpdate.optionFieldType === 'dateTime') {
+        this.formUpdate.fieldType = this.formUpdate.optionFieldType
+      } else {
+        this.formUpdate.fieldType = 'optionField'
+      }
+      console.log('fieldType', this.formUpdate.fieldType)
     },
     deleteItem (item) {
       this.editedIndex = this.dataItemOption.indexOf(item)
@@ -885,6 +904,14 @@ export default {
       }
       this.checkDataEdit = true
       this.close()
+    },
+    editItem (item) {
+      this.checkDataEdit = false
+      this.formUpdateOption.optionText = item.text
+      this.formUpdateOption.optionValue = item.value
+      this.editedIndex = this.dataItemOption.indexOf(item)
+      // this.editedItem = Object.assign({}, item)
+      // this.dialogNewAccess = true
     },
     editItemAdd (item) {
       this.checkDataEdit = false
@@ -985,15 +1012,17 @@ export default {
     async getDataById (item) {
       console.log('dataItem', this.dataItem)
       console.log('Item', item)
-      console.log('conditionField', typeof (this.formUpdate.conditionField))
+      console.log('selectConditionField', this.selectConditionField)
       this.dataItemOption = JSON.parse(item.optionField)
-      this.selectConditionField = item.conditionField
       this.formUpdate.fieldId = item.fieldId
-      this.formUpdate.conditionField = ''
       if (item.conditionField === '' || item.conditionField === null) {
         this.checkbox = 'false'
+        this.formUpdate.conditionField = ''
       } else {
         this.checkbox = 'true'
+        this.formUpdate.conditionField = this.selectConditionField.filter((row) => {
+          return row.value === parseInt(item.conditionField)
+        })[0].value
       }
       this.formUpdate.optionField = []
       await axios
@@ -1007,15 +1036,12 @@ export default {
             // Object.assign(this.formUpdate, response.data)
             this.formUpdate = response.data
             this.formUpdate.optionField = this.dataItemOption
-            // this.formUpdate.optionField = JSON.parse(this.formUpdate.optionField)
-            this.formUpdate.fieldType = this.formUpdate.fieldType
-            this.formUpdate.conditionField = this.dataItem.filter((row) => {
-              console.log('fieldId', row.fieldId)
-              console.log(this.selectConditionField)
-              return (row.fieldId) === parseInt(this.selectConditionField)
-            })
-            console.log(this.formUpdate.conditionField)
-            this.formUpdate.conditionField = this.formUpdate.conditionField[0] || ''
+            if (item.fieldType === 'Selects') {
+              this.formUpdate.fieldType = 'optionField'
+            }
+            this.formUpdate.optionFieldType = item.fieldType
+            this.formUpdate.conditionField = parseInt(this.formUpdate.conditionField)
+            console.log('conditionField', this.formUpdate.conditionField)
           }
         })
         // eslint-disable-next-line handle-callback-err
@@ -1031,9 +1057,10 @@ export default {
     },
     getCondition () {
       this.selectConditionField = []
-      axios.get(this.DNS_IP + '/customField/getConditionField?shopId=' + this.shopId).then((response) => {
+      axios.get(this.DNS_IP + '/customField/get?shopId=' + this.shopId).then((response) => {
         let rs = response.data
         if (rs.length > 0) {
+          console.log('getCondition', rs)
           for (var i = 0; i < rs.length; i++) {
             var d = rs[i]
             d.text = d.fieldName
@@ -1061,10 +1088,10 @@ export default {
         .then(async (result) => {
           this.formAdd.CREATE_USER = this.session.data.userName
           this.formAdd.LAST_USER = this.session.data.userName
-          if (this.formAdd.optionField === 'Autocompletes' || 'Selects') {
+          if (this.formAdd.fieldType === 'optionField') {
             this.formAdd.optionField = JSON.stringify(this.dataItemOption)
           }
-          this.add(this.formAdd)
+          this.add()
         })
         .catch((error) => {
           console.log('error function addData : ', error)
@@ -1072,6 +1099,12 @@ export default {
         })
     },
     async add () {
+      if (this.formAdd.optionFieldType === 'Autocompletes' || this.formAdd.optionFieldType === 'Selects' || this.formAdd.optionFieldType === 'Radio') {
+        this.formAdd.fieldType = this.formAdd.optionFieldType
+      } else {
+        this.formAdd.optionField = []
+      }
+      delete this.formAdd['optionFieldType']
       await axios
         .post(
           // eslint-disable-next-line quotes
@@ -1113,14 +1146,20 @@ export default {
       })
         .then(async (result) => {
           this.formUpdate.LAST_USER = this.session.data.userName
-          this.formUpdate.conditionField = this.formUpdate.conditionField.value
-          if (this.formUpdate.optionField === 'Autocompletes' || 'Selects') {
+          this.formUpdate.conditionField = this.formUpdate.conditionField
+          if (this.formUpdate.fieldType === 'optionField') {
             this.formUpdate.optionField = JSON.stringify(this.dataItemOption)
+          }
+          if (this.formUpdate.optionFieldType === 'Autocompletes' || this.formUpdate.optionFieldType === 'Selects' || this.formUpdate.optionFieldType === 'Radio') {
+            this.formUpdate.fieldType = this.formUpdate.optionFieldType
+          } else {
+            this.formUpdate.optionField = []
           }
           var ID = this.formUpdate.fieldId
           delete this.formUpdate['fieldId']
           delete this.formUpdate['LAST_DATE']
           delete this.formUpdate['CREATE_DATE']
+          delete this.formUpdate['optionFieldType']
           await axios
             .post(
               // eslint-disable-next-line quotes
