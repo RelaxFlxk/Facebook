@@ -15,6 +15,27 @@
           </v-col>
         </v-row>
         <v-row>
+
+        <v-dialog v-model="dialogDeleteAccess" max-width="500px">
+          <v-card>
+            <v-card-title class="text-h5"
+              >คุณแน่ใจที่จะลบรายการนี้ใช่หรือไม่</v-card-title
+            >
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text @click="closeDelete"
+                >Cancel</v-btn
+              >
+              <v-btn
+                color="blue darken-1"
+                text
+                @click="deleteItemConfirm"
+                >OK</v-btn
+              >
+              <v-spacer></v-spacer>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
           <!-- ADD -->
           <v-dialog v-model="dialogAdd" persistent max-width="50%">
             <v-card>
@@ -32,18 +53,32 @@
                       <v-img :src="require('@/assets/customtextAdd.svg')"></v-img>
                       </v-col>
                       </center>
-                      <v-card-text>
-                         <!-- v-if="formAdd.fieldName && formAdd.fieldType !== 'text'" -->
-
+                      <v-card-text v-if="formAdd.fieldType !== 'text' && formAdd.fieldType !== ''">
                           <v-data-table
-                            v-if="formAdd.fieldName != '' && formAdd.fieldType !== 'text'"
                             class="elevation-1 custom_table_class"
                             dense
                             :headers="columnsOption"
                             :items="dataItemOption"
                             hide-default-footer
                       >
-                        <template v-slot:[`item.action`]="{ item }">
+                      <template v-slot:[`item.actions`]="{ item }">
+                        <v-icon
+                        color="#E91E63"
+                          small
+                          class="mr-2"
+                          @click="editItemAdd(item)"
+                        >
+                          mdi-pencil
+                        </v-icon>
+                        <v-icon
+                        color="#E91E63"
+                          small
+                          @click="deleteItemAdd(item)"
+                        >
+                          mdi-delete
+                        </v-icon>
+                      </template>
+                        <!-- <template v-slot:[`item.action`]="{ item }">
                           <v-btn
                             color="red"
                             dark
@@ -53,14 +88,14 @@
                           >
                             <v-icon> mdi-delete </v-icon>
                           </v-btn>
-                        </template>
+                        </template> -->
                       </v-data-table>
                     </v-card-text>
                     </v-col>
                     <!-- ขวา -->
                       <v-col cols="6" class="v-margit_text_add mt-1">
                         <v-col class="text-right">
-                    <v-icon color="#173053" @click="(dialogAdd = false), clearData()">mdi-close</v-icon>
+                    <v-icon color="#173053" @click="(dialogAdd = false), clearData(), checkbox ='false'">mdi-close</v-icon>
                   </v-col>
                     <v-col class="text-center">
                       <v-img class="v_text_add" :src="require('@/assets/Grouptitle.svg')"></v-img>
@@ -82,11 +117,11 @@
                       </v-row>
                     </v-col>
                     <v-col cols="12">
-                      <v-row style="height: 35px">
+                      <v-row style="height: 35px" v-if="formAdd.fieldType == 'text' || formAdd.fieldType == ''">
                       <v-subheader id="subtext">type</v-subheader>
                       </v-row>
 
-                      <v-row style="height: 50px">
+                      <v-row style="height: 50px" v-if="formAdd.fieldType == 'text' || formAdd.fieldType == ''">
                         <v-select
                         v-model="formAdd.fieldType"
                         :items="selectTypeField"
@@ -96,10 +131,10 @@
                         ></v-select>
                       </v-row>
 
-                      <v-row style="height: 35px" v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
+                      <v-row style="height: 35px" v-if="formAdd.fieldType !== 'text' && formAdd.fieldType !== ''">
                       <v-subheader id="subtext">optionField</v-subheader>
                       </v-row>
-                      <v-row style="height: 50px" v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
+                      <v-row style="height: 50px" v-if="formAdd.fieldType !== 'text' && formAdd.fieldType !== ''">
                         <v-select
                         v-model="formAdd.fieldType"
                         :items="selectOptionField"
@@ -113,10 +148,10 @@
                     <v-form ref="form_addOption" v-model="validAddOption" lazy-validation>
                     <v-row>
                     <v-col cols="6">
-                      <v-row style="height: 35px" v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
+                      <v-row style="height: 35px" v-if="formAdd.fieldType !== 'text' && formAdd.fieldType !== ''">
                       <v-subheader id="subtext" >Text:</v-subheader >
                       </v-row>
-                      <v-row style="height: 50px" v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
+                      <v-row style="height: 50px" v-if="formAdd.fieldType !== 'text' && formAdd.fieldType !== ''">
                       <v-text-field
                         v-model="formAddOption.optionText"
                         placeholder="Text"
@@ -129,10 +164,10 @@
                       </v-row>
                     </v-col>
                      <v-col cols="6">
-                      <v-row style="height: 35px" v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
+                      <v-row style="height: 35px" v-if="formAdd.fieldType !== 'text' && formAdd.fieldType !== ''">
                       <v-subheader id="subtext">Value:</v-subheader>
                       </v-row>
-                      <v-row style="height: 50px" v-if="formAdd.fieldName && formAdd.fieldType !== 'text'">
+                      <v-row style="height: 50px" v-if="formAdd.fieldType !== 'text' && formAdd.fieldType !== ''">
                       <v-text-field
                         v-model="formAddOption.optionValue"
                         placeholder="Value"
@@ -146,17 +181,28 @@
                      </v-form>
                     <br>
 
-                    <v-row justify="center" v-if="formAddOption.optionText && formAddOption.optionValue">
-                      <v-btn
+                      <v-row justify="center" v-if="formAddOption.optionText && formAddOption.optionValue">
+                      <v-btn v-if="checkDataEdit"
                         elevation="2"
                         x-large
                         dark
                         color="#173053"
                         :disabled="!validAddOption"
-                        @click="addDataOption(formAddOption), clearDataOption()"
+                        @click="addDataOption(formAddOption)"
                       >
                         <v-icon left>mdi-checkbox-marked-circle</v-icon>
                         ADD
+                      </v-btn>
+                      <v-btn v-if="!checkDataEdit"
+                        elevation="2"
+                        x-large
+                        dark
+                        color="#173053"
+                        :disabled="!validAddOption"
+                        @click="saveAdd()"
+                      >
+                        <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                        EDIT
                       </v-btn>
                       </v-row>
 
@@ -165,17 +211,19 @@
                         class="px-0"
                         fluid
                       >
-                        <v-checkbox
+                      <v-checkbox
+                          label="เงื่อนไข ช่องกรอกข้อมูล"
+                          false-value="false"
+                          true-value="true"
                           v-model="checkbox"
-                          :label="`Checkbox Condition: ${checkbox.toString()}`"
                         ></v-checkbox>
                       </v-container>
                       <!-- checkbox -->
 
-                      <v-row style="height: 35px" v-if="checkbox === true">
+                      <v-row style="height: 35px" v-if="checkbox === 'true'">
                       <v-subheader id="subtext">Field</v-subheader>
                       </v-row>
-                      <v-row style="height: 50px" v-if="checkbox === true">
+                      <v-row style="height: 50px" v-if="checkbox === 'true'">
                         <v-select
                         v-model="formAdd.conditionField"
                         :items="selectConditionField"
@@ -185,10 +233,10 @@
                         ></v-select>
                       </v-row>
                       <!-- END -->
-                        <v-row style="height: 35px" v-if="checkbox === true">
+                        <v-row style="height: 35px" v-if="checkbox === 'true'">
                       <v-subheader id="subtext">Value:</v-subheader>
                       </v-row>
-                      <v-row style="height: 50px" v-if="checkbox === true">
+                      <v-row style="height: 50px" v-if="checkbox === 'true'">
                       <v-text-field
                         v-model="formAdd.conditionValue"
                         placeholder="Value"
@@ -249,16 +297,22 @@
                         :headers="columnsOption"
                         :items="dataItemOption"
                       >
-                        <template v-slot:[`item.action`]="{ item }">
-                          <v-btn
-                            color="red"
-                            dark
-                            fab
-                            x-small
-                            @click="deleteOption(item)"
+                        <template v-slot:[`item.actions`]="{ item }">
+                          <v-icon
+                          color="#E91E63"
+                            small
+                            class="mr-2"
+                            @click="editItem(item)"
                           >
-                            <v-icon> mdi-delete </v-icon>
-                          </v-btn>
+                            mdi-pencil
+                          </v-icon>
+                          <v-icon
+                          color="#E91E63"
+                            small
+                            @click="deleteItem(item)"
+                          >
+                            mdi-delete
+                          </v-icon>
                         </template>
                       </v-data-table>
                     </v-card-text>
@@ -349,16 +403,27 @@
                     <br>
 
                     <v-row justify="center" v-if="formUpdate.fieldName && formUpdate.fieldType !== 'text'">
-                      <v-btn
+                      <v-btn v-if="checkDataEdit"
                         elevation="2"
                         x-large
                         dark
                         color="#173053"
                         :disabled="!validAddOption"
-                        @click="addDataOption(formUpdateOption), clearDataFormUpdateOption()"
+                        @click="addDataOption(formUpdateOption)"
                       >
                         <v-icon left>mdi-checkbox-marked-circle</v-icon>
                         ADD
+                      </v-btn>
+                      <v-btn v-if="!checkDataEdit"
+                        elevation="2"
+                        x-large
+                        dark
+                        color="#173053"
+                        :disabled="!validAddOption"
+                        @click="save()"
+                      >
+                        <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                        EDIT
                       </v-btn>
                       </v-row>
 
@@ -366,32 +431,19 @@
                      <v-container
                         class="px-0"
                       >
-                        <v-checkbox
-                          v-if="formUpdate.conditionField !== ''"
-                          v-model="checkboxTrue"
-                          :label="`Checkbox Condition: ${checkboxTrue.toString()}`"
-                        ></v-checkbox>
-                        <v-checkbox
-                          v-if="formUpdate.conditionField == ''"
+                       <v-checkbox
+                          label="เงื่อนไข ช่องกรอกข้อมูล"
+                          false-value="false"
+                          true-value="true"
                           v-model="checkbox"
-                          :label="`Checkbox Condition: ${checkbox.toString()}`"
                         ></v-checkbox>
                       </v-container>
                       <!-- checkbox -->
 
-                      <v-row style="height: 35px" v-if="checkboxTrue === true && checkbox == false">
+                      <v-row style="height: 35px" v-if="checkbox == 'true'">
                       <v-subheader id="subtext">Field</v-subheader>
                       </v-row>
-                      <v-row style="height: 50px" v-if="checkboxTrue === true && checkbox == false">
-                        {{formUpdate.conditionField}}
-                        <!-- {{dataItem}} -->
-                        <!-- <v-select
-                        v-model="formUpdate.conditionField"
-                        :items="selectConditionField"
-                        small-chips
-                        dense
-                        :rules="[rules.required]"
-                        ></v-select> -->
+                      <v-row style="height: 50px" v-if="checkbox == 'true'">
                         <v-select
                           item-text="fieldName"
                           item-value="fieldId"
@@ -401,10 +453,10 @@
                           </v-select>
                       </v-row>
                       <!-- END -->
-                        <v-row style="height: 35px" v-if="checkboxTrue === true && checkbox == false">
+                        <v-row style="height: 35px" v-if="checkbox == 'true'">
                       <v-subheader id="subtext">Value:</v-subheader>
                       </v-row>
-                      <v-row style="height: 50px" v-if="checkboxTrue === true && checkbox == false">
+                      <v-row style="height: 50px" v-if="checkbox == 'true'">
                       <v-text-field
                         v-model="formUpdate.conditionValue"
                         placeholder="Value"
@@ -525,13 +577,40 @@
                   <template v-slot:[`item.LAST_DATE`]="{ item }">
                       {{ format_dateNotime(item.LAST_DATE) }}
                   </template>
+                  <template
+                              v-slot:[`item.actions2`]="{ item, index }"
+                            >
+                              <v-btn
+                                v-show="index !== 0"
+                                color="173053"
+                                fab
+                                x-small
+                                outlined
+                                @click="actionUp(item.stepId)"
+                              >
+                                <v-icon color="#173053">
+                                  mdi-chevron-up
+                                </v-icon>
+                              </v-btn>
+                              <v-btn
+                                color="173053"
+                                fab
+                                x-small
+                                outlined
+                                @click="actionDown(item.stepId)"
+                              >
+                                <v-icon color="#173053">
+                                  mdi-chevron-down
+                                </v-icon>
+                              </v-btn>
+                            </template>
                   <template v-slot:[`item.action`]="{ item }">
                     <v-btn
                       color="#1B437C"
                       fab
                       dark
                       x-small
-                      @click.stop="(dialogEdit = true), getDataById(item), validate('UPDATE')"
+                      @click.stop="(dialogEdit = true), getDataById(item), validate('UPDATE'), validate('ADDOPTION')"
                     >
                       <v-icon> mdi-tools </v-icon>
                     </v-btn>
@@ -646,6 +725,7 @@ export default {
       dialogDelete: false,
       dialogImport: false,
       dialogAddField: false,
+      dialogDeleteAccess: false,
       // END Dialog Config ADD EDIT DELETE
       panel: [0],
       panel1: [1],
@@ -653,9 +733,7 @@ export default {
       shopId: this.$session.getAll().data.shopId,
       column: null,
       radios: null,
-      checkbox: false,
-      checkbox1: false,
-      checkboxTrue: true,
+      checkbox: 'false',
       // Search All
       searchAll: '',
       searchAll2: '',
@@ -717,13 +795,24 @@ export default {
         // { text: 'ID', value: 'fieldId' },
         { text: 'ชื่อ Field', value: 'fieldName', align: 'center' },
         { text: 'ประเภท Field', value: 'fieldType', align: 'center' },
+        { text: ' ', value: 'actions2', sortable: false, align: 'center' },
         // { text: 'conditionValue', value: 'conditionValue', align: 'center' },
         { text: 'Action', value: 'action', sortable: false, align: 'center' }
       ],
       dataItem: [],
+      editedItem: {
+        text: '',
+        value: ''
+      },
+      defaultItem: {
+        text: '',
+        value: ''
+      },
+      editedIndex: -1,
       columnsOption: [
         { text: 'Text', value: 'text' },
-        { text: 'Value', value: 'value' }
+        { text: 'Value', value: 'value' },
+        { text: 'Actions', value: 'actions', sortable: false }
       ],
       dataItemOption: [],
       selectConditionField: [],
@@ -731,19 +820,115 @@ export default {
       validAddOption: true,
       validUpdate: true,
       filesAdd: null,
-      filesUpdate: null
+      filesUpdate: null,
+      dialogNewAccess: false,
+      checkDataEdit: true
       // End Data Table Config
+    }
+  },
+  watch: {
+    dialogNewAccess (val) {
+      val || this.close()
+    },
+    dialogDeleteAccess (val) {
+      val || this.closeDelete()
     }
   },
   async mounted () {
     // this.getGetToken(this.DNS_IP)
     this.dataReady = false
     // Get Data
-    this.getOption()
+    // this.getOption()
     this.getCondition()
     this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
   },
   methods: {
+    editItem (item) {
+      this.checkDataEdit = false
+      this.formUpdateOption.optionText = item.text
+      this.formUpdateOption.optionValue = item.value
+      this.editedIndex = this.dataItemOption.indexOf(item)
+      // this.editedItem = Object.assign({}, item)
+      // this.dialogNewAccess = true
+    },
+    deleteItem (item) {
+      this.editedIndex = this.dataItemOption.indexOf(item)
+      this.editedItem = Object.assign({}, item)
+      this.dialogDeleteAccess = true
+    },
+    deleteItemConfirm () {
+      this.dataItemOption.splice(this.editedIndex, 1)
+      this.closeDelete()
+    },
+    close () {
+      console.log(this.checkDataEdit)
+      this.$nextTick(() => {
+        this.formUpdateOption.optionText = ''
+        this.formUpdateOption.optionValue = ''
+        this.editedIndex = -1
+      })
+    },
+    closeDelete () {
+      this.dialogDeleteAccess = false
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem)
+        this.editedIndex = -1
+      })
+    },
+    save () {
+      console.log(this.formUpdateOption.optionText)
+      console.log(this.formUpdateOption.optionValue)
+      if (this.editedIndex > -1) {
+        Object.assign(this.dataItemOption[this.editedIndex], {text: this.formUpdateOption.optionText, value: this.formUpdateOption.optionValue})
+      } else {
+        this.dataItemOption.push({text: this.formUpdateOption.optionText, value: this.formUpdateOption.optionValue})
+      }
+      this.checkDataEdit = true
+      this.close()
+    },
+    editItemAdd (item) {
+      this.checkDataEdit = false
+      this.formAddOption.optionText = item.text
+      this.formAddOption.optionValue = item.value
+      this.editedIndex = this.dataItemOption.indexOf(item)
+      // this.editedItem = Object.assign({}, item)
+      // this.dialogNewAccess = true
+    },
+    deleteItemAdd (item) {
+      this.editedIndex = this.dataItemOption.indexOf(item)
+      this.editedItem = Object.assign({}, item)
+      this.dialogDeleteAccess = true
+    },
+    deleteItemConfirmAdd () {
+      this.dataItemOption.splice(this.editedIndex, 1)
+      this.closeDelete()
+    },
+    closeAdd () {
+      console.log(this.checkDataEdit)
+      this.$nextTick(() => {
+        this.formAddOption.optionText = ''
+        this.formAddOption.optionValue = ''
+        this.editedIndex = -1
+      })
+    },
+    closeDeleteAdd () {
+      this.dialogDeleteAccess = false
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem)
+        this.editedIndex = -1
+      })
+    },
+    saveAdd () {
+      console.log(this.formAddOption.optionText)
+      console.log(this.formAddOption.optionValue)
+      if (this.editedIndex > -1) {
+        Object.assign(this.dataItemOption[this.editedIndex], {text: this.formAddOption.optionText, value: this.formAddOption.optionValue})
+      } else {
+        this.dataItemOption.push({text: this.formAddOption.optionText, value: this.formAddOption.optionValue})
+      }
+      this.checkDataEdit = true
+      this.close()
+    },
     validate (Action) {
       switch (Action) {
         case 'ADD':
@@ -769,13 +954,47 @@ export default {
           break
       }
     },
+
+    async updateActionDown (dt, fieldId) {
+      console.log('dt', dt)
+
+      var newArray = dt.filter(val => val)
+      console.log(newArray)
+      await axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + "/customField/" + "updateAction",
+          newArray,
+          {
+            headers: {
+              'Application-Key': this.$session.getAll().ApplicationKey
+            }
+          }
+        )
+        .then(async response => {
+          // Debug response
+          console.log('addDataGlobal DNS_IP + PATH + "add"', response)
+          this.getDataById(fieldId)
+        })
+        // eslint-disable-next-line handle-callback-err
+        .catch(error => {
+          console.log('error function addDataGlobal : ', error)
+          this.dataReady = true
+        })
+    },
     async getDataById (item) {
       console.log('dataItem', this.dataItem)
       console.log('Item', item)
       console.log('conditionField', typeof (this.formUpdate.conditionField))
       this.dataItemOption = JSON.parse(item.optionField)
       this.selectConditionField = item.conditionField
+      this.formUpdate.fieldId = item.fieldId
       this.formUpdate.conditionField = ''
+      if (item.conditionField === '' || item.conditionField === null) {
+        this.checkbox = 'false'
+      } else {
+        this.checkbox = 'true'
+      }
       this.formUpdate.optionField = []
       await axios
         .get(
@@ -784,14 +1003,19 @@ export default {
         )
         .then(async (response) => {
           console.log('getOptionField 777888: ', this.dataItemOption)
-          console.log('selectConditionField: ', this.selectConditionField)
           if (response.data) {
             // Object.assign(this.formUpdate, response.data)
             this.formUpdate = response.data
-            this.formUpdate.optionField = JSON.parse(this.dataItemOption)
+            this.formUpdate.optionField = this.dataItemOption
             // this.formUpdate.optionField = JSON.parse(this.formUpdate.optionField)
             this.formUpdate.fieldType = this.formUpdate.fieldType
-            this.formUpdate.conditionField = parseInt(this.selectConditionField)
+            this.formUpdate.conditionField = this.dataItem.filter((row) => {
+              console.log('fieldId', row.fieldId)
+              console.log(this.selectConditionField)
+              return (row.fieldId) === parseInt(this.selectConditionField)
+            })
+            console.log(this.formUpdate.conditionField)
+            this.formUpdate.conditionField = this.formUpdate.conditionField[0] || ''
           }
         })
         // eslint-disable-next-line handle-callback-err
@@ -805,21 +1029,6 @@ export default {
       this.dataItemOption.push({'text': item.optionText, 'value': item.optionValue})
       this.clearDataOption()
     },
-    getOption () {
-      this.dataItemOption = []
-      axios.get(this.DNS_IP + '/customField/get?shopId=' + this.shopId)
-        .then((response) => {
-          let rs = response.data
-          if (rs.length > 0) {
-            for (var i = 0; i < rs.length; i++) {
-              var d = rs[i]
-              d.text = d.optionField
-              d.value = d.optionField
-              this.dataItemOption.push(d)
-            }
-          }
-        })
-    },
     getCondition () {
       this.selectConditionField = []
       axios.get(this.DNS_IP + '/customField/getConditionField?shopId=' + this.shopId).then((response) => {
@@ -830,7 +1039,6 @@ export default {
             d.text = d.fieldName
             d.value = d.fieldId
             this.selectConditionField.push(d)
-            console.log('selectConditionField', this.selectConditionField)
           }
         }
       })
@@ -905,6 +1113,7 @@ export default {
       })
         .then(async (result) => {
           this.formUpdate.LAST_USER = this.session.data.userName
+          this.formUpdate.conditionField = this.formUpdate.conditionField.value
           if (this.formUpdate.optionField === 'Autocompletes' || 'Selects') {
             this.formUpdate.optionField = JSON.stringify(this.dataItemOption)
           }
@@ -985,6 +1194,8 @@ export default {
     },
     async clearData () {
       // eslint-disable-next-line no-redeclare
+      this.dataItemOption = []
+      this.checkbox = 'false'
       for (var key in this.formAdd) {
         if (this.formAdd[key]) {
           this.formAdd[key] = ''
@@ -1002,6 +1213,7 @@ export default {
       for (var key in this.formUpdateOption) {
         if (this.formUpdateOption[key]) {
           this.formUpdateOption[key] = ''
+          this.dataItemOption = ''
         }
       }
     },
@@ -1012,6 +1224,7 @@ export default {
 
         if (this.formUpdate[key]) {
           this.formUpdate[key] = ''
+          this.dataItemOption = ''
         }
       }
     }
