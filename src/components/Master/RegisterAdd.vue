@@ -537,7 +537,7 @@ export default {
     async addData (p) {
       await this.validate('ADD')
       console.log('this.', this.valid)
-      if (this.validAdd !== false) {
+      if (this.valid !== false) {
         this.flowfieldNameitem[0].endDate = this.endDate
         this.flowfieldNameitem[0].endTime = this.endTime
         this.flowfieldNameitem[0].CREATE_USER = this.session.data.userName
