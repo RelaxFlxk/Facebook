@@ -440,6 +440,7 @@
                           false-value="false"
                           true-value="true"
                           v-model="checkbox"
+                          @change="chkUpdateCondition()"
                         ></v-checkbox>
                       </v-container>
                       <!-- checkbox -->
@@ -860,6 +861,12 @@ export default {
         this.formUpdate.optionFieldType = ''
       } else {
         this.formUpdate.optionFieldType = this.formUpdate.optionFieldType
+      }
+    },
+    chkUpdateCondition () {
+      if (this.checkbox === 'false') {
+        this.formUpdate.conditionField = ''
+        this.formUpdate.conditionValue = ''
       }
     },
     chkfieldType () {
