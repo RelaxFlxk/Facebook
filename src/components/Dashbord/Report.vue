@@ -240,6 +240,7 @@ export default {
         .get(this.DNS_IP + '/master_branch/get?shopId=' + this.shopId)
         .then(async (response) => {
           let rs = response.data
+          // console.log('rsrsrs', rs)
           for (var i = 0; i < rs.length; i++) {
             var d = rs[i]
             d.text = d.masBranchName

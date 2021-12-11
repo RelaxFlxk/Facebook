@@ -1,12 +1,10 @@
 /* eslint-disable vue/return-in-computed-property */
 <template>
-  <div>
-    <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
-    <v-main>
-   <!-- มีข้อมูล    -->
+  <v-main>
   <v-container class="QrBg" v-show="value !== ''">
-  <br>
-   <v-card >
+   <v-card
+   min-height="100vh"
+  style="background: linear-gradient(180deg, #FFFFFF 0%, #E1F3FF 100%);">
      <v-container >
       <v-row >
         <v-col cols="12">
@@ -43,10 +41,8 @@
       </v-col>
     </v-row>
    </v-card>
-   <br>
   </v-container>
     </v-main>
-  </div>
 </template>
 
 <script>
@@ -183,16 +179,7 @@ export default {
 
 </script>
 <style scope>
-#margin {
-  margin-top: 50px;
-  margin-bottom: 40px;
-}
-.v_text_edit {
-  Width: 255px;
-  Height: 52px;
-}
 .QrBg{
-  background-color: #173053;
-  height: 100vh;
+  padding: 0px;
 }
 </style>

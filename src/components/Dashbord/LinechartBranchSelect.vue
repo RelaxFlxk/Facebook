@@ -39,6 +39,8 @@ export default {
   methods: {
     async getBranchSelect (masBranchName, dateRange) {
       this.dataitem = []
+      this.chartData = null
+      console.log('chart', this.chartData)
       let startDate = this.momenDate_1(dateRange.startDate)
       let endDate = this.momenDate_1(dateRange.endDate)
       // console.log('masBranchName', masBranchName)
@@ -64,18 +66,27 @@ export default {
     },
     async getChart () {
       let datasetsitem = []
-      // console.log('item', item)
-      let s = {}
-      s.label = this.dataitem[0].masBranchName
-      s.data = this.dataitem.map(item => { return item.totalJob })
-      s.fill = false
-      s.borderColor = 'rgb(251, 133, 0)'
-      s.tension = 0.1
-      datasetsitem.push(s)
-      const labels = this.dataitem.map(item => { return item.CREATE_DATE })
-      this.chartData = {
-        labels: labels,
-        datasets: datasetsitem
+      console.log('itethis.dataitemm', this.dataitem)
+      if (this.dataitem.length > 0) {
+        let s = {}
+        s.label = this.dataitem[0].masBranchName
+        s.data = this.dataitem.map(item => { return item.totalJob })
+        s.fill = false
+        s.borderColor = 'rgb(251, 133, 0)'
+        s.tension = 0.1
+        datasetsitem.push(s)
+        const labels = this.dataitem.map(item => { return item.CREATE_DATE })
+        this.chartData = {
+          labels: labels,
+          datasets: datasetsitem
+        }
+        console.log('if')
+      } else {
+        this.chartData = {
+          labels: '',
+          datasets: []
+        }
+        console.log('else')
       }
       // [1, 2, 3, 4, 5]
     }

@@ -40,12 +40,11 @@
                    <v-card
                     class="mb-12"
                     width="220"
-                    :text-color="codeColor[step]"
                    >
                      <v-toolbar
 
                     >
-                    {{element.stepTitle}}
+                    <p :style="'color:'+ codeColor[step]">{{element.stepTitle}}</p>
                     </v-toolbar>
                     </v-card>
               </div>
@@ -57,12 +56,11 @@
                     <v-card
                     class="mb-12"
                     width="220"
-                    :text-color="codeColor[i]"
                    >
                      <v-toolbar
 
                     >
-                    {{element.stepTitle}}
+                    <p :style="'color:'+ codeColor[i]">{{element.stepTitle}}</p>
                     </v-toolbar>
                     </v-card>
                   </div>
@@ -130,19 +128,21 @@ export default {
         LAST_USER: '',
         shopId: ''
       },
+      CCSS: 'rgb(142, 202, 230)',
       codeColor: [
-        'rgb(142, 202, 230)',
-        'rgb(33, 158, 188)',
-        'rgb(2, 48, 71)',
-        'rgb(241, 91, 76)',
-        'rgb(255, 183, 3)',
-        'rgb(251, 133, 0)',
-        'rgb(61,90,128)',
-        'rgb(152,193,217)',
-        'rgb(224,251,252)',
-        'rgb(255,212,91)',
-        'rgb(238,108,77)',
-        'rgb(41,50,65)'
+        '#EB56F6',
+        '#824D99',
+        '#4D67AB',
+        '#84C650',
+        '#FED966',
+        '#CE2220',
+        '#A06ACC',
+        '#204E5B',
+        '#2BB989',
+        '#F9B232',
+        '#F29200',
+        '#B23232',
+        '#57A2AC'
       ],
       numberRules: [ (v) => (!isNaN(parseFloat(v)) && v >= 0 && v <= 9999999999) ]
     }
