@@ -396,6 +396,7 @@ export default {
   methods: {
     async getBookingField () {
       let itemIncustomField = []
+      this.IdUpdate = ''
       await axios
         .get(this.DNS_IP + '/BookingField/get?shopId=' + this.shopId)
         .then(response => {
@@ -429,6 +430,7 @@ export default {
     },
     async getCustomField (item) {
       let checkdata = []
+      this.Fielditem = []
       await axios
         .get(this.DNS_IP + '/customField/get?shopId=' + this.shopId)
         .then(response => {
@@ -542,6 +544,7 @@ export default {
       } else {
         booking.countCus = 0
       }
+      booking.LAST_USER = this.session.data.userName
       console.log('dtbooking', booking)
       this.$swal({
         title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
@@ -553,31 +556,62 @@ export default {
         cancelButtonText: 'ไม่'
       })
         .then(async result => {
-          axios
-            .post(this.DNS_IP + '/BookingField/edit/' + this.IdUpdate, booking)
-            .then(response => {
-              for (let i = 0; i < this.Fielditem.length; i++) {
-                let d = this.Fielditem[i]
-                let showcarditem = {
-                  showCard: d.showcard
+          if (this.IdUpdate === '') {
+            booking.CREATE_USER = this.session.data.userName
+            await axios
+              .post(this.DNS_IP + '/BookingField/add', booking)
+              .then(async response => {
+                for (let i = 0; i < this.Fielditem.length; i++) {
+                  let d = this.Fielditem[i]
+                  let showcarditem = {
+                    showCard: d.showcard
+                  }
+                  await axios
+                    .post(
+                      this.DNS_IP + '/customField/edit/' + d.fieldId,
+                      showcarditem
+                    )
+                    .then(response => {})
+                    .catch(error => {
+                      console.log('error function addData : ', error)
+                    })
                 }
-                axios
-                  .post(
-                    this.DNS_IP + '/customField/edit/' + d.fieldId,
-                    showcarditem
-                  )
-                  .then(response => {})
-                  .catch(error => {
-                    console.log('error function addData : ', error)
-                  })
-              }
 
-              this.$swal('บันทึกข้อมูลเรียบร้อย', ' ', 'success')
-              console.log('addDataGlobal DNS_IP + /job/add', response)
-            })
-            .catch(error => {
-              console.log('error function addData : ', error)
-            })
+                this.$swal('บันทึกข้อมูลเรียบร้อย', ' ', 'success')
+                await this.getBookingField()
+                console.log('addDataGlobal DNS_IP + /job/add', response)
+              })
+              .catch(error => {
+                console.log('error function addData : ', error)
+              })
+          } else {
+            axios
+              .post(this.DNS_IP + '/BookingField/edit/' + this.IdUpdate, booking)
+              .then(response => {
+                for (let i = 0; i < this.Fielditem.length; i++) {
+                  let d = this.Fielditem[i]
+                  let showcarditem = {
+                    showCard: d.showcard
+                  }
+                  axios
+                    .post(
+                      this.DNS_IP + '/customField/edit/' + d.fieldId,
+                      showcarditem
+                    )
+                    .then(response => {})
+                    .catch(error => {
+                      console.log('error function addData : ', error)
+                    })
+                }
+
+                this.$swal('บันทึกข้อมูลเรียบร้อย', ' ', 'success')
+                this.getBookingField()
+                console.log('addDataGlobal DNS_IP + /job/add', response)
+              })
+              .catch(error => {
+                console.log('error function addData : ', error)
+              })
+          }
         })
         .catch(error => {
           console.log('Cencel : ', error)
