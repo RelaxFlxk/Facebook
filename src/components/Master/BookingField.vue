@@ -400,25 +400,27 @@ export default {
         .get(this.DNS_IP + '/BookingField/get?shopId=' + this.shopId)
         .then(response => {
           let rs = response.data
-          console.log('rs', rs)
-          this.IdUpdate = rs[0].bookingFieldId
-          console.log('this.IdUpdate', this.IdUpdate)
-          console.log('rs', rs)
-          if (rs.length > 0) {
-            let bookingData = []
-            if (rs[0].countCus) {
-              this.countCus = rs[0].countCus
-            } else {
-              this.countCus = 0
+          if (typeof (rs.status) === 'undefined') {
+            this.IdUpdate = rs[0].bookingFieldId
+            console.log('this.IdUpdate', this.IdUpdate)
+            console.log('rs', rs)
+            if (rs.length > 0) {
+              let bookingData = []
+              if (rs[0].countCus) {
+                this.countCus = rs[0].countCus
+              } else {
+                this.countCus = 0
+              }
+              bookingData = JSON.parse(rs[0].flowfieldName)
+              for (let i = 0; i < bookingData.length; i++) {
+                let d = bookingData[i]
+                itemIncustomField.push(d.fieldId)
+              }
+              console.log('item', itemIncustomField)
+              this.getCustomField(itemIncustomField)
             }
-            bookingData = JSON.parse(rs[0].flowfieldName)
-            for (let i = 0; i < bookingData.length; i++) {
-              let d = bookingData[i]
-              itemIncustomField.push(d.fieldId)
-            }
-            console.log('item', itemIncustomField)
-            this.getCustomField(itemIncustomField)
           } else {
+            this.getCustomField(itemIncustomField)
           }
         })
         .catch(error => {
