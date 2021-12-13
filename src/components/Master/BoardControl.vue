@@ -13,12 +13,10 @@
             <v-select
               :items="DataFlowName"
               v-model="formUpdate.flowName"
-              @change="
-                getStepFlow(), getLayout()
-              "
               dense
               outlined
               filled
+              @change="chkBranchName()"
               hide-details
               label="ประเภทบริการ"
               prepend-inner-icon="mdi-car-connected"
@@ -31,7 +29,7 @@
             <v-select
               :items="DataBranchName"
               v-model="masBranchID"
-              @change="getStepFlow(), getLayout()"
+              @change="chkFlowName()"
               dense
               outlined
               hide-details
@@ -214,7 +212,7 @@
 
         <!-- DIALOG แก้ไขข้อมูล ใน card -->
 
-        <v-dialog v-model="dialogEdit" persistent max-width="50%">
+        <v-dialog v-model="dialogEdit" persistent max-width="80%">
           <v-card>
             <v-form ref="form_edit" lazy-validation>
               <v-card-text>
@@ -257,7 +255,7 @@
                           :key="index"
                         >
                           <strong>{{ itemsEdit.fieldName }}: </strong>
-                          <v-col cols="12">
+                          <v-col cols="12" class="pt-0 pb-0">
                             <v-text-field
                               v-model="itemsEdit.fieldValue"
                               required
@@ -266,9 +264,9 @@
                           </v-col>
                         </div>
                       </v-col>
-                      <v-col cols="12">
-                        <v-row style="height: 50px" justify="center">
-                          <v-col cols="6">
+                      <v-col class="pt-0 pb-0" cols="12">
+                        <v-row justify="center">
+                          <v-col class="pt-0 pb-0" cols="6">
                             <v-menu
                               ref="menu"
                               v-model="menu"
@@ -295,7 +293,7 @@
                               ></v-date-picker>
                             </v-menu>
                           </v-col>
-                          <v-col cols="6">
+                          <v-col class="pt-0 pb-0" cols="6">
                             <v-text-field
                               v-model="formUpdate.endTime"
                               label="เวลา"
@@ -310,8 +308,7 @@
                   </v-row>
                 </v-container>
               </v-card-text>
-              <br />
-              <v-col class="text-center">
+              <v-col  class="text-center pt-0 pb-0">
                 <v-btn
                   dark
                   elevation="2"
@@ -323,6 +320,7 @@
                   แก้ไข
                 </v-btn>
               </v-col>
+              <br>
             </v-form>
           </v-card>
         </v-dialog>
@@ -892,6 +890,22 @@ export default {
     await this.getEmpSelect()
   },
   methods: {
+    async chkFlowName () {
+      if (this.formUpdate.flowName !== '') {
+        await this.getStepFlow()
+        await this.getLayout()
+        await this.getJobData()
+      } else {
+        this.$swal('ผิดพลาด', 'กรุณาเลือก ประเภทบริการ', 'error')
+      }
+    },
+    async chkBranchName () {
+      if (this.masBranchID !== '') {
+        await this.getStepFlow()
+        await this.getLayout()
+        await this.getJobData()
+      }
+    },
     getDataFlow () {
       this.DataFlowName = []
       console.log('DataFlowName', this.DataFlowName)
@@ -973,7 +987,6 @@ export default {
         )
         .then(async response => {
           let rs = response.data
-          console.log('rs', rs)
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
@@ -982,7 +995,6 @@ export default {
               this.stepItemSelete.push(d)
             }
             console.log('stepItemSelete', this.formUpdate)
-            await this.getJobData()
           }
         })
     },
@@ -992,7 +1004,6 @@ export default {
         .get(this.DNS_IP + '/empSelect/get?shopId=' + this.shopId)
         .then(async response => {
           let rs = response.data
-          console.log('rs', rs)
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
@@ -1002,7 +1013,6 @@ export default {
               this.empSeleteStep.push(s)
             }
             console.log('empSeleteStep', this.formUpdate)
-            await this.getJobData()
           }
         })
     },
@@ -1020,35 +1030,32 @@ export default {
         )
         .then(async response => {
           this.dataReady = true
-          // var jobs = []
+          var jobs = []
           console.log('res', response.data)
           // console.log('userId', this.formUpdate.userId === 'NULL')
           if (response.data) {
-            // this.formUpdate.stepId = response.data[0].stepId
-            // this.formUpdate.flowId = response.data[0].flowId
-            // this.formUpdate.jobId = response.data[0].jobId
-            // this.formUpdate.jobNo = response.data[0].jobNo
-            // this.formUpdate.empStep = response.data[0].empStep
-            // this.formUpdate.departmentStep = response.data[0].departmentStep
-            // this.formUpdate.branchStep = response.data[0].branchStep
-            // this.formUpdate.checkCar = response.data[0].checkCar
-            // this.totalDateDiff = response.data[0].totalDateDiff
-            // this.formUpdate.endDate = response.data[0].endDate
-            // this.userId = response.data[0].userId
             for (var i = 0; i < response.data.length; i++) {
               var d = response.data[i]
-              if (d.userId !== '' || d.userId !== null) {
-                // jobs.push(element.jobId)
-                this.allJob.push({
-                  jobId: d.jobId,
-                  jobNo: d.jobNo,
-                  stepId: d.stepId,
-                  checkCar: d.checkCar,
-                  totalDateDiff: d.totalDateDiff,
-                  endDate: d.endDate,
-                  endTime: d.endTime
-                })
-                this.JobDataItem.push(d)
+              d.userId = d.userId || ''
+              if (jobs.indexOf(d.jobId) === -1) {
+                jobs.push(d.jobId)
+                if (d.userId !== '') {
+                  var rss = response.data.filter(el => { return el.jobId === d.jobId })
+                  for (var x = 0; x < response.data.filter(el => { return el.jobId === d.jobId }).length; x++) {
+                    var s = rss[x]
+                    // jobs.push(element.jobId)
+                    this.JobDataItem.push(s)
+                  }
+                  this.allJob.push({
+                    jobId: d.jobId,
+                    jobNo: d.jobNo,
+                    stepId: d.stepId,
+                    checkCar: d.checkCar,
+                    totalDateDiff: d.totalDateDiff,
+                    endDate: d.endDate,
+                    endTime: d.endTime
+                  })
+                }
               }
             }
             // response.data.forEach(element => {
@@ -1165,6 +1172,7 @@ export default {
               this.$swal('เรียบร้อย', 'แก้ไขสถานะ เรียบร้อย', 'success')
               this.getStepFlow()
               this.getLayout()
+              await this.getJobData()
               // console.log('allJob', this.allJob)
               // console.log(this.formUpdate.jobId)
               // console.log(this.formUpdate.stepId)
@@ -1224,6 +1232,7 @@ export default {
             this.$swal('เรียบร้อย', 'อัพเดท สถานะรถ เรียบร้อย', 'success')
             this.getStepFlow()
             this.getLayout()
+            await this.getJobData()
             console.log('shopId:', this.shopId)
             console.log('form:', this.formUpdateCar)
           })
@@ -1264,6 +1273,7 @@ export default {
             this.$swal('เรียบร้อย', 'ลบข้อมูล เรียบร้อย', 'success')
             this.getStepFlow()
             this.getLayout()
+            await this.getJobData()
             this.dialogDelete = false
             console.log('shopId:', this.shopId)
             console.log('form:', this.formDelete)
@@ -1316,6 +1326,7 @@ export default {
             this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
             this.getStepFlow()
             this.getLayout()
+            await this.getJobData()
             this.dialogEdit = false
             console.log('shopId:', this.shopId)
             console.log('form:', this.formEditData)
