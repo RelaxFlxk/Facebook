@@ -143,9 +143,9 @@ table tr:last-child td:last-child {
   font-family: KittithadaBold;
   font-size: 22px !important;
 }
-.v-list-item {
+/* .v-list-item {
   background-color: var(--nav-bg) !important;
-}
+} */
 .v-select-list {
   background-color: var(--nav-bg) !important;
 }

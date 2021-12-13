@@ -116,10 +116,10 @@
                         </v-btn>
                       </template>
                       <v-list>
-                        <v-list-item @click="type = 'week', getBookingList()">
+                        <v-list-item class="vlistitem" @click="type = 'week', getBookingList()">
                           <v-list-item-title>Week</v-list-item-title>
                         </v-list-item>
-                        <v-list-item @click="type = 'month', getBookingList()">
+                        <v-list-item class="vlistitem" @click="type = 'month', getBookingList()">
                           <v-list-item-title>Month</v-list-item-title>
                         </v-list-item>
                       </v-list>
@@ -737,3 +737,8 @@ export default {
   }
 }
 </script>
+<style scoped>
+.vlistitem {
+  background-color: #1B437C;
+}
+</style>
