@@ -11,7 +11,7 @@
           <!-- ประเภทบริการ -->
           <v-col cols="12" sm="3">
             <v-select
-              :items="editedItemSelete"
+              :items="DataFlowName"
               v-model="formUpdate.flowName"
               @change="
                 getStepFlow(), getLayout()
@@ -36,7 +36,6 @@
               outlined
               hide-details
               filled
-              value="สาขาบางกอกน้อย"
               label="สาขา"
               prepend-inner-icon="mdi-map-marker"
               class="ma-2"
@@ -139,9 +138,8 @@
               <v-icon
                 class="mr-1 text-right"
                 color="#1B437C"
-                @click="SwitchCard()"
               >
-                mdi-view-dashboard
+                mdi-format-list-text
               </v-icon>
               List View
             </v-btn>
@@ -400,7 +398,7 @@
         <div
           v-if="layout === 'grid'"
           class="workRow"
-          v-show="formUpdate.flowName && masBranchID"
+          v-show="masBranchID"
         >
           <v-row>
             <v-col class="colum" v-for="(element, work) in Layout" :key="work">
@@ -410,10 +408,10 @@
               >
                 <v-card class="mb-2">
                   <v-card id="cardTitle" elevation="12">
-                    <v-card-title class="ma-3" text-color="red">
-                      <v-row class=" allFrame pb-3" color="red">
+                    <v-card-title class="ma-3">
+                      <v-row class="pb-3">
                         <v-col cols="8">
-                          <strong color="red">{{ item.stepTitle }}</strong>
+                          <strong>{{ item.stepTitle }}</strong>
                         </v-col>
                         <v-col cols="4" class="text-right">
                           <strong>{{
@@ -892,29 +890,8 @@ export default {
     await this.getDataFlow()
     await this.getDataBranch()
     await this.getEmpSelect()
-    this.getCustomField()
   },
   methods: {
-    async getCustomField () {
-      this.editedItemSelete = []
-      axios
-        .get(this.DNS_IP + '/flow/get?shopId=' + this.shopId)
-        .then(response => {
-          let rs = response.data
-          if (rs.length > 0) {
-            for (var i = 0; i < rs.length; i++) {
-              let d = rs[i]
-              d.text = d.flowName
-              d.value = d.flowName
-              this.editedItemSelete.push(d)
-            }
-          }
-          console.log(this.editedItemSelete)
-        })
-    },
-    log: function (evt) {
-      window.console.log(evt)
-    },
     getDataFlow () {
       this.DataFlowName = []
       console.log('DataFlowName', this.DataFlowName)
@@ -1043,7 +1020,7 @@ export default {
         )
         .then(async response => {
           this.dataReady = true
-          var jobs = []
+          // var jobs = []
           console.log('res', response.data)
           // console.log('userId', this.formUpdate.userId === 'NULL')
           if (response.data) {
@@ -1058,21 +1035,46 @@ export default {
             // this.totalDateDiff = response.data[0].totalDateDiff
             // this.formUpdate.endDate = response.data[0].endDate
             // this.userId = response.data[0].userId
-            response.data.forEach(element => {
-              if (jobs.indexOf(element.jobId) === -1) {
-                jobs.push(element.jobId)
+            for (var i = 0; i < response.data.length; i++) {
+              var d = response.data[i]
+              if (d.userId !== '' || d.userId !== null) {
+                // jobs.push(element.jobId)
                 this.allJob.push({
-                  jobId: element.jobId,
-                  jobNo: element.jobNo,
-                  stepId: element.stepId,
-                  checkCar: element.checkCar,
-                  totalDateDiff: element.totalDateDiff,
-                  endDate: element.endDate,
-                  endTime: element.endTime
+                  jobId: d.jobId,
+                  jobNo: d.jobNo,
+                  stepId: d.stepId,
+                  checkCar: d.checkCar,
+                  totalDateDiff: d.totalDateDiff,
+                  endDate: d.endDate,
+                  endTime: d.endTime
                 })
+                this.JobDataItem.push(d)
               }
-            })
-            this.JobDataItem = response.data
+            }
+            // response.data.forEach(element => {
+            //   console.log('indexOf(element.jobId)', jobs.indexOf(element.jobId))
+            //   // if (jobs.indexOf(element.jobId) === -1) {
+            //   console.log('element', element.userId)
+            //   if (element.userId !== '' || element.userId !== null) {
+            //     // jobs.push(element.jobId)
+            //     this.allJob.push({
+            //       jobId: element.jobId,
+            //       jobNo: element.jobNo,
+            //       stepId: element.stepId,
+            //       checkCar: element.checkCar,
+            //       totalDateDiff: element.totalDateDiff,
+            //       endDate: element.endDate,
+            //       endTime: element.endTime
+            //     })
+            //     this.JobDataItem.push(element)
+            //   }
+            //   // }
+            // })
+            // this.JobDataItem = response.data
+            // if (this.JobDataItem.length === 0) {
+            //   this.JobDataItem = []
+            //   // this.allJob = []
+            // }
           }
           console.log('JobDataItem', this.JobDataItem)
           console.log('JobLEN', this.userId)
