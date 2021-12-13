@@ -406,15 +406,16 @@
               <div
                 v-for="(item, indexitem) in Layout[work].workData"
                 :key="indexitem"
+                class="pb-0 pt-0"
               >
                 <v-card class="mb-2">
                   <v-card id="cardTitle" elevation="12">
                     <v-card-title class="ma-3">
                       <v-row>
-                        <v-col cols="8" class="pb-0">
+                        <v-col cols="8" class="pb-1 pt-0">
                           <strong>{{ item.stepTitle }}</strong>
                         </v-col>
-                        <v-col cols="4" class="text-right pb-1">
+                        <v-col cols="4" class="text-right pb-1 pt-0">
                           <strong>{{
                             allJob.filter(row => {
                               return row.stepId == item.stepId
