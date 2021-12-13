@@ -414,15 +414,15 @@
                         <v-col cols="8">
                           <strong>{{ item.stepTitle }}</strong>
                         </v-col>
-                        <v-col cols="4" class="text-right">
+                        <v-col cols="3" class="text-right">
                           <strong>{{
                             allJob.filter(row => {
                               return row.stepId == item.stepId
                             }).length
                           }}</strong>
-                          <v-icon color="#ABB1C7">
+                          <!-- <v-icon color="#ABB1C7">
                             mdi-dots-vertical
-                          </v-icon>
+                          </v-icon> -->
                         </v-col>
                       </v-row>
                     </v-card-title>
@@ -849,14 +849,16 @@ export default {
         fieldName: ''
       },
       codeColor: [
-        '#B82D15',
-        '#0028FA',
-        '#EB56F6',
-        '#FED966',
+        '#4D67AB',
+        '#4E79C4',
+        '#57A2AC',
+        '#824D99',
         '#84C650',
-        '#6557A2',
-        '#50C6BF'
-        
+        '#C65050',
+        '#CE2220',
+        '#E67F33',
+        '#EB56F6',
+        '#FED966'
       ],
       formDelete: {
         jobNo: '',
