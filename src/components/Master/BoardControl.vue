@@ -410,11 +410,11 @@
                 <v-card class="mb-2">
                   <v-card id="cardTitle" elevation="12">
                     <v-card-title class="ma-3">
-                      <v-row class="pb-3">
-                        <v-col cols="8">
+                      <v-row>
+                        <v-col cols="8" class="pb-0">
                           <strong>{{ item.stepTitle }}</strong>
                         </v-col>
-                        <v-col cols="3" class="text-right">
+                        <v-col cols="4" class="text-right pb-1">
                           <strong>{{
                             allJob.filter(row => {
                               return row.stepId == item.stepId
