@@ -155,8 +155,11 @@
                 >
               </v-col>
               <center>
-                <v-col class="text-center">
-                  <v-img :src="require('@/assets/UpDateStatus.png')"></v-img>
+                <v-col class="mt-16">
+                  <v-img id="img_edit_step" :src="require('@/assets/imgEditStap.svg')"></v-img>
+                </v-col>
+                <v-col >
+                  <v-img id="text_edit_step" :src="require('@/assets/textEditStep.svg')"></v-img>
                 </v-col>
               </center>
               <!-- <v-col class="text-center">
@@ -853,6 +856,7 @@ export default {
         '#84C650',
         '#6557A2',
         '#50C6BF'
+        
       ],
       formDelete: {
         jobNo: '',
@@ -1375,6 +1379,14 @@ export default {
 #v-img-car {
   height: 60px;
   width: 64px;
+}
+#img_edit_step {
+  width: 135px;
+  height: 100px;
+}
+#text_edit_step {
+  Width: 250px;
+  Height: 50px;
 }
 #textButton {
   height: 50px;
