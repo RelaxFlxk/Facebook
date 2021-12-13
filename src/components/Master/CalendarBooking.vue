@@ -32,11 +32,6 @@
               <v-date-picker
                 v-model="today"
                 @input="(menuDate = false), getBookingList()"
-                :max="
-                  new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-                    .toISOString()
-                    .substr(0, 10)
-                "
               ></v-date-picker>
             </v-menu>
           </v-col>

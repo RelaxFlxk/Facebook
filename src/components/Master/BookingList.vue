@@ -1088,7 +1088,7 @@ export default {
             this.masBranchID
         )
         .then(async response => {
-          // console.log('getData', response.data)
+          console.log('getData', response.data)
           this.dataReady = true
           if (response.data.length > 0) {
             for (let i = 0; i < response.data.length; i++) {
@@ -1119,7 +1119,7 @@ export default {
                   this.DNS_IP + "/BookingData/get?bookNo=" + d.bookNo
                 )
                 .then(async responses => {
-                // console.log('getData', responses.data)
+                  console.log('getDataData', responses.data)
                   dataBookingData = responses.data
                 // for (let i = 0; i < response.data.length; i++) {
                 //   let e = response.data[i]
@@ -1133,10 +1133,21 @@ export default {
                 })
               s.cusName = dataBookingData.filter(function (el) {
                 return el.fieldName === 'ชื่อ'
-              })[0].fieldValue
+              })
               s.cusReg = dataBookingData.filter(function (el) {
                 return el.fieldName === 'เลขทะเบียน'
-              })[0].fieldValue
+              })
+              if (s.cusName.length > 0) {
+                s.cusName = s.cusName[0].fieldValue
+              } else {
+                s.cusName = ''
+              }
+              if (s.cusReg.length > 0) {
+                s.cusReg = s.cusReg[0].fieldValue
+              } else {
+                s.cusReg = ''
+              }
+              console.log('s.cusName', s.cusName)
               this.dataItem.push(s)
             }
           }
