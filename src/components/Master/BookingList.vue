@@ -888,9 +888,9 @@ export default {
   async mounted () {
     // this.dataReady = false
     await this.getDataBranch()
-    await this.scanQrcode()
     this.getDataFlow()
     this.getBookingList()
+    this.scanQrcode()
   },
   methods: {
     validate (Action) {
@@ -1405,6 +1405,7 @@ export default {
     },
     async getBookingData (dt) {
       this.BookingDataItem = []
+      console.log('dt', dt)
       await axios
         .get(this.DNS_IP + '/BookingDataSelect/get?bookNo=' + dt.bookNo)
         .then(async response => {
@@ -1421,40 +1422,49 @@ export default {
         })
     },
     addDataJob () {
-      this.$swal({
-        title: 'ต้องการนำรายการนี้ เข้าตารางใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      }).then(async result => {
-        await axios
-          .post(this.DNS_IP + '/job/add', this.BookingDataItem)
-          .then(async response => {
-            if (response.data.status) {
-              var dt = {
-                bookNo: this.BookingDataItem[0].bookNo,
-                statusJob: 'job'
-              }
-              await axios
-                .post(
-                  this.DNS_IP +
+      if (this.dataItem.filter(row => row.bookNo === this.BookingDataItem[0].bookNo).length > 0) {
+        this.$swal({
+          title: 'ต้องการนำรายการนี้ เข้าตารางใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        }).then(async result => {
+          await axios
+            .post(this.DNS_IP + '/job/add', this.BookingDataItem)
+            .then(async response => {
+              if (response.data.status) {
+                var dt = {
+                  bookNo: this.BookingDataItem[0].bookNo,
+                  statusJob: 'job'
+                }
+                await axios
+                  .post(
+                    this.DNS_IP +
                     '/Booking/editStatus/' +
                     this.BookingDataItem[0].bookNo,
-                  dt
-                )
-                .then(async response1 => {
-                  console.log('response', response.data)
-                  await this.pushMsg(response.data.jobNo)
-                  this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
-                  this.dialogEdit = false
-                  this.getBookingList()
-                })
-            }
-          })
-      })
+                    dt
+                  )
+                  .then(async response1 => {
+                    console.log('response', response.data)
+                    await this.pushMsg(response.data.jobNo)
+                    this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
+                    this.dialogEdit = false
+                    this.getBookingList()
+                  })
+              }
+            })
+        })
+      } else {
+        this.$swal('ผิดพลาด', 'ไม่มีนัดหมายเข้ารับบริการนี้', 'error').then(async response => {
+          this.$router.push('/BookingList')
+        }).catch(error => {
+          console.log('error function addData : ', error)
+          this.$router.push('/BookingList')
+        })
+      }
     },
     async pushMsg (jobNo) {
       const result = await axios
