@@ -932,6 +932,16 @@ export default {
         let dt = {
           bookNo: this.bookNo
         }
+        axios.get(this.DNS_IP + '/Booking/get?bookNo=' + dt.bookNo).then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            this.masBranchID = rs[0].masBranchID
+            console.log('this.mas', this.masBranchID)
+            this.dataItem = []
+            this.getBookingList()
+          }
+        })
+        // masBranchID
         this.getBookingData(dt)
         this.dialogEdit = true
       }
@@ -1422,6 +1432,12 @@ export default {
         })
     },
     addDataJob () {
+      // console.log('this.masBranchID', this.masBranchID)
+      // console.log('branch', this.branch)
+      // for (let i = 0; i < this.branch.length; i++) {
+
+      // }
+      // this.getBookingList()
       if (this.dataItem.filter(row => row.bookNo === this.BookingDataItem[0].bookNo).length > 0) {
         this.$swal({
           title: 'ต้องการนำรายการนี้ เข้าตารางใช่หรือไม่?',
@@ -1459,10 +1475,12 @@ export default {
         })
       } else {
         this.$swal('ผิดพลาด', 'ไม่มีนัดหมายเข้ารับบริการนี้', 'error').then(async response => {
-          this.$router.push('/BookingList')
+          this.dialogEdit = false
+          this.getBookingList()
         }).catch(error => {
           console.log('error function addData : ', error)
-          this.$router.push('/BookingList')
+          this.dialogEdit = false
+          this.getBookingList()
         })
       }
     },

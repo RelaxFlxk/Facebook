@@ -22,7 +22,7 @@
           <v-container class="text-center" >
             <v-container>
                 <div v-for="(p , index) in jobitem" :key="index">
-                <h4>{{p.name}} : {{p.value}}</h4>
+                <h4 v-if="p.showCard === 'True' ">{{p.name}} : {{p.value}}</h4>
             </div>
             </v-container>
             <v-btn small class="ma-2" color="primary" @click="jobConfirm" dark>
@@ -116,11 +116,13 @@ export default {
               let s = {
                 Id: d.jobId,
                 value: d.fieldValue,
-                name: d.fieldName
+                name: d.fieldName,
+                showCard: d.showCard
               }
               Id = d.userId
               this.jobitem.push(s)
             }
+            console.log('rs', this.jobitem)
             this.userId = Id
             this.value = this.pathToweb + this.jobitem[0].Id + '&shopId=' + this.$session.getAll().data.shopId
             console.log(this.jobitem)
