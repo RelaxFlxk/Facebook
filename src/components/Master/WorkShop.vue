@@ -4,7 +4,7 @@
     <v-main>
       <div class="stepLayout">
         <v-col cols="12" sm="8">
-            <h4 style="color:#1B437C">แก้ไขกระดานทำงาน</h4>
+            <h3 style="color:#1B437C">แก้ไขกระดานทำงาน</h3>
           </v-col>
         <v-row>
           <v-col cols="6" sm="4">
@@ -44,7 +44,7 @@
                      <v-toolbar
 
                     >
-                    <p :style="'color:'+ codeColor[step]">{{element.stepTitle}}</p>
+                    <p style="color:#1B437C">{{element.stepTitle}}</p>
                     </v-toolbar>
                     </v-card>
               </div>
@@ -60,7 +60,7 @@
                      <v-toolbar
 
                     >
-                    <p :style="'color:'+ codeColor[i]">{{element.stepTitle}}</p>
+                    <p style="color:#1B437C">{{element.stepTitle}}</p>
                     </v-toolbar>
                     </v-card>
                   </div>
@@ -71,13 +71,13 @@
               <div v-show="stepData.length > 0 || Layout.length > 0">
                 <v-btn class="mx-2" elevation="2" outlined dark  color="primary" @click="AddColum ()">
                   <v-icon dark> mdi-plus </v-icon>
-                  เพิ่มกระดาษ
+                  เพิ่มกระดาน
               </v-btn>
               </div>
               <div v-show="Layout.length > 0">
                 <v-btn class="mx-2" elevation="2" outlined dark color="error" @click="DeleteColum ()">
                 <v-icon dark> mdi-minus </v-icon>
-                ลบกระดาษ
+                ลบกระดาน
               </v-btn>
               </div>
             </v-col>
