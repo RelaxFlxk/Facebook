@@ -2366,6 +2366,7 @@ export default {
             ).then(async (response) => {
               console.log(response)
               this.$swal('เรียบร้อย', 'ปรับปรุงเรียบร้อย', 'success')
+              this.dialogJob = false
             })
         })
     },
