@@ -1,0 +1,297 @@
+<template>
+  <div>
+    <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
+    <v-main>
+      <div class="col-md-12 ml-sm-auto col-lg-12 px-4">
+        <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
+        <!-- <v-row>
+          <v-col cols="12">
+            <v-sheet tile height="54" class="d-flex">
+              <v-col cols="3">
+                <v-select
+                  v-model="masBranchName"
+                  :items="BranchItem"
+                  dense
+                  outlined
+                  hide-details
+                  label="สาขา"
+                  class="ma-3"
+                ></v-select>
+              </v-col>
+              <v-col cols="3">
+                <v-select
+                  v-model="empStep"
+                  :items="EmployeeSelect"
+                  dense
+                  outlined
+                  hide-details
+                  label="พนักงาน"
+                  class="ma-3"
+                ></v-select>
+              </v-col>
+              <v-col cols="6">
+                <date-range-picker
+                  ref="picker"
+                  :locale-data="{ firstDay: 1, format: 'yyyy-mm-dd' }"
+                  v-model="dateRange"
+                />
+              </v-col>
+            </v-sheet>
+          </v-col>
+        </v-row> -->
+        <div id="app" class="container mt-5">
+          <!-- <h2 class="border-bottom pb-2 mb-4">
+            Pivot <small>(drag & drop UI + PivotTable)</small>
+          </h2> -->
+          <div class="mb-5">
+            <div ref="wdrComponent"></div>
+            <!-- <pivot
+              :data="data"
+              :fields="fields"
+              :showFooter="showFooter"
+              :available-field-keys="availableFieldKeys"
+              :row-field-keys="rowFieldKeys"
+              :col-field-keys="colFieldKeys"
+              :reducer="reducer"
+              :default-show-settings="defaultShowSettings"
+              :is-data-loading="isDataLoading"
+            >
+              <template slot="value" slot-scope="{ value }">
+                {{ value.toLocaleString() }}
+              </template>
+            </pivot> -->
+          </div>
+        </div>
+      </div>
+    </v-main>
+  </div>
+</template>
+<script>
+import axios from 'axios' // api
+import adminLeftMenu from '../Sidebar.vue' // เมนู
+import JsonExcel from 'vue-json-excel' // https://www.npmjs.com/package/vue-json-excel
+import XLSX from 'xlsx' // import xlsx
+import readXlsxFile from 'read-excel-file'
+import moment from 'moment' // แปลง date
+import DateRangePicker from 'vue2-daterange-picker'
+// you need to import the CSS manually
+// import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
+// import { PivotTable, Pivot } from '@click2buy/vue-pivot-table'
+import WebDataRocks from 'webdatarocks'
+import 'webdatarocks/webdatarocks.min.css'
+export default {
+  components: {
+    'left-menu-admin': adminLeftMenu,
+    downloadExcel: JsonExcel,
+    XLSX,
+    readXlsxFile,
+    moment,
+    DateRangePicker
+  },
+  // created () {
+  //   setInterval(this.getNowGlobal, 1000)
+  // },
+  data () {
+    // let startDate = new Date()
+    // let endDate = new Date()
+    return {
+      session: this.$session.getAll(),
+      // Menu Config
+      breadcrumbs: [
+        {
+          text: 'Home',
+          disabled: false,
+          href: '/Core/Home'
+        },
+        {
+          text: 'รายงาน',
+          disabled: false,
+          href: '/Dashbord/Report'
+        }
+      ],
+      data: [],
+
+      // Pivot params
+      fields: [
+        {
+          key: 'masBranchName',
+          getter: item => item.masBranchName,
+          label: 'สาขา',
+          valueFilter: true
+        },
+        {
+          key: 'empStep',
+          getter: item => item.empStep,
+          label: 'พนักงาน',
+          valueFilter: true
+        },
+        {
+          key: 'jobDate',
+          getter: item => item.jobDate,
+          label: 'วันที่เปิด Job',
+          valueFilter: true
+        },
+        {
+          key: 'totall',
+          getter: item => item.totall,
+          label: 'Totall',
+          valueFilter: true
+        }
+      ],
+      availableFieldKeys: [],
+      report: null,
+      rowFieldKeys: ['masBranchName', 'empStep'],
+      colFieldKeys: ['jobDate', 'totall'],
+      reducer: (sum, item) => sum + item.closeJob,
+      defaultShowSettings: false,
+      isDataLoading: false,
+      showFooter: true,
+      shopId: this.$session.getAll().data.shopId
+    }
+  },
+  async mounted () {
+    console.log('shopId', this.shopId)
+    console.log('getPerformance', this.getDta())
+    await this.getPerformance()
+    this.report = new WebDataRocks({
+      container: this.$refs.wdrComponent,
+      toolbar: false,
+      height: 500,
+      width: '100%',
+      report: {
+        dataSource: {
+          'dataSourceType': 'json',
+          'data': this.getDta()
+        },
+        'slice': {
+          'rows': [
+            {
+              'uniqueName': 'masBranchName'
+            },
+            {
+              'uniqueName': 'empStep'
+            }
+          ],
+          'columns': [
+            {
+              'uniqueName': 'jobDate'
+            }
+          ],
+          'measures': [
+            {
+              'uniqueName': 'jobDate',
+              'aggregation': 'sum'
+            }
+          ]
+        },
+        'conditions': [
+          {
+            'formula': '#value > 2000000',
+            'measure': 'jobDate',
+            'format': {
+              'backgroundColor': '#0598df',
+              'color': '#FFFFFF',
+              'fontFamily': 'Arial',
+              'fontSize': '12px'
+            }
+          }
+        ]
+      }
+    }).expandAllData('masBranchName')
+    // this.expandAll()
+  },
+  methods: {
+    expandAll () {
+      WebDataRocks.expandAllData()
+    },
+    async getPerformance () {
+      this.isDataLoading = false
+      this.data = []
+      await axios
+        .get(
+          'http://localhost:5004/job_log/getReport_performance?shopId=' + this.shopId
+        )
+        .then(async response => {
+          if (response.data) {
+            // Object.assign(this.data, response.data)
+            this.data = response.data
+            // return response.data
+          } else {
+            this.isDataLoading = true
+          }
+          console.log(response)
+          console.log('data', this.data)
+        })
+        // eslint-disable-next-line handle-callback-err
+        .catch(error => {
+          this.data = []
+        })
+    },
+    getDta () {
+      return this.data
+    }
+  }
+}
+</script>
+<style scope>
+.v-data-table-header {
+  background-color: #1b437c !important;
+}
+.Color-Font {
+  color: #808588;
+}
+.Color-Font-Action {
+  color: #b61c1c;
+}
+.Color-Font-Preview {
+  color: #262a34;
+}
+.Color-Button {
+  color: #b61c1c;
+}
+.Divider {
+  border: 2px solid #808588;
+  background: #808588;
+  border-radius: 5px;
+}
+.custom-loader {
+  animation: loader 1s infinite;
+  display: flex;
+}
+@-moz-keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@-o-keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.v-data-table-header {
+  background-color: var(--table-head-bg) !important;
+}
+</style>
