@@ -48,6 +48,21 @@
             <v-row>
               <v-col cols="6" class="text-center pb-0">
                 <v-alert
+                  color="warning"
+                  dark
+                  dense
+                  icon="mdi-phone-ring"
+                  prominent
+                  @click="getSelect('wait',countWaiting)"
+                >
+                  <div>
+                    <strong>ยังไมไ่ด้โทร</strong>
+                  </div>
+                  <div>จำนวน : {{countWaiting}}</div>
+                </v-alert>
+              </v-col>
+              <v-col cols="6" class="text-center pb-0">
+                <v-alert
                   color="success"
                   dark
                   dense
@@ -61,6 +76,8 @@
                   <div>จำนวน : {{countConfirm}}</div>
                 </v-alert>
               </v-col>
+            </v-row>
+            <v-row>
               <v-col cols="6" class="text-center pb-0">
                 <v-alert
                   color="error"
@@ -76,24 +93,7 @@
                   <div>จำนวน : {{countCancel}}</div>
                 </v-alert>
               </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="6" class="text-center pb-1  pt-1">
-                <v-alert
-                  color="warning"
-                  dark
-                  dense
-                  icon="mdi-phone-ring"
-                  prominent
-                  @click="getSelect('wait',countWaiting)"
-                >
-                  <div>
-                    <strong>ยังไมไ่ด้โทร</strong>
-                  </div>
-                  <div>จำนวน : {{countWaiting}}</div>
-                </v-alert>
-              </v-col>
-              <v-col cols="6" class="text-center pb-1  pt-1">
+              <v-col cols="6" class="text-center pb-0">
                 <v-alert
                   color="info"
                   dark
@@ -118,7 +118,7 @@
                   rounded
                   block
                   class="ma-2 white--text"
-                  @click="dataItemSelect = []"
+                  @click="getSelect('all',countAll)"
                 >
                   ทั้งหมด จำนวน : {{countAll}}
                   <v-icon
@@ -966,10 +966,120 @@
               </v-form>
             </v-card>
           </v-dialog>
-
           <!-- data table -->
-          <v-col cols="12">
+          <v-col cols="12" >
+            <transition name="slide">
+              <div class="slidein" v-if="drawer">
+                <h4>แสดงตารางรายวัน</h4>
+                <v-row>
+                  <v-col cols="10">
+                    <v-menu
+                      ref="menu"
+                      v-model="menu1"
+                      :close-on-content-click="false"
+                      transition="scale-transition"
+                      offset-y
+                      max-width="290px"
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          v-model="timeTable"
+                          label="วันที่นัดส่งรถลูกค้า"
+                          persistent-hint
+                          dense
+                          outlined
+                          readonly
+                          required
+                          :rules="[rules.required]"
+                          prepend-icon="mdi-calendar"
+                          v-bind="attrs"
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        v-model="timeTable"
+                        no-title
+                        @input="menu1 = false, getTimesChange('update')"
+                      ></v-date-picker>
+                    </v-menu>
+                  </v-col>
+                  <v-col cols="2">
+                    <!-- <v-btn
+                      color="primary"
+                      fab
+                      small
+                      @change="getTimesChange('all'), this.timeTable = ''"
+                      dark
+                    >
+                      <v-icon>mdi-arrow-expand-all</v-icon>
+                    </v-btn> -->
+                  </v-col>
+                </v-row>
+                <button class="close-btn" @click="toggle(), getSelect()">X</button>
+                <v-row v-for="(item, indexitem) in dataItemTime" :key="indexitem">
+                  <v-col>
+                    <strong>{{item.timeDueHtext}}</strong>
+                  </v-col>
+                  <v-col class="pt-1 pb-1" cols="auto" v-for="(items, indexitems) in dataItemTimesChange.filter(el => { return el.timeDueHtext === item.timeDueHtext })" :key="indexitems">
+                    <v-card
+                      elevation="10"
+                    >
+                      <v-container class="pt-0 pb-0">
+                      <v-card-title>{{items.timeDuetext + ' : ' + items.statusBtText}}</v-card-title>
+                      <v-card-text>
+                        <v-text-field
+                          label="ชื่อลูกค้า"
+                          :value="items.cusName"
+                          class="pt-0 pb-0"
+                          outlined
+                          dense
+                          readonly
+                        ></v-text-field>
+                        <v-text-field
+                          label="ทะเบียน"
+                          :value="items.cusReg"
+                          class="pt-0 pb-0"
+                          outlined
+                          dense
+                          readonly
+                        ></v-text-field>
+                        <v-text-field
+                          label="บริการ"
+                          :value="items.flowName"
+                          class="pt-0 pb-0"
+                          outlined
+                          dense
+                          readonly
+                        ></v-text-field>
+                      </v-card-text>
+                      </v-container>
+                    </v-card>
+                  </v-col>
+                  <v-col col="12" class="pt-0 pb-0">
+                    <v-divider></v-divider>
+                  </v-col>
+                </v-row>
+              </div>
+            </transition>
             <v-card elevation="7" v-if="dataReady">
+              <div>
+                <v-btn
+                  v-if="dataItem.length > 0"
+                  color="blue-grey"
+                  class="ma-2 white--text"
+                  @click="toggle"
+                  small
+                >
+                  แสดงตารางรายวัน
+                  <v-icon
+                    right
+                    dark
+                  >
+                    mdi-table-eye
+                  </v-icon>
+                </v-btn>
+              </div>
               <v-card-title>
                 <v-text-field
                   v-model="searchAll2"
@@ -983,7 +1093,7 @@
                 <v-data-table
                   :headers="columns"
                   :items="dataItem"
-                  v-if="dataItemSelect.length === 0"
+                  v-if="dataItemSelect.length === 0 && dataItemTimesChange.length === 0"
                   :search="searchAll2"
                   :items-per-page="10"
                 >
@@ -1064,7 +1174,88 @@
                 <v-data-table
                   :headers="columns"
                   :items="dataItemSelect"
-                  v-if="dataItemSelect.length > 0"
+                  v-if="dataItemSelect.length > 0 && dataItemTimesChange.length === 0"
+                  :search="searchAll2"
+                  :items-per-page="10"
+                >
+                  <template v-slot:[`item.CREATE_DATE`]="{ item }">
+                    {{ format_dateNotime(item.CREATE_DATE) }}
+                  </template>
+                  <template v-slot:[`item.LAST_DATE`]="{ item }">
+                    {{ format_dateNotime(item.LAST_DATE) }}
+                  </template>
+                  <template v-slot:[`item.dueDate`]="{ item }">
+                    {{ format_date(item.dueDate) }}
+                  </template>
+                  <template v-slot:[`item.action`]="{ item }">
+                    <!-- confirm -->
+                    <v-btn
+                      color="success"
+                      fab
+                      id="v-step-2"
+                      v-if="item.statusBt !== 'confirmJob'"
+                      :disabled="item.chkConfirm"
+                      small
+                      @click.stop="confirmChk(item)"
+                    >
+                      <v-icon dark> mdi-phone-check </v-icon>
+                    </v-btn>
+                    <v-btn
+                      color="error"
+                      fab
+                      id="v-step-2"
+                      v-if="item.statusBt !== 'confirmJob'"
+                      small
+                      :disabled="item.chkCancel"
+                      @click.stop="cancelChk(item)"
+                    >
+                      <v-icon dark> mdi-phone-cancel </v-icon>
+                    </v-btn>
+                    <v-btn
+                      color="warning"
+                      id="v-step-2"
+                      v-if="item.statusBt !== 'confirmJob'"
+                      small
+                      @click.stop="setDataChang(item)"
+                    >
+                      เปลี่ยนเวลา
+                    </v-btn>
+                    <v-btn
+                      color="primary"
+                      fab
+                      v-if="item.statusBt !== 'confirmJob'"
+                      id="v-step-2"
+                      small
+                      @click.stop="(dialogEdit = true), getBookingData(item)"
+                    >
+                      <v-icon dark> mdi-account-plus </v-icon>
+                    </v-btn>
+                    <v-btn
+                      color="red"
+                      dark
+                      v-if="item.statusBt !== 'confirmJob'"
+                      fab
+                      small
+                      @click.stop="(dialogDelete = true), getDataById(item)"
+                    >
+                      <v-icon> mdi-delete </v-icon>
+                    </v-btn>
+                    <v-btn
+                      color="info"
+                      dark
+                      v-if="item.statusBt === 'confirmJob'"
+                      fab
+                      small
+                      @click.stop="(dialogJob = true), getjob(item)"
+                    >
+                      <v-icon> mdi-qrcode-scan </v-icon>
+                    </v-btn>
+                  </template>
+                </v-data-table>
+                <v-data-table
+                  :headers="columns"
+                  :items="dataItemTimesChange"
+                  v-if="dataItemTimesChange.length > 0"
                   :search="searchAll2"
                   :items-per-page="10"
                 >
@@ -1157,6 +1348,53 @@
     </v-main>
   </div>
 </template>
+<style scoped>
+.theme--light.v-divider {
+    border-color: rgba(243, 5, 25, 0.904) !important;
+}
+.slidein {
+  max-width: 600px;
+  padding: 2em 3em;
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  right: 0;
+  background: #ddd;
+  height: 100%;
+  overflow: scroll;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.5);
+  transition: all 0.5s ease-in-out;
+}
+button {
+  padding: .5em 1em;
+  border-radius: 3em;
+  font-size: 1.1em;
+}
+/* before the element is shown, start off the screen to the right */
+.slide-enter, .slide-leave-active {
+  right: -100%;
+}
+
+.close-btn {
+  border: none;
+  font-weight: bold;
+  font-size: 2em;
+  background: transparent;
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 0.5em;
+}
+
+/* General styles unrelated to slide in */
+body {
+  font-family: 'Mulish', sans-serif;
+}
+
+.toggle {
+  margin: 1em;
+}
+</style>
 <script>
 import axios from 'axios' // api
 import draggable from 'vuedraggable'
@@ -1169,6 +1407,7 @@ import DateRangePicker from 'vue2-daterange-picker'
 // you need to import the CSS manually
 import QrcodeVue from 'qrcode.vue'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
+import { PivotTable } from '@click2buy/vue-pivot-table'
 
 export default {
   name: 'BookingList',
@@ -1180,12 +1419,15 @@ export default {
     XLSX,
     readXlsxFile,
     VuetifyMoney,
-    QrcodeVue
+    QrcodeVue,
+    PivotTable
   },
   data () {
     let startDate = null
     let endDate = null
     return {
+      timeTable: '',
+      drawer: false,
       value: '',
       size: 200,
       foreground: '#173053',
@@ -1238,6 +1480,8 @@ export default {
       bookNo: '',
       BookingDataItem: [],
       Layout: [],
+      dataItemTime: [],
+      dataItemTimesChange: [],
       appendBody: true,
       dialogExport: false,
       dataReady: false,
@@ -1266,14 +1510,14 @@ export default {
       // Data Table Config
       searchAll2: '',
       columns: [
+        { text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
         { text: 'Booking Id', value: 'bookNo' },
         { text: 'ชื่อลูกค้า', value: 'cusName' },
         { text: 'ทะเบียนรถ', value: 'cusReg' },
         { text: 'ชื่อบริการ', value: 'flowName' },
         { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-        { text: 'สถานะนัดหมาย', value: 'statusBtText' },
+        { text: 'สถานะนัดหมาย', value: 'statusBtText' }
         // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
-        { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
       ],
       dataItem: [],
       dataItemSelect: [],
@@ -1313,6 +1557,7 @@ export default {
       dialogChange: false,
       dialogJob: false,
       menu: false,
+      menu1: false,
       endDate: '',
       endTime: '',
       rules: {
@@ -1350,6 +1595,11 @@ export default {
     this.scanQrcode()
   },
   methods: {
+    toggle () {
+      this.timeTable = new Date().toISOString().substr(0, 10)
+      this.getTimesChange('update')
+      this.drawer = !this.drawer
+    },
     async getCustomFieldStart () {
       this.editedItemSeleteField = []
       axios
@@ -1568,6 +1818,7 @@ export default {
     },
     getSelect (text, count) {
       this.dataItemSelect = []
+      this.dataItemTimesChange = []
       if (text === 'confirm') {
         if (count > 0) {
           this.dataItemSelect = this.dataItem.filter(el => { return el.statusBt === text })
@@ -1586,6 +1837,14 @@ export default {
         }
       }
     },
+    getTimesChange (text) {
+      this.dataItemTimesChange = []
+      if (text === 'all') {
+        this.dataItemTimesChange = this.dataItem
+      } else {
+        this.dataItemTimesChange = this.dataItem.filter(el => { return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable })
+      }
+    },
     async getBookingList () {
       // Clear Data ทุกครั้ง
       console.log('this.masBranchID1', this.masBranchID)
@@ -1602,6 +1861,8 @@ export default {
       this.countJob = 0
       // Clear ช่องค้นหา
       this.searchAll2 = ''
+      var dataItemTimes = []
+      var dataItems = []
       await axios
         .get(
           // eslint-disable-next-line quotes
@@ -1613,7 +1874,6 @@ export default {
         )
         .then(async response => {
           // console.log('getData', response.data)
-          this.dataReady = true
           if (response.data.length > 0) {
             for (let i = 0; i < response.data.length; i++) {
               let d = response.data[i]
@@ -1625,6 +1885,8 @@ export default {
               s.chkConfirm = false
               s.chkCancel = false
               s.jobNo = d.jobNo
+              s.timeDueHtext = d.timeDueH + ':00'
+              s.timeDuetext = d.timeDue
               this.countAll = this.countAll + 1
               if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
                 s.chkConfirm = true
@@ -1650,6 +1912,10 @@ export default {
                 s.statusBt = 'wait'
                 s.statusBtText = 'ยังไมไ่ด้โทร'
                 this.countWaiting = this.countWaiting + 1
+              }
+              var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
+              if (chkTime.length === 0) {
+                dataItemTimes.push(s)
               }
               let dataBookingData = []
               await axios
@@ -1686,13 +1952,35 @@ export default {
               } else {
                 s.cusReg = ''
               }
-              this.dataItem.push(s)
+              dataItems.push(s)
             }
           }
-          if (this.dataItem.length === 0 || this.dataItem.status === false) {
+          if (dataItems.length === 0 || dataItems.status === false) {
             this.dataItem = []
+            this.dataItemTime = []
+            this.dataReady = true
             // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
           } else {
+            this.dataItem = dataItems
+            var datause = dataItemTimes.sort((a, b) => {
+              if (a.timeDueHtext < b.timeDueHtext) return -1
+              return a.timeDueHtext > b.timeDueHtext ? 1 : 0
+            })
+            for (var k = 0; k < datause.length; k++) {
+              var t = datause[k]
+              var h = {}
+              h.timeDueHtext = t.timeDueHtext
+              let chkTimes = this.dataItemTime.filter(el => { return el.timeDueHtext === t.timeDueHtext })
+              console.log('chkTimes', chkTimes)
+              if (chkTimes.length === 0) {
+                this.dataItemTime.push(h)
+              }
+            }
+            // this.dataItemTime = dataItemTimes.sort((a, b) => {
+            //   if (a.timeDueHtext < b.timeDueHtext) return -1
+            //   return a.timeDueHtext > b.timeDueHtext ? 1 : 0
+            // })
+            console.log('dataItemTime', this.dataItemTime)
             this.dataReady = true
           }
         })
