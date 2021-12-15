@@ -207,11 +207,28 @@
                       </v-btn>
                       </v-row>
 
+                      <!-- <v-col cols="6">
+                        <v-select
+                          v-model="formAdd.requiredField"
+                          :items="items"
+                          item-text="text"
+                          item-value="value"
+                          label="บังคับกรอก"
+                          persistent-hint
+                          return-object
+                          single-line
+                        ></v-select>
+                      </v-col> -->
+
                       <!-- checkbox -->
                      <v-container
                         class="px-0"
                         fluid
                       >
+                      <v-checkbox
+                          v-model="formAdd.requiredField"
+                          :label="`บังคับกรอก: ${formAdd.requiredField.toString()}`"
+                        ></v-checkbox>
                       <v-checkbox
                           label="เงื่อนไข ช่องกรอกข้อมูล"
                           false-value="false"
@@ -435,6 +452,12 @@
                      <v-container
                         class="px-0"
                       >
+                      <v-checkbox
+                          label="บังคับกรอก"
+                          false-value="False"
+                          true-value="True"
+                          v-model="formUpdate.requiredField"
+                        ></v-checkbox>
                        <v-checkbox
                           label="เงื่อนไข ช่องกรอกข้อมูล"
                           false-value="false"
@@ -590,7 +613,7 @@
                                 fab
                                 x-small
                                 outlined
-                                @click="actionUp(item.stepId)"
+                                @click="actionUp(item.fieldId)"
                               >
                                 <v-icon color="#173053">
                                   mdi-chevron-up
@@ -601,7 +624,7 @@
                                 fab
                                 x-small
                                 outlined
-                                @click="actionDown(item.stepId)"
+                                @click="actionDown(item.fieldId)"
                               >
                                 <v-icon color="#173053">
                                   mdi-chevron-down
@@ -753,6 +776,8 @@ export default {
         conditionField: '',
         conditionValue: '',
         showCard: 'False',
+        requiredField: true,
+        sortNoField: '',
         shopId: this.$session.getAll().data.shopId
       },
       formUpdate: {
@@ -766,7 +791,9 @@ export default {
         optionValue: '',
         conditionField: '',
         conditionValue: '',
-        shopId: ''
+        shopId: '',
+        requiredField: '',
+        sortNoField: ''
       },
       formAddOption: {
         optionText: '',
@@ -780,6 +807,10 @@ export default {
       },
       desserts: [],
       editedItemOption: [],
+      items: [
+        { text: 'required field', value: 'true' },
+        { text: 'No required field', value: 'false' }
+      ],
       rules: {
         numberRules: value =>
           (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
@@ -801,8 +832,7 @@ export default {
         // { text: 'ID', value: 'fieldId' },
         { text: 'ชื่อ Field', value: 'fieldName', align: 'center' },
         { text: 'ประเภท Field', value: 'fieldType', align: 'center' },
-        // { text: ' ', value: 'actions2', sortable: false, align: 'center' },
-        // { text: 'conditionValue', value: 'conditionValue', align: 'center' },
+        { text: ' ', value: 'actions2', sortable: false, align: 'center' },
         { text: 'Action', value: 'action', sortable: false, align: 'center' }
       ],
       dataItem: [],
@@ -849,6 +879,75 @@ export default {
     this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
   },
   methods: {
+    async actionUp (fieldId) {
+      console.log('fieldId', fieldId)
+      console.log('dataItem', this.dataItem)
+      let sortItem = this.dataItem
+      this.dataItem = []
+      let index = sortItem.findIndex(e => e.fieldId === fieldId)
+      console.log('index', index)
+      if (index !== -1 && index < sortItem.length + 1) {
+        let el = sortItem[index]
+        console.log('*****', el)
+        this.dataItem[index] = sortItem[index - 1]
+        this.dataItem[index - 1] = el
+        this.dataItem[index].sortNoField = sortItem[index - 1].sortNoField + 1
+        this.dataItem[index - 1].sortNoField = el.sortNoField - 1
+        console.log('sortNoField', this.dataItem[index - 1].sortNoField)
+        console.log('el', el)
+        console.log('movedown', this.dataItem)
+      }
+      await this.updateAction(this.dataItem, sortItem[0])
+      console.log('dataItme', this.dataItem)
+    },
+    async actionDown (fieldId) {
+      console.log('fieldId', fieldId)
+      console.log('dataItem', this.dataItem)
+      let sortItem = this.dataItem
+      this.dataItem = []
+      let index = sortItem.findIndex(e => e.fieldId === fieldId)
+      console.log('index', index)
+      if (index !== -1 && index < sortItem.length - 1) {
+        let el = sortItem[index]
+        console.log('*****', el)
+        this.dataItem[index] = sortItem[index + 1]
+        this.dataItem[index + 1] = el
+        this.dataItem[index].sortNoField = sortItem[index + 1].sortNoField - 1
+        this.dataItem[index + 1].sortNoField = el.sortNoField + 1
+        console.log('sortNoField', this.dataItem[index + 1].sortNoField)
+        console.log('el', el)
+        console.log('movedown', this.dataItem)
+      }
+      await this.updateAction(this.dataItem, sortItem[0])
+      console.log('dataItme', this.dataItem)
+    },
+    async updateAction (dt) {
+      console.log('dt', dt)
+
+      var newArray = dt.filter(val => val)
+      console.log('newArray', newArray)
+      await axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + "/customField/" + "updateAction",
+          newArray,
+          {
+            headers: {
+              'Application-Key': this.$session.getAll().ApplicationKey
+            }
+          }
+        )
+        .then(async response => {
+          // Debug response
+          console.log('addDataGlobal DNS_IP + PATH + "add"', response)
+          await this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
+        })
+        // eslint-disable-next-line handle-callback-err
+        .catch(error => {
+          console.log('error function addDataGlobal : ', error)
+          this.dataReady = true
+        })
+    },
     chkAddoptionFieldType () {
       if (this.formAdd.fieldType === 'text' || this.formAdd.fieldType === 'number' || this.formAdd.fieldType === 'dateTime') {
         this.formAdd.optionFieldType = ''
@@ -988,38 +1087,11 @@ export default {
           break
       }
     },
-
-    async updateActionDown (dt, fieldId) {
-      console.log('dt', dt)
-
-      var newArray = dt.filter(val => val)
-      console.log(newArray)
-      await axios
-        .post(
-          // eslint-disable-next-line quotes
-          this.DNS_IP + "/customField/" + "updateAction",
-          newArray,
-          {
-            headers: {
-              'Application-Key': this.$session.getAll().ApplicationKey
-            }
-          }
-        )
-        .then(async response => {
-          // Debug response
-          console.log('addDataGlobal DNS_IP + PATH + "add"', response)
-          this.getDataById(fieldId)
-        })
-        // eslint-disable-next-line handle-callback-err
-        .catch(error => {
-          console.log('error function addDataGlobal : ', error)
-          this.dataReady = true
-        })
-    },
     async getDataById (item) {
       console.log('dataItem', this.dataItem)
       console.log('Item', item)
       console.log('selectConditionField', this.selectConditionField)
+      console.log('requiredField', this.formUpdate.requiredField)
       this.dataItemOption = JSON.parse(item.optionField)
       this.formUpdate.fieldId = item.fieldId
       if (item.conditionField === '' || item.conditionField === null) {
@@ -1082,6 +1154,7 @@ export default {
       this.dataReady = false
       // this.formAdd.optionField = JSON.stringify(this.formAdd.optionField)
       console.log('optionField', this.formAdd.optionField)
+      console.log('requiredField', this.formAdd.requiredField)
 
       this.$swal({
         title: 'ต้องการ เพิ่มข้อมูล ใช่หรือไม่?',
@@ -1098,6 +1171,13 @@ export default {
           if (this.formAdd.fieldType === 'optionField') {
             this.formAdd.optionField = JSON.stringify(this.dataItemOption)
           }
+          // if (this.formAdd.requiredField.text === 'required field') {
+          //   this.formAdd.requiredField = 'true'
+          // } else {
+          //   this.formAdd.requiredField = 'false'
+          // }
+          this.formAdd.sortNoField = this.dataItem.length + 1
+          console.log('sortNo', this.formAdd.sortNoField)
           this.add()
         })
         .catch((error) => {

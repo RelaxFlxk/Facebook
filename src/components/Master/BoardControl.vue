@@ -452,7 +452,9 @@
                           })"
                           :key="index"
                         >
+                        <div v-if="items.showCard === 'True'">
                           {{ items.fieldValue }}<br />
+                        </div>
                         </div>
                         <v-icon large color="black"> mdi-account</v-icon>
                         <strong>{{
@@ -678,9 +680,11 @@
                         })"
                         :key="index"
                       >
+                      <div v-if="items.showCard === 'True'">
                         <strong>
                           {{ items.fieldValue }}
                         </strong>
+                      </div>
                       </v-chip>
                     </v-col>
                     <v-col cols="2" class="text-right">
