@@ -1353,7 +1353,7 @@
     border-color: rgba(243, 5, 25, 0.904) !important;
 }
 .slidein {
-  max-width: 600px;
+  max-width: "100%";
   padding: 2em 3em;
   position: fixed;
   z-index: 100;
