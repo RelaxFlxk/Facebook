@@ -972,7 +972,7 @@
               <div class="slidein" v-if="drawer">
                 <h4>แสดงตารางรายวัน</h4>
                 <v-row>
-                  <v-col cols="10">
+                  <v-col cols="8">
                     <v-menu
                       ref="menu"
                       v-model="menu1"
@@ -1004,16 +1004,17 @@
                       ></v-date-picker>
                     </v-menu>
                   </v-col>
-                  <v-col cols="2">
-                    <!-- <v-btn
+                  <v-col cols="4">
+                    <v-btn
+                      v-if="dataItemTimesChange.length > 0"
                       color="primary"
-                      fab
                       small
-                      @change="getTimesChange('all'), this.timeTable = ''"
+                      @click="exportExcel()"
                       dark
                     >
-                      <v-icon>mdi-arrow-expand-all</v-icon>
-                    </v-btn> -->
+                      <v-icon right dark>mdi-microsoft-excel</v-icon>
+                      Export Excel
+                    </v-btn>
                   </v-col>
                 </v-row>
                 <button class="close-btn" @click="toggle(), getSelect()">X</button>
@@ -1520,6 +1521,7 @@ export default {
         // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
       ],
       dataItem: [],
+      dataexport: [],
       dataItemSelect: [],
       editedItemSeleteField: [],
       jobitem: [],
@@ -1595,6 +1597,35 @@ export default {
     this.scanQrcode()
   },
   methods: {
+    exportExcel () {
+      let dataExport = []
+      this.dataexport = []
+      for (var i = 0; i < this.dataItemTime.length; i++) {
+        // var d = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === item.timeDueHtext })[i]
+        var d = this.dataItemTime[i]
+        var dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && (el.statusBtText === 'โทรยืนยันแล้ว' || el.statusBtText === 'รับรถแล้ว') })
+        console.log('s.dataSelect', dataSelect)
+        for (var x = 0; x < dataSelect.length; x++) {
+          var t = dataSelect[x]
+          var s = {}
+          console.log('s.t', t)
+          if (dataExport.filter(el => { return el.timeDueHtext === this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )' }).length === 0) {
+            s.timeDueHtext = this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )'
+          } else {
+            s.timeDueHtext = ''
+          }
+          s.title = t.timeDuetext + ' : ' + t.statusBtText
+          s.status = t.statusBtText
+          s.cusName = t.cusName
+          s.cusReg = t.cusReg
+          s.flowName = t.flowName
+          dataExport.push(s)
+        }
+      }
+      this.dataexport = dataExport
+      this.onExport()
+      console.log('dataEport', JSON.stringify(dataExport))
+    },
     toggle () {
       this.timeTable = new Date().toISOString().substr(0, 10)
       this.getTimesChange('update')
@@ -1842,7 +1873,10 @@ export default {
       if (text === 'all') {
         this.dataItemTimesChange = this.dataItem
       } else {
-        this.dataItemTimesChange = this.dataItem.filter(el => { return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable })
+        this.dataItemTimesChange = this.dataItem.filter(el => { return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable }).sort((a, b) => {
+          if (a.timeDuetext < b.timeDuetext) return -1
+          return a.timeDuetext > b.timeDuetext ? 1 : 0
+        })
       }
     },
     async getBookingList () {
@@ -2664,6 +2698,24 @@ export default {
       this.formChange.time = this.momenTime(item.dueDate)
       this.dialogChange = true
       console.log(this.formChange)
+    },
+    onExport () {
+      var dataexport = []
+      for (var i = 0; i < this.dataexport.length; i++) {
+        var a = this.dataexport[i]
+        dataexport.push({
+          'วันที่และเวลา': a.timeDueHtext,
+          'เวลาและสถานะ': a.title,
+          'สถานะ': a.status,
+          'ชื่อลูกค้า': a.cusName,
+          'ทะเบียน': a.cusReg,
+          'ประเภทบริการ': a.flowName
+        })
+      }
+      const dataWS = XLSX.utils.json_to_sheet(dataexport)
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, dataWS)
+      XLSX.writeFile(wb, 'export_' + this.format_dateNotime(this.timeTable) + '.xlsx')
     }
   }
 }
