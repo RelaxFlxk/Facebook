@@ -208,6 +208,8 @@ table tr:last-child td:last-child {
 }
 .v-data-table>.v-data-table__wrapper>table>tbody>tr:nth-child(even) {background: var(--table-body-row-even)}
 .v-data-table>.v-data-table__wrapper>table>tbody>tr:nth-child(odd) {background: var(--table-body-row-odd)}
+.table_detail_2>.v-data-table__wrapper>table>tbody>tr:nth-child(even) {background: #eeeeee}
+.table_detail_2>.v-data-table__wrapper>table>tbody>tr:nth-child(odd) {background: #ffffff}
 .v-data-table>.v-data-table__wrapper>table>tbody>tr>td {
   color: var(--table-body-text) !important;
 }

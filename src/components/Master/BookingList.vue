@@ -970,7 +970,7 @@
           <v-col cols="12" >
             <transition name="slide">
               <div class="slidein" v-if="drawer">
-                <h4>แสดงตารางรายวัน</h4>
+                <h4>ตรวจสอบคิวจองรายวัน</h4>
                 <v-row>
                   <v-col cols="8">
                     <v-menu
@@ -985,7 +985,7 @@
                       <template v-slot:activator="{ on, attrs }">
                         <v-text-field
                           v-model="timeTable"
-                          label="วันที่นัดส่งรถลูกค้า"
+                          label="วันที่นัดลูกค้า"
                           persistent-hint
                           dense
                           outlined
@@ -1013,46 +1013,46 @@
                       dark
                     >
                       <v-icon right dark>mdi-microsoft-excel</v-icon>
-                      Export Excel
+                      &nbsp;Export
                     </v-btn>
                   </v-col>
                 </v-row>
                 <button class="close-btn" @click="toggle(), getSelect()">X</button>
-                <v-row v-for="(item, indexitem) in dataItemTime" :key="indexitem">
+                <v-simple-table dense>
+                  <tbody>
+                  <template v-for="(item, indexitem) in masterTime">
+                    <tr :key="'tr'+indexitem">
+                      <td valign="top"><b>{{item}}</b></td>
+                      <td>
+                        <v-simple-table dense class="table_detail_2">
+                          <tbody>
+                          <tr v-for="(items, indexitems) in dataItemTimesChange.filter(el => { return el.timeDueHtext === item && (el.statusBt==='confirmJob' || el.statusBt==='confirm') })" :key="'td'+indexitems">
+                            <td>{{items.timeDuetext}}</td>
+                            <td>{{items.flowName}}</td>
+                            <td>{{items.cusName}}</td>
+                            <td>{{items.cusReg}}</td>
+                          </tr>
+                          </tbody>
+                        </v-simple-table>
+                      </td>
+                    </tr>
+                  </template>
+                  </tbody>
+                </v-simple-table>
+
+                <!-- <v-row v-for="(item, indexitem) in dataItemTime" :key="indexitem">
                   <v-col>
                     <strong>{{item.timeDueHtext}}</strong>
                   </v-col>
-                  <v-col class="pt-1 pb-1" cols="auto" v-for="(items, indexitems) in dataItemTimesChange.filter(el => { return el.timeDueHtext === item.timeDueHtext })" :key="indexitems">
+                  <v-col class="pt-1 pb-1 text-left" cols="auto" v-for="(items, indexitems) in dataItemTimesChange.filter(el => { return el.timeDueHtext === item.timeDueHtext })" :key="indexitems">
                     <v-card
                       elevation="10"
                     >
                       <v-container class="pt-0 pb-0">
-                      <v-card-title>{{items.timeDuetext + ' : ' + items.statusBtText}}</v-card-title>
+                      <v-card-title>{{items.timeDuetext + ' : ' + items.flowName}}</v-card-title>
                       <v-card-text>
-                        <v-text-field
-                          label="ชื่อลูกค้า"
-                          :value="items.cusName"
-                          class="pt-0 pb-0"
-                          outlined
-                          dense
-                          readonly
-                        ></v-text-field>
-                        <v-text-field
-                          label="ทะเบียน"
-                          :value="items.cusReg"
-                          class="pt-0 pb-0"
-                          outlined
-                          dense
-                          readonly
-                        ></v-text-field>
-                        <v-text-field
-                          label="บริการ"
-                          :value="items.flowName"
-                          class="pt-0 pb-0"
-                          outlined
-                          dense
-                          readonly
-                        ></v-text-field>
+                        คุณ {{items.cusName}}<br>
+                        ทะเบียน: {{items.cusReg}}
                       </v-card-text>
                       </v-container>
                     </v-card>
@@ -1060,7 +1060,7 @@
                   <v-col col="12" class="pt-0 pb-0">
                     <v-divider></v-divider>
                   </v-col>
-                </v-row>
+                </v-row> -->
               </div>
             </transition>
             <v-card elevation="7" v-if="dataReady">
@@ -1072,7 +1072,7 @@
                   @click="toggle"
                   small
                 >
-                  แสดงตารางรายวัน
+                  ตรวจสอบคิวจองรายวัน
                   <v-icon
                     right
                     dark
@@ -1355,7 +1355,7 @@
 }
 .slidein {
   max-width: "100%";
-  padding: 2em 3em;
+  padding: 2em 1em;
   position: fixed;
   z-index: 100;
   top: 0;
@@ -1476,6 +1476,7 @@ export default {
         // monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         firstDay: 1
       },
+      masterTime: ['06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'],
       masBranchID: '',
       masBranchIDExport: '',
       bookNo: '',
