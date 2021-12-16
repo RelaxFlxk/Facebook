@@ -3,12 +3,186 @@
     <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
     <v-main>
       <div class="pl-5">
-        <v-breadcrumbs
-          class="pl-0 pb-10"
-          :items="breadcrumbs"
-          divider=">"
-        ></v-breadcrumbs>
+        <v-row>
+          <v-col cols="6">
+            <v-breadcrumbs
+              class="pl-0 pb-10"
+              :items="breadcrumbs"
+              divider=">"
+            ></v-breadcrumbs>
+          </v-col>
+          <v-col cols="6" align="right">
+            <v-btn
+              class="mt-6 mr-10"
+              color="primary"
+              style="z-index: 8"
+              id="v-step-0"
+              depressed
+              @click="(dialogAdd = true)"
+            >
+              <v-icon left>mdi-text-box-plus</v-icon>
+              Add User
+            </v-btn>
+          </v-col>
+        </v-row>
       </div>
+      <v-dialog v-model="dialogAdd" persistent max-width="70%">
+        <v-card class="text-center">
+          <v-form ref="form" v-model="valid" lazy-validation>
+            <v-card-text>
+              <v-container>
+                <v-col class="text-right pa-0">
+                  <v-btn
+                    small
+                    color="#E0E0E0"
+                    @click="(dialogAdd = false), clearDataAdd()"
+                  >
+                    <v-icon color="#173053">mdi-close</v-icon>
+                  </v-btn>
+                </v-col>
+                <v-row justify="center">
+                  <v-col cols="5" class="text-center" style="margin: auto 0">
+                    <v-col class="text-center">
+                      <v-img
+                        class="v-margit_img_reward"
+                        :src="require('@/assets/AddBookingList.svg')"
+                        max-width="470.37"
+                        max-height="247"
+                      ></v-img>
+                    </v-col>
+                  </v-col>
+
+                  <v-col cols="6" class="v-margit_text_add mt-0 pa-0">
+                    <v-col class="text-center pa-3 ml-2">
+                      <v-img
+                        class="v_text_add"
+                        :src="require('@/assets/Grouptitle.svg')"
+                      ></v-img>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-text-field
+                        v-model="name"
+                        :counter="10"
+                        :rules="nameRules"
+                        label="ชื่อ-นามสกุล"
+                        required
+                      ></v-text-field>
+                      <v-text-field
+                        v-model="email"
+                        :rules="emailRules"
+                        label=" Email"
+                        required
+                      ></v-text-field>
+                      <v-text-field
+                        v-model="password"
+                        :counter="10"
+                        :rules="nameRules"
+                        label="password"
+                        required
+                      ></v-text-field>
+                       <v-text-field
+                        v-model="email"
+                        label="User Name"
+                        disabled
+                        required
+                      ></v-text-field>
+                       <v-text-field
+                        v-model="password"
+                        label="Password"
+                        disabled
+                        required
+                      ></v-text-field>
+                    </v-col>
+                  </v-col>
+                </v-row>
+                <div class="text-center">
+                  <v-btn
+                    class="mt-3"
+                    elevation="2"
+                    large
+                    color="success"
+                    :disabled="!valid"
+                    @click="addData()"
+                  >
+                    <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                    เพิ่ม
+                  </v-btn>
+                </div>
+              </v-container>
+            </v-card-text>
+          </v-form>
+        </v-card>
+      </v-dialog>
+      <v-dialog v-model="dialogEdit" persistent max-width="80%">
+            <v-card>
+              <v-card-title>
+                <span class="headline">แก้ไขข้อมูล</span>
+              </v-card-title>
+              <v-card-text>
+                <v-container>
+                  <v-form
+                    ref="form_update"
+                    v-model="valid"
+                    lazy-validation
+                  >
+                  <v-row>
+                      <v-col cols="4">
+                      <v-text-field
+                        label="user Name"
+                        v-model="formUpdate.userName"
+                        :counter="50"
+                        maxlength="50"
+                        required
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="4">
+                      <v-text-field
+                        label="password"
+                        v-model="formUpdate.userPassword"
+                        :counter="50"
+                        maxlength="50"
+                        required
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="4">
+                      <v-text-field
+                        label="Name"
+                        v-model="formUpdate.userFirst_NameTH"
+                        :counter="50"
+                        maxlength="50"
+                        required
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                   </v-form>
+                </v-container>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  elevation="2"
+                  x-large
+                  color="blue darken-1"
+                  text
+                  @click="dialogEdit = false"
+                >
+                  <v-icon left> mdi-cancel</v-icon>
+                  ปิด
+                </v-btn>
+                <v-btn
+                  elevation="2"
+                  x-large
+                  color="success"
+                  text
+                  :disabled="!valid"
+                  @click="editData()"
+                >
+                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                  แก้ไข
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
       <div>
         <!-- <v-card class="pa-3" width="50%" style="margin: 0 auto">
           <v-form ref="form" v-model="valid" lazy-validation>
@@ -30,38 +204,46 @@
           </v-form>
         </v-card> -->
         <v-card class="pa-3" width="100%" style="margin: 0 auto">
-        <v-data-table
-                  :headers="columns"
-                  :items="dataItem"
-                  :items-per-page="10"
-                >
-                  <template v-slot:[`item.CREATE_DATE`]="{ item }">
-                    {{ format_dateNotime(item.CREATE_DATE) }}
-                  </template>
-                  <template v-slot:[`item.LAST_DATE`]="{ item }">
-                    {{ format_dateNotime(item.LAST_DATE) }}
-                  </template>
-                  <template v-slot:[`item.action`]="{ item }">
-                    <v-btn
-                      color="question"
+          <v-data-table
+            :headers="columns"
+            :items="dataItem"
+            :items-per-page="10"
+          >
+            <template v-slot:[`item.CREATE_DATE`]="{ item }">
+              {{ format_dateNotime(item.CREATE_DATE) }}
+            </template>
+            <template v-slot:[`item.LAST_DATE`]="{ item }">
+              {{ format_dateNotime(item.LAST_DATE) }}
+            </template>
+            <template v-slot:[`item.action`]="{ item }">
+               <v-btn
+                      v-if="item.USER_ROLE === 'user'"
+                      color="red"
+                      dark
                       fab
-                      x-small
-                      @click.stop="
-                        ;(dialogEdit = true),
-                          getDataById(item),
-                          validate('UPDATE')
-                      "
+                      small
+                      @click="deleteData(item)"
                     >
-                      <v-icon dark> mdi-tools </v-icon>
+                      <v-icon> mdi-delete </v-icon>
                     </v-btn>
-                  </template>
-                </v-data-table>
-                </v-card>
+              <v-btn
+                      color="blue"
+                      fab
+                      small
+                      dark
+                      @click.stop="(dialogEdit = true), getDataById(item)"
+                    >
+                      <v-icon> mdi-tools </v-icon>
+                    </v-btn>
+            </template>
+          </v-data-table>
+        </v-card>
       </div>
     </v-main>
   </div>
 </template>
 <script>
+import axios from 'axios'
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import JsonExcel from 'vue-json-excel' // https://www.npmjs.com/package/vue-json-excel
 import XLSX from 'xlsx' // import xlsx
@@ -103,20 +285,7 @@ export default {
       optionSubDistrict: [],
       optionDistrict: [],
       optionProvince: [],
-      formUpdate: {
-        logo: '',
-        logoPreview: '',
-        contactTel: '',
-        shopName: '',
-        shopImge: '',
-        expireDate: '',
-        contactEmail: '',
-        map: '',
-        ZIP_CD: '',
-        optionSubDistrictNew: '',
-        optionDistrictNew: '',
-        optionProvinceNew: ''
-      },
+      formUpdate: {},
       filesShop: null,
       formUpdateItem: {
         userTypeGroupCode: '',
@@ -128,26 +297,19 @@ export default {
         CAN_IMPORT: '',
         CAN_EXPORT: ''
       },
-      rules: {
-        numberRules: (value) =>
-          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
-          'กรุณากรอกตัวเลข 0 ถึง 9',
-        counterTel: (value) => value.length <= 10 || 'Max 10 characters',
-        IDcardRules: (value) =>
-          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999999) ||
-          'กรุณากรอกตัวเลข 0 ถึง 9',
-        required: (value) => !!value || 'กรุณากรอก.',
-        resizeImag: (value) =>
-          !value ||
-          value.size < 2000000 ||
-          'Avatar size should be less than 2 MB!',
-        counterIDcard: (value) => value.length <= 13 || 'Max 13 characters',
-        email: (value) => {
-          const pattern =
-            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-          return pattern.test(value) || 'Invalid e-mail.'
-        }
-      },
+      valid: false,
+      name: '',
+      lastName: '',
+      password: '',
+      nameRules: [
+        v => !!v || 'Name is required',
+        v => (v && v.length <= 10) || 'Name must be less than 10 characters'
+      ],
+      email: '',
+      emailRules: [
+        v => !!v || 'E-mail is required',
+        v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
+      ],
       // End Form Config ADD EDIT
       // Menu Config
       breadcrumbs: [
@@ -174,8 +336,7 @@ export default {
         { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
         { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
       ],
-      dataItem: [],
-      validUpdate: true
+      dataItem: []
       // End Data Table Config
     }
   },
@@ -184,14 +345,207 @@ export default {
     // this.getDataTypeGroup()
     this.dataReady = false
     // Get Data
-    this.getDataGlobal(
-      this.DNS_IP,
-      this.path,
-      this.session.data.shopId
-    )
+    this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
     console.log(this.dataItem + this.path + this.session.data.shopId)
   },
-  methods: {}
+  methods: {
+    async addData () {
+      this.$refs.form.validate()
+      if (this.$refs.form.validate() === false) {
+        console.log('false', this.session.data.shopId)
+      } else {
+        let data = [{
+          'userCode': 'SYS_USER_' + (new Date()).getTime(),
+          'userName': this.email,
+          'userFirst_NameTH': this.name,
+          'userPassword': this.password,
+          'USER_ROLE': 'user',
+          'CREATE_USER': 'admin',
+          'LAST_USER': 'admin',
+          'shopId': this.session.data.shopId
+        }]
+        console.log(data)
+        this.$swal({
+          title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        }).then(async result => {
+          axios
+            .post(this.DNS_IP + `/admin_register_user/?userName=${this.session.data.userName}&shopId=${this.session.data.shopId}`, ...data)
+            .then(response => {
+              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              this.clearDataAdd()
+              this.dialogAdd = false
+              this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
+              console.log('addDataGlobal DNS_IP + /job/add', response)
+            })
+            .catch(error => {
+              console.log('error function addData : ', error)
+            })
+        })
+          .catch(error => {
+            console.log('Cencel : ', error)
+          })
+      }
+      // let rs = {
+      //   'userName': this.email
+      // }
+      // console.log(this.email)
+      // let rs = this.fieldNameItem
+      // console.log('dddddddddddd', this.fieldNameItem)
+      // let Add = []
+      // let fielditem = this.fieldNameItem
+      // for (let i = 0; i < rs.length; i++) {
+      //   let d = rs[i]
+      //   let update = {}
+      //   if (d.conditionField === '' || d.conditionField === null) {
+      //     update.masBranchID = this.formAdd.masBranchID
+      //     update.bookingFieldId = this.formAdd.bookingFieldId
+      //     update.flowId = this.formAdd.flowId
+      //     update.fieldId = d.fieldId
+      //     update.fieldValue = d.fieldValue
+      //     update.shopId = d.shopId
+      //     update.dueDate = this.date + ' ' + this.time
+      //     update.userId = 'user-skip'
+      //     update.pageName = 'BookingList'
+      //     Add.push(update)
+      //   } else {
+      //     if (
+      //       fielditem.filter((row) => {
+      //         return row.fieldId === parseInt(d.conditionField)
+      //       }).length > 0
+      //     ) {
+      //       console.log('this', fielditem)
+      //       if (
+      //         d.conditionValue ===
+      //         fielditem.filter((row) => {
+      //           return row.fieldId === parseInt(d.conditionField)
+      //         })[0].fieldValue
+      //       ) {
+      //         update.masBranchID = this.formAdd.masBranchID
+      //         update.bookingFieldId = this.formAdd.bookingFieldId
+      //         update.flowId = this.formAdd.flowId
+      //         update.fieldId = d.fieldId
+      //         update.fieldValue = d.fieldValue
+      //         update.shopId = d.shopId
+      //         update.dueDate = this.date + ' ' + this.time
+      //         update.userId = 'user-skip'
+      //         update.pageName = 'BookingList'
+      //         Add.push(update)
+      //       }
+      //     }
+      //   }
+      // }
+      // console.log('Add', Add)
+      // this.$swal({
+      //   title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
+      //   type: 'question',
+      //   showCancelButton: true,
+      //   confirmButtonColor: '#3085d6',
+      //   cancelButtonColor: '#b3b1ab',
+      //   confirmButtonText: 'ใช่',
+      //   cancelButtonText: 'ไม่'
+      // })
+      //   .then(async (result) => {
+      //     axios
+      //       .post(this.DNS_IP + '/Booking/add', Add)
+      //       .then((response) => {
+      //         this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+      //         this.clearDataAdd()
+      //         console.log('addDataGlobal DNS_IP + /job/add', response)
+      //       })
+      //       .catch((error) => {
+      //         console.log('error function addData : ', error)
+      //       })
+      //   })
+      //   .catch((error) => {
+      //     console.log('Cencel : ', error)
+      //   })
+    },
+    clearDataAdd () {
+      this.$refs.form.reset()
+      this.$refs.form.resetValidation()
+    },
+    deleteData (item) {
+      console.log('test', item)
+      this.$swal({
+        title: `ต้องการ ลบข้อมูล ${item.userName} ใช่หรือไม่?`,
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#fa0202',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      }).then(async result => {
+        this.formUpdate.LAST_USER = this.$session.getAll().data.userName
+        await axios
+          .post(
+            // eslint-disable-next-line quotes
+            this.DNS_IP + "/system_user/delete/" + item.userId, item
+          )
+          .then(async response => {
+            // Debug response
+            console.log('DNS_IP + PATH + "delete/"', response)
+            console.log('status', status)
+
+            this.$swal('เรียบร้อย', 'ลบข้อมูลเรียบร้อย', 'success')
+            this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
+            // Close Dialog
+            this.dialogDelete = false
+          })
+      })
+    },
+    getDataById (item) {
+      this.formUpdate = item
+      console.log('dff', this.formUpdate)
+    },
+    editData () {
+      console.log('dd', this.formUpdate)
+      console.log('dd', this.formUpdate.name)
+      console.log('dd', this.formUpdate.email)
+
+      this.$swal({
+        title: `ต้องการ เเก้ไขข้อมูล ใช่หรือไม่?`,
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#fa0202',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      }).then(async result => {
+        let data = [{
+          'userName': this.formUpdate.userName,
+          'userFirst_NameTH': this.formUpdate.userFirst_NameTH,
+          'userPassword': this.formUpdate.userPassword
+        }]
+        console.log('dd', data)
+
+        await axios
+          .post(
+            // eslint-disable-next-line quotes
+            this.DNS_IP + "/system_user/edit/" + this.formUpdate.userId, ...data
+          )
+          .then(async response => {
+            // Debug response
+            console.log('DNS_IP + PATH + "delete/"', response)
+            console.log('status', status)
+
+            this.$swal('เรียบร้อย', 'แก้ไขข้อมูลเรียบร้อย', 'success')
+            this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
+            // Close Dialog
+            this.dialogEdit = false
+          })
+      })
+    }
+  }
 }
 </script>
-<style scope></style>
+<style scope>
+.v-text-field{
+  padding: 10px;
+}
+</style>

@@ -250,13 +250,18 @@ export default {
       booking: [],
       broadCast: [],
       items: [],
-      Dashboard: []
+      Dashboard: [],
+      roleUser: this.$session.getAll().data.USER_ROLE
     }
   },
   computed: {},
   mounted () {
     this.items = []
     this.adminChk()
+    console.log(this.roleUser)
+    if (this.roleUser === 'user') {
+      this.corporate = this.corporate.filter((item) => { return item.title !== 'สมัครเเละจัดการยูเซอร์' })
+    } else { console.log('admin') }
     // if (this.session.data.userTypeGroup === 'Shop Admin') {
     //   this.shopAdminChk()
     // }

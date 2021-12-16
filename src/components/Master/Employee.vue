@@ -344,12 +344,13 @@
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
                     <v-btn
-                      color="question"
+                      color="blue"
                       fab
                       small
+                      dark
                       @click.stop="(dialogEdit = true), getDataById(item), validate('UPDATE')"
                     >
-                      <v-icon dark> mdi-tools </v-icon>
+                      <v-icon> mdi-tools </v-icon>
                     </v-btn>
                     <v-btn
                       color="red"
