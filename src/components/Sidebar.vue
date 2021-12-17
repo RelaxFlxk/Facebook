@@ -250,18 +250,13 @@ export default {
       booking: [],
       broadCast: [],
       items: [],
-      Dashboard: [],
-      roleUser: this.$session.getAll().data.USER_ROLE
+      Dashboard: []
     }
   },
   computed: {},
   mounted () {
     this.items = []
     this.adminChk()
-    console.log(this.roleUser)
-    if (this.roleUser === 'user') {
-      this.corporate = this.corporate.filter((item) => { return item.title !== 'สมัครเเละจัดการยูเซอร์' })
-    } else { console.log('admin') }
     // if (this.session.data.userTypeGroup === 'Shop Admin') {
     //   this.shopAdminChk()
     // }
@@ -299,7 +294,8 @@ export default {
         { title: 'เพิ่ม/ลบ สถานะการบริการ', icon: 'mdi-transit-connection-variant', to: '/Master/Flow' },
         { title: 'จัดโครงสร้างกระดาน', icon: 'dashboard', to: '/Master/WorkShop' },
         { title: 'จัดการ ช่องกรอกข้อมูล', icon: 'mdi-account-edit', to: '/Master/CustomField' },
-        { title: 'ข้อมูลคะแนนบริการ', icon: 'mdi-account-edit', to: '/Master/Rating' }
+        { title: 'ข้อมูลคะแนนบริการ', icon: 'mdi-account-edit', to: '/Master/Rating' },
+        { title: 'จัดการLineGroup', icon: 'mdi-account-edit', to: '/Master/SettingLineGroup' }
         // { title: 'รายชื่อร้านค้า', icon: 'mdi-playlist-check', to: '/System/ListShop' },
         // { title: 'กลุ่มผู้ใช้งาน', icon: 'mdi-account-group', to: '/System/UserTypeGroup' },
         // { title: 'Vgroup', icon: 'mdi-account-group', to: '/System/VgroupMapCoin' }

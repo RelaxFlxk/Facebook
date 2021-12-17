@@ -176,7 +176,7 @@ export default {
             let d = rs[i]
             this.dataitem.push(d)
           }
-          // console.log(' this.dataitem', this.dataitem)
+          console.log('dataitem', this.dataitem)
           this.getCard()
         })
         .catch((error) => {
@@ -204,21 +204,16 @@ export default {
         let d = this.flowNameitem[i]
         // console.log('d', d)
         let aa = []
-        for (
-          let a = 0;
-          a < this.dataitem.filter((item) => item.flowName === d).length;
-          a++
-        ) {
+        for (let a = 0; a < this.dataitem.filter((item) => item.flowName === d).length; a++) {
           let ff = this.dataitem.filter((item) => item.flowName === d)[a]
           let s = {}
           s.label = ff.stepTitle
           s.value = ff.totalJob - ff.closeJob
           aa.push(s)
         }
-        // console.log('aa', aa)
         this.Carditem.push(aa)
       }
-      // console.log(' this.Carditem', this.Carditem)
+      console.log(' this.Carditem', this.Carditem)
       setTimeout(() => {
         this.renderChart()
       }, 500)

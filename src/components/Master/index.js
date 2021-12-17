@@ -15,6 +15,7 @@ import PaymentType from './PaymentType.vue'
 import Rating from './Rating'
 import CalendarBooking from './CalendarBooking'
 import BoardControl from './BoardControl'
+import SettingLineGroup from './SettingLineGroup'
 export default {
   CustomField,
   Flow,
@@ -32,5 +33,6 @@ export default {
   PaymentType,
   Rating,
   CalendarBooking,
-  BoardControl
+  BoardControl,
+  SettingLineGroup
 }

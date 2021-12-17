@@ -75,6 +75,11 @@ export default new Router({
     component: Master.Rating
   },
   {
+    path: '/Master/SettingLineGroup',
+    name: 'SettingLineGroup',
+    component: Master.SettingLineGroup
+  },
+  {
     path: '/Master/Qrcodereader',
     name: 'Qrcodereader',
     component: Master.Qrcodereader
