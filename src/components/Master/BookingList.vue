@@ -133,6 +133,35 @@
             </template>
           </v-col>
           <v-col cols="4" class="pl-5 v-margit_button">
+            <v-menu
+              ref="menu"
+              v-model="menuStart"
+              transition="scale-transition"
+              offset-y
+              max-width="290px"
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="dateStart"
+                  label="Picker in menu"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  outlined
+                  dense
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                @input="menuStart = false,getBookingList()"
+                v-model="dateStart"
+                type="month"
+                no-title
+                scrollable
+              >
+              </v-date-picker>
+            </v-menu>
             <v-select
               v-model="masBranchID"
               :items="branch"
@@ -1017,7 +1046,7 @@
                     </v-btn>
                   </v-col>
                 </v-row>
-                <button class="close-btn" @click="toggle(), getSelect()">X</button>
+                <button class="close-btn" @click="toggle()">X</button>
                 <v-simple-table dense>
                   <tbody>
                   <template v-for="(item, indexitem) in masterTime">
@@ -1094,7 +1123,7 @@
                 <v-data-table
                   :headers="columns"
                   :items="dataItem"
-                  v-if="dataItemSelect.length === 0 && dataItemTimesChange.length === 0"
+                  v-if="dataItemSelect.length === 0"
                   :search="searchAll2"
                   :items-per-page="10"
                 >
@@ -1175,88 +1204,7 @@
                 <v-data-table
                   :headers="columns"
                   :items="dataItemSelect"
-                  v-if="dataItemSelect.length > 0 && dataItemTimesChange.length === 0"
-                  :search="searchAll2"
-                  :items-per-page="10"
-                >
-                  <template v-slot:[`item.CREATE_DATE`]="{ item }">
-                    {{ format_dateNotime(item.CREATE_DATE) }}
-                  </template>
-                  <template v-slot:[`item.LAST_DATE`]="{ item }">
-                    {{ format_dateNotime(item.LAST_DATE) }}
-                  </template>
-                  <template v-slot:[`item.dueDate`]="{ item }">
-                    {{ format_date(item.dueDate) }}
-                  </template>
-                  <template v-slot:[`item.action`]="{ item }">
-                    <!-- confirm -->
-                    <v-btn
-                      color="success"
-                      fab
-                      id="v-step-2"
-                      v-if="item.statusBt !== 'confirmJob'"
-                      :disabled="item.chkConfirm"
-                      small
-                      @click.stop="confirmChk(item)"
-                    >
-                      <v-icon dark> mdi-phone-check </v-icon>
-                    </v-btn>
-                    <v-btn
-                      color="error"
-                      fab
-                      id="v-step-2"
-                      v-if="item.statusBt !== 'confirmJob'"
-                      small
-                      :disabled="item.chkCancel"
-                      @click.stop="cancelChk(item)"
-                    >
-                      <v-icon dark> mdi-phone-cancel </v-icon>
-                    </v-btn>
-                    <v-btn
-                      color="warning"
-                      id="v-step-2"
-                      v-if="item.statusBt !== 'confirmJob'"
-                      small
-                      @click.stop="setDataChang(item)"
-                    >
-                      เปลี่ยนเวลา
-                    </v-btn>
-                    <v-btn
-                      color="primary"
-                      fab
-                      v-if="item.statusBt !== 'confirmJob'"
-                      id="v-step-2"
-                      small
-                      @click.stop="(dialogEdit = true), getBookingData(item)"
-                    >
-                      <v-icon dark> mdi-account-plus </v-icon>
-                    </v-btn>
-                    <v-btn
-                      color="red"
-                      dark
-                      v-if="item.statusBt !== 'confirmJob'"
-                      fab
-                      small
-                      @click.stop="(dialogDelete = true), getDataById(item)"
-                    >
-                      <v-icon> mdi-delete </v-icon>
-                    </v-btn>
-                    <v-btn
-                      color="info"
-                      dark
-                      v-if="item.statusBt === 'confirmJob'"
-                      fab
-                      small
-                      @click.stop="(dialogJob = true), getjob(item)"
-                    >
-                      <v-icon> mdi-qrcode-scan </v-icon>
-                    </v-btn>
-                  </template>
-                </v-data-table>
-                <v-data-table
-                  :headers="columns"
-                  :items="dataItemTimesChange"
-                  v-if="dataItemTimesChange.length > 0"
+                  v-if="dataItemSelect.length > 0"
                   :search="searchAll2"
                   :items-per-page="10"
                 >
@@ -1561,6 +1509,8 @@ export default {
       dialogJob: false,
       menu: false,
       menu1: false,
+      menuStart: false,
+      dateStart: new Date().toISOString().substr(0, 7),
       endDate: '',
       endTime: '',
       rules: {
@@ -1581,7 +1531,9 @@ export default {
           const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
           return pattern.test(value) || 'Invalid e-mail.'
         }
-      }
+      },
+      getSelectText: '',
+      getSelectCount: 0
     }
   },
   beforeCreate () {
@@ -1849,6 +1801,8 @@ export default {
         })
     },
     getSelect (text, count) {
+      this.getSelectText = text
+      this.getSelectCount = count
       this.dataItemSelect = []
       this.dataItemTimesChange = []
       if (text === 'confirm') {
@@ -1871,6 +1825,7 @@ export default {
     },
     getTimesChange (text) {
       this.dataItemTimesChange = []
+      console.log('this.dataItem', this.dataItem.filter(el => { return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable }))
       if (text === 'all') {
         this.dataItemTimesChange = this.dataItem
       } else {
@@ -1894,6 +1849,7 @@ export default {
       this.countConfirm = 0
       this.countCancel = 0
       this.countJob = 0
+      this.countAll = 0
       // Clear ช่องค้นหา
       this.searchAll2 = ''
       var dataItemTimes = []
@@ -1905,7 +1861,9 @@ export default {
             '/booking_view/get?shopId=' +
             this.session.data.shopId +
             '&masBranchID=' +
-            this.masBranchID
+            this.masBranchID +
+            '&dueDate=' +
+            this.dateStart
         )
         .then(async response => {
           // console.log('getData', response.data)
@@ -2558,10 +2516,13 @@ export default {
         }
         axios
           .post(this.DNS_IP + '/booking_transaction/add', dt)
-          .then(response => {
+          .then(async response => {
             this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-            this.getBookingList()
-            console.log('addDataGlobal', response)
+            await this.getBookingList()
+            if (this.getSelectText) {
+              this.getSelect(this.getSelectText, this.getSelectCount)
+            }
+            // console.log('addDataGlobal', response)
           })
           .catch(error => {
             console.log('error function addData : ', error)
@@ -2590,10 +2551,13 @@ export default {
         }
         axios
           .post(this.DNS_IP + '/booking_transaction/add', dt)
-          .then(response => {
+          .then(async response => {
             this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
             console.log('addDataGlobal', response)
-            this.getBookingList()
+            await this.getBookingList()
+            if (this.getSelectText) {
+              this.getSelect(this.getSelectText, this.getSelectCount)
+            }
           })
           .catch(error => {
             console.log('error function addData : ', error)
@@ -2634,11 +2598,14 @@ export default {
             }
             await axios
               .post(this.DNS_IP + '/booking_transaction/add', dt)
-              .then(response => {
+              .then(async response => {
                 this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
                 this.dialogChange = false
                 console.log('addDataGlobal', response)
-                this.getBookingList()
+                await this.getBookingList()
+                if (this.getSelectText) {
+                  this.getSelect(this.getSelectText, this.getSelectCount)
+                }
               })
               .catch(error => {
                 console.log('error function addData : ', error)

@@ -47,7 +47,6 @@
             <pivot
               :data="data"
               :fields="fields"
-              :showFooter="showFooter"
               :available-field-keys="availableFieldKeys"
               :row-field-keys="rowFieldKeys"
               :col-field-keys="colFieldKeys"
@@ -116,30 +115,27 @@ export default {
           key: 'masBranchName',
           getter: item => item.masBranchName,
           label: 'สาขา',
-          valueFilter: true
+          valueFilter: true,
+          displayTotal: true
         },
         {
           key: 'empStep',
           getter: item => item.empStep,
           label: 'พนักงาน',
-          valueFilter: true
+          valueFilter: true,
+          displayTotal: false
         },
         {
           key: 'jobDate',
           getter: item => item.jobDate,
           label: 'วันที่เปิด Job',
-          valueFilter: true
-        },
-        {
-          key: 'totall',
-          getter: item => item.totall,
-          label: 'Totall',
-          valueFilter: true
+          valueFilter: true,
+          displayTotal: false
         }
       ],
       availableFieldKeys: [],
       rowFieldKeys: ['masBranchName', 'empStep'],
-      colFieldKeys: ['jobDate', 'totall'],
+      colFieldKeys: ['jobDate'],
       reducer: (sum, item) => sum + item.closeJob,
       defaultShowSettings: false,
       isDataLoading: false,

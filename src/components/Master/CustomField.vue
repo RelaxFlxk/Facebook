@@ -215,41 +215,43 @@
                       <!-- checkbox -->
 
                       <v-row style="height: 35px" v-if="checkbox === 'true'">
-                      <v-subheader id="subtext">Field</v-subheader>
+                      <v-subheader id="subtext">ช่องกรอกข้อมูล</v-subheader>
                       </v-row>
                       <v-row style="height: 50px" v-if="checkbox === 'true'">
                         <v-select
                         v-model="formAdd.conditionField"
                         :items="selectConditionField"
-                        small-chips
-                        @change="chkOptionFieldItem(itemOp)"
                         dense
+                        item-text="text"
+                        item-value="value"
+                        return-object
+                        @change="formAdd.conditionValue = ''"
                         :rules="[rules.required]"
                         ></v-select>
                       </v-row>
                       <!-- END -->
-                        <v-row style="height: 35px" v-if="checkbox === 'true'">
+                      <v-row style="height: 35px" v-if="checkbox === 'true' && formAdd.conditionField">
                       <v-subheader id="subtext">Value:</v-subheader>
                       </v-row>
-                      <v-row style="height: 50px" v-if="checkbox === 'true'">
-                      <v-text-field
-                        v-model="formAdd.conditionValue"
-                        placeholder="Value"
-                        dense
-                        required
-                        :rules="[
-                          rules.required
-                        ]"
-                      ></v-text-field>
-                      <div v-if="!checkConditionField">
+                      <v-row style="height: 50px" v-if="checkbox === 'true' && formAdd.conditionField &&
+                      (formAdd.conditionField.fieldType === 'Selects' || formAdd.conditionField.fieldType === 'Radio' || formAdd.conditionField.fieldType === 'Autocompletes' || formAdd.conditionField.fieldType === 'flow')">
                       <v-select
                         v-model="formAdd.conditionValue"
-                        item-value="Value"
-                        :items="dataItemOption"
-                        small-chips
+                        :items="JSON.parse(formAdd.conditionField.optionField)"
                         dense
+                        required
+                        :rules="[rules.required]"
                         ></v-select>
-                      </div>
+                      </v-row>
+                      <v-row style="height: 50px" v-if="checkbox === 'true' && formAdd.conditionField &&
+                      (formAdd.conditionField.fieldType === 'number' || formAdd.conditionField.fieldType === 'text' || formAdd.conditionField.fieldType === 'dateTime')">
+                        <v-text-field
+                          v-model="formAdd.conditionValue"
+                          placeholder="Value"
+                          dense
+                          required
+                          :rules="[rules.required]"
+                        ></v-text-field>
                       </v-row>
                       <!-- END -->
                     </v-col>
@@ -453,8 +455,46 @@
                         ></v-checkbox>
                       </v-container>
                       <!-- checkbox -->
-
-                      <v-row style="height: 35px" v-if="checkbox == 'true'">
+                      <v-row style="height: 35px" v-if="checkbox === 'true'">
+                      <v-subheader id="subtext">ช่องกรอกข้อมูล</v-subheader>
+                      </v-row>
+                      <v-row style="height: 50px" v-if="checkbox === 'true'">
+                        <v-select
+                        v-model="formUpdate.conditionField"
+                        :items="selectConditionField"
+                        dense
+                        item-text="text"
+                        item-value="value"
+                        return-object
+                        @change="formUpdate.conditionValue = '', formUpdateConditionField = formUpdate.conditionField"
+                        :rules="[rules.required]"
+                        ></v-select>
+                      </v-row>
+                      <!-- END -->
+                      <v-row style="height: 35px" v-if="checkbox === 'true' && formUpdate.conditionField">
+                      <v-subheader id="subtext">Value:</v-subheader>
+                      </v-row>
+                      <v-row style="height: 50px" v-if="checkbox === 'true' && formUpdate.conditionField &&
+                      (formUpdateConditionField.fieldType === 'Selects' || formUpdateConditionField.fieldType === 'Radio' || formUpdateConditionField.fieldType === 'Autocompletes' || formUpdateConditionField.fieldType === 'flow')">
+                      <v-select
+                        v-model="formUpdate.conditionValue"
+                        :items="JSON.parse(formUpdateConditionField.optionField)"
+                        dense
+                        required
+                        :rules="[rules.required]"
+                        ></v-select>
+                      </v-row>
+                      <v-row style="height: 50px" v-if="checkbox === 'true' && formUpdateConditionField &&
+                      (formUpdateConditionField.fieldType === 'number' || formUpdateConditionField.fieldType === 'text' || formUpdateConditionField.fieldType === 'dateTime')">
+                        <v-text-field
+                          v-model="formUpdate.conditionValue"
+                          placeholder="Value"
+                          dense
+                          required
+                          :rules="[rules.required]"
+                        ></v-text-field>
+                      </v-row>
+                      <!-- <v-row style="height: 35px" v-if="checkbox == 'true'">
                       <v-subheader id="subtext">Field</v-subheader>
                       </v-row>
                       <v-row style="height: 50px" v-if="checkbox == 'true'">
@@ -464,7 +504,6 @@
                           >
                           </v-select>
                       </v-row>
-                      <!-- END -->
                         <v-row style="height: 35px" v-if="checkbox == 'true'">
                       <v-subheader id="subtext">Value:</v-subheader>
                       </v-row>
@@ -474,7 +513,7 @@
                         placeholder="Value"
                         dense
                       ></v-text-field>
-                      </v-row>
+                      </v-row> -->
                       <!-- END -->
                     </v-col>
                       <!-- END Radio buttun -->
@@ -623,7 +662,7 @@
                       fab
                       dark
                       x-small
-                      @click.stop="(dialogEdit = true), getDataById(item), validate('UPDATE'), validate('ADDOPTION')"
+                      @click.stop="getDataById(item), validate('UPDATE'), validate('ADDOPTION'), (dialogEdit = true)"
                     >
                       <v-icon> mdi-tools </v-icon>
                     </v-btn>
@@ -781,6 +820,7 @@ export default {
         requiredField: '',
         sortNoField: ''
       },
+      formUpdateConditionField: '',
       formAddOption: {
         optionText: '',
         optionValue: '',
@@ -836,6 +876,7 @@ export default {
         { text: 'Value', value: 'value' },
         { text: 'Actions', value: 'actions', sortable: false }
       ],
+      DataFlowName: [],
       dataItemOption: [],
       optionFieldItem: [],
       selectConditionField: [],
@@ -864,9 +905,29 @@ export default {
     // Get Data
     // this.getOption()
     this.getCondition()
+    this.getDataFlow()
     this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
   },
   methods: {
+    getDataFlow () {
+      this.DataFlowName = []
+      console.log('DataFlowName', this.DataFlowName)
+      axios
+        .get(this.DNS_IP + '/flow/get?shopId=' + this.shopId)
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              d.text = d.flowName
+              d.value = d.flowId
+              this.DataFlowName.push(d)
+            }
+          } else {
+            this.DataFlowName = []
+          }
+        })
+    },
     async actionUp (fieldId) {
       console.log('fieldId', fieldId)
       console.log('dataItem', this.dataItem)
@@ -1092,21 +1153,39 @@ export default {
       }
     },
     async getDataById (item) {
-      console.log('dataItem', this.dataItem)
-      console.log('Item', item)
-      console.log('selectConditionField', this.selectConditionField)
-      console.log('requiredField', this.formUpdate.requiredField)
+      console.log('conditionField', item.conditionField)
       this.dataItemOption = JSON.parse(item.optionField)
       this.formUpdate.fieldId = item.fieldId
       if (item.conditionField === '' || item.conditionField === null) {
         this.checkbox = 'false'
         this.formUpdate.conditionField = ''
+        this.formUpdate.conditionValue = ''
       } else {
         this.checkbox = 'true'
-        this.formUpdate.conditionField = this.selectConditionField.filter((row) => {
-          return row.value === parseInt(item.conditionField)
-        })[0].value
+        if (item.conditionField === 'flow') {
+          var value1 = this.selectConditionField.filter((row) => {
+            return row.value === 'flow'
+          })[0]
+          this.formUpdateConditionField = value1
+          this.formUpdate.conditionField = value1.value
+          this.formUpdate.conditionValue = item.conditionValue
+        } else {
+          var value2 = this.selectConditionField.filter((row) => {
+            return row.value === parseInt(item.conditionField)
+          })[0]
+          this.formUpdateConditionField = value2
+          this.formUpdate.conditionField = value2.value
+          this.formUpdate.conditionValue = item.conditionValue
+          // if (this.selectConditionField.filter((row) => { return row.value === parseInt(item.conditionField) })[0].fieldType === 'Selects' ||
+          // this.selectConditionField.filter((row) => { return row.value === parseInt(item.conditionField) })[0].fieldType === 'Radio' ||
+          // this.selectConditionField.filter((row) => { return row.value === parseInt(item.conditionField) })[0].fieldType === 'Autocompletes') {
+          //   this.formUpdate.conditionValue =
+          // } else {
+          //   this.formUpdate.conditionValue = item.conditionValue
+          // }
+        }
       }
+      console.log('conditionField', this.formUpdate.conditionField)
       this.formUpdate.optionField = []
       await axios
         .get(
@@ -1119,12 +1198,19 @@ export default {
             // Object.assign(this.formUpdate, response.data)
             this.formUpdate = response.data
             this.formUpdate.optionField = this.dataItemOption
-            if (item.fieldType === 'Selects') {
+            if (item.fieldType === 'Selects' || item.fieldType === 'Radio' || item.fieldType === 'Autocompletes') {
               this.formUpdate.fieldType = 'optionField'
             }
+            if (this.formUpdate.conditionField !== '') {
+              if (item.conditionField === 'flow') {
+                this.formUpdate.conditionValue = parseInt(this.formUpdate.conditionValue)
+              } else {
+                this.formUpdate.conditionField = parseInt(this.formUpdate.conditionField)
+                this.formUpdate.conditionValue = item.conditionValue
+              }
+            }
+            console.log('this.formUpdate.conditionValue', this.formUpdate.conditionValue)
             this.formUpdate.optionFieldType = item.fieldType
-            this.formUpdate.conditionField = parseInt(this.formUpdate.conditionField)
-            console.log('conditionField', this.formUpdate.conditionField)
           }
         })
         // eslint-disable-next-line handle-callback-err
@@ -1144,6 +1230,7 @@ export default {
         let rs = response.data
         if (rs.length > 0) {
           console.log('getCondition', rs)
+          this.selectConditionField.push({text: 'ประเภทบริการ', value: 'flow', fieldType: 'flow', optionField: JSON.stringify(this.DataFlowName)})
           for (var i = 0; i < rs.length; i++) {
             var d = rs[i]
             d.text = d.fieldName
@@ -1154,12 +1241,23 @@ export default {
       })
     },
     async addData () {
-      console.log('dataItemOption', JSON.stringify(this.dataItemOption))
       this.dataReady = false
-      // this.formAdd.optionField = JSON.stringify(this.formAdd.optionField)
-      console.log('optionField', this.formAdd.optionField)
-      console.log('requiredField', this.formAdd.requiredField)
 
+      this.formAdd.CREATE_USER = this.session.data.userName
+      this.formAdd.LAST_USER = this.session.data.userName
+      if (this.formAdd.fieldType === 'optionField') {
+        this.formAdd.optionField = JSON.stringify(this.dataItemOption)
+      }
+      this.formAdd.sortNoField = this.dataItem.length + 1
+      if (this.formAdd.optionFieldType === 'Autocompletes' || this.formAdd.optionFieldType === 'Selects' || this.formAdd.optionFieldType === 'Radio') {
+        this.formAdd.fieldType = this.formAdd.optionFieldType
+      } else {
+        this.formAdd.optionField = []
+      }
+      console.log('formAdd', this.formAdd)
+      this.add()
+    },
+    async add () {
       this.$swal({
         title: 'ต้องการ เพิ่มข้อมูล ใช่หรือไม่?',
         type: 'question',
@@ -1170,55 +1268,42 @@ export default {
         cancelButtonText: 'ไม่'
       })
         .then(async (result) => {
-          this.formAdd.CREATE_USER = this.session.data.userName
-          this.formAdd.LAST_USER = this.session.data.userName
-          if (this.formAdd.fieldType === 'optionField') {
-            this.formAdd.optionField = JSON.stringify(this.dataItemOption)
+          if (this.checkbox === 'true') {
+            this.formAdd.conditionField = this.formAdd.conditionField.value
+          } else {
+            this.formAdd.conditionField = ''
+            this.formAdd.conditionValue = ''
           }
-          // if (this.formAdd.requiredField.text === 'required field') {
-          //   this.formAdd.requiredField = 'true'
-          // } else {
-          //   this.formAdd.requiredField = 'false'
-          // }
-          this.formAdd.sortNoField = this.dataItem.length + 1
-          console.log('sortNo', this.formAdd.sortNoField)
-          this.add()
+          console.log('formAdd', this.formAdd)
+          delete this.formAdd['optionFieldType']
+          await axios
+            .post(
+              // eslint-disable-next-line quotes
+              this.DNS_IP + this.path + "add",
+              this.formAdd,
+              {
+                headers: {
+                  'Application-Key': this.$session.getAll().ApplicationKey
+                }
+              }
+            )
+            .then(async (response) => {
+              console.log('addDataGlobal DNS_IP + PATH + "add"', response)
+              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              this.dialogAdd = false
+
+              // Load Data
+              await this.clearData()
+              await this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
+            })
+          // eslint-disable-next-line handle-callback-err
+            .catch((error) => {
+              console.log('error function addDataGlobal : ', error)
+              this.dataReady = true
+            })
         })
         .catch((error) => {
           console.log('error function addData : ', error)
-          this.dataReady = true
-        })
-    },
-    async add () {
-      if (this.formAdd.optionFieldType === 'Autocompletes' || this.formAdd.optionFieldType === 'Selects' || this.formAdd.optionFieldType === 'Radio') {
-        this.formAdd.fieldType = this.formAdd.optionFieldType
-      } else {
-        this.formAdd.optionField = []
-      }
-      delete this.formAdd['optionFieldType']
-      await axios
-        .post(
-          // eslint-disable-next-line quotes
-          this.DNS_IP + this.path + "add",
-          this.formAdd,
-          {
-            headers: {
-              'Application-Key': this.$session.getAll().ApplicationKey
-            }
-          }
-        )
-        .then(async (response) => {
-          console.log('addDataGlobal DNS_IP + PATH + "add"', response)
-          this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-          this.dialogAdd = false
-
-          // Load Data
-          await this.clearData()
-          await this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
-        })
-      // eslint-disable-next-line handle-callback-err
-        .catch((error) => {
-          console.log('error function addDataGlobal : ', error)
           this.dataReady = true
         })
     },
@@ -1237,7 +1322,6 @@ export default {
       })
         .then(async (result) => {
           this.formUpdate.LAST_USER = this.session.data.userName
-          this.formUpdate.conditionField = this.formUpdate.conditionField
           if (this.formUpdate.fieldType === 'optionField') {
             this.formUpdate.optionField = JSON.stringify(this.dataItemOption)
           }
@@ -1245,6 +1329,12 @@ export default {
             this.formUpdate.fieldType = this.formUpdate.optionFieldType
           } else {
             this.formUpdate.optionField = []
+          }
+          if (this.checkbox === 'true') {
+            this.formUpdate.conditionField = this.formUpdateConditionField.value
+          } else {
+            this.formUpdate.conditionField = ''
+            this.formformUpdateAdd.conditionValue = ''
           }
           var ID = this.formUpdate.fieldId
           delete this.formUpdate['fieldId']
@@ -1348,13 +1438,11 @@ export default {
       }
     },
     async clearDataFormUpDate () {
+      this.formUpdateConditionField = ''
+      this.dataItemOption = ''
       for (var key in this.formUpdate) {
-        console.log('Key', key)
-        console.log('Value', this.formUpdate)
-
         if (this.formUpdate[key]) {
           this.formUpdate[key] = ''
-          this.dataItemOption = ''
         }
       }
     }
