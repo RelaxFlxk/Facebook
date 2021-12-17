@@ -78,17 +78,6 @@
                           mdi-delete
                         </v-icon>
                       </template>
-                        <!-- <template v-slot:[`item.action`]="{ item }">
-                          <v-btn
-                            color="red"
-                            dark
-                            fab
-                            x-small
-                            @click="deleteOption(item)"
-                          >
-                            <v-icon> mdi-delete </v-icon>
-                          </v-btn>
-                        </template> -->
                       </v-data-table>
                     </v-card-text>
                     </v-col>
@@ -207,19 +196,6 @@
                       </v-btn>
                       </v-row>
 
-                      <!-- <v-col cols="6">
-                        <v-select
-                          v-model="formAdd.requiredField"
-                          :items="items"
-                          item-text="text"
-                          item-value="value"
-                          label="บังคับกรอก"
-                          persistent-hint
-                          return-object
-                          single-line
-                        ></v-select>
-                      </v-col> -->
-
                       <!-- checkbox -->
                      <v-container
                         class="px-0"
@@ -246,6 +222,7 @@
                         v-model="formAdd.conditionField"
                         :items="selectConditionField"
                         small-chips
+                        @change="chkOptionFieldItem(itemOp)"
                         dense
                         :rules="[rules.required]"
                         ></v-select>
@@ -264,6 +241,15 @@
                           rules.required
                         ]"
                       ></v-text-field>
+                      <div v-if="!checkConditionField">
+                      <v-select
+                        v-model="formAdd.conditionValue"
+                        item-value="Value"
+                        :items="dataItemOption"
+                        small-chips
+                        dense
+                        ></v-select>
+                      </div>
                       </v-row>
                       <!-- END -->
                     </v-col>
@@ -851,6 +837,7 @@ export default {
         { text: 'Actions', value: 'actions', sortable: false }
       ],
       dataItemOption: [],
+      optionFieldItem: [],
       selectConditionField: [],
       validAdd: true,
       validAddOption: true,
@@ -858,7 +845,8 @@ export default {
       filesAdd: null,
       filesUpdate: null,
       dialogNewAccess: false,
-      checkDataEdit: true
+      checkDataEdit: true,
+      checkConditionField: true
       // End Data Table Config
     }
   },
@@ -947,6 +935,22 @@ export default {
           console.log('error function addDataGlobal : ', error)
           this.dataReady = true
         })
+    },
+    chkOptionFieldItem (itemOp) {
+      console.log('item', itemOp)
+      console.log('fieldType', this.checkConditionField)
+      if (this.formAdd.fieldType === 'text' || this.formAdd.fieldType === 'number' || this.formAdd.fieldType === 'dateTime') {
+        this.checkConditionField = false
+      }
+      console.log('getOptionField', this.dataItemOption)
+      // this.dataItemOption = JSON.parse(itemOp.optionField)
+      this.formAdd.conditionValue = this.dataItemOption
+      if (itemOp.fieldType === 'Selects') {
+        this.formAdd.conditionValue.push(itemOp.optionValue)
+      }
+      // this.formUpdate.conditionField = this.selectConditionField.filter((row) => {
+      //   return row.value === parseInt(itemOp.conditionField)
+      // })[0].value
     },
     chkAddoptionFieldType () {
       if (this.formAdd.fieldType === 'text' || this.formAdd.fieldType === 'number' || this.formAdd.fieldType === 'dateTime') {
