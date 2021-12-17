@@ -3,24 +3,28 @@
     <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
     <v-main>
       <div class="col-md-12 ml-sm-auto col-lg-12 px-4">
-          <v-row>
-              <v-col cols="8" ><C3Chart :chartData="chartData1" v-if="chartData1"></C3Chart></v-col>
-              <v-col cols="4" ><C3Chart :chartData="chartData2" v-if="chartData2"></C3Chart></v-col>
-          </v-row>
-          <v-row>
-              <v-col cols="8" ><C3Chart :chartData="chartData3" v-if="chartData3"></C3Chart></v-col>
-              <v-col cols="4" ><C3Chart :chartData="chartData4" v-if="chartData4"></C3Chart></v-col>
-          </v-row>
-          <v-row>
-              <v-col cols="8" ><C3Chart :chartData="chartData6" v-if="chartData6"></C3Chart></v-col>
-              <v-col cols="4" ><C3Chart :chartData="chartData7" v-if="chartData7"></C3Chart></v-col>
-          </v-row>
-          <v-row>
-              <v-col cols="11" ><C3Chart :chartData="chartData5" v-if="chartData5"></C3Chart></v-col>
-          </v-row>
-          <v-row>
-              <v-col cols="11" ><C3Chart :chartData="chartData8" v-if="chartData8"></C3Chart></v-col>
-          </v-row>
+        <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
+        <v-row v-if="dateRange">
+            <v-col cols="12">
+                <div style="display: flex">
+                <date-range-picker
+                ref="picker"
+                :locale-data="{ firstDay: 1, format: 'yyyy-mm-dd' }"
+                v-model="dateRange"
+                />
+                <v-btn
+                    small class="ml-5 mt-2" color="#173053" dark
+                    @click="searchData()"
+                >
+                    ค้นหา
+                </v-btn>
+                </div>
+            </v-col>
+        </v-row>
+        <v-row>
+            <v-col cols="8" ><C3Chart :chartData="chartTimeSeries" v-if="chartTimeSeries"></C3Chart></v-col>
+            <v-col cols="4" ><C3Chart :chartData="chartBranch" v-if="chartBranch"></C3Chart></v-col>
+        </v-row>
      </div>
     </v-main>
   </div>
@@ -29,12 +33,17 @@
   @import '../../assets/c3.min.css';
 </style>
 <script>
+import axios from 'axios'
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import C3Chart from './C3Chart.vue'
+import moment from 'moment-timezone'
+import DateRangePicker from 'vue2-daterange-picker'
+import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 
 export default {
   components: {
     'left-menu-admin': adminLeftMenu,
+    DateRangePicker,
     C3Chart
   },
   created () {
@@ -42,145 +51,126 @@ export default {
   },
   data () {
     return {
+      breadcrumbs: [
+        {
+          text: 'Home',
+          disabled: false,
+          href: '/Core/Home'
+        },
+        {
+          text: 'รายงาน',
+          disabled: false,
+          href: '/Dashbord/Report'
+        }
+      ],
       session: this.$session.getAll(),
-      chartData1: null,
-      chartData2: null,
-      chartData3: null,
-      chartData4: null,
-      chartData5: null,
-      chartData6: null,
-      chartData7: null,
-      chartData8: null
+      shopId: this.$session.getAll().data.shopId,
+      startDate: null,
+      endDate: null,
+      dateRange: null,
+      dataitem: [],
+      chartTimeSeries: null,
+      chartBranch: null,
+      timeXSeries: [],
+      dateDiff: 0
     }
   },
   async mounted () {
-    this.dataReady = false
-    this.chartData1 = {
-      data: {
-        columns: [
-          ['ซ่อมทั่วไป', 30, 200, 100, 400, 150, 250],
-          ['เช็คระยะ', 50, 20, 10, 40, 15, 25]
-        ]
-      }
-    }
-
-    this.chartData2 = {
-      data: {
-        columns: [
-          ['ซ่อมทั่วไป', 30],
-          ['เช็คระยะ', 120]
-        ],
-        type: 'donut'
-      },
-      donut: {
-        title: 'ประเภทบริการ'
-      }
-    }
-
-    this.chartData3 = {
-      data: {
-        columns: [
-          ['ซ่อมทั่วไป', 30, 200, 100, 400, 150, 250],
-          ['เช็คระยะ', 50, 20, 10, 40, 15, 25]
-        ],
-        type: 'bar'
-      }
-    }
-
-    this.chartData4 = {
-      data: {
-        columns: [
-          ['ซ่อมทั่วไป', 30],
-          ['เช็คระยะ', 120]
-        ],
-        type: 'pie'
-      },
-      donut: {
-        title: 'ประเภทบริการ'
-      }
-    }
-
-    this.chartData5 = {
-      data: {
-        x: 'x',
-        columns: [
-          ['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
-          ['data1', 30, 200, 100, 400, 150, 250],
-          ['data2', 130, 340, 200, 500, 250, 350]
-        ]
-      },
-      axis: {
-        x: {
-          type: 'timeseries',
-          tick: {
-            format: '%Y-%m-%d'
-          }
-        }
-      }
-    }
-
-    this.chartData6 = {
-      data: {
-        columns: [
-          ['ซ่อมทั่วไป', 30, 200, 100, 400, 150, 250],
-          ['เช็คระยะ', 50, 20, 10, 40, 15, 25]
-        ],
-        type: 'bar',
-        groups: [
-          ['ซ่อมทั่วไป', 'เช็คระยะ']
-        ]
-      }
-    }
-
-    this.chartData7 = {
-      data: {
-        columns: [
-          ['data', 91.4]
-        ],
-        type: 'gauge'
-      },
-      color: {
-        pattern: ['#FF0000', '#F97600', '#F6C600', '#60B044'], // the three color levels for the percentage values.
-        threshold: {
-          values: [30, 60, 90, 100]
-        }
-      },
-      size: {
-        height: 220
-      }
-    }
-
-    this.chartData8 = {
-      data: {
-        x: 'x',
-        columns: [
-          ['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
-          ['ซ่อมทั่วไป', 30, 200, 100, 400, 150, 250],
-          ['เช็คระยะ', 130, 340, 200, 300, 550, 350]
-        ],
-        axes: {
-          ซ่อมทั่วไป: 'y',
-          เช็คระยะ: 'y2'
-        }
-      },
-      axis: {
-        y: {
-          label: 'ซ่อมทั่วไป'
-        },
-        y2: {
-          show: true,
-          label: 'เช็คระยะ'
-        },
-        x: {
-          type: 'timeseries',
-          tick: {
-            format: '%Y-%m-%d'
-          }
-        }
-      }
-    }
+    this.startDate = new Date()
+    this.endDate = new Date()
+    this.dateRange = { startDate: this.startDate, endDate: this.endDate }
+    this.searchData()
   },
   methods: {
+    async searchData () {
+      this.startDate = this.momenDate_1(this.dateRange.startDate)
+      this.endDate = this.momenDate_1(this.dateRange.endDate)
+      await this.createTimeSeries()
+      this.getData1()
+    },
+    createTimeSeries () {
+      let start = moment(this.startDate)
+      let end = moment(this.endDate)
+      let duration = moment.duration(end.diff(start))
+      this.dateDiff = duration.asDays()
+      for (let i = 0; i <= this.dateDiff; i++) {
+        start = moment(this.startDate).add(i, 'days')
+        this.timeXSeries.push(start.format('YYYY-MM-DD').toString())
+      }
+    },
+    async getData1 () {
+      console.log(this.startDate)
+      console.log(this.endDate)
+      await axios.get(
+        this.DNS_IP + '/job_log/getDashbord_total?startDate=' + this.startDate + '&endDate=' + this.endDate + '&shopId=' + this.shopId
+      ).then(response => {
+        let rs = response.data
+        if (rs.length > 0) {
+          let chartData = []
+          let branchList = []
+          chartData['x'] = this.timeXSeries
+          for (let i = 0; i < rs.length; i++) {
+            let d = rs[i]
+            if (typeof chartData[d.masBranchName] === 'undefined') {
+              branchList.push(d.masBranchName)
+              chartData[d.masBranchName] = Array(this.dateDiff + 1).fill(0)
+            }
+            const index = this.timeXSeries.indexOf(d.CREATE_DATE)
+            chartData[d.masBranchName][index] = d.totalJob
+            this.dataitem.push(d)
+          }
+          let columns = []
+          let columns2 = []
+          columns[0] = ['x', ...chartData['x']]
+          for (let i = 0; i < branchList.length; i++) {
+            columns[i + 1] = [branchList[i], ...chartData[branchList[i]]]
+            let sum = chartData[branchList[i]].reduce((partialSum, a) => partialSum + a, 0)
+            columns2[i] = [branchList[i], sum]
+            console.log(sum)
+          }
+
+          this.chartTimeSeries = {
+            padding: {
+              bottom: 20
+            },
+            data: {
+              x: 'x',
+              columns: columns,
+              order: 'desc'
+            },
+            axis: {
+              x: {
+                type: 'timeseries',
+                tick: {
+                  format: '%Y-%m-%d'
+                }
+              }
+            },
+            size: {
+              height: 400
+            }
+          }
+
+          this.chartBranch = {
+            data: {
+              columns: columns2,
+              type: 'donut'
+            },
+            donut: {
+              title: 'สาขา',
+              label: {
+                format: function (value, ratio, id) {
+                  return value
+                }
+              }
+            }
+          }
+          console.log(this.chartBranch)
+        }
+      }).catch((error) => {
+        console.log('error function addDataGlobal : ', error)
+      })
+    }
   }
 }
 </script>
