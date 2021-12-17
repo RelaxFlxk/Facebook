@@ -175,6 +175,11 @@ export default new Router({
     component: Dashbord.Report
   },
   {
+    path: '/Dashbord/Report2',
+    name: 'Report2',
+    component: Dashbord.Report2
+  },
+  {
     path: '/Dashbord/Performance',
     name: 'Performance',
     component: Dashbord.Performance

@@ -301,4 +301,7 @@ table tr:last-child td:last-child {
   background-size: 100% 10%;
   background-repeat: no-repeat;
 }
+.c3-axis-y-label, .c3-axis-x-label, .c3-chart-arcs-gauge-min, .c3-chart-arcs-gauge-max {
+  font-size: 17px !important;
+}
 </style>

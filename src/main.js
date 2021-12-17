@@ -31,7 +31,7 @@ Vue.mixin({
       PK: '', // Primary Key
       ApplicationKey: '', // Token
       IPPotocalENV_Production: 'https://api-belinked.betaskthai.com',
-      IPPotocalENV_Developer: 'http://localhost:5004',
+      IPPotocalENV_Developer: 'http://localhost:5001',
       main_profile: {
         userLineuserId: 'U97a2b1814542579b9e5d7c1b891538ab',
         pictureUrl: 'https://profile.line-scdn.net/0hI98EFerAFhYFPD-Dk3VpQTl5GHtyEhBefVoNdiA_SSMtWFdIbV0KIiU9HCApCFUSbVxZJSZpSyQh',
