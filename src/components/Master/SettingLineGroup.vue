@@ -103,7 +103,18 @@
                 dark
                 @click="getLineData(item) , dialog=true"
               >
-                <v-icon > mdi-account-convert </v-icon>
+                <v-icon > mdi-wrench </v-icon>
+              </v-btn>
+            </template>
+            <template v-slot:[`item.Delete`]="{ item }">
+              <v-btn
+                color="red"
+                fab
+                small
+                dark
+                @click="DeleteGroup(item)"
+              >
+                <v-icon > mdi-delete </v-icon>
               </v-btn>
             </template>
             </v-data-table>
@@ -147,7 +158,9 @@ export default {
         { text: 'GroupID', value: 'GroupId' },
         { text: 'GroupName', value: 'GroupName' },
         { text: 'รูปกลุ่ม', value: 'Img' },
-        { text: 'แก้ไข', value: 'action', sortable: false, align: 'center' }
+        { text: 'แก้ไข', value: 'action', sortable: false, align: 'center' },
+        { text: 'ลบข้อมูล', value: 'Delete', sortable: false, align: 'center' }
+
       ],
       LineGroupitem: [],
       itemSelect: [],
@@ -312,6 +325,31 @@ export default {
         .catch((error) => {
           console.log('error function addData : ', error)
         })
+    },
+    async DeleteGroup (item) {
+      console.log('item', item)
+      item.shopId = this.shopId
+      this.$swal({
+        title: 'ต้องการ ลบข้อมูล ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      }).then(async () => {
+        await axios
+          .post(this.DNS_IP + '/LineGroupFlow/deleteGroup/' + item.Id, item)
+          .then(async (response) => {
+            this.$swal('ลบข้อมูลเรียบร้อย', ' ', 'success')
+            this.getLineGroup()
+            this.getDataBranch()
+          })
+        // eslint-disable-next-line handle-callback-err
+          .catch((error) => {
+            console.log('error function addData : ', error)
+          })
+      })
     }
   }
 }
