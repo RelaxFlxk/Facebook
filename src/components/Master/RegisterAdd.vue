@@ -363,7 +363,6 @@
                                 depressed
                                 dark
                                 color="#1B437C"
-                                :disabled="!valid"
                                 @click="addData()"
                               >
                                 รับรถใหม่
@@ -629,10 +628,12 @@ export default {
           console.log('error function addData : ', error)
         })
     },
-    async addData (p) {
-      await this.validate('ADD')
-      console.log('this.', this.valid)
-      if (this.valid !== false) {
+    addData () {
+      this.validate('ADD')
+      setTimeout(() => this.addDataSubmit(), 500)
+    },
+    async addDataSubmit (p) {
+      if (this.valid === true) {
         this.flowfieldNameitem[0].endDate = this.endDate
         this.flowfieldNameitem[0].endTime = this.endTime
         this.flowfieldNameitem[0].CREATE_USER = this.session.data.userName

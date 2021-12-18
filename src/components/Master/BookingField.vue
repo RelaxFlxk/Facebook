@@ -292,7 +292,6 @@
                       :headers="FieldSelect"
                       :items="Fielditem"
                       rounded="xl"
-                      hide-default-footer
                       class="elevation-10"
                     >
                       <template v-slot:[`item.showitem`]="{ item }">

@@ -23,7 +23,7 @@
               style="z-index:8;"
               id="v-step-0"
               depressed
-              @click="(dialogAdd = true), validate('ADD'), getBookingField()"
+              @click="(dialogAdd = true), getBookingField()"
             >
               <v-icon left>mdi-text-box-plus</v-icon>
               เพิ่ม
@@ -548,6 +548,7 @@
                                         row
                                         dense
                                         v-model="item.fieldValue"
+                                        :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                         style="margin:0px;"
                                       >
                                         <template v-slot:label> </template>
@@ -568,6 +569,78 @@
                                   </div>
                                 </div>
                               </div>
+                                <div  v-if="item.conditionField === 'flow' ">
+                                  <div v-if="parseInt(item.conditionValue) === parseInt(formAdd.flowId) ">
+                                    <div v-if="item.fieldType == 'text'">
+                                      <v-text-field
+                                        v-model="item.fieldValue"
+                                        :label="item.fieldName"
+                                        dense
+                                        :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                        outlined
+                                      ></v-text-field>
+                                    </div>
+                                    <div v-if="item.fieldType == 'number'">
+                                      <v-text-field
+                                        v-model="item.fieldValue"
+                                        :label="item.fieldName"
+                                        dense
+                                        :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                        outlined
+                                      ></v-text-field>
+                                    </div>
+                                    <div
+                                      cols="12"
+                                      v-if="item.fieldType == 'Autocompletes'"
+                                    >
+                                      <v-autocomplete
+                                        v-model="item.fieldValue"
+                                        :items="JSON.parse(item.optionField)"
+                                        dense
+                                        filled
+                                        :label="item.fieldName"
+                                        :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                      ></v-autocomplete>
+                                    </div>
+                                      <div v-if="item.fieldType == 'Selects'">
+                                        <v-select
+                                          v-model="item.fieldValue"
+                                          :items="JSON.parse(item.optionField)"
+                                          menu-props="auto"
+                                          :label="item.fieldName"
+                                          dense
+                                          :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                          hide-details
+                                          outlined
+                                        ></v-select>
+                                      </div>
+                                      <div v-if="item.fieldType === 'Radio'" style="padding:0px;">
+                                        <v-container fluid style="padding:0px;">
+                                          <v-radio-group
+                                            row
+                                            v-model="item.fieldValue"
+                                            style="margin:0px;"
+                                            :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                          >
+                                            <template v-slot:label> </template>
+                                            <div
+                                              v-for="radios in JSON.parse(
+                                                item.optionField
+                                              )"
+                                              :key="radios.toISOString"
+                                              class="text-center"
+                                            >
+                                              <v-radio
+                                                :label="radios.text"
+                                                dense
+                                                :value="radios.value"
+                                              ></v-radio>
+                                            </div>
+                                          </v-radio-group>
+                                        </v-container>
+                                      </div>
+                                  </div>
+                                </div>
                             </div>
                           </div>
                         </v-col>
@@ -578,7 +651,6 @@
                         elevation="2"
                         large
                         color="#173053"
-                        :disabled="!validAdd"
                         dark
                         @click="addData()"
                       >
@@ -935,7 +1007,6 @@
                       elevation="2"
                       small
                       dark
-                      :disabled='!validUpdate'
                       color="#173053"
                       @click="addDataJob()"
                     >
@@ -2117,7 +2188,7 @@ export default {
             this.fieldNameItem.splice((indexF + 1), 0, this.fieldNameItem.splice(indexC, 1)[0])
             // data2.push({'indexC': indexC, 'indexF': indexF})
           }
-          setTimeout(() => this.validate('ADD'), 500)
+          // setTimeout(() => this.validate('ADD'), 500)
         })
         .catch(error => {
           console.log('error function addData : ', error)
@@ -2209,74 +2280,80 @@ export default {
           console.log('error function addData : ', error)
         })
     },
-    async addData () {
-      let rs = this.fieldNameItem
-      let Add = []
-      let fielditem = this.fieldNameItem
-      for (let i = 0; i < rs.length; i++) {
-        let d = rs[i]
-        let update = {}
-        if (d.conditionField === '' || d.conditionField === null) {
-          update.masBranchID = this.formAdd.masBranchID
-          update.bookingFieldId = this.formAdd.bookingFieldId
-          update.flowId = this.formAdd.flowId
-          update.fieldId = d.fieldId
-          update.fieldValue = d.fieldValue
-          update.shopId = d.shopId
-          update.dueDate = this.date + ' ' + this.time
-          update.userId = 'user-skip'
-          update.pageName = 'BookingList'
-          Add.push(update)
-        } else {
-          if (
-            fielditem.filter(row => {
-              return row.fieldId === parseInt(d.conditionField)
-            }).length > 0
-          ) {
+    addData () {
+      this.validate('ADD')
+      setTimeout(() => this.addDataSubmit(), 500)
+    },
+    async addDataSubmit () {
+      if (this.validAdd === true) {
+        let rs = this.fieldNameItem
+        let Add = []
+        let fielditem = this.fieldNameItem
+        for (let i = 0; i < rs.length; i++) {
+          let d = rs[i]
+          let update = {}
+          if (d.conditionField === '' || d.conditionField === null) {
+            update.masBranchID = this.formAdd.masBranchID
+            update.bookingFieldId = this.formAdd.bookingFieldId
+            update.flowId = this.formAdd.flowId
+            update.fieldId = d.fieldId
+            update.fieldValue = d.fieldValue
+            update.shopId = d.shopId
+            update.dueDate = this.date + ' ' + this.time
+            update.userId = 'user-skip'
+            update.pageName = 'BookingList'
+            Add.push(update)
+          } else {
             if (
-              d.conditionValue ===
+              fielditem.filter(row => {
+                return row.fieldId === parseInt(d.conditionField)
+              }).length > 0
+            ) {
+              if (
+                d.conditionValue ===
               fielditem.filter(row => {
                 return row.fieldId === parseInt(d.conditionField)
               })[0].fieldValue
-            ) {
-              update.masBranchID = this.formAdd.masBranchID
-              update.bookingFieldId = this.formAdd.bookingFieldId
-              update.flowId = this.formAdd.flowId
-              update.fieldId = d.fieldId
-              update.fieldValue = d.fieldValue
-              update.shopId = d.shopId
-              update.dueDate = this.date + ' ' + this.time
-              update.userId = 'user-skip'
-              update.pageName = 'BookingList'
-              Add.push(update)
+              ) {
+                update.masBranchID = this.formAdd.masBranchID
+                update.bookingFieldId = this.formAdd.bookingFieldId
+                update.flowId = this.formAdd.flowId
+                update.fieldId = d.fieldId
+                update.fieldValue = d.fieldValue
+                update.shopId = d.shopId
+                update.dueDate = this.date + ' ' + this.time
+                update.userId = 'user-skip'
+                update.pageName = 'BookingList'
+                Add.push(update)
+              }
             }
           }
         }
+        this.$swal({
+          title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        })
+          .then(async result => {
+            axios
+              .post(this.DNS_IP + '/Booking/add', Add)
+              .then(response => {
+                this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+                this.clearDataAdd()
+                console.log('addDataGlobal DNS_IP + /job/add', response)
+              })
+              .catch(error => {
+                console.log('error function addData : ', error)
+              })
+          })
+          .catch(error => {
+            console.log('Cencel : ', error)
+          })
       }
-      this.$swal({
-        title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      })
-        .then(async result => {
-          axios
-            .post(this.DNS_IP + '/Booking/add', Add)
-            .then(response => {
-              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-              this.clearDataAdd()
-              console.log('addDataGlobal DNS_IP + /job/add', response)
-            })
-            .catch(error => {
-              console.log('error function addData : ', error)
-            })
-        })
-        .catch(error => {
-          console.log('Cencel : ', error)
-        })
     },
     async pushMsglineGroup (bookNo) {
       await axios
@@ -2397,7 +2474,7 @@ export default {
     },
     addDataJobSubmit () {
       if (this.dataItem.filter(row => row.bookNo === this.BookingDataItem[0].bookNo).length > 0) {
-        if (this.validUpdate !== false) {
+        if (this.validUpdate === true) {
           for (var x = 0; x < this.flowfieldNameitem.length; x++) {
             var s = this.flowfieldNameitem[x]
             if (s.userId === 'user-skip') {
