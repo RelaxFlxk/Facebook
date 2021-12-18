@@ -180,6 +180,11 @@ export default new Router({
     component: Dashbord.Report2
   },
   {
+    path: '/Dashbord/C3Example',
+    name: 'C3Example',
+    component: Dashbord.C3Example
+  },
+  {
     path: '/Dashbord/Performance',
     name: 'Performance',
     component: Dashbord.Performance
