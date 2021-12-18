@@ -311,6 +311,7 @@ export default {
         shopId: this.shopId,
         GroupId: this.GroupId
       }
+
       console.log('dataAdd', dataAdd)
       await axios
         .post(this.DNS_IP + '/LineGroupFlow/AdminEdit', dataAdd)
