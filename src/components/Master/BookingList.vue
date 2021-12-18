@@ -416,7 +416,7 @@
                                     outlined
                                     dense
                                     required
-                                    :rules="[rules.required]"
+                                    :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                   ></v-text-field>
                                 </div>
                                 <div v-if="item.fieldType == 'number'">
@@ -426,7 +426,7 @@
                                     outlined
                                     dense
                                     required
-                                    :rules="[rules.required]"
+                                    :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                   ></v-text-field>
                                 </div>
                                 <div v-if="item.fieldType == 'Autocompletes'">
@@ -437,7 +437,7 @@
                                     :label="item.fieldName"
                                     required
                                     dense
-                                    :rules="[rules.required]"
+                                    :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                   ></v-autocomplete>
                                 </div>
                                 <div v-if="item.fieldType == 'Selects'">
@@ -447,7 +447,7 @@
                                     menu-props="auto"
                                     :label="item.fieldName"
                                     required
-                                    :rules="[rules.required]"
+                                    :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                     dense
                                     outlined
                                   ></v-select>
@@ -506,7 +506,7 @@
                                       outlined
                                       required
                                       dense
-                                      :rules="[rules.required]"
+                                      :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                     ></v-text-field>
                                   </div>
                                   <div v-if="item.fieldType == 'number'">
@@ -516,7 +516,7 @@
                                       outlined
                                       required
                                       dense
-                                      :rules="[rules.required]"
+                                      :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                     ></v-text-field>
                                   </div>
                                   <div v-if="item.fieldType == 'Autocompletes'">
@@ -527,7 +527,7 @@
                                       :label="item.fieldName"
                                       required
                                       dense
-                                      :rules="[rules.required]"
+                                      :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                     ></v-autocomplete>
                                   </div>
                                   <div v-if="item.fieldType == 'Selects'">
@@ -538,7 +538,7 @@
                                       :label="item.fieldName"
                                       required
                                       dense
-                                      :rules="[rules.required]"
+                                      :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                       outlined
                                     ></v-select>
                                   </div>
@@ -672,7 +672,7 @@
                             v-model="p.fieldValue"
                             :label="p.fieldName"
                             dense
-                            :rules="[rules.required]"
+                            :rules="p.requiredField === 'True' ? [rules.required] : [true]"
                             outlined
                           ></v-text-field>
                         </div>
@@ -683,7 +683,7 @@
                             v-model="p.fieldValue"
                             :label="p.fieldName"
                             dense
-                            :rules="[rules.required]"
+                            :rules="p.requiredField === 'True' ? [rules.required] : [true]"
                             outlined
                           ></v-text-field>
                         </div>
@@ -700,7 +700,7 @@
                               dense
                               filled
                               :label="p.fieldName"
-                              :rules="[rules.required]"
+                              :rules="p.requiredField === 'True' ? [rules.required] : [true]"
                             ></v-autocomplete>
                           </v-col>
                           <v-col
@@ -718,7 +718,7 @@
                                 hide-details
                                 outlined
                                 dense
-                                :rules="[rules.required]"
+                                :rules="p.requiredField === 'True' ? [rules.required] : [true]"
                               ></v-select>
                             </div>
                           </v-col>
@@ -730,7 +730,7 @@
                                 row
                                 v-model="p.fieldValue"
                                 style="margin:0px;"
-                                :rules="[rules.required]"
+                                :rules="p.requiredField === 'True' ? [rules.required] : [true]"
                               >
                               <template v-slot:label> </template>
                               <div
@@ -763,7 +763,7 @@
                             dense
                             filled
                             :label="p.fieldName"
-                            :rules="[rules.required]"
+                            :rules="p.requiredField === 'True' ? [rules.required] : [true]"
                           ></v-autocomplete>
                         </div>
                           <div v-if="p.fieldType == 'Selects'">
@@ -775,7 +775,7 @@
                               dense
                               hide-details
                               outlined
-                              :rules="[rules.required]"
+                              :rules="p.requiredField === 'True' ? [rules.required] : [true]"
                             ></v-select>
                           </div>
                           <div v-if="p.fieldType === 'Radio'" style="padding:0px;">
@@ -785,7 +785,82 @@
                                 row
                                 v-model="p.fieldValue"
                                 style="margin:0px;"
-                                :rules="[rules.required]"
+                                :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                              >
+                                <template v-slot:label> </template>
+                                <div
+                                  v-for="radios in JSON.parse(
+                                    p.optionField
+                                  )"
+                                  :key="radios.toISOString"
+                                  class="text-center"
+                                >
+                                  <v-radio
+                                    :label="radios.text"
+                                    dense
+                                    :value="radios.value"
+                                  ></v-radio>
+                                </div>
+                              </v-radio-group>
+                            </v-container>
+                          </div>
+                      </div>
+                    </div>
+                    <div  v-if="p.conditionField === 'flow' ">
+                      <div v-if="parseInt(p.conditionValue) === parseInt(formAdd.flowId) ">
+                        <div v-if="p.fieldType == 'text'">
+                          <br />
+                          <v-text-field
+                            v-model="p.fieldValue"
+                            :label="p.fieldName"
+                            dense
+                            :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                            outlined
+                          ></v-text-field>
+                        </div>
+                        <div v-if="p.fieldType == 'number'">
+                          <br />
+                          <v-text-field
+                            v-model="p.fieldValue"
+                            :label="p.fieldName"
+                            dense
+                            :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                            outlined
+                          ></v-text-field>
+                        </div>
+                        <div
+                          cols="12"
+                          v-if="p.fieldType == 'Autocompletes'"
+                        >
+                          <v-autocomplete
+                            v-model="p.fieldValue"
+                            :items="JSON.parse(p.optionField)"
+                            dense
+                            filled
+                            :label="p.fieldName"
+                            :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                          ></v-autocomplete>
+                        </div>
+                          <div v-if="p.fieldType == 'Selects'">
+                            <v-select
+                              v-model="p.fieldValue"
+                              :items="JSON.parse(p.optionField)"
+                              menu-props="auto"
+                              :label="p.fieldName"
+                              dense
+                              :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                              hide-details
+                              outlined
+                            ></v-select>
+                          </div>
+                          <div v-if="p.fieldType === 'Radio'" style="padding:0px;">
+                            <br />
+                            <v-container fluid style="padding:0px;">
+                              <v-radio-group
+                                row
+                                v-model="p.fieldValue"
+                                style="margin:0px;"
+                                :rules="p.requiredField === 'True' ? [rules.required] : [true]"
                               >
                                 <template v-slot:label> </template>
                                 <div
@@ -2026,6 +2101,7 @@ export default {
             s.conditionValue = d.conditionValue
             s.shopId = d.shopId
             s.fieldValue = ''
+            s.requiredField = d.requiredField
             this.fieldNameItem.push(s)
           }
           var data1 = this.fieldNameItem.filter(el => parseInt(el.conditionField || 0) > 0)
@@ -2097,6 +2173,7 @@ export default {
             s.endTime = ''
             s.checkCar = 'False'
             s.conditionValue = d.conditionValue
+            s.requiredField = d.requiredField
             flowfieldNameitems.push(s)
           }
           var data1 = flowfieldNameitems.filter(el => parseInt(el.conditionField || 0) > 0)

@@ -20,13 +20,13 @@
                         <!-- เลือกขั้นตอนบริการ -->
                         <v-col cols="12" sm="4">
                           <v-select
-                            v-model="formAdd.flowCode"
+                            v-model="formAdd.flowId"
                             :items="editedItemSelete"
                             label="เลือกขั้นตอนบริการ"
                             dense
                             outlined
                             hide-details
-                            @change="flowfieldtest(formAdd.flowCode)"
+                            @change="flowfieldtest(formAdd.flowId)"
                           >
                           </v-select>
                         </v-col>
@@ -49,7 +49,7 @@
                       class="mx-auto"
                       max-width="500"> -->
                       <v-card
-                        v-show="formAdd.flowCode && formAdd.masBranchID !== ''"
+                        v-show="formAdd.flowId && formAdd.masBranchID !== ''"
                         max-width="450%"
                       >
                         <v-container>
@@ -81,18 +81,17 @@
                                         v-model="p.fieldValue"
                                         :label="p.fieldName"
                                         dense
-                                        :rules="[rules.required]"
+                                        :rules="p.requiredField === 'True' ? [rules.required] : [true]"
                                         outlined
                                       ></v-text-field>
                                     </div>
                                     <div v-if="p.fieldType == 'number'">
                                       <br />
-                                      <!-- <p>{{p.fieldName}}</p> -->
                                       <v-text-field
                                         v-model="p.fieldValue"
                                         :label="p.fieldName"
                                         dense
-                                        :rules="[rules.required]"
+                                        :rules="p.requiredField === 'True' ? [rules.required] : [true]"
                                         outlined
                                       ></v-text-field>
                                     </div>
@@ -109,7 +108,7 @@
                                           dense
                                           filled
                                           :label="p.fieldName"
-                                          :rules="[rules.required]"
+                                          :rules="p.requiredField === 'True' ? [rules.required] : [true]"
                                         ></v-autocomplete>
                                       </v-col>
                                       <v-col
@@ -127,7 +126,7 @@
                                             hide-details
                                             outlined
                                             dense
-                                            :rules="[rules.required]"
+                                            :rules="p.requiredField === 'True' ? [rules.required] : [true]"
                                           ></v-select>
                                         </div>
                                       </v-col>
@@ -139,7 +138,7 @@
                                             row
                                             v-model="p.fieldValue"
                                             style="margin:0px;"
-                                            :rules="[rules.required]"
+                                            :rules="p.requiredField === 'True' ? [rules.required] : [true]"
                                           >
                                           <template v-slot:label> </template>
                                           <div
@@ -162,6 +161,26 @@
                                 </div>
                                 <div  v-if="p.conditionField !== '' && flowfieldNameitem.filter(row => {return (row.fieldId === parseInt(p.conditionField));}).length > 0">
                                   <div v-if="p.conditionValue === flowfieldNameitem.filter(row => {return (row.fieldId === parseInt(p.conditionField));})[0].fieldValue">
+                                    <div v-if="p.fieldType == 'text'">
+                                      <br />
+                                      <v-text-field
+                                        v-model="p.fieldValue"
+                                        :label="p.fieldName"
+                                        dense
+                                        :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                                        outlined
+                                      ></v-text-field>
+                                    </div>
+                                    <div v-if="p.fieldType == 'number'">
+                                      <br />
+                                      <v-text-field
+                                        v-model="p.fieldValue"
+                                        :label="p.fieldName"
+                                        dense
+                                        :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                                        outlined
+                                      ></v-text-field>
+                                    </div>
                                     <div
                                       cols="12"
                                       v-if="p.fieldType == 'Autocompletes'"
@@ -172,7 +191,7 @@
                                         dense
                                         filled
                                         :label="p.fieldName"
-                                        :rules="[rules.required]"
+                                        :rules="p.requiredField === 'True' ? [rules.required] : [true]"
                                       ></v-autocomplete>
                                     </div>
                                       <div v-if="p.fieldType == 'Selects'">
@@ -184,7 +203,7 @@
                                           dense
                                           hide-details
                                           outlined
-                                          :rules="[rules.required]"
+                                          :rules="p.requiredField === 'True' ? [rules.required] : [true]"
                                         ></v-select>
                                       </div>
                                       <div v-if="p.fieldType === 'Radio'" style="padding:0px;">
@@ -194,7 +213,82 @@
                                             row
                                             v-model="p.fieldValue"
                                             style="margin:0px;"
-                                            :rules="[rules.required]"
+                                            :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                                          >
+                                            <template v-slot:label> </template>
+                                            <div
+                                              v-for="radios in JSON.parse(
+                                                p.optionField
+                                              )"
+                                              :key="radios.toISOString"
+                                              class="text-center"
+                                            >
+                                              <v-radio
+                                                :label="radios.text"
+                                                dense
+                                                :value="radios.value"
+                                              ></v-radio>
+                                            </div>
+                                          </v-radio-group>
+                                        </v-container>
+                                      </div>
+                                  </div>
+                                </div>
+                                <div  v-if="p.conditionField === 'flow' ">
+                                  <div v-if="parseInt(p.conditionValue) === parseInt(formAdd.flowId) ">
+                                    <div v-if="p.fieldType == 'text'">
+                                      <br />
+                                      <v-text-field
+                                        v-model="p.fieldValue"
+                                        :label="p.fieldName"
+                                        dense
+                                        :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                                        outlined
+                                      ></v-text-field>
+                                    </div>
+                                    <div v-if="p.fieldType == 'number'">
+                                      <br />
+                                      <v-text-field
+                                        v-model="p.fieldValue"
+                                        :label="p.fieldName"
+                                        dense
+                                        :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                                        outlined
+                                      ></v-text-field>
+                                    </div>
+                                    <div
+                                      cols="12"
+                                      v-if="p.fieldType == 'Autocompletes'"
+                                    >
+                                      <v-autocomplete
+                                        v-model="p.fieldValue"
+                                        :items="JSON.parse(p.optionField)"
+                                        dense
+                                        filled
+                                        :label="p.fieldName"
+                                        :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                                      ></v-autocomplete>
+                                    </div>
+                                      <div v-if="p.fieldType == 'Selects'">
+                                        <v-select
+                                          v-model="p.fieldValue"
+                                          :items="JSON.parse(p.optionField)"
+                                          menu-props="auto"
+                                          :label="p.fieldName"
+                                          dense
+                                          :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                                          hide-details
+                                          outlined
+                                        ></v-select>
+                                      </div>
+                                      <div v-if="p.fieldType === 'Radio'" style="padding:0px;">
+                                        <br />
+                                        <v-container fluid style="padding:0px;">
+                                          <v-radio-group
+                                            row
+                                            v-model="p.fieldValue"
+                                            style="margin:0px;"
+                                            :rules="p.requiredField === 'True' ? [rules.required] : [true]"
                                           >
                                             <template v-slot:label> </template>
                                             <div
@@ -426,7 +520,7 @@ export default {
             for (var i = 0; i < rs.length; i++) {
               let d = rs[i]
               d.text = d.flowName
-              d.value = d.flowCode
+              d.value = d.flowId
               this.editedItemSelete.push(d)
             }
           }
@@ -455,8 +549,8 @@ export default {
       axios
         .get(
           this.DNS_IP +
-            '/flowField/get?flowCode=' +
-            this.formAdd.flowCode +
+            '/flowField/get?flowId=' +
+            this.formAdd.flowId +
             '&shopId=' +
             this.shopId
         )
@@ -499,6 +593,7 @@ export default {
             s.endTime = ''
             s.checkCar = 'False'
             s.conditionValue = d.conditionValue
+            s.requiredField = d.requiredField
             // if (d.conditionField !== '') {
             //   s.conditionFieldId = this.flowfieldNameitem.filter((row) => { return row.fieldId === d.conditionField })['fieldId']
             // } else {
