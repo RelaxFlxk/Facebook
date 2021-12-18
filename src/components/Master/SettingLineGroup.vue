@@ -105,8 +105,6 @@
               >
                 <v-icon > mdi-wrench </v-icon>
               </v-btn>
-            </template>
-            <template v-slot:[`item.Delete`]="{ item }">
               <v-btn
                 color="red"
                 fab
@@ -158,8 +156,7 @@ export default {
         { text: 'GroupID', value: 'GroupId' },
         { text: 'GroupName', value: 'GroupName' },
         { text: 'รูปกลุ่ม', value: 'Img' },
-        { text: 'แก้ไข', value: 'action', sortable: false, align: 'center' },
-        { text: 'ลบข้อมูล', value: 'Delete', sortable: false, align: 'center' }
+        { text: 'จัดการข้อมูล', value: 'action', sortable: false, align: 'center' }
 
       ],
       LineGroupitem: [],
