@@ -340,6 +340,14 @@
                                       v-model="endDate"
                                       no-title
                                       @input="menu = false"
+                                      :min="
+                                    new Date(
+                                      Date.now() -
+                                        new Date().getTimezoneOffset() * 60000
+                                    )
+                                      .toISOString()
+                                      .substr(0, 10)
+                                  "
                                     ></v-date-picker>
                                   </v-menu>
                                 </v-col>
@@ -448,7 +456,7 @@ export default {
       menu: false,
       endDate: '',
       endTime: '',
-      checkCar: 'False',
+      checkCar: 'True',
       session: this.$session.getAll(),
       shopId: this.$session.getAll().data.shopId,
       formAdd: {
@@ -588,9 +596,9 @@ export default {
             s.LAST_USER = ''
             s.showCard = d.showCard
             s.shopId = this.shopId
-            s.endDate = ''
-            s.endTime = ''
-            s.checkCar = 'False'
+            s.endDate = d.endDate
+            s.endTime = d.endTime
+            s.checkCar = 'True'
             s.conditionValue = d.conditionValue
             s.requiredField = d.requiredField
             // if (d.conditionField !== '') {
@@ -651,8 +659,8 @@ export default {
             update.checkCar = d.checkCar
             update.conditionField = d.conditionField
             update.conditionValue = d.conditionValue
-            update.endDate = d.endDate
-            update.endTime = d.endTime
+            update.endDate = this.endDate
+            update.endTime = this.endTime
             update.fieldId = d.fieldId
             update.fieldName = d.fieldName
             update.fieldType = d.fieldType
@@ -681,8 +689,8 @@ export default {
                 update.checkCar = d.checkCar
                 update.conditionField = d.conditionField
                 update.conditionValue = d.conditionValue
-                update.endDate = d.endDate
-                update.endTime = d.endTime
+                update.endDate = this.endDate
+                update.endTime = this.endTime
                 update.fieldId = d.fieldId
                 update.fieldName = d.fieldName
                 update.fieldType = d.fieldType
