@@ -1269,7 +1269,7 @@
                 <v-data-table
                   :headers="columns"
                   :items="dataItem"
-                  v-if="dataItemSelect.length === 0"
+                  v-if="!selectedStatus"
                   :search="searchAll2"
                   :items-per-page="10"
                 >
@@ -1308,17 +1308,18 @@
                     </v-btn>
                     <v-btn
                       color="warning"
+                      fab
                       id="v-step-2"
                       v-if="item.statusBt !== 'confirmJob'"
                       small
                       @click.stop="setDataChang(item)"
                     >
-                      เปลี่ยนเวลา
+                      <v-icon> mdi-calendar-clock </v-icon>
                     </v-btn>
                     <v-btn
                       color="primary"
                       fab
-                      v-if="item.statusBt !== 'confirmJob'"
+                      v-if="item.statusBt === 'confirmJob'"
                       id="v-step-2"
                       small
                       @click.stop="(dialogEdit = true), getBookingData(item)"
@@ -1328,7 +1329,7 @@
                     <v-btn
                       color="red"
                       dark
-                      v-if="item.statusBt !== 'confirmJob'"
+                      v-if="item.statusBt === 'confirmJob' || item.statusBt === 'cancel'"
                       fab
                       small
                       @click.stop="(dialogDelete = true), getDataById(item)"
@@ -1350,7 +1351,7 @@
                 <v-data-table
                   :headers="columns"
                   :items="dataItemSelect"
-                  v-if="dataItemSelect.length > 0"
+                  v-if="selectedStatus"
                   :search="searchAll2"
                   :items-per-page="10"
                 >
@@ -1366,40 +1367,9 @@
                   <template v-slot:[`item.action`]="{ item }">
                     <!-- confirm -->
                     <v-btn
-                      color="success"
-                      fab
-                      id="v-step-2"
-                      v-if="item.statusBt !== 'confirmJob'"
-                      :disabled="item.chkConfirm"
-                      small
-                      @click.stop="confirmChk(item)"
-                    >
-                      <v-icon dark> mdi-phone-check </v-icon>
-                    </v-btn>
-                    <v-btn
-                      color="error"
-                      fab
-                      id="v-step-2"
-                      v-if="item.statusBt !== 'confirmJob'"
-                      small
-                      :disabled="item.chkCancel"
-                      @click.stop="cancelChk(item)"
-                    >
-                      <v-icon dark> mdi-phone-cancel </v-icon>
-                    </v-btn>
-                    <v-btn
-                      color="warning"
-                      id="v-step-2"
-                      v-if="item.statusBt !== 'confirmJob'"
-                      small
-                      @click.stop="setDataChang(item)"
-                    >
-                      เปลี่ยนเวลา
-                    </v-btn>
-                    <v-btn
                       color="primary"
                       fab
-                      v-if="item.statusBt !== 'confirmJob'"
+                      v-if="item.statusBt === 'confirm'"
                       id="v-step-2"
                       small
                       @click.stop="(dialogEdit = true), getBookingData(item)"
@@ -1407,14 +1377,15 @@
                       <v-icon dark> mdi-account-plus </v-icon>
                     </v-btn>
                     <v-btn
-                      color="red"
-                      dark
-                      v-if="item.statusBt !== 'confirmJob'"
+                      color="success"
                       fab
+                      id="v-step-2"
+                      v-if="item.statusBt !== 'confirmJob' && item.statusBt !== 'confirm'"
+                      :disabled="item.chkConfirm"
                       small
-                      @click.stop="(dialogDelete = true), getDataById(item)"
+                      @click.stop="confirmChk(item)"
                     >
-                      <v-icon> mdi-delete </v-icon>
+                      <v-icon dark> mdi-phone-check </v-icon>
                     </v-btn>
                     <v-btn
                       color="info"
@@ -1425,6 +1396,36 @@
                       @click.stop="(dialogJob = true), getjob(item)"
                     >
                       <v-icon> mdi-qrcode-scan </v-icon>
+                    </v-btn>
+                    <v-btn
+                      color="warning"
+                      fab
+                      id="v-step-2"
+                      small
+                      @click.stop="setDataChang(item)"
+                    >
+                      <v-icon> mdi-calendar-clock </v-icon>
+                    </v-btn>
+                    <v-btn
+                      color="error"
+                      fab
+                      id="v-step-2"
+                      v-if="item.statusBt !== 'cancel' && item.statusBt !== 'confirmJob'"
+                      small
+                      :disabled="item.chkCancel"
+                      @click.stop="cancelChk(item)"
+                    >
+                      <v-icon dark> mdi-phone-cancel </v-icon>
+                    </v-btn>
+                    <v-btn
+                      color="red"
+                      dark
+                      v-if="item.statusBt === 'cancel'"
+                      fab
+                      small
+                      @click.stop="(dialogDelete = true), getDataById(item)"
+                    >
+                      <v-icon> mdi-delete </v-icon>
                     </v-btn>
                   </template>
                 </v-data-table>
@@ -1608,7 +1609,7 @@ export default {
       searchAll2: '',
       columns: [
         { text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
-        { text: 'Booking Id', value: 'bookNo' },
+        // { text: 'Booking Id', value: 'bookNo' },
         { text: 'ชื่อลูกค้า', value: 'cusName' },
         { text: 'ทะเบียนรถ', value: 'cusReg' },
         { text: 'ชื่อบริการ', value: 'flowName' },
@@ -1680,7 +1681,8 @@ export default {
         }
       },
       getSelectText: '',
-      getSelectCount: 0
+      getSelectCount: 0,
+      selectedStatus: false
     }
   },
   beforeCreate () {
@@ -1948,6 +1950,7 @@ export default {
         })
     },
     getSelect (text, count) {
+      this.selectedStatus = true
       this.getSelectText = text
       this.getSelectCount = count
       this.dataItemSelect = []
@@ -1999,6 +2002,7 @@ export default {
         this.masBranchID = this.branch[0].value
       }
       this.dataReady = false
+      this.selectedStatus = false
       this.dataItem = []
       this.countWaiting = 0
       this.countConfirm = 0

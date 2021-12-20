@@ -122,7 +122,7 @@ table tr:last-child td:last-child {
   border-bottom-right-radius: 10px;
 } */
 .v-application a {
-  color: var(--nav-bg);
+  color: var(--nav-bg) !important;
 }
 .theme--light.v-btn {
   color: var(--nav-text) !important;
@@ -159,23 +159,20 @@ table tr:last-child td:last-child {
   background-color: var(--date-picker-footer) !important;
 }
 .v-date-picker-header {
-  background-color: var(--date-picker-head) !important
+  background-color: var(--date-picker-head)
 }
 .v-date-picker-table {
-  background-color: var(--date-picker-head) !important;
+  background-color: var(--date-picker-head);
 }
 .v-date-picker-table > table > thead {
-  background-color: var(--date-picker-table-head) !important;
+  background-color: var(--date-picker-table-head);
 }
 .v-date-picker-table > table > tbody {
-  background-color: var(--date-picker-table-body) !important;
+  background-color: var(--date-picker-table-body);
 }
 
 .v-list-group__header {
   background-color: var(--nav-bg) !important;
-}
-.theme--light.v-icon {
-  color: var(--nav-text);
 }
 .menu-head {
   color: var(--nav-text);
@@ -183,7 +180,10 @@ table tr:last-child td:last-child {
   font-size: 26px !important;
 }
 .v-list-item--active {
-  background-color: var(--nav-text-active) !important;
+  background-color: var(--nav-text-active);
+}
+.theme--light.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled) {
+  background-color: var(--nav-bg) !important;
 }
 .theme--light.v-app-bar.v-toolbar.v-sheet {
   background-color: var(--nav-bg) !important;
