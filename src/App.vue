@@ -103,6 +103,9 @@ h4 {
   font-weight: 300;
   letter-spacing: .0125em!important;
 }
+.v-navigation-drawer .v-list {
+    padding: 0px !important;
+}
 .nav-text-active {
   color: var(--nav-text-active) !important;
 }
@@ -125,7 +128,7 @@ table tr:last-child td:last-child {
   color: var(--nav-bg) !important;
 }
 .theme--light.v-btn {
-  color: var(--nav-text) !important;
+  color: var(--nav-text);
 };
 .theme--light.v-btn.v-btn--has-bg {
   background-color: var(--nav-bg) ;
