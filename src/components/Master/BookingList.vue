@@ -48,8 +48,8 @@
             <v-row>
               <v-col cols="6" class="text-center pb-0">
                 <v-alert
-                  color="warning"
-                  dark
+                  :color="'orange ' + ((getSelectText === 'wait') ? '' : 'lighten-4')"
+                  :dark="((getSelectText === 'wait') ? true : false)"
                   dense
                   icon="mdi-phone-ring"
                   prominent
@@ -63,8 +63,8 @@
               </v-col>
               <v-col cols="6" class="text-center pb-0">
                 <v-alert
-                  color="success"
-                  dark
+                  :color="'green ' + ((getSelectText === 'confirm') ? '' : 'lighten-4')"
+                  :dark="((getSelectText === 'confirm') ? true : false)"
                   dense
                   icon="mdi-phone-check"
                   prominent
@@ -80,8 +80,8 @@
             <v-row>
               <v-col cols="6" class="text-center pb-0">
                 <v-alert
-                  color="error"
-                  dark
+                  :color="'red ' + ((getSelectText === 'cancel') ? '' : 'lighten-4')"
+                  :dark="((getSelectText === 'cancel') ? true : false)"
                   dense
                   icon="mdi-phone-cancel"
                   prominent
@@ -95,8 +95,8 @@
               </v-col>
               <v-col cols="6" class="text-center pb-0">
                 <v-alert
-                  color="info"
-                  dark
+                  :color="'blue ' + ((getSelectText === 'confirmJob') ? '' : 'lighten-4')"
+                  :dark="((getSelectText === 'confirmJob') ? true : false)"
                   dense
                   icon="mdi-car-cog"
                   prominent
@@ -1349,7 +1349,7 @@
                   </template>
                 </v-data-table>
                 <v-data-table
-                  :headers="columns"
+                  :headers="columnsSelected"
                   :items="dataItemSelect"
                   v-if="selectedStatus"
                   :search="searchAll2"
@@ -1616,6 +1616,16 @@ export default {
         { text: 'ชื่อบริการ', value: 'flowName' },
         { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
         { text: 'สถานะนัดหมาย', value: 'statusBtText' }
+        // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
+      ],
+      columnsSelected: [
+        { text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+        // { text: 'Booking Id', value: 'bookNo' },
+        { text: 'ชื่อลูกค้า', value: 'cusName' },
+        { text: 'เบอร์โทร', value: 'tel' },
+        { text: 'ทะเบียนรถ', value: 'cusReg' },
+        { text: 'ชื่อบริการ', value: 'flowName' },
+        { text: 'วันและเวลานัดหมาย', value: 'dueDate' }
         // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
       ],
       dataItem: [],
@@ -2004,6 +2014,7 @@ export default {
       }
       this.dataReady = false
       this.selectedStatus = false
+      this.getSelectText = ''
       this.dataItem = []
       this.countWaiting = 0
       this.countConfirm = 0
