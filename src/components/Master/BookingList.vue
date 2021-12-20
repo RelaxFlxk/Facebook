@@ -1611,6 +1611,7 @@ export default {
         { text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
         // { text: 'Booking Id', value: 'bookNo' },
         { text: 'ชื่อลูกค้า', value: 'cusName' },
+        { text: 'เบอร์โทร', value: 'tel' },
         { text: 'ทะเบียนรถ', value: 'cusReg' },
         { text: 'ชื่อบริการ', value: 'flowName' },
         { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
@@ -2094,6 +2095,9 @@ export default {
               s.cusReg = dataBookingData.filter(function (el) {
                 return el.fieldName === 'เลขทะเบียน'
               })
+              s.tel = dataBookingData.filter(function (el) {
+                return el.fieldName === 'เบอร์โทร'
+              })
               if (s.cusName.length > 0) {
                 s.cusName = s.cusName[0].fieldValue
               } else {
@@ -2103,6 +2107,11 @@ export default {
                 s.cusReg = s.cusReg[0].fieldValue
               } else {
                 s.cusReg = ''
+              }
+              if (s.tel.length > 0) {
+                s.tel = s.tel[0].fieldValue
+              } else {
+                s.tel = ''
               }
               dataItems.push(s)
             }
