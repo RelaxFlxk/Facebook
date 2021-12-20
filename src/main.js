@@ -54,7 +54,8 @@ Vue.mixin({
   methods: {
     format_date (value) {
       if (value) {
-        return moment(moment(value, 'YYYY-MM-DD HH:mm:ss').tz('Asia/Bangkok').toDate()).format('YYYY-MM-DD HH:mm')
+        // return moment(moment(value, 'YYYY-MM-DD HH:mm:ss').tz('Asia/Bangkok').toDate()).format('YYYY-MM-DD HH:mm')
+        return moment(moment(new Date(value)), 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss')
         // return moment(moment((value), ('Asia/Bangkok')).format('DD/MM/YYYY HH:mm:ss'))
       }
     },
@@ -62,12 +63,12 @@ Vue.mixin({
       if (value) {
         // moment.tz.add('Asia/Bangkok|ICT|-70|0|')
         // return moment(new Date(value)).zone('UTC+7').format('YYYY-MM-DD HH:mm:ss')
-        return moment(moment(new Date(value)).tz('Asia/Bangkok')).format('YYYY-MM-DD HH:mm:ss')
+        return moment(moment(new Date(value)), 'DD/MM/YYYY HH:mm:ss').format('DD/MM/YYYY HH:mm:ss')
       }
     },
     format_dateNotime (value) {
       if (value) {
-        return moment(moment((value), 'DD/MM/YYYY').toDate()).format('DD/MM/YYYY')
+        return moment(moment(new Date(value), 'DD/MM/YYYY').toDate()).format('DD/MM/YYYY')
       }
     },
     // YYYY-MM-DD
