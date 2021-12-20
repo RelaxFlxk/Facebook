@@ -453,7 +453,7 @@ export default {
       dialog: false,
       dialogEdit: false,
       dialogDelete: false,
-      date: new Date().toISOString().substr(0, 10),
+      date: this.momenDate_1(new Date()),
       menu: false,
       session: this.$session.getAll(),
       shopId: this.$session.getAll().data.shopId,

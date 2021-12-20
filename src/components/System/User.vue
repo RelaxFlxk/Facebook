@@ -890,7 +890,7 @@ export default {
       path: '/system_user/', // Path Model
       dataReady: true,
       dateTime: '', // Generate DateTime
-      date: new Date().toISOString().substr(0, 10),
+      date: this.momenDate_1(new Date()),
       menu: false,
       menu2: false,
       menu3: false,

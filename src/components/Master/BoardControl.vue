@@ -802,7 +802,7 @@ export default {
       dialogAdd: false,
       dialogEdit: false,
       dialogDelete: false,
-      date: new Date().toISOString().substr(0, 10),
+      date: this.momenDate_1(),
       // DIALOG ADD
       drawer: false,
       drawer1: false,

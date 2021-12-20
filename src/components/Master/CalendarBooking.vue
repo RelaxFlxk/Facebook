@@ -239,7 +239,7 @@ export default {
         }
       ],
       dataReady: true,
-      today: new Date().toISOString().substr(0, 10),
+      today: this.momenDate_1(new Date()),
       events: [],
       countCus: 0,
       selectedEvent: {},

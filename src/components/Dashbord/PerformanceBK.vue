@@ -140,7 +140,7 @@ export default {
       ],
       shopId: this.$session.getAll().data.shopId,
       dataReady: true,
-      date: new Date().toISOString().substr(0, 10),
+      date: this.momenDate_1(new Date()),
       EmployeeSelect: [],
       empStep: '',
       dateRange: { startDate, endDate },

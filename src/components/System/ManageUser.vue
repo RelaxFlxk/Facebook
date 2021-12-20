@@ -210,10 +210,10 @@
             :items-per-page="10"
           >
             <template v-slot:[`item.CREATE_DATE`]="{ item }">
-              {{ format_dateNotime(item.CREATE_DATE) }}
+              {{ format_dateFUllTime(item.CREATE_DATE) }}
             </template>
             <template v-slot:[`item.LAST_DATE`]="{ item }">
-              {{ format_dateNotime(item.LAST_DATE) }}
+              {{ format_dateFUllTime(item.LAST_DATE) }}
             </template>
             <template v-slot:[`item.action`]="{ item }">
                <v-btn
@@ -266,7 +266,7 @@ export default {
       returnLink: '/system/EditShop',
       dataReady: true,
       dateTime: '', // Generate DateTime
-      date: new Date().toISOString().substr(0, 10),
+      date: this.momenDate_1(new Date()),
       menu: false,
       menu2: false,
       menu3: false,

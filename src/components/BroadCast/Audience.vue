@@ -1264,10 +1264,10 @@
                   :items-per-page="10"
                 >
                   <template v-slot:[`item.CREATE_DATE`]="{ item }">
-                    {{ format_dateNotime(item.CREATE_DATE) }}
+                    {{ format_dateFUllTime(item.CREATE_DATE) }}
                   </template>
                   <template v-slot:[`item.LAST_DATE`]="{ item }">
-                    {{ format_dateNotime(item.LAST_DATE) }}
+                    {{ format_dateFUllTime(item.LAST_DATE) }}
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
                     <!-- <v-btn
@@ -1379,10 +1379,10 @@ export default {
         flowId: '', //
         fieldId: '', //
         optionFieldValue: '', //
-        startDate: new Date().toISOString().substr(0, 10), //
-        endDate: new Date().toISOString().substr(0, 10), //
-        startDateClose: new Date().toISOString().substr(0, 10), //
-        endDateClose: new Date().toISOString().substr(0, 10), //
+        startDate: this.momenDate_1(new Date()), //
+        endDate: this.momenDate_1(new Date()), //
+        startDateClose: this.momenDate_1(new Date()), //
+        endDateClose: this.momenDate_1(new Date()), //
         audiencesSelect: 'bookingDate', //
         startRating: 0, //
         endRating: 0, //
@@ -1401,10 +1401,10 @@ export default {
         flowId: '', //
         fieldId: '', //
         optionFieldValue: '', //
-        startDate: new Date().toISOString().substr(0, 10), //
-        endDate: new Date().toISOString().substr(0, 10), //
-        startDateClose: new Date().toISOString().substr(0, 10), //
-        endDateClose: new Date().toISOString().substr(0, 10), //
+        startDate: this.momenDate_1(), //
+        endDate: this.momenDate_1(), //
+        startDateClose: this.momenDate_1(), //
+        endDateClose: this.momenDate_1(), //
         audiencesSelect: 'bookingDate', //
         startRating: 0, //
         endRating: 0, //
@@ -1880,10 +1880,10 @@ export default {
       this.formAdd.audiencesName = ''
       this.formAdd.fieldId = ''
       this.formAdd.optionFieldValue = ''
-      this.formAdd.startDate = new Date().toISOString().substr(0, 10)
-      this.formAdd.endDate = new Date().toISOString().substr(0, 10)
-      this.formAdd.startDateClose = new Date().toISOString().substr(0, 10)
-      this.formAdd.endDateClose = new Date().toISOString().substr(0, 10)
+      this.formAdd.startDate = this.momenDate_1(this.formAdd.startDate)
+      this.formAdd.endDate = this.momenDate_1(this.formAdd.endDate)
+      this.formAdd.startDateClose = this.momenDate_1(this.formAdd.startDateClose)
+      this.formAdd.endDateClose = this.momenDate_1(this.formAdd.endDateClose)
       this.formAdd.audiencesSelect = 'bookingDate'
       this.formAdd.startRating = 0
       this.formAdd.endRating = 0
@@ -1932,8 +1932,8 @@ export default {
         if (item.audiencesSelect === 'bookingDate') {
           this.formUpdate.audiencesName = item.audiencesName
           this.formUpdate.flowId = flowIds
-          this.formUpdate.startDate = new Date(item.startDate).toISOString().substr(0, 10)
-          this.formUpdate.endDate = new Date(item.endDate).toISOString().substr(0, 10)
+          this.formUpdate.startDate = this.momenDate_1(item.startDate)
+          this.formUpdate.endDate = this.momenDate_1(item.endDate)
           this.formUpdate.audiencesSelect = item.audiencesSelect
           this.formUpdate.shopId = this.$session.getAll().data.shopId //
           this.formUpdate.masBranchID = masBranchIDs
@@ -1944,10 +1944,10 @@ export default {
           if (item.dateJobOpen === 'True' && item.dateJobClose === 'True') {
             this.formUpdate.audiencesName = item.audiencesName
             this.formUpdate.flowId = flowIds
-            this.formUpdate.startDate = new Date(item.startDate).toISOString().substr(0, 10)
-            this.formUpdate.endDate = new Date(item.endDate).toISOString().substr(0, 10)
-            this.formUpdate.startDateClose = new Date(item.startDateClose).toISOString().substr(0, 10)
-            this.formUpdate.endDateClose = new Date(item.endDateClose).toISOString().substr(0, 10)
+            this.formUpdate.startDate = this.momenDate_1(item.startDate)
+            this.formUpdate.endDate = this.momenDate_1(item.endDate)
+            this.formUpdate.startDateClose = this.momenDate_1(item.startDateClose)
+            this.formUpdate.endDateClose = this.momenDate_1(item.endDateClose)
             this.formUpdate.audiencesSelect = item.audiencesSelect
             this.formUpdate.shopId = this.$session.getAll().data.shopId
             this.formUpdate.dateJobOpen = 'True' //
@@ -1960,8 +1960,8 @@ export default {
           } else if (item.dateJobOpen === 'True' && item.dateJobClose === 'False') {
             this.formUpdate.audiencesName = item.audiencesName
             this.formUpdate.flowId = flowIds
-            this.formUpdate.startDate = new Date(item.startDate).toISOString().substr(0, 10)
-            this.formUpdate.endDate = new Date(item.endDate).toISOString().substr(0, 10)
+            this.formUpdate.startDate = this.momenDate_1(item.startDate)
+            this.formUpdate.endDate = this.momenDate_1(item.endDate)
             this.formUpdate.audiencesSelect = item.audiencesSelect
             this.formUpdate.shopId = this.$session.getAll().data.shopId
             this.formUpdate.dateJobOpen = 'True' //
@@ -1974,8 +1974,8 @@ export default {
           } else if (item.dateJobOpen === 'False' && item.dateJobClose === 'True') {
             this.formUpdate.audiencesName = item.audiencesName
             this.formUpdate.flowId = flowIds
-            this.formUpdate.startDateClose = new Date(item.startDateClose).toISOString().substr(0, 10)
-            this.formUpdate.endDateClose = new Date(item.endDateClose).toISOString().substr(0, 10)
+            this.formUpdate.startDateClose = this.momenDate_1(item.startDateClose)
+            this.formUpdate.endDateClose = this.momenDate_1(item.endDateClose)
             this.formUpdate.audiencesSelect = item.audiencesSelect
             this.formUpdate.shopId = this.$session.getAll().data.shopId
             this.formUpdate.dateJobOpen = 'False' //
@@ -2001,8 +2001,8 @@ export default {
           }
         } else if (item.audiencesSelect === 'rating') {
           this.formUpdate.audiencesName = item.audiencesName
-          this.formUpdate.startDate = new Date(item.startDate).toISOString().substr(0, 10)
-          this.formUpdate.endDate = new Date(item.endDate).toISOString().substr(0, 10)
+          this.formUpdate.startDate = this.momenDate_1(item.startDate)
+          this.formUpdate.endDate = this.momenDate_1(item.endDate)
           this.formUpdate.audiencesSelect = item.audiencesSelect
           this.formUpdate.shopId = this.$session.getAll().data.shopId
           this.formUpdate.startRating = parseInt(item.startRating)
@@ -2369,10 +2369,10 @@ export default {
       this.formUpdate.audiencesName = ''
       this.formUpdate.fieldId = ''
       this.formUpdate.optionFieldValue = ''
-      this.formUpdate.startDate = new Date().toISOString().substr(0, 10)
-      this.formUpdate.endDate = new Date().toISOString().substr(0, 10)
-      this.formUpdate.startDateClose = new Date().toISOString().substr(0, 10)
-      this.formUpdate.endDateClose = new Date().toISOString().substr(0, 10)
+      this.formUpdate.startDate = this.momenDate_1()
+      this.formUpdate.endDate = this.momenDate_1()
+      this.formUpdate.startDateClose = this.momenDate_1()
+      this.formUpdate.endDateClose = this.momenDate_1()
       this.formUpdate.audiencesSelect = 'bookingDate'
       this.formUpdate.startRating = 0
       this.formUpdate.endRating = 0

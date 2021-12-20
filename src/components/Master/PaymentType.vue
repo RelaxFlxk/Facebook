@@ -277,7 +277,7 @@ export default {
       // End Menu Config
       dataReady: true,
       dateTime: '', // Generate DateTime
-      date: new Date().toISOString().substr(0, 10),
+      date: this.momenDate_1(new Date()),
       menu: false,
       menu2: false,
       menu3: false,

@@ -152,7 +152,7 @@ export default {
       searchAll2: '',
       loader: null,
       loading3: false,
-      date: new Date().toISOString().substr(0, 10),
+      date: this.momenDate_1(),
       menu: false,
       dataItem: [],
       EmployeeItem: [],
