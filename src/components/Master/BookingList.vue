@@ -1362,7 +1362,7 @@
                     {{ format_dateNotime(item.LAST_DATE) }}
                   </template>
                   <template v-slot:[`item.dueDate`]="{ item }">
-                    {{ format_date(item.dueDate) }}
+                    {{ (item.dueDate) }}
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
                     <!-- confirm -->

@@ -54,7 +54,8 @@ Vue.mixin({
   methods: {
     format_date (value) {
       if (value) {
-        return moment(moment((value), ('Asia/Bangkok')).format('DD/MM/YYYY HH:mm:ss'))
+        return moment(moment(value, 'YYYY-MM-DD HH:mm:ss').tz('Asia/Bangkok').toDate()).format('YYYY-MM-DD HH:mm')
+        // return moment(moment((value), ('Asia/Bangkok')).format('DD/MM/YYYY HH:mm:ss'))
       }
     },
     format_dateFUllTime (value) {
