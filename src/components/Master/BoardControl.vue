@@ -753,7 +753,7 @@ import draggable from 'vuedraggable'
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
 import Menu from '../System/Menu.vue'
-import moment from 'moment' // แปลง date
+// import moment from 'moment' // แปลง date
 
 export default {
   name: 'hello',
@@ -1097,7 +1097,7 @@ export default {
           console.log('JobDataItem', this.JobDataItem)
           console.log('JobLEN', this.userId)
           console.log('allJob', this.allJob)
-          console.log('endTime', this.formUpdate.endDate)
+          console.log('endTime', d.endTime)
           console.log('totalDateDiff', this.totalDateDiff)
         })
     },
@@ -1106,11 +1106,6 @@ export default {
       await axios
         .post(this.DNS_IP + '/job/pushMsg/' + jobId, updateStatusSend)
         .then(console.log(jobId))
-    },
-    momenDate (value) {
-      if (value) {
-        return moment(String(value)).format('YYYY-MM-DD')
-      }
     },
     async editStep () {
       this.$router.push('/Master/Flow')
@@ -1124,11 +1119,16 @@ export default {
     itemCars (item) {
       this.item_newcars = item
     },
+    // momenDate (value) {
+    //   if (value) {
+    //     return moment(String(value)).format('YYYY-MM-DD')
+    //   }
+    // },
     async setUpdate (item) {
       console.log(this.formUpdate)
-      console.log(item)
+      console.log('item1', item)
       this.formUpdate.jobId = item.jobId
-      this.formUpdate.endDate = this.momenDate(item.endDate)
+      this.formUpdate.endDate = this.momenDate_1(item.endDate)
       this.formUpdate.endTime = item.endTime
       this.formDelete.jobNo = item.jobNo
     },

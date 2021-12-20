@@ -54,7 +54,7 @@ Vue.mixin({
   methods: {
     format_date (value) {
       if (value) {
-        return moment.tz(String(value), 'Asia/Bangkok').format('DD/MM/YYYY HH:mm:ss')
+        return moment(moment((value), ('Asia/Bangkok')).format('DD/MM/YYYY HH:mm:ss'))
       }
     },
     format_dateFUllTime (value) {
@@ -66,19 +66,19 @@ Vue.mixin({
     },
     format_dateNotime (value) {
       if (value) {
-        return moment.tz(String(value), 'Asia/Bangkok').format('DD/MM/YYYY')
+        return moment(moment((value), 'DD/MM/YYYY').toDate()).format('DD/MM/YYYY')
       }
     },
     // YYYY-MM-DD
     momenDate_1 (value) {
       if (value) {
-        return moment.tz(String(value), 'Asia/Bangkok').format('YYYY-MM-DD')
+        return moment(moment((value), 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
       }
     },
     // HH:MM:ss
     momenTime (value) {
       if (value) {
-        return moment.tz(String(value), 'Asia/Bangkok').format('HH:mm:ss')
+        return moment(moment((value), 'HH:mm:ss').toDate()).format('HH:mm:ss')
       }
     },
     getGetToken (DNS_IP) {
