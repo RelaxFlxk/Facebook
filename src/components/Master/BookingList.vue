@@ -56,7 +56,7 @@
                   @click="getSelect('wait',countWaiting)"
                 >
                   <div>
-                    <strong>ยังไมไ่ด้โทร</strong>
+                    <strong>รายการนัดหมายใหม่</strong>
                   </div>
                   <div>จำนวน : {{countWaiting}}</div>
                 </v-alert>
@@ -1914,7 +1914,7 @@ export default {
               }
             } else {
               s.statusBt = 'wait'
-              s.statusBtText = 'ยังไมไ่ด้โทร'
+              s.statusBtText = 'รายการนัดหมายใหม่'
             }
             let dataBookingData = []
             await axios
@@ -2074,7 +2074,7 @@ export default {
                 }
               } else {
                 s.statusBt = 'wait'
-                s.statusBtText = 'ยังไมไ่ด้โทร'
+                s.statusBtText = 'รายการนัดหมายใหม่'
                 this.countWaiting = this.countWaiting + 1
               }
               var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
