@@ -2376,8 +2376,8 @@ export default {
               .post(this.DNS_IP + '/Booking/add', Add)
               .then(response => {
                 this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-                this.clearDataAdd()
-                console.log('addDataGlobal DNS_IP + /job/add', response)
+                this.confirmChkAdd(response.data)
+                // console.log('addDataGlobal DNS_IP + /job/add', response)
               })
               .catch(error => {
                 console.log('error function addData : ', error)
@@ -2395,7 +2395,34 @@ export default {
           this.clearData()
         })
     },
+    async confirmChkAdd (item) {
+      console.log('item', item)
+      var dt = {
+        bookNo: item.bookNo,
+        contactDate: this.format_dateFUllTime(new Date()),
+        status: 'confirm',
+        statusUse: 'use',
+        shopId: this.$session.getAll().data.shopId,
+        CREATE_USER: this.session.data.userName,
+        LAST_USER: this.session.data.userName
+      }
+      axios
+        .post(this.DNS_IP + '/booking_transaction/add', dt)
+        .then(async response => {
+          this.clearDataAdd()
+          this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+          // await this.getBookingList()
+        })
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
+    },
     clearDataAdd () {
+      this.countWaiting = 0
+      this.countConfirm = 0
+      this.countCancel = 0
+      this.countJob = 0
+      this.countAll = 0
       this.date = ''
       this.time = ''
       this.fieldNameItem = []
