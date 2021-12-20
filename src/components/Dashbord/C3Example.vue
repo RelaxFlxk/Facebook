@@ -95,7 +95,7 @@ export default {
         ],
         type: 'pie'
       },
-      donut: {
+      pie: {
         title: 'ประเภทบริการ'
       }
     }

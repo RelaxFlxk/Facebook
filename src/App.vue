@@ -124,6 +124,9 @@ table tr:last-child td:last-child {
 .v-application a {
   color: var(--nav-bg);
 }
+.theme--light.v-btn {
+  color: var(--nav-text) !important;
+};
 .theme--light.v-btn.v-btn--has-bg {
   background-color: var(--nav-bg) ;
 }
@@ -156,16 +159,16 @@ table tr:last-child td:last-child {
   background-color: var(--date-picker-footer) !important;
 }
 .v-date-picker-header {
-  background-color: var(--date-picker-head)
+  background-color: var(--date-picker-head) !important
 }
 .v-date-picker-table {
-  background-color: var(--date-picker-head);
+  background-color: var(--date-picker-head) !important;
 }
 .v-date-picker-table > table > thead {
-  background-color: var(--date-picker-table-head);
+  background-color: var(--date-picker-table-head) !important;
 }
 .v-date-picker-table > table > tbody {
-  background-color: var(--date-picker-table-body);
+  background-color: var(--date-picker-table-body) !important;
 }
 
 .v-list-group__header {
@@ -180,14 +183,14 @@ table tr:last-child td:last-child {
   font-size: 26px !important;
 }
 .v-list-item--active {
-  background-color: var(--nav-text-active);
+  background-color: var(--nav-text-active) !important;
 }
 .theme--light.v-app-bar.v-toolbar.v-sheet {
-  background-color: var(--nav-bg);
-  color: var(--nav-text);
+  background-color: var(--nav-bg) !important;
+  color: var(--nav-text) !important;
 }
 .v-expansion-panel-header {
-  background-color: var(--panel-bg);
+  background-color: var(--panel-bg) !important;
   color: var(--panel-text);
   font-weight: bold;
 }

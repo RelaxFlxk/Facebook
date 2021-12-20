@@ -8,9 +8,9 @@
             <v-col cols="12">
                 <div style="display: flex">
                 <date-range-picker
-                ref="picker"
-                :locale-data="{ firstDay: 1, format: 'yyyy-mm-dd' }"
-                v-model="dateRange"
+                    ref="picker"
+                    :locale-data="{ firstDay: 1, format: 'yyyy-mm-dd' }"
+                    v-model="dateRange"
                 />
                 <v-btn
                     small class="ml-5 mt-2" color="#173053" dark
@@ -120,19 +120,12 @@ export default {
             this.dataitem.push(d)
           }
           let columns = []
-          let columns2 = []
           columns[0] = ['x', ...chartData['x']]
           for (let i = 0; i < branchList.length; i++) {
             columns[i + 1] = [branchList[i], ...chartData[branchList[i]]]
-            let sum = chartData[branchList[i]].reduce((partialSum, a) => partialSum + a, 0)
-            columns2[i] = [branchList[i], sum]
-            console.log(sum)
           }
 
           this.chartTimeSeries = {
-            padding: {
-              bottom: 20
-            },
             data: {
               x: 'x',
               columns: columns,
@@ -144,6 +137,9 @@ export default {
                 tick: {
                   format: '%Y-%m-%d'
                 }
+              },
+              y: {
+                label: 'จำนวนรับรถ'
               }
             },
             size: {
@@ -153,7 +149,8 @@ export default {
 
           this.chartBranch = {
             data: {
-              columns: columns2,
+              x: 'x',
+              columns: columns,
               type: 'donut'
             },
             donut: {

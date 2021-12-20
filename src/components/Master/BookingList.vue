@@ -1145,7 +1145,7 @@
           <v-col cols="12" >
             <transition name="slide">
               <div class="slidein" v-if="drawer">
-                <h4>ตรวจสอบคิวจองรายวัน</h4>
+                <h4 @click="toggle">ตรวจสอบคิวจองรายวัน</h4>
                 <v-row>
                   <v-col cols="8">
                     <v-menu
@@ -1448,7 +1448,7 @@
     border-color: rgba(243, 5, 25, 0.904) !important;
 }
 .slidein {
-  max-width: "100%";
+  max-width: 100%;
   padding: 2em 1em;
   position: fixed;
   z-index: 100;
@@ -1503,6 +1503,7 @@ import DateRangePicker from 'vue2-daterange-picker'
 import QrcodeVue from 'qrcode.vue'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import { PivotTable } from '@click2buy/vue-pivot-table'
+import moment from 'moment-timezone'
 
 export default {
   name: 'BookingList',
@@ -1970,15 +1971,23 @@ export default {
       }
     },
     getTimesChange (text) {
-      this.dataItemTimesChange = []
-      console.log('this.dataItem', this.dataItem.filter(el => { return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable }))
-      if (text === 'all') {
-        this.dataItemTimesChange = this.dataItem
-      } else {
-        this.dataItemTimesChange = this.dataItem.filter(el => { return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable }).sort((a, b) => {
-          if (a.timeDuetext < b.timeDuetext) return -1
-          return a.timeDuetext > b.timeDuetext ? 1 : 0
-        })
+      try {
+        this.dataItemTimesChange = []
+        // console.log('this.dataItem', this.dataItem.filter(el => { return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable }))
+        if (text === 'all') {
+          this.dataItemTimesChange = this.dataItem
+        } else {
+          this.dataItemTimesChange = this.dataItem.filter(el => {
+            let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+            return dueDate === this.timeTable
+            // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
+          }).sort((a, b) => {
+            if (a.timeDuetext < b.timeDuetext) return -1
+            return a.timeDuetext > b.timeDuetext ? 1 : 0
+          })
+        }
+      } catch (err) {
+        console.log(err)
       }
     },
     async getBookingList () {

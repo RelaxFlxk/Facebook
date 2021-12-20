@@ -22,6 +22,7 @@ export default {
     }
   },
   async mounted () {
+    this.chartData.padding = { bottom: 20 }
     this.handler.$emit('init', this.chartData)
   },
   methods: {
