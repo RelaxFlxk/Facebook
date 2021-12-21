@@ -676,7 +676,7 @@ export default {
       }).then(async result => {
         var dt = {
           bookNo: item.bookNo,
-          contactDate: this.format_dateFUllTime(new Date()),
+          contactDate: this.format_date(new Date()),
           status: 'confirm',
           statusUse: 'use',
           shopId: this.$session.getAll().data.shopId,
@@ -709,7 +709,7 @@ export default {
       }).then(async result => {
         var dt = {
           bookNo: item.bookNo,
-          contactDate: this.format_dateFUllTime(new Date()),
+          contactDate: this.format_date(new Date()),
           status: 'cancel',
           statusUse: 'use',
           shopId: this.$session.getAll().data.shopId,

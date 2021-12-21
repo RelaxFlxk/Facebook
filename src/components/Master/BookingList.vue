@@ -1983,6 +1983,7 @@ export default {
           this.dataItemSelect = this.dataItem.filter(el => { return el.statusBt === text })
         }
       }
+      this.getTimesChange('update')
     },
     getTimesChange (text) {
       try {
@@ -2400,7 +2401,7 @@ export default {
       console.log('item', item)
       var dt = {
         bookNo: item.bookNo,
-        contactDate: this.format_dateFUllTime(new Date()),
+        contactDate: this.format_date(new Date()),
         status: 'confirm',
         statusUse: 'use',
         shopId: this.$session.getAll().data.shopId,
@@ -2413,12 +2414,13 @@ export default {
           this.clearDataAdd()
           this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
           // await this.getBookingList()
+          // this.getTimesChange('update')
         })
         .catch(error => {
           console.log('error function addData : ', error)
         })
     },
-    clearDataAdd () {
+    async clearDataAdd () {
       this.countWaiting = 0
       this.countConfirm = 0
       this.countCancel = 0
@@ -2436,7 +2438,8 @@ export default {
       this.formAdd.dueDate = ''
       this.formAdd.shopId = this.$session.getAll().data.shopId
       this.dialogAdd = false
-      this.getBookingList()
+      await this.getBookingList()
+      await this.getTimesChange('update')
     },
     async getDataById (dt) {
       console.log(this.DNS_IP + '/Booking/getID?bookNo=' + dt.bookNo)
@@ -2636,7 +2639,7 @@ export default {
                       await this.pushMsg(response.data.jobNo)
                       var dtt = {
                         bookNo: this.BookingDataItem[0].bookNo,
-                        contactDate: this.format_dateFUllTime(new Date()),
+                        contactDate: this.format_date(new Date()),
                         status: 'confirmJob',
                         statusUse: 'use',
                         shopId: this.$session.getAll().data.shopId,
@@ -2722,7 +2725,7 @@ export default {
       }).then(async result => {
         var dt = {
           bookNo: item.bookNo,
-          contactDate: this.format_dateFUllTime(new Date()),
+          contactDate: this.format_date(new Date()),
           status: 'confirm',
           statusUse: 'use',
           shopId: this.$session.getAll().data.shopId,
@@ -2737,6 +2740,7 @@ export default {
             console.log('DTITEM', DTitem)
             if (DTitem !== 'user-skip') {
               await this.getBookingList()
+              this.getTimesChange('update')
               if (this.getSelectText) {
                 this.getSelect(this.getSelectText, this.getSelectCount)
               }
@@ -2759,6 +2763,7 @@ export default {
                 })
             } else {
               await this.getBookingList()
+              this.getTimesChange('update')
               if (this.getSelectText) {
                 this.getSelect(this.getSelectText, this.getSelectCount)
               }
@@ -2783,7 +2788,7 @@ export default {
       }).then(async result => {
         var dt = {
           bookNo: item.bookNo,
-          contactDate: this.format_dateFUllTime(new Date()),
+          contactDate: this.format_date(new Date()),
           status: 'cancel',
           statusUse: 'use',
           shopId: this.$session.getAll().data.shopId,
@@ -2796,6 +2801,7 @@ export default {
             this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
             console.log('addDataGlobal', response)
             await this.getBookingList()
+            this.getTimesChange('update')
             if (this.getSelectText) {
               this.getSelect(this.getSelectText, this.getSelectCount)
             }
@@ -2829,7 +2835,7 @@ export default {
           .then(async response => {
             var dt = {
               bookNo: item.bookNo,
-              contactDate: this.format_dateFUllTime(new Date()),
+              contactDate: this.format_date(new Date()),
               status: 'change',
               statusUse: 'use',
               shopId: this.$session.getAll().data.shopId,
@@ -2844,6 +2850,7 @@ export default {
                 this.dialogChange = false
                 console.log('addDataGlobal', response)
                 await this.getBookingList()
+                this.getTimesChange('update')
                 if (this.getSelectText) {
                   this.getSelect(this.getSelectText, this.getSelectCount)
                 }
@@ -2902,6 +2909,7 @@ export default {
         })
     },
     setDataChang (item) {
+      console.log('dueDate', item.dueDate)
       this.dataChange = item
       this.formChange.date = this.momenDate_1(item.dueDate)
       this.formChange.time = this.momenTime(item.dueDate)

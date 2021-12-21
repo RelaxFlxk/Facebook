@@ -1300,7 +1300,7 @@ export default {
             audiencesSelect: item.audiencesSelect,
             shopId: this.$session.getAll().data.shopId, //
             masBranchID: item.masBranchID,
-            CREATE_DATE: this.format_dateFUllTime(new Date()),
+            CREATE_DATE: this.format_date(new Date()),
             CREATE_USER: this.formUpdate.CREATE_USER,
             LAST_USER: this.formUpdate.LAST_USER
           }
@@ -1325,7 +1325,7 @@ export default {
               dateJobOpen: 'True', //
               dateJobClose: 'True', //
               masBranchID: item.masBranchID,
-              CREATE_DATE: this.format_dateFUllTime(new Date()),
+              CREATE_DATE: this.format_date(new Date()),
               CREATE_USER: this.formUpdate.CREATE_USER,
               LAST_USER: this.formUpdate.LAST_USER
             }
@@ -1346,7 +1346,7 @@ export default {
               dateJobOpen: 'True', //
               dateJobClose: 'False', //
               masBranchID: item.masBranchID,
-              CREATE_DATE: this.format_dateFUllTime(new Date()),
+              CREATE_DATE: this.format_date(new Date()),
               CREATE_USER: this.formUpdate.CREATE_USER,
               LAST_USER: this.formUpdate.LAST_USER
             }
@@ -1367,7 +1367,7 @@ export default {
               dateJobOpen: 'False', //
               dateJobClose: 'True', //
               masBranchID: item.masBranchID,
-              CREATE_DATE: this.format_dateFUllTime(new Date()),
+              CREATE_DATE: this.format_date(new Date()),
               CREATE_USER: this.formUpdate.CREATE_USER,
               LAST_USER: this.formUpdate.LAST_USER
             }
@@ -1387,7 +1387,7 @@ export default {
               dateJobOpen: 'False', //
               dateJobClose: 'False', //
               masBranchID: item.masBranchID,
-              CREATE_DATE: this.format_dateFUllTime(new Date()),
+              CREATE_DATE: this.format_date(new Date()),
               CREATE_USER: this.formUpdate.CREATE_USER,
               LAST_USER: this.formUpdate.LAST_USER
             }
@@ -1407,7 +1407,7 @@ export default {
             shopId: this.$session.getAll().data.shopId,
             startRating: item.startRating,
             endRating: item.endRating,
-            CREATE_DATE: this.format_dateFUllTime(new Date()),
+            CREATE_DATE: this.format_date(new Date()),
             CREATE_USER: this.formUpdate.CREATE_USER,
             LAST_USER: this.formUpdate.LAST_USER
           }
@@ -1427,7 +1427,7 @@ export default {
               optionFieldValue: item.optionFieldValue,
               selectData: item.selectData,
               masBranchID: item.masBranchID,
-              CREATE_DATE: this.format_dateFUllTime(new Date()),
+              CREATE_DATE: this.format_date(new Date()),
               CREATE_USER: this.formUpdate.CREATE_USER,
               LAST_USER: this.formUpdate.LAST_USER
             }
@@ -1446,7 +1446,7 @@ export default {
               optionFieldValue: item.optionFieldValue,
               selectData: item.selectData,
               masBranchID: item.masBranchID,
-              CREATE_DATE: this.format_dateFUllTime(new Date()),
+              CREATE_DATE: this.format_date(new Date()),
               CREATE_USER: this.formUpdate.CREATE_USER,
               LAST_USER: this.formUpdate.LAST_USER
             }

@@ -170,6 +170,11 @@ export default new Router({
     component: Master.BoardControl
   },
   {
+    path: '/BookingMobile',
+    name: 'BookingMobile',
+    component: Master.BookingMobile
+  },
+  {
     path: '/Dashbord/Report',
     name: 'Report',
     component: Dashbord.Report

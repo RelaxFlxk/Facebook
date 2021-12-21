@@ -80,7 +80,7 @@ Vue.mixin({
     // HH:MM:ss
     momenTime (value) {
       if (value) {
-        return moment(moment((value), 'HH:mm:ss').toDate()).format('HH:mm:ss')
+        return moment(moment(new Date(value), 'HH:mm:ss').toDate()).format('HH:mm:ss')
       }
     },
     getGetToken (DNS_IP) {

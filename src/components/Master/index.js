@@ -16,6 +16,7 @@ import Rating from './Rating'
 import CalendarBooking from './CalendarBooking'
 import BoardControl from './BoardControl'
 import SettingLineGroup from './SettingLineGroup'
+import BookingMobile from './BookingMobile'
 export default {
   CustomField,
   Flow,
@@ -34,5 +35,6 @@ export default {
   Rating,
   CalendarBooking,
   BoardControl,
-  SettingLineGroup
+  SettingLineGroup,
+  BookingMobile
 }
