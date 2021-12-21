@@ -253,6 +253,11 @@ export default {
       Dashboard: []
     }
   },
+  beforeCreate () {
+    if (!this.$session.exists()) {
+      this.$router.push('/Core/Login')
+    }
+  },
   computed: {},
   mounted () {
     this.items = []

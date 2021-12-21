@@ -182,6 +182,7 @@
                           item-text="text"
                           item-value="stepId"
                           return-object
+                          @change="checkStep()"
                         ></v-select>
                       </v-row>
                     </v-col>
@@ -412,7 +413,7 @@
                   <v-card id="cardTitle" elevation="12">
                     <v-card-title class="ma-3">
                       <v-row>
-                        <v-col cols="8" class="pb-1 pt-0">
+                        <v-col cols="8" class="pa-1">
                           <strong>{{ item.stepTitle }}</strong>
                         </v-col>
                         <v-col cols="4" class="text-right pb-1 pt-0">
@@ -550,9 +551,27 @@
                           </v-row>
                           <v-row class="pt-2 pl-1">
                             <v-icon
+                            v-if="
+                                allJob.filter(row => {
+                                  return row.jobId == itemsJob.jobId
+                                })[0].checkCar !== 'False'
+                              "
                               large
                               color="#FED966"
-                              @click=";(dialog = true), setUpdate(itemsJob)"
+                              @click=";(dialog = true),
+                                  setUpdate(itemsJob)
+                              "
+                            >
+                              mdi-layers-triple
+                            </v-icon>
+                            <v-icon
+                            v-if="
+                                allJob.filter(row => {
+                                  return row.jobId == itemsJob.jobId
+                                })[0].checkCar == 'False'
+                              "
+                              large
+                              color="#9E9E9E"
                             >
                               mdi-layers-triple
                             </v-icon>
@@ -991,7 +1010,7 @@ export default {
       await axios
         .get(
           this.DNS_IP +
-            '/flowStep/get?flowName=' +
+            '/flowStep/find_step?flowName=' +
             this.formUpdate.flowName +
             '&shopId=' +
             this.shopId
@@ -1119,11 +1138,21 @@ export default {
     itemCars (item) {
       this.item_newcars = item
     },
-    // momenDate (value) {
-    //   if (value) {
-    //     return moment(String(value)).format('YYYY-MM-DD')
-    //   }
-    // },
+    checkStep () {
+      this.formUpdate.stepId = this.formUpdate.stepTitle.stepId
+      this.formUpdate.stepTitle = this.formUpdate.stepTitle.stepTitle
+      console.log('stepId', this.formUpdate.stepId)
+      console.log('stepTitle', this.formUpdate.stepTitle)
+      // let rs = this.stepItemSelete
+      // if (rs.length > 0) {
+      //   for (var i = 0; i < rs.length; i++) {
+      //     var d = rs[i]
+      //     if (this.formUpdate.stepTitle === d.stepTitle) {
+      //       this.formUpdate.stepTitle = ''
+      //     }
+      //   }
+      // }
+    },
     async setUpdate (item) {
       console.log(this.formUpdate)
       console.log('item1', item)
@@ -1200,6 +1229,7 @@ export default {
         })
     },
     async clearData () {
+      this.formUpdate.stepTitle = ''
       // eslint-disable-next-line no-redeclare
       for (var key in this.formEdit) {
         console.log('Key', key)
