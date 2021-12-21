@@ -2733,11 +2733,37 @@ export default {
           .post(this.DNS_IP + '/booking_transaction/add', dt)
           .then(async response => {
             this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-            await this.getBookingList()
-            if (this.getSelectText) {
-              this.getSelect(this.getSelectText, this.getSelectCount)
+            let DTitem = item.userId
+            console.log('DTITEM', DTitem)
+            if (DTitem !== 'user-skip') {
+              await this.getBookingList()
+              if (this.getSelectText) {
+                this.getSelect(this.getSelectText, this.getSelectCount)
+              }
+              let pushText = {
+                'to': 'Cbefaf1840affcf2f173e9620f47a3d49',
+                'messages': [
+                  {
+                    'type': 'text',
+                    'text': ` ✍️ ยืนยันเวลานัดหมา\nวันเดือนปี ${item.dueDate}`
+                  }
+                ]
+              }
+              axios
+                .post(
+                  this.DNS_IP + '/LineGroupFlow/pushmessage',
+                  pushText
+                )
+                .catch(error => {
+                  console.log('error function addData : ', error)
+                })
+            } else {
+              await this.getBookingList()
+              if (this.getSelectText) {
+                this.getSelect(this.getSelectText, this.getSelectCount)
+              }
             }
-            // console.log('addDataGlobal', response)
+            console.log('addDataGlobal', response)
           })
           .catch(error => {
             console.log('error function addData : ', error)
