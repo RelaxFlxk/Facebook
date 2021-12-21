@@ -2046,6 +2046,7 @@ export default {
               s.flowId = d.flowId
               s.flowName = d.flowName
               s.dueDate = d.dueDate
+              s.userId = d.userId
               s.chkConfirm = false
               s.chkCancel = false
               s.jobNo = d.jobNo
