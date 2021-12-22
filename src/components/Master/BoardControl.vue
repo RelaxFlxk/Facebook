@@ -285,6 +285,7 @@
                                   v-model="formUpdate.endDate"
                                   label="วันที่นัดส่งรถลูกค้า"
                                   persistent-hint
+                                  readonly
                                   prepend-icon="mdi-calendar"
                                   v-bind="attrs"
                                   v-on="on"

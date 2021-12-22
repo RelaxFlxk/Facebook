@@ -328,6 +328,7 @@
                                         label="วันที่นัดส่งรถลูกค้า"
                                         persistent-hint
                                         dense
+                                        readonly
                                         outlined
                                         required
                                         :rules="[rules.required]"

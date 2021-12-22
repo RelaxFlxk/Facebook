@@ -378,6 +378,7 @@
                                         label=""
                                         v-bind="attrs"
                                         outlined
+                                        readonly
                                         dense
                                         v-on="on"
                                       ></v-text-field>
@@ -404,6 +405,7 @@
                                         prepend-icon="mdi-calendar"
                                         label=""
                                         v-bind="attrs"
+                                        readonly
                                         outlined
                                         dense
                                         v-on="on"
@@ -471,6 +473,7 @@
                                         prepend-icon="mdi-calendar"
                                         label=""
                                         v-bind="attrs"
+                                        readonly
                                         outlined
                                         dense
                                         v-on="on"
@@ -499,6 +502,7 @@
                                         label=""
                                         v-bind="attrs"
                                         outlined
+                                        readonly
                                         dense
                                         v-on="on"
                                       ></v-text-field>
@@ -782,6 +786,7 @@
                                         label=""
                                         v-bind="attrs"
                                         :disabled="disableOpen"
+                                        readonly
                                         outlined
                                         dense
                                         v-on="on"
@@ -811,6 +816,7 @@
                                         label=""
                                         v-bind="attrs"
                                         :disabled="disableOpen"
+                                        readonly
                                         outlined
                                         dense
                                         v-on="on"
@@ -858,6 +864,7 @@
                                         label=""
                                         v-bind="attrs"
                                         outlined
+                                        readonly
                                         :disabled="disableClose"
                                         dense
                                         v-on="on"
@@ -887,6 +894,7 @@
                                         label=""
                                         v-bind="attrs"
                                         outlined
+                                        readonly
                                         :disabled="disableClose"
                                         dense
                                         v-on="on"
@@ -966,6 +974,7 @@
                                         prepend-icon="mdi-calendar"
                                         label=""
                                         v-bind="attrs"
+                                        readonly
                                         outlined
                                         dense
                                         v-on="on"
@@ -993,6 +1002,7 @@
                                         prepend-icon="mdi-calendar"
                                         label=""
                                         v-bind="attrs"
+                                        readonly
                                         outlined
                                         dense
                                         v-on="on"
@@ -1060,6 +1070,7 @@
                                         prepend-icon="mdi-calendar"
                                         label=""
                                         v-bind="attrs"
+                                        readonly
                                         outlined
                                         dense
                                         v-on="on"
@@ -1087,6 +1098,7 @@
                                         prepend-icon="mdi-calendar"
                                         label=""
                                         v-bind="attrs"
+                                        readonly
                                         outlined
                                         dense
                                         v-on="on"
