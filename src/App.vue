@@ -202,8 +202,8 @@ table tr:last-child td:last-child {
   color: var(--nav-text) !important;
 }
 .v-expansion-panel-header {
-  background-color: var(--panel-bg) !important;
-  color: var(--panel-text);
+  /* background-color: var(--panel-bg) !important; */
+  /* color: var(--panel-text); */
   font-weight: bold;
 }
 .v-expansion-panel--active>.v-expansion-panel-header {

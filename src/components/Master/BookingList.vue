@@ -1193,9 +1193,57 @@
                   </v-col>
                 </v-row>
                 <button class="close-btn" @click="toggle()">X</button>
-                <v-simple-table dense>
-                  <tbody>
-                  <template v-for="(item, indexitem) in masterTime">
+                <!-- <v-simple-table dense>
+                  <tbody> -->
+                    <v-row justify="center">
+                      <v-expansion-panels>
+                        <v-expansion-panel
+                          v-for="(item, indexitem) in masterTime" :key="indexitem"
+                        >
+                          <v-expansion-panel-header>{{item + '(' + dataItemTimesChange.filter(el => { return el.timeDueHtext === item && (el.statusBt==='confirmJob' || el.statusBt==='confirm') }).length + ')'}}</v-expansion-panel-header>
+                          <v-expansion-panel-content v-for="(items, indexitems) in dataItemTimesChange.filter(el => { return el.timeDueHtext === item && (el.statusBt==='confirmJob' || el.statusBt==='confirm') })" :key="'td'+indexitems">
+                            <v-card
+                              color="#1B437C"
+                            >
+                              <v-container class="pt-0 pb-0">
+                                <v-list-item class="pa-0">
+                                  <v-icon
+                                    large
+                                    dark
+                                    left
+                                  >
+                                    mdi-car-wash
+                                  </v-icon>
+                                  <v-list-item-content>
+                                    <v-list-item-title class="pt-0 pb-0">{{items.flowName}}</v-list-item-title>
+                                  </v-list-item-content>
+                                  <v-row
+                                    align="center"
+                                    justify="end"
+                                  >
+                                    <v-icon dark class="mr-1">
+                                      mdi-clock-outline
+                                    </v-icon>
+                                    <span class="white--text mr-2">{{items.timeDuetext}}</span>
+                                  </v-row>
+                                </v-list-item>
+                              <v-card-text>
+                                <v-row class="white--text">
+                                  <v-col cols="12" class="pt-0 pb-0">
+                                    คุณ {{items.cusName}}
+                                  </v-col>
+                                  <v-col cols="12" class="pt-0 pb-0">
+                                    ทะเบียน {{items.cusReg}}
+                                  </v-col>
+                                </v-row>
+                              </v-card-text>
+                              </v-container>
+                            </v-card>
+                          </v-expansion-panel-content>
+                        </v-expansion-panel>
+                      </v-expansion-panels>
+                    </v-row>
+                  <!-- <template v-for="(item, indexitem) in masterTime">
                     <tr :key="'tr'+indexitem">
                       <td valign="top"><b>{{item}}</b></td>
                       <td>
@@ -1241,40 +1289,14 @@
                               </v-container>
                             </v-card>
                             <br>
-                            <!-- <td>{{items.timeDuetext}}</td>
-                            <td>{{items.flowName}}</td>
-                            <td>{{items.cusName}}</td>
-                            <td>{{items.cusReg}}</td> -->
                           </tr>
                           </tbody>
                         </v-simple-table>
                       </td>
                     </tr>
-                  </template>
-                  </tbody>
-                </v-simple-table>
-
-                <!-- <v-row v-for="(item, indexitem) in dataItemTime" :key="indexitem">
-                  <v-col>
-                    <strong>{{item.timeDueHtext}}</strong>
-                  </v-col>
-                  <v-col class="pt-1 pb-1 text-left" cols="auto" v-for="(items, indexitems) in dataItemTimesChange.filter(el => { return el.timeDueHtext === item.timeDueHtext })" :key="indexitems">
-                    <v-card
-                      elevation="10"
-                    >
-                      <v-container class="pt-0 pb-0">
-                      <v-card-title>{{items.timeDuetext + ' : ' + items.flowName}}</v-card-title>
-                      <v-card-text>
-                        คุณ {{items.cusName}}<br>
-                        ทะเบียน: {{items.cusReg}}
-                      </v-card-text>
-                      </v-container>
-                    </v-card>
-                  </v-col>
-                  <v-col col="12" class="pt-0 pb-0">
-                    <v-divider></v-divider>
-                  </v-col>
-                </v-row> -->
+                  </template> -->
+                  <!-- </tbody>
+                </v-simple-table> -->
               </div>
             </transition>
             <v-card elevation="7" v-if="dataReady">
@@ -1488,7 +1510,7 @@
     border-color: rgba(243, 5, 25, 0.904) !important;
 }
 .slidein {
-  max-width: 100%;
+  max-width: 40%;
   padding: 2em 1em;
   position: fixed;
   z-index: 100;

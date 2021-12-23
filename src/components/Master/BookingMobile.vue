@@ -546,7 +546,55 @@
           </v-col>
         </v-row>
         <button class="close-btn" @click="toggle()">X</button>
-        <v-simple-table dense>
+        <v-row justify="center">
+                      <v-expansion-panels>
+                        <v-expansion-panel
+                          v-for="(item, indexitem) in masterTime" :key="indexitem"
+                        >
+                          <v-expansion-panel-header>{{item + '(' + dataItemTimesChange.filter(el => { return el.timeDueHtext === item && (el.statusBt==='confirmJob' || el.statusBt==='confirm') }).length + ')'}}</v-expansion-panel-header>
+                          <v-expansion-panel-content v-for="(items, indexitems) in dataItemTimesChange.filter(el => { return el.timeDueHtext === item && (el.statusBt==='confirmJob' || el.statusBt==='confirm') })" :key="'td'+indexitems">
+                            <v-card
+                              color="#1B437C"
+                            >
+                              <v-container class="pt-0 pb-0">
+                                <v-list-item class="pa-0">
+                                  <v-icon
+                                    large
+                                    dark
+                                    left
+                                  >
+                                    mdi-car-wash
+                                  </v-icon>
+                                  <v-list-item-content>
+                                    <v-list-item-title class="pt-0 pb-0">{{items.flowName}}</v-list-item-title>
+                                  </v-list-item-content>
+                                  <v-row
+                                    align="center"
+                                    justify="end"
+                                  >
+                                    <v-icon dark class="mr-1">
+                                      mdi-clock-outline
+                                    </v-icon>
+                                    <span class="white--text mr-2">{{items.timeDuetext}}</span>
+                                  </v-row>
+                                </v-list-item>
+                              <v-card-text>
+                                <v-row class="white--text">
+                                  <v-col cols="12" class="pt-0 pb-0">
+                                    คุณ {{items.cusName}}
+                                  </v-col>
+                                  <v-col cols="12" class="pt-0 pb-0">
+                                    ทะเบียน {{items.cusReg}}
+                                  </v-col>
+                                </v-row>
+                              </v-card-text>
+                              </v-container>
+                            </v-card>
+                          </v-expansion-panel-content>
+                        </v-expansion-panel>
+                      </v-expansion-panels>
+                    </v-row>
+        <!-- <v-simple-table dense>
           <tbody>
             <template v-for="(item, indexitem) in masterTime">
               <tr :key="'tr' + indexitem">
@@ -578,13 +626,14 @@
               </tr>
             </template>
           </tbody>
-        </v-simple-table>
+        </v-simple-table> -->
       </div>
     </transition>
   </div>
 </template>
 <script>
 import axios from 'axios' // api
+import moment from 'moment-timezone'
 export default {
   name: 'BookingList',
   data () {
@@ -615,6 +664,7 @@ export default {
       dataItemBooking: [],
       dataItemTimesChange: [],
       BookingDataItem: [],
+      dataItemCheck: [],
       dataReady: false,
       getSelectText: '',
       timeTable: '',
@@ -648,21 +698,189 @@ export default {
       this.getTimesChange('update')
       this.drawer = !this.drawer
     },
-    getTimesChange (text) {
+    async getTimesChange (text) {
       try {
         this.dataItemTimesChange = []
         // console.log('this.dataItem', this.dataItem.filter(el => { return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable }))
         if (text === 'all') {
           this.dataItemTimesChange = this.dataItemBooking
         } else {
-          this.dataItemTimesChange = this.dataItemBooking.filter(el => {
-            let dueDate = this.momenDate_1(el.dueDate)
-            return dueDate === this.timeTable
+          if (moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM') === this.dateStart) {
+            console.log('month old')
+            this.dataItemTimesChange = this.dataItemBooking.filter(el => {
+              let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+              return dueDate === this.timeTable
             // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-          }).sort((a, b) => {
-            if (a.timeDuetext < b.timeDuetext) return -1
-            return a.timeDuetext > b.timeDuetext ? 1 : 0
-          })
+            }).sort((a, b) => {
+              if (a.timeDuetext < b.timeDuetext) return -1
+              return a.timeDuetext > b.timeDuetext ? 1 : 0
+            })
+          } else {
+            var data = this.dataItemCheck.filter(el => {
+              let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+              return dueDate === this.timeTable
+            // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
+            })
+            console.log('data', data)
+            if (data.length === 0) {
+              this.dataItemCheck = []
+              var dataItems = []
+              // var dataItemTimes = []
+              await axios
+                .get(
+                  // eslint-disable-next-line quotes
+                  this.DNS_IP +
+                    '/booking_view/get?shopId=' +
+                    this.session.data.shopId +
+                    '&masBranchID=' +
+                    this.dataItem[0].masBranchID +
+                    '&dueDate=' + moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM')
+                )
+                .then(async response => {
+                  console.log('getData', response.data)
+                  if (response.data.length > 0) {
+                    for (let i = 0; i < response.data.length; i++) {
+                      let d = response.data[i]
+                      let s = {}
+                      s.bookNo = d.bookNo
+                      s.flowId = d.flowId
+                      s.flowName = d.flowName
+                      s.dueDate = d.dueDate
+                      s.userId = d.userId
+                      s.chkConfirm = false
+                      s.chkCancel = false
+                      s.jobNo = d.jobNo
+                      s.timeDueHtext = d.timeDueH + ':00'
+                      s.timeDuetext = d.timeDue
+                      if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
+                        s.chkConfirm = true
+                        s.chkCancel = false
+                      }
+                      if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
+                        s.chkConfirm = false
+                        s.chkCancel = true
+                      }
+                      if (d.statusBt) {
+                        s.statusBt = d.statusBt
+                        if (d.statusBt === 'confirm') {
+                          s.statusBtText = 'โทรยืนยันแล้ว'
+                        } else if (d.statusBt === 'cancel') {
+                          s.statusBtText = 'ยกเลิก'
+                        } else if (d.statusBt === 'confirmJob') {
+                          s.statusBtText = 'รับรถแล้ว'
+                        }
+                      } else {
+                        s.statusBt = 'wait'
+                        s.statusBtText = 'รายการนัดหมายใหม่'
+                      }
+                      let dataBookingData = []
+                      await axios
+                        .get(
+                          // eslint-disable-next-line quotes
+                          this.DNS_IP + "/BookingData/get?bookNo=" + d.bookNo
+                        )
+                        .then(async responses => {
+                          // console.log('getDataData', responses.data)
+                          dataBookingData = responses.data
+                          // for (let i = 0; i < response.data.length; i++) {
+                          //   let e = response.data[i]
+                          //   if (e.fieldName === 'ชื่อ') {
+                          //     s.cusName = s.fieldValue
+                          //   }
+                          //   if (e.fieldName === 'เลขทะเบียน') {
+                          //     s.cusReg = s.fieldValue
+                          //   }
+                          // }
+                        })
+                      s.cusName = dataBookingData.filter(function (el) {
+                        return el.fieldName === 'ชื่อ'
+                      })
+                      s.cusReg = dataBookingData.filter(function (el) {
+                        return el.fieldName === 'เลขทะเบียน'
+                      })
+                      s.tel = dataBookingData.filter(function (el) {
+                        return el.fieldName === 'เบอร์โทร'
+                      })
+                      if (s.cusName.length > 0) {
+                        s.cusName = s.cusName[0].fieldValue
+                      } else {
+                        s.cusName = ''
+                      }
+                      if (s.cusReg.length > 0) {
+                        s.cusReg = s.cusReg[0].fieldValue
+                      } else {
+                        s.cusReg = ''
+                      }
+                      if (s.tel.length > 0) {
+                        s.tel = s.tel[0].fieldValue
+                      } else {
+                        s.tel = ''
+                      }
+                      // var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
+                      // if (chkTime.length === 0) {
+                      //   dataItemTimes.push(s)
+                      // }
+                      dataItems.push(s)
+                    }
+                  }
+                  if (dataItems.length === 0 || dataItems.status === false) {
+                    this.dataItemCheck = []
+                    // this.dataItemTime = []
+                    // this.dataReady = true
+                    // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
+                  } else {
+                    console.log('month new if')
+                    this.dataItemCheck = dataItems
+                    // this.dataItemTimesChange = this.dataItemCheck.filter(el => {
+                    //   let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+                    //   return dueDate === this.timeTable
+                    //   // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
+                    // }).sort((a, b) => {
+                    //   if (a.timeDuetext < b.timeDuetext) return -1
+                    //   return a.timeDuetext > b.timeDuetext ? 1 : 0
+                    // })
+                    // var datause = dataItemTimes.sort((a, b) => {
+                    //   if (a.timeDueHtext < b.timeDueHtext) return -1
+                    //   return a.timeDueHtext > b.timeDueHtext ? 1 : 0
+                    // })
+                    // for (var k = 0; k < datause.length; k++) {
+                    //   var t = datause[k]
+                    //   var h = {}
+                    //   h.timeDueHtext = t.timeDueHtext
+                    //   let chkTimes = this.dataItemTime.filter(el => { return el.timeDueHtext === t.timeDueHtext })
+                    //   console.log('chkTimes', chkTimes)
+                    //   if (chkTimes.length === 0) {
+                    //     this.dataItemTime.push(h)
+                    //   }
+                    // }
+                    // this.dataItemTime = dataItemTimes.sort((a, b) => {
+                    //   if (a.timeDueHtext < b.timeDueHtext) return -1
+                    //   return a.timeDueHtext > b.timeDueHtext ? 1 : 0
+                    // })
+                    // console.log('dataItemTime', this.dataItemTime)
+                    // this.dataReady = true
+                  }
+                })
+            } else {
+              console.log('month new else')
+              this.dataItemTimesChange = this.dataItemCheck.filter(el => {
+                let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+                return dueDate === this.timeTable
+                // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
+              }).sort((a, b) => {
+                if (a.timeDuetext < b.timeDuetext) return -1
+                return a.timeDuetext > b.timeDuetext ? 1 : 0
+              })
+            }
+          // this.dataItemTimesChange = this.dataItemBooking.filter(el => {
+          //   let dueDate = this.momenDate_1(el.dueDate)
+          //   return dueDate === this.timeTable
+          //   // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
+          // }).sort((a, b) => {
+          //   if (a.timeDuetext < b.timeDuetext) return -1
+          //   return a.timeDuetext > b.timeDuetext ? 1 : 0
+          // })
+          }
         }
       } catch (err) {
         console.log(err)
@@ -1128,7 +1346,7 @@ export default {
   z-index: 100;
   top: 0;
   right: 0;
-  background: #ddd;
+  background: #fff;
   height: 100%;
   overflow: scroll;
   box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.5);
