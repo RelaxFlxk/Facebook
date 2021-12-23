@@ -62,17 +62,25 @@
               v-for="(item, indexitem) in BookingDataItem"
               :key="indexitem"
               cols="12"
-              class="pa-0"
+              class="pa-1"
             >
+            <v-row class="pa-0 pb-0 pt-0">
               <v-text-field
                 :label="item.fieldName"
                 :value="item.fieldValue"
-                class="pa-0"
+                class="pa-2 pb-3 pt-0"
                 outlined
                 dense
                 readonly
-              ></v-text-field>
+              >
+              <!-- <v-icon left large
+              color="#64DD17"
+              v-if="item.fieldName === 'เบอร์โทร'"
+              @click="dial(item.phone)">call</v-icon> -->
+              </v-text-field>
+              <v-icon class="pa-3 pb-10 pt-0" v-if="item.fieldName === 'เบอร์โทร'" large color="#64DD17" @click="dial(item.phone)">call</v-icon>
               <!-- {{item.fieldName}} : {{item.fieldValue}} -->
+              </v-row>
             </v-col>
             <!-- <v-form ref="form_update" v-model="validUpdate" lazy-validation>
               <div v-for="(p, index) in flowfieldNameitem" :key="index">
@@ -632,6 +640,9 @@ export default {
     await this.chkBookingNo()
   },
   methods: {
+    dial: function (number) {
+      window.location = 'tel:' + number
+    },
     toggle () {
       this.timeTable = this.momenDate_1(new Date())
       this.getTimesChange('update')
