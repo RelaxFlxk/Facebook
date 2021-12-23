@@ -182,7 +182,6 @@
                           item-text="text"
                           item-value="stepId"
                           return-object
-                          @change="checkStep()"
                         ></v-select>
                       </v-row>
                     </v-col>
@@ -1011,7 +1010,7 @@ export default {
       await axios
         .get(
           this.DNS_IP +
-            '/flowStep/find_step?flowName=' +
+            '/flowStep/get?flowName=' +
             this.formUpdate.flowName +
             '&shopId=' +
             this.shopId
@@ -1139,21 +1138,21 @@ export default {
     itemCars (item) {
       this.item_newcars = item
     },
-    checkStep () {
-      this.formUpdate.stepId = this.formUpdate.stepTitle.stepId
-      this.formUpdate.stepTitle = this.formUpdate.stepTitle.stepTitle
-      console.log('stepId', this.formUpdate.stepId)
-      console.log('stepTitle', this.formUpdate.stepTitle)
-      // let rs = this.stepItemSelete
-      // if (rs.length > 0) {
-      //   for (var i = 0; i < rs.length; i++) {
-      //     var d = rs[i]
-      //     if (this.formUpdate.stepTitle === d.stepTitle) {
-      //       this.formUpdate.stepTitle = ''
-      //     }
-      //   }
-      // }
-    },
+    // checkStep () {
+    //   this.formUpdate.stepId = this.formUpdate.stepTitle.stepId
+    //   this.formUpdate.stepTitle = this.formUpdate.stepTitle.stepTitle
+    //   console.log('stepId', this.formUpdate.stepId)
+    //   console.log('stepTitle', this.formUpdate.stepTitle)
+    //   // let rs = this.stepItemSelete
+    //   // if (rs.length > 0) {
+    //   //   for (var i = 0; i < rs.length; i++) {
+    //   //     var d = rs[i]
+    //   //     if (this.formUpdate.stepTitle === d.stepTitle) {
+    //   //       this.formUpdate.stepTitle = ''
+    //   //     }
+    //   //   }
+    //   // }
+    // },
     async setUpdate (item) {
       console.log(this.formUpdate)
       console.log('item1', item)
@@ -1230,7 +1229,7 @@ export default {
         })
     },
     async clearData () {
-      this.formUpdate.stepTitle = ''
+      // this.formUpdate.stepTitle = ''
       // eslint-disable-next-line no-redeclare
       for (var key in this.formEdit) {
         console.log('Key', key)
