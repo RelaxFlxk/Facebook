@@ -1173,9 +1173,10 @@
                         ></v-text-field>
                       </template>
                       <v-date-picker
+                        type="month"
                         v-model="timeTable"
                         no-title
-                        @input="menu1 = false, getTimesChange('update')"
+                        @input="menu1 = false, getTimesChange('change')"
                       ></v-date-picker>
                     </v-menu>
                   </v-col>
@@ -1193,6 +1194,48 @@
                   </v-col>
                 </v-row>
                 <button class="close-btn" @click="toggle()">X</button>
+                <v-row>
+                  <v-col cols="12">
+                    <!-- <v-tabs
+                      v-model="tab"
+                      icons-and-text
+                      background-color="primary"
+                      dark
+                    >
+                      <v-tab
+                        v-for="item in dateTab"
+                        :key="item.date"
+                      >
+                        <p style="font-size: 9px;">{{ item.date }}</p>
+                        <p style="font-size: 10px;">{{ item.dayName }}</p>
+                      </v-tab>
+                    </v-tabs> -->
+                    {{tab}}
+                     <v-sheet
+                        elevation="10"
+                      >
+                      <v-chip-group
+                          v-model="tab"
+                          mandatory
+                          active-class="red--text"
+                        >
+                          <v-chip
+                            large
+                            outlined
+                            label
+                            class="text-center"
+                            v-for="item in dateTab"
+                            :key="item.date"
+                            :value="item.date"
+                            @click="getTimesChange('update',item)"
+                          >
+                          {{ item.dayName }} <br>
+                            {{ item.date }}
+                          </v-chip>
+                        </v-chip-group>
+                     </v-sheet>
+                  </v-col>
+                </v-row>
                 <v-simple-table dense>
                   <tbody>
                   <template v-for="(item, indexitem) in masterTime">
@@ -1202,49 +1245,10 @@
                         <v-simple-table dense class="table_detail_2">
                           <tbody>
                           <tr v-for="(items, indexitems) in dataItemTimesChange.filter(el => { return el.timeDueHtext === item && (el.statusBt==='confirmJob' || el.statusBt==='confirm') })" :key="'td'+indexitems">
-                            <v-card
-                              elevation="10"
-                              color="#1B437C"
-                            >
-                              <v-container class="pt-0 pb-0">
-                                <v-list-item class="pa-0">
-                                  <v-icon
-                                    large
-                                    dark
-                                    left
-                                  >
-                                    mdi-car-wash
-                                  </v-icon>
-                                  <v-list-item-content>
-                                    <v-list-item-title class="pt-0 pb-0">{{items.flowName}}</v-list-item-title>
-                                  </v-list-item-content>
-                                  <v-row
-                                    align="center"
-                                    justify="end"
-                                  >
-                                    <v-icon dark class="mr-1">
-                                      mdi-clock-outline
-                                    </v-icon>
-                                    <span class="white--text mr-2">{{items.timeDuetext}}</span>
-                                  </v-row>
-                                </v-list-item>
-                              <v-card-text>
-                                <v-row class="white--text">
-                                  <v-col cols="12" class="pt-0 pb-0">
-                                    คุณ {{items.cusName}}
-                                  </v-col>
-                                  <v-col cols="12" class="pt-0 pb-0">
-                                    ทะเบียน {{items.cusReg}}
-                                  </v-col>
-                                </v-row>
-                              </v-card-text>
-                              </v-container>
-                            </v-card>
-                            <br>
-                            <!-- <td>{{items.timeDuetext}}</td>
+                            <td>{{items.timeDuetext}}</td>
                             <td>{{items.flowName}}</td>
                             <td>{{items.cusName}}</td>
-                            <td>{{items.cusReg}}</td> -->
+                            <td>{{items.cusReg}}</td>
                           </tr>
                           </tbody>
                         </v-simple-table>
@@ -1488,13 +1492,13 @@
     border-color: rgba(243, 5, 25, 0.904) !important;
 }
 .slidein {
-  max-width: 100%;
+  max-width: 30%;
   padding: 2em 1em;
   position: fixed;
   z-index: 100;
   top: 0;
   right: 0;
-  background: #fff;
+  background: #ddd;
   height: 100%;
   overflow: scroll;
   box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.5);
@@ -1562,6 +1566,8 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      tab: moment(moment(new Date(), 'DD').toDate()).format('DD').toString(),
+      dateTab: '',
       timeTable: '',
       drawer: false,
       value: '',
@@ -1649,26 +1655,25 @@ export default {
       columns: [
         { text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
         // { text: 'Booking Id', value: 'bookNo' },
-        { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-        { text: 'ชื่อบริการ', value: 'flowName' },
         { text: 'ชื่อลูกค้า', value: 'cusName' },
         { text: 'เบอร์โทร', value: 'tel' },
         { text: 'ทะเบียนรถ', value: 'cusReg' },
+        { text: 'ชื่อบริการ', value: 'flowName' },
+        { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
         { text: 'สถานะนัดหมาย', value: 'statusBtText' }
         // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
       ],
       columnsSelected: [
         { text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
         // { text: 'Booking Id', value: 'bookNo' },
-        { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-        { text: 'ชื่อบริการ', value: 'flowName' },
         { text: 'ชื่อลูกค้า', value: 'cusName' },
         { text: 'เบอร์โทร', value: 'tel' },
-        { text: 'ทะเบียนรถ', value: 'cusReg' }
+        { text: 'ทะเบียนรถ', value: 'cusReg' },
+        { text: 'ชื่อบริการ', value: 'flowName' },
+        { text: 'วันและเวลานัดหมาย', value: 'dueDate' }
         // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
       ],
       dataItem: [],
-      dataItemCheck: [],
       dataexport: [],
       dataItemSelect: [],
       editedItemSeleteField: [],
@@ -1748,8 +1753,28 @@ export default {
     this.getDataFlow()
     this.getBookingList()
     this.scanQrcode()
+    // this.dateTab = await this.getDayNames(12, 2021)
+    // console.log('day', this.getDayNames(12, 2021))
   },
   methods: {
+    getDayNames () {
+      let month = ''
+      let year = ''
+      month = this.timeTable.substring(5, 7)
+      year = this.timeTable.substring(0, 4)
+      const daysInMonth = moment(`${year}-${month}-01`, 'YYYY-MM-DD').daysInMonth()
+      const names = []
+
+      for (let i = 1; i <= daysInMonth; i++) {
+        let date = moment(`${year}-${month}-${i}`, 'YYYY-MM-DD')
+        let dayName = date.format('ddd')
+        let fullDate = date.format('YYYY-MM-DD')
+
+        names.push({dayName: `${dayName}`, date: `${date.format('DD')}`, fullDate: fullDate})
+      }
+
+      return names
+    },
     exportExcel () {
       let dataExport = []
       this.dataexport = []
@@ -1780,9 +1805,49 @@ export default {
       console.log('dataEport', JSON.stringify(dataExport))
     },
     toggle () {
-      this.timeTable = new Date().toISOString().substr(0, 10)
+      this.timeTable = moment(moment(new Date(), 'YYYY-MM').toDate()).format('YYYY-MM')
+      this.dateTab = this.getDayNames()
       this.getTimesChange('update')
       this.drawer = !this.drawer
+    },
+    getTimesChange (text, item) {
+      try {
+        this.dataItemTimesChange = []
+        // console.log('this.dataItem', this.dataItem.filter(el => { return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable }))
+        if (text === 'change') {
+          if (item) {
+            this.dataItemTimesChange = this.dataItem.filter(el => {
+              let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+              return dueDate === item.fullDate
+            // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
+            }).sort((a, b) => {
+              if (a.timeDuetext < b.timeDuetext) return -1
+              return a.timeDuetext > b.timeDuetext ? 1 : 0
+            })
+          } else {
+            this.dateTab = this.getDayNames()
+            this.dataItemTimesChange = this.dataItem.filter(el => {
+              let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+              return dueDate === this.timeTable + '-' + this.tab
+            // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
+            }).sort((a, b) => {
+              if (a.timeDuetext < b.timeDuetext) return -1
+              return a.timeDuetext > b.timeDuetext ? 1 : 0
+            })
+          }
+        } else {
+          this.dataItemTimesChange = this.dataItem.filter(el => {
+            let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+            return dueDate === this.timeTable + '-' + this.tab
+            // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
+          }).sort((a, b) => {
+            if (a.timeDuetext < b.timeDuetext) return -1
+            return a.timeDuetext > b.timeDuetext ? 1 : 0
+          })
+        }
+      } catch (err) {
+        console.log(err)
+      }
     },
     async getCustomFieldStart () {
       this.editedItemSeleteField = []
@@ -2022,197 +2087,8 @@ export default {
         if (count > 0) {
           this.dataItemSelect = this.dataItem.filter(el => { return el.statusBt === text })
         }
-      } else if (text === 'all') {
-        if (count > 0) {
-          this.dataItemSelect = this.dataItem
-        }
       }
       this.getTimesChange('update')
-    },
-    async getTimesChange (text) {
-      try {
-        this.dataItemTimesChange = []
-        // console.log('this.dataItem', this.dataItem.filter(el => { return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable }))
-        if (text === 'all') {
-          this.dataItemTimesChange = this.dataItem
-        } else {
-          if (moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM') === this.dateStart) {
-            console.log('month old')
-            this.dataItemTimesChange = this.dataItem.filter(el => {
-              let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-              return dueDate === this.timeTable
-            // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-            }).sort((a, b) => {
-              if (a.timeDuetext < b.timeDuetext) return -1
-              return a.timeDuetext > b.timeDuetext ? 1 : 0
-            })
-          } else {
-            var data = this.dataItemCheck.filter(el => {
-              let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-              return dueDate === this.timeTable
-            // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-            })
-            console.log('data', data)
-            if (data.length === 0) {
-              if (this.masBranchID) {
-                this.masBranchID = this.masBranchID
-              } else {
-                this.masBranchID = this.branch[0].value
-              }
-              this.dataItemCheck = []
-              var dataItems = []
-              // var dataItemTimes = []
-              await axios
-                .get(
-                  // eslint-disable-next-line quotes
-                  this.DNS_IP +
-                    '/booking_view/get?shopId=' +
-                    this.session.data.shopId +
-                    '&masBranchID=' +
-                    this.masBranchID +
-                    '&dueDate=' + moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM')
-                )
-                .then(async response => {
-                  console.log('getData', response.data)
-                  if (response.data.length > 0) {
-                    for (let i = 0; i < response.data.length; i++) {
-                      let d = response.data[i]
-                      let s = {}
-                      s.bookNo = d.bookNo
-                      s.flowId = d.flowId
-                      s.flowName = d.flowName
-                      s.dueDate = d.dueDate
-                      s.userId = d.userId
-                      s.chkConfirm = false
-                      s.chkCancel = false
-                      s.jobNo = d.jobNo
-                      s.timeDueHtext = d.timeDueH + ':00'
-                      s.timeDuetext = d.timeDue
-                      if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
-                        s.chkConfirm = true
-                        s.chkCancel = false
-                      }
-                      if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
-                        s.chkConfirm = false
-                        s.chkCancel = true
-                      }
-                      if (d.statusBt) {
-                        s.statusBt = d.statusBt
-                        if (d.statusBt === 'confirm') {
-                          s.statusBtText = 'โทรยืนยันแล้ว'
-                        } else if (d.statusBt === 'cancel') {
-                          s.statusBtText = 'ยกเลิก'
-                        } else if (d.statusBt === 'confirmJob') {
-                          s.statusBtText = 'รับรถแล้ว'
-                        }
-                      } else {
-                        s.statusBt = 'wait'
-                        s.statusBtText = 'รายการนัดหมายใหม่'
-                      }
-                      let dataBookingData = []
-                      await axios
-                        .get(
-                          // eslint-disable-next-line quotes
-                          this.DNS_IP + "/BookingData/get?bookNo=" + d.bookNo
-                        )
-                        .then(async responses => {
-                          // console.log('getDataData', responses.data)
-                          dataBookingData = responses.data
-                          // for (let i = 0; i < response.data.length; i++) {
-                          //   let e = response.data[i]
-                          //   if (e.fieldName === 'ชื่อ') {
-                          //     s.cusName = s.fieldValue
-                          //   }
-                          //   if (e.fieldName === 'เลขทะเบียน') {
-                          //     s.cusReg = s.fieldValue
-                          //   }
-                          // }
-                        })
-                      s.cusName = dataBookingData.filter(function (el) {
-                        return el.fieldName === 'ชื่อ'
-                      })
-                      s.cusReg = dataBookingData.filter(function (el) {
-                        return el.fieldName === 'เลขทะเบียน'
-                      })
-                      s.tel = dataBookingData.filter(function (el) {
-                        return el.fieldName === 'เบอร์โทร'
-                      })
-                      if (s.cusName.length > 0) {
-                        s.cusName = s.cusName[0].fieldValue
-                      } else {
-                        s.cusName = ''
-                      }
-                      if (s.cusReg.length > 0) {
-                        s.cusReg = s.cusReg[0].fieldValue
-                      } else {
-                        s.cusReg = ''
-                      }
-                      if (s.tel.length > 0) {
-                        s.tel = s.tel[0].fieldValue
-                      } else {
-                        s.tel = ''
-                      }
-                      // var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
-                      // if (chkTime.length === 0) {
-                      //   dataItemTimes.push(s)
-                      // }
-                      dataItems.push(s)
-                    }
-                  }
-                  if (dataItems.length === 0 || dataItems.status === false) {
-                    this.dataItemCheck = []
-                    // this.dataItemTime = []
-                    // this.dataReady = true
-                    // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
-                  } else {
-                    console.log('month new if')
-                    this.dataItemCheck = dataItems
-                    // this.dataItemTimesChange = this.dataItemCheck.filter(el => {
-                    //   let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-                    //   return dueDate === this.timeTable
-                    //   // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-                    // }).sort((a, b) => {
-                    //   if (a.timeDuetext < b.timeDuetext) return -1
-                    //   return a.timeDuetext > b.timeDuetext ? 1 : 0
-                    // })
-                    // var datause = dataItemTimes.sort((a, b) => {
-                    //   if (a.timeDueHtext < b.timeDueHtext) return -1
-                    //   return a.timeDueHtext > b.timeDueHtext ? 1 : 0
-                    // })
-                    // for (var k = 0; k < datause.length; k++) {
-                    //   var t = datause[k]
-                    //   var h = {}
-                    //   h.timeDueHtext = t.timeDueHtext
-                    //   let chkTimes = this.dataItemTime.filter(el => { return el.timeDueHtext === t.timeDueHtext })
-                    //   console.log('chkTimes', chkTimes)
-                    //   if (chkTimes.length === 0) {
-                    //     this.dataItemTime.push(h)
-                    //   }
-                    // }
-                    // this.dataItemTime = dataItemTimes.sort((a, b) => {
-                    //   if (a.timeDueHtext < b.timeDueHtext) return -1
-                    //   return a.timeDueHtext > b.timeDueHtext ? 1 : 0
-                    // })
-                    // console.log('dataItemTime', this.dataItemTime)
-                    // this.dataReady = true
-                  }
-                })
-            } else {
-              console.log('month new else')
-              this.dataItemTimesChange = this.dataItemCheck.filter(el => {
-                let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-                return dueDate === this.timeTable
-                // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-              }).sort((a, b) => {
-                if (a.timeDuetext < b.timeDuetext) return -1
-                return a.timeDuetext > b.timeDuetext ? 1 : 0
-              })
-            }
-          }
-        }
-      } catch (err) {
-        console.log(err)
-      }
     },
     async getBookingList () {
       // Clear Data ทุกครั้ง

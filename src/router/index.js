@@ -200,6 +200,11 @@ export default new Router({
     component: Dashbord.PerformanceBK
   },
   {
+    path: '/Dashbord/PerformanceBK1',
+    name: 'PerformanceBK1',
+    component: Dashbord.PerformanceBK1
+  },
+  {
     path: '/BroadCast/Audience',
     name: 'Audience',
     component: BroadCast.Audience
