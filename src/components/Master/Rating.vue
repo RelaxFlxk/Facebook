@@ -22,13 +22,14 @@
             small
           >
             <template v-slot:opposite>
-              <span>{{format_dateNotime(item.DTCREATE_DATE)}}</span>
+              <span>{{format_dateNotime(item.DTLAST_DATE)}}</span>
             </template>
             <v-card class="elevation-2 p-2">
               <v-card-title class="text-h6" style="color:#173053;">
               </v-card-title>
               <v-card-text>
                 <p style="margin-bottom: 0px; color:#173053;">ขั้นตอน {{item.stepTitle}}</p>
+                <p style="margin-bottom: 0px;"> เวลาที่รับงาน {{momenTime(item.DTLAST_DATE)}}</p>
                 <p style="margin-bottom: 0px;"> ผู้รับผิดชอบ {{item.empStep}}</p>
                 <p style="margin-bottom: 0px;">เวลาการทำงาน {{item.timediff}} นาที</p>
                 <p style="margin-bottom: 0px;">วันที่เปลี่ยน {{format_dateNotime(item.DTLAST_DATE)}}</p>
