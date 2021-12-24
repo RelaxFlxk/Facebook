@@ -2321,6 +2321,7 @@ export default {
               s.chkConfirm = false
               s.chkCancel = false
               s.jobNo = d.jobNo
+              s.lineUserId = d.lineUserId
               s.timeDueHtext = d.timeDueH + ':00'
               s.timeDuetext = d.timeDue
               this.countAll = this.countAll + 1
@@ -3015,17 +3016,18 @@ export default {
                 this.getSelect(this.getSelectText, this.getSelectCount)
               }
               let pushText = {
-                'to': 'Cbefaf1840affcf2f173e9620f47a3d49',
+                'to': item.lineUserId,
                 'messages': [
                   {
                     'type': 'text',
-                    'text': ` ✍️ ยืนยันเวลานัดหมา\nวันเดือนปี ${item.dueDate}`
+                    'text': ` ✍️ ยืนยันเวลานัดหมา\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
+                          \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}`
                   }
                 ]
               }
               axios
                 .post(
-                  this.DNS_IP + '/LineGroupFlow/pushmessage',
+                  this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
                   pushText
                 )
                 .catch(error => {
@@ -3046,7 +3048,7 @@ export default {
       })
     },
     cancelChk (item) {
-      // console.log('item', item)
+      console.log('item', item)
       this.$swal({
         title: 'ต้องการ ยกเลิก ใช่หรือไม่?',
         type: 'question',
@@ -3119,10 +3121,44 @@ export default {
                 this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
                 this.dialogChange = false
                 console.log('addDataGlobal', response)
-                await this.getBookingList()
-                this.getTimesChange('update')
-                if (this.getSelectText) {
-                  this.getSelect(this.getSelectText, this.getSelectCount)
+                if (item.statusBt === 'confirm') {
+                  if (item.userId !== 'user-skip') {
+                    await this.getBookingList()
+                    this.getTimesChange('update')
+                    if (this.getSelectText) {
+                      this.getSelect(this.getSelectText, this.getSelectCount)
+                    }
+                    let pushText = {
+                      'to': item.lineUserId,
+                      'messages': [
+                        {
+                          'type': 'text',
+                          'text': ` ✍️ ยืนยันเวลานัดหมา\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
+                          \nวันเดือนปี ${this.format_dateFUllTime(this.formChange.date + ' ' + this.formChange.time)}`
+                        }
+                      ]
+                    }
+                    axios
+                      .post(
+                        this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
+                        pushText
+                      )
+                      .catch(error => {
+                        console.log('error function addData : ', error)
+                      })
+                  } else {
+                    await this.getBookingList()
+                    this.getTimesChange('update')
+                    if (this.getSelectText) {
+                      this.getSelect(this.getSelectText, this.getSelectCount)
+                    }
+                  }
+                } else {
+                  await this.getBookingList()
+                  this.getTimesChange('update')
+                  if (this.getSelectText) {
+                    this.getSelect(this.getSelectText, this.getSelectCount)
+                  }
                 }
               })
               .catch(error => {
