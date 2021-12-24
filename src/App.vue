@@ -194,9 +194,9 @@ table tr:last-child td:last-child {
 .v-list-item--active {
   background-color: var(--nav-text-active);
 }
-.theme--light.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled) {
+/* .theme--light.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled) {
   background-color: var(--nav-bg) !important;
-}
+} */
 .theme--light.v-app-bar.v-toolbar.v-sheet {
   background-color: var(--nav-bg) !important;
   color: var(--nav-text) !important;
