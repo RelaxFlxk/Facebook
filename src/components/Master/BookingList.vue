@@ -1419,7 +1419,7 @@
                     <v-btn
                       color="primary"
                       fab
-                      v-if="item.statusBt === 'confirmJob'"
+                      v-if="item.statusBt === 'confirm'"
                       id="v-step-2"
                       small
                       @click.stop="(dialogEdit = true), getBookingData(item)"
@@ -2713,7 +2713,7 @@ export default {
       await this.getTimesChange('update')
     },
     async getDataById (dt) {
-      console.log(this.DNS_IP + '/Booking/getID?bookNo=' + dt.bookNo)
+      console.log('dt', dt)
       await axios
         .get(
           // eslint-disable-next-line quotes
@@ -2831,6 +2831,7 @@ export default {
               update.CREATE_USER = d.userName
               update.LAST_USER = d.userName
               update.checkCar = ''
+              update.userId = d.userId
               update.endDate = this.endDate
               update.endTime = this.endTime
               update.fieldId = d.fieldId
@@ -2861,6 +2862,7 @@ export default {
                   update.CREATE_USER = d.userName
                   update.LAST_USER = d.userName
                   update.checkCar = ''
+                  update.userId = d.userId
                   update.endDate = this.endDate
                   update.endTime = this.endTime
                   update.fieldId = d.fieldId
@@ -2959,6 +2961,22 @@ export default {
         }
         await axios.post(this.DNS_IP + '/job/updateJobNo/' + jobNo, statusSend)
         console.log('statusSend', 'false')
+        let updateStatusSend = {
+          updateStatusSend: 'false'
+        }
+        await axios
+          .post(
+            this.DNS_IP + '/job/pushQr/' + jobNo,
+            updateStatusSend
+          )
+          .then(
+            this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+            // this.clearData()
+            // this.$router.push('/Master/FlowStep')
+          )
+          .catch(error => {
+            console.log('error function addDataGlobal : ', error)
+          })
       } else {
         let statusSend = {
           statusSend: 'true'
@@ -3209,8 +3227,13 @@ export default {
               this.DNS_IP + '/job/update/' + this.jobitem[0].Id, this.skip
             ).then(async (response) => {
               console.log(response)
-              this.$swal('เรียบร้อย', 'ปรับปรุงเรียบร้อย', 'success')
-              this.dialogJob = false
+              if (response.data.status) {
+                this.$swal('เรียบร้อย', 'ปรับปรุงเรียบร้อย', 'success')
+                this.dialogJob = false
+              } else {
+                this.$swal('ผิดพลาด', 'เนื่องจากรายการนี้มีคนนำเข้าแล้ว', 'error')
+                this.dialogJob = false
+              }
             })
         })
     },

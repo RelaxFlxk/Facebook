@@ -159,7 +159,7 @@ export default {
         })
     },
     getUserId () {
-      if (this.userId === null) {
+      if (this.userId === null || this.userId === '') {
         console.log('yes')
       } else {
         this.$swal({

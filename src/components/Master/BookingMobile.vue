@@ -721,7 +721,7 @@ export default {
   },
   beforeCreate () {
     if (!this.$session.exists()) {
-      this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo)
+      this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
     }
   },
   async mounted () {
@@ -958,6 +958,7 @@ export default {
                 s.chkConfirm = false
                 s.chkCancel = false
                 s.jobNo = d.jobNo
+                s.lineUserId = d.lineUserId
                 s.timeDueHtext = d.timeDueH + ':00'
                 s.timeDuetext = d.timeDue
                 this.countAll = this.countAll + 1
@@ -1185,16 +1186,20 @@ export default {
               await this.chkBookingNo()
               this.getTimesChange('update')
               let pushText = {
-                to: 'Cbefaf1840affcf2f173e9620f47a3d49',
-                messages: [
+                'to': item.lineUserId,
+                'messages': [
                   {
-                    type: 'text',
-                    text: ` ✍️ ยืนยันเวลานัดหมา\nวันเดือนปี ${item.dueDate}`
+                    'type': 'text',
+                    'text': ` ✍️ ยืนยันเวลานัดหมา\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
+                          \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}`
                   }
                 ]
               }
               axios
-                .post(this.DNS_IP + '/LineGroupFlow/pushmessage', pushText)
+                .post(
+                  this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
+                  pushText
+                )
                 .catch(error => {
                   console.log('error function addData : ', error)
                 })
@@ -1288,8 +1293,36 @@ export default {
                 this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
                 this.dialogChange = false
                 console.log('addDataGlobal', response)
-                await this.chkBookingNo()
-                this.getTimesChange('update')
+                if (item.statusBt === 'confirm') {
+                  if (item.userId !== 'user-skip') {
+                    await this.chkBookingNo()
+                    this.getTimesChange('update')
+                    let pushText = {
+                      'to': item.lineUserId,
+                      'messages': [
+                        {
+                          'type': 'text',
+                          'text': ` ✍️ ยืนยันเวลานัดหมา\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
+                          \nวันเดือนปี ${this.format_dateFUllTime(this.formChange.date + ' ' + this.formChange.time)}`
+                        }
+                      ]
+                    }
+                    axios
+                      .post(
+                        this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
+                        pushText
+                      )
+                      .catch(error => {
+                        console.log('error function addData : ', error)
+                      })
+                  } else {
+                    await this.chkBookingNo()
+                    this.getTimesChange('update')
+                  }
+                } else {
+                  await this.chkBookingNo()
+                  this.getTimesChange('update')
+                }
               })
               .catch(error => {
                 console.log('error function addData : ', error)

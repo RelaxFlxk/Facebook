@@ -269,6 +269,7 @@ export default {
             confirmButtonText: 'ใช่',
             cancelButtonText: 'ไม่'
           }).then(async () => {
+            this.dataReady = true
             this.$router.push('/Core/Login')
           // await _this.getTokenCheck()
           })
