@@ -13,9 +13,7 @@ import vueXlsxTable from 'vue-xlsx-table'
 import axios from 'axios' // api
 import moment from 'moment-timezone' // แปลง date
 import { PivotViewPlugin } from '@syncfusion/ej2-vue-pivotview'
-import { ButtonPlugin } from '@syncfusion/ej2-vue-buttons'
 Vue.use(PivotViewPlugin)
-Vue.use(ButtonPlugin)
 
 Vue.config.productionTip = false
 Vue.use(Swal)
