@@ -1143,201 +1143,7 @@
           </v-dialog>
           <!-- data table -->
           <v-col cols="12" >
-            <transition name="slide">
-              <div class="slidein" v-if="drawer">
-                <h4 @click="toggle">ตรวจสอบคิวจองรายวัน</h4>
-                <v-row>
-                  <v-col cols="8">
-                    <v-menu
-                      ref="menu"
-                      v-model="menu1"
-                      :close-on-content-click="false"
-                      transition="scale-transition"
-                      offset-y
-                      max-width="290px"
-                      min-width="auto"
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          v-model="timeTable"
-                          label="วันที่นัดลูกค้า"
-                          persistent-hint
-                          dense
-                          outlined
-                          readonly
-                          required
-                          :rules="[rules.required]"
-                          prepend-icon="mdi-calendar"
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        v-model="timeTable"
-                        no-title
-                        @input="menu1 = false, getTimesChange('update')"
-                      ></v-date-picker>
-                    </v-menu>
-                  </v-col>
-                  <v-col cols="4">
-                    <v-btn
-                      v-if="dataItemTimesChange.length > 0"
-                      color="primary"
-                      small
-                      @click="exportExcel()"
-                      dark
-                    >
-                      <v-icon right dark>mdi-microsoft-excel</v-icon>
-                      &nbsp;Export
-                    </v-btn>
-                  </v-col>
-                </v-row>
-                <button class="close-btn" @click="toggle()">X</button>
-                <!-- <v-simple-table dense>
-                  <tbody> -->
-                    <v-row justify="center">
-                      <v-expansion-panels>
-                        <v-expansion-panel
-                          v-for="(item, indexitem) in masterTime" :key="indexitem"
-                        >
-                          <v-expansion-panel-header v-slot="{ open }">
-                            <v-row no-gutters>
-                              <v-col cols="4">
-                                {{item}}
-                              </v-col>
-                              <v-col
-                                cols="8"
-                                class="text--secondary"
-                              >
-                                <v-fade-transition leave-absolute>
-                                  <span v-if="open && dataItemTimesChange.filter(el => { return el.timeDueHtext === item && (el.statusBt==='confirmJob' || el.statusBt==='confirm') }).length > 0">
-                                    {{'รายการนัดหมาย ' + dataItemTimesChange.filter(el => { return el.timeDueHtext === item && (el.statusBt==='confirmJob' || el.statusBt==='confirm') }).length + ' คัน'}} </span>
-                                  <span v-if="open && dataItemTimesChange.filter(el => { return el.timeDueHtext === item && (el.statusBt==='confirmJob' || el.statusBt==='confirm') }).length === 0">
-                                    ไม่มีรายการนัดหมาย</span>
-                                  <v-row
-                                    v-if="!open && dataItemTimesChange.filter(el => { return el.timeDueHtext === item && (el.statusBt==='confirmJob' || el.statusBt==='confirm') }).length > 0"
-                                    no-gutters
-                                    style="width: 100%"
-                                  >
-                                    <v-col cols="6">
-                                    </v-col>
-                                    <v-col cols="6" class="text-right">
-                                      <v-chip
-                                        class="ma-2"
-                                        color="primary"
-                                        label
-                                        small
-                                      >
-                                        <v-icon left>
-                                          mdi-car-multiple
-                                        </v-icon>
-                                        {{dataItemTimesChange.filter(el => { return el.timeDueHtext === item && (el.statusBt==='confirmJob' || el.statusBt==='confirm') }).length + ' คัน'}}
-                                      </v-chip>
-                                    </v-col>
-                                  </v-row>
-                                </v-fade-transition>
-                              </v-col>
-                            </v-row>
-                          </v-expansion-panel-header>
-                          <!-- <v-expansion-panel-header>{{item + '(' + dataItemTimesChange.filter(el => { return el.timeDueHtext === item && (el.statusBt==='confirmJob' || el.statusBt==='confirm') }).length + ')'}}</v-expansion-panel-header> -->
-                          <v-expansion-panel-content v-for="(items, indexitems) in dataItemTimesChange.filter(el => { return el.timeDueHtext === item && (el.statusBt==='confirmJob' || el.statusBt==='confirm') })" :key="'td'+indexitems">
-                            <v-card
-                              color="#1B437C"
-                            >
-                              <v-container class="pt-0 pb-0">
-                                <v-list-item class="pa-0">
-                                  <v-icon
-                                    large
-                                    dark
-                                    left
-                                  >
-                                    mdi-car-wash
-                                  </v-icon>
-                                  <v-list-item-content>
-                                    <v-list-item-title class="pt-0 pb-0">{{items.flowName}}</v-list-item-title>
-                                  </v-list-item-content>
-                                  <v-row
-                                    align="center"
-                                    justify="end"
-                                  >
-                                    <v-icon dark class="mr-1">
-                                      mdi-clock-outline
-                                    </v-icon>
-                                    <span class="white--text mr-2">{{items.timeDuetext}}</span>
-                                  </v-row>
-                                </v-list-item>
-                              <v-card-text>
-                                <v-row class="white--text">
-                                  <v-col cols="12" class="pt-0 pb-0">
-                                    คุณ {{items.cusName}}
-                                  </v-col>
-                                  <v-col cols="12" class="pt-0 pb-0">
-                                    ทะเบียน {{items.cusReg}}
-                                  </v-col>
-                                </v-row>
-                              </v-card-text>
-                              </v-container>
-                            </v-card>
-                          </v-expansion-panel-content>
-                        </v-expansion-panel>
-                      </v-expansion-panels>
-                    </v-row>
-                  <!-- <template v-for="(item, indexitem) in masterTime">
-                    <tr :key="'tr'+indexitem">
-                      <td valign="top"><b>{{item}}</b></td>
-                      <td>
-                        <v-simple-table dense class="table_detail_2">
-                          <tbody>
-                          <tr v-for="(items, indexitems) in dataItemTimesChange.filter(el => { return el.timeDueHtext === item && (el.statusBt==='confirmJob' || el.statusBt==='confirm') })" :key="'td'+indexitems">
-                            <v-card
-                              elevation="10"
-                              color="#1B437C"
-                            >
-                              <v-container class="pt-0 pb-0">
-                                <v-list-item class="pa-0">
-                                  <v-icon
-                                    large
-                                    dark
-                                    left
-                                  >
-                                    mdi-car-wash
-                                  </v-icon>
-                                  <v-list-item-content>
-                                    <v-list-item-title class="pt-0 pb-0">{{items.flowName}}</v-list-item-title>
-                                  </v-list-item-content>
-                                  <v-row
-                                    align="center"
-                                    justify="end"
-                                  >
-                                    <v-icon dark class="mr-1">
-                                      mdi-clock-outline
-                                    </v-icon>
-                                    <span class="white--text mr-2">{{items.timeDuetext}}</span>
-                                  </v-row>
-                                </v-list-item>
-                              <v-card-text>
-                                <v-row class="white--text">
-                                  <v-col cols="12" class="pt-0 pb-0">
-                                    คุณ {{items.cusName}}
-                                  </v-col>
-                                  <v-col cols="12" class="pt-0 pb-0">
-                                    ทะเบียน {{items.cusReg}}
-                                  </v-col>
-                                </v-row>
-                              </v-card-text>
-                              </v-container>
-                            </v-card>
-                            <br>
-                          </tr>
-                          </tbody>
-                        </v-simple-table>
-                      </td>
-                    </tr>
-                  </template> -->
-                  <!-- </tbody>
-                </v-simple-table> -->
-              </div>
-            </transition>
+            <BookingQueue :drawerParent="drawer" :menu1Parent="menu1" :timeTableParent="timeTable" :rulesParent="rules" :masterTimeParent="masterTime" :dataItemTimesChangeParent="dataItemTimesChange" :getTimesChangeParent="getTimesChange" :exportExcelParent="exportExcel" :toggleParent="toggle" @updateTimeTable="updateTimeTablefromChild"></BookingQueue>
             <v-card elevation="7" v-if="dataReady">
               <div>
                 <v-btn
@@ -1567,20 +1373,6 @@ button {
   font-size: 1.1em;
 }
 /* before the element is shown, start off the screen to the right */
-.slide-enter, .slide-leave-active {
-  right: -100%;
-}
-
-.close-btn {
-  border: none;
-  font-weight: bold;
-  font-size: 2em;
-  background: transparent;
-  position: absolute;
-  top: 0;
-  left: 0;
-  padding: 0.5em;
-}
 
 /* General styles unrelated to slide in */
 body {
@@ -1605,6 +1397,7 @@ import QrcodeVue from 'qrcode.vue'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import { PivotTable } from '@click2buy/vue-pivot-table'
 import moment from 'moment-timezone'
+import BookingQueue from './BookingQueue.vue'
 
 export default {
   name: 'BookingList',
@@ -1617,7 +1410,8 @@ export default {
     readXlsxFile,
     VuetifyMoney,
     QrcodeVue,
-    PivotTable
+    PivotTable,
+    BookingQueue
   },
   data () {
     let startDate = null
@@ -2089,6 +1883,9 @@ export default {
         }
       }
       this.getTimesChange('update')
+    },
+    updateTimeTablefromChild (timeTable) {
+      this.timeTable = timeTable
     },
     async getTimesChange (text) {
       try {
