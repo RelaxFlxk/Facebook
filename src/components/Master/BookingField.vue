@@ -13,7 +13,6 @@
             <div class="Bar">
               <v-card
                 class="content p-3"
-                height="700px"
                 style="background: linear-gradient(180deg, #FFFFFF 0%, #E1F3FF 100%);"
               >
                 <h5 class="text-center" style="color:red;">(ตัวอย่าง)</h5>
@@ -212,7 +211,7 @@
                   </div>
                 </form>
                 <div class="text-center">
-              <v-btn
+              <!-- <v-btn
               elevation="10"
               color="#173053" dark
               small
@@ -222,7 +221,7 @@
               color="#173053" outlined
               style="background-color:#FFFFFF"
               small
-            >CANCEL</v-btn>
+            >CANCEL</v-btn> -->
             </div>
               </v-card>
             </div>
@@ -264,19 +263,6 @@
                           </v-btn>
                         </v-col>
                       </v-row>
-                      <!-- <v-row align-content="center">
-                      <v-col cols="4" class="text-lelf" >
-                        <h3 class="text-center" style="color:#FFFFFF;">จำนวนลูกค้าต่อวัน</h3>
-                      </v-col>
-                      <v-col cols="8">
-                        <VuetifyMoney
-                          v-model="countCus"
-                          placeholder="จำนวนคนเข้าใช้บริการ / วัน"
-                          dense
-                          required
-                          v-bind:options="options2" />
-                      </v-col>
-                    </v-row> -->
                     </v-card-text>
                   </v-card>
                 </div>
@@ -309,9 +295,6 @@
                       @click="addBooking()"
                       >SAVE</v-btn
                     >
-                    <!-- <v-btn elevation="5" color="#1B437C" outlined class="a"
-                        >CANCEL</v-btn
-                      > -->
                   </v-col>
                 </v-card>
               </v-col>
@@ -346,7 +329,6 @@ export default {
       menuDate: false,
       date: '',
       time: '',
-      countCus: 0,
       options2: {
         locale: 'en-US',
         prefix: '',
@@ -406,11 +388,6 @@ export default {
             console.log('rs', rs)
             if (rs.length > 0) {
               let bookingData = []
-              if (rs[0].countCus) {
-                this.countCus = rs[0].countCus
-              } else {
-                this.countCus = 0
-              }
               bookingData = JSON.parse(rs[0].flowfieldName)
               for (let i = 0; i < bookingData.length; i++) {
                 let d = bookingData[i]
@@ -446,82 +423,48 @@ export default {
         return !item.includes(x)
       })
       if (item.length > 0) {
-        await axios
-          .get(this.DNS_IP + '/customField/fieldId?fieldId=' + item)
-          .then(async response => {
-            let rs = response.data
-            // let aa = []
-            for (let i = 0; i < rs.length; i++) {
-              let d = rs[i]
-              let s = {}
-              s.fieldId = d.fieldId
-              s.fieldName = d.fieldName
-              s.fieldType = d.fieldType
-              s.optionField = d.optionField
-              s.conditionField = d.conditionField
-              s.conditionValue = d.conditionValue
-              s.shopId = d.shopId
-              s.fieldValue = ''
-              s.showitem = true
-              this.Fielditem.push(s)
-              console.log('s', this.Fielditem)
-            }
-            let data1 = this.Fielditem.filter(el => parseInt(el.conditionField || 0) > 0)
-            // let data2 = []
-            for (let i = 0; i < data1.length; i++) {
-              let d = data1[i]
-              let indexC = this.Fielditem.findIndex(function (o) {
-                return o.fieldId === d.fieldId
-              })
-              let indexF = this.Fielditem.findIndex(function (o) {
-                return o.fieldId === parseInt(d.conditionField)
-              })
-              this.Fielditem.splice((indexF + 1), 0, this.Fielditem.splice(indexC, 1)[0])
-            // data2.push({'indexC': indexC, 'indexF': indexF})
-            }
-          })
-          .catch(error => {
-            console.log('error function addData : ', error)
-          })
+        await this.getCustomFieldData(item, true)
       }
       if (fieldAll.length > 0) {
-        await axios
-          .get(this.DNS_IP + '/customField/fieldId?fieldId=' + fieldAll)
-          .then(async response => {
-            let rs = response.data
-            // let aa = []
-            for (let i = 0; i < rs.length; i++) {
-              let d = rs[i]
-              let s = {}
-              s.fieldId = d.fieldId
-              s.fieldName = d.fieldName
-              s.fieldType = d.fieldType
-              s.optionField = d.optionField
-              s.conditionField = d.conditionField
-              s.conditionValue = d.conditionValue
-              s.shopId = d.shopId
-              s.fieldValue = ''
-              s.showitem = false
-              this.Fielditem.push(s)
-            }
-            let data1 = this.Fielditem.filter(el => parseInt(el.conditionField || 0) > 0)
-            // let data2 = []
-            for (let i = 0; i < data1.length; i++) {
-              let d = data1[i]
-              let indexC = this.Fielditem.findIndex(function (o) {
-                return o.fieldId === d.fieldId
-              })
-              let indexF = this.Fielditem.findIndex(function (o) {
-                return o.fieldId === parseInt(d.conditionField)
-              })
-              this.Fielditem.splice((indexF + 1), 0, this.Fielditem.splice(indexC, 1)[0])
-            // data2.push({'indexC': indexC, 'indexF': indexF})
-            }
-          })
-          .catch(error => {
-            console.log('error function addData : ', error)
-          })
+        await this.getCustomFieldData(fieldAll, false)
       }
+    },
+    async getCustomFieldData (fieldSet, showItem) {
+      await axios
+        .get(this.DNS_IP + '/customField/fieldId?fieldId=' + fieldSet)
+        .then(async response => {
+          let rs = response.data
+          // let aa = []
+          for (let i = 0; i < rs.length; i++) {
+            let d = rs[i]
+            let s = {}
+            s.fieldId = d.fieldId
+            s.fieldName = d.fieldName
+            s.fieldType = d.fieldType
+            s.optionField = d.optionField
+            s.conditionField = d.conditionField
+            s.conditionValue = d.conditionValue
+            s.shopId = d.shopId
+            s.fieldValue = ''
+            s.showitem = showItem
+            this.Fielditem.push(s)
+          }
+          let data1 = this.Fielditem.filter(el => parseInt(el.conditionField || 0) > 0)
+          // let data2 = []
+          for (let i = 0; i < data1.length; i++) {
+            let d = data1[i]
+            let indexC = this.Fielditem.findIndex(function (o) {
+              return o.fieldId === d.fieldId
+            })
+            let indexF = this.Fielditem.findIndex(function (o) {
+              return o.fieldId === parseInt(d.conditionField)
+            })
+            this.Fielditem.splice((indexF + 1), 0, this.Fielditem.splice(indexC, 1)[0])
+          }
+        })
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
     },
     async addBooking () {
       let booking = {}
@@ -538,11 +481,6 @@ export default {
       console.log('update', this.Fielditem)
       booking.flowfieldName = JSON.stringify(UpdateField)
       booking.shopId = this.shopId
-      if (this.countCus) {
-        booking.countCus = this.countCus
-      } else {
-        booking.countCus = 0
-      }
       booking.LAST_USER = this.session.data.userName
       console.log('dtbooking', booking)
       this.$swal({
@@ -555,65 +493,45 @@ export default {
         cancelButtonText: 'ไม่'
       })
         .then(async result => {
-          if (this.IdUpdate === '') {
-            booking.CREATE_USER = this.session.data.userName
+          await this.saveBooking(booking)
+        })
+        .catch(error => {
+          console.log('Cencel : ', error)
+        })
+    },
+    async saveBooking (booking) {
+      let url = '/BookingField/add'
+      if (this.IdUpdate !== '') {
+        url = '/BookingField/edit/' + this.IdUpdate
+      } else {
+        booking.CREATE_USER = this.session.data.userName
+      }
+
+      await axios
+        .post(this.DNS_IP + url, booking)
+        .then(async response => {
+          for (let i = 0; i < this.Fielditem.length; i++) {
+            let d = this.Fielditem[i]
+            let showcarditem = {
+              showCard: d.showcard
+            }
             await axios
-              .post(this.DNS_IP + '/BookingField/add', booking)
-              .then(async response => {
-                for (let i = 0; i < this.Fielditem.length; i++) {
-                  let d = this.Fielditem[i]
-                  let showcarditem = {
-                    showCard: d.showcard
-                  }
-                  await axios
-                    .post(
-                      this.DNS_IP + '/customField/edit/' + d.fieldId,
-                      showcarditem
-                    )
-                    .then(response => {})
-                    .catch(error => {
-                      console.log('error function addData : ', error)
-                    })
-                }
-
-                this.$swal('บันทึกข้อมูลเรียบร้อย', ' ', 'success')
-                await this.getBookingField()
-                console.log('addDataGlobal DNS_IP + /job/add', response)
-              })
-              .catch(error => {
-                console.log('error function addData : ', error)
-              })
-          } else {
-            axios
-              .post(this.DNS_IP + '/BookingField/edit/' + this.IdUpdate, booking)
-              .then(response => {
-                for (let i = 0; i < this.Fielditem.length; i++) {
-                  let d = this.Fielditem[i]
-                  let showcarditem = {
-                    showCard: d.showcard
-                  }
-                  axios
-                    .post(
-                      this.DNS_IP + '/customField/edit/' + d.fieldId,
-                      showcarditem
-                    )
-                    .then(response => {})
-                    .catch(error => {
-                      console.log('error function addData : ', error)
-                    })
-                }
-
-                this.$swal('บันทึกข้อมูลเรียบร้อย', ' ', 'success')
-                this.getBookingField()
-                console.log('addDataGlobal DNS_IP + /job/add', response)
-              })
+              .post(
+                this.DNS_IP + '/customField/edit/' + d.fieldId,
+                showcarditem
+              )
+              .then(response => {})
               .catch(error => {
                 console.log('error function addData : ', error)
               })
           }
+
+          this.$swal('บันทึกข้อมูลเรียบร้อย', ' ', 'success')
+          this.getBookingField()
+          console.log(`addDataGlobal DNS_IP + ${url}`, response)
         })
         .catch(error => {
-          console.log('Cencel : ', error)
+          console.log('error function addData : ', error)
         })
     },
     FunCopy () {
