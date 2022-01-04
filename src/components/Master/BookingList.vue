@@ -1588,7 +1588,16 @@ export default {
       },
       getSelectText: '',
       getSelectCount: 0,
-      selectedStatus: false
+      selectedStatus: false,
+      swalConfig: {
+        title: null,
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      }
     }
   },
   beforeCreate () {
@@ -1717,49 +1726,37 @@ export default {
         this.dialogEdit = true
       }
     },
-    async getDataFlow () {
-      this.DataFlowName = []
-      // console.log('DataFlowName', this.DataFlowName)
-      axios
-        .get(this.DNS_IP + '/flow/get?shopId=' + this.session.data.shopId)
+    async getDataFromAPI (url, fieldId, fieldName) {
+      let result = []
+      await axios
+        .get(this.DNS_IP + `${url}?shopId=${this.session.data.shopId}`)
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               let d = rs[i]
               let s = {}
-              s.text = d.flowName
-              s.value = d.flowId
-              this.DataFlowName.push(s)
+              s.text = d[fieldName]
+              s.value = d[fieldId]
+              result.push(s)
               // console.log('this.DataFlowName', this.DataFlowName)
             }
           } else {
-            this.DataFlowName = []
+            result = []
           }
         })
+      return result
+    },
+    async getDataFlow () {
+      this.DataFlowName = await this.getDataFromAPI('/flow/get', 'flowId', 'flowName')
     },
     async getDataBranch () {
-      this.branch = []
-      // console.log('branch', this.branch)
-      await axios
-        .get(
-          this.DNS_IP + '/master_branch/get?shopId=' + this.session.data.shopId
-        )
-        .then(response => {
-          let rs = response.data
-          if (rs.length > 0) {
-            for (var i = 0; i < rs.length; i++) {
-              let d = rs[i]
-              let s = {}
-              s.text = d.masBranchName
-              s.value = d.masBranchID
-              this.branch.push(s)
-              // console.log('dtdtdtdt', this.branch)
-            }
-          } else {
-            this.branch = []
-          }
-        })
+      this.branch = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName')
+    },
+    getDataFromFieldName (data, key) {
+      return data.filter(function (el) {
+        return el.fieldName === key
+      })
     },
     async updateValuesExport () {
       this.export_data = []
@@ -1793,53 +1790,40 @@ export default {
             if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
               s.chkConfirm = true
               s.chkCancel = false
-            }
-            if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
+            } else if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
               s.chkConfirm = false
               s.chkCancel = true
             }
-            if (d.statusBt) {
-              s.statusBt = d.statusBt
-              if (d.statusBt === 'confirm') {
+            s.statusBt = d.statusBt || 'wait'
+            switch (d.statusBt) {
+              case 'confirm':
                 s.statusBtText = 'โทรยืนยันแล้ว'
-              } else if (d.statusBt === 'cancel') {
+                break
+              case 'cancel':
                 s.statusBtText = 'ยกเลิก'
-              } else if (d.statusBt === 'confirmJob') {
+                break
+              case 'confirmJob':
                 s.statusBtText = 'รับรถแล้ว'
-              }
-            } else {
-              s.statusBt = 'wait'
-              s.statusBtText = 'รายการนัดหมายใหม่'
+                break
+              default:
+                s.statusBtText = 'รายการนัดหมายใหม่'
+                break
             }
             let dataBookingData = []
             await axios
               .get(
-                // eslint-disable-next-line quotes
-                this.DNS_IP + "/BookingData/get?bookNo=" + d.bookNo
+                this.DNS_IP + `/BookingData/get?bookNo=${d.bookNo}`
               )
               .then(async responses => {
-                // console.log('getData', responses.data)
                 dataBookingData = responses.data
-                // for (let i = 0; i < response.data.length; i++) {
-                //   let e = response.data[i]
-                //   if (e.fieldName === 'ชื่อ') {
-                //     s.cusName = s.fieldValue
-                //   }
-                //   if (e.fieldName === 'เลขทะเบียน') {
-                //     s.cusReg = s.fieldValue
-                //   }
-                // }
               })
-            s.cusName = dataBookingData.filter(function (el) {
-              return el.fieldName === 'ชื่อ'
-            })[0].fieldValue
-            s.cusReg = dataBookingData.filter(function (el) {
-              return el.fieldName === 'เลขทะเบียน'
-            })[0].fieldValue
+            s.cusName = this.getDataFromFieldName(dataBookingData, 'ชื่อ')
+            s.cusReg = this.getDataFromFieldName(dataBookingData, 'เลขทะเบียน')
+            s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
+            s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
             exportdatas.push(s)
           }
           this.export_data = exportdatas
-          console.log('exportdatas', exportdatas)
           // if (exportdatas.length === 0 || exportdatas.status === false) {
           //   this.export_data = []
           //   // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
@@ -1847,9 +1831,7 @@ export default {
           //   // this.dataReady = true
           //   this.export_data = exportdatas
           // }
-        })
-        // eslint-disable-next-line handle-callback-err
-        .catch(error => {
+        }).catch(error => {
           console.log(error)
           this.dataReady = true
           //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
@@ -1861,25 +1843,11 @@ export default {
       this.getSelectCount = count
       this.dataItemSelect = []
       this.dataItemTimesChange = []
-      if (text === 'confirm') {
-        if (count > 0) {
-          this.dataItemSelect = this.dataItem.filter(el => { return el.statusBt === text })
-        }
-      } else if (text === 'cancel') {
-        if (count > 0) {
-          this.dataItemSelect = this.dataItem.filter(el => { return el.statusBt === text })
-        }
-      } else if (text === 'confirmJob') {
-        if (count > 0) {
-          this.dataItemSelect = this.dataItem.filter(el => { return el.statusBt === text })
-        }
-      } else if (text === 'wait') {
-        if (count > 0) {
-          this.dataItemSelect = this.dataItem.filter(el => { return el.statusBt === text })
-        }
-      } else if (text === 'all') {
-        if (count > 0) {
+      if (count > 0) {
+        if (text === 'all') {
           this.dataItemSelect = this.dataItem
+        } else {
+          this.dataItemSelect = this.dataItem.filter(el => { return el.statusBt === text })
         }
       }
       this.getTimesChange('update')
@@ -1954,62 +1922,35 @@ export default {
                         s.chkConfirm = false
                         s.chkCancel = true
                       }
-                      if (d.statusBt) {
-                        s.statusBt = d.statusBt
-                        if (d.statusBt === 'confirm') {
+                      s.statusBt = d.statusBt || 'wait'
+                      switch (d.statusBt) {
+                        case 'confirm':
                           s.statusBtText = 'โทรยืนยันแล้ว'
-                        } else if (d.statusBt === 'cancel') {
+                          break
+                        case 'cancel':
                           s.statusBtText = 'ยกเลิก'
-                        } else if (d.statusBt === 'confirmJob') {
+                          break
+                        case 'confirmJob':
                           s.statusBtText = 'รับรถแล้ว'
-                        }
-                      } else {
-                        s.statusBt = 'wait'
-                        s.statusBtText = 'รายการนัดหมายใหม่'
+                          break
+                        default:
+                          s.statusBtText = 'รายการนัดหมายใหม่'
+                          break
                       }
                       let dataBookingData = []
                       await axios
                         .get(
-                          // eslint-disable-next-line quotes
-                          this.DNS_IP + "/BookingData/get?bookNo=" + d.bookNo
+                          this.DNS_IP + `/BookingData/get?bookNo=${d.bookNo}`
                         )
                         .then(async responses => {
-                          // console.log('getDataData', responses.data)
                           dataBookingData = responses.data
-                          // for (let i = 0; i < response.data.length; i++) {
-                          //   let e = response.data[i]
-                          //   if (e.fieldName === 'ชื่อ') {
-                          //     s.cusName = s.fieldValue
-                          //   }
-                          //   if (e.fieldName === 'เลขทะเบียน') {
-                          //     s.cusReg = s.fieldValue
-                          //   }
-                          // }
                         })
-                      s.cusName = dataBookingData.filter(function (el) {
-                        return el.fieldName === 'ชื่อ'
-                      })
-                      s.cusReg = dataBookingData.filter(function (el) {
-                        return el.fieldName === 'เลขทะเบียน'
-                      })
-                      s.tel = dataBookingData.filter(function (el) {
-                        return el.fieldName === 'เบอร์โทร'
-                      })
-                      if (s.cusName.length > 0) {
-                        s.cusName = s.cusName[0].fieldValue
-                      } else {
-                        s.cusName = ''
-                      }
-                      if (s.cusReg.length > 0) {
-                        s.cusReg = s.cusReg[0].fieldValue
-                      } else {
-                        s.cusReg = ''
-                      }
-                      if (s.tel.length > 0) {
-                        s.tel = s.tel[0].fieldValue
-                      } else {
-                        s.tel = ''
-                      }
+                      s.cusName = this.getDataFromFieldName(dataBookingData, 'ชื่อ')
+                      s.cusReg = this.getDataFromFieldName(dataBookingData, 'เลขทะเบียน')
+                      s.tel = this.getDataFromFieldName(dataBookingData, 'เบอร์โทร')
+                      s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
+                      s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
+                      s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
                       // var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
                       // if (chkTime.length === 0) {
                       //   dataItemTimes.push(s)
@@ -2130,22 +2071,24 @@ export default {
                 s.chkConfirm = false
                 s.chkCancel = true
               }
-              if (d.statusBt) {
-                s.statusBt = d.statusBt
-                if (d.statusBt === 'confirm') {
+              s.statusBt = d.statusBt || 'wait'
+              switch (d.statusBt) {
+                case 'confirm':
                   s.statusBtText = 'โทรยืนยันแล้ว'
                   this.countConfirm = this.countConfirm + 1
-                } else if (d.statusBt === 'cancel') {
+                  break
+                case 'cancel':
                   s.statusBtText = 'ยกเลิก'
                   this.countCancel = this.countCancel + 1
-                } else if (d.statusBt === 'confirmJob') {
+                  break
+                case 'confirmJob':
                   s.statusBtText = 'รับรถแล้ว'
                   this.countJob = this.countJob + 1
-                }
-              } else {
-                s.statusBt = 'wait'
-                s.statusBtText = 'รายการนัดหมายใหม่'
-                this.countWaiting = this.countWaiting + 1
+                  break
+                default:
+                  s.statusBtText = 'รายการนัดหมายใหม่'
+                  this.countWaiting = this.countWaiting + 1
+                  break
               }
               var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
               if (chkTime.length === 0) {
@@ -2158,42 +2101,14 @@ export default {
                   this.DNS_IP + "/BookingData/get?bookNo=" + d.bookNo
                 )
                 .then(async responses => {
-                  // console.log('getDataData', responses.data)
                   dataBookingData = responses.data
-                // for (let i = 0; i < response.data.length; i++) {
-                //   let e = response.data[i]
-                //   if (e.fieldName === 'ชื่อ') {
-                //     s.cusName = s.fieldValue
-                //   }
-                //   if (e.fieldName === 'เลขทะเบียน') {
-                //     s.cusReg = s.fieldValue
-                //   }
-                // }
                 })
-              s.cusName = dataBookingData.filter(function (el) {
-                return el.fieldName === 'ชื่อ'
-              })
-              s.cusReg = dataBookingData.filter(function (el) {
-                return el.fieldName === 'เลขทะเบียน'
-              })
-              s.tel = dataBookingData.filter(function (el) {
-                return el.fieldName === 'เบอร์โทร'
-              })
-              if (s.cusName.length > 0) {
-                s.cusName = s.cusName[0].fieldValue
-              } else {
-                s.cusName = ''
-              }
-              if (s.cusReg.length > 0) {
-                s.cusReg = s.cusReg[0].fieldValue
-              } else {
-                s.cusReg = ''
-              }
-              if (s.tel.length > 0) {
-                s.tel = s.tel[0].fieldValue
-              } else {
-                s.tel = ''
-              }
+              s.cusName = this.getDataFromFieldName(dataBookingData, 'ชื่อ')
+              s.cusReg = this.getDataFromFieldName(dataBookingData, 'เลขทะเบียน')
+              s.tel = this.getDataFromFieldName(dataBookingData, 'เบอร์โทร')
+              s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
+              s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
+              s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
               dataItems.push(s)
             }
           }
@@ -2432,15 +2347,8 @@ export default {
             }
           }
         }
-        this.$swal({
-          title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
-          type: 'question',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#b3b1ab',
-          confirmButtonText: 'ใช่',
-          cancelButtonText: 'ไม่'
-        })
+        this.swalConfig.title = 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?'
+        this.$swal(this.swalConfig)
           .then(async result => {
             axios
               .post(this.DNS_IP + '/Booking/add', Add)
@@ -2531,15 +2439,8 @@ export default {
         })
     },
     async deleteData () {
-      this.$swal({
-        title: 'ต้องการ ลบข้อมูล ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#fa0202',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      })
+      this.swalConfig.title = 'ต้องการ ลบข้อมูล ใช่หรือไม่?'
+      this.$swal(this.swalConfig)
         .then(async result => {
           this.formUpdate.LAST_USER = this.$session.getAll().data.userName
           await axios
@@ -2622,8 +2523,26 @@ export default {
           for (var i = 0; i < this.BookingDataItem.length; i++) {
             var d = this.BookingDataItem[i]
             let update = {}
+            let addData = false
             var dataField = this.editedItemSeleteField.filter(el => { return parseInt(el.fieldId) === parseInt(d.fieldId) })
             if (dataField[0].conditionField === '' || dataField[0].conditionField === null) {
+              addData = true
+            } else {
+              if (
+                fielditem.filter(row => {
+                  return row.fieldId === parseInt(d.conditionField)
+                }).length > 0
+              ) {
+                console.log('this', fielditem)
+                if (d.conditionValue === fielditem.filter(row => {
+                  return row.fieldId === parseInt(d.conditionField)
+                })[0].fieldValue
+                ) {
+                  addData = true
+                }
+              }
+            }
+            if (addData) {
               update.masBranchID = this.BookingDataItem[0].masBranchID
               update.CREATE_USER = d.userName
               update.LAST_USER = d.userName
@@ -2642,51 +2561,11 @@ export default {
               update.shopId = dataField[0].shopId
               update.showCard = dataField[0].showCard
               Add.push(update)
-            } else {
-              if (
-                fielditem.filter(row => {
-                  return row.fieldId === parseInt(d.conditionField)
-                }).length > 0
-              ) {
-                console.log('this', fielditem)
-                if (
-                  d.conditionValue ===
-              fielditem.filter(row => {
-                return row.fieldId === parseInt(d.conditionField)
-              })[0].fieldValue
-                ) {
-                  update.masBranchID = this.BookingDataItem[0].masBranchID
-                  update.CREATE_USER = d.userName
-                  update.LAST_USER = d.userName
-                  update.checkCar = ''
-                  update.userId = d.userId
-                  update.endDate = this.endDate
-                  update.endTime = this.endTime
-                  update.fieldId = d.fieldId
-                  update.fieldName = d.fieldName
-                  update.fieldType = dataField[0].fieldType
-                  update.fieldValue = d.fieldValue
-                  update.flowId = d.flowId
-                  update.conditionField = dataField[0].conditionField
-                  update.conditionValue = dataField[0].conditionValue
-                  update.optionField = dataField[0].optionField
-                  update.shopId = dataField[0].shopId
-                  update.showCard = dataField[0].showCard
-                  Add.push(update)
-                }
-              }
             }
           }
           console.log('this.Add', Add)
-          this.$swal({
-            title: 'ต้องการนำรายการนี้ เข้าตารางใช่หรือไม่?',
-            type: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#b3b1ab',
-            confirmButtonText: 'ใช่',
-            cancelButtonText: 'ไม่'
-          }).then(async result => {
+          this.swalConfig.title = 'ต้องการนำรายการนี้ เข้าตารางใช่หรือไม่?'
+          this.$swal(this.swalConfig).then(async result => {
             await axios
               .post(this.DNS_IP + '/job/add', Add)
               .then(async response => {
@@ -2800,15 +2679,8 @@ export default {
     },
     confirmChk (item) {
       console.log('item', item)
-      this.$swal({
-        title: 'ต้องการ ยืนยัน ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      }).then(async result => {
+      this.swalConfig.title = 'ต้องการ ยืนยัน ใช่หรือไม่?'
+      this.$swal(this.swalConfig).then(async result => {
         var dt = {
           bookNo: item.bookNo,
           contactDate: this.format_date(new Date()),
@@ -2864,15 +2736,8 @@ export default {
     },
     cancelChk (item) {
       console.log('item', item)
-      this.$swal({
-        title: 'ต้องการ ยกเลิก ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      }).then(async result => {
+      this.swalConfig.title = 'ต้องการ ยกเลิก ใช่หรือไม่?'
+      this.$swal(this.swalConfig).then(async result => {
         var dt = {
           bookNo: item.bookNo,
           contactDate: this.format_date(new Date()),
@@ -2901,15 +2766,8 @@ export default {
     async changeChk (item) {
       console.log('item', item)
       console.log('formChange', this.formChange)
-      this.$swal({
-        title: 'ต้องการ เปลี่ยนเวลานัดหมาย ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      }).then(async result => {
+      this.swalConfig.title = 'ต้องการ เปลี่ยนเวลานัดหมาย ใช่หรือไม่?'
+      this.$swal(this.swalConfig).then(async result => {
         var dtChange = {
           dueDate: this.formChange.date + ' ' + this.formChange.time
         }
@@ -3009,15 +2867,8 @@ export default {
       }
     },
     async jobConfirm () {
-      this.$swal({
-        title: 'ต้องการ ยืนยันข้อมูล ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      })
+      this.swalConfig.title = 'ต้องการ ยืนยันข้อมูล ใช่หรือไม่?'
+      this.$swal(this.swalConfig)
         .then(async () => {
           await axios
             .post(
