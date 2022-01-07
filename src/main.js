@@ -13,6 +13,24 @@ import vueXlsxTable from 'vue-xlsx-table'
 import axios from 'axios' // api
 import moment from 'moment-timezone' // แปลง date
 import { PivotViewPlugin } from '@syncfusion/ej2-vue-pivotview'
+import * as Sentry from '@sentry/vue'
+import { Integrations } from '@sentry/tracing'
+
+Sentry.init({
+  Vue,
+  dsn: 'https://517cf6d99a5d4c848776f14482248e6f@o1109732.ingest.sentry.io/6138284',
+  integrations: [
+    new Integrations.BrowserTracing({
+      routingInstrumentation: Sentry.vueRouterInstrumentation(router),
+      tracingOrigins: ['localhost', 'betask-linked-admin.firebaseapp.com', /^\//]
+    })
+  ],
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 1.0
+})
+
 Vue.use(PivotViewPlugin)
 
 Vue.config.productionTip = false

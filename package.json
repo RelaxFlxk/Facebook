@@ -16,6 +16,8 @@
   "dependencies": {
     "@chenfengyuan/vue-qrcode": "^1.0.2",
     "@click2buy/vue-pivot-table": "^1.1.6",
+    "@sentry/tracing": "^6.16.1",
+    "@sentry/vue": "^6.16.1",
     "@syncfusion/ej2-vue-pivotview": "^17.3.14",
     "axios": "^0.21.0",
     "bootstrap": "^4.5.3",
