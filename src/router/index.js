@@ -5,6 +5,7 @@ import System from '@/components/System'
 import Master from '@/components/Master'
 import Dashbord from '@/components/Dashbord'
 import BroadCast from '@/components/BroadCast'
+import Payment from '@/components/Payment'
 
 Vue.use(Router)
 
@@ -218,6 +219,11 @@ export default new Router({
     path: '/System/ManageUser',
     name: 'ManageUser',
     component: System.ManageUser
+  },
+  {
+    path: '/Payment',
+    name: 'Payment',
+    component: Payment.Payment
   }
   ]
 })

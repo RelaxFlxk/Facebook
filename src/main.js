@@ -22,7 +22,7 @@ Sentry.init({
   integrations: [
     new Integrations.BrowserTracing({
       routingInstrumentation: Sentry.vueRouterInstrumentation(router),
-      tracingOrigins: ['localhost', 'betask-linked-admin.firebaseapp.com', /^\//]
+      tracingOrigins: ['localhost', 'betask-linked-admin.firebaseapp.com', 'betask-linked-admin.web.app', /^\//]
     })
   ],
   // Set tracesSampleRate to 1.0 to capture 100%
@@ -40,8 +40,10 @@ Vue.use(VueSession)
 Vue.use(VueMask)
 Vue.use(vueXlsxTable, {rABS: false})
 
+Vue.prototype.$omise_public_key = 'pkey_test_5pyxhrcj5hv0pb3azgd'
 Vue.prototype.$liff_id_login = '1654154168-E3mxd54W'
 Vue.prototype.$liff = window.liff
+Vue.prototype.$OmiseCard = window.OmiseCard
 Vue.config.productionTip = false
 Vue.mixin({
   data: function () {
