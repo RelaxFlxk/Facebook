@@ -247,6 +247,13 @@ table tr:last-child td:last-child {
   color: var(--nav-text);
   background-color: var(--nav-bg);
 }
+.nav-button-dark {
+  color: var(--nav-text);
+  background-color: #173053;
+}
+.v-navigation-drawer__append {
+  background-color: #173053;
+}
 .shopname {
   font-size: 26px !important;
   font-weight: bold;

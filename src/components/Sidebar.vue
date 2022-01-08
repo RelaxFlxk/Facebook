@@ -224,7 +224,7 @@
             text
             tile
             dark
-            class="nav-button"
+            class="nav-button-dark"
             @click.prevent="$router.push('/LoyaltyPresent')">
             <v-icon color="white">mdi-gift-open</v-icon>&nbsp;&nbsp;Be-Loyalty
           </v-btn>
@@ -233,22 +233,19 @@
             text
             tile
             dark
-            class="nav-button"
+            class="nav-button-dark"
             @click.prevent="chkPlan()">
-            <v-icon color="white">mdi-briefcase-edit-outline</v-icon>&nbsp;&nbsp;Pay as you go
+            <v-icon color="white">mdi-briefcase-edit-outline</v-icon>&nbsp;&nbsp;จัดการแพคเกจ
           </v-btn>
         <v-divider class="ma-0"></v-divider>
-        <div class="pa-2 nav-button">
           <v-btn block
             text
             tile
             dark
-            class="nav-button"
+            class="nav-button-dark"
             @click.prevent="logout()">
             <v-icon color="white">mdi-logout</v-icon>&nbsp;&nbsp;ออกจากระบบ
           </v-btn>
-          <br>
-        </div>
       </template>
       <v-dialog
       v-model="dialogCash"
@@ -275,7 +272,7 @@
 
                         <v-list-item-content>
                           <v-list-item-title>ระบบที่สามารถใช้งานได้</v-list-item-title>
-                          <v-list-item-subtitle>สามาราใช้ได้ทั้งหมด</v-list-item-subtitle>
+                          <v-list-item-subtitle class="feature_detail">สามารถใช้ได้ทั้งหมด</v-list-item-subtitle>
                         </v-list-item-content>
                       </v-list-item>
                       <v-list-item>
@@ -287,7 +284,7 @@
 
                         <v-list-item-content>
                           <v-list-item-title>จำนวนรถในศูนย์บริการ</v-list-item-title>
-                          <v-list-item-subtitle>จำกัดแค่ 10 คัน</v-list-item-subtitle>
+                          <v-list-item-subtitle class="feature_detail">จำกัดแค่ 10 คัน</v-list-item-subtitle>
                         </v-list-item-content>
                       </v-list-item>
                       <v-list-item>
@@ -299,32 +296,30 @@
 
                         <v-list-item-content>
                           <v-list-item-title>ราคา</v-list-item-title>
-                          <v-list-item-subtitle>ฟรี</v-list-item-subtitle>
+                          <v-list-item-subtitle class="feature_detail">ฟรี</v-list-item-subtitle>
                         </v-list-item-content>
                       </v-list-item>
                     </v-list>
                   </v-col>
                   </v-row>
-                  <div class="text-center">
+                  <div v-if="!btFree" class="text-center plan_button">
                     <v-btn
-                      v-if="!btFree"
                       rounded
                       color="primary"
                       dark
                       @click="updateFreePlan()"
                     >
-                      Select Plan
+                      เปลี่ยนแพลน
                     </v-btn>
                   </div>
-                  <div class="text-center">
+                  <div v-if="btFree" class="text-center plan_button">
                     <v-btn
-                      v-if="btFree"
                       rounded
                       outlined
                       color="teal"
                       dark
                     >
-                      Current Plan
+                      แพลนปัจจุบัน
                     </v-btn>
                   </div>
                 </v-card>
@@ -345,7 +340,7 @@
 
                         <v-list-item-content>
                           <v-list-item-title>ระบบที่สามารถใช้งานได้</v-list-item-title>
-                          <v-list-item-subtitle>สามาราใช้ได้ทั้งหมด</v-list-item-subtitle>
+                          <v-list-item-subtitle class="feature_detail">สามารถใช้ได้ทั้งหมด</v-list-item-subtitle>
                         </v-list-item-content>
                       </v-list-item>
                       <v-list-item>
@@ -357,7 +352,7 @@
 
                         <v-list-item-content>
                           <v-list-item-title>จำนวนรถในศูนย์บริการ</v-list-item-title>
-                          <v-list-item-subtitle>ไม่จำกัดจำนวน</v-list-item-subtitle>
+                          <v-list-item-subtitle class="feature_detail">ไม่จำกัดจำนวน</v-list-item-subtitle>
                         </v-list-item-content>
                       </v-list-item>
                       <v-list-item>
@@ -369,32 +364,30 @@
 
                         <v-list-item-content>
                           <v-list-item-title>ราคา</v-list-item-title>
-                          <v-list-item-subtitle>฿ 2,999 ต่อเดือน</v-list-item-subtitle>
+                          <v-list-item-subtitle class="feature_detail">฿ 2,999 ต่อเดือน</v-list-item-subtitle>
                         </v-list-item-content>
                       </v-list-item>
                     </v-list>
                   </v-col>
                   </v-row>
-                  <div class="text-center">
+                  <div v-if="!btBilling" class="text-center plan_button">
                     <v-btn
                       rounded
-                      v-if="!btBilling"
                       color="primary"
                       dark
                       @click="billingPlan()"
                     >
-                      Select Plan
+                      เปลี่ยนแพลน
                     </v-btn>
                   </div>
-                  <div class="text-center">
+                  <div v-if="btBilling" class="text-center plan_button">
                     <v-btn
-                      v-if="btBilling"
                       rounded
                       outlined
                       color="teal"
                       dark
                     >
-                      Current Plan
+                      แพลนปัจจุบัน
                     </v-btn>
                   </div>
                 </v-card>
@@ -612,6 +605,12 @@ export default {
 </script>
 
 <style lang="css" scoped>
+.plan_button {
+  padding-bottom: 10px;
+}
+.feature_detail {
+  color:#ddd !important;
+}
 .listChin {
     background-color: white !important;
 }
