@@ -118,6 +118,46 @@
                             <!-- <v-col cols="2" class="pb-0"></v-col> -->
                           </v-row>
                         </v-col>
+                        <v-col cols="12" class="pb-0" v-if="audiencesSelect === 'Preset'">
+                          <v-row>
+                            <v-col cols="12" class="pb-0">
+                               <v-row>
+                                <v-subheader id="subtext"
+                                >Preset ที่เลือก</v-subheader
+                                >
+                              </v-row>
+                              <v-row>
+                                <v-col cols="12" class="pa-0">
+                                  <v-text-field
+                                      v-model="formUpdate.namePreset"
+                                      solo
+                                      dense
+                                      readonly
+                                    ></v-text-field>
+                                </v-col>
+                              </v-row>
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col cols="12" class="pb-0">
+                               <v-row>
+                                <v-subheader id="subtext"
+                                >เลือกบริการต้องการ</v-subheader
+                                >
+                              </v-row>
+                              <v-row>
+                                <v-col cols="12" class="pa-0">
+                                  <v-text-field
+                                      v-model="formUpdate.flowId"
+                                      solo
+                                      dense
+                                      readonly
+                                    ></v-text-field>
+                                </v-col>
+                              </v-row>
+                            </v-col>
+                          </v-row>
+                        </v-col>
                         <v-col cols="12" class="pb-0" v-if="audiencesSelect === 'typeJob'">
                           <v-row>
                             <v-col cols="12" class="pb-0">
@@ -772,7 +812,8 @@ export default {
         dateJobClose: 'False', //
         CREATE_USER: '',
         LAST_USER: '',
-        CREATE_DATE: ''
+        CREATE_DATE: '',
+        namePreset: ''
       }
     }
   },
@@ -1105,12 +1146,23 @@ export default {
           this.formUpdate.CREATE_USER = item.CREATE_USER
           this.formUpdate.LAST_USER = item.LAST_USER
         }
+      } else if (item.audiencesSelect === 'Preset') {
+        console.log('Preset', flowIds)
+        this.formUpdate.audiencesName = item.audiencesName
+        this.formUpdate.audiencesSelect = item.audiencesSelect
+        this.formUpdate.namePreset = item.namePreset
+        this.formUpdate.flowId = this.DataFlowName.filter(el => el.value === item.refId)[0].text
+        this.formUpdate.shopId = this.$session.getAll().data.shopId
+        this.formUpdate.CREATE_USER = item.CREATE_USER
+        this.formUpdate.LAST_USER = item.LAST_USER
+        console.log('formUpdate', this.formUpdate)
       }
       this.showTabel = true
       this.getDataUpdate(item)
       // this.dialogEdit = true
     },
     async getDataUpdate (item) {
+      console.log('getDataUpdate', item)
       this.dataUserLine = []
       this.valueAdd = 0
       this.dataAdd = 0
@@ -1186,6 +1238,12 @@ export default {
           url = this.DNS_IP + '/jobData/getAudience?shopId=' + this.session.data.shopId + '&fieldValue=' + item.optionFieldValue +
           '&masBranchID=' + branchId
         }
+      } else if (item.audiencesSelect === 'Preset') {
+        url = this.DNS_IP + '/job/getAudiencePreset?shopId=' +
+            this.session.data.shopId +
+            '&flowId=' + item.refId +
+            '&statusPreset=' + item.statusPreset +
+            '&datePreset=' + item.datePreset
       }
       console.log(url)
       await axios

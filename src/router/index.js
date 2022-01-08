@@ -224,6 +224,11 @@ export default new Router({
     path: '/Payment',
     name: 'Payment',
     component: Payment.Payment
+  },
+  {
+    path: '/LoyaltyPresent',
+    name: 'LoyaltyPresent',
+    component: Core.LoyaltyPresent
   }
   ]
 })

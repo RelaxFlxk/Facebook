@@ -220,6 +220,24 @@
       </v-list-group>
       <template v-slot:append>
         <v-divider class="ma-0"></v-divider>
+        <v-btn block
+            text
+            tile
+            dark
+            class="nav-button"
+            @click.prevent="$router.push('/LoyaltyPresent')">
+            <v-icon color="white">mdi-gift-open</v-icon>&nbsp;&nbsp;Be-Loyalty
+          </v-btn>
+        <v-divider class="ma-0"></v-divider>
+        <v-btn block
+            text
+            tile
+            dark
+            class="nav-button"
+            @click.prevent="chkPlan()">
+            <v-icon color="white">mdi-briefcase-edit-outline</v-icon>&nbsp;&nbsp;Pay as you go
+          </v-btn>
+        <v-divider class="ma-0"></v-divider>
         <div class="pa-2 nav-button">
           <v-btn block
             text
@@ -229,13 +247,169 @@
             @click.prevent="logout()">
             <v-icon color="white">mdi-logout</v-icon>&nbsp;&nbsp;ออกจากระบบ
           </v-btn>
+          <br>
         </div>
       </template>
+      <v-dialog
+      v-model="dialogCash"
+      max-width="50%"
+    >
+      <v-card>
+        <v-card-title class="text-h5">
+          Be-Linked billing plans
+        </v-card-title>
+        <v-card-text>
+          <v-row>
+            <v-col col="6">
+              <v-container>
+                <v-card>
+                  <v-row>
+                  <v-col col="12">
+                    <v-list two-line>
+                      <v-list-item>
+                        <v-list-item-icon>
+                          <v-icon color="white">
+                            mdi-projector-screen-outline
+                          </v-icon>
+                        </v-list-item-icon>
+
+                        <v-list-item-content>
+                          <v-list-item-title>ระบบที่สามารถใช้งานได้</v-list-item-title>
+                          <v-list-item-subtitle>สามาราใช้ได้ทั้งหมด</v-list-item-subtitle>
+                        </v-list-item-content>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-icon>
+                          <v-icon color="white">
+                            mdi-car-multiple
+                          </v-icon>
+                        </v-list-item-icon>
+
+                        <v-list-item-content>
+                          <v-list-item-title>จำนวนรถในศูนย์บริการ</v-list-item-title>
+                          <v-list-item-subtitle>จำกัดแค่ 10 คัน</v-list-item-subtitle>
+                        </v-list-item-content>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-icon>
+                          <v-icon color="white">
+                            mdi-cash-multiple
+                          </v-icon>
+                        </v-list-item-icon>
+
+                        <v-list-item-content>
+                          <v-list-item-title>ราคา</v-list-item-title>
+                          <v-list-item-subtitle>ฟรี</v-list-item-subtitle>
+                        </v-list-item-content>
+                      </v-list-item>
+                    </v-list>
+                  </v-col>
+                  </v-row>
+                  <div class="text-center">
+                    <v-btn
+                      v-if="!btFree"
+                      rounded
+                      color="primary"
+                      dark
+                      @click="updateFreePlan()"
+                    >
+                      Select Plan
+                    </v-btn>
+                  </div>
+                  <div class="text-center">
+                    <v-btn
+                      v-if="btFree"
+                      rounded
+                      outlined
+                      color="teal"
+                      dark
+                    >
+                      Current Plan
+                    </v-btn>
+                  </div>
+                </v-card>
+              </v-container>
+            </v-col>
+            <v-col col="6">
+              <v-container>
+                <v-card>
+                  <v-row>
+                  <v-col col="12">
+                    <v-list two-line>
+                      <v-list-item>
+                        <v-list-item-icon>
+                          <v-icon color="white">
+                            mdi-projector-screen-outline
+                          </v-icon>
+                        </v-list-item-icon>
+
+                        <v-list-item-content>
+                          <v-list-item-title>ระบบที่สามารถใช้งานได้</v-list-item-title>
+                          <v-list-item-subtitle>สามาราใช้ได้ทั้งหมด</v-list-item-subtitle>
+                        </v-list-item-content>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-icon>
+                          <v-icon color="white">
+                            mdi-car-multiple
+                          </v-icon>
+                        </v-list-item-icon>
+
+                        <v-list-item-content>
+                          <v-list-item-title>จำนวนรถในศูนย์บริการ</v-list-item-title>
+                          <v-list-item-subtitle>ไม่จำกัดจำนวน</v-list-item-subtitle>
+                        </v-list-item-content>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-icon>
+                          <v-icon color="white">
+                            mdi-cash-multiple
+                          </v-icon>
+                        </v-list-item-icon>
+
+                        <v-list-item-content>
+                          <v-list-item-title>ราคา</v-list-item-title>
+                          <v-list-item-subtitle>฿ 2,999 ต่อเดือน</v-list-item-subtitle>
+                        </v-list-item-content>
+                      </v-list-item>
+                    </v-list>
+                  </v-col>
+                  </v-row>
+                  <div class="text-center">
+                    <v-btn
+                      rounded
+                      v-if="!btBilling"
+                      color="primary"
+                      dark
+                      @click="billingPlan()"
+                    >
+                      Select Plan
+                    </v-btn>
+                  </div>
+                  <div class="text-center">
+                    <v-btn
+                      v-if="btBilling"
+                      rounded
+                      outlined
+                      color="teal"
+                      dark
+                    >
+                      Current Plan
+                    </v-btn>
+                  </div>
+                </v-card>
+              </v-container>
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
     </v-navigation-drawer>
   </div>
 </template>
 
 <script>
+import axios from 'axios' // api
 export default {
   data () {
     return {
@@ -250,7 +424,10 @@ export default {
       booking: [],
       broadCast: [],
       items: [],
-      Dashboard: []
+      Dashboard: [],
+      dialogCash: false,
+      btFree: false,
+      btBilling: false
     }
   },
   // beforeCreate () {
@@ -261,14 +438,12 @@ export default {
   // },
   computed: {},
   mounted () {
+    console.log('session', this.session)
     this.items = []
     this.adminChk()
-    // if (this.session.data.userTypeGroup === 'Shop Admin') {
-    //   this.shopAdminChk()
-    // }
-    // if (this.session.data.userTypeGroup === 'Operation') {
-    //   this.operationChk()
-    // }
+    this.$OmiseCard.configure({
+      publicKey: this.$omise_public_key
+    })
   },
   methods: {
     logout () {
@@ -332,43 +507,114 @@ export default {
       //   { title: 'กิจกรรม', icon: 'mdi-account-voice', to: '/Tool/Activity' }
       //   // { title: 'Qr Code แลกสินค้า', icon: 'mdi-alpha-r-box ', to: '/insurance/ReportProcess' }
       // ]
+    },
+    billingPlan () {
+      this.$swal({
+        title: 'ต้องการ อัพเดทสมาชิก ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async result => {
+          this.$OmiseCard.open({
+            amount: 2000,
+            currency: 'THB',
+            defaultPaymentMethod: 'credit_card',
+            onCreateTokenSuccess: (nonce) => {
+              if (nonce.startsWith('tokn_')) {
+                this.omiseToken = nonce
+                this.getCustomersOmise(nonce)
+              } else {
+                this.omiseSource = nonce
+              }
+              // form.submit()
+            }
+          })
+        })
+        .catch(error => {
+          this.dataReady = true
+          console.log('error function editDataGlobal : ', error)
+        })
+    },
+    async getCustomersOmise (tokn) {
+      var dt = {
+        email: this.$session.getAll().data.userName,
+        description: this.$session.getAll().data.shopName,
+        card: tokn,
+        shopId: this.$session.getAll().data.shopId
+      }
+      await axios
+        .post(this.DNS_IP + '/omise/customers', dt)
+        .then(async response => {
+          console.log('getCustomersOmise', response)
+          if (response.data.status) {
+            this.chkPlan()
+            this.$swal('เรียบร้อย', 'คุณได้อัพเดทเป็นสมาชิก Premium แล้ว', 'success')
+          } else {
+            this.$swal('ผิดพลาด', 'กรุณาตรวจสอบข้อมูลครับ', 'error')
+          }
+        })
+    },
+    updateFreePlan () {
+      this.$swal({
+        title: 'ต้องการ อัพเดทสมาชิก ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async result => {
+          var dt = {
+            billingPlan: 'free',
+            LAST_USER: this.$session.getAll().data.userName
+          }
+          axios
+            .post(
+              // eslint-disable-next-line quotes
+              this.DNS_IP + "/sys_shop/edit/" + this.$session.getAll().data.shopId,
+              dt
+            )
+            .then(async response => {
+              this.chkPlan()
+              this.$swal('เรียบร้อย', 'คุณได้อัพเดทเป็นสมาชิกสายฟรีแล้ว', 'success')
+            })
+        })
+        .catch(error => {
+          this.dataReady = true
+          console.log('error function editDataGlobal : ', error)
+        })
+    },
+    async chkPlan () {
+      await axios
+        .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.$session.getAll().data.shopId)
+        .then(async response => {
+          let rs = response.data[0]
+          if (response.data.length > 0) {
+            // console.log('shop', response.data[0])
+            if (rs.billingPlan === 'free') {
+              this.btFree = true
+              this.btBilling = false
+            } else {
+              this.btFree = false
+              this.btBilling = true
+            }
+          }
+        })
+      this.dialogCash = true
     }
-    // shopAdminChk () {
-    //   this.system = [
-    //     { title: 'บัญชี', icon: 'mdi-account-edit', to: '/System/User' },
-    //     { title: 'ร้านค้า', icon: 'mdi-cash-register', to: '/System/EditShop' },
-    //     { title: 'รายการ ลูกค้า', icon: 'mdi-account-details', to: '/System/ListMember' }
-    //   ]
-    //   this.master = [
-    //     // { title: 'Code 4', icon: 'mdi-numeric-4-circle', to: '/insurance/AllocateProspectiveCode4' },
-    //     { title: 'สาขา', icon: 'mdi-home-floor-b', to: '/Master/Branch' },
-    //     { title: 'Theme', icon: 'mdi-format-color-fill', to: '/Master/Color' },
-    //     { title: 'Level', icon: 'mdi-signal-cellular-3', to: '/Master/Level' },
-    //     // { title: 'การ์ด', icon: 'mdi-cards', to: '/Master/Card' },
-    //     { title: 'รางวัล', icon: 'mdi-gift-open', to: '/Master/Reward' },
-    //     { title: 'อัตราแลกเปลี่ยนสินค้า', icon: 'mdi-atom-variant', to: '/Master/ProductExchangeRate' }
-    //   ]
-    //   this.tool = [
-    //     { title: 'Qr Code เก็บคะแนน', icon: 'mdi-alpha-c-box', to: '/Tool/CollectQRCode' },
-    //     { title: 'Qr Code Lot', icon: 'mdi-book-plus-multiple', to: '/Tool/CollectQRCodeLot' },
-    //     // { title: 'Qr Code แลกสินค้า', icon: 'mdi-alpha-r-box ', to: '/insurance/ReportProcess' },
-    //     { title: 'กิจกรรม', icon: 'mdi-account-voice', to: '/Tool/Activity' }
-    //   ]
-    // },
-    // operationChk () {
-    //   this.tool = [
-    //     { title: 'Qr Code เก็บคะแนน', icon: 'mdi-alpha-c-box', to: '/Tool/CollectQRCode' },
-    //     { title: 'Qr Code Lot', icon: 'mdi-book-plus-multiple', to: '/Tool/CollectQRCodeLot' },
-    //     { title: 'กิจกรรม', icon: 'mdi-account-voice', to: '/Tool/Activity' }
-    //     // { title: 'Qr Code แลกสินค้า', icon: 'mdi-alpha-r-box ', to: '/insurance/ReportProcess' }
-    //   ]
-    // }
   }
 }
 </script>
 
 <style lang="css" scoped>
-
+.listChin {
+    background-color: white !important;
+}
 #img_bt {
   width: 50px;
   height: 50px;

@@ -19,6 +19,17 @@
               <v-icon left>mdi-text-box-plus</v-icon>
               เพิ่ม
             </v-btn>
+            <v-btn
+              color="#1B437C"
+              style="z-index:8;"
+              id="v-step-0"
+              depressed
+              dark
+              @click="setPreset()"
+            >
+              <v-icon left>mdi-expand-all-outline</v-icon>
+              เพิ่มแบบ Preset
+            </v-btn>
           </v-col>
         </v-row>
         <v-row>
@@ -606,6 +617,115 @@
                       color="#173053"
                       :disabled="!validAdd"
                       @click="addData()"
+                    >
+                      <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                      เพิ่ม
+                    </v-btn>
+                  </v-row>
+                </v-col>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <!-- Preset data -->
+          <v-dialog v-model="dialogPreset" persistent max-width="70%">
+            <v-card>
+                <v-card-text>
+                    <v-col class="text-right">
+                      <v-btn
+                        small
+                        color="#E0E0E0"
+                        @click=";(dialogPreset = false)"
+                      >
+                        <v-icon color="#173053">mdi-close</v-icon>
+                      </v-btn>
+                    </v-col>
+                    <v-row class="mb-6" justify="center" no-gutters>
+                      <v-col md="auto">
+                        <h2 style="font-size:10vw;" class="underline-06">จัดกลุ่มเป้าหมาย Preset</h2>
+                        <!-- <h1 style="color:black;"><strong>Forget Password?</strong></h1> -->
+                      </v-col>
+                    </v-row>
+                    <v-row justify="center">
+                      <v-col cols="4" class="text-center pt-0">
+                        <v-card elevation="2" class="mx-auto">
+                          <v-container>
+                            <v-card-title>เป้าหมายโดยประมาณ</v-card-title>
+                            <v-card-text>
+                              <v-progress-circular
+                                :rotate="360"
+                                :size="100"
+                                :width="15"
+                                :value="valueAdd"
+                                color="teal"
+                              >
+                                {{ valueAdd }} %
+                              </v-progress-circular>
+                            </v-card-text>
+                            <v-card-text>ประมาณ {{ dataAdd }} คน</v-card-text>
+                          </v-container>
+                        </v-card>
+                        {{showPreset}}
+                      </v-col>
+                      <v-col cols="8" class="pt-0">
+                         <v-row>
+                        <v-col cols="12" class="pb-0">
+                          <v-row>
+                            <v-col cols="12" class="pb-0">
+                              <v-row>
+                                <v-subheader id="subtext"
+                                  >ชื่อกลุ่มเป้าหมาย</v-subheader
+                                >
+                              </v-row>
+                              <v-row>
+                                <v-text-field
+                                  placeholder="ชื่อกลุ่มเป้าหมาย"
+                                  v-model="formAdd.audiencesName"
+                                  :rules="[rules.required]"
+                                  :counter="50"
+                                  maxlength="50"
+                                  solo
+                                  dense
+                                  required
+                                ></v-text-field>
+                              </v-row>
+                            </v-col>
+                          </v-row>
+                        </v-col>
+                        <v-col cols="12" class="pb-0">
+                          <v-chip-group
+                            active-class="primary--text"
+                            column
+                            mandatory
+                          >
+                            <v-chip
+                              @click="countPreset(item)"
+                              v-for="(item, index) in dataPreset" :key="index"
+                            >
+                              {{ item.namePreset }}
+                            </v-chip>
+                          </v-chip-group>
+                        </v-col>
+                        <!-- <v-col cols="6" class="pb-0" v-for="(item, index) in dataPreset" :key="index">
+                          <v-btn
+                              small
+                              color="#173053"
+                              @click="countPreset(item)"
+                            >
+                              {{item.namePreset}}
+                            </v-btn>
+                        </v-col> -->
+                         </v-row>
+                      </v-col>
+                    </v-row>
+                </v-card-text>
+              <v-card-actions id="v-step-1">
+                <v-col id="margin">
+                  <v-row justify="center">
+                    <v-btn
+                      elevation="2"
+                      x-large
+                      color="#173053"
+                      @click="addDataPreset()"
                     >
                       <v-icon left>mdi-checkbox-marked-circle</v-icon>
                       เพิ่ม
@@ -1293,6 +1413,7 @@
                     <v-btn
                       class="btn-color"
                       fab
+                      v-if="item.audiencesSelect !== 'Preset'"
                       id="v-step-2"
                       small
                       @click.stop="
@@ -1459,6 +1580,7 @@ export default {
       searchAll3: '',
       dialogAdd: false,
       dialogEdit: false,
+      dialogPreset: false,
       disableOpen: true,
       disableClose: true,
       dialogDelete: false,
@@ -1468,7 +1590,10 @@ export default {
       branch: [],
       DataFlowName: [],
       dataCustom: [],
-      dataOptionField: []
+      dataOptionField: [],
+      dataPreset: [],
+      itemPreset: {},
+      showPreset: ''
     }
   },
   beforeCreate () {
@@ -1482,6 +1607,85 @@ export default {
     this.getDataFlow()
   },
   methods: {
+    async countPreset (item) {
+      this.itemPreset = item
+      console.log(item)
+      this.valueAdd = 0
+      this.dataAdd = 0
+      var num = 0
+      this.showPreset = item.namePreset
+      await axios
+        .get(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + '/member/get?shopId=' + this.session.data.shopId
+        )
+        .then(async response => {
+          console.log('member', response.data)
+          if (response.data.status === false) {
+            this.valueAdd = 0
+            this.dataAdd = 0
+          } else {
+            num = response.data.length
+            this.valueAdd = 100
+            this.dataAdd = num
+          }
+          await axios
+            .get(
+              // eslint-disable-next-line quotes
+              this.DNS_IP + '/job/getAudiencePreset?shopId=' +
+            this.session.data.shopId +
+            '&flowId=' + item.refId +
+            '&statusPreset=' + item.statusPreset +
+            '&datePreset=' + item.datePreset
+            )
+            .then(async res => {
+              console.log('getAudiencePreset', res.data)
+              if (res.data.status === false) {
+                this.valueAdd = parseInt((0 / num) * 100)
+                this.dataAdd = 0
+              } else {
+                this.valueAdd = parseInt((res.data.length / num) * 100)
+                this.dataAdd = res.data.length
+              }
+            })
+        })
+    },
+    setPreset () {
+      this.dataPreset = []
+      var dataFlow = this.DataFlowName.filter(el => {
+        return el.value !== 'allFlow'
+      })
+      if (dataFlow.length > 0) {
+        this.dialogPreset = true
+        let datePreset = [{date: 7}, {date: 30}]
+        for (var i = 0; i < dataFlow.length; i++) {
+          var d = dataFlow[i]
+          for (var x = 0; x < datePreset.length; x++) {
+            var b = datePreset[x]
+            var s = {}
+            s.statusPreset = 'Preset'
+            s.typePreSet = 'flow'
+            s.refId = d.flowId
+            switch (b.date) {
+              case 7:
+                s.namePreset = d.flowName + ' ( เข้ามาล่าสุดอาทิตย์ที่แล้ว )'
+                s.datePreset = 7
+                this.dataPreset.push(s)
+                break
+              case 30:
+                s.namePreset = d.flowName + ' ( เข้ามาล่าสุดเดือนที่แล้ว )'
+                s.datePreset = 30
+                this.dataPreset.push(s)
+                break
+            }
+          }
+          // s.refId = d.
+        }
+      } else {
+        this.$swal('ผิดพลาด', 'ไม่มีข้อมูล Preset', 'error')
+        this.dialogPreset = false
+      }
+    },
     async getData () {
       this.dataItem = []
       // console.log('branch', this.branch)
@@ -1494,7 +1698,11 @@ export default {
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               let d = rs[i]
-              d.audiencesSelectText = this.optionAudiences.filter(el => el.value === d.audiencesSelect)[0].text
+              if (d.audiencesSelect !== 'Preset') {
+                d.audiencesSelectText = this.optionAudiences.filter(el => el.value === d.audiencesSelect)[0].text
+              } else {
+                d.audiencesSelectText = 'Preset : ' + d.namePreset
+              }
               this.dataItem.push(d)
               // console.log('dtdtdtdt', this.branch)
             }
@@ -1735,6 +1943,59 @@ export default {
               }
             })
         })
+    },
+    addDataPreset () {
+      if (this.formAdd.audiencesName !== '' && this.showPreset !== '') {
+        this.$swal({
+          title: 'ต้องการ เพิ่มข้อมูล ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        })
+          .then(async (result) => {
+            var dt = {
+              audiencesSelect: this.itemPreset.statusPreset,
+              audiencesName: this.formAdd.audiencesName,
+              flowId: this.itemPreset.flowId,
+              datePreset: this.itemPreset.datePreset,
+              namePreset: this.itemPreset.namePreset,
+              refId: this.itemPreset.refId,
+              typePreSet: this.itemPreset.typePreSet,
+              shopId: this.$session.getAll().data.shopId, //
+              CREATE_USER: this.$session.getAll().data.userName,
+              LAST_USER: this.$session.getAll().data.userName
+            }
+            await axios
+              .post(
+              // eslint-disable-next-line quotes
+                this.DNS_IP + '/audience/add',
+                dt,
+                {
+                  headers: {
+                    'Application-Key': this.$session.getAll().ApplicationKey
+                  }
+                }
+              )
+              .then(async (response) => {
+              // Debug response
+                console.log('addDataGlobal DNS_IP + PATH + "add"', response)
+
+                this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+                // Close Dialog
+                this.dialogPreset = false
+
+                // Load Data
+                await this.clearAdd()
+                await this.getData()
+                this.itemPreset = {}
+              })
+          })
+      } else {
+        this.$swal('ผิดพลาด', 'กรุณาใส่ชื่อ และเลือก Preset ให้เรียบร้อย', 'error')
+      }
     },
     addData () {
       this.$swal({
