@@ -142,7 +142,7 @@
                             <v-col cols="12" class="pb-0">
                                <v-row>
                                 <v-subheader id="subtext"
-                                >เลือกบริการต้องการ</v-subheader
+                                >บริการที่เลือก</v-subheader
                                 >
                               </v-row>
                               <v-row>
@@ -153,6 +153,31 @@
                                       dense
                                       readonly
                                     ></v-text-field>
+                                </v-col>
+                              </v-row>
+                            </v-col>
+                            <v-col cols="12" class="pb-0">
+                              <v-row>
+                                <v-subheader id="subtext"
+                                >วันที่ที่ระบบคำนาณตาม Preset</v-subheader
+                                >
+                              </v-row>
+                              <v-row>
+                                <v-col cols="6" class="pa-0">
+                                  <v-text-field
+                                    v-model="formUpdate.startDate"
+                                    solo
+                                    dense
+                                    readonly
+                                  ></v-text-field>
+                                </v-col>
+                                <v-col cols="6" class="pa-0">
+                                  <v-text-field
+                                    v-model="formUpdate.endDate"
+                                    solo
+                                    dense
+                                    readonly
+                                  ></v-text-field>
                                 </v-col>
                               </v-row>
                             </v-col>
@@ -705,6 +730,7 @@
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
 import axios from 'axios' // api
+import moment from 'moment-timezone'
 export default {
   components: {
     'left-menu-admin': adminLeftMenu,
@@ -1147,8 +1173,12 @@ export default {
           this.formUpdate.LAST_USER = item.LAST_USER
         }
       } else if (item.audiencesSelect === 'Preset') {
-        console.log('Preset', flowIds)
+        console.log('Preset', item)
+        var dateStart = this.momenDate_1(new Date())
+        var dateEnd = this.momenDate_1(moment().add(parseInt(item.datePreset), 'days'))
         this.formUpdate.audiencesName = item.audiencesName
+        this.formUpdate.startDate = dateStart
+        this.formUpdate.endDate = dateEnd
         this.formUpdate.audiencesSelect = item.audiencesSelect
         this.formUpdate.namePreset = item.namePreset
         this.formUpdate.flowId = this.DataFlowName.filter(el => el.value === item.refId)[0].text
@@ -1358,6 +1388,24 @@ export default {
             audiencesSelect: item.audiencesSelect,
             shopId: this.$session.getAll().data.shopId, //
             masBranchID: item.masBranchID,
+            CREATE_DATE: this.format_date(new Date()),
+            CREATE_USER: this.formUpdate.CREATE_USER,
+            LAST_USER: this.formUpdate.LAST_USER
+          }
+        } else if (item.audiencesSelect === 'Preset') {
+          dt = {
+            countSend: this.dataUserLine.length,
+            pictureUrl: this.formUpdate.pictureUrl,
+            linkWeb: this.formUpdate.linkWeb,
+            message: this.formUpdate.title,
+            broadcastName: this.formUpdate.broadcastName,
+            lineUserId: this.dataUserLine,
+            audiencesName: item.audiencesName,
+            flowId: item.flowId,
+            startDate: this.formUpdate.startDate,
+            endDate: this.formUpdate.endDate,
+            audiencesSelect: item.audiencesSelect,
+            shopId: this.$session.getAll().data.shopId, //
             CREATE_DATE: this.format_date(new Date()),
             CREATE_USER: this.formUpdate.CREATE_USER,
             LAST_USER: this.formUpdate.LAST_USER

@@ -564,7 +564,11 @@ export default {
         .then(async result => {
           var dt = {
             billingPlan: 'free',
-            LAST_USER: this.$session.getAll().data.userName
+            LAST_USER: this.$session.getAll().data.userName,
+            billingCustomerId: '',
+            billingCustomerCardId: '',
+            billingScheduleId: '',
+            billingCustomerData: ''
           }
           axios
             .post(
