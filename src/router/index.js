@@ -66,6 +66,11 @@ export default new Router({
     component: Master.BookingField
   },
   {
+    path: '/Master/BookingLink',
+    name: 'BookingLink',
+    component: Master.BookingLink
+  },
+  {
     path: '/Master/BookingList',
     name: 'BookingList',
     component: Master.BookingList

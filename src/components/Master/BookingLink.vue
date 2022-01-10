@@ -1,0 +1,556 @@
+<template>
+  <div>
+    <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
+    <v-main>
+      <v-row>
+        <v-col cols="6" class="text-left">
+          <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
+        </v-col>
+      </v-row>
+      <v-container>
+        <v-row>
+          <v-col cols="12">
+            <h2>ระบบนัดหมาย สามารถใช้ได้กับทุกช่องทาง</h2>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" md="4" sm="4" class="main">
+            <v-img
+              :src="require('@/assets/social-media.png')"
+              class="a"
+            ></v-img>
+          </v-col>
+          <v-col cols="12" md="7" sm="7" class="main">
+            <v-row>
+              <v-col cols="12" md="12" sm="12">
+                <div v-if="Redirect !== ''">
+                  <v-card class="p-3" style="background-color:#050C42;">
+                    <h3 class="text-center" style="color:#FFFFFF;">
+                      Copy ลิ้งนี้ไปใส่ช่องทางต่างๆ เพิ่อเริ่มใช้งาน!
+                    </h3>
+                    <v-img
+                      :src="require('@/assets/Blue_Arrow_PNG.png')"
+                      class="a"
+                      style="width:60px;height:76px;margin-bottom:13px;"
+                    ></v-img>
+                    <v-card-text>
+                      <v-row align-content="center">
+                        <v-col cols="10">
+                          <v-text-field
+                            v-model="Redirect"
+                            style="background-color:#050C42;"
+                            solo
+                            id="myInput"
+                            dense
+                          >
+                          </v-text-field>
+                        </v-col>
+                        <v-col cols="2" class="text-lelf">
+                          <v-btn
+                            color="#1B437C"
+                            small
+                            fab
+                            dark
+                            @click="FunCopy()"
+                          >
+                            <v-icon>mdi-content-copy</v-icon>
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" md="12" sm="12" class="main">
+                          <div class="Bar">
+                            <v-card
+                              class="content p-3"
+                              style="background: linear-gradient(180deg, #FFFFFF 0%, #E1F3FF 100%);"
+                            >
+                              <h5 class="text-center" style="color:red;">(ตัวอย่าง)</h5>
+                              <v-img
+                                :src="require('@/assets/Booking.png')"
+                                class="a"
+                                style="width:56.3px;height:67.03px"
+                              ></v-img>
+                              <h4 class="text-center">นัดหมายเข้ารับบริการ</h4>
+                              <div
+                                v-for="(itemFix, indexFix) in fixtureField"
+                                :key="indexFix"
+                              >
+                                <v-text-field
+                                  :label="itemFix.fieldName"
+                                  outlined
+
+                                ></v-text-field>
+                              </div>
+                              <v-row>
+                                <v-col cols="6">
+                                  <v-menu
+                                    ref="menu"
+                                    v-model="menuDate"
+                                    :close-on-content-click="false"
+                                    :return-value.sync="date"
+                                    transition="scale-transition"
+                                    offset-y
+                                    required
+                                    min-width="auto"
+                                  >
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-text-field
+                                        v-model="date"
+                                        label="วันที่"
+                                        prepend-icon="mdi-calendar"
+                                        readonly
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        required
+                                      ></v-text-field>
+                                    </template>
+                                    <v-date-picker
+                                      v-model="date"
+                                      no-title
+                                      scrollable
+                                      :min="
+                                        new Date(
+                                          Date.now() - new Date().getTimezoneOffset() * 60000
+                                        )
+                                          .toISOString()
+                                          .substr(0, 10)
+                                      "
+                                    >
+                                      <v-spacer></v-spacer>
+                                      <v-btn text color="primary" @click="menuDate = false">
+                                        Cancel
+                                      </v-btn>
+                                      <v-btn text color="primary">
+                                        OK
+                                      </v-btn>
+                                    </v-date-picker>
+                                  </v-menu>
+                                </v-col>
+                                <v-col cols="6">
+                                  <v-text-field
+                                    v-model="time"
+                                    label="เวลา"
+                                    type="time"
+                                    suffix=""
+                                    required
+                                  ></v-text-field>
+                                </v-col>
+                              </v-row>
+                              <form class="Review">
+                                <div v-for="(item, index) in Fielditem" :key="index">
+                                  <div v-if="item.showitem == true">
+                            <div v-if="item.conditionField === '' || item.conditionField === null ">
+                              <div v-if="item.fieldType == 'text'">
+                              <v-text-field
+                              v-model="item.fieldValue"
+                              :label="item.fieldName"
+                              outlined
+                              required
+
+                              ></v-text-field>
+                            </div>
+                            <div v-if="item.fieldType == 'number'">
+                              <v-text-field
+                              v-model="item.fieldValue"
+                              :label="item.fieldName"
+                              outlined
+                              required
+
+                              ></v-text-field>
+                            </div>
+                            <div v-if="item.fieldType== 'Autocompletes'">
+                              <v-autocomplete
+                                v-model="item.fieldValue"
+                                :items="JSON.parse(item.optionField)"
+                                outlined
+                                :label="item.fieldName"
+                                required
+
+                              ></v-autocomplete>
+                            </div>
+                            <div v-if="item.fieldType== 'Selects'">
+                              <v-select
+                                v-model="item.fieldValue"
+                                :items="JSON.parse(item.optionField)"
+                                menu-props="auto"
+                                :label="item.fieldName"
+                                required
+
+                                outlined
+                              ></v-select>
+                            </div>
+                            <div v-if="item.fieldType== 'Radio'" style="padding:0px;">
+                              <v-container fluid style="padding:0px;">
+                                <v-radio-group
+                                column
+                              v-model="item.fieldValue"
+                              style="margin:0px;">
+                                <template v-slot:label>
+                                </template>
+                                <div v-for="radios in JSON.parse(item.optionField)" :key="radios.toISOString">
+                                <v-radio
+                                  :label="radios.text"
+                                  :value="radios.value"
+                                ></v-radio>
+                                </div>
+                              </v-radio-group>
+                              </v-container>
+                            </div>
+                            </div>
+                          <div v-if="item.conditionField !== '' && Fielditem.filter((row) => { return row.fieldId === parseInt(item.conditionField)}).length > 0">
+                            <div v-if="item.conditionValue === Fielditem.filter((row) => { return row.fieldId === parseInt(item.conditionField)})[0].fieldValue">
+                              <div v-if="item.fieldType == 'text'">
+                              <v-text-field
+                              v-model="item.fieldValue"
+                              :label="item.fieldName"
+                              outlined
+                              required
+
+                              ></v-text-field>
+                              </div>
+                              <div v-if="item.fieldType == 'number'">
+                                <v-text-field
+                                v-model="item.fieldValue"
+                                :label="item.fieldName"
+                                outlined
+                                required
+
+                                ></v-text-field>
+                              </div>
+                              <div v-if="item.fieldType== 'Autocompletes'">
+                                <v-autocomplete
+                                  v-model="item.fieldValue"
+                                  :items="JSON.parse(item.optionField)"
+                                  outlined
+                                  :label="item.fieldName"
+                                  required
+
+                                ></v-autocomplete>
+                              </div>
+                              <div v-if="item.fieldType== 'Selects'">
+                                <v-select
+                                  v-model="item.fieldValue"
+                                  :items="JSON.parse(item.optionField)"
+                                  menu-props="auto"
+                                  :label="item.fieldName"
+                                  required
+
+                                  outlined
+                                ></v-select>
+                              </div>
+                              <div v-if="item.fieldType== 'Radio'" style="padding:0px;">
+                                <v-container fluid style="padding:0px;">
+                                  <v-radio-group row
+                                v-model="item.fieldValue"
+                                style="margin:0px;">
+                                  <template v-slot:label>
+                                  </template>
+                                  <div v-for="radios in JSON.parse(item.optionField)" :key="radios.toISOString">
+                                  <v-radio
+                                    :label="radios.text"
+                                    :value="radios.value"
+                                  ></v-radio>
+                                  </div>
+                                </v-radio-group>
+                                </v-container>
+                              </div>
+                              </div>
+                            </div>
+                                  </div>
+                                </div>
+                              </form>
+                            </v-card>
+                          </div>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12">
+                          <v-btn
+                          elevation="10"
+                          color="#5C99DB" block dark
+                          medium
+                          @click="$router.push('/Master/BookingField')"
+                        >แก้ไขหน้า Booking</v-btn>
+                        </v-col>
+                      </v-row>
+                    </v-card-text>
+                  </v-card>
+                </div>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-main>
+  </div>
+</template>
+
+<script>
+import axios from 'axios' // api
+import adminLeftMenu from '../Sidebar.vue' // เมนู
+import VuetifyMoney from '../VuetifyMoney.vue'
+
+export default {
+  components: {
+    'left-menu-admin': adminLeftMenu,
+    VuetifyMoney
+  },
+  data () {
+    return {
+      itemdetell: [],
+      Redirect:
+        'https://liff.line.me/1656581804-7KRQyqo5/Booking?shopId=' +
+        this.$session.getAll().data.shopId,
+      session: this.$session.getAll(),
+      shopId: this.$session.getAll().data.shopId,
+      IdUpdate: '',
+      bookingField: [],
+      menuDate: false,
+      date: '',
+      time: '',
+      options2: {
+        locale: 'en-US',
+        prefix: '',
+        suffix: '',
+        length: 9,
+        precision: 0
+      },
+      Fielditem: [],
+      showitem: false,
+      breadcrumbs: [
+        {
+          text: 'Home',
+          disabled: false,
+          href: '/Core/Home'
+        },
+        {
+          text: 'หน้านัดหมาย',
+          disabled: false,
+          href: '/Master/BookingField'
+        }
+      ],
+      fixtureField: [
+        {
+          fieldName: 'ประเภทบริการ'
+        },
+        {
+          fieldName: 'สาขา'
+        }
+      ],
+      FieldSelect: [
+        {
+          text: 'Field Id',
+          value: 'fieldId'
+        },
+        {
+          text: 'Field Name',
+          value: 'fieldName'
+        },
+        { text: 'เลือกข้อมูล', value: 'showitem' }
+      ]
+    }
+  },
+  async mounted () {
+    await this.getBookingField()
+  },
+  methods: {
+    async getBookingField () {
+      let itemIncustomField = []
+      this.IdUpdate = ''
+      await axios
+        .get(this.DNS_IP + '/BookingField/get?shopId=' + this.shopId)
+        .then(response => {
+          let rs = response.data
+          if (typeof (rs.status) === 'undefined') {
+            this.IdUpdate = rs[0].bookingFieldId
+            console.log('this.IdUpdate', this.IdUpdate)
+            console.log('rs', rs)
+            if (rs.length > 0) {
+              let bookingData = []
+              bookingData = JSON.parse(rs[0].flowfieldName)
+              for (let i = 0; i < bookingData.length; i++) {
+                let d = bookingData[i]
+                itemIncustomField.push(d.fieldId)
+              }
+              console.log('item', itemIncustomField)
+              this.getCustomField(itemIncustomField)
+            }
+          } else {
+            this.getCustomField(itemIncustomField)
+          }
+        })
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
+    },
+    async getCustomField (item) {
+      let checkdata = []
+      this.Fielditem = []
+      await axios
+        .get(this.DNS_IP + '/customField/get?shopId=' + this.shopId)
+        .then(response => {
+          let dt = response.data
+          for (let i = 0; i < dt.length; i++) {
+            let d = dt[i]
+            checkdata.push(d.fieldId)
+          }
+        })
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
+      let fieldAll = checkdata.filter(function (x) {
+        return !item.includes(x)
+      })
+      if (item.length > 0) {
+        await this.getCustomFieldData(item, true)
+      }
+      if (fieldAll.length > 0) {
+        await this.getCustomFieldData(fieldAll, false)
+      }
+    },
+    async getCustomFieldData (fieldSet, showItem) {
+      await axios
+        .get(this.DNS_IP + '/customField/fieldId?fieldId=' + fieldSet)
+        .then(async response => {
+          let rs = response.data
+          // let aa = []
+          for (let i = 0; i < rs.length; i++) {
+            let d = rs[i]
+            let s = {}
+            s.fieldId = d.fieldId
+            s.fieldName = d.fieldName
+            s.fieldType = d.fieldType
+            s.optionField = d.optionField
+            s.conditionField = d.conditionField
+            s.conditionValue = d.conditionValue
+            s.shopId = d.shopId
+            s.fieldValue = ''
+            s.showitem = showItem
+            this.Fielditem.push(s)
+          }
+          let data1 = this.Fielditem.filter(el => parseInt(el.conditionField || 0) > 0)
+          // let data2 = []
+          for (let i = 0; i < data1.length; i++) {
+            let d = data1[i]
+            let indexC = this.Fielditem.findIndex(function (o) {
+              return o.fieldId === d.fieldId
+            })
+            let indexF = this.Fielditem.findIndex(function (o) {
+              return o.fieldId === parseInt(d.conditionField)
+            })
+            this.Fielditem.splice((indexF + 1), 0, this.Fielditem.splice(indexC, 1)[0])
+          }
+        })
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
+    },
+    async addBooking () {
+      let booking = {}
+      let UpdateField = []
+      // this.Redirect = this.DNS_IP + '/booking?shopId=' + this.$route.query.shopId
+      for (let i = 0; i < this.Fielditem.length; i++) {
+        let d = this.Fielditem[i]
+        if (d.showitem === true) {
+          UpdateField.push({
+            fieldId: d.fieldId
+          })
+        }
+      }
+      console.log('update', this.Fielditem)
+      booking.flowfieldName = JSON.stringify(UpdateField)
+      booking.shopId = this.shopId
+      booking.LAST_USER = this.session.data.userName
+      console.log('dtbooking', booking)
+      this.$swal({
+        title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async result => {
+          await this.saveBooking(booking)
+        })
+        .catch(error => {
+          console.log('Cencel : ', error)
+        })
+    },
+    async saveBooking (booking) {
+      let url = '/BookingField/add'
+      if (this.IdUpdate !== '') {
+        url = '/BookingField/edit/' + this.IdUpdate
+      } else {
+        booking.CREATE_USER = this.session.data.userName
+      }
+
+      await axios
+        .post(this.DNS_IP + url, booking)
+        .then(async response => {
+          for (let i = 0; i < this.Fielditem.length; i++) {
+            let d = this.Fielditem[i]
+            let showcarditem = {
+              showCard: d.showcard
+            }
+            await axios
+              .post(
+                this.DNS_IP + '/customField/edit/' + d.fieldId,
+                showcarditem
+              )
+              .then(response => {})
+              .catch(error => {
+                console.log('error function addData : ', error)
+              })
+          }
+
+          this.$swal('บันทึกข้อมูลเรียบร้อย', ' ', 'success')
+          this.getBookingField()
+          console.log(`addDataGlobal DNS_IP + ${url}`, response)
+        })
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
+    },
+    FunCopy () {
+      var copyText = document.getElementById('myInput')
+      copyText.select()
+      copyText.setSelectionRange(0, 99999)
+      navigator.clipboard.writeText(copyText.value)
+    }
+  }
+}
+</script>
+
+<style scoped>
+span.v-btn__content {
+  color: #1b437c !important;
+}
+.main {
+  margin-top: 1rem;
+  min-height: 700px;
+}
+.Bar {
+  padding: 10px;
+  background-color: #ffffff;
+  height: 100%;
+  width: 400px;
+}
+.Review {
+  padding: 20px, 20px, 20px, 20px;
+}
+.content {
+  overflow: auto;
+  white-space: normal;
+}
+.a {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 0px;
+}
+.continer {
+  padding: 20px, 20px, 20px, 20px;
+}
+</style>

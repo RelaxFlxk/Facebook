@@ -451,8 +451,8 @@ export default {
         { title: 'ข้อมูลลงทะเบียนลูกค้า', icon: 'mdi-account-edit', to: '/System/ListMember' }
       ]
       this.booking = [
+        { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingLink' },
         { title: 'รายชื่อลูกค้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingList' },
-        { title: 'ข้อมูลหน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingField' },
         { title: 'ปฏิทินนัดหมาย', icon: 'mdi-account-edit', to: '/Master/CalendarBooking' }
       ]
       this.Dashboard = [

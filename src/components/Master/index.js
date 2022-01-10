@@ -6,6 +6,7 @@ import JobQrCode from './JobQrCode'
 import WorkShop from './WorkShop'
 import Employee from './Employee'
 import BookingField from './BookingField'
+import BookingLink from './BookingLink'
 import Branch from './Branch'
 import Company from './Company'
 import BookingList from './BookingList'
@@ -26,6 +27,7 @@ export default {
   WorkShop,
   Employee,
   BookingField,
+  BookingLink,
   Branch,
   Company,
   BookingList,
