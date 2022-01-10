@@ -1141,6 +1141,26 @@
               </v-form>
             </v-card>
           </v-dialog>
+
+          <v-dialog v-model="dialogInfo" max-width="50%">
+            <v-card class="text-center">
+              <v-card-title><b>รายละเอียดนัดหมาย</b></v-card-title>
+              <v-card-text v-if="dataInfo">
+                <v-row>
+                  <v-col class="text-right">ประเภทบริการ</v-col>
+                  <v-col class="text-left">{{dataInfo.flowName}}</v-col>
+                </v-row>
+                <v-row>
+                  <v-col class="text-right">วันที่ต้องการเข้ารับบริการ</v-col>
+                  <v-col class="text-left">{{dataInfo.dueDate}}</v-col>
+                </v-row>
+                <v-row v-for="(row, index) in BookingDataItem" v-bind:key="index">
+                  <v-col class="text-right">{{row.fieldName}}</v-col>
+                  <v-col class="text-left">{{row.fieldValue}}</v-col>
+                </v-row><br>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
           <!-- data table -->
           <v-col cols="12" >
             <BookingQueue :drawerParent="drawer" :menu1Parent="menu1" :timeTableParent="timeTable" :rulesParent="rules" :masterTimeParent="masterTime" :dataItemTimesChangeParent="dataItemTimesChange" :getTimesChangeParent="getTimesChange" :exportExcelParent="exportExcel" :toggleParent="toggle" @updateTimeTable="updateTimeTablefromChild"></BookingQueue>
@@ -1179,6 +1199,9 @@
                   :search="searchAll2"
                   :items-per-page="10"
                 >
+                  <template v-slot:[`item.cusName`]="{ item }">
+                    <a @click.stop="openInfo(item)" style="cursor:hand"><u>{{ item.cusName }}</u></a>
+                  </template>
                   <template v-slot:[`item.CREATE_DATE`]="{ item }">
                     {{ format_dateNotime(item.CREATE_DATE) }}
                   </template>
@@ -1567,6 +1590,9 @@ export default {
       dateStart: new Date().toISOString().substr(0, 7),
       endDate: '',
       endTime: '',
+      dataInfo: null,
+      dialogInfo: false,
+      detailInfo: null,
       rules: {
         numberRules: value =>
           (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
@@ -2892,6 +2918,11 @@ export default {
       this.formChange.time = this.momenTime(item.dueDate)
       this.dialogChange = true
       console.log(this.formChange)
+    },
+    async openInfo (item) {
+      this.detailInfo = await this.getBookingData(item)
+      this.dataInfo = item
+      this.dialogInfo = true
     },
     onExport () {
       var dataexport = []

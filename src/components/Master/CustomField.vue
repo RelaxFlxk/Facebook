@@ -902,14 +902,14 @@ export default {
     // Get Data
     // this.getOption()
     this.getCondition()
-    this.getDataFlow()
+    await this.getDataFlow()
     this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
   },
   methods: {
-    getDataFlow () {
+    async getDataFlow () {
       this.DataFlowName = []
       console.log('DataFlowName', this.DataFlowName)
-      axios
+      await axios
         .get(this.DNS_IP + '/flow/get?shopId=' + this.shopId)
         .then(response => {
           let rs = response.data
@@ -1187,6 +1187,7 @@ export default {
       await this.dbGetDataById(item)
     },
     async dbGetDataById (item) {
+      console.log('item', item)
       await axios
         .get(
           // eslint-disable-next-line quotes
@@ -1334,7 +1335,7 @@ export default {
             this.formUpdate.conditionField = this.formUpdateConditionField.value
           } else {
             this.formUpdate.conditionField = ''
-            this.formformUpdateAdd.conditionValue = ''
+            this.formUpdate.conditionValue = ''
           }
           var ID = this.formUpdate.fieldId
           delete this.formUpdate['fieldId']
@@ -1363,12 +1364,12 @@ export default {
             // eslint-disable-next-line handle-callback-err
             .catch((error) => {
               this.dataReady = true
-              console.log('error function editDataGlobal : ', error)
+              console.log('error function editDataGlobal-1 : ', error)
             })
         })
         .catch((error) => {
           this.dataReady = true
-          console.log('error function editDataGlobal : ', error)
+          console.log('error function editDataGlobal-2 : ', error)
         })
     },
     async deleteData (DNS_IP, PATH, ID) {
