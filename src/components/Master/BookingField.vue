@@ -273,6 +273,16 @@
                 <v-card min-height="50%">
                   <v-col cols="12" class="text-center">
                     <h4 class="text-center">โปรดเลือกข้อมูลที่ต้องการแสดง</h4>
+                    <v-row align="center">
+                      <v-checkbox
+                        false-value="ไม่แสดง"
+                        true-value="แสดง"
+                        v-model="showTime"
+                        hide-details
+                        class="shrink ml-6 mr-0 mt-0 mb-6"
+                      ></v-checkbox>
+                      <v-text-field v-model="showTime" readonly label="แสดงเวลาการจองหรือไม่"></v-text-field>
+                    </v-row>
                     <v-data-table
                       v-model="itemdetell"
                       :headers="FieldSelect"
@@ -329,6 +339,7 @@ export default {
       menuDate: false,
       date: '',
       time: '',
+      showTime: 'แสดง',
       options2: {
         locale: 'en-US',
         prefix: '',
@@ -481,6 +492,7 @@ export default {
       console.log('update', this.Fielditem)
       booking.flowfieldName = JSON.stringify(UpdateField)
       booking.shopId = this.shopId
+      booking.showTime = this.showTime
       booking.LAST_USER = this.session.data.userName
       console.log('dtbooking', booking)
       this.$swal({

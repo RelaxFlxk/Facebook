@@ -37,20 +37,37 @@
           </v-col>
           <v-col cols="4">
             <v-select
+              :items="DataFlowName"
+              v-model="flowId"
+              dense
+              outlined
+              filled
+              @change="getBookingList()"
+              hide-details
+              label="ประเภทบริการ"
+              prepend-inner-icon="mdi-car-connected"
+              class="ma-2"
+            >
+            </v-select>
+          </v-col>
+          <v-col cols="4">
+            <v-select
               :items="DataBranchName"
               v-model="masBranchName"
               @change="getBookingList()"
               dense
               outlined
+              filled
               hide-details
               item-text="text"
               item-value="value"
               return-object
               label="สาขา"
+              prepend-inner-icon="mdi-map-marker"
               class="ma-2"
             ></v-select>
           </v-col>
-          <v-col cols="4">
+          <v-col cols="12">
             <v-alert
               color="primary"
               dark
@@ -248,6 +265,7 @@ export default {
       menuDate: false,
       dialog: false,
       dataCalendar: [],
+      DataFlowName: [],
       colors: [
         'blue',
         'indigo',
@@ -259,6 +277,7 @@ export default {
       ],
       DataBranchName: [],
       masBranchName: '',
+      flowId: '',
       type: 'month',
       typeToLabel: {
         month: 'Month',
@@ -272,7 +291,9 @@ export default {
     }
   },
   async mounted () {
+    await this.getDataFlow()
     await this.getDataBranch()
+    await this.getBookingList()
     this.$refs.calendar.checkChange()
   },
   methods: {
@@ -284,9 +305,29 @@ export default {
       this.$refs.calendar.next()
       this.getBookingList()
     },
-    getDataBranch () {
+    async getDataFlow () {
+      this.DataFlowName = []
+      await axios
+        .get(this.DNS_IP + '/flow/get?shopId=' + this.$session.getAll().data.shopId)
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            this.DataFlowName.push({text: 'ทั้งหมด', value: 'allFlow'})
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              d.text = d.flowName
+              d.value = d.flowId
+              this.DataFlowName.push(d)
+            }
+            this.flowId = this.DataFlowName[0].value
+          } else {
+            this.DataFlowName = []
+          }
+        })
+    },
+    async getDataBranch () {
       this.DataBranchName = []
-      axios
+      await axios
         .get(
           this.DNS_IP +
             '/master_branch/get?shopId=' +
@@ -303,7 +344,6 @@ export default {
             }
             this.masBranchName = this.DataBranchName[0]
             console.log('DataBranchName', this.DataBranchName)
-            await this.getBookingList()
           } else {
             this.DataBranchName = []
           }
@@ -326,10 +366,9 @@ export default {
       const year = String(dateSplit[0])
       const month = String(dateSplit[1])
       if (this.type === 'month') {
-        await axios
-          .get(
-          // eslint-disable-next-line quotes
-            this.DNS_IP +
+        let url = ''
+        if (this.flowId === 'allFlow') {
+          url = this.DNS_IP +
             '/booking_view/getCountNotime?shopId=' +
             this.$session.getAll().data.shopId +
             '&dueDate=' +
@@ -338,7 +377,20 @@ export default {
             month +
             '&masBranchName=' +
             this.masBranchName.text
-          )
+        } else {
+          url = this.DNS_IP +
+            '/booking_view/getCountNotime?shopId=' +
+            this.$session.getAll().data.shopId +
+            '&dueDate=' +
+            year +
+            '-' +
+            month +
+            '&masBranchName=' +
+            this.masBranchName.text +
+            '&flowId=' + this.flowId
+        }
+        await axios
+          .get(url)
           .then(async response => {
             console.log('getData', response.data)
             this.dataReady = true
@@ -455,10 +507,9 @@ export default {
           //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
           })
       } else if (this.type === 'week') {
-        await axios
-          .get(
-          // eslint-disable-next-line quotes
-            this.DNS_IP +
+        let url = ''
+        if (this.flowId === 'allFlow') {
+          url = this.DNS_IP +
             '/booking_view/getCountNotime?shopId=' +
             this.$session.getAll().data.shopId +
             '&dueDate=' +
@@ -467,7 +518,20 @@ export default {
             month +
             '&masBranchName=' +
             this.masBranchName.text
-          )
+        } else {
+          url = this.DNS_IP +
+            '/booking_view/getCountNotime?shopId=' +
+            this.$session.getAll().data.shopId +
+            '&dueDate=' +
+            year +
+            '-' +
+            month +
+            '&masBranchName=' +
+            this.masBranchName.text +
+            '&flowId=' + this.flowId
+        }
+        await axios
+          .get(url)
           .then(async response => {
             console.log('getData', response.data)
             this.dataReady = true

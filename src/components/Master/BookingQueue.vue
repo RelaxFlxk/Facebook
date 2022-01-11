@@ -51,6 +51,25 @@
          <button class="close-btn" @click="toggle()">X</button>
          <!-- <v-simple-table dense>
          <tbody> -->
+            <v-row>
+               <v-col cols="12" class="pt-0 pb-0">
+                  <strong>{{'รายการนัดหมายทั้งหมด ' + dataItemTimesChange.filter(el => { return (el.statusBt==='confirmJob' || el.statusBt==='confirm') }).length + ' คัน'}}</strong>
+               </v-col>
+               <!-- {{dataItemTimesChange.filter(el => { return (el.statusBt==='confirmJob' || el.statusBt==='confirm') })}} -->
+               <v-col cols="12" class="pt-0 pb-0">
+                  <v-chip-group
+                     column
+                  >
+                     <v-chip
+                     dark
+                     color="#1B437C"
+                     v-for="(item, index) in dataCount" :key="index"
+                     >
+                     {{ item.name + " : " +  item.count + " คัน"}}
+                     </v-chip>
+                  </v-chip-group>
+               </v-col>
+            </v-row>
             <v-row justify="center">
                <v-expansion-panels>
                <v-expansion-panel
@@ -207,7 +226,8 @@ export default {
       timeTable: this.timeTableParent,
       rules: this.rulesParent,
       masterTime: this.masterTimeParent,
-      dataItemTimesChange: this.dataItemTimesChangeParent
+      dataItemTimesChange: this.dataItemTimesChangeParent,
+      dataCount: []
     }
   },
   async mounted () {
@@ -241,7 +261,27 @@ export default {
       this.masterTime = this.masterTimeParent
     },
     dataItemTimesChangeParent () {
+      this.dataCount = []
       this.dataItemTimesChange = this.dataItemTimesChangeParent
+      for (var issue of this.dataItemTimesChange) {
+        var entryFound = false
+        if (issue.statusBt === 'confirmJob' || issue.statusBt === 'confirm') {
+          var tempObj = {
+            name: issue.flowName,
+            count: 1
+          }
+          for (var item of this.dataCount) {
+            if (item.name === tempObj.name) {
+              item.count++
+              entryFound = true
+              break
+            }
+          }
+          if (!entryFound) {
+            this.dataCount.push(tempObj)
+          }
+        }
+      }
     }
   }
 }
