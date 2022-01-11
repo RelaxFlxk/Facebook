@@ -314,7 +314,7 @@
 
                           <v-col cols="12" class="v-margit_button text-center">
                             <v-btn
-                              color="1B437C"
+                              color="#1B437C"
                               depressed
                               outlined
                               @click="dialogAddStepTitle = true"
@@ -323,7 +323,7 @@
                               เพิ่มขั้นตอน
                             </v-btn>
                             <v-btn
-                              color="1B437C"
+                              color="#1B437C"
                               depressed
                               dark
                               @click="editDataStepTitle()"
