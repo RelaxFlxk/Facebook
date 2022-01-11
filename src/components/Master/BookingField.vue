@@ -399,7 +399,11 @@ export default {
             console.log('rs', rs)
             if (rs.length > 0) {
               let bookingData = []
-              this.showTime = rs[0].showTime
+              if (rs[0].showTime === null || rs[0].showTime === '') {
+                this.showTime = 'แสดง'
+              } else {
+                this.showTime = rs[0].showTime
+              }
               bookingData = JSON.parse(rs[0].flowfieldName)
               for (let i = 0; i < bookingData.length; i++) {
                 let d = bookingData[i]
