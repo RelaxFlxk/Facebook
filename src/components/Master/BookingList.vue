@@ -1740,6 +1740,7 @@ export default {
   methods: {
     confirmRemark (item, text) {
       console.log('item', item)
+      console.log('getSelectText', this.getSelectText, this.getSelectCount)
       if (text === 'inAdvance') {
         this.swalConfig.title = 'ต้องการ ยืนยันลูกค้าล่วงหน้า ใช่หรือไม่?'
         this.$swal(this.swalConfig)
@@ -1763,6 +1764,7 @@ export default {
                 if (this.getSelectText) {
                   this.getSelect(this.getSelectText, this.getSelectCount)
                 }
+                console.log('getSelectText', this.getSelectText, this.getSelectCount)
               })
               .catch(error => {
                 console.log('error function addData : ', error)
@@ -1794,6 +1796,7 @@ export default {
                 if (this.getSelectText) {
                   this.getSelect(this.getSelectText, this.getSelectCount)
                 }
+                console.log('getSelectText', this.getSelectText, this.getSelectCount)
                 // console.log('addDataGlobal DNS_IP + /job/add', response)
               })
               .catch(error => {
@@ -1860,7 +1863,7 @@ export default {
               s.fieldValue = ''
               this.editedItemSeleteField.push(s)
             }
-            console.log('this.editedItemSeleteField', this.editedItemSeleteField)
+            // console.log('this.editedItemSeleteField', this.editedItemSeleteField)
           }
         })
     },
@@ -2041,7 +2044,7 @@ export default {
           this.dataItemSelect = this.dataItem.filter(el => { return el.statusBt === text })
         }
       }
-      this.getTimesChange('update')
+      // this.getTimesChange('update')
     },
     updateTimeTablefromChild (timeTable) {
       this.timeTable = timeTable
@@ -2157,34 +2160,6 @@ export default {
                   } else {
                     console.log('month new if')
                     this.dataItemCheck = dataItems
-                    // this.dataItemTimesChange = this.dataItemCheck.filter(el => {
-                    //   let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-                    //   return dueDate === this.timeTable
-                    //   // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-                    // }).sort((a, b) => {
-                    //   if (a.timeDuetext < b.timeDuetext) return -1
-                    //   return a.timeDuetext > b.timeDuetext ? 1 : 0
-                    // })
-                    // var datause = dataItemTimes.sort((a, b) => {
-                    //   if (a.timeDueHtext < b.timeDueHtext) return -1
-                    //   return a.timeDueHtext > b.timeDueHtext ? 1 : 0
-                    // })
-                    // for (var k = 0; k < datause.length; k++) {
-                    //   var t = datause[k]
-                    //   var h = {}
-                    //   h.timeDueHtext = t.timeDueHtext
-                    //   let chkTimes = this.dataItemTime.filter(el => { return el.timeDueHtext === t.timeDueHtext })
-                    //   console.log('chkTimes', chkTimes)
-                    //   if (chkTimes.length === 0) {
-                    //     this.dataItemTime.push(h)
-                    //   }
-                    // }
-                    // this.dataItemTime = dataItemTimes.sort((a, b) => {
-                    //   if (a.timeDueHtext < b.timeDueHtext) return -1
-                    //   return a.timeDueHtext > b.timeDueHtext ? 1 : 0
-                    // })
-                    // console.log('dataItemTime', this.dataItemTime)
-                    // this.dataReady = true
                   }
                 })
             } else {
@@ -2214,7 +2189,7 @@ export default {
       }
       this.dataReady = false
       this.selectedStatus = false
-      this.getSelectText = ''
+      // this.getSelectText = ''
       this.dataItem = []
       this.countWaiting = 0
       this.countConfirm = 0
@@ -2321,7 +2296,7 @@ export default {
               var h = {}
               h.timeDueHtext = t.timeDueHtext
               let chkTimes = this.dataItemTime.filter(el => { return el.timeDueHtext === t.timeDueHtext })
-              console.log('chkTimes', chkTimes)
+              // console.log('chkTimes', chkTimes)
               if (chkTimes.length === 0) {
                 this.dataItemTime.push(h)
               }

@@ -166,11 +166,11 @@
                     <v-card elevation="2">
                       <v-list-item three-line>
                         <v-list-item-content>
-                          <div class="text-overline mb-4">
+                          <div class="text-overline mb-4 text-white">
                             {{ items.flowName }}
                           </div>
                           <v-list-item-subtitle>
-                            <p>
+                            <p class="text-white">
                               วันที่นัดหมาย : {{ format_date(items.dueDate) }}
                             </p>
                           </v-list-item-subtitle>
@@ -178,7 +178,7 @@
                             <p>สถานะ ยืนยัน : {{ items.statusBt || "wait" }}</p>
                           </v-list-item-group>
                           <v-list-item-subtitle v-if="items.contactDateBt">
-                            <p>
+                            <p class="text-white">
                               วันที่ ยืนยัน :
                               {{ format_date(items.contactDateBt) }}
                             </p>
@@ -188,6 +188,7 @@
                               color="success"
                               fab
                               id="v-step-2"
+                              v-if="items.statusBt !== 'confirmJob'"
                               :disabled="items.chkConfirm"
                               small
                               @click.stop="confirmChk(items)"
@@ -197,6 +198,7 @@
                             <v-btn
                               color="error"
                               fab
+                              v-if="items.statusBt !== 'confirmJob'"
                               id="v-step-2"
                               small
                               :disabled="items.chkCancel"
@@ -232,6 +234,7 @@ import axios from 'axios' // api
 import draggable from 'vuedraggable'
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
+import moment from 'moment-timezone' // แปลง date
 
 export default {
   name: 'BookingList',
@@ -376,7 +379,8 @@ export default {
             '-' +
             month +
             '&masBranchName=' +
-            this.masBranchName.text
+            this.masBranchName.text +
+            '&statusBt=confirm'
         } else {
           url = this.DNS_IP +
             '/booking_view/getCountNotime?shopId=' +
@@ -387,7 +391,8 @@ export default {
             month +
             '&masBranchName=' +
             this.masBranchName.text +
-            '&flowId=' + this.flowId
+            '&flowId=' + this.flowId +
+            '&statusBt=confirm'
         }
         await axios
           .get(url)
@@ -447,10 +452,9 @@ export default {
               this.events = []
             // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
             } else {
-              await axios
-                .get(
-                // eslint-disable-next-line quotes
-                  this.DNS_IP +
+              let url = ''
+              if (this.flowId === 'allFlow') {
+                url = this.DNS_IP +
                   '/booking_view/getCount?shopId=' +
                   this.$session.getAll().data.shopId +
                   '&dueDate=' +
@@ -459,7 +463,20 @@ export default {
                   month +
                   '&masBranchName=' +
                   this.masBranchName.text
-                )
+              } else {
+                url = this.DNS_IP +
+                  '/booking_view/getCount?shopId=' +
+                  this.$session.getAll().data.shopId +
+                  '&dueDate=' +
+                  year +
+                  '-' +
+                  month +
+                  '&masBranchName=' +
+                  this.masBranchName.text +
+                  '&flowId=' + this.flowId
+              }
+              await axios
+                .get(url)
                 .then(async responses => {
                   for (var x = 0; x < responses.data.length; x++) {
                     var e = responses.data[x]
@@ -470,16 +487,19 @@ export default {
                       if (e.statusBt === 'confirm') {
                         f.color = 'green'
                         f.name =
-                        e.statusBt +
-                        ' เวลา ' +
+                        'ยืนยัน เวลา ' +
                         e.timeDue +
                         ' โมง : ' +
+                        e.name.toString()
+                      } else if (e.statusBt === 'confirmJob') {
+                        f.color = 'info'
+                        f.name =
+                        'รับรถ : ' +
                         e.name.toString()
                       } else {
                         f.color = 'red'
                         f.name =
-                        e.statusBt +
-                        ' เวลา ' +
+                        'ยกเลิก เวลา ' +
                         e.timeDue +
                         ' โมง : ' +
                         e.name.toString()
@@ -488,8 +508,7 @@ export default {
                       f.start = e.start
                       f.color = 'orange'
                       f.name =
-                      'wait' +
-                      ' เวลา ' +
+                      'รอยืนยัน เวลา ' +
                       e.timeDue +
                       ' โมง : ' +
                       e.name.toString()
@@ -539,13 +558,13 @@ export default {
             for (var i = 0; i < response.data.length; i++) {
               var d = response.data[i]
               var s = {}
-              console.log('d', d)
+              // console.log('d', d)
               if (this.countCus > 0) {
                 s.start = d.start
                 d.d50 = parseInt((this.countCus / 100) * 50)
                 d.d70 = parseInt((this.countCus / 100) * 70)
                 d.d90 = parseInt((this.countCus / 100) * 90)
-                console.log('d.d', parseInt(d.name), d.d50, d.d70, d.d90)
+                // console.log('d.d', parseInt(d.name), d.d50, d.d70, d.d90)
                 if (parseInt(d.name) <= d.d50) {
                   console.log('50')
                   s.color = 'blue'
@@ -588,10 +607,9 @@ export default {
               this.events = []
             // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
             } else {
-              await axios
-                .get(
-                // eslint-disable-next-line quotes
-                  this.DNS_IP +
+              let url = ''
+              if (this.flowId === 'allFlow') {
+                url = this.DNS_IP +
                   '/booking_view/getCount?shopId=' +
                   this.$session.getAll().data.shopId +
                   '&dueDate=' +
@@ -600,35 +618,56 @@ export default {
                   month +
                   '&masBranchName=' +
                   this.masBranchName.text
-                )
+              } else {
+                url = this.DNS_IP +
+                  '/booking_view/getCount?shopId=' +
+                  this.$session.getAll().data.shopId +
+                  '&dueDate=' +
+                  year +
+                  '-' +
+                  month +
+                  '&masBranchName=' +
+                  this.masBranchName.text +
+                  '&flowId=' + this.flowId
+              }
+              await axios
+                .get(url)
                 .then(async responses => {
                   for (var x = 0; x < responses.data.length; x++) {
                     var e = responses.data[x]
                     var f = {}
                     // console.log(d)
+                    console.log('e.statusBt', e.statusBt)
                     if (e.statusBt) {
                       f.start = e.start + ' ' + e.timeDue + ':00'
                       f.end = e.start + ' ' + e.timeDue + ':30'
                       if (e.statusBt === 'confirm') {
                         f.color = 'green'
                         f.name =
-                        e.statusBt +
-                        ' : ' +
+                        'ยืนยัน เวลา ' +
+                        e.timeDue +
+                        ' โมง : ' +
+                        e.name.toString()
+                      } else if (e.statusBt === 'confirmJob') {
+                        f.color = 'info'
+                        f.name =
+                        'รับรถ : ' +
                         e.name.toString()
                       } else {
                         f.color = 'red'
                         f.name =
-                        e.statusBt +
-                        ' : ' +
+                        'ยกเลิก เวลา ' +
+                        e.timeDue +
+                        ' โมง : ' +
                         e.name.toString()
                       }
                     } else {
-                      f.start = e.start + ' ' + e.timeDue + ':00'
-                      f.end = e.start + ' ' + e.timeDue + ':30'
+                      f.start = e.start
                       f.color = 'orange'
                       f.name =
-                      'wait' +
-                      ' : ' +
+                      'รอยืนยัน เวลา ' +
+                      e.timeDue +
+                      ' โมง : ' +
                       e.name.toString()
                     }
                     this.events.push(f)
@@ -648,15 +687,23 @@ export default {
     async showEvent (event) {
       this.dataCalendar = []
       this.selectedEvent = event.event.start
-      console.log('selectedEvent', this.selectedEvent)
-      await axios
-        .get(
-          // eslint-disable-next-line quotes
-          this.DNS_IP +
+      console.log('selectedEventmonth', this.type, moment(moment(new Date(event.event.start)), 'YYYY-MM-DD HH').format('YYYY-MM-DD HH'))
+      let url = ''
+      if (this.type === 'week') {
+        url = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.session.data.shopId +
-            '&dueDate=' +
-            event.event.start
+            "&DATE_FORMAT(dueDate,'%%Y-%%m-%%d %%H')=" +
+            moment(moment(new Date(event.event.start)), 'YYYY-MM-DD HH').format('YYYY-MM-DD HH')
+      } else {
+        url = this.DNS_IP +
+            '/booking_view/get?shopId=' +
+            this.session.data.shopId +
+            '&dueDate=' + event.event.start
+      }
+      await axios
+        .get(
+          url
         )
         .then(async response => {
           console.log('getData', response.data)
@@ -672,9 +719,12 @@ export default {
               d.chkConfirm = false
               d.chkCancel = true
             }
+            console.log('d.statusBt', d.statusBt)
             if (d.statusBt) {
               if (d.statusBt === 'confirm') {
                 d.color = 'green'
+              } else if (d.statusBt === 'confirmJob') {
+                d.color = 'info'
               } else {
                 d.color = 'red'
               }
@@ -686,47 +736,50 @@ export default {
           this.dialog = true
         })
     },
-    async showEventre (event) {
-      this.dataCalendar = []
-      this.selectedEvent = event.event.start
-      console.log('selectedEvent', this.selectedEvent)
-      await axios
-        .get(
-          // eslint-disable-next-line quotes
-          this.DNS_IP +
-            '/booking_view/get?shopId=' +
-            this.session.data.shopId +
-            '&dueDate=' +
-            event.event.start
-        )
-        .then(async response => {
-          console.log('getData', response.data)
-          for (let i = 0; i < response.data.length; i++) {
-            let d = response.data[i]
-            d.chkConfirm = false
-            d.chkCancel = false
-            if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
-              d.chkConfirm = true
-              d.chkCancel = false
-            }
-            if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
-              d.chkConfirm = false
-              d.chkCancel = true
-            }
-            if (d.statusBt) {
-              if (d.statusBt === 'confirm') {
-                d.color = 'green'
-              } else {
-                d.color = 'red'
-              }
-            } else {
-              d.color = 'orange'
-            }
-            this.dataCalendar.push(d)
-          }
-          this.dialog = true
-        })
-    },
+    // async showEventre (event) {
+    //   this.dataCalendar = []
+    //   this.selectedEvent = event.event.start
+    //   console.log('selectedEventweek', moment(moment(new Date(event.event.start)), 'YYYY-MM-DD HH').format('YYYY-MM-DD HH'))
+    //   await axios
+    //     .get(
+    //       // eslint-disable-next-line quotes
+    //       this.DNS_IP +
+    //         '/booking_view/get?shopId=' +
+    //         this.session.data.shopId +
+    //         '&dueDate=' +
+    //         event.event.start
+    //     )
+    //     .then(async response => {
+    //       console.log('getData', response.data)
+    //       for (let i = 0; i < response.data.length; i++) {
+    //         let d = response.data[i]
+    //         d.chkConfirm = false
+    //         d.chkCancel = false
+    //         if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
+    //           d.chkConfirm = true
+    //           d.chkCancel = false
+    //         }
+    //         if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
+    //           d.chkConfirm = false
+    //           d.chkCancel = true
+    //         }
+    //         console.log('d.statusBt', d.statusBt)
+    //         if (d.statusBt) {
+    //           if (d.statusBt === 'confirm') {
+    //             d.color = 'green'
+    //           } else if (d.statusBt === 'confirmJob') {
+    //             d.color = 'info'
+    //           } else {
+    //             d.color = 'red'
+    //           }
+    //         } else {
+    //           d.color = 'orange'
+    //         }
+    //         this.dataCalendar.push(d)
+    //       }
+    //       this.dialog = true
+    //     })
+    // },
     confirmChk (item) {
       console.log('item', item)
       this.$swal({
