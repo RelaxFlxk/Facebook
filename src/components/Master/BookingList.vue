@@ -1213,46 +1213,24 @@
                     {{ format_date(item.dueDate) }}
                   </template>
                    <template v-slot:[`item.action2`]="{ item }">
-                     <v-btn
-                      color="teal"
-                      dark
-                      v-if="item.statusBt === 'confirm' && (item.remarkConfirm21 === '' || item.remarkConfirm1 === 'fales' || item.remarkConfirm1 === null)"
-                      small
-                      @click.stop="confirmRemark(item, 'inAdvance')"
-                    >
-                      <v-icon> mdi-calendar-today </v-icon>
-                      ยืนยันล่วงหน้า
-                    </v-btn>
-                    <v-btn
-                      color="teal"
-                      dark
-                      v-if="item.statusBt === 'confirm' && item.remarkConfirm1 === 'true'"
-                      small
-                      @click.stop="confirmRemark(item, 'inAdvance')"
-                    >
-                      <v-icon> mdi-calendar-today </v-icon>
-                      ยืนยันล่วงหน้าแล้ว
-                    </v-btn>
-                    <v-btn
-                      color="cyan"
-                      dark
-                      v-if="item.statusBt === 'confirm' && (item.remarkConfirm2 === '' || item.remarkConfirm2 === 'fales' || item.remarkConfirm2 === null)"
-                      small
-                      @click.stop="confirmRemark(item, 'inDay')"
-                    >
-                      <v-icon> mdi-alarm-check </v-icon>
-                      ยืนยันในวัน
-                    </v-btn>
-                    <v-btn
-                      color="cyan"
-                      dark
-                      v-if="item.statusBt === 'confirm' && item.remarkConfirm2 === 'true'"
-                      small
-                      @click.stop="confirmRemark(item, 'inDay')"
-                    >
-                      <v-icon> mdi-alarm-check </v-icon>
-                      ยืนยันในวันแล้ว
-                    </v-btn>
+                    <v-row>
+                      <v-col>
+                        <v-switch
+                            v-if="item.statusBt === 'confirm'"
+                            v-model="item.remarkConfirm1"
+                            label="1 วัน"
+                            @click.stop="confirmRemark(item, 'inAdvance')"
+                          ></v-switch>
+                      </v-col>
+                      <v-col>
+                        <v-switch
+                            v-if="item.statusBt === 'confirm'"
+                            v-model="item.remarkConfirm2"
+                            label="15 นาที"
+                            @click.stop="confirmRemark(item, 'inDay')"
+                          ></v-switch>
+                      </v-col>
+                    </v-row>
                    </template>
                   <template v-slot:[`item.action`]="{ item }">
                     <!-- confirm -->
@@ -1337,46 +1315,24 @@
                     {{ (item.dueDate) }}
                   </template>
                   <template v-slot:[`item.action2`]="{ item }">
-                     <v-btn
-                      color="teal"
-                      dark
-                      v-if="item.statusBt === 'confirm' && (item.remarkConfirm21 === '' || item.remarkConfirm1 === 'fales' || item.remarkConfirm1 === null)"
-                      small
-                      @click.stop="confirmRemark(item, 'inAdvance')"
-                    >
-                      <v-icon> mdi-calendar-today </v-icon>
-                      ยืนยันล่วงหน้า
-                    </v-btn>
-                    <v-btn
-                      color="teal"
-                      dark
-                      v-if="item.statusBt === 'confirm' && item.remarkConfirm1 === 'true'"
-                      small
-                      @click.stop="confirmRemark(item, 'inAdvance')"
-                    >
-                      <v-icon> mdi-calendar-today </v-icon>
-                      ยืนยันล่วงหน้าแล้ว
-                    </v-btn>
-                    <v-btn
-                      color="cyan"
-                      dark
-                      v-if="item.statusBt === 'confirm' && (item.remarkConfirm2 === '' || item.remarkConfirm2 === 'fales' || item.remarkConfirm2 === null)"
-                      small
-                      @click.stop="confirmRemark(item, 'inDay')"
-                    >
-                      <v-icon> mdi-alarm-check </v-icon>
-                      ยืนยันในวัน
-                    </v-btn>
-                    <v-btn
-                      color="cyan"
-                      dark
-                      v-if="item.statusBt === 'confirm' && item.remarkConfirm2 === 'true'"
-                      small
-                      @click.stop="confirmRemark(item, 'inDay')"
-                    >
-                      <v-icon> mdi-alarm-check </v-icon>
-                      ยืนยันในวันแล้ว
-                    </v-btn>
+                    <v-row>
+                      <v-col>
+                        <v-switch
+                            v-if="item.statusBt === 'confirm'"
+                            v-model="item.remarkConfirm1"
+                            label="1 วัน"
+                            @click.stop="confirmRemark(item, 'inAdvance')"
+                          ></v-switch>
+                      </v-col>
+                      <v-col>
+                        <v-switch
+                            v-if="item.statusBt === 'confirm'"
+                            v-model="item.remarkConfirm2"
+                            label="15 นาที"
+                            @click.stop="confirmRemark(item, 'inDay')"
+                          ></v-switch>
+                      </v-col>
+                    </v-row>
                    </template>
                   <template v-slot:[`item.action`]="{ item }">
                     <!-- confirm -->
@@ -1629,7 +1585,7 @@ export default {
         { text: 'เบอร์โทร', value: 'tel' },
         { text: 'ทะเบียนรถ', value: 'cusReg' },
         { text: 'สถานะนัดหมาย', value: 'statusBtText' },
-        { text: 'จัดการหมายเหตุ', value: 'action2', sortable: false, align: 'center' }
+        { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
         // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
       ],
       columnsSelected: [
@@ -1640,7 +1596,7 @@ export default {
         { text: 'ชื่อลูกค้า', value: 'cusName' },
         { text: 'เบอร์โทร', value: 'tel' },
         { text: 'ทะเบียนรถ', value: 'cusReg' },
-        { text: 'จัดการหมายเหตุ', value: 'action2', sortable: false, align: 'center' }
+        { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
         // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
       ],
       dataItem: [],
@@ -1746,19 +1702,19 @@ export default {
         this.$swal(this.swalConfig)
           .then(async result => {
             var remark1 = ''
-            if (item.remarkConfirm1 === '' || item.remarkConfirm1 === 'fales' || item.remarkConfirm1 === null) {
+            if (item.remarkConfirm1 === '' || item.remarkConfirm1 === 'false' || item.remarkConfirm1 === null) {
               remark1 = 'true'
             } else if (item.remarkConfirm1 === 'true') {
-              remark1 = 'fales'
+              remark1 = 'false'
             }
+            console.log('remark1', remark1)
             var dt = {
-              remarkConfirm1: remark1,
+              remarkConfirm1: item.remarkConfirm1,
               LAST_USER: this.session.data.userName
             }
             axios
               .post(this.DNS_IP + '/Booking/edit/' + item.bookNo, dt)
               .then(async response => {
-                this.$swal('เรียบร้อย', 'ยืนยันลูกค้าล่วงหน้า เรียบร้อย', 'success')
                 await this.getBookingList()
                 this.getTimesChange('update')
                 if (this.getSelectText) {
@@ -1778,19 +1734,19 @@ export default {
         this.$swal(this.swalConfig)
           .then(async result => {
             var remark2 = ''
-            if (item.remarkConfirm2 === '' || item.remarkConfirm2 === 'fales' || item.remarkConfirm2 === null) {
+            if (item.remarkConfirm2 === '' || item.remarkConfirm2 === 'false' || item.remarkConfirm2 === null) {
               remark2 = 'true'
             } else if (item.remarkConfirm2 === 'true') {
-              remark2 = 'fales'
+              remark2 = 'false'
             }
+            console.log('remark2', remark2)
             var dt = {
-              remarkConfirm2: remark2,
+              remarkConfirm2: item.remarkConfirm2,
               LAST_USER: this.session.data.userName
             }
             axios
               .post(this.DNS_IP + '/Booking/edit/' + item.bookNo, dt)
               .then(async response => {
-                this.$swal('เรียบร้อย', 'ยืนยันลูกค้าในวัน เรียบร้อย', 'success')
                 await this.getBookingList()
                 this.getTimesChange('update')
                 if (this.getSelectText) {
@@ -2225,8 +2181,8 @@ export default {
               s.chkConfirm = false
               s.chkCancel = false
               s.jobNo = d.jobNo
-              s.remarkConfirm1 = d.remarkConfirm1
-              s.remarkConfirm2 = d.remarkConfirm2
+              s.remarkConfirm1 = (d.remarkConfirm1 === 'true' || d.remarkConfirm1 === 'True')
+              s.remarkConfirm2 = (d.remarkConfirm2 === 'true' || d.remarkConfirm2 === 'True')
               s.lineUserId = d.lineUserId
               s.timeDueHtext = d.timeDueH + ':00'
               s.timeDuetext = d.timeDue
