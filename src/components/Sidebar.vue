@@ -3,12 +3,15 @@
     <v-app-bar fixed app>
       <v-app-bar-nav-icon dark @click.stop="drawer = !drawer" />
         <!-- <v-toolbar-title v-text="title" /> -->
-          <v-col cols="11" class='text-right'>
-            <v-list-item-avatar>
-              <v-img :src="session.data.logo"></v-img>
-            </v-list-item-avatar>
-          </v-col>
-        <v-list-item-title>{{ session.data.name }}</v-list-item-title>
+      <v-spacer></v-spacer>
+      <v-avatar class="mr-3">
+        <v-img :src="session.data.shopImge"></v-img>
+      </v-avatar>
+      <v-toolbar-title>{{ session.data.shopName }}</v-toolbar-title>
+        <!-- <v-list-item-avatar>
+          <v-img :src="session.data.shopImge"></v-img>
+        </v-list-item-avatar>
+        <v-list-item-content><strong style="color: white;">{{ session.data.shopName }}</strong></v-list-item-content> -->
     </v-app-bar>
     <v-navigation-drawer v-model="drawer" bottom fixed app>
       <v-list>
