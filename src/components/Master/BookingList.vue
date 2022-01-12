@@ -2,48 +2,50 @@
   <div>
     <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
     <v-main>
-      <div class="pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4">
-        <v-row>
-          <v-col cols="6" class="text-left">
+      <div class="col-md-12 ml-sm-auto col-lg-12 px-4">
+        <v-row class="no-gutters">
+          <v-col cols="12" md="6" lg="6" class="text-left">
             <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
           </v-col>
-          <v-col cols="6" class="v-margit_button text-right">
-            <v-btn
-              color="primary"
-              style="z-index:8;"
-              id="v-step-0"
-              depressed
-              @click="$router.push('./Qrcodereader')"
-            >
-              <v-icon left>mdi-text-box-plus</v-icon>
-              Qr Code
-            </v-btn>
-            <v-btn
-              color="primary"
-              style="z-index:8;"
-              id="v-step-0"
-              depressed
-              @click="(dialogAdd = true), getBookingField()"
-            >
-              <v-icon left>mdi-text-box-plus</v-icon>
-              เพิ่ม
-            </v-btn>
-            <v-btn
-              color="teal"
-              style="z-index:8;"
-              id="v-step-0"
-              dark
-              depressed
-              @click="(dialogExport = true), validate('EXPORT')"
-            >
-              <v-icon left>mdi-download</v-icon>
-              Export Data
-            </v-btn>
+          <v-col cols="12" md="6" lg="6" class="v-margit_button text-right">
+            <v-btn-toggle>
+              <v-btn
+                color="primary"
+                style="z-index:8;margin-right: 5px;"
+                id="v-step-0"
+                depressed
+                @click="$router.push('./Qrcodereader')"
+              >
+                <v-icon left>mdi-text-box-plus</v-icon>
+                Qr Code
+              </v-btn>
+              <v-btn
+                color="primary"
+                style="z-index:8;margin-right: 5px;"
+                id="v-step-0"
+                depressed
+                @click="(dialogAdd = true), getBookingField()"
+              >
+                <v-icon left>mdi-text-box-plus</v-icon>
+                เพิ่ม
+              </v-btn>
+              <v-btn
+                color="teal"
+                style="z-index:8;"
+                id="v-step-0"
+                dark
+                depressed
+                @click="(dialogExport = true), validate('EXPORT')"
+              >
+                <v-icon left>mdi-download</v-icon>
+                Export Data
+              </v-btn>
+            </v-btn-toggle>
             <!-- </v-overlay> -->
           </v-col>
         </v-row>
-        <v-row no-gutters>
-          <v-col cols="8" class="text-left">
+        <v-row>
+          <v-col cols="12" md="8" lg="8" class="text-left">
             <template  v-if="changeBackgroundColor">
             <v-row>
               <v-col cols="6" class="text-center pb-0">
@@ -132,7 +134,7 @@
             </v-row>
             </template>
           </v-col>
-          <v-col cols="4" class="pl-5 v-margit_button">
+          <v-col cols="12" md="4" lg="4" class="pl-5 v-margit_button">
             <v-menu
               ref="menu"
               v-model="menuStart"
@@ -308,7 +310,7 @@
                     <v-row justify="center">
                       <v-col
                         cols="5"
-                        class="text-center"
+                        class="text-center d-none d-sm-flex"
                         style="margin: auto 0;"
                       >
                         <v-col class="text-center">
@@ -321,7 +323,7 @@
                         </v-col>
                       </v-col>
 
-                      <v-col cols="6" class="v-margit_text_add mt-0 pa-0">
+                      <v-col cols="12" sm="6" md="6" lg="6" class="v-margit_text_add mt-0 pa-0">
                         <v-col class="text-center pa-3 ml-2">
                           <v-img
                             class="v_text_add"
@@ -713,7 +715,7 @@
           <!-- end delete -->
 
           <!-- edit -->
-          <v-dialog v-model="dialogEdit" persistent max-width="50%">
+          <v-dialog v-model="dialogEdit" persistent :max-width="dialogwidth">
             <v-card class="text-center">
               <v-card-title>นำเข้ากระดานการทำงาน</v-card-title>
               <v-card-text>
@@ -953,10 +955,9 @@
                           </div>
                       </div>
                     </div>
-                  </div>
-                  <br>
+                  </div><br>
                   <v-row>
-                    <v-col cols="6">
+                    <v-col cols="12" sm="6" md="6" lg="6">
                       <v-menu
                         ref="menu"
                         v-model="menu"
@@ -988,7 +989,7 @@
                       </v-menu>
                     </v-col>
 
-                    <v-col cols="6">
+                    <v-col cols="12" sm="6" md="6" lg="6">
                       <v-text-field
                         v-model="endTime"
                         label="เวลา"
@@ -1014,7 +1015,7 @@
                       นำเข้าตารางงาน
                     </v-btn>
                     <v-btn small color="red" dark @click="dialogEdit = false;">
-                      <v-icon color="#173053">mdi-close</v-icon>
+                      <v-icon color="#173053">mdi-close</v-icon> ยกเลิก
                     </v-btn>
                   </div>
                 </v-container>
@@ -1023,7 +1024,7 @@
           </v-dialog>
           <!-- end -->
 
-          <v-dialog v-model="dialogJob" persistent max-width="50%">
+          <v-dialog v-model="dialogJob" persistent :max-width="dialogwidth">
             <v-card
               style="background: linear-gradient(180deg, #FFFFFF 0%, #E1F3FF 100%);">
                 <v-container >
@@ -1064,13 +1065,13 @@
               </v-card>
           </v-dialog>
 
-          <v-dialog v-model="dialogChange" persistent max-width="50%">
+          <v-dialog v-model="dialogChange" persistent :max-width="dialogwidth">
             <v-card class="text-center">
               <v-card-title>เปลี่ยนเวลานัดหมาย</v-card-title>
               <v-form ref="form_change" v-model="validChange" lazy-validation>
                 <v-card-text>
                   <v-row>
-                    <v-col cols="6">
+                    <v-col cols="12" md="6" lg="6">
                       <v-menu
                         v-model="menuDateChange"
                         :close-on-content-click="false"
@@ -1105,7 +1106,7 @@
                         ></v-date-picker>
                       </v-menu>
                     </v-col>
-                    <v-col cols="6">
+                    <v-col  cols="12" md="6" lg="6">
                       <v-text-field
                         v-model="formChange.time"
                         label="เวลา"
@@ -1142,7 +1143,7 @@
             </v-card>
           </v-dialog>
 
-          <v-dialog v-model="dialogInfo" max-width="50%">
+          <v-dialog v-model="dialogInfo" :max-width="dialogwidth">
             <v-card class="text-center">
               <v-card-title><b>รายละเอียดนัดหมาย</b></v-card-title>
               <v-card-text v-if="dataInfo">
@@ -1519,6 +1520,17 @@ export default {
     QrcodeVue,
     PivotTable,
     BookingQueue
+  },
+  computed: {
+    dialogwidth () {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return '70%'
+        case 'sm': return '60%'
+        case 'md': return '50%'
+        case 'lg': return '50%'
+        case 'xl': return '50%'
+      }
+    }
   },
   data () {
     let startDate = null

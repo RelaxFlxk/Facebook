@@ -1,6 +1,6 @@
 <template>
    <transition name="slide">
-      <div class="slidein" v-if="drawer">
+      <div class="slidein" v-if="drawer" :style="'max-width:'+width+' !important'">
          <h4 @click="toggle">ตรวจสอบคิวจองรายวัน</h4>
          <v-row>
          <v-col cols="8">
@@ -219,6 +219,17 @@ export default {
   props: ['drawerParent', 'menu1Parent', 'timeTableParent', 'rulesParent', 'masterTimeParent', 'dataItemTimesChangeParent', 'getTimesChangeParent', 'exportExcelParent', 'toggleParent', 'updateTimeTable'],
   components: {},
   created () {},
+  computed: {
+    width () {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return '100%'
+        case 'sm': return '80%'
+        case 'md': return '40%'
+        case 'lg': return '40%'
+        case 'xl': return '40%'
+      }
+    }
+  },
   data () {
     return {
       drawer: this.drawerParent,
