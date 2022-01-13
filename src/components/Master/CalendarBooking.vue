@@ -484,6 +484,8 @@ export default {
                     // console.log(d)
                     if (e.statusBt) {
                       f.start = e.start
+                      f.statusBt = e.statusBt
+                      f.timeDue = e.timeDue
                       if (e.statusBt === 'confirm') {
                         f.color = 'green'
                         f.name =
@@ -506,6 +508,8 @@ export default {
                       }
                     } else {
                       f.start = e.start
+                      f.statusBt = e.statusBt
+                      f.timeDue = e.timeDue
                       f.color = 'orange'
                       f.name =
                       'รอยืนยัน เวลา ' +
@@ -641,6 +645,7 @@ export default {
                     if (e.statusBt) {
                       f.start = e.start + ' ' + e.timeDue + ':00'
                       f.end = e.start + ' ' + e.timeDue + ':30'
+                      f.statusBt = e.statusBt
                       if (e.statusBt === 'confirm') {
                         f.color = 'green'
                         f.name =
@@ -662,7 +667,9 @@ export default {
                         e.name.toString()
                       }
                     } else {
-                      f.start = e.start
+                      f.start = e.start + ' ' + e.timeDue + ':00'
+                      f.end = e.start + ' ' + e.timeDue + ':30'
+                      f.statusBt = e.statusBt
                       f.color = 'orange'
                       f.name =
                       'รอยืนยัน เวลา ' +
@@ -687,20 +694,25 @@ export default {
     async showEvent (event) {
       this.dataCalendar = []
       this.selectedEvent = event.event.start
-      console.log('selectedEventmonth', this.type, moment(moment(new Date(event.event.start)), 'YYYY-MM-DD HH').format('YYYY-MM-DD HH'))
+      console.log('event', event.event)
+      console.log('type', this.type)
+      console.log('start', event.event.start + ' ' + event.event.timeDue)
       let url = ''
       if (this.type === 'week') {
         url = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.session.data.shopId +
             "&DATE_FORMAT(dueDate,'%%Y-%%m-%%d %%H')=" +
-            moment(moment(new Date(event.event.start)), 'YYYY-MM-DD HH').format('YYYY-MM-DD HH')
+            moment(moment(new Date(event.event.start)), 'YYYY-MM-DD HH').format('YYYY-MM-DD HH') +
+            '&statusBt=' + event.event.statusBt
       } else {
         url = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.session.data.shopId +
-            '&dueDate=' + event.event.start
+            '&dueDate=' + event.event.start + ' ' + event.event.timeDue +
+            '&statusBt=' + event.event.statusBt
       }
+      console.log('url', url)
       await axios
         .get(
           url
