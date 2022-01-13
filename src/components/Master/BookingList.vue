@@ -1701,13 +1701,6 @@ export default {
         this.swalConfig.title = 'ต้องการ ยืนยันลูกค้าล่วงหน้า ใช่หรือไม่?'
         this.$swal(this.swalConfig)
           .then(async result => {
-            var remark1 = ''
-            if (item.remarkConfirm1 === '' || item.remarkConfirm1 === 'false' || item.remarkConfirm1 === null) {
-              remark1 = 'true'
-            } else if (item.remarkConfirm1 === 'true') {
-              remark1 = 'false'
-            }
-            console.log('remark1', remark1)
             var dt = {
               remarkConfirm1: item.remarkConfirm1,
               LAST_USER: this.session.data.userName
@@ -1733,13 +1726,6 @@ export default {
         this.swalConfig.title = 'ต้องการ ยืนยันลูกค้าในวัน ใช่หรือไม่?'
         this.$swal(this.swalConfig)
           .then(async result => {
-            var remark2 = ''
-            if (item.remarkConfirm2 === '' || item.remarkConfirm2 === 'false' || item.remarkConfirm2 === null) {
-              remark2 = 'true'
-            } else if (item.remarkConfirm2 === 'true') {
-              remark2 = 'false'
-            }
-            console.log('remark2', remark2)
             var dt = {
               remarkConfirm2: item.remarkConfirm2,
               LAST_USER: this.session.data.userName
