@@ -136,9 +136,11 @@ table tr:last-child td:last-child {
 .v-application a {
   color: var(--nav-bg) !important;
 }
+/*
 .theme--light.v-btn {
   color: var(--nav-text);
 };
+*/
 .theme--light.v-btn.v-btn--has-bg {
   background-color: var(--nav-bg) ;
 }
