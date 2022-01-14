@@ -1,6 +1,19 @@
 <template lang="">
     <div >
       <v-row>
+        <v-col cols="12">
+          <v-card
+        class="pa-md-4 mx-lg-auto "
+        color="rgb(251, 133, 0)"
+        height="60"
+        dark
+        v-if="chartItem.length > 0"
+        >
+          <v-card-title class="justify-center" ><h3>รถที่ซ่อมยังไม่เสร็จ</h3></v-card-title>
+      </v-card>
+        </v-col>
+      </v-row>
+      <v-row>
         <v-col v-for="(item , index) in chartItem" :key="index">
           <v-card
         class="pa-2"
