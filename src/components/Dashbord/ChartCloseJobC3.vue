@@ -1,5 +1,19 @@
 <template lang="">
-    <div >
+    <div>
+      <v-row>
+        <v-col cols="12">
+          <v-card
+        class="pa-md-4 mx-lg-auto "
+        color="rgb(33, 158, 188)"
+        height="60"
+        dark
+        v-if="chartBranch"
+        >
+          <v-card-title class="justify-center" ><h3>รถที่ซ่อมเสร็จ</h3></v-card-title>
+      </v-card>
+        </v-col>
+      </v-row>
+      <br>
       <v-row>
         <v-col cols="5" md="5" >
           <v-card class="pa-2" v-if="chartBranch">
@@ -83,7 +97,7 @@ export default {
         }
         this.dessertsItem = rs
         this.genDataTable()
-        console.log('rs', rs)
+        // console.log('rs', rs)
         this.genChart(JobGood, JobLate)
       }
     },
@@ -145,7 +159,7 @@ export default {
       } else {
         this.desserts = Tableitem
       }
-      console.log('this.desserts', this.desserts)
+      // console.log('this.desserts', this.desserts)
     }
   }
 }

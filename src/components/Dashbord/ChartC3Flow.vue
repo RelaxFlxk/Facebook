@@ -11,6 +11,20 @@
       </v-card>
        </v-col>
       </v-row>
+      <v-dialog
+      v-model="dialog"
+      max-width="600"
+      class="pa-6"
+    >
+      <v-card class="pa-4">
+              <v-data-table
+              :headers="headers"
+              :items="desserts"
+              :items-per-page="4"
+              class="elevation-1"
+            ></v-data-table>
+            </v-card>
+    </v-dialog>
     </div>
 </template>
 <script>
@@ -30,7 +44,18 @@ export default {
       flowNameitem: [],
       chartItem: [],
       chartBranch: null,
-      chartName: []
+      chartName: [],
+      headers: [
+        { text: 'ชื่อ', value: 'Name' },
+        { text: 'เลขทะเบียน', value: 'carNo' },
+        { text: 'วันที่ส่งรถ', value: 'endDate' },
+        { text: 'ประเภทบริการ', value: 'flowName' }
+      ],
+      desserts: [],
+      dessertsItem: [],
+      dialog: false,
+      startDate: '',
+      endDate: ''
     }
   },
   async mounted () {
@@ -39,12 +64,13 @@ export default {
   methods: {
     async getFlow (masBranchName, dateRange) {
       await this.getDataflow()
-      let startDate = this.momenDate_1(dateRange.startDate)
-      let endDate = this.momenDate_1(dateRange.endDate)
+      this.startDate = this.momenDate_1(dateRange.startDate)
+      this.endDate = this.momenDate_1(dateRange.endDate)
       if (masBranchName) {
-        await axios.get(this.DNS_IP + '/job_log/getChartflowByBranch?startDate=' + startDate + '&endDate=' + endDate + '&shopId=' + this.shopId + '&masBranchName=' + masBranchName)
+        await axios.get(this.DNS_IP + '/job_log/getChartflowByBranch?startDate=' + this.startDate + '&endDate=' + this.endDate + '&shopId=' + this.shopId + '&masBranchName=' + masBranchName)
           .then((response) => {
             let rs = response.data
+            this.dessertsItem = rs
             // console.log('rs', rs)
             if (rs.length > 0) {
               this.genChart(rs)
@@ -54,9 +80,10 @@ export default {
             console.log('error function addDataGlobal : ', error)
           })
       } else {
-        await axios.get(this.DNS_IP + '/job_log/getChartflowNoBranch?startDate=' + startDate + '&endDate=' + endDate + '&shopId=' + this.shopId)
+        await axios.get(this.DNS_IP + '/job_log/getChartflowNoBranch?startDate=' + this.startDate + '&endDate=' + this.endDate + '&shopId=' + this.shopId)
           .then((response) => {
             let rs = response.data
+            this.dessertsItem = rs
             // console.log('rs', rs)
             if (rs.length > 0) {
               this.genChart(rs)
@@ -86,17 +113,33 @@ export default {
       this.chartName = []
       let chartStep = []
       let chartValue = []
+      const reducer = (previousValue, currentValue) => previousValue + currentValue
       for (let i = 0; i < this.flowNameitem.length; i++) {
+        let a = []
         let d = this.flowNameitem[i]
         if (item.filter(row => row.flowName === d).map(item => item.flowName)[0] !== undefined) {
           this.chartName.push(item.filter(row => row.flowName === d).map(item => item.flowName)[0])
         }
         // console.log('charTNsame', this.chartName)
-        chartStep.push(item.filter(row => row.flowName === d).map(item => item.stepTitle))
-        chartValue.push(item.filter(row => row.flowName === d).map(item => item.Job))
+        chartStep.push(Array.from(new Set(item.filter(row => row.flowName === d).map(item => item.stepTitle))))
+        chartStep.forEach((v, k) => {
+          let dt = []
+          v.forEach((v1, k1) => {
+            let dd = item.filter(row => row.flowName === d).filter(row1 => row1.stepTitle === v1).map(item => item.Job)
+            // console.log('dd', dd.length)
+            if (dd.length > 1) {
+              dt.push(dd.reduce(reducer))
+            } else {
+              dt.push(dd)
+            }
+          })
+          console.log('dt', dt)
+          a = dt
+        })
+        chartValue.push(a)
       }
-      // console.log('chartStep', chartStep[1])
-      // console.log('chartValue', chartValue[1])
+      console.log('chartStep', chartStep)
+      console.log('chartValue', chartValue)
       chartStep.forEach((element, key) => {
         let dtitem = []
         chartValue[key].forEach((v, k) => {
@@ -115,22 +158,6 @@ export default {
         FullChart.push(dtitem)
       })
       let _this = this
-      // this.chartBranch = {
-      //   data: {
-      //     columns: FullChart[1],
-      //     type: 'donut',
-      //     onclick: function (d, i) { _this.genDataTable(d) }
-      //   },
-      //   donut: {
-      //     label: {
-      //       format: function (value, ratio, id) {
-      //         return value
-      //       }
-      //     }
-      //   }
-      // }
-      // console.log('this.', this.chartBranch)
-      // console.log('Fulll', FullChart)
       for (let a = 0; a < FullChart.length; a++) {
         let d = FullChart[a]
         if (d.length > 0) {
@@ -138,7 +165,7 @@ export default {
             data: {
               columns: d,
               type: 'donut',
-              onclick: function (d, i) { _this.genDataTable(d, i) }
+              onclick: function (d, i) { _this.genDataTable(d, chartBranch) }
             },
             donut: {
               label: {
@@ -146,51 +173,51 @@ export default {
                   return value
                 }
               }
-            }
+            },
+            datafilter: this.chartName[a]
           }
           this.chartItem.push(chartBranch)
         }
       }
       console.log('this.chartItem.', this.chartItem)
+      this.genDataTable()
     },
     async genDataTable (dataFilter, i) {
       console.log('datafilter', dataFilter, i)
-      // let Tableitem = []
-      // let dataitem = []
-      // let datafilter = this.dessertsItem
-      // await axios.get(this.DNS_IP + '/job_log/select_by_DataTable_TotalJob?startDate=' + this.startDate + '&endDate=' + this.endDate + '&shopId=' + this.shopId).then(response => {
-      //   let rs = response.data
-      //   dataitem = rs
-      //   // console.log('rs2', rs)
-      // })
-      //   .catch((error) => {
-      //     console.log('error function addDataGlobal : ', error)
-      //   })
-      // datafilter.forEach((element, key) => {
-      //   let dt = {}
-      //   dt.Name = dataitem.filter(item => item.jobId === element.jobId).filter(item2 => item2.fieldName === 'ชื่อ').map(row => row.fieldValue)[0]
-      //   dt.carNo = dataitem.filter(item => item.jobId === element.jobId).filter(item2 => item2.fieldName === 'เลขทะเบียน').map(row => row.fieldValue)[0]
-      //   dt.endDate = this.format_dateNotime(dataitem.filter(item => item.jobId === element.jobId).map(row => row.endDate)[0])
-      //   dt.flowName = dataitem.filter(item => item.jobId === element.jobId).map(row => row.flowName)[0]
-      //   dt.dateTotal = dataitem.filter(item => item.jobId === element.jobId).map(row => row.totalDateDiff)[0]
-      //   dt.totalPrice = dataitem.filter(item => item.jobId === element.jobId).map(row => row.totalPrice)[0]
-      //   dt.RECORD_STATUS = dataitem.filter(item => item.jobId === element.jobId).map(row => row.RECORD_STATUS)[0]
-      //   Tableitem.push(dt)
-      //   // datafilter.filter(item => item.JobId === element.JobId)
-      // })
-      // if (dataFilter) {
-      //   if (dataFilter.name === 'เสร็จตามเวลา') {
-      //     console.log('1')
-      //     this.desserts = Tableitem.filter(item => item.dateTotal > 0)
-      //   }
-      //   if (dataFilter.name === 'เสร็จช้ากว่าเวลาที่กำหนด') {
-      //     console.log('2')
-      //     this.desserts = Tableitem.filter(item => item.dateTotal < 0)
-      //   }
-      // } else {
-      //   this.desserts = Tableitem
-      // }
-      // console.log('this.desserts', this.desserts)
+      let Tableitem = []
+      let dataitem = []
+      let datafilter = this.dessertsItem
+      await axios.get(this.DNS_IP + '/job_log/select_by_DataTable_TotalJob?startDate=' + this.startDate + '&endDate=' + this.endDate + '&shopId=' + this.shopId).then(response => {
+        let rs = response.data
+        dataitem = rs
+        // console.log('rs2', rs)
+      })
+        .catch((error) => {
+          console.log('error function addDataGlobal : ', error)
+        })
+      datafilter.forEach((element, key) => {
+        let dt = {}
+        dt.Name = dataitem.filter(item => item.jobId === element.jobId).filter(item2 => item2.fieldName === 'ชื่อ').map(row => row.fieldValue)[0]
+        dt.carNo = dataitem.filter(item => item.jobId === element.jobId).filter(item2 => item2.fieldName === 'เลขทะเบียน').map(row => row.fieldValue)[0]
+        dt.endDate = this.format_dateNotime(dataitem.filter(item => item.jobId === element.jobId).map(row => row.endDate)[0])
+        dt.flowName = dataitem.filter(item => item.jobId === element.jobId).map(row => row.flowName)[0]
+        dt.dateTotal = dataitem.filter(item => item.jobId === element.jobId).map(row => row.totalDateDiff)[0]
+        dt.stepTitle = dataitem.filter(item => item.jobId === element.jobId).map(row => row.stepTitle)[0]
+        dt.totalPrice = dataitem.filter(item => item.jobId === element.jobId).map(row => row.totalPrice)[0]
+        dt.RECORD_STATUS = dataitem.filter(item => item.jobId === element.jobId).map(row => row.RECORD_STATUS)[0]
+        Tableitem.push(dt)
+        // datafilter.filter(item => item.JobId === element.JobId)
+      })
+      if (dataFilter) {
+        let stepTitle = dataFilter.id
+        let flowNameitem = i.datafilter
+        // console.log('Tableitem', Tableitem)
+        this.desserts = Tableitem.filter(item => item.flowName === flowNameitem).filter(item2 => item2.stepTitle === stepTitle)
+        this.dialog = true
+      } else {
+        this.desserts = Tableitem
+      }
+      console.log('this.desserts', this.desserts)
     }
   }
 }

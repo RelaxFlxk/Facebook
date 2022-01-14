@@ -44,9 +44,11 @@
               <v-col cols="4" md="4">
                 <v-card
                 class="pa-md-4 mx-lg-auto "
+                dark
                 width="500"
                 height="100"
                 :color="codeColor[3]"
+                @click="genDataTable()"
                 >
                   <v-card-title class="justify-center" ><h3>จำนวนรถทั้งหมด</h3></v-card-title>
 
@@ -62,10 +64,12 @@
               </v-col>
               <v-col cols="4" md="4">
                 <v-card
+                dark
                 class="pa-md-4 mx-lg-auto"
                 width="500"
                 height="100"
                 :color="codeColor[5]"
+                @click="genDataTable('จำนวนรถที่ซ่อมอยู่')"
                 >
                   <v-card-title class="justify-center" ><h3>จำนวนรถที่ซ่อมอยู่</h3></v-card-title>
 
@@ -81,10 +85,12 @@
               </v-col>
               <v-col cols="4" md="4">
                 <v-card
+                dark
                 class="pa-md-4 mx-lg-auto"
                 width="500"
                 height="100"
                 :color="codeColor[1]"
+                @click="genDataTable('จำนวนรถที่ซ่อมเสร็จ')"
                 >
                   <v-card-title class="justify-center" ><h3>จำนวนรถที่ซ่อมเสร็จ</h3></v-card-title>
 
@@ -400,6 +406,7 @@ export default {
         })
     },
     async genDataTable (dataFilter) {
+      // console.log('dataFilter', dataFilter)
       let Tableitem = []
       let dataitem = []
       let datafilter = this.dessertsItem
@@ -426,10 +433,10 @@ export default {
         // datafilter.filter(item => item.JobId === element.JobId)
       })
       if (dataFilter) {
-        if (dataFilter.name === 'จำนวนรถที่ซ่อมอยู่') {
+        if (dataFilter.name === 'จำนวนรถที่ซ่อมอยู่' || dataFilter === 'จำนวนรถที่ซ่อมอยู่') {
           this.desserts = Tableitem.filter(item => item.totalPrice === '' || item.totalPrice === null)
         }
-        if (dataFilter.name === 'จำนวนรถที่ซ่อมเสร็จ') {
+        if (dataFilter.name === 'จำนวนรถที่ซ่อมเสร็จ' || dataFilter === 'จำนวนรถที่ซ่อมเสร็จ') {
           this.desserts = Tableitem.filter(item => item.totalPrice)
         }
       } else {
