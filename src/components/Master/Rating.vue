@@ -18,7 +18,7 @@
         <v-timeline>
           <v-timeline-item
             v-for="(item , index) in timelineitem" :key="index"
-            color="#173053"
+            :color="codeColor[index]"
             small
           >
             <template v-slot:opposite>
@@ -28,11 +28,12 @@
               <v-card-title class="text-h6" style="color:#173053;">
               </v-card-title>
               <v-card-text>
-                <p style="margin-bottom: 0px; color:#173053;">ขั้นตอน {{item.stepTitle}}</p>
+                <p style="margin-bottom: 0px;color:#000000;">ขั้นตอน {{item.stepTitle}}</p>
+                <!-- <p style="margin-bottom: 0px; color:#173053;">ขั้นตอน {{item.stepTitle}}</p> -->
                 <p style="margin-bottom: 0px;"> เวลาที่รับงาน {{momenTime(item.DTLAST_DATE)}}</p>
                 <p style="margin-bottom: 0px;"> ผู้รับผิดชอบ {{item.empStep}}</p>
-                <p style="margin-bottom: 0px;">เวลาการทำงาน {{item.timediff}} นาที</p>
-                <p style="margin-bottom: 0px;">วันที่เปลี่ยน {{format_dateNotime(item.DTLAST_DATE)}}</p>
+                <p style="margin-bottom: 0px;">เวลาการทำงาน {{item.Counttime}} นาที</p>
+                <!-- <p style="margin-bottom: 0px;">วันที่เปลี่ยน {{format_dateNotime(item.DTLAST_DATE)}}</p> -->
               </v-card-text>
             </v-card>
           </v-timeline-item>
@@ -131,7 +132,21 @@ export default {
         { text: 'ดูรายละเอียดงาน', value: 'action', sortable: false, align: 'center' }
       ],
       Ratingitem: [],
-      timelineitem: []
+      timelineitem: [],
+      codeColor: [
+        'rgb(142, 202, 230)',
+        'rgb(33, 158, 188)',
+        'rgb(2, 48, 71)',
+        'rgb(241, 91, 76)',
+        'rgb(255, 183, 3)',
+        'rgb(251, 133, 0)',
+        'rgb(61,90,128)',
+        'rgb(152,193,217)',
+        'rgb(224,251,252)',
+        'rgb(255,212,91)',
+        'rgb(238,108,77)',
+        'rgb(41,50,65)'
+      ]
     }
   },
   async mounted () {
@@ -167,15 +182,30 @@ export default {
           if (rs.length > 0) {
             for (let i = 0; i < rs.length; i++) {
               let d = rs[i]
-              let s = {}
-              s.empStep = d.empStep
-              s.endDate = d.endDate
-              s.totalPrice = s.totalPrice
-              s.DTCREATE_DATE = d.CREATE_DATE
-              s.DTLAST_DATE = d.LAST_DATE
-              s.stepTitle = d.stepTitle
-              s.timediff = d.timediff
-              this.timelineitem.push(s)
+              let t = i + 1
+              if (t === rs.length) {
+                let s = {}
+                s.empStep = d.empStep
+                s.endDate = d.endDate
+                s.totalPrice = s.totalPrice
+                s.DTCREATE_DATE = d.CREATE_DATE
+                s.DTLAST_DATE = d.LAST_DATE
+                s.stepTitle = d.stepTitle
+                s.timediff = d.timediff
+                s.Counttime = 0
+                this.timelineitem.push(s)
+              } else {
+                let s = {}
+                s.empStep = d.empStep
+                s.endDate = d.endDate
+                s.totalPrice = s.totalPrice
+                s.DTCREATE_DATE = d.CREATE_DATE
+                s.DTLAST_DATE = d.LAST_DATE
+                s.stepTitle = d.stepTitle
+                s.timediff = d.timediff
+                s.Counttime = rs[t].timediff - d.timediff
+                this.timelineitem.push(s)
+              }
             }
           }
         }).catch((error) => {

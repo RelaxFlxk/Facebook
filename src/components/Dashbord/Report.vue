@@ -5,7 +5,7 @@
       <div class="col-md-12 ml-sm-auto col-lg-12 px-4">
         <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
         <v-row>
-                <v-col cols="12">
+                <v-col cols="6" md="6">
                   <div style="display: flex">
                     <date-range-picker
                     ref="picker"
@@ -14,61 +14,120 @@
                     />
                     <v-btn
                       small class="ml-5 mt-2" color="#173053" dark
-                      @click="getBranch()"
+                      @click="getBranchCard()"
                     >
                       ค้นหา
                     </v-btn>
                   </div>
                 </v-col>
         </v-row>
-
         <v-divider class="mx-4"></v-divider>
         <v-row>
-          <v-col cols="12" md="6">
-            <LinechartBranch ref="modal2"></LinechartBranch>
+            <v-col cols="4" md="4">
+                  <div style="display: flex">
+                    <v-select
+                      v-model="masBranchName"
+                      :items="BranchItem"
+                      dense
+                      outlined
+                      hide-details
+                      label="สาขา"
+                      class="ma-3"
+                      @change="getBranchCard(masBranchName)"
+                    ></v-select>
+                  </div>
+                </v-col>
+        </v-row>
+
+        <v-divider class="mx-4"></v-divider>
+        <v-row v-if="chartBranch">
+              <v-col cols="4" md="4">
+                <v-card
+                class="pa-md-4 mx-lg-auto "
+                width="500"
+                height="100"
+                :color="codeColor[3]"
+                >
+                  <v-card-title class="justify-center" ><h3>จำนวนรถทั้งหมด</h3></v-card-title>
+
+                  <v-card-text>
+                    <v-row
+                      align="center"
+                      class="justify-center mx-0 "
+                    >
+                      <h4>{{carditem.cardTotal}}</h4>
+                    </v-row>
+                  </v-card-text>
+              </v-card>
+              </v-col>
+              <v-col cols="4" md="4">
+                <v-card
+                class="pa-md-4 mx-lg-auto"
+                width="500"
+                height="100"
+                :color="codeColor[5]"
+                >
+                  <v-card-title class="justify-center" ><h3>จำนวนรถที่ซ่อมอยู่</h3></v-card-title>
+
+                  <v-card-text>
+                    <v-row
+                      align="center"
+                      class="justify-center mx-0 "
+                    >
+                      <h4>{{carditem.cardWork}}</h4>
+                    </v-row>
+                  </v-card-text>
+              </v-card>
+              </v-col>
+              <v-col cols="4" md="4">
+                <v-card
+                class="pa-md-4 mx-lg-auto"
+                width="500"
+                height="100"
+                :color="codeColor[1]"
+                >
+                  <v-card-title class="justify-center" ><h3>จำนวนรถที่ซ่อมเสร็จ</h3></v-card-title>
+
+                  <v-card-text>
+                    <v-row
+                      align="center"
+                      class="justify-center mx-0 "
+                    >
+                      <h4>{{carditem.cardClose}}</h4>
+                    </v-row>
+                  </v-card-text>
+              </v-card>
+              </v-col>
+            </v-row>
+        <v-row  v-if="chartBranch">
+          <v-col cols="5" md="5" >
+            <v-card class="pa-2" v-if="chartBranch">
+              <C3Chart :chartData="chartBranch" ></C3Chart>
+            </v-card>
+            <!-- <LinechartBranch ref="modal2"></LinechartBranch> -->
           </v-col>
-          <v-col cols="12" md="6">
-              <CardBranch ref="modal1"></CardBranch>
+          <v-col cols="7" md="7">
+            <v-card class="pa-4">
+              <v-data-table
+              :headers="headers"
+              :items="desserts"
+              :items-per-page="4"
+              class="elevation-1"
+            ></v-data-table>
+            </v-card>
           </v-col>
         </v-row>
         <v-divider class="mx-4"></v-divider>
         <v-row>
-          <v-col cols="12" md="6">
-            <v-select
-              v-model="masBranchName"
-              :items="BranchItem"
-              dense
-              outlined
-              hide-details
-              label="สาขา"
-              class="ma-3"
-              @change="getselectBranch()"
-            ></v-select>
-          </v-col>
-          <v-col cols="12" md="6" v-if="masBranchName.length > 0">
-            <v-select
-              v-model="SelectFlowName"
-              :items="itemFlowName"
-              :menu-props="{ maxHeight: '400' }"
-              label="ประเภทงาน"
-              dense
-              outlined
-              multiple
-              hint="เลือกประเภทงานที่ต้องการสแดง"
-              persistent-hint
-              class="ma-3"
-              @change="SelectFlow ()"
-            ></v-select>
+          <v-col cols="12" md="12">
+            <ChartC3Flow ref="modal1"></ChartC3Flow>
           </v-col>
         </v-row>
-         <v-row>
-           <v-col cols="12" md="6">
-              <LinechartBranchSelect ref="modal3"></LinechartBranchSelect>
+        <v-divider class="mx-4"></v-divider>
+        <v-row>
+          <v-col cols="12" md="12">
+            <ChartCloseJobC3 ref="modal2"></ChartCloseJobC3>
           </v-col>
-          <v-col cols="12" md="6">
-            <CardBranchSelect ref="modal4"></CardBranchSelect>
-          </v-col>
-
         </v-row>
       </div>
     </v-main>
@@ -89,9 +148,12 @@ import LinechartBranch from './LinechartBranch.vue'
 import DateRangePicker from 'vue2-daterange-picker'
 // you need to import the CSS manually
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
-import CardBranch from './CardBranch.vue'
-import LinechartBranchSelect from './LinechartBranchSelect.vue'
-import CardBranchSelect from './CardBranchSelect.vue'
+// import CardBranch from './CardBranch.vue'
+// import LinechartBranchSelect from './LinechartBranchSelect.vue'
+// import CardBranchSelect from './CardBranchSelect.vue'
+import C3Chart from './C3Chart.vue'
+import ChartC3Flow from './ChartC3Flow.vue'
+import ChartCloseJobC3 from './ChartCloseJobC3.vue'
 
 export default {
   components: {
@@ -103,9 +165,12 @@ export default {
     ChartBarBase,
     LinechartBranch,
     DateRangePicker,
-    CardBranch,
-    LinechartBranchSelect,
-    CardBranchSelect
+    // CardBranch,
+    // LinechartBranchSelect,
+    // CardBranchSelect,
+    C3Chart,
+    ChartC3Flow,
+    ChartCloseJobC3
   },
   created () {
     setInterval(this.getNowGlobal, 1000)
@@ -119,6 +184,14 @@ export default {
       SelectFlowName: [],
       center: {},
       session: this.$session.getAll(),
+      headers: [
+        { text: 'ชื่อ', value: 'Name' },
+        { text: 'เลขทะเบียน', value: 'carNo' },
+        { text: 'วันที่ส่งรถ', value: 'endDate' },
+        { text: 'ประเภทบริการ', value: 'flowName' }
+      ],
+      desserts: [],
+      dessertsItem: [],
       // Menu Config
       breadcrumbs: [
         {
@@ -178,36 +251,113 @@ export default {
       BranchItem: [],
       stepCountAll: '',
       totalJob: 0,
-      closeJob: 0
+      closeJob: 0,
+      chartBranch: null,
+      columnsItem: [],
+      carditem: {
+        cardTotal: null,
+        cardWork: null,
+        cardClose: null
+      },
+      codeColor: [
+        'rgb(142, 202, 230)',
+        'rgb(33, 158, 188)',
+        'rgb(2, 48, 71)',
+        'rgb(241, 91, 76)',
+        'rgb(255, 183, 3)',
+        'rgb(251, 133, 0)',
+        'rgb(61,90,128)',
+        'rgb(152,193,217)',
+        'rgb(224,251,252)',
+        'rgb(255,212,91)',
+        'rgb(238,108,77)',
+        'rgb(41,50,65)'
+      ]
     }
   },
   async mounted () {
     this.dataReady = false
     await this.getDataBranch()
-    await this.getEmpSelect()
     await this.getFlow()
   },
   methods: {
-    async getEmpSelect () {
-      this.EmployeeItem = []
-      await axios
-        .get(this.DNS_IP + '/empSelect/get?shopId=' + this.shopId)
-        .then(async response => {
-          let rs = response.data
-          if (rs.length > 0) {
-            for (var i = 0; i < rs.length; i++) {
-              var d = rs[i]
-              var s = {}
-              s.text = d.empFirst_NameTH
-              s.value = d.empFirst_NameTH
-              this.EmployeeItem.push(s)
+    async getBranchCard (ItemmasBranchName) {
+      // get ข้อมูล Chart แต่ละ Flow
+      await this.getBranch()
+      this.chartBranch = null
+      let startDate = this.momenDate_1(this.dateRange.startDate)
+      let endDate = this.momenDate_1(this.dateRange.endDate)
+      this.statusitem = []
+      let rs = []
+      if (ItemmasBranchName) {
+        await axios.get(this.DNS_IP + '/job_log/getDashbord_selectBranch_card?startDate=' + startDate + '&endDate=' + endDate + '&shopId=' + this.shopId + '&masBranchName=' + ItemmasBranchName).then(response => {
+          rs = response.data
+        }).catch((error) => {
+          console.log('error function addDataGlobal : ', error)
+        })
+      } else {
+        await axios.get(this.DNS_IP + '/job_log/getDashbord_total_card?startDate=' + startDate + '&endDate=' + endDate + '&shopId=' + this.shopId).then(response => {
+          rs = response.data
+        }).catch((error) => {
+          console.log('error function addDataGlobal : ', error)
+        })
+      }
+      if (rs.length > 0) {
+        this.columnsItem = []
+        let DT1 = ['จำนวนรถที่ซ่อมอยู่']
+        let DT2 = ['จำนวนรถที่ซ่อมเสร็จ']
+        const reducer = (previousValue, currentValue) => previousValue + currentValue
+        let Jobwork = []
+        let Total = []
+        let Close = []
+        // let JobIndex = null
+        // console.log('rs', rs)
+        for (let i = 0; i < rs.length; i++) {
+          let d = rs[i]
+          if (ItemmasBranchName) {
+            if (d.masBranchName === this.masBranchName) {
+              this.columnsItem = []
+              DT2.push(...[d.closeJob])
+              Jobwork.push(d.Jobwork)
+              Total.push(d.totalJob)
+              Close.push(d.closeJob)
+            }
+          } else {
+            this.columnsItem = []
+            DT2.push(...[d.closeJob])
+            Jobwork.push(d.Jobwork)
+            Total.push(d.totalJob)
+            Close.push(d.closeJob)
+          }
+        }
+        DT1.push(...[Jobwork.reduce(reducer)])
+        let ChartDataitem = [
+          DT1,
+          DT2
+        ]
+        this.carditem = {}
+        this.carditem.cardTotal = Total.reduce(reducer)
+        this.carditem.cardWork = Jobwork.reduce(reducer)
+        this.carditem.cardClose = Close.reduce(reducer)
+        let _this = this
+        this.chartBranch = {
+          data: {
+            columns: ChartDataitem,
+            type: 'donut',
+            onclick: function (d, i) { _this.genDataTable(d) }
+          },
+          donut: {
+            label: {
+              format: function (value, ratio, id) {
+                return value
+              }
             }
           }
-        })
-    },
-    async SelectFlow () {
-      // console.log('this', this.SelectFlowName)
-      this.$refs.modal4.selectflowname(this.SelectFlowName)
+        }
+        this.dessertsItem = rs
+        await this.genDataTable()
+        // console.log('555555', this.chartBranch)
+      }
     },
     async getFlow () {
       this.itemFlowName = []
@@ -226,12 +376,8 @@ export default {
         })
     },
     getBranch () {
-      this.$refs.modal1.getBranchCard(this.masBranchName, this.dateRange)
-      this.$refs.modal2.getBranchLine(this.dateRange)
-    },
-    getselectBranch () {
-      this.$refs.modal3.getBranchSelect(this.masBranchName, this.dateRange)
-      this.$refs.modal4.getBranchSelectCard(this.masBranchName, this.dateRange)
+      this.$refs.modal1.getFlow(this.masBranchName, this.dateRange)
+      this.$refs.modal2.getCloseJob(this.masBranchName, this.dateRange)
     },
     async getDataBranch () {
       this.BranchItem = []
@@ -252,6 +398,43 @@ export default {
         .catch((error) => {
           this.BranchItem = []
         })
+    },
+    async genDataTable (dataFilter) {
+      let Tableitem = []
+      let dataitem = []
+      let datafilter = this.dessertsItem
+      let startDate = this.momenDate_1(this.dateRange.startDate)
+      let endDate = this.momenDate_1(this.dateRange.endDate)
+      await axios.get(this.DNS_IP + '/job_log/select_by_DataTable_TotalJob?startDate=' + startDate + '&endDate=' + endDate + '&shopId=' + this.shopId).then(response => {
+        let rs = response.data
+        dataitem = rs
+        // console.log('rs2', rs)
+      })
+        .catch((error) => {
+          console.log('error function addDataGlobal : ', error)
+        })
+      datafilter.forEach((element, key) => {
+        let dt = {}
+        dt.Name = dataitem.filter(item => item.jobId === element.jobId).filter(item2 => item2.fieldName === 'ชื่อ').map(row => row.fieldValue)[0]
+        dt.carNo = dataitem.filter(item => item.jobId === element.jobId).filter(item2 => item2.fieldName === 'เลขทะเบียน').map(row => row.fieldValue)[0]
+        dt.endDate = this.format_dateNotime(dataitem.filter(item => item.jobId === element.jobId).map(row => row.endDate)[0])
+        dt.flowName = dataitem.filter(item => item.jobId === element.jobId).map(row => row.flowName)[0]
+        dt.dateTotal = dataitem.filter(item => item.jobId === element.jobId).map(row => row.totalDateDiff)[0]
+        dt.totalPrice = dataitem.filter(item => item.jobId === element.jobId).map(row => row.totalPrice)[0]
+        dt.RECORD_STATUS = dataitem.filter(item => item.jobId === element.jobId).map(row => row.RECORD_STATUS)[0]
+        Tableitem.push(dt)
+        // datafilter.filter(item => item.JobId === element.JobId)
+      })
+      if (dataFilter) {
+        if (dataFilter.name === 'จำนวนรถที่ซ่อมอยู่') {
+          this.desserts = Tableitem.filter(item => item.totalPrice === '' || item.totalPrice === null)
+        }
+        if (dataFilter.name === 'จำนวนรถที่ซ่อมเสร็จ') {
+          this.desserts = Tableitem.filter(item => item.totalPrice)
+        }
+      } else {
+        this.desserts = Tableitem
+      }
     }
   }
 }
