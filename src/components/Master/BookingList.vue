@@ -1034,7 +1034,19 @@
                       <br/>
                         <br>
                         <h2 style="font-weight: 900; color:#FFA000">ติดตามสถานะ!</h2>
-                        <qrcode-vue :value="value" :size="size" level="H" :foreground="foreground" />
+                        <qrcode-vue v-if="userId === ''" :value="value" :size="size" level="H" :foreground="foreground" />
+                         <div v-if="userId !== ''" class="avatar text-center">
+                            <v-avatar v-if="memberPicture !== ''" size="120" style="border:5px solid #FFFFFF;">
+                                <img :src= memberPicture>
+                            </v-avatar>
+                            <v-avatar v-else size="120" style="border:5px solid #FFFFFF;">
+                                <v-img
+                                  class="v_text_add"
+                                  :src="require('@/assets/OtherP.svg')"
+                                ></v-img>
+                            </v-avatar>
+                            <!-- <p class="text-center">{{profile.displayName}}</p> -->
+                        </div>
                     </div>
                   </v-col>
                 </v-row>
@@ -1044,7 +1056,8 @@
                       <v-container class="text-center" >
                         <v-container>
                             <div v-for="(p , index) in jobitem" :key="index">
-                            <h4 v-if="p.showCard === 'True' ">{{p.name}} : {{p.value}}</h4>
+                            <h4>{{p.name}} : {{p.value}}</h4>
+                            <!-- <h4 v-if="p.showCard === 'True' ">{{p.name}} : {{p.value}}</h4> -->
                         </div>
                         </v-container>
                         <v-btn small class="ma-2" color="primary" v-if="userId === ''" @click="jobConfirm" dark>
@@ -1644,6 +1657,7 @@ export default {
       dateStart: new Date().toISOString().substr(0, 7),
       endDate: '',
       endTime: '',
+      memberPicture: '',
       dataInfo: null,
       dialogInfo: false,
       detailInfo: null,
@@ -2956,6 +2970,7 @@ export default {
         axios.get(this.DNS_IP + '/job/getJobNo?jobNo=' + item.jobNo).then((response) => {
           let rs = response.data
           let Id = ''
+          let memberPicture = ''
           console.log('getJobNo', rs)
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
@@ -2967,9 +2982,11 @@ export default {
                 showCard: d.showCard
               }
               Id = d.userId || ''
+              memberPicture = d.memberPicture || ''
               this.jobitem.push(s)
             }
             this.userId = Id
+            this.memberPicture = memberPicture
             this.value = this.pathToweb + this.jobitem[0].Id + '&shopId=' + this.$session.getAll().data.shopId
             // this.getUserId()
           }
