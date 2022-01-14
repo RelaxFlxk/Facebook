@@ -539,6 +539,7 @@ export default {
       var dt = {
         email: this.$session.getAll().data.userName,
         description: this.$session.getAll().data.shopName,
+        descriptionCharge: 'Belinked-Packet1-' + this.$session.getAll().data.shopId,
         card: tokn,
         shopId: this.$session.getAll().data.shopId
       }
