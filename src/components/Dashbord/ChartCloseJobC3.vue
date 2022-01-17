@@ -1,27 +1,48 @@
 <template lang="">
-    <div>
-      <v-row>
-        <v-col cols="12">
+    <div >
+      <v-card class="p-3" color="#f2f2f2">
+        <v-row  v-if="chartBranch" >
+        <v-col cols="12" >
           <v-card
-        class="pa-md-4 mx-lg-auto "
-        color="rgb(33, 158, 188)"
-        height="60"
-        dark
-        v-if="chartBranch"
-        >
-          <v-card-title class="justify-center" ><h3>รถที่ซ่อมเสร็จ</h3></v-card-title>
-      </v-card>
+                class="pa-md-4 mx-lg-auto "
+                width="500"
+                height="100"
+                elevation="8"
+                @click="genDataTable()"
+                >
+                 <v-row>
+                   <v-col cols="2" md="2">
+                     <v-icon
+                     style="font-size:70px !important; margin:3px -10px 10px 55px;"
+                    x-large
+                    color="orange"
+                  >mdi-clipboard-check</v-icon>
+                   </v-col>
+                   <v-col cols="10" md="10">
+                    <v-card-title class="justify-center" ><h3>รถที่ซ่อมเสร็จ</h3></v-card-title>
+                      <v-card-text>
+                        <v-row
+                          align="center"
+                          class="justify-center"
+                        >
+                      <h5></h5>
+                        </v-row>
+                     </v-card-text>
+                   </v-col>
+                 </v-row>
+              </v-card>
         </v-col>
       </v-row>
-      <br>
-      <v-row>
-        <v-col cols="5" md="5" >
-          <v-card class="pa-2" v-if="chartBranch">
+      <v-row  v-if="chartBranch">
+        <v-col cols="4" md="4" >
+          <v-card elevation="8" class="pa-2" v-if="chartBranch">
           <C3Chart :chartData="chartBranch" ></C3Chart>
           </v-card>
        </v-col>
-       <v-col cols="7" md="7">
-            <v-card class="pa-4" v-if="chartBranch">
+       <v-col cols="8" md="8">
+            <v-card elevation="8" class="pa-4" v-if="chartBranch">
+              <h3 class="text-center">รายละเอียดงานซ่อม</h3>
+              <v-card height="4"  :color="TBcolor"></v-card>
               <v-data-table
               :headers="headers"
               :items="desserts"
@@ -31,6 +52,7 @@
             </v-card>
           </v-col>
       </v-row>
+      </v-card>
     </div>
 </template>
 <script>
@@ -51,13 +73,17 @@ export default {
       headers: [
         { text: 'ชื่อ', value: 'Name' },
         { text: 'เลขทะเบียน', value: 'carNo' },
+        { text: 'วันที่รับรถ', value: 'CREATE_DATE' },
         { text: 'วันที่ส่งรถ', value: 'endDate' },
-        { text: 'ประเภทบริการ', value: 'flowName' }
+        { text: 'ประเภทบริการ', value: 'flowName' },
+        { text: 'จำนวนวันที่ซ่อม', value: 'totalDateDiff' },
+        { text: 'ผู้รับผิดชอบ', value: 'empStep' }
       ],
       desserts: [],
       dessertsItem: [],
       startDate: '',
-      endDate: ''
+      endDate: '',
+      TBcolor: ''
     }
   },
   async mounted () {
@@ -144,6 +170,9 @@ export default {
         dt.dateTotal = dataitem.filter(item => item.jobId === element.jobId).map(row => row.totalDateDiff)[0]
         dt.totalPrice = dataitem.filter(item => item.jobId === element.jobId).map(row => row.totalPrice)[0]
         dt.RECORD_STATUS = dataitem.filter(item => item.jobId === element.jobId).map(row => row.RECORD_STATUS)[0]
+        dt.CREATE_DATE = this.format_dateNotime(dataitem.filter(item => item.jobId === element.jobId).map(row => row.CREATE_DATE)[0])
+        dt.totalDateDiff = dataitem.filter(item => item.jobId === element.jobId).map(row => row.totalDateDiff)[0]
+        dt.empStep = dataitem.filter(item => item.jobId === element.jobId).map(row => row.empStep)[0]
         Tableitem.push(dt)
         // datafilter.filter(item => item.JobId === element.JobId)
       })
@@ -151,12 +180,15 @@ export default {
         if (dataFilter.name === 'เสร็จตามเวลา') {
           console.log('1')
           this.desserts = Tableitem.filter(item => item.dateTotal > 0)
+          this.TBcolor = 'blue'
         }
         if (dataFilter.name === 'เสร็จช้ากว่าเวลาที่กำหนด') {
           console.log('2')
           this.desserts = Tableitem.filter(item => item.dateTotal < 0)
+          this.TBcolor = 'orange'
         }
       } else {
+        this.TBcolor = 'green'
         this.desserts = Tableitem
       }
       // console.log('this.desserts', this.desserts)
@@ -165,5 +197,8 @@ export default {
 }
 </script>
 <style lang="">
-
+.BGmain {
+  --bg-color: #f2f2f2;
+  background-color: var(--bg-color);
+}
 </style>
