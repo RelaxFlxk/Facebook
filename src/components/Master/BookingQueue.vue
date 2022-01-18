@@ -60,13 +60,14 @@
                   <v-chip-group
                      column
                   >
+                  <template v-for="(item, index) in dataCount">
                      <v-chip
-                     dark
-                     color="#1B437C"
-                     v-for="(item, index) in dataCount" :key="index"
+                     :color="'grey lighten-'+(index+1)"
+                     v-bind:key="'chip'+index"
                      >
                      {{ item.name + " : " +  item.count + " คัน"}}
                      </v-chip>
+                  </template>
                   </v-chip-group>
                </v-col>
             </v-row>
@@ -94,19 +95,46 @@
                            no-gutters
                            style="width: 100%"
                            >
-                           <v-col cols="6">
+                           <v-col cols="2">
                            </v-col>
-                           <v-col cols="6" class="text-right">
+                           <v-col cols="10" class="text-right">
+                              <v-chip
+                                 class="ma-2"
+                                 color="orange darken-1"
+                                 dark
+                                 label
+                                 small
+                                 v-if="dataItemTimesChange.filter(el => { return el.timeDueHtext === item && el.fastTrack && (el.statusBt==='confirmJob' || el.statusBt==='confirm') }).length > 0 "
+                              >
+                                 <v-icon left>
+                                 mdi-flash
+                                 </v-icon>
+                                 {{dataItemTimesChange.filter(el => { return el.timeDueHtext === item && el.fastTrack && (el.statusBt==='confirmJob' || el.statusBt==='confirm') }).length + ' คัน'}}
+                              </v-chip>
+                              <v-chip
+                                 class="ma-2"
+                                 color="green darken-1"
+                                 dark
+                                 label
+                                 small
+                                 v-if="dataItemTimesChange.filter(el => { return el.timeDueHtext === item && el.extraJob && (el.statusBt==='confirmJob' || el.statusBt==='confirm') }).length > 0 "
+                              >
+                                 <v-icon left>
+                                 mdi-alarm-plus
+                                 </v-icon>
+                                 {{dataItemTimesChange.filter(el => { return el.timeDueHtext === item && el.extraJob && (el.statusBt==='confirmJob' || el.statusBt==='confirm') }).length + ' คัน'}}
+                              </v-chip>
                               <v-chip
                                  class="ma-2"
                                  color="primary"
                                  label
                                  small
+                                 v-if="dataItemTimesChange.filter(el => { return el.timeDueHtext === item && !el.fastTrack && !el.extraJob && (el.statusBt==='confirmJob' || el.statusBt==='confirm') }).length > 0"
                               >
                                  <v-icon left>
                                  mdi-car-multiple
                                  </v-icon>
-                                 {{dataItemTimesChange.filter(el => { return el.timeDueHtext === item && (el.statusBt==='confirmJob' || el.statusBt==='confirm') }).length + ' คัน'}}
+                                 {{dataItemTimesChange.filter(el => { return el.timeDueHtext === item && !el.fastTrack && !el.extraJob && (el.statusBt==='confirmJob' || el.statusBt==='confirm') }).length + ' คัน'}}
                               </v-chip>
                            </v-col>
                            </v-row>
@@ -117,10 +145,10 @@
                   <!-- <v-expansion-panel-header>{{item + '(' + dataItemTimesChange.filter(el => { return el.timeDueHtext === item && (el.statusBt==='confirmJob' || el.statusBt==='confirm') }).length + ')'}}</v-expansion-panel-header> -->
                   <v-expansion-panel-content v-for="(items, indexitems) in dataItemTimesChange.filter(el => { return el.timeDueHtext === item && (el.statusBt==='confirmJob' || el.statusBt==='confirm') })" :key="'td'+indexitems">
                      <v-card
-                     color="#1B437C"
+                     :color="(items.fastTrack) ? 'orange darken-1' : ((items.extraJob) ? 'green darken-1' : '#1B437C')"
                      >
                      <v-container class="pt-0 pb-0">
-                        <v-list-item class="pa-0">
+                        <v-list-item class="pa-0" :style="(items.fastTrack) ? 'background-color:#FB8C00 !important' : ((items.extraJob) ? 'background-color: #43A047 !important' : '')">
                            <v-icon
                            large
                            dark
@@ -135,7 +163,13 @@
                            align="center"
                            justify="end"
                            >
-                           <v-icon dark class="mr-1">
+                           <v-icon dark class="mr-1" v-if="items.fastTrack">
+                              mdi-flash
+                           </v-icon>
+                           <v-icon dark class="mr-1" v-else-if="items.extraJob">
+                              mdi-alarm-plus
+                           </v-icon>
+                           <v-icon dark class="mr-1" v-else>
                               mdi-clock-outline
                            </v-icon>
                            <span class="white--text mr-2">{{items.timeDuetext}}</span>
