@@ -1225,26 +1225,62 @@
                   <template v-slot:[`item.dueDate`]="{ item }">
                     {{ format_date(item.dueDate) }}
                   </template>
-                   <template v-slot:[`item.action2`]="{ item }">
+                  <template v-slot:[`item.action2`]="{ item }">
                     <v-row>
                       <v-col>
-                        <v-switch
-                            v-if="item.statusBt === 'confirm'"
-                            v-model="item.remarkConfirm1"
-                            label="1 วัน"
-                            @click.stop="confirmRemark(item, 'inAdvance')"
-                          ></v-switch>
+                        <v-chip
+                          filter
+                          dark
+                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
+                          :color="(item.remarkConfirm1) ? 'green darken-2' : 'grey darken-1'"
+                          v-model="item.remarkConfirm1"
+                          @click.stop="item.remarkConfirm1=!item.remarkConfirm1;confirmRemark(item, 'inAdvance')"
+                        >
+                          1 วัน
+                        </v-chip>
                       </v-col>
                       <v-col>
-                        <v-switch
-                            v-if="item.statusBt === 'confirm'"
-                            v-model="item.remarkConfirm2"
-                            label="15 นาที"
-                            @click.stop="confirmRemark(item, 'inDay')"
-                          ></v-switch>
+                        <v-chip
+                          filter
+                          dark
+                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
+                          :color="(item.remarkConfirm2) ? 'green darken-2' : 'grey darken-1'"
+                          v-model="item.remarkConfirm2"
+                          @click.stop="item.remarkConfirm2=!item.remarkConfirm2;confirmRemark(item, 'inDay')"
+                        >
+                          30 นาที
+                        </v-chip>
                       </v-col>
                     </v-row>
-                   </template>
+                  </template>
+                  <template v-slot:[`item.action3`]="{ item }">
+                    <v-row>
+                      <v-col>
+                        <v-chip
+                          filter
+                          dark
+                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
+                          :color="(item.fastTrack) ? 'green darken-2' : 'grey darken-1'"
+                          v-model="item.fastTrack"
+                          @click.stop="item.fastTrack=!item.fastTrack;confirmRemark(item, 'fastTrack')"
+                        >
+                          Fast Track
+                        </v-chip>
+                      </v-col>
+                      <v-col>
+                        <v-chip
+                          filter
+                          dark
+                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
+                          :color="(item.extraJob) ? 'green darken-2' : 'grey darken-1'"
+                          v-model="item.extraJob"
+                          @click.stop="item.extraJob=!item.extraJob;confirmRemark(item, 'extraJob')"
+                        >
+                          Extra Job
+                        </v-chip>
+                      </v-col>
+                    </v-row>
+                  </template>
                   <template v-slot:[`item.action`]="{ item }">
                     <!-- confirm -->
                     <v-btn
@@ -1330,23 +1366,59 @@
                   <template v-slot:[`item.action2`]="{ item }">
                     <v-row>
                       <v-col>
-                        <v-switch
-                            v-if="item.statusBt === 'confirm'"
-                            v-model="item.remarkConfirm1"
-                            label="1 วัน"
-                            @click.stop="confirmRemark(item, 'inAdvance')"
-                          ></v-switch>
+                        <v-chip
+                          filter
+                          dark
+                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
+                          :color="(item.remarkConfirm1) ? 'green darken-2' : 'grey darken-1'"
+                          v-model="item.remarkConfirm1"
+                          @click.stop="item.remarkConfirm1=!item.remarkConfirm1;confirmRemark(item, 'inAdvance')"
+                        >
+                          1 วัน
+                        </v-chip>
                       </v-col>
                       <v-col>
-                        <v-switch
-                            v-if="item.statusBt === 'confirm'"
-                            v-model="item.remarkConfirm2"
-                            label="15 นาที"
-                            @click.stop="confirmRemark(item, 'inDay')"
-                          ></v-switch>
+                        <v-chip
+                          filter
+                          dark
+                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
+                          :color="(item.remarkConfirm2) ? 'green darken-2' : 'grey darken-1'"
+                          v-model="item.remarkConfirm2"
+                          @click.stop="item.remarkConfirm2=!item.remarkConfirm2;confirmRemark(item, 'inDay')"
+                        >
+                          30 นาที
+                        </v-chip>
                       </v-col>
                     </v-row>
-                   </template>
+                  </template>
+                  <template v-slot:[`item.action3`]="{ item }">
+                    <v-row>
+                      <v-col>
+                        <v-chip
+                          filter
+                          dark
+                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
+                          :color="(item.fastTrack) ? 'green darken-2' : 'grey darken-1'"
+                          v-model="item.fastTrack"
+                          @click.stop="item.fastTrack=!item.fastTrack;confirmRemark(item, 'fastTrack')"
+                        >
+                          Fast Track
+                        </v-chip>
+                      </v-col>
+                      <v-col>
+                        <v-chip
+                          filter
+                          dark
+                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
+                          :color="(item.extraJob) ? 'green darken-2' : 'grey darken-1'"
+                          v-model="item.extraJob"
+                          @click.stop="item.extraJob=!item.extraJob;confirmRemark(item, 'extraJob')"
+                        >
+                          Extra Job
+                        </v-chip>
+                      </v-col>
+                    </v-row>
+                  </template>
                   <template v-slot:[`item.action`]="{ item }">
                     <!-- confirm -->
                     <v-btn
@@ -1598,6 +1670,7 @@ export default {
         { text: 'เบอร์โทร', value: 'tel' },
         { text: 'ทะเบียนรถ', value: 'cusReg' },
         { text: 'สถานะนัดหมาย', value: 'statusBtText' },
+        { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
         { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
         // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
       ],
@@ -1609,6 +1682,7 @@ export default {
         { text: 'ชื่อลูกค้า', value: 'cusName' },
         { text: 'เบอร์โทร', value: 'tel' },
         { text: 'ทะเบียนรถ', value: 'cusReg' },
+        { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
         { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
         // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
       ],
@@ -1695,6 +1769,11 @@ export default {
     }
   },
   beforeCreate () {
+    // if (localStorage.userName) {
+    //   console.log(localStorage.userName)
+    // } else {
+    //   console.log('not user')
+    // }
     if (!this.$session.exists()) {
       this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
     }
@@ -1708,59 +1787,42 @@ export default {
     this.scanQrcode()
   },
   methods: {
-    confirmRemark (item, text) {
-      console.log('item', item)
-      console.log('getSelectText', this.getSelectText, this.getSelectCount)
+    async confirmRemark (item, text) {
+      let dt = null
       if (text === 'inAdvance') {
-        this.swalConfig.title = 'ต้องการ ยืนยันลูกค้าล่วงหน้า ใช่หรือไม่?'
-        this.$swal(this.swalConfig)
-          .then(async result => {
-            var dt = {
-              remarkConfirm1: item.remarkConfirm1,
-              LAST_USER: this.session.data.userName
+        dt = {
+          remarkConfirm1: item.remarkConfirm1,
+          LAST_USER: this.session.data.userName
+        }
+      } else if (text === 'inDay') {
+        dt = {
+          remarkConfirm2: item.remarkConfirm2,
+          LAST_USER: this.session.data.userName
+        }
+      } else if (text === 'extraJob') {
+        dt = {
+          extraJob: item.extraJob,
+          LAST_USER: this.session.data.userName
+        }
+      } else if (text === 'fastTrack') {
+        dt = {
+          fastTrack: item.fastTrack,
+          LAST_USER: this.session.data.userName
+        }
+      }
+      if (dt) {
+        await axios
+          .post(this.DNS_IP + '/Booking/edit/' + item.bookNo, dt)
+          .then(async response => {
+            await this.getBookingList()
+            this.getTimesChange('update')
+            if (this.getSelectText) {
+              this.getSelect(this.getSelectText, this.getSelectCount)
             }
-            axios
-              .post(this.DNS_IP + '/Booking/edit/' + item.bookNo, dt)
-              .then(async response => {
-                await this.getBookingList()
-                this.getTimesChange('update')
-                if (this.getSelectText) {
-                  this.getSelect(this.getSelectText, this.getSelectCount)
-                }
-                console.log('getSelectText', this.getSelectText, this.getSelectCount)
-              })
-              .catch(error => {
-                console.log('error function addData : ', error)
-              })
+            console.log('getSelectText', this.getSelectText, this.getSelectCount)
           })
           .catch(error => {
-            console.log('Cencel : ', error)
-          })
-      } else {
-        this.swalConfig.title = 'ต้องการ ยืนยันลูกค้าในวัน ใช่หรือไม่?'
-        this.$swal(this.swalConfig)
-          .then(async result => {
-            var dt = {
-              remarkConfirm2: item.remarkConfirm2,
-              LAST_USER: this.session.data.userName
-            }
-            axios
-              .post(this.DNS_IP + '/Booking/edit/' + item.bookNo, dt)
-              .then(async response => {
-                await this.getBookingList()
-                this.getTimesChange('update')
-                if (this.getSelectText) {
-                  this.getSelect(this.getSelectText, this.getSelectCount)
-                }
-                console.log('getSelectText', this.getSelectText, this.getSelectCount)
-                // console.log('addDataGlobal DNS_IP + /job/add', response)
-              })
-              .catch(error => {
-                console.log('error function addData : ', error)
-              })
-          })
-          .catch(error => {
-            console.log('Cencel : ', error)
+            console.log('error function addData : ', error)
           })
       }
     },
@@ -2183,6 +2245,8 @@ export default {
               s.jobNo = d.jobNo
               s.remarkConfirm1 = (d.remarkConfirm1 === 'true' || d.remarkConfirm1 === 'True')
               s.remarkConfirm2 = (d.remarkConfirm2 === 'true' || d.remarkConfirm2 === 'True')
+              s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
+              s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
               s.lineUserId = d.lineUserId
               s.timeDueHtext = d.timeDueH + ':00'
               s.timeDuetext = d.timeDue

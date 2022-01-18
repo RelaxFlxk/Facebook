@@ -75,6 +75,7 @@
                         </v-card>
                         <div class="text-center">
                           <v-btn
+                            dark
                             color="blue-grey"
                             class="ma-2 white--text"
                             @click="getDataAdd()"
@@ -612,6 +613,7 @@
                 <v-col id="margin">
                   <v-row justify="center">
                     <v-btn
+                      dark
                       elevation="2"
                       x-large
                       color="#173053"
@@ -722,6 +724,7 @@
                 <v-col id="margin">
                   <v-row justify="center">
                     <v-btn
+                      dark
                       elevation="2"
                       x-large
                       color="#173053"
@@ -777,6 +780,7 @@
                         </v-card>
                         <div class="text-center">
                           <v-btn
+                            dark
                             color="blue-grey"
                             class="ma-2 white--text"
                             @click="getDataUpdate()"
@@ -1318,6 +1322,7 @@
                 <v-col id="margin">
                   <v-row justify="center">
                     <v-btn
+                      dark
                       elevation="2"
                       x-large
                       color="#173053"
@@ -1361,6 +1366,7 @@
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn
+                  dark
                   elevation="2"
                   x-large
                   class="btn-color"
@@ -1413,6 +1419,7 @@
                     <v-btn
                       class="btn-color"
                       fab
+                      dark
                       v-if="item.audiencesSelect !== 'Preset'"
                       id="v-step-2"
                       small
