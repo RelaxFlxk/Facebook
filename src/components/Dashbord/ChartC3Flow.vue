@@ -1,42 +1,74 @@
 <template lang="">
     <div >
-      <v-row>
+      <v-card class="p-3" color="#f2f2f2">
+        <v-row  v-if="chartItem.length > 0">
         <v-col cols="12">
           <v-card
-        class="pa-md-4 mx-lg-auto "
-        color="rgb(251, 133, 0)"
-        height="60"
-        dark
-        v-if="chartItem.length > 0"
-        >
-          <v-card-title class="justify-center" ><h3>รถที่ซ่อมยังไม่เสร็จ</h3></v-card-title>
-      </v-card>
+                class="pa-md-4 mx-lg-auto "
+                width="500"
+                height="100"
+                elevation="8"
+                >
+                 <v-row>
+                   <v-col cols="2" md="2">
+                     <v-icon
+                     style="font-size:70px !important; margin:3px -10px 10px 55px;"
+                    x-large
+                    color="blue"
+                  >mdi-car-wash</v-icon>
+                   </v-col>
+                   <v-col cols="10" md="10">
+                    <v-card-title class="justify-center" ><h3>รถที่ซ่อมยังไม่เสร็จ</h3></v-card-title>
+                      <v-card-text>
+                        <v-row
+                          align="center"
+                          class="justify-center"
+                        >
+                      <h5></h5>
+                        </v-row>
+                     </v-card-text>
+                   </v-col>
+                 </v-row>
+              </v-card>
         </v-col>
       </v-row>
-      <v-row>
+      <v-row  v-if="chartItem.length > 0">
         <v-col v-for="(item , index) in chartItem" :key="index">
           <v-card
         class="pa-2"
         max-width="400"
+        elevation="8"
       >
       <p class="text-center">{{chartName[index]}}</p>
       <C3Chart :chartData="chartItem[index]" v-if="chartItem[index]"></C3Chart>
       </v-card>
        </v-col>
       </v-row>
+      </v-card>
       <v-dialog
       v-model="dialog"
-      max-width="600"
+      max-width="900"
       class="pa-6"
     >
-      <v-card class="pa-4">
-              <v-data-table
-              :headers="headers"
-              :items="desserts"
-              :items-per-page="4"
-              class="elevation-1"
-            ></v-data-table>
-            </v-card>
+      <v-card elevation="8" class="pa-4">
+        <div class="text-right pa-0">
+          <v-btn
+          small
+          color="#E0E0E0"
+          @click="(dialog = false)"
+        >
+          <v-icon color="#173053">mdi-close</v-icon>
+        </v-btn>
+        </div>
+          <h3 class="text-center">รายละเอียดงานซ่อม</h3>
+              <v-card height="4"  color="green"></v-card>
+            <v-data-table
+            :headers="headers"
+            :items="desserts"
+            :items-per-page="4"
+            class="elevation-1"
+          ></v-data-table>
+      </v-card>
     </v-dialog>
     </div>
 </template>
@@ -61,8 +93,11 @@ export default {
       headers: [
         { text: 'ชื่อ', value: 'Name' },
         { text: 'เลขทะเบียน', value: 'carNo' },
+        { text: 'วันที่รับรถ', value: 'CREATE_DATE' },
         { text: 'วันที่ส่งรถ', value: 'endDate' },
-        { text: 'ประเภทบริการ', value: 'flowName' }
+        { text: 'ประเภทบริการ', value: 'flowName' },
+        { text: 'จำนวนวันที่ซ่อม', value: 'totalDateDiff' },
+        { text: 'ผู้รับผิดชอบ', value: 'empStep' }
       ],
       desserts: [],
       dessertsItem: [],
@@ -146,13 +181,13 @@ export default {
               dt.push(dd)
             }
           })
-          console.log('dt', dt)
+          // console.log('dt', dt)
           a = dt
         })
         chartValue.push(a)
       }
-      console.log('chartStep', chartStep)
-      console.log('chartValue', chartValue)
+      // console.log('chartStep', chartStep)
+      // console.log('chartValue', chartValue)
       chartStep.forEach((element, key) => {
         let dtitem = []
         chartValue[key].forEach((v, k) => {
@@ -192,11 +227,11 @@ export default {
           this.chartItem.push(chartBranch)
         }
       }
-      console.log('this.chartItem.', this.chartItem)
+      // console.log('this.chartItem.', this.chartItem)
       this.genDataTable()
     },
     async genDataTable (dataFilter, i) {
-      console.log('datafilter', dataFilter, i)
+      // console.log('datafilter', dataFilter, i)
       let Tableitem = []
       let dataitem = []
       let datafilter = this.dessertsItem
@@ -218,6 +253,9 @@ export default {
         dt.stepTitle = dataitem.filter(item => item.jobId === element.jobId).map(row => row.stepTitle)[0]
         dt.totalPrice = dataitem.filter(item => item.jobId === element.jobId).map(row => row.totalPrice)[0]
         dt.RECORD_STATUS = dataitem.filter(item => item.jobId === element.jobId).map(row => row.RECORD_STATUS)[0]
+        dt.CREATE_DATE = this.format_dateNotime(dataitem.filter(item => item.jobId === element.jobId).map(row => row.CREATE_DATE)[0])
+        dt.totalDateDiff = dataitem.filter(item => item.jobId === element.jobId).map(row => row.totalDateDiff)[0]
+        dt.empStep = dataitem.filter(item => item.jobId === element.jobId).map(row => row.empStep)[0]
         Tableitem.push(dt)
         // datafilter.filter(item => item.JobId === element.JobId)
       })
@@ -230,11 +268,15 @@ export default {
       } else {
         this.desserts = Tableitem
       }
-      console.log('this.desserts', this.desserts)
+      // console.log('this.desserts', this.desserts)
     }
   }
 }
 </script>
 <style lang="">
+.BGmain {
+  --bg-color: #f2f2f2;
+  background-color: var(--bg-color);
+}
 
 </style>

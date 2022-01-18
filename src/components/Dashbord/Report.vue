@@ -1,5 +1,5 @@
-<template>
-  <div>
+<template >
+  <div >
     <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
     <v-main>
       <div class="col-md-12 ml-sm-auto col-lg-12 px-4">
@@ -31,6 +31,7 @@
                       dense
                       outlined
                       hide-details
+                      background-color="white"
                       label="สาขา"
                       class="ma-3"
                       @change="getBranchCard(masBranchName)"
@@ -40,80 +41,104 @@
         </v-row>
 
         <v-divider class="mx-4"></v-divider>
-        <v-row v-if="chartBranch">
+        <v-card class="p-3" color="#f2f2f2">
+          <v-row  v-if="chartBranch">
               <v-col cols="4" md="4">
                 <v-card
                 class="pa-md-4 mx-lg-auto "
-                dark
-                width="500"
-                height="100"
-                :color="codeColor[3]"
+                elevation="8"
                 @click="genDataTable()"
                 >
-                  <v-card-title class="justify-center" ><h3>จำนวนรถทั้งหมด</h3></v-card-title>
-
-                  <v-card-text>
-                    <v-row
-                      align="center"
-                      class="justify-center mx-0 "
-                    >
-                      <h4>{{carditem.cardTotal}}</h4>
-                    </v-row>
-                  </v-card-text>
+                 <v-row>
+                   <v-col cols="2" md="2">
+                     <v-icon
+                     style="font-size:70px !important; margin:3px -10px 10px 55px;"
+                    x-large
+                    color="green"
+                  >mdi-car</v-icon>
+                   </v-col>
+                   <v-col cols="10" md="10">
+                    <v-card-title class="justify-center" ><h2>{{carditem.cardTotal}}</h2></v-card-title>
+                      <v-card-text>
+                        <v-row
+                          align="center"
+                          class="justify-center"
+                        >
+                      <h5>จำนวนรถทั้งหมด</h5>
+                        </v-row>
+                     </v-card-text>
+                   </v-col>
+                 </v-row>
               </v-card>
               </v-col>
               <v-col cols="4" md="4">
-                <v-card
-                dark
-                class="pa-md-4 mx-lg-auto"
-                width="500"
-                height="100"
-                :color="codeColor[5]"
+              <v-card
+                class="pa-md-4 mx-lg-auto "
+                elevation="8"
                 @click="genDataTable('จำนวนรถที่ซ่อมอยู่')"
                 >
-                  <v-card-title class="justify-center" ><h3>จำนวนรถที่ซ่อมอยู่</h3></v-card-title>
-
-                  <v-card-text>
-                    <v-row
-                      align="center"
-                      class="justify-center mx-0 "
-                    >
-                      <h4>{{carditem.cardWork}}</h4>
-                    </v-row>
-                  </v-card-text>
+                 <v-row>
+                   <v-col cols="2" md="2">
+                     <v-icon
+                     style="font-size:70px !important; margin:3px -10px 10px 55px;"
+                    x-large
+                    color="blue"
+                  >mdi-timer</v-icon>
+                   </v-col>
+                   <v-col cols="10" md="10">
+                    <v-card-title class="justify-center" ><h2>{{carditem.cardWork}}</h2></v-card-title>
+                      <v-card-text>
+                        <v-row
+                          align="center"
+                          class="justify-center"
+                        >
+                      <h5>จำนวนรถที่ซ่อมอยู่</h5>
+                        </v-row>
+                     </v-card-text>
+                   </v-col>
+                 </v-row>
               </v-card>
               </v-col>
               <v-col cols="4" md="4">
-                <v-card
-                dark
-                class="pa-md-4 mx-lg-auto"
-                width="500"
-                height="100"
-                :color="codeColor[1]"
+              <v-card
+                class="pa-md-4 mx-lg-auto "
+                elevation="8"
                 @click="genDataTable('จำนวนรถที่ซ่อมเสร็จ')"
                 >
-                  <v-card-title class="justify-center" ><h3>จำนวนรถที่ซ่อมเสร็จ</h3></v-card-title>
-
-                  <v-card-text>
-                    <v-row
-                      align="center"
-                      class="justify-center mx-0 "
-                    >
-                      <h4>{{carditem.cardClose}}</h4>
-                    </v-row>
-                  </v-card-text>
+                 <v-row>
+                   <v-col cols="2" md="2">
+                     <v-icon
+                     style="font-size:70px !important; margin:3px -10px 10px 55px;"
+                    x-large
+                    color="orange"
+                  >mdi-checkbox-multiple-marked</v-icon>
+                   </v-col>
+                   <v-col cols="10" md="10">
+                    <v-card-title class="justify-center" ><h2>{{carditem.cardClose}}</h2></v-card-title>
+                      <v-card-text>
+                        <v-row
+                          align="center"
+                          class="justify-center"
+                        >
+                      <h5>จำนวนรถที่ซ่อมเสร็จ</h5>
+                        </v-row>
+                     </v-card-text>
+                   </v-col>
+                 </v-row>
               </v-card>
               </v-col>
             </v-row>
         <v-row  v-if="chartBranch">
-          <v-col cols="5" md="5" >
-            <v-card class="pa-2" v-if="chartBranch">
+          <v-col cols="4" md="4" >
+            <v-card elevation="8" class="pa-2" v-if="chartBranch">
               <C3Chart :chartData="chartBranch" ></C3Chart>
             </v-card>
             <!-- <LinechartBranch ref="modal2"></LinechartBranch> -->
           </v-col>
-          <v-col cols="7" md="7">
-            <v-card class="pa-4">
+          <v-col cols="8" md="8">
+            <v-card class="pa-4" >
+              <h3 class="text-center">รายละเอียดงานซ่อม</h3>
+              <v-card height="4"  :color="TBcolor"></v-card>
               <v-data-table
               :headers="headers"
               :items="desserts"
@@ -123,14 +148,14 @@
             </v-card>
           </v-col>
         </v-row>
-        <v-divider class="mx-4"></v-divider>
-        <v-row>
+        </v-card>
+        <br>
+        <v-row >
           <v-col cols="12" md="12">
             <ChartC3Flow ref="modal1"></ChartC3Flow>
           </v-col>
         </v-row>
-        <v-divider class="mx-4"></v-divider>
-        <v-row>
+        <v-row >
           <v-col cols="12" md="12">
             <ChartCloseJobC3 ref="modal2"></ChartCloseJobC3>
           </v-col>
@@ -187,14 +212,17 @@ export default {
     return {
       PK: '',
       itemFlowName: [],
+      TBcolor: '',
       SelectFlowName: [],
       center: {},
       session: this.$session.getAll(),
       headers: [
         { text: 'ชื่อ', value: 'Name' },
         { text: 'เลขทะเบียน', value: 'carNo' },
+        { text: 'วันที่รับรถ', value: 'CREATE_DATE' },
         { text: 'วันที่ส่งรถ', value: 'endDate' },
-        { text: 'ประเภทบริการ', value: 'flowName' }
+        { text: 'ประเภทบริการ', value: 'flowName' },
+        { text: 'จำนวนวันที่ซ่อม', value: 'totalDateDiff' }
       ],
       desserts: [],
       dessertsItem: [],
@@ -274,7 +302,7 @@ export default {
         'rgb(251, 133, 0)',
         'rgb(61,90,128)',
         'rgb(152,193,217)',
-        'rgb(224,251,252)',
+        'rgb(28,251,252)',
         'rgb(255,212,91)',
         'rgb(238,108,77)',
         'rgb(41,50,65)'
@@ -285,6 +313,7 @@ export default {
     this.dataReady = false
     await this.getDataBranch()
     await this.getFlow()
+    await this.getBranchCard()
   },
   methods: {
     async getBranchCard (ItemmasBranchName) {
@@ -298,12 +327,14 @@ export default {
       if (ItemmasBranchName) {
         await axios.get(this.DNS_IP + '/job_log/getDashbord_selectBranch_card?startDate=' + startDate + '&endDate=' + endDate + '&shopId=' + this.shopId + '&masBranchName=' + ItemmasBranchName).then(response => {
           rs = response.data
+          console.log('1')
         }).catch((error) => {
           console.log('error function addDataGlobal : ', error)
         })
       } else {
         await axios.get(this.DNS_IP + '/job_log/getDashbord_total_card?startDate=' + startDate + '&endDate=' + endDate + '&shopId=' + this.shopId).then(response => {
           rs = response.data
+          console.log('2')
         }).catch((error) => {
           console.log('error function addDataGlobal : ', error)
         })
@@ -393,12 +424,17 @@ export default {
         .then(async (response) => {
           let rs = response.data
           // console.log('rsrsrs', rs)
-          for (var i = 0; i < rs.length; i++) {
-            var d = rs[i]
+          for (let i = 0; i < rs.length; i++) {
+            let d = rs[i]
             d.text = d.masBranchName
             d.value = d.masBranchName
             this.BranchItem.push(d)
           }
+          let dt = {
+            text: 'ทั้งหมด',
+            value: ''
+          }
+          this.BranchItem.push(dt)
         })
         // eslint-disable-next-line handle-callback-err
         .catch((error) => {
@@ -429,26 +465,49 @@ export default {
         dt.dateTotal = dataitem.filter(item => item.jobId === element.jobId).map(row => row.totalDateDiff)[0]
         dt.totalPrice = dataitem.filter(item => item.jobId === element.jobId).map(row => row.totalPrice)[0]
         dt.RECORD_STATUS = dataitem.filter(item => item.jobId === element.jobId).map(row => row.RECORD_STATUS)[0]
+        dt.CREATE_DATE = this.format_dateNotime(dataitem.filter(item => item.jobId === element.jobId).map(row => row.CREATE_DATE)[0])
+        dt.totalDateDiff = dataitem.filter(item => item.jobId === element.jobId).map(row => row.totalDateDiff)[0]
         Tableitem.push(dt)
         // datafilter.filter(item => item.JobId === element.JobId)
       })
       if (dataFilter) {
         if (dataFilter.name === 'จำนวนรถที่ซ่อมอยู่' || dataFilter === 'จำนวนรถที่ซ่อมอยู่') {
           this.desserts = Tableitem.filter(item => item.totalPrice === '' || item.totalPrice === null)
+          this.TBcolor = 'blue'
         }
         if (dataFilter.name === 'จำนวนรถที่ซ่อมเสร็จ' || dataFilter === 'จำนวนรถที่ซ่อมเสร็จ') {
           this.desserts = Tableitem.filter(item => item.totalPrice)
+          this.TBcolor = 'orange'
         }
       } else {
         this.desserts = Tableitem
+        this.TBcolor = 'green'
       }
     }
   }
 }
 </script>
 <style scope>
+:root {
+  --table-head-bg: #FFFFFF;
+  --table-head-text: #000000;
+  --table-body-row-even: #FFFFFF;
+  --table-body-row-odd: #ffffff;
+  --table-body-text: #000000;
+}
 .v-data-table-header {
-  background-color: #1b437c !important;
+  background-color:  var(--table-head-bg) !important;
+}
+.v-data-table>.v-data-table__wrapper>table>tbody>tr:nth-child(even) {background: var(--table-body-row-even)}
+.v-data-table>.v-data-table__wrapper>table>tbody>tr:nth-child(odd) {background: var(--table-body-row-odd)}
+.table_detail_2>.v-data-table__wrapper>table>tbody>tr:nth-child(even) {background: #eeeeee}
+.table_detail_2>.v-data-table__wrapper>table>tbody>tr:nth-child(odd) {background: #ffffff}
+.v-data-table>.v-data-table__wrapper>table>tbody>tr>td {
+  color: var(--table-body-text) !important;
+}
+.BGmain {
+  --bbg-color: #f2f2f2;
+  background-color: var(--bbg-color);
 }
 .Color-Font {
   color: #808588;
