@@ -2009,7 +2009,6 @@ export default {
             for (var i = 0; i < rs.length; i++) {
               let d = rs[i]
               let s = {}
-              console.log('d', d)
               s.text = d[fieldName]
               s.value = d[fieldId]
               s.allData = d
