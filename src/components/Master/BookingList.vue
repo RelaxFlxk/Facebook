@@ -1829,31 +1829,92 @@ export default {
     exportExcel () {
       let dataExport = []
       this.dataexport = []
-      for (var i = 0; i < this.dataItemTime.length; i++) {
+      let runNo = 0
+      for (let i = 0; i < this.dataItemTime.length; i++) {
         // var d = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === item.timeDueHtext })[i]
-        var d = this.dataItemTime[i]
-        var dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && (el.statusBtText === 'โทรยืนยันแล้ว' || el.statusBtText === 'รับรถแล้ว') })
+        let d = this.dataItemTime[i]
+        let dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && el.fastTrack && (el.statusBtText === 'โทรยืนยันแล้ว' || el.statusBtText === 'รับรถแล้ว') })
         console.log('s.dataSelect', dataSelect)
-        for (var x = 0; x < dataSelect.length; x++) {
-          var t = dataSelect[x]
-          var s = {}
+        for (let x = 0; x < dataSelect.length; x++) {
+          runNo++
+          let t = dataSelect[x]
+          let s = {}
+          console.log('fastTrack')
           console.log('s.t', t)
           if (dataExport.filter(el => { return el.timeDueHtext === this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )' }).length === 0) {
             s.timeDueHtext = this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )'
           } else {
             s.timeDueHtext = ''
           }
-          s.title = t.timeDuetext + ' : ' + t.statusBtText
+          s.type = 'Fast Track'
+          s.runNo = runNo
+          s.licenseNo = t.cusReg
+          s.title = t.timeDuetext
           s.status = t.statusBtText
           s.cusName = t.cusName
           s.cusReg = t.cusReg
           s.flowName = t.flowName
+          s.tel = t.tel
+          dataExport.push(s)
+        }
+      }
+      runNo = 0
+      for (let i = 0; i < this.dataItemTime.length; i++) {
+        let d = this.dataItemTime[i]
+        let dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && !el.fastTrack && (el.statusBtText === 'โทรยืนยันแล้ว' || el.statusBtText === 'รับรถแล้ว') })
+        console.log('s.dataSelect', dataSelect)
+        for (let x = 0; x < dataSelect.length; x++) {
+          runNo++
+          let t = dataSelect[x]
+          let s = {}
+          console.log('normal')
+          console.log('s.t', t)
+          if (dataExport.filter(el => { return el.timeDueHtext === this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )' }).length === 0) {
+            s.timeDueHtext = this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )'
+          } else {
+            s.timeDueHtext = ''
+          }
+          s.type = 'ปกติ'
+          s.runNo = runNo
+          s.dateBooking = this.format_dateNotime(this.timeTable)
+          s.licenseNo = t.cusReg
+          s.title = t.timeDuetext
+          s.status = t.statusBtText
+          s.cusName = t.cusName
+          s.cusReg = t.cusReg
+          s.flowName = t.flowName
+          s.tel = t.tel
           dataExport.push(s)
         }
       }
       this.dataexport = dataExport
       this.onExport()
       console.log('dataEport', JSON.stringify(dataExport))
+    },
+    onExport () {
+      var dataexport = []
+      for (var i = 0; i < this.dataexport.length; i++) {
+        var a = this.dataexport[i]
+        dataexport.push({
+          'ประเภท': a.type,
+          'ลำดับ': a.runNo,
+          'วันที่': a.dateBooking,
+          'เวลา': a.title,
+          'ชื่อลูกค้า': a.cusName,
+          'ทะเบียน': a.cusReg,
+          'รายการซ่อม': a.flowName,
+          'เบอร์โทร': a.tel,
+          'เวลาติดตาม': '',
+          'เหตุผล': '',
+          'ตรง': '',
+          'ไม่ตรง': '',
+          'เปิดJob': ''
+        })
+      }
+      const dataWS = XLSX.utils.json_to_sheet(dataexport)
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, dataWS)
+      XLSX.writeFile(wb, 'export_' + this.format_dateNotime(this.timeTable) + '.xlsx')
     },
     toggle () {
       this.timeTable = new Date().toISOString().substr(0, 10)
@@ -3088,24 +3149,6 @@ export default {
       this.detailInfo = await this.getBookingData(item)
       this.dataInfo = item
       this.dialogInfo = true
-    },
-    onExport () {
-      var dataexport = []
-      for (var i = 0; i < this.dataexport.length; i++) {
-        var a = this.dataexport[i]
-        dataexport.push({
-          'วันที่และเวลา': a.timeDueHtext,
-          'เวลาและสถานะ': a.title,
-          'สถานะ': a.status,
-          'ชื่อลูกค้า': a.cusName,
-          'ทะเบียน': a.cusReg,
-          'ประเภทบริการ': a.flowName
-        })
-      }
-      const dataWS = XLSX.utils.json_to_sheet(dataexport)
-      const wb = XLSX.utils.book_new()
-      XLSX.utils.book_append_sheet(wb, dataWS)
-      XLSX.writeFile(wb, 'export_' + this.format_dateNotime(this.timeTable) + '.xlsx')
     }
   }
 }

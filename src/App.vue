@@ -245,6 +245,9 @@ table tr:last-child td:last-child {
 .btn {
   color: var(--btn-general-color);
 }
+.v-date-picker-table .v-btn {
+   color: #eeeeee !important;
+}
 .nav-button {
   color: var(--nav-text);
   background-color: var(--nav-bg);
