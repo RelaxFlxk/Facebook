@@ -1177,7 +1177,7 @@
           </v-dialog>
           <!-- data table -->
           <v-col cols="12" >
-            <BookingQueue :drawerParent="drawer" :menu1Parent="menu1" :timeTableParent="timeTable" :rulesParent="rules" :masterTimeParent="masterTime" :dataItemTimesChangeParent="dataItemTimesChange" :getTimesChangeParent="getTimesChange" :exportExcelParent="exportExcel" :toggleParent="toggle" @updateTimeTable="updateTimeTablefromChild"></BookingQueue>
+            <BookingQueue :branchParent="branch" :masBranchIDParent="masBranchID" :drawerParent="drawer" :menu1Parent="menu1" :timeTableParent="timeTable" :rulesParent="rules" :masterTimeParent="masterTime" :dataItemTimesChangeParent="dataItemTimesChange" :getTimesChangeParent="getTimesChange" :exportExcelParent="exportExcel" :toggleParent="toggle" @updateTimeTable="updateTimeTablefromChild"></BookingQueue>
             <v-card elevation="7" v-if="dataReady">
               <div>
                 <v-btn
@@ -2009,8 +2009,10 @@ export default {
             for (var i = 0; i < rs.length; i++) {
               let d = rs[i]
               let s = {}
+              console.log('d', d)
               s.text = d[fieldName]
               s.value = d[fieldId]
+              s.allData = d
               result.push(s)
               // console.log('this.DataFlowName', this.DataFlowName)
             }
