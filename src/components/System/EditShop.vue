@@ -20,55 +20,26 @@
                         <v-icon color="#173053">mdi-close</v-icon>
                       </v-btn>
                     </v-col>
-                    <!-- <v-row justify="center">
-                      <v-col cols="12" class="text-center">
-                        <v-img
-                          aspect-ratio="6"
-                          contain
-                          :src="formUpdate.logoPreview"
-                        ></v-img>
-                        <v-avatar size="100px"><img alt="Avatar" :src="formAdd.pictureUrl"></v-avatar>
-                        <br />
-                        <v-file-input
-                          required
-                          counter
-                          show-size
-                          accept="image/png, image/jpeg, image/bmp"
-                          prepend-icon="mdi-camera"
-                          label="โลโก้ร้าน"
-                          @change="selectImgShop"
-                          v-model="filesShop"
-                        ></v-file-input>
+                    <v-row justify="center">
+                      <v-col md="auto">
+                        <h1 style="font-size:10vw;" class="underline-06">แก้ไขข้อมูลร้านค้า</h1>
                       </v-col>
                     </v-row>
-                    <v-row justify="center">
-                      <v-col cols="5" class="text-center">
-                        <v-img
-                          class="v_text"
-                          :src="require('@/assets/GroupEditTitle.svg')"
-                        ></v-img>
-                      </v-col>
-                    </v-row> -->
                     <v-row>
-                      <v-col cols="6">
-                        <v-row style="height: 35px">
-                          <v-subheader id="subtext">ชื่อร้าน</v-subheader>
-                        </v-row>
-                        <v-row style="height: 50px">
+                      <v-col cols="6" class="pb-0">
                           <v-text-field
+                            outlined
+                            label="ชื่อร้าน"
                             placeholder="ชื่อร้าน*"
                             v-model="formUpdate.shopName"
                             :rules="[rules.required]"
                             required
                           ></v-text-field>
-                        </v-row>
                       </v-col>
-                      <v-col cols="6">
-                        <v-row style="height: 35px">
-                          <v-subheader id="subtext">เบอร์โทรศัพท์</v-subheader>
-                        </v-row>
-                        <v-row style="height: 50px">
+                      <v-col cols="6" class="pb-0">
                           <v-text-field
+                          outlined
+                            label="เบอร์โทรศัพท์"
                             placeholder="Contact Tel*"
                             v-model="formUpdate.contactTel"
                             :rules="[rules.required, rules.numberRules]"
@@ -76,76 +47,45 @@
                             maxlength="10"
                             required
                           ></v-text-field>
-                        </v-row>
                       </v-col>
                     </v-row>
 
                     <v-row>
-                      <v-col cols="6">
-                        <v-row style="height: 35px">
-                          <v-subheader id="subtext">E-mail</v-subheader>
-                        </v-row>
-                        <v-row style="height: 50px">
+                      <v-col cols="6" class="pb-0">
                           <v-text-field
+                          outlined
+                            label="E-mail"
                             v-model="formUpdate.contactEmail"
                             type="email"
                             :rules="[rules.email]"
                             required
                           ></v-text-field>
-                        </v-row>
                       </v-col>
                     </v-row>
-
-                    <!-- <v-row>
-                      <v-col cols="6">
-                        <v-row style="height: 35px">
-                          <v-subheader id="subtext">รหัสไปรษณีย์</v-subheader>
-                        </v-row>
-                        <v-row style="height: 50px">
-                          <v-text-field
-                            v-model="formUpdate.ZIP_CD"
-                            type="email"
-                            @change="getAddress()"
-                          ></v-text-field>
-                        </v-row>
-                      </v-col>
-                      <v-col cols="6">
-                          <v-row style="height: 35px">
-                          <v-subheader id="subtext">ตำบล/แขวง</v-subheader>
-                        </v-row>
-                        <v-row style="height: 50px">
-                          <v-select
-                            v-model="formUpdate.optionSubDistrictNew"
-                            :items="optionSubDistrict"
-                          ></v-select>
-                        </v-row>
-                      </v-col>
-                    </v-row>
-
                     <v-row>
-                      <v-col cols="6">
-                          <v-row style="height: 35px">
-                          <v-subheader id="subtext">อำเภอ/เขต</v-subheader>
-                        </v-row>
-                        <v-row style="height: 50px">
-                          <v-select
-                            v-model="formUpdate.optionDistrictNew"
-                            :items="optionDistrict"
-                          ></v-select>
-                        </v-row>
+                      <v-col cols="6" class="pb-2 pt-0">
+                        <v-subheader>สีหลัก</v-subheader>
+                        <v-color-picker
+                          dot-size="25"
+                          v-model="formUpdate.primaryColor"
+                          hide-inputs
+                          mode="hexa"
+                          show-swatches
+                          swatches-max-height="100"
+                        ></v-color-picker>
                       </v-col>
-                      <v-col cols="6">
-                        <v-row style="height: 35px">
-                          <v-subheader id="subtext">จังหวัด</v-subheader>
-                        </v-row>
-                        <v-row style="height: 50px">
-                          <v-select
-                            v-model="formUpdate.optionProvinceNew"
-                            :items="optionProvince"
-                          ></v-select>
-                        </v-row>
+                      <v-col cols="6" class="pb-2 pt-0">
+                        <v-subheader>สีรอง</v-subheader>
+                        <v-color-picker
+                          dot-size="25"
+                          v-model="formUpdate.secondaryColor"
+                          hide-inputs
+                          mode="hexa"
+                          show-swatches
+                          swatches-max-height="100"
+                        ></v-color-picker>
                       </v-col>
-                    </v-row> -->
+                    </v-row>
                   </v-container>
                 </v-card-text>
               </v-form>
@@ -154,6 +94,7 @@
                   <v-row justify="center">
                     <v-btn
                       elevation="2"
+                      dark
                       x-large
                       color="#173053"
                       :disabled="!validUpdate"
@@ -197,6 +138,7 @@
                     <v-btn
                       color="question"
                       fab
+                      dark
                       x-small
                       @click.stop="
                         ;(dialogEdit = true),
@@ -206,15 +148,6 @@
                     >
                       <v-icon dark> mdi-tools </v-icon>
                     </v-btn>
-                    <!-- <v-btn
-                      color="red"
-                      dark
-                      fab
-                      x-small
-                      @click.stop="(dialogDelete = true), getDataById(item)"
-                    >
-                      <v-icon> mdi-delete </v-icon>
-                    </v-btn> -->
                   </template>
                 </v-data-table>
               </v-card-text>
@@ -288,7 +221,9 @@ export default {
         ZIP_CD: '',
         optionSubDistrictNew: '',
         optionDistrictNew: '',
-        optionProvinceNew: ''
+        optionProvinceNew: '',
+        primaryColor: '',
+        secondaryColor: ''
       },
       filesShop: null,
       formUpdateItem: {
@@ -415,6 +350,8 @@ export default {
       this.formUpdate.expireDate = moment(this.formUpdate.expireDate).format(
         'YYYY-MM-DD HH:mm'
       )
+      // this.formUpdate.primaryColor = item.primaryColor
+      // this.formUpdate.secondaryColor = item.secondaryColor
       // if (this.formUpdate.ZIP_CD.length >= 5) {
       //   this.getAddress()
       // }
@@ -440,7 +377,9 @@ export default {
             shopName: this.formUpdate.shopName,
             contactTel: this.formUpdate.contactTel,
             LAST_USER: this.session.data.userName,
-            contactEmail: this.formUpdate.contactEmail
+            contactEmail: this.formUpdate.contactEmail,
+            primaryColor: this.formUpdate.primaryColor,
+            secondaryColor: this.formUpdate.secondaryColor
           }
           await axios
             .post(
@@ -485,49 +424,6 @@ export default {
           this.dataReady = true
           console.log('error function editDataGlobal : ', error)
         })
-    },
-    async getAddress () {
-      if (this.formUpdate.ZIP_CD.length >= 5) {
-        this.optionSubDistrict = []
-        this.optionDistrict = []
-        this.optionProvince = []
-        await axios
-          .get(
-            // eslint-disable-next-line quotes
-            'https://api.betaskthai.com/hrm/location/map_thai/?zipcode=' +
-              this.formUpdate.ZIP_CD
-          )
-          .then(async response => {
-            let rs = response.data
-            // this.form.ADDRESS_PROVINCE = response.data[0].province
-            for (var i = 0; i < rs.length; i++) {
-              var x = rs[i]
-              var z = {}
-              z.text = x.district
-              z.value = x.district
-              this.optionDistrict.push(z)
-            }
-            for (var t = 0; t < rs.length; t++) {
-              var k = rs[t]
-              var l = {}
-              l.text = k.province
-              l.value = k.province
-              this.optionProvince.push(l)
-            }
-            for (var b = 0; b < rs.length; b++) {
-              var d = rs[b]
-              var s = {}
-              s.text = d.sub_district
-              s.value = d.sub_district
-              this.optionSubDistrict.push(s)
-            }
-            // }
-          }) // eslint-disable-next-line handle-callback-err
-          .catch(error => {
-            console.log(error)
-            // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
-          })
-      }
     },
     async clearDataUpdate () {
       // eslint-disable-next-line no-redeclare
