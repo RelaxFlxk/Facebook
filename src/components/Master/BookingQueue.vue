@@ -53,7 +53,10 @@
          <tbody> -->
             <v-row>
                <v-col cols="12" class="pt-0 pb-0">
-                  <strong>{{'รายการนัดหมายทั้งหมด ' + dataItemTimesChange.filter(el => { return (el.statusBt==='confirmJob' || el.statusBt==='confirm') }).length + ' คัน'}}</strong>
+                  <strong>
+                     {{'รายการนัดหมายทั้งหมด ' + dataItemTimesChange.filter(el => { return (el.statusBt==='confirmJob' || el.statusBt==='confirm') }).length + ' คัน'}}
+                     / {{branch.filter((row) => { return row.allData.masBranchID === masBranchID })[0].allData.countCus}} คัน
+                  </strong>
                </v-col>
                <!-- {{dataItemTimesChange.filter(el => { return (el.statusBt==='confirmJob' || el.statusBt==='confirm') })}} -->
                <v-col cols="12" class="pt-0 pb-0">
@@ -250,7 +253,7 @@
 </template>
 <script>
 export default {
-  props: ['drawerParent', 'menu1Parent', 'timeTableParent', 'rulesParent', 'masterTimeParent', 'dataItemTimesChangeParent', 'getTimesChangeParent', 'exportExcelParent', 'toggleParent', 'updateTimeTable'],
+  props: ['branchParent', 'masBranchIDParent', 'drawerParent', 'menu1Parent', 'timeTableParent', 'rulesParent', 'masterTimeParent', 'dataItemTimesChangeParent', 'getTimesChangeParent', 'exportExcelParent', 'toggleParent', 'updateTimeTable'],
   components: {},
   created () {},
   computed: {
@@ -266,6 +269,8 @@ export default {
   },
   data () {
     return {
+      branch: this.branchParent,
+      masBranchID: this.masBranchIDParent,
       drawer: this.drawerParent,
       menu1: this.menu1Parent,
       timeTable: this.timeTableParent,
@@ -290,6 +295,12 @@ export default {
     }
   },
   watch: {
+    masBranchIDParent () {
+      this.masBranchID = this.masBranchIDParent
+    },
+    branchParent () {
+      this.branch = this.branchParent
+    },
     drawerParent () {
       this.drawer = this.drawerParent
     },
