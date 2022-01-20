@@ -1,9 +1,11 @@
 <template lang="">
     <div >
-      <v-card class="p-3" color="#f2f2f2">
+      <v-card class="p-3" color="#f2f2f2" v-if="chartBranch" >
         <v-row  v-if="chartBranch" >
-        <v-col cols="12" >
-          <v-card
+        <v-col :cols="resCol" >
+          <h4  style="margin-bottom: 0px;">Work Done</h4>
+          <h6 >เสร็จล่าช้า / เสร็จตรงเวลาที่กำหนด</h6>
+          <!-- <v-card
                 class="pa-md-4 mx-lg-auto "
                 width="500"
                 height="100"
@@ -19,7 +21,7 @@
                   >mdi-clipboard-check</v-icon>
                    </v-col>
                    <v-col cols="10" md="10">
-                    <v-card-title class="justify-center" ><h3>รถที่ซ่อมเสร็จ</h3></v-card-title>
+                    <v-card-title class="justify-center" ><h3>ซ่อมเสร็จแล้ว</h3></v-card-title>
                       <v-card-text>
                         <v-row
                           align="center"
@@ -30,16 +32,16 @@
                      </v-card-text>
                    </v-col>
                  </v-row>
-              </v-card>
+              </v-card> -->
         </v-col>
       </v-row>
       <v-row  v-if="chartBranch">
-        <v-col cols="4" md="4" >
+        <v-col :cols="resCol" >
           <v-card elevation="8" class="pa-2" v-if="chartBranch">
           <C3Chart :chartData="chartBranch" ></C3Chart>
           </v-card>
        </v-col>
-       <v-col cols="8" md="8">
+       <v-col cols="8" lg="8" md="12" sm="12" xs="12">
             <v-card elevation="8" class="pa-4" v-if="chartBranch">
               <h3 class="text-center">รายละเอียดงานซ่อม</h3>
               <v-card height="4"  :color="TBcolor"></v-card>
@@ -65,6 +67,18 @@ export default {
     C3Chart
 
   },
+  computed: {
+    resCol () {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return '12'
+        case 'sm': return '12'
+        case 'md': return '6'
+        case 'lg': return '4'
+        case 'xl': return '4'
+      }
+      console.log('this.$vuetify.breakpoint.name', this.$vuetify.breakpoint.name)
+    }
+  },
   data () {
     return {
       session: this.$session.getAll(),
@@ -77,6 +91,7 @@ export default {
         { text: 'วันที่ส่งรถ', value: 'endDate' },
         { text: 'ประเภทบริการ', value: 'flowName' },
         { text: 'จำนวนวันที่ซ่อม', value: 'totalDateDiff' },
+        { text: 'สรุปค่าใช้จ่าย', value: 'totalPrice' },
         { text: 'ผู้รับผิดชอบ', value: 'empStep' }
       ],
       desserts: [],
@@ -109,6 +124,7 @@ export default {
         })
       }
       if (rs.length > 0) {
+        let TotalJob = []
         let JobGood = []
         let JobLate = []
         if (rs.length > 0) {
@@ -116,23 +132,27 @@ export default {
             let d = rs[i]
             if (d.totalDateDiff > 0) {
               JobGood.push('1')
+              TotalJob.push(1)
             } else if (d.totalDateDiff < 0) {
               JobLate.push('1')
+              TotalJob.push(1)
             }
           }
         }
         this.dessertsItem = rs
         this.genDataTable()
         // console.log('rs', rs)
-        this.genChart(JobGood, JobLate)
+        this.genChart(JobGood, JobLate, TotalJob)
       }
     },
-    async genChart (JobGood, JobLate) {
+    async genChart (JobGood, JobLate, TotalJob) {
       // this.chartBranch = null
       let columns = [
         ['เสร็จตามเวลา', ...JobGood],
         ['เสร็จช้ากว่าเวลาที่กำหนด', ...JobLate]
       ]
+      const reducer = (previousValue, currentValue) => previousValue + currentValue
+      let TotalsJob = TotalJob.reduce(reducer)
       let _this = this
       this.chartBranch = {
         data: {
@@ -141,6 +161,7 @@ export default {
           onclick: function (d, i) { _this.genDataTable(d) }
         },
         donut: {
+          title: `งานทั้งหมด ( ${TotalsJob} )`,
           label: {
             format: function (value, ratio, id) {
               return value
@@ -173,17 +194,18 @@ export default {
         dt.CREATE_DATE = this.format_dateNotime(dataitem.filter(item => item.jobId === element.jobId).map(row => row.CREATE_DATE)[0])
         dt.totalDateDiff = dataitem.filter(item => item.jobId === element.jobId).map(row => row.totalDateDiff)[0]
         dt.empStep = dataitem.filter(item => item.jobId === element.jobId).map(row => row.empStep)[0]
+        dt.totalPrice = dataitem.filter(item => item.jobId === element.jobId).map(row => row.totalPrice)[0]
         Tableitem.push(dt)
         // datafilter.filter(item => item.JobId === element.JobId)
       })
       if (dataFilter) {
         if (dataFilter.name === 'เสร็จตามเวลา') {
-          console.log('1')
+          // console.log('1')
           this.desserts = Tableitem.filter(item => item.dateTotal > 0)
           this.TBcolor = 'blue'
         }
         if (dataFilter.name === 'เสร็จช้ากว่าเวลาที่กำหนด') {
-          console.log('2')
+          // console.log('2')
           this.desserts = Tableitem.filter(item => item.dateTotal < 0)
           this.TBcolor = 'orange'
         }

@@ -1,9 +1,11 @@
 <template lang="">
     <div >
-      <v-card class="p-3" color="#f2f2f2">
+      <v-card class="p-3" color="#f2f2f2" v-if="chartItem.length > 0">
         <v-row  v-if="chartItem.length > 0">
-        <v-col cols="12">
-          <v-card
+        <v-col :cols="resCol">
+          <h3  style="margin-bottom: 0px;">Working</h3>
+          <h6> ประเภทบริการ / ขั้นตอนการทำงาน</h6>
+          <!-- <v-card
                 class="pa-md-4 mx-lg-auto "
                 width="500"
                 height="100"
@@ -18,7 +20,7 @@
                   >mdi-car-wash</v-icon>
                    </v-col>
                    <v-col cols="10" md="10">
-                    <v-card-title class="justify-center" ><h3>รถที่ซ่อมยังไม่เสร็จ</h3></v-card-title>
+                    <v-card-title class="justify-center" ><h3>กำลังซ่อม</h3></v-card-title>
                       <v-card-text>
                         <v-row
                           align="center"
@@ -29,11 +31,11 @@
                      </v-card-text>
                    </v-col>
                  </v-row>
-              </v-card>
+              </v-card> -->
         </v-col>
       </v-row>
       <v-row  v-if="chartItem.length > 0">
-        <v-col v-for="(item , index) in chartItem" :key="index">
+        <v-col  v-for="(item , index) in chartItem" :key="index">
           <v-card
         class="pa-2"
         max-width="400"
@@ -81,6 +83,18 @@ export default {
     'left-menu-admin': adminLeftMenu,
     C3Chart
 
+  },
+  computed: {
+    resCol () {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return '12'
+        case 'sm': return '12'
+        case 'md': return '6'
+        case 'lg': return '4'
+        case 'xl': return '4'
+      }
+      console.log('this.$vuetify.breakpoint.name', this.$vuetify.breakpoint.name)
+    }
   },
   data () {
     return {
@@ -188,8 +202,10 @@ export default {
       }
       // console.log('chartStep', chartStep)
       // console.log('chartValue', chartValue)
+      let Totaljob = []
       chartStep.forEach((element, key) => {
         let dtitem = []
+        let Totals = []
         chartValue[key].forEach((v, k) => {
           chartStep[key].forEach((v2, k2) => {
             if (k === k2) {
@@ -197,12 +213,19 @@ export default {
                 v2,
                 v
               ]
-              // console.log('Value', v)
-              // console.log('Value2', v2)
+              if (v.length > 0) {
+                Totals.push(v[0])
+              } else {
+                Totals.push(v)
+              }
+              // console.log('Value2', v)
               dtitem.push(item)
             }
           })
         })
+        // console.log('Totals', Totals)
+        const reducer = (previousValue, currentValue) => previousValue + currentValue
+        Totaljob.push(Totals.reduce(reducer))
         FullChart.push(dtitem)
       })
       let _this = this
@@ -216,6 +239,7 @@ export default {
               onclick: function (d, i) { _this.genDataTable(d, chartBranch) }
             },
             donut: {
+              title: `งานทั้งหมด ( ${Totaljob[a]} )`,
               label: {
                 format: function (value, ratio, id) {
                   return value

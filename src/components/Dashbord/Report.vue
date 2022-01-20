@@ -41,23 +41,29 @@
         </v-row>
 
         <v-divider class="mx-4"></v-divider>
-        <v-card class="p-3" color="#f2f2f2">
+        <v-card class="p-3" color="#f2f2f2" v-if="chartBranch">
+          <v-row>
+            <v-col :cols="resCol">
+              <h4 style="margin-bottom: 0px;">Performance</h4>
+                <h6 >งานทั้งหมด / งานที่กำลังซ่อม / งานที่ซ่อมเสร็จแล้ว</h6>
+            </v-col>
+          </v-row>
           <v-row  v-if="chartBranch">
-              <v-col cols="4" md="4">
+              <v-col :cols="resCol" xs="12">
                 <v-card
-                class="pa-md-4 mx-lg-auto "
+                class="pa-2"
                 elevation="8"
                 @click="genDataTable()"
                 >
                  <v-row>
-                   <v-col cols="2" md="2">
+                   <v-col cols="2" lg="4" md="4" sm="6" xs="6">
                      <v-icon
                      style="font-size:70px !important; margin:3px -10px 10px 55px;"
                     x-large
                     color="green"
                   >mdi-car</v-icon>
                    </v-col>
-                   <v-col cols="10" md="10">
+                   <v-col cols="10" lg="8" md="8" sm="6" xs="6">
                     <v-card-title class="justify-center" ><h2>{{carditem.cardTotal}}</h2></v-card-title>
                       <v-card-text>
                         <v-row
@@ -71,21 +77,21 @@
                  </v-row>
               </v-card>
               </v-col>
-              <v-col cols="4" md="4">
+              <v-col :cols="resCol" xs="12">
               <v-card
-                class="pa-md-4 mx-lg-auto "
+                class="pa-2"
                 elevation="8"
                 @click="genDataTable('จำนวนรถที่ซ่อมอยู่')"
                 >
                  <v-row>
-                   <v-col cols="2" md="2">
+                   <v-col cols="2" lg="4" md="4" sm="6" xs="6" >
                      <v-icon
                      style="font-size:70px !important; margin:3px -10px 10px 55px;"
                     x-large
                     color="blue"
                   >mdi-timer</v-icon>
                    </v-col>
-                   <v-col cols="10" md="10">
+                   <v-col cols="10" lg="8" md="8" sm="6" xs="6" >
                     <v-card-title class="justify-center" ><h2>{{carditem.cardWork}}</h2></v-card-title>
                       <v-card-text>
                         <v-row
@@ -99,21 +105,21 @@
                  </v-row>
               </v-card>
               </v-col>
-              <v-col cols="4" md="4">
+              <v-col :cols="resCol" xs="12">
               <v-card
-                class="pa-md-4 mx-lg-auto "
+                class="pa-2"
                 elevation="8"
                 @click="genDataTable('จำนวนรถที่ซ่อมเสร็จ')"
                 >
                  <v-row>
-                   <v-col cols="2" md="2">
+                   <v-col cols="2" lg="4" md="4" sm="6" xs="6" >
                      <v-icon
                      style="font-size:70px !important; margin:3px -10px 10px 55px;"
                     x-large
                     color="orange"
                   >mdi-checkbox-multiple-marked</v-icon>
                    </v-col>
-                   <v-col cols="10" md="10">
+                   <v-col cols="10" lg="8" md="8" sm="6" xs="6" >
                     <v-card-title class="justify-center" ><h2>{{carditem.cardClose}}</h2></v-card-title>
                       <v-card-text>
                         <v-row
@@ -129,13 +135,13 @@
               </v-col>
             </v-row>
         <v-row  v-if="chartBranch">
-          <v-col cols="4" md="4" >
+          <v-col :cols="resCol" >
             <v-card elevation="8" class="pa-2" v-if="chartBranch">
               <C3Chart :chartData="chartBranch" ></C3Chart>
             </v-card>
             <!-- <LinechartBranch ref="modal2"></LinechartBranch> -->
           </v-col>
-          <v-col cols="8" md="8">
+          <v-col cols="8" lg="8" md="12" sm="12" xs="12">
             <v-card class="pa-4" >
               <h3 class="text-center">รายละเอียดงานซ่อม</h3>
               <v-card height="4"  :color="TBcolor"></v-card>
@@ -205,6 +211,18 @@ export default {
   },
   created () {
     setInterval(this.getNowGlobal, 1000)
+  },
+  computed: {
+    resCol () {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return '12'
+        case 'sm': return '12'
+        case 'md': return '4'
+        case 'lg': return '4'
+        case 'xl': return '4'
+      }
+      console.log('this.$vuetify.breakpoint.name', this.$vuetify.breakpoint.name)
+    }
   },
   data () {
     let startDate = new Date()
@@ -384,6 +402,7 @@ export default {
             onclick: function (d, i) { _this.genDataTable(d) }
           },
           donut: {
+            title: `งานทั้งหมด ( ${this.carditem.cardTotal} )`,
             label: {
               format: function (value, ratio, id) {
                 return value
