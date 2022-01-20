@@ -142,7 +142,7 @@
             <!-- <LinechartBranch ref="modal2"></LinechartBranch> -->
           </v-col>
           <v-col cols="8" lg="8" md="12" sm="12" xs="12">
-            <v-card class="pa-4" >
+            <v-card class="pa-2" >
               <h3 class="text-center">รายละเอียดงานซ่อม</h3>
               <v-card height="4"  :color="TBcolor"></v-card>
               <v-data-table

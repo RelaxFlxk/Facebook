@@ -165,12 +165,14 @@ export default {
       BranchItem: [],
       itemBranch: [],
       BookingSend: false,
-      GroupId: ''
+      GroupId: '',
+      flowData: []
     }
   },
   async mounted () {
     this.getLineGroup()
     this.getDataBranch()
+    this.getFLow()
   },
   methods: {
     async getLineGroup () {
@@ -203,75 +205,82 @@ export default {
       await axios
         .get(this.DNS_IP + '/LineGroupFlow/get?shopId=' + this.shopId + '&GroupId=' + GroupId).then((response) => {
           let rs = response.data
-          let dataitem = []
           this.itemBranch = []
+          let dataitem = []
           // console.log('rs1', rs)
           if (rs.length > 0) {
             for (let i = 0; i < rs.length; i++) {
               let d = rs[i]
-              let s = {}
-              s.Id = d.Id
-              s.flowCode = d.flowCode
-              s.text = d.flowName
-              s.value = d.flowId
-              s.checkitem = true
-              this.itemSelect.push(s)
-              dataitem.push(s)
+              if (d.flowCode === '' || d.flowCode === null) {
+              } else {
+                let flowitem = this.flowData.filter(item => { return item.flowCode === d.flowCode })
+                // console.log('flowitem', flowitem)
+                if (flowitem.length > 0) {
+                  let s = {}
+                  s.Id = d.Id
+                  s.flowCode = d.flowCode
+                  s.text = flowitem[0].flowName
+                  s.value = flowitem[0].flowId
+                  s.checkitem = true
+                  this.itemSelect.push(s)
+                  dataitem.push(s)
+                }
+              }
             }
-            this.getFLow(dataitem)
+            // this.getFLow(dataitem)
             if (rs[0].BookingSend === 'N') {
               this.BookingSend = true
             }
             if (rs[0].masBranchID === null) {
               // console.log('rs[1]', rs[0].masBranchID)
             } else {
-              let dt = JSON.parse(rs[0].masBranchID)
-              // let dtarray = []
-              // console.log('rs[2]', dt[0].masBranchID)
-              for (let i = 0; i < dt.length; i++) {
-                let d = dt[i]
-                this.itemBranch.push(...this.BranchItem.filter(row => row.masBranchID === d.masBranchID).map((item) => { return item.masBranchID }))
-              }
-              // console.log('this', this.itemBranch)
+              // this.itemBranch = JSON.parse(rs[0].masBranchID)
+              JSON.parse(rs[0].masBranchID).forEach((v, k) => {
+                this.itemBranch.push(v.masBranchID)
+              })
+              // console.log('this.itemBranch', this.itemBranch)
             }
+            let datatest = []
+            for (let a = 0; a < this.flowData.length; a++) {
+              let d = this.flowData[a]
+              let dt = dataitem.filter(item => { return item.flowCode === d.flowCode })
+              if (dt.length === 0) {
+                let s = {}
+                s.Id = d.flowId
+                s.flowCode = d.flowCode
+                s.text = d.flowName
+                s.value = d.flowId
+                s.checkitem = false
+                datatest.push(s)
+              }
+            }
+            datatest.forEach((v, k) => {
+              this.itemSelect.push(v)
+            })
           } else {
-            this.getFLow(dataitem)
+            // this.getFLow(dataitem)
+            for (let i = 0; i < this.flowData.length; i++) {
+              let d = this.flowData[i]
+              let s = {}
+              s.Id = d.flowId
+              s.flowCode = d.flowCode
+              s.text = d.flowName
+              s.value = d.flowId
+              s.checkitem = false
+              this.itemSelect.push(s)
+            }
           }
         }).catch((error) => {
           console.log('error function addData : ', error)
         })
     },
-    async getFLow (dataitem) {
+    async getFLow () {
       await axios
         .get(this.DNS_IP + '/flow/get?shopId=' + this.shopId).then((response) => {
           let rs = response.data
-          console.log('rs2', rs)
-          // console.log('dataitem', dataitem)
+          // console.log('rs2', rs)
           if (rs.length > 0) {
-            for (let i = 0; i < rs.length; i++) {
-              let d = rs[i]
-              // console.log('1', dataitem.filter(row => row.text === d.flowName))
-              if (this.itemSelect.length > 0) {
-                if (dataitem.filter(row => row.text === d.flowName).length === 0) {
-                  let s = {}
-                  s.Id = d.Id
-                  s.flowCode = d.flowCode
-                  s.text = d.flowName
-                  s.value = d.flowId
-                  s.checkitem = false
-                  this.itemSelect.push(s)
-                }
-              } else {
-                let s = {}
-                s.Id = d.Id
-                s.flowCode = d.flowCode
-                s.text = d.flowName
-                s.value = d.flowId
-                s.checkitem = false
-                this.itemSelect.push(s)
-              }
-            }
-            console.log('this', this.itemSelect)
+            this.flowData = rs
           }
         }).catch((error) => {
           console.log('error function addData : ', error)
@@ -298,31 +307,52 @@ export default {
     },
     async AddData () {
       let BranchJSON = []
+      // console.log('itemBrtanch', this.itemBranch)
       for (let i = 0; i < this.itemBranch.length; i++) {
         let d = this.itemBranch[i]
         let s = {}
         s.masBranchID = d
         BranchJSON.push(s)
       }
-      let dataAdd = {
-        flow: this.itemSelect,
-        masBranchID: JSON.stringify(BranchJSON),
-        Booking: this.BookingSend,
-        shopId: this.shopId,
-        GroupId: this.GroupId
+      let checkitemSelect = []
+      this.itemSelect.forEach(v => {
+        if (v.checkitem === true) {
+          checkitemSelect.push(v.checkitem)
+        }
+      })
+      let dataAdd = {}
+      if (checkitemSelect.length > 0) {
+        dataAdd = {
+          flow: this.itemSelect,
+          masBranchID: JSON.stringify(BranchJSON),
+          Booking: this.BookingSend,
+          shopId: this.shopId,
+          GroupId: this.GroupId
+        }
+      } else {
+        dataAdd = {
+          flow: null,
+          masBranchID: JSON.stringify(BranchJSON),
+          Booking: this.BookingSend,
+          shopId: this.shopId,
+          GroupId: this.GroupId
+        }
       }
-
-      console.log('dataAdd', dataAdd)
-      await axios
-        .post(this.DNS_IP + '/LineGroupFlow/AdminEdit', dataAdd)
-        .then(async (response) => {
-          this.$swal('บันทึกข้อมูลเรียบร้อย', ' ', 'success')
-          this.dialog = false
-        })
+      if (this.BookingSend === false && checkitemSelect.length === 0) {
+        this.$swal('ผิดพลาด', 'กรุณาเลือกรายการแจ้งเตือน', 'error')
+      } else {
+        await axios
+          .post(this.DNS_IP + '/LineGroupFlow/AdminEdit', dataAdd)
+          .then(async (response) => {
+            this.$swal('บันทึกข้อมูลเรียบร้อย', ' ', 'success')
+            this.dialog = false
+          })
         // eslint-disable-next-line handle-callback-err
-        .catch((error) => {
-          console.log('error function addData : ', error)
-        })
+          .catch((error) => {
+            console.log('error function addData : ', error)
+          })
+      }
+      // console.log('dataAdd', dataAdd)
     },
     async DeleteGroup (item) {
       console.log('item', item)
