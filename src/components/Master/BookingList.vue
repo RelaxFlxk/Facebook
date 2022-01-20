@@ -349,57 +349,6 @@
                             required
                             :rules="[rules.required]"
                           ></v-select>
-                          <v-row>
-                            <v-col cols="6">
-                              <v-menu
-                                v-model="menuDate"
-                                :close-on-content-click="false"
-                                :nudge-right="40"
-                                transition="scale-transition"
-                                offset-y
-                                min-width="auto"
-                              >
-                                <template v-slot:activator="{ on, attrs }">
-                                  <v-text-field
-                                    v-model="date"
-                                    label="วันที่"
-                                    prepend-icon="mdi-calendar"
-                                    readonly
-                                    v-bind="attrs"
-                                    dense
-                                    outlined
-                                    v-on="on"
-                                    required
-                                    :rules="[rules.required]"
-                                  ></v-text-field>
-                                </template>
-                                <v-date-picker
-                                  v-model="date"
-                                  @input="menuDate = false"
-                                  :min="
-                                    new Date(
-                                      Date.now() -
-                                        new Date().getTimezoneOffset() * 60000
-                                    )
-                                      .toISOString()
-                                      .substr(0, 10)
-                                  "
-                                ></v-date-picker>
-                              </v-menu>
-                            </v-col>
-                            <v-col cols="6">
-                              <v-text-field
-                                v-model="time"
-                                label="เวลา"
-                                dense
-                                outlined
-                                type="time"
-                                suffix=""
-                                required
-                                :rules="[rules.required]"
-                              ></v-text-field>
-                            </v-col>
-                          </v-row>
                           <div v-if="fieldNameItem">
                             <div
                               v-for="(item, index) in fieldNameItem"
@@ -645,6 +594,57 @@
                                 </div>
                             </div>
                           </div>
+                          <v-row>
+                            <v-col cols="6">
+                              <v-menu
+                                v-model="menuDate"
+                                :close-on-content-click="false"
+                                :nudge-right="40"
+                                transition="scale-transition"
+                                offset-y
+                                min-width="auto"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                    v-model="date"
+                                    label="วันที่"
+                                    prepend-icon="mdi-calendar"
+                                    readonly
+                                    v-bind="attrs"
+                                    dense
+                                    outlined
+                                    v-on="on"
+                                    required
+                                    :rules="[rules.required]"
+                                  ></v-text-field>
+                                </template>
+                                <v-date-picker
+                                  v-model="date"
+                                  @input="menuDate = false"
+                                  :min="
+                                    new Date(
+                                      Date.now() -
+                                        new Date().getTimezoneOffset() * 60000
+                                    )
+                                      .toISOString()
+                                      .substr(0, 10)
+                                  "
+                                ></v-date-picker>
+                              </v-menu>
+                            </v-col>
+                            <v-col cols="6">
+                              <v-text-field
+                                v-model="time"
+                                label="เวลา"
+                                dense
+                                outlined
+                                type="time"
+                                suffix=""
+                                required
+                                :rules="[rules.required]"
+                              ></v-text-field>
+                            </v-col>
+                          </v-row>
                         </v-col>
                       </v-col>
                     </v-row>
