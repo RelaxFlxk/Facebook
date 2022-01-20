@@ -6,101 +6,12 @@
         <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
         <v-row>
 
-          <!-- Dialog export / import -->
           <v-col cols="12">
             <v-btn color="primary" depressed @click="dialogAdd = true, validate('ADD')">
               <v-icon left>mdi-text-box-plus</v-icon>
-              Add
-            </v-btn>
-            <v-btn color="yellow-light">
-              <v-icon left>mdi-download</v-icon>
-              <download-excel
-                class="btn btn-default"
-                :data="export_data"
-                :fields="export_fields"
-                :type="exportType"
-                :worksheet="exportWorksheet"
-                :name="exportFileName"
-              >
-                Export Data
-              </download-excel>
-            </v-btn>
-            <v-btn color="yellow-light" depressed @click="dialogImport = true">
-              <v-icon left>mdi-import</v-icon>
-              Manage Data By Excel.xls
+              เพิ่ม
             </v-btn>
           </v-col>
-          <!-- Import -->
-          <v-dialog v-model="dialogImport" persistent max-width="80%">
-            <v-card>
-              <v-card-title>
-                <span class="headline">จัดการไฟล์ผ่าน excel.xls</span>
-              </v-card-title>
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col cols="12">
-                      <input type="file" @change="importData" accept=".xls" />
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card-text>
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col cols="12">
-                      <template>
-                        <v-data-table
-                          :headers="columnsImport"
-                          :items="dataItemImport"
-                          :items-per-page="5"
-                          class="elevation-1"
-                        ></v-data-table>
-                      </template>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn
-                  elevation="2"
-                  color="red darken-1"
-                  text
-                  @click="(dialogImport = false), (dataItemImport = [])"
-                >
-                  ปิด
-                </v-btn>
-                <template v-if="!dataItemImportChecKHide">
-                  <v-btn
-                    elevation="2"
-                    color="red"
-                    text
-                    @click="importDataApprove('delete')"
-                  >
-                    ล้างข้อมูลทั้งหมดที่เลือก
-                  </v-btn>
-                  <v-btn
-                    elevation="2"
-                    color="blue darken-1"
-                    text
-                    @click="importDataApprove('update')"
-                  >
-                    ปรับปรุงข้อมูลที่ตรงกัน
-                  </v-btn>
-                  <v-btn
-                    elevation="2"
-                    color="green darken-1"
-                    text
-                    @click="importDataApprove('add')"
-                  >
-                    นำเข้าใหม่ทั้งหมด
-                  </v-btn>
-                </template>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-          <!-- end Import -->
 
           <!-- ADD -->
           <v-dialog v-model="dialogAdd" persistent max-width="80%">
@@ -133,6 +44,103 @@
                           placeholder="จำนวนคนเข้าใช้บริการ / วัน"
                           required
                           v-bind:options="options2" />
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="3">
+                      <v-text-field
+                          v-model="formAdd.time"
+                           v-mask="'##:##'"
+                           label="ตั้งค่าเวลาที่ต้องการ"
+                           placeholder="HH:mm"
+                      ></v-text-field>
+                      <v-select
+                        v-if="dataItemAddTime.length > 0"
+                        :items="dataItemAddTime"
+                        label="ตัวอย่างการแสดงเวลา"
+                        item-text="value"
+                        item-value="value"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="2">
+                      <v-btn
+                        class="mx-2"
+                        fab
+                        dark
+                        v-if="typeTimeAdd === 'add'"
+                        color="indigo"
+                        @click="addDataTimeAdd()"
+                      >
+                        <v-icon dark>
+                          mdi-plus
+                        </v-icon>
+                      </v-btn>
+                      <v-btn
+                        class="mx-2"
+                        fab
+                        dark
+                        v-if="typeTimeAdd === 'update'"
+                        color="question"
+                        @click="UpdateDataTimeAdd()"
+                      >
+                        <v-icon dark>
+                          mdi-tools
+                        </v-icon>
+                      </v-btn>
+                    </v-col>
+                    <v-col cols="7">
+                      <v-data-table
+                        :headers="columnsAddTime"
+                        :items="dataItemAddTime"
+                        :items-per-page="10"
+                      >
+                        <template v-slot:[`item.actions1`]="{ item, index }">
+                            <v-btn
+                              v-show="index !== 0"
+                              color="173053"
+                              fab
+                              x-small
+                              outlined
+                              @click="actionUp(item, index)"
+                            >
+                              <v-icon color="#173053">
+                                mdi-chevron-up
+                              </v-icon>
+                            </v-btn>
+                            <v-btn
+                              color="173053"
+                              fab
+                              x-small
+                              v-show="index < (dataItemAddTime.length -1)"
+                              outlined
+                              @click="actionDown(item, index)"
+                            >
+                              <v-icon color="#173053">
+                                mdi-chevron-down
+                              </v-icon>
+                            </v-btn>
+                          </template>
+                           <template v-slot:[`item.actions2`]="{ item, index }">
+                              <v-btn
+                                color="question"
+                                fab
+                                dark
+                                x-small
+                                @click.stop="getUpdateAdd(item, 'update', index)"
+                              >
+                                <v-icon color="#FFFFFF"> mdi-tools </v-icon>
+                              </v-btn>
+                              <v-btn
+                                color="red"
+                                dark
+                                fab
+                                x-small
+                                @click.stop="getUpdateAdd(item, 'delete', index)"
+                              >
+                                <v-icon> mdi-delete </v-icon>
+                              </v-btn>
+                            </template>
+                      </v-data-table>
                     </v-col>
                   </v-row>
                   </v-form>
@@ -197,6 +205,103 @@
                           placeholder="จำนวนคนเข้าใช้บริการ / วัน"
                           required
                           v-bind:options="options2" />
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="3">
+                      <v-text-field
+                          v-model="formAdd.time"
+                           v-mask="'##:##'"
+                           label="ตั้งค่าเวลาที่ต้องการ"
+                           placeholder="HH:mm"
+                      ></v-text-field>
+                      <v-select
+                        v-if="dataItemAddTime.length > 0"
+                        :items="dataItemAddTime"
+                        label="ตัวอย่างการแสดงเวลา"
+                        item-text="value"
+                        item-value="value"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="2">
+                      <v-btn
+                        class="mx-2"
+                        fab
+                        dark
+                        v-if="typeTimeAdd === 'add'"
+                        color="indigo"
+                        @click="addDataTimeAdd()"
+                      >
+                        <v-icon dark>
+                          mdi-plus
+                        </v-icon>
+                      </v-btn>
+                      <v-btn
+                        class="mx-2"
+                        fab
+                        dark
+                        v-if="typeTimeAdd === 'update'"
+                        color="question"
+                        @click="UpdateDataTimeAdd()"
+                      >
+                        <v-icon dark>
+                          mdi-tools
+                        </v-icon>
+                      </v-btn>
+                    </v-col>
+                    <v-col cols="7">
+                      <v-data-table
+                        :headers="columnsAddTime"
+                        :items="dataItemAddTime"
+                        :items-per-page="10"
+                      >
+                        <template v-slot:[`item.actions1`]="{ item, index }">
+                            <v-btn
+                              v-show="index !== 0"
+                              color="173053"
+                              fab
+                              x-small
+                              outlined
+                              @click="actionUp(item, index)"
+                            >
+                              <v-icon color="#173053">
+                                mdi-chevron-up
+                              </v-icon>
+                            </v-btn>
+                            <v-btn
+                              color="173053"
+                              fab
+                              x-small
+                              v-show="index < (dataItemAddTime.length -1)"
+                              outlined
+                              @click="actionDown(item, index)"
+                            >
+                              <v-icon color="#173053">
+                                mdi-chevron-down
+                              </v-icon>
+                            </v-btn>
+                          </template>
+                           <template v-slot:[`item.actions2`]="{ item, index }">
+                              <v-btn
+                                color="question"
+                                fab
+                                dark
+                                x-small
+                                @click.stop="getUpdateAdd(item, 'update', index)"
+                              >
+                                <v-icon color="#FFFFFF"> mdi-tools </v-icon>
+                              </v-btn>
+                              <v-btn
+                                color="red"
+                                dark
+                                fab
+                                x-small
+                                @click.stop="getUpdateAdd(item, 'delete', index)"
+                              >
+                                <v-icon> mdi-delete </v-icon>
+                              </v-btn>
+                            </template>
+                      </v-data-table>
                     </v-col>
                   </v-row>
                    </v-form>
@@ -305,6 +410,7 @@
                     <v-btn
                       color="question"
                       fab
+                      dark
                       small
                       @click.stop="(dialogEdit = true), getDataById(item), validate('UPDATE')"
                     >
@@ -343,6 +449,7 @@ import JsonExcel from 'vue-json-excel' // https://www.npmjs.com/package/vue-json
 import XLSX from 'xlsx' // import xlsx
 import readXlsxFile from 'read-excel-file'
 import VuetifyMoney from '../VuetifyMoney.vue'
+import TheMask from 'vue-the-mask'
 // import moment from 'moment' // แปลง date
 
 export default {
@@ -351,7 +458,8 @@ export default {
     downloadExcel: JsonExcel,
     XLSX,
     readXlsxFile,
-    VuetifyMoney
+    VuetifyMoney,
+    TheMask
   },
   created () {
     setInterval(this.getNowGlobal, 1000)
@@ -408,15 +516,20 @@ export default {
         masBranchCode: '',
         masBranchName: '',
         countCus: 0,
+        time: '',
+        setTime: '',
         shopId: this.$session.getAll().data.shopId
       },
       formUpdate: {
         masBranchCode: '',
         countCus: 0,
-        masBranchName: ''
+        masBranchName: '',
+        setTime: '',
+        time: ''
       },
       formUpdateItem: {
         countCus: 0,
+        setTime: '',
         masBranchName: ''
       },
       nameRules: [
@@ -431,46 +544,21 @@ export default {
       // Data Table Config
       columns: [
         { text: 'สาขา', value: 'masBranchName' },
-        { text: 'จำนวนคนเข้าใช้บริการ / วัน', value: 'countCus' },
+        { text: 'จำนวนคนเข้าใช้บริการ / วัน', value: 'countCus', align: 'center' },
         { text: 'วันที่สร้าง', value: 'CREATE_DATE' },
         { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
         { text: 'Action', value: 'action', sortable: false, align: 'center' }
       ],
       dataItem: [],
-      // End Data Table Config
-
-      // Config Import
-      columnsImport: [
-        { text: 'masBranchID', value: 'masBranchID' },
-        { text: 'masBranchCode', value: 'masBranchCode' },
-        { text: 'masBranchName', value: 'masBranchName' },
-        { text: 'masCompanyCode', value: 'masCompanyCode' },
-        { text: 'masCompanyName', value: 'masCompanyName' }
+      dataItemAddTime: [],
+      columnsAddTime: [
+        { text: 'เวลา', value: 'value' },
+        { text: 'เรียงตำแหน่ง', value: 'actions1', align: 'center' },
+        { text: 'จัดการเวลา', value: 'actions2', align: 'center' },
+        { text: 'sortNo', value: 'sortNo', align: 'center' }
       ],
-      dataItemImportChecKHide: true,
-      dataItemImport: [],
-      // End Config Import
-      // Export Config
-      exportType: 'xls',
-      exportFileName: 'Master-Branch.xls',
-      exportWorksheet: 'WorkSheet',
-      export_fields: {
-        masBranchID: 'masBranchID',
-        masBranchCode: 'masBranchCode',
-        masBranchName: 'masBranchName',
-        masCompanyCode: 'masCompanyCode',
-        masCompanyName: 'masCompanyName'
-      },
-      json_meta: [
-        [
-          {
-            key: 'charset',
-            value: 'utf-8'
-          }
-        ]
-      ],
-      // End Export Config
-      Company: []
+      typeTimeAdd: 'add',
+      indexTimeAdd: 0
     }
   },
   async mounted () {
@@ -480,6 +568,74 @@ export default {
     this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
   },
   methods: {
+    addDataTimeAdd () {
+      if (this.formAdd.time) {
+        var dataTime = this.formAdd.time.split(':')
+        var hh = dataTime[0]
+        var mm = dataTime[1]
+        console.log(dataTime)
+        if (parseInt(hh) <= 24 && parseInt(mm) <= 59) {
+          if (this.dataItemAddTime.length === 0) {
+            this.dataItemAddTime.push({value: this.formAdd.time, sortNo: 1})
+          } else {
+            if (this.dataItemAddTime.filter(el => { return el.value === this.formAdd.time }).length > 0) {
+              this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกมีอยู่ในรายการแล้ว', 'error')
+            } else {
+              var numArr = this.dataItemAddTime.length
+              this.dataItemAddTime.push({value: this.formAdd.time, sortNo: parseInt(this.dataItemAddTime[numArr - 1].sortNo) + 1})
+            }
+          }
+        } else {
+          this.$swal('ผิดพลาด', 'กรุณาตรวจสอบเวลาให้ถูกต้อง', 'error')
+        }
+      }
+    },
+    async actionUp (item, index) {
+      if ((index - 1) >= this.dataItemAddTime.length) {
+        var k = (index - 1) - this.dataItemAddTime.length + 1
+        while (k--) {
+          this.dataItemAddTime.push(undefined)
+        }
+      }
+      this.dataItemAddTime.splice((index - 1), 0, this.dataItemAddTime.splice(index, 1)[0])
+      this.dataItemAddTime[index].sortNo = this.dataItemAddTime[index].sortNo + 1
+      this.dataItemAddTime[index - 1].sortNo = this.dataItemAddTime[index].sortNo - 1
+    },
+    async actionDown (item, index) {
+      if ((index + 1) >= this.dataItemAddTime.length) {
+        var k = (index + 1) - this.dataItemAddTime.length + 1
+        while (k--) {
+          this.dataItemAddTime.push(undefined)
+        }
+      }
+      this.dataItemAddTime.splice((index + 1), 0, this.dataItemAddTime.splice(index, 1)[0])
+      this.dataItemAddTime[index].sortNo = this.dataItemAddTime[index].sortNo - 1
+      this.dataItemAddTime[index + 1].sortNo = this.dataItemAddTime[index].sortNo + 1
+    },
+    getUpdateAdd (item, text, index) {
+      if (text === 'update') {
+        this.formAdd.time = item.value
+        this.typeTimeAdd = text
+        this.indexTimeAdd = index
+      } else {
+        this.dataItemAddTime.splice(index, 1)
+        console.log('this.dataItemAddTime', this.dataItemAddTime)
+        for (var i = 0; i < this.dataItemAddTime.length; i++) {
+          var d = this.dataItemAddTime[i]
+          d.sortNo = i + 1
+        }
+        this.typeTimeAdd = 'add'
+      }
+    },
+    UpdateDataTimeAdd () {
+      if (this.dataItemAddTime.filter(el => { return el.value === this.formAdd.time }).length > 0) {
+        this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกมีอยู่ในรายการแล้ว', 'error')
+      } else {
+        this.dataItemAddTime[this.indexTimeAdd].value = this.formAdd.time
+        this.typeTimeAdd = 'add'
+        this.formAdd.time = ''
+      }
+    },
     validate (Action) {
       switch (Action) {
         case 'ADD':
@@ -513,6 +669,12 @@ export default {
       } else {
         this.formUpdate.countCus = 0
       }
+      console.log('this.formUpdate.setTime', item.setTime)
+      if (item.setTime === null || item.setTime === '') {
+        this.dataItemAddTime = []
+      } else {
+        this.dataItemAddTime = JSON.parse(item.setTime)
+      }
     },
     async addData () {
       //
@@ -520,26 +682,31 @@ export default {
       // สำหรับ เพิ่มข้อมูล
       // ต้องระบุ Create / Last User ว่าใครเป็นคนสร้าง
       //
-      this.formAdd.CREATE_USER = this.$session.getAll().data.userName
-      this.formAdd.LAST_USER = this.$session.getAll().data.userName
-      if (this.formAdd.countCus) {
-        this.formAdd.countCus = this.formAdd.countCus
-      } else {
-        this.formAdd.countCus = 0
-      }
+      if (this.dataItemAddTime.length > 0) {
+        this.formAdd.CREATE_USER = this.$session.getAll().data.userName
+        this.formAdd.LAST_USER = this.$session.getAll().data.userName
+        if (this.formAdd.countCus) {
+          this.formAdd.countCus = this.formAdd.countCus
+        } else {
+          this.formAdd.countCus = 0
+        }
 
-      console.log('form', JSON.stringify(this.formAdd))
+        console.log('form', JSON.stringify(this.formAdd))
 
-      this.formAdd.masBranchCode = this.code + this.generateCodeGlobal()
-
-      this.dataReady = false
-      if (this.formAdd.masBranchName === '') {
-        this.$swal('ผิดพลาด', 'กรอกชื่อ แผนก', 'error')
-      } else if (this.formAdd.masBranchCode === '') {
-        this.$swal('ผิดพลาด', 'กรุณาเลือก สาขา', 'error')
-      } else {
+        this.formAdd.masBranchCode = this.code + this.generateCodeGlobal()
+        this.formAdd.setTime = JSON.stringify(this.dataItemAddTime)
+        delete this.formAdd['time']
         this.dataReady = false
-        this.submitAdd()
+        if (this.formAdd.masBranchName === '') {
+          this.$swal('ผิดพลาด', 'กรอกชื่อ แผนก', 'error')
+        } else if (this.formAdd.masBranchCode === '') {
+          this.$swal('ผิดพลาด', 'กรุณาเลือก สาขา', 'error')
+        } else {
+          this.dataReady = false
+          this.submitAdd()
+        }
+      } else {
+        this.$swal('ผิดพลาด', 'กรุณาตั้งเวลาที่จะให้ในสาขานี้', 'error')
       }
     },
     async submitAdd () {
@@ -590,29 +757,34 @@ export default {
         })
     },
     async editData () {
-      this.formUpdateItem.countCus = this.formUpdate.countCus
-      this.formUpdateItem.masBranchName = this.formUpdate.masBranchName
-      // Config User ทำรายการล่าสุด
-      this.formUpdateItem.LAST_USER = this.$session.getAll().data.userName
-      if (this.formUpdate.countCus) {
-        this.formUpdate.countCus = this.formUpdate.countCus
+      if (this.dataItemAddTime.length > 0) {
+        this.formUpdateItem.countCus = this.formUpdate.countCus
+        this.formUpdateItem.masBranchName = this.formUpdate.masBranchName
+        this.formUpdateItem.setTime = JSON.stringify(this.dataItemAddTime)
+        // Config User ทำรายการล่าสุด
+        this.formUpdateItem.LAST_USER = this.$session.getAll().data.userName
+        if (this.formUpdate.countCus) {
+          this.formUpdate.countCus = this.formUpdate.countCus
+        } else {
+          this.formUpdate.countCus = 0
+        }
+        // End Config User ทำรายการล่าสุด
+        console.log('this.formUpdateItem', this.formUpdateItem)
+
+        // Debug
+        console.log('EDIT PK : ', this.PK)
+        console.log('formUpdateItem', JSON.stringify(this.formUpdateItem))
+        // End Debug
+        // สำหรับ แก้ไขข้อมูล
+        // ต้องระบุ  Last User ว่าใครเป็นคนแก้ไขล่าสุด
+        //
+        this.dataReady = false
+
+        this.dataReady = false
+        this.submitEdit(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
       } else {
-        this.formUpdate.countCus = 0
+        this.$swal('ผิดพลาด', 'กรุณาตั้งเวลาที่จะให้ในสาขานี้', 'error')
       }
-      // End Config User ทำรายการล่าสุด
-      console.log('this.formUpdateItem', this.formUpdateItem)
-
-      // Debug
-      console.log('EDIT PK : ', this.PK)
-      console.log('formUpdateItem', JSON.stringify(this.formUpdateItem))
-      // End Debug
-      // สำหรับ แก้ไขข้อมูล
-      // ต้องระบุ  Last User ว่าใครเป็นคนแก้ไขล่าสุด
-      //
-      this.dataReady = false
-
-      this.dataReady = false
-      this.submitEdit(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
     },
     async submitEdit (DNS_IP, PATH, ID, DT) {
       // this.editDataGlobal(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
@@ -646,7 +818,7 @@ export default {
               this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
               // Close Dialog
               this.dialogEdit = false
-
+              await this.clearData()
               // Load Data
               await this.getDataGlobal(DNS_IP, PATH, this.$session.getAll().data.shopId)
             })
@@ -677,200 +849,9 @@ export default {
       this.formAdd.masBranchName = ''
       this.formAdd.countCus = 0
       this.formAdd.shopId = this.$session.getAll().data.shopId
-    },
-    // * Option Import Excel
-    // * ตั้งค่าจาก Data
-    importData (event) {
-      var input = event.target
-      var reader = new FileReader()
-      reader.onload = () => {
-        var fileData = reader.result
-        var wb = XLSX.read(fileData, { type: 'binary' })
-        wb.SheetNames.forEach((sheetName) => {
-          var rowObj = XLSX.utils.sheet_to_json(wb.Sheets[sheetName])
-          console.log(rowObj)
-          this.dataItemImport = rowObj
-        })
-        if (this.dataItemImport.length === 0) {
-          alert('โปรดใส่ไฟล์ให้ถูกต้อง')
-        } else {
-          this.dataItemImportChecKHide = false
-        }
-      }
-
-      reader.readAsBinaryString(input.files[0])
-    },
-    importDataApprove (action) {
-      console.log('Action', action)
-      var titleMsg = ''
-      var checkError = false
-      if (action === 'add') {
-        titleMsg = 'ท่านต้องการ นำเข้าข้อมูลจากไฟล์นี้ ใช่หรือไม่'
-      } else if (action === 'delete') {
-        titleMsg = 'ท่านต้องการ ลบข้อมูลจากไฟล์นี้ ใช่หรือไม่'
-      } else {
-        titleMsg = 'ท่านต้องการ ปรับปรุงข้อมูลจากไฟล์นี้ ใช่หรือไม่'
-      }
-
-      this.$swal({
-        title: titleMsg,
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      })
-        .then(async (result) => {
-          for (var key in this.dataItemImport) {
-            this.PK = this.dataItemImport[key].masBranchID
-            if (action === 'add') {
-              console.log('add')
-              await this.importDataAdd(this.dataItemImport[key])
-              checkError = true
-            } else {
-              await axios
-                .get(
-                  // eslint-disable-next-line quotes
-                  this.DNS_IP +
-                    this.path +
-                    'get?masBranchID=' +
-                    this.dataItemImport[key].masBranchID,
-                  {
-                    headers: {
-                      'Application-Key': this.$session.getAll().ApplicationKey
-                    }
-                  }
-                )
-                .then(async (response) => {
-                  if (action === 'update') {
-                    await this.importDataUpdate(this.dataItemImport[key])
-                    checkError = true
-                  }
-                  if (action === 'delete') {
-                    await this.importDataDelete(this.dataItemImport[key])
-                    checkError = true
-                  }
-                })
-                // eslint-disable-next-line handle-callback-err
-                .catch((error) => {
-                  checkError = false
-
-                  console.log('error /master_branch/get?masBranchID : ', error)
-                })
-            }
-          }
-          console.log(checkError)
-          if (checkError === true) {
-            await this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
-          } else {
-            this.dataItemImport = []
-            this.dataItemImportChecKHide = true
-            alert('โปรดใส่ไฟล์ให้ถูกต้อง')
-          }
-        })
-        .catch((error) => {
-          console.log('error function importDataApprove : ', error)
-          this.dataReady = true
-        })
-    },
-    async importDataAdd (dt) {
-      Object.assign(this.formAdd, dt)
-      this.formAdd.CREATE_USER = this.$session.getAll().data.userName
-      this.formAdd.LAST_USER = this.$session.getAll().data.userName
-
-      delete this.formAdd['masBranchID']
-      delete this.formAdd['LAST_DATE']
-      delete this.formAdd['CREATE_DATE']
-      delete this.formAdd['RECORD_STATUS']
-      await axios
-        .post(
-          // eslint-disable-next-line quotes
-          this.DNS_IP + this.path + "add",
-          this.formAdd,
-          {
-            headers: {
-              'Application-Key': this.$session.getAll().ApplicationKey
-            }
-          }
-        )
-        .then(async (response) => {
-          this.dialogImport = false
-          // Debug response
-          console.log('/master_branch/add/', response)
-        })
-        // eslint-disable-next-line handle-callback-err
-        .catch((error) => {
-          alert('โปรดใส่ไฟล์ให้ถูกต้อง', dt)
-          console.log('error function importDataAdd addData : ', error)
-          this.dataReady = true
-        })
-    },
-    async importDataUpdate (dt) {
-      Object.assign(this.formUpdate, dt)
-      delete this.formUpdate['masBranchID']
-      delete this.formUpdate['LAST_DATE']
-      delete this.formUpdate['CREATE_DATE']
-      delete this.formUpdate['RECORD_STATUS']
-      this.formUpdate.LAST_USER = this.$session.getAll().data.userName
-
-      for (var key in this.formUpdateItem) {
-        for (var key2 in this.formUpdate) {
-          if (key === key2) {
-            this.formUpdateItem[key] = this.formUpdate[key2]
-          }
-        }
-      }
-
-      // Debug
-      console.log('EDIT PK : ', this.PK)
-      console.log('formUpdateItem', JSON.stringify(this.formUpdateItem))
-
-      await axios
-        .post(
-          // eslint-disable-next-line quotes
-          this.DNS_IP + this.path + "edit/" + dt.masBranchID,
-          this.formUpdateItem,
-          {
-            headers: {
-              'Application-Key': this.$session.getAll().ApplicationKey
-            }
-          }
-        )
-        .then(async (response) => {
-          this.dialogImport = false
-          // Debug response
-          console.log('/master_branch/edit/', response)
-        })
-        // eslint-disable-next-line handle-callback-err
-        .catch((error) => {
-          alert('โปรดใส่ไฟล์ให้ถูกต้อง', dt)
-          console.log('error function importDataUpdate : ', error)
-        })
-    },
-    async importDataDelete (dt) {
-      this.formUpdate.LAST_USER = this.$session.getAll().data.userName
-      await axios
-        .post(
-          // eslint-disable-next-line quotes
-          this.DNS_IP + this.path + "delete/" + dt.masBranchID,
-          this.formUpdate,
-          {
-            headers: {
-              'Application-Key': this.$session.getAll().ApplicationKey
-            }
-          }
-        )
-        .then(async (response) => {
-          this.dialogImport = false
-          // Debug response
-          console.log('/master_branch/delete/', response)
-        })
-        // eslint-disable-next-line handle-callback-err
-        .catch((error) => {
-          alert('โปรดใส่ไฟล์ให้ถูกต้อง', dt)
-          console.log('error function importDataDelete : ', error)
-        })
+      this.dataItemAddTime = []
+      this.typeTimeAdd = 'add'
+      this.indexTimeAdd = 0
     }
   }
 }
