@@ -29,7 +29,7 @@
                 <v-icon left>mdi-text-box-plus</v-icon>
                 เพิ่ม
               </v-btn>
-              <v-btn
+              <!-- <v-btn
                 color="teal"
                 style="z-index:8;"
                 id="v-step-0"
@@ -39,7 +39,7 @@
               >
                 <v-icon left>mdi-download</v-icon>
                 Export Data
-              </v-btn>
+              </v-btn> -->
             </v-btn-toggle>
             <!-- </v-overlay> -->
           </v-col>
@@ -58,7 +58,7 @@
                   @click="getSelect('wait',countWaiting)"
                 >
                   <div>
-                    <strong>รายการนัดหมายใหม่</strong>
+                    <strong>รอโทรยืนยัน</strong>
                   </div>
                   <div>จำนวน : {{countWaiting}}</div>
                 </v-alert>
@@ -1259,7 +1259,6 @@
                         <v-chip
                           filter
                           dark
-                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
                           :color="(item.fastTrack) ? 'green darken-2' : 'grey darken-1'"
                           v-model="item.fastTrack"
                           @click.stop="item.fastTrack=!item.fastTrack;confirmRemark(item, 'fastTrack')"
@@ -1271,7 +1270,6 @@
                         <v-chip
                           filter
                           dark
-                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
                           :color="(item.extraJob) ? 'green darken-2' : 'grey darken-1'"
                           v-model="item.extraJob"
                           @click.stop="item.extraJob=!item.extraJob;confirmRemark(item, 'extraJob')"
@@ -1397,7 +1395,6 @@
                         <v-chip
                           filter
                           dark
-                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
                           :color="(item.fastTrack) ? 'green darken-2' : 'grey darken-1'"
                           v-model="item.fastTrack"
                           @click.stop="item.fastTrack=!item.fastTrack;confirmRemark(item, 'fastTrack')"
@@ -1409,7 +1406,6 @@
                         <v-chip
                           filter
                           dark
-                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
                           :color="(item.extraJob) ? 'green darken-2' : 'grey darken-1'"
                           v-model="item.extraJob"
                           @click.stop="item.extraJob=!item.extraJob;confirmRemark(item, 'extraJob')"
@@ -1801,11 +1797,13 @@ export default {
         }
       } else if (text === 'extraJob') {
         dt = {
+          fastTrack: (item.extraJob) ? false : item.fastTrack,
           extraJob: item.extraJob,
           LAST_USER: this.session.data.userName
         }
       } else if (text === 'fastTrack') {
         dt = {
+          extraJob: (item.fastTrack) ? false : item.extraJob,
           fastTrack: item.fastTrack,
           LAST_USER: this.session.data.userName
         }
@@ -1858,6 +1856,17 @@ export default {
           dataExport.push(s)
         }
       }
+      let s = {}
+      s.type = ''
+      s.runNo = ''
+      s.licenseNo = ''
+      s.title = ''
+      s.status = ''
+      s.cusName = ''
+      s.cusReg = ''
+      s.flowName = ''
+      s.tel = ''
+      dataExport.push(s)
       runNo = 0
       for (let i = 0; i < this.dataItemTime.length; i++) {
         let d = this.dataItemTime[i]
@@ -2080,7 +2089,7 @@ export default {
                 s.statusBtText = 'รับรถแล้ว'
                 break
               default:
-                s.statusBtText = 'รายการนัดหมายใหม่'
+                s.statusBtText = 'รอโทรยืนยัน'
                 break
             }
             let dataBookingData = []
