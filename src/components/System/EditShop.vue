@@ -68,7 +68,6 @@
                         <v-color-picker
                           dot-size="25"
                           v-model="formUpdate.primaryColor"
-                          hide-inputs
                           mode="hexa"
                           show-swatches
                           swatches-max-height="100"
@@ -79,7 +78,6 @@
                         <v-color-picker
                           dot-size="25"
                           v-model="formUpdate.secondaryColor"
-                          hide-inputs
                           mode="hexa"
                           show-swatches
                           swatches-max-height="100"
