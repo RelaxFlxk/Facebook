@@ -29,7 +29,7 @@
             <v-select
               :items="DataBranchName"
               v-model="masBranchID"
-              @change="chkFlowName()"
+              @change="chkFlowName(), checkTime()"
               dense
               outlined
               hide-details
@@ -298,13 +298,14 @@
                             </v-menu>
                           </v-col>
                           <v-col class="pt-0 pb-0" cols="6">
-                            <v-text-field
+                            <v-select
                               v-model="formUpdate.endTime"
+                              :items="timeavailable"
                               label="เวลา"
-                              type="time"
-                              suffix=""
+                              menu-props="auto"
                               required
-                            ></v-text-field>
+                              :rules ="[rules.required]"
+                            ></v-select>
                           </v-col>
                         </v-row>
                       </v-col>
@@ -912,7 +913,8 @@ export default {
       userId: '',
       totalDateDiff: '',
       masBranchID: '',
-      // masBranchId: '',
+      branchData: [],
+      timeavailable: [],
       formUpdate: {
         stepId: '',
         flowId: '',
@@ -1023,8 +1025,15 @@ export default {
           }
         })
     },
+    checkTime () {
+      console.log('this.branchData', this.branchData)
+      console.log('masBranchID', this.masBranchID)
+      this.timeavailable = JSON.parse(this.branchData.filter(item => { return item.masBranchID === this.masBranchID })[0].setTime)
+      console.log('timevailable', this.timeavailable)
+    },
     getDataBranch () {
       this.DataBranchName = []
+      this.branchData = []
       console.log('DataBranchName', this.DataBranchName)
       axios
         .get(this.DNS_IP + '/master_branch/get?shopId=' + this.shopId)
@@ -1036,6 +1045,7 @@ export default {
               d.text = d.masBranchName
               d.value = d.masBranchID
               this.DataBranchName.push(d)
+              this.branchData.push(d)
             }
           } else {
             this.DataBranchName = []
