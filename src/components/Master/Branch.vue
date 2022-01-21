@@ -94,7 +94,7 @@
                         :items="dataItemAddTime"
                         :items-per-page="10"
                       >
-                        <template v-slot:[`item.actions1`]="{ item, index }">
+                        <!-- <template v-slot:[`item.actions1`]="{ item, index }">
                             <v-btn
                               v-show="index !== 0"
                               color="173053"
@@ -119,7 +119,7 @@
                                 mdi-chevron-down
                               </v-icon>
                             </v-btn>
-                          </template>
+                          </template> -->
                            <template v-slot:[`item.actions2`]="{ item, index }">
                               <v-btn
                                 color="question"
@@ -255,7 +255,7 @@
                         :items="dataItemAddTime"
                         :items-per-page="10"
                       >
-                        <template v-slot:[`item.actions1`]="{ item, index }">
+                        <!-- <template v-slot:[`item.actions1`]="{ item, index }">
                             <v-btn
                               v-show="index !== 0"
                               color="173053"
@@ -280,7 +280,7 @@
                                 mdi-chevron-down
                               </v-icon>
                             </v-btn>
-                          </template>
+                          </template> -->
                            <template v-slot:[`item.actions2`]="{ item, index }">
                               <v-btn
                                 color="question"
@@ -553,9 +553,8 @@ export default {
       dataItemAddTime: [],
       columnsAddTime: [
         { text: 'เวลา', value: 'value' },
-        { text: 'เรียงตำแหน่ง', value: 'actions1', align: 'center' },
-        { text: 'จัดการเวลา', value: 'actions2', align: 'center' },
-        { text: 'sortNo', value: 'sortNo', align: 'center' }
+        // { text: 'เรียงตำแหน่ง', value: 'actions1', align: 'center' },
+        { text: 'จัดการเวลา', value: 'actions2', align: 'center' }
       ],
       typeTimeAdd: 'add',
       indexTimeAdd: 0
@@ -576,13 +575,30 @@ export default {
         console.log(dataTime)
         if (parseInt(hh) <= 24 && parseInt(mm) <= 59) {
           if (this.dataItemAddTime.length === 0) {
-            this.dataItemAddTime.push({value: this.formAdd.time, sortNo: 1})
+            // this.dataItemAddTime.push({value: this.formAdd.time, text: this.formAdd.time, sortNo: 1})
+            let numhh = 100 + parseInt(hh)
+            let nummm = 100 + parseInt(mm)
+            let strhh = numhh.toString().substring(1, 3)
+            let strmm = nummm.toString().substring(1, 3)
+            this.dataItemAddTime.push({value: strhh + ':' + strmm, text: strhh + ':' + strmm})
           } else {
-            if (this.dataItemAddTime.filter(el => { return el.value === this.formAdd.time }).length > 0) {
+            let numhh = 100 + parseInt(hh)
+            let nummm = 100 + parseInt(mm)
+            let strhh = numhh.toString().substring(1, 3)
+            let strmm = nummm.toString().substring(1, 3)
+            if (this.dataItemAddTime.filter(el => { return el.value === strhh + ':' + strmm }).length > 0) {
               this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกมีอยู่ในรายการแล้ว', 'error')
             } else {
-              var numArr = this.dataItemAddTime.length
-              this.dataItemAddTime.push({value: this.formAdd.time, sortNo: parseInt(this.dataItemAddTime[numArr - 1].sortNo) + 1})
+              // var numArr = this.dataItemAddTime.length
+              // this.dataItemAddTime.push({value: this.formAdd.time, text: this.formAdd.time, sortNo: parseInt(this.dataItemAddTime[numArr - 1].sortNo) + 1})
+              let numhh = 100 + parseInt(hh)
+              let nummm = 100 + parseInt(mm)
+              let strhh = numhh.toString().substring(1, 3)
+              let strmm = nummm.toString().substring(1, 3)
+              this.dataItemAddTime.push({value: strhh + ':' + strmm, text: strhh + ':' + strmm})
+              this.dataItemAddTime.sort(function (a, b) {
+                return a.value.localeCompare(b.value)
+              })
             }
           }
         } else {
@@ -590,28 +606,28 @@ export default {
         }
       }
     },
-    async actionUp (item, index) {
-      if ((index - 1) >= this.dataItemAddTime.length) {
-        var k = (index - 1) - this.dataItemAddTime.length + 1
-        while (k--) {
-          this.dataItemAddTime.push(undefined)
-        }
-      }
-      this.dataItemAddTime.splice((index - 1), 0, this.dataItemAddTime.splice(index, 1)[0])
-      this.dataItemAddTime[index].sortNo = this.dataItemAddTime[index].sortNo + 1
-      this.dataItemAddTime[index - 1].sortNo = this.dataItemAddTime[index].sortNo - 1
-    },
-    async actionDown (item, index) {
-      if ((index + 1) >= this.dataItemAddTime.length) {
-        var k = (index + 1) - this.dataItemAddTime.length + 1
-        while (k--) {
-          this.dataItemAddTime.push(undefined)
-        }
-      }
-      this.dataItemAddTime.splice((index + 1), 0, this.dataItemAddTime.splice(index, 1)[0])
-      this.dataItemAddTime[index].sortNo = this.dataItemAddTime[index].sortNo - 1
-      this.dataItemAddTime[index + 1].sortNo = this.dataItemAddTime[index].sortNo + 1
-    },
+    // async actionUp (item, index) {
+    //   if ((index - 1) >= this.dataItemAddTime.length) {
+    //     var k = (index - 1) - this.dataItemAddTime.length + 1
+    //     while (k--) {
+    //       this.dataItemAddTime.push(undefined)
+    //     }
+    //   }
+    //   this.dataItemAddTime.splice((index - 1), 0, this.dataItemAddTime.splice(index, 1)[0])
+    //   this.dataItemAddTime[index].sortNo = this.dataItemAddTime[index].sortNo + 1
+    //   this.dataItemAddTime[index - 1].sortNo = this.dataItemAddTime[index].sortNo - 1
+    // },
+    // async actionDown (item, index) {
+    //   if ((index + 1) >= this.dataItemAddTime.length) {
+    //     var k = (index + 1) - this.dataItemAddTime.length + 1
+    //     while (k--) {
+    //       this.dataItemAddTime.push(undefined)
+    //     }
+    //   }
+    //   this.dataItemAddTime.splice((index + 1), 0, this.dataItemAddTime.splice(index, 1)[0])
+    //   this.dataItemAddTime[index].sortNo = this.dataItemAddTime[index].sortNo - 1
+    //   this.dataItemAddTime[index + 1].sortNo = this.dataItemAddTime[index].sortNo + 1
+    // },
     getUpdateAdd (item, text, index) {
       if (text === 'update') {
         this.formAdd.time = item.value
@@ -619,21 +635,46 @@ export default {
         this.indexTimeAdd = index
       } else {
         this.dataItemAddTime.splice(index, 1)
-        console.log('this.dataItemAddTime', this.dataItemAddTime)
-        for (var i = 0; i < this.dataItemAddTime.length; i++) {
-          var d = this.dataItemAddTime[i]
-          d.sortNo = i + 1
-        }
+        // console.log('this.dataItemAddTime', this.dataItemAddTime)
+        // for (var i = 0; i < this.dataItemAddTime.length; i++) {
+        //   var d = this.dataItemAddTime[i]
+        //   d.sortNo = i + 1
+        // }
+        this.dataItemAddTime.sort(function (a, b) {
+          return a.value.localeCompare(b.value)
+        })
         this.typeTimeAdd = 'add'
       }
     },
     UpdateDataTimeAdd () {
-      if (this.dataItemAddTime.filter(el => { return el.value === this.formAdd.time }).length > 0) {
-        this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกมีอยู่ในรายการแล้ว', 'error')
-      } else {
-        this.dataItemAddTime[this.indexTimeAdd].value = this.formAdd.time
-        this.typeTimeAdd = 'add'
-        this.formAdd.time = ''
+      if (this.formAdd.time) {
+        var dataTime = this.formAdd.time.split(':')
+        var hh = dataTime[0]
+        var mm = dataTime[1]
+        console.log(dataTime)
+        if (parseInt(hh) <= 24 && parseInt(mm) <= 59) {
+          let numhh = 100 + parseInt(hh)
+          let nummm = 100 + parseInt(mm)
+          let strhh = numhh.toString().substring(1, 3)
+          let strmm = nummm.toString().substring(1, 3)
+          if (this.dataItemAddTime.filter(el => { return el.value === strhh + ':' + strmm }).length > 0) {
+            this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกมีอยู่ในรายการแล้ว', 'error')
+          } else {
+            let numhh = 100 + parseInt(hh)
+            let nummm = 100 + parseInt(mm)
+            let strhh = numhh.toString().substring(1, 3)
+            let strmm = nummm.toString().substring(1, 3)
+            this.dataItemAddTime[this.indexTimeAdd].value = strhh + ':' + strmm
+            this.dataItemAddTime[this.indexTimeAdd].text = strhh + ':' + strmm
+            this.typeTimeAdd = 'add'
+            this.formAdd.time = ''
+            this.dataItemAddTime.sort(function (a, b) {
+              return a.value.localeCompare(b.value)
+            })
+          }
+        } else {
+          this.$swal('ผิดพลาด', 'กรุณาตรวจสอบเวลาให้ถูกต้อง', 'error')
+        }
       }
     },
     validate (Action) {
@@ -658,7 +699,7 @@ export default {
     async getDataById (item) {
       //
       //
-      // สำหรับ เรียกข้อมูล ใส่ form Update / Delete
+      // สำหรับ เรียกข้อมูล ใส่ form Update / Delete1
       //
       //
       // Get ID /main.js

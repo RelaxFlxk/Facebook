@@ -36,7 +36,7 @@
                           <v-select
                             v-model="formAdd.masBranchID"
                             :items="DataBranchName"
-                            @change="flowfieldtest()"
+                            @change="flowfieldtest() ,checkTime()"
                             dense
                             outlined
                             hide-details
@@ -373,16 +373,15 @@
                                 </v-col>
 
                                 <v-col cols="6">
-                                  <v-text-field
+                                  <v-select
                                     v-model="endTime"
+                                    :items="timeavailable"
                                     label="เวลา"
-                                    type="time"
-                                    suffix=""
-                                    required
-                                    :rules="[rules.required]"
+                                    menu-props="auto"
                                     outlined
-                                    dense
-                                  ></v-text-field>
+                                    required
+                                    :rules ="[rules.required]"
+                                  ></v-select>
                                 </v-col>
                               </v-row>
                               {{itemJob.length}}
@@ -523,7 +522,9 @@ export default {
       dataItem: [],
       valid: true,
       validAdd: false,
-      validUpdate: false
+      validUpdate: false,
+      branchData: [],
+      timeavailable: []
     }
   },
   async mounted () {
@@ -539,6 +540,12 @@ export default {
     },
     reset () {
       this.$refs.form.reset()
+    },
+    checkTime () {
+      console.log('this.branchData', this.branchData)
+      console.log('this.fromAdd.masBranchID', this.formAdd.masBranchID)
+      this.timeavailable = JSON.parse(this.branchData.filter(item => { return item.masBranchID === this.formAdd.masBranchID })[0].setTime)
+      console.log('timevailable', this.timeavailable)
     },
     async getCustomField () {
       this.editedItemSelete = []
@@ -559,6 +566,7 @@ export default {
     },
     getDataBranch () {
       this.DataBranchName = []
+      this.branchData = []
       console.log('DataBranchName', this.DataBranchName)
       axios
         .get(this.DNS_IP + '/master_branch/get?shopId=' + this.shopId)
@@ -570,6 +578,7 @@ export default {
               d.text = d.masBranchName
               d.value = d.masBranchID
               this.DataBranchName.push(d)
+              this.branchData.push(d)
             }
           }
         })

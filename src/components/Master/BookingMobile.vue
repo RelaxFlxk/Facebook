@@ -473,14 +473,15 @@
               </v-menu>
             </v-col>
             <v-col cols="12" class="pt-0 pb-0">
-              <v-text-field
-                v-model="formChange.time"
-                label="เวลา"
-                type="time"
-                suffix="th-th"
-                required
-                :rules="[rules.required]"
-              ></v-text-field>
+              <v-select
+                  v-model="formChange.time"
+                  :items="timeavailable"
+                  label="เวลา"
+                  menu-props="auto"
+                  outlined
+                  required
+                  :rules ="[rules.required]"
+                ></v-select>
             </v-col>
           </v-row>
           <div class="text-center">
@@ -716,7 +717,8 @@ export default {
         date: '',
         time: ''
       },
-      masterTime: ['06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00']
+      masterTime: ['06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'],
+      timeavailable: []
     }
   },
   beforeCreate () {
@@ -1021,6 +1023,7 @@ export default {
                     // }
                   })
                 s.masBranchID = dataBookingData[0].masBranchID
+                this.timeavailable = JSON.parse(dataBookingData[0].setTime)
                 s.cusName = dataBookingData.filter(function (el) {
                   return el.fieldName === 'ชื่อ'
                 })
