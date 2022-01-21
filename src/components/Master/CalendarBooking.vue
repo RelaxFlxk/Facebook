@@ -148,7 +148,97 @@
                     @click:event="showEvent"
                     color="primary"
                     :type="type"
-                  ></v-calendar>
+                  >
+                  <template v-slot:day="{ date }">
+                    <template v-if="eventInfo[date] && eventInfo[date].all > 0">
+                      <v-row>
+                        <v-col>
+                          <v-progress-linear
+                            :value="eventInfo[date].allPercent"
+                            :color="(eventInfo[date].allPercent >= 100) ? 'red lighten-1' : ((eventInfo[date].allPercent < 50) ? 'green lighten-1' : 'yellow lighten-1' ) "
+                            height="25"
+                            style="cursor: pointer"
+                            @click.native="openTaskList(date, 'all')"
+                          >
+                            <template v-slot:default="{}">
+                              {{ eventInfo[date].all }} / {{ countCus }}
+                            </template>
+                          </v-progress-linear>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col class="text-center mb-1 mt-0">
+                          <v-badge
+                            avatar
+                            bordered
+                            overlap
+                            color="orange darken-1"
+                            v-if="eventInfo[date].fastTrack > 0"
+                            class="mr-1"
+                            style="cursor: pointer"
+                            @click.native="openTaskList(date, 'fastTrack')"
+                          >
+                            <template v-slot:badge>
+                              <v-avatar class="mb-1" color="orange darken-1">
+                                {{eventInfo[date].fastTrack}}
+                              </v-avatar>
+                            </template>
+
+                            <v-avatar size="40" color="orange darken-3">
+                              <v-icon dark>
+                                  mdi-flash
+                              </v-icon>
+                            </v-avatar>
+                          </v-badge>
+                          <v-badge
+                            avatar
+                            bordered
+                            overlap
+                            color="green darken-1"
+                            v-if="eventInfo[date].extraJob > 0"
+                            class="mr-1"
+                            style="cursor: pointer"
+                            @click.native="openTaskList(date, 'extraJob')"
+                          >
+                            <template v-slot:badge>
+                              <v-avatar class="mb-1" color="green darken-1">
+                                {{eventInfo[date].extraJob}}
+                              </v-avatar>
+                            </template>
+
+                            <v-avatar size="40" color="green darken-3">
+                              <v-icon dark>
+                                  mdi-alarm-plus
+                              </v-icon>
+                            </v-avatar>
+                          </v-badge>
+                          <v-badge
+                            avatar
+                            bordered
+                            overlap
+                            color="blue darken-1"
+                            v-if="eventInfo[date].normal > 0"
+                            class="mr-1"
+                            style="cursor: pointer"
+                            @click.native="openTaskList(date, 'normal')"
+                          >
+                            <template v-slot:badge>
+                              <v-avatar class="mb-1" color="blue darken-1">
+                                {{eventInfo[date].normal}}
+                              </v-avatar>
+                            </template>
+
+                            <v-avatar size="40" color="blue darken-3">
+                              <v-icon dark>
+                                  mdi-clock-outline
+                              </v-icon>
+                            </v-avatar>
+                          </v-badge>
+                        </v-col>
+                      </v-row>
+                    </template>
+                  </template>
+                  </v-calendar>
                 </v-sheet>
               </v-card-text>
             </v-card>
@@ -164,26 +254,33 @@
                     :key="index"
                   >
                     <v-card elevation="2">
-                      <v-list-item three-line>
+                      <v-list-item :style="((items.bgcolor) ? 'background-color:' + items.bgcolor + ' !important' : '') ">
                         <v-list-item-content>
-                          <div class="text-overline mb-4 text-white">
-                            {{ items.flowName }}
-                          </div>
-                          <v-list-item-subtitle>
-                            <p class="text-white">
-                              วันที่นัดหมาย : {{ format_date(items.dueDate) }}
-                            </p>
-                          </v-list-item-subtitle>
-                          <v-list-item-group :color="items.color">
-                            <p>สถานะ ยืนยัน : {{ items.statusBt || "wait" }}</p>
-                          </v-list-item-group>
-                          <v-list-item-subtitle v-if="items.contactDateBt">
-                            <p class="text-white">
-                              วันที่ ยืนยัน :
+                          <v-row style="color:#fff;">
+                            <v-col cols="3">
+                              <h3>{{items.timeDue}}</h3><br>
+                              <v-icon dark class="mr-1" v-if="items.fastTrack === 'true' || items.fastTrack === 'True'">
+                                  mdi-flash
+                              </v-icon>
+                              <v-icon dark class="mr-1" v-else-if="items.extraJob === 'true' || items.extraJob === 'True'">
+                                  mdi-alarm-plus
+                              </v-icon>
+                              <v-icon dark class="mr-1" v-else>
+                                  mdi-clock-outline
+                              </v-icon>
+                            </v-col>
+                            <v-col cols="9">
+                              <v-row>
+                                <v-col cols="8"><h4>คุณ {{ items.name }}</h4></v-col>
+                                <v-col cols="4" class="text-right">{{items.licenseNo}}</v-col>
+                              </v-row>
+                              {{ items.flowName }}<br>
+                              โทร {{ items.tel }}
+                              รุ่นรถ {{ items.carModel }}<br>
                               {{ format_date(items.contactDateBt) }}
-                            </p>
-                          </v-list-item-subtitle>
-                          <v-list-item-subtitle>
+                            </v-col>
+                          </v-row>
+                          <!-- <v-list-item-subtitle>
                             <v-btn
                               color="success"
                               fab
@@ -206,7 +303,7 @@
                             >
                               <v-icon dark> mdi-phone-cancel </v-icon>
                             </v-btn>
-                          </v-list-item-subtitle>
+                          </v-list-item-subtitle> -->
                         </v-list-item-content>
                       </v-list-item>
                     </v-card>
@@ -285,7 +382,10 @@ export default {
       typeToLabel: {
         month: 'Month',
         week: 'Week'
-      }
+      },
+      eventInfo: [],
+      monthData: null,
+      bookingData: []
     }
   },
   beforeCreate () {
@@ -298,15 +398,18 @@ export default {
     await this.getDataBranch()
     await this.getBookingList()
     this.$refs.calendar.checkChange()
+    await this.getBookingData()
   },
   methods: {
     prev () {
       this.$refs.calendar.prev()
       this.getBookingList()
+      this.getBookingData()
     },
     next () {
       this.$refs.calendar.next()
       this.getBookingList()
+      this.getBookingData()
     },
     async getDataFlow () {
       this.DataFlowName = []
@@ -352,6 +455,24 @@ export default {
           }
         })
     },
+    async getBookingData () {
+      this.bookingData = []
+      const dateSplit = this.today.split('-')
+      const year = String(dateSplit[0])
+      const month = String(dateSplit[1])
+      let url = `${this.DNS_IP}/BookingData/get?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchName=${this.masBranchName.text}`
+      await axios
+        .get(url)
+        .then(async response => {
+          response.data.forEach((row) => {
+            if (typeof (this.bookingData[row.bookNo]) === 'undefined') {
+              this.bookingData[row.bookNo] = []
+            }
+            this.bookingData[row.bookNo].push(row)
+          })
+        })
+      console.log(this.bookingData)
+    },
     async getBookingList () {
       console.log('masBranchName', this.masBranchName)
       // if (this.masBranchName) {
@@ -368,22 +489,22 @@ export default {
       // const date = dateSplit[0].split('-')
       const year = String(dateSplit[0])
       const month = String(dateSplit[1])
+      this.countCus = this.masBranchName.countCus
       if (this.type === 'month') {
         let url = ''
         if (this.flowId === 'allFlow') {
           url = this.DNS_IP +
-            '/booking_view/getCountNotime?shopId=' +
+            '/booking_view/get?shopId=' +
             this.$session.getAll().data.shopId +
             '&dueDate=' +
             year +
             '-' +
             month +
             '&masBranchName=' +
-            this.masBranchName.text +
-            '&statusBt=confirm'
+            this.masBranchName.text
         } else {
           url = this.DNS_IP +
-            '/booking_view/getCountNotime?shopId=' +
+            '/booking_view/get?shopId=' +
             this.$session.getAll().data.shopId +
             '&dueDate=' +
             year +
@@ -391,144 +512,40 @@ export default {
             month +
             '&masBranchName=' +
             this.masBranchName.text +
-            '&flowId=' + this.flowId +
-            '&statusBt=confirm'
+            '&flowId=' + this.flowId
         }
         await axios
           .get(url)
-          .then(async response => {
-            console.log('getData', response.data)
-            this.dataReady = true
-            this.countCus = this.masBranchName.countCus
-            for (var i = 0; i < response.data.length; i++) {
-              var d = response.data[i]
-              var s = {}
-              console.log('d', d)
-              if (this.countCus > 0) {
-                s.start = d.start
-                d.d50 = parseInt((this.countCus / 100) * 50)
-                d.d70 = parseInt((this.countCus / 100) * 70)
-                d.d90 = parseInt((this.countCus / 100) * 90)
-                console.log('d.d', parseInt(d.name), d.d50, d.d70, d.d90)
-                if (parseInt(d.name) <= d.d50) {
-                  console.log('50')
-                  s.color = 'blue'
-                  s.name =
-                  'คล่อง : ' +
-                  d.name.toString() +
-                  '/' +
-                  this.countCus.toString()
-                }
-                if (parseInt(d.name) <= d.d70 && parseInt(d.name) >= d.d50) {
-                  console.log('70')
-                  s.color = 'deep-purple'
-                  s.name =
-                  'ติดขัด : ' +
-                  d.name.toString() +
-                  '/' +
-                  this.countCus.toString()
-                }
-                if (parseInt(d.name) <= d.d90 && parseInt(d.name) >= d.d70) {
-                  console.log('90')
-                  s.color = 'red accent-1'
-                  s.name =
-                  'ติดขัด : ' +
-                  d.name.toString() +
-                  '/' +
-                  this.countCus.toString()
-                }
-                if (parseInt(d.name) === this.countCus) {
-                  s.color = 'red'
-                  s.name =
-                  'เต็ม : ' +
-                  d.name.toString() +
-                  '/' +
-                  this.countCus.toString()
-                }
-                this.events.push(s)
+          .then(async responses => {
+            this.monthData = []
+            this.eventInfo = []
+            for (var x = 0; x < responses.data.length; x++) {
+              var e = responses.data[x]
+              let dueDate = e.dueDate
+              dueDate = dueDate.split(' ')
+              dueDate = dueDate[0]
+              if (typeof this.eventInfo[dueDate] === 'undefined') {
+                this.monthData[dueDate] = []
+                this.eventInfo[dueDate] = {'timeDue': e.timeDue, 'all': 0, 'allPercent': 0, 'fastTrack': 0, 'extraJob': 0, 'normal': 0}
               }
-            }
-            if (this.events.length === 0 || this.events.status === false) {
-              this.events = []
-            // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
-            } else {
-              let url = ''
-              if (this.flowId === 'allFlow') {
-                url = this.DNS_IP +
-                  '/booking_view/getCount?shopId=' +
-                  this.$session.getAll().data.shopId +
-                  '&dueDate=' +
-                  year +
-                  '-' +
-                  month +
-                  '&masBranchName=' +
-                  this.masBranchName.text
-              } else {
-                url = this.DNS_IP +
-                  '/booking_view/getCount?shopId=' +
-                  this.$session.getAll().data.shopId +
-                  '&dueDate=' +
-                  year +
-                  '-' +
-                  month +
-                  '&masBranchName=' +
-                  this.masBranchName.text +
-                  '&flowId=' + this.flowId
-              }
-              await axios
-                .get(url)
-                .then(async responses => {
-                  for (var x = 0; x < responses.data.length; x++) {
-                    var e = responses.data[x]
-                    var f = {}
-                    // console.log(d)
-                    if (e.statusBt) {
-                      f.start = e.start
-                      f.statusBt = e.statusBt
-                      f.timeDue = e.timeDue
-                      if (e.statusBt === 'confirm') {
-                        f.color = 'green'
-                        f.name =
-                        'ยืนยัน เวลา ' +
-                        e.timeDue +
-                        ' โมง : ' +
-                        e.name.toString()
-                      } else if (e.statusBt === 'confirmJob') {
-                        f.color = 'info'
-                        f.name =
-                        'รับรถ : ' +
-                        e.name.toString()
-                      } else {
-                        f.color = 'red'
-                        f.name =
-                        'ยกเลิก เวลา ' +
-                        e.timeDue +
-                        ' โมง : ' +
-                        e.name.toString()
-                      }
-                    } else {
-                      f.start = e.start
-                      f.statusBt = e.statusBt
-                      f.timeDue = e.timeDue
-                      f.color = 'orange'
-                      f.name =
-                      'รอยืนยัน เวลา ' +
-                      e.timeDue +
-                      ' โมง : ' +
-                      e.name.toString()
-                    }
-                    this.events.push(f)
+              this.monthData[dueDate].push(e)
+              if (e.statusBt) {
+                if (e.statusBt === 'confirm' || e.statusBt === 'confirmJob') {
+                  this.eventInfo[dueDate].all++
+                  this.eventInfo[dueDate].allPercent = this.eventInfo[dueDate].all * 100 / this.countCus
+                  if (e.fastTrack === 'True' || e.fastTrack === 'true') {
+                    this.eventInfo[dueDate].fastTrack++
+                  } else if (e.extraJob === 'True' || e.extraJob === 'true') {
+                    this.eventInfo[dueDate].extraJob++
+                  } else {
+                    this.eventInfo[dueDate].normal++
                   }
-                })
+                }
+              }
             }
-            console.log('events', this.events)
-          })
-        // eslint-disable-next-line handle-callback-err
-          .catch(error => {
-            console.log(error)
             this.dataReady = true
-          //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
           })
+      // -------   S T A R T   W E E K   ---------
       } else if (this.type === 'week') {
         let url = ''
         if (this.flowId === 'allFlow') {
@@ -691,6 +708,57 @@ export default {
           })
       }
     },
+    openTaskList (date, type) {
+      this.dataCalendar = []
+      let targetData = null
+      if (type === 'fastTrack') {
+        targetData = this.monthData[date].filter((row) => { return row.fastTrack === 'True' || row.fastTrack === 'true' })
+      } else if (type === 'extraJob') {
+        targetData = this.monthData[date].filter((row) => { return row.extraJob === 'True' || row.extraJob === 'true' })
+      } else if (type === 'normal') {
+        targetData = this.monthData[date].filter((row) => { return (row.fastTrack !== 'True' && row.fastTrack !== 'true') && (row.extraJob !== 'True' && row.extraJob !== 'true') })
+      } else {
+        targetData = this.monthData[date]
+      }
+      for (let i = 0; i < targetData.length; i++) {
+        let d = targetData[i]
+        d.chkConfirm = false
+        d.chkCancel = false
+        if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
+          d.chkConfirm = true
+          d.chkCancel = false
+        }
+        if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
+          d.chkConfirm = false
+          d.chkCancel = true
+        }
+        if (d.fastTrack === 'true' || d.fastTrack === 'True') {
+          d.bgcolor = '#EF6C00'
+        } else if (d.extraJob === 'true' || d.extraJob === 'True') {
+          d.bgcolor = '#2E7D32'
+        } else {
+          d.bgcolor = '#1565C0'
+        }
+        d.name = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'ชื่อ' })
+        d.licenseNo = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เลขทะเบียน' })
+        d.tel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เบอร์โทร' })
+        d.carModel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'รุ่นรถ' })
+        d.name = (d.name.length > 0) ? d.name[0].fieldValue : ''
+        d.licenseNo = (d.licenseNo.length > 0) ? d.licenseNo[0].fieldValue : ''
+        d.tel = (d.tel.length > 0) ? d.tel[0].fieldValue : ''
+        d.carModel = (d.carModel.length > 0) ? d.carModel[0].fieldValue : ''
+        this.dataCalendar.push(d)
+      }
+      this.dataCalendar.sort((a, b) => {
+        let keyA = new Date(a.dueDate)
+        let keyB = new Date(b.dueDate)
+        if (keyA < keyB) return -1
+        if (keyA > keyB) return 1
+        return 0
+      })
+      console.log(this.dataCalendar)
+      this.dialog = true
+    },
     async showEvent (event) {
       this.dataCalendar = []
       this.selectedEvent = event.event.start
@@ -743,6 +811,14 @@ export default {
             } else {
               d.color = 'orange'
             }
+            d.name = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'ชื่อ' })
+            d.licenseNo = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เลขทะเบียน' })
+            d.tel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เบอร์โทร' })
+            d.carModel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'รุ่นรถ' })
+            d.name = (d.name.length > 0) ? d.name[0].fieldValue : ''
+            d.licenseNo = (d.licenseNo.length > 0) ? d.licenseNo[0].fieldValue : ''
+            d.tel = (d.tel.length > 0) ? d.tel[0].fieldValue : ''
+            d.carModel = (d.carModel.length > 0) ? d.carModel[0].fieldValue : ''
             this.dataCalendar.push(d)
           }
           this.dialog = true
