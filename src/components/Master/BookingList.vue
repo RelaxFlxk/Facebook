@@ -1780,7 +1780,6 @@ export default {
     await this.getDataBranch()
     this.getCustomFieldStart()
     this.getDataFlow()
-    await this.getBookingDataList()
     this.getBookingList()
     this.scanQrcode()
   },
@@ -2311,6 +2310,7 @@ export default {
       this.searchAll2 = ''
       var dataItemTimes = []
       var dataItems = []
+      await this.getBookingDataList()
       await axios
         .get(
           // eslint-disable-next-line quotes
@@ -2375,15 +2375,6 @@ export default {
               if (chkTime.length === 0) {
                 dataItemTimes.push(s)
               }
-              // let dataBookingData = []
-              // await axios
-              //   .get(
-              //   // eslint-disable-next-line quotes
-              //     this.DNS_IP + "/BookingData/get?bookNo=" + d.bookNo
-              //   )
-              //   .then(async responses => {
-              //     dataBookingData = responses.data
-              //   })
               s.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
               s.cusReg = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เลขทะเบียน')
               s.tel = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เบอร์โทร')
