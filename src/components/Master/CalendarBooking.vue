@@ -155,7 +155,7 @@
                         <v-col>
                           <v-progress-linear
                             :value="eventInfo[date].allPercent"
-                            :color="(eventInfo[date].allPercent >= 100) ? 'red lighten-1' : ((eventInfo[date].allPercent < 50) ? 'green lighten-1' : 'yellow lighten-1' ) "
+                            :color="(eventInfo[date].allPercent >= 100) ? 'red lighten-1' : ((eventInfo[date].allPercent < 80) ? 'green lighten-1' : 'yellow lighten-1' ) "
                             height="25"
                             style="cursor: pointer"
                             @click.native="openTaskList(date, 'all')"
