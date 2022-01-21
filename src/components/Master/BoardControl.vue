@@ -396,6 +396,40 @@
         </v-dialog>
         <!-- end add -->
 
+        <div
+          v-if="formUpdate.flowName === ''"
+          class="workRow"
+        >
+          <v-row>
+            <v-col class="colum" v-for="(element, work) in Layout" :key="work">
+              <div
+                v-for="(item, indexitem) in Layout[work].workData"
+                :key="indexitem"
+                class="pb-0 pt-0"
+              >
+                <v-card class="mb-2">
+                  <v-card id="cardTitle" elevation="12">
+                    <v-card-title class="ma-3">
+                      <v-row>
+                        <v-col cols="8" class="pa-1">
+                          <strong>{{ item.stepTitle }}</strong>
+                        </v-col>
+                        <v-col cols="4" class="text-right pb-1 pt-0">
+                          <strong>{{
+                            allJob.filter(row => {
+                              return row.stepId == item.stepId
+                            }).length
+                          }}</strong>
+                        </v-col>
+                      </v-row>
+                    </v-card-title>
+                  </v-card>
+                </v-card>
+              </div>
+            </v-col>
+          </v-row>
+        </div>
+
         <!-- GridView -->
         <div
           v-if="layout === 'grid'"
@@ -516,6 +550,8 @@
                         >
                           <!-- update satatus car -->
                           <v-row class="pl-1">
+                            <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
                             <v-icon
                               v-if="
                                 allJob.filter(row => {
@@ -525,6 +561,8 @@
                               color="#9E9E9E"
                               depressed
                               @click="updateStatusCars(itemsJob.jobId, 'False')"
+                              v-bind="attrs"
+                              v-on="on"
                             >
                               mdi-car
                             </v-icon>
@@ -537,6 +575,9 @@
                             >
                               mdi-car
                             </v-icon>
+                            </template>
+                            <span>รถไม่อยู่</span>
+                            </v-tooltip>
                           </v-row>
                           <!-- end update satatus car -->
                           <v-row class="pt-2 pl-1">
@@ -632,9 +673,9 @@
               })"
               :key="indexJob"
             >
-              <v-list-item>
+
                 <v-alert
-                  class="allFrame pb-3"
+                  class="allFrame pb-3 ml-4"
                   style="height: 38px;"
                   :color="codeColor[indexJob]"
                   border="left"
@@ -708,6 +749,8 @@
                     </v-col>
                     <v-col cols="2" class="text-right">
                       <!-- update satatus car -->
+                      <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
                       <v-icon
                         v-if="
                           allJob.filter(row => {
@@ -717,6 +760,8 @@
                         color="#9E9E9E"
                         depressed
                         @click="updateStatusCars(itemsJob.jobId, 'False')"
+                        v-bind="attrs"
+                        v-on="on"
                       >
                         mdi-car
                       </v-icon>
@@ -729,6 +774,9 @@
                       >
                         mdi-car
                       </v-icon>
+                        </template>
+                        <span>รถไม่อยู่</span>
+                      </v-tooltip>
                       <!-- end update satatus car -->
                       <v-icon
                         large
@@ -740,12 +788,31 @@
                       </v-icon>
 
                       <v-icon
+                      v-if="
+                          allJob.filter(row => {
+                            return row.jobId == itemsJob.jobId
+                          })[0].checkCar !== 'False'
+                        "
                         large
                         color="#FED966"
-                        @click=";(dialog = true), setUpdate(itemsJob)"
+                        @click=";(dialog = true),
+                            setUpdate(itemsJob)
+                        "
                       >
                         mdi-layers-triple
                       </v-icon>
+                      <v-icon
+                      v-if="
+                          allJob.filter(row => {
+                            return row.jobId == itemsJob.jobId
+                          })[0].checkCar == 'False'
+                        "
+                        large
+                        color="#9E9E9E"
+                      >
+                        mdi-layers-triple
+                      </v-icon>
+
                       <v-icon
                         large
                         color="#84C650"
@@ -756,7 +823,7 @@
                     </v-col>
                   </v-row>
                 </v-alert>
-              </v-list-item>
+
             </div>
             <br />
           </div>
@@ -918,6 +985,7 @@ export default {
     await this.getDataFlow()
     await this.getDataBranch()
     await this.getEmpSelect()
+    await this.getLayoutDefault()
   },
   methods: {
     async chkFlowName () {
@@ -992,6 +1060,36 @@ export default {
           for (let i = 0; i < rs.length; i++) {
             let d = rs[i]
             var workData = []
+            workData = JSON.parse(d.workData)
+            this.Layout.push({
+              workShopId: d.workShopId,
+              workColum: d.workColum,
+              workData: workData
+            })
+          }
+          console.log('this.Layout', this.Layout)
+        })
+        .catch(error => {
+          console.log('error function addDataGlobal : ', error)
+        })
+    },
+    async getLayoutDefault () {
+      this.Layout = []
+      console.log('flowName', this.formUpdate.flowName)
+      console.log('Branch' + this.masBranchID)
+      console.log('shopId' + this.shopId)
+      await axios
+        .get(
+          this.DNS_IP +
+            '/WorkShopLayout/get?flowName=' +
+            '&shopId=' +
+            this.shopId
+        )
+        .then(response => {
+          let rs = response.data
+          for (let i = 0; i < rs.length; i++) {
+            let d = rs[i]
+            var workData = [i]
             workData = JSON.parse(d.workData)
             this.Layout.push({
               workShopId: d.workShopId,

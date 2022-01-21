@@ -1,6 +1,6 @@
 <template>
   <div>
-    <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
+    <left-menu-admin ref="movein" menuActive="0" :sessionData="session"></left-menu-admin>
     <v-main>
       <div class="pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4">
         <v-row>
@@ -15,7 +15,7 @@
               <div class="text-center">
                 <v-form>
                   <v-row>
-                    <v-col cols="12" class="pa-0">
+                    <v-col cols="8" class="pa-0">
                       <v-sheet tile height="54" class="d-flex">
                         <!-- เลือกขั้นตอนบริการ -->
                         <v-col cols="12" sm="4">
@@ -44,14 +44,33 @@
                           ></v-select>
                         </v-col>
                       </v-sheet>
+                      </v-col>
+                       <v-col cols="12" sm="4" right>
+                      <v-alert v-if="itemJob.length >= 20"
+                        :value="alert"
+                        outlined
+                        type="warning"
+                        prominent
+                        border="left"
+                        elevation="24"
+                      >
+                        จำนวนรถในศูนย์ เต็มจำนวนแล้ว เพิ่ม แพ็คเก็จมากขึ้น
+                         <v-btn small  color="primary" @click="moveOn()">
+                            <v-icon small left>mdi-download</v-icon>
+                            เพิ่มแพ็คเก็จ
+                          </v-btn>
+                      </v-alert>
+                      </v-col>
+                      <br>
                       <br />
                       <!-- <v-card v-show="formAdd.flowCode && formAdd.masBranchID !== '' "
                       class="mx-auto"
                       max-width="500"> -->
+                      <v-col cols="12" class="pa-0">
                       <v-card
-                        v-show="formAdd.flowId && formAdd.masBranchID !== ''"
-                        max-width="450%"
+                        max-width="500%"
                       >
+                      <br>
                         <v-container>
                           <v-row justify="center">
                             <v-col cols="6" style="margin: auto 0;">
@@ -71,7 +90,7 @@
                                   :src="require('@/assets/NewcarText.png')"
                                 ></v-img>
                               </v-col>
-                            <v-form ref="form" v-model="valid" lazy-validation>
+                            <v-form  v-show="formAdd.flowId && formAdd.masBranchID !== ''" ref="form" v-model="valid" lazy-validation>
                               <div v-for="(p, index) in flowfieldNameitem" :key="index">
                                 <div class="pa-0" v-if="p.conditionField === '' || p.conditionField === null ">
                                   <div>
@@ -366,13 +385,13 @@
                                   ></v-text-field>
                                 </v-col>
                               </v-row>
-                            </v-form>
+                              {{itemJob.length}}
                               <div class="text-center">
                               <v-btn
                                 depressed
                                 dark
                                 color="#1B437C"
-                                @click="addData()"
+                                @click="alert = !alert , addData()"
                               >
                                 รับรถใหม่
                               </v-btn>
@@ -385,12 +404,13 @@
                                 ล้างข้อมูล
                               </v-btn>
                               </div>
+                            </v-form>
                             </v-col>
                             <v-col cols="1"></v-col>
                           </v-row>
                         </v-container>
                       </v-card>
-                    </v-col>
+                      </v-col>
                   </v-row>
                 </v-form>
               </div>
@@ -423,10 +443,12 @@ export default {
       dtname: [],
       dtitem: [],
       GroupId: [],
+      itemJob: [],
       editedItemSelete: [],
       flowfieldNameitem: [],
       flowCode: '',
       form1: {},
+      alert: false,
       breadcrumbs: [
         {
           text: 'Home',
@@ -637,9 +659,68 @@ export default {
           console.log('error function addData : ', error)
         })
     },
+    async getjob () {
+      this.itemJob = []
+      await axios
+        .get(this.DNS_IP + '/job/getCount?shopId=' + this.shopId + '&masBranchID=' + this.formAdd.masBranchID + '&flowId=' + this.formAdd.flowId)
+        .then(async (response) => {
+          this.dataReady = true
+          this.itemJob = response.data
+        })
+      console.log('jobbbb', this.itemJob)
+      console.log('itemJoblength', this.itemJob.length)
+      // if (billingPlan == 'free') {
+      if (this.itemJob.length <= 20) {
+        console.log('เข้า')
+        setTimeout(() => this.addDataSubmit(), 500)
+      }
+      // } else {
+      //   setTimeout(() => this.addDataSubmit(), 500)
+      // }
+    },
+    async moveOn () {
+      this.$refs.movein.chkPlan()
+    },
+    chkAdd () {
+      this.res = []
+      axios
+        .get(this.DNS_IP + '/only_shop/get?shopId=' + this.session.data.shopId)
+        .then(response => {
+          let rs = response.data[0].billingPlan
+          console.log('rs', rs)
+          if (rs === 'billing') {
+            axios
+              .get(
+                this.DNS_IP +
+                  '/member/Member?shopId=' +
+                  this.session.data.shopId
+              )
+              .then(response => {
+                const rs = response.data
+                console.log(rs)
+              })
+          } else {
+            axios
+              .get(
+                this.DNS_IP +
+                  '/member/Member?shopId=' +
+                  this.session.data.shopId
+              )
+              .then(response => {
+                this.res = response.data
+                if (this.res.length >= this.Limit) {
+                  this.statusLimit = true
+                } else {
+                  this.statusLimit = false
+                }
+              })
+          }
+        })
+    },
+
     addData () {
       this.validate('ADD')
-      setTimeout(() => this.addDataSubmit(), 500)
+      this.getjob()
     },
     async addDataSubmit (p) {
       if (this.valid === true) {

@@ -11,11 +11,11 @@
               <v-icon left>mdi-text-box-plus</v-icon>
               Add
             </v-btn>
-            <v-btn color="yellow-light" @click="exportData()">
+            <v-btn color="primary" @click="exportData()">
               <v-icon left>mdi-download</v-icon>
               Export Data
             </v-btn>
-            <v-btn color="yellow-light" depressed @click="dialogImport = true">
+            <v-btn color="primary" depressed @click="dialogImport = true">
               <v-icon left>mdi-import</v-icon>
               Manage Data By Excel.xls
             </v-btn>
