@@ -632,7 +632,7 @@ export default {
       if (text === 'update') {
         this.formAdd.time = item.value
         this.typeTimeAdd = text
-        // this.indexTimeAdd = index
+        this.indexTimeAdd = index
       } else {
         this.dataItemAddTime.splice(index, 1)
         // console.log('this.dataItemAddTime', this.dataItemAddTime)
@@ -665,6 +665,7 @@ export default {
             let strhh = numhh.toString().substring(1, 3)
             let strmm = nummm.toString().substring(1, 3)
             this.dataItemAddTime[this.indexTimeAdd].value = strhh + ':' + strmm
+            this.dataItemAddTime[this.indexTimeAdd].text = strhh + ':' + strmm
             this.typeTimeAdd = 'add'
             this.formAdd.time = ''
             this.dataItemAddTime.sort(function (a, b) {
