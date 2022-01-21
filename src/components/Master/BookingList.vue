@@ -1761,7 +1761,8 @@ export default {
         cancelButtonColor: '#b3b1ab',
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
-      }
+      },
+      BookingDataList: []
     }
   },
   beforeCreate () {
@@ -1779,6 +1780,7 @@ export default {
     await this.getDataBranch()
     this.getCustomFieldStart()
     this.getDataFlow()
+    await this.getBookingDataList()
     this.getBookingList()
     this.scanQrcode()
   },
@@ -2268,6 +2270,26 @@ export default {
         console.log(err)
       }
     },
+    async getBookingDataList () {
+      this.BookingDataList = []
+      if (this.masBranchID) {
+        this.masBranchID = this.masBranchID
+      } else {
+        this.masBranchID = this.branch[0].value
+      }
+      let url = `${this.DNS_IP}/BookingData/get?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&dueDate=${this.dateStart}`
+      await axios
+        .get(url)
+        .then(async response => {
+          response.data.forEach((row) => {
+            if (typeof (this.BookingDataList[row.bookNo]) === 'undefined') {
+              this.BookingDataList[row.bookNo] = []
+            }
+            this.BookingDataList[row.bookNo].push(row)
+          })
+        })
+      console.log(this.BookingDataList)
+    },
     async getBookingList () {
       // Clear Data ทุกครั้ง
       console.log('this.masBranchID1', this.masBranchID)
@@ -2353,18 +2375,18 @@ export default {
               if (chkTime.length === 0) {
                 dataItemTimes.push(s)
               }
-              let dataBookingData = []
-              await axios
-                .get(
-                // eslint-disable-next-line quotes
-                  this.DNS_IP + "/BookingData/get?bookNo=" + d.bookNo
-                )
-                .then(async responses => {
-                  dataBookingData = responses.data
-                })
-              s.cusName = this.getDataFromFieldName(dataBookingData, 'ชื่อ')
-              s.cusReg = this.getDataFromFieldName(dataBookingData, 'เลขทะเบียน')
-              s.tel = this.getDataFromFieldName(dataBookingData, 'เบอร์โทร')
+              // let dataBookingData = []
+              // await axios
+              //   .get(
+              //   // eslint-disable-next-line quotes
+              //     this.DNS_IP + "/BookingData/get?bookNo=" + d.bookNo
+              //   )
+              //   .then(async responses => {
+              //     dataBookingData = responses.data
+              //   })
+              s.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
+              s.cusReg = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เลขทะเบียน')
+              s.tel = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เบอร์โทร')
               s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
               s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
               s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
