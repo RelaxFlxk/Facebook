@@ -25,6 +25,28 @@
                         <h1 style="font-size:10vw;" class="underline-06">แก้ไขข้อมูลร้านค้า</h1>
                       </v-col>
                     </v-row>
+                    <v-row justify="center">
+                          <v-col cols="12" class="text-center">
+                            <v-img
+                              aspect-ratio="6"
+                              contain
+                              :src="formUpdate.pictureUrlPreview"
+                            ></v-img>
+                            <!-- <v-avatar size="100px"><img alt="Avatar" :src="formAdd.pictureUrl"></v-avatar> -->
+                            <br />
+                            <v-file-input
+                              required
+                              counter
+                              show-size
+                              :rules="[rules.resizeImag]"
+                              accept="image/png, image/jpeg, image/bmp"
+                              prepend-icon="mdi-camera"
+                              label="Image"
+                              @change="selectImgUpdate"
+                              v-model="filesUpdate"
+                            ></v-file-input>
+                          </v-col>
+                        </v-row>
                     <v-row>
                       <v-col cols="6" class="pb-0">
                           <v-text-field
@@ -208,8 +230,7 @@ export default {
       optionDistrict: [],
       optionProvince: [],
       formUpdate: {
-        logo: '',
-        logoPreview: '',
+        pictureUrlPreview: '',
         contactTel: '',
         shopName: '',
         shopImge: '',
@@ -281,6 +302,7 @@ export default {
         { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
       ],
       dataItem: [],
+      filesUpdate: null,
       validUpdate: true
       // End Data Table Config
     }
@@ -303,6 +325,16 @@ export default {
     )
   },
   methods: {
+    selectImgUpdate () {
+      if (this.filesUpdate) {
+        this.formUpdate.pictureUrlPreview = URL.createObjectURL(
+          this.filesUpdate
+        )
+      } else {
+        this.formUpdate.pictureUrlPreview = ''
+      }
+      // console.log(event)
+    },
     validate (Action) {
       switch (Action) {
         case 'ADD':
@@ -320,13 +352,6 @@ export default {
 
         default:
           break
-      }
-    },
-    selectImgShop () {
-      if (this.filesShop) {
-        this.formUpdate.logoPreview = URL.createObjectURL(this.filesShop)
-      } else {
-        this.formUpdate.logoPreview = ''
       }
     },
     async getDataById (item) {
@@ -348,6 +373,7 @@ export default {
       this.formUpdate.expireDate = moment(this.formUpdate.expireDate).format(
         'YYYY-MM-DD HH:mm'
       )
+      this.formUpdate.pictureUrlPreview = this.formUpdate.shopImge
       // this.formUpdate.primaryColor = item.primaryColor
       // this.formUpdate.secondaryColor = item.secondaryColor
       // if (this.formUpdate.ZIP_CD.length >= 5) {
@@ -371,8 +397,22 @@ export default {
         .then(async result => {
           // this.formUpdate.LAST_USER = this.session.data.userName
           var ID = this.formUpdate.shopId
+          if (this.filesUpdate) {
+            const _this = this
+            let params = new FormData()
+            params.append('file', this.filesUpdate)
+            await axios
+              .post(this.DNS_IP + `/file/upload/shop`, params)
+              .then(function (response) {
+                _this.formUpdate.shopImge = response.data
+                console.log('url Pic', response.data)
+              })
+          } else {
+            this.formUpdate.shopImge = this.formUpdate.pictureUrlPreview
+          }
           var dt = {
             shopName: this.formUpdate.shopName,
+            shopImge: this.formUpdate.shopImge,
             contactTel: this.formUpdate.contactTel,
             LAST_USER: this.session.data.userName,
             contactEmail: this.formUpdate.contactEmail,
