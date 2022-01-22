@@ -347,20 +347,21 @@
                             outlined
                             dense
                             required
+                            @change="checkTime()"
                             :rules="[rules.required]"
                           ></v-select>
-                          <div v-if="fieldNameItem">
+                          <template v-if="fieldNameItem">
                             <div
                               v-for="(item, index) in fieldNameItem"
                               :key="index"
                             >
-                              <div
+                              <template
                                 v-if="
                                   item.conditionField === '' ||
                                     item.conditionField === null
                                 "
                               >
-                                <div v-if="item.fieldType == 'text'">
+                                <v-col cols="12" class="InputData" v-if="item.fieldType == 'text'">
                                   <v-text-field
                                     v-model="item.fieldValue"
                                     :label="item.fieldName"
@@ -369,8 +370,8 @@
                                     required
                                     :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                   ></v-text-field>
-                                </div>
-                                <div v-if="item.fieldType == 'number'">
+                                </v-col>
+                                <v-col cols="12" class="InputData" v-if="item.fieldType == 'number'">
                                   <v-text-field
                                     v-model="item.fieldValue"
                                     :label="item.fieldName"
@@ -379,8 +380,8 @@
                                     required
                                     :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                   ></v-text-field>
-                                </div>
-                                <div v-if="item.fieldType == 'Autocompletes'">
+                                </v-col>
+                                <v-col cols="12" class="InputData" v-if="item.fieldType == 'Autocompletes'">
                                   <v-autocomplete
                                     v-model="item.fieldValue"
                                     :items="JSON.parse(item.optionField)"
@@ -390,9 +391,10 @@
                                     dense
                                     :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                   ></v-autocomplete>
-                                </div>
-                                <div v-if="item.fieldType == 'Selects'">
+                                </v-col>
+                                <v-col cols="12" class="InputData" v-if="item.fieldType == 'Selects'">
                                   <v-select
+                                  class="mb-6"
                                     v-model="item.fieldValue"
                                     :items="JSON.parse(item.optionField)"
                                     menu-props="auto"
@@ -402,8 +404,8 @@
                                     dense
                                     outlined
                                   ></v-select>
-                                </div>
-                                <div v-if="item.fieldType == 'Radio'" style="padding:0px;">
+                                </v-col>
+                                <v-col cols="12" class="InputData" v-if="item.fieldType == 'Radio'" style="padding:0px;">
                                   <v-container fluid style="padding:0px;">
                                     <v-radio-group
                                       column
@@ -426,9 +428,9 @@
                                       </div>
                                     </v-radio-group>
                                   </v-container>
-                                </div>
-                              </div>
-                              <div
+                                </v-col>
+                              </template>
+                              <template
                                 v-if="
                                   item.conditionField !== '' &&
                                     fieldNameItem.filter(row => {
@@ -439,7 +441,7 @@
                                     }).length > 0
                                 "
                               >
-                                <div
+                                <template
                                   v-if="
                                     item.conditionValue ===
                                       fieldNameItem.filter(row => {
@@ -450,7 +452,7 @@
                                       })[0].fieldValue
                                   "
                                 >
-                                  <div v-if="item.fieldType == 'text'">
+                                  <v-col cols="12" class="InputData" v-if="item.fieldType == 'text'">
                                     <v-text-field
                                       v-model="item.fieldValue"
                                       :label="item.fieldName"
@@ -459,8 +461,8 @@
                                       dense
                                       :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                     ></v-text-field>
-                                  </div>
-                                  <div v-if="item.fieldType == 'number'">
+                                  </v-col>
+                                  <v-col cols="12" class="InputData" v-if="item.fieldType == 'number'">
                                     <v-text-field
                                       v-model="item.fieldValue"
                                       :label="item.fieldName"
@@ -469,8 +471,8 @@
                                       dense
                                       :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                     ></v-text-field>
-                                  </div>
-                                  <div v-if="item.fieldType == 'Autocompletes'">
+                                  </v-col>
+                                  <v-col cols="12" class="InputData" v-if="item.fieldType == 'Autocompletes'">
                                     <v-autocomplete
                                       v-model="item.fieldValue"
                                       :items="JSON.parse(item.optionField)"
@@ -480,9 +482,10 @@
                                       dense
                                       :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                     ></v-autocomplete>
-                                  </div>
-                                  <div v-if="item.fieldType == 'Selects'">
+                                  </v-col>
+                                  <v-col cols="12" class="InputData" v-if="item.fieldType == 'Selects'">
                                     <v-select
+                                    class="mb-6"
                                       v-model="item.fieldValue"
                                       :items="JSON.parse(item.optionField)"
                                       menu-props="auto"
@@ -492,8 +495,8 @@
                                       :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                       outlined
                                     ></v-select>
-                                  </div>
-                                  <div v-if="item.fieldType == 'Radio'" style="padding:0px;">
+                                  </v-col>
+                                  <v-col cols="12" class="InputData" v-if="item.fieldType == 'Radio'" style="padding:0px;">
                                     <v-container fluid style="padding:0px;">
                                       <v-radio-group
                                         row
@@ -517,12 +520,12 @@
                                         </div>
                                       </v-radio-group>
                                     </v-container>
-                                  </div>
-                                </div>
-                              </div>
-                                <div  v-if="item.conditionField === 'flow' ">
-                                  <div v-if="parseInt(item.conditionValue) === parseInt(formAdd.flowId) ">
-                                    <div v-if="item.fieldType == 'text'">
+                                  </v-col>
+                                </template>
+                              </template>
+                                <template  v-if="item.conditionField === 'flow' ">
+                                  <template v-if="parseInt(item.conditionValue) === parseInt(formAdd.flowId) ">
+                                    <v-col cols="12" class="InputData" v-if="item.fieldType == 'text'">
                                       <v-text-field
                                         v-model="item.fieldValue"
                                         :label="item.fieldName"
@@ -530,8 +533,8 @@
                                         :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                         outlined
                                       ></v-text-field>
-                                    </div>
-                                    <div v-if="item.fieldType == 'number'">
+                                    </v-col>
+                                    <v-col cols="12" class="InputData" v-if="item.fieldType == 'number'">
                                       <v-text-field
                                         v-model="item.fieldValue"
                                         :label="item.fieldName"
@@ -539,9 +542,10 @@
                                         :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                         outlined
                                       ></v-text-field>
-                                    </div>
-                                    <div
+                                    </v-col>
+                                    <v-col
                                       cols="12"
+                                      class="InputData"
                                       v-if="item.fieldType == 'Autocompletes'"
                                     >
                                       <v-autocomplete
@@ -552,9 +556,10 @@
                                         :label="item.fieldName"
                                         :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                       ></v-autocomplete>
-                                    </div>
-                                      <div v-if="item.fieldType == 'Selects'">
+                                    </v-col>
+                                      <v-col cols="12" class="InputData" v-if="item.fieldType == 'Selects'">
                                         <v-select
+                                        class="mb-6"
                                           v-model="item.fieldValue"
                                           :items="JSON.parse(item.optionField)"
                                           menu-props="auto"
@@ -564,8 +569,8 @@
                                           hide-details
                                           outlined
                                         ></v-select>
-                                      </div>
-                                      <div v-if="item.fieldType === 'Radio'" style="padding:0px;">
+                                      </v-col>
+                                      <v-col cols="12" class="InputData" v-if="item.fieldType === 'Radio'" style="padding:0px;">
                                         <v-container fluid style="padding:0px;">
                                           <v-radio-group
                                             row
@@ -589,13 +594,13 @@
                                             </div>
                                           </v-radio-group>
                                         </v-container>
-                                      </div>
-                                  </div>
-                                </div>
+                                      </v-col>
+                                  </template>
+                                </template>
                             </div>
-                          </div>
+                          </template>
                           <v-row>
-                            <v-col cols="6">
+                            <v-col >
                               <v-menu
                                 v-model="menuDate"
                                 :close-on-content-click="false"
@@ -632,17 +637,17 @@
                                 ></v-date-picker>
                               </v-menu>
                             </v-col>
-                            <v-col cols="6">
-                              <v-text-field
-                                v-model="time"
-                                label="เวลา"
-                                dense
-                                outlined
-                                type="time"
-                                suffix=""
-                                required
-                                :rules="[rules.required]"
-                              ></v-text-field>
+                            <v-col >
+                              <v-select
+                              v-model="time"
+                              :items="timeavailable"
+                              label="เวลา"
+                              menu-props="auto"
+                              outlined
+                              dense
+                              required
+                              :rules ="[rules.required]"
+                            ></v-select>
                             </v-col>
                           </v-row>
                         </v-col>
@@ -1175,6 +1180,45 @@
               </v-card-text>
             </v-card>
           </v-dialog>
+
+          <v-dialog v-model="dialogRemove" :max-width="dialogwidth">
+            <v-card class="text-center">
+              <v-card-title>
+                ยกเลิกรายการนี้
+              </v-card-title>
+              <v-card-text>
+                <v-container>
+                <v-row>
+                  <v-textarea
+                    v-model="remarkRemove"
+                    outlined
+                    label="หมายเหตุในการยกเลิก"
+                    auto-grow
+                  ></v-textarea>
+                </v-row>
+                <div class="text-center">
+                  <v-btn
+                    elevation="10"
+                    color="#173053"
+                    dark
+                    small
+                    @click="cancelChk()"
+                    >ยกเลิกรายการนี้</v-btn
+                  >
+                  <v-btn
+                    elevation="10"
+                    color="#173053"
+                    outlined
+                    style="background-color:#FFFFFF"
+                    small
+                    @click="dialogRemove = false"
+                    >ยกเลิก</v-btn
+                  >
+                </div>
+                </v-container>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
           <!-- data table -->
           <v-col cols="12" >
             <BookingQueue :branchParent="branch" :masBranchIDParent="masBranchID" :drawerParent="drawer" :menu1Parent="menu1" :timeTableParent="timeTable" :rulesParent="rules" :masterTimeParent="masterTime" :dataItemTimesChangeParent="dataItemTimesChange" :getTimesChangeParent="getTimesChange" :exportExcelParent="exportExcel" :toggleParent="toggle" @updateTimeTable="updateTimeTablefromChild"></BookingQueue>
@@ -1299,7 +1343,7 @@
                       v-if="item.statusBt !== 'confirmJob'"
                       small
                       :disabled="item.chkCancel"
-                      @click.stop="cancelChk(item)"
+                      @click.stop="setDataRemove(item)"
                     >
                       <v-icon dark> mdi-phone-cancel </v-icon>
                     </v-btn>
@@ -1464,7 +1508,7 @@
                       v-if="item.statusBt !== 'cancel' && item.statusBt !== 'confirmJob'"
                       small
                       :disabled="item.chkCancel"
-                      @click.stop="cancelChk(item)"
+                      @click.stop="setDataRemove(item)"
                     >
                       <v-icon dark> mdi-phone-cancel </v-icon>
                     </v-btn>
@@ -1526,6 +1570,10 @@ body {
 
 .toggle {
   margin: 1em;
+}
+.InputData{
+  margin: 0px !important;
+  padding: 0px !important;
 }
 </style>
 <script>
@@ -1632,6 +1680,7 @@ export default {
       dataItemTimesChange: [],
       appendBody: true,
       dialogExport: false,
+      dialogRemove: false,
       dataReady: false,
       menuDate: false,
       menuDateChange: false,
@@ -1670,18 +1719,7 @@ export default {
         { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
         // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
       ],
-      columnsSelected: [
-        { text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
-        // { text: 'Booking Id', value: 'bookNo' },
-        { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-        { text: 'ชื่อบริการ', value: 'flowName' },
-        { text: 'ชื่อลูกค้า', value: 'cusName' },
-        { text: 'เบอร์โทร', value: 'tel' },
-        { text: 'ทะเบียนรถ', value: 'cusReg' },
-        { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
-        { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
-        // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
-      ],
+      columnsSelected: [],
       dataItem: [],
       dataItemCheck: [],
       dataexport: [],
@@ -1762,7 +1800,10 @@ export default {
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
       },
-      BookingDataList: []
+      BookingDataList: [],
+      remarkRemove: '',
+      bookNoRemove: '',
+      timeavailable: []
     }
   },
   beforeCreate () {
@@ -1784,6 +1825,12 @@ export default {
     this.scanQrcode()
   },
   methods: {
+    checkTime () {
+      let dtTime = this.branch.filter(item => { return item.value === this.formAdd.masBranchID })
+      // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
+      this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+      // console.log('timevailable', this.timeavailable)
+    },
     async confirmRemark (item, text) {
       let dt = null
       if (text === 'inAdvance') {
@@ -2132,6 +2179,30 @@ export default {
           this.dataItemSelect = this.dataItem
         } else {
           this.dataItemSelect = this.dataItem.filter(el => { return el.statusBt === text })
+          if (text === 'cancel') {
+            this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+              // { text: 'Booking Id', value: 'bookNo' },
+              { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+              { text: 'ชื่อบริการ', value: 'flowName' },
+              { text: 'ชื่อลูกค้า', value: 'cusName' },
+              { text: 'เบอร์โทร', value: 'tel' },
+              { text: 'ทะเบียนรถ', value: 'cusReg' },
+              { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
+              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+              { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' }
+              // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
+            ]
+          } else {
+            this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+              // { text: 'Booking Id', value: 'bookNo' },
+              { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+              { text: 'ชื่อบริการ', value: 'flowName' },
+              { text: 'ชื่อลูกค้า', value: 'cusName' },
+              { text: 'เบอร์โทร', value: 'tel' },
+              { text: 'ทะเบียนรถ', value: 'cusReg' },
+              { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
+              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }]
+          }
         }
       }
       // this.getTimesChange('update')
@@ -2196,6 +2267,7 @@ export default {
                       s.chkConfirm = false
                       s.chkCancel = false
                       s.jobNo = d.jobNo
+                      s.remarkRemove = d.remarkRemove || ''
                       s.timeDueHtext = d.timeDueH + ':00'
                       s.timeDuetext = d.timeDue
                       if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
@@ -2336,6 +2408,7 @@ export default {
               s.chkConfirm = false
               s.chkCancel = false
               s.jobNo = d.jobNo
+              s.remarkRemove = d.remarkRemove || ''
               s.remarkConfirm1 = (d.remarkConfirm1 === 'true' || d.remarkConfirm1 === 'True')
               s.remarkConfirm2 = (d.remarkConfirm2 === 'true' || d.remarkConfirm2 === 'True')
               s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
@@ -3006,34 +3079,38 @@ export default {
           })
       })
     },
-    cancelChk (item) {
-      console.log('item', item)
-      this.swalConfig.title = 'ต้องการ ยกเลิก ใช่หรือไม่?'
-      this.$swal(this.swalConfig).then(async result => {
-        var dt = {
-          bookNo: item.bookNo,
-          contactDate: this.format_date(new Date()),
-          status: 'cancel',
-          statusUse: 'use',
-          shopId: this.$session.getAll().data.shopId,
-          CREATE_USER: this.session.data.userName,
-          LAST_USER: this.session.data.userName
-        }
-        axios
-          .post(this.DNS_IP + '/booking_transaction/add', dt)
-          .then(async response => {
-            this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-            console.log('addDataGlobal', response)
-            await this.getBookingList()
-            this.getTimesChange('update')
-            if (this.getSelectText) {
-              this.getSelect(this.getSelectText, this.getSelectCount)
-            }
-          })
-          .catch(error => {
-            console.log('error function addData : ', error)
-          })
-      })
+    setDataRemove (item) {
+      this.bookNoRemove = item.bookNo
+      this.dialogRemove = true
+    },
+    cancelChk () {
+      var dt = {
+        bookNo: this.bookNoRemove,
+        contactDate: this.format_date(new Date()),
+        status: 'cancel',
+        statusUse: 'use',
+        shopId: this.$session.getAll().data.shopId,
+        CREATE_USER: this.session.data.userName,
+        LAST_USER: this.session.data.userName,
+        remarkRemove: this.remarkRemove
+      }
+      axios
+        .post(this.DNS_IP + '/booking_transaction/add', dt)
+        .then(async response => {
+          this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+          console.log('addDataGlobal', response)
+          await this.getBookingList()
+          this.getTimesChange('update')
+          if (this.getSelectText) {
+            this.getSelect(this.getSelectText, this.getSelectCount)
+          }
+          this.dialogRemove = false
+          this.remarkRemove = ''
+          this.bookNo = ''
+        })
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
     },
     async changeChk (item) {
       console.log('item', item)
