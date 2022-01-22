@@ -73,7 +73,7 @@
                   @click="getSelect('confirm',countConfirm)"
                 >
                   <div>
-                    <strong>โทรยืนยันแล้ว</strong>
+                    <strong>ยืนยันแล้ว</strong>
                   </div>
                   <div>จำนวน : {{countConfirm}}</div>
                 </v-alert>
@@ -1832,7 +1832,7 @@ export default {
       for (let i = 0; i < this.dataItemTime.length; i++) {
         // var d = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === item.timeDueHtext })[i]
         let d = this.dataItemTime[i]
-        let dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && el.fastTrack && (el.statusBtText === 'โทรยืนยันแล้ว' || el.statusBtText === 'รับรถแล้ว') })
+        let dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && el.fastTrack && (el.statusBtText === 'ยืนยันแล้ว' || el.statusBtText === 'รับรถแล้ว') })
         console.log('s.dataSelect', dataSelect)
         for (let x = 0; x < dataSelect.length; x++) {
           runNo++
@@ -1871,7 +1871,7 @@ export default {
       runNo = 0
       for (let i = 0; i < this.dataItemTime.length; i++) {
         let d = this.dataItemTime[i]
-        let dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && !el.fastTrack && (el.statusBtText === 'โทรยืนยันแล้ว' || el.statusBtText === 'รับรถแล้ว') })
+        let dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && !el.fastTrack && (el.statusBtText === 'ยืนยันแล้ว' || el.statusBtText === 'รับรถแล้ว') })
         console.log('s.dataSelect', dataSelect)
         for (let x = 0; x < dataSelect.length; x++) {
           runNo++
@@ -2081,7 +2081,7 @@ export default {
             s.statusBt = d.statusBt || 'wait'
             switch (d.statusBt) {
               case 'confirm':
-                s.statusBtText = 'โทรยืนยันแล้ว'
+                s.statusBtText = 'ยืนยันแล้ว'
                 break
               case 'cancel':
                 s.statusBtText = 'ยกเลิก'
@@ -2209,7 +2209,7 @@ export default {
                       s.statusBt = d.statusBt || 'wait'
                       switch (d.statusBt) {
                         case 'confirm':
-                          s.statusBtText = 'โทรยืนยันแล้ว'
+                          s.statusBtText = 'ยืนยันแล้ว'
                           break
                         case 'cancel':
                           s.statusBtText = 'ยกเลิก'
@@ -2355,7 +2355,7 @@ export default {
               s.statusBt = d.statusBt || 'wait'
               switch (d.statusBt) {
                 case 'confirm':
-                  s.statusBtText = 'โทรยืนยันแล้ว'
+                  s.statusBtText = 'ยืนยันแล้ว'
                   this.countConfirm = this.countConfirm + 1
                   break
                 case 'cancel':
