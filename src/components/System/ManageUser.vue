@@ -62,7 +62,6 @@
                     <v-col cols="12">
                       <v-text-field
                         v-model="name"
-                        :counter="10"
                         :rules="nameRules"
                         label="ชื่อ-นามสกุล"
                         required
@@ -75,7 +74,6 @@
                       ></v-text-field>
                       <v-text-field
                         v-model="password"
-                        :counter="10"
                         :rules="nameRules"
                         label="password"
                         required
@@ -118,45 +116,38 @@
               <v-card-title>
                 <span class="headline">แก้ไขข้อมูล</span>
               </v-card-title>
+              <v-form ref="form_update" v-model="validUpdate" lazy-validation>
               <v-card-text>
                 <v-container>
-                  <v-form
-                    ref="form_update"
-                    v-model="valid"
-                    lazy-validation
-                  >
                   <v-row>
                       <v-col cols="4">
                       <v-text-field
                         label="user Name"
                         v-model="formUpdate.userName"
-                        :counter="50"
-                        maxlength="50"
                         required
+                        :rules="emailRules"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="4">
                       <v-text-field
                         label="password"
                         v-model="formUpdate.userPassword"
-                        :counter="50"
-                        maxlength="50"
                         required
+                        :rules="nameRules"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="4">
                       <v-text-field
                         label="Name"
                         v-model="formUpdate.userFirst_NameTH"
-                        :counter="50"
-                        maxlength="50"
                         required
+                        :rules="nameRules"
                       ></v-text-field>
                     </v-col>
                   </v-row>
-                   </v-form>
                 </v-container>
               </v-card-text>
+              </v-form>
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn
@@ -174,7 +165,7 @@
                   x-large
                   color="success"
                   text
-                  :disabled="!valid"
+                  :disabled="!validUpdate"
                   @click="editData()"
                 >
                   <v-icon left>mdi-checkbox-marked-circle</v-icon>
@@ -298,12 +289,12 @@ export default {
         CAN_EXPORT: ''
       },
       valid: false,
+      validUpdate: false,
       name: '',
       lastName: '',
       password: '',
       nameRules: [
-        v => !!v || 'Name is required',
-        v => (v && v.length <= 10) || 'Name must be less than 10 characters'
+        v => !!v || 'Name is required'
       ],
       email: '',
       emailRules: [
@@ -354,117 +345,53 @@ export default {
       if (this.$refs.form.validate() === false) {
         console.log('false', this.session.data.shopId)
       } else {
-        let data = [{
-          'userCode': 'SYS_USER_' + (new Date()).getTime(),
-          'userName': this.email,
-          'userFirst_NameTH': this.name,
-          'userPassword': this.password,
-          'USER_ROLE': 'user',
-          'CREATE_USER': 'admin',
-          'LAST_USER': 'admin',
-          'shopId': this.session.data.shopId
-        }]
-        console.log(data)
-        this.$swal({
-          title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
-          type: 'question',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#b3b1ab',
-          confirmButtonText: 'ใช่',
-          cancelButtonText: 'ไม่'
-        }).then(async result => {
-          axios
-            .post(this.DNS_IP + `/admin_register_user/?userName=${this.session.data.userName}&shopId=${this.session.data.shopId}`, ...data)
-            .then(response => {
-              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-              this.clearDataAdd()
-              this.dialogAdd = false
-              this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
-              console.log('addDataGlobal DNS_IP + /job/add', response)
-            })
-            .catch(error => {
-              console.log('error function addData : ', error)
-            })
-        })
-          .catch(error => {
-            console.log('Cencel : ', error)
+        axios
+          .get(this.DNS_IP + '/system_user/get?userName=' + this.email)
+          .then(response1 => {
+            console.log('status', response1.data.status)
+            if (response1.data.status === false) {
+              let data = [{
+                'userCode': 'SYS_USER_' + (new Date()).getTime(),
+                'userName': this.email,
+                'userFirst_NameTH': this.name,
+                'userPassword': this.password,
+                'USER_ROLE': 'user',
+                'CREATE_USER': 'admin',
+                'LAST_USER': 'admin',
+                'shopId': this.session.data.shopId
+              }]
+              console.log(data)
+              this.$swal({
+                title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
+                type: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#b3b1ab',
+                confirmButtonText: 'ใช่',
+                cancelButtonText: 'ไม่'
+              }).then(async result => {
+                axios
+                  .post(this.DNS_IP + `/admin_register_user/?userName=${this.session.data.userName}&shopId=${this.session.data.shopId}`, ...data)
+                  .then(response => {
+                    this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+                    this.clearDataAdd()
+                    this.dialogAdd = false
+                    this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
+                    console.log('addDataGlobal DNS_IP + /job/add', response)
+                  })
+                  .catch(error => {
+                    console.log('error function addData : ', error)
+                  })
+              })
+                .catch(error => {
+                  console.log('Cencel : ', error)
+                })
+            } else {
+              this.$swal('ผิดพลาด', 'อีเมลของท่าน มีอยู่ในระบบแล้ว กรุณากรอกอีเมลใหม่', 'error')
+              this.dataReady = true
+            }
           })
       }
-      // let rs = {
-      //   'userName': this.email
-      // }
-      // console.log(this.email)
-      // let rs = this.fieldNameItem
-      // console.log('dddddddddddd', this.fieldNameItem)
-      // let Add = []
-      // let fielditem = this.fieldNameItem
-      // for (let i = 0; i < rs.length; i++) {
-      //   let d = rs[i]
-      //   let update = {}
-      //   if (d.conditionField === '' || d.conditionField === null) {
-      //     update.masBranchID = this.formAdd.masBranchID
-      //     update.bookingFieldId = this.formAdd.bookingFieldId
-      //     update.flowId = this.formAdd.flowId
-      //     update.fieldId = d.fieldId
-      //     update.fieldValue = d.fieldValue
-      //     update.shopId = d.shopId
-      //     update.dueDate = this.date + ' ' + this.time
-      //     update.userId = 'user-skip'
-      //     update.pageName = 'BookingList'
-      //     Add.push(update)
-      //   } else {
-      //     if (
-      //       fielditem.filter((row) => {
-      //         return row.fieldId === parseInt(d.conditionField)
-      //       }).length > 0
-      //     ) {
-      //       console.log('this', fielditem)
-      //       if (
-      //         d.conditionValue ===
-      //         fielditem.filter((row) => {
-      //           return row.fieldId === parseInt(d.conditionField)
-      //         })[0].fieldValue
-      //       ) {
-      //         update.masBranchID = this.formAdd.masBranchID
-      //         update.bookingFieldId = this.formAdd.bookingFieldId
-      //         update.flowId = this.formAdd.flowId
-      //         update.fieldId = d.fieldId
-      //         update.fieldValue = d.fieldValue
-      //         update.shopId = d.shopId
-      //         update.dueDate = this.date + ' ' + this.time
-      //         update.userId = 'user-skip'
-      //         update.pageName = 'BookingList'
-      //         Add.push(update)
-      //       }
-      //     }
-      //   }
-      // }
-      // console.log('Add', Add)
-      // this.$swal({
-      //   title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
-      //   type: 'question',
-      //   showCancelButton: true,
-      //   confirmButtonColor: '#3085d6',
-      //   cancelButtonColor: '#b3b1ab',
-      //   confirmButtonText: 'ใช่',
-      //   cancelButtonText: 'ไม่'
-      // })
-      //   .then(async (result) => {
-      //     axios
-      //       .post(this.DNS_IP + '/Booking/add', Add)
-      //       .then((response) => {
-      //         this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-      //         this.clearDataAdd()
-      //         console.log('addDataGlobal DNS_IP + /job/add', response)
-      //       })
-      //       .catch((error) => {
-      //         console.log('error function addData : ', error)
-      //       })
-      //   })
-      //   .catch((error) => {
-      //     console.log('Cencel : ', error)
-      //   })
     },
     clearDataAdd () {
       this.$refs.form.reset()
@@ -504,42 +431,49 @@ export default {
       console.log('dff', this.formUpdate)
     },
     editData () {
-      console.log('dd', this.formUpdate)
-      console.log('dd', this.formUpdate.name)
-      console.log('dd', this.formUpdate.email)
+      this.$refs.form_update.validate()
+      if (this.$refs.form_update.validate() === false) {
+        console.log('false', this.session.data.shopId)
+      } else {
+        axios
+          .get(this.DNS_IP + '/system_user/get?userName=' + this.formUpdate.userName)
+          .then(response1 => {
+            console.log('status', response1.data.status)
+            if (response1.data.status === false) {
+              this.$swal({
+                title: `ต้องการ เเก้ไขข้อมูล ใช่หรือไม่?`,
+                type: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#fa0202',
+                cancelButtonColor: '#b3b1ab',
+                confirmButtonText: 'ใช่',
+                cancelButtonText: 'ไม่'
+              }).then(async result => {
+                let data = [{
+                  'userName': this.formUpdate.userName,
+                  'userFirst_NameTH': this.formUpdate.userFirst_NameTH,
+                  'userPassword': this.formUpdate.userPassword
+                }]
+                console.log('dd', data)
 
-      this.$swal({
-        title: `ต้องการ เเก้ไขข้อมูล ใช่หรือไม่?`,
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#fa0202',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      }).then(async result => {
-        let data = [{
-          'userName': this.formUpdate.userName,
-          'userFirst_NameTH': this.formUpdate.userFirst_NameTH,
-          'userPassword': this.formUpdate.userPassword
-        }]
-        console.log('dd', data)
-
-        await axios
-          .post(
-            // eslint-disable-next-line quotes
-            this.DNS_IP + "/system_user/edit/" + this.formUpdate.userId, ...data
-          )
-          .then(async response => {
-            // Debug response
-            console.log('DNS_IP + PATH + "delete/"', response)
-            console.log('status', status)
-
-            this.$swal('เรียบร้อย', 'แก้ไขข้อมูลเรียบร้อย', 'success')
-            this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
-            // Close Dialog
-            this.dialogEdit = false
+                await axios
+                  .post(
+                  // eslint-disable-next-line quotes
+                    this.DNS_IP + "/system_user/edit/" + this.formUpdate.userId, ...data
+                  )
+                  .then(async response => {
+                    this.$swal('เรียบร้อย', 'แก้ไขข้อมูลเรียบร้อย', 'success')
+                    this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
+                    // Close Dialog
+                    this.dialogEdit = false
+                  })
+              })
+            } else {
+              this.$swal('ผิดพลาด', 'อีเมลของท่าน มีอยู่ในระบบแล้ว กรุณากรอกอีเมลใหม่', 'error')
+              this.dataReady = true
+            }
           })
-      })
+      }
     }
   }
 }
