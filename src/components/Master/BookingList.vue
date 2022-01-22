@@ -2238,7 +2238,11 @@ export default {
               if (this.masBranchID) {
                 this.masBranchID = this.masBranchID
               } else {
-                this.masBranchID = this.branch[0].value
+                if (this.branch.length > 0) {
+                  this.masBranchID = this.branch[0].value
+                } else {
+                  this.masBranchID = ''
+                }
               }
               this.dataItemCheck = []
               var dataItems = []
@@ -2346,7 +2350,11 @@ export default {
       if (this.masBranchID) {
         this.masBranchID = this.masBranchID
       } else {
-        this.masBranchID = this.branch[0].value
+        if (this.branch.length > 0) {
+          this.masBranchID = this.branch[0].value
+        } else {
+          this.masBranchID = ''
+        }
       }
       let url = `${this.DNS_IP}/BookingData/get?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&dueDate=${this.dateStart}`
       await axios
@@ -2367,7 +2375,11 @@ export default {
       if (this.masBranchID) {
         this.masBranchID = this.masBranchID
       } else {
-        this.masBranchID = this.branch[0].value
+        if (this.branch.length > 0) {
+          this.masBranchID = this.branch[0].value
+        } else {
+          this.masBranchID = ''
+        }
       }
       this.dataReady = false
       this.selectedStatus = false
