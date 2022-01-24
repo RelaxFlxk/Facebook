@@ -380,11 +380,11 @@
                                     menu-props="auto"
                                     outlined
                                     required
+                                    dense
                                     :rules ="[rules.required]"
                                   ></v-select>
                                 </v-col>
                               </v-row>
-                              {{itemJob.length}}
                               <div class="text-center">
                               <v-btn
                                 depressed

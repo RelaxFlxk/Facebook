@@ -637,7 +637,7 @@
                                 ></v-date-picker>
                               </v-menu>
                             </v-col>
-                            <v-col >
+                            <v-col v-if="timeavailable.length > 0">
                               <v-select
                               v-model="time"
                               :items="timeavailable"
@@ -2361,12 +2361,14 @@ export default {
       await axios
         .get(url)
         .then(async response => {
-          response.data.forEach((row) => {
-            if (typeof (this.BookingDataList[row.bookNo]) === 'undefined') {
-              this.BookingDataList[row.bookNo] = []
-            }
-            this.BookingDataList[row.bookNo].push(row)
-          })
+          if (response.data.status !== false) {
+            response.data.forEach((row) => {
+              if (typeof (this.BookingDataList[row.bookNo]) === 'undefined') {
+                this.BookingDataList[row.bookNo] = []
+              }
+              this.BookingDataList[row.bookNo].push(row)
+            })
+          }
         })
       console.log(this.BookingDataList)
     },
