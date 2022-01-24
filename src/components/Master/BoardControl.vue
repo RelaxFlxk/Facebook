@@ -1221,11 +1221,6 @@ export default {
             //   // this.allJob = []
             // }
           }
-          console.log('JobDataItem', this.JobDataItem)
-          console.log('JobLEN', this.userId)
-          console.log('allJob', this.allJob)
-          console.log('endTime', d.endTime)
-          console.log('totalDateDiff', this.totalDateDiff)
         })
     },
     async pushmessage (jobId) {
