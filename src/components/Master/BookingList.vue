@@ -2174,6 +2174,7 @@ export default {
       this.getSelectCount = count
       this.dataItemSelect = []
       this.dataItemTimesChange = []
+      this.columnsSelected = []
       if (count > 0) {
         if (text === 'all') {
           this.dataItemSelect = this.dataItem
