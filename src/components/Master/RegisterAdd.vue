@@ -682,21 +682,20 @@ export default {
     async getjob () {
       this.itemJob = []
       await axios
-        .get(this.DNS_IP + '/job/getCount?shopId=' + this.shopId + '&masBranchID=' + this.formAdd.masBranchID + '&flowId=' + this.formAdd.flowId)
+        .get(this.DNS_IP + '/job/getCount?shopId=' + this.shopId + '&flowId=' + this.formAdd.flowId)
         .then(async (response) => {
           this.dataReady = true
-          this.itemJob = response.data
+          let rs = response.data
+          await axios
+            .get(this.DNS_IP_Betask + '/packet/get?shopId=' + this.shopId + '&source=Belinked')
+            .then(async (responses) => {
+              let rsPacket = responses.data[0].close
+              if (rs.length <= parseInt(rsPacket)) {
+                console.log('เข้า')
+                this.addDataSubmit()
+              }
+            })
         })
-      console.log('jobbbb', this.itemJob)
-      console.log('itemJoblength', this.itemJob.length)
-      // if (billingPlan == 'free') {
-      if (this.itemJob.length <= 20) {
-        console.log('เข้า')
-        setTimeout(() => this.addDataSubmit(), 500)
-      }
-      // } else {
-      //   setTimeout(() => this.addDataSubmit(), 500)
-      // }
     },
     async moveOn () {
       this.$refs.movein.chkPlan()
@@ -739,7 +738,7 @@ export default {
     },
 
     addData () {
-      this.validate('ADD')
+      setTimeout(() => this.validate('ADD'), 500)
       this.getjob()
     },
     async addDataSubmit (p) {

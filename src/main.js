@@ -50,10 +50,13 @@ Vue.mixin({
     return {
       globalVar: 'global',
       DNS_IP: '',
+      DNS_IP_Betask: '',
       PK: '', // Primary Key
       ApplicationKey: '', // Token
       IPPotocalENV_Production: 'https://api-belinked.betaskthai.com',
+      IPPotocalENV_ProductionBetask: 'https://customer-core.betaskthai.com',
       IPPotocalENV_Developer: 'http://localhost:5004',
+      IPPotocalENV_DeveloperBetask: 'http://localhost:5006',
       main_profile: {
         userLineuserId: 'U97a2b1814542579b9e5d7c1b891538ab',
         pictureUrl: 'https://profile.line-scdn.net/0hI98EFerAFhYFPD-Dk3VpQTl5GHtyEhBefVoNdiA_SSMtWFdIbV0KIiU9HCApCFUSbVxZJSZpSyQh',
@@ -69,8 +72,10 @@ Vue.mixin({
   async mounted () {
     if (process.env.NODE_ENV === 'development') {
       this.DNS_IP = this.IPPotocalENV_Developer
+      this.DNS_IP_Betask = this.IPPotocalENV_DeveloperBetask
     } else {
       this.DNS_IP = this.IPPotocalENV_Production
+      this.DNS_IP_Betask = this.IPPotocalENV_ProductionBetask
     }
   },
   methods: {
