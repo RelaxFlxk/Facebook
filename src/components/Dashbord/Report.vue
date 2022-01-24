@@ -402,7 +402,7 @@ export default {
             onclick: function (d, i) { _this.genDataTable(d) }
           },
           donut: {
-            title: `งานทั้งหมด ( ${this.carditem.cardTotal} )`,
+            title: `( ${this.carditem.cardTotal} )`,
             label: {
               format: function (value, ratio, id) {
                 return value

@@ -161,7 +161,7 @@ export default {
           onclick: function (d, i) { _this.genDataTable(d) }
         },
         donut: {
-          title: `งานทั้งหมด ( ${TotalsJob} )`,
+          title: `( ${TotalsJob} )`,
           label: {
             format: function (value, ratio, id) {
               return value

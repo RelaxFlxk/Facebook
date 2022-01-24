@@ -239,7 +239,7 @@ export default {
               onclick: function (d, i) { _this.genDataTable(d, chartBranch) }
             },
             donut: {
-              title: `งานทั้งหมด ( ${Totaljob[a]} )`,
+              title: `( ${Totaljob[a]} )`,
               label: {
                 format: function (value, ratio, id) {
                   return value
