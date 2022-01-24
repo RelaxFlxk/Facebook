@@ -36,7 +36,7 @@
                           <v-select
                             v-model="formAdd.masBranchID"
                             :items="DataBranchName"
-                            @change="flowfieldtest() ,checkTime()"
+                            @change="flowfieldtest(), checkTime()"
                             dense
                             outlined
                             hide-details
@@ -332,6 +332,7 @@
                               <br>
                               <v-row>
                                 <v-col cols="6">
+                                  <v-row>
                                   <v-menu
                                     ref="menu"
                                     v-model="menu"
@@ -370,19 +371,29 @@
                                   "
                                     ></v-date-picker>
                                   </v-menu>
+                                  </v-row>
                                 </v-col>
 
                                 <v-col cols="6">
+                                  <v-row>
+                                  <v-icon
+                                  class="pb-5 ma-2"
+                                  small
+                                  color="#7F87A7"
+                                >
+                                 mdi-clock-outline
+                                </v-icon>
                                   <v-select
                                     v-model="endTime"
                                     :items="timeavailable"
                                     label="เวลา"
                                     menu-props="auto"
                                     outlined
-                                    required
                                     dense
+                                    required
                                     :rules ="[rules.required]"
                                   ></v-select>
+                                  </v-row>
                                 </v-col>
                               </v-row>
                               <div class="text-center">
