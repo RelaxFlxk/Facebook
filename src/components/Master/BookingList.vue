@@ -1143,11 +1143,20 @@
                   <div class="text-center">
                     <v-btn
                       elevation="10"
+                      color="green darken-1"
+                      dark
+                      small
+                      :disabled="!validChange"
+                      @click="changeChk(dataChange, 'confirm')"
+                      >เปลี่ยนเวลานัดหมาย และ ยืนยัน</v-btn
+                    >
+                    <v-btn
+                      elevation="10"
                       color="#173053"
                       dark
                       small
                       :disabled="!validChange"
-                      @click="changeChk(dataChange)"
+                      @click="changeChk(dataChange, 'change')"
                       >เปลี่ยนเวลานัดหมาย</v-btn
                     >
                     <v-btn
@@ -1908,12 +1917,14 @@ export default {
           }
           s.type = 'Fast Track'
           s.runNo = runNo
+          s.dateBooking = this.format_dateNotime(this.timeTable)
           s.licenseNo = t.cusReg
           s.title = t.timeDuetext
           s.status = t.statusBtText
           s.cusName = t.cusName
           s.cusReg = t.cusReg
           s.flowName = t.flowName
+          s.extraJob = t.extraJob ? 'Extra Job' : ''
           s.tel = t.tel
           dataExport.push(s)
         }
@@ -1955,6 +1966,7 @@ export default {
           s.cusReg = t.cusReg
           s.flowName = t.flowName
           s.tel = t.tel
+          s.extraJob = t.extraJob ? 'Extra Job' : ''
           dataExport.push(s)
         }
       }
@@ -1975,6 +1987,7 @@ export default {
           'ทะเบียน': a.cusReg,
           'รายการซ่อม': a.flowName,
           'เบอร์โทร': a.tel,
+          'หมายเหตุ': a.extraJob,
           'เวลาติดตาม': '',
           'เหตุผล': '',
           'ตรง': '',
@@ -2202,9 +2215,9 @@ export default {
               { text: 'ชื่อลูกค้า', value: 'cusName' },
               { text: 'เบอร์โทร', value: 'tel' },
               { text: 'ทะเบียนรถ', value: 'cusReg' },
-              { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
-              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
               { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' }
+              // { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
+              // { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
               // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
             ]
           } else {
@@ -3141,7 +3154,7 @@ export default {
           console.log('error function addData : ', error)
         })
     },
-    async changeChk (item) {
+    async changeChk (item, changeStatus) {
       console.log('item', item)
       console.log('formChange', this.formChange)
       this.swalConfig.title = 'ต้องการ เปลี่ยนเวลานัดหมาย ใช่หรือไม่?'
@@ -3159,7 +3172,7 @@ export default {
             var dt = {
               bookNo: item.bookNo,
               contactDate: this.format_date(new Date()),
-              status: 'change',
+              status: changeStatus,
               statusUse: 'use',
               shopId: this.$session.getAll().data.shopId,
               CREATE_USER: this.session.data.userName,
