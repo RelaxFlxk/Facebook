@@ -346,6 +346,9 @@ export default {
           .then(async (response) => {
             this.$swal('บันทึกข้อมูลเรียบร้อย', ' ', 'success')
             this.dialog = false
+            this.getLineGroup()
+            this.getDataBranch()
+            this.getFLow()
           })
         // eslint-disable-next-line handle-callback-err
           .catch((error) => {
@@ -372,6 +375,7 @@ export default {
             this.$swal('ลบข้อมูลเรียบร้อย', ' ', 'success')
             this.getLineGroup()
             this.getDataBranch()
+            this.getFLow()
           })
         // eslint-disable-next-line handle-callback-err
           .catch((error) => {
