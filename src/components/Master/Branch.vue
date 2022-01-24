@@ -7,7 +7,7 @@
         <v-row>
 
           <v-col cols="12">
-            <v-btn color="primary" depressed @click="dialogAdd = true, validate('ADD')">
+            <v-btn color="primary" depressed @click="dialogAdd = true, validate('ADD'), dataItemAddTime = []">
               <v-icon left>mdi-text-box-plus</v-icon>
               เพิ่ม
             </v-btn>
@@ -61,6 +61,17 @@
                         item-text="value"
                         item-value="value"
                       ></v-select>
+                      <v-btn
+                        block
+                        color="teal"
+                        elevation="2"
+                        rounded
+                        small
+                        dark
+                        @click="presetTime()"
+                      >
+                        แบบร่าง เวลา
+                      </v-btn>
                     </v-col>
                     <v-col cols="2">
                       <v-btn
@@ -567,6 +578,9 @@ export default {
     this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
   },
   methods: {
+    presetTime () {
+      this.dataItemAddTime = [{'value': '08:00', 'text': '08:00'}, {'value': '08:30', 'text': '08:30'}, {'value': '09:00', 'text': '09:00'}, {'value': '09:30', 'text': '09:30'}, {'value': '10:00', 'text': '10:00'}, {'value': '10:30', 'text': '10:30'}, {'value': '11:00', 'text': '11:00'}, {'value': '11:30', 'text': '11:30'}, {'value': '12:00', 'text': '12:00'}, {'value': '12:30', 'text': '12:30'}, {'value': '13:00', 'text': '13:00'}, {'value': '13:30', 'text': '13:30'}, {'value': '14:00', 'text': '14:00'}, {'value': '14:30', 'text': '14:30'}, {'value': '15:00', 'text': '15:00'}, {'value': '15:30', 'text': '15:30'}, {'value': '16:00', 'text': '16:00'}, {'value': '16:30', 'text': '16:30'}, {'value': '17:00', 'text': '17:00'}]
+    },
     addDataTimeAdd () {
       if (this.formAdd.time) {
         var dataTime = this.formAdd.time.split(':')
