@@ -24,7 +24,7 @@
                 style="z-index:8;margin-right: 5px;"
                 id="v-step-0"
                 depressed
-                @click="(dialogAdd = true), getBookingField()"
+                @click="(dialogAdd = true), getBookingField(), checkTime()"
               >
                 <v-icon left>mdi-text-box-plus</v-icon>
                 เพิ่ม
@@ -994,17 +994,17 @@
                       </v-menu>
                     </v-col>
 
-                    <v-col cols="12" sm="6" md="6" lg="6">
-                      <v-text-field
-                        v-model="endTime"
-                        label="เวลา"
-                        type="time"
-                        suffix=""
-                        required
-                        :rules="[rules.required]"
-                        outlined
-                        dense
-                      ></v-text-field>
+                    <v-col cols="12" sm="6" md="6" lg="6" v-if="timeavailable.length > 0">
+                          <v-select
+                          v-model="endTime"
+                          :items="timeavailable"
+                          label="เวลา"
+                          menu-props="auto"
+                          outlined
+                          dense
+                          required
+                          :rules ="[rules.required]"
+                        ></v-select>
                     </v-col>
                   </v-row>
                   </v-form>
@@ -1088,6 +1088,7 @@
               <v-card-title>เปลี่ยนเวลานัดหมาย</v-card-title>
               <v-form ref="form_change" v-model="validChange" lazy-validation>
                 <v-card-text>
+                  <v-container>
                   <v-row>
                     <v-col cols="12" md="6" lg="6">
                       <v-menu
@@ -1104,6 +1105,8 @@
                             label="วันที่"
                             prepend-icon="mdi-calendar"
                             readonly
+                            outlined
+                            dense
                             v-bind="attrs"
                             v-on="on"
                             required
@@ -1125,14 +1128,16 @@
                       </v-menu>
                     </v-col>
                     <v-col  cols="12" md="6" lg="6">
-                      <v-text-field
-                        v-model="formChange.time"
-                        label="เวลา"
-                        type="time"
-                        suffix="th-th"
-                        required
-                        :rules="[rules.required]"
-                      ></v-text-field>
+                      <v-select
+                          v-model="formChange.time"
+                          :items="timeavailable"
+                          label="เวลา"
+                          menu-props="auto"
+                          outlined
+                          dense
+                          required
+                          :rules ="[rules.required]"
+                        ></v-select>
                     </v-col>
                   </v-row>
                   <div class="text-center">
@@ -1155,6 +1160,7 @@
                       >ยกเลิก</v-btn
                     >
                   </div>
+                  </v-container>
                 </v-card-text>
                 <br />
               </v-form>
@@ -1353,7 +1359,7 @@
                       id="v-step-2"
                       v-if="item.statusBt !== 'confirmJob'"
                       small
-                      @click.stop="setDataChang(item)"
+                      @click.stop="setDataChang(item), checkTimeFlow()"
                     >
                       <v-icon> mdi-calendar-clock </v-icon>
                     </v-btn>
@@ -1363,7 +1369,7 @@
                       v-if="item.statusBt === 'confirm'"
                       id="v-step-2"
                       small
-                      @click.stop="(dialogEdit = true), getBookingData(item)"
+                      @click.stop="(dialogEdit = true), getBookingData(item), checkTimeFlow()"
                     >
                       <v-icon dark> mdi-account-plus </v-icon>
                     </v-btn>
@@ -1467,7 +1473,7 @@
                       v-if="item.statusBt === 'confirm'"
                       id="v-step-2"
                       small
-                      @click.stop="(dialogEdit = true), getBookingData(item)"
+                      @click.stop="(dialogEdit = true), getBookingData(item),checkTimeFlow()"
                     >
                       <v-icon dark> mdi-account-plus </v-icon>
                     </v-btn>
@@ -1497,7 +1503,7 @@
                       fab
                       id="v-step-2"
                       small
-                      @click.stop="setDataChang(item)"
+                      @click.stop="setDataChang(item), checkTimeFlow()"
                     >
                       <v-icon> mdi-calendar-clock </v-icon>
                     </v-btn>
@@ -1826,7 +1832,15 @@ export default {
   },
   methods: {
     checkTime () {
+      this.timeavailable = []
       let dtTime = this.branch.filter(item => { return item.value === this.formAdd.masBranchID })
+      // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
+      this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+      // console.log('timevailable', this.timeavailable)
+    },
+    checkTimeFlow () {
+      this.timeavailable = []
+      let dtTime = this.branch.filter(item => { return item.value === this.masBranchID })
       // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
       this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
       // console.log('timevailable', this.timeavailable)
