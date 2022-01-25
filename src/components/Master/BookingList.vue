@@ -1550,6 +1550,46 @@
           </v-col>
           <!-- end data table -->
         </v-row>
+        <v-dialog v-model="dialogConfirm" :max-width="dialogwidth">
+            <v-card class="text-center">
+              <v-card-title>
+                ยืนยันรายการนี้
+              </v-card-title>
+              <v-card-text>
+                <v-container>
+                <v-row>
+                  <v-select
+                    v-model="empSelect"
+                    :items="empSelectStep"
+                    label="พนักงานที่รับนัดหมาย"
+                    menu-props="auto"
+                    outlined
+                    dense
+                  ></v-select>
+                </v-row>
+                <div class="text-center">
+                  <v-btn
+                    elevation="10"
+                    color="#173053"
+                    dark
+                    small
+                    @click="onConfirm(dataConfirm)"
+                    >ยืนยันรายการนี้</v-btn
+                  >
+                  <v-btn
+                    elevation="10"
+                    color="#173053"
+                    outlined
+                    style="background-color:#FFFFFF"
+                    small
+                    @click="dialogConfirm = false"
+                    >ยกเลิก</v-btn
+                  >
+                </div>
+                </v-container>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
       </div>
     </v-main>
   </div>
@@ -1818,7 +1858,11 @@ export default {
       BookingDataList: [],
       remarkRemove: '',
       bookNoRemove: '',
-      timeavailable: []
+      timeavailable: [],
+      dialogConfirm: false,
+      empSelectStep: [],
+      dataConfirm: [],
+      empSelect: ''
     }
   },
   beforeCreate () {
@@ -2220,6 +2264,17 @@ export default {
               // { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
               // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
             ]
+          } else if (text === 'confirm') {
+            this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+              // { text: 'Booking Id', value: 'bookNo' },
+              { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+              { text: 'ชื่อบริการ', value: 'flowName' },
+              { text: 'ชื่อลูกค้า', value: 'cusName' },
+              { text: 'เบอร์โทร', value: 'tel' },
+              { text: 'ทะเบียนรถ', value: 'cusReg' },
+              { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
+              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+              { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' }]
           } else {
             this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
               // { text: 'Booking Id', value: 'bookNo' },
@@ -2446,6 +2501,8 @@ export default {
               s.flowId = d.flowId
               s.flowName = d.flowName
               s.dueDate = d.dueDate
+              s.shopId = d.shopId
+              s.empFull_NameTH = d.empFull_NameTH
               s.userId = d.userId
               s.chkConfirm = false
               s.chkCancel = false
@@ -3064,62 +3121,97 @@ export default {
       }
       // this.clearData()
     },
-    confirmChk (item) {
-      console.log('item', item)
-      this.swalConfig.title = 'ต้องการ ยืนยัน ใช่หรือไม่?'
-      this.$swal(this.swalConfig).then(async result => {
-        var dt = {
-          bookNo: item.bookNo,
-          contactDate: this.format_date(new Date()),
-          status: 'confirm',
-          statusUse: 'use',
-          shopId: this.$session.getAll().data.shopId,
-          CREATE_USER: this.session.data.userName,
-          LAST_USER: this.session.data.userName
-        }
-        axios
-          .post(this.DNS_IP + '/booking_transaction/add', dt)
-          .then(async response => {
-            this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-            let DTitem = item.userId
-            console.log('DTITEM', DTitem)
-            if (DTitem !== 'user-skip') {
-              await this.getBookingList()
-              this.getTimesChange('update')
-              if (this.getSelectText) {
-                this.getSelect(this.getSelectText, this.getSelectCount)
-              }
-              let pushText = {
-                'to': item.lineUserId,
-                'messages': [
-                  {
-                    'type': 'text',
-                    'text': ` ✍️ ยืนยันเวลานัดหมา\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
-                          \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}`
-                  }
-                ]
-              }
-              axios
-                .post(
-                  this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
-                  pushText
-                )
-                .catch(error => {
-                  console.log('error function addData : ', error)
-                })
-            } else {
-              await this.getBookingList()
-              this.getTimesChange('update')
-              if (this.getSelectText) {
-                this.getSelect(this.getSelectText, this.getSelectCount)
-              }
+    async getEmpSelect (item) {
+      this.empSelectStep = []
+      await axios
+        .get(this.DNS_IP + '/empSelect/get?shopId=' + item.shopId)
+        .then(async response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              var s = {}
+              s.text = d.empFirst_NameTH
+              s.value = d.empId
+              this.empSelectStep.push(s)
             }
-            console.log('addDataGlobal', response)
-          })
-          .catch(error => {
-            console.log('error function addData : ', error)
-          })
-      })
+            this.empSelect = this.empSelectStep[0].value
+          }
+        })
+    },
+    async confirmChk (item) {
+      this.dataConfirm = item
+      await this.getEmpSelect(item)
+      this.dialogConfirm = true
+    },
+    onConfirm (item) {
+      console.log('item', item)
+      var dt = {
+        bookNo: item.bookNo,
+        contactDate: this.format_date(new Date()),
+        status: 'confirm',
+        statusUse: 'use',
+        shopId: this.$session.getAll().data.shopId,
+        CREATE_USER: this.session.data.userName,
+        LAST_USER: this.session.data.userName
+      }
+      axios
+        .post(this.DNS_IP + '/booking_transaction/add', dt)
+        .then(async response => {
+          this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+          await this.updateRemark(item)
+          let DTitem = item.userId
+          console.log('DTITEM', DTitem)
+          if (DTitem !== 'user-skip') {
+            await this.getBookingList()
+            this.getTimesChange('update')
+            if (this.getSelectText) {
+              this.getSelect(this.getSelectText, this.getSelectCount)
+            }
+            let pushText = {
+              'to': item.lineUserId,
+              'messages': [
+                {
+                  'type': 'text',
+                  'text': ` ✍️ ยืนยันเวลานัดหมา\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
+                          \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}`
+                }
+              ]
+            }
+            axios
+              .post(
+                this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
+                pushText
+              )
+              .catch(error => {
+                console.log('error function addData : ', error)
+              })
+          } else {
+            await this.getBookingList()
+            this.getTimesChange('update')
+            if (this.getSelectText) {
+              this.getSelect(this.getSelectText, this.getSelectCount)
+            }
+          }
+          this.dialogConfirm = false
+          console.log('addDataGlobal', response)
+        })
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
+    },
+    async updateRemark (item) {
+      var dt = {
+        LAST_USER: this.session.data.userName,
+        empSelect: this.empSelect
+      }
+      await axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + "/Booking/edit/" + item.bookNo,
+          dt
+        )
+        .then(async response => {})
     },
     setDataRemove (item) {
       this.bookNoRemove = item.bookNo
@@ -3139,7 +3231,7 @@ export default {
       axios
         .post(this.DNS_IP + '/booking_transaction/add', dt)
         .then(async response => {
-          this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+          this.$swal('เรียบร้อย', 'ยกเลิกเรียบร้อย', 'success')
           console.log('addDataGlobal', response)
           await this.getBookingList()
           this.getTimesChange('update')
