@@ -760,7 +760,8 @@ export default {
           }
           console.log(checkError)
           if (checkError === true) {
-            await this.getDataGlobal(this.DNS_IP, this.path)
+            this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+            await this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
           } else {
             this.dataItemImport = []
             this.dataItemImportChecKHide = true
