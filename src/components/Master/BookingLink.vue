@@ -29,28 +29,109 @@
                     ></v-img>
                     <v-card-text>
                       <v-row align-content="center">
-                        <v-col cols="10">
+                        <v-col cols="12"  class="pb-0">
                           <v-text-field
                             v-model="Redirect"
                             style="background-color:#050C42;"
                             solo
+                            readonly
                             id="myInput"
                             dense
                           >
                           </v-text-field>
                         </v-col>
-                        <v-col cols="2" class="text-lelf">
+                      </v-row>
+                      <v-row justify="center" no-gutters>
+                        <v-col cols="auto" class="text-lelf">
                           <v-btn
                             color="#1B437C"
                             small
                             fab
                             dark
-                            @click="FunCopy()"
+                            @click="FunCopy('facebook')"
                           >
-                            <v-icon>mdi-content-copy</v-icon>
+                            <v-icon>mdi-facebook</v-icon>
+                          </v-btn>
+                        </v-col>
+                        <v-col cols="auto" class="text-lelf">
+                          <v-btn
+                            color="#1B437C"
+                            small
+                            fab
+                            dark
+                            @click="FunCopy('twitter')"
+                          >
+                            <v-icon>mdi-twitter</v-icon>
+                          </v-btn>
+                        </v-col>
+                        <v-col cols="auto" class="text-lelf">
+                          <button v-on:click="FunCopy('line')"><v-img :src="require('@/assets/lineIcon.png')" style="width:40px;height:40px;margin-bottom:13px;" /></button>
+                        </v-col>
+                        <v-col cols="auto" class="text-lelf">
+                          <v-btn
+                            color="#1B437C"
+                            small
+                            fab
+                            dark
+                            @click="FunCopy('instagram')"
+                          >
+                            <v-icon>mdi-instagram</v-icon>
+                          </v-btn>
+                        </v-col>
+                        <v-col cols="auto" class="text-lelf">
+                          <v-btn
+                            color="#1B437C"
+                            small
+                            fab
+                            dark
+                            @click="dialogOther = true, validate('other')"
+                          >
+                            <v-icon>mdi-tag-plus</v-icon>
                           </v-btn>
                         </v-col>
                       </v-row>
+                      <v-dialog v-model="dialogOther" max-width="70%">
+                        <v-card class="text-center">
+                          <v-card-title>
+                            ยืนยันรายการนี้
+                          </v-card-title>
+                          <v-card-text>
+                            <v-form ref="form_other" v-model="validOther" lazy-validation>
+                            <v-container>
+                            <v-row>
+                              <v-text-field
+                                v-model="textOther"
+                                label="ใส่แหล่งที่มาที่ต้องการ"
+                                outlined
+                                dense
+                                required
+                                :rules ="[rules.required]"
+                              ></v-text-field>
+                            </v-row>
+                            <div class="text-center">
+                              <v-btn
+                                elevation="10"
+                                color="#173053"
+                                dark
+                                :disabled="!validOther"
+                                small
+                                @click="FunCopy(textOther), dialogOther = false"
+                                >คัดลอก</v-btn>
+                              <v-btn
+                                elevation="10"
+                                color="#173053"
+                                outlined
+                                style="background-color:#FFFFFF"
+                                small
+                                @click="dialogOther = false"
+                                >ยกเลิก</v-btn
+                              >
+                            </div>
+                            </v-container>
+                            </v-form>
+                          </v-card-text>
+                        </v-card>
+                      </v-dialog>
                       <v-row>
                         <v-col cols="12" md="12" sm="12" class="main">
                           <div class="Bar">
@@ -310,7 +391,29 @@ export default {
         precision: 0
       },
       Fielditem: [],
+      textOther: '',
       showitem: false,
+      validOther: false,
+      dialogOther: false,
+      rules: {
+        numberRules: value =>
+          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
+          'กรุณากรอกตัวเลข 0 ถึง 9',
+        counterTel: value => value.length <= 10 || 'Max 10 characters',
+        IDcardRules: value =>
+          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999999) ||
+          'กรุณากรอกตัวเลข 0 ถึง 9',
+        required: value => !!value || 'กรุณากรอก.',
+        resizeImag: value =>
+          !value ||
+          value.size < 2000000 ||
+          'Avatar size should be less than 2 MB!',
+        counterIDcard: value => value.length <= 13 || 'Max 13 characters',
+        email: value => {
+          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+          return pattern.test(value) || 'Invalid e-mail.'
+        }
+      },
       breadcrumbs: [
         {
           text: 'Home',
@@ -348,6 +451,18 @@ export default {
     await this.getBookingField()
   },
   methods: {
+    validate (Action) {
+      switch (Action) {
+        case 'other':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_other.validate()
+          })
+          break
+        default:
+          break
+      }
+    },
     async getBookingField () {
       let itemIncustomField = []
       this.IdUpdate = ''
@@ -507,11 +622,11 @@ export default {
           console.log('error function addData : ', error)
         })
     },
-    FunCopy () {
+    FunCopy (text) {
       var copyText = document.getElementById('myInput')
       copyText.select()
       copyText.setSelectionRange(0, 99999)
-      navigator.clipboard.writeText(copyText.value)
+      navigator.clipboard.writeText(copyText.value + '&source=' + text)
     }
   }
 }
