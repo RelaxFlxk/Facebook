@@ -101,7 +101,7 @@ Vue.mixin({
     // YYYY-MM-DD
     momenDate_1 (value) {
       if (value) {
-        return moment(moment((value), 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+        return moment(moment(new Date(value), 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
       }
     },
     // HH:MM:ss
