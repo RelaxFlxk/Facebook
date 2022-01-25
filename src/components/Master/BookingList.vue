@@ -1236,7 +1236,7 @@
           </v-dialog>
           <!-- data table -->
           <v-col cols="12" >
-            <BookingQueue :branchParent="branch" :masBranchIDParent="masBranchID" :drawerParent="drawer" :menu1Parent="menu1" :timeTableParent="timeTable" :rulesParent="rules" :masterTimeParent="masterTime" :dataItemTimesChangeParent="dataItemTimesChange" :getTimesChangeParent="getTimesChange" :exportExcelParent="exportExcel" :toggleParent="toggle" @updateTimeTable="updateTimeTablefromChild"></BookingQueue>
+            <BookingQueue :branchParent="branch" :masBranchIDParent="masBranchID" :drawerParent="drawer" :menu1Parent="menu1" :timeTableParent="timeTable" :rulesParent="rules" :masterTimeParent="masterTime" :dataItemTimesChangeParent="dataItemTimesChange" :getTimesChangeParent="getTimesChange" :exportExcelParent="exportExcel" :dataRemoveExportParent="dataRemoveExport" :exportExcelRemoveParent="exportExcelRemove" :toggleParent="toggle" @updateTimeTable="updateTimeTablefromChild"></BookingQueue>
             <v-card elevation="7" v-if="dataReady">
               <div>
                 <v-btn
@@ -1862,7 +1862,9 @@ export default {
       dialogConfirm: false,
       empSelectStep: [],
       dataConfirm: [],
-      empSelect: ''
+      empSelect: '',
+      dataRemoveExport: [],
+      dataexportRemove: []
     }
   },
   beforeCreate () {
@@ -2043,6 +2045,115 @@ export default {
       const wb = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(wb, dataWS)
       XLSX.writeFile(wb, 'export_' + this.format_dateNotime(this.timeTable) + '.xlsx')
+    },
+    exportExcelRemove () {
+      let dataExport = []
+      this.dataexportRemove = []
+      let runNo = 0
+      for (let i = 0; i < this.dataItemTime.length; i++) {
+        // var d = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === item.timeDueHtext })[i]
+        let d = this.dataItemTime[i]
+        let dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && el.fastTrack && (el.statusBtText === 'ยกเลิก') })
+        console.log('s.dataSelect', dataSelect)
+        for (let x = 0; x < dataSelect.length; x++) {
+          runNo++
+          let t = dataSelect[x]
+          let s = {}
+          console.log('fastTrack')
+          console.log('s.t', t)
+          if (dataExport.filter(el => { return el.timeDueHtext === this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )' }).length === 0) {
+            s.timeDueHtext = this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )'
+          } else {
+            s.timeDueHtext = ''
+          }
+          s.type = 'Fast Track'
+          s.runNo = runNo
+          s.dateBooking = this.format_dateNotime(this.timeTable)
+          s.licenseNo = t.cusReg
+          s.remarkRemove = t.remarkRemove
+          s.title = t.timeDuetext
+          s.status = t.statusBtText
+          s.cusName = t.cusName
+          s.cusReg = t.cusReg
+          s.flowName = t.flowName
+          s.extraJob = t.extraJob ? 'Extra Job' : ''
+          s.tel = t.tel
+          dataExport.push(s)
+        }
+      }
+      let s = {}
+      s.type = ''
+      s.runNo = ''
+      s.licenseNo = ''
+      s.title = ''
+      s.status = ''
+      s.cusName = ''
+      s.cusReg = ''
+      s.remarkRemove = ''
+      s.tel = ''
+      s.tel = ''
+      dataExport.push(s)
+      runNo = 0
+      for (let i = 0; i < this.dataItemTime.length; i++) {
+        let d = this.dataItemTime[i]
+        let dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && !el.fastTrack && (el.statusBtText === 'ยกเลิก') })
+        console.log('s.dataSelect', dataSelect)
+        for (let x = 0; x < dataSelect.length; x++) {
+          runNo++
+          let t = dataSelect[x]
+          let s = {}
+          console.log('normal')
+          console.log('s.t', t)
+          if (dataExport.filter(el => { return el.timeDueHtext === this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )' }).length === 0) {
+            s.timeDueHtext = this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )'
+          } else {
+            s.timeDueHtext = ''
+          }
+          s.type = 'ปกติ'
+          s.runNo = runNo
+          s.dateBooking = this.format_dateNotime(this.timeTable)
+          s.licenseNo = t.cusReg
+          s.remarkRemove = t.remarkRemove
+          s.title = t.timeDuetext
+          s.status = t.statusBtText
+          s.cusName = t.cusName
+          s.cusReg = t.cusReg
+          s.flowName = t.flowName
+          s.tel = t.tel
+          s.extraJob = t.extraJob ? 'Extra Job' : ''
+          dataExport.push(s)
+        }
+      }
+      this.dataexportRemove = dataExport
+      this.onExportRemove()
+      console.log('dataEportCancel', JSON.stringify(dataExport))
+    },
+    onExportRemove () {
+      var dataexport = []
+      for (var i = 0; i < this.dataexportRemove.length; i++) {
+        var a = this.dataexportRemove[i]
+        dataexport.push({
+          'ประเภท': a.type,
+          'ลำดับ': a.runNo,
+          'วันที่': a.dateBooking,
+          'เวลา': a.title,
+          'ชื่อลูกค้า': a.cusName,
+          'ทะเบียน': a.cusReg,
+          'รายการซ่อม': a.flowName,
+          'เบอร์โทร': a.tel,
+          'หมายเหตุ': a.extraJob,
+          'หมายเหตุยกเลิก': a.remarkRemove,
+          'เวลาติดตาม': '',
+          'เหตุผล': '',
+          'ตรง': '',
+          'ไม่ตรง': '',
+          'เปิดJob': ''
+        })
+      }
+      const dataWS = XLSX.utils.json_to_sheet(dataexport)
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, dataWS)
+      XLSX.writeFile(wb, 'export_cancel_' + this.format_dateNotime(this.timeTable) + '.xlsx')
     },
     toggle () {
       this.timeTable = new Date().toISOString().substr(0, 10)
@@ -2288,7 +2399,6 @@ export default {
           }
         }
       }
-      // this.getTimesChange('update')
     },
     updateTimeTablefromChild (timeTable) {
       this.timeTable = timeTable
@@ -2296,9 +2406,11 @@ export default {
     async getTimesChange (text) {
       try {
         this.dataItemTimesChange = []
+        this.dataRemoveExport = []
         // console.log('this.dataItem', this.dataItem.filter(el => { return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable }))
         if (text === 'all') {
           this.dataItemTimesChange = this.dataItem
+          this.dataRemoveExport = this.dataItemTimesChange.filter(el => { return el.statusBt === 'cancel' })
         } else {
           if (moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM') === this.dateStart) {
             console.log('month old')
@@ -2350,6 +2462,7 @@ export default {
                       s.flowId = d.flowId
                       s.flowName = d.flowName
                       s.dueDate = d.dueDate
+                      s.remarkRemove = d.remarkRemove
                       s.userId = d.userId
                       s.chkConfirm = false
                       s.chkCancel = false
@@ -2423,6 +2536,8 @@ export default {
               })
             }
           }
+          this.dataRemoveExport = this.dataItemTimesChange.filter(el => { return el.statusBt === 'cancel' })
+          console.log('this.dataRemoveExport', this.dataRemoveExport)
         }
       } catch (err) {
         console.log(err)

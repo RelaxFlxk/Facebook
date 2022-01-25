@@ -2,8 +2,8 @@
    <transition name="slide">
       <div class="slidein" v-if="drawer" :style="'max-width:'+width+' !important'">
          <h4 @click="toggle">ตรวจสอบคิวจองรายวัน</h4>
-         <v-row>
-         <v-col cols="8">
+         <v-row no-gutters>
+         <v-col cols="12">
             <v-menu
                ref="menu"
                v-model="menu1"
@@ -35,9 +35,10 @@
                ></v-date-picker>
             </v-menu>
          </v-col>
-         <v-col cols="4">
+         </v-row>
+         <v-row justify="center">
+            <v-col class="pt-0" cols="auto" v-if="dataItemTimesChange.filter(el => { return (el.statusBt==='confirmJob' || el.statusBt==='confirm') }).length > 0">
             <v-btn
-               v-if="dataItemTimesChange.length > 0"
                color="primary"
                small
                @click="exportExcel()"
@@ -45,6 +46,17 @@
             >
                <v-icon right dark>mdi-microsoft-excel</v-icon>
                &nbsp;Export
+            </v-btn>
+         </v-col>
+         <v-col class="pt-0" cols="auto" v-if="dataRemoveExport.length > 0">
+            <v-btn
+               color="error"
+               small
+               @click="exportExcelRemove()"
+               dark
+            >
+               <v-icon right dark>mdi-microsoft-excel</v-icon>
+               &nbsp;Export Cancel
             </v-btn>
          </v-col>
          </v-row>
@@ -253,7 +265,7 @@
 </template>
 <script>
 export default {
-  props: ['branchParent', 'masBranchIDParent', 'drawerParent', 'menu1Parent', 'timeTableParent', 'rulesParent', 'masterTimeParent', 'dataItemTimesChangeParent', 'getTimesChangeParent', 'exportExcelParent', 'toggleParent', 'updateTimeTable'],
+  props: ['branchParent', 'masBranchIDParent', 'drawerParent', 'menu1Parent', 'timeTableParent', 'rulesParent', 'masterTimeParent', 'dataItemTimesChangeParent', 'getTimesChangeParent', 'exportExcelParent', 'toggleParent', 'updateTimeTable', 'dataRemoveExportParent', 'exportExcelRemoveParent'],
   components: {},
   created () {},
   computed: {
@@ -277,6 +289,7 @@ export default {
       rules: this.rulesParent,
       masterTime: this.masterTimeParent,
       dataItemTimesChange: this.dataItemTimesChangeParent,
+      dataRemoveExport: this.dataRemoveExportParent,
       dataCount: []
     }
   },
@@ -289,6 +302,9 @@ export default {
     },
     exportExcel () {
       this.exportExcelParent()
+    },
+    exportExcelRemove () {
+      this.exportExcelRemoveParent()
     },
     toggle () {
       this.toggleParent()
@@ -315,6 +331,9 @@ export default {
     },
     masterTimeParent () {
       this.masterTime = this.masterTimeParent
+    },
+    dataRemoveExportParent () {
+      this.dataRemoveExport = this.dataRemoveExportParent
     },
     dataItemTimesChangeParent () {
       this.dataCount = []
