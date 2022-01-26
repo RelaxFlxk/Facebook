@@ -1980,6 +1980,7 @@ export default {
           s.cusName = t.cusName
           s.cusReg = t.cusReg
           s.flowName = t.flowName
+          s.empFull_NameTH = t.empFull_NameTH
           s.extraJob = t.extraJob ? 'Extra Job' : ''
           s.tel = t.tel
           dataExport.push(s)
@@ -1995,6 +1996,7 @@ export default {
       s.cusReg = ''
       s.flowName = ''
       s.tel = ''
+      s.empFull_NameTH = ''
       dataExport.push(s)
       runNo = 0
       for (let i = 0; i < this.dataItemTime.length; i++) {
@@ -2022,6 +2024,7 @@ export default {
           s.cusReg = t.cusReg
           s.flowName = t.flowName
           s.tel = t.tel
+          s.empFull_NameTH = t.empFull_NameTH
           s.extraJob = t.extraJob ? 'Extra Job' : ''
           dataExport.push(s)
         }
@@ -2048,7 +2051,8 @@ export default {
           'เหตุผล': '',
           'ตรง': '',
           'ไม่ตรง': '',
-          'เปิดJob': ''
+          'เปิดJob': '',
+          'พนักงานรับนัดหมาย': a.empFull_NameTH
         })
       }
       const dataWS = XLSX.utils.json_to_sheet(dataexport)
@@ -2086,6 +2090,7 @@ export default {
           s.cusName = t.cusName
           s.cusReg = t.cusReg
           s.flowName = t.flowName
+          s.empFull_NameTH = t.empFull_NameTH
           s.extraJob = t.extraJob ? 'Extra Job' : ''
           s.tel = t.tel
           dataExport.push(s)
@@ -2101,7 +2106,7 @@ export default {
       s.cusReg = ''
       s.remarkRemove = ''
       s.tel = ''
-      s.tel = ''
+      s.empFull_NameTH = ''
       dataExport.push(s)
       runNo = 0
       for (let i = 0; i < this.dataItemTime.length; i++) {
@@ -2130,6 +2135,7 @@ export default {
           s.cusReg = t.cusReg
           s.flowName = t.flowName
           s.tel = t.tel
+          s.empFull_NameTH = t.empFull_NameTH
           s.extraJob = t.extraJob ? 'Extra Job' : ''
           dataExport.push(s)
         }
@@ -2157,7 +2163,8 @@ export default {
           'เหตุผล': '',
           'ตรง': '',
           'ไม่ตรง': '',
-          'เปิดJob': ''
+          'เปิดJob': '',
+          'พนักงานรับนัดหมาย': a.empFull_NameTH
         })
       }
       const dataWS = XLSX.utils.json_to_sheet(dataexport)
