@@ -104,7 +104,7 @@
                               </v-chip>
                               <v-chip
                                  class="ma-2"
-                                 color="green darken-1"
+                                 color="red darken-1"
                                  dark
                                  label
                                  small
@@ -136,10 +136,10 @@
                   <!-- <v-expansion-panel-header>{{item + '(' + dataItemTimesChange.filter(el => { return el.timeDueHtext === item && (el.statusBt==='confirmJob' || el.statusBt==='confirm') }).length + ')'}}</v-expansion-panel-header> -->
                   <v-expansion-panel-content v-for="(items, indexitems) in dataItemTimesChange.filter(el => { return el.timeDueHtext === item && (el.statusBt==='confirmJob' || el.statusBt==='confirm') })" :key="'td'+indexitems">
                      <v-card
-                     :color="(items.fastTrack) ? 'orange darken-1' : ((items.extraJob) ? 'green darken-1' : '#1B437C')"
+                     :color="(items.fastTrack) ? 'orange darken-1' : ((items.extraJob) ? 'red darken-1' : '#1B437C')"
                      >
                      <v-container class="pt-0 pb-0">
-                        <v-list-item class="pa-0" :style="(items.fastTrack) ? 'background-color:#FB8C00 !important' : ((items.extraJob) ? 'background-color: #43A047 !important' : '')">
+                        <v-list-item class="pa-0" :style="(items.fastTrack) ? 'background-color:#FB8C00 !important' : ((items.extraJob) ? 'background-color: #E53935 !important' : '')">
                            <v-icon
                            large
                            dark
