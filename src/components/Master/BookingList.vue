@@ -1211,6 +1211,16 @@
                     auto-grow
                   ></v-textarea>
                 </v-row>
+                <v-row>
+                  <v-select
+                    v-model="empSelect"
+                    :items="empSelectStep"
+                    label="พนักงานที่รับนัดหมาย"
+                    menu-props="auto"
+                    outlined
+                    dense
+                  ></v-select>
+                </v-row>
                 <div class="text-center">
                   <v-btn
                     elevation="10"
@@ -2879,7 +2889,7 @@ export default {
             update.dueDate = this.date + ' ' + this.time
             update.userId = 'user-skip'
             update.pageName = 'BookingList'
-            update.sourceLink = 'BookingAdmin'
+            update.sourceLink = 'direct'
             Add.push(update)
           } else {
             if (
@@ -2900,7 +2910,7 @@ export default {
                 update.fieldValue = d.fieldValue
                 update.shopId = d.shopId
                 update.dueDate = this.date + ' ' + this.time
-                update.sourceLink = 'BookingAdmin'
+                update.sourceLink = 'direct'
                 update.userId = 'user-skip'
                 update.pageName = 'BookingList'
                 Add.push(update)
@@ -3330,13 +3340,14 @@ export default {
         )
         .then(async response => {})
     },
-    setDataRemove (item) {
-      this.bookNoRemove = item.bookNo
+    async setDataRemove (item) {
+      this.bookNoRemove = item
+      await this.getEmpSelect(item)
       this.dialogRemove = true
     },
     cancelChk () {
       var dt = {
-        bookNo: this.bookNoRemove,
+        bookNo: this.bookNoRemove.bookNo,
         contactDate: this.format_date(new Date()),
         status: 'cancel',
         statusUse: 'use',
@@ -3348,6 +3359,7 @@ export default {
       axios
         .post(this.DNS_IP + '/booking_transaction/add', dt)
         .then(async response => {
+          await this.updateRemark(this.bookNoRemove)
           this.$swal('เรียบร้อย', 'ยกเลิกเรียบร้อย', 'success')
           console.log('addDataGlobal', response)
           await this.getBookingList()

@@ -280,6 +280,16 @@
                     auto-grow
                   ></v-textarea>
                 </v-row>
+                <v-row>
+                  <v-select
+                    v-model="empSelect"
+                    :items="empSelectStep"
+                    label="พนักงานที่รับนัดหมาย"
+                    menu-props="auto"
+                    outlined
+                    dense
+                  ></v-select>
+                </v-row>
                 <div class="text-center">
                   <v-btn
                     elevation="10"
@@ -309,7 +319,7 @@
 <script>
 import axios from 'axios' // api
 import moment from 'moment-timezone'
-import BookingQueue from './BookingQueue.vue'
+import BookingQueue from './BookingQueueMobile.vue'
 export default {
   components: {
     BookingQueue
@@ -555,6 +565,7 @@ export default {
             }
           }
         }
+        console.log('this.dataItemTimesChange', this.dataItemTimesChange)
       } catch (err) {
         console.log(err)
       }
@@ -829,13 +840,14 @@ export default {
           console.log('error function addData : ', error)
         })
     },
-    setDataRemove (item) {
-      this.bookNoRemove = item.bookNo
+    async setDataRemove (item) {
+      this.bookNoRemove = item
+      await this.getEmpSelect(item)
       this.dialogRemove = true
     },
     cancelChk () {
       var dt = {
-        bookNo: this.bookNoRemove,
+        bookNo: this.bookNoRemove.bookNo,
         contactDate: this.format_date(new Date()),
         status: 'cancel',
         statusUse: 'use',
@@ -847,10 +859,13 @@ export default {
       axios
         .post(this.DNS_IP + '/booking_transaction/add', dt)
         .then(async response => {
+          await this.updateRemark(this.bookNoRemove)
           this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
           console.log('addDataGlobal', response)
+          this.dialogRemove = false
           await this.chkBookingNo()
           this.getTimesChange('update')
+          this.dialogRemove = false
         })
         .catch(error => {
           console.log('error function addData : ', error)
