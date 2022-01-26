@@ -83,6 +83,16 @@
                             required
                           ></v-text-field>
                       </v-col>
+                      <v-col cols="6" class="pb-0">
+                          <v-switch
+                            v-model="formUpdate.darkMode"
+                            inset
+                          >
+                            <template v-slot:label>
+                              <div class="mt-3">Dark Mode</div>
+                            </template>
+                          </v-switch>
+                      </v-col>
                     </v-row>
                     <v-row>
                       <v-col cols="6" class="pb-2 pt-0">
@@ -242,7 +252,8 @@ export default {
         optionDistrictNew: '',
         optionProvinceNew: '',
         primaryColor: '',
-        secondaryColor: ''
+        secondaryColor: '',
+        darkMode: false
       },
       filesShop: null,
       formUpdateItem: {
@@ -374,6 +385,11 @@ export default {
         'YYYY-MM-DD HH:mm'
       )
       this.formUpdate.pictureUrlPreview = this.formUpdate.shopImge
+      if (this.formUpdate.darkMode === 'True') {
+        this.formUpdate.darkMode = true
+      } else {
+        this.formUpdate.darkMode = false
+      }
       // this.formUpdate.primaryColor = item.primaryColor
       // this.formUpdate.secondaryColor = item.secondaryColor
       // if (this.formUpdate.ZIP_CD.length >= 5) {
@@ -410,6 +426,12 @@ export default {
           } else {
             this.formUpdate.shopImge = this.formUpdate.pictureUrlPreview
           }
+          var darkMode = ''
+          if (this.formUpdate.darkMode === true) {
+            darkMode = 'True'
+          } else {
+            darkMode = 'False'
+          }
           var dt = {
             shopName: this.formUpdate.shopName,
             shopImge: this.formUpdate.shopImge,
@@ -417,7 +439,8 @@ export default {
             LAST_USER: this.session.data.userName,
             contactEmail: this.formUpdate.contactEmail,
             primaryColor: this.formUpdate.primaryColor,
-            secondaryColor: this.formUpdate.secondaryColor
+            secondaryColor: this.formUpdate.secondaryColor,
+            darkMode: darkMode
           }
           await axios
             .post(
