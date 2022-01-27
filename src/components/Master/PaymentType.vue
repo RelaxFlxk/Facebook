@@ -574,7 +574,7 @@ export default {
         let params = new FormData()
         params.append('file', this.filesUpdate)
         await axios
-          .post(this.DNS_IP + `/file/upload/shop`, params)
+          .post(this.DNS_IP + `/file/upload/payment`, params)
           .then(function (response) {
             _this.formUpdateItem.payTypeImage = response.data
             console.log('url Pic', response.data)
