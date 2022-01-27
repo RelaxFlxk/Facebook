@@ -692,7 +692,7 @@ export default {
               let rsPacket = responses.data[0].close
               if (rs.length <= parseInt(rsPacket)) {
                 console.log('เข้า')
-                this.addDataSubmit()
+                setTimeout(() => this.addDataSubmit(), 500)
               }
             })
         })
@@ -736,9 +736,8 @@ export default {
           }
         })
     },
-
     addData () {
-      setTimeout(() => this.validate('ADD'), 500)
+      this.validate('ADD')
       this.getjob()
     },
     async addDataSubmit (p) {
