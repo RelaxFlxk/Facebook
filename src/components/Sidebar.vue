@@ -260,6 +260,59 @@
         </v-card-title>
         <v-card-text>
           <v-row>
+            <v-col col="6" v-for="(item, index) in dataPackage" :key="index">
+              <v-container>
+                <v-card>
+                  <v-row>
+                  <v-col col="12">
+                    <v-list two-line>
+                      <v-list-item  v-for="(items, index) in item.description" :key="index">
+                        <v-list-item-icon>
+                          <v-icon>
+                            {{items.icon}}
+                          </v-icon>
+                        </v-list-item-icon>
+
+                        <v-list-item-content>
+                          <v-list-item-title>{{items.title}}</v-list-item-title>
+                          <v-list-item-subtitle class="feature_detail">{{items.subtitle}}</v-list-item-subtitle>
+                        </v-list-item-content>
+                      </v-list-item>
+                    </v-list>
+                  </v-col>
+                  </v-row>
+                  <div v-if="dataBilling !== item.id" class="text-center plan_button">
+                    <v-btn
+                      rounded
+                      color="primary"
+                      dark
+                      @click="billingPlan(item)"
+                    >
+                      เปลี่ยนแพลน
+                    </v-btn>
+                  </div>
+                  <div v-if="dataBilling === item.id" class="text-center plan_button">
+                    <v-btn
+                      rounded
+                      outlined
+                      color="teal"
+                      dark
+                    >
+                      แพลนปัจจุบัน
+                    </v-btn>
+                  </div>
+                </v-card>
+              </v-container>
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-card>
+      <!-- <v-card>
+        <v-card-title class="text-h5">
+          Be-Linked billing plans
+        </v-card-title>
+        <v-card-text>
+          <v-row>
             <v-col col="6">
               <v-container>
                 <v-card>
@@ -398,7 +451,7 @@
             </v-col>
           </v-row>
         </v-card-text>
-      </v-card>
+      </v-card> -->
     </v-dialog>
     </v-navigation-drawer>
   </div>
@@ -421,6 +474,7 @@ export default {
       broadCast: [],
       items: [],
       Dashboard: [],
+      dataPackage: [],
       dialogCash: false,
       btFree: false,
       btBilling: false
@@ -504,7 +558,7 @@ export default {
       //   // { title: 'Qr Code แลกสินค้า', icon: 'mdi-alpha-r-box ', to: '/insurance/ReportProcess' }
       // ]
     },
-    billingPlan () {
+    billingPlan (dt) {
       this.$swal({
         title: 'ต้องการ อัพเดทสมาชิก ใช่หรือไม่?',
         type: 'question',
@@ -515,36 +569,58 @@ export default {
         cancelButtonText: 'ไม่'
       })
         .then(async result => {
-          this.$OmiseCard.open({
-            amount: 2000,
-            currency: 'THB',
-            defaultPaymentMethod: 'credit_card',
-            onCreateTokenSuccess: (nonce) => {
-              if (nonce.startsWith('tokn_')) {
-                this.omiseToken = nonce
-                this.getCustomersOmise(nonce)
-              } else {
-                this.omiseSource = nonce
-              }
-              // form.submit()
+          if (dt.pricePackage === '') {
+            var ds = {
+              billingPlan: dt.id,
+              LAST_USER: this.$session.getAll().data.userName,
+              billingCustomerId: '',
+              billingCustomerCardId: '',
+              billingScheduleId: '',
+              billingCustomerData: ''
             }
-          })
+            axios
+              .post(
+              // eslint-disable-next-line quotes
+                this.DNS_IP + "/sys_shop/edit/" + this.$session.getAll().data.shopId,
+                ds
+              )
+              .then(async response => {
+                this.chkPlan()
+                this.$swal('เรียบร้อย', 'คุณได้อัพเดทเป็นสมาชิกสายฟรีแล้ว', 'success')
+              })
+          } else {
+            this.$OmiseCard.open({
+              amount: parseInt(dt.pricePackage + '00'),
+              currency: 'THB',
+              defaultPaymentMethod: 'credit_card',
+              onCreateTokenSuccess: (nonce) => {
+                if (nonce.startsWith('tokn_')) {
+                  this.omiseToken = nonce
+                  this.getCustomersOmise(nonce, dt)
+                } else {
+                  this.omiseSource = nonce
+                }
+              // form.submit()
+              }
+            })
+          }
         })
         .catch(error => {
           this.dataReady = true
           console.log('error function editDataGlobal : ', error)
         })
     },
-    async getCustomersOmise (tokn) {
-      var dt = {
+    async getCustomersOmise (tokn, dt) {
+      var ds = {
+        billingPlan: dt.id,
         email: this.$session.getAll().data.userName,
         description: this.$session.getAll().data.shopName,
-        descriptionCharge: 'Belinked-Packet1-' + this.$session.getAll().data.shopId,
+        descriptionCharge: dt.name + this.$session.getAll().data.shopId,
         card: tokn,
         shopId: this.$session.getAll().data.shopId
       }
       await axios
-        .post(this.DNS_IP + '/omise/customers', dt)
+        .post(this.DNS_IP + '/omise/customers', ds)
         .then(async response => {
           console.log('getCustomersOmise', response)
           if (response.data.status) {
@@ -555,56 +631,83 @@ export default {
           }
         })
     },
-    updateFreePlan () {
-      this.$swal({
-        title: 'ต้องการ อัพเดทสมาชิก ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      })
-        .then(async result => {
-          var dt = {
-            billingPlan: 'free',
-            LAST_USER: this.$session.getAll().data.userName,
-            billingCustomerId: '',
-            billingCustomerCardId: '',
-            billingScheduleId: '',
-            billingCustomerData: ''
-          }
-          axios
-            .post(
-              // eslint-disable-next-line quotes
-              this.DNS_IP + "/sys_shop/edit/" + this.$session.getAll().data.shopId,
-              dt
-            )
-            .then(async response => {
-              this.chkPlan()
-              this.$swal('เรียบร้อย', 'คุณได้อัพเดทเป็นสมาชิกสายฟรีแล้ว', 'success')
-            })
-        })
-        .catch(error => {
-          this.dataReady = true
-          console.log('error function editDataGlobal : ', error)
-        })
-    },
+    // updateFreePlan () {
+    //   this.$swal({
+    //     title: 'ต้องการ อัพเดทสมาชิก ใช่หรือไม่?',
+    //     type: 'question',
+    //     showCancelButton: true,
+    //     confirmButtonColor: '#3085d6',
+    //     cancelButtonColor: '#b3b1ab',
+    //     confirmButtonText: 'ใช่',
+    //     cancelButtonText: 'ไม่'
+    //   })
+    //     .then(async result => {
+    //       var dt = {
+    //         billingPlan: 'free',
+    //         LAST_USER: this.$session.getAll().data.userName,
+    //         billingCustomerId: '',
+    //         billingCustomerCardId: '',
+    //         billingScheduleId: '',
+    //         billingCustomerData: ''
+    //       }
+    //       axios
+    //         .post(
+    //           // eslint-disable-next-line quotes
+    //           this.DNS_IP + "/sys_shop/edit/" + this.$session.getAll().data.shopId,
+    //           dt
+    //         )
+    //         .then(async response => {
+    //           this.chkPlan()
+    //           this.$swal('เรียบร้อย', 'คุณได้อัพเดทเป็นสมาชิกสายฟรีแล้ว', 'success')
+    //         })
+    //     })
+    //     .catch(error => {
+    //       this.dataReady = true
+    //       console.log('error function editDataGlobal : ', error)
+    //     })
+    // },
     async chkPlan () {
+      this.dataBilling = ''
       await axios
         .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.$session.getAll().data.shopId)
         .then(async response => {
           let rs = response.data[0]
           if (response.data.length > 0) {
+            this.dataBilling = parseInt(rs.billingPlan)
             // console.log('shop', response.data[0])
-            if (rs.billingPlan === 'free') {
-              this.btFree = true
-              this.btBilling = false
-            } else {
-              this.btFree = false
-              this.btBilling = true
-            }
+            // if (rs.billingPlan === 'free') {
+            //   this.btFree = true
+            //   this.btBilling = false
+            // } else {
+            //   this.btFree = false
+            //   this.btBilling = true
+            // }
           }
+        })
+      this.dataPackage = []
+      await axios
+        .get(this.DNS_IP_Betask + '/packet/getSortNo?source=BeLinked')
+        .then(async (responses) => {
+          let rsPacket = responses.data
+          for (let i = 0; i < rsPacket.length; i++) {
+            var d = rsPacket[i]
+            var s = {}
+            s.id = d.id
+            if (d.sortNo === null || d.sortNo === '') {
+              s.sortNo = i + 1
+            } else {
+              s.sortNo = d.sortNo
+            }
+            s.name = d.name
+            s.description = JSON.parse(d.description)
+            s.warning = d.warning
+            s.close = d.close
+            s.source = d.source
+            s.pricePackage = d.pricePackage
+            s.rangeRePackage = d.rangeRePackage
+            this.dataPackage.push(s)
+          }
+          // this.dataPackage = rsPacket
         })
       this.dialogCash = true
     }
