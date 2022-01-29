@@ -615,7 +615,7 @@ export default {
         billingPlan: dt.id,
         email: this.$session.getAll().data.userName,
         description: this.$session.getAll().data.shopName,
-        descriptionCharge: dt.name + this.$session.getAll().data.shopId,
+        descriptionCharge: dt.source + '-' + dt.name + '-' + this.$session.getAll().data.shopId,
         card: tokn,
         shopId: this.$session.getAll().data.shopId
       }
