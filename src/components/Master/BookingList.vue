@@ -1799,7 +1799,8 @@ export default {
         flowId: null,
         masBranchID: null,
         dueDate: '',
-        shopId: this.$session.getAll().data.shopId
+        shopId: this.$session.getAll().data.shopId,
+        bookingFieldId: ''
       },
       formUpdate: {
         masBranchCode: '',
@@ -2917,12 +2918,13 @@ export default {
         let rs = this.fieldNameItem
         let Add = []
         let fielditem = this.fieldNameItem
+        console.log('this.fieldNameItem', this.fieldNameItem)
         for (let i = 0; i < rs.length; i++) {
           let d = rs[i]
           let update = {}
           if (d.conditionField === '' || d.conditionField === null) {
             update.masBranchID = this.formAdd.masBranchID
-            update.bookingFieldId = this.formAdd.bookingFieldId
+            update.bookingFieldId = d.bookingFieldId
             update.flowId = this.formAdd.flowId
             update.fieldId = d.fieldId
             update.fieldValue = d.fieldValue
@@ -2945,7 +2947,23 @@ export default {
               })[0].fieldValue
               ) {
                 update.masBranchID = this.formAdd.masBranchID
-                update.bookingFieldId = this.formAdd.bookingFieldId
+                update.bookingFieldId = d.bookingFieldId
+                update.flowId = this.formAdd.flowId
+                update.fieldId = d.fieldId
+                update.fieldValue = d.fieldValue
+                update.shopId = d.shopId
+                update.dueDate = this.date + ' ' + this.time
+                update.sourceLink = 'direct'
+                update.userId = 'user-skip'
+                update.pageName = 'BookingList'
+                Add.push(update)
+              }
+            } else if (d.conditionField === 'flow') {
+              console.log(parseInt(this.formAdd.flowId))
+              console.log(parseInt(d.conditionValue))
+              if (parseInt(d.conditionValue) === parseInt(this.formAdd.flowId)) {
+                update.masBranchID = this.formAdd.masBranchID
+                update.bookingFieldId = d.bookingFieldId
                 update.flowId = this.formAdd.flowId
                 update.fieldId = d.fieldId
                 update.fieldValue = d.fieldValue
@@ -2959,6 +2977,7 @@ export default {
             }
           }
         }
+        console.log('Add', Add)
         this.swalConfig.title = 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?'
         this.$swal(this.swalConfig)
           .then(async result => {
