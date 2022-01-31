@@ -600,7 +600,7 @@
                             </div>
                           </template>
                           <v-row>
-                            <v-col >
+                            <v-col class="pb-0">
                               <v-menu
                                 v-model="menuDate"
                                 :close-on-content-click="false"
@@ -637,7 +637,7 @@
                                 ></v-date-picker>
                               </v-menu>
                             </v-col>
-                            <v-col v-if="timeavailable.length > 0">
+                            <v-col class="pb-0" v-if="timeavailable.length > 0">
                               <v-select
                               v-model="time"
                               :items="timeavailable"
@@ -648,6 +648,20 @@
                               required
                               :rules ="[rules.required]"
                             ></v-select>
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col class="pt-0">
+                              <v-select
+                                v-model="empSelectAdd"
+                                :items="empSelectStepAdd"
+                                label="พนักงานที่รับนัดหมาย"
+                                menu-props="auto"
+                                outlined
+                                required
+                                :rules="[rules.required]"
+                                dense
+                              ></v-select>
                             </v-col>
                           </v-row>
                         </v-col>
@@ -1751,6 +1765,7 @@ export default {
       menuDateChange: false,
       date: '',
       time: '',
+      empSelectAdd: '',
       session: this.$session.getAll(),
       fieldNameItem: [],
       flowfieldNameitem: [],
@@ -1872,6 +1887,7 @@ export default {
       timeavailable: [],
       dialogConfirm: false,
       empSelectStep: [],
+      empSelectStepAdd: [],
       dataConfirm: [],
       empSelect: '',
       dataRemoveExport: [],
@@ -1891,6 +1907,7 @@ export default {
   async mounted () {
     // this.dataReady = false
     await this.getDataBranch()
+    await this.getEmpSelectAdd()
     this.getCustomFieldStart()
     this.getDataFlow()
     this.getBookingList()
@@ -2933,6 +2950,7 @@ export default {
             update.userId = 'user-skip'
             update.pageName = 'BookingList'
             update.sourceLink = 'direct'
+            update.empSelect = this.empSelectAdd
             Add.push(update)
           } else {
             if (
@@ -2956,11 +2974,10 @@ export default {
                 update.sourceLink = 'direct'
                 update.userId = 'user-skip'
                 update.pageName = 'BookingList'
+                update.empSelect = this.empSelectAdd
                 Add.push(update)
               }
             } else if (d.conditionField === 'flow') {
-              console.log(parseInt(this.formAdd.flowId))
-              console.log(parseInt(d.conditionValue))
               if (parseInt(d.conditionValue) === parseInt(this.formAdd.flowId)) {
                 update.masBranchID = this.formAdd.masBranchID
                 update.bookingFieldId = d.bookingFieldId
@@ -2972,6 +2989,7 @@ export default {
                 update.sourceLink = 'direct'
                 update.userId = 'user-skip'
                 update.pageName = 'BookingList'
+                update.empSelect = this.empSelectAdd
                 Add.push(update)
               }
             }
@@ -3323,6 +3341,23 @@ export default {
               this.empSelectStep.push(s)
             }
             this.empSelect = this.empSelectStep[0].value
+          }
+        })
+    },
+    async getEmpSelectAdd () {
+      this.empSelectStepAdd = []
+      await axios
+        .get(this.DNS_IP + '/empSelect/get?shopId=' + this.$session.getAll().data.shopId)
+        .then(async response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              var s = {}
+              s.text = d.empFirst_NameTH
+              s.value = d.empId
+              this.empSelectStepAdd.push(s)
+            }
           }
         })
     },
