@@ -1955,6 +1955,8 @@ export default {
       let dataExport = []
       this.dataexport = []
       let runNo = 0
+      console.log('bookingData', this.BookingDataList)
+      console.log('this.editedItemSeleteField', this.editedItemSeleteField)
       for (let i = 0; i < this.dataItemTime.length; i++) {
         // var d = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === item.timeDueHtext })[i]
         let d = this.dataItemTime[i]
@@ -1971,6 +1973,14 @@ export default {
           } else {
             s.timeDueHtext = ''
           }
+          let serviceDetail = ''
+          let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
+          fieldflow.forEach((row) => {
+            let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+            serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
+          })
+          serviceDetail = serviceDetail || t.flowName
+
           s.type = 'Fast Track'
           s.runNo = runNo
           s.dateBooking = this.format_dateNotime(this.timeTable)
@@ -1979,9 +1989,11 @@ export default {
           s.status = t.statusBtText
           s.cusName = t.cusName
           s.cusReg = t.cusReg
-          s.flowName = t.flowName
+          s.flowName = serviceDetail
           s.empFull_NameTH = t.empFull_NameTH
           s.extraJob = t.extraJob ? 'Extra Job' : ''
+          s.carModel = this.getDataFromFieldName(this.BookingDataList[t.bookNo], 'รุ่นรถ')
+          s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
           s.tel = t.tel
           dataExport.push(s)
         }
@@ -1997,6 +2009,7 @@ export default {
       s.flowName = ''
       s.tel = ''
       s.empFull_NameTH = ''
+      s.carModel = ''
       dataExport.push(s)
       runNo = 0
       for (let i = 0; i < this.dataItemTime.length; i++) {
@@ -2007,13 +2020,18 @@ export default {
           runNo++
           let t = dataSelect[x]
           let s = {}
-          console.log('normal')
-          console.log('s.t', t)
+          let serviceDetail = ''
+          let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
+          fieldflow.forEach((row) => {
+            let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+            serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
+          })
           if (dataExport.filter(el => { return el.timeDueHtext === this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )' }).length === 0) {
             s.timeDueHtext = this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )'
           } else {
             s.timeDueHtext = ''
           }
+          serviceDetail = serviceDetail || t.flowName
           s.type = 'ปกติ'
           s.runNo = runNo
           s.dateBooking = this.format_dateNotime(this.timeTable)
@@ -2022,10 +2040,12 @@ export default {
           s.status = t.statusBtText
           s.cusName = t.cusName
           s.cusReg = t.cusReg
-          s.flowName = t.flowName
+          s.flowName = serviceDetail
           s.tel = t.tel
           s.empFull_NameTH = t.empFull_NameTH
           s.extraJob = t.extraJob ? 'Extra Job' : ''
+          s.carModel = this.getDataFromFieldName(this.BookingDataList[t.bookNo], 'รุ่นรถ')
+          s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
           dataExport.push(s)
         }
       }
@@ -2043,6 +2063,7 @@ export default {
           'วันที่': a.dateBooking,
           'เวลา': a.title,
           'ชื่อลูกค้า': a.cusName,
+          'รุ่นรถ': a.carModel,
           'ทะเบียน': a.cusReg,
           'รายการซ่อม': a.flowName,
           'เบอร์โทร': a.tel,
@@ -2080,6 +2101,13 @@ export default {
           } else {
             s.timeDueHtext = ''
           }
+          let serviceDetail = ''
+          let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
+          fieldflow.forEach((row) => {
+            let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+            serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
+          })
+          serviceDetail = serviceDetail || t.flowName
           s.type = 'Fast Track'
           s.runNo = runNo
           s.dateBooking = this.format_dateNotime(this.timeTable)
@@ -2089,10 +2117,12 @@ export default {
           s.status = t.statusBtText
           s.cusName = t.cusName
           s.cusReg = t.cusReg
-          s.flowName = t.flowName
+          s.flowName = serviceDetail
           s.empFull_NameTH = t.empFull_NameTH
           s.extraJob = t.extraJob ? 'Extra Job' : ''
           s.tel = t.tel
+          s.carModel = this.getDataFromFieldName(this.BookingDataList[t.bookNo], 'รุ่นรถ')
+          s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
           dataExport.push(s)
         }
       }
@@ -2107,6 +2137,7 @@ export default {
       s.remarkRemove = ''
       s.tel = ''
       s.empFull_NameTH = ''
+      s.carModel = ''
       dataExport.push(s)
       runNo = 0
       for (let i = 0; i < this.dataItemTime.length; i++) {
@@ -2137,6 +2168,8 @@ export default {
           s.tel = t.tel
           s.empFull_NameTH = t.empFull_NameTH
           s.extraJob = t.extraJob ? 'Extra Job' : ''
+          s.carModel = this.getDataFromFieldName(this.BookingDataList[t.bookNo], 'รุ่นรถ')
+          s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
           dataExport.push(s)
         }
       }
@@ -2154,6 +2187,7 @@ export default {
           'วันที่': a.dateBooking,
           'เวลา': a.title,
           'ชื่อลูกค้า': a.cusName,
+          'รุ่นรถ': a.carModel,
           'ทะเบียน': a.cusReg,
           'รายการซ่อม': a.flowName,
           'เบอร์โทร': a.tel,
