@@ -194,19 +194,19 @@
                             avatar
                             bordered
                             overlap
-                            color="green darken-1"
+                            color="red darken-1"
                             v-if="eventInfo[date].extraJob > 0"
                             class="mr-1"
                             style="cursor: pointer"
                             @click.native="openTaskList(date, 'extraJob')"
                           >
                             <template v-slot:badge>
-                              <v-avatar class="mb-1" color="green darken-1">
+                              <v-avatar class="mb-1" color="red darken-1">
                                 {{eventInfo[date].extraJob}}
                               </v-avatar>
                             </template>
 
-                            <v-avatar size="40" color="green darken-3">
+                            <v-avatar size="40" color="red darken-3">
                               <v-icon dark>
                                   mdi-alarm-plus
                               </v-icon>
@@ -398,18 +398,18 @@ export default {
     await this.getDataBranch()
     await this.getBookingList()
     this.$refs.calendar.checkChange()
-    await this.getBookingData()
+    // await this.getBookingData()
   },
   methods: {
     prev () {
       this.$refs.calendar.prev()
       this.getBookingList()
-      this.getBookingData()
+      // this.getBookingData()
     },
     next () {
       this.$refs.calendar.next()
       this.getBookingList()
-      this.getBookingData()
+      // this.getBookingData()
     },
     async getDataFlow () {
       this.DataFlowName = []
@@ -449,7 +449,6 @@ export default {
               this.DataBranchName.push(d)
             }
             this.masBranchName = this.DataBranchName[0]
-            console.log('DataBranchName', this.DataBranchName)
           } else {
             this.DataBranchName = []
           }
@@ -471,10 +470,9 @@ export default {
             this.bookingData[row.bookNo].push(row)
           })
         })
-      console.log(this.bookingData)
     },
     async getBookingList () {
-      console.log('masBranchName', this.masBranchName)
+      this.getBookingData()
       // if (this.masBranchName) {
       //   this.masBranchName = this.masBranchName
       // } else {
@@ -573,21 +571,17 @@ export default {
         await axios
           .get(url)
           .then(async response => {
-            console.log('getData', response.data)
             this.dataReady = true
             this.countCus = this.masBranchName.countCus
             for (var i = 0; i < response.data.length; i++) {
               var d = response.data[i]
               var s = {}
-              // console.log('d', d)
               if (this.countCus > 0) {
                 s.start = d.start
                 d.d50 = parseInt((this.countCus / 100) * 50)
                 d.d70 = parseInt((this.countCus / 100) * 70)
                 d.d90 = parseInt((this.countCus / 100) * 90)
-                // console.log('d.d', parseInt(d.name), d.d50, d.d70, d.d90)
                 if (parseInt(d.name) <= d.d50) {
-                  console.log('50')
                   s.color = 'blue'
                   s.name =
                   'คล่อง : ' +
@@ -658,7 +652,6 @@ export default {
                     var e = responses.data[x]
                     var f = {}
                     // console.log(d)
-                    console.log('e.statusBt', e.statusBt)
                     if (e.statusBt) {
                       f.start = e.start + ' ' + e.timeDue + ':00'
                       f.end = e.start + ' ' + e.timeDue + ':30'
@@ -709,6 +702,7 @@ export default {
       }
     },
     openTaskList (date, type) {
+      console.log('start TaskList')
       this.dataCalendar = []
       let targetData = null
       if (type === 'fastTrack') {
@@ -722,6 +716,7 @@ export default {
       }
       for (let i = 0; i < targetData.length; i++) {
         let d = targetData[i]
+        console.log('d', d)
         d.chkConfirm = false
         d.chkCancel = false
         if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
@@ -735,7 +730,7 @@ export default {
         if (d.fastTrack === 'true' || d.fastTrack === 'True') {
           d.bgcolor = '#EF6C00'
         } else if (d.extraJob === 'true' || d.extraJob === 'True') {
-          d.bgcolor = '#2E7D32'
+          d.bgcolor = '#C62828'
         } else {
           d.bgcolor = '#1565C0'
         }
@@ -749,6 +744,7 @@ export default {
         d.carModel = (d.carModel.length > 0) ? d.carModel[0].fieldValue : ''
         this.dataCalendar.push(d)
       }
+      console.log('dataCalendar', this.dataCalendar)
       this.dataCalendar.sort((a, b) => {
         let keyA = new Date(a.dueDate)
         let keyB = new Date(b.dueDate)
