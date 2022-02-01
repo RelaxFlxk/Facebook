@@ -1282,6 +1282,15 @@
                     mdi-table-eye
                   </v-icon>
                 </v-btn>
+                <v-btn
+                  v-if="dataItem.length > 0"
+                  color="blue-grey"
+                  class="ma-2 white--text"
+                  small
+                  @click="(dialogAdd = true), getBookingField(), checkTime()"
+                >
+                  ตรวจสอบคิวจองรายเดือน
+                </v-btn>
               </div>
               <v-card-title>
                 <v-text-field
