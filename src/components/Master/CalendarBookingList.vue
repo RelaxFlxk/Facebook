@@ -233,27 +233,32 @@
               </v-card-text>
             </v-card>
             <div class="text-center">
-              <v-dialog v-model="dialog" width="500">
+              <v-dialog v-model="dialog" width="600">
                 <v-card>
                   <v-card-title class="text-h6 grey lighten-2">
                     รายชื่อลูกค้านัดหมาย
                   </v-card-title>
                   <br />
-                  <template v-for="(items, index) in dataSummary">
-                    <v-chip
-                      class="ma-2"
-                      color="grey"
-                      text-color="white"
-                      v-bind:key="'sum'+index"
-                    >
-                      <v-avatar
-                        left
-                        class="grey darken-3"
-                      >
-                        {{items.length}}
-                      </v-avatar>
-                      {{index}}
-                    </v-chip>
+                  <template v-for="(sumItems, index1) in dataSummary">
+                    <v-row v-bind:key="'sum'+index1" no-gutters>
+                    <template v-for="(items, index2) in sumItems">
+                      <v-col cols="2" v-bind:key="'sum'+index1+index2">
+                        <v-chip
+                          class="ma-2"
+                          :color="index1 + ' darken-2'"
+                          text-color="white"
+                        >
+                          <v-avatar
+                            left
+                            :class="index1 + ' darken-4'"
+                          >
+                            {{items.length}}
+                          </v-avatar>
+                          {{index2}}
+                        </v-chip>
+                      </v-col>
+                    </template>
+                    </v-row>
                   </template>
                   <v-card-text
                     v-for="(items, index) in dataCalendar"
@@ -538,8 +543,6 @@ export default {
                   this.eventInfo[dueDate].allPercent = this.eventInfo[dueDate].all * 100 / this.countCus
                   if (e.fastTrack === 'True' || e.fastTrack === 'true') {
                     this.eventInfo[dueDate].fastTrack++
-                  } else if (e.extraJob === 'True' || e.extraJob === 'true') {
-                    this.eventInfo[dueDate].extraJob++
                   } else {
                     this.eventInfo[dueDate].normal++
                   }
@@ -713,10 +716,8 @@ export default {
       let targetData = null
       if (type === 'fastTrack') {
         targetData = this.monthData[date].filter((row) => { return row.fastTrack === 'True' || row.fastTrack === 'true' })
-      } else if (type === 'extraJob') {
-        targetData = this.monthData[date].filter((row) => { return row.extraJob === 'True' || row.extraJob === 'true' })
       } else if (type === 'normal') {
-        targetData = this.monthData[date].filter((row) => { return (row.fastTrack !== 'True' && row.fastTrack !== 'true') && (row.extraJob !== 'True' && row.extraJob !== 'true') })
+        targetData = this.monthData[date].filter((row) => { return (row.fastTrack !== 'True' && row.fastTrack !== 'true') })
       } else {
         targetData = this.monthData[date]
       }
@@ -724,6 +725,9 @@ export default {
         let d = targetData[i]
         d.chkConfirm = false
         d.chkCancel = false
+        if (d.statusBt === 'cancel') {
+          continue
+        }
         if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
           d.chkConfirm = true
           d.chkCancel = false
@@ -734,10 +738,13 @@ export default {
         }
         if (d.fastTrack === 'true' || d.fastTrack === 'True') {
           d.bgcolor = '#EF6C00'
+          d.bgcolorChip = 'orange'
         } else if (d.extraJob === 'true' || d.extraJob === 'True') {
           d.bgcolor = '#C62828'
+          d.bgcolorChip = 'red'
         } else {
           d.bgcolor = '#1565C0'
+          d.bgcolorChip = 'blue'
         }
         d.name = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'ชื่อ' })
         d.licenseNo = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เลขทะเบียน' })
@@ -757,12 +764,12 @@ export default {
         return 0
       })
 
-      this.dataSummary = this.dataCalendar.reduce(function (r, a) {
-        r[a.timeDue] = r[a.timeDue] || []
-        r[a.timeDue].push(a)
+      this.dataSummary = this.dataCalendar.reduce((r, a) => {
+        r[a.bgcolorChip] = r[a.bgcolorChip] || {}
+        r[a.bgcolorChip][a.timeDue] = r[a.bgcolorChip][a.timeDue] || []
+        r[a.bgcolorChip][a.timeDue].push(a)
         return r
       }, Object.create(null))
-      console.log('dataSummary', this.dataSummary)
       this.dialog = true
     },
     async showEvent (event) {
