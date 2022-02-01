@@ -293,11 +293,11 @@
           </v-dialog>
           <!-- end add -->
           <!-- ADD -->
-          <v-dialog v-model="dialogAdd" persistent max-width="70%">
+          <v-dialog v-model="dialogAdd" hide-overlay fullscreen>
+          <!-- <v-dialog v-model="dialogAdd" persistent max-width="70%"> -->
             <v-card class="text-center">
               <v-form ref="form_add" v-model="validAdd" lazy-validation>
                 <v-card-text>
-                  <v-container>
                     <v-col class="text-right pa-0">
                       <v-btn
                         small
@@ -309,21 +309,26 @@
                     </v-col>
                     <v-row justify="center">
                       <v-col
-                        cols="5"
+                        cols="9"
+                      >
+                      <!-- <v-col
+                        cols="8"
                         class="text-center d-none d-sm-flex"
                         style="margin: auto 0;"
-                      >
+                      > -->
                         <v-col class="text-center">
-                          <v-img
+                          <CalendarBooking></CalendarBooking>
+                          <!-- <v-img
                             class="v-margit_img_reward"
                             :src="require('@/assets/AddBookingList.svg')"
                             max-width="470.37"
                             max-height="247"
-                          ></v-img>
+                          ></v-img> -->
                         </v-col>
                       </v-col>
 
-                      <v-col cols="12" sm="6" md="6" lg="6" class="v-margit_text_add mt-0 pa-0">
+                      <v-col cols="3">
+                      <!-- <v-col cols="12" sm="6" md="6" lg="6" class="v-margit_text_add mt-0 pa-0"> -->
                         <v-col class="text-center pa-3 ml-2">
                           <v-img
                             class="v_text_add"
@@ -664,22 +669,21 @@
                               ></v-select>
                             </v-col>
                           </v-row>
+                          <div class="text-center">
+                            <v-btn
+                              elevation="2"
+                              large
+                              color="#173053"
+                              dark
+                              @click="addData()"
+                            >
+                              <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                              เพิ่ม
+                            </v-btn>
+                          </div>
                         </v-col>
                       </v-col>
                     </v-row>
-                    <div class="text-center">
-                      <v-btn
-                        elevation="2"
-                        large
-                        color="#173053"
-                        dark
-                        @click="addData()"
-                      >
-                        <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                        เพิ่ม
-                      </v-btn>
-                    </div>
-                  </v-container>
                 </v-card-text>
               </v-form>
             </v-card>
@@ -1670,6 +1674,7 @@ import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import { PivotTable } from '@click2buy/vue-pivot-table'
 import moment from 'moment-timezone'
 import BookingQueue from './BookingQueue.vue'
+import CalendarBooking from './CalendarBookingList.vue'
 
 export default {
   name: 'BookingList',
@@ -1683,7 +1688,8 @@ export default {
     VuetifyMoney,
     QrcodeVue,
     PivotTable,
-    BookingQueue
+    BookingQueue,
+    CalendarBooking
   },
   computed: {
     dialogwidth () {
