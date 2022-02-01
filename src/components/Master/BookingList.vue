@@ -2692,7 +2692,10 @@ export default {
               s.flowName = d.flowName
               s.dueDate = d.dueDate
               s.shopId = d.shopId
-              s.empFull_NameTH = d.empFull_NameTH
+              s.empFull_NameTH = d.empFull_NameTH || ''
+              s.empFull_NameTH = s.empFull_NameTH.replace('นางสาว', '')
+              s.empFull_NameTH = s.empFull_NameTH.replace('นาย', '')
+              s.empFull_NameTH = s.empFull_NameTH.replace('นาง', '')
               s.userId = d.userId
               s.chkConfirm = false
               s.chkCancel = false

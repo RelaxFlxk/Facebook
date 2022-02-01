@@ -249,6 +249,22 @@
                     รายชื่อลูกค้านัดหมาย
                   </v-card-title>
                   <br />
+                  <template v-for="(items, index) in dataSummary">
+                    <v-chip
+                      class="ma-2"
+                      color="grey"
+                      text-color="white"
+                      v-bind:key="'sum'+index"
+                    >
+                      <v-avatar
+                        left
+                        class="grey darken-3"
+                      >
+                        {{items.length}}
+                      </v-avatar>
+                      {{index}}
+                    </v-chip>
+                  </template>
                   <v-card-text
                     v-for="(items, index) in dataCalendar"
                     :key="index"
@@ -365,6 +381,7 @@ export default {
       menuDate: false,
       dialog: false,
       dataCalendar: [],
+      dataSummary: [],
       DataFlowName: [],
       colors: [
         'blue',
@@ -703,6 +720,7 @@ export default {
     },
     openTaskList (date, type) {
       console.log('start TaskList')
+      this.dataSummary = []
       this.dataCalendar = []
       let targetData = null
       if (type === 'fastTrack') {
@@ -716,7 +734,6 @@ export default {
       }
       for (let i = 0; i < targetData.length; i++) {
         let d = targetData[i]
-        console.log('d', d)
         d.chkConfirm = false
         d.chkCancel = false
         if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
@@ -744,7 +761,6 @@ export default {
         d.carModel = (d.carModel.length > 0) ? d.carModel[0].fieldValue : ''
         this.dataCalendar.push(d)
       }
-      console.log('dataCalendar', this.dataCalendar)
       this.dataCalendar.sort((a, b) => {
         let keyA = new Date(a.dueDate)
         let keyB = new Date(b.dueDate)
@@ -752,7 +768,13 @@ export default {
         if (keyA > keyB) return 1
         return 0
       })
-      console.log(this.dataCalendar)
+
+      this.dataSummary = this.dataCalendar.reduce(function (r, a) {
+        r[a.timeDue] = r[a.timeDue] || []
+        r[a.timeDue].push(a)
+        return r
+      }, Object.create(null))
+      console.log('dataSummary', this.dataSummary)
       this.dialog = true
     },
     async showEvent (event) {
