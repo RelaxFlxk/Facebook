@@ -285,7 +285,7 @@
                                 <v-col cols="8"><h4>คุณ {{ items.name }}</h4></v-col>
                                 <v-col cols="4" class="text-right">{{items.licenseNo}}</v-col>
                               </v-row>
-                              {{ items.flowName }}<br>
+                              {{ items.serviceDetail }}<br>
                               โทร {{ items.tel }}
                               รุ่นรถ {{ items.carModel }}<br>
                               {{ format_date(items.contactDateBt) }}
@@ -395,7 +395,8 @@ export default {
       },
       eventInfo: [],
       monthData: null,
-      bookingData: []
+      bookingData: [],
+      editedItemSeleteField: []
     }
   },
   beforeCreate () {
@@ -404,6 +405,7 @@ export default {
     }
   },
   async mounted () {
+    this.getCustomFieldStart()
     await this.getDataFlow()
     await this.getDataBranch()
     await this.getBookingList()
@@ -709,6 +711,31 @@ export default {
           })
       }
     },
+    async getCustomFieldStart () {
+      this.editedItemSeleteField = []
+      axios
+        .get(this.DNS_IP + '/customField/get?shopId=' + this.$session.getAll().data.shopId)
+        .then(async response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (let i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              let s = {}
+              s.fieldId = d.fieldId
+              s.fieldName = d.fieldName
+              s.fieldType = d.fieldType
+              s.optionField = d.optionField
+              s.conditionField = d.conditionField
+              s.conditionValue = d.conditionValue
+              s.shopId = d.shopId
+              s.showCard = d.showCard
+              s.fieldValue = ''
+              this.editedItemSeleteField.push(s)
+            }
+            // console.log('this.editedItemSeleteField', this.editedItemSeleteField)
+          }
+        })
+    },
     openTaskList (date, type) {
       console.log('start TaskList')
       this.dataSummary = []
@@ -728,6 +755,14 @@ export default {
         if (d.statusBt === 'cancel') {
           continue
         }
+        let serviceDetail = ''
+        let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(d.flowId) })
+        fieldflow.forEach((row) => {
+          let tempField = this.bookingData[d.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+          serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
+        })
+        serviceDetail = serviceDetail || d.flowName
+        d.serviceDetail = serviceDetail
         if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
           d.chkConfirm = true
           d.chkCancel = false
