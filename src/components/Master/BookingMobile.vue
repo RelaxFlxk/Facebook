@@ -58,7 +58,112 @@
 
         <v-card-text style="height: 100%;">
           <v-container>
-            <v-col
+            <template v-if="BookingDataItemEdit">
+              <v-row class="InputData">
+                  <v-text-field
+                    v-model="BookingDataItemEdit[0].masBranchName"
+                    label="สาขา"
+                    class="pa-2 pb-0 pt-0"
+                    outlined
+                    dense
+                    readonly
+                  ></v-text-field>
+                </v-row>
+              <v-row class="InputData">
+                  <v-text-field
+                    v-model="BookingDataItemEdit[0].flowName"
+                    label="ประเภทบริการ"
+                    class="pa-2 pb-0 pt-0"
+                    outlined
+                    dense
+                    readonly
+                  ></v-text-field>
+                </v-row>
+              <div
+                v-for="(item, index) in BookingDataItemEdit"
+                :key="index"
+              >
+                <template
+                  v-if="
+                    item.conditionField === '' ||
+                      item.conditionField === null
+                  "
+                >
+                  <v-row class="InputData">
+                    <v-text-field
+                      v-model="item.fieldValue"
+                      :label="item.fieldName"
+                      class="pa-2 pb-0 pt-0"
+                      outlined
+                      dense
+                      readonly
+                    ></v-text-field>
+                    <v-icon class="pa-3 pb-10 pt-0" v-if="item.fieldName === 'เบอร์โทร'" large color="#64DD17" @click="dial(item.phone)">call</v-icon>
+                  </v-row>
+                </template>
+                <template
+                  v-if="
+                    item.conditionField !== '' &&
+                      BookingDataItemEdit.filter(row => {
+                        return (
+                          row.fieldId ===
+                          parseInt(item.conditionField)
+                        );
+                      }).length > 0
+                  "
+                >
+                  <template
+                    v-if="
+                      item.conditionValue ===
+                        BookingDataItemEdit.filter(row => {
+                          return (
+                            row.fieldId ===
+                            parseInt(item.conditionField)
+                          );
+                        })[0].fieldValue
+                    "
+                  >
+                    <v-row class="InputData">
+                      <v-text-field
+                        v-model="item.fieldValue"
+                        :label="item.fieldName"
+                        outlined
+                        readonly
+                        class="pa-2 pb-0 pt-0"
+                        dense
+                      ></v-text-field>
+                      <v-icon class="pa-3 pb-10 pt-0" v-if="item.fieldName === 'เบอร์โทร'" large color="#64DD17" @click="dial(item.phone)">call</v-icon>
+                    </v-row>
+                  </template>
+                </template>
+                  <template  v-if="item.conditionField === 'flow' ">
+                    <template v-if="parseInt(item.conditionValue) === parseInt(flowIdSelect) ">
+                      <v-row class="InputData">
+                        <v-text-field
+                          v-model="item.fieldValue"
+                          :label="item.fieldName"
+                          dense
+                          readonly
+                          class="pa-2 pb-0 pt-0"
+                          outlined
+                        ></v-text-field>
+                        <v-icon class="pa-3 pb-10 pt-0" v-if="item.fieldName === 'เบอร์โทร'" large color="#64DD17" @click="dial(item.phone)">call</v-icon>
+                      </v-row>
+                    </template>
+                  </template>
+              </div>
+            </template>
+            <v-row class="InputData">
+              <v-text-field
+                v-model="BookingDataItem[0].fieldValue"
+                :label="BookingDataItem[0].fieldName"
+                class="pa-2 pb-0 pt-0"
+                outlined
+                dense
+                readonly
+              ></v-text-field>
+            </v-row>
+            <!-- <v-col
               v-for="(item, indexitem) in BookingDataItem"
               :key="indexitem"
               cols="12"
@@ -73,15 +178,10 @@
                 dense
                 readonly
               >
-              <!-- <v-icon left large
-              color="#64DD17"
-              v-if="item.fieldName === 'เบอร์โทร'"
-              @click="dial(item.phone)">call</v-icon> -->
               </v-text-field>
               <v-icon class="pa-3 pb-10 pt-0" v-if="item.fieldName === 'เบอร์โทร'" large color="#64DD17" @click="dial(item.phone)">call</v-icon>
-              <!-- {{item.fieldName}} : {{item.fieldValue}} -->
               </v-row>
-            </v-col>
+            </v-col> -->
             <v-col cols='12' class="pb-0 pt-0 mt-0">
               <v-radio-group v-model="radiosRemark" row>
                 <!-- <template v-slot:label>
@@ -380,7 +480,9 @@ export default {
       masBranchID: '',
       branch: [],
       BookingDataList: [],
-      dateStart: ''
+      BookingDataItemEdit: [],
+      dateStart: '',
+      flowIdSelect: ''
     }
   },
   beforeCreate () {
@@ -643,13 +745,13 @@ export default {
                         fieldValue: this.format_dateFUllTime(s.dueDate)
                       })
                       for (var i = 0; i < responses.data.length; i++) {
-                        var d = responses.data[i]
-                        if (d.userId === 'user-skip') {
-                          d.userId = ''
+                        var t = responses.data[i]
+                        if (t.userId === 'user-skip') {
+                          t.userId = ''
                         }
-                        d.shopId = this.session.data.shopId
-                        d.userName = this.$session.getAll().data.userName
-                        this.BookingDataItem.push(d)
+                        t.shopId = this.session.data.shopId
+                        t.userName = this.$session.getAll().data.userName
+                        this.BookingDataItem.push(t)
                       }
                       console.log('BookingDataItem', this.BookingDataItem)
                       // await this.getBookingField()
@@ -665,6 +767,7 @@ export default {
                     //   }
                     // }
                   })
+                this.flowIdSelect = dataBookingData[0].flowId
                 s.masBranchID = dataBookingData[0].masBranchID
                 this.masBranchID = dataBookingData[0].masBranchID
                 this.timeavailable = JSON.parse(dataBookingData[0].setTime)
@@ -1064,10 +1167,96 @@ export default {
           }
           if (dataItems.length === 0 || dataItems.status === false) {
             this.dataItemBooking = []
+            this.BookingDataItemEdit = []
+            let itemIncustomField = []
+            await axios
+              .get(
+                this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+              )
+              .then(async response1 => {
+                let rs2 = response1.data
+                if (rs2.length > 0) {
+                  let bookingData = []
+                  bookingData = JSON.parse(rs2[0].flowfieldName)
+                  for (let i = 0; i < bookingData.length; i++) {
+                    let d = bookingData[i]
+                    itemIncustomField.push(d.fieldId)
+                  }
+                  await axios
+                    .get(this.DNS_IP + '/customField/fieldId?fieldId=' + itemIncustomField)
+                    .then(async responses => {
+                      let rs1 = responses.data
+                      for (var i = 0; i < rs1.length; i++) {
+                        var d = rs1[i]
+                        var s = {}
+                        var dataBD = this.BookingDataItem.filter(el => { return parseInt(el.fieldId) === parseInt(d.fieldId) })
+                        console.log('dataBD', dataBD)
+                        if (dataBD.length > 0) {
+                          s.flowName = dataBD[0].flowName
+                          s.masBranchName = dataBD[0].masBranchName
+                          s.bookingFieldId = rs2[0].bookingFieldId
+                          s.conditionField = d.conditionField
+                          s.fieldId = d.fieldId
+                          s.fieldType = d.fieldType
+                          s.fieldValue = dataBD[0].fieldValue
+                          s.fieldName = d.fieldName
+                          s.conditionField = d.conditionField
+                          s.conditionValue = d.conditionValue
+                          s.requiredField = d.requiredField
+                          s.optionField = d.optionField
+                          this.BookingDataItemEdit.push(s)
+                        }
+                      }
+                    })
+                }
+              })
             this.dataReady = true
             // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
           } else {
             this.dataItemBooking = dataItems
+            this.BookingDataItemEdit = []
+            let itemIncustomField = []
+            await axios
+              .get(
+                this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+              )
+              .then(async response1 => {
+                let rs2 = response1.data
+                if (rs2.length > 0) {
+                  let bookingData = []
+                  bookingData = JSON.parse(rs2[0].flowfieldName)
+                  for (let i = 0; i < bookingData.length; i++) {
+                    let d = bookingData[i]
+                    itemIncustomField.push(d.fieldId)
+                  }
+                  await axios
+                    .get(this.DNS_IP + '/customField/fieldId?fieldId=' + itemIncustomField)
+                    .then(async responses => {
+                      let rs1 = responses.data
+                      for (var i = 0; i < rs1.length; i++) {
+                        var d = rs1[i]
+                        var s = {}
+                        var dataBD = this.BookingDataItem.filter(el => { return parseInt(el.fieldId) === parseInt(d.fieldId) })
+                        console.log('dataBD', dataBD)
+                        if (dataBD.length > 0) {
+                          s.flowName = dataBD[0].flowName
+                          s.masBranchName = dataBD[0].masBranchName
+                          s.bookingFieldId = rs2[0].bookingFieldId
+                          s.conditionField = d.conditionField
+                          s.fieldId = d.fieldId
+                          s.fieldType = d.fieldType
+                          s.fieldValue = dataBD[0].fieldValue
+                          s.fieldName = d.fieldName
+                          s.conditionField = d.conditionField
+                          s.conditionValue = d.conditionValue
+                          s.requiredField = d.requiredField
+                          s.optionField = d.optionField
+                          this.BookingDataItemEdit.push(s)
+                        }
+                      }
+                    })
+                }
+              })
             this.dataReady = true
           }
         })
@@ -1101,6 +1290,10 @@ export default {
 <style scoped>
 .theme--light.v-divider {
     border-color: rgba(243, 5, 25, 0.904) !important;
+}
+.InputData{
+  margin: 0px !important;
+  padding: 0px !important;
 }
 .slidein {
   max-width: 100%;
