@@ -1396,24 +1396,31 @@
                       small
                       :disabled="item.chkCancel"
                       @click.stop="setDataRemove(item)"
+                      title="ยกเลิกนัด"
                     >
                       <v-icon dark> mdi-phone-cancel </v-icon>
                     </v-btn>
-                    <v-btn
-                      color="warning"
-                      fab
-                      id="v-step-2"
-                      v-if="item.statusBt !== 'confirmJob'"
-                      small
-                      @click.stop="setDataChang(item), checkTimeFlow()"
-                    >
-                      <v-icon> mdi-calendar-clock </v-icon>
-                    </v-btn>
+                    <v-tooltip right>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          color="warning"
+                          fab
+                          v-if="item.statusBt !== 'confirmJob'"
+                          small
+                          @click.stop="setDataChang(item), checkTimeFlow()"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <v-icon> mdi-calendar-clock </v-icon>
+                        </v-btn>
+                      </template>
+                      <span>เปลี่ยนเวลานัดหมาย</span>
+                    </v-tooltip>
+
                     <v-btn
                       color="primary"
                       fab
                       v-if="item.statusBt === 'confirm'"
-                      id="v-step-2"
                       small
                       @click.stop="(dialogEdit = true), getBookingData(item), checkTimeFlow()"
                     >
@@ -1513,67 +1520,100 @@
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
                     <!-- confirm -->
-                    <v-btn
-                      color="primary"
-                      fab
-                      v-if="item.statusBt === 'confirm'"
-                      id="v-step-2"
-                      small
-                      @click.stop="(dialogEdit = true), getBookingData(item),checkTimeFlow()"
-                    >
-                      <v-icon dark> mdi-account-plus </v-icon>
-                    </v-btn>
-                    <v-btn
-                      color="success"
-                      fab
-                      id="v-step-2"
-                      v-if="item.statusBt !== 'confirmJob' && item.statusBt !== 'confirm'"
-                      :disabled="item.chkConfirm"
-                      small
-                      @click.stop="confirmChk(item)"
-                    >
-                      <v-icon dark> mdi-phone-check </v-icon>
-                    </v-btn>
-                    <v-btn
-                      color="info"
-                      dark
-                      v-if="item.statusBt === 'confirmJob'"
-                      fab
-                      small
-                      @click.stop="(dialogJob = true), getjob(item)"
-                    >
-                      <v-icon> mdi-qrcode-scan </v-icon>
-                    </v-btn>
-                    <v-btn
-                      color="warning"
-                      fab
-                      id="v-step-2"
-                      small
-                      @click.stop="setDataChang(item), checkTimeFlow()"
-                    >
-                      <v-icon> mdi-calendar-clock </v-icon>
-                    </v-btn>
-                    <v-btn
-                      color="error"
-                      fab
-                      id="v-step-2"
-                      v-if="item.statusBt !== 'cancel' && item.statusBt !== 'confirmJob'"
-                      small
-                      :disabled="item.chkCancel"
-                      @click.stop="setDataRemove(item)"
-                    >
-                      <v-icon dark> mdi-phone-cancel </v-icon>
-                    </v-btn>
-                    <v-btn
-                      color="red"
-                      dark
-                      v-if="item.statusBt === 'cancel'"
-                      fab
-                      small
-                      @click.stop="(dialogDelete = true), getDataById(item)"
-                    >
-                      <v-icon> mdi-delete </v-icon>
-                    </v-btn>
+                    <v-tooltip bottom v-if="item.statusBt === 'confirm'">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          color="primary"
+                          fab
+                          small
+                          @click.stop="(dialogEdit = true), getBookingData(item),checkTimeFlow()"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <v-icon dark> mdi-account-plus </v-icon>
+                        </v-btn>
+                      </template>
+                      <span>รับรถเข้าศูนย์</span>
+                    </v-tooltip>
+                    <v-tooltip bottom v-if="item.statusBt !== 'confirmJob' && item.statusBt !== 'confirm'">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          color="success"
+                          fab
+                          :disabled="item.chkConfirm"
+                          small
+                          @click.stop="confirmChk(item)"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <v-icon dark> mdi-phone-check </v-icon>
+                        </v-btn>
+                      </template>
+                      <span>ยืนยันนัดหมาย</span>
+                    </v-tooltip>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          color="warning"
+                          fab
+                          small
+                          @click.stop="setDataChang(item), checkTimeFlow()"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <v-icon> mdi-calendar-clock </v-icon>
+                        </v-btn>
+                      </template>
+                      <span>เปลี่ยนเวลานัดหมาย</span>
+                    </v-tooltip>
+                    <v-tooltip bottom v-if="item.statusBt !== 'cancel' && item.statusBt !== 'confirmJob'">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          color="error"
+                          fab
+                          small
+                          :disabled="item.chkCancel"
+                          @click.stop="setDataRemove(item)"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <v-icon dark> mdi-phone-cancel </v-icon>
+                        </v-btn>
+                      </template>
+                      <span>ยกเลิกนัดหมาย</span>
+                    </v-tooltip>
+                    <v-tooltip bottom v-if="item.statusBt === 'confirmJob'">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          color="info"
+                          dark
+                          fab
+                          small
+                          @click.stop="(dialogJob = true), getjob(item)"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <v-icon> mdi-qrcode-scan </v-icon>
+                        </v-btn>
+                      </template>
+                      <span>QR Code สำหรับให้ลูกค้า</span>
+                    </v-tooltip>
+                    <v-tooltip bottom v-if="item.statusBt === 'cancel'">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          color="red"
+                          dark
+                          fab
+                          small
+                          @click.stop="(dialogDelete = true), getDataById(item)"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <v-icon> mdi-delete </v-icon>
+                        </v-btn>
+                      </template>
+                      <span>ลบรายการนี้</span>
+                    </v-tooltip>
                   </template>
                 </v-data-table>
               </v-card-text>
@@ -2785,6 +2825,7 @@ export default {
             // })
             console.log('dataItemTime', this.dataItemTime)
             this.dataReady = true
+            this.getSelect('wait', this.countWaiting)
           }
         })
         // eslint-disable-next-line handle-callback-err
