@@ -194,37 +194,18 @@
                             avatar
                             bordered
                             overlap
-                            color="red darken-1"
-                            v-if="eventInfo[date].extraJob > 0"
-                            class="mr-1"
-                            style="cursor: pointer"
-                            @click.native="openTaskList(date, 'extraJob')"
-                          >
-                            <template v-slot:badge>
-                              <v-avatar class="mb-1" color="red darken-1">
-                                {{eventInfo[date].extraJob}}
-                              </v-avatar>
-                            </template>
-
-                            <v-avatar size="40" color="red darken-3">
-                              <v-icon dark>
-                                  mdi-alarm-plus
-                              </v-icon>
-                            </v-avatar>
-                          </v-badge>
-                          <v-badge
-                            avatar
-                            bordered
-                            overlap
                             color="blue darken-1"
-                            v-if="eventInfo[date].normal > 0"
+                            v-if="eventInfo[date].normal > 0 || eventInfo[date].normalExtra > 0"
                             class="mr-1"
                             style="cursor: pointer"
                             @click.native="openTaskList(date, 'normal')"
                           >
                             <template v-slot:badge>
-                              <v-avatar class="mb-1" color="blue darken-1">
-                                {{eventInfo[date].normal}}
+                              <v-avatar class="mb-1" color="blue darken-1" v-if="eventInfo[date].normal > 0">
+                                {{eventInfo[date].normal - eventInfo[date].normalExtra}}
+                              </v-avatar>
+                              <v-avatar class="mb-1" color="red darken-1" v-if="eventInfo[date].normalExtra > 0">
+                                {{eventInfo[date].normalExtra}}
                               </v-avatar>
                             </template>
 
@@ -548,7 +529,7 @@ export default {
               dueDate = dueDate[0]
               if (typeof this.eventInfo[dueDate] === 'undefined') {
                 this.monthData[dueDate] = []
-                this.eventInfo[dueDate] = {'timeDue': e.timeDue, 'all': 0, 'allPercent': 0, 'fastTrack': 0, 'extraJob': 0, 'normal': 0}
+                this.eventInfo[dueDate] = {'timeDue': e.timeDue, 'all': 0, 'allPercent': 0, 'fastTrack': 0, 'extraJob': 0, 'normal': 0, 'normalExtra': 0}
               }
               this.monthData[dueDate].push(e)
               if (e.statusBt) {
@@ -558,6 +539,9 @@ export default {
                   if (e.fastTrack === 'True' || e.fastTrack === 'true') {
                     this.eventInfo[dueDate].fastTrack++
                   } else {
+                    if (e.extraJob === 'True' || e.extraJob === 'true') {
+                      this.eventInfo[dueDate].normalExtra++
+                    }
                     this.eventInfo[dueDate].normal++
                   }
                 }
