@@ -696,6 +696,7 @@ export default {
       }
     },
     async getCustomFieldStart () {
+      console.log('getCustomFieldStart')
       this.editedItemSeleteField = []
       axios
         .get(this.DNS_IP + '/customField/get?shopId=' + this.$session.getAll().data.shopId)

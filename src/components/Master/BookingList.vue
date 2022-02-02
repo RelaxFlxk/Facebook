@@ -10,6 +10,16 @@
           <v-col cols="12" md="6" lg="6" class="v-margit_button text-right">
             <v-btn-toggle>
               <v-btn
+                color="warning"
+                style="z-index:8;margin-right: 5px;"
+                id="v-step-0"
+                depressed
+                @click="getDataDefault()"
+              >
+                <v-icon left>mdi-refresh-circle</v-icon>
+                Refresh
+              </v-btn>
+              <v-btn
                 color="primary"
                 style="z-index:8;margin-right: 5px;"
                 id="v-step-0"
@@ -24,7 +34,7 @@
                 style="z-index:8;margin-right: 5px;"
                 id="v-step-0"
                 depressed
-                @click="(dialogAdd = true), getBookingField(), checkTime()"
+                @click="addDataSet()"
               >
                 <v-icon left>mdi-text-box-plus</v-icon>
                 เพิ่ม
@@ -317,7 +327,7 @@
                         style="margin: auto 0;"
                       > -->
                         <v-col class="text-center">
-                          <CalendarBooking></CalendarBooking>
+                          <CalendarBooking ref="CalendarBooking"></CalendarBooking>
                           <!-- <v-img
                             class="v-margit_img_reward"
                             :src="require('@/assets/AddBookingList.svg')"
@@ -1287,7 +1297,7 @@
                   color="blue-grey"
                   class="ma-2 white--text"
                   small
-                  @click="(dialogAdd = true), getBookingField(), checkTime()"
+                  @click="addDataSet()"
                 >
                   ตรวจสอบคิวจองรายเดือน
                 </v-btn>
@@ -1929,6 +1939,25 @@ export default {
     this.scanQrcode()
   },
   methods: {
+    async getDataCalendaBooking () {
+      this.$refs.CalendarBooking.getCustomFieldStart()
+      await this.$refs.CalendarBooking.getDataFlow()
+      await this.$refs.CalendarBooking.getDataBranch()
+      await this.$refs.CalendarBooking.getBookingList()
+    },
+    addDataSet () {
+      this.getDataCalendaBooking()
+      this.dialogAdd = true
+      this.getBookingField()
+      this.checkTime()
+    },
+    async getDataDefault () {
+      await this.getDataBranch()
+      await this.getEmpSelectAdd()
+      this.getCustomFieldStart()
+      this.getDataFlow()
+      this.getBookingList()
+    },
     checkTime () {
       this.timeavailable = []
       let dtTime = this.branch.filter(item => { return item.value === this.formAdd.masBranchID })
