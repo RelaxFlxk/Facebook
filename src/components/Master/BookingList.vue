@@ -1229,17 +1229,21 @@
               <v-card-title>
                 ยกเลิกรายการนี้
               </v-card-title>
-              <v-card-text>
+              <v-form ref="form_remove" v-model="validRemove" lazy-validation>
                 <v-container>
+              <v-card-text>
                 <v-row>
+                  <v-col cols= "12">
                   <v-textarea
                     v-model="remarkRemove"
                     outlined
                     label="หมายเหตุในการยกเลิก"
                     auto-grow
+                    required
+                    :rules="[rules.required]"
                   ></v-textarea>
-                </v-row>
-                <v-row>
+                  </v-col>
+                  <v-col cols= "12">
                   <v-select
                     v-model="empSelect"
                     :items="empSelectStep"
@@ -1248,6 +1252,7 @@
                     outlined
                     dense
                   ></v-select>
+                  </v-col>
                 </v-row>
                 <div class="text-center">
                   <v-btn
@@ -1268,8 +1273,9 @@
                     >ยกเลิก</v-btn
                   >
                 </div>
-                </v-container>
               </v-card-text>
+              </v-container>
+              </v-form>
             </v-card>
           </v-dialog>
           <!-- data table -->
@@ -1695,7 +1701,6 @@
         <v-dialog v-model="dialogEditData" :max-width="dialogwidth">
           <!-- <v-dialog v-model="dialogAdd" persistent max-width="70%"> -->
             <v-card class="text-center">
-              <v-form ref="form_add" v-model="validAdd" lazy-validation>
                 <v-card-text>
                     <v-col class="text-right pa-0">
                       <v-btn
@@ -2126,7 +2131,6 @@
                       </v-col>
                     </v-row>
                 </v-card-text>
-              </v-form>
             </v-card>
           </v-dialog>
       </div>
@@ -2364,6 +2368,7 @@ export default {
       validUpdate: true,
       validAdd: true,
       validEdit: true,
+      validRemove: true,
       validChange: true,
       validExport: true,
       // Dialog Config ADD EDIT DELETE IMPORT
@@ -3002,6 +3007,12 @@ export default {
           this.$nextTick(() => {
             let self = this
             self.$refs.form_edit.validate()
+          })
+          break
+        case 'REMOVE':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_remove.validate()
           })
           break
         case 'CHANGE':
@@ -4185,34 +4196,40 @@ export default {
       this.dialogRemove = true
     },
     cancelChk () {
-      var dt = {
-        bookNo: this.bookNoRemove.bookNo,
-        contactDate: this.format_date(new Date()),
-        status: 'cancel',
-        statusUse: 'use',
-        shopId: this.$session.getAll().data.shopId,
-        CREATE_USER: this.session.data.userName,
-        LAST_USER: this.session.data.userName,
-        remarkRemove: this.remarkRemove
+      this.validate('REMOVE')
+      setTimeout(() => this.onCancelChk(), 500)
+    },
+    onCancelChk () {
+      if (this.validRemove === true) {
+        var dt = {
+          bookNo: this.bookNoRemove.bookNo,
+          contactDate: this.format_date(new Date()),
+          status: 'cancel',
+          statusUse: 'use',
+          shopId: this.$session.getAll().data.shopId,
+          CREATE_USER: this.session.data.userName,
+          LAST_USER: this.session.data.userName,
+          remarkRemove: this.remarkRemove
+        }
+        axios
+          .post(this.DNS_IP + '/booking_transaction/add', dt)
+          .then(async response => {
+            await this.updateRemark(this.bookNoRemove)
+            this.$swal('เรียบร้อย', 'ยกเลิกเรียบร้อย', 'success')
+            console.log('addDataGlobal', response)
+            await this.getBookingList()
+            this.getTimesChange('update')
+            if (this.getSelectText) {
+              this.getSelect(this.getSelectText, this.getSelectCount)
+            }
+            this.dialogRemove = false
+            this.remarkRemove = ''
+            this.bookNo = ''
+          })
+          .catch(error => {
+            console.log('error function addData : ', error)
+          })
       }
-      axios
-        .post(this.DNS_IP + '/booking_transaction/add', dt)
-        .then(async response => {
-          await this.updateRemark(this.bookNoRemove)
-          this.$swal('เรียบร้อย', 'ยกเลิกเรียบร้อย', 'success')
-          console.log('addDataGlobal', response)
-          await this.getBookingList()
-          this.getTimesChange('update')
-          if (this.getSelectText) {
-            this.getSelect(this.getSelectText, this.getSelectCount)
-          }
-          this.dialogRemove = false
-          this.remarkRemove = ''
-          this.bookNo = ''
-        })
-        .catch(error => {
-          console.log('error function addData : ', error)
-        })
     },
     async changeChk (item, changeStatus) {
       console.log('item', item)
