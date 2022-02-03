@@ -2619,6 +2619,9 @@ export default {
                 this.dataEditReady = true
                 this.getDataDefault()
               })
+          }).catch(error => {
+            this.dataEditReady = true
+            console.log('close alert : ', error)
           })
       }
     },
