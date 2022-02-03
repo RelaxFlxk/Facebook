@@ -1735,6 +1735,7 @@
                             :src="require('@/assets/Grouptitle.svg')"
                           ></v-img> -->
                         </v-col>
+                        <v-form ref="form_edit" v-model="validEdit" lazy-validation>
                         <v-col cols="12" v-if="dataEditReady">
                           <v-select
                             v-model="formEdit.flowId"
@@ -2050,8 +2051,6 @@
                               menu-props="auto"
                               outlined
                               dense
-                              required
-                              :rules ="[rules.required]"
                             ></v-select>
                             </v-col>
                           </v-row>
@@ -2063,8 +2062,6 @@
                                 label="พนักงานที่รับนัดหมาย"
                                 menu-props="auto"
                                 outlined
-                                required
-                                :rules="[rules.required]"
                                 dense
                               ></v-select>
                             </v-col>
@@ -2075,6 +2072,7 @@
                               large
                               color="#173053"
                               dark
+                              :disabled="!validEdit"
                               @click="editDataSelect()"
                             >
                               <v-icon left>mdi-checkbox-marked-circle</v-icon>
@@ -2092,6 +2090,7 @@
                             </v-btn>
                           </div>
                         </v-col>
+                        </v-form>
                         <div class="text-center" v-if="!dataEditReady">
                             <v-progress-circular
                               :size="50"
@@ -2364,6 +2363,7 @@ export default {
       dataChange: {},
       validUpdate: true,
       validAdd: true,
+      validEdit: true,
       validChange: true,
       validExport: true,
       // Dialog Config ADD EDIT DELETE IMPORT
@@ -2534,87 +2534,93 @@ export default {
       this.dialogEditData = true
     },
     editDataSelect () {
-      this.dataEditReady = false
-      let rs = this.BookingDataItemEdit
-      let Add = []
-      let fielditem = this.BookingDataItemEdit
-      console.log('this.BookingDataItemEdit', this.BookingDataItemEdit)
-      for (let i = 0; i < rs.length; i++) {
-        let d = rs[i]
-        let update = {}
-        if (d.conditionField === '' || d.conditionField === null) {
-          update.fieldId = d.fieldId
-          update.bookingDataId = d.bookingDataId
-          update.bookingFieldId = d.bookingFieldId
-          update.bookNo = d.bookNo
-          update.fieldValue = d.fieldValue
-          update.dueDate = this.dateEdit + ' ' + this.timeEdit
-          update.flowId = this.formEdit.flowId
-          update.masBranchID = this.formEdit.masBranchID
-          update.LAST_USER = this.$session.getAll().data.userName
-          update.empSelect = this.empSelectEdit
-          update.shopId = this.session.data.shopId
-          Add.push(update)
-        } else {
-          if (
-            fielditem.filter(row => {
-              return row.fieldId === parseInt(d.conditionField)
-            }).length > 0
-          ) {
+      this.validate('EDIT')
+      setTimeout(() => this.editDataSelectSubmit(), 500)
+    },
+    editDataSelectSubmit () {
+      if (this.validEdit !== false) {
+        this.dataEditReady = false
+        let rs = this.BookingDataItemEdit
+        let Add = []
+        let fielditem = this.BookingDataItemEdit
+        console.log('this.BookingDataItemEdit', this.BookingDataItemEdit)
+        for (let i = 0; i < rs.length; i++) {
+          let d = rs[i]
+          let update = {}
+          if (d.conditionField === '' || d.conditionField === null) {
+            update.fieldId = d.fieldId
+            update.bookingDataId = d.bookingDataId
+            update.bookingFieldId = d.bookingFieldId
+            update.bookNo = d.bookNo
+            update.fieldValue = d.fieldValue
+            update.dueDate = this.dateEdit + ' ' + this.timeEdit
+            update.flowId = this.formEdit.flowId
+            update.masBranchID = this.formEdit.masBranchID
+            update.LAST_USER = this.$session.getAll().data.userName
+            update.empSelect = this.empSelectEdit
+            update.shopId = this.session.data.shopId
+            Add.push(update)
+          } else {
             if (
-              d.conditionValue ===
+              fielditem.filter(row => {
+                return row.fieldId === parseInt(d.conditionField)
+              }).length > 0
+            ) {
+              if (
+                d.conditionValue ===
               fielditem.filter(row => {
                 return row.fieldId === parseInt(d.conditionField)
               })[0].fieldValue
-            ) {
-              update.fieldId = d.fieldId
-              update.bookingDataId = d.bookingDataId
-              update.bookingFieldId = d.bookingFieldId
-              update.bookNo = d.bookNo
-              update.fieldValue = d.fieldValue
-              update.dueDate = this.dateEdit + ' ' + this.timeEdit
-              update.flowId = this.formEdit.flowId
-              update.masBranchID = this.formEdit.masBranchID
-              update.LAST_USER = this.$session.getAll().data.userName
-              update.empSelect = this.empSelectEdit
-              update.shopId = this.session.data.shopId
-              Add.push(update)
-            }
-          } else if (d.conditionField === 'flow') {
-            if (parseInt(d.conditionValue) === parseInt(this.formEdit.flowId)) {
-              update.fieldId = d.fieldId
-              update.bookingDataId = d.bookingDataId
-              update.bookingFieldId = d.bookingFieldId
-              update.bookNo = d.bookNo
-              update.fieldValue = d.fieldValue
-              update.dueDate = this.dateEdit + ' ' + this.timeEdit
-              update.flowId = this.formEdit.flowId
-              update.masBranchID = this.formEdit.masBranchID
-              update.LAST_USER = this.$session.getAll().data.userName
-              update.empSelect = this.empSelectEdit
-              update.shopId = this.session.data.shopId
-              Add.push(update)
+              ) {
+                update.fieldId = d.fieldId
+                update.bookingDataId = d.bookingDataId
+                update.bookingFieldId = d.bookingFieldId
+                update.bookNo = d.bookNo
+                update.fieldValue = d.fieldValue
+                update.dueDate = this.dateEdit + ' ' + this.timeEdit
+                update.flowId = this.formEdit.flowId
+                update.masBranchID = this.formEdit.masBranchID
+                update.LAST_USER = this.$session.getAll().data.userName
+                update.empSelect = this.empSelectEdit
+                update.shopId = this.session.data.shopId
+                Add.push(update)
+              }
+            } else if (d.conditionField === 'flow') {
+              if (parseInt(d.conditionValue) === parseInt(this.formEdit.flowId)) {
+                update.fieldId = d.fieldId
+                update.bookingDataId = d.bookingDataId
+                update.bookingFieldId = d.bookingFieldId
+                update.bookNo = d.bookNo
+                update.fieldValue = d.fieldValue
+                update.dueDate = this.dateEdit + ' ' + this.timeEdit
+                update.flowId = this.formEdit.flowId
+                update.masBranchID = this.formEdit.masBranchID
+                update.LAST_USER = this.$session.getAll().data.userName
+                update.empSelect = this.empSelectEdit
+                update.shopId = this.session.data.shopId
+                Add.push(update)
+              }
             }
           }
         }
-      }
-      console.log('Add', Add)
-      this.swalConfig.title = 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?'
-      this.$swal(this.swalConfig)
-        .then(async result => {
-          await axios
-            .post(
+        console.log('Add', Add)
+        this.swalConfig.title = 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?'
+        this.$swal(this.swalConfig)
+          .then(async result => {
+            await axios
+              .post(
               // eslint-disable-next-line quotes
-              this.DNS_IP + "/BookingData/editAdmin",
-              Add
-            )
-            .then(async response => {
-              this.dialogEditData = false
-              this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
-              this.dataEditReady = true
-              this.getDataDefault()
-            })
-        })
+                this.DNS_IP + "/BookingData/editAdmin",
+                Add
+              )
+              .then(async response => {
+                this.dialogEditData = false
+                this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
+                this.dataEditReady = true
+                this.getDataDefault()
+              })
+          })
+      }
     },
     async getDataCalendaBooking () {
       this.$refs.CalendarBooking.getCustomFieldStart()
@@ -2987,6 +2993,12 @@ export default {
           this.$nextTick(() => {
             let self = this
             self.$refs.form_update.validate()
+          })
+          break
+        case 'EDIT':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_edit.validate()
           })
           break
         case 'CHANGE':
