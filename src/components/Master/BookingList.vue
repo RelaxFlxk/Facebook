@@ -2463,7 +2463,7 @@ export default {
       // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
       this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
       this.dateEdit = moment(moment(dt.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-      this.timeEdit = moment(moment(dt.dueDate, 'hh:mm').toDate()).format('hh:mm')
+      this.timeEdit = dt.dueDate.slice(-5)
       console.log('this.timeEdit', this.timeEdit)
       let itemIncustomField = []
       axios
