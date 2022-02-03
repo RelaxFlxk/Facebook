@@ -2820,6 +2820,7 @@ export default {
           s.licenseNo = t.cusReg
           s.title = t.timeDuetext
           s.status = t.statusBtText
+          s.remark = t.remark
           s.cusName = t.cusName
           s.cusReg = t.cusReg
           s.flowName = serviceDetail
@@ -2840,6 +2841,7 @@ export default {
       s.cusName = ''
       s.cusReg = ''
       s.flowName = ''
+      s.remark = ''
       s.tel = ''
       s.empFull_NameTH = ''
       s.carModel = ''
@@ -2872,6 +2874,7 @@ export default {
           s.title = t.timeDuetext
           s.status = t.statusBtText
           s.cusName = t.cusName
+          s.remark = t.remark
           s.cusReg = t.cusReg
           s.flowName = serviceDetail
           s.tel = t.tel
@@ -2906,7 +2909,8 @@ export default {
           'ตรง': '',
           'ไม่ตรง': '',
           'เปิดJob': '',
-          'พนักงานรับนัดหมาย': a.empFull_NameTH
+          'พนักงานรับนัดหมาย': a.empFull_NameTH,
+          'หมายเหตุเพิ่มเติม': a.remark
         })
       }
       const dataWS = XLSX.utils.json_to_sheet(dataexport)
@@ -2948,6 +2952,7 @@ export default {
           s.remarkRemove = t.remarkRemove
           s.title = t.timeDuetext
           s.status = t.statusBtText
+          s.remark = t.remark
           s.cusName = t.cusName
           s.cusReg = t.cusReg
           s.flowName = serviceDetail
@@ -2969,6 +2974,7 @@ export default {
       s.cusReg = ''
       s.remarkRemove = ''
       s.tel = ''
+      s.remark = ''
       s.empFull_NameTH = ''
       s.carModel = ''
       dataExport.push(s)
@@ -2995,6 +3001,7 @@ export default {
           s.remarkRemove = t.remarkRemove
           s.title = t.timeDuetext
           s.status = t.statusBtText
+          s.remark = t.remark
           s.cusName = t.cusName
           s.cusReg = t.cusReg
           s.flowName = t.flowName
@@ -3031,7 +3038,8 @@ export default {
           'ตรง': '',
           'ไม่ตรง': '',
           'เปิดJob': '',
-          'พนักงานรับนัดหมาย': a.empFull_NameTH
+          'พนักงานรับนัดหมาย': a.empFull_NameTH,
+          'หมายเหตุเพิ่มเติม': a.remark
         })
       }
       const dataWS = XLSX.utils.json_to_sheet(dataexport)
