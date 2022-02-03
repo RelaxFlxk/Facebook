@@ -1354,10 +1354,56 @@
                 <v-text-field
                   v-model="searchAll2"
                   append-icon="mdi-magnify"
-                  label="Search"
+                  label="ค้นหาจากข้อมูลทั้งหมด"
                   single-line
+                  dense
                   hide-details
                 ></v-text-field>
+                <v-menu
+                  v-model="menuDateSearch"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="filters"
+                      label="ค้นหาจากวันที่นัดหมาย"
+                      prepend-icon="mdi-calendar"
+                      readonly
+                      outlined
+                      class="pa-4"
+                      append-icon="mdi-magnify"
+                      dense
+                      v-bind="attrs"
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="filters"
+                    @input="menuDateSearch = false"
+                  ></v-date-picker>
+                </v-menu>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      color="red"
+                      fab
+                      class="mb-7"
+                      dark
+                      small
+                      @click.stop="filters=''"
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                      <v-icon> mdi-calendar-remove </v-icon>
+                    </v-btn>
+                  </template>
+                  <span>เคลียร์ ค้นหาจากวันที่นัดหมาย</span>
+                </v-tooltip>
+                <!-- <v-icon color="#64DD17" small @click="filters=''">call</v-icon> -->
               </v-card-title>
               <v-card-text>
                 <v-data-table
@@ -1508,7 +1554,7 @@
                 </v-data-table>
                 <v-data-table
                   :headers="columnsSelected"
-                  :items="dataItemSelect"
+                  :items="filteredSelect"
                   v-if="selectedStatus"
                   :search="searchAll2"
                   :items-per-page="10"
@@ -2262,6 +2308,17 @@ export default {
     CalendarBooking
   },
   computed: {
+    filteredSelect () {
+      return this.dataItemSelect.filter(d => {
+        return this.filters.length < 1 || d['dueDate'].toString().toLowerCase().includes(this.filters.toLowerCase())
+        // return Object.keys(this.filters).every(f => {
+        // f is search column
+        // this.filters[f] is the current search string entered by user
+        // d[f] is the entry being tested against the search string
+        //   return this.filters[f].length < 1 || d[f].toString().toLowerCase().includes(this.filters[f].toLowerCase())
+        // })
+      })
+    },
     dialogwidth () {
       switch (this.$vuetify.breakpoint.name) {
         case 'xs': return '70%'
@@ -2276,6 +2333,8 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      filters: '',
+      menuDateSearch: false,
       timeTable: '',
       drawer: false,
       value: '',
