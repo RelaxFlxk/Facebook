@@ -3175,7 +3175,8 @@ export default {
               { text: 'ชื่อลูกค้า', value: 'cusName' },
               { text: 'เบอร์โทร', value: 'tel' },
               { text: 'ทะเบียนรถ', value: 'cusReg' },
-              { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' }
+              { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
+              { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' }
               // { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
               // { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
               // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
