@@ -1278,6 +1278,48 @@
               </v-form>
             </v-card>
           </v-dialog>
+          <v-dialog v-model="dialogRemark" :max-width="dialogwidth">
+            <v-card class="text-center">
+              <v-card-title>
+                หมายเหตุเพิ่มเติม
+              </v-card-title>
+              <!-- <v-form ref="form_remove" v-model="validRemove" lazy-validation> -->
+                <v-container>
+              <v-card-text>
+                <v-row>
+                  <v-col cols= "12">
+                  <v-textarea
+                    v-model="remark"
+                    outlined
+                    label="หมายเหตุเพิ่มเติม"
+                    auto-grow
+                  ></v-textarea>
+                  </v-col>
+                </v-row>
+                <div class="text-center">
+                  <v-btn
+                    elevation="10"
+                    color="#173053"
+                    dark
+                    small
+                    @click="onSaveRemark()"
+                    >หมายเหตุเพิ่มเติม</v-btn
+                  >
+                  <v-btn
+                    elevation="10"
+                    color="#173053"
+                    outlined
+                    style="background-color:#FFFFFF"
+                    small
+                    @click="dialogRemark = false"
+                    >ยกเลิก</v-btn
+                  >
+                </div>
+              </v-card-text>
+              </v-container>
+              <!-- </v-form> -->
+            </v-card>
+          </v-dialog>
           <!-- data table -->
           <v-col cols="12" >
             <BookingQueue :branchParent="branch" :masBranchIDParent="masBranchID" :drawerParent="drawer" :menu1Parent="menu1" :timeTableParent="timeTable" :rulesParent="rules" :masterTimeParent="masterTime" :dataItemTimesChangeParent="dataItemTimesChange" :getTimesChangeParent="getTimesChange" :exportExcelParent="exportExcel" :dataRemoveExportParent="dataRemoveExport" :exportExcelRemoveParent="exportExcelRemove" :toggleParent="toggle" @updateTimeTable="updateTimeTablefromChild"></BookingQueue>
@@ -1479,6 +1521,19 @@
                   </template>
                   <template v-slot:[`item.dueDate`]="{ item }">
                     {{ (item.dueDate) }}
+                  </template>
+                  <template v-slot:[`item.remark`]="{ item }">
+                    <a v-if="item.remark !== ''" @click.stop="openRemark(item)" style="cursor:hand"><u>{{ item.remark }}</u></a>
+                    <v-btn
+                      color="teal"
+                      small
+                      v-if="item.remark === ''"
+                      dark
+                      @click.stop="openRemark(item)"
+                    >
+                      <v-icon left dark> mdi-playlist-edit </v-icon>
+                      เพิ่มหมายเหตุ
+                    </v-btn>
                   </template>
                   <template v-slot:[`item.action2`]="{ item }">
                     <v-row>
@@ -2377,6 +2432,7 @@ export default {
       dialogEditData: false,
       dialogDelete: false,
       dialogChange: false,
+      dialogRemark: false,
       dialogJob: false,
       menu: false,
       menu1: false,
@@ -2430,7 +2486,9 @@ export default {
       empSelect: '',
       dataRemoveExport: [],
       dataexportRemove: [],
-      BookingDataItemEdit: []
+      BookingDataItemEdit: [],
+      bookNoRemark: '',
+      remark: ''
     }
   },
   beforeCreate () {
@@ -2453,6 +2511,28 @@ export default {
     this.scanQrcode()
   },
   methods: {
+    openRemark (item) {
+      this.bookNoRemark = item.bookNo
+      this.remark = item.remark
+      this.dialogRemark = true
+    },
+    async onSaveRemark () {
+      var dt = {
+        LAST_USER: this.session.data.userName,
+        remark: this.remark
+      }
+      await axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + "/Booking/edit/" + this.bookNoRemark,
+          dt
+        )
+        .then(async response => {
+          this.$swal('เรียบร้อย', 'เปลี่ยนแปลงหมายเหตุเพิ่มเติมเรียบร้อย', 'success')
+          this.dialogRemark = false
+          this.getDataDefault()
+        })
+    },
     async setDataEdit (dt) {
       // this.dialogEditData = true
       await this.getBookingField()
@@ -3175,9 +3255,49 @@ export default {
       this.columnsSelected = []
       if (count > 0) {
         if (text === 'all') {
-          this.dataItemSelect = this.dataItem
+          // this.dataItemSelect = this.dataItem
+          for (let x = 0; x < this.dataItem.length; x++) {
+            let t = this.dataItem[x]
+            let serviceDetail = ''
+            let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
+            fieldflow.forEach((row) => {
+              let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+              serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
+            })
+            serviceDetail = serviceDetail || t.flowName
+            t.flowName = serviceDetail
+            this.dataItemSelect.push(t)
+          }
+          this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+            // { text: 'Booking Id', value: 'bookNo' },
+            { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+            { text: 'ชื่อบริการ', value: 'flowName' },
+            { text: 'ชื่อลูกค้า', value: 'cusName' },
+            { text: 'เบอร์โทร', value: 'tel' },
+            { text: 'ทะเบียนรถ', value: 'cusReg' },
+            { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
+            { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+            { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
+            { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
+            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
+            // { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
+            // { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
+            // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
+          ]
         } else {
-          this.dataItemSelect = this.dataItem.filter(el => { return el.statusBt === text })
+          var dataSelect = this.dataItem.filter(el => { return el.statusBt === text })
+          for (let x = 0; x < dataSelect.length; x++) {
+            let t = dataSelect[x]
+            let serviceDetail = ''
+            let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
+            fieldflow.forEach((row) => {
+              let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+              serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
+            })
+            serviceDetail = serviceDetail || t.flowName
+            t.flowName = serviceDetail
+            this.dataItemSelect.push(t)
+          }
           if (text === 'cancel') {
             this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
               // { text: 'Booking Id', value: 'bookNo' },
@@ -3187,7 +3307,8 @@ export default {
               { text: 'เบอร์โทร', value: 'tel' },
               { text: 'ทะเบียนรถ', value: 'cusReg' },
               { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
-              { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' }
+              { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
+              { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
               // { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
               // { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
               // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
@@ -3202,7 +3323,8 @@ export default {
               { text: 'ทะเบียนรถ', value: 'cusReg' },
               { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
               { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-              { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' }]
+              { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
+              { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
           } else {
             this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
               // { text: 'Booking Id', value: 'bookNo' },
@@ -3212,7 +3334,8 @@ export default {
               { text: 'เบอร์โทร', value: 'tel' },
               { text: 'ทะเบียนรถ', value: 'cusReg' },
               { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
-              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }]
+              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+              { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
           }
         }
       }
@@ -3434,6 +3557,7 @@ export default {
               s.flowName = d.flowName
               s.dueDate = d.dueDate
               s.shopId = d.shopId
+              s.remark = d.remark || ''
               s.masBranchID = d.masBranchID
               s.empSelect = d.empSelect
               s.empFull_NameTH = d.empFull_NameTH || ''
