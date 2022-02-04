@@ -3726,7 +3726,7 @@ export default {
       let itemIncustomField = []
       await axios
         .get(
-          this.DNS_IP + '/customField/get?shopId=' + this.session.data.shopId
+          this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
         )
         .then(async response => {
           let rs = response.data
@@ -3741,19 +3741,19 @@ export default {
             await this.getCustomField(itemIncustomField)
           } else {
             this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
-              this.$router.go()
+              this.dialogAdd = false
             }).catch((error) => {
               console.log('error function addData : ', error)
-              this.$router.go()
+              this.dialogAdd = false
             })
           }
         })
         .catch(error => {
           this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
-            this.$router.go()
+            this.dialogAdd = false
           }).catch((error) => {
             console.log('error function addData : ', error)
-            this.$router.go()
+            this.dialogAdd = false
           })
           console.log('error function addData : ', error)
         })
@@ -3796,19 +3796,19 @@ export default {
           // setTimeout(() => this.validate('ADD'), 500)
           } else {
             this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
-              this.$router.go()
+              this.dialogAdd = false
             }).catch((error) => {
               console.log('error function addData : ', error)
-              this.$router.go()
+              this.dialogAdd = false
             })
           }
         })
         .catch(error => {
           this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
-            this.$router.go()
+            this.dialogAdd = false
           }).catch((error) => {
             console.log('error function addData : ', error)
-            this.$router.go()
+            this.dialogAdd = false
           })
           console.log('error function addData : ', error)
         })
