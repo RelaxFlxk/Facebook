@@ -2569,7 +2569,12 @@ export default {
     //   console.log('not user')
     // }
     if (!this.$session.exists()) {
-      this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
+      if (this.$route.query.bookNo) {
+        this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
+      } else {
+        this.$router.push('/Core/Login')
+      }
+      // this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
     }
   },
   async mounted () {
@@ -2820,16 +2825,16 @@ export default {
       }
     },
     async getDataCalendaBooking () {
-      this.$refs.CalendarBooking.getCustomFieldStart()
+      await this.$refs.CalendarBooking.getCustomFieldStart()
       await this.$refs.CalendarBooking.getDataFlow()
       await this.$refs.CalendarBooking.getDataBranch()
       await this.$refs.CalendarBooking.getBookingList()
     },
-    addDataSet () {
-      this.getDataCalendaBooking()
+    async addDataSet () {
       this.dialogAdd = true
       this.getBookingField()
       this.checkTime()
+      await this.getDataCalendaBooking()
     },
     async getDataDefault () {
       await this.getDataBranch()

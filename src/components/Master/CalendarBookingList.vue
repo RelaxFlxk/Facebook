@@ -390,7 +390,7 @@ export default {
     await this.getDataFlow()
     await this.getDataBranch()
     await this.getBookingList()
-    this.$refs.calendar.checkChange()
+    // this.$refs.calendar.checkChange()
     // await this.getBookingData()
   },
   methods: {
@@ -702,7 +702,7 @@ export default {
         .get(this.DNS_IP + '/customField/get?shopId=' + this.$session.getAll().data.shopId)
         .then(async response => {
           let rs = response.data
-          if (rs.length > 0) {
+          if (rs.status !== false) {
             for (let i = 0; i < rs.length; i++) {
               let d = rs[i]
               let s = {}

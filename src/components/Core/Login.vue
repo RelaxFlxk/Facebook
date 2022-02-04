@@ -378,13 +378,15 @@ export default {
             this.form.userPassword
         )
         .then(async (response) => {
-          if (response.data[0]) {
-            this.$session.start()
-            this.$session.set('data', response.data[0])
-            this.checkbookNo(response.data[0])
-          } else {
-            this.dataReady = true
-            this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง1', 'error')
+          if (response.data.status !== false) {
+            if (response.data[0]) {
+              this.$session.start()
+              this.$session.set('data', response.data[0])
+              this.checkbookNo(response.data[0])
+            } else {
+              this.dataReady = true
+              this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง1', 'error')
+            }
           }
         })
         // eslint-disable-next-line handle-callback-err
@@ -406,49 +408,51 @@ export default {
             this.form.newUserName
         )
         .then(async (response) => {
-          if (response.data[0]) {
-            var md5 = require('md5')
-            let autogen = await this.generateCodeGlobal
-            let token = md5(autogen)
+          if (response.data.status !== false) {
+            if (response.data[0]) {
+              var md5 = require('md5')
+              let autogen = await this.generateCodeGlobal
+              let token = md5(autogen)
 
-            let dt = {
-              'refId': response.data[0].userId,
-              'typeJob': 'forgot',
-              'status': 'wait',
-              'token': token,
-              'CREATE_USER': response.data[0].userName,
-              'LAST_USER': response.data[0].userName
-            }
-            await axios
-              .post(
-                this.DNS_IP + '/token_email/add', dt
-              )
-              .then(async response1 => {
-                console.log('response1', response1.data.status)
-                if (response1.data.status) {
-                  let dt = {
-                    'email': response.data[0].userName,
-                    'status': 'forgot',
-                    'token': token
+              let dt = {
+                'refId': response.data[0].userId,
+                'typeJob': 'forgot',
+                'status': 'wait',
+                'token': token,
+                'CREATE_USER': response.data[0].userName,
+                'LAST_USER': response.data[0].userName
+              }
+              await axios
+                .post(
+                  this.DNS_IP + '/token_email/add', dt
+                )
+                .then(async response1 => {
+                  console.log('response1', response1.data.status)
+                  if (response1.data.status) {
+                    let dt = {
+                      'email': response.data[0].userName,
+                      'status': 'forgot',
+                      'token': token
+                    }
+                    await axios
+                      .post(
+                        'https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Welcome-sendMail', dt
+                      )
+                      .then(async response => {
+                        this.dialog = false
+                        this.$swal('เรียบร้อย', 'กรุณาตรวจสอบ Email ของท่าน', 'success')
+                        // location.reload()
+                        this.form.newUserName = ''
+                      })
+                  } else {
+                    this.$swal('ผิดพลาด', 'กรุณาทำรายการใหม่', 'error')
+                    this.form.newUserName = ''
                   }
-                  await axios
-                    .post(
-                      'https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Welcome-sendMail', dt
-                    )
-                    .then(async response => {
-                      this.dialog = false
-                      this.$swal('เรียบร้อย', 'กรุณาตรวจสอบ Email ของท่าน', 'success')
-                      // location.reload()
-                      this.form.newUserName = ''
-                    })
-                } else {
-                  this.$swal('ผิดพลาด', 'กรุณาทำรายการใหม่', 'error')
-                  this.form.newUserName = ''
-                }
-              })
-          } else {
-            this.dataReady = true
-            this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง1', 'error')
+                })
+            } else {
+              this.dataReady = true
+              this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง1', 'error')
+            }
           }
         })
         // eslint-disable-next-line handle-callback-err
@@ -473,57 +477,59 @@ export default {
         )
         .then(async (response) => {
           // ExpireDateDiff
-          if (response.data[0].ExpireDateDiff < 1) {
-            this.dataReady = true
-            this.$swal(
-              'ผิดพลาด',
-              'Account หมดอายุ กรุณาติดต่อเจ้าหน้าที่',
-              'error'
-            )
-          } else {
-            // console.log(response.data[0])
-            this.$session.start()
-            this.$session.set('data', response.data[0])
-            this.formCheckPrivacy.userCode = response.data[0].userCode
-            this.formCheckPrivacy.CREATE_USER = response.data[0].userName
-            this.formCheckPrivacy.LAST_USER = response.data[0].userName
-            this.formCheckPrivacy.userTypeGroup =
-              response.data[0].userTypeGroup
-            this.formCheckPrivacy.privacyStatus = 'Confirm'
-
-            // ตรวจสอบว่ามีเคย check privacy หรือไม่
-            await axios
-              .get(
-                // eslint-disable-next-line quotes
-                this.DNS_IP +
-                  '/system_privacy_check/get?RECORD_STATUS=N&userCode='
+          if (response.data.status !== false) {
+            if (response.data[0].ExpireDateDiff < 1) {
+              this.dataReady = true
+              this.$swal(
+                'ผิดพลาด',
+                'Account หมดอายุ กรุณาติดต่อเจ้าหน้าที่',
+                'error'
               )
-              .then(async (response) => {
+            } else {
+            // console.log(response.data[0])
+              this.$session.start()
+              this.$session.set('data', response.data[0])
+              this.formCheckPrivacy.userCode = response.data[0].userCode
+              this.formCheckPrivacy.CREATE_USER = response.data[0].userName
+              this.formCheckPrivacy.LAST_USER = response.data[0].userName
+              this.formCheckPrivacy.userTypeGroup =
+              response.data[0].userTypeGroup
+              this.formCheckPrivacy.privacyStatus = 'Confirm'
+
+              // ตรวจสอบว่ามีเคย check privacy หรือไม่
+              await axios
+                .get(
+                // eslint-disable-next-line quotes
+                  this.DNS_IP +
+                  '/system_privacy_check/get?RECORD_STATUS=N&userCode='
+                )
+                .then(async (response) => {
                 // เคย
                 // console.log(response)
                 // this.$router.push('/Dashbord/Report')
-                this.getMenu(this.formCheckPrivacy)
-              })
+                  this.getMenu(this.formCheckPrivacy)
+                })
               // eslint-disable-next-line handle-callback-err
-              .catch((error) => {
+                .catch((error) => {
                 // เคย
-                axios
-                  .post(
+                  axios
+                    .post(
                     // eslint-disable-next-line quotes
-                    this.DNS_IP + "/system_privacy_check/add",
-                    this.formCheckPrivacy
-                  )
-                  .then(async (response) => {
+                      this.DNS_IP + "/system_privacy_check/add",
+                      this.formCheckPrivacy
+                    )
+                    .then(async (response) => {
                     // console.log(response)
-                    this.getMenu(this.formCheckPrivacy)
+                      this.getMenu(this.formCheckPrivacy)
                     // this.$router.push('/Dashbord/Report')
-                  })
+                    })
                   // eslint-disable-next-line handle-callback-err
-                  .catch((error) => {
-                    this.dataReady = true
-                    console.log(error)
-                  })
-              })
+                    .catch((error) => {
+                      this.dataReady = true
+                      console.log(error)
+                    })
+                })
+            }
           }
         })
         // eslint-disable-next-line handle-callback-err
