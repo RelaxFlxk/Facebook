@@ -2610,7 +2610,7 @@ export default {
       this.timeEdit = dt.dueDate.slice(-5)
       console.log('this.timeEdit', this.timeEdit)
       let itemIncustomField = []
-      axios
+      await axios
         .get(
           this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
         )
@@ -2669,10 +2669,40 @@ export default {
                           this.BookingDataItemEdit.push(s)
                         }
                       }
+                    } else {
+                      this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
+                        this.dialogEditData = false
+                      }).catch((error) => {
+                        console.log('error function addData : ', error)
+                        this.dialogEditData = false
+                      })
                     }
+                  }).catch((error) => {
+                    this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
+                      this.dialogEditData = false
+                    }).catch((error) => {
+                      console.log('error function addData : ', error)
+                      this.dialogEditData = false
+                    })
+                    console.log('error function addData : ', error)
                   })
               })
+          } else {
+            this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
+              this.dialogEditData = false
+            }).catch((error) => {
+              console.log('error function addData : ', error)
+              this.dialogEditData = false
+            })
           }
+        }).catch((error) => {
+          this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
+            this.dialogEditData = false
+          }).catch((error) => {
+            console.log('error function addData : ', error)
+            this.dialogEditData = false
+          })
+          console.log('error function addData : ', error)
         })
       console.log('this.BookingDataItemEdit', this.BookingDataItemEdit)
       this.dialogEditData = true
