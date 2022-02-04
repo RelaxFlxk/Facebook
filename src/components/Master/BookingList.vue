@@ -3726,7 +3726,7 @@ export default {
       let itemIncustomField = []
       await axios
         .get(
-          this.DNS_IP + '/BookingFiel/get?shopId=' + this.session.data.shopId
+          this.DNS_IP + '/customField/get?shopId=' + this.session.data.shopId
         )
         .then(async response => {
           let rs = response.data
