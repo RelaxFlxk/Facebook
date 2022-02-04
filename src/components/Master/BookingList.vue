@@ -1117,6 +1117,17 @@
               <v-form ref="form_change" v-model="validChange" lazy-validation>
                 <v-card-text>
                   <v-container>
+                    <v-row>
+                      <v-col cols= "12">
+                        <v-textarea
+                          v-model="remark"
+                          outlined
+                          v-if="getSelectText === 'confirm'"
+                          label="หมายเหตุเพิ่มเติม"
+                          auto-grow
+                        ></v-textarea>
+                      </v-col>
+                  </v-row>
                   <v-row>
                     <v-col cols="12" md="6" lg="6">
                       <v-menu
@@ -1176,16 +1187,17 @@
                       small
                       :disabled="!validChange"
                       @click="changeChk(dataChange, 'confirm')"
-                      >เปลี่ยนเวลานัดหมาย และ ยืนยัน</v-btn
+                      >เปลี่ยนวันเวลานัดหมาย (ยืนยัน)</v-btn
                     >
                     <v-btn
                       elevation="10"
                       color="#173053"
                       dark
+                      v-if="getSelectText !== 'confirm'"
                       small
                       :disabled="!validChange"
                       @click="changeChk(dataChange, 'change')"
-                      >เปลี่ยนเวลานัดหมาย</v-btn
+                      >เปลี่ยนวันเวลานัดหมาย</v-btn
                     >
                     <v-btn
                       elevation="10"
@@ -2589,7 +2601,11 @@ export default {
         .then(async response => {
           this.$swal('เรียบร้อย', 'เปลี่ยนแปลงหมายเหตุเพิ่มเติมเรียบร้อย', 'success')
           this.dialogRemark = false
-          this.getDataDefault()
+          await this.getBookingList()
+          this.getTimesChange('update')
+          if (this.getSelectText) {
+            this.getSelect(this.getSelectText, this.getSelectCount)
+          }
         })
     },
     async setDataEdit (dt) {
@@ -2791,7 +2807,11 @@ export default {
                 this.dialogEditData = false
                 this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
                 this.dataEditReady = true
-                this.getDataDefault()
+                await this.getBookingList()
+                this.getTimesChange('update')
+                if (this.getSelectText) {
+                  this.getSelect(this.getSelectText, this.getSelectCount)
+                }
               })
           }).catch(error => {
             this.dataEditReady = true
@@ -3741,7 +3761,9 @@ export default {
             // })
             console.log('dataItemTime', this.dataItemTime)
             this.dataReady = true
-            this.getSelect('wait', this.countWaiting)
+            if (this.getSelectText === '') {
+              this.getSelect('wait', this.countWaiting)
+            }
           }
         })
         // eslint-disable-next-line handle-callback-err
@@ -4480,6 +4502,29 @@ export default {
       }
     },
     async changeChk (item, changeStatus) {
+      if (item.statusBt === 'confirm') {
+        if (this.remark !== '') {
+          var dt = {
+            LAST_USER: this.session.data.userName,
+            remark: this.remark
+          }
+          await axios
+            .post(
+              // eslint-disable-next-line quotes
+              this.DNS_IP + "/Booking/edit/" + item.bookNo,
+              dt
+            )
+            .then(async response => {
+              this.onChangeChk(item, changeStatus)
+            })
+        } else {
+          this.$swal('ผิดพลาด', 'กรุณาใส่ หมายเหตุเพิ่มเติม', 'error')
+        }
+      } else {
+        this.onChangeChk(item, changeStatus)
+      }
+    },
+    onChangeChk (item, changeStatus) {
       console.log('item', item)
       console.log('formChange', this.formChange)
       this.swalConfig.title = 'ต้องการ เปลี่ยนเวลานัดหมาย ใช่หรือไม่?'
@@ -4607,6 +4652,7 @@ export default {
     setDataChang (item) {
       console.log('dueDate', item.dueDate)
       this.dataChange = item
+      this.remark = item.remark
       this.formChange.date = this.momenDate_1(item.dueDate)
       this.formChange.time = this.momenTime(item.dueDate)
       this.dialogChange = true
