@@ -3387,13 +3387,13 @@ export default {
               serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
             })
             serviceDetail = serviceDetail || t.flowName
-            t.flowName = serviceDetail
+            t.flowNameShow = serviceDetail
             this.dataItemSelect.push(t)
           }
           this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
             // { text: 'Booking Id', value: 'bookNo' },
             { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'ชื่อบริการ', value: 'flowName' },
+            { text: 'ชื่อบริการ', value: 'flowNameShow' },
             { text: 'ชื่อลูกค้า', value: 'cusName' },
             { text: 'เบอร์โทร', value: 'tel' },
             { text: 'ทะเบียนรถ', value: 'cusReg' },
@@ -3417,14 +3417,14 @@ export default {
               serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
             })
             serviceDetail = serviceDetail || t.flowName
-            t.flowName = serviceDetail
+            t.flowNameShow = serviceDetail
             this.dataItemSelect.push(t)
           }
           if (text === 'cancel') {
             this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
               // { text: 'Booking Id', value: 'bookNo' },
               { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-              { text: 'ชื่อบริการ', value: 'flowName' },
+              { text: 'ชื่อบริการ', value: 'flowNameShow' },
               { text: 'ชื่อลูกค้า', value: 'cusName' },
               { text: 'เบอร์โทร', value: 'tel' },
               { text: 'ทะเบียนรถ', value: 'cusReg' },
@@ -3439,7 +3439,7 @@ export default {
             this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
               // { text: 'Booking Id', value: 'bookNo' },
               { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-              { text: 'ชื่อบริการ', value: 'flowName' },
+              { text: 'ชื่อบริการ', value: 'flowNameShow' },
               { text: 'ชื่อลูกค้า', value: 'cusName' },
               { text: 'เบอร์โทร', value: 'tel' },
               { text: 'ทะเบียนรถ', value: 'cusReg' },
@@ -3451,7 +3451,7 @@ export default {
             this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
               // { text: 'Booking Id', value: 'bookNo' },
               { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-              { text: 'ชื่อบริการ', value: 'flowName' },
+              { text: 'ชื่อบริการ', value: 'flowNameShow' },
               { text: 'ชื่อลูกค้า', value: 'cusName' },
               { text: 'เบอร์โทร', value: 'tel' },
               { text: 'ทะเบียนรถ', value: 'cusReg' },
