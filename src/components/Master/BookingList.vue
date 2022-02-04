@@ -3724,9 +3724,9 @@ export default {
     async getBookingField () {
       // this.bookingField = []
       let itemIncustomField = []
-      axios
+      await axios
         .get(
-          this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+          this.DNS_IP + '/BookingFiel/get?shopId=' + this.session.data.shopId
         )
         .then(async response => {
           let rs = response.data
@@ -3740,9 +3740,21 @@ export default {
             }
             await this.getCustomField(itemIncustomField)
           } else {
+            this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
+              this.$router.go()
+            }).catch((error) => {
+              console.log('error function addData : ', error)
+              this.$router.go()
+            })
           }
         })
         .catch(error => {
+          this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
+            this.$router.go()
+          }).catch((error) => {
+            console.log('error function addData : ', error)
+            this.$router.go()
+          })
           console.log('error function addData : ', error)
         })
     },
@@ -3753,36 +3765,51 @@ export default {
         .then(async response => {
           let rs = response.data
           // let aa = []
-          for (let i = 0; i < rs.length; i++) {
-            let d = rs[i]
-            let s = {}
-            s.fieldId = d.fieldId
-            s.fieldName = d.fieldName
-            s.fieldType = d.fieldType
-            s.optionField = d.optionField
-            s.conditionField = d.conditionField
-            s.conditionValue = d.conditionValue
-            s.shopId = d.shopId
-            s.fieldValue = ''
-            s.requiredField = d.requiredField
-            this.fieldNameItem.push(s)
-          }
-          var data1 = this.fieldNameItem.filter(el => parseInt(el.conditionField || 0) > 0)
-          // var data2 = []
-          for (var i = 0; i < data1.length; i++) {
-            var d = data1[i]
-            var indexC = this.fieldNameItem.findIndex(function (o) {
-              return o.fieldId === d.fieldId
-            })
-            var indexF = this.fieldNameItem.findIndex(function (o) {
-              return o.fieldId === parseInt(d.conditionField)
-            })
-            this.fieldNameItem.splice((indexF + 1), 0, this.fieldNameItem.splice(indexC, 1)[0])
+          if (rs.length > 0) {
+            for (let i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              let s = {}
+              s.fieldId = d.fieldId
+              s.fieldName = d.fieldName
+              s.fieldType = d.fieldType
+              s.optionField = d.optionField
+              s.conditionField = d.conditionField
+              s.conditionValue = d.conditionValue
+              s.shopId = d.shopId
+              s.fieldValue = ''
+              s.requiredField = d.requiredField
+              this.fieldNameItem.push(s)
+            }
+            var data1 = this.fieldNameItem.filter(el => parseInt(el.conditionField || 0) > 0)
+            // var data2 = []
+            for (var i = 0; i < data1.length; i++) {
+              var d = data1[i]
+              var indexC = this.fieldNameItem.findIndex(function (o) {
+                return o.fieldId === d.fieldId
+              })
+              var indexF = this.fieldNameItem.findIndex(function (o) {
+                return o.fieldId === parseInt(d.conditionField)
+              })
+              this.fieldNameItem.splice((indexF + 1), 0, this.fieldNameItem.splice(indexC, 1)[0])
             // data2.push({'indexC': indexC, 'indexF': indexF})
-          }
+            }
           // setTimeout(() => this.validate('ADD'), 500)
+          } else {
+            this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
+              this.$router.go()
+            }).catch((error) => {
+              console.log('error function addData : ', error)
+              this.$router.go()
+            })
+          }
         })
         .catch(error => {
+          this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
+            this.$router.go()
+          }).catch((error) => {
+            console.log('error function addData : ', error)
+            this.$router.go()
+          })
           console.log('error function addData : ', error)
         })
     },
