@@ -2841,7 +2841,9 @@ export default {
       await this.getEmpSelectAdd()
       this.getCustomFieldStart()
       this.getDataFlow()
-      this.getBookingList()
+      await this.getBookingList()
+      await this.getTimesChange('update')
+      this.getSelect(this.getSelectText, this.getSelectCount)
     },
     checkTime () {
       this.timeavailable = []
@@ -3375,21 +3377,67 @@ export default {
       this.dataItemSelect = []
       this.dataItemTimesChange = []
       this.columnsSelected = []
-      if (count > 0) {
-        if (text === 'all') {
-          // this.dataItemSelect = this.dataItem
-          for (let x = 0; x < this.dataItem.length; x++) {
-            let t = this.dataItem[x]
-            let serviceDetail = ''
-            let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
-            fieldflow.forEach((row) => {
-              let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
-              serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
-            })
-            serviceDetail = serviceDetail || t.flowName
-            t.flowNameShow = serviceDetail
-            this.dataItemSelect.push(t)
-          }
+      // if (count > 0) {
+      if (text === 'all') {
+        // this.dataItemSelect = this.dataItem
+        for (let x = 0; x < this.dataItem.length; x++) {
+          let t = this.dataItem[x]
+          let serviceDetail = ''
+          let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
+          fieldflow.forEach((row) => {
+            let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+            serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
+          })
+          serviceDetail = serviceDetail || t.flowName
+          t.flowNameShow = serviceDetail
+          this.dataItemSelect.push(t)
+        }
+        this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+          // { text: 'Booking Id', value: 'bookNo' },
+          { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+          { text: 'ชื่อบริการ', value: 'flowNameShow' },
+          { text: 'ชื่อลูกค้า', value: 'cusName' },
+          { text: 'เบอร์โทร', value: 'tel' },
+          { text: 'ทะเบียนรถ', value: 'cusReg' },
+          { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
+          { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+          { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
+          { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
+          { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
+          // { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
+          // { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
+          // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
+        ]
+      } else {
+        var dataSelect = this.dataItem.filter(el => { return el.statusBt === text })
+        for (let x = 0; x < dataSelect.length; x++) {
+          let t = dataSelect[x]
+          let serviceDetail = ''
+          let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
+          fieldflow.forEach((row) => {
+            let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+            serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
+          })
+          serviceDetail = serviceDetail || t.flowName
+          t.flowNameShow = serviceDetail
+          this.dataItemSelect.push(t)
+        }
+        if (text === 'cancel') {
+          this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+            // { text: 'Booking Id', value: 'bookNo' },
+            { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+            { text: 'ชื่อบริการ', value: 'flowNameShow' },
+            { text: 'ชื่อลูกค้า', value: 'cusName' },
+            { text: 'เบอร์โทร', value: 'tel' },
+            { text: 'ทะเบียนรถ', value: 'cusReg' },
+            { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
+            { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
+            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
+            // { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
+            // { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
+            // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
+          ]
+        } else if (text === 'confirm') {
           this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
             // { text: 'Booking Id', value: 'bookNo' },
             { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
@@ -3399,68 +3447,22 @@ export default {
             { text: 'ทะเบียนรถ', value: 'cusReg' },
             { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
             { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-            { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
             { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
-            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
-            // { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
-            // { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
-            // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
-          ]
+            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
         } else {
-          var dataSelect = this.dataItem.filter(el => { return el.statusBt === text })
-          for (let x = 0; x < dataSelect.length; x++) {
-            let t = dataSelect[x]
-            let serviceDetail = ''
-            let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
-            fieldflow.forEach((row) => {
-              let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
-              serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
-            })
-            serviceDetail = serviceDetail || t.flowName
-            t.flowNameShow = serviceDetail
-            this.dataItemSelect.push(t)
-          }
-          if (text === 'cancel') {
-            this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
-              // { text: 'Booking Id', value: 'bookNo' },
-              { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-              { text: 'ชื่อบริการ', value: 'flowNameShow' },
-              { text: 'ชื่อลูกค้า', value: 'cusName' },
-              { text: 'เบอร์โทร', value: 'tel' },
-              { text: 'ทะเบียนรถ', value: 'cusReg' },
-              { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
-              { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
-              { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
-              // { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
-              // { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
-              // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
-            ]
-          } else if (text === 'confirm') {
-            this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
-              // { text: 'Booking Id', value: 'bookNo' },
-              { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-              { text: 'ชื่อบริการ', value: 'flowNameShow' },
-              { text: 'ชื่อลูกค้า', value: 'cusName' },
-              { text: 'เบอร์โทร', value: 'tel' },
-              { text: 'ทะเบียนรถ', value: 'cusReg' },
-              { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
-              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-              { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
-              { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
-          } else {
-            this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
-              // { text: 'Booking Id', value: 'bookNo' },
-              { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-              { text: 'ชื่อบริการ', value: 'flowNameShow' },
-              { text: 'ชื่อลูกค้า', value: 'cusName' },
-              { text: 'เบอร์โทร', value: 'tel' },
-              { text: 'ทะเบียนรถ', value: 'cusReg' },
-              { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
-              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-              { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
-          }
+          this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+            // { text: 'Booking Id', value: 'bookNo' },
+            { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+            { text: 'ชื่อบริการ', value: 'flowNameShow' },
+            { text: 'ชื่อลูกค้า', value: 'cusName' },
+            { text: 'เบอร์โทร', value: 'tel' },
+            { text: 'ทะเบียนรถ', value: 'cusReg' },
+            { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
+            { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
         }
       }
+      // }
     },
     updateTimeTablefromChild (timeTable) {
       this.timeTable = timeTable
@@ -3644,7 +3646,7 @@ export default {
         }
       }
       this.dataReady = false
-      this.selectedStatus = false
+      this.selectedStatus = true
       // this.getSelectText = ''
       this.dataItem = []
       this.countWaiting = 0
