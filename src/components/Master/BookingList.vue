@@ -2829,6 +2829,7 @@ export default {
                 this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
                 this.dataEditReady = true
                 await this.getBookingList()
+                this.getDataCalendaBooking()
                 this.getTimesChange('update')
                 if (this.getSelectText) {
                   this.getSelect(this.getSelectText, this.getSelectCount)
@@ -2841,16 +2842,20 @@ export default {
       }
     },
     async getDataCalendaBooking () {
-      await this.$refs.CalendarBooking.getCustomFieldStart()
-      await this.$refs.CalendarBooking.getDataFlow()
-      await this.$refs.CalendarBooking.getDataBranch()
-      await this.$refs.CalendarBooking.getBookingList()
+      try {
+        await this.$refs.CalendarBooking.getDataReturn()
+      } catch (e) { console.log(e) }
+      // this.$refs.CalendarBooking.getDataFlow()
+      // this.$refs.CalendarBooking.getDataBranch()
+      // this.$refs.CalendarBooking.getBookingList()
     },
     async addDataSet () {
+      // console.log('addDataSet')
+      // this.getDataCalendaBooking()
+      // this.$refs.CalendarBooking.getDataReturn()
       this.dialogAdd = true
       this.getBookingField()
       this.checkTime()
-      await this.getDataCalendaBooking()
     },
     async getDataDefault () {
       this.loadingRefresh = true
@@ -4054,6 +4059,7 @@ export default {
               .then(response => {
                 this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
                 this.confirmChkAdd(response.data)
+                this.getDataCalendaBooking()
                 // console.log('addDataGlobal DNS_IP + /job/add', response)
               })
               .catch(error => {
@@ -4115,6 +4121,7 @@ export default {
       this.dialogAdd = false
       await this.getBookingList()
       await this.getTimesChange('update')
+      this.getDataCalendaBooking()
     },
     async getDataById (dt) {
       console.log('dt', dt)
@@ -4150,6 +4157,7 @@ export default {
             )
             .then(async response => {
               // Debug response
+              this.getDataCalendaBooking()
               console.log('DNS_IP + PATH + "delete/"', response)
 
               this.$swal('เรียบร้อย', 'ลบข้อมูลเรียบร้อย', 'success')
@@ -4432,6 +4440,7 @@ export default {
         .then(async response => {
           this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
           await this.updateRemark(item)
+          this.getDataCalendaBooking()
           let DTitem = item.userId
           console.log('DTITEM', DTitem)
           if (DTitem !== 'user-skip') {
@@ -4513,6 +4522,7 @@ export default {
             this.$swal('เรียบร้อย', 'ยกเลิกเรียบร้อย', 'success')
             console.log('addDataGlobal', response)
             await this.getBookingList()
+            this.getDataCalendaBooking()
             this.getTimesChange('update')
             if (this.getSelectText) {
               this.getSelect(this.getSelectText, this.getSelectCount)
@@ -4583,6 +4593,7 @@ export default {
                 if (item.statusBt === 'confirm') {
                   if (item.userId !== 'user-skip') {
                     await this.getBookingList()
+                    this.getDataCalendaBooking()
                     this.getTimesChange('update')
                     if (this.getSelectText) {
                       this.getSelect(this.getSelectText, this.getSelectCount)
@@ -4665,6 +4676,7 @@ export default {
             ).then(async (response) => {
               console.log(response)
               if (response.data.status) {
+                this.getDataCalendaBooking()
                 this.$swal('เรียบร้อย', 'ปรับปรุงเรียบร้อย', 'success')
                 this.dialogJob = false
               } else {

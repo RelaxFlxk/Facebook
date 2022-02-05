@@ -390,10 +390,17 @@ export default {
     await this.getDataFlow()
     await this.getDataBranch()
     await this.getBookingList()
-    // this.$refs.calendar.checkChange()
+    this.$refs.calendar.checkChange()
     // await this.getBookingData()
   },
   methods: {
+    async getDataReturn () {
+      console.log('getDataReturn')
+      this.getCustomFieldStart()
+      await this.getDataFlow()
+      await this.getDataBranch()
+      await this.getBookingList()
+    },
     prev () {
       this.$refs.calendar.prev()
       this.getBookingList()
@@ -465,7 +472,8 @@ export default {
         })
     },
     async getBookingList () {
-      this.getBookingData()
+      console.log('getBookingList')
+      await this.getBookingData()
       // if (this.masBranchName) {
       //   this.masBranchName = this.masBranchName
       // } else {
