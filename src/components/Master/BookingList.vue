@@ -9,7 +9,7 @@
           </v-col>
           <v-col cols="12" md="6" lg="6" class="v-margit_button text-right">
             <v-btn-toggle>
-              <v-btn
+              <!-- <v-btn
                 color="warning"
                 style="z-index:8;margin-right: 5px;"
                 id="v-step-0"
@@ -18,6 +18,21 @@
               >
                 <v-icon left>mdi-refresh-circle</v-icon>
                 Refresh
+              </v-btn> -->
+              <v-btn
+                :loading="loadingRefresh"
+                :disabled="loadingRefresh"
+                color="warning"
+                style="z-index:8;margin-right: 5px;"
+                @click="getDataDefault()"
+              >
+                <v-icon left>mdi-refresh-circle</v-icon>
+                Refresh
+                <template v-if="loadingRefresh">
+                  <span class="custom-loader">
+                    <v-icon light>mdi-cached</v-icon>
+                  </span>
+                </template>
               </v-btn>
               <v-btn
                 color="primary"
@@ -2346,6 +2361,7 @@ export default {
     let endDate = null
     return {
       filters: '',
+      loadingRefresh: false,
       menuDateSearch: false,
       timeTable: '',
       drawer: false,
@@ -2837,6 +2853,7 @@ export default {
       await this.getDataCalendaBooking()
     },
     async getDataDefault () {
+      this.loadingRefresh = true
       await this.getDataBranch()
       await this.getEmpSelectAdd()
       this.getCustomFieldStart()
@@ -2844,6 +2861,7 @@ export default {
       await this.getBookingList()
       await this.getTimesChange('update')
       this.getSelect(this.getSelectText, this.getSelectCount)
+      this.loadingRefresh = false
     },
     checkTime () {
       this.timeavailable = []
