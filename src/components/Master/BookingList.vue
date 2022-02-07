@@ -2851,7 +2851,7 @@ export default {
             update.bookingDataId = d.bookingDataId
             update.bookingFieldId = d.bookingFieldId
             update.bookNo = d.bookNo
-            update.fieldValue = d.fieldValue
+            update.fieldValue = d.fieldValue.replace(/%/g, '%%')
             update.dueDate = this.dateEdit + ' ' + this.timeEdit
             update.flowId = this.formEdit.flowId
             update.masBranchID = this.formEdit.masBranchID
@@ -2875,7 +2875,7 @@ export default {
                 update.bookingDataId = d.bookingDataId
                 update.bookingFieldId = d.bookingFieldId
                 update.bookNo = d.bookNo
-                update.fieldValue = d.fieldValue
+                update.fieldValue = d.fieldValue.replace(/%/g, '%%')
                 update.dueDate = this.dateEdit + ' ' + this.timeEdit
                 update.flowId = this.formEdit.flowId
                 update.masBranchID = this.formEdit.masBranchID
@@ -2890,7 +2890,7 @@ export default {
                 update.bookingDataId = d.bookingDataId
                 update.bookingFieldId = d.bookingFieldId
                 update.bookNo = d.bookNo
-                update.fieldValue = d.fieldValue
+                update.fieldValue = d.fieldValue.replace(/%/g, '%%')
                 update.dueDate = this.dateEdit + ' ' + this.timeEdit
                 update.flowId = this.formEdit.flowId
                 update.masBranchID = this.formEdit.masBranchID
