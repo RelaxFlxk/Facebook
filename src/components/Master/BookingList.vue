@@ -694,6 +694,16 @@
                               ></v-select>
                             </v-col>
                           </v-row>
+                          <v-row>
+                            <v-col class="pt-0">
+                            <v-textarea
+                              v-model="remark"
+                              outlined
+                              label="หมายเหตุเพิ่มเติม"
+                              auto-grow
+                            ></v-textarea>
+                            </v-col>
+                          </v-row>
                           <div class="text-center">
                             <v-btn
                               elevation="2"
@@ -1258,7 +1268,7 @@
               </v-card-title>
               <v-form ref="form_remove" v-model="validRemove" lazy-validation>
                 <v-container>
-              <v-card-text>
+              <v-card-text v-if="dataCancelReady">
                 <v-row>
                   <v-col cols= "12">
                   <v-textarea
@@ -1301,6 +1311,38 @@
                   >
                 </div>
               </v-card-text>
+              <div class="text-center" v-if="!dataCancelReady">
+                  <v-progress-circular
+                    :size="50"
+                    color="primary"
+                    indeterminate
+                  ></v-progress-circular>
+
+                  <v-progress-circular
+                    :width="3"
+                    color="red"
+                    indeterminate
+                  ></v-progress-circular>
+
+                  <v-progress-circular
+                    :size="70"
+                    :width="7"
+                    color="purple"
+                    indeterminate
+                  ></v-progress-circular>
+
+                  <v-progress-circular
+                    :width="3"
+                    color="green"
+                    indeterminate
+                  ></v-progress-circular>
+
+                  <v-progress-circular
+                    :size="50"
+                    color="amber"
+                    indeterminate
+                  ></v-progress-circular>
+                  </div>
               </v-container>
               </v-form>
             </v-card>
@@ -1791,9 +1833,10 @@
               <v-card-title>
                 ยืนยันรายการนี้
               </v-card-title>
-              <v-card-text>
+              <v-card-text v-if="dataConfirmReady">
                 <v-container>
                 <v-row>
+                  <v-col cols= "12" class="pb-0">
                   <v-select
                     v-model="empSelect"
                     :items="empSelectStep"
@@ -1802,6 +1845,17 @@
                     outlined
                     dense
                   ></v-select>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols= "12"  class="pb-0">
+                  <v-textarea
+                    v-model="remark"
+                    outlined
+                    label="หมายเหตุเพิ่มเติม"
+                    auto-grow
+                  ></v-textarea>
+                  </v-col>
                 </v-row>
                 <div class="text-center">
                   <v-btn
@@ -1824,6 +1878,38 @@
                 </div>
                 </v-container>
               </v-card-text>
+               <div class="text-center" v-if="!dataConfirmReady">
+                  <v-progress-circular
+                    :size="50"
+                    color="primary"
+                    indeterminate
+                  ></v-progress-circular>
+
+                  <v-progress-circular
+                    :width="3"
+                    color="red"
+                    indeterminate
+                  ></v-progress-circular>
+
+                  <v-progress-circular
+                    :size="70"
+                    :width="7"
+                    color="purple"
+                    indeterminate
+                  ></v-progress-circular>
+
+                  <v-progress-circular
+                    :width="3"
+                    color="green"
+                    indeterminate
+                  ></v-progress-circular>
+
+                  <v-progress-circular
+                    :size="50"
+                    color="amber"
+                    indeterminate
+                  ></v-progress-circular>
+                  </div>
             </v-card>
           </v-dialog>
         <v-dialog v-model="dialogEditData" :max-width="dialogwidth">
@@ -2422,6 +2508,8 @@ export default {
       dataItemTimesChange: [],
       appendBody: true,
       dataEditReady: true,
+      dataConfirmReady: true,
+      dataCancelReady: true,
       dialogExport: false,
       dialogRemove: false,
       dataReady: false,
@@ -2611,7 +2699,7 @@ export default {
     async onSaveRemark () {
       var dt = {
         LAST_USER: this.session.data.userName,
-        remark: this.remark
+        remark: this.remark.replace(/%/g, '%%')
       }
       await axios
         .post(
@@ -2829,11 +2917,11 @@ export default {
                 this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
                 this.dataEditReady = true
                 await this.getBookingList()
-                this.getDataCalendaBooking()
                 this.getTimesChange('update')
                 if (this.getSelectText) {
                   this.getSelect(this.getSelectText, this.getSelectCount)
                 }
+                this.getDataCalendaBooking()
               })
           }).catch(error => {
             this.dataEditReady = true
@@ -2850,12 +2938,16 @@ export default {
       // this.$refs.CalendarBooking.getBookingList()
     },
     async addDataSet () {
-      // console.log('addDataSet')
+      console.log('this.branch', this.branch)
       // this.getDataCalendaBooking()
       // this.$refs.CalendarBooking.getDataReturn()
       this.dialogAdd = true
+      if (this.branch) {
+        await this.getDataBranch()
+      }
       this.getBookingField()
       this.checkTime()
+      this.remark = ''
     },
     async getDataDefault () {
       this.loadingRefresh = true
@@ -3997,6 +4089,7 @@ export default {
           if (d.conditionField === '' || d.conditionField === null) {
             update.masBranchID = this.formAdd.masBranchID
             update.bookingFieldId = d.bookingFieldId
+            update.remark = this.remark.replace(/%/g, '%%')
             update.flowId = this.formAdd.flowId
             update.fieldId = d.fieldId
             update.fieldValue = d.fieldValue
@@ -4006,6 +4099,7 @@ export default {
             update.pageName = 'BookingList'
             update.sourceLink = 'direct'
             update.empSelect = this.empSelectAdd
+            update.adminLogin = this.session.data.userName
             Add.push(update)
           } else {
             if (
@@ -4021,6 +4115,7 @@ export default {
               ) {
                 update.masBranchID = this.formAdd.masBranchID
                 update.bookingFieldId = d.bookingFieldId
+                update.remark = this.remark.replace(/%/g, '%%')
                 update.flowId = this.formAdd.flowId
                 update.fieldId = d.fieldId
                 update.fieldValue = d.fieldValue
@@ -4030,12 +4125,14 @@ export default {
                 update.userId = 'user-skip'
                 update.pageName = 'BookingList'
                 update.empSelect = this.empSelectAdd
+                update.adminLogin = this.session.data.userName
                 Add.push(update)
               }
             } else if (d.conditionField === 'flow') {
               if (parseInt(d.conditionValue) === parseInt(this.formAdd.flowId)) {
                 update.masBranchID = this.formAdd.masBranchID
                 update.bookingFieldId = d.bookingFieldId
+                update.remark = this.remark.replace(/%/g, '%%')
                 update.flowId = this.formAdd.flowId
                 update.fieldId = d.fieldId
                 update.fieldValue = d.fieldValue
@@ -4045,6 +4142,7 @@ export default {
                 update.userId = 'user-skip'
                 update.pageName = 'BookingList'
                 update.empSelect = this.empSelectAdd
+                update.adminLogin = this.session.data.userName
                 Add.push(update)
               }
             }
@@ -4056,10 +4154,9 @@ export default {
           .then(async result => {
             axios
               .post(this.DNS_IP + '/Booking/add', Add)
-              .then(response => {
+              .then(async response => {
                 this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-                this.confirmChkAdd(response.data)
-                this.getDataCalendaBooking()
+                await this.confirmChkAdd(response.data)
                 // console.log('addDataGlobal DNS_IP + /job/add', response)
               })
               .catch(error => {
@@ -4089,10 +4186,11 @@ export default {
         CREATE_USER: this.session.data.userName,
         LAST_USER: this.session.data.userName
       }
-      axios
+      await axios
         .post(this.DNS_IP + '/booking_transaction/add', dt)
         .then(async response => {
           this.clearDataAdd()
+          this.getDataCalendaBooking()
           this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
           // await this.getBookingList()
           // this.getTimesChange('update')
@@ -4109,6 +4207,8 @@ export default {
       this.countAll = 0
       this.date = ''
       this.time = ''
+      this.empSelectAdd = ''
+      this.remark = ''
       this.fieldNameItem = []
       this.DataflowId = ''
       this.formAdd.bookingId = null
@@ -4120,7 +4220,10 @@ export default {
       this.formAdd.shopId = this.$session.getAll().data.shopId
       this.dialogAdd = false
       await this.getBookingList()
-      await this.getTimesChange('update')
+      this.getTimesChange('update')
+      if (this.getSelectText) {
+        this.getSelect(this.getSelectText, this.getSelectCount)
+      }
       this.getDataCalendaBooking()
     },
     async getDataById (dt) {
@@ -4157,7 +4260,6 @@ export default {
             )
             .then(async response => {
               // Debug response
-              this.getDataCalendaBooking()
               console.log('DNS_IP + PATH + "delete/"', response)
 
               this.$swal('เรียบร้อย', 'ลบข้อมูลเรียบร้อย', 'success')
@@ -4165,12 +4267,12 @@ export default {
               this.dialogDelete = false
 
               // Load Data
-              if (status !== '') {
-                await this.getBookingList()
+              await this.getBookingList()
+              this.getTimesChange('update')
+              if (this.getSelectText) {
+                this.getSelect(this.getSelectText, this.getSelectCount)
               }
-              if (status === '') {
-                await this.getBookingList()
-              }
+              this.getDataCalendaBooking()
             })
             // eslint-disable-next-line handle-callback-err
             .catch(error => {
@@ -4318,10 +4420,18 @@ export default {
         this.$swal('ผิดพลาด', 'ไม่มีนัดหมายเข้ารับบริการนี้', 'error').then(async response => {
           this.dialogEdit = false
           this.getBookingList()
+          this.getTimesChange('update')
+          if (this.getSelectText) {
+            this.getSelect(this.getSelectText, this.getSelectCount)
+          }
         }).catch(error => {
           console.log('error function addData : ', error)
           this.dialogEdit = false
           this.getBookingList()
+          this.getTimesChange('update')
+          if (this.getSelectText) {
+            this.getSelect(this.getSelectText, this.getSelectCount)
+          }
         })
       }
     },
@@ -4421,11 +4531,13 @@ export default {
     },
     async confirmChk (item) {
       this.dataConfirm = item
+      this.remark = item.remark
       await this.getEmpSelect(item)
       this.dialogConfirm = true
     },
     onConfirm (item) {
       console.log('item', item)
+      this.dataConfirmReady = false
       var dt = {
         bookNo: item.bookNo,
         contactDate: this.format_date(new Date()),
@@ -4439,8 +4551,7 @@ export default {
         .post(this.DNS_IP + '/booking_transaction/add', dt)
         .then(async response => {
           this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-          await this.updateRemark(item)
-          this.getDataCalendaBooking()
+          await this.updateRemarkAndEmpSelect(item)
           let DTitem = item.userId
           console.log('DTITEM', DTitem)
           if (DTitem !== 'user-skip') {
@@ -4474,12 +4585,28 @@ export default {
               this.getSelect(this.getSelectText, this.getSelectCount)
             }
           }
+          this.dataConfirmReady = true
           this.dialogConfirm = false
+          this.getDataCalendaBooking()
           console.log('addDataGlobal', response)
         })
         .catch(error => {
           console.log('error function addData : ', error)
         })
+    },
+    async updateRemarkAndEmpSelect (item) {
+      var dt = {
+        LAST_USER: this.session.data.userName,
+        empSelect: this.empSelect,
+        remark: this.remark.replace(/%/g, '%%')
+      }
+      await axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + "/Booking/edit/" + item.bookNo,
+          dt
+        )
+        .then(async response => {})
     },
     async updateRemark (item) {
       var dt = {
@@ -4505,6 +4632,7 @@ export default {
     },
     onCancelChk () {
       if (this.validRemove === true) {
+        this.dataCancelReady = false
         var dt = {
           bookNo: this.bookNoRemove.bookNo,
           contactDate: this.format_date(new Date()),
@@ -4513,7 +4641,7 @@ export default {
           shopId: this.$session.getAll().data.shopId,
           CREATE_USER: this.session.data.userName,
           LAST_USER: this.session.data.userName,
-          remarkRemove: this.remarkRemove
+          remarkRemove: this.remarkRemove.replace(/%/g, '%%')
         }
         axios
           .post(this.DNS_IP + '/booking_transaction/add', dt)
@@ -4522,11 +4650,12 @@ export default {
             this.$swal('เรียบร้อย', 'ยกเลิกเรียบร้อย', 'success')
             console.log('addDataGlobal', response)
             await this.getBookingList()
-            this.getDataCalendaBooking()
             this.getTimesChange('update')
             if (this.getSelectText) {
               this.getSelect(this.getSelectText, this.getSelectCount)
             }
+            this.getDataCalendaBooking()
+            this.dataCancelReady = true
             this.dialogRemove = false
             this.remarkRemove = ''
             this.bookNo = ''
@@ -4541,7 +4670,7 @@ export default {
         if (this.remark !== '') {
           var dt = {
             LAST_USER: this.session.data.userName,
-            remark: this.remark
+            remark: this.remark.replace(/%/g, '%%')
           }
           await axios
             .post(
@@ -4593,7 +4722,6 @@ export default {
                 if (item.statusBt === 'confirm') {
                   if (item.userId !== 'user-skip') {
                     await this.getBookingList()
-                    this.getDataCalendaBooking()
                     this.getTimesChange('update')
                     if (this.getSelectText) {
                       this.getSelect(this.getSelectText, this.getSelectCount)
@@ -4630,6 +4758,7 @@ export default {
                     this.getSelect(this.getSelectText, this.getSelectCount)
                   }
                 }
+                this.getDataCalendaBooking()
               })
               .catch(error => {
                 console.log('error function addData : ', error)
