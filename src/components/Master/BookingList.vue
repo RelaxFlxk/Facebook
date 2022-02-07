@@ -2663,7 +2663,8 @@ export default {
       dataexportRemove: [],
       BookingDataItemEdit: [],
       bookNoRemark: '',
-      remark: ''
+      remark: '',
+      setTimer: null
     }
   },
   beforeCreate () {
@@ -2938,7 +2939,10 @@ export default {
       // this.$refs.CalendarBooking.getBookingList()
     },
     async addDataSet () {
-      console.log('this.branch', this.branch)
+      // console.log('this.setTimer', this.setTimer)
+      // clearTimeout(this.setTimer)
+      // this.setTimer = null
+      // console.log('this.setTimer', this.setTimer)
       // this.getDataCalendaBooking()
       // this.$refs.CalendarBooking.getDataReturn()
       this.dialogAdd = true
@@ -2959,6 +2963,13 @@ export default {
       await this.getTimesChange('update')
       this.getSelect(this.getSelectText, this.getSelectCount)
       this.loadingRefresh = false
+    },
+    async getDataSetTime () {
+      await this.getBookingList()
+      await this.getTimesChange('update')
+      if (this.getSelectText) {
+        this.getSelect(this.getSelectText, this.getSelectCount)
+      }
     },
     checkTime () {
       this.timeavailable = []
@@ -3750,7 +3761,11 @@ export default {
     },
     async getBookingList () {
       // Clear Data ทุกครั้ง
-      console.log('this.masBranchID1', this.masBranchID)
+      // this.setTimer = setInterval(this.getDataDefault(), 100000)
+      // let _this = this
+      // this.setTimer = setTimeout(function () { _this.getDataSetTime() }, 10000)
+      // console.log('this.masBranchID1', this.masBranchID)
+      // console.log('this.setTimer', this.setTimer)
       if (this.masBranchID) {
         this.masBranchID = this.masBranchID
       } else {
