@@ -4089,7 +4089,7 @@ export default {
           if (d.conditionField === '' || d.conditionField === null) {
             update.masBranchID = this.formAdd.masBranchID
             update.bookingFieldId = d.bookingFieldId
-            update.remark = this.remark.replace(/%/g, '%%')
+            update.remark = this.remark
             update.flowId = this.formAdd.flowId
             update.fieldId = d.fieldId
             update.fieldValue = d.fieldValue
@@ -4115,7 +4115,7 @@ export default {
               ) {
                 update.masBranchID = this.formAdd.masBranchID
                 update.bookingFieldId = d.bookingFieldId
-                update.remark = this.remark.replace(/%/g, '%%')
+                update.remark = this.remark
                 update.flowId = this.formAdd.flowId
                 update.fieldId = d.fieldId
                 update.fieldValue = d.fieldValue
@@ -4132,7 +4132,7 @@ export default {
               if (parseInt(d.conditionValue) === parseInt(this.formAdd.flowId)) {
                 update.masBranchID = this.formAdd.masBranchID
                 update.bookingFieldId = d.bookingFieldId
-                update.remark = this.remark.replace(/%/g, '%%')
+                update.remark = this.remark
                 update.flowId = this.formAdd.flowId
                 update.fieldId = d.fieldId
                 update.fieldValue = d.fieldValue
