@@ -438,34 +438,26 @@ export default {
     },
     async getDataBranch () {
       this.DataBranchName = []
-      if (localStorage.getItem('BRANCH') === null) {
-        await axios
-          .get(
-            this.DNS_IP +
-              '/master_branch/get?shopId=' +
-              this.$session.getAll().data.shopId
-          )
-          .then(async response => {
-            let rs = response.data
-            if (rs.length > 0) {
-              for (var i = 0; i < rs.length; i++) {
-                var d = rs[i]
-                d.text = d.masBranchName
-                d.value = d.masBranchName
-                this.DataBranchName.push(d)
-              }
-              this.masBranchName = this.DataBranchName[0]
-            } else {
-              this.DataBranchName = []
+      await axios
+        .get(
+          this.DNS_IP +
+            '/master_branch/get?shopId=' +
+            this.$session.getAll().data.shopId
+        )
+        .then(async response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              d.text = d.masBranchName
+              d.value = d.masBranchName
+              this.DataBranchName.push(d)
             }
-          })
-        localStorage.setItem('BRANCH', JSON.stringify(this.DataBranchName))
-      } else {
-        this.DataBranchName = JSON.parse(localStorage.getItem('BRANCH'))
-      }
-      if (this.DataBranchName.length > 0) {
-        this.masBranchName = this.DataBranchName[0]
-      }
+            this.masBranchName = this.DataBranchName[0]
+          } else {
+            this.DataBranchName = []
+          }
+        })
     },
     async getBookingData () {
       this.bookingData = []
