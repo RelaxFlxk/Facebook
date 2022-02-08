@@ -2914,15 +2914,15 @@ export default {
                 Add
               )
               .then(async response => {
-                this.dialogEditData = false
-                this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
-                this.dataEditReady = true
                 await this.getBookingList()
                 this.getTimesChange('update')
                 if (this.getSelectText) {
                   this.getSelect(this.getSelectText, this.getSelectCount)
                 }
                 this.getDataCalendaBooking()
+                this.dialogEditData = false
+                this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
+                this.dataEditReady = true
               })
           }).catch(error => {
             this.dataEditReady = true
@@ -2962,6 +2962,7 @@ export default {
       await this.getBookingList()
       await this.getTimesChange('update')
       this.getSelect(this.getSelectText, this.getSelectCount)
+      this.getDataCalendaBooking()
       this.loadingRefresh = false
     },
     async getDataSetTime () {
@@ -4210,8 +4211,8 @@ export default {
       await axios
         .post(this.DNS_IP + '/booking_transaction/add', dt)
         .then(async response => {
-          this.clearDataAdd()
           this.getDataCalendaBooking()
+          this.clearDataAdd()
           this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
           // await this.getBookingList()
           // this.getTimesChange('update')
@@ -4221,6 +4222,12 @@ export default {
         })
     },
     async clearDataAdd () {
+      await this.getBookingList()
+      this.getTimesChange('update')
+      if (this.getSelectText) {
+        this.getSelect(this.getSelectText, this.getSelectCount)
+      }
+      this.getDataCalendaBooking()
       this.countWaiting = 0
       this.countConfirm = 0
       this.countCancel = 0
@@ -4240,12 +4247,6 @@ export default {
       this.formAdd.dueDate = ''
       this.formAdd.shopId = this.$session.getAll().data.shopId
       this.dialogAdd = false
-      await this.getBookingList()
-      this.getTimesChange('update')
-      if (this.getSelectText) {
-        this.getSelect(this.getSelectText, this.getSelectCount)
-      }
-      this.getDataCalendaBooking()
     },
     async getDataById (dt) {
       console.log('dt', dt)
@@ -4285,7 +4286,6 @@ export default {
 
               this.$swal('เรียบร้อย', 'ลบข้อมูลเรียบร้อย', 'success')
               // Close Dialog
-              this.dialogDelete = false
 
               // Load Data
               await this.getBookingList()
@@ -4294,6 +4294,7 @@ export default {
                 this.getSelect(this.getSelectText, this.getSelectCount)
               }
               this.getDataCalendaBooking()
+              this.dialogDelete = false
             })
             // eslint-disable-next-line handle-callback-err
             .catch(error => {
@@ -4573,6 +4574,7 @@ export default {
         .then(async response => {
           this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
           await this.updateRemarkAndEmpSelect(item)
+          this.getDataCalendaBooking()
           let DTitem = item.userId
           console.log('DTITEM', DTitem)
           if (DTitem !== 'user-skip') {
@@ -4608,7 +4610,6 @@ export default {
           }
           this.dataConfirmReady = true
           this.dialogConfirm = false
-          this.getDataCalendaBooking()
           console.log('addDataGlobal', response)
         })
         .catch(error => {
@@ -4738,7 +4739,6 @@ export default {
               .post(this.DNS_IP + '/booking_transaction/add', dt)
               .then(async response => {
                 this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-                this.dialogChange = false
                 console.log('addDataGlobal', response)
                 if (item.statusBt === 'confirm') {
                   if (item.userId !== 'user-skip') {
@@ -4780,6 +4780,7 @@ export default {
                   }
                 }
                 this.getDataCalendaBooking()
+                this.dialogChange = false
               })
               .catch(error => {
                 console.log('error function addData : ', error)
