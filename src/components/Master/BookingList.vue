@@ -3410,13 +3410,13 @@ export default {
       this.DataFlowName = await this.getDataFromAPI('/flow/get', 'flowId', 'flowName')
     },
     async getDataBranch () {
-      if (localStorage.getItem('BRANCH') === null) {
-        let temp = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName')
-        console.log(typeof temp)
-        localStorage.setItem('BRANCH', JSON.stringify(temp))
-      }
-      this.branch = JSON.parse(localStorage.getItem('BRANCH'))
-      // this.branch = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName')
+      // if (localStorage.getItem('BRANCH') === null) {
+      //   let temp = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName')
+      //   console.log(typeof temp)
+      //   localStorage.setItem('BRANCH', JSON.stringify(temp))
+      // }
+      // this.branch = JSON.parse(localStorage.getItem('BRANCH'))
+      this.branch = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName')
     },
     getDataFromFieldName (data, key) {
       return data.filter(function (el) {
