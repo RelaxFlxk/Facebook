@@ -3037,13 +3037,13 @@ export default {
         // var d = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === item.timeDueHtext })[i]
         let d = this.dataItemTime[i]
         let dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && el.fastTrack && (el.statusBtText === 'ยืนยันแล้ว' || el.statusBtText === 'รับรถแล้ว') })
-        console.log('s.dataSelect', dataSelect)
+        // console.log('s.dataSelect', dataSelect)
         for (let x = 0; x < dataSelect.length; x++) {
           runNo++
           let t = dataSelect[x]
           let s = {}
-          console.log('fastTrack')
-          console.log('s.t', t)
+          // console.log('fastTrack')
+          // console.log('s.t', t)
           if (dataExport.filter(el => { return el.timeDueHtext === this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )' }).length === 0) {
             s.timeDueHtext = this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )'
           } else {
@@ -3053,9 +3053,35 @@ export default {
           let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
           fieldflow.forEach((row) => {
             let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
-            serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
+            // serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
+            let convertTextField = ''
+            // if (tempField.length > 0) {
+            console.log('fieldType', row.fieldType)
+            if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
+              console.log('optionField', row.optionField)
+              console.log('fieldValue', tempField[0].fieldValue)
+              if (tempField[0].fieldValue) {
+                convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+              } else {
+                convertTextField = tempField[0].fieldValue
+              }
+            } else {
+              convertTextField = tempField[0].fieldValue
+            }
+            // }
+            console.log('convertTextField', convertTextField)
+            serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
           })
+          // console.log('fieldflow', fieldflow)
+          // let convertTextField = ''
+          // if (serviceDetail !== '' && fieldflow.filter(el => { return el.fieldType === 'Selects' || el.fieldType === 'Autocompletes' || el.fieldType === 'Radio' }).length > 0) {
+          //   let textField = ''
+          //   textField = JSON.parse(fieldflow.filter(el => { return el.fieldType === 'Selects' || el.fieldType === 'Autocompletes' || el.fieldType === 'Radio' })[0].optionField)
+          //   convertTextField = textField.filter(el => { return el.value === serviceDetail })
+          //   console.log('convertTextField', convertTextField)
+          // }
           serviceDetail = serviceDetail || t.flowName
+          console.log('serviceDetail', serviceDetail)
 
           s.type = 'Fast Track'
           s.runNo = runNo
@@ -3102,7 +3128,24 @@ export default {
           let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
           fieldflow.forEach((row) => {
             let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
-            serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
+            // serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
+            let convertTextField = ''
+            // if (tempField.length > 0) {
+            console.log('fieldType', row.fieldType)
+            if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
+              console.log('optionField', row.optionField)
+              console.log('fieldValue', tempField[0].fieldValue)
+              if (tempField[0].fieldValue) {
+                convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+              } else {
+                convertTextField = tempField[0].fieldValue
+              }
+            } else {
+              convertTextField = tempField[0].fieldValue
+            }
+            // }
+            console.log('convertTextField', convertTextField)
+            serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
           })
           if (dataExport.filter(el => { return el.timeDueHtext === this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )' }).length === 0) {
             s.timeDueHtext = this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )'
@@ -3185,7 +3228,22 @@ export default {
           let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
           fieldflow.forEach((row) => {
             let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
-            serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
+            // serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
+            let convertTextField = ''
+            console.log('fieldType', row.fieldType)
+            if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
+              console.log('optionField', row.optionField)
+              console.log('fieldValue', tempField[0].fieldValue)
+              if (tempField[0].fieldValue) {
+                convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+              } else {
+                convertTextField = tempField[0].fieldValue
+              }
+            } else {
+              convertTextField = tempField[0].fieldValue
+            }
+            console.log('convertTextField', convertTextField)
+            serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
           })
           serviceDetail = serviceDetail || t.flowName
           s.type = 'Fast Track'
@@ -3237,6 +3295,28 @@ export default {
           } else {
             s.timeDueHtext = ''
           }
+          let serviceDetail = ''
+          let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
+          fieldflow.forEach((row) => {
+            let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+            // serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
+            let convertTextField = ''
+            console.log('fieldType', row.fieldType)
+            if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
+              console.log('optionField', row.optionField)
+              console.log('fieldValue', tempField[0].fieldValue)
+              if (tempField[0].fieldValue) {
+                convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+              } else {
+                convertTextField = tempField[0].fieldValue
+              }
+            } else {
+              convertTextField = tempField[0].fieldValue
+            }
+            console.log('convertTextField', convertTextField)
+            serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
+          })
+          serviceDetail = serviceDetail || t.flowName
           s.type = 'ปกติ'
           s.runNo = runNo
           s.dateBooking = this.format_dateNotime(this.timeTable)
@@ -3247,7 +3327,7 @@ export default {
           s.remark = t.remark
           s.cusName = t.cusName
           s.cusReg = t.cusReg
-          s.flowName = t.flowName
+          s.flowName = serviceDetail
           s.tel = t.tel
           s.empFull_NameTH = t.empFull_NameTH
           s.extraJob = t.extraJob ? 'Extra Job' : ''
