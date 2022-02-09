@@ -4228,16 +4228,16 @@ export default {
         this.getSelect(this.getSelectText, this.getSelectCount)
       }
       this.getDataCalendaBooking()
-      this.countWaiting = 0
-      this.countConfirm = 0
-      this.countCancel = 0
-      this.countJob = 0
-      this.countAll = 0
+      // this.countWaiting = 0
+      // this.countConfirm = 0
+      // this.countCancel = 0
+      // this.countJob = 0
+      // this.countAll = 0
       this.date = ''
       this.time = ''
       this.empSelectAdd = ''
       this.remark = ''
-      this.fieldNameItem = []
+      // this.fieldNameItem = []
       this.DataflowId = ''
       this.formAdd.bookingId = null
       this.formAdd.fieldId = ''
