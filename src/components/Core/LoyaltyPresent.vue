@@ -42,8 +42,8 @@ export default {
         .get(
           // eslint-disable-next-line quotes
           this.DNS_IP_Loyalty +
-            '/system_shop/get?userName=' +
-            this.session.data.userName
+            '/system_shop/get?shopId=' +
+            this.session.data.shopId
         )
         .then(async (response) => {
           if (response.data.status === false) {

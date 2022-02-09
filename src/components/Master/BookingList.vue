@@ -1508,7 +1508,7 @@
                           1 วัน
                         </v-chip>
                       </v-col>
-                      <v-col>
+                      <!-- <v-col>
                         <v-chip
                           filter
                           dark
@@ -1519,7 +1519,7 @@
                         >
                           30 นาที
                         </v-chip>
-                      </v-col>
+                      </v-col> -->
                     </v-row>
                   </template>
                   <template v-slot:[`item.action3`]="{ item }">
@@ -1664,7 +1664,7 @@
                           1 วัน
                         </v-chip>
                       </v-col>
-                      <v-col>
+                      <!-- <v-col>
                         <v-chip
                           filter
                           dark
@@ -1675,7 +1675,7 @@
                         >
                           30 นาที
                         </v-chip>
-                      </v-col>
+                      </v-col> -->
                     </v-row>
                   </template>
                   <template v-slot:[`item.action3`]="{ item }">
