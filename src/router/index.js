@@ -176,6 +176,11 @@ export default new Router({
     component: Master.BoardControl
   },
   {
+    path: '/Master/BoardControlM',
+    name: 'BoardControlM',
+    component: Master.BoardControlM
+  },
+  {
     path: '/BookingMobile',
     name: 'BookingMobile',
     component: Master.BookingMobile

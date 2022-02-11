@@ -18,6 +18,7 @@ import CalendarBooking from './CalendarBooking'
 import BoardControl from './BoardControl'
 import SettingLineGroup from './SettingLineGroup'
 import BookingMobile from './BookingMobile'
+import BoardControlM from './BoardControlM'
 export default {
   CustomField,
   Flow,
@@ -38,5 +39,6 @@ export default {
   CalendarBooking,
   BoardControl,
   SettingLineGroup,
-  BookingMobile
+  BookingMobile,
+  BoardControlM
 }
