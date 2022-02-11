@@ -778,7 +778,7 @@
                         large
                         color="#FED966"
                         @click=";(dialog = true),
-                            setUpdate(itemsJob)
+                            setUpdate(itemsJob, 'editFlow', item)
                         "
                       >
                         mdi-layers-triple
