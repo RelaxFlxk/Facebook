@@ -439,6 +439,7 @@
                                     :items="JSON.parse(item.optionField)"
                                     menu-props="auto"
                                     :label="item.fieldName"
+                                    clearable
                                     required
                                     :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                     dense
@@ -532,6 +533,7 @@
                                       :label="item.fieldName"
                                       required
                                       dense
+                                      clearable
                                       :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                       outlined
                                     ></v-select>
@@ -604,6 +606,7 @@
                                           :items="JSON.parse(item.optionField)"
                                           menu-props="auto"
                                           :label="item.fieldName"
+                                          clearable
                                           dense
                                           :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                           hide-details
@@ -2037,6 +2040,7 @@
                                     required
                                     :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                     dense
+                                    clearable
                                     outlined
                                   ></v-select>
                                 </v-col>
@@ -2127,6 +2131,7 @@
                                       :label="item.fieldName"
                                       required
                                       dense
+                                      clearable
                                       :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                       outlined
                                     ></v-select>
@@ -2200,6 +2205,7 @@
                                           menu-props="auto"
                                           :label="item.fieldName"
                                           dense
+                                          clearable
                                           :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                           hide-details
                                           outlined

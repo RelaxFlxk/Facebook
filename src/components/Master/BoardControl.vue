@@ -40,6 +40,7 @@
             ></v-select>
           </v-col>
           <v-col cols="6" class="v-margit_button_right text-right">
+            <v-btn-toggle borderless>
             <v-btn
               class="ma-6 mt-5"
               id="textButton"
@@ -48,8 +49,8 @@
               depressed
               @click="newCars()"
             >
-              <v-icon left>mdi-car-2-plus</v-icon>
-              รับรถใหม่
+              <span class="hidden-sm-and-down">รับรถใหม่</span>
+              <v-icon right>mdi-car-2-plus</v-icon>
             </v-btn>
             <v-btn
               class="ma-6 mt-5"
@@ -59,8 +60,8 @@
               depressed
               @click="editLayout()"
             >
-              <v-icon left>mdi-application-cog</v-icon>
-              แก้ไข Layout
+              <span class="hidden-sm-and-down">แก้ไข Layout</span>
+              <v-icon right>mdi-application-cog</v-icon>
             </v-btn>
             <v-btn
               class="ma-6 mt-5"
@@ -70,9 +71,10 @@
               depressed
               @click="editStep()"
             >
-              <v-icon left>mdi-database-edit</v-icon>
-              แก้ไข ขั้นตอน
+              <span class="hidden-sm-and-down">แก้ไข ขั้นตอน</span>
+              <v-icon right>mdi-database-edit</v-icon>
             </v-btn>
+            </v-btn-toggle>
           </v-col>
         </v-sheet>
         <v-row class="mt-5 ml-5">
@@ -84,20 +86,20 @@
             นัดส่ง:
           </v-card-title>
           <v-col cols="4">
-            <v-chip class="ma-2" color="#DE6467" text-color="white">
+            <v-chip class="mt-6" color="#DE6467" text-color="white">
               ภายใน 2 วัน
             </v-chip>
 
-            <v-chip class="ma-2" color="#FED966" text-color="white">
+            <v-chip class="mt-6" color="#FED966" text-color="white">
               ภายใน 4 วัน
             </v-chip>
 
-            <v-chip class="ma-2" color="#4F93D0" text-color="white">
+            <v-chip class="mt-6" color="#4F93D0" text-color="white">
               มากกว่า 4 วัน
             </v-chip>
           </v-col>
 
-          <v-col cols="7" class="text-right" text color="#ABB1C7">
+          <v-col cols="7" class="text-right" text color="#ABB1C7" v-if="allJob.length > 0">
             <v-btn
               class="ma-6 mt-5"
               id="textButton"
@@ -169,35 +171,25 @@
                 <v-container>
                   <v-row>
                     <v-col cols="12">
-                      <v-row style="height: 45px">
-                        <v-subheader id="subtextTitle"
-                          >ขั้นตอนต่อไป</v-subheader
-                        >
-                      </v-row>
-                      <v-row style="height: 30px">
                         <v-select
                           dense
+                          label="ขั้นตอนต่อไป"
                           v-model="formUpdate.stepTitle"
-                          :items="stepItemSelete"
+                          :items="stepItemSeleteInBoard"
                           item-text="text"
                           item-value="stepId"
                           return-object
+                          :rules="[rules.required]"
                         ></v-select>
-                      </v-row>
                     </v-col>
                     <v-col cols="12">
-                      <v-row style="height: 45px">
-                        <v-subheader id="subtextTitle"
-                          >ชื่อพนักงานที่รับผิดชอบ</v-subheader
-                        >
-                      </v-row>
-                      <v-row style="height: 30px">
                         <v-autocomplete
                           dense
+                          label="ชื่อพนักงานที่รับผิดชอบ"
                           v-model="formUpdate.empStep"
                           :items="empSeleteStep"
+                          :rules="[rules.required]"
                         ></v-autocomplete>
-                      </v-row>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -348,51 +340,40 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="12">
-                    <v-row style="height: 35px">
-                      <v-col class="text-center">
-                        <v-subheader id="subtextTitle"
-                          >ค่าใช้จ่ายทั้งหมด</v-subheader
-                        >
-                      </v-col>
-                    </v-row>
-                    <v-row style="height: 70px">
-                      <v-col class="text-center">
-                        <VuetifyMoney
-                          v-model="formDelete.totalPrice"
-                          placeholder="Amount"
-                          dense
-                          required
-                          :rules="[rules.required]"
-                          v-bind:options="options2"
-                        />
-                      </v-col>
-                    </v-row>
+                  <v-col cols="12" class="pb-0">
+                    <VuetifyMoney
+                      v-model="formDelete.totalPrice"
+                      placeholder="ค่าใช้จ่ายทั้งหมด"
+                      dense
+                      label="ค่าใช้จ่ายทั้งหมด"
+                      required
+                      :rules="[rules.required]"
+                      v-bind:options="options2"
+                    />
+                  </v-col>
+                  <v-col class="text-center"  cols="12">
+                    <v-btn
+                      dark
+                      elevation="2"
+                      depressed
+                      color="#1B437C"
+                      @click="deleteDataPrice()"
+                    >
+                      <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                      ชำระเงิน
+                    </v-btn>
+                    <v-btn
+                      color="primary"
+                      depressed
+                      @click=";(dialogDelete = false), clearData()"
+                    >
+                      <v-icon left> mdi-cancel</v-icon>
+                      ยกเลิก
+                    </v-btn>
                   </v-col>
                 </v-row>
               </v-container>
             </v-card-text>
-            <v-col class="text-center">
-              <v-btn
-                dark
-                elevation="2"
-                depressed
-                color="#1B437C"
-                @click="deleteDataPrice()"
-              >
-                <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                เพิ่ม
-              </v-btn>
-              <v-btn
-                color="primary"
-                depressed
-                @click=";(dialogDelete = false), clearData()"
-              >
-                <v-icon left> mdi-cancel</v-icon>
-                ยกเลิก
-              </v-btn>
-            </v-col>
-            <br />
           </v-card>
         </v-dialog>
         <!-- end add -->
@@ -601,7 +582,7 @@
                               large
                               color="#FED966"
                               @click=";(dialog = true),
-                                  setUpdate(itemsJob)
+                                  setUpdate(itemsJob, 'editFlow', item)
                               "
                             >
                               mdi-layers-triple
@@ -904,6 +885,7 @@ export default {
       session: this.$session.getAll(),
       shopId: this.$session.getAll().data.shopId,
       stepItemSelete: [],
+      stepItemSeleteInBoard: [],
       empSeleteStep: [],
       DataFlowName: [],
       validAdd: false,
@@ -1256,13 +1238,23 @@ export default {
     //   //   }
     //   // }
     // },
-    async setUpdate (item) {
+    async setUpdate (item, text, stepItem) {
       console.log(this.formUpdate)
+      console.log(this.stepItemSelete)
       console.log('item1', item)
+      console.log('stepItem', stepItem)
+      var dataStepItemSelete = this.stepItemSelete
+      // var index = dataStepItemSelete.findIndex(key => key.text === stepTitle)
       this.formUpdate.jobId = item.jobId
       this.formUpdate.endDate = this.momenDate_1(item.endDate)
       this.formUpdate.endTime = item.endTime
       this.formDelete.jobNo = item.jobNo
+      this.formUpdate.empStep = this.JobDataItem.filter(row => {
+        return row.jobId === item.jobId
+      })[0].empStep
+      if (text === 'editFlow') {
+        this.stepItemSeleteInBoard = dataStepItemSelete.filter(el => el.text !== stepItem.stepTitle)
+      }
     },
     async onUpdate () {
       this.formUpdate.stepId = this.formUpdate.stepTitle.stepId
@@ -1272,64 +1264,68 @@ export default {
       console.log('allJob', this.allJob)
       console.log('empSeleteStep', this.empSeleteStep)
       console.log('empStep', this.formUpdate.empStep)
-      this.dataReady = false
-      this.$swal({
-        title: 'ต้องการ แก้ไขสถานะ ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      })
-        .then(async result => {
-          this.formUpdate.LAST_USER = this.session.data.userName
-          var ID = this.formUpdate.jobId
-          var flowName = this.formUpdate.flowName
-          delete this.formUpdate['flowId']
-          delete this.formUpdate['flowName']
-          delete this.formUpdate['sortNo']
-          delete this.formUpdate['CREATE_USER']
-          // delete this.formUpdate['stepTitle']
-          await axios
-            .post(
+      if (this.formUpdate.empStep !== '' && this.formUpdate.stepTitle !== '') {
+        this.dataReady = false
+        this.$swal({
+          title: 'ต้องการ แก้ไขสถานะ ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        })
+          .then(async result => {
+            this.formUpdate.LAST_USER = this.session.data.userName
+            var ID = this.formUpdate.jobId
+            var flowName = this.formUpdate.flowName
+            delete this.formUpdate['flowId']
+            delete this.formUpdate['flowName']
+            delete this.formUpdate['sortNo']
+            delete this.formUpdate['CREATE_USER']
+            // delete this.formUpdate['stepTitle']
+            await axios
+              .post(
               // eslint-disable-next-line quotes
-              this.DNS_IP + '/job/edit/' + ID,
-              this.formUpdate
-            )
-            .then(async response => {
+                this.DNS_IP + '/job/edit/' + ID,
+                this.formUpdate
+              )
+              .then(async response => {
               // Debug response
-              console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
-              // this.dialog = false
-              // this.$swal('เรียบร้อย', 'แก้ไขสถานะ เรียบร้อย', 'success')
-              // this.getStepFlow()
-              // this.getLayout()
-              // this.allJob.map((row, index) => {
-              //   if (row.jobId === ID) {
-              //     this.allJob[index].stepId = this.formUpdate.stepId
-              //   }
-              // })
-              this.formUpdate.flowName = flowName
-              await this.pushmessage(this.formUpdate.jobId)
-              this.dialog = false
-              this.$swal('เรียบร้อย', 'แก้ไขสถานะ เรียบร้อย', 'success')
-              this.getStepFlow()
-              this.getLayout()
-              await this.getJobData()
+                console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
+                // this.dialog = false
+                // this.$swal('เรียบร้อย', 'แก้ไขสถานะ เรียบร้อย', 'success')
+                // this.getStepFlow()
+                // this.getLayout()
+                // this.allJob.map((row, index) => {
+                //   if (row.jobId === ID) {
+                //     this.allJob[index].stepId = this.formUpdate.stepId
+                //   }
+                // })
+                this.formUpdate.flowName = flowName
+                await this.pushmessage(this.formUpdate.jobId)
+                this.dialog = false
+                this.$swal('เรียบร้อย', 'แก้ไขสถานะ เรียบร้อย', 'success')
+                this.getStepFlow()
+                this.getLayout()
+                await this.getJobData()
               // console.log('allJob', this.allJob)
               // console.log(this.formUpdate.jobId)
               // console.log(this.formUpdate.stepId)
-            })
+              })
             // eslint-disable-next-line handle-callback-err
-            .catch(error => {
-              this.dataReady = true
-              console.log('error function editDataGlobal : ', error)
-            })
-        })
-        .catch(error => {
-          this.dataReady = true
-          console.log('error function editDataGlobal : ', error)
-        })
+              .catch(error => {
+                this.dataReady = true
+                console.log('error function editDataGlobal : ', error)
+              })
+          })
+          .catch(error => {
+            this.dataReady = true
+            console.log('error function editDataGlobal : ', error)
+          })
+      } else {
+        this.$swal('ผิดพลาด', 'กรุณากรอกข้อมูลให้ครบ', 'error')
+      }
     },
     async clearData () {
       // this.formUpdate.stepTitle = ''
@@ -1389,40 +1385,44 @@ export default {
         .then(console.log(jobNo))
     },
     deleteDataPrice () {
-      this.jobNo = ''
-      console.log('shopId:', this.shopId)
-      console.log('form:', this.formDelete)
-      this.$swal({
-        title: 'ให้บริการ เสร็จเรียบร้อยแล้ว ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#fa0202',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      }).then(async response => {
-        var ID = this.formUpdate.jobId
-        let ds = {
-          jobNo: this.formDelete.jobNo,
-          shopId: this.shopId,
-          totalPrice: this.formDelete.totalPrice,
-          LAST_USER: this.session.data.userName,
-          statusDelete: 'true'
-        }
-        console.log('ds', ds)
-        await axios
-          .post(this.DNS_IP + '/job/editPrice/' + ID, ds)
-          .then(async response => {
-            await this.pushmessagePrice(this.formDelete.jobNo)
-            this.$swal('เรียบร้อย', 'ลบข้อมูล เรียบร้อย', 'success')
-            this.getStepFlow()
-            this.getLayout()
-            await this.getJobData()
-            this.dialogDelete = false
-            console.log('shopId:', this.shopId)
-            console.log('form:', this.formDelete)
-          })
-      })
+      if (this.formDelete.totalPrice !== '') {
+        this.jobNo = ''
+        console.log('shopId:', this.shopId)
+        console.log('form:', this.formDelete)
+        this.$swal({
+          title: 'ให้บริการ เสร็จเรียบร้อยแล้ว ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#fa0202',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        }).then(async response => {
+          var ID = this.formUpdate.jobId
+          let ds = {
+            jobNo: this.formDelete.jobNo,
+            shopId: this.shopId,
+            totalPrice: this.formDelete.totalPrice,
+            LAST_USER: this.session.data.userName,
+            statusDelete: 'true'
+          }
+          console.log('ds', ds)
+          await axios
+            .post(this.DNS_IP + '/job/editPrice/' + ID, ds)
+            .then(async response => {
+              await this.pushmessagePrice(this.formDelete.jobNo)
+              this.$swal('เรียบร้อย', 'ลบข้อมูล เรียบร้อย', 'success')
+              this.getStepFlow()
+              this.getLayout()
+              await this.getJobData()
+              this.dialogDelete = false
+              console.log('shopId:', this.shopId)
+              console.log('form:', this.formDelete)
+            })
+        })
+      } else {
+        this.$swal('ผิดพลาก', 'กรุณาใส่จำนวนเงิน', 'error')
+      }
     },
     async editData () {
       console.log(
