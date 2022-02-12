@@ -3,13 +3,38 @@
     <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
     <v-main>
       <div class="pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4">
-        <v-col class="ma-2" id="text-Board">กระดานทำงาน</v-col>
-        <br />
-
-        <!-- select flow-->
-        <v-sheet tile height="54" class="d-flex mt-6">
-          <!-- ประเภทบริการ -->
-          <v-col cols="12" sm="3">
+        <!-- <v-col class="ma-2" id="text-Board">กระดานทำงาน</v-col> -->
+        <v-row>
+        <v-col cols="6" style="font-family: Roboto; font-style: normal; font-weight: bold; font-size: 24px; line-height: 28px; color: #1b437c;">กระดานทำงาน</v-col>
+        <v-col cols="6" class="text-right">
+            <v-btn-toggle borderless>
+            <v-btn
+              color="#1B437C"
+              text
+              @click="newCars()"
+            >
+              <v-icon left>mdi-car-2-plus</v-icon>
+              <span class="hidden-sm-and-down">รับรถใหม่</span>
+            </v-btn>
+            <v-btn
+              color="#1B437C"
+              text
+              @click="editLayout()"
+            >
+              <v-icon left>mdi-application-cog</v-icon>
+              <span class="hidden-sm-and-down">แก้ไข Layout</span>
+            </v-btn>
+            <v-btn
+              color="#1B437C"
+              text
+              @click="editStep()"
+            >
+              <v-icon left>mdi-database-edit</v-icon>
+              <span class="hidden-sm-and-down">แก้ไข ขั้นตอน</span>
+            </v-btn>
+            </v-btn-toggle>
+          </v-col>
+          <v-col :cols="colsWidth">
             <v-select
               :items="DataFlowName"
               v-model="formUpdate.flowName"
@@ -25,7 +50,7 @@
             </v-select>
           </v-col>
           <!-- สาขา -->
-          <v-col cols="12" sm="3">
+          <v-col :cols="colsWidth">
             <v-select
               :items="DataBranchName"
               v-model="masBranchID"
@@ -39,86 +64,45 @@
               class="ma-2"
             ></v-select>
           </v-col>
-          <v-col cols="6" class="v-margit_button_right text-right">
-            <v-btn-toggle borderless>
-            <v-btn
-              class="ma-6 mt-5"
-              id="textButton"
-              text
-              color="#1B437C"
-              depressed
-              @click="newCars()"
-            >
-              <span class="hidden-sm-and-down">รับรถใหม่</span>
-              <v-icon right>mdi-car-2-plus</v-icon>
-            </v-btn>
-            <v-btn
-              class="ma-6 mt-5"
-              color="#1B437C"
-              id="textButton"
-              text
-              depressed
-              @click="editLayout()"
-            >
-              <span class="hidden-sm-and-down">แก้ไข Layout</span>
-              <v-icon right>mdi-application-cog</v-icon>
-            </v-btn>
-            <v-btn
-              class="ma-6 mt-5"
-              color="#1B437C"
-              id="textButton"
-              text
-              depressed
-              @click="editStep()"
-            >
-              <span class="hidden-sm-and-down">แก้ไข ขั้นตอน</span>
-              <v-icon right>mdi-database-edit</v-icon>
-            </v-btn>
-            </v-btn-toggle>
-          </v-col>
-        </v-sheet>
-        <v-row class="mt-5 ml-5">
-          <v-card-title
+          </v-row>
+        <v-row>
+          <!-- <v-col :cols="colsWidth" class="text-h6" color="#ABB1C7"> นัดส่ง:</v-col> -->
+          <!-- <v-card-title
             class="text-h6"
             color="#ABB1C7"
             style="margin-bottom: 10px;"
           >
             นัดส่ง:
-          </v-card-title>
-          <v-col cols="4">
-            <v-chip class="mt-6" color="#DE6467" text-color="white">
+          </v-card-title> -->
+          <v-col cols="12">
+            <strong class="text-h6">นัดส่ง:</strong>
+            <v-chip color="#DE6467" text-color="white">
               ภายใน 2 วัน
             </v-chip>
 
-            <v-chip class="mt-6" color="#FED966" text-color="white">
+            <v-chip color="#FED966" text-color="white">
               ภายใน 4 วัน
             </v-chip>
 
-            <v-chip class="mt-6" color="#4F93D0" text-color="white">
+            <v-chip color="#4F93D0" text-color="white">
               มากกว่า 4 วัน
             </v-chip>
           </v-col>
 
-          <v-col cols="7" class="text-right" text color="#ABB1C7" v-if="allJob.length > 0">
+          <v-col cols="12" class="text-right" text color="#ABB1C7" v-if="allJob.length > 0">
+            <v-btn-toggle>
             <v-btn
-              class="ma-6 mt-5"
-              id="textButton"
               text
+              small
               color="#ABB1C7"
-              depressed
             >
               {{ allJob.length }} records
             </v-btn>
-            <v-icon color="#ABB1C7">
-              mdi-power-on
-            </v-icon>
             <v-btn
               v-if="layout === 'grid'"
-              class="ma-6 mt-5"
-              id="textButton"
               text
+              small
               color="#ABB1C7"
-              depressed
               @click="layout = 'list'"
             >
               <v-icon class="mr-1 text-right" color="#1B437C">
@@ -128,11 +112,9 @@
             </v-btn>
             <v-btn
               v-if="layout === 'list'"
-              class="ma-6 mt-5"
-              id="textButton"
               text
+              small
               color="#ABB1C7"
-              depressed
               @click="layout = 'grid'"
             >
               <v-icon
@@ -143,6 +125,7 @@
               </v-icon>
               List View
             </v-btn>
+            </v-btn-toggle>
           </v-col>
         </v-row>
         <v-divider></v-divider>
@@ -380,7 +363,7 @@
 
         <div
           v-if="formUpdate.flowName === ''"
-          class="workRow"
+          :class="classWork"
         >
           <v-row>
             <v-col class="colum" v-for="(element, work) in Layout" :key="work">
@@ -415,7 +398,7 @@
         <!-- GridView -->
         <div
           v-if="layout === 'grid'"
-          class="workRow"
+          :class="classWork"
           v-show="masBranchID"
         >
           <v-row>
@@ -620,8 +603,233 @@
           </v-row>
         </div>
 
-        <!-- List view -->
         <div v-if="layout === 'list'">
+          <v-expansion-panels>
+            <v-expansion-panel
+              v-for="(item, indexitem) in stepItemSelete" :key="indexitem"
+            >
+              <v-expansion-panel-header>
+                <!-- <v-alert
+                  class="allFrame pb-3"
+                  border="left"
+                  elevation="2"
+                > -->
+                  <v-row class=" allFrame pb-3">
+                    <v-col>
+                      <strong>{{ item.stepTitle }}</strong>
+                    </v-col>
+                    <v-col class="text-right">
+                      <strong>{{
+                        allJob.filter(row => {
+                          return row.stepId == item.stepId
+                        }).length
+                      }}</strong>
+                      <!-- <v-icon class="text-right" color="#ABB1C7">
+                        mdi-dots-vertical
+                      </v-icon> -->
+                    </v-col>
+                  </v-row>
+                <!-- </v-alert> -->
+                </v-expansion-panel-header>
+                <v-expansion-panel-content
+                  v-for="(itemsJob, indexJob) in allJob.filter(row => {
+                    return row.stepId == item.stepId
+                  })"
+                  :key="indexJob"
+                >
+                    <v-alert
+                      class="allFrame pb-3"
+                      :color="codeColor[indexJob]"
+                      border="left"
+                      elevation="2"
+                      colored-border
+                    >
+                      <v-row class=" allFrame pb-3">
+                        <!-- <v-col cols="2">
+                          <v-chip
+                            v-if="parseInt(itemsJob.totalDateDiff) <= 2"
+                            class="ma-2"
+                            color="#DE6467"
+                            text-color="white"
+                            x-small
+                            draggable
+                            justify="center"
+                            align="center"
+                          >
+                            {{ itemsJob.totalDateDiff }} วัน
+                          </v-chip>
+                          <v-chip
+                            v-else-if="
+                              parseInt(itemsJob.totalDateDiff) <= 4 &&
+                                parseInt(itemsJob.totalDateDiff) >= 2
+                            "
+                            class="ma-2"
+                            color="#FED966"
+                            text-color="white"
+                            draggable
+                            x-small
+                            justify="center"
+                            align="center"
+                          >
+                            {{ itemsJob.totalDateDiff }} วัน
+                          </v-chip>
+                          <v-chip
+                            v-else-if="parseInt(itemsJob.totalDateDiff) >= 4"
+                            class="ma-2"
+                            color="#4F93D0"
+                            text-color="white"
+                            draggable
+                            x-small
+                            justify="center"
+                            align="center"
+                          >
+                            {{ itemsJob.totalDateDiff }} วัน
+                          </v-chip>
+                        </v-col> -->
+                        <!-- end diffDate -->
+                        <v-col cols="12" class="text-left">
+                          <v-chip
+                            outlined
+                            color="white"
+                            text-color="#212121"
+                            draggable
+                            small
+                            justify="center"
+                            align="center"
+                            v-for="(items, index) in JobDataItem.filter(row => {
+                              return row.jobId == itemsJob.jobId
+                            })"
+                            :key="index"
+                          >
+                          <div v-if="items.showCard === 'True'">
+                            <strong>
+                              {{ items.fieldValue }}
+                            </strong>
+                          </div>
+                          </v-chip>
+                        </v-col>
+                        <v-col cols="12" class="text-right">
+                            <v-chip
+                            v-if="parseInt(itemsJob.totalDateDiff) <= 2"
+                            class="ma-2"
+                            color="#DE6467"
+                            text-color="white"
+                            x-small
+                            draggable
+                            justify="center"
+                            align="center"
+                          >
+                            {{ itemsJob.totalDateDiff }} วัน
+                          </v-chip>
+                          <v-chip
+                            v-else-if="
+                              parseInt(itemsJob.totalDateDiff) <= 4 &&
+                                parseInt(itemsJob.totalDateDiff) >= 2
+                            "
+                            class="ma-2"
+                            color="#FED966"
+                            text-color="white"
+                            draggable
+                            x-small
+                            justify="center"
+                            align="center"
+                          >
+                            {{ itemsJob.totalDateDiff }} วัน
+                          </v-chip>
+                          <v-chip
+                            v-else-if="parseInt(itemsJob.totalDateDiff) >= 4"
+                            class="ma-2"
+                            color="#4F93D0"
+                            text-color="white"
+                            draggable
+                            x-small
+                            justify="center"
+                            align="center"
+                          >
+                            {{ itemsJob.totalDateDiff }} วัน
+                          </v-chip>
+                          <!-- update satatus car -->
+                          <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                          <v-icon
+                            v-if="
+                              allJob.filter(row => {
+                                return row.jobId == itemsJob.jobId
+                              })[0].checkCar == 'False'
+                            "
+                            color="#9E9E9E"
+                            depressed
+                            @click="updateStatusCars(itemsJob.jobId, 'False')"
+                            v-bind="attrs"
+                            v-on="on"
+                          >
+                            mdi-car
+                          </v-icon>
+
+                          <v-icon
+                            v-else
+                            color="#4F93D0"
+                            depressed
+                            @click="updateStatusCars(itemsJob.jobId, 'True')"
+                          >
+                            mdi-car
+                          </v-icon>
+                            </template>
+                            <span>รถไม่อยู่</span>
+                          </v-tooltip>
+                          <!-- end update satatus car -->
+                          <v-icon
+                            large
+                            color="#DE6467"
+                            dark
+                            @click=";(dialogEdit = true), setUpdate(itemsJob)"
+                          >
+                            mdi-square-edit-outline
+                          </v-icon>
+
+                          <v-icon
+                          v-if="
+                              allJob.filter(row => {
+                                return row.jobId == itemsJob.jobId
+                              })[0].checkCar !== 'False'
+                            "
+                            large
+                            color="#FED966"
+                            @click=";(dialog = true),
+                                setUpdate(itemsJob, 'editFlow', item)
+                            "
+                          >
+                            mdi-layers-triple
+                          </v-icon>
+                          <v-icon
+                          v-if="
+                              allJob.filter(row => {
+                                return row.jobId == itemsJob.jobId
+                              })[0].checkCar == 'False'
+                            "
+                            large
+                            color="#9E9E9E"
+                          >
+                            mdi-layers-triple
+                          </v-icon>
+
+                          <v-icon
+                            large
+                            color="#84C650"
+                            @click=";(dialogDelete = true), setUpdate(itemsJob)"
+                          >
+                            mdi-tag
+                          </v-icon>
+                        </v-col>
+                      </v-row>
+                    </v-alert>
+
+                </v-expansion-panel-content>
+                    </v-expansion-panel>
+              </v-expansion-panels>
+            <br />
+        </div>
+        <!-- <div v-if="layout === 'list'">
           <div
             class="mt-3"
             v-for="(item, indexitem) in stepItemSelete"
@@ -666,7 +874,6 @@
                 >
                   <v-row class=" allFrame pb-3">
                     <v-col cols="2">
-                      <!-- diffDate -->
                       <v-chip
                         v-if="parseInt(itemsJob.totalDateDiff) <= 2"
                         class="ma-2"
@@ -707,7 +914,6 @@
                         {{ itemsJob.totalDateDiff }} วัน
                       </v-chip>
                     </v-col>
-                    <!-- end diffDate -->
                     <v-col cols="8" class="text-left">
                       <v-chip
                         outlined
@@ -730,7 +936,6 @@
                       </v-chip>
                     </v-col>
                     <v-col cols="2" class="text-right">
-                      <!-- update satatus car -->
                       <v-tooltip bottom>
                         <template v-slot:activator="{ on, attrs }">
                       <v-icon
@@ -759,7 +964,6 @@
                         </template>
                         <span>รถไม่อยู่</span>
                       </v-tooltip>
-                      <!-- end update satatus car -->
                       <v-icon
                         large
                         color="#DE6467"
@@ -809,8 +1013,7 @@
             </div>
             <br />
           </div>
-        </div>
-        <!-- END list view -->
+        </div> -->
       </div>
     </v-main>
   </div>
@@ -830,6 +1033,26 @@ export default {
     'left-menu-admin': adminLeftMenu,
     VuetifyMoney,
     Menu
+  },
+  computed: {
+    colsWidth () {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return '12'
+        case 'sm': return '12'
+        case 'md': return '12'
+        case 'lg': return '4'
+        case 'xl': return '4'
+      }
+    },
+    classWork () {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return ''
+        case 'sm': return ''
+        case 'md': return ''
+        case 'lg': return 'workRow'
+        case 'xl': return 'workRow'
+      }
+    }
   },
   data () {
     return {

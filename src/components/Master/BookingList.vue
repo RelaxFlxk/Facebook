@@ -24,7 +24,7 @@
                 :disabled="loadingRefresh"
                 color="warning"
                 style="z-index:8;margin-right: 5px;"
-                @click="getDataDefault(), searchOther = '', showColorSearch = false"
+                @click="getDataDefault(), searchOther = '', showColorSearch = false, statusSearch = 'no'"
               >
                 <v-icon left>mdi-refresh-circle</v-icon>
                 Refresh
@@ -215,7 +215,7 @@
               append-icon="mdi-text-box-search"
               label="ค้นหา"
               :color="showColorSearch ? 'green' : 'info'"
-              @click:append="searchAny(), showColorSearch = true"
+              @click:append="searchAny(), showColorSearch = true, statusSearch = 'yes'"
               outlined
             ></v-text-field>
           </v-col>
@@ -2682,7 +2682,8 @@ export default {
       remark: '',
       setTimer: null,
       searchOther: '',
-      showColorSearch: false
+      showColorSearch: false,
+      statusSearch: 'no'
     }
   },
   beforeCreate () {
@@ -2898,7 +2899,11 @@ export default {
         .then(async response => {
           this.$swal('เรียบร้อย', 'เปลี่ยนแปลงหมายเหตุเพิ่มเติมเรียบร้อย', 'success')
           this.dialogRemark = false
-          await this.getBookingList()
+          if (this.statusSearch === 'no') {
+            await this.getBookingList()
+          } else {
+            await this.searchAny()
+          }
           this.getTimesChange('update')
           if (this.getSelectText) {
             this.getSelect(this.getSelectText, this.getSelectCount)
@@ -3101,7 +3106,11 @@ export default {
                 Add
               )
               .then(async response => {
-                await this.getBookingList()
+                if (this.statusSearch === 'no') {
+                  await this.getBookingList()
+                } else {
+                  await this.searchAny()
+                }
                 this.getTimesChange('update')
                 if (this.getSelectText) {
                   this.getSelect(this.getSelectText, this.getSelectCount)
@@ -3153,7 +3162,11 @@ export default {
       this.loadingRefresh = false
     },
     async getDataSetTime () {
-      await this.getBookingList()
+      if (this.statusSearch === 'no') {
+        await this.getBookingList()
+      } else {
+        await this.searchAny()
+      }
       await this.getTimesChange('update')
       if (this.getSelectText) {
         this.getSelect(this.getSelectText, this.getSelectCount)
@@ -3202,7 +3215,11 @@ export default {
         await axios
           .post(this.DNS_IP + '/Booking/edit/' + item.bookNo, dt)
           .then(async response => {
-            await this.getBookingList()
+            if (this.statusSearch === 'no') {
+              await this.getBookingList()
+            } else {
+              await this.searchAny()
+            }
             this.getTimesChange('update')
             if (this.getSelectText) {
               this.getSelect(this.getSelectText, this.getSelectCount)
@@ -3267,7 +3284,7 @@ export default {
           //   convertTextField = textField.filter(el => { return el.value === serviceDetail })
           //   console.log('convertTextField', convertTextField)
           // }
-          serviceDetail = serviceDetail || t.flowName
+          serviceDetail = serviceDetail.trim() || t.flowName
           console.log('serviceDetail', serviceDetail)
 
           s.type = 'Fast Track'
@@ -3339,7 +3356,7 @@ export default {
           } else {
             s.timeDueHtext = ''
           }
-          serviceDetail = serviceDetail || t.flowName
+          serviceDetail = serviceDetail.trim() || t.flowName
           s.type = 'ปกติ'
           s.runNo = runNo
           s.dateBooking = this.format_dateNotime(this.timeTable)
@@ -3434,7 +3451,7 @@ export default {
             console.log('convertTextField', convertTextField)
             serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
           })
-          serviceDetail = serviceDetail || t.flowName
+          serviceDetail = serviceDetail.trim() || t.flowName
           s.type = 'Fast Track'
           s.runNo = runNo
           s.dateBooking = this.format_dateNotime(this.timeTable)
@@ -3507,7 +3524,7 @@ export default {
             console.log('convertTextField', convertTextField)
             serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
           })
-          serviceDetail = serviceDetail || t.flowName
+          serviceDetail = serviceDetail.trim() || t.flowName
           s.type = 'ปกติ'
           s.runNo = runNo
           s.dateBooking = this.format_dateNotime(this.timeTable)
@@ -3809,7 +3826,7 @@ export default {
             }
             serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
           })
-          serviceDetail = serviceDetail || t.flowName
+          serviceDetail = serviceDetail.trim() || t.flowName
           t.flowNameShow = serviceDetail
           this.dataItemSelect.push(t)
         }
@@ -3862,7 +3879,7 @@ export default {
               serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
             })
           }
-          serviceDetail = serviceDetail || t.flowName
+          serviceDetail = serviceDetail.trim() || t.flowName
           t.flowNameShow = serviceDetail
           this.dataItemSelect.push(t)
         }
@@ -4534,7 +4551,11 @@ export default {
         })
     },
     async clearDataAdd () {
-      await this.getBookingList()
+      if (this.statusSearch === 'no') {
+        await this.getBookingList()
+      } else {
+        await this.searchAny()
+      }
       this.getTimesChange('update')
       if (this.getSelectText) {
         this.getSelect(this.getSelectText, this.getSelectCount)
@@ -4600,7 +4621,11 @@ export default {
               // Close Dialog
 
               // Load Data
-              await this.getBookingList()
+              if (this.statusSearch === 'no') {
+                await this.getBookingList()
+              } else {
+                await this.searchAny()
+              }
               this.getTimesChange('update')
               if (this.getSelectText) {
                 this.getSelect(this.getSelectText, this.getSelectCount)
@@ -4743,7 +4768,11 @@ export default {
                         .then(async response => {
                           this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
                           this.dialogEdit = false
-                          this.getBookingList()
+                          if (this.statusSearch === 'no') {
+                            await this.getBookingList()
+                          } else {
+                            await this.searchAny()
+                          }
                         })
                     })
                 }
@@ -4753,7 +4782,11 @@ export default {
       } else {
         this.$swal('ผิดพลาด', 'ไม่มีนัดหมายเข้ารับบริการนี้', 'error').then(async response => {
           this.dialogEdit = false
-          this.getBookingList()
+          if (this.statusSearch === 'no') {
+            await this.getBookingList()
+          } else {
+            await this.searchAny()
+          }
           this.getTimesChange('update')
           if (this.getSelectText) {
             this.getSelect(this.getSelectText, this.getSelectCount)
@@ -4761,7 +4794,11 @@ export default {
         }).catch(error => {
           console.log('error function addData : ', error)
           this.dialogEdit = false
-          this.getBookingList()
+          if (this.statusSearch === 'no') {
+            this.getBookingList()
+          } else {
+            this.searchAny()
+          }
           this.getTimesChange('update')
           if (this.getSelectText) {
             this.getSelect(this.getSelectText, this.getSelectCount)
@@ -4890,7 +4927,11 @@ export default {
           let DTitem = item.userId
           console.log('DTITEM', DTitem)
           if (DTitem !== 'user-skip') {
-            await this.getBookingList()
+            if (this.statusSearch === 'no') {
+              await this.getBookingList()
+            } else {
+              await this.searchAny()
+            }
             this.getTimesChange('update')
             if (this.getSelectText) {
               this.getSelect(this.getSelectText, this.getSelectCount)
@@ -4914,7 +4955,11 @@ export default {
                 console.log('error function addData : ', error)
               })
           } else {
-            await this.getBookingList()
+            if (this.statusSearch === 'no') {
+              await this.getBookingList()
+            } else {
+              await this.searchAny()
+            }
             this.getTimesChange('update')
             if (this.getSelectText) {
               this.getSelect(this.getSelectText, this.getSelectCount)
@@ -4983,7 +5028,11 @@ export default {
             await this.updateRemark(this.bookNoRemove)
             this.$swal('เรียบร้อย', 'ยกเลิกเรียบร้อย', 'success')
             console.log('addDataGlobal', response)
-            await this.getBookingList()
+            if (this.statusSearch === 'no') {
+              await this.getBookingList()
+            } else {
+              await this.searchAny()
+            }
             this.getTimesChange('update')
             if (this.getSelectText) {
               this.getSelect(this.getSelectText, this.getSelectCount)
@@ -5054,7 +5103,11 @@ export default {
                 console.log('addDataGlobal', response)
                 if (item.statusBt === 'confirm') {
                   if (item.userId !== 'user-skip') {
-                    await this.getBookingList()
+                    if (this.statusSearch === 'no') {
+                      await this.getBookingList()
+                    } else {
+                      await this.searchAny()
+                    }
                     this.getTimesChange('update')
                     if (this.getSelectText) {
                       this.getSelect(this.getSelectText, this.getSelectCount)
@@ -5078,14 +5131,22 @@ export default {
                         console.log('error function addData : ', error)
                       })
                   } else {
-                    await this.getBookingList()
+                    if (this.statusSearch === 'no') {
+                      await this.getBookingList()
+                    } else {
+                      await this.searchAny()
+                    }
                     this.getTimesChange('update')
                     if (this.getSelectText) {
                       this.getSelect(this.getSelectText, this.getSelectCount)
                     }
                   }
                 } else {
-                  await this.getBookingList()
+                  if (this.statusSearch === 'no') {
+                    await this.getBookingList()
+                  } else {
+                    await this.searchAny()
+                  }
                   this.getTimesChange('update')
                   if (this.getSelectText) {
                     this.getSelect(this.getSelectText, this.getSelectCount)
