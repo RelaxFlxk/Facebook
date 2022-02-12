@@ -2724,6 +2724,7 @@ export default {
         this.countAll = 0
         // Clear ช่องค้นหา
         this.searchAll2 = ''
+        this.dataItemSelect = []
         var dataItemTimes = []
         var dataItems = []
         this.BookingDataList = []
@@ -2861,17 +2862,18 @@ export default {
                   this.dataItemTime.push(h)
                 }
               }
+              await this.getTimesChange('update')
+              if (this.getSelectText) {
+                this.getSelect(this.getSelectText, 0)
+              } else {
+                this.getSelect('wait', this.countWaiting)
+              }
               // this.dataItemTime = dataItemTimes.sort((a, b) => {
               //   if (a.timeDueHtext < b.timeDueHtext) return -1
               //   return a.timeDueHtext > b.timeDueHtext ? 1 : 0
               // })
               console.log('this.BookingDataList', this.BookingDataList)
               this.dataReady = true
-              if (this.getSelectText === '') {
-                this.getSelect('wait', this.countWaiting)
-              } else {
-                this.getSelect(this.getSelectText)
-              }
             }
           })
         // eslint-disable-next-line handle-callback-err
@@ -3806,33 +3808,37 @@ export default {
       // if (count > 0) {
       if (text === 'all') {
         // this.dataItemSelect = this.dataItem
-        for (let x = 0; x < this.dataItem.length; x++) {
-          let t = this.dataItem[x]
-          let serviceDetail = ''
-          let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
-          // fieldflow.forEach((row) => {
-          //   let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
-          //   serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
-          // })
-          fieldflow.forEach((row) => {
-            let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
-            let convertTextField = ''
-            if (tempField.length > 0) {
-              if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
-                if (tempField[0].fieldValue) {
-                  convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+        if (this.dataItem.length > 0) {
+          for (let x = 0; x < this.dataItem.length; x++) {
+            let t = this.dataItem[x]
+            let serviceDetail = ''
+            let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
+            // fieldflow.forEach((row) => {
+            //   let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+            //   serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
+            // })
+            fieldflow.forEach((row) => {
+              let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+              let convertTextField = ''
+              if (tempField.length > 0) {
+                if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
+                  if (tempField[0].fieldValue) {
+                    convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+                  } else {
+                    convertTextField = tempField[0].fieldValue
+                  }
                 } else {
                   convertTextField = tempField[0].fieldValue
                 }
-              } else {
-                convertTextField = tempField[0].fieldValue
               }
-            }
-            serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
-          })
-          serviceDetail = serviceDetail.trim() || t.flowName
-          t.flowNameShow = serviceDetail
-          this.dataItemSelect.push(t)
+              serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
+            })
+            serviceDetail = serviceDetail.trim() || t.flowName
+            t.flowNameShow = serviceDetail
+            this.dataItemSelect.push(t)
+          }
+        } else {
+          this.dataItemSelect = []
         }
         console.log('dataSelect', this.dataItemSelect)
         this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
@@ -3854,38 +3860,42 @@ export default {
       } else {
         var dataSelect = this.dataItem.filter(el => { return el.statusBt === text })
         console.log('fieldflow', dataSelect)
-        for (let x = 0; x < dataSelect.length; x++) {
-          let t = dataSelect[x]
-          let serviceDetail = ''
-          let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
-          // fieldflow.forEach((row) => {
-          //   let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
-          //   serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
-          // })
-          console.log('fieldflow')
-          if (fieldflow.length > 0) {
-            fieldflow.forEach((row) => {
-              let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
-              console.log('tempField', tempField)
-              console.log('fieldType', row.fieldType)
-              let convertTextField = ''
-              if (tempField.length > 0) {
-                if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
-                  if (tempField[0].fieldValue) {
-                    convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+        if (dataSelect.length > 0) {
+          for (let x = 0; x < dataSelect.length; x++) {
+            let t = dataSelect[x]
+            let serviceDetail = ''
+            let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
+            // fieldflow.forEach((row) => {
+            //   let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+            //   serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
+            // })
+            console.log('fieldflow')
+            if (fieldflow.length > 0) {
+              fieldflow.forEach((row) => {
+                let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+                console.log('tempField', tempField)
+                console.log('fieldType', row.fieldType)
+                let convertTextField = ''
+                if (tempField.length > 0) {
+                  if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
+                    if (tempField[0].fieldValue) {
+                      convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+                    } else {
+                      convertTextField = tempField[0].fieldValue || ''
+                    }
                   } else {
                     convertTextField = tempField[0].fieldValue || ''
                   }
-                } else {
-                  convertTextField = tempField[0].fieldValue || ''
                 }
-              }
-              serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
-            })
+                serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
+              })
+            }
+            serviceDetail = serviceDetail.trim() || t.flowName
+            t.flowNameShow = serviceDetail
+            this.dataItemSelect.push(t)
           }
-          serviceDetail = serviceDetail.trim() || t.flowName
-          t.flowNameShow = serviceDetail
-          this.dataItemSelect.push(t)
+        } else {
+          this.dataItemSelect = []
         }
         console.log('dataSelect', this.dataItemSelect)
         if (text === 'cancel') {
