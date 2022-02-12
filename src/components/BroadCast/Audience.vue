@@ -89,89 +89,46 @@
                       </v-col>
                       <v-col cols="8" class="text-center pt-0">
                         <v-col cols="12" class="pb-0">
-                          <v-row>
-                            <v-col cols="12" class="pb-0">
-                              <v-row>
-                                <v-subheader id="subtext"
-                                  >ชื่อกลุ่มเป้าหมาย</v-subheader
-                                >
-                              </v-row>
-                              <v-row>
-                                <v-text-field
-                                  placeholder="ชื่อกลุ่มเป้าหมาย"
-                                  v-model="formAdd.audiencesName"
-                                  :rules="[rules.required]"
-                                  :counter="50"
-                                  maxlength="50"
-                                  solo
-                                  dense
-                                  required
-                                ></v-text-field>
-                              </v-row>
-                            </v-col>
-                          </v-row>
+                            <v-text-field
+                              label="ชื่อกลุ่มเป้าหมาย"
+                              v-model="formAdd.audiencesName"
+                              :rules="[rules.required]"
+                              :counter="50"
+                              maxlength="50"
+                              outlined
+                              dense
+                              required
+                            ></v-text-field>
                         </v-col>
                         <v-col cols="12" class="pb-0">
-                          <v-row>
-                            <v-col cols="12" class="pb-0">
-                              <v-row>
-                                <v-subheader id="subtext"
-                                >เลือกกลุ่มเป้าหมาย</v-subheader
-                                >
-                              </v-row>
-                              <v-row>
-                                <v-select
-                                  :items="optionAudiences"
-                                  v-model="formAdd.audiencesSelect"
-                                  dense
-                                  @change="chkAudiencesSelect()"
-                                  solo
-                                  :rules="[rules.required]"
-                                ></v-select>
-                              </v-row>
-                            </v-col>
-                            <!-- <v-col cols="2" class="pb-0"></v-col> -->
-                          </v-row>
+                          <v-select
+                            label="เลือกกลุ่มเป้าหมาย"
+                            :items="optionAudiences"
+                            v-model="formAdd.audiencesSelect"
+                            dense
+                            @change="chkAudiencesSelect()"
+                            outlined
+                            :rules="[rules.required]"
+                          ></v-select>
                         </v-col>
-                        <v-col cols="12" class="pb-0" v-if="formAdd.audiencesSelect === 'typeJob'">
-                          <v-row>
+                        <template class="pb-0" v-if="formAdd.audiencesSelect === 'typeJob'">
                             <v-col cols="12" class="pb-0">
-                              <v-row>
-                                <v-col cols="12" class="pb-0">
-                                  <v-row>
-                                    <v-subheader id="subtext"
-                                    >เลือกสาขา</v-subheader
-                                    >
-                                  </v-row>
-                                  <v-row>
-                                    <v-select
-                                      v-model="formAdd.masBranchID"
-                                      :items="branch"
-                                      solo
-                                      dense
-                                    ></v-select>
-                                  </v-row>
-                                </v-col>
-                                <!-- <v-col cols="2" class="pb-0"></v-col> -->
-                              </v-row>
+                              <v-select
+                                label="เลือกสาขา"
+                                v-model="formAdd.masBranchID"
+                                :items="branch"
+                                outlined
+                                dense
+                              ></v-select>
                             </v-col>
                             <v-col cols="12" class="pb-0">
-                               <v-row>
-                                <v-subheader id="subtext"
-                                >เลือกบริการต้องการ</v-subheader
-                                >
-                              </v-row>
-                              <v-row>
-                                <v-col cols="12" class="pa-0">
-                                  <v-select
-                                      v-model="formAdd.flowId"
-                                      :items="DataFlowName"
-                                      label="ประเภทบริการ"
-                                      outlined
-                                      dense
-                                    ></v-select>
-                                </v-col>
-                              </v-row>
+                              <v-select
+                                  v-model="formAdd.flowId"
+                                  :items="DataFlowName"
+                                  label="ประเภทบริการ"
+                                  outlined
+                                  dense
+                                ></v-select>
                             </v-col>
                             <v-col cols="12" class="pb-0">
                               <v-row>
@@ -325,285 +282,258 @@
                                 </v-col>
                               </v-row>
                             </v-col>
-                          </v-row>
-                        </v-col>
-                        <v-col cols="12" class="pb-0" v-if="formAdd.audiencesSelect === 'bookingDate'">
-                          <v-row>
-                            <v-col cols="12" class="pb-0">
-                              <v-row>
-                                <v-col cols="12" class="pb-0">
-                                  <v-row>
-                                    <v-subheader id="subtext"
-                                    >เลือกสาขา</v-subheader
-                                    >
-                                  </v-row>
-                                  <v-row>
-                                    <v-select
-                                      v-model="formAdd.masBranchID"
-                                      :items="branch"
-                                      solo
-                                      dense
-                                    ></v-select>
-                                  </v-row>
-                                </v-col>
-                                <!-- <v-col cols="2" class="pb-0"></v-col> -->
-                              </v-row>
-                            </v-col>
-                            <v-col cols="12" class="pb-0">
-                               <v-row>
-                                <v-subheader id="subtext"
-                                >เลือกบริการต้องการ</v-subheader
+                        </template>
+                        <template class="pb-0" v-if="formAdd.audiencesSelect === 'bookingDate'">
+                          <v-col cols="12" class="pb-0">
+                            <v-select
+                              label="เลือกสาขา"
+                              v-model="formAdd.masBranchID"
+                              :items="branch"
+                              outlined
+                              dense
+                            ></v-select>
+                          </v-col>
+                          <v-col cols="12" class="pb-0">
+                            <v-select
+                                v-model="formAdd.flowId"
+                                :items="DataFlowName"
+                                label="ประเภทบริการ"
+                                outlined
+                                dense
+                              ></v-select>
+                          </v-col>
+                          <v-col cols="12" class="pb-0">
+                            <v-row>
+                              <v-subheader id="subtext"
+                              >เลือกวันที่ที่ต้องการ</v-subheader
+                              >
+                            </v-row>
+                            <v-row>
+                              <v-col cols="6" class="pa-0">
+                                <v-menu
+                                  v-model="menu1"
+                                  :close-on-content-click="false"
+                                  :nudge-right="40"
+                                  transition="scale-transition"
+                                  offset-y
+                                  min-width="290px"
                                 >
-                              </v-row>
-                              <v-row>
-                                <v-col cols="12" class="pa-0">
-                                  <v-select
-                                      v-model="formAdd.flowId"
-                                      :items="DataFlowName"
-                                      label="ประเภทบริการ"
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field
+                                      v-model="formAdd.startDate"
+                                      prepend-icon="mdi-calendar"
+                                      label=""
+                                      v-bind="attrs"
+                                      outlined
+                                      readonly
+                                      dense
+                                      v-on="on"
+                                    ></v-text-field>
+                                  </template>
+                                  <v-date-picker
+                                    v-model="formAdd.startDate"
+                                    :max="formAdd.endDate"
+                                    @input="menu1 = false"
+                                  ></v-date-picker>
+                                </v-menu>
+                              </v-col>
+                              <v-col cols="6" class="pa-0">
+                                <v-menu
+                                  v-model="menu2"
+                                  :close-on-content-click="false"
+                                  :nudge-right="40"
+                                  transition="scale-transition"
+                                  offset-y
+                                  min-width="290px"
+                                >
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field
+                                      v-model="formAdd.endDate"
+                                      prepend-icon="mdi-calendar"
+                                      label=""
+                                      v-bind="attrs"
+                                      readonly
                                       outlined
                                       dense
-                                    ></v-select>
-                                </v-col>
-                              </v-row>
-                            </v-col>
-                            <v-col cols="12" class="pb-0">
-                              <v-row>
-                                <v-subheader id="subtext"
-                                >เลือกวันที่ที่ต้องการ</v-subheader
+                                      v-on="on"
+                                    ></v-text-field>
+                                  </template>
+                                  <v-date-picker
+                                    :min="formAdd.startDate"
+                                    v-model="formAdd.endDate"
+                                    @input="menu2 = false"
+                                  ></v-date-picker>
+                                </v-menu>
+                              </v-col>
+                            </v-row>
+                          </v-col>
+                        </template>
+                        <template class="pb-0" v-if="formAdd.audiencesSelect === 'rating'">
+                          <v-col cols="12" class="pb-0">
+                            <v-row>
+                              <v-subheader id="subtext"
+                              >เลือกคะแนนที่ต้องการ</v-subheader
+                              >
+                            </v-row>
+                            <v-row>
+                              <v-col cols="6" class="pt-0 pb-0">
+                                <VuetifyMoney
+                                  v-model="formAdd.startRating"
+                                  dense
+                                  required
+                                  outlined
+                                  v-bind:options="options2"
+                                />
+                              </v-col>
+                              <v-col cols="6" class="pt-0 pb-0">
+                                <VuetifyMoney
+                                  v-model="formAdd.endRating"
+                                  dense
+                                  required
+                                  outlined
+                                  v-bind:options="options2"
+                                />
+                              </v-col>
+                            </v-row>
+                          </v-col>
+                          <v-col cols="12" class="pb-0">
+                            <v-row>
+                              <v-subheader id="subtext"
+                              >เลือกวันที่ที่ต้องการ</v-subheader
+                              >
+                            </v-row>
+                            <v-row>
+                              <v-col cols="6" class="pa-0">
+                                <v-menu
+                                  v-model="menu1"
+                                  :close-on-content-click="false"
+                                  :nudge-right="40"
+                                  transition="scale-transition"
+                                  offset-y
+                                  min-width="290px"
                                 >
-                              </v-row>
-                              <v-row>
-                                <v-col cols="6" class="pa-0">
-                                  <v-menu
-                                    v-model="menu1"
-                                    :close-on-content-click="false"
-                                    :nudge-right="40"
-                                    transition="scale-transition"
-                                    offset-y
-                                    min-width="290px"
-                                  >
-                                    <template v-slot:activator="{ on, attrs }">
-                                      <v-text-field
-                                        v-model="formAdd.startDate"
-                                        prepend-icon="mdi-calendar"
-                                        label=""
-                                        v-bind="attrs"
-                                        outlined
-                                        readonly
-                                        dense
-                                        v-on="on"
-                                      ></v-text-field>
-                                    </template>
-                                    <v-date-picker
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field
                                       v-model="formAdd.startDate"
-                                      :max="formAdd.endDate"
-                                      @input="menu1 = false"
-                                    ></v-date-picker>
-                                  </v-menu>
-                                </v-col>
-                                <v-col cols="6" class="pa-0">
-                                  <v-menu
-                                    v-model="menu2"
-                                    :close-on-content-click="false"
-                                    :nudge-right="40"
-                                    transition="scale-transition"
-                                    offset-y
-                                    min-width="290px"
-                                  >
-                                    <template v-slot:activator="{ on, attrs }">
-                                      <v-text-field
-                                        v-model="formAdd.endDate"
-                                        prepend-icon="mdi-calendar"
-                                        label=""
-                                        v-bind="attrs"
-                                        readonly
-                                        outlined
-                                        dense
-                                        v-on="on"
-                                      ></v-text-field>
-                                    </template>
-                                    <v-date-picker
-                                      :min="formAdd.startDate"
-                                      v-model="formAdd.endDate"
-                                      @input="menu2 = false"
-                                    ></v-date-picker>
-                                  </v-menu>
-                                </v-col>
-                              </v-row>
-                            </v-col>
-                          </v-row>
-                        </v-col>
-                          <v-col cols="12" class="pb-0" v-if="formAdd.audiencesSelect === 'rating'">
-                          <v-row>
-                            <v-col cols="12" class="pb-0">
-                              <v-row>
-                                <v-subheader id="subtext"
-                                >เลือกคะแนนที่ต้องการ</v-subheader
+                                      prepend-icon="mdi-calendar"
+                                      label=""
+                                      v-bind="attrs"
+                                      readonly
+                                      outlined
+                                      dense
+                                      v-on="on"
+                                    ></v-text-field>
+                                  </template>
+                                  <v-date-picker
+                                    v-model="formAdd.startDate"
+                                    :max="formAdd.endDate"
+                                    @input="menu1 = false"
+                                  ></v-date-picker>
+                                </v-menu>
+                              </v-col>
+                              <v-col cols="6" class="pa-0">
+                                <v-menu
+                                  v-model="menu2"
+                                  :close-on-content-click="false"
+                                  :nudge-right="40"
+                                  transition="scale-transition"
+                                  offset-y
+                                  min-width="290px"
                                 >
-                              </v-row>
-                              <v-row>
-                                <v-col cols="6" class="pt-0 pb-0">
-                                  <VuetifyMoney
-                                    v-model="formAdd.startRating"
-                                    dense
-                                    required
-                                    outlined
-                                    v-bind:options="options2"
-                                  />
-                                </v-col>
-                                <v-col cols="6" class="pt-0 pb-0">
-                                  <VuetifyMoney
-                                    v-model="formAdd.endRating"
-                                    dense
-                                    required
-                                    outlined
-                                    v-bind:options="options2"
-                                  />
-                                </v-col>
-                              </v-row>
-                            </v-col>
-                            <v-col cols="12" class="pb-0">
-                              <v-row>
-                                <v-subheader id="subtext"
-                                >เลือกวันที่ที่ต้องการ</v-subheader
-                                >
-                              </v-row>
-                              <v-row>
-                                <v-col cols="6" class="pa-0">
-                                  <v-menu
-                                    v-model="menu1"
-                                    :close-on-content-click="false"
-                                    :nudge-right="40"
-                                    transition="scale-transition"
-                                    offset-y
-                                    min-width="290px"
-                                  >
-                                    <template v-slot:activator="{ on, attrs }">
-                                      <v-text-field
-                                        v-model="formAdd.startDate"
-                                        prepend-icon="mdi-calendar"
-                                        label=""
-                                        v-bind="attrs"
-                                        readonly
-                                        outlined
-                                        dense
-                                        v-on="on"
-                                      ></v-text-field>
-                                    </template>
-                                    <v-date-picker
-                                      v-model="formAdd.startDate"
-                                      :max="formAdd.endDate"
-                                      @input="menu1 = false"
-                                    ></v-date-picker>
-                                  </v-menu>
-                                </v-col>
-                                <v-col cols="6" class="pa-0">
-                                  <v-menu
-                                    v-model="menu2"
-                                    :close-on-content-click="false"
-                                    :nudge-right="40"
-                                    transition="scale-transition"
-                                    offset-y
-                                    min-width="290px"
-                                  >
-                                    <template v-slot:activator="{ on, attrs }">
-                                      <v-text-field
-                                        v-model="formAdd.endDate"
-                                        prepend-icon="mdi-calendar"
-                                        label=""
-                                        v-bind="attrs"
-                                        outlined
-                                        readonly
-                                        dense
-                                        v-on="on"
-                                      ></v-text-field>
-                                    </template>
-                                    <v-date-picker
-                                      :min="formAdd.startDate"
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field
                                       v-model="formAdd.endDate"
-                                      @input="menu2 = false"
-                                    ></v-date-picker>
-                                  </v-menu>
-                                </v-col>
-                              </v-row>
-                            </v-col>
-                          </v-row>
-                        </v-col>
-                        <v-col cols="12" class="pb-0" v-if="formAdd.audiencesSelect === 'typeCustomField' && dataCustom.length > 0">
-                          <v-row>
-                            <v-col cols="12" class="pb-0">
-                              <v-row>
-                                <v-col cols="6">
-                                  <v-row>
-                                    <v-subheader id="subtext"
-                                    >เลือกช่องกรอกข้อมูล</v-subheader
-                                    >
-                                  </v-row>
-                                  <v-row>
-                                    <v-select
-                                      v-model="formAdd.fieldId"
-                                      :items="dataCustom"
-                                      @change="getDataOptionField()"
-                                      solo
+                                      prepend-icon="mdi-calendar"
+                                      label=""
+                                      v-bind="attrs"
+                                      outlined
+                                      readonly
                                       dense
-                                    ></v-select>
-                                  </v-row>
-                                </v-col>
-                                <v-col cols="6">
-                                  <v-row>
-                                    <v-subheader id="subtext"
-                                    >เลือกข้อมูลของช่องกรอกข้อมูล</v-subheader
-                                    >
-                                  </v-row>
-                                  <v-row>
-                                    <v-select
-                                      v-model="formAdd.optionFieldValue"
-                                      :items="dataOptionField"
-                                      solo
-                                      dense
-                                    ></v-select>
-                                  </v-row>
-                                </v-col>
-                                <!-- <v-col cols="2" class="pb-0"></v-col> -->
-                              </v-row>
-                            </v-col>
-                            <v-col cols="12" class="pb-0">
-                              <v-row>
-                                <v-col cols="6">
-                                  <v-row>
-                                    <v-subheader id="subtext"
-                                    >เลือกแหล่งที่มาของข้อมูล</v-subheader
-                                    >
-                                  </v-row>
-                                  <v-row>
-                                    <v-select
-                                      v-model="formAdd.selectData"
-                                      :items="dataSelectData"
-                                      solo
-                                      dense
-                                    ></v-select>
-                                  </v-row>
-                                </v-col>
-                                <v-col cols="6" class="pb-0">
-                                  <v-row>
-                                    <v-subheader id="subtext"
-                                    >เลือกสาขา</v-subheader
-                                    >
-                                  </v-row>
-                                  <v-row>
-                                    <v-select
-                                      v-model="formAdd.masBranchID"
-                                      :items="branch"
-                                      solo
-                                      dense
-                                    ></v-select>
-                                  </v-row>
-                                </v-col>
-                              </v-row>
-                            </v-col>
-                          </v-row>
-                        </v-col>
+                                      v-on="on"
+                                    ></v-text-field>
+                                  </template>
+                                  <v-date-picker
+                                    :min="formAdd.startDate"
+                                    v-model="formAdd.endDate"
+                                    @input="menu2 = false"
+                                  ></v-date-picker>
+                                </v-menu>
+                              </v-col>
+                            </v-row>
+                          </v-col>
+                        </template>
+                        <template class="pb-0" v-if="formAdd.audiencesSelect === 'typeCustomField' && dataCustom.length > 0">
+                          <v-col cols="12" class="pb-0">
+                            <v-row>
+                              <v-col cols="6">
+                                <v-row>
+                                  <v-subheader id="subtext"
+                                  >เลือกช่องกรอกข้อมูล</v-subheader
+                                  >
+                                </v-row>
+                                <v-row>
+                                  <v-select
+                                    v-model="formAdd.fieldId"
+                                    :items="dataCustom"
+                                    @change="getDataOptionField()"
+                                    solo
+                                    dense
+                                  ></v-select>
+                                </v-row>
+                              </v-col>
+                              <v-col cols="6">
+                                <v-row>
+                                  <v-subheader id="subtext"
+                                  >เลือกข้อมูลของช่องกรอกข้อมูล</v-subheader
+                                  >
+                                </v-row>
+                                <v-row>
+                                  <v-select
+                                    v-model="formAdd.optionFieldValue"
+                                    :items="dataOptionField"
+                                    solo
+                                    dense
+                                  ></v-select>
+                                </v-row>
+                              </v-col>
+                              <!-- <v-col cols="2" class="pb-0"></v-col> -->
+                            </v-row>
+                          </v-col>
+                          <v-col cols="12" class="pb-0">
+                            <v-row>
+                              <v-col cols="6">
+                                <v-row>
+                                  <v-subheader id="subtext"
+                                  >เลือกแหล่งที่มาของข้อมูล</v-subheader
+                                  >
+                                </v-row>
+                                <v-row>
+                                  <v-select
+                                    v-model="formAdd.selectData"
+                                    :items="dataSelectData"
+                                    solo
+                                    dense
+                                  ></v-select>
+                                </v-row>
+                              </v-col>
+                              <v-col cols="6" class="pb-0">
+                                <v-row>
+                                  <v-subheader id="subtext"
+                                  >เลือกสาขา</v-subheader
+                                  >
+                                </v-row>
+                                <v-row>
+                                  <v-select
+                                    v-model="formAdd.masBranchID"
+                                    :items="branch"
+                                    solo
+                                    dense
+                                  ></v-select>
+                                </v-row>
+                              </v-col>
+                            </v-row>
+                          </v-col>
+                        </template>
                       </v-col>
                     </v-row>
                   </v-container>
@@ -794,89 +724,46 @@
                       </v-col>
                       <v-col cols="8" class="text-center pt-0">
                         <v-col cols="12" class="pb-0">
-                          <v-row>
-                            <v-col cols="12" class="pb-0">
-                              <v-row>
-                                <v-subheader id="subtext"
-                                  >ชื่อกลุ่มเป้าหมาย</v-subheader
-                                >
-                              </v-row>
-                              <v-row>
-                                <v-text-field
-                                  placeholder="ชื่อกลุ่มเป้าหมาย"
-                                  v-model="formUpdate.audiencesName"
-                                  :rules="[rules.required]"
-                                  :counter="50"
-                                  maxlength="50"
-                                  solo
-                                  dense
-                                  required
-                                ></v-text-field>
-                              </v-row>
-                            </v-col>
-                          </v-row>
+                          <v-text-field
+                            label="ชื่อกลุ่มเป้าหมาย"
+                            v-model="formUpdate.audiencesName"
+                            :rules="[rules.required]"
+                            :counter="50"
+                            maxlength="50"
+                            outlined
+                            dense
+                            required
+                          ></v-text-field>
                         </v-col>
                         <v-col cols="12" class="pb-0">
-                          <v-row>
-                            <v-col cols="12" class="pb-0">
-                              <v-row>
-                                <v-subheader id="subtext"
-                                >เลือกกลุ่มเป้าหมาย</v-subheader
-                                >
-                              </v-row>
-                              <v-row>
-                                <v-select
-                                  :items="optionAudiences"
-                                  v-model="formUpdate.audiencesSelect"
-                                  dense
-                                  @change="chkAudiencesSelectUpdate()"
-                                  solo
-                                  :rules="[rules.required]"
-                                ></v-select>
-                              </v-row>
-                            </v-col>
-                            <!-- <v-col cols="2" class="pb-0"></v-col> -->
-                          </v-row>
+                          <v-select
+                            label="เลือกกลุ่มเป้าหมาย"
+                            :items="optionAudiences"
+                            v-model="formUpdate.audiencesSelect"
+                            dense
+                            @change="chkAudiencesSelectUpdate()"
+                            outlined
+                            :rules="[rules.required]"
+                          ></v-select>
                         </v-col>
-                        <v-col cols="12" class="pb-0" v-if="formUpdate.audiencesSelect === 'typeJob'">
-                          <v-row>
+                        <template class="pb-0" v-if="formUpdate.audiencesSelect === 'typeJob'">
                             <v-col cols="12" class="pb-0">
-                              <v-row>
-                                <v-col cols="12" class="pb-0">
-                                  <v-row>
-                                    <v-subheader id="subtext"
-                                    >เลือกสาขา</v-subheader
-                                    >
-                                  </v-row>
-                                  <v-row>
-                                    <v-select
-                                      v-model="formUpdate.masBranchID"
-                                      :items="branch"
-                                      solo
-                                      dense
-                                    ></v-select>
-                                  </v-row>
-                                </v-col>
-                                <!-- <v-col cols="2" class="pb-0"></v-col> -->
-                              </v-row>
+                              <v-select
+                                label="เลือกสาขา"
+                                v-model="formUpdate.masBranchID"
+                                :items="branch"
+                                outlined
+                                dense
+                              ></v-select>
                             </v-col>
                             <v-col cols="12" class="pb-0">
-                               <v-row>
-                                <v-subheader id="subtext"
-                                >เลือกบริการต้องการ</v-subheader
-                                >
-                              </v-row>
-                              <v-row>
-                                <v-col cols="12" class="pa-0">
-                                  <v-select
-                                      v-model="formUpdate.flowId"
-                                      :items="DataFlowName"
-                                      label="ประเภทบริการ"
-                                      outlined
-                                      dense
-                                    ></v-select>
-                                </v-col>
-                              </v-row>
+                              <v-select
+                                  v-model="formUpdate.flowId"
+                                  :items="DataFlowName"
+                                  label="ประเภทบริการ"
+                                  outlined
+                                  dense
+                                ></v-select>
                             </v-col>
                             <v-col cols="12" class="pb-0">
                               <v-row>
@@ -1034,47 +921,25 @@
                                 </v-col>
                               </v-row>
                             </v-col>
-                          </v-row>
-                        </v-col>
-                        <v-col cols="12" class="pb-0" v-if="formUpdate.audiencesSelect === 'bookingDate'">
-                          <v-row>
+                        </template>
+                        <template class="pb-0" v-if="formUpdate.audiencesSelect === 'bookingDate'">
                             <v-col cols="12" class="pb-0">
-                              <v-row>
-                                <v-col cols="12" class="pb-0">
-                                  <v-row>
-                                    <v-subheader id="subtext"
-                                    >เลือกสาขา</v-subheader
-                                    >
-                                  </v-row>
-                                  <v-row>
-                                    <v-select
-                                      v-model="formUpdate.masBranchID"
-                                      :items="branch"
-                                      solo
-                                      dense
-                                    ></v-select>
-                                  </v-row>
-                                </v-col>
-                                <!-- <v-col cols="2" class="pb-0"></v-col> -->
-                              </v-row>
+                              <v-select
+                                v-model="formUpdate.masBranchID"
+                                :items="branch"
+                                label="เลือกสาขา"
+                                outlined
+                                dense
+                              ></v-select>
                             </v-col>
                             <v-col cols="12" class="pb-0">
-                               <v-row>
-                                <v-subheader id="subtext"
-                                >เลือกบริการต้องการ</v-subheader
-                                >
-                              </v-row>
-                              <v-row>
-                                <v-col cols="12" class="pa-0">
-                                  <v-select
-                                      v-model="formUpdate.flowId"
-                                      :items="DataFlowName"
-                                      label="ประเภทบริการ"
-                                      outlined
-                                      dense
-                                    ></v-select>
-                                </v-col>
-                              </v-row>
+                              <v-select
+                                  v-model="formUpdate.flowId"
+                                  :items="DataFlowName"
+                                  label="ประเภทบริการ"
+                                  outlined
+                                  dense
+                                ></v-select>
                             </v-col>
                             <v-col cols="12" class="pb-0">
                               <v-row>
@@ -1141,9 +1006,8 @@
                                 </v-col>
                               </v-row>
                             </v-col>
-                          </v-row>
-                        </v-col>
-                          <v-col cols="12" class="pb-0" v-if="formUpdate.audiencesSelect === 'rating'">
+                        </template>
+                          <template class="pb-0" v-if="formUpdate.audiencesSelect === 'rating'">
                           <v-row>
                             <v-col cols="12" class="pb-0">
                               <v-row>
@@ -1238,82 +1102,47 @@
                               </v-row>
                             </v-col>
                           </v-row>
-                        </v-col>
-                        <v-col cols="12" class="pb-0" v-if="formUpdate.audiencesSelect === 'typeCustomField' && dataCustom.length > 0">
-                          <v-row>
-                            <v-col cols="12" class="pb-0">
-                              <v-row>
-                                <v-col cols="6">
-                                  <v-row>
-                                    <v-subheader id="subtext"
-                                    >เลือกช่องกรอกข้อมูล</v-subheader
-                                    >
-                                  </v-row>
-                                  <v-row>
-                                    <v-select
-                                      v-model="formUpdate.fieldId"
-                                      :items="dataCustom"
-                                      @change="getDataOptionFieldUpdate()"
-                                      solo
-                                      dense
-                                    ></v-select>
-                                  </v-row>
-                                </v-col>
-                                <v-col cols="6">
-                                  <v-row>
-                                    <v-subheader id="subtext"
-                                    >เลือกข้อมูลของช่องกรอกข้อมูล</v-subheader
-                                    >
-                                  </v-row>
-                                  <v-row>
-                                    <v-select
-                                      v-model="formUpdate.optionFieldValue"
-                                      :items="dataOptionField"
-                                      solo
-                                      dense
-                                    ></v-select>
-                                  </v-row>
-                                </v-col>
-                                <!-- <v-col cols="2" class="pb-0"></v-col> -->
-                              </v-row>
+                        </template>
+                        <template class="pb-0" v-if="formUpdate.audiencesSelect === 'typeCustomField' && dataCustom.length > 0">
+                            <v-col cols="6" class="pb-0">
+                              <v-select
+                                v-model="formUpdate.fieldId"
+                                :items="dataCustom"
+                                outlined
+                                @change="getDataOptionFieldUpdate()"
+                                label="เลือกช่องกรอกข้อมูล"
+                                dense
+                              ></v-select>
                             </v-col>
-                            <v-col cols="12" class="pb-0">
-                              <v-row>
-                                <v-col cols="6">
-                                  <v-row>
-                                    <v-subheader id="subtext"
-                                    >เลือกแหล่งที่มาของข้อมูล</v-subheader
-                                    >
-                                  </v-row>
-                                  <v-row>
-                                    <v-select
-                                      v-model="formUpdate.selectData"
-                                      :items="dataSelectData"
-                                      solo
-                                      dense
-                                    ></v-select>
-                                  </v-row>
-                                </v-col>
-                                <v-col cols="6" class="pb-0">
-                                  <v-row>
-                                    <v-subheader id="subtext"
-                                    >เลือกสาขา</v-subheader
-                                    >
-                                  </v-row>
-                                  <v-row>
-                                    <v-select
-                                      v-model="formUpdate.masBranchID"
-                                      :items="branch"
-                                      solo
-                                      dense
-                                    ></v-select>
-                                  </v-row>
-                                </v-col>
-                              </v-row>
+                            <v-col cols="6">
+                              <v-select
+                                v-model="formUpdate.optionFieldValue"
+                                :items="dataOptionField"
+                                label="เลือกข้อมูลของช่องกรอกข้อมูล"
+                                outlined
+                                dense
+                              ></v-select>
                             </v-col>
-                          </v-row>
+                            <v-col cols="6" class="pb-0">
+                              <v-select
+                                v-model="formUpdate.selectData"
+                                :items="dataSelectData"
+                                outlined
+                                dense
+                                label="เลือกแหล่งที่มาของข้อมูล"
+                              ></v-select>
+                            </v-col>
+                            <v-col cols="6" class="pb-0">
+                              <v-select
+                                label="เลือกสาขา"
+                                v-model="formUpdate.masBranchID"
+                                :items="branch"
+                                outlined
+                                dense
+                              ></v-select>
+                            </v-col>
+                            </template>
                         </v-col>
-                      </v-col>
                     </v-row>
                   </v-container>
                 </v-card-text>
