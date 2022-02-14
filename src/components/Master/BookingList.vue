@@ -171,7 +171,7 @@
               <template v-slot:activator="{ on, attrs }">
                 <v-text-field
                   v-model="dateStart"
-                  label="Picker in menu"
+                  label="เลือก เดือน/ปี"
                   prepend-icon="mdi-calendar"
                   readonly
                   outlined
@@ -213,7 +213,7 @@
               dense
               v-model="searchOther"
               append-icon="mdi-text-box-search"
-              label="ค้นหา"
+              label="ค้นหาทั้งหมด"
               :color="showColorSearch ? 'green' : 'info'"
               @click:append="searchAny(), showColorSearch = true, statusSearch = 'yes'"
               outlined
@@ -1436,7 +1436,7 @@
                 <v-text-field
                   v-model="searchAll2"
                   append-icon="mdi-magnify"
-                  label="ค้นหาจากข้อมูลทั้งหมด"
+                  label="ค้นหา"
                   single-line
                   dense
                   hide-details
@@ -2724,7 +2724,7 @@ export default {
         this.countAll = 0
         // Clear ช่องค้นหา
         this.searchAll2 = ''
-        this.dataItemSelect = []
+        // this.dataItemSelect = []
         var dataItemTimes = []
         var dataItems = []
         this.BookingDataList = []
@@ -2844,6 +2844,12 @@ export default {
             if (dataItems.length === 0 || dataItems.status === false) {
               this.dataItem = []
               this.dataItemTime = []
+              await this.getTimesChange('update')
+              if (this.getSelectText) {
+                this.getSelect(this.getSelectText, 0)
+              } else {
+                this.getSelect('wait', this.countWaiting)
+              }
               this.dataReady = true
             // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
             } else {
@@ -4224,6 +4230,12 @@ export default {
           if (dataItems.length === 0 || dataItems.status === false) {
             this.dataItem = []
             this.dataItemTime = []
+            await this.getTimesChange('update')
+            if (this.getSelectText) {
+              this.getSelect(this.getSelectText, 0)
+            } else {
+              this.getSelect('wait', this.countWaiting)
+            }
             this.dataReady = true
             // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
           } else {
@@ -4247,10 +4259,13 @@ export default {
             //   return a.timeDueHtext > b.timeDueHtext ? 1 : 0
             // })
             console.log('dataItemTime', this.dataItemTime)
-            this.dataReady = true
-            if (this.getSelectText === '') {
+            await this.getTimesChange('update')
+            if (this.getSelectText) {
+              this.getSelect(this.getSelectText, 0)
+            } else {
               this.getSelect('wait', this.countWaiting)
             }
+            this.dataReady = true
           }
         })
         // eslint-disable-next-line handle-callback-err
