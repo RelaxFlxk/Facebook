@@ -253,7 +253,7 @@ export default {
       })
     },
     async checkbookNo (dataitem) {
-      if (this.$route.query.bookNo) {
+      if (this.$route.query.bookNo !== undefined && this.$route.query.type !== 'job') {
         if (dataitem.shopId === this.$route.query.shopId) {
           this.bookNo = this.$route.query.bookNo
           this.queryData = 'bookNo'
@@ -299,6 +299,8 @@ export default {
               this.$router.push('/Core/Login')
             })
         }
+      } else if (this.$route.query.bookNo !== undefined && this.$route.query.type === 'job') {
+        this.$router.push('/Master/BookingList?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId + '&type=' + this.$route.query.type)
       } else {
         this.$router.push('/Dashbord/Report')
       }
