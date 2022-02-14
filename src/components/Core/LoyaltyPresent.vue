@@ -65,6 +65,7 @@ export default {
               )
               .then(async (response) => {
                 this.$swal('เรียบร้อย', 'สร้างร้าน เรียบร้อย', 'success')
+                window.location.href = `https://betask-loyalty-admin.web.app/core/login`
                 // this.$router.push('/Core/Login')
               })
             // eslint-disable-next-line handle-callback-err
