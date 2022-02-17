@@ -789,7 +789,7 @@
           <v-dialog v-model="dialogEdit" persistent :max-width="dialogwidth">
             <v-card class="text-center">
               <v-card-title>นำเข้ากระดานการทำงาน</v-card-title>
-              <v-card-text>
+              <v-card-text  v-if="dataEditJobReady">
                 <v-container>
                   <v-col
                     v-for="(item, indexitem) in BookingDataItem"
@@ -1089,6 +1089,42 @@
                       <v-icon color="#173053">mdi-close</v-icon> ยกเลิก
                     </v-btn>
                   </div>
+                </v-container>
+              </v-card-text>
+              <v-card-text  v-if="!dataEditJobReady">
+                <v-container>
+                  <div class="text-center">
+                    <v-progress-circular
+                      :size="50"
+                      color="primary"
+                      indeterminate
+                    ></v-progress-circular>
+
+                    <v-progress-circular
+                      :width="3"
+                      color="red"
+                      indeterminate
+                    ></v-progress-circular>
+
+                    <v-progress-circular
+                      :size="70"
+                      :width="7"
+                      color="purple"
+                      indeterminate
+                    ></v-progress-circular>
+
+                    <v-progress-circular
+                      :width="3"
+                      color="green"
+                      indeterminate
+                    ></v-progress-circular>
+
+                    <v-progress-circular
+                      :size="50"
+                      color="amber"
+                      indeterminate
+                    ></v-progress-circular>
+                    </div>
                 </v-container>
               </v-card-text>
             </v-card>
@@ -1740,7 +1776,7 @@
                           color="primary"
                           fab
                           small
-                          @click.stop="(dialogEdit = true), getBookingData(item),checkTimeFlow()"
+                          @click.stop="(dialogEdit = true), getBookingData(item, 'qrcode'),checkTimeFlow()"
                           v-bind="attrs"
                           v-on="on"
                         >
@@ -2678,11 +2714,13 @@ export default {
       dataRemoveExport: [],
       dataexportRemove: [],
       BookingDataItemEdit: [],
+      dataQrcode: [],
       bookNoRemark: '',
       remark: '',
       setTimer: null,
       searchOther: '',
       showColorSearch: false,
+      dataEditJobReady: true,
       statusSearch: 'no'
     }
   },
@@ -4871,6 +4909,9 @@ export default {
               d.userName = this.$session.getAll().data.userName
               this.BookingDataItem.push(d)
             }
+            if (text === 'qrcode') {
+              this.dataQrcode = dt
+            }
             // await this.getBookingField()
             await this.getflowfield(dt)
           }
@@ -4941,6 +4982,7 @@ export default {
           console.log('this.Add', Add)
           this.swalConfig.title = 'ต้องการนำรายการนี้ เข้าตารางใช่หรือไม่?'
           this.$swal(this.swalConfig).then(async result => {
+            this.dataEditJobReady = false
             await axios
               .post(this.DNS_IP + '/job/add', Add)
               .then(async response => {
@@ -4974,12 +5016,16 @@ export default {
                         .post(this.DNS_IP + '/booking_transaction/add', dtt)
                         .then(async response => {
                           this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
-                          this.dialogEdit = false
                           if (this.statusSearch === 'no') {
                             await this.getBookingList()
                           } else {
                             await this.searchAny()
                           }
+                          this.dialogEdit = false
+                          this.dataEditJobReady = true
+                          var dataJob = this.dataItem.filter(el => { return el.bookNo === this.dataQrcode.bookNo })
+                          this.getjob(dataJob[0])
+                          this.dialogJob = true
                         })
                     })
                 }
@@ -5369,6 +5415,7 @@ export default {
       })
     },
     getjob (item) {
+      console.log(item)
       this.jobitem = []
       if (item.jobNo !== '') {
         axios.get(this.DNS_IP + '/job/getJobNo?jobNo=' + item.jobNo).then((response) => {
