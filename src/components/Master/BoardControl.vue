@@ -1704,6 +1704,9 @@ export default {
 }
 </script>
 <style scoped>
+.theme--light.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled) {
+  background-color: #ffffff !important;
+}
 .workRow {
   display: inline-block;
   width: max-content;
