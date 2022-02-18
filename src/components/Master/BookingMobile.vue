@@ -486,8 +486,25 @@ export default {
     }
   },
   beforeCreate () {
-    if (!this.$session.exists()) {
-      this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
+    // if (!this.$session.exists()) {
+    //   this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
+    // }
+    console.log(JSON.parse(localStorage.getItem('sessionData')))
+    if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
+      if (JSON.parse(localStorage.getItem('sessionData')).shopId === this.$route.query.shopId) {
+      } else {
+        this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
+      }
+    } else {
+      if (!this.$session.exists()) {
+        this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
+      } else {
+        if (this.session.data.shopId === this.$route.query.shopId) {
+          localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
+        } else {
+          this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
+        }
+      }
     }
   },
   async mounted () {
@@ -509,7 +526,7 @@ export default {
     async getDataFromAPI (url, fieldId, fieldName) {
       let result = []
       await axios
-        .get(this.DNS_IP + `${url}?shopId=${this.session.data.shopId}`)
+        .get(this.DNS_IP + `${url}?shopId=${this.$route.query.shopId}`)
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
@@ -578,7 +595,7 @@ export default {
                   // eslint-disable-next-line quotes
                   this.DNS_IP +
                     '/booking_view/get?shopId=' +
-                    this.session.data.shopId +
+                    this.$route.query.shopId +
                     '&masBranchID=' +
                     this.masBranchID +
                     '&dueDate=' + moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM')
@@ -686,7 +703,7 @@ export default {
           .get(
             this.DNS_IP +
               '/booking_view/get?shopId=' +
-              this.session.data.shopId +
+              this.$route.query.shopId +
               '&bookNo=' +
               dt.bookNo
           )
@@ -749,8 +766,8 @@ export default {
                         if (t.userId === 'user-skip') {
                           t.userId = ''
                         }
-                        t.shopId = this.session.data.shopId
-                        t.userName = this.$session.getAll().data.userName
+                        t.shopId = this.$route.query.shopId
+                        t.userName = JSON.parse(localStorage.getItem('sessionData')).userName
                         this.BookingDataItem.push(t)
                       }
                       console.log('BookingDataItem', this.BookingDataItem)
@@ -803,7 +820,7 @@ export default {
             '/flowField/get?flowId=' +
             item.flowId +
             '&shopId=' +
-            this.session.data.shopId
+            this.$route.query.shopId
         )
         .then(response => {
           let tt = response.data
@@ -1121,7 +1138,7 @@ export default {
           // eslint-disable-next-line quotes
           this.DNS_IP +
             '/booking_view/get?shopId=' +
-            this.session.data.shopId +
+            this.$route.query.shopId +
             '&masBranchID=' +
             dt.masBranchID +
             '&dueDate=' +
@@ -1171,7 +1188,7 @@ export default {
             let itemIncustomField = []
             await axios
               .get(
-                this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+                this.DNS_IP + '/BookingField/get?shopId=' + this.$route.query.shopId
               )
               .then(async response1 => {
                 let rs2 = response1.data
@@ -1218,7 +1235,7 @@ export default {
             let itemIncustomField = []
             await axios
               .get(
-                this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+                this.DNS_IP + '/BookingField/get?shopId=' + this.$route.query.shopId
               )
               .then(async response1 => {
                 let rs2 = response1.data
@@ -1268,7 +1285,7 @@ export default {
     },
     async getBookingDataList (dt) {
       this.BookingDataList = []
-      let url = `${this.DNS_IP}/BookingData/get?shopId=${this.session.data.shopId}&masBranchID=${dt.masBranchID}&dueDate=${dt.dueDate.substring(0, 7)}`
+      let url = `${this.DNS_IP}/BookingData/get?shopId=${this.$route.query.shopId}&masBranchID=${dt.masBranchID}&dueDate=${dt.dueDate.substring(0, 7)}`
       await axios
         .get(url)
         .then(async response => {
