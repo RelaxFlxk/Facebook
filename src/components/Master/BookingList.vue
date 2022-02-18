@@ -5024,24 +5024,26 @@ export default {
               }
             }
             if (addData) {
-              update.masBranchID = this.BookingDataItem[0].masBranchID
-              update.CREATE_USER = d.userName
-              update.LAST_USER = d.userName
-              update.checkCar = ''
-              update.userId = d.userId
-              update.endDate = this.endDate
-              update.endTime = this.endTime
-              update.fieldId = d.fieldId
-              update.fieldName = d.fieldName
-              update.fieldType = dataField[0].fieldType
-              update.fieldValue = d.fieldValue
-              update.flowId = d.flowId
-              update.conditionField = dataField[0].conditionField
-              update.conditionValue = dataField[0].conditionValue
-              update.optionField = dataField[0].optionField
-              update.shopId = dataField[0].shopId
-              update.showCard = dataField[0].showCard
-              Add.push(update)
+              if (d.fieldValue !== '') {
+                update.masBranchID = this.BookingDataItem[0].masBranchID
+                update.CREATE_USER = d.userName
+                update.LAST_USER = d.userName
+                update.checkCar = ''
+                update.userId = d.userId
+                update.endDate = this.endDate
+                update.endTime = this.endTime
+                update.fieldId = d.fieldId
+                update.fieldName = d.fieldName
+                update.fieldType = dataField[0].fieldType
+                update.fieldValue = d.fieldValue
+                update.flowId = d.flowId
+                update.conditionField = dataField[0].conditionField
+                update.conditionValue = dataField[0].conditionValue
+                update.optionField = dataField[0].optionField
+                update.shopId = dataField[0].shopId
+                update.showCard = dataField[0].showCard
+                Add.push(update)
+              }
             }
           }
           console.log('this.Add', Add)
