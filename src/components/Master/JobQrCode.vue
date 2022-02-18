@@ -110,8 +110,12 @@ export default {
         if (!this.$session.exists()) {
           this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId)
         } else {
-          localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
-          this.getjob()
+          if (this.session.data.shopId === this.$route.query.shopId) {
+            localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
+            this.getjob()
+          } else {
+            this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId)
+          }
         }
       }
     },
