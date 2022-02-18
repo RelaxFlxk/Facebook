@@ -94,14 +94,25 @@ export default {
     }
   },
   async mounted () {
+    console.log('dasdas')
     await this.beforeCreate()
   },
   methods: {
     beforeCreate () {
-      if (!this.$session.exists()) {
-        this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId)
+      console.log(JSON.parse(localStorage.getItem('sessionData')))
+      if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
+        if (JSON.parse(localStorage.getItem('sessionData')).shopId === this.$route.query.shopId) {
+          this.getjob()
+        } else {
+          this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId)
+        }
       } else {
-        this.getjob()
+        if (!this.$session.exists()) {
+          this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId)
+        } else {
+          localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
+          this.getjob()
+        }
       }
     },
     getjob () {
@@ -124,7 +135,7 @@ export default {
             }
             console.log('rs', this.jobitem)
             this.userId = Id
-            this.value = this.pathToweb + this.jobitem[0].Id + '&shopId=' + this.$session.getAll().data.shopId
+            this.value = this.pathToweb + this.jobitem[0].Id + '&shopId=' + this.$route.query.shopId
             console.log(this.jobitem)
             console.log(this.value)
             console.log('UserId', this.userId)
