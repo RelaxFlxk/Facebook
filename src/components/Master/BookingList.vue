@@ -1776,7 +1776,7 @@
                           color="primary"
                           fab
                           small
-                          @click.stop="(dialogEdit = true), getBookingData(item, 'qrcode'),checkTimeFlow()"
+                          @click.stop="(dialogEdit = true), getBookingDataJob(item, 'qrcode'),checkTimeFlow()"
                           v-bind="attrs"
                           v-on="on"
                         >
@@ -4892,6 +4892,76 @@ export default {
           console.log('error function deleteDataGlobal : ', error)
         })
     },
+    async getBookingDataJob (dt, text) {
+      this.BookingDataItem = []
+      let itemIncustomField = []
+      await axios
+        .get(
+          this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+        )
+        .then(async response1 => {
+          let rs2 = response1.data
+          if (rs2.length > 0) {
+            let bookingData = []
+            bookingData = JSON.parse(rs2[0].flowfieldName)
+            for (let i = 0; i < bookingData.length; i++) {
+              let d = bookingData[i]
+              itemIncustomField.push(d.fieldId)
+            }
+            await axios
+              .get(this.DNS_IP + '/customField/fieldId?fieldId=' + itemIncustomField)
+              .then(async responses => {
+                let rs1 = responses.data
+                await axios
+                  .get(this.DNS_IP + '/BookingDataSelect/get?bookNo=' + dt.bookNo)
+                  .then(async response => {
+                    let rs = response.data
+                    if (rs.length > 0) {
+                      console.log('BookingDataSelect', rs)
+                      console.log('customField', rs1)
+                      for (var i = 0; i < rs1.length; i++) {
+                        var d = rs1[i]
+                        // var s = {}
+                        var dataBD = rs.filter(el => { return parseInt(el.fieldId) === parseInt(d.fieldId) })
+                        if (dataBD.length > 0) {
+                          if (dt.flowId === dataBD[0].flowId) {
+                            d.bookNo = dataBD[0].bookNo
+                            d.bookingFieldId = rs2[0].bookingFieldId
+                            d.bookingDataId = dataBD[0].bookingDataId
+                            d.flowId = dataBD[0].flowId
+                            d.masBranchID = dataBD[0].masBranchID
+                            // d.conditionField = d.conditionField
+                            // d.fieldId = d.fieldId
+                            // d.fieldType = d.fieldType
+                            d.fieldValue = dataBD[0].fieldValue
+                            // d.fieldName = d.fieldName
+                            // d.conditionField = d.conditionField
+                            // d.conditionValue = d.conditionValue
+                            // d.requiredField = d.requiredField
+                            // d.optionField = d.optionField
+                            // d.userId = d.userId
+                            if (rs[0].userId === 'user-skip') {
+                              d.userId = ''
+                            } else {
+                              d.userId = rs[0].userId
+                            }
+                            d.shopId = this.session.data.shopId
+                            d.userName = this.$session.getAll().data.userName
+                            this.BookingDataItem.push(d)
+                          }
+                        }
+                      }
+                      if (text === 'qrcode') {
+                        this.dataQrcode = dt
+                      }
+                      // await this.getBookingField()
+                      await this.getflowfield(dt)
+                    }
+                  })
+              })
+          }
+        })
+    },
     async getBookingData (dt, text) {
       this.BookingDataItem = []
       await axios
@@ -4924,15 +4994,6 @@ export default {
     addDataJobSubmit () {
       if (this.dataItem.filter(row => row.bookNo === this.BookingDataItem[0].bookNo).length > 0) {
         if (this.validUpdate === true) {
-          for (var x = 0; x < this.flowfieldNameitem.length; x++) {
-            var s = this.flowfieldNameitem[x]
-            if (s.userId === 'user-skip') {
-              s.userId = ''
-            }
-            s.shopId = this.session.data.shopId
-            s.userName = this.$session.getAll().data.userName
-            this.BookingDataItem.push(s)
-          }
           console.log('this.BookingDataItem', this.BookingDataItem)
           let Add = []
           let fielditem = this.flowfieldNameitem
@@ -4955,7 +5016,11 @@ export default {
                 })[0].fieldValue
                 ) {
                   addData = true
+                } else if (d.conditionField === 'flow') {
+                  addData = true
                 }
+              } else if (d.conditionField === 'flow') {
+                addData = true
               }
             }
             if (addData) {
@@ -5194,7 +5259,7 @@ export default {
               'messages': [
                 {
                   'type': 'text',
-                  'text': ` ✍️ ยืนยันเวลานัดหมา\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
+                  'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
                           \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}`
                 }
               ]
@@ -5370,7 +5435,7 @@ export default {
                       'messages': [
                         {
                           'type': 'text',
-                          'text': ` ✍️ ยืนยันเวลานัดหมา\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
+                          'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
                           \nวันเดือนปี ${this.format_dateFUllTime(this.formChange.date + ' ' + this.formChange.time)}`
                         }
                       ]

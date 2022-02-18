@@ -452,7 +452,7 @@
                           })"
                           :key="index"
                         >
-                        <div v-if="items.showCard === 'True'">
+                        <div v-if="items.showCard === 'True' && items.fieldValue !== ''">
                           {{ items.fieldValue }}<br />
                         </div>
                         </div>
