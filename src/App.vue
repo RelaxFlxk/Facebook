@@ -331,4 +331,9 @@ table tr:last-child td:last-child {
 .c3-axis-y-label, .c3-axis-x-label, .c3-chart-arcs-gauge-min, .c3-chart-arcs-gauge-max {
   font-size: 17px !important;
 }
+.theme--light.v-calendar-weekly .v-calendar-weekly__day {
+    border-right: 2px solid #555;
+    border-bottom: 2px solid #555;
+    color: #000;
+}
 </style>

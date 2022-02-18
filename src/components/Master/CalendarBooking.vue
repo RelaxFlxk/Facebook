@@ -149,6 +149,9 @@
                     color="primary"
                     :type="type"
                   >
+                  <template v-slot:day-label="{ day }">
+                    <span style="font-size:26px !important;">{{day}}</span>
+                  </template>
                   <template v-slot:day="{ date }">
                     <template v-if="eventInfo[date] && eventInfo[date].all > 0">
                       <v-row>
@@ -156,12 +159,12 @@
                           <v-progress-linear
                             :value="eventInfo[date].allPercent"
                             :color="(eventInfo[date].allPercent >= 100) ? 'red lighten-1' : ((eventInfo[date].allPercent < 80) ? 'green lighten-1' : 'yellow lighten-1' ) "
-                            height="25"
+                            height="13"
                             style="cursor: pointer"
                             @click.native="openTaskList(date, 'all')"
                           >
                             <template v-slot:default="{}">
-                              {{ eventInfo[date].all }} / {{ countCus }}
+                              <!-- {{ eventInfo[date].all }} / {{ countCus }} -->
                             </template>
                           </v-progress-linear>
                         </v-col>
