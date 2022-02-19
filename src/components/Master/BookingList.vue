@@ -3048,7 +3048,7 @@ export default {
                       this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
                         this.dialogEditData = false
                       }).catch((error) => {
-                        console.log('error function addData : ', error)
+                        console.log('error function setDataEdit : ', error)
                         this.dialogEditData = false
                       })
                     }
@@ -3056,17 +3056,17 @@ export default {
                     this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
                       this.dialogEditData = false
                     }).catch((error) => {
-                      console.log('error function addData : ', error)
+                      console.log('error function setDataEdit : ', error)
                       this.dialogEditData = false
                     })
-                    console.log('error function addData : ', error)
+                    console.log('error function setDataEdit : ', error)
                   })
               })
           } else {
             this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
               this.dialogEditData = false
             }).catch((error) => {
-              console.log('error function addData : ', error)
+              console.log('error function setDataEdit : ', error)
               this.dialogEditData = false
             })
           }
@@ -3074,10 +3074,10 @@ export default {
           this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
             this.dialogEditData = false
           }).catch((error) => {
-            console.log('error function addData : ', error)
+            console.log('error function setDataEdit : ', error)
             this.dialogEditData = false
           })
-          console.log('error function addData : ', error)
+          console.log('error function setDataEdit : ', error)
         })
       console.log('this.BookingDataItemEdit', this.BookingDataItemEdit)
       this.dialogEditData = true
@@ -4673,95 +4673,114 @@ export default {
       this.validate('ADD')
       setTimeout(() => this.addDataSubmit(), 500)
     },
-    async addDataSubmit () {
-      if (this.validAdd === true) {
-        let rs = this.fieldNameItem
-        let Add = []
-        let fielditem = this.fieldNameItem
-        console.log('this.fieldNameItem', this.fieldNameItem)
-        for (let i = 0; i < rs.length; i++) {
-          let d = rs[i]
-          let update = {}
-          if (d.conditionField === '' || d.conditionField === null) {
-            update.masBranchID = this.formAdd.masBranchID
-            update.bookingFieldId = d.bookingFieldId
-            update.remark = this.remark
-            update.flowId = this.formAdd.flowId
-            update.fieldId = d.fieldId
-            update.fieldValue = d.fieldValue
-            update.shopId = d.shopId
-            update.dueDate = this.date + ' ' + this.time
-            update.userId = 'user-skip'
-            update.pageName = 'BookingList'
-            update.sourceLink = 'direct'
-            update.empSelect = this.empSelectAdd
-            update.adminLogin = this.session.data.userName
-            Add.push(update)
-          } else {
+    addDataInsert () {
+      let rs = this.fieldNameItem
+      let Add = []
+      let fielditem = this.fieldNameItem
+      console.log('this.fieldNameItem', this.fieldNameItem)
+      for (let i = 0; i < rs.length; i++) {
+        let d = rs[i]
+        let update = {}
+        if (d.conditionField === '' || d.conditionField === null) {
+          update.masBranchID = this.formAdd.masBranchID
+          update.bookingFieldId = d.bookingFieldId
+          update.remark = this.remark
+          update.flowId = this.formAdd.flowId
+          update.fieldId = d.fieldId
+          update.fieldValue = d.fieldValue
+          update.shopId = d.shopId
+          update.dueDate = this.date + ' ' + this.time
+          update.userId = 'user-skip'
+          update.pageName = 'BookingList'
+          update.sourceLink = 'direct'
+          update.empSelect = this.empSelectAdd
+          update.adminLogin = this.session.data.userName
+          Add.push(update)
+        } else {
+          if (
+            fielditem.filter(row => {
+              return row.fieldId === parseInt(d.conditionField)
+            }).length > 0
+          ) {
             if (
-              fielditem.filter(row => {
-                return row.fieldId === parseInt(d.conditionField)
-              }).length > 0
-            ) {
-              if (
-                d.conditionValue ===
+              d.conditionValue ===
               fielditem.filter(row => {
                 return row.fieldId === parseInt(d.conditionField)
               })[0].fieldValue
-              ) {
-                update.masBranchID = this.formAdd.masBranchID
-                update.bookingFieldId = d.bookingFieldId
-                update.remark = this.remark
-                update.flowId = this.formAdd.flowId
-                update.fieldId = d.fieldId
-                update.fieldValue = d.fieldValue
-                update.shopId = d.shopId
-                update.dueDate = this.date + ' ' + this.time
-                update.sourceLink = 'direct'
-                update.userId = 'user-skip'
-                update.pageName = 'BookingList'
-                update.empSelect = this.empSelectAdd
-                update.adminLogin = this.session.data.userName
-                Add.push(update)
-              }
-            } else if (d.conditionField === 'flow') {
-              if (parseInt(d.conditionValue) === parseInt(this.formAdd.flowId)) {
-                update.masBranchID = this.formAdd.masBranchID
-                update.bookingFieldId = d.bookingFieldId
-                update.remark = this.remark
-                update.flowId = this.formAdd.flowId
-                update.fieldId = d.fieldId
-                update.fieldValue = d.fieldValue
-                update.shopId = d.shopId
-                update.dueDate = this.date + ' ' + this.time
-                update.sourceLink = 'direct'
-                update.userId = 'user-skip'
-                update.pageName = 'BookingList'
-                update.empSelect = this.empSelectAdd
-                update.adminLogin = this.session.data.userName
-                Add.push(update)
-              }
+            ) {
+              update.masBranchID = this.formAdd.masBranchID
+              update.bookingFieldId = d.bookingFieldId
+              update.remark = this.remark
+              update.flowId = this.formAdd.flowId
+              update.fieldId = d.fieldId
+              update.fieldValue = d.fieldValue
+              update.shopId = d.shopId
+              update.dueDate = this.date + ' ' + this.time
+              update.sourceLink = 'direct'
+              update.userId = 'user-skip'
+              update.pageName = 'BookingList'
+              update.empSelect = this.empSelectAdd
+              update.adminLogin = this.session.data.userName
+              Add.push(update)
+            }
+          } else if (d.conditionField === 'flow') {
+            if (parseInt(d.conditionValue) === parseInt(this.formAdd.flowId)) {
+              update.masBranchID = this.formAdd.masBranchID
+              update.bookingFieldId = d.bookingFieldId
+              update.remark = this.remark
+              update.flowId = this.formAdd.flowId
+              update.fieldId = d.fieldId
+              update.fieldValue = d.fieldValue
+              update.shopId = d.shopId
+              update.dueDate = this.date + ' ' + this.time
+              update.sourceLink = 'direct'
+              update.userId = 'user-skip'
+              update.pageName = 'BookingList'
+              update.empSelect = this.empSelectAdd
+              update.adminLogin = this.session.data.userName
+              Add.push(update)
             }
           }
         }
-        console.log('Add', Add)
-        this.swalConfig.title = 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?'
-        this.$swal(this.swalConfig)
-          .then(async result => {
-            axios
-              .post(this.DNS_IP + '/Booking/add', Add)
-              .then(async response => {
-                this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-                await this.confirmChkAdd(response.data)
-                // console.log('addDataGlobal DNS_IP + /job/add', response)
-              })
-              .catch(error => {
-                console.log('error function addData : ', error)
-              })
-          })
-          .catch(error => {
-            console.log('Cencel : ', error)
-          })
+      }
+      console.log('Add', Add)
+      this.swalConfig.title = 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?'
+      this.$swal(this.swalConfig)
+        .then(async result => {
+          axios
+            .post(this.DNS_IP + '/Booking/add', Add)
+            .then(async response => {
+              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              await this.confirmChkAdd(response.data)
+              // console.log('addDataGlobal DNS_IP + /job/add', response)
+            })
+            .catch(error => {
+              console.log('error function addData : ', error)
+            })
+        })
+        .catch(error => {
+          console.log('Cencel : ', error)
+        })
+    },
+    async addDataSubmit () {
+      if (this.validAdd === true) {
+        let checkDupliRegNo = this.fieldNameItem.filter(el => { return el.fieldName === 'เลขทะเบียน' })
+        if (checkDupliRegNo.length > 0) {
+          console.log('checkDupliRegNo', checkDupliRegNo[0].fieldValue.replace(/ /g, ''))
+          await axios
+            .get(this.DNS_IP + '/booking_view/getSearchDuplicate?shopId=' + this.session.data.shopId + '&fieldValue=' + checkDupliRegNo[0].fieldValue.replace(/ /g, '') +
+            '&flowId=' + this.formAdd.flowId + '&dueDate=' + this.date)
+            .then(response => {
+              let rs = response.data
+              if (rs.status === false) {
+                this.addDataInsert()
+              } else {
+                this.$swal('ผิดพลาด', 'เลขทะเบียนนี้ วันนี้ได้ทำรายการนัดหมายไปแล้ว', 'error')
+              }
+            })
+        } else {
+          this.addDataInsert()
+        }
       }
     },
     async pushMsglineGroup (bookNo) {
