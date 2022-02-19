@@ -332,8 +332,8 @@ table tr:last-child td:last-child {
   font-size: 17px !important;
 }
 .theme--light.v-calendar-weekly .v-calendar-weekly__day {
-    border-right: 2px solid #555;
-    border-bottom: 2px solid #555;
-    color: #000;
+    border-right: 2px solid #555 !important;
+    border-bottom: 2px solid #555 !important;
+    color: #000 !important;
 }
 </style>
