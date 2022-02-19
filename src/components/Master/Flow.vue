@@ -376,19 +376,24 @@
                             :src="require('@/assets/Grouptitle.svg')"
                           ></v-img>
                         </v-col>
-                        <v-col cols="12">
-                          <v-row style="height: 35px">
-                            <v-subheader id="subtext">ชื่อขั้นตอน</v-subheader>
-                          </v-row>
-                          <v-row style="height: 70px">
-                            <v-text-field
-                              v-model="formAdd.flowName"
-                              placeholder="ชื่อขั้นตอน"
-                              dense
-                              required
-                              :rules="[rules.required]"
-                            ></v-text-field>
-                          </v-row>
+                        <v-col cols="12" class="pb-0">
+                          <v-text-field
+                            v-model="formAdd.flowName"
+                            label="ชื่อขั้นตอน"
+                            outlined
+                            dense
+                            required
+                            :rules="[rules.required]"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" class="pb-0 pt-0">
+                          <v-checkbox
+                            label="แจ้งยอดค่าชำระ"
+                            class=""
+                            false-value="False"
+                            true-value="True"
+                            v-model="formAdd.checkPayment"
+                          ></v-checkbox>
                         </v-col>
                         <v-col cols="12">
                           <v-row style="height: 50px" justify="center">
@@ -548,18 +553,23 @@
                             :src="require('@/assets/GroupEditTitle.svg')"
                           ></v-img>
                         </v-col>
-                        <v-col cols="12">
-                          <v-row style="height: 35px">
-                            <v-subheader id="subtext">ชื่อขั้นตอน</v-subheader>
-                          </v-row>
-                          <v-row style="height: 70px">
-                            <v-text-field
-                              v-model="formUpdate.flowName"
-                              dense
-                              required
-                              :rules="[rules.required]"
-                            ></v-text-field>
-                          </v-row>
+                        <v-col cols="12" class="pb-0">
+                          <v-text-field
+                            v-model="formUpdate.flowName"
+                            label="ชื่อขั้นตอน"
+                            outlined
+                            dense
+                            required
+                            :rules="[rules.required]"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" class="pb-0 pt-0">
+                          <v-checkbox
+                            label="แจ้งยอดค่าชำระ"
+                            false-value="False"
+                            true-value="True"
+                            v-model="formUpdate.checkPayment"
+                          ></v-checkbox>
                         </v-col>
                         <v-col cols="12">
                           <v-row style="height: 50px" justify="center">
@@ -901,6 +911,7 @@ export default {
         flowfieldName: [],
         CREATE_USER: '',
         LAST_USER: '',
+        checkPayment: 'True',
         shopId: this.$session.getAll().data.shopId
       },
       formAddStep: {
@@ -932,6 +943,7 @@ export default {
         flowId: '',
         flowName: '',
         LAST_USER: '',
+        checkPayment: 'True',
         shopId: ''
       },
       formUpdateItemFlow: {
@@ -954,6 +966,7 @@ export default {
         fieldType: '',
         flowId: '',
         flowName: '',
+        checkPayment: 'True',
         LAST_USER: ''
       },
       columnsStep: [
@@ -1278,6 +1291,7 @@ export default {
             this.formUpdate.flowName = response.data[0].flowName
             this.formUpdate.flowId = response.data[0].flowId
             this.formUpdate.flowCode = response.data[0].flowCode
+            this.formUpdate.checkPayment = response.data[0].checkPayment || 'True'
             this.shopId = this.$session.getAll().data.shopId
             this.fieldType = this.formUpdate.fieldType
             // this.desserts = JSON.parse(response.data[0].flowfieldName)

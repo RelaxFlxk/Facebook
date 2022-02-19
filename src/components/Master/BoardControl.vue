@@ -308,7 +308,7 @@
 
         <!-- DIALOG ค่าใช้จ่าย -->
         <v-dialog v-model="dialogDelete" persistent max-width="400px">
-          <v-card>
+          <v-card v-if="checkPayment === 'True'">
             <center>
               <v-col>
                 <v-img
@@ -340,10 +340,41 @@
                       elevation="2"
                       depressed
                       color="#1B437C"
-                      @click="deleteDataPrice()"
+                      @click="closeJob()"
                     >
                       <v-icon left>mdi-checkbox-marked-circle</v-icon>
                       ชำระเงิน
+                    </v-btn>
+                    <v-btn
+                      color="primary"
+                      depressed
+                      @click=";(dialogDelete = false), clearData()"
+                    >
+                      <v-icon left> mdi-cancel</v-icon>
+                      ยกเลิก
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+          </v-card>
+          <v-card v-if="checkPayment === 'False'">
+            <v-col class="text-center">
+              <span class="headline">จบกระบวนการซ่อม</span>
+            </v-col>
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col class="text-center"  cols="12">
+                    <v-btn
+                      dark
+                      elevation="2"
+                      depressed
+                      color="#1B437C"
+                      @click="closeJob()"
+                    >
+                      <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                      จบกระบวนการซ่อม
                     </v-btn>
                     <v-btn
                       color="primary"
@@ -1161,7 +1192,7 @@ export default {
       formDelete: {
         jobNo: '',
         shopId: this.$session.getAll().data.shopId,
-        totalPrice: ''
+        totalPrice: '0'
       },
       formUpdateCar: {
         jobNo: '',
@@ -1183,7 +1214,8 @@ export default {
         LAST_USER: '',
         shopId: '',
         sendCard: ''
-      }
+      },
+      checkPayment: 'True'
     }
   },
   async mounted () {
@@ -1396,7 +1428,8 @@ export default {
                     checkCar: d.checkCar,
                     totalDateDiff: d.totalDateDiff,
                     endDate: d.endDate,
-                    endTime: d.endTime
+                    endTime: d.endTime,
+                    checkPayment: d.checkPayment
                   })
                 }
               }
@@ -1466,6 +1499,7 @@ export default {
       console.log(this.stepItemSelete)
       console.log('item1', item)
       console.log('stepItem', stepItem)
+      this.checkPayment = item.checkPayment
       var dataStepItemSelete = this.stepItemSelete
       // var index = dataStepItemSelete.findIndex(key => key.text === stepTitle)
       this.formUpdate.jobId = item.jobId
@@ -1602,50 +1636,57 @@ export default {
       })
     },
     async pushmessagePrice (jobNo) {
-      let updateStatusSend = { updateStatusSend: 'false' }
+      let updateStatusSend = { updateStatusSend: 'false', checkPayment: this.checkPayment }
       await axios
         .post(this.DNS_IP + '/job/pushClosejob/' + jobNo, updateStatusSend)
         .then(console.log(jobNo))
     },
-    deleteDataPrice () {
-      if (this.formDelete.totalPrice !== '') {
-        this.jobNo = ''
-        console.log('shopId:', this.shopId)
-        console.log('form:', this.formDelete)
-        this.$swal({
-          title: 'ให้บริการ เสร็จเรียบร้อยแล้ว ใช่หรือไม่?',
-          type: 'question',
-          showCancelButton: true,
-          confirmButtonColor: '#fa0202',
-          cancelButtonColor: '#b3b1ab',
-          confirmButtonText: 'ใช่',
-          cancelButtonText: 'ไม่'
-        }).then(async response => {
-          var ID = this.formUpdate.jobId
-          let ds = {
-            jobNo: this.formDelete.jobNo,
-            shopId: this.shopId,
-            totalPrice: this.formDelete.totalPrice,
-            LAST_USER: this.session.data.userName,
-            statusDelete: 'true'
-          }
-          console.log('ds', ds)
-          await axios
-            .post(this.DNS_IP + '/job/editPrice/' + ID, ds)
-            .then(async response => {
-              await this.pushmessagePrice(this.formDelete.jobNo)
-              this.$swal('เรียบร้อย', 'ลบข้อมูล เรียบร้อย', 'success')
-              this.getStepFlow()
-              this.getLayout()
-              await this.getJobData()
-              this.dialogDelete = false
-              console.log('shopId:', this.shopId)
-              console.log('form:', this.formDelete)
-            })
-        })
+    closeJob () {
+      if (this.checkPayment === 'True') {
+        if (this.formDelete.totalPrice !== '') {
+          this.closeJobSubmit(this.formDelete.totalPrice)
+        } else {
+          this.$swal('ผิดพลาก', 'กรุณาใส่จำนวนเงิน', 'error')
+        }
       } else {
-        this.$swal('ผิดพลาก', 'กรุณาใส่จำนวนเงิน', 'error')
+        this.closeJobSubmit('0')
       }
+    },
+    closeJobSubmit (totalPrice) {
+      this.jobNo = ''
+      console.log('shopId:', this.shopId)
+      console.log('form:', this.formDelete)
+      this.$swal({
+        title: 'ให้บริการ เสร็จเรียบร้อยแล้ว ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#fa0202',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      }).then(async response => {
+        var ID = this.formUpdate.jobId
+        let ds = {
+          jobNo: this.formDelete.jobNo,
+          shopId: this.shopId,
+          totalPrice: totalPrice,
+          LAST_USER: this.session.data.userName,
+          statusDelete: 'true'
+        }
+        console.log('ds', ds)
+        await axios
+          .post(this.DNS_IP + '/job/editPrice/' + ID, ds)
+          .then(async response => {
+            await this.pushmessagePrice(this.formDelete.jobNo)
+            this.$swal('เรียบร้อย', 'ลบข้อมูล เรียบร้อย', 'success')
+            this.getStepFlow()
+            this.getLayout()
+            await this.getJobData()
+            this.dialogDelete = false
+            console.log('shopId:', this.shopId)
+            console.log('form:', this.formDelete)
+          })
+      })
     },
     async editData () {
       console.log(
