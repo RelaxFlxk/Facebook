@@ -54,16 +54,15 @@ export default {
         this.dataMonth.push(data)
       }
       console.log('dataMonth', this.dataMonth)
+      await this.getBookingC3line(picker)
     },
-    async getBookingC3line (dateRange) {
+    async getBookingC3line (picker) {
       this.BookingC3line = null
-      this.startDate = this.momenDate_1(dateRange.startDate)
-      this.endDate = this.momenDate_1(dateRange.endDate)
-      console.log('data', dateRange)
-      await axios.get(this.DNS_IP + '/booking_view_getBookflowName/get?startDate=' + this.startDate + '&endDate=' + this.endDate + '&shopId=' + this.shopId)
+      console.log('picker', picker)
+      await axios.get(this.DNS_IP + '/booking_view_getBookC3line/get?picker=' + picker + '&shopId=' + this.shopId)
         .then((response) => {
           let rs = response.data
-          // console.log('rs', rs)
+          console.log('rs', rs)
           if (rs.length > 0) {
             this.genChart(rs)
           }
@@ -73,25 +72,20 @@ export default {
         })
     },
     async genChart (dt) {
-      let chartData = []
-      dt.forEach((value, key) => {
-        chartData.push([value.flowName, value.Total])
-      })
+      // let chartData = []
+      // dt.forEach((value, key) => {
+      //   chartData.push([value.flowName, value.Total])
+      // })
       // console.log('chart', chartData)
       this.BookingC3line = {
         data: {
-        // iris data from R
-          columns: chartData,
-          type: 'pie'
-          // onclick: function (d, i) { console.log('onclick', d, i) },
-          // onmouseover: function (d, i) { console.log('onmouseover', d, i) },
-          // onmouseout: function (d, i) { console.log('onmouseout', d, i) }
-        },
-        pie: {
-          label: {
-            format: function (value, ratio, id) {
-              return value
-            }
+          columns: [
+            ['data1', 30, 200, 100, 400, 150, 250],
+            ['data2', 50, 20, 10, 40, 15, 25]
+          ],
+          regions: {
+            'data1': [{'start': 1, 'end': 2, 'style': 'dashed'}, {'start': 3}], // currently 'dashed' style only
+            'data2': [{'end': 3}]
           }
         }
       }
@@ -103,9 +97,5 @@ export default {
 }
 </script>
 <style lang="">
-.BGmain {
-  --bg-color: #f2f2f2;
-  background-color: var(--bg-color);
-}
 
 </style>
