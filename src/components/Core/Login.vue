@@ -302,7 +302,7 @@ export default {
       } else if (this.$route.query.bookNo !== undefined && this.$route.query.type === 'job') {
         this.$router.push('/Master/BookingList?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId + '&type=' + this.$route.query.type)
       } else {
-        this.$router.push('/Dashbord/Report')
+        this.$router.push('/Dashbord/ReportBooking')
       }
     },
     async getProfile () {

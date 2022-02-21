@@ -513,7 +513,8 @@ export default {
         { title: 'ปฏิทินนัดหมาย', icon: 'mdi-account-edit', to: '/Master/CalendarBooking' }
       ]
       this.Dashboard = [
-        { title: 'รายงาน', icon: 'mdi-application-settings', to: '/Dashbord/Report' },
+        { title: 'นัดหมายเข้ารับบริการ', icon: 'mdi-application-settings', to: '/Dashbord/ReportBooking' },
+        { title: 'งานซ่อม', icon: 'mdi-application-settings', to: '/Dashbord/Report' },
         { title: 'Performance', icon: 'mdi-application-settings', to: '/Dashbord/Performance' }
 
       ]

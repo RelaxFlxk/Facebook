@@ -223,7 +223,7 @@ export default {
             }
           })
         })
-        // console.log('Totals', Totals)
+        console.log('Totals', Totals)
         const reducer = (previousValue, currentValue) => previousValue + currentValue
         Totaljob.push(Totals.reduce(reducer))
         FullChart.push(dtitem)

@@ -6,6 +6,10 @@ import PerformanceBK from './PerformanceBK'
 import PerformanceBK1 from './PerformanceBK1'
 import ChartC3Flow from './ChartC3Flow'
 import ChartCloseJobC3 from './ChartCloseJobC3'
+import ReportBooking from './ReportBooking.vue'
+import BookingsourceLink from './BookingsourceLink.vue'
+import BookingflowName from './BookingflowName.vue'
+import BookingC3line from './BookingC3line.vue'
 export default {
   Report,
   Report2,
@@ -14,5 +18,9 @@ export default {
   PerformanceBK,
   PerformanceBK1,
   ChartC3Flow,
-  ChartCloseJobC3
+  ChartCloseJobC3,
+  ReportBooking,
+  BookingsourceLink,
+  BookingflowName,
+  BookingC3line
 }

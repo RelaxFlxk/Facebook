@@ -196,6 +196,11 @@ export default new Router({
     component: Dashbord.Report2
   },
   {
+    path: '/Dashbord/ReportBooking',
+    name: 'ReportBooking',
+    component: Dashbord.ReportBooking
+  },
+  {
     path: '/Dashbord/C3Example',
     name: 'C3Example',
     component: Dashbord.C3Example
