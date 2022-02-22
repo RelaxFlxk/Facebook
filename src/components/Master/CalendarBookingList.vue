@@ -149,12 +149,12 @@
                           <v-progress-linear
                             :value="eventInfo[date].allPercent"
                             :color="(eventInfo[date].allPercent >= 100) ? 'red lighten-1' : ((eventInfo[date].allPercent < 80) ? 'green lighten-1' : 'yellow lighten-1' ) "
-                            height="13"
+                            height="20"
                             style="cursor: pointer"
                             @click.native="openTaskList(date, 'all')"
                           >
                             <template v-slot:default="{}">
-                              <!-- {{ eventInfo[date].all }} / {{ countCus }} -->
+                              {{ eventInfo[date].all }} / {{ countCus }}
                             </template>
                           </v-progress-linear>
                         </v-col>
