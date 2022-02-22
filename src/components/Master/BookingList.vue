@@ -3294,9 +3294,13 @@ export default {
       let runNo = 0
       console.log('bookingData', this.BookingDataList)
       console.log('this.editedItemSeleteField', this.editedItemSeleteField)
-      for (let i = 0; i < this.dataItemTime.length; i++) {
+      var datause = this.dataItemTime.sort((a, b) => {
+        if (a.timeDuetext < b.timeDuetext) return -1
+        return a.timeDuetext > b.timeDuetext ? 1 : 0
+      })
+      for (let i = 0; i < datause.length; i++) {
         // var d = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === item.timeDueHtext })[i]
-        let d = this.dataItemTime[i]
+        let d = datause[i]
         let dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && el.fastTrack && (el.statusBtText === 'ยืนยันแล้ว' || el.statusBtText === 'รับรถแล้ว') })
         // console.log('s.dataSelect', dataSelect)
         for (let x = 0; x < dataSelect.length; x++) {
@@ -3377,8 +3381,12 @@ export default {
       s.carModel = ''
       dataExport.push(s)
       runNo = 0
-      for (let i = 0; i < this.dataItemTime.length; i++) {
-        let d = this.dataItemTime[i]
+      var datause2 = this.dataItemTime.sort((a, b) => {
+        if (a.timeDuetext < b.timeDuetext) return -1
+        return a.timeDuetext > b.timeDuetext ? 1 : 0
+      })
+      for (let i = 0; i < datause2.length; i++) {
+        let d = datause2[i]
         let dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && !el.fastTrack && (el.statusBtText === 'ยืนยันแล้ว' || el.statusBtText === 'รับรถแล้ว') })
         console.log('s.dataSelect', dataSelect)
         for (let x = 0; x < dataSelect.length; x++) {
@@ -3469,9 +3477,13 @@ export default {
       let dataExport = []
       this.dataexportRemove = []
       let runNo = 0
-      for (let i = 0; i < this.dataItemTime.length; i++) {
+      var datause = this.dataItemTime.sort((a, b) => {
+        if (a.timeDuetext < b.timeDuetext) return -1
+        return a.timeDuetext > b.timeDuetext ? 1 : 0
+      })
+      for (let i = 0; i < datause.length; i++) {
         // var d = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === item.timeDueHtext })[i]
-        let d = this.dataItemTime[i]
+        let d = datause[i]
         let dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && el.fastTrack && (el.statusBtText === 'ยกเลิก') })
         console.log('s.dataSelect', dataSelect)
         for (let x = 0; x < dataSelect.length; x++) {
@@ -3543,8 +3555,12 @@ export default {
       s.carModel = ''
       dataExport.push(s)
       runNo = 0
-      for (let i = 0; i < this.dataItemTime.length; i++) {
-        let d = this.dataItemTime[i]
+      var datause2 = this.dataItemTime.sort((a, b) => {
+        if (a.timeDuetext < b.timeDuetext) return -1
+        return a.timeDuetext > b.timeDuetext ? 1 : 0
+      })
+      for (let i = 0; i < datause2.length; i++) {
+        let d = datause2[i]
         let dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && !el.fastTrack && (el.statusBtText === 'ยกเลิก') })
         console.log('s.dataSelect', dataSelect)
         for (let x = 0; x < dataSelect.length; x++) {
