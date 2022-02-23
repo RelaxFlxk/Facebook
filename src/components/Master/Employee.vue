@@ -15,10 +15,10 @@
               <v-icon left>mdi-download</v-icon>
               Export Data
             </v-btn>
-            <!-- <v-btn color="primary" depressed @click="dialogImport = true">
+            <v-btn color="primary" depressed @click="dialogImport = true">
               <v-icon left>mdi-import</v-icon>
               Manage Data By Excel.xls
-            </v-btn> -->
+            </v-btn>
           </v-col>
 
           <!-- Import -->
@@ -63,7 +63,7 @@
                   ปิด
                 </v-btn>
                 <template v-if="!dataItemImportChecKHide">
-                  <v-btn
+                  <!-- <v-btn
                     elevation="2"
                     color="red"
                     text
@@ -78,14 +78,14 @@
                     @click="importDataApprove('update')"
                   >
                     ปรับปรุงข้อมูลที่ตรงกัน
-                  </v-btn>
+                  </v-btn> -->
                   <v-btn
                     elevation="2"
                     color="green darken-1"
                     text
                     @click="importDataApprove('add')"
                   >
-                    นำเข้าใหม่ทั้งหมด
+                    นำเข้าข้อมูล
                   </v-btn>
                 </template>
               </v-card-actions>
@@ -745,7 +745,6 @@ export default {
     importDataApprove (action) {
       console.log('Action', action)
       var titleMsg = ''
-      var checkError = false
       if (action === 'add') {
         titleMsg = 'ท่านต้องการ นำเข้าข้อมูลจากไฟล์นี้ ใช่หรือไม่'
       } else if (action === 'delete') {
@@ -764,47 +763,38 @@ export default {
         cancelButtonText: 'ไม่'
       })
         .then(async (result) => {
-          for (var key in this.dataItemImport) {
-            this.PK = this.dataItemImport[key].empId
-            if (action === 'add') {
-              console.log('add')
-              await this.importDataAdd(this.dataItemImport[key])
-              checkError = true
-            } else {
-              await axios
-                .get(
-                  // eslint-disable-next-line quotes
-                  this.DNS_IP +
-                    this.path +
-                    'get?empId=' +
-                    this.dataItemImport[key].empId
-                )
-                .then(async (response) => {
-                  if (action === 'update') {
-                    await this.importDataUpdate(this.dataItemImport[key])
-                    checkError = true
-                  }
-                  if (action === 'delete') {
-                    await this.importDataDelete(this.dataItemImport[key])
-                    checkError = true
-                  }
-                })
-                // eslint-disable-next-line handle-callback-err
-                .catch((error) => {
-                  checkError = false
-
-                  console.log('error /empSelect/get?empId : ', error)
-                })
+          console.log('this.dataItemImport', this.dataItemImport)
+          let dataItem = []
+          for (var i = 0; i < this.dataItemImport.length; i++) {
+            var d = this.dataItemImport[i]
+            if (d.empCode !== '') {
+              d.shopId = this.$session.getAll().data.shopId
+              d.userName = this.$session.getAll().data.userName
+              dataItem.push(d)
             }
           }
-          console.log(checkError)
-          if (checkError === true) {
-            this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-            await this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
+          if (dataItem.length > 0) {
+            await axios
+              .post(
+              // eslint-disable-next-line quotes
+                this.DNS_IP + this.path + "addImport",
+                dataItem
+              )
+              .then(async (response) => {
+                this.dialogImport = false
+                // Debug response
+                this.$swal('เรียบร้อย', 'นำเข้าข้อมูล เรียบร้อย', 'success')
+                await this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
+                console.log('/empSelect/addImport/', response)
+              })
+            // eslint-disable-next-line handle-callback-err
+              .catch((error) => {
+                alert('โปรดใส่ไฟล์ให้ถูกต้อง')
+                console.log('error function importDataAdd addData : ', error)
+                this.dataReady = true
+              })
           } else {
-            this.dataItemImport = []
-            this.dataItemImportChecKHide = true
-            alert('โปรดใส่ไฟล์ให้ถูกต้อง')
+            this.$swal('ผิดพลาด', 'กรุณาเซ็คข้อมูลให้ครบ', 'error')
           }
         })
         .catch((error) => {
@@ -812,6 +802,76 @@ export default {
           this.dataReady = true
         })
     },
+    // importDataApprove (action) {
+    //   console.log('Action', action)
+    //   var titleMsg = ''
+    //   if (action === 'add') {
+    //     titleMsg = 'ท่านต้องการ นำเข้าข้อมูลจากไฟล์นี้ ใช่หรือไม่'
+    //   } else if (action === 'delete') {
+    //     titleMsg = 'ท่านต้องการ ลบข้อมูลจากไฟล์นี้ ใช่หรือไม่'
+    //   } else {
+    //     titleMsg = 'ท่านต้องการ ปรับปรุงข้อมูลจากไฟล์นี้ ใช่หรือไม่'
+    //   }
+
+    //   this.$swal({
+    //     title: titleMsg,
+    //     type: 'question',
+    //     showCancelButton: true,
+    //     confirmButtonColor: '#3085d6',
+    //     cancelButtonColor: '#b3b1ab',
+    //     confirmButtonText: 'ใช่',
+    //     cancelButtonText: 'ไม่'
+    //   })
+    //     .then(async (result) => {
+    //       console.log('this.dataItemImport', this.dataItemImport)
+    //       // for (var key in this.dataItemImport) {
+    //       //   this.PK = this.dataItemImport[key].empId
+    //       //   if (action === 'add') {
+    //       //     console.log('add')
+    //       //     await this.importDataAdd(this.dataItemImport[key])
+    //       //     checkError = true
+    //       //   } else {
+    //       //     await axios
+    //       //       .get(
+    //       //         // eslint-disable-next-line quotes
+    //       //         this.DNS_IP +
+    //       //           this.path +
+    //       //           'get?empId=' +
+    //       //           this.dataItemImport[key].empId
+    //       //       )
+    //       //       .then(async (response) => {
+    //       //         if (action === 'update') {
+    //       //           await this.importDataUpdate(this.dataItemImport[key])
+    //       //           checkError = true
+    //       //         }
+    //       //         if (action === 'delete') {
+    //       //           await this.importDataDelete(this.dataItemImport[key])
+    //       //           checkError = true
+    //       //         }
+    //       //       })
+    //       //       // eslint-disable-next-line handle-callback-err
+    //       //       .catch((error) => {
+    //       //         checkError = false
+
+    //       //         console.log('error /empSelect/get?empId : ', error)
+    //       //       })
+    //       //   }
+    //       // }
+    //       // console.log(checkError)
+    //       // if (checkError === true) {
+    //       //   this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+    //       //   await this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
+    //       // } else {
+    //       //   this.dataItemImport = []
+    //       //   this.dataItemImportChecKHide = true
+    //       //   alert('โปรดใส่ไฟล์ให้ถูกต้อง')
+    //       // }
+    //     })
+    //     .catch((error) => {
+    //       console.log('error function importDataApprove : ', error)
+    //       this.dataReady = true
+    //     })
+    // },
     async importDataAdd (dt) {
       Object.assign(this.formAdd, dt)
       this.formAdd.CREATE_USER = this.$session.getAll().data.userName
@@ -830,6 +890,7 @@ export default {
         .then(async (response) => {
           this.dialogImport = false
           // Debug response
+
           console.log('/empSelect/add/', response)
         })
         // eslint-disable-next-line handle-callback-err
