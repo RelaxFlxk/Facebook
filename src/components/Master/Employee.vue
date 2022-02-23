@@ -15,10 +15,10 @@
               <v-icon left>mdi-download</v-icon>
               Export Data
             </v-btn>
-            <v-btn color="primary" depressed @click="dialogImport = true">
+            <!-- <v-btn color="primary" depressed @click="dialogImport = true">
               <v-icon left>mdi-import</v-icon>
               Manage Data By Excel.xls
-            </v-btn>
+            </v-btn> -->
           </v-col>
 
           <!-- Import -->
@@ -515,7 +515,8 @@ export default {
         { text: 'empCode', value: 'empCode' },
         { text: 'empTitle_NameTH', value: 'empTitle_NameTH' },
         { text: 'empFirst_NameTH', value: 'empFirst_NameTH' },
-        { text: 'empLast_NameTH', value: 'empLast_NameTH' }
+        { text: 'empLast_NameTH', value: 'empLast_NameTH' },
+        { text: 'privacyPage', value: 'privacyPage' }
       ],
       dataItemImportChecKHide: true,
       dataItemImport: [],

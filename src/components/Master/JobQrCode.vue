@@ -94,12 +94,10 @@ export default {
     }
   },
   async mounted () {
-    console.log('dasdas')
     await this.beforeCreate()
   },
   methods: {
     beforeCreate () {
-      console.log(JSON.parse(localStorage.getItem('sessionData')))
       if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
         if (JSON.parse(localStorage.getItem('sessionData')).shopId === this.$route.query.shopId) {
           this.getjob()
@@ -110,6 +108,7 @@ export default {
         if (!this.$session.exists()) {
           this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId)
         } else {
+          console.log('true session')
           if (this.session.data.shopId === this.$route.query.shopId) {
             localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
             this.getjob()

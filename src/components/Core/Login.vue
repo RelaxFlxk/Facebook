@@ -239,19 +239,6 @@ export default {
           break
       }
     },
-    async checkLiffLogin () {
-      await this.$liff.ready.then(async () => {
-        if (process.env.NODE_ENV === 'development') {
-          this.getProfile_dev()
-        } else {
-          if (!this.$liff.isLoggedIn()) {
-            this.$liff.login({ redirectUri: window.location })
-          } else {
-            await this.getProfile()
-          }
-        }
-      })
-    },
     async checkbookNo (dataitem) {
       if (this.$route.query.bookNo !== undefined && this.$route.query.type !== 'job') {
         if (dataitem.shopId === this.$route.query.shopId) {
@@ -277,11 +264,14 @@ export default {
               this.$router.push('/Core/Login')
             })
         }
-      } else if (this.$route.query.jobNo) {
+      } else if (this.$route.query.jobNo !== undefined && this.$route.query.type !== 'job') {
+        console.log('job')
+        console.log('dataitem.shopId', dataitem.shopId, this.$route.query.shopId)
         if (dataitem.shopId === this.$route.query.shopId) {
-          this.jobNo = this.$route.query.jobNo
-          this.queryData = 'jobNo'
-          this.$router.push('/Master/jobQrCode?' + this.queryData + '=' + this.jobNo)
+          // this.jobNo = this.$route.query.jobNo
+          console.log('jobMach')
+          // this.queryData = 'jobNo'
+          this.$router.push('/Master/jobQrCode?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId)
         } else {
           this.$swal({
             title: 'ข้อมูลงานไม่ถูกต้อง?',
@@ -292,11 +282,11 @@ export default {
             confirmButtonText: 'ใช่',
             cancelButtonText: 'ไม่'
           }).then(async () => {
-            this.$router.push('/Core/Login')
+            this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId)
           // await _this.getTokenCheck()
           })
             .catch(async () => {
-              this.$router.push('/Core/Login')
+              this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId)
             })
         }
       } else if (this.$route.query.bookNo !== undefined && this.$route.query.type === 'job') {
@@ -304,25 +294,6 @@ export default {
       } else {
         this.$router.push('/Dashbord/ReportBooking')
       }
-    },
-    async getProfile () {
-      let _this = this
-      await this.$liff
-        .getProfile()
-        .then(async (profileLine) => {
-          _this.form.userLineId = profileLine.userId
-          _this.form.userLinepictureUrl = profileLine.pictureUrl
-          // await _this.getTokenCheck()
-        })
-        .catch(function (error) {
-          alert('Error getting profile: ' + error)
-        })
-    },
-    async getProfile_dev () {
-      let _this = this
-      _this.form.userLineuserId = _this.main_profile.userLineuserId
-      _this.form.userLinepictureUrl = _this.main_profile.pictureUrl
-      // await _this.getTokenCheck()
     },
     async getTokenCheck () {
       await axios
@@ -381,9 +352,11 @@ export default {
         )
         .then(async (response) => {
           if (response.data.status !== false) {
+            console.log('response.data[0]', response.data[0])
             if (response.data[0]) {
               this.$session.start()
               this.$session.set('data', response.data[0])
+              localStorage.clear()
               this.checkbookNo(response.data[0])
             } else {
               this.dataReady = true
@@ -462,107 +435,6 @@ export default {
           this.dataReady = true
           console.log(error)
           this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง2', 'error')
-        })
-    },
-    async onSubmitPrivacy () {
-      this.dataReady = false
-      this.form.type = 'username'
-      console.log(JSON.stringify(this.form))
-      await axios
-        .get(
-          // eslint-disable-next-line quotes
-          this.DNS_IP +
-            '/system_user/auth?userName=' +
-            this.form.userName +
-            '&userPassword=' +
-            this.form.userPassword
-        )
-        .then(async (response) => {
-          // ExpireDateDiff
-          if (response.data.status !== false) {
-            if (response.data[0].ExpireDateDiff < 1) {
-              this.dataReady = true
-              this.$swal(
-                'ผิดพลาด',
-                'Account หมดอายุ กรุณาติดต่อเจ้าหน้าที่',
-                'error'
-              )
-            } else {
-            // console.log(response.data[0])
-              this.$session.start()
-              this.$session.set('data', response.data[0])
-              this.formCheckPrivacy.userCode = response.data[0].userCode
-              this.formCheckPrivacy.CREATE_USER = response.data[0].userName
-              this.formCheckPrivacy.LAST_USER = response.data[0].userName
-              this.formCheckPrivacy.userTypeGroup =
-              response.data[0].userTypeGroup
-              this.formCheckPrivacy.privacyStatus = 'Confirm'
-
-              // ตรวจสอบว่ามีเคย check privacy หรือไม่
-              await axios
-                .get(
-                // eslint-disable-next-line quotes
-                  this.DNS_IP +
-                  '/system_privacy_check/get?RECORD_STATUS=N&userCode='
-                )
-                .then(async (response) => {
-                // เคย
-                // console.log(response)
-                // this.$router.push('/Dashbord/Report')
-                  this.getMenu(this.formCheckPrivacy)
-                })
-              // eslint-disable-next-line handle-callback-err
-                .catch((error) => {
-                // เคย
-                  axios
-                    .post(
-                    // eslint-disable-next-line quotes
-                      this.DNS_IP + "/system_privacy_check/add",
-                      this.formCheckPrivacy
-                    )
-                    .then(async (response) => {
-                    // console.log(response)
-                      this.getMenu(this.formCheckPrivacy)
-                    // this.$router.push('/Dashbord/Report')
-                    })
-                  // eslint-disable-next-line handle-callback-err
-                    .catch((error) => {
-                      this.dataReady = true
-                      console.log(error)
-                    })
-                })
-            }
-          }
-        })
-        // eslint-disable-next-line handle-callback-err
-        .catch((error) => {
-          this.dataReady = true
-          console.log(error)
-          this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง3', 'error')
-        })
-    },
-    async getMenu (dt) {
-      console.log('getMenu', dt)
-      await axios
-        .get(
-          // eslint-disable-next-line quotes
-          this.DNS_IP +
-            '/system_menu/get?RECORD_STATUS=N&userTypeGroup=' +
-            dt.userTypeGroup
-        )
-        .then(async (response) => {
-          console.log(
-            '/system_menu/get?RECORD_STATUS=N&userTypeGroup=' +
-              dt.userTypeGroup,
-            response.data
-          )
-          this.$session.set('menu', response.data)
-          this.$session.set('AccessKey', this.$route.query.access)
-          this.$router.push('/Dashbord/Report?access=' + this.$route.query.access)
-        })
-        // eslint-disable-next-line handle-callback-err
-        .catch((error) => {
-          console.log(error)
         })
     }
   }
