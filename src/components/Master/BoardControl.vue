@@ -1376,7 +1376,7 @@ export default {
     async getEmpSelect () {
       this.empSeleteStep = []
       await axios
-        .get(this.DNS_IP + '/empSelect/get?shopId=' + this.shopId)
+        .get(this.DNS_IP + '/empSelect/getUse?privacyPage=board&shopId=' + this.shopId)
         .then(async response => {
           let rs = response.data
           if (rs.length > 0) {

@@ -5223,7 +5223,7 @@ export default {
     async getEmpSelect (item) {
       this.empSelectStep = []
       await axios
-        .get(this.DNS_IP + '/empSelect/get?shopId=' + item.shopId)
+        .get(this.DNS_IP + '/empSelect/getUse?privacyPage=booking&shopId=' + item.shopId)
         .then(async response => {
           let rs = response.data
           if (rs.length > 0) {
@@ -5241,7 +5241,7 @@ export default {
     async getEmpSelectAdd () {
       this.empSelectStepAdd = []
       await axios
-        .get(this.DNS_IP + '/empSelect/get?shopId=' + this.$session.getAll().data.shopId)
+        .get(this.DNS_IP + '/empSelect/getUse?privacyPage=booking&shopId=' + this.$session.getAll().data.shopId)
         .then(async response => {
           let rs = response.data
           if (rs.length > 0) {

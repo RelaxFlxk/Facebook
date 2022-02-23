@@ -679,24 +679,24 @@ export default {
           console.log('error function addData : ', error)
         })
     },
-    async getjob () {
-      this.itemJob = []
-      await axios
-        .get(this.DNS_IP + '/job/getCount?shopId=' + this.shopId + '&flowId=' + this.formAdd.flowId)
-        .then(async (response) => {
-          this.dataReady = true
-          let rs = response.data
-          await axios
-            .get(this.DNS_IP_Betask + '/packet/get?shopId=' + this.shopId + '&source=Belinked')
-            .then(async (responses) => {
-              let rsPacket = responses.data[0].close
-              if (rs.length <= parseInt(rsPacket)) {
-                console.log('เข้า')
-                setTimeout(() => this.addDataSubmit(), 500)
-              }
-            })
-        })
-    },
+    // async getjob () {
+    //   this.itemJob = []
+    //   await axios
+    //     .get(this.DNS_IP + '/job/getCount?shopId=' + this.shopId + '&flowId=' + this.formAdd.flowId)
+    //     .then(async (response) => {
+    //       this.dataReady = true
+    //       let rs = response.data
+    //       await axios
+    //         .get(this.DNS_IP_Betask + '/packet/get?shopId=' + this.shopId + '&source=Belinked')
+    //         .then(async (responses) => {
+    //           let rsPacket = responses.data[0].close
+    //           if (rs.length <= parseInt(rsPacket)) {
+    //             console.log('เข้า')
+    //             setTimeout(() => this.addDataSubmit(), 500)
+    //           }
+    //         })
+    //     })
+    // },
     async moveOn () {
       this.$refs.movein.chkPlan()
     },
@@ -738,7 +738,8 @@ export default {
     },
     addData () {
       this.validate('ADD')
-      this.getjob()
+      setTimeout(() => this.addDataSubmit(), 500)
+      // this.getjob()
     },
     async addDataSubmit (p) {
       if (this.valid === true) {

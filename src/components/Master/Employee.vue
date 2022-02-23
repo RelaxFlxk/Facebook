@@ -139,6 +139,18 @@
                       ></v-text-field>
                     </v-col>
                   </v-row>
+                  <v-row>
+                    <v-col cols="4">
+                      <v-select
+                        v-model="formAdd.privacyPage"
+                        :items="privacyPageSelect"
+                        menu-props="auto"
+                        :rules="nameRules"
+                        label="เลือกหน้าที่จะแสดง"
+                        prepend-icon="mdi-map"
+                      ></v-select>
+                    </v-col>
+                  </v-row>
                    </v-form>
                 </v-container>
               </v-card-text>
@@ -214,6 +226,18 @@
                         maxlength="50"
                         required
                       ></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="4">
+                      <v-select
+                        v-model="formUpdate.privacyPage"
+                        :items="privacyPageSelect"
+                        menu-props="auto"
+                        :rules="nameRules"
+                        label="เลือกหน้าที่จะแสดง"
+                        prepend-icon="mdi-map"
+                      ></v-select>
                     </v-col>
                   </v-row>
                    </v-form>
@@ -336,6 +360,11 @@
                   :search="searchAll2"
                   :items-per-page="10"
                 >
+                   <template v-slot:[`item.privacyPage`]="{ item }">
+                     <p v-if="item.privacyPage === 'booking'">หน้านัดหมาย</p>
+                     <p v-if="item.privacyPage === 'board'">หน้ากระดานการทำงาน</p>
+                     <p v-if="item.privacyPage === 'all'">ทั้งหมด</p>
+                   </template>
                    <template v-slot:[`item.CREATE_DATE`]="{ item }">
                       {{ format_date(item.CREATE_DATE) }}
                   </template>
@@ -442,20 +471,28 @@ export default {
         empTitle_NameTH: '',
         empFirst_NameTH: '',
         empLast_NameTH: '',
+        privacyPage: '',
         shopId: this.$session.getAll().data.shopId
       },
       formUpdate: {
         empCode: '',
         empTitle_NameTH: '',
         empFirst_NameTH: '',
-        empLast_NameTH: ''
+        empLast_NameTH: '',
+        privacyPage: ''
       },
       formUpdateItem: {
         empCode: '',
         empTitle_NameTH: '',
         empFirst_NameTH: '',
-        empLast_NameTH: ''
+        empLast_NameTH: '',
+        privacyPage: ''
       },
+      privacyPageSelect: [
+        { text: 'หน้านัดหมาย', value: 'booking' },
+        { text: 'หน้ากระดานการทำงาน', value: 'board' },
+        { text: 'ทั้งหมด', value: 'all' }
+      ],
       nameRules: [
         (v) => !!v || 'กรุณากรอกข้อมูล '
       ],
@@ -464,6 +501,7 @@ export default {
       columns: [
         // { text: 'id', value: 'empId', align: 'center' },
         { text: 'ชื่อ-นามสกุล', value: 'empFull_NameTH', align: 'center' },
+        { text: 'แสดงชื่อ', value: 'privacyPage', align: 'center' },
         // { text: 'แผนก', value: 'positionName', align: 'center' },
         // { text: 'สาขา', value: 'masBranchName', align: 'center' },
         { text: 'วันที่สร้าง', value: 'CREATE_DATE' },
@@ -878,7 +916,14 @@ export default {
             s.empTitle_NameTH = element.empTitle_NameTH
             s.empFirst_NameTH = element.empFirst_NameTH
             s.empLast_NameTH = element.empLast_NameTH
+            s.privacyPage = element.privacyPage
             tem.push(s)
+            // tem.push({'empCode': element.empCode,
+            //   'คำนำหน้า': element.empTitle_NameTH,
+            //   'ชื่อ': element.empFirst_NameTH,
+            //   'นามสกุล': element.empLast_NameTH,
+            //   'แสดงชื่อที่หน้าไหน': element.privacyPage
+            // })
           })
           console.log(tem)
           var info = XLSX.utils.json_to_sheet(tem)
