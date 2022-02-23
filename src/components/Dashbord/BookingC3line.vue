@@ -1,7 +1,7 @@
 <template lang="">
     <div >
       <v-card class="p-3" v-if="BookingC3line">
-        <h3 class="text-center">ประเภทการนัดหมายเข้ารับบริการ</h3>
+        <h3 class="text-center">รายการนัดหมายในเดือนนี้</h3>
         <C3Chart :chartData="BookingC3line"></C3Chart>
       </v-card>
     </div>
@@ -35,7 +35,22 @@ export default {
       startDate: '',
       endDate: '',
       BookingC3line: null,
-      dataMonth: []
+      dataMonth: [],
+      codeColor: [
+        '#F898A4',
+        '#0099FF',
+        '#CC0066',
+        '#CCFF00',
+        'rgb(33, 158, 188)',
+        'rgb(2, 48, 71)',
+        'rgb(255, 183, 3)',
+        'rgb(61,90,128)',
+        'rgb(152,193,217)',
+        'rgb(28,251,252)',
+        'rgb(255,212,91)',
+        'rgb(238,108,77)',
+        'rgb(41,50,65)'
+      ]
     }
   },
   async mounted () {
@@ -72,21 +87,35 @@ export default {
         })
     },
     async genChart (dt) {
-      // let chartData = []
-      // dt.forEach((value, key) => {
-      //   chartData.push([value.flowName, value.Total])
-      // })
-      // console.log('chart', chartData)
+      let itemdt = Array.from(new Set(dt.map(item => item.sourceLink)))
+      console.log(itemdt)
+      let itemChart = [
+        ['x', ...this.dataMonth.map(item => item.day)]
+      ]
+      itemdt.forEach((vitemdt, kitemdt) => {
+        let ChartEach = [vitemdt]
+        console.log(kitemdt, vitemdt)
+        this.dataMonth.forEach((vdataMonth, kdataMonth) => {
+          if (dt.filter((item) => item.CREATE_DATE === vdataMonth.date && item.sourceLink === vitemdt).length > 0) {
+            ChartEach.push(...dt.filter((item) => item.CREATE_DATE === vdataMonth.date && item.sourceLink === vitemdt).map(item2 => item2.Book))
+          } else {
+            // let numberInt = '0'
+            ChartEach.push(...[0])
+          }
+        })
+        itemChart.push(ChartEach)
+      })
+      console.log(itemChart)
       this.BookingC3line = {
         data: {
-          columns: [
-            ['data1', 30, 200, 100, 400, 150, 250],
-            ['data2', 50, 20, 10, 40, 15, 25]
-          ],
-          regions: {
-            'data1': [{'start': 1, 'end': 2, 'style': 'dashed'}, {'start': 3}], // currently 'dashed' style only
-            'data2': [{'end': 3}]
-          }
+          x: 'x',
+          columns: itemChart
+        },
+        color: {
+          pattern: this.codeColor
+        },
+        size: {
+          height: 600
         }
       }
     },

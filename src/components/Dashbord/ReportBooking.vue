@@ -85,6 +85,9 @@
     </v-main>
   </div>
 </template>
+<style>
+  @import '../../assets/c3.min.css';
+</style>
 <script>
 // import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู

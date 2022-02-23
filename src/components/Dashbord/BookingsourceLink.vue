@@ -34,7 +34,22 @@ export default {
       shopId: this.$session.getAll().data.shopId,
       startDate: '',
       endDate: '',
-      BooksourceLinkChart: null
+      BooksourceLinkChart: null,
+      codeColor: [
+        '#F898A4',
+        '#0099FF',
+        '#CC0066',
+        '#CCFF00',
+        'rgb(33, 158, 188)',
+        'rgb(2, 48, 71)',
+        'rgb(255, 183, 3)',
+        'rgb(61,90,128)',
+        'rgb(152,193,217)',
+        'rgb(28,251,252)',
+        'rgb(255,212,91)',
+        'rgb(238,108,77)',
+        'rgb(41,50,65)'
+      ]
     }
   },
   async mounted () {
@@ -76,6 +91,9 @@ export default {
               return value
             }
           }
+        },
+        color: {
+          pattern: this.codeColor
         }
       }
     }
