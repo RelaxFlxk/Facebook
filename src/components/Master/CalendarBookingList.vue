@@ -748,7 +748,7 @@ export default {
         let d = targetData[i]
         d.chkConfirm = false
         d.chkCancel = false
-        if (d.statusBt === 'cancel') {
+        if (d.statusBt === 'cancel' || !d.statusBt) {
           continue
         }
         let serviceDetail = ''
