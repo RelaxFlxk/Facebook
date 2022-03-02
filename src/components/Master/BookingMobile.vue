@@ -485,33 +485,37 @@ export default {
       flowIdSelect: ''
     }
   },
-  beforeCreate () {
+  async mounted () {
+    await this.beforeCreate()
+  },
+  methods: {
+    async beforeCreate () {
     // if (!this.$session.exists()) {
     //   this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
     // }
-    console.log(JSON.parse(localStorage.getItem('sessionData')))
-    if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
-      if (JSON.parse(localStorage.getItem('sessionData')).shopId === this.$route.query.shopId) {
-      } else {
-        this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
-      }
-    } else {
-      if (!this.$session.exists()) {
-        this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
-      } else {
-        if (this.session.data.shopId === this.$route.query.shopId) {
-          localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
+      // console.log(JSON.parse(localStorage.getItem('sessionData')))
+      if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
+        if (JSON.parse(localStorage.getItem('sessionData')).shopId === this.$route.query.shopId) {
+          await this.chkBookingNo()
+          await this.getDataBranch()
         } else {
           this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
         }
+      } else {
+        if (!this.$session.exists()) {
+          this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
+        } else {
+          if (this.session.data.shopId === this.$route.query.shopId) {
+            localStorage.setItem('sessionData', JSON.stringify(this.session.data))
+            await this.chkBookingNo()
+            await this.getDataBranch()
+          } else {
+            this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
+          }
+        }
       }
-    }
-  },
-  async mounted () {
-    await this.chkBookingNo()
-    await this.getDataBranch()
-  },
-  methods: {
+      console.log(JSON.stringify(this.session.data))
+    },
     getDataFromFieldName (data, key) {
       return data.filter(function (el) {
         return el.fieldName === key

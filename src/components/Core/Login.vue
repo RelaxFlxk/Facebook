@@ -245,7 +245,7 @@ export default {
           this.bookNo = this.$route.query.bookNo
           this.queryData = 'bookNo'
           console.log('dataitem.shopId', dataitem.shopId)
-          this.$router.push('/BookingMobile?' + this.queryData + '=' + this.bookNo)
+          this.$router.push('/BookingMobile?' + this.queryData + '=' + this.bookNo + '&shopId=' + this.$route.query.shopId)
         } else {
           this.$swal({
             title: 'ไม่มีข้อมูลการนัดหมาย?',
