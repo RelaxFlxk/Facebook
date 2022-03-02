@@ -1189,7 +1189,7 @@
             <v-card class="text-center">
               <v-card-title>เปลี่ยนเวลานัดหมาย</v-card-title>
               <v-form ref="form_change" v-model="validChange" lazy-validation>
-                <v-card-text>
+                <v-card-text v-if="dataChangeReady">
                   <v-container>
                     <v-row>
                       <v-col cols= "12">
@@ -1285,6 +1285,38 @@
                   </div>
                   </v-container>
                 </v-card-text>
+                <div class="text-center" v-if="!dataChangeReady">
+                  <v-progress-circular
+                    :size="50"
+                    color="primary"
+                    indeterminate
+                  ></v-progress-circular>
+
+                  <v-progress-circular
+                    :width="3"
+                    color="red"
+                    indeterminate
+                  ></v-progress-circular>
+
+                  <v-progress-circular
+                    :size="70"
+                    :width="7"
+                    color="purple"
+                    indeterminate
+                  ></v-progress-circular>
+
+                  <v-progress-circular
+                    :width="3"
+                    color="green"
+                    indeterminate
+                  ></v-progress-circular>
+
+                  <v-progress-circular
+                    :size="50"
+                    color="amber"
+                    indeterminate
+                  ></v-progress-circular>
+                  </div>
                 <br />
               </v-form>
             </v-card>
@@ -2312,6 +2344,10 @@
                                       .substr(0, 10)
                                   "
                                 ></v-date-picker>
+                                <!-- <v-date-picker
+                                  v-model="dateEdit"
+                                  @input="menuDate = false"
+                                ></v-date-picker> -->
                               </v-menu>
                             </v-col>
                             <v-col class="pb-0">
@@ -2722,6 +2758,7 @@ export default {
       searchOther: '',
       showColorSearch: false,
       dataEditJobReady: true,
+      dataChangeReady: true,
       statusSearch: 'no'
     }
   },
@@ -5432,6 +5469,7 @@ export default {
       }
     },
     async changeChk (item, changeStatus) {
+      this.dataChangeReady = false
       if (item.statusBt === 'confirm') {
         if (this.remark !== '') {
           var dt = {
@@ -5449,6 +5487,7 @@ export default {
             })
         } else {
           this.$swal('ผิดพลาด', 'กรุณาใส่ หมายเหตุเพิ่มเติม', 'error')
+          this.dataChangeReady = true
         }
       } else {
         this.onChangeChk(item, changeStatus)
@@ -5482,7 +5521,6 @@ export default {
             await axios
               .post(this.DNS_IP + '/booking_transaction/add', dt)
               .then(async response => {
-                this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
                 console.log('addDataGlobal', response)
                 if (item.statusBt === 'confirm') {
                   if (item.userId !== 'user-skip') {
@@ -5536,6 +5574,8 @@ export default {
                   }
                 }
                 this.getDataCalendaBooking()
+                this.$swal('เรียบร้อย', 'เปลี่ยนเวลานัดหมาย เรียบร้อย', 'success')
+                this.dataChangeReady = true
                 this.dialogChange = false
               })
               .catch(error => {

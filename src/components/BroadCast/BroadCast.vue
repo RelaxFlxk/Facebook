@@ -1363,7 +1363,7 @@ export default {
           params.append('file', this.filesUpdate)
 
           await axios
-            .post(`https://api-beloyalty.betaskthai.com/file/upload/reward`, params)
+            .post(this.DNS_IP + `/file/upload/broadcast`, params)
             .then(function (response) {
               _this.formUpdate.pictureUrl = response.data
               console.log('url Pic', response.data)
