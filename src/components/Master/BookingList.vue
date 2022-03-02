@@ -3270,8 +3270,10 @@ export default {
       let dataExport = []
       this.dataexport = []
       let runNo = 0
-      console.log('bookingData', this.BookingDataList)
+      console.log('bookingData', this.BookingDataListTimechange)
       console.log('this.editedItemSeleteField', this.editedItemSeleteField)
+      console.log('this.dataItemTimesChange', this.dataItemTimesChange)
+      console.log('this.dataItemTime', this.dataItemTime)
       var datause = this.dataItemTime.sort((a, b) => {
         if (a.timeDuetext < b.timeDuetext) return -1
         return a.timeDuetext > b.timeDuetext ? 1 : 0
@@ -3295,7 +3297,7 @@ export default {
           let serviceDetail = ''
           let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
           fieldflow.forEach((row) => {
-            let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+            let tempField = this.BookingDataListTimechange[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
             // serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
             let convertTextField = ''
             if (tempField.length > 0) {
@@ -3338,7 +3340,7 @@ export default {
           s.flowName = serviceDetail
           s.empFull_NameTH = t.empFull_NameTH
           s.extraJob = t.extraJob ? 'Extra Job' : ''
-          s.carModel = this.getDataFromFieldName(this.BookingDataList[t.bookNo], 'รุ่นรถ')
+          s.carModel = this.getDataFromFieldName(this.BookingDataListTimechange[t.bookNo], 'รุ่นรถ')
           s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
           s.tel = t.tel
           dataExport.push(s)
@@ -3367,6 +3369,7 @@ export default {
         let d = datause2[i]
         let dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && !el.fastTrack && (el.statusBtText === 'ยืนยันแล้ว' || el.statusBtText === 'รับรถแล้ว') })
         console.log('s.dataSelect', dataSelect)
+        console.log('this.BookingDataList', this.BookingDataListTimechange)
         for (let x = 0; x < dataSelect.length; x++) {
           runNo++
           let t = dataSelect[x]
@@ -3374,7 +3377,7 @@ export default {
           let serviceDetail = ''
           let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
           fieldflow.forEach((row) => {
-            let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+            let tempField = this.BookingDataListTimechange[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
             // serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
             let convertTextField = ''
             if (tempField.length > 0) {
@@ -3413,7 +3416,7 @@ export default {
           s.tel = t.tel
           s.empFull_NameTH = t.empFull_NameTH
           s.extraJob = t.extraJob ? 'Extra Job' : ''
-          s.carModel = this.getDataFromFieldName(this.BookingDataList[t.bookNo], 'รุ่นรถ')
+          s.carModel = this.getDataFromFieldName(this.BookingDataListTimechange[t.bookNo], 'รุ่นรถ')
           s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
           dataExport.push(s)
         }
@@ -3478,7 +3481,7 @@ export default {
           let serviceDetail = ''
           let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
           fieldflow.forEach((row) => {
-            let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+            let tempField = this.BookingDataListTimechange[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
             // serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
             let convertTextField = ''
             if (tempField.length > 0) {
@@ -3513,7 +3516,7 @@ export default {
           s.empFull_NameTH = t.empFull_NameTH
           s.extraJob = t.extraJob ? 'Extra Job' : ''
           s.tel = t.tel
-          s.carModel = this.getDataFromFieldName(this.BookingDataList[t.bookNo], 'รุ่นรถ')
+          s.carModel = this.getDataFromFieldName(this.BookingDataListTimechange[t.bookNo], 'รุ่นรถ')
           s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
           dataExport.push(s)
         }
@@ -3555,7 +3558,7 @@ export default {
           let serviceDetail = ''
           let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
           fieldflow.forEach((row) => {
-            let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+            let tempField = this.BookingDataListTimechange[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
             // serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
             let convertTextField = ''
             if (tempField.length > 0) {
@@ -3590,7 +3593,7 @@ export default {
           s.tel = t.tel
           s.empFull_NameTH = t.empFull_NameTH
           s.extraJob = t.extraJob ? 'Extra Job' : ''
-          s.carModel = this.getDataFromFieldName(this.BookingDataList[t.bookNo], 'รุ่นรถ')
+          s.carModel = this.getDataFromFieldName(this.BookingDataListTimechange[t.bookNo], 'รุ่นรถ')
           s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
           dataExport.push(s)
         }
@@ -4168,6 +4171,7 @@ export default {
         if (text === 'all') {
           this.dataItemTimesChange = this.dataItem
           this.dataRemoveExport = this.dataItemTimesChange.filter(el => { return el.statusBt === 'cancel' })
+          this.BookingDataListTimechange = this.BookingDataList
         } else {
           if (moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM') === this.dateStart) {
             console.log('month old')
@@ -4179,6 +4183,7 @@ export default {
               if (a.timeDuetext < b.timeDuetext) return -1
               return a.timeDuetext > b.timeDuetext ? 1 : 0
             })
+            this.BookingDataListTimechange = this.BookingDataList
           } else {
             var data = this.dataItemCheck.filter(el => {
               let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
