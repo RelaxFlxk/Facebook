@@ -36,8 +36,8 @@ export default {
       endDate: '',
       BookingflowName: null,
       codeColor: [
-        '#F898A4',
         '#0099FF',
+        '#F898A4',
         '#CC0066',
         '#CCFF00',
         'rgb(33, 158, 188)',
@@ -60,7 +60,7 @@ export default {
       this.BookingflowName = null
       this.startDate = this.momenDate_1(dateRange.startDate)
       this.endDate = this.momenDate_1(dateRange.endDate)
-      console.log('data', dateRange)
+      // console.log('data', dateRange)
       await axios.get(this.DNS_IP + '/booking_view_getBookflowName/get?startDate=' + this.startDate + '&endDate=' + this.endDate + '&shopId=' + this.shopId)
         .then((response) => {
           let rs = response.data

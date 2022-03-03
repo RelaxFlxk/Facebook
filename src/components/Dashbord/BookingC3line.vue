@@ -68,16 +68,16 @@ export default {
         data.day = (i + 101).toString().substr(1, 2)
         this.dataMonth.push(data)
       }
-      console.log('dataMonth', this.dataMonth)
+      // console.log('dataMonth', this.dataMonth)
       await this.getBookingC3line(picker)
     },
     async getBookingC3line (picker) {
       this.BookingC3line = null
-      console.log('picker', picker)
+      // console.log('picker', picker)
       await axios.get(this.DNS_IP + '/booking_view_getBookC3line/get?picker=' + picker + '&shopId=' + this.shopId)
         .then((response) => {
           let rs = response.data
-          console.log('rs', rs)
+          // console.log('rs', rs)
           if (rs.length > 0) {
             this.genChart(rs)
           }
@@ -88,13 +88,13 @@ export default {
     },
     async genChart (dt) {
       let itemdt = Array.from(new Set(dt.map(item => item.sourceLink)))
-      console.log(itemdt)
+      // console.log(itemdt)
       let itemChart = [
         ['x', ...this.dataMonth.map(item => item.day)]
       ]
       itemdt.forEach((vitemdt, kitemdt) => {
         let ChartEach = [vitemdt]
-        console.log(kitemdt, vitemdt)
+        // console.log(kitemdt, vitemdt)
         this.dataMonth.forEach((vdataMonth, kdataMonth) => {
           if (dt.filter((item) => item.CREATE_DATE === vdataMonth.date && item.sourceLink === vitemdt).length > 0) {
             ChartEach.push(...dt.filter((item) => item.CREATE_DATE === vdataMonth.date && item.sourceLink === vitemdt).map(item2 => item2.Book))
@@ -105,7 +105,7 @@ export default {
         })
         itemChart.push(ChartEach)
       })
-      console.log(itemChart)
+      // console.log(itemChart)
       this.BookingC3line = {
         data: {
           x: 'x',
@@ -115,7 +115,7 @@ export default {
           pattern: this.codeColor
         },
         size: {
-          height: 600
+          height: 300
         }
       }
     },

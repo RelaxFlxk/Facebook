@@ -2,38 +2,44 @@
   <div >
     <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
     <v-main>
-      <div class="col-md-12 ml-sm-auto col-lg-12 px-4">
+      <div class="col-md-12 ml-sm-auto col-lg-12 px-4" >
         <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
-        <v-row>
-                <v-col cols="6" md="6">
-                  <div style="display: flex">
-                    <date-range-picker
-                    ref="picker"
-                    :locale-data="{ firstDay: 1, format: 'yyyy-mm-dd' }"
-                    v-model="dateRange"
-                    />
-                    <v-btn
-                      small class="ml-5 mt-2" color="#173053" dark
-                      @click="getReportBooking()"
-                    >
-                      ค้นหา
-                    </v-btn>
-                  </div>
-                </v-col>
-        </v-row>
         <v-divider class="mx-4"></v-divider>
+        <v-card class="p-3" color="#f2f2f2">
           <v-row>
-          <v-col :cols="resCol">
-            <BookingsourceLink ref="modal1"></BookingsourceLink>
-          </v-col>
-          <v-col :cols="resCol" >
-            <v-card >
-            <BookingflowName ref="modal2"></BookingflowName>
-            </v-card>
-          </v-col>
-        </v-row>
+            <v-col cols="6" md="6">
+              <div style="display: flex">
+                <date-range-picker
+                ref="picker"
+                :locale-data="{ firstDay: 1, format: 'yyyy-mm-dd' }"
+                v-model="dateRange"
+                />
+                <v-btn
+                  small class="ml-5 mt-2" color="#173053" dark
+                  @click="getReportBooking()"
+                >
+                  ค้นหา
+                </v-btn>
+              </div>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col :cols="resCol">
+              <BookingsourceLink ref="modal1"></BookingsourceLink>
+            </v-col>
+            <v-col :cols="resCol" >
+              <BookingflowName ref="modal2"></BookingflowName>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+
+            </v-col>
+          </v-row>
+        </v-card>
         <v-divider class="mx-4"></v-divider>
-        <v-menu
+      <v-card class="p-3" color="#f2f2f2">
+          <v-menu
         ref="menu"
         v-model="menumonth"
         :close-on-content-click="false"
@@ -46,7 +52,7 @@
         <template v-slot:activator="{ on, attrs }">
           <v-text-field
             v-model="datemonth"
-            label="Picker in menu"
+            label="กรุณาเลือกเดือน"
             prepend-icon="mdi-calendar"
             readonly
             v-bind="attrs"
@@ -81,6 +87,12 @@
             <BookingC3line ref="modal3"></BookingC3line>
           </v-col>
         </v-row>
+        <v-row>
+          <v-col cols="12">
+            <BookingChartCarAndFlow ref="modal4"></BookingChartCarAndFlow>
+          </v-col>
+        </v-row>
+      </v-card>
       </div>
     </v-main>
   </div>
@@ -109,6 +121,7 @@ import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import BookingsourceLink from './BookingsourceLink.vue'
 import BookingflowName from './BookingflowName.vue'
 import BookingC3line from './BookingC3line.vue'
+import BookingChartCarAndFlow from './BookingChartCarAndFlow.vue'
 
 export default {
   components: {
@@ -122,7 +135,8 @@ export default {
     DateRangePicker,
     BookingsourceLink,
     BookingflowName,
-    BookingC3line
+    BookingC3line,
+    BookingChartCarAndFlow
   },
   created () {
     setInterval(this.getNowGlobal, 1000)
@@ -231,6 +245,7 @@ export default {
     },
     getDateMount () {
       this.$refs.modal3.getDate(this.datemonth)
+      this.$refs.modal4.getBookingcarAndflow(this.datemonth)
     }
 
   }
@@ -278,6 +293,9 @@ export default {
 .custom-loader {
   animation: loader 1s infinite;
   display: flex;
+}
+.main {
+  background-color: #f2f2f2;
 }
 @-moz-keyframes loader {
   from {
