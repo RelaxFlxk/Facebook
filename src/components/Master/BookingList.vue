@@ -2755,6 +2755,7 @@ export default {
       bookNoRemark: '',
       remark: '',
       setTimer: null,
+      setTimerCalendar: null,
       searchOther: '',
       showColorSearch: false,
       dataEditJobReady: true,
@@ -3199,6 +3200,7 @@ export default {
       }
     },
     async getDataCalendaBooking () {
+      console.log('getDataCalendaBooking')
       try {
         await this.$refs.CalendarBooking.getDataReturn()
       } catch (e) { console.log(e) }
@@ -3213,6 +3215,10 @@ export default {
       // console.log('this.setTimer', this.setTimer)
       // this.getDataCalendaBooking()
       // this.$refs.CalendarBooking.getDataReturn()
+      let _this = this
+      this.setTimerCalendar = setInterval(function () { _this.getDataCalendaBooking() }, 60000)
+      // var _this = this
+      // this.setTimerCalendar = setInterval(function () { _this.getDataCalendaBooking() }, 30000)
       this.dialogAdd = true
       if (this.branch.length === 0) {
         await this.getDataBranch()
@@ -4240,101 +4246,104 @@ export default {
               }
               this.dataItemCheck = []
               var dataItems = []
-              var dateStart = moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM')
-              console.log('dateStartxx', dateStart)
-              await this.getBookingDataListTimechange(dateStart)
-              // var dataItemTimes = []
-              await axios
-                .get(
+              if (this.timeTable !== '') {
+                var dateStart = moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM')
+                console.log('dateStartxx', dateStart)
+                await this.getBookingDataListTimechange(dateStart)
+
+                // var dataItemTimes = []
+                await axios
+                  .get(
                   // eslint-disable-next-line quotes
-                  this.DNS_IP +
+                    this.DNS_IP +
                     '/booking_view/get?shopId=' +
                     this.session.data.shopId +
                     '&masBranchID=' +
                     this.masBranchID +
                     '&dueDate=' + moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM')
-                )
-                .then(async response => {
-                  console.log('getData', response.data)
-                  if (response.data.length > 0) {
-                    for (let i = 0; i < response.data.length; i++) {
-                      let d = response.data[i]
-                      let s = {}
-                      s.bookNo = d.bookNo
-                      s.flowId = d.flowId
-                      s.flowName = d.flowName
-                      s.dueDate = d.dueDate
-                      s.remarkRemove = d.remarkRemove
-                      s.userId = d.userId
-                      s.chkConfirm = false
-                      s.chkCancel = false
-                      s.jobNo = d.jobNo
-                      s.remarkRemove = d.remarkRemove || ''
-                      s.timeDueHtext = d.timeDueH + ':00'
-                      s.timeDuetext = d.timeDue
-                      if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
-                        s.chkConfirm = true
-                        s.chkCancel = false
-                      }
-                      if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
+                  )
+                  .then(async response => {
+                    console.log('getData', response.data)
+                    if (response.data.length > 0) {
+                      for (let i = 0; i < response.data.length; i++) {
+                        let d = response.data[i]
+                        let s = {}
+                        s.bookNo = d.bookNo
+                        s.flowId = d.flowId
+                        s.flowName = d.flowName
+                        s.dueDate = d.dueDate
+                        s.remarkRemove = d.remarkRemove
+                        s.userId = d.userId
                         s.chkConfirm = false
-                        s.chkCancel = true
+                        s.chkCancel = false
+                        s.jobNo = d.jobNo
+                        s.remarkRemove = d.remarkRemove || ''
+                        s.timeDueHtext = d.timeDueH + ':00'
+                        s.timeDuetext = d.timeDue
+                        if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
+                          s.chkConfirm = true
+                          s.chkCancel = false
+                        }
+                        if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
+                          s.chkConfirm = false
+                          s.chkCancel = true
+                        }
+                        s.statusBt = d.statusBt || 'wait'
+                        switch (d.statusBt) {
+                          case 'confirm':
+                            s.statusBtText = 'ยืนยันแล้ว'
+                            break
+                          case 'cancel':
+                            s.statusBtText = 'ยกเลิก'
+                            break
+                          case 'confirmJob':
+                            s.statusBtText = 'รับรถแล้ว'
+                            break
+                          default:
+                            s.statusBtText = 'รายการนัดหมายใหม่'
+                            break
+                        }
+                        // let dataBookingData = []
+                        // await axios
+                        //   .get(
+                        //     this.DNS_IP + `/BookingData/get?bookNo=${d.bookNo}`
+                        //   )
+                        //   .then(async responses => {
+                        //     dataBookingData = responses.data
+                        //   })
+                        s.cusName = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'ชื่อ')
+                        s.cusReg = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'เลขทะเบียน')
+                        s.tel = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'เบอร์โทร')
+                        s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
+                        s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
+                        s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
+                        // var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
+                        // if (chkTime.length === 0) {
+                        //   dataItemTimes.push(s)
+                        // }
+                        dataItems.push(s)
                       }
-                      s.statusBt = d.statusBt || 'wait'
-                      switch (d.statusBt) {
-                        case 'confirm':
-                          s.statusBtText = 'ยืนยันแล้ว'
-                          break
-                        case 'cancel':
-                          s.statusBtText = 'ยกเลิก'
-                          break
-                        case 'confirmJob':
-                          s.statusBtText = 'รับรถแล้ว'
-                          break
-                        default:
-                          s.statusBtText = 'รายการนัดหมายใหม่'
-                          break
-                      }
-                      // let dataBookingData = []
-                      // await axios
-                      //   .get(
-                      //     this.DNS_IP + `/BookingData/get?bookNo=${d.bookNo}`
-                      //   )
-                      //   .then(async responses => {
-                      //     dataBookingData = responses.data
-                      //   })
-                      s.cusName = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'ชื่อ')
-                      s.cusReg = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'เลขทะเบียน')
-                      s.tel = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'เบอร์โทร')
-                      s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
-                      s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
-                      s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
-                      // var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
-                      // if (chkTime.length === 0) {
-                      //   dataItemTimes.push(s)
-                      // }
-                      dataItems.push(s)
                     }
-                  }
-                  if (dataItems.length === 0 || dataItems.status === false) {
-                    this.dataItemCheck = []
+                    if (dataItems.length === 0 || dataItems.status === false) {
+                      this.dataItemCheck = []
                     // this.dataItemTime = []
                     // this.dataReady = true
                     // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
-                  } else {
+                    } else {
                     // console.log('month new if')
-                    console.log('month new if', dataItems)
-                    this.dataItemCheck = dataItems
-                    this.dataItemTimesChange = this.dataItemCheck.filter(el => {
-                      let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-                      return dueDate === this.timeTable
+                      console.log('month new if', dataItems)
+                      this.dataItemCheck = dataItems
+                      this.dataItemTimesChange = this.dataItemCheck.filter(el => {
+                        let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+                        return dueDate === this.timeTable
                       // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-                    }).sort((a, b) => {
-                      if (a.timeDuetext < b.timeDuetext) return -1
-                      return a.timeDuetext > b.timeDuetext ? 1 : 0
-                    })
-                  }
-                })
+                      }).sort((a, b) => {
+                        if (a.timeDuetext < b.timeDuetext) return -1
+                        return a.timeDuetext > b.timeDuetext ? 1 : 0
+                      })
+                    }
+                  })
+              }
             } else {
               console.log('month new else')
               this.dataItemTimesChange = this.dataItemCheck.filter(el => {
@@ -4415,10 +4424,12 @@ export default {
     async getBookingList () {
       // Clear Data ทุกครั้ง
       // this.setTimer = setInterval(this.getDataDefault(), 100000)
-      // let _this = this
-      // this.setTimer = setTimeout(function () { _this.getDataSetTime() }, 10000)
       // console.log('this.masBranchID1', this.masBranchID)
       // console.log('this.setTimer', this.setTimer)
+
+      clearInterval(this.setTimerCalendar)
+      this.setTimerCalendar = null
+
       if (this.masBranchID) {
         this.masBranchID = this.masBranchID
       } else {
@@ -4428,7 +4439,7 @@ export default {
           this.masBranchID = ''
         }
       }
-      this.dataReady = false
+      // this.dataReady = false
       this.selectedStatus = true
       // this.getSelectText = ''
       this.dataItem = []
@@ -4896,6 +4907,7 @@ export default {
         })
     },
     async clearDataAdd () {
+      this.dataReady = false
       if (this.statusSearch === 'no') {
         await this.getBookingList()
       } else {
@@ -4905,6 +4917,8 @@ export default {
       if (this.getSelectText) {
         this.getSelect(this.getSelectText, this.getSelectCount)
       }
+      clearInterval(this.setTimerCalendar)
+      this.setTimerCalendar = null
       this.getDataCalendaBooking()
       // this.countWaiting = 0
       // this.countConfirm = 0
