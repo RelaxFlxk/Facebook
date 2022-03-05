@@ -1238,6 +1238,10 @@
                               .substr(0, 10)
                           "
                         ></v-date-picker>
+                        <!-- <v-date-picker
+                          v-model="formChange.date"
+                          @input="menuDateChange = false"
+                        ></v-date-picker> -->
                       </v-menu>
                     </v-col>
                     <v-col  cols="12" md="6" lg="6">
@@ -4277,6 +4281,8 @@ export default {
                         s.chkConfirm = false
                         s.chkCancel = false
                         s.jobNo = d.jobNo
+                        s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
+                        s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
                         s.remarkRemove = d.remarkRemove || ''
                         s.timeDueHtext = d.timeDueH + ':00'
                         s.timeDuetext = d.timeDue
