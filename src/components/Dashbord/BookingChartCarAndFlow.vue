@@ -1,6 +1,7 @@
 <template lang="">
     <div >
       <v-card class="p-3">
+        <h3 class="text-center">ปริมาณข้อมูลแบ่งตามประเภทบริการ</h3>
         <v-row>
           <v-col cols="4" v-for="(item , index ) in allItem" :key='index'>
                 <v-card
@@ -37,10 +38,8 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col>
-            <v-card class="p-3" v-if="itemChart">
+          <v-col class="p-3" v-if="itemChart">
               <C3Chart :chartData="itemChart"></C3Chart>
-            </v-card>
           </v-col>
         </v-row>
       </v-card>
@@ -72,6 +71,7 @@ export default {
     return {
       session: this.$session.getAll(),
       shopId: this.$session.getAll().data.shopId,
+      dateStatus: '',
       codeColor: [
         '#F898A4',
         '#0099FF',
@@ -97,6 +97,7 @@ export default {
   },
   methods: {
     async getBookingcarAndflow (picker) {
+      this.dateStatus = picker
       this.itemChart = null
       // console.log('picker', picker)
       await axios.get(this.DNS_IP + '/BookingData/getChartCarAndFlow?picker=' + picker + '&shopId=' + this.shopId)
@@ -123,14 +124,36 @@ export default {
     async genChart (item) {
       this.itemChart = null
       let column = []
-      await this.rsItem.forEach((v, k) => {
-        if (v.fieldName === item) {
-          if (v.fieldValue !== '') {
-            let d = [v.fieldValue, v.Count]
-            column.push(d)
+      if (item === 'รอบเช็คระยะ') {
+        let rsItemfilter = []
+        for (let i = 0; i < this.rsItem.length; i++) {
+          let d = this.rsItem[i]
+          if (d.fieldValue !== '') {
+            if (d.fieldName === item) {
+              rsItemfilter.push(d)
+            }
           }
         }
-      })
+        // console.log('rsItemfilter', rsItemfilter)
+        // console.log('rsItemfilterTTTTT', rsItemfilter.sort((a, b) => { return a.fieldValue.replace(',', '') - b.fieldValue.replace(',', '') }))
+        await rsItemfilter.sort((a, b) => { return a.fieldValue.replace(',', '') - b.fieldValue.replace(',', '') }).forEach((v, k) => {
+          if (v.fieldName === item) {
+            if (v.fieldValue !== '') {
+              let d = [v.fieldValue, v.Count]
+              column.push(d)
+            }
+          }
+        })
+      } else {
+        await this.rsItem.forEach((v, k) => {
+          if (v.fieldName === item) {
+            if (v.fieldValue !== '') {
+              let d = [v.fieldValue, v.Count]
+              column.push(d)
+            }
+          }
+        })
+      }
       this.itemChart = {
         data: {
           columns: column,
@@ -142,6 +165,9 @@ export default {
           }
         // or
         // width: 100 // this makes bar width 100px
+        },
+        tooltip: {
+          grouped: false // Default true
         },
         axis: {
           x: {
