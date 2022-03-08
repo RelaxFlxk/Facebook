@@ -5519,6 +5519,7 @@ export default {
       this.swalConfig.title = 'ต้องการ เปลี่ยนเวลานัดหมาย ใช่หรือไม่?'
       this.$swal(this.swalConfig).then(async result => {
         var dtChange = {
+          changeDueDate: 'change',
           dueDate: this.formChange.date + ' ' + this.formChange.time
         }
         await axios

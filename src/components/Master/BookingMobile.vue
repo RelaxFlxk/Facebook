@@ -481,6 +481,7 @@ export default {
       branch: [],
       BookingDataList: [],
       BookingDataItemEdit: [],
+      BookingDataListTimechange: [],
       dateStart: '',
       flowIdSelect: ''
     }
@@ -594,6 +595,9 @@ export default {
               this.dataItemCheck = []
               var dataItems = []
               // var dataItemTimes = []
+              var dateStart = moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM')
+              console.log('dateStartxx', dateStart)
+              await this.getBookingDataListTimechange(dateStart)
               await axios
                 .get(
                   // eslint-disable-next-line quotes
@@ -621,6 +625,8 @@ export default {
                       s.remarkRemove = d.remarkRemove || ''
                       s.timeDueHtext = d.timeDueH + ':00'
                       s.timeDuetext = d.timeDue
+                      s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
+                      s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
                       if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
                         s.chkConfirm = true
                         s.chkCancel = false
@@ -644,17 +650,24 @@ export default {
                           s.statusBtText = 'รายการนัดหมายใหม่'
                           break
                       }
-                      let dataBookingData = []
-                      await axios
-                        .get(
-                          this.DNS_IP + `/BookingData/get?bookNo=${d.bookNo}`
-                        )
-                        .then(async responses => {
-                          dataBookingData = responses.data
-                        })
-                      s.cusName = this.getDataFromFieldName(dataBookingData, 'ชื่อ')
-                      s.cusReg = this.getDataFromFieldName(dataBookingData, 'เลขทะเบียน')
-                      s.tel = this.getDataFromFieldName(dataBookingData, 'เบอร์โทร')
+                      // let dataBookingData = []
+                      // await axios
+                      //   .get(
+                      //     this.DNS_IP + `/BookingData/get?bookNo=${d.bookNo}`
+                      //   )
+                      //   .then(async responses => {
+                      //     dataBookingData = responses.data
+                      //   })
+                      // s.cusName = this.getDataFromFieldName(dataBookingData, 'ชื่อ')
+                      // s.cusReg = this.getDataFromFieldName(dataBookingData, 'เลขทะเบียน')
+                      // s.tel = this.getDataFromFieldName(dataBookingData, 'เบอร์โทร')
+                      // s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
+                      // s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
+                      // s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
+
+                      s.cusName = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'ชื่อ')
+                      s.cusReg = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'เลขทะเบียน')
+                      s.tel = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'เบอร์โทร')
                       s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
                       s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
                       s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
@@ -673,6 +686,14 @@ export default {
                   } else {
                     console.log('month new if')
                     this.dataItemCheck = dataItems
+                    this.dataItemTimesChange = this.dataItemCheck.filter(el => {
+                      let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+                      return dueDate === this.timeTable
+                      // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
+                    }).sort((a, b) => {
+                      if (a.timeDuetext < b.timeDuetext) return -1
+                      return a.timeDuetext > b.timeDuetext ? 1 : 0
+                    })
                   }
                 })
             } else {
@@ -692,6 +713,32 @@ export default {
       } catch (err) {
         console.log(err)
       }
+    },
+    async getBookingDataListTimechange (dateStart) {
+      this.BookingDataListTimechange = []
+      if (this.masBranchID) {
+        this.masBranchID = this.masBranchID
+      } else {
+        if (this.branch.length > 0) {
+          this.masBranchID = this.branch[0].value
+        } else {
+          this.masBranchID = ''
+        }
+      }
+      let url = `${this.DNS_IP}/BookingData/get?shopId=${this.$route.query.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
+      await axios
+        .get(url)
+        .then(async response => {
+          if (response.data.status !== false) {
+            response.data.forEach((row) => {
+              if (typeof (this.BookingDataListTimechange[row.bookNo]) === 'undefined') {
+                this.BookingDataListTimechange[row.bookNo] = []
+              }
+              this.BookingDataListTimechange[row.bookNo].push(row)
+            })
+          }
+        })
+      console.log(this.BookingDataListTimechange)
     },
     async chkBookingNo () {
       this.BookingDataItem = []
@@ -1066,6 +1113,7 @@ export default {
         cancelButtonText: 'ไม่'
       }).then(async result => {
         var dtChange = {
+          changeDueDate: 'change',
           dueDate: this.formChange.date + ' ' + this.formChange.time
         }
         await axios
