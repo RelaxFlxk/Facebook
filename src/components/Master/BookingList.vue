@@ -181,7 +181,7 @@
                 ></v-text-field>
               </template>
               <v-date-picker
-                @input="menuStart = false,getBookingList()"
+                @input="menuStart = false,dataReady = false,getBookingList()"
                 v-model="dateStart"
                 type="month"
                 no-title
@@ -196,7 +196,7 @@
               outlined
               dense
               required
-              @change="getBookingList()"
+              @change="dataReady = false,getBookingList()"
             ></v-select>
             <v-btn
               elevation="4"
@@ -4795,17 +4795,8 @@ export default {
           update.adminLogin = this.session.data.userName
           Add.push(update)
         } else {
-          if (
-            fielditem.filter(row => {
-              return row.fieldId === parseInt(d.conditionField)
-            }).length > 0
-          ) {
-            if (
-              d.conditionValue ===
-              fielditem.filter(row => {
-                return row.fieldId === parseInt(d.conditionField)
-              })[0].fieldValue
-            ) {
+          if (fielditem.filter(row => { return row.fieldId === parseInt(d.conditionField) }).length > 0) {
+            if (d.conditionValue === fielditem.filter(row => { return row.fieldId === parseInt(d.conditionField) })[0].fieldValue) {
               update.masBranchID = this.formAdd.masBranchID
               update.bookingFieldId = d.bookingFieldId
               update.remark = this.remark
@@ -5543,7 +5534,7 @@ export default {
               .post(this.DNS_IP + '/booking_transaction/add', dt)
               .then(async response => {
                 console.log('addDataGlobal', response)
-                if (item.statusBt === 'confirm') {
+                if (changeStatus === 'confirm') {
                   if (item.userId !== 'user-skip') {
                     if (this.statusSearch === 'no') {
                       await this.getBookingList()
@@ -5603,6 +5594,9 @@ export default {
                 console.log('error function addData : ', error)
               })
           })
+      }).catch(error => {
+        this.dataChangeReady = true
+        console.log('catch alear : ', error)
       })
     },
     getjob (item) {
