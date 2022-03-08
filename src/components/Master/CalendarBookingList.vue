@@ -143,7 +143,7 @@
                     <span style="font-size:26px !important;">{{day}}</span>
                   </template>
                   <template v-slot:day="{ date }">
-                    <template v-if="eventInfo[date] && eventInfo[date].all > 0">
+                    <div v-if="eventInfo[date] && eventInfo[date].all > 0" :class="(date === today) ? 'today' : ''">
                       <v-row>
                         <v-col>
                           <v-progress-linear
@@ -210,7 +210,7 @@
                           </v-badge>
                         </v-col>
                       </v-row>
-                    </template>
+                    </div>
                   </template>
                   </v-calendar>
                 </v-sheet>
@@ -984,5 +984,8 @@ export default {
 <style scoped>
 .vlistitem {
   background-color: #1B437C;
+}
+.today {
+  background-color: #C1DFFF;
 }
 </style>
