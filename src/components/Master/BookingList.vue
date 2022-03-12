@@ -3092,10 +3092,10 @@ export default {
         if (dt.timeText) {
           this.timeEdit = { text: dt.timeText, value: dt.dueDate.slice(-5) }
         } else {
-          this.timeEdit = dt.dueDate.slice(-5)
+          this.timeEdit = { text: dt.dueDate.slice(-5), value: dt.dueDate.slice(-5) }
         }
       } else {
-        this.timeEdit = dt.dueDate.slice(-5)
+        this.timeEdit = { text: dt.dueDate.slice(-5), value: dt.dueDate.slice(-5) }
       }
       var extraJob = ''
       var fastTrack = ''
@@ -5996,10 +5996,10 @@ export default {
         if (item.timeText) {
           this.formChange.time = { text: item.timeText, value: this.momenTime(item.dueDate) }
         } else {
-          this.formChange.time = this.momenTime(item.dueDate)
+          this.formChange.time = { text: this.momenTime(item.dueDate), value: this.momenTime(item.dueDate) }
         }
       } else {
-        this.formChange.time = this.momenTime(item.dueDate)
+        this.formChange.time = { text: this.momenTime(item.dueDate), value: this.momenTime(item.dueDate) }
       }
       this.dialogChange = true
       console.log(this.formChange)
