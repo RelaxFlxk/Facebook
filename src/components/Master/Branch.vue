@@ -49,6 +49,14 @@
                   <v-row>
                     <v-col cols="3">
                       <v-text-field
+                        label="แสดงเวลา"
+                        v-model="timeText"
+                        :rules="nameRules"
+                        :counter="50"
+                        maxlength="50"
+
+                      ></v-text-field>
+                      <v-text-field
                           v-model="formAdd.time"
                            v-mask="'##:##'"
                            label="ตั้งค่าเวลาที่ต้องการ"
@@ -58,8 +66,8 @@
                         v-if="dataItemAddTime.length > 0"
                         :items="dataItemAddTime"
                         label="ตัวอย่างการแสดงเวลา"
-                        item-text="value"
-                        item-value="value"
+                        item-text="text"
+                        item-value="text"
                       ></v-select>
                       <v-btn
                         block
@@ -221,6 +229,14 @@
                   <v-row>
                     <v-col cols="3">
                       <v-text-field
+                        label="แสดงเวลา"
+                        v-model="timeText"
+                        :rules="nameRules"
+                        :counter="50"
+                        maxlength="50"
+
+                      ></v-text-field>
+                      <v-text-field
                           v-model="formAdd.time"
                            v-mask="'##:##'"
                            label="ตั้งค่าเวลาที่ต้องการ"
@@ -230,9 +246,16 @@
                         v-if="dataItemAddTime.length > 0"
                         :items="dataItemAddTime"
                         label="ตัวอย่างการแสดงเวลา"
-                        item-text="value"
-                        item-value="value"
+                        item-text="text"
+                        item-value="text"
                       ></v-select>
+                      <!-- <v-select
+                        v-if="dataItemAddTime.length > 0"
+                        :items="dataItemAddTime"
+                        label="ตัวอย่างการแสดงเวลา"
+                        item-text="text"
+                        item-value="text"
+                      ></v-select> -->
                     </v-col>
                     <v-col cols="2">
                       <v-btn
@@ -325,7 +348,7 @@
                   x-large
                   color="blue darken-1"
                   text
-                  @click="dialogEdit = false"
+                  @click="dialogEdit = false, dataReady = true"
                 >
                   <v-icon left> mdi-cancel</v-icon>
                   ปิด
@@ -372,7 +395,7 @@
                   x-large
                   color="dark darken-1"
                   text
-                  @click="dialogDelete = false"
+                  @click="dialogDelete = false, dataReady = true"
                 >
                   <v-icon left> mdi-cancel</v-icon>
                   ปิด
@@ -563,11 +586,13 @@ export default {
       dataItem: [],
       dataItemAddTime: [],
       columnsAddTime: [
+        { text: 'แสดงเวลา', value: 'text' },
         { text: 'เวลา', value: 'value' },
         // { text: 'เรียงตำแหน่ง', value: 'actions1', align: 'center' },
         { text: 'จัดการเวลา', value: 'actions2', align: 'center' }
       ],
       typeTimeAdd: 'add',
+      timeText: '',
       indexTimeAdd: 0
     }
   },
@@ -582,7 +607,7 @@ export default {
       this.dataItemAddTime = [{'value': '08:00', 'text': '08:00'}, {'value': '08:30', 'text': '08:30'}, {'value': '09:00', 'text': '09:00'}, {'value': '09:30', 'text': '09:30'}, {'value': '10:00', 'text': '10:00'}, {'value': '10:30', 'text': '10:30'}, {'value': '11:00', 'text': '11:00'}, {'value': '11:30', 'text': '11:30'}, {'value': '12:00', 'text': '12:00'}, {'value': '12:30', 'text': '12:30'}, {'value': '13:00', 'text': '13:00'}, {'value': '13:30', 'text': '13:30'}, {'value': '14:00', 'text': '14:00'}, {'value': '14:30', 'text': '14:30'}, {'value': '15:00', 'text': '15:00'}, {'value': '15:30', 'text': '15:30'}, {'value': '16:00', 'text': '16:00'}, {'value': '16:30', 'text': '16:30'}, {'value': '17:00', 'text': '17:00'}]
     },
     addDataTimeAdd () {
-      if (this.formAdd.time) {
+      if (this.formAdd.time !== '' && this.timeText !== '') {
         var dataTime = this.formAdd.time.split(':')
         var hh = dataTime[0]
         var mm = dataTime[1]
@@ -594,30 +619,30 @@ export default {
             let nummm = 100 + parseInt(mm)
             let strhh = numhh.toString().substring(1, 3)
             let strmm = nummm.toString().substring(1, 3)
-            this.dataItemAddTime.push({value: strhh + ':' + strmm, text: strhh + ':' + strmm})
+            this.dataItemAddTime.push({value: strhh + ':' + strmm, text: this.timeText})
           } else {
+            // let numhh = 100 + parseInt(hh)
+            // let nummm = 100 + parseInt(mm)
+            // let strhh = numhh.toString().substring(1, 3)
+            // let strmm = nummm.toString().substring(1, 3)
+            // if (this.dataItemAddTime.filter(el => { return el.value === strhh + ':' + strmm }).length > 0) {
+            //   this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกมีอยู่ในรายการแล้ว', 'error')
+            // } else {
             let numhh = 100 + parseInt(hh)
             let nummm = 100 + parseInt(mm)
             let strhh = numhh.toString().substring(1, 3)
             let strmm = nummm.toString().substring(1, 3)
-            if (this.dataItemAddTime.filter(el => { return el.value === strhh + ':' + strmm }).length > 0) {
-              this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกมีอยู่ในรายการแล้ว', 'error')
-            } else {
-              // var numArr = this.dataItemAddTime.length
-              // this.dataItemAddTime.push({value: this.formAdd.time, text: this.formAdd.time, sortNo: parseInt(this.dataItemAddTime[numArr - 1].sortNo) + 1})
-              let numhh = 100 + parseInt(hh)
-              let nummm = 100 + parseInt(mm)
-              let strhh = numhh.toString().substring(1, 3)
-              let strmm = nummm.toString().substring(1, 3)
-              this.dataItemAddTime.push({value: strhh + ':' + strmm, text: strhh + ':' + strmm})
-              this.dataItemAddTime.sort(function (a, b) {
-                return a.value.localeCompare(b.value)
-              })
-            }
+            this.dataItemAddTime.push({value: strhh + ':' + strmm, text: this.timeText})
+            this.dataItemAddTime.sort(function (a, b) {
+              return a.value.localeCompare(b.value)
+            })
+            // }
           }
         } else {
           this.$swal('ผิดพลาด', 'กรุณาตรวจสอบเวลาให้ถูกต้อง', 'error')
         }
+      } else {
+        this.$swal('ผิดพลาด', 'กรุณากรอกข้อมูลให้ครบ', 'error')
       }
     },
     // async actionUp (item, index) {
@@ -645,6 +670,7 @@ export default {
     getUpdateAdd (item, text, index) {
       if (text === 'update') {
         this.formAdd.time = item.value
+        this.timeText = item.text
         this.typeTimeAdd = text
         this.indexTimeAdd = index
       } else {
@@ -661,34 +687,37 @@ export default {
       }
     },
     UpdateDataTimeAdd () {
-      if (this.formAdd.time) {
+      if (this.formAdd.time !== '' && this.timeText !== '') {
         var dataTime = this.formAdd.time.split(':')
         var hh = dataTime[0]
         var mm = dataTime[1]
         console.log(dataTime)
         if (parseInt(hh) <= 24 && parseInt(mm) <= 59) {
+          // let numhh = 100 + parseInt(hh)
+          // let nummm = 100 + parseInt(mm)
+          // let strhh = numhh.toString().substring(1, 3)
+          // let strmm = nummm.toString().substring(1, 3)
+          // if (this.dataItemAddTime.filter(el => { return el.value === strhh + ':' + strmm }).length > 0) {
+          //   this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกมีอยู่ในรายการแล้ว', 'error')
+          // } else {
           let numhh = 100 + parseInt(hh)
           let nummm = 100 + parseInt(mm)
           let strhh = numhh.toString().substring(1, 3)
           let strmm = nummm.toString().substring(1, 3)
-          if (this.dataItemAddTime.filter(el => { return el.value === strhh + ':' + strmm }).length > 0) {
-            this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกมีอยู่ในรายการแล้ว', 'error')
-          } else {
-            let numhh = 100 + parseInt(hh)
-            let nummm = 100 + parseInt(mm)
-            let strhh = numhh.toString().substring(1, 3)
-            let strmm = nummm.toString().substring(1, 3)
-            this.dataItemAddTime[this.indexTimeAdd].value = strhh + ':' + strmm
-            this.dataItemAddTime[this.indexTimeAdd].text = strhh + ':' + strmm
-            this.typeTimeAdd = 'add'
-            this.formAdd.time = ''
-            this.dataItemAddTime.sort(function (a, b) {
-              return a.value.localeCompare(b.value)
-            })
-          }
+          this.dataItemAddTime[this.indexTimeAdd].value = strhh + ':' + strmm
+          this.dataItemAddTime[this.indexTimeAdd].text = this.timeText
+          this.typeTimeAdd = 'add'
+          this.formAdd.time = ''
+          this.timeText = ''
+          this.dataItemAddTime.sort(function (a, b) {
+            return a.value.localeCompare(b.value)
+          })
+          // }
         } else {
           this.$swal('ผิดพลาด', 'กรุณาตรวจสอบเวลาให้ถูกต้อง', 'error')
         }
+      } else {
+        this.$swal('ผิดพลาด', 'กรุณากรอกข้อมูลให้ครบ', 'error')
       }
     },
     validate (Action) {
@@ -718,7 +747,9 @@ export default {
       //
       // Get ID /main.js
       this.dataReady = false
-      this.getDataByIdGlobal(this.DNS_IP, this.path, 'masBranchID', item.masBranchID)
+      Object.assign(this.formUpdate, item)
+      this.PK = item.masBranchID
+      // this.getDataByIdGlobal(this.DNS_IP, this.path, 'masBranchID', item.masBranchID)
       if (this.formUpdate.countCus) {
         this.formUpdate.countCus = this.formUpdate.countCus
       } else {
@@ -900,6 +931,7 @@ export default {
       this.deleteDataGlobal(this.DNS_IP, this.path, this.PK, this.$session.getAll().data.shopId)
     },
     async clearData () {
+      this.dataReady = true
       this.formAdd.masBranchCode = ''
       this.formAdd.masBranchName = ''
       this.formAdd.countCus = 0

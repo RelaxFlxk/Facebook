@@ -685,12 +685,36 @@
                               v-model="time"
                               :items="timeavailable"
                               label="เวลา"
-                              menu-props="auto"
+                              item-text="text"
+                              item-value="text"
+                              persistent-hint
+                              return-object
                               outlined
                               dense
                               required
                               :rules ="[rules.required]"
                             ></v-select>
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col class="pt-0">
+                              <v-radio-group v-model="formAdd.radiosRemark" row>
+                                <v-radio value="ซ่อมปกติ">
+                                  <template v-slot:label>
+                                    <div class="mt-3"><strong class="primary--text">ซ่อมปกติ</strong></div>
+                                  </template>
+                                </v-radio>
+                                <v-radio value="ExtraJob">
+                                  <template v-slot:label>
+                                    <div class="mt-3"><strong class="error--text">Extra Job</strong></div>
+                                  </template>
+                                </v-radio>
+                                <v-radio value="FastTrack">
+                                  <template v-slot:label>
+                                    <div class="mt-3"><strong class="orange--text">Fast Track</strong></div>
+                                  </template>
+                                </v-radio>
+                              </v-radio-group>
                             </v-col>
                           </v-row>
                           <v-row>
@@ -1061,11 +1085,24 @@
                     </v-col>
 
                     <v-col cols="12" sm="6" md="6" lg="6">
-                          <v-select
+                          <!-- <v-select
                           v-model="endTime"
                           :items="timeavailable"
                           label="เวลา"
                           menu-props="auto"
+                          outlined
+                          dense
+                          required
+                          :rules ="[rules.required]"
+                        ></v-select> -->
+                        <v-select
+                          v-model="endTime"
+                          :items="timeavailable"
+                          label="เวลา"
+                          item-text="text"
+                          item-value="text"
+                          persistent-hint
+                          return-object
                           outlined
                           dense
                           required
@@ -1245,7 +1282,7 @@
                       </v-menu>
                     </v-col>
                     <v-col  cols="12" md="6" lg="6">
-                      <v-select
+                      <!-- <v-select
                           v-model="formChange.time"
                           :items="timeavailable"
                           label="เวลา"
@@ -1254,7 +1291,20 @@
                           dense
                           required
                           :rules ="[rules.required]"
-                        ></v-select>
+                        ></v-select> -->
+                         <v-select
+                            v-model="formChange.time"
+                            :items="timeavailable"
+                            label="เวลา"
+                            item-text="text"
+                            item-value="text"
+                            persistent-hint
+                            return-object
+                            outlined
+                            dense
+                            required
+                            :rules ="[rules.required]"
+                          ></v-select>
                     </v-col>
                   </v-row>
                   <div class="text-center">
@@ -1665,7 +1715,7 @@
                           fab
                           v-if="item.statusBt !== 'confirmJob'"
                           small
-                          @click.stop="setDataChang(item), checkTimeFlow()"
+                          @click.stop="setDataChang(item)"
                           v-bind="attrs"
                           v-on="on"
                         >
@@ -1812,7 +1862,7 @@
                           color="primary"
                           fab
                           small
-                          @click.stop="(dialogEdit = true), getBookingDataJob(item, 'qrcode'),checkTimeFlow()"
+                          @click.stop="(dialogEdit = true), getBookingDataJob(item, 'qrcode')"
                           v-bind="attrs"
                           v-on="on"
                         >
@@ -1843,7 +1893,7 @@
                           color="warning"
                           fab
                           small
-                          @click.stop="setDataChang(item), checkTimeFlow()"
+                          @click.stop="setDataChang(item)"
                           v-bind="attrs"
                           v-on="on"
                         >
@@ -2355,14 +2405,48 @@
                               </v-menu>
                             </v-col>
                             <v-col class="pb-0">
-                              <v-select
+                              <!-- <v-select
                               v-model="timeEdit"
                               :items="timeavailable"
                               label="เวลา"
                               menu-props="auto"
                               outlined
                               dense
+                            ></v-select> -->
+                            <v-select
+                              v-model="timeEdit"
+                              :items="timeavailable"
+                              label="เวลา"
+                              item-text="text"
+                              item-value="text"
+                              persistent-hint
+                              return-object
+                              outlined
+                              dense
+                              required
+                              :rules ="[rules.required]"
                             ></v-select>
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col class="pt-0">
+                              <v-radio-group v-model="formEdit.radiosRemark" row>
+                                <v-radio value="ซ่อมปกติ">
+                                  <template v-slot:label>
+                                    <div class="mt-3"><strong class="primary--text">ซ่อมปกติ</strong></div>
+                                  </template>
+                                </v-radio>
+                                <v-radio value="ExtraJob">
+                                  <template v-slot:label>
+                                    <div class="mt-3"><strong class="error--text">Extra Job</strong></div>
+                                  </template>
+                                </v-radio>
+                                <v-radio value="FastTrack">
+                                  <template v-slot:label>
+                                    <div class="mt-3"><strong class="orange--text">Fast Track</strong></div>
+                                  </template>
+                                </v-radio>
+                              </v-radio-group>
                             </v-col>
                           </v-row>
                           <v-row>
@@ -2662,7 +2746,8 @@ export default {
         masBranchID: null,
         dueDate: '',
         shopId: this.$session.getAll().data.shopId,
-        bookingFieldId: ''
+        bookingFieldId: '',
+        radiosRemark: 'ซ่อมปกติ'
       },
       formEdit: {
         bookingId: null,
@@ -2672,7 +2757,8 @@ export default {
         masBranchID: null,
         dueDate: '',
         shopId: this.$session.getAll().data.shopId,
-        bookingFieldId: ''
+        bookingFieldId: '',
+        radiosRemark: 'ซ่อมปกติ'
       },
       formUpdate: {
         masBranchCode: '',
@@ -2909,7 +2995,7 @@ export default {
             if (dataItems.length === 0 || dataItems.status === false) {
               this.dataItem = []
               this.dataItemTime = []
-              await this.getTimesChange('update')
+              // await this.getTimesChange('update')
               if (this.getSelectText) {
                 this.getSelect(this.getSelectText, 0)
               } else {
@@ -2933,7 +3019,7 @@ export default {
                   this.dataItemTime.push(h)
                 }
               }
-              await this.getTimesChange('update')
+              // await this.getTimesChange('update')
               if (this.getSelectText) {
                 this.getSelect(this.getSelectText, 0)
               } else {
@@ -2981,7 +3067,7 @@ export default {
           } else {
             await this.searchAny()
           }
-          this.getTimesChange('update')
+          // this.getTimesChange('update')
           if (this.getSelectText) {
             this.getSelect(this.getSelectText, this.getSelectCount)
           }
@@ -3002,8 +3088,36 @@ export default {
       // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
       this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
       this.dateEdit = moment(moment(dt.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-      this.timeEdit = dt.dueDate.slice(-5)
-      console.log('this.timeEdit', this.timeEdit)
+      if (this.timeavailable.filter(el => { return el.text === dt.timeText }).length > 0) {
+        if (dt.timeText) {
+          this.timeEdit = { text: dt.timeText, value: dt.dueDate.slice(-5) }
+        } else {
+          this.timeEdit = dt.dueDate.slice(-5)
+        }
+      } else {
+        this.timeEdit = dt.dueDate.slice(-5)
+      }
+      var extraJob = ''
+      var fastTrack = ''
+      if (dt.extraJob === null) {
+        extraJob = false
+      } else {
+        extraJob = dt.extraJob
+      }
+      if (dt.fastTrack === null) {
+        fastTrack = false
+      } else {
+        fastTrack = dt.fastTrack
+      }
+
+      if (!extraJob && !fastTrack) {
+        this.formEdit.radiosRemark = 'ซ่อมปกติ'
+      } else if (extraJob && !fastTrack) {
+        this.formEdit.radiosRemark = 'ExtraJob'
+      } else if (!extraJob && fastTrack) {
+        this.formEdit.radiosRemark = 'FastTrack'
+      }
+
       let itemIncustomField = []
       await axios
         .get(
@@ -3033,7 +3147,7 @@ export default {
                         var d = rs1[i]
                         var s = {}
                         var dataBD = rs.filter(el => { return parseInt(el.fieldId) === parseInt(d.fieldId) })
-                        console.log('dataBD', dataBD)
+                        // console.log('dataBD', dataBD)
                         if (dataBD.length > 0) {
                           s.bookNo = dataBD[0].bookNo
                           s.bookingFieldId = rs2[0].bookingFieldId
@@ -3113,6 +3227,22 @@ export default {
         let Add = []
         let fielditem = this.BookingDataItemEdit
         console.log('this.BookingDataItemEdit', this.BookingDataItemEdit)
+        var fastTrack = 'False'
+        var extraJob = 'False'
+        switch (this.formEdit.radiosRemark) {
+          case 'ซ่อมปกติ':
+            fastTrack = 'False'
+            extraJob = 'False'
+            break
+          case 'ExtraJob':
+            fastTrack = 'False'
+            extraJob = 'True'
+            break
+          case 'FastTrack':
+            fastTrack = 'True'
+            extraJob = 'False'
+            break
+        }
         for (let i = 0; i < rs.length; i++) {
           let d = rs[i]
           let update = {}
@@ -3122,9 +3252,12 @@ export default {
             update.bookingFieldId = d.bookingFieldId
             update.bookNo = d.bookNo
             update.fieldValue = d.fieldValue.replace(/%/g, '%%')
-            update.dueDate = this.dateEdit + ' ' + this.timeEdit
+            update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
+            update.timeText = this.timeEdit.text
             update.flowId = this.formEdit.flowId
             update.masBranchID = this.formEdit.masBranchID
+            update.fastTrack = fastTrack
+            update.extraJob = extraJob
             update.LAST_USER = this.$session.getAll().data.userName
             update.empSelect = this.empSelectEdit
             update.shopId = this.session.data.shopId
@@ -3146,9 +3279,12 @@ export default {
                 update.bookingFieldId = d.bookingFieldId
                 update.bookNo = d.bookNo
                 update.fieldValue = d.fieldValue.replace(/%/g, '%%')
-                update.dueDate = this.dateEdit + ' ' + this.timeEdit
+                update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
+                update.timeText = this.timeEdit.text
                 update.flowId = this.formEdit.flowId
                 update.masBranchID = this.formEdit.masBranchID
+                update.fastTrack = fastTrack
+                update.extraJob = extraJob
                 update.LAST_USER = this.$session.getAll().data.userName
                 update.empSelect = this.empSelectEdit
                 update.shopId = this.session.data.shopId
@@ -3161,9 +3297,12 @@ export default {
                 update.bookingFieldId = d.bookingFieldId
                 update.bookNo = d.bookNo
                 update.fieldValue = d.fieldValue.replace(/%/g, '%%')
-                update.dueDate = this.dateEdit + ' ' + this.timeEdit
+                update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
+                update.timeText = this.timeEdit.text
                 update.flowId = this.formEdit.flowId
                 update.masBranchID = this.formEdit.masBranchID
+                update.fastTrack = fastTrack
+                update.extraJob = extraJob
                 update.LAST_USER = this.$session.getAll().data.userName
                 update.empSelect = this.empSelectEdit
                 update.shopId = this.session.data.shopId
@@ -3188,7 +3327,7 @@ export default {
                 } else {
                   await this.searchAny()
                 }
-                this.getTimesChange('update')
+                // this.getTimesChange('update')
                 if (this.getSelectText) {
                   this.getSelect(this.getSelectText, this.getSelectCount)
                 }
@@ -3220,7 +3359,7 @@ export default {
       // this.getDataCalendaBooking()
       // this.$refs.CalendarBooking.getDataReturn()
       let _this = this
-      this.setTimerCalendar = setInterval(function () { _this.getDataCalendaBooking() }, 60000)
+      this.setTimerCalendar = setInterval(function () { _this.getDataCalendaBooking() }, 20000)
       // var _this = this
       // this.setTimerCalendar = setInterval(function () { _this.getDataCalendaBooking() }, 30000)
       this.dialogAdd = true
@@ -3238,7 +3377,7 @@ export default {
       this.getCustomFieldStart()
       this.getDataFlow()
       await this.getBookingList()
-      await this.getTimesChange('update')
+      // await this.getTimesChange('update')
       this.getSelect(this.getSelectText, this.getSelectCount)
       this.getDataCalendaBooking()
       this.loadingRefresh = false
@@ -3249,7 +3388,7 @@ export default {
       } else {
         await this.searchAny()
       }
-      await this.getTimesChange('update')
+      // await this.getTimesChange('update')
       if (this.getSelectText) {
         this.getSelect(this.getSelectText, this.getSelectCount)
       }
@@ -3302,7 +3441,7 @@ export default {
             } else {
               await this.searchAny()
             }
-            this.getTimesChange('update')
+            // this.getTimesChange('update')
             if (this.getSelectText) {
               this.getSelect(this.getSelectText, this.getSelectCount)
             }
@@ -3868,7 +4007,7 @@ export default {
                 await axios
                   .get(
                     // eslint-disable-next-line quotes
-                    this.DNS_IP + "/BookingData/get?bookNo=" + d.bookNo
+                    this.DNS_IP + "/BookingData/getView?bookNo=" + d.bookNo
                   )
                   .then(async responses => {
                     console.log('getDataData', responses.data)
@@ -4038,7 +4177,7 @@ export default {
             let dataBookingData = []
             await axios
               .get(
-                this.DNS_IP + `/BookingData/get?bookNo=${d.bookNo}`
+                this.DNS_IP + `/BookingData/getView?bookNo=${d.bookNo}`
               )
               .then(async responses => {
                 dataBookingData = responses.data
@@ -4220,155 +4359,316 @@ export default {
           this.dataRemoveExport = this.dataItemTimesChange.filter(el => { return el.statusBt === 'cancel' })
           this.BookingDataListTimechange = this.BookingDataList
         } else {
-          if (moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM') === this.dateStart) {
-            console.log('month old')
-            this.dataItemTimesChange = this.dataItem.filter(el => {
-              let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-              return dueDate === this.timeTable
-            // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-            }).sort((a, b) => {
-              if (a.timeDuetext < b.timeDuetext) return -1
-              return a.timeDuetext > b.timeDuetext ? 1 : 0
-            })
-            this.BookingDataListTimechange = this.BookingDataList
+          // if (moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM') === this.dateStart) {
+          //   console.log('month old')
+          //   this.dataItemTimesChange = this.dataItem.filter(el => {
+          //     let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+          //     return dueDate === this.timeTable
+          //   // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
+          //   }).sort((a, b) => {
+          //     if (a.timeDuetext < b.timeDuetext) return -1
+          //     return a.timeDuetext > b.timeDuetext ? 1 : 0
+          //   })
+          //   this.BookingDataListTimechange = this.BookingDataList
+          // }
+          // } else {
+          //   var data = this.dataItemCheck.filter(el => {
+          //     let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+          //     return dueDate === this.timeTable
+          //   // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
+          //   })
+          //   console.log('data', data)
+          //   if (data.length === 0) {
+          if (this.masBranchID) {
+            this.masBranchID = this.masBranchID
           } else {
-            var data = this.dataItemCheck.filter(el => {
-              let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-              return dueDate === this.timeTable
-            // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-            })
-            console.log('data', data)
-            if (data.length === 0) {
-              if (this.masBranchID) {
-                this.masBranchID = this.masBranchID
-              } else {
-                if (this.branch.length > 0) {
-                  this.masBranchID = this.branch[0].value
-                } else {
-                  this.masBranchID = ''
-                }
-              }
-              this.dataItemCheck = []
-              var dataItems = []
-              if (this.timeTable !== '') {
-                var dateStart = moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM')
-                console.log('dateStartxx', dateStart)
-                await this.getBookingDataListTimechange(dateStart)
+            if (this.branch.length > 0) {
+              this.masBranchID = this.branch[0].value
+            } else {
+              this.masBranchID = ''
+            }
+          }
+          this.dataItemCheck = []
+          var dataItems = []
+          if (this.timeTable !== '') {
+            var dateStart = moment(moment(this.timeTable, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+            console.log('dateStartxx', dateStart)
+            await this.getBookingDataListTimechange(dateStart)
 
-                // var dataItemTimes = []
-                await axios
-                  .get(
-                  // eslint-disable-next-line quotes
-                    this.DNS_IP +
+            // var dataItemTimes = []
+            await axios
+              .get(
+                // eslint-disable-next-line quotes
+                this.DNS_IP +
                     '/booking_view/get?shopId=' +
                     this.session.data.shopId +
                     '&masBranchID=' +
                     this.masBranchID +
-                    '&dueDate=' + moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM')
-                  )
-                  .then(async response => {
-                    console.log('getData', response.data)
-                    if (response.data.length > 0) {
-                      for (let i = 0; i < response.data.length; i++) {
-                        let d = response.data[i]
-                        let s = {}
-                        s.bookNo = d.bookNo
-                        s.flowId = d.flowId
-                        s.flowName = d.flowName
-                        s.dueDate = d.dueDate
-                        s.remarkRemove = d.remarkRemove
-                        s.userId = d.userId
-                        s.chkConfirm = false
-                        s.chkCancel = false
-                        s.jobNo = d.jobNo
-                        s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
-                        s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
-                        s.remarkRemove = d.remarkRemove || ''
-                        s.timeDueHtext = d.timeDueH + ':00'
-                        s.timeDuetext = d.timeDue
-                        if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
-                          s.chkConfirm = true
-                          s.chkCancel = false
-                        }
-                        if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
-                          s.chkConfirm = false
-                          s.chkCancel = true
-                        }
-                        s.statusBt = d.statusBt || 'wait'
-                        switch (d.statusBt) {
-                          case 'confirm':
-                            s.statusBtText = 'ยืนยันแล้ว'
-                            break
-                          case 'cancel':
-                            s.statusBtText = 'ยกเลิก'
-                            break
-                          case 'confirmJob':
-                            s.statusBtText = 'รับรถแล้ว'
-                            break
-                          default:
-                            s.statusBtText = 'รายการนัดหมายใหม่'
-                            break
-                        }
-                        // let dataBookingData = []
-                        // await axios
-                        //   .get(
-                        //     this.DNS_IP + `/BookingData/get?bookNo=${d.bookNo}`
-                        //   )
-                        //   .then(async responses => {
-                        //     dataBookingData = responses.data
-                        //   })
-                        s.cusName = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'ชื่อ')
-                        s.cusReg = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'เลขทะเบียน')
-                        s.tel = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'เบอร์โทร')
-                        s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
-                        s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
-                        s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
-                        // var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
-                        // if (chkTime.length === 0) {
-                        //   dataItemTimes.push(s)
-                        // }
-                        dataItems.push(s)
-                      }
+                    '&dueDate=' + moment(moment(this.timeTable, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+              )
+              .then(async response => {
+                console.log('getData', response.data)
+                if (response.data.length > 0) {
+                  for (let i = 0; i < response.data.length; i++) {
+                    let d = response.data[i]
+                    let s = {}
+                    s.bookNo = d.bookNo
+                    s.flowId = d.flowId
+                    s.flowName = d.flowName
+                    s.dueDate = d.dueDate
+                    s.remarkRemove = d.remarkRemove
+                    s.userId = d.userId
+                    s.chkConfirm = false
+                    s.chkCancel = false
+                    s.jobNo = d.jobNo
+                    s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
+                    s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
+                    s.remarkRemove = d.remarkRemove || ''
+                    s.timeDueHtext = d.timeDueH + ':00'
+                    s.timeDuetext = d.timeDue
+                    if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
+                      s.chkConfirm = true
+                      s.chkCancel = false
                     }
-                    if (dataItems.length === 0 || dataItems.status === false) {
-                      this.dataItemCheck = []
-                    // this.dataItemTime = []
-                    // this.dataReady = true
-                    // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
-                    } else {
-                    // console.log('month new if')
-                      console.log('month new if', dataItems)
-                      this.dataItemCheck = dataItems
-                      this.dataItemTimesChange = this.dataItemCheck.filter(el => {
-                        let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-                        return dueDate === this.timeTable
-                      // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-                      }).sort((a, b) => {
-                        if (a.timeDuetext < b.timeDuetext) return -1
-                        return a.timeDuetext > b.timeDuetext ? 1 : 0
-                      })
+                    if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
+                      s.chkConfirm = false
+                      s.chkCancel = true
                     }
+                    s.statusBt = d.statusBt || 'wait'
+                    switch (d.statusBt) {
+                      case 'confirm':
+                        s.statusBtText = 'ยืนยันแล้ว'
+                        break
+                      case 'cancel':
+                        s.statusBtText = 'ยกเลิก'
+                        break
+                      case 'confirmJob':
+                        s.statusBtText = 'รับรถแล้ว'
+                        break
+                      default:
+                        s.statusBtText = 'รายการนัดหมายใหม่'
+                        break
+                    }
+                    // let dataBookingData = []
+                    // await axios
+                    //   .get(
+                    //     this.DNS_IP + `/BookingData/getView?bookNo=${d.bookNo}`
+                    //   )
+                    //   .then(async responses => {
+                    //     dataBookingData = responses.data
+                    //   })
+                    s.cusName = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'ชื่อ')
+                    s.cusReg = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'เลขทะเบียน')
+                    s.tel = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'เบอร์โทร')
+                    s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
+                    s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
+                    s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
+                    // var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
+                    // if (chkTime.length === 0) {
+                    //   dataItemTimes.push(s)
+                    // }
+                    dataItems.push(s)
+                  }
+                }
+                if (dataItems.length === 0 || dataItems.status === false) {
+                  this.dataItemCheck = []
+                  // this.dataItemTime = []
+                  // this.dataReady = true
+                  // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
+                } else {
+                  // console.log('month new if')
+                  console.log('month new if', dataItems)
+                  this.dataItemCheck = dataItems
+                  this.dataItemTimesChange = this.dataItemCheck.filter(el => {
+                    let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+                    return dueDate === this.timeTable
+                    // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
+                  }).sort((a, b) => {
+                    if (a.timeDuetext < b.timeDuetext) return -1
+                    return a.timeDuetext > b.timeDuetext ? 1 : 0
                   })
-              }
-            } else {
-              console.log('month new else')
-              this.dataItemTimesChange = this.dataItemCheck.filter(el => {
-                let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-                return dueDate === this.timeTable
-                // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-              }).sort((a, b) => {
-                if (a.timeDuetext < b.timeDuetext) return -1
-                return a.timeDuetext > b.timeDuetext ? 1 : 0
+                  this.dataRemoveExport = this.dataItemTimesChange.filter(el => { return el.statusBt === 'cancel' })
+                  console.log('this.dataRemoveExport', this.dataRemoveExport)
+                }
               })
-            }
           }
-          this.dataRemoveExport = this.dataItemTimesChange.filter(el => { return el.statusBt === 'cancel' })
-          console.log('this.dataRemoveExport', this.dataRemoveExport)
+          // } else {
+          //   console.log('month new else')
+          //   this.dataItemTimesChange = this.dataItemCheck.filter(el => {
+          //     let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+          //     return dueDate === this.timeTable
+          //     // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
+          //   }).sort((a, b) => {
+          //     if (a.timeDuetext < b.timeDuetext) return -1
+          //     return a.timeDuetext > b.timeDuetext ? 1 : 0
+          //   })
+          // }
         }
+        // this.dataRemoveExport = this.dataItemTimesChange.filter(el => { return el.statusBt === 'cancel' })
+        // console.log('this.dataRemoveExport', this.dataRemoveExport)
       } catch (err) {
         console.log(err)
       }
     },
+    // async getTimesChange (text) {
+    //   try {
+    //     this.dataItemTimesChange = []
+    //     this.dataRemoveExport = []
+    //     // console.log('this.dataItem', this.dataItem.filter(el => { return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable }))
+    //     if (text === 'all') {
+    //       this.dataItemTimesChange = this.dataItem
+    //       this.dataRemoveExport = this.dataItemTimesChange.filter(el => { return el.statusBt === 'cancel' })
+    //       this.BookingDataListTimechange = this.BookingDataList
+    //     } else {
+    //       if (moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM') === this.dateStart) {
+    //         console.log('month old')
+    //         this.dataItemTimesChange = this.dataItem.filter(el => {
+    //           let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+    //           return dueDate === this.timeTable
+    //         // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
+    //         }).sort((a, b) => {
+    //           if (a.timeDuetext < b.timeDuetext) return -1
+    //           return a.timeDuetext > b.timeDuetext ? 1 : 0
+    //         })
+    //         this.BookingDataListTimechange = this.BookingDataList
+    //       } else {
+    //         var data = this.dataItemCheck.filter(el => {
+    //           let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+    //           return dueDate === this.timeTable
+    //         // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
+    //         })
+    //         console.log('data', data)
+    //         if (data.length === 0) {
+    //           if (this.masBranchID) {
+    //             this.masBranchID = this.masBranchID
+    //           } else {
+    //             if (this.branch.length > 0) {
+    //               this.masBranchID = this.branch[0].value
+    //             } else {
+    //               this.masBranchID = ''
+    //             }
+    //           }
+    //           this.dataItemCheck = []
+    //           var dataItems = []
+    //           if (this.timeTable !== '') {
+    //             var dateStart = moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM')
+    //             console.log('dateStartxx', dateStart)
+    //             await this.getBookingDataListTimechange(dateStart)
+
+    //             // var dataItemTimes = []
+    //             await axios
+    //               .get(
+    //               // eslint-disable-next-line quotes
+    //                 this.DNS_IP +
+    //                 '/booking_view/get?shopId=' +
+    //                 this.session.data.shopId +
+    //                 '&masBranchID=' +
+    //                 this.masBranchID +
+    //                 '&dueDate=' + moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM')
+    //               )
+    //               .then(async response => {
+    //                 console.log('getData', response.data)
+    //                 if (response.data.length > 0) {
+    //                   for (let i = 0; i < response.data.length; i++) {
+    //                     let d = response.data[i]
+    //                     let s = {}
+    //                     s.bookNo = d.bookNo
+    //                     s.flowId = d.flowId
+    //                     s.flowName = d.flowName
+    //                     s.dueDate = d.dueDate
+    //                     s.remarkRemove = d.remarkRemove
+    //                     s.userId = d.userId
+    //                     s.chkConfirm = false
+    //                     s.chkCancel = false
+    //                     s.jobNo = d.jobNo
+    //                     s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
+    //                     s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
+    //                     s.remarkRemove = d.remarkRemove || ''
+    //                     s.timeDueHtext = d.timeDueH + ':00'
+    //                     s.timeDuetext = d.timeDue
+    //                     if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
+    //                       s.chkConfirm = true
+    //                       s.chkCancel = false
+    //                     }
+    //                     if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
+    //                       s.chkConfirm = false
+    //                       s.chkCancel = true
+    //                     }
+    //                     s.statusBt = d.statusBt || 'wait'
+    //                     switch (d.statusBt) {
+    //                       case 'confirm':
+    //                         s.statusBtText = 'ยืนยันแล้ว'
+    //                         break
+    //                       case 'cancel':
+    //                         s.statusBtText = 'ยกเลิก'
+    //                         break
+    //                       case 'confirmJob':
+    //                         s.statusBtText = 'รับรถแล้ว'
+    //                         break
+    //                       default:
+    //                         s.statusBtText = 'รายการนัดหมายใหม่'
+    //                         break
+    //                     }
+    //                     // let dataBookingData = []
+    //                     // await axios
+    //                     //   .get(
+    //                     //     this.DNS_IP + `/BookingData/getView?bookNo=${d.bookNo}`
+    //                     //   )
+    //                     //   .then(async responses => {
+    //                     //     dataBookingData = responses.data
+    //                     //   })
+    //                     s.cusName = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'ชื่อ')
+    //                     s.cusReg = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'เลขทะเบียน')
+    //                     s.tel = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'เบอร์โทร')
+    //                     s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
+    //                     s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
+    //                     s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
+    //                     // var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
+    //                     // if (chkTime.length === 0) {
+    //                     //   dataItemTimes.push(s)
+    //                     // }
+    //                     dataItems.push(s)
+    //                   }
+    //                 }
+    //                 if (dataItems.length === 0 || dataItems.status === false) {
+    //                   this.dataItemCheck = []
+    //                 // this.dataItemTime = []
+    //                 // this.dataReady = true
+    //                 // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
+    //                 } else {
+    //                 // console.log('month new if')
+    //                   console.log('month new if', dataItems)
+    //                   this.dataItemCheck = dataItems
+    //                   this.dataItemTimesChange = this.dataItemCheck.filter(el => {
+    //                     let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+    //                     return dueDate === this.timeTable
+    //                   // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
+    //                   }).sort((a, b) => {
+    //                     if (a.timeDuetext < b.timeDuetext) return -1
+    //                     return a.timeDuetext > b.timeDuetext ? 1 : 0
+    //                   })
+    //                 }
+    //               })
+    //           }
+    //         } else {
+    //           console.log('month new else')
+    //           this.dataItemTimesChange = this.dataItemCheck.filter(el => {
+    //             let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+    //             return dueDate === this.timeTable
+    //             // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
+    //           }).sort((a, b) => {
+    //             if (a.timeDuetext < b.timeDuetext) return -1
+    //             return a.timeDuetext > b.timeDuetext ? 1 : 0
+    //           })
+    //         }
+    //       }
+    //       this.dataRemoveExport = this.dataItemTimesChange.filter(el => { return el.statusBt === 'cancel' })
+    //       console.log('this.dataRemoveExport', this.dataRemoveExport)
+    //     }
+    //   } catch (err) {
+    //     console.log(err)
+    //   }
+    // },
     async getBookingDataListTimechange (dateStart) {
       this.BookingDataListTimechange = []
       if (this.masBranchID) {
@@ -4380,7 +4680,7 @@ export default {
           this.masBranchID = ''
         }
       }
-      let url = `${this.DNS_IP}/BookingData/get?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
+      let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
       await axios
         .get(url)
         .then(async response => {
@@ -4411,7 +4711,7 @@ export default {
       if (dateStart === 'no') {
         url = `${this.DNS_IP}/BookingData/getsearchOther?shopId=${this.session.data.shopId}&fieldValue=${searchOther}`
       } else {
-        url = `${this.DNS_IP}/BookingData/get?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
+        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
       }
       await axios
         .get(url)
@@ -4492,6 +4792,7 @@ export default {
               s.chkConfirm = false
               s.chkCancel = false
               s.jobNo = d.jobNo
+              s.timeText = d.timeText
               s.remarkRemove = d.remarkRemove || ''
               s.remarkConfirm1 = (d.remarkConfirm1 === 'true' || d.remarkConfirm1 === 'True')
               s.remarkConfirm2 = (d.remarkConfirm2 === 'true' || d.remarkConfirm2 === 'True')
@@ -4544,7 +4845,7 @@ export default {
           if (dataItems.length === 0 || dataItems.status === false) {
             this.dataItem = []
             this.dataItemTime = []
-            await this.getTimesChange('update')
+            // await this.getTimesChange('update')
             if (this.getSelectText) {
               this.getSelect(this.getSelectText, 0)
             } else {
@@ -4573,7 +4874,7 @@ export default {
             //   return a.timeDueHtext > b.timeDueHtext ? 1 : 0
             // })
             console.log('dataItemTime', this.dataItemTime)
-            await this.getTimesChange('update')
+            // await this.getTimesChange('update')
             if (this.getSelectText) {
               this.getSelect(this.getSelectText, 0)
             } else {
@@ -4772,6 +5073,22 @@ export default {
       setTimeout(() => this.addDataSubmit(), 500)
     },
     addDataInsert () {
+      var fastTrack = 'False'
+      var extraJob = 'False'
+      switch (this.formAdd.radiosRemark) {
+        case 'ซ่อมปกติ':
+          fastTrack = 'False'
+          extraJob = 'False'
+          break
+        case 'ExtraJob':
+          fastTrack = 'False'
+          extraJob = 'True'
+          break
+        case 'FastTrack':
+          fastTrack = 'True'
+          extraJob = 'False'
+          break
+      }
       let rs = this.fieldNameItem
       let Add = []
       let fielditem = this.fieldNameItem
@@ -4787,10 +5104,13 @@ export default {
           update.fieldId = d.fieldId
           update.fieldValue = d.fieldValue
           update.shopId = d.shopId
-          update.dueDate = this.date + ' ' + this.time
+          update.dueDate = this.date + ' ' + this.time.value
+          update.timeText = this.time.text
           update.userId = 'user-skip'
           update.pageName = 'BookingList'
           update.sourceLink = 'direct'
+          update.fastTrack = fastTrack
+          update.extraJob = extraJob
           update.empSelect = this.empSelectAdd
           update.adminLogin = this.session.data.userName
           Add.push(update)
@@ -4804,10 +5124,13 @@ export default {
               update.fieldId = d.fieldId
               update.fieldValue = d.fieldValue
               update.shopId = d.shopId
-              update.dueDate = this.date + ' ' + this.time
+              update.dueDate = this.date + ' ' + this.time.value
+              update.timeText = this.time.text
               update.sourceLink = 'direct'
               update.userId = 'user-skip'
               update.pageName = 'BookingList'
+              update.fastTrack = fastTrack
+              update.extraJob = extraJob
               update.empSelect = this.empSelectAdd
               update.adminLogin = this.session.data.userName
               Add.push(update)
@@ -4821,10 +5144,13 @@ export default {
               update.fieldId = d.fieldId
               update.fieldValue = d.fieldValue
               update.shopId = d.shopId
-              update.dueDate = this.date + ' ' + this.time
+              update.dueDate = this.date + ' ' + this.time.value
+              update.timeText = this.time.text
               update.sourceLink = 'direct'
               update.userId = 'user-skip'
               update.pageName = 'BookingList'
+              update.fastTrack = fastTrack
+              update.extraJob = extraJob
               update.empSelect = this.empSelectAdd
               update.adminLogin = this.session.data.userName
               Add.push(update)
@@ -4910,7 +5236,7 @@ export default {
       } else {
         await this.searchAny()
       }
-      this.getTimesChange('update')
+      // this.getTimesChange('update')
       if (this.getSelectText) {
         this.getSelect(this.getSelectText, this.getSelectCount)
       }
@@ -4982,7 +5308,7 @@ export default {
               } else {
                 await this.searchAny()
               }
-              this.getTimesChange('update')
+              // this.getTimesChange('update')
               if (this.getSelectText) {
                 this.getSelect(this.getSelectText, this.getSelectCount)
               }
@@ -5004,6 +5330,7 @@ export default {
         })
     },
     async getBookingDataJob (dt, text) {
+      this.checkTimeFlow()
       this.BookingDataItem = []
       let itemIncustomField = []
       await axios
@@ -5142,7 +5469,7 @@ export default {
                 update.checkCar = ''
                 update.userId = d.userId
                 update.endDate = this.endDate
-                update.endTime = this.endTime
+                update.endTime = this.endTime.value
                 update.fieldId = d.fieldId
                 update.fieldName = d.fieldName
                 update.fieldType = dataField[0].fieldType
@@ -5218,7 +5545,7 @@ export default {
           } else {
             await this.searchAny()
           }
-          this.getTimesChange('update')
+          // this.getTimesChange('update')
           if (this.getSelectText) {
             this.getSelect(this.getSelectText, this.getSelectCount)
           }
@@ -5230,7 +5557,7 @@ export default {
           } else {
             this.searchAny()
           }
-          this.getTimesChange('update')
+          // this.getTimesChange('update')
           if (this.getSelectText) {
             this.getSelect(this.getSelectText, this.getSelectCount)
           }
@@ -5363,7 +5690,7 @@ export default {
             } else {
               await this.searchAny()
             }
-            this.getTimesChange('update')
+            // this.getTimesChange('update')
             if (this.getSelectText) {
               this.getSelect(this.getSelectText, this.getSelectCount)
             }
@@ -5391,7 +5718,7 @@ export default {
             } else {
               await this.searchAny()
             }
-            this.getTimesChange('update')
+            // this.getTimesChange('update')
             if (this.getSelectText) {
               this.getSelect(this.getSelectText, this.getSelectCount)
             }
@@ -5464,7 +5791,7 @@ export default {
             } else {
               await this.searchAny()
             }
-            this.getTimesChange('update')
+            // this.getTimesChange('update')
             if (this.getSelectText) {
               this.getSelect(this.getSelectText, this.getSelectCount)
             }
@@ -5511,7 +5838,9 @@ export default {
       this.$swal(this.swalConfig).then(async result => {
         var dtChange = {
           changeDueDate: 'change',
-          dueDate: this.formChange.date + ' ' + this.formChange.time
+          dueDate: this.formChange.date + ' ' + this.formChange.time.value,
+          timeText: this.formChange.time.text,
+          LAST_USER: this.session.data.userName
         }
         await axios
           .post(
@@ -5541,7 +5870,7 @@ export default {
                     } else {
                       await this.searchAny()
                     }
-                    this.getTimesChange('update')
+                    // this.getTimesChange('update')
                     if (this.getSelectText) {
                       this.getSelect(this.getSelectText, this.getSelectCount)
                     }
@@ -5569,7 +5898,7 @@ export default {
                     } else {
                       await this.searchAny()
                     }
-                    this.getTimesChange('update')
+                    // this.getTimesChange('update')
                     if (this.getSelectText) {
                       this.getSelect(this.getSelectText, this.getSelectCount)
                     }
@@ -5580,7 +5909,7 @@ export default {
                   } else {
                     await this.searchAny()
                   }
-                  this.getTimesChange('update')
+                  // this.getTimesChange('update')
                   if (this.getSelectText) {
                     this.getSelect(this.getSelectText, this.getSelectCount)
                   }
@@ -5649,12 +5978,22 @@ export default {
             })
         })
     },
-    setDataChang (item) {
+    async setDataChang (item) {
       console.log('dueDate', item.dueDate)
+      console.log('timeText', item.timeText)
+      await this.checkTimeFlow()
       this.dataChange = item
       this.remark = item.remark
       this.formChange.date = this.momenDate_1(item.dueDate)
-      this.formChange.time = this.momenTime(item.dueDate)
+      if (this.timeavailable.filter(el => { return el.text === item.timeText }).length > 0) {
+        if (item.timeText) {
+          this.formChange.time = { text: item.timeText, value: this.momenTime(item.dueDate) }
+        } else {
+          this.formChange.time = this.momenTime(item.dueDate)
+        }
+      } else {
+        this.formChange.time = this.momenTime(item.dueDate)
+      }
       this.dialogChange = true
       console.log(this.formChange)
     },
