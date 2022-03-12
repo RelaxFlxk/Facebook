@@ -51,7 +51,6 @@
                       <v-text-field
                         label="แสดงเวลา"
                         v-model="timeText"
-                        :rules="nameRules"
                         :counter="50"
                         maxlength="50"
 
@@ -231,7 +230,6 @@
                       <v-text-field
                         label="แสดงเวลา"
                         v-model="timeText"
-                        :rules="nameRules"
                         :counter="50"
                         maxlength="50"
 
