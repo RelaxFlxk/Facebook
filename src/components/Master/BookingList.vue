@@ -2107,7 +2107,7 @@
                             outlined
                             dense
                             required
-                            @change="checkTime()"
+                            @change="checkTimeEdit()"
                             :rules="[rules.required]"
                           ></v-select>
                           <template v-if="BookingDataItemEdit">
@@ -3396,6 +3396,13 @@ export default {
     checkTime () {
       this.timeavailable = []
       let dtTime = this.branch.filter(item => { return item.value === this.formAdd.masBranchID })
+      // console.log('test', dtTime)
+      this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+      // console.log('timevailable', this.timeavailable)
+    },
+    checkTimeEdit () {
+      this.timeavailable = []
+      let dtTime = this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
       // console.log('test', dtTime)
       this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
       // console.log('timevailable', this.timeavailable)
