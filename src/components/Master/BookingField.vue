@@ -283,6 +283,16 @@
                       ></v-checkbox>
                       <v-text-field v-model="showTime" readonly label="แสดงเวลาการจองหรือไม่"></v-text-field>
                     </v-row>
+                    <v-row align="center">
+                      <v-checkbox
+                        false-value="ไม่แสดง"
+                        true-value="แสดง"
+                        v-model="showMap"
+                        hide-details
+                        class="shrink ml-6 mr-0 mt-0 mb-6"
+                      ></v-checkbox>
+                      <v-text-field v-model="showMap" readonly label="แสดงแผนที่หรือไม่"></v-text-field>
+                    </v-row>
                     <v-data-table
                       v-model="itemdetell"
                       :headers="FieldSelect"
@@ -340,6 +350,7 @@ export default {
       date: '',
       time: '',
       showTime: 'แสดง',
+      showMap: 'ไม่แสดง',
       options2: {
         locale: 'en-US',
         prefix: '',
@@ -403,6 +414,11 @@ export default {
                 this.showTime = 'แสดง'
               } else {
                 this.showTime = rs[0].showTime
+              }
+              if (rs[0].showMap === null || rs[0].showMap === '') {
+                this.showMap = 'ไม่แสดง'
+              } else {
+                this.showMap = rs[0].showMap
               }
               bookingData = JSON.parse(rs[0].flowfieldName)
               for (let i = 0; i < bookingData.length; i++) {
@@ -498,6 +514,7 @@ export default {
       booking.flowfieldName = JSON.stringify(UpdateField)
       booking.shopId = this.shopId
       booking.showTime = this.showTime
+      booking.showMap = this.showMap
       booking.LAST_USER = this.session.data.userName
       console.log('dtbooking', booking)
       this.$swal({

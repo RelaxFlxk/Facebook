@@ -5857,7 +5857,7 @@ export default {
               shopId: this.$session.getAll().data.shopId,
               CREATE_USER: this.session.data.userName,
               LAST_USER: this.session.data.userName,
-              changDate: this.formChange.date + ' ' + this.formChange.time
+              changDate: this.formChange.date + ' ' + this.formChange.time.value
             }
             await axios
               .post(this.DNS_IP + '/booking_transaction/add', dt)
