@@ -99,11 +99,13 @@ export default {
     async getBookingcarAndflow (picker) {
       this.dateStatus = picker
       this.itemChart = null
+      this.allItem = []
+      this.rsItem = []
       // console.log('picker', picker)
       await axios.get(this.DNS_IP + '/BookingData/getChartCarAndFlow?picker=' + picker + '&shopId=' + this.shopId)
         .then((response) => {
           let rs = response.data
-          console.log(rs)
+          console.log('********************', rs)
           if (rs.length > 0) {
             this.rsItem = rs
             this.allItem = rs.reduce((item, value) => {
