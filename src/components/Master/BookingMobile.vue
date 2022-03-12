@@ -215,6 +215,16 @@
             </v-col>
             <div class="text-center">
               <v-btn
+                v-if="showMap === 'แสดง' && dataItem[0].addressLatLong !== null"
+                color="blue-grey darken-1"
+                fab
+                small
+                dark
+                @click.stop="setShowMap(dataItem[0])"
+              >
+                <v-icon dark> mdi-map-marker-radius-outline </v-icon>
+              </v-btn>
+              <v-btn
                 color="success"
                 fab
                 id="v-step-2"
@@ -255,6 +265,67 @@
         </v-card-text>
       </v-card>
     </v-card>
+    <v-dialog v-model="dialogMap" max-width="90%">
+           <v-card class="text-center">
+          <v-card-title>
+            แสดงแผนที่
+          </v-card-title>
+          <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col cols= "12" class="pb-0">
+                    <v-text-field
+                      v-model="address"
+                      outlined
+                      label="ชื่อของที่อยู่"
+                      auto-grow
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols= "12" class="pb-0">
+                    <v-card class="text-center">
+                      <v-container>
+                      <GmapMap
+                        v-if="center !== null"
+                        :center="center"
+                        :zoom="15"
+                        style="width: 100%; height: 200px"
+                        :options="{ disableDefaultUI: true }"
+                      >
+                        <GmapMarker @click="gotoMap()" :position="center" />
+                        <!-- <gmap-info-window
+                          @closeclick="window_open=false"
+                          :opened="window_open"
+                          :position="center"
+                          :options="{
+                            pixelOffset: {
+                              width: 0,
+                              height: -35
+                            }
+                          }"
+                      >
+                          {{address}}
+                      </gmap-info-window> -->
+                      </GmapMap>
+                      </v-container>
+                    </v-card>
+                  </v-col>
+                </v-row>
+                <hr>
+                <div class="text-center">
+                  <v-btn
+                    elevation="10"
+                    color="#173053"
+                    outlined
+                    style="background-color:#FFFFFF"
+                    small
+                    @click="dialogMap = false"
+                    >ปิด</v-btn
+                  >
+                </div>
+              </v-container>
+          </v-card-text>
+           </v-card>
+        </v-dialog>
     <v-dialog v-model="dialogChange" persistent max-width="90%">
       <v-card class="text-center">
         <v-card-title>เปลี่ยนเวลานัดหมาย</v-card-title>
@@ -505,13 +576,47 @@ export default {
       BookingDataItemEdit: [],
       BookingDataListTimechange: [],
       dateStart: '',
-      flowIdSelect: ''
+      flowIdSelect: '',
+      dialogMap: false,
+      center: null,
+      address: ''
     }
   },
   async mounted () {
     await this.beforeCreate()
   },
   methods: {
+    async getShowMap () {
+      await axios
+        .get(
+          this.DNS_IP + '/BookingField/get?shopId=' + this.$route.query.shopId
+        )
+        .then(async response1 => {
+          let rs = response1.data
+          if (rs.status !== false) {
+            if (rs[0].showMap === null || rs[0].showMap === '') {
+              this.showMap = 'ไม่แสดง'
+            } else {
+              this.showMap = rs[0].showMap
+            }
+          } else {
+            this.showMap = 'ไม่แสดง'
+          }
+        })
+    },
+    gotoMap () {
+      window.location.href = 'https://www.google.com/maps/dir/?api=1&travelmode=driving&layer=traffic&destination=' + this.center.lat + ',' + this.center.lng
+    },
+    setShowMap (dt) {
+      this.center = null
+      if (dt.addressLatLong === null && dt.addressLatLong === '') {
+        this.center = null
+      } else {
+        this.center = JSON.parse(dt.addressLatLong)
+        this.address = dt.address
+        this.dialogMap = true
+      }
+    },
     async beforeCreate () {
     // if (!this.$session.exists()) {
     //   this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
@@ -921,6 +1026,7 @@ export default {
       this.BookingDataItem = []
       this.dataReady = false
       this.bookNo = this.$route.query.bookNo
+      await this.getShowMap()
       if (this.bookNo === undefined) {
         // console.log('11111111111111', this.bookNo)
       } else {
@@ -960,6 +1066,8 @@ export default {
                 s.chkConfirm = false
                 s.chkCancel = false
                 s.jobNo = d.jobNo
+                s.address = d.address
+                s.addressLatLong = d.addressLatLong
                 s.lineUserId = d.lineUserId
                 s.remarkConfirm1 = (d.remarkConfirm1 === 'true' || d.remarkConfirm1 === 'True')
                 s.remarkConfirm2 = (d.remarkConfirm2 === 'true' || d.remarkConfirm2 === 'True')

@@ -1841,6 +1841,22 @@
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
                     <!-- confirm -->
+                    <v-tooltip bottom v-if="showMap === 'แสดง' && item.addressLatLong !== null">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          color="blue-grey darken-1"
+                          fab
+                          small
+                          dark
+                          @click.stop="setShowMap(item)"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <v-icon dark> mdi-map-marker-radius-outline </v-icon>
+                        </v-btn>
+                      </template>
+                      <span>ดูแผนที่</span>
+                    </v-tooltip>
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on, attrs }">
                         <v-btn
@@ -1963,6 +1979,67 @@
           </v-col>
           <!-- end data table -->
         </v-row>
+        <v-dialog v-model="dialogMap" :max-width="dialogwidth">
+           <v-card class="text-center">
+          <v-card-title>
+            แสดงแผนที่
+          </v-card-title>
+          <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col cols= "12" class="pb-0">
+                    <v-text-field
+                      v-model="address"
+                      outlined
+                      label="ชื่อของที่อยู่"
+                      auto-grow
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols= "12" class="pb-0">
+                    <v-card class="text-center">
+                      <v-container>
+                      <GmapMap
+                        v-if="center !== null"
+                        :center="center"
+                        :zoom="15"
+                        style="width: 100%; height: 200px"
+                        :options="{ disableDefaultUI: true }"
+                      >
+                        <GmapMarker @click="gotoMap()" :position="center" />
+                        <!-- <gmap-info-window
+                          @closeclick="window_open=false"
+                          :opened="window_open"
+                          :position="center"
+                          :options="{
+                            pixelOffset: {
+                              width: 0,
+                              height: -35
+                            }
+                          }"
+                      >
+                          {{address}}
+                      </gmap-info-window> -->
+                      </GmapMap>
+                      </v-container>
+                    </v-card>
+                  </v-col>
+                </v-row>
+                <hr>
+                <div class="text-center">
+                  <v-btn
+                    elevation="10"
+                    color="#173053"
+                    outlined
+                    style="background-color:#FFFFFF"
+                    small
+                    @click="dialogMap = false"
+                    >ปิด</v-btn
+                  >
+                </div>
+              </v-container>
+          </v-card-text>
+           </v-card>
+        </v-dialog>
         <v-dialog v-model="dialogConfirm" :max-width="dialogwidth">
             <v-card class="text-center">
               <v-card-title>
@@ -2834,6 +2911,7 @@ export default {
       bookNoRemove: '',
       timeavailable: [],
       dialogConfirm: false,
+      dialogMap: false,
       empSelectStep: [],
       empSelectStepAdd: [],
       dataConfirm: [],
@@ -2844,13 +2922,17 @@ export default {
       dataQrcode: [],
       bookNoRemark: '',
       remark: '',
+      showMap: '',
       setTimer: null,
       setTimerCalendar: null,
       searchOther: '',
       showColorSearch: false,
       dataEditJobReady: true,
       dataChangeReady: true,
-      statusSearch: 'no'
+      statusSearch: 'no',
+      // window_open: true,
+      center: null,
+      address: ''
     }
   },
   beforeCreate () {
@@ -2885,6 +2967,37 @@ export default {
     }
   },
   methods: {
+    async getShowMap () {
+      await axios
+        .get(
+          this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+        )
+        .then(async response1 => {
+          let rs = response1.data
+          if (rs.status !== false) {
+            if (rs[0].showMap === null || rs[0].showMap === '') {
+              this.showMap = 'ไม่แสดง'
+            } else {
+              this.showMap = rs[0].showMap
+            }
+          } else {
+            this.showMap = 'ไม่แสดง'
+          }
+        })
+    },
+    gotoMap () {
+      window.location.href = 'https://www.google.com/maps/dir/?api=1&travelmode=driving&layer=traffic&destination=' + this.center.lat + ',' + this.center.lng
+    },
+    setShowMap (dt) {
+      this.center = null
+      if (dt.addressLatLong === null && dt.addressLatLong === '') {
+        this.center = null
+      } else {
+        this.center = JSON.parse(dt.addressLatLong)
+        this.address = dt.address
+        this.dialogMap = true
+      }
+    },
     async searchAny () {
       if (this.searchOther.trim().length > 1) {
         this.dataReady = false
@@ -2943,6 +3056,8 @@ export default {
                   s.lineUserId = d.lineUserId
                   s.timeDueHtext = d.timeDueH + ':00'
                   s.timeDuetext = d.timeDue
+                  s.address = d.address
+                  s.addressLatLong = d.addressLatLong
                   this.countAll = this.countAll + 1
                   if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
                     s.chkConfirm = true
@@ -4765,6 +4880,7 @@ export default {
       this.searchAll2 = ''
       var dataItemTimes = []
       var dataItems = []
+      await this.getShowMap()
       await this.getBookingDataList(this.dateStart)
       await axios
         .get(
@@ -4798,6 +4914,8 @@ export default {
               s.userId = d.userId
               s.chkConfirm = false
               s.chkCancel = false
+              s.address = d.address
+              s.addressLatLong = d.addressLatLong
               s.jobNo = d.jobNo
               s.timeText = d.timeText
               s.remarkRemove = d.remarkRemove || ''

@@ -15,6 +15,15 @@ import moment from 'moment-timezone' // แปลง date
 import { PivotViewPlugin } from '@syncfusion/ej2-vue-pivotview'
 import * as Sentry from '@sentry/vue'
 import { Integrations } from '@sentry/tracing'
+import * as VueGoogleMaps from 'vue2-google-maps'
+
+Vue.use(VueGoogleMaps, {
+  load: {
+    key: 'AIzaSyCnDosnYWNnKQxLbsI5Cy_iw_VC5oyc1Ck',
+    libraries: 'places' // This is required if you use the Autocomplete plugin
+  },
+  installComponents: true
+})
 
 Sentry.init({
   Vue,
