@@ -4539,10 +4539,12 @@ export default {
                     s.flowName = d.flowName
                     s.dueDate = d.dueDate
                     s.remarkRemove = d.remarkRemove
+                    s.remark = d.remark
                     s.userId = d.userId
                     s.chkConfirm = false
                     s.chkCancel = false
                     s.jobNo = d.jobNo
+                    s.empFull_NameTH = d.empFull_NameTH
                     s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
                     s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
                     s.remarkRemove = d.remarkRemove || ''
