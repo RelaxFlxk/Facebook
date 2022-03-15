@@ -118,6 +118,7 @@ export default {
       DataBranchID: '',
       DataMasbranch: [],
       DataFlowName: [],
+      stepItemSelete: [],
       session: this.$session.getAll(),
       shopId: this.$session.getAll().data.shopId,
       fromAdd: {
@@ -150,10 +151,34 @@ export default {
   async mounted () {
     this.showData()
     await this.getDataMasbranch()
+    await this.getStepFlow()
   },
   methods: {
     showData () {
       // console.log('showcard', this.Layout)
+    },
+    async getStepFlow (flowId) {
+      this.stepItemSelete = []
+      await axios
+        .get(
+          this.DNS_IP +
+            '/flowStep/get?flowId=' +
+            flowId +
+            '&shopId=' +
+            this.shopId
+        )
+        .then(async response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              d.text = d.stepTitle
+              d.value = d.stepId
+              this.stepItemSelete.push(d)
+            }
+            console.log('stepItemSelete', this.stepItemSelete)
+          }
+        })
     },
     getDataFlow () {
       this.DataFlowName = []
@@ -197,6 +222,7 @@ export default {
       })
     },
     async getLayout () {
+      await this.getStepFlow(this.DataflowId)
       this.Layout = []
       await axios.get(this.DNS_IP + '/WorkShopLayout/get?flowId=' + this.DataflowId + '&shopId=' + this.shopId + '&masBranchID=' + this.DataBranchID)
         .then((response) => {
@@ -205,14 +231,26 @@ export default {
           for (let i = 0; i < rs.length; i++) {
             let d = rs[i]
             var workData = []
+            var workDataUse = []
             workData = JSON.parse(d.workData)
-            this.Layout.push(
-              {
-                workShopId: d.workShopId,
-                workColum: d.workColum,
-                workData: workData
+            console.log('workData', workData)
+            if (workData.length > 0) {
+              for (let x = 0; x < workData.length; x++) {
+                let t = workData[x]
+                let s = {}
+                s.sortNo = t.sortNo
+                s.stepId = t.stepId
+                s.stepTitle = this.stepItemSelete.filter(el => { return el.stepId === t.stepId })[0].stepTitle
+                workDataUse.push(s)
               }
-            )
+            } else {
+              workDataUse = []
+            }
+            this.Layout.push({
+              workShopId: d.workShopId,
+              workColum: d.workColum,
+              workData: workDataUse
+            })
           }
           const flowId = this.DataflowId
           this.getStep(flowId)

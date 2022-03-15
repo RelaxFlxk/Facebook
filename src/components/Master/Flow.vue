@@ -1663,6 +1663,7 @@ export default {
         })
     },
     async editStepTitle () {
+      // console.log('this.formUpdateStep', this.formUpdateStep)
       this.$swal({
         title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',
         type: 'question',

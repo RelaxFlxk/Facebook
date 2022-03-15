@@ -698,7 +698,7 @@
                           </v-row>
                           <v-row>
                             <v-col class="pt-0">
-                              <v-radio-group v-model="formAdd.radiosRemark" row>
+                              <v-radio-group v-model="formAdd.radiosRemark" row required :rules ="[rules.required]">
                                 <v-radio value="ซ่อมปกติ">
                                   <template v-slot:label>
                                     <div class="mt-3"><strong class="primary--text">ซ่อมปกติ</strong></div>
@@ -2507,7 +2507,7 @@
                           </v-row>
                           <v-row>
                             <v-col class="pt-0">
-                              <v-radio-group v-model="formEdit.radiosRemark" row>
+                              <v-radio-group v-model="formEdit.radiosRemark" row  required :rules ="[rules.required]">
                                 <v-radio value="ซ่อมปกติ">
                                   <template v-slot:label>
                                     <div class="mt-3"><strong class="primary--text">ซ่อมปกติ</strong></div>
@@ -2824,7 +2824,7 @@ export default {
         dueDate: '',
         shopId: this.$session.getAll().data.shopId,
         bookingFieldId: '',
-        radiosRemark: 'ซ่อมปกติ'
+        radiosRemark: ''
       },
       formEdit: {
         bookingId: null,
@@ -2835,7 +2835,7 @@ export default {
         dueDate: '',
         shopId: this.$session.getAll().data.shopId,
         bookingFieldId: '',
-        radiosRemark: 'ซ่อมปกติ'
+        radiosRemark: ''
       },
       formUpdate: {
         masBranchCode: '',

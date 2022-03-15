@@ -1224,7 +1224,7 @@ export default {
     await this.getDataFlow()
     await this.getDataBranch()
     await this.getEmpSelect()
-    await this.getLayoutDefault()
+    // await this.getLayoutDefault()
   },
   methods: {
     async chkFlowName () {
@@ -1293,6 +1293,7 @@ export default {
       this.Layout = []
       console.log('flowName', this.formUpdate.flowName)
       console.log('Branch' + this.masBranchID)
+      console.log('this.stepItemSelete', this.stepItemSelete)
       await axios
         .get(
           this.DNS_IP +
@@ -1307,11 +1308,25 @@ export default {
           for (let i = 0; i < rs.length; i++) {
             let d = rs[i]
             var workData = []
+            var workDataUse = []
             workData = JSON.parse(d.workData)
+            console.log('workData', workData)
+            if (workData.length > 0) {
+              for (let x = 0; x < workData.length; x++) {
+                let t = workData[x]
+                let s = {}
+                s.sortNo = t.sortNo
+                s.stepId = t.stepId
+                s.stepTitle = this.stepItemSelete.filter(el => { return el.stepId === t.stepId })[0].stepTitle
+                workDataUse.push(s)
+              }
+            } else {
+              workDataUse = []
+            }
             this.Layout.push({
               workShopId: d.workShopId,
               workColum: d.workColum,
-              workData: workData
+              workData: workDataUse
             })
           }
           console.log('this.Layout', this.Layout)
@@ -1320,36 +1335,36 @@ export default {
           console.log('error function addDataGlobal : ', error)
         })
     },
-    async getLayoutDefault () {
-      this.Layout = []
-      console.log('flowName', this.formUpdate.flowName)
-      console.log('Branch' + this.masBranchID)
-      console.log('shopId' + this.shopId)
-      await axios
-        .get(
-          this.DNS_IP +
-            '/WorkShopLayout/get?flowName=' +
-            '&shopId=' +
-            this.shopId
-        )
-        .then(response => {
-          let rs = response.data
-          for (let i = 0; i < rs.length; i++) {
-            let d = rs[i]
-            var workData = [i]
-            workData = JSON.parse(d.workData)
-            this.Layout.push({
-              workShopId: d.workShopId,
-              workColum: d.workColum,
-              workData: workData
-            })
-          }
-          console.log('this.Layout', this.Layout)
-        })
-        .catch(error => {
-          console.log('error function addDataGlobal : ', error)
-        })
-    },
+    // async getLayoutDefault () {
+    //   this.Layout = []
+    //   console.log('flowName', this.formUpdate.flowName)
+    //   console.log('Branch' + this.masBranchID)
+    //   console.log('shopId' + this.shopId)
+    //   await axios
+    //     .get(
+    //       this.DNS_IP +
+    //         '/WorkShopLayout/get?flowName=' +
+    //         '&shopId=' +
+    //         this.shopId
+    //     )
+    //     .then(response => {
+    //       let rs = response.data
+    //       for (let i = 0; i < rs.length; i++) {
+    //         let d = rs[i]
+    //         var workData = [i]
+    //         workData = JSON.parse(d.workData)
+    //         this.Layout.push({
+    //           workShopId: d.workShopId,
+    //           workColum: d.workColum,
+    //           workData: workData
+    //         })
+    //       }
+    //       console.log('this.Layout', this.Layout)
+    //     })
+    //     .catch(error => {
+    //       console.log('error function addDataGlobal : ', error)
+    //     })
+    // },
     async getStepFlow () {
       this.stepItemSelete = []
       await axios
@@ -1369,7 +1384,7 @@ export default {
               d.value = d.stepId
               this.stepItemSelete.push(d)
             }
-            console.log('stepItemSelete', this.formUpdate)
+            console.log('stepItemSelete', this.stepItemSelete)
           }
         })
     },
