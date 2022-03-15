@@ -1533,7 +1533,7 @@ export default {
       this.formDelete.jobNo = item.jobNo
       this.formUpdate.empStep = parseInt(item.empStepId)
       var lineUserId = ''
-      if (item.lineUserId === null || item.lineUserId === '' || item.lineUserId === 'user-skip') {
+      if (item.lineUserId === null || item.lineUserId === '' || item.lineUserId === 'user-skip' || item.lineUserId === undefined) {
         lineUserId = ''
       } else {
         lineUserId = item.lineUserId
@@ -1780,7 +1780,7 @@ export default {
             var jodDateOld = this.updateEndDateOld + ' ' + this.updateEndTimeOld
             console.log(dateNew, dateOld)
             console.log(this.lineUserId)
-            if (dateNew !== dateOld) {
+            if (dateNew !== dateOld && this.lineUserId !== '') {
               // แจ้งเตือนลูกค้า this.lineUserId
               let pushText = {
                 'to': this.lineUserId,
