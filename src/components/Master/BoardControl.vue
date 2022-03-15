@@ -153,7 +153,7 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12">
+                    <v-col cols="12" class="pb-0">
                         <v-select
                           dense
                           label="ขั้นตอนต่อไป"
@@ -165,7 +165,7 @@
                           :rules="[rules.required]"
                         ></v-select>
                     </v-col>
-                    <v-col cols="12">
+                    <v-col cols="12" class="pb-0">
                         <v-autocomplete
                           dense
                           label="ชื่อพนักงานที่รับผิดชอบ"
@@ -177,9 +177,12 @@
                   </v-row>
                 </v-container>
               </v-card-text>
-              <v-col class="text-center">
+              <v-col class="text-center pt-0">
                 <v-btn color="#1B437C" depressed dark @click="onUpdate()">
-                  Save
+                  <v-icon left>
+                    mdi-swap-horizontal
+                  </v-icon>
+                  เปลี่ยนสถานะ
                 </v-btn>
               </v-col>
               <br />
@@ -1167,6 +1170,9 @@ export default {
         branchStep: '',
         checkCar: ''
       },
+      updateEndDateOld: '',
+      updateEndTimeOld: '',
+      lineUserId: '',
       JobDataItem: [],
       allJob: [],
       form: {
@@ -1398,11 +1404,11 @@ export default {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
               var s = {}
-              s.text = d.empFirst_NameTH
-              s.value = d.empFirst_NameTH
+              s.text = d.empFirst_NameTH + ' ' + d.empLast_NameTH
+              s.value = d.empId
               this.empSeleteStep.push(s)
             }
-            console.log('empSeleteStep', this.formUpdate)
+            console.log('empSeleteStep', this.empSeleteStep)
           }
         })
     },
@@ -1444,7 +1450,9 @@ export default {
                     totalDateDiff: d.totalDateDiff,
                     endDate: d.endDate,
                     endTime: d.endTime,
-                    checkPayment: d.checkPayment
+                    checkPayment: d.checkPayment,
+                    empStepId: d.empStepId,
+                    lineUserId: d.lineUserId
                   })
                 }
               }
@@ -1518,24 +1526,34 @@ export default {
       var dataStepItemSelete = this.stepItemSelete
       // var index = dataStepItemSelete.findIndex(key => key.text === stepTitle)
       this.formUpdate.jobId = item.jobId
+      this.updateEndDateOld = this.momenDate_1(item.endDate)
+      this.updateEndTimeOld = item.endTime
       this.formUpdate.endDate = this.momenDate_1(item.endDate)
       this.formUpdate.endTime = item.endTime
       this.formDelete.jobNo = item.jobNo
-      this.formUpdate.empStep = this.JobDataItem.filter(row => {
-        return row.jobId === item.jobId
-      })[0].empStep
+      this.formUpdate.empStep = parseInt(item.empStepId)
+      var lineUserId = ''
+      if (item.lineUserId === null || item.lineUserId === '' || item.lineUserId === 'user-skip') {
+        lineUserId = ''
+      } else {
+        lineUserId = item.lineUserId
+      }
+      this.lineUserId = lineUserId
+      // this.formUpdate.empStep = this.JobDataItem.filter(row => {
+      //   return row.jobId === item.jobId
+      // })[0].empStep
       if (text === 'editFlow') {
         this.stepItemSeleteInBoard = dataStepItemSelete.filter(el => el.text !== stepItem.stepTitle)
       }
     },
     async onUpdate () {
       this.formUpdate.stepId = this.formUpdate.stepTitle.stepId
-      console.log('stepId', this.formUpdate.stepTitle.stepId)
-      console.log('id', this.formUpdate.jobId)
-      console.log('formUpdate', this.formUpdate)
-      console.log('allJob', this.allJob)
-      console.log('empSeleteStep', this.empSeleteStep)
-      console.log('empStep', this.formUpdate.empStep)
+      // console.log('stepId', this.formUpdate.stepTitle.stepId)
+      // console.log('id', this.formUpdate.jobId)
+      // console.log('formUpdate', this.formUpdate)
+      // console.log('allJob', this.allJob)
+      // console.log('empSeleteStep', this.empSeleteStep)
+      // console.log('empStep', this.formUpdate.empStep)
       if (this.formUpdate.empStep !== '' && this.formUpdate.stepTitle !== '') {
         this.dataReady = false
         this.$swal({
@@ -1725,13 +1743,23 @@ export default {
         let rs = this.JobDataItem.filter(row => {
           return row.jobId === this.formUpdate.jobId
         })
+        console.log('rs JobDataItem', rs)
         let dt = []
+        var cusName = ''
+        var cusReg = ''
+        var jobDate = this.formUpdate.endDate + ' ' + this.formUpdate.endTime
         for (var i = 0; i < rs.length; i++) {
           var d = rs[i]
           var s = {}
           s.jobNo = d.jobNo
           s.jobId = d.jobId
           s.fieldId = d.fieldId
+          if (d.fieldName === 'ชื่อ') {
+            cusName = d.fieldValue
+          }
+          if (d.fieldName === 'เลขทะเบียน') {
+            cusReg = d.fieldValue
+          }
           s.fieldValue = d.fieldValue
           s.endDate = this.formUpdate.endDate
           s.endTime = this.formUpdate.endTime
@@ -1747,6 +1775,33 @@ export default {
           )
           .then(async response => {
             this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
+            var dateNew = this.formUpdate.endDate + this.formUpdate.endTime
+            var dateOld = this.updateEndDateOld + this.updateEndTimeOld
+            var jodDateOld = this.updateEndDateOld + ' ' + this.updateEndTimeOld
+            console.log(dateNew, dateOld)
+            console.log(this.lineUserId)
+            if (dateNew !== dateOld) {
+              // แจ้งเตือนลูกค้า this.lineUserId
+              let pushText = {
+                'to': this.lineUserId,
+                'messages': [
+                  {
+                    'type': 'text',
+                    'text': ` ✍️ มีการเปลี่ยนแปลงเวลาวันรับรถ\n ✅ ชื่อ : ${cusName}\n ✅ เลขทะเบียน : ${cusReg}
+                          \nจาก วันที่ ${this.format_dateFUllTime(jodDateOld)}
+                          \nเป็น วันที่ ${this.format_dateFUllTime(jobDate)}`
+                  }
+                ]
+              }
+              axios
+                .post(
+                  this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
+                  pushText
+                )
+                .catch(error => {
+                  console.log('error function addData : ', error)
+                })
+            }
             this.getStepFlow()
             this.getLayout()
             await this.getJobData()

@@ -1050,9 +1050,9 @@
                           </div>
                       </div>
                     </div>
-                  </div><br>
+                  </div>
                   <v-row>
-                    <v-col cols="12" sm="6" md="6" lg="6">
+                    <v-col cols="12" sm="6" md="6" lg="6" class="pb-0">
                       <v-menu
                         ref="menu"
                         v-model="menu"
@@ -1084,7 +1084,7 @@
                       </v-menu>
                     </v-col>
 
-                    <v-col cols="12" sm="6" md="6" lg="6">
+                    <v-col cols="12" sm="6" md="6" lg="6" class="pb-0">
                           <!-- <v-select
                           v-model="endTime"
                           :items="timeavailable"
@@ -1108,6 +1108,18 @@
                           required
                           :rules ="[rules.required]"
                         ></v-select>
+                    </v-col>
+                    <v-col cols="12" sm="12" md="12" lg="12">
+                      <v-select
+                        v-model="empSelectJob"
+                        :items="empSelectStepAdd"
+                        label="พนักงานที่รับนำเข้ากระดาษ"
+                        menu-props="auto"
+                        outlined
+                        required
+                        :rules="[rules.required]"
+                        dense
+                      ></v-select>
                     </v-col>
                   </v-row>
                   </v-form>
@@ -2932,7 +2944,8 @@ export default {
       statusSearch: 'no',
       // window_open: true,
       center: null,
-      address: ''
+      address: '',
+      empSelectJob: ''
     }
   },
   beforeCreate () {
@@ -5602,6 +5615,7 @@ export default {
                 update.fieldType = dataField[0].fieldType
                 update.fieldValue = d.fieldValue
                 update.flowId = d.flowId
+                update.empSelect = this.empSelectJob
                 update.conditionField = dataField[0].conditionField
                 update.conditionValue = dataField[0].conditionValue
                 update.optionField = dataField[0].optionField
@@ -5620,6 +5634,7 @@ export default {
               .then(async response => {
                 this.endDate = ''
                 this.endTime = ''
+                this.empSelectJob = ''
                 if (response.data.status) {
                   var dt = {
                     bookNo: this.BookingDataItem[0].bookNo,
