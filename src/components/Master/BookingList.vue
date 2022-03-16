@@ -4383,7 +4383,8 @@ export default {
         console.log('dataSelect', this.dataItemSelect)
         this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
           // { text: 'Booking Id', value: 'bookNo' },
-          { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+          { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+          // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
           { text: 'ชื่อบริการ', value: 'flowNameShow' },
           { text: 'ชื่อลูกค้า', value: 'cusName' },
           { text: 'เบอร์โทร', value: 'tel' },
@@ -4442,7 +4443,8 @@ export default {
         if (text === 'cancel') {
           this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
             // { text: 'Booking Id', value: 'bookNo' },
-            { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+            { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+            // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
             { text: 'ชื่อบริการ', value: 'flowNameShow' },
             { text: 'ชื่อลูกค้า', value: 'cusName' },
             { text: 'เบอร์โทร', value: 'tel' },
@@ -4457,7 +4459,8 @@ export default {
         } else if (text === 'confirm') {
           this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
             // { text: 'Booking Id', value: 'bookNo' },
-            { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+            { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+            // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
             { text: 'ชื่อบริการ', value: 'flowNameShow' },
             { text: 'ชื่อลูกค้า', value: 'cusName' },
             { text: 'เบอร์โทร', value: 'tel' },
@@ -4469,7 +4472,8 @@ export default {
         } else {
           this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
             // { text: 'Booking Id', value: 'bookNo' },
-            { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+            { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+            // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
             { text: 'ชื่อบริการ', value: 'flowNameShow' },
             { text: 'ชื่อลูกค้า', value: 'cusName' },
             { text: 'เบอร์โทร', value: 'tel' },
@@ -4918,6 +4922,10 @@ export default {
               s.flowId = d.flowId
               s.flowName = d.flowName
               s.dueDate = d.dueDate
+              if (d.timeText === null || d.timeText === '') {
+                d.timeText = d.timeDue
+              }
+              s.dueDateText = this.format_dateNotime(d.dueDate) + ' ' + d.timeText
               s.shopId = d.shopId
               s.remark = d.remark || ''
               s.masBranchID = d.masBranchID

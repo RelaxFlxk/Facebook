@@ -253,7 +253,8 @@
                         <v-list-item-content>
                           <v-row style="color:#fff;">
                             <v-col cols="3">
-                              <h3>{{items.timeDue}}</h3><br>
+                              <h3>{{items.timeText}}</h3><br>
+                              <!-- <h3>{{items.timeDue}}</h3><br> -->
                               <v-icon dark class="mr-1" v-if="items.fastTrack === 'true' || items.fastTrack === 'True'">
                                   mdi-flash
                               </v-icon>
@@ -748,6 +749,9 @@ export default {
         let d = targetData[i]
         d.chkConfirm = false
         d.chkCancel = false
+        if (d.timeText === null || d.timeText === '') {
+          d.timeText = d.timeDue
+        }
         if (d.statusBt === 'cancel' || !d.statusBt) {
           continue
         }
@@ -797,10 +801,13 @@ export default {
 
       this.dataSummary = this.dataCalendar.reduce((r, a) => {
         r[a.bgcolorChip] = r[a.bgcolorChip] || {}
-        r[a.bgcolorChip][a.timeDue] = r[a.bgcolorChip][a.timeDue] || []
-        r[a.bgcolorChip][a.timeDue].push(a)
+        r[a.bgcolorChip][a.timeText] = r[a.bgcolorChip][a.timeText] || []
+        r[a.bgcolorChip][a.timeText].push(a)
+        // r[a.bgcolorChip][a.timeDue] = r[a.bgcolorChip][a.timeDue] || []
+        // r[a.bgcolorChip][a.timeDue].push(a)
         return r
       }, Object.create(null))
+      console.log('this.dataSummary', this.dataSummary)
       this.dialog = true
     },
     async showEvent (event) {
