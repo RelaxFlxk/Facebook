@@ -626,6 +626,19 @@
                             >
                               mdi-tag
                             </v-icon>
+
+                          </v-row>
+                          <v-row class="pt-2 pl-1">
+                            <v-icon
+                              large
+                              color="#A12BFD"
+                              @click="
+                                ;(dialogProgress = true), getJobitem(itemsJob)
+                              "
+                            >
+                              mdi-monitor-eye
+                            </v-icon>
+
                           </v-row>
                         </v-container>
                       </v-alert>
@@ -854,6 +867,15 @@
                           >
                             mdi-tag
                           </v-icon>
+                          <!-- <v-icon
+                              large
+                              color="#A12BFD"
+                              @click="
+                                ;(dialogProgress = true), getJobitem(itemsJob)
+                              "
+                            >
+                              mdi-monitor-eye
+                            </v-icon> -->
                         </v-col>
                       </v-row>
                     </v-alert>
@@ -1050,6 +1072,46 @@
         </div> -->
       </div>
     </v-main>
+              <v-dialog
+      v-model="dialogProgress"
+      persistent
+      max-width="600"
+    >
+      <v-card class="p-3" style="background: linear-gradient(180deg, #FFFFFF 0%, #E1F3FF 100%);">
+        <v-timeline>
+          <v-timeline-item
+            v-for="(item , index) in timelineitem" :key="index"
+            :color="codeColor[index]"
+            small
+          >
+            <template v-slot:opposite>
+              <span>{{format_dateNotime(item.DTLAST_DATE)}}</span>
+            </template>
+            <v-card class="elevation-2 p-2">
+              <v-card-title class="text-h6" style="color:#173053;">
+              </v-card-title>
+              <v-card-text>
+                <p style="margin-bottom: 0px;color:#000000;">ขั้นตอน {{item.stepTitle}}</p>
+                <!-- <p style="margin-bottom: 0px; color:#173053;">ขั้นตอน {{item.stepTitle}}</p> -->
+                <p style="margin-bottom: 0px;"> เวลาที่รับงาน {{momenTime(item.DTLAST_DATE)}}</p>
+                <p style="margin-bottom: 0px;"> ผู้รับผิดชอบ {{item.empStep}}</p>
+                <p style="margin-bottom: 0px;">เวลาการทำงาน {{item.Counttime}} นาที</p>
+                <!-- <p style="margin-bottom: 0px;">วันที่เปลี่ยน {{format_dateNotime(item.DTLAST_DATE)}}</p> -->
+              </v-card-text>
+            </v-card>
+          </v-timeline-item>
+        </v-timeline>
+        <br>
+        <div class="text-center">
+          <v-btn
+            small class="ma-2" color="#173053" dark
+            @click="dialogProgress = false"
+          >
+            Close
+          </v-btn>
+        </div>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 <script>
@@ -1090,6 +1152,7 @@ export default {
   },
   data () {
     return {
+      timelineitem: [],
       Layout: [],
       layout: 'grid',
       breadcrumbs: [
@@ -1127,6 +1190,7 @@ export default {
       dialogAdd: false,
       dialogEdit: false,
       dialogDelete: false,
+      dialogProgress: false,
       date: this.momenDate_1(),
       // DIALOG ADD
       drawer: false,
@@ -1810,6 +1874,46 @@ export default {
             console.log('form:', this.formEditData)
           })
       })
+    },
+    async getJobitem (item) {
+      console.log('*******************', item)
+      this.timelineitem = []
+      await axios
+        .get(this.DNS_IP + '/job_logCloseJob/' + item.jobNo).then((response) => {
+          let rs = response.data
+          console.log('rs', rs)
+          if (rs.length > 0) {
+            for (let i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              let t = i + 1
+              if (t === rs.length) {
+                let s = {}
+                s.empStep = d.empStep
+                s.endDate = d.endDate
+                s.totalPrice = s.totalPrice
+                s.DTCREATE_DATE = d.CREATE_DATE
+                s.DTLAST_DATE = d.LAST_DATE
+                s.stepTitle = d.stepTitle
+                s.timediff = d.timediff
+                s.Counttime = 0
+                this.timelineitem.push(s)
+              } else {
+                let s = {}
+                s.empStep = d.empStep
+                s.endDate = d.endDate
+                s.totalPrice = s.totalPrice
+                s.DTCREATE_DATE = d.CREATE_DATE
+                s.DTLAST_DATE = d.LAST_DATE
+                s.stepTitle = d.stepTitle
+                s.timediff = d.timediff
+                s.Counttime = rs[t].timediff - d.timediff
+                this.timelineitem.push(s)
+              }
+            }
+          }
+        }).catch((error) => {
+          console.log('error function addData : ', error)
+        })
     }
   }
 }
