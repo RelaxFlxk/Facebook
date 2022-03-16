@@ -226,7 +226,7 @@
                   <template v-for="(sumItems, index1) in dataSummary">
                     <v-row v-bind:key="'sum'+index1" no-gutters>
                     <template v-for="(items, index2) in sumItems">
-                      <v-col cols="2" v-bind:key="'sum'+index1+index2">
+                      <v-col cols="auto" v-bind:key="'sum'+index1+index2">
                         <v-chip
                           class="ma-2"
                           :color="index1 + ' darken-2'"
