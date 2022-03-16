@@ -473,7 +473,7 @@
                     <v-list-item>
                       <v-alert
                         class="allFrame pb-3"
-                        style="min-height: 105px;"
+                        style="min-height: 150px;"
                         :color="codeColor[work]"
                         border="left"
                         elevation="2"
@@ -885,6 +885,45 @@
               </v-expansion-panels>
             <br />
         </div>
+        <v-dialog
+          v-model="dialogProgress"
+          max-width="600"
+        >
+          <v-card class="p-3" style="background: linear-gradient(180deg, #FFFFFF 0%, #E1F3FF 100%);">
+            <v-timeline>
+              <v-timeline-item
+                v-for="(item , index) in timelineitem" :key="index"
+                :color="codeColor[index]"
+                small
+              >
+                <template v-slot:opposite>
+                  <span>{{format_dateNotime(item.DTLAST_DATE)}}</span>
+                </template>
+                <v-card class="elevation-2 p-2">
+                  <v-card-title class="text-h6" style="color:#173053;">
+                  </v-card-title>
+                  <v-card-text>
+                    <p style="margin-bottom: 0px;color:#000000;">ขั้นตอน {{item.stepTitle}}</p>
+                    <!-- <p style="margin-bottom: 0px; color:#173053;">ขั้นตอน {{item.stepTitle}}</p> -->
+                    <p style="margin-bottom: 0px;"> เวลาที่รับงาน {{momenTime(item.DTLAST_DATE)}}</p>
+                    <p style="margin-bottom: 0px;"> ผู้รับผิดชอบ {{item.empStep}}</p>
+                    <p style="margin-bottom: 0px;">เวลาการทำงาน {{item.Counttime}} นาที</p>
+                    <!-- <p style="margin-bottom: 0px;">วันที่เปลี่ยน {{format_dateNotime(item.DTLAST_DATE)}}</p> -->
+                  </v-card-text>
+                </v-card>
+              </v-timeline-item>
+            </v-timeline>
+            <br>
+            <div class="text-center">
+              <v-btn
+                small class="ma-2" color="#173053" dark
+                @click="dialogProgress = false"
+              >
+                Close
+              </v-btn>
+            </div>
+          </v-card>
+        </v-dialog>
         <!-- <div v-if="layout === 'list'">
           <div
             class="mt-3"
@@ -1072,46 +1111,6 @@
         </div> -->
       </div>
     </v-main>
-              <v-dialog
-      v-model="dialogProgress"
-      persistent
-      max-width="600"
-    >
-      <v-card class="p-3" style="background: linear-gradient(180deg, #FFFFFF 0%, #E1F3FF 100%);">
-        <v-timeline>
-          <v-timeline-item
-            v-for="(item , index) in timelineitem" :key="index"
-            :color="codeColor[index]"
-            small
-          >
-            <template v-slot:opposite>
-              <span>{{format_dateNotime(item.DTLAST_DATE)}}</span>
-            </template>
-            <v-card class="elevation-2 p-2">
-              <v-card-title class="text-h6" style="color:#173053;">
-              </v-card-title>
-              <v-card-text>
-                <p style="margin-bottom: 0px;color:#000000;">ขั้นตอน {{item.stepTitle}}</p>
-                <!-- <p style="margin-bottom: 0px; color:#173053;">ขั้นตอน {{item.stepTitle}}</p> -->
-                <p style="margin-bottom: 0px;"> เวลาที่รับงาน {{momenTime(item.DTLAST_DATE)}}</p>
-                <p style="margin-bottom: 0px;"> ผู้รับผิดชอบ {{item.empStep}}</p>
-                <p style="margin-bottom: 0px;">เวลาการทำงาน {{item.Counttime}} นาที</p>
-                <!-- <p style="margin-bottom: 0px;">วันที่เปลี่ยน {{format_dateNotime(item.DTLAST_DATE)}}</p> -->
-              </v-card-text>
-            </v-card>
-          </v-timeline-item>
-        </v-timeline>
-        <br>
-        <div class="text-center">
-          <v-btn
-            small class="ma-2" color="#173053" dark
-            @click="dialogProgress = false"
-          >
-            Close
-          </v-btn>
-        </div>
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 <script>
