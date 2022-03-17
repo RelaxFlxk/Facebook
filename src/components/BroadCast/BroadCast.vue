@@ -725,6 +725,14 @@
   font-family: KittithadaBold !important;
   font-size: 20px !important;
 }
+.v-list-item__title{
+  /* color: var(--nav-text) !important; */
+  font-family: KittithadaBold;
+  font-size: 22px !important;
+}
+.theme--light.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled) {
+  background-color: white !important;
+}
 </style>
 <script>
 import adminLeftMenu from '../Sidebar.vue' // เมนู
@@ -1070,8 +1078,8 @@ export default {
       if (item.audiencesSelect === 'bookingDate') {
         this.formUpdate.audiencesName = item.audiencesName
         this.formUpdate.flowId = this.DataFlowName.filter(el => el.value === flowIds)[0].text
-        this.formUpdate.startDate = new Date(item.startDate).toISOString().substr(0, 10)
-        this.formUpdate.endDate = new Date(item.endDate).toISOString().substr(0, 10)
+        this.formUpdate.startDate = this.momenDate_1(item.startDate)
+        this.formUpdate.endDate = this.momenDate_1(item.endDate)
         this.formUpdate.audiencesSelect = this.optionAudiences.filter(el => el.value === item.audiencesSelect)[0].text
         this.formUpdate.shopId = this.$session.getAll().data.shopId //
         this.formUpdate.masBranchID = this.branch.filter(el => el.value === masBranchIDs)[0].text
@@ -1082,10 +1090,10 @@ export default {
         if (item.dateJobOpen === 'True' && item.dateJobClose === 'True') {
           this.formUpdate.audiencesName = item.audiencesName
           this.formUpdate.flowId = this.DataFlowName.filter(el => el.value === flowIds)[0].text
-          this.formUpdate.startDate = new Date(item.startDate).toISOString().substr(0, 10)
-          this.formUpdate.endDate = new Date(item.endDate).toISOString().substr(0, 10)
-          this.formUpdate.startDateClose = new Date(item.startDateClose).toISOString().substr(0, 10)
-          this.formUpdate.endDateClose = new Date(item.endDateClose).toISOString().substr(0, 10)
+          this.formUpdate.startDate = this.momenDate_1(item.startDate)
+          this.formUpdate.endDate = this.momenDate_1(item.endDate)
+          this.formUpdate.startDateClose = this.momenDate_1(item.startDateClose)
+          this.formUpdate.endDateClose = this.momenDate_1(item.endDateClose)
           this.formUpdate.audiencesSelect = this.optionAudiences.filter(el => el.value === item.audiencesSelect)[0].text
           this.formUpdate.shopId = this.$session.getAll().data.shopId
           this.formUpdate.dateJobOpen = 'True' //
@@ -1098,8 +1106,8 @@ export default {
         } else if (item.dateJobOpen === 'True' && item.dateJobClose === 'False') {
           this.formUpdate.audiencesName = item.audiencesName
           this.formUpdate.flowId = this.DataFlowName.filter(el => el.value === flowIds)[0].text
-          this.formUpdate.startDate = new Date(item.startDate).toISOString().substr(0, 10)
-          this.formUpdate.endDate = new Date(item.endDate).toISOString().substr(0, 10)
+          this.formUpdate.startDate = this.momenDate_1(item.startDate)
+          this.formUpdate.endDate = this.momenDate_1(item.endDate)
           this.formUpdate.audiencesSelect = this.optionAudiences.filter(el => el.value === item.audiencesSelect)[0].text
           this.formUpdate.shopId = this.$session.getAll().data.shopId
           this.formUpdate.dateJobOpen = 'True' //
@@ -1112,8 +1120,8 @@ export default {
         } else if (item.dateJobOpen === 'False' && item.dateJobClose === 'True') {
           this.formUpdate.audiencesName = item.audiencesName
           this.formUpdate.flowId = this.DataFlowName.filter(el => el.value === flowIds)[0].text
-          this.formUpdate.startDateClose = new Date(item.startDateClose).toISOString().substr(0, 10)
-          this.formUpdate.endDateClose = new Date(item.endDateClose).toISOString().substr(0, 10)
+          this.formUpdate.startDateClose = this.momenDate_1(item.startDateClose)
+          this.formUpdate.endDateClose = this.momenDate_1(item.endDateClose)
           this.formUpdate.audiencesSelect = this.optionAudiences.filter(el => el.value === item.audiencesSelect)[0].text
           this.formUpdate.shopId = this.$session.getAll().data.shopId
           this.formUpdate.dateJobOpen = 'False' //
@@ -1139,8 +1147,8 @@ export default {
         }
       } else if (item.audiencesSelect === 'rating') {
         this.formUpdate.audiencesName = item.audiencesName
-        this.formUpdate.startDate = new Date(item.startDate).toISOString().substr(0, 10)
-        this.formUpdate.endDate = new Date(item.endDate).toISOString().substr(0, 10)
+        this.formUpdate.startDate = this.momenDate_1(item.startDate)
+        this.formUpdate.endDate = this.momenDate_1(item.endDate)
         this.formUpdate.audiencesSelect = this.optionAudiences.filter(el => el.value === item.audiencesSelect)[0].text
         this.formUpdate.shopId = this.$session.getAll().data.shopId
         this.formUpdate.startRating = parseInt(item.startRating)
@@ -1301,15 +1309,24 @@ export default {
                 this.dataAdd = 0
                 this.dataUserLine = []
               } else {
-                this.valueAdd = parseInt((res.data.length / num) * 100)
-                this.dataAdd = res.data.length
                 for (var i = 0; i < res.data.length; i++) {
                   var d = res.data[i]
                   var s = {}
-                  s.lineUserId = d.lineUserId
-                  s.picture = d.memberPicture
-                  s.name = d.memberName
-                  this.dataUserLine.push(s)
+                  if (d.lineUserId === '' || d.lineUserId === null) {
+
+                  } else {
+                    s.lineUserId = d.lineUserId
+                    s.picture = d.memberPicture
+                    s.name = d.memberName
+                    this.dataUserLine.push(s)
+                  }
+                }
+                if (this.dataUserLine.length > 0) {
+                  this.valueAdd = parseInt((this.dataUserLine.length / num) * 100)
+                  this.dataAdd = this.dataUserLine.length
+                } else {
+                  this.valueAdd = parseInt((0 / num) * 100)
+                  this.dataAdd = 0
                 }
               }
             })
@@ -1383,8 +1400,8 @@ export default {
             lineUserId: this.dataUserLine,
             audiencesName: item.audiencesName,
             flowId: item.flowId,
-            startDate: new Date(item.startDate).toISOString().substr(0, 10),
-            endDate: new Date(item.endDate).toISOString().substr(0, 10),
+            startDate: this.momenDate_1(item.startDate),
+            endDate: this.momenDate_1(item.endDate),
             audiencesSelect: item.audiencesSelect,
             shopId: this.$session.getAll().data.shopId, //
             masBranchID: item.masBranchID,
@@ -1422,10 +1439,10 @@ export default {
               broadcastName: this.formUpdate.broadcastName,
               audiencesName: item.audiencesName,
               flowId: item.flowId,
-              startDate: new Date(item.startDate).toISOString().substr(0, 10),
-              endDate: new Date(item.endDate).toISOString().substr(0, 10),
-              startDateClose: new Date(item.startDateClose).toISOString().substr(0, 10),
-              endDateClose: new Date(item.endDateClose).toISOString().substr(0, 10),
+              startDate: this.momenDate_1(item.startDate),
+              endDate: this.momenDate_1(item.endDate),
+              startDateClose: this.momenDate_1(item.startDateClose),
+              endDateClose: this.momenDate_1(item.endDateClose),
               audiencesSelect: item.audiencesSelect,
               shopId: this.$session.getAll().data.shopId,
               dateJobOpen: 'True', //
@@ -1445,8 +1462,8 @@ export default {
               broadcastName: this.formUpdate.broadcastName,
               audiencesName: item.audiencesName,
               flowId: item.flowId,
-              startDate: new Date(item.startDate).toISOString().substr(0, 10),
-              endDate: new Date(item.endDate).toISOString().substr(0, 10),
+              startDate: this.momenDate_1(item.startDate),
+              endDate: this.momenDate_1(item.endDate),
               audiencesSelect: item.audiencesSelect,
               shopId: this.$session.getAll().data.shopId,
               dateJobOpen: 'True', //
@@ -1466,8 +1483,8 @@ export default {
               broadcastName: this.formUpdate.broadcastName,
               audiencesName: item.audiencesName,
               flowId: item.flowId,
-              startDateClose: new Date(item.startDateClose).toISOString().substr(0, 10),
-              endDateClose: new Date(item.endDateClose).toISOString().substr(0, 10),
+              startDateClose: this.momenDate_1(item.startDateClose),
+              endDateClose: this.momenDate_1(item.endDateClose),
               audiencesSelect: item.audiencesSelect,
               shopId: this.$session.getAll().data.shopId,
               dateJobOpen: 'False', //
@@ -1507,8 +1524,8 @@ export default {
             message: this.formUpdate.title,
             broadcastName: this.formUpdate.broadcastName,
             audiencesName: item.audiencesName,
-            startDate: new Date(item.startDate).toISOString().substr(0, 10),
-            endDate: new Date(item.endDate).toISOString().substr(0, 10),
+            startDate: this.momenDate_1(item.startDate),
+            endDate: this.momenDate_1(item.endDate),
             audiencesSelect: item.audiencesSelect,
             shopId: this.$session.getAll().data.shopId,
             startRating: item.startRating,

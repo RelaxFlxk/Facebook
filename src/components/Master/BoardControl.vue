@@ -1291,6 +1291,10 @@ export default {
   async mounted () {
     this.dataReady = false
     // Get Data
+    this.$root.$on('closeSetTime', () => {
+      // your code goes here
+      this.closeSetTime()
+    })
     await this.getDataFlow()
     await this.getDataBranch()
     await this.getEmpSelect()
@@ -1300,6 +1304,10 @@ export default {
     setTimeJob () {
       let _this = this
       this.setTimerJob = setInterval(function () { _this.getJobData() }, 60000)
+    },
+    closeSetTime () {
+      clearInterval(this.setTimerJob)
+      this.setTimerJob = null
     },
     async chkFlowName () {
       if (this.formUpdate.flowName !== '') {

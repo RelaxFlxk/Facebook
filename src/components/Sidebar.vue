@@ -489,6 +489,9 @@ export default {
   computed: {},
   mounted () {
     console.log('session', this.session)
+    // this.$root.$refs.BoardControl.closeSetTime()
+    this.$root.$emit('closeSetTime')
+    this.$root.$emit('closeSetTimeGetCalenda')
     this.items = []
     this.adminChk()
     this.$OmiseCard.configure({

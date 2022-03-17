@@ -2978,8 +2978,16 @@ export default {
       this.getDataFlow()
       this.getBookingList()
     }
+    this.$root.$on('closeSetTimeGetCalenda', () => {
+      // your code goes here
+      this.closeSetTimeGetCalenda()
+    })
   },
   methods: {
+    closeSetTimeGetCalenda () {
+      clearInterval(this.setTimerCalendar)
+      this.setTimerCalendar = null
+    },
     async getShowMap () {
       await axios
         .get(
@@ -5323,6 +5331,7 @@ export default {
         })
         .catch(error => {
           console.log('Cencel : ', error)
+          this.closeSetTimeGetCalenda()
         })
     },
     async addDataSubmit () {

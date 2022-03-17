@@ -1755,7 +1755,6 @@ export default {
           this.DNS_IP + '/member/get?shopId=' + this.session.data.shopId
         )
         .then(async response => {
-          console.log('response', response.data)
           if (response.data.status === false) {
             this.valueAdd = 0
             this.dataAdd = 0
@@ -1769,13 +1768,33 @@ export default {
               url
             )
             .then(async res => {
-              console.log('response', response.data)
+              console.log('response', res.data)
+              let dataUserLine = []
               if (res.data.status === false) {
                 this.valueAdd = parseInt((0 / num) * 100)
                 this.dataAdd = 0
+                dataUserLine = []
               } else {
-                this.valueAdd = parseInt((res.data.length / num) * 100)
-                this.dataAdd = res.data.length
+                for (var i = 0; i < res.data.length; i++) {
+                  var d = res.data[i]
+                  var s = {}
+                  if (d.lineUserId === '' || d.lineUserId === null) {
+
+                  } else {
+                    s.lineUserId = d.lineUserId
+                    s.picture = d.memberPicture
+                    s.name = d.memberName
+                    dataUserLine.push(s)
+                  }
+                }
+                console.log('dataUserLine', dataUserLine)
+                if (dataUserLine.length > 0) {
+                  this.valueAdd = parseInt((dataUserLine.length / num) * 100)
+                  this.dataAdd = dataUserLine.length
+                } else {
+                  this.valueAdd = parseInt((0 / num) * 100)
+                  this.dataAdd = 0
+                }
               }
             })
         })
