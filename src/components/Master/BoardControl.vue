@@ -1284,7 +1284,8 @@ export default {
         shopId: '',
         sendCard: ''
       },
-      checkPayment: 'True'
+      checkPayment: 'True',
+      setTimerJob: ''
     }
   },
   async mounted () {
@@ -1296,11 +1297,16 @@ export default {
     // await this.getLayoutDefault()
   },
   methods: {
+    setTimeJob () {
+      let _this = this
+      this.setTimerJob = setInterval(function () { _this.getJobData() }, 60000)
+    },
     async chkFlowName () {
       if (this.formUpdate.flowName !== '') {
         await this.getStepFlow()
         await this.getLayout()
         await this.getJobData()
+        this.setTimeJob()
       } else {
         this.$swal('ผิดพลาด', 'กรุณาเลือก ประเภทบริการ', 'error')
       }
@@ -1310,6 +1316,7 @@ export default {
         await this.getStepFlow()
         await this.getLayout()
         await this.getJobData()
+        this.setTimeJob()
       }
     },
     getDataFlow () {
@@ -1404,36 +1411,6 @@ export default {
           console.log('error function addDataGlobal : ', error)
         })
     },
-    // async getLayoutDefault () {
-    //   this.Layout = []
-    //   console.log('flowName', this.formUpdate.flowName)
-    //   console.log('Branch' + this.masBranchID)
-    //   console.log('shopId' + this.shopId)
-    //   await axios
-    //     .get(
-    //       this.DNS_IP +
-    //         '/WorkShopLayout/get?flowName=' +
-    //         '&shopId=' +
-    //         this.shopId
-    //     )
-    //     .then(response => {
-    //       let rs = response.data
-    //       for (let i = 0; i < rs.length; i++) {
-    //         let d = rs[i]
-    //         var workData = [i]
-    //         workData = JSON.parse(d.workData)
-    //         this.Layout.push({
-    //           workShopId: d.workShopId,
-    //           workColum: d.workColum,
-    //           workData: workData
-    //         })
-    //       }
-    //       console.log('this.Layout', this.Layout)
-    //     })
-    //     .catch(error => {
-    //       console.log('error function addDataGlobal : ', error)
-    //     })
-    // },
     async getStepFlow () {
       this.stepItemSelete = []
       await axios
@@ -1476,8 +1453,10 @@ export default {
         })
     },
     async getJobData () {
-      this.JobDataItem = []
-      this.allJob = []
+      // this.JobDataItem = []
+      // this.allJob = []
+      var JobDataItem = []
+      var allJob = []
       axios
         .get(
           this.DNS_IP +
@@ -1503,9 +1482,9 @@ export default {
                   for (var x = 0; x < response.data.filter(el => { return el.jobId === d.jobId }).length; x++) {
                     var s = rss[x]
                     // jobs.push(element.jobId)
-                    this.JobDataItem.push(s)
+                    JobDataItem.push(s)
                   }
-                  this.allJob.push({
+                  allJob.push({
                     jobId: d.jobId,
                     jobNo: d.jobNo,
                     stepId: d.stepId,
@@ -1519,31 +1498,17 @@ export default {
                   })
                 }
               }
+              if (JobDataItem.length > 0) {
+                this.JobDataItem = JobDataItem
+              } else {
+                this.JobDataItem = []
+              }
+              if (allJob.length > 0) {
+                this.allJob = allJob
+              } else {
+                this.allJob = []
+              }
             }
-            // response.data.forEach(element => {
-            //   console.log('indexOf(element.jobId)', jobs.indexOf(element.jobId))
-            //   // if (jobs.indexOf(element.jobId) === -1) {
-            //   console.log('element', element.userId)
-            //   if (element.userId !== '' || element.userId !== null) {
-            //     // jobs.push(element.jobId)
-            //     this.allJob.push({
-            //       jobId: element.jobId,
-            //       jobNo: element.jobNo,
-            //       stepId: element.stepId,
-            //       checkCar: element.checkCar,
-            //       totalDateDiff: element.totalDateDiff,
-            //       endDate: element.endDate,
-            //       endTime: element.endTime
-            //     })
-            //     this.JobDataItem.push(element)
-            //   }
-            //   // }
-            // })
-            // this.JobDataItem = response.data
-            // if (this.JobDataItem.length === 0) {
-            //   this.JobDataItem = []
-            //   // this.allJob = []
-            // }
           }
         })
     },
@@ -1565,26 +1530,13 @@ export default {
     itemCars (item) {
       this.item_newcars = item
     },
-    // checkStep () {
-    //   this.formUpdate.stepId = this.formUpdate.stepTitle.stepId
-    //   this.formUpdate.stepTitle = this.formUpdate.stepTitle.stepTitle
-    //   console.log('stepId', this.formUpdate.stepId)
-    //   console.log('stepTitle', this.formUpdate.stepTitle)
-    //   // let rs = this.stepItemSelete
-    //   // if (rs.length > 0) {
-    //   //   for (var i = 0; i < rs.length; i++) {
-    //   //     var d = rs[i]
-    //   //     if (this.formUpdate.stepTitle === d.stepTitle) {
-    //   //       this.formUpdate.stepTitle = ''
-    //   //     }
-    //   //   }
-    //   // }
-    // },
     async setUpdate (item, text, stepItem) {
-      console.log(this.formUpdate)
-      console.log(this.stepItemSelete)
-      console.log('item1', item)
-      console.log('stepItem', stepItem)
+      // console.log(this.formUpdate)
+      // console.log(this.stepItemSelete)
+      // console.log('item1', item)
+      // console.log('stepItem', stepItem)
+      clearInterval(this.setTimerJob)
+      this.setTimerJob = null
       this.checkPayment = item.checkPayment
       var dataStepItemSelete = this.stepItemSelete
       // var index = dataStepItemSelete.findIndex(key => key.text === stepTitle)
@@ -1662,6 +1614,7 @@ export default {
                 this.getStepFlow()
                 this.getLayout()
                 await this.getJobData()
+                this.setTimeJob()
               // console.log('allJob', this.allJob)
               // console.log(this.formUpdate.jobId)
               // console.log(this.formUpdate.stepId)
@@ -1778,6 +1731,7 @@ export default {
             this.getStepFlow()
             this.getLayout()
             await this.getJobData()
+            this.setTimeJob()
             this.dialogDelete = false
             console.log('shopId:', this.shopId)
             console.log('form:', this.formDelete)
@@ -1868,6 +1822,7 @@ export default {
             this.getStepFlow()
             this.getLayout()
             await this.getJobData()
+            this.setTimeJob()
             this.dialogEdit = false
             console.log('shopId:', this.shopId)
             console.log('form:', this.formEditData)
