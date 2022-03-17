@@ -1477,9 +1477,10 @@ export default {
         .then(async response => {
           this.dataReady = true
           var jobs = []
+          console.log('res', response.data.length)
           console.log('res', response.data)
           // console.log('userId', this.formUpdate.userId === 'NULL')
-          if (response.data) {
+          if (response.data.length > 0) {
             for (var i = 0; i < response.data.length; i++) {
               var d = response.data[i]
               d.userId = d.userId || ''
@@ -1517,6 +1518,9 @@ export default {
                 this.allJob = []
               }
             }
+          } else {
+            this.JobDataItem = []
+            this.allJob = []
           }
         })
     },
