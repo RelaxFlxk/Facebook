@@ -1113,7 +1113,7 @@
                       <v-select
                         v-model="empSelectJob"
                         :items="empSelectStepAdd"
-                        label="พนักงานที่รับนำเข้ากระดาษ"
+                        label="พนักงานที่นำเข้ากระดานทำงาน"
                         menu-props="auto"
                         outlined
                         required
