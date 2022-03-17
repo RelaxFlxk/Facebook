@@ -677,7 +677,7 @@
           </v-col>
         </v-row>
         <v-row>
-        <v-col cols="12">
+        <v-col cols="12" v-if="!dataSelect">
             <v-card elevation="7">
               <v-card-title>
                 <v-text-field
@@ -804,7 +804,8 @@ export default {
         { text: 'รูป', value: 'pictureUrl' },
         { text: 'ชื่อประกาศ', value: 'broadcastName' },
         { text: 'กลุ่มเป้าหมาย', value: 'audiencesName' },
-        { text: 'จำนวนการส่ง', value: 'countSend' },
+        { text: 'จำนวนการส่ง', value: 'countSend', align: 'center' },
+        { text: 'จำนวนการคลิก', value: 'click', align: 'center' },
         { text: 'วันที่สร้าง', value: 'CREATE_DATE' }
       ],
       dataSelectData: [
@@ -887,12 +888,24 @@ export default {
       // console.log('branch', this.branch)
       axios
         .get(
-          this.DNS_IP + '/broadcast/getView?shopId=' + this.session.data.shopId
+          this.DNS_IP + '/broadcast/get?shopId=' + this.session.data.shopId
         )
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
-            this.dataItem = rs
+            for (let i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              if (d.insightEvent !== null) {
+                d.countSend = JSON.parse(d.insightEvent).overview.delivered
+                if (JSON.parse(d.insightEvent).clicks.length === 0) {
+                  d.click = 0
+                } else {
+                  d.click = JSON.parse(d.insightEvent).clicks[0].click
+                }
+              }
+              this.dataItem.push(d)
+            }
+            // this.dataItem = rs
           } else {
             this.dataItem = []
           }
