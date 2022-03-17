@@ -772,8 +772,12 @@ export default {
         required: value => !!value || 'กรุณากรอก.',
         resizeImag: value =>
           !value ||
-          value.size < 2000000 ||
-          'Avatar size should be less than 2 MB!'
+          value.size < 1000000 ||
+          'รูปภาพต้องมีขนาดไม่เกิน 1 MB!'
+        // resizeImag: value =>
+        //   !value ||
+        //   value.size < 2000000 ||
+        //   'Avatar size should be less than 2 MB!'
       },
       // Menu Config
       breadcrumbs: [
