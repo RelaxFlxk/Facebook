@@ -135,7 +135,7 @@
           <v-dialog v-model="dialog" max-width="500px">
             <v-card>
               <v-col class="text-right">
-                <v-icon color="#173053" @click=";(dialog = false), clearData()"
+                <v-icon color="#173053" @click=";(dialog = false), clearData(), setTimeJob()"
                   >mdi-close</v-icon
                 >
               </v-col>
@@ -202,7 +202,7 @@
                     <v-btn
                       small
                       color="#E0E0E0"
-                      @click=";(dialogEdit = false), clearData()"
+                      @click=";(dialogEdit = false), clearData(), setTimeJob()"
                     >
                       <v-icon color="#173053">mdi-close</v-icon>
                     </v-btn>
@@ -351,7 +351,7 @@
                     <v-btn
                       color="primary"
                       depressed
-                      @click=";(dialogDelete = false), clearData()"
+                      @click=";(dialogDelete = false), clearData(), setTimeJob()"
                     >
                       <v-icon left> mdi-cancel</v-icon>
                       ยกเลิก
@@ -382,7 +382,7 @@
                     <v-btn
                       color="primary"
                       depressed
-                      @click=";(dialogDelete = false), clearData()"
+                      @click=";(dialogDelete = false), clearData(), setTimeJob()"
                     >
                       <v-icon left> mdi-cancel</v-icon>
                       ยกเลิก
