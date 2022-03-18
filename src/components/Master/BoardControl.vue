@@ -1468,7 +1468,7 @@ export default {
       axios
         .get(
           this.DNS_IP +
-            '/job/get?flowName=' +
+            '/job/get?checkUser=check&flowName=' +
             this.formUpdate.flowName +
             '&masBranchID=' + this.masBranchID +
             '&shopId=' +
@@ -1521,6 +1521,9 @@ export default {
           } else {
             this.JobDataItem = []
             this.allJob = []
+            this.$swal('ไม่มีข้อมูล', 'กรุณาเลือกบริการใหม่', 'warning')
+            clearInterval(this.setTimerJob)
+            this.setTimerJob = null
           }
         })
     },
