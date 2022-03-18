@@ -530,7 +530,8 @@ export default {
         { title: 'จัดโครงสร้างกระดาน', icon: 'dashboard', to: '/Master/WorkShop' },
         { title: 'จัดการ ช่องกรอกข้อมูล', icon: 'mdi-account-edit', to: '/Master/CustomField' },
         { title: 'ข้อมูลคะแนนบริการ', icon: 'mdi-account-edit', to: '/Master/Rating' },
-        { title: 'จัดการLineGroup', icon: 'mdi-wrench', to: '/Master/SettingLineGroup' }
+        { title: 'จัดการLineGroup', icon: 'mdi-wrench', to: '/Master/SettingLineGroup' },
+        { title: 'จัดการ Notify', icon: 'mdi-wrench', to: '/Master/SettingLineNotify' }
         // { title: 'รายชื่อร้านค้า', icon: 'mdi-playlist-check', to: '/System/ListShop' },
         // { title: 'กลุ่มผู้ใช้งาน', icon: 'mdi-account-group', to: '/System/UserTypeGroup' },
         // { title: 'Vgroup', icon: 'mdi-account-group', to: '/System/VgroupMapCoin' }

@@ -19,6 +19,8 @@ import BoardControl from './BoardControl'
 import SettingLineGroup from './SettingLineGroup'
 import BookingMobile from './BookingMobile'
 import BoardControlM from './BoardControlM'
+import UpdateNotify from './UpdateNotify'
+import SettingLineNotify from './SettingLineNotify'
 export default {
   CustomField,
   Flow,
@@ -40,5 +42,7 @@ export default {
   BoardControl,
   SettingLineGroup,
   BookingMobile,
-  BoardControlM
+  BoardControlM,
+  UpdateNotify,
+  SettingLineNotify
 }

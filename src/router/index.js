@@ -181,6 +181,16 @@ export default new Router({
     component: Master.BoardControlM
   },
   {
+    path: '/Master/SettingLineNotify',
+    name: 'SettingLineNotify',
+    component: Master.SettingLineNotify
+  },
+  {
+    path: '/UpdateNotify',
+    name: 'UpdateNotify',
+    component: Master.UpdateNotify
+  },
+  {
     path: '/BookingMobile',
     name: 'BookingMobile',
     component: Master.BookingMobile
