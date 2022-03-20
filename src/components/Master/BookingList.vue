@@ -215,7 +215,7 @@
               append-icon="mdi-text-box-search"
               label="ค้นหาทั้งหมด"
               :color="showColorSearch ? 'green' : 'info'"
-              @click:append="searchAny(), showColorSearch = true, statusSearch = 'yes'"
+              @click:append="searchAny(), showColorSearch = true, statusSearch = 'yes', dataReady = false"
               outlined
             ></v-text-field>
           </v-col>
@@ -3021,7 +3021,7 @@ export default {
     },
     async searchAny () {
       if (this.searchOther.trim().length > 1) {
-        this.dataReady = false
+        // this.dataReady = false
         this.selectedStatus = true
         // this.getSelectText = ''
         this.dataItem = []
@@ -3057,6 +3057,10 @@ export default {
                   s.flowId = d.flowId
                   s.flowName = d.flowName
                   s.dueDate = d.dueDate
+                  if (d.timeText === null || d.timeText === '') {
+                    d.timeText = d.timeDue
+                  }
+                  s.dueDateText = this.format_dateNotime(d.dueDate) + ' ' + d.timeText
                   s.shopId = d.shopId
                   s.remark = d.remark || ''
                   s.masBranchID = d.masBranchID
@@ -3068,7 +3072,10 @@ export default {
                   s.userId = d.userId
                   s.chkConfirm = false
                   s.chkCancel = false
+                  s.address = d.address
+                  s.addressLatLong = d.addressLatLong
                   s.jobNo = d.jobNo
+                  s.timeText = d.timeText
                   s.remarkRemove = d.remarkRemove || ''
                   s.remarkConfirm1 = (d.remarkConfirm1 === 'true' || d.remarkConfirm1 === 'True')
                   s.remarkConfirm2 = (d.remarkConfirm2 === 'true' || d.remarkConfirm2 === 'True')
