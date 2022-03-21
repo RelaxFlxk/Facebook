@@ -3471,6 +3471,7 @@ export default {
                   await this.searchAny()
                 }
                 // this.getTimesChange('update')
+                this.formEdit.radiosRemark = ''
                 if (this.getSelectText) {
                   this.getSelect(this.getSelectText, this.getSelectCount)
                 }
@@ -5417,6 +5418,7 @@ export default {
       this.empSelectAdd = ''
       this.remark = ''
       // this.fieldNameItem = []
+      this.formAdd.radiosRemark = ''
       this.DataflowId = ''
       this.formAdd.bookingId = null
       this.formAdd.fieldId = ''
