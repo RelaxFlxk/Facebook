@@ -5538,6 +5538,7 @@ export default {
                             // d.fieldId = d.fieldId
                             // d.fieldType = d.fieldType
                             d.fieldValue = dataBD[0].fieldValue
+                            d.packageId = dataBD[0].packageId
                             // d.fieldName = d.fieldName
                             // d.conditionField = d.conditionField
                             // d.conditionValue = d.conditionValue
@@ -5632,6 +5633,7 @@ export default {
                 update.masBranchID = this.BookingDataItem[0].masBranchID
                 update.CREATE_USER = d.userName
                 update.LAST_USER = d.userName
+                update.packageId = d.packageId
                 update.checkCar = ''
                 update.userId = d.userId
                 update.endDate = this.endDate
