@@ -2612,6 +2612,35 @@
                 </v-card-text>
             </v-card>
           </v-dialog>
+          <v-dialog
+            v-model="dialogAddCon"
+            persistent
+            max-width="500px"
+          >
+            <v-card>
+              <v-card-title class="text-h5">
+                บันทึกข้อมูล
+              </v-card-title>
+              <v-card-text>ต้องการ บันทึกข้อมูล ใช่หรือไม่?</v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  dark
+                  color="red darken-1"
+                  @click="dialogAddCon = false"
+                >
+                  ตรวจสอบอีกครั้ง
+                </v-btn>
+                <v-btn
+                  dark
+                  color="green darken-1"
+                  @click="addDataInsert()"
+                >
+                  บันทึกข้อมูล
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
       </div>
     </v-main>
   </div>
@@ -2876,6 +2905,7 @@ export default {
       dialogChange: false,
       dialogRemark: false,
       dialogJob: false,
+      dialogAddCon: false,
       menu: false,
       menu1: false,
       menuStart: false,
@@ -5223,9 +5253,9 @@ export default {
               this.flowfieldNameitem.push(s)
             }
           }
-          console.log('flowfieldNameitems', this.flowfieldNameitem)
-          console.log('flowfieldNameitems', flowfieldNameitems)
-          console.log('BookingDataItem', this.BookingDataItem)
+          // console.log('flowfieldNameitems', this.flowfieldNameitem)
+          // console.log('flowfieldNameitems', flowfieldNameitems)
+          // console.log('BookingDataItem', this.BookingDataItem)
           // setTimeout(() => this.validate('ADD'), 500)
         })
         .catch(error => {
@@ -5237,6 +5267,9 @@ export default {
       setTimeout(() => this.addDataSubmit(), 500)
     },
     addDataInsert () {
+      // this.swalConfig.title = 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?'
+      // this.$swal(this.swalConfig)
+      //   .then(async result => {
       var fastTrack = 'False'
       var extraJob = 'False'
       switch (this.formAdd.radiosRemark) {
@@ -5323,24 +5356,21 @@ export default {
         }
       }
       console.log('Add', Add)
-      this.swalConfig.title = 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?'
-      this.$swal(this.swalConfig)
-        .then(async result => {
-          axios
-            .post(this.DNS_IP + '/Booking/add', Add)
-            .then(async response => {
-              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-              await this.confirmChkAdd(response.data)
-              // console.log('addDataGlobal DNS_IP + /job/add', response)
-            })
-            .catch(error => {
-              console.log('error function addData : ', error)
-            })
+      axios
+        .post(this.DNS_IP + '/Booking/add', Add)
+        .then(async response => {
+          this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+          await this.confirmChkAdd(response.data)
+          // console.log('addDataGlobal DNS_IP + /job/add', response)
         })
         .catch(error => {
-          console.log('Cencel : ', error)
-          this.closeSetTimeGetCalenda()
+          console.log('error function addData : ', error)
         })
+        // })
+        // .catch(error => {
+        //   console.log('Cencel : ', error)
+        //   this.closeSetTimeGetCalenda()
+        // })
     },
     async addDataSubmit () {
       if (this.validAdd === true) {
@@ -5353,7 +5383,8 @@ export default {
             .then(response => {
               let rs = response.data
               if (rs.status === false) {
-                this.addDataInsert()
+                // this.addDataInsert()
+                this.dialogAddCon = true
               } else {
                 this.$swal('ผิดพลาด', 'เลขทะเบียนนี้ วันนี้ได้ทำรายการนัดหมายไปแล้ว', 'error')
               }
@@ -5428,6 +5459,7 @@ export default {
       this.formAdd.dueDate = ''
       this.formAdd.shopId = this.$session.getAll().data.shopId
       this.dialogAdd = false
+      this.dialogAddCon = false
     },
     async getDataById (dt) {
       console.log('dt', dt)

@@ -37,7 +37,7 @@
           <v-col :cols="colsWidth">
             <v-select
               :items="DataFlowName"
-              v-model="formUpdate.flowName"
+              v-model="flowId"
               dense
               outlined
               filled
@@ -338,6 +338,17 @@
                     />
                   </v-col>
                   <v-col class="text-center"  cols="12">
+                    <v-select
+                      v-if="dataPackage.length > 0"
+                      v-model="packageId"
+                      :items="dataPackage"
+                      label="แพ็กเก็ต *"
+                      required
+                      :rules="[rules.required]"
+                    >
+                    </v-select>
+                  </v-col>
+                  <v-col class="text-center"  cols="12">
                     <v-btn
                       dark
                       elevation="2"
@@ -396,7 +407,7 @@
         <!-- end add -->
 
         <div
-          v-if="formUpdate.flowName === ''"
+          v-if="flowId === ''"
           :class="classWork"
         >
           <v-row>
@@ -621,7 +632,7 @@
                               large
                               color="#84C650"
                               @click="
-                                ;(dialogDelete = true), setUpdate(itemsJob)
+                                ;(dialogDelete = true), setUpdate(itemsJob, 'closeJob')
                               "
                             >
                               mdi-tag
@@ -1285,7 +1296,10 @@ export default {
         sendCard: ''
       },
       checkPayment: 'True',
-      setTimerJob: ''
+      setTimerJob: '',
+      packageId: '',
+      dataPackage: [],
+      flowId: ''
     }
   },
   async mounted () {
@@ -1310,7 +1324,7 @@ export default {
       this.setTimerJob = null
     },
     async chkFlowName () {
-      if (this.formUpdate.flowName !== '') {
+      if (this.flowId !== '') {
         await this.getStepFlow()
         await this.getLayout()
         await this.getJobData()
@@ -1338,7 +1352,7 @@ export default {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
               d.text = d.flowName
-              d.value = d.flowName
+              d.value = d.flowId
               this.DataFlowName.push(d)
             }
           } else {
@@ -1375,14 +1389,13 @@ export default {
     },
     async getLayout () {
       this.Layout = []
-      console.log('flowName', this.formUpdate.flowName)
       console.log('Branch' + this.masBranchID)
       console.log('this.stepItemSelete', this.stepItemSelete)
       await axios
         .get(
           this.DNS_IP +
-            '/WorkShopLayout/get?flowName=' +
-            this.formUpdate.flowName +
+            '/WorkShopLayout/get?flowId=' +
+            this.flowId +
             '&masBranchID=' + this.masBranchID +
             '&shopId=' +
             this.shopId
@@ -1424,8 +1437,8 @@ export default {
       await axios
         .get(
           this.DNS_IP +
-            '/flowStep/get?flowName=' +
-            this.formUpdate.flowName +
+            '/flowStep/get?flowId=' +
+            this.flowId +
             '&shopId=' +
             this.shopId
         )
@@ -1468,8 +1481,8 @@ export default {
       axios
         .get(
           this.DNS_IP +
-            '/job/get?checkUser=check&flowName=' +
-            this.formUpdate.flowName +
+            '/job/get?checkUser=check&flowId=' +
+            this.flowId +
             '&masBranchID=' + this.masBranchID +
             '&shopId=' +
             this.shopId
@@ -1503,7 +1516,8 @@ export default {
                     endTime: d.endTime,
                     checkPayment: d.checkPayment,
                     empStepId: d.empStepId,
-                    lineUserId: d.lineUserId
+                    lineUserId: d.lineUserId,
+                    packageId: d.packageId
                   })
                 }
               }
@@ -1548,7 +1562,7 @@ export default {
     async setUpdate (item, text, stepItem) {
       // console.log(this.formUpdate)
       // console.log(this.stepItemSelete)
-      // console.log('item1', item)
+      console.log('item1', item)
       // console.log('stepItem', stepItem)
       clearInterval(this.setTimerJob)
       this.setTimerJob = null
@@ -1575,6 +1589,39 @@ export default {
       if (text === 'editFlow') {
         this.stepItemSeleteInBoard = dataStepItemSelete.filter(el => el.text !== stepItem.stepTitle)
       }
+      if (text === 'closeJob') {
+        if (item.packageId === '' || item.packageId === null) {
+
+        } else {
+          await this.getPackage(item)
+          this.packageId = item.packageId
+        }
+      }
+    },
+    async getPackage (dt) {
+      // this.fieldNameItem.forEach((field, index) => {
+      //   if (field.fieldId === 101) {
+      //     this.fieldNameItem[index].fieldValue = String(this.fromAdd.flowId)
+      //   }
+      // })
+      this.dataPackage = []
+      await axios.get(this.DNS_IP_Loyalty + '/PackageLog/get?shopId=' + this.shopId + '&lineUserId=' + dt.lineUserId +
+      '&flowId=' + this.flowId).then(response => {
+        console.log('PackageLog', response.data)
+        let rs = response.data
+        if (rs.status !== false) {
+          for (var i = 0; i < rs.length; i++) {
+            let d = rs[i]
+            let s = {}
+            s.text = d.packageName
+            s.value = d.packageId
+            this.dataPackage.push(s)
+            // console.log('this.DataFlowName', this.DataFlowName)
+          }
+        } else {
+          this.dataPackage = []
+        }
+      })
     },
     async onUpdate () {
       this.formUpdate.stepId = this.formUpdate.stepTitle.stepId
@@ -1598,7 +1645,7 @@ export default {
           .then(async result => {
             this.formUpdate.LAST_USER = this.session.data.userName
             var ID = this.formUpdate.jobId
-            var flowName = this.formUpdate.flowName
+            var flowId = this.flowId
             delete this.formUpdate['flowId']
             delete this.formUpdate['flowName']
             delete this.formUpdate['sortNo']
@@ -1622,7 +1669,7 @@ export default {
                 //     this.allJob[index].stepId = this.formUpdate.stepId
                 //   }
                 // })
-                this.formUpdate.flowName = flowName
+                this.flowId = flowId
                 await this.pushmessage(this.formUpdate.jobId)
                 this.dialog = false
                 this.$swal('เรียบร้อย', 'แก้ไขสถานะ เรียบร้อย', 'success')
