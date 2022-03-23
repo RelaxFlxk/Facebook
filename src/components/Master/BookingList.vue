@@ -5390,7 +5390,8 @@ export default {
               }
             })
         } else {
-          this.addDataInsert()
+          this.dialogAddCon = true
+          // this.addDataInsert()
         }
       }
     },
