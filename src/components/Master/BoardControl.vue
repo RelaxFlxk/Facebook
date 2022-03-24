@@ -333,18 +333,38 @@
                       dense
                       label="ค่าใช้จ่ายทั้งหมด"
                       required
+                      outlined
                       :rules="[rules.required]"
                       v-bind:options="options2"
                     />
                   </v-col>
-                  <v-col class="text-center"  cols="12">
+                  <v-col class="pb-0"  cols="12" v-if="dataPackage.length > 0">
                     <v-select
-                      v-if="dataPackage.length > 0"
                       v-model="packageId"
                       :items="dataPackage"
+                      dense
                       label="แพ็กเก็ต *"
+                      outlined
                       required
+                      clearable
+                      item-text="packageName"
+                      item-value="packageId"
+                      return-object
                       :rules="[rules.required]"
+                    >
+                    </v-select>
+                  </v-col>
+                  <v-col class="pb-0"  cols="12"  v-if="dataCoin.length > 0">
+                    <v-select
+                      v-model="productExchangeRateId"
+                      :items="dataCoin"
+                      dense
+                      outlined
+                      label="เลือกอัตราแลกเปลี่ยน *"
+                      clearable
+                      item-text="text"
+                      item-value="value"
+                      return-object
                     >
                     </v-select>
                   </v-col>
@@ -379,6 +399,22 @@
             <v-card-text>
               <v-container>
                 <v-row>
+                  <v-col class="text-center"  cols="12">
+                    <v-select
+                      v-if="dataPackage.length > 0"
+                      v-model="packageId"
+                      :items="dataPackage"
+                      dense
+                      label="แพ็กเก็ต *"
+                      required
+                      clearable
+                      item-text="packageName"
+                      item-value="packageId"
+                      return-object
+                      :rules="[rules.required]"
+                    >
+                    </v-select>
+                  </v-col>
                   <v-col class="text-center"  cols="12">
                     <v-btn
                       dark
@@ -1299,7 +1335,9 @@ export default {
       setTimerJob: '',
       packageId: '',
       dataPackage: [],
-      flowId: ''
+      flowId: '',
+      dataCoin: '',
+      productExchangeRateId: ''
     }
   },
   async mounted () {
@@ -1517,6 +1555,7 @@ export default {
                     checkPayment: d.checkPayment,
                     empStepId: d.empStepId,
                     lineUserId: d.lineUserId,
+                    userId: d.userId,
                     packageId: d.packageId
                   })
                 }
@@ -1560,6 +1599,8 @@ export default {
       this.item_newcars = item
     },
     async setUpdate (item, text, stepItem) {
+      this.dataPackage = []
+      this.dataCoin = []
       // console.log(this.formUpdate)
       // console.log(this.stepItemSelete)
       console.log('item1', item)
@@ -1577,12 +1618,19 @@ export default {
       this.formDelete.jobNo = item.jobNo
       this.formUpdate.empStep = parseInt(item.empStepId)
       var lineUserId = ''
+      var userId = ''
       if (item.lineUserId === null || item.lineUserId === '' || item.lineUserId === 'user-skip' || item.lineUserId === undefined) {
         lineUserId = ''
       } else {
         lineUserId = item.lineUserId
       }
+      if (item.userId === null || item.userId === '' || item.userId === 'user-skip' || item.userId === undefined) {
+        userId = ''
+      } else {
+        userId = item.userId
+      }
       this.lineUserId = lineUserId
+      this.userId = userId
       // this.formUpdate.empStep = this.JobDataItem.filter(row => {
       //   return row.jobId === item.jobId
       // })[0].empStep
@@ -1590,11 +1638,13 @@ export default {
         this.stepItemSeleteInBoard = dataStepItemSelete.filter(el => el.text !== stepItem.stepTitle)
       }
       if (text === 'closeJob') {
+        this.getCoin()
         if (item.packageId === '' || item.packageId === null) {
 
         } else {
           await this.getPackage(item)
-          this.packageId = item.packageId
+          var dataPack = this.dataPackage.filter(el => { return el.packageId === item.packageId })
+          this.packageId = {text: dataPack[0].text, value: item.packageId}
         }
       }
     },
@@ -1612,16 +1662,41 @@ export default {
         if (rs.status !== false) {
           for (var i = 0; i < rs.length; i++) {
             let d = rs[i]
-            let s = {}
-            s.text = d.packageName
-            s.value = d.packageId
-            this.dataPackage.push(s)
+            d.text = d.packageName
+            d.value = d.packageId
+            this.dataPackage.push(d)
             // console.log('this.DataFlowName', this.DataFlowName)
           }
         } else {
           this.dataPackage = []
         }
       })
+    },
+    async getCoin (dt) {
+      // this.fieldNameItem.forEach((field, index) => {
+      //   if (field.fieldId === 101) {
+      //     this.fieldNameItem[index].fieldValue = String(this.fromAdd.flowId)
+      //   }
+      // })
+      if (this.lineUserId !== '') {
+        this.dataCoin = []
+        await axios.get(this.DNS_IP_Loyalty + '/productExchangeRate/get?shopId=' + this.shopId +
+      '&flowId=' + this.flowId).then(response => {
+          console.log('productExchangeRate', response.data)
+          let rs = response.data
+          if (rs.status !== false) {
+            for (var i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              d.text = d.name
+              d.value = d.productExchangeRateId
+              this.dataCoin.push(d)
+            // console.log('this.DataFlowName', this.DataFlowName)
+            }
+          } else {
+            this.dataCoin = []
+          }
+        })
+      }
     },
     async onUpdate () {
       this.formUpdate.stepId = this.formUpdate.stepTitle.stepId
@@ -1753,6 +1828,8 @@ export default {
         .then(console.log(jobNo))
     },
     closeJob () {
+      console.log('this.productExchangeRateId', this.productExchangeRateId)
+      console.log('this.packageId', this.packageId)
       if (this.checkPayment === 'True') {
         if (this.formDelete.totalPrice !== '') {
           this.closeJobSubmit(this.formDelete.totalPrice)
@@ -1776,6 +1853,20 @@ export default {
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
       }).then(async response => {
+        if (this.packageId !== '' && this.productExchangeRateId === '') {
+          this.usePackage()
+        } else if (this.packageId === '' && this.productExchangeRateId !== '') {
+          if (this.lineUserId !== '') {
+            this.useCoin(totalPrice)
+          }
+        } else if (this.packageId !== '' && this.productExchangeRateId !== '') {
+          if (this.lineUserId !== '') {
+            this.useCoin(totalPrice)
+            this.usePackage()
+          } else {
+            this.usePackage()
+          }
+        }
         var ID = this.formUpdate.jobId
         let ds = {
           jobNo: this.formDelete.jobNo,
@@ -1799,6 +1890,79 @@ export default {
             console.log('form:', this.formDelete)
           })
       })
+    },
+    usePackage () {
+      var params = {
+        shopId: this.shopId,
+        lineUserId: this.lineUserId,
+        lineId: this.lineUserId,
+        token: this.packageId.token
+      }
+      axios({
+        method: 'post',
+        headers: {
+          shopId: this.shopId,
+          lineUserId: this.lineUserId
+        },
+        url: this.DNS_IP_Loyalty + '/use_package/edit',
+        data: params
+      }).then((response) => {})
+    },
+    useCoin (totalPrice) {
+      // productExchangeRateId
+      const today = new Date()
+      // console.log(today)
+      const date =
+            today.getFullYear() +
+            '' +
+            (today.getMonth() + 1) +
+            '' +
+            today.getDate()
+      const time =
+            today.getHours() + '' + today.getMinutes() + '' + today.getSeconds()
+      const token = date + '' + time
+      var point = ''
+      if (this.productExchangeRateId.exchangeRate === 0) {
+        point = 0
+      } else {
+        point = parseInt(totalPrice) / this.productExchangeRateId.exchangeRate
+      }
+      var md5 = require('md5')
+      var tokenKey = md5(token)
+      let ds = {
+        productExchangeRateId: this.productExchangeRateId.value,
+        amount: parseInt(totalPrice),
+        refId: '',
+        point: parseInt(point),
+        token: tokenKey,
+        status: 'waiting',
+        statusMemberCard: 'collect',
+        CREATE_USER: this.session.data.userName,
+        LAST_USER: this.session.data.userName,
+        shopId: this.shopId,
+        qrCodeURL: `https://liff.line.me/1656906322-RnAKKNyq/collect?shopId=${this.shopId}&token=${tokenKey}`
+        // masBranchID: '',
+        // branchName: ''
+      }
+      console.log('ds', ds)
+      axios
+        .post(this.DNS_IP_Loyalty + '/qrcode/add', ds)
+        .then(async response => {
+          var params = {
+            shopId: this.shopId,
+            token: tokenKey
+          }
+          axios({
+            method: 'post',
+            headers: {
+              shopId: this.shopId,
+              lineUserId: this.lineUserId,
+              lineId: this.userId
+            },
+            url: this.DNS_IP_Loyalty + '/memberCard/edit',
+            data: params
+          }).then((response) => {})
+        })
     },
     async editData () {
       console.log(

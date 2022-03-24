@@ -746,10 +746,17 @@
                               elevation="2"
                               large
                               color="#173053"
-                              dark
+                              :loading="loadingAdd"
+                              :disabled="loadingAdd"
+                              class="white--text"
                               @click="addData()"
                             >
-                              <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                              <template v-slot:loader>
+                                <span class="custom-loader">
+                                  <v-icon light>mdi-cached</v-icon>
+                                </span>
+                              </template>
+                              <v-icon color="white" dark left>mdi-checkbox-marked-circle</v-icon>
                               เพิ่ม
                             </v-btn>
                           </div>
@@ -2555,10 +2562,16 @@
                               elevation="2"
                               large
                               color="#173053"
-                              dark
-                              :disabled="!validEdit"
+                              class="text-white"
+                              :loading="loadingEdit"
+                              :disabled="loadingEdit"
                               @click="editDataSelect()"
                             >
+                              <template v-slot:loader>
+                                <span class="custom-loader">
+                                  <v-icon light>mdi-cached</v-icon>
+                                </span>
+                              </template>
                               <v-icon left>mdi-checkbox-marked-circle</v-icon>
                               แก้ไขข้อมูล
                             </v-btn>
@@ -2622,12 +2635,12 @@
                 บันทึกข้อมูล
               </v-card-title>
               <v-card-text>ต้องการ บันทึกข้อมูล ใช่หรือไม่?</v-card-text>
-              <v-card-actions>
+              <v-card-actions v-if="dataReadyAdd">
                 <v-spacer></v-spacer>
                 <v-btn
                   dark
                   color="red darken-1"
-                  @click="dialogAddCon = false"
+                  @click="dialogAddCon = false, loadingAdd = false"
                 >
                   ตรวจสอบอีกครั้ง
                 </v-btn>
@@ -2639,6 +2652,60 @@
                   บันทึกข้อมูล
                 </v-btn>
               </v-card-actions>
+              <div class="text-center" v-if="!dataReadyAdd">
+                <v-progress-circular
+                  :size="50"
+                  color="primary"
+                  indeterminate
+                ></v-progress-circular>
+
+                <v-progress-circular
+                  :width="3"
+                  color="red"
+                  indeterminate
+                ></v-progress-circular>
+
+                <v-progress-circular
+                  :size="70"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+
+                <v-progress-circular
+                  :width="3"
+                  color="green"
+                  indeterminate
+                ></v-progress-circular>
+
+                <v-progress-circular
+                  :size="50"
+                  color="amber"
+                  indeterminate
+                ></v-progress-circular>
+              </div>
+            </v-card>
+          </v-dialog>
+          <v-dialog
+            v-model="dialogError"
+            persistent
+            max-width="500px"
+          >
+            <v-card>
+              <v-card-title class="text-h5">
+                ผิดพลาด
+              </v-card-title>
+              <v-card-text>{{textError}}</v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  dark
+                  color="red darken-1"
+                  @click="dialogError = false"
+                >
+                  ตรวจสอบอีกครั้ง
+                </v-btn>
+              </v-card-actions>
             </v-card>
           </v-dialog>
       </div>
@@ -2646,6 +2713,42 @@
   </div>
 </template>
 <style scoped>
+.custom-loader {
+    animation: loader 1s infinite;
+    display: flex;
+  }
+  @-moz-keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @-webkit-keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @-o-keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
 .theme--light.v-divider {
     border-color: rgba(243, 5, 25, 0.904) !important;
 }
@@ -2741,6 +2844,8 @@ export default {
     let endDate = null
     return {
       filters: '',
+      loadingEdit: false,
+      loadingAdd: false,
       loadingRefresh: false,
       menuDateSearch: false,
       timeTable: '',
@@ -2806,6 +2911,7 @@ export default {
       dataCancelReady: true,
       dialogExport: false,
       dialogRemove: false,
+      dialogError: false,
       dataReady: false,
       menuDate: false,
       menuDateChange: false,
@@ -2975,7 +3081,9 @@ export default {
       // window_open: true,
       center: null,
       address: '',
-      empSelectJob: ''
+      empSelectJob: '',
+      textError: '',
+      dataReadyAdd: true
     }
   },
   beforeCreate () {
@@ -3391,130 +3499,162 @@ export default {
     },
     editDataSelect () {
       this.validate('EDIT')
-      setTimeout(() => this.editDataSelectSubmit(), 500)
+      setTimeout(() => this.checkDuplicate(), 500)
+      // setTimeout(() => this.editDataSelectSubmit(), 500)
+    },
+    async checkDuplicate () {
+      if (this.validEdit !== false) {
+        this.loadingEdit = true
+        let checkDupliRegNo = this.BookingDataItemEdit.filter(el => { return el.fieldName === 'เลขทะเบียน' })
+        console.log('checkDupliRegNo', checkDupliRegNo[0].fieldValue.replace(/ /g, ''))
+        console.log('checkDupliRegNo1', checkDupliRegNo[0])
+        if (checkDupliRegNo.length > 0) {
+          // console.log('checkDupliRegNo', checkDupliRegNo[0].fieldValue.replace(/ /g, ''))
+          await axios
+            .get(this.DNS_IP + '/booking_view/getSearchDuplicate?shopId=' + this.session.data.shopId + '&fieldValue=' + checkDupliRegNo[0].fieldValue.replace(/ /g, '') +
+            '&flowId=' + this.formEdit.flowId + '&dueDate=' + this.dateEdit + '&noBookNo=' + checkDupliRegNo[0].bookNo)
+            .then(response => {
+              let rs = response.data
+              if (rs.status === false) {
+              // this.addDataInsert()
+                this.editDataSelectSubmit()
+              } else {
+                var dateEdit = this.format_dateNotime(this.dateEdit)
+                this.textError = 'เลขทะเบียนนี้ วันที่ ' + dateEdit + ' ได้ทำรายการนัดหมายไปแล้ว'
+                this.dialogError = true
+                this.loadingEdit = false
+              }
+            })
+        } else {
+          this.editDataSelectSubmit()
+        }
+      } else {
+        this.loadingEdit = false
+      }
     },
     editDataSelectSubmit () {
-      if (this.validEdit !== false) {
-        this.dataEditReady = false
-        let rs = this.BookingDataItemEdit
-        let Add = []
-        let fielditem = this.BookingDataItemEdit
-        console.log('this.BookingDataItemEdit', this.BookingDataItemEdit)
-        var fastTrack = 'False'
-        var extraJob = 'False'
-        switch (this.formEdit.radiosRemark) {
-          case 'ซ่อมปกติ':
-            fastTrack = 'False'
-            extraJob = 'False'
-            break
-          case 'ExtraJob':
-            fastTrack = 'False'
-            extraJob = 'True'
-            break
-          case 'FastTrack':
-            fastTrack = 'True'
-            extraJob = 'False'
-            break
-        }
-        for (let i = 0; i < rs.length; i++) {
-          let d = rs[i]
-          let update = {}
-          if (d.conditionField === '' || d.conditionField === null) {
-            update.fieldId = d.fieldId
-            update.bookingDataId = d.bookingDataId
-            update.bookingFieldId = d.bookingFieldId
-            update.bookNo = d.bookNo
-            update.fieldValue = d.fieldValue.replace(/%/g, '%%')
-            update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
-            update.timeText = this.timeEdit.text
-            update.flowId = this.formEdit.flowId
-            update.masBranchID = this.formEdit.masBranchID
-            update.fastTrack = fastTrack
-            update.extraJob = extraJob
-            update.LAST_USER = this.$session.getAll().data.userName
-            update.empSelect = this.empSelectEdit
-            update.shopId = this.session.data.shopId
-            Add.push(update)
-          } else {
+      // if (this.validEdit !== false) {
+      this.dataEditReady = false
+      let rs = this.BookingDataItemEdit
+      let Add = []
+      let fielditem = this.BookingDataItemEdit
+      console.log('this.BookingDataItemEdit', this.BookingDataItemEdit)
+      var fastTrack = 'False'
+      var extraJob = 'False'
+      switch (this.formEdit.radiosRemark) {
+        case 'ซ่อมปกติ':
+          fastTrack = 'False'
+          extraJob = 'False'
+          break
+        case 'ExtraJob':
+          fastTrack = 'False'
+          extraJob = 'True'
+          break
+        case 'FastTrack':
+          fastTrack = 'True'
+          extraJob = 'False'
+          break
+      }
+      for (let i = 0; i < rs.length; i++) {
+        let d = rs[i]
+        let update = {}
+        if (d.conditionField === '' || d.conditionField === null) {
+          update.fieldId = d.fieldId
+          update.bookingDataId = d.bookingDataId
+          update.bookingFieldId = d.bookingFieldId
+          update.bookNo = d.bookNo
+          update.fieldValue = d.fieldValue.replace(/%/g, '%%')
+          update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
+          update.timeText = this.timeEdit.text
+          update.flowId = this.formEdit.flowId
+          update.masBranchID = this.formEdit.masBranchID
+          update.fastTrack = fastTrack
+          update.extraJob = extraJob
+          update.LAST_USER = this.$session.getAll().data.userName
+          update.empSelect = this.empSelectEdit
+          update.shopId = this.session.data.shopId
+          Add.push(update)
+        } else {
+          if (
+            fielditem.filter(row => {
+              return row.fieldId === parseInt(d.conditionField)
+            }).length > 0
+          ) {
             if (
-              fielditem.filter(row => {
-                return row.fieldId === parseInt(d.conditionField)
-              }).length > 0
-            ) {
-              if (
-                d.conditionValue ===
+              d.conditionValue ===
               fielditem.filter(row => {
                 return row.fieldId === parseInt(d.conditionField)
               })[0].fieldValue
-              ) {
-                update.fieldId = d.fieldId
-                update.bookingDataId = d.bookingDataId
-                update.bookingFieldId = d.bookingFieldId
-                update.bookNo = d.bookNo
-                update.fieldValue = d.fieldValue.replace(/%/g, '%%')
-                update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
-                update.timeText = this.timeEdit.text
-                update.flowId = this.formEdit.flowId
-                update.masBranchID = this.formEdit.masBranchID
-                update.fastTrack = fastTrack
-                update.extraJob = extraJob
-                update.LAST_USER = this.$session.getAll().data.userName
-                update.empSelect = this.empSelectEdit
-                update.shopId = this.session.data.shopId
-                Add.push(update)
-              }
-            } else if (d.conditionField === 'flow') {
-              if (parseInt(d.conditionValue) === parseInt(this.formEdit.flowId)) {
-                update.fieldId = d.fieldId
-                update.bookingDataId = d.bookingDataId
-                update.bookingFieldId = d.bookingFieldId
-                update.bookNo = d.bookNo
-                update.fieldValue = d.fieldValue.replace(/%/g, '%%')
-                update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
-                update.timeText = this.timeEdit.text
-                update.flowId = this.formEdit.flowId
-                update.masBranchID = this.formEdit.masBranchID
-                update.fastTrack = fastTrack
-                update.extraJob = extraJob
-                update.LAST_USER = this.$session.getAll().data.userName
-                update.empSelect = this.empSelectEdit
-                update.shopId = this.session.data.shopId
-                Add.push(update)
-              }
+            ) {
+              update.fieldId = d.fieldId
+              update.bookingDataId = d.bookingDataId
+              update.bookingFieldId = d.bookingFieldId
+              update.bookNo = d.bookNo
+              update.fieldValue = d.fieldValue.replace(/%/g, '%%')
+              update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
+              update.timeText = this.timeEdit.text
+              update.flowId = this.formEdit.flowId
+              update.masBranchID = this.formEdit.masBranchID
+              update.fastTrack = fastTrack
+              update.extraJob = extraJob
+              update.LAST_USER = this.$session.getAll().data.userName
+              update.empSelect = this.empSelectEdit
+              update.shopId = this.session.data.shopId
+              Add.push(update)
+            }
+          } else if (d.conditionField === 'flow') {
+            if (parseInt(d.conditionValue) === parseInt(this.formEdit.flowId)) {
+              update.fieldId = d.fieldId
+              update.bookingDataId = d.bookingDataId
+              update.bookingFieldId = d.bookingFieldId
+              update.bookNo = d.bookNo
+              update.fieldValue = d.fieldValue.replace(/%/g, '%%')
+              update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
+              update.timeText = this.timeEdit.text
+              update.flowId = this.formEdit.flowId
+              update.masBranchID = this.formEdit.masBranchID
+              update.fastTrack = fastTrack
+              update.extraJob = extraJob
+              update.LAST_USER = this.$session.getAll().data.userName
+              update.empSelect = this.empSelectEdit
+              update.shopId = this.session.data.shopId
+              Add.push(update)
             }
           }
         }
-        console.log('Add', Add)
-        this.swalConfig.title = 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?'
-        this.$swal(this.swalConfig)
-          .then(async result => {
-            await axios
-              .post(
-              // eslint-disable-next-line quotes
-                this.DNS_IP + "/BookingData/editAdmin",
-                Add
-              )
-              .then(async response => {
-                if (this.statusSearch === 'no') {
-                  await this.getBookingList()
-                } else {
-                  await this.searchAny()
-                }
-                // this.getTimesChange('update')
-                this.formEdit.radiosRemark = ''
-                if (this.getSelectText) {
-                  this.getSelect(this.getSelectText, this.getSelectCount)
-                }
-                this.getDataCalendaBooking()
-                this.dialogEditData = false
-                this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
-                this.dataEditReady = true
-              })
-          }).catch(error => {
-            this.dataEditReady = true
-            console.log('close alert : ', error)
-          })
       }
+      console.log('Add', Add)
+      this.swalConfig.title = 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?'
+      this.$swal(this.swalConfig)
+        .then(async result => {
+          await axios
+            .post(
+              // eslint-disable-next-line quotes
+              this.DNS_IP + "/BookingData/editAdmin",
+              Add
+            )
+            .then(async response => {
+              if (this.statusSearch === 'no') {
+                await this.getBookingList()
+              } else {
+                await this.searchAny()
+              }
+              // this.getTimesChange('update')
+              this.formEdit.radiosRemark = ''
+              if (this.getSelectText) {
+                this.getSelect(this.getSelectText, this.getSelectCount)
+              }
+              this.getDataCalendaBooking()
+              this.dialogEditData = false
+              this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
+              this.dataEditReady = true
+              this.loadingEdit = false
+            })
+        }).catch(error => {
+          this.dataEditReady = true
+          console.log('close alert : ', error)
+        })
+      // }
     },
     async getDataCalendaBooking () {
       console.log('getDataCalendaBooking')
@@ -5263,6 +5403,7 @@ export default {
         })
     },
     addData () {
+      this.loadingAdd = true
       this.validate('ADD')
       setTimeout(() => this.addDataSubmit(), 500)
     },
@@ -5270,6 +5411,7 @@ export default {
       // this.swalConfig.title = 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?'
       // this.$swal(this.swalConfig)
       //   .then(async result => {
+      this.dataReadyAdd = false
       var fastTrack = 'False'
       var extraJob = 'False'
       switch (this.formAdd.radiosRemark) {
@@ -5359,7 +5501,7 @@ export default {
       axios
         .post(this.DNS_IP + '/Booking/add', Add)
         .then(async response => {
-          this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+          // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
           await this.confirmChkAdd(response.data)
           // console.log('addDataGlobal DNS_IP + /job/add', response)
         })
@@ -5386,13 +5528,17 @@ export default {
                 // this.addDataInsert()
                 this.dialogAddCon = true
               } else {
-                this.$swal('ผิดพลาด', 'เลขทะเบียนนี้ วันนี้ได้ทำรายการนัดหมายไปแล้ว', 'error')
+                var dateEdit = this.format_dateNotime(this.date)
+                this.textError = 'เลขทะเบียนนี้ วันที่ ' + dateEdit + ' ได้ทำรายการนัดหมายไปแล้ว'
+                this.dialogError = true
+                this.loadingAdd = false
               }
             })
         } else {
           this.dialogAddCon = true
-          // this.addDataInsert()
         }
+      } else {
+        this.loadingAdd = false
       }
     },
     async pushMsglineGroup (bookNo) {
@@ -5461,6 +5607,8 @@ export default {
       this.formAdd.shopId = this.$session.getAll().data.shopId
       this.dialogAdd = false
       this.dialogAddCon = false
+      this.loadingAdd = false
+      this.dataReadyAdd = true
     },
     async getDataById (dt) {
       console.log('dt', dt)
