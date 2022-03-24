@@ -1452,8 +1452,11 @@ export default {
                 let s = {}
                 s.sortNo = t.sortNo
                 s.stepId = t.stepId
-                s.stepTitle = this.stepItemSelete.filter(el => { return el.stepId === t.stepId })[0].stepTitle
-                workDataUse.push(s)
+                var chkStepTitle = this.stepItemSelete.filter(el => { return el.stepId === t.stepId })
+                if (chkStepTitle.length > 0) {
+                  s.stepTitle = this.stepItemSelete.filter(el => { return el.stepId === t.stepId })[0].stepTitle
+                  workDataUse.push(s)
+                }
               }
             } else {
               workDataUse = []
@@ -1643,8 +1646,10 @@ export default {
 
         } else {
           await this.getPackage(item)
-          var dataPack = this.dataPackage.filter(el => { return el.packageId === item.packageId })
-          this.packageId = {text: dataPack[0].text, value: item.packageId}
+          if (this.dataPackage.length > 0) {
+            var dataPack = this.dataPackage.filter(el => { return el.packageId === item.packageId })
+            this.packageId = {text: dataPack[0].text, value: item.packageId}
+          }
         }
       }
     },
@@ -1854,17 +1859,17 @@ export default {
         cancelButtonText: 'ไม่'
       }).then(async response => {
         if (this.packageId !== '' && this.productExchangeRateId === '') {
-          this.usePackage()
+          await this.usePackage()
         } else if (this.packageId === '' && this.productExchangeRateId !== '') {
           if (this.lineUserId !== '') {
-            this.useCoin(totalPrice)
+            await this.useCoin(totalPrice)
           }
         } else if (this.packageId !== '' && this.productExchangeRateId !== '') {
           if (this.lineUserId !== '') {
-            this.useCoin(totalPrice)
-            this.usePackage()
+            await this.useCoin(totalPrice)
+            await this.usePackage()
           } else {
-            this.usePackage()
+            await this.usePackage()
           }
         }
         var ID = this.formUpdate.jobId
@@ -1881,34 +1886,34 @@ export default {
           .then(async response => {
             await this.pushmessagePrice(this.formDelete.jobNo)
             this.$swal('เรียบร้อย', 'ลบข้อมูล เรียบร้อย', 'success')
-            this.getStepFlow()
-            this.getLayout()
+            await this.getStepFlow()
+            await this.getLayout()
             await this.getJobData()
             this.setTimeJob()
             this.dialogDelete = false
+            this.formDelete.totalPrice = 0
             console.log('shopId:', this.shopId)
             console.log('form:', this.formDelete)
           })
       })
     },
-    usePackage () {
+    async usePackage () {
       var params = {
         shopId: this.shopId,
-        lineUserId: this.lineUserId,
-        lineId: this.lineUserId,
         token: this.packageId.token
       }
-      axios({
+      await axios({
         method: 'post',
         headers: {
           shopId: this.shopId,
-          lineUserId: this.lineUserId
+          lineUserId: this.lineUserId,
+          lineId: this.userId
         },
         url: this.DNS_IP_Loyalty + '/use_package/edit',
         data: params
       }).then((response) => {})
     },
-    useCoin (totalPrice) {
+    async useCoin (totalPrice) {
       // productExchangeRateId
       const today = new Date()
       // console.log(today)
@@ -1945,14 +1950,14 @@ export default {
         // branchName: ''
       }
       console.log('ds', ds)
-      axios
+      await axios
         .post(this.DNS_IP_Loyalty + '/qrcode/add', ds)
         .then(async response => {
           var params = {
             shopId: this.shopId,
             token: tokenKey
           }
-          axios({
+          await axios({
             method: 'post',
             headers: {
               shopId: this.shopId,
