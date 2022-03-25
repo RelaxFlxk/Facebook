@@ -3190,7 +3190,7 @@ export default {
                 let d = response.data[i]
                 let s = {}
                 if (dataItems.filter(el => { return el.bookNo === d.bookNo }).length === 0) {
-                  console.log('d.bookNo', d.bookNo)
+                  // console.log('d.bookNo', d.bookNo)
                   s.bookNo = d.bookNo
                   s.flowId = d.flowId
                   s.flowName = d.flowName
@@ -3256,7 +3256,7 @@ export default {
                   if (chkTime.length === 0) {
                     dataItemTimes.push(s)
                   }
-                  console.log('this.BookingDataListSearch', this.BookingDataList[d.bookNo])
+                  // console.log('this.BookingDataListSearch', this.BookingDataList[d.bookNo])
                   s.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
                   s.cusReg = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เลขทะเบียน')
                   s.tel = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เบอร์โทร')
@@ -3290,6 +3290,7 @@ export default {
                 if (a.timeDueHtext < b.timeDueHtext) return -1
                 return a.timeDueHtext > b.timeDueHtext ? 1 : 0
               })
+              console.log('datause', datause)
               for (var k = 0; k < datause.length; k++) {
                 var t = datause[k]
                 var h = {}
@@ -4440,9 +4441,13 @@ export default {
       this.branch = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName')
     },
     getDataFromFieldName (data, key) {
-      return data.filter(function (el) {
-        return el.fieldName === key
-      })
+      if (data !== undefined) {
+        return data.filter(function (el) {
+          return el.fieldName === key
+        })
+      } else {
+        return []
+      }
     },
     async updateValuesExport () {
       this.export_data = []
@@ -4586,7 +4591,7 @@ export default {
         ]
       } else {
         var dataSelect = this.dataItem.filter(el => { return el.statusBt === text })
-        console.log('fieldflow', dataSelect)
+        // console.log('fieldflow', dataSelect)
         if (dataSelect.length > 0) {
           for (let x = 0; x < dataSelect.length; x++) {
             let t = dataSelect[x]
@@ -4596,13 +4601,20 @@ export default {
             //   let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
             //   serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
             // })
-            console.log('fieldflow1', fieldflow)
-            console.log('this.BookingDataList', this.BookingDataList)
+            // console.log('fieldflow1', fieldflow)
+            // console.log('this.BookingDataList', this.BookingDataList)
             if (fieldflow.length > 0) {
               fieldflow.forEach((row) => {
-                let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
-                console.log('tempField', tempField)
-                console.log('fieldType', row.fieldType)
+                // console.log('this.BookingDataList[t.bookNo]', this.BookingDataList[t.bookNo])
+                // console.log('[t.bookNo]', t.bookNo)
+                let tempField = []
+                if (this.BookingDataList[t.bookNo] !== undefined) {
+                  tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+                } else {
+                  tempField = []
+                }
+                // console.log('tempField', tempField)
+                // console.log('fieldType', row.fieldType)
                 let convertTextField = ''
                 if (tempField.length > 0) {
                   if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
@@ -4625,7 +4637,7 @@ export default {
         } else {
           this.dataItemSelect = []
         }
-        console.log('dataSelect', this.dataItemSelect)
+        // console.log('dataSelect', this.dataItemSelect)
         if (text === 'cancel') {
           this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
             // { text: 'Booking Id', value: 'bookNo' },
