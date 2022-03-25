@@ -755,6 +755,163 @@
           </v-dialog>
           <!-- end delete -->
 
+          <!-- set condition -->
+          <v-dialog v-model="dialogCondition" max-width="80%" persistent>
+            <v-card>
+              <br />
+              <!-- <v-row class="mb-6" justify="center">
+                <v-col md="auto">
+                  <v-img
+                    :src="require('@/assets/GroupDelete.png')"
+                    class="a"
+                    style="width:55.05px;height:63px"
+                  ></v-img>
+                </v-col>
+              </v-row> -->
+              <v-col class="text-center">
+                <span class="headline">เงื่อนไขการให้บริการ</span>
+              </v-col>
+              <v-card-text v-if="dataConditionReady">
+                <v-container>
+                  <v-row>
+                    <v-col cols="6" class="pb-0">
+                      <v-row>
+                      <v-select
+                        v-model="dataCountCondition"
+                        :items="itemCountCondition"
+                        label="เลือกจำนวนเงื่อนไข"
+                        outlined
+                        dense
+                        @change="fixCountCondition()"
+                      ></v-select>
+                      </v-row>
+                    </v-col>
+                    <v-col cols="6" class="pb-0">
+                      <v-row>
+                      <v-checkbox
+                        false-value="ไม่แสดง"
+                        true-value="แสดง"
+                        v-model="showCondition"
+                        hide-details
+                        class="shrink ml-6 mr-0 mt-0 mb-6"
+                      ></v-checkbox>
+                      <v-text-field v-model="showCondition" dense outlined readonly label="แสดงเงื่อนไข หรือไม่"></v-text-field>
+                      </v-row>
+                    </v-col>
+                  </v-row>
+                  <v-form ref="form_condition" v-model="validCondition" lazy-validation>
+                  <v-row>
+                    <v-col cols="12" class="pb-0" v-if="dataCondition.length > 0">
+                      <div v-for="(item, index) in dataCondition" :key="index">
+                       <v-card>
+                          <v-container>
+                            <v-card-text>
+                              <v-row>
+                                <v-col cols="12" class="pb-0">
+                                  <v-img
+                                    v-if="item.image !== ''"
+                                    aspect-ratio="6"
+                                    contain
+                                    :src="item.image"
+                                  ></v-img>
+                                  <!-- <v-avatar size="100px"><img alt="Avatar" :src="formAdd.pictureUrl"></v-avatar> -->
+                                  <br />
+                                  <v-file-input
+                                    required
+                                    counter
+                                    show-size
+                                    :rules="[rules.resizeImag]"
+                                    accept="image/png, image/jpeg, image/bmp"
+                                    prepend-icon="mdi-camera"
+                                    label="รูปภาพ"
+                                    v-model="item.files"
+                                    @change="selectImg(item)"
+                                  ></v-file-input>
+                                </v-col>
+                                <v-col cols="12" class="pb-0">
+                                  <v-textarea
+                                    v-model="item.text"
+                                    auto-grow
+                                    rows="1"
+                                    label="รายละเอียด"
+                                    outlined
+                                    dense
+                                    :rules="[rules.required]"
+                                  ></v-textarea>
+                                </v-col>
+                              </v-row>
+                            </v-card-text>
+                          </v-container>
+                       </v-card>
+                       <br>
+                       </div>
+                    </v-col>
+                  </v-row>
+                  </v-form>
+                </v-container>
+              </v-card-text>
+              <v-col class="text-center" v-if="dataConditionReady">
+                <v-spacer></v-spacer>
+                <v-btn
+                  class="text-white"
+                  elevation="2"
+                  x-large
+                  :disabled="!validCondition"
+                  color="#1B437C"
+                  @click="addDataCondition()"
+                >
+                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                  บันทึกข้อมูล
+                </v-btn>
+                <v-btn
+                  dark
+                  elevation="2"
+                  x-large
+                  color="error"
+                  @click="dialogCondition = false, clearCondition()"
+                >
+                  <v-icon left> mdi-cancel</v-icon>
+                  ยกเลิก
+                </v-btn>
+              </v-col>
+              <v-card-text v-if="!dataConditionReady">
+                <div class="text-center">
+                  <v-progress-circular
+                    :size="50"
+                    color="primary"
+                    indeterminate
+                  ></v-progress-circular>
+
+                  <v-progress-circular
+                    :width="3"
+                    color="red"
+                    indeterminate
+                  ></v-progress-circular>
+
+                  <v-progress-circular
+                    :size="70"
+                    :width="7"
+                    color="purple"
+                    indeterminate
+                  ></v-progress-circular>
+
+                  <v-progress-circular
+                    :width="3"
+                    color="green"
+                    indeterminate
+                  ></v-progress-circular>
+
+                  <v-progress-circular
+                    :size="50"
+                    color="amber"
+                    indeterminate
+                  ></v-progress-circular>
+                  </div>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
+          <!-- end condition -->
+
           <!-- data table -->
           <v-col cols="12">
             <v-card elevation="7" v-if="dataReady">
@@ -780,6 +937,16 @@
                     {{ format_dateFUllTime(item.LAST_DATE) }}
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
+                    <v-btn
+                      color="info"
+                      fab
+                      x-small
+                      @click="
+                          getCondition(item)
+                      "
+                    >
+                      <v-icon color="#FFFFFF"> mdi-clipboard-text-search </v-icon>
+                    </v-btn>
                     <v-btn
                       color="#4CAF50"
                       fab
@@ -848,6 +1015,19 @@ export default {
   },
   data () {
     return {
+      flowId: '',
+      dataCondition: [],
+      oldDataCondition: [],
+      showCondition: 'ไม่แสดง',
+      dataCountCondition: '',
+      oldDataCountCondition: '',
+      itemCountCondition: [
+        {text: '1', value: 1},
+        {text: '2', value: 2},
+        {text: '3', value: 3},
+        {text: '4', value: 4},
+        {text: '5', value: 5}
+      ],
       PK: '',
       path: '/flow/', // Path Model
       // Menu Config
@@ -877,6 +1057,7 @@ export default {
       ],
       // End Menu Config
       dataReady: true,
+      dataConditionReady: true,
       canvas: true,
       dateTime: '', // Generate DateTime
       date: this.momenDate_1(new Date()),
@@ -896,6 +1077,7 @@ export default {
       dialogAddStepTitle: false,
       dialogEditStep: false,
       dialogDeleteStepTitle: false,
+      dialogCondition: false,
       // END Dialog Config ADD EDIT DELETE
       panel: [0],
       panel1: [1],
@@ -995,7 +1177,23 @@ export default {
       },
       stepItemSelete: [],
       rules: {
-        required: value => !!value || 'กรุณากรอก.'
+        numberRules: value =>
+          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
+          'กรุณากรอกตัวเลข 0 ถึง 9',
+        counterTel: value => value.length <= 10 || 'Max 10 characters',
+        IDcardRules: value =>
+          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999999) ||
+          'กรุณากรอกตัวเลข 0 ถึง 9',
+        required: value => !!value || 'กรุณากรอก.',
+        resizeImag: value =>
+          !value ||
+          value.size < 2000000 ||
+          'Avatar size should be less than 2 MB!',
+        counterIDcard: value => value.length <= 13 || 'Max 13 characters',
+        email: value => {
+          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+          return pattern.test(value) || 'Invalid e-mail.'
+        }
       },
       // End Form Config ADD EDIT
       // Data Table Config
@@ -1010,6 +1208,7 @@ export default {
       dataItem: [],
       validAdd: true,
       validUpdate: true,
+      validCondition: true,
       editedIndex: -1
       // End Data Table Config
     }
@@ -1021,6 +1220,151 @@ export default {
     await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
   },
   methods: {
+    getCondition (item) {
+      this.dataCondition = []
+      console.log(item)
+      if (item.dataCondition === null) {
+        this.dataCondition = []
+      } else {
+        this.dataCondition = JSON.parse(item.dataCondition)
+      }
+      this.dataCountCondition = item.countCondition || ''
+      this.showCondition = item.showCondition || 'ไม่แสดง'
+      // this.validate('CONDITION')
+      this.oldDataCountCondition = item.countCondition || ''
+      this.flowId = item.flowId
+      this.dialogCondition = true
+    },
+    fixCountCondition () {
+      if (this.dataCondition.length > 0) {
+        if (this.dataCondition[0].image === '') {
+          this.dataCondition = []
+          for (let i = 0; i < this.dataCountCondition; i++) {
+            this.dataCondition.push({id: i + 1, text: '', image: '', files: null})
+          }
+          this.validate('CONDITION')
+        } else {
+          console.log('oldDataCountCondition', this.oldDataCountCondition)
+          console.log('dataCountCondition', this.dataCountCondition)
+          if (this.oldDataCountCondition < this.dataCountCondition) {
+            var sumCount = this.dataCountCondition - this.dataCondition.length
+            console.log('sumCount', sumCount)
+            for (let i = 0; i < sumCount; i++) {
+              this.dataCondition.push({id: this.dataCondition.length + 1, text: '', image: '', files: null})
+            }
+            this.oldDataCountCondition = this.dataCondition.length
+          } else {
+            this.$swal({
+              title: 'คุณต้องการจะลดจำนวน ใช่หรือไม่?',
+              text: 'การลดจำนวนจะทำให้ข้อมูลที่ท่านกรอกหายไป',
+              type: 'question',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#b3b1ab',
+              confirmButtonText: 'ใช่',
+              cancelButtonText: 'ไม่'
+            })
+              .then(async result => {
+                this.oldDataCondition = this.dataCondition
+                this.dataCondition = []
+                for (let i = 0; i < this.dataCountCondition; i++) {
+                  var d = this.oldDataCondition[i]
+                  this.dataCondition.push(d)
+                }
+                this.oldDataCountCondition = this.dataCondition.length
+              })
+              .catch(error => {
+                console.log('error function addData : ', error)
+              })
+          }
+          this.validate('CONDITION')
+        }
+      } else {
+        this.dataCondition = []
+        for (let i = 0; i < this.dataCountCondition; i++) {
+          this.dataCondition.push({id: i + 1, text: '', image: '', files: null})
+        }
+        this.validate('CONDITION')
+      }
+    },
+    selectImg (item) {
+      if (item.files) {
+        item.image = URL.createObjectURL(
+          item.files
+        )
+      } else {
+        item.image = ''
+      }
+      // console.log(event)
+    },
+    async addDataCondition () {
+      console.log('dataCondition', this.dataCondition)
+      console.log('dataCountCondition', this.dataCountCondition)
+      if (this.dataCountCondition !== '') {
+        if (this.dataCondition.filter(el => { return el.image === '' }).length === 0) {
+          this.dataConditionReady = false
+          let dataUse = []
+          if (this.dataCondition.length > 0) {
+            for (let i = 0; i < this.dataCondition.length; i++) {
+              let d = this.dataCondition[i]
+              let s = {}
+              s.id = d.id
+              s.text = d.text
+              if (d.files !== undefined) {
+                console.log('image')
+                let params = new FormData()
+                params.append('file', d.files)
+                await axios
+                  .post(this.DNS_IP + `/file/upload/flowCondition`, params)
+                  .then(function (response) {
+                    s.image = response.data
+                  // console.log('url Pic', response.data)
+                  })
+                dataUse.push(s)
+              } else {
+                s.image = d.image
+                dataUse.push(s)
+              }
+            }
+            let dt = {
+              countCondition: this.dataCountCondition,
+              showCondition: this.showCondition,
+              dataCondition: JSON.stringify(dataUse)
+            }
+            await axios
+              .post(
+              // eslint-disable-next-line quotes
+                this.DNS_IP + this.path + "editData/" + this.flowId,
+                dt
+              )
+              .then(async response => {
+                await this.getDataGlobal(
+                  this.DNS_IP,
+                  this.path,
+                  this.session.data.shopId
+                )
+                this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
+                this.clearCondition()
+              })
+          }
+        } else {
+          this.$swal('ผิดพลาด', 'กรุณาใส่รูปภาพให้ครบ', 'error')
+          this.dataConditionReady = true
+        }
+      } else {
+        this.$swal('ผิดพลาด', 'เลือกจำนวนเงื่อนไข', 'error')
+      }
+    },
+    clearCondition () {
+      this.flowId = ''
+      this.dataCondition = []
+      this.oldDataCondition = []
+      this.showCondition = 'ไม่แสดง'
+      this.dataCountCondition = ''
+      this.oldDataCountCondition = ''
+      this.dataConditionReady = true
+      this.dialogCondition = false
+    },
     async actionUp (stepId) {
       console.log('stepId', stepId)
       console.log('this.stepItemSelete', this.stepItemSelete)
@@ -1205,6 +1549,12 @@ export default {
           this.$nextTick(() => {
             let self = this
             self.$refs.form_update.validate()
+          })
+          break
+        case 'CONDITION':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_condition.validate()
           })
           break
 

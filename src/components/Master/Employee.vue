@@ -576,6 +576,7 @@ export default {
       //
       this.formAdd.CREATE_USER = this.$session.getAll().data.userName
       this.formAdd.LAST_USER = this.$session.getAll().data.userName
+      this.formAdd.shopId = this.$session.getAll().data.shopId
 
       // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
       //
