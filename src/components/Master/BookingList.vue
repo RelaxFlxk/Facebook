@@ -3778,9 +3778,9 @@ export default {
       let dataExport = []
       this.dataexport = []
       let runNo = 0
-      console.log('bookingData', this.BookingDataListTimechange)
-      console.log('this.editedItemSeleteField', this.editedItemSeleteField)
-      console.log('this.dataItemTimesChange', this.dataItemTimesChange)
+      // console.log('bookingData', this.BookingDataListTimechange)
+      // console.log('this.editedItemSeleteField', this.editedItemSeleteField)
+      // console.log('this.dataItemTimesChange', this.dataItemTimesChange)
       console.log('this.dataItemTime', this.dataItemTime)
       var datause = this.dataItemTime.sort((a, b) => {
         if (a.timeDuetext < b.timeDuetext) return -1
@@ -3809,10 +3809,10 @@ export default {
             // serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
             let convertTextField = ''
             if (tempField.length > 0) {
-              console.log('fieldType', row.fieldType)
+              // console.log('fieldType', row.fieldType)
               if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
-                console.log('optionField', row.optionField)
-                console.log('fieldValue', tempField[0].fieldValue)
+                // console.log('optionField', row.optionField)
+                // console.log('fieldValue', tempField[0].fieldValue)
                 if (tempField[0].fieldValue) {
                   convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
                 } else {
@@ -3822,7 +3822,7 @@ export default {
                 convertTextField = tempField[0].fieldValue
               }
             }
-            console.log('convertTextField', convertTextField)
+            // console.log('convertTextField', convertTextField)
             serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
           })
           // console.log('fieldflow', fieldflow)
@@ -3876,8 +3876,8 @@ export default {
       for (let i = 0; i < datause2.length; i++) {
         let d = datause2[i]
         let dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && !el.fastTrack && (el.statusBtText === 'ยืนยันแล้ว' || el.statusBtText === 'รับรถแล้ว') })
-        console.log('s.dataSelect', dataSelect)
-        console.log('this.BookingDataList', this.BookingDataListTimechange)
+        // console.log('s.dataSelect', dataSelect)
+        // console.log('this.BookingDataList', this.BookingDataListTimechange)
         for (let x = 0; x < dataSelect.length; x++) {
           runNo++
           let t = dataSelect[x]
@@ -3889,10 +3889,10 @@ export default {
             // serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
             let convertTextField = ''
             if (tempField.length > 0) {
-              console.log('fieldType', row.fieldType)
+              // console.log('fieldType', row.fieldType)
               if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
-                console.log('optionField', row.optionField)
-                console.log('fieldValue', tempField[0].fieldValue)
+                // console.log('optionField', row.optionField)
+                // console.log('fieldValue', tempField[0].fieldValue)
                 if (tempField[0].fieldValue) {
                   convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
                 } else {
@@ -3902,7 +3902,7 @@ export default {
                 convertTextField = tempField[0].fieldValue
               }
             }
-            console.log('convertTextField', convertTextField)
+            // console.log('convertTextField', convertTextField)
             serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
           })
           if (dataExport.filter(el => { return el.timeDueHtext === this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )' }).length === 0) {
@@ -4730,6 +4730,7 @@ export default {
           if (this.timeTable !== '') {
             var dateStart = moment(moment(this.timeTable, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
             console.log('dateStartxx', dateStart)
+            console.log('timeTable', this.timeTable)
             await this.getBookingDataListTimechange(dateStart)
 
             // var dataItemTimes = []
@@ -4818,16 +4819,20 @@ export default {
                   // console.log('month new if')
                   console.log('month new if', dataItems)
                   this.dataItemCheck = dataItems
-                  this.dataItemTimesChange = this.dataItemCheck.filter(el => {
-                    let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-                    return dueDate === this.timeTable
-                    // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-                  }).sort((a, b) => {
+                  this.dataItemTimesChange = this.dataItemCheck.sort((a, b) => {
                     if (a.timeDuetext < b.timeDuetext) return -1
                     return a.timeDuetext > b.timeDuetext ? 1 : 0
                   })
+                  // this.dataItemTimesChange = this.dataItemCheck.filter(el => {
+                  //   let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+                  //   return dueDate === this.timeTable
+                  //   // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
+                  // }).sort((a, b) => {
+                  //   if (a.timeDuetext < b.timeDuetext) return -1
+                  //   return a.timeDuetext > b.timeDuetext ? 1 : 0
+                  // })
                   this.dataRemoveExport = this.dataItemTimesChange.filter(el => { return el.statusBt === 'cancel' })
-                  console.log('this.dataRemoveExport', this.dataRemoveExport)
+                  // console.log('this.dataRemoveExport', this.dataRemoveExport)
                 }
               })
           }
