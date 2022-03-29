@@ -252,12 +252,25 @@
       </template>
       <v-dialog
       v-model="dialogCash"
-      max-width="50%"
+      persistent
+      max-width="80%"
     >
       <v-card>
         <v-card-title class="text-h5">
           Be-Linked billing plans
         </v-card-title>
+        <v-card-text>
+          <div class="text-right plan_button">
+            <v-btn
+              rounded
+              color="error"
+              dark
+              @click="dialogCancel = true"
+            >
+              ยกเลิกแผนการชำระเงิน
+            </v-btn>
+          </div>
+        </v-card-text>
         <v-card-text>
           <v-row>
             <v-col col="6" v-for="(item, index) in dataPackage" :key="index">
@@ -268,7 +281,7 @@
                     <v-list two-line>
                       <v-list-item  v-for="(items, index) in item.description" :key="index">
                         <v-list-item-icon>
-                          <v-icon>
+                          <v-icon dark>
                             {{items.icon}}
                           </v-icon>
                         </v-list-item-icon>
@@ -305,164 +318,216 @@
               </v-container>
             </v-col>
           </v-row>
+          <div class="text-right plan_button">
+            <v-btn
+              rounded
+              color="error"
+              dark
+              @click="dialogCash = false"
+            >
+              ปิด
+            </v-btn>
+          </div>
         </v-card-text>
       </v-card>
-      <!-- <v-card>
+    </v-dialog>
+      <v-dialog
+      v-model="dialogCondition"
+      persistent
+      max-width="70%"
+    >
+      <v-card>
         <v-card-title class="text-h5">
-          Be-Linked billing plans
+          คุณต้องการเปลี่ยน แผนการจ่ายเงินหรือไม่
         </v-card-title>
         <v-card-text>
-          <v-row>
-            <v-col col="6">
-              <v-container>
-                <v-card>
-                  <v-row>
-                  <v-col col="12">
-                    <v-list two-line>
-                      <v-list-item>
-                        <v-list-item-icon>
-                          <v-icon color="white">
-                            mdi-projector-screen-outline
-                          </v-icon>
-                        </v-list-item-icon>
+          <h6>รายละเอียด แผนการจ่ายเงินที่จะเปล่ี่ยน</h6>
+          <v-container>
+            <v-row>
+              <v-col cols="12">
+                <v-list two-line>
+                  <v-list-item  v-for="(items, index) in dataCondition.description" :key="index">
+                    <v-list-item-icon>
+                      <v-icon dark>
+                        {{items.icon}}
+                      </v-icon>
+                    </v-list-item-icon>
 
-                        <v-list-item-content>
-                          <v-list-item-title>ระบบที่สามารถใช้งานได้</v-list-item-title>
-                          <v-list-item-subtitle class="feature_detail">สามารถใช้ได้ทั้งหมด</v-list-item-subtitle>
-                        </v-list-item-content>
-                      </v-list-item>
-                      <v-list-item>
-                        <v-list-item-icon>
-                          <v-icon color="white">
-                            mdi-car-multiple
-                          </v-icon>
-                        </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title>{{items.title}}</v-list-item-title>
+                      <v-list-item-subtitle class="feature_detail">{{items.subtitle}}</v-list-item-subtitle>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </v-col>
+            </v-row>
+            <v-row v-if="dataReady">
+              <v-col cols="12" class="pb-0">
+                <v-row>
+                  <v-checkbox
+                    false-value="ไม่ยอมรับ"
+                    true-value="ยอมรับ"
+                    v-model="checkCondition"
+                    hide-details
+                    class="shrink ml-6 mr-0 mt-0 mb-6"
+                  ></v-checkbox>
+                  <v-text-field v-model="checkCondition" dense outlined readonly label="ท่านยอมรับเงื่อนไข และค่าใช้จ่ายในการเปลี่ยนแผน หรือไม่"></v-text-field>
+                </v-row>
+              </v-col>
+              <v-col cols="12" class="pb-0">
+                <div class="text-center">
+                  <v-btn
+                    rounded
+                    color="primary"
+                    dark
+                    @click="submitBillingPlan(dataCondition)"
+                  >
+                    ยืนยันรายการนี้
+                  </v-btn>
+                </div>
+              </v-col>
+            </v-row>
+            <div class="text-center" v-if="!dataReady">
+              <v-progress-circular
+                :size="50"
+                color="primary"
+                indeterminate
+              ></v-progress-circular>
 
-                        <v-list-item-content>
-                          <v-list-item-title>จำนวนรถในศูนย์บริการ</v-list-item-title>
-                          <v-list-item-subtitle class="feature_detail">จำกัดแค่ 10 คัน</v-list-item-subtitle>
-                        </v-list-item-content>
-                      </v-list-item>
-                      <v-list-item>
-                        <v-list-item-icon>
-                          <v-icon color="white">
-                            mdi-cash-multiple
-                          </v-icon>
-                        </v-list-item-icon>
+              <v-progress-circular
+                :width="3"
+                color="red"
+                indeterminate
+              ></v-progress-circular>
 
-                        <v-list-item-content>
-                          <v-list-item-title>ราคา</v-list-item-title>
-                          <v-list-item-subtitle class="feature_detail">ฟรี</v-list-item-subtitle>
-                        </v-list-item-content>
-                      </v-list-item>
-                    </v-list>
-                  </v-col>
-                  </v-row>
-                  <div v-if="!btFree" class="text-center plan_button">
-                    <v-btn
-                      rounded
-                      color="primary"
-                      dark
-                      @click="updateFreePlan()"
-                    >
-                      เปลี่ยนแพลน
-                    </v-btn>
-                  </div>
-                  <div v-if="btFree" class="text-center plan_button">
-                    <v-btn
-                      rounded
-                      outlined
-                      color="teal"
-                      dark
-                    >
-                      แพลนปัจจุบัน
-                    </v-btn>
-                  </div>
-                </v-card>
-              </v-container>
-            </v-col>
-            <v-col col="6">
-              <v-container>
-                <v-card>
-                  <v-row>
-                  <v-col col="12">
-                    <v-list two-line>
-                      <v-list-item>
-                        <v-list-item-icon>
-                          <v-icon color="white">
-                            mdi-projector-screen-outline
-                          </v-icon>
-                        </v-list-item-icon>
+              <v-progress-circular
+                :size="70"
+                :width="7"
+                color="purple"
+                indeterminate
+              ></v-progress-circular>
 
-                        <v-list-item-content>
-                          <v-list-item-title>ระบบที่สามารถใช้งานได้</v-list-item-title>
-                          <v-list-item-subtitle class="feature_detail">สามารถใช้ได้ทั้งหมด</v-list-item-subtitle>
-                        </v-list-item-content>
-                      </v-list-item>
-                      <v-list-item>
-                        <v-list-item-icon>
-                          <v-icon color="white">
-                            mdi-car-multiple
-                          </v-icon>
-                        </v-list-item-icon>
+              <v-progress-circular
+                :width="3"
+                color="green"
+                indeterminate
+              ></v-progress-circular>
 
-                        <v-list-item-content>
-                          <v-list-item-title>จำนวนรถในศูนย์บริการ</v-list-item-title>
-                          <v-list-item-subtitle class="feature_detail">ไม่จำกัดจำนวน</v-list-item-subtitle>
-                        </v-list-item-content>
-                      </v-list-item>
-                      <v-list-item>
-                        <v-list-item-icon>
-                          <v-icon color="white">
-                            mdi-cash-multiple
-                          </v-icon>
-                        </v-list-item-icon>
-
-                        <v-list-item-content>
-                          <v-list-item-title>ราคา</v-list-item-title>
-                          <v-list-item-subtitle class="feature_detail">฿ 2,999 ต่อเดือน</v-list-item-subtitle>
-                        </v-list-item-content>
-                      </v-list-item>
-                    </v-list>
-                  </v-col>
-                  </v-row>
-                  <div v-if="!btBilling" class="text-center plan_button">
-                    <v-btn
-                      rounded
-                      color="primary"
-                      dark
-                      @click="billingPlan()"
-                    >
-                      เปลี่ยนแพลน
-                    </v-btn>
-                  </div>
-                  <div v-if="btBilling" class="text-center plan_button">
-                    <v-btn
-                      rounded
-                      outlined
-                      color="teal"
-                      dark
-                    >
-                      แพลนปัจจุบัน
-                    </v-btn>
-                  </div>
-                </v-card>
-              </v-container>
-            </v-col>
-          </v-row>
+              <v-progress-circular
+                :size="50"
+                color="amber"
+                indeterminate
+              ></v-progress-circular>
+            </div>
+          </v-container>
         </v-card-text>
-      </v-card> -->
+      </v-card>
     </v-dialog>
     </v-navigation-drawer>
+    <v-snackbar
+      v-model="snackbarSchedule"
+      shaped
+      top
+      right
+      color="warning"
+      outlined
+      timeout="60000"
+    >
+       {{ textSchedule }}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="red"
+          fab
+          dark
+          x-small
+          outlined
+          v-bind="attrs"
+          @click="snackbarSchedule = false"
+        >
+          <v-icon dark>
+            mdi-close-circle
+          </v-icon>
+        </v-btn>
+      </template>
+    </v-snackbar>
+    <v-dialog
+      v-model="dialogCancel"
+      persistent
+      max-width="500px"
+    >
+      <v-card>
+        <v-card-title class="text-h5">
+          ยกเลิกแผนการชำระเงิน
+        </v-card-title>
+        <v-card-text>ต้องการ ยกเลิกแผนการชำระเงิน ใช่หรือไม่?</v-card-text>
+        <!-- <v-card-text class="text-red">* บริษัทจะไม่มีการคืนเงินในกรณีใดๆทั้งสิ้น *</v-card-text> -->
+        <v-alert
+          outlined
+          type="warning"
+        >* บริษัทจะไม่มีการคืนเงินในทุกกรณี *</v-alert>
+        <v-card-actions v-if="dataReadyCancel">
+          <v-spacer></v-spacer>
+          <v-btn
+            dark
+            color="red darken-1"
+            @click="dialogCancel = false"
+          >
+            ตรวจสอบอีกครั้ง
+          </v-btn>
+          <v-btn
+            dark
+            color="green darken-1"
+            @click="cancelPlan()"
+          >
+            ยกเลิกแผนการชำระเงิน
+          </v-btn>
+        </v-card-actions>
+        <div class="text-center" v-if="!dataReadyCancel">
+          <v-progress-circular
+            :size="50"
+            color="primary"
+            indeterminate
+          ></v-progress-circular>
+
+          <v-progress-circular
+            :width="3"
+            color="red"
+            indeterminate
+          ></v-progress-circular>
+
+          <v-progress-circular
+            :size="70"
+            :width="7"
+            color="purple"
+            indeterminate
+          ></v-progress-circular>
+
+          <v-progress-circular
+            :width="3"
+            color="green"
+            indeterminate
+          ></v-progress-circular>
+
+          <v-progress-circular
+            :size="50"
+            color="amber"
+            indeterminate
+          ></v-progress-circular>
+        </div>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import axios from 'axios' // api
+import moment from 'moment-timezone'
 export default {
   data () {
     return {
       title: 'Be-Linked',
+      dataReadyCancel: true,
+      dataReady: true,
       drawer: true,
       mini: false,
       session: this.$session.getAll(),
@@ -475,9 +540,18 @@ export default {
       items: [],
       Dashboard: [],
       dataPackage: [],
+      dialogCancel: false,
+      dialogCondition: false,
+      dataCondition: [],
       dialogCash: false,
       btFree: false,
-      btBilling: false
+      btBilling: false,
+      checkCondition: 'ไม่ยอมรับ',
+      billingCustomerId: '',
+      chkDateSchedule: '',
+      snackbarSchedule: false,
+      textSchedule: '',
+      dataBilling: ''
     }
   },
   // beforeCreate () {
@@ -489,6 +563,7 @@ export default {
   computed: {},
   mounted () {
     console.log('session', this.session)
+    this.billingCustomerId = this.session.data.billingCustomerId || ''
     // this.$root.$refs.BoardControl.closeSetTime()
     this.$root.$emit('closeSetTime')
     this.$root.$emit('closeSetTimeGetCalenda')
@@ -497,6 +572,10 @@ export default {
     this.$OmiseCard.configure({
       publicKey: this.$omise_public_key
     })
+    console.log('this.chkDateSchedule', this.chkDateSchedule)
+    if (this.chkDateSchedule === '' || this.chkDateSchedule !== moment(moment(new Date(), 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')) {
+      this.chkSchedule()
+    }
   },
   methods: {
     logout () {
@@ -564,56 +643,110 @@ export default {
       // ]
     },
     billingPlan (dt) {
-      this.$swal({
-        title: 'ต้องการ อัพเดทสมาชิก ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      })
-        .then(async result => {
-          if (dt.pricePackage === '') {
-            var ds = {
-              billingPlan: dt.id,
-              LAST_USER: this.$session.getAll().data.userName,
-              billingCustomerId: '',
-              billingCustomerCardId: '',
-              billingScheduleId: '',
-              billingCustomerData: ''
-            }
-            axios
-              .post(
-              // eslint-disable-next-line quotes
-                this.DNS_IP + "/sys_shop/edit/" + this.$session.getAll().data.shopId,
-                ds
-              )
-              .then(async response => {
-                this.chkPlan()
-                this.$swal('เรียบร้อย', 'คุณได้อัพเดทเป็นสมาชิกสายฟรีแล้ว', 'success')
-              })
-          } else {
-            this.$OmiseCard.open({
-              amount: parseInt(dt.pricePackage + '00'),
-              currency: 'THB',
-              defaultPaymentMethod: 'credit_card',
-              onCreateTokenSuccess: (nonce) => {
-                if (nonce.startsWith('tokn_')) {
-                  this.omiseToken = nonce
-                  this.getCustomersOmise(nonce, dt)
-                } else {
-                  this.omiseSource = nonce
-                }
-              // form.submit()
-              }
-            })
+      console.log('billingPlan', dt)
+      this.dataCondition = []
+      // if (parseInt(dt.pricePackage || '0') === 0) {
+      //   this.$swal({
+      //     title: 'ต้องการ อัพเดทสมาชิก ใช่หรือไม่?',
+      //     type: 'question',
+      //     showCancelButton: true,
+      //     confirmButtonColor: '#3085d6',
+      //     cancelButtonColor: '#b3b1ab',
+      //     confirmButtonText: 'ใช่',
+      //     cancelButtonText: 'ไม่'
+      //   })
+      //     .then(async result => {
+      //       if (dt.pricePackage === '') {
+      //         var ds = {
+      //           billingPlan: dt.id,
+      //           LAST_USER: this.$session.getAll().data.userName,
+      //           billingCustomerId: '',
+      //           billingCustomerCardId: '',
+      //           billingScheduleId: '',
+      //           billingCustomerData: ''
+      //         }
+      //         axios
+      //           .post(
+      //             // eslint-disable-next-line quotes
+      //             this.DNS_IP + "/sys_shop/edit/" + this.$session.getAll().data.shopId,
+      //             ds
+      //           )
+      //           .then(async response => {
+      //             this.chkPlan()
+      //             this.$swal('เรียบร้อย', 'คุณได้อัพเดทเป็นสมาชิกสายฟรีแล้ว', 'success')
+      //           })
+      //       } else {
+      //         this.$OmiseCard.open({
+      //           amount: parseInt(dt.pricePackage + '00'),
+      //           currency: 'THB',
+      //           defaultPaymentMethod: 'credit_card',
+      //           onCreateTokenSuccess: (nonce) => {
+      //             if (nonce.startsWith('tokn_')) {
+      //               this.omiseToken = nonce
+      //               this.getCustomersOmise(nonce, dt)
+      //             } else {
+      //               this.omiseSource = nonce
+      //             }
+      //             // form.submit()
+      //           }
+      //         })
+      //       }
+      //     })
+      //     .catch(error => {
+      //       this.dataReady = true
+      //       console.log('error function editDataGlobal : ', error)
+      //     })
+      // } else {
+      this.dialogCondition = true
+      this.dataCondition = dt
+      // }
+    },
+    submitBillingPlan (dt) {
+      if (this.checkCondition === 'ยอมรับ') {
+        this.dataReady = false
+        if (dt.pricePackage === '') {
+          var ds = {
+            billingPlan: dt.id,
+            LAST_USER: this.$session.getAll().data.userName,
+            billingCustomerId: '',
+            billingCustomerCardId: '',
+            billingScheduleId: '',
+            billingCustomerData: ''
           }
-        })
-        .catch(error => {
-          this.dataReady = true
-          console.log('error function editDataGlobal : ', error)
-        })
+          axios
+            .post(
+            // eslint-disable-next-line quotes
+              this.DNS_IP + "/sys_shop/edit/" + this.$session.getAll().data.shopId,
+              ds
+            )
+            .then(async response => {
+              this.chkPlan()
+              this.$swal('เรียบร้อย', 'คุณได้อัพเดทเป็นสมาชิกสายฟรีแล้ว', 'success')
+              this.checkCondition = 'ไม่ยอมรับ'
+              this.dataReady = true
+            })
+        } else {
+          this.$OmiseCard.open({
+            amount: parseInt(dt.pricePackage + '00'),
+            currency: 'THB',
+            defaultPaymentMethod: 'credit_card',
+            onCreateTokenSuccess: (nonce) => {
+              if (nonce.startsWith('tokn_')) {
+                this.omiseToken = nonce
+                this.getCustomersOmise(nonce, dt)
+              } else {
+                this.omiseSource = nonce
+                this.checkCondition = 'ไม่ยอมรับ'
+                this.dataReady = true
+              }
+            // form.submit()
+            }
+          })
+        }
+      } else {
+        this.dialogCondition = false
+        this.dataReady = true
+      }
     },
     async getCustomersOmise (tokn, dt) {
       var ds = {
@@ -631,62 +764,30 @@ export default {
           if (response.data.status) {
             this.chkPlan()
             this.$swal('เรียบร้อย', 'คุณได้อัพเดทเป็นสมาชิก Premium แล้ว', 'success')
+            this.checkCondition = 'ไม่ยอมรับ'
+            this.dataReady = true
           } else {
             this.$swal('ผิดพลาด', 'กรุณาตรวจสอบข้อมูลครับ', 'error')
+            this.checkCondition = 'ไม่ยอมรับ'
+            this.dataReady = true
           }
         })
     },
-    // updateFreePlan () {
-    //   this.$swal({
-    //     title: 'ต้องการ อัพเดทสมาชิก ใช่หรือไม่?',
-    //     type: 'question',
-    //     showCancelButton: true,
-    //     confirmButtonColor: '#3085d6',
-    //     cancelButtonColor: '#b3b1ab',
-    //     confirmButtonText: 'ใช่',
-    //     cancelButtonText: 'ไม่'
-    //   })
-    //     .then(async result => {
-    //       var dt = {
-    //         billingPlan: 'free',
-    //         LAST_USER: this.$session.getAll().data.userName,
-    //         billingCustomerId: '',
-    //         billingCustomerCardId: '',
-    //         billingScheduleId: '',
-    //         billingCustomerData: ''
-    //       }
-    //       axios
-    //         .post(
-    //           // eslint-disable-next-line quotes
-    //           this.DNS_IP + "/sys_shop/edit/" + this.$session.getAll().data.shopId,
-    //           dt
-    //         )
-    //         .then(async response => {
-    //           this.chkPlan()
-    //           this.$swal('เรียบร้อย', 'คุณได้อัพเดทเป็นสมาชิกสายฟรีแล้ว', 'success')
-    //         })
-    //     })
-    //     .catch(error => {
-    //       this.dataReady = true
-    //       console.log('error function editDataGlobal : ', error)
-    //     })
-    // },
     async chkPlan () {
       this.dataBilling = ''
+      this.billingCustomerId = ''
       await axios
         .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.$session.getAll().data.shopId)
         .then(async response => {
           let rs = response.data[0]
           if (response.data.length > 0) {
-            this.dataBilling = parseInt(rs.billingPlan)
-            // console.log('shop', response.data[0])
-            // if (rs.billingPlan === 'free') {
-            //   this.btFree = true
-            //   this.btBilling = false
-            // } else {
-            //   this.btFree = false
-            //   this.btBilling = true
-            // }
+            this.$session.set('data', response.data[0])
+            this.billingCustomerId = rs.billingCustomerId
+            if (rs.billingPlan === 'free') {
+              this.dataBilling = rs.billingPlan
+            } else {
+              this.dataBilling = parseInt(rs.billingPlan)
+            }
           }
         })
       this.dataPackage = []
@@ -712,9 +813,58 @@ export default {
             s.rangeRePackage = d.rangeRePackage
             this.dataPackage.push(s)
           }
+          if (this.dataBilling === 'free') {
+            this.dataBilling = this.dataPackage.filter(el => { return el.pricePackage === '' || el.pricePackage === '0' })[0].id
+          }
           // this.dataPackage = rsPacket
         })
+      console.log('this.dataBilling', this.dataBilling)
+      console.log('this.dataPackage', this.dataPackage)
       this.dialogCash = true
+    },
+    async chkSchedule () {
+      this.chkDateSchedule = moment(moment(new Date(), 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+      this.snackbarSchedule = false
+      if (this.billingCustomerId !== '') {
+        console.log('this.chkDateSchedule2', this.chkDateSchedule)
+        await axios
+          .get(this.DNS_IP + '/omise/getSchedule?billingCustomerId=' + this.billingCustomerId)
+          .then(async response => {
+          // console.log('chkSchedule', response.data.data.next_occurrences_on[0])
+            const date1 = new Date(this.chkDateSchedule)
+            const date2 = new Date(response.data.data.next_occurrences_on[0])
+            const diffTime = Math.abs(date2 - date1)
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+            console.log(diffDays + ' days')
+            if (diffDays < 7) {
+              this.snackbarSchedule = true
+              this.textSchedule = 'ระบบจะตัดเงินผ่านระบบอัตโนมัติในวันที่ ' + this.format_dateNotime(response.data.data.next_occurrences_on[0])
+            }
+          })
+      }
+    },
+    cancelPlan () {
+      this.dataReadyCancel = false
+      var ds = {
+        billingPlan: 'free',
+        LAST_USER: this.$session.getAll().data.userName,
+        billingCustomerId: '',
+        billingCustomerCardId: '',
+        billingScheduleId: '',
+        billingCustomerData: ''
+      }
+      axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + "/sys_shop/edit/" + this.$session.getAll().data.shopId,
+          ds
+        )
+        .then(async response => {
+          this.chkPlan()
+          this.$swal('เรียบร้อย', 'คุณได้อัพเดทเป็นสมาชิกสายฟรีแล้ว', 'success')
+          this.checkCondition = 'ไม่ยอมรับ'
+          this.dataReadyCancel = true
+        })
     }
   }
 }
