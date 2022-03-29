@@ -7,18 +7,19 @@
         <v-divider class="mx-4"></v-divider>
         <v-card class="p-3" color="#f2f2f2">
           <v-row>
-            <v-col cols="6" md="6">
+            <v-col cols="8" md="8">
               <div style="display: flex">
                 <date-range-picker
                 ref="picker"
                 :locale-data="{ firstDay: 1, format: 'yyyy-mm-dd' }"
                 v-model="dateRange"
+                @update="getReportBooking()"
                 />
                 <v-btn
                   small class="ml-5 mt-2" color="#173053" dark
-                  @click="getReportBooking()"
+                  readonly
                 >
-                  ค้นหา
+                  กรุณาเลือกวันที่
                 </v-btn>
               </div>
             </v-col>

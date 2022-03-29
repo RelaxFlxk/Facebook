@@ -27,7 +27,7 @@
                             dark
                             small
                             color="rgb(238,108,77)"
-                            @click="genChart(index2)"
+                            @click="genChart(index , index2)"
                           >{{index2}}</v-card>
                       </v-col>
                         </v-row>
@@ -105,7 +105,7 @@ export default {
       await axios.get(this.DNS_IP + '/BookingData/getChartCarAndFlow?picker=' + picker + '&shopId=' + this.shopId)
         .then((response) => {
           let rs = response.data
-          console.log('********************', rs)
+          // console.log('********************', rs)
           if (rs.length > 0) {
             this.rsItem = rs
             this.allItem = rs.reduce((item, value) => {
@@ -123,9 +123,10 @@ export default {
           console.log('error function addDataGlobal : ', error)
         })
     },
-    async genChart (item) {
+    async genChart (flowName, item) {
       this.itemChart = null
       let column = []
+      console.log(flowName, item)
       if (item === 'รอบเช็คระยะ') {
         let rsItemfilter = []
         for (let i = 0; i < this.rsItem.length; i++) {
@@ -148,9 +149,10 @@ export default {
         })
       } else {
         await this.rsItem.forEach((v, k) => {
-          if (v.fieldName === item) {
+          if (v.flowName === flowName && v.fieldName === item) {
             if (v.fieldValue !== '') {
               let d = [v.fieldValue, v.Count]
+              // console.log('dddd', d)
               column.push(d)
             }
           }
@@ -201,7 +203,7 @@ export default {
           height: 300
         }
       }
-      console.log(this.itemChart)
+      // console.log(this.itemChart)
     }
   }
 }

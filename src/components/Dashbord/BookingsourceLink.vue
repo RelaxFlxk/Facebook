@@ -73,6 +73,7 @@ export default {
     },
     async genChart (dt) {
       let chartData = []
+      console.log('dt', dt)
       dt.forEach((value, key) => {
         chartData.push([value.sourceLink, value.Total])
       })
