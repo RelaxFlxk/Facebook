@@ -6,6 +6,7 @@ import Master from '@/components/Master'
 import Dashbord from '@/components/Dashbord'
 import BroadCast from '@/components/BroadCast'
 import Payment from '@/components/Payment'
+import PrintPdf from '@/components/PrintPdf'
 
 Vue.use(Router)
 
@@ -254,6 +255,11 @@ export default new Router({
     path: '/LoyaltyPresent',
     name: 'LoyaltyPresent',
     component: Core.LoyaltyPresent
+  },
+  {
+    path: '/PrintPdf/PrintInvoice',
+    name: 'PrintInvoice',
+    component: PrintPdf.PrintInvoice
   }
   ]
 })

@@ -65,7 +65,7 @@ Vue.mixin({
       ApplicationKey: '', // Token
       IPPotocalENV_Production: 'https://api-belinked.betaskthai.com',
       IPPotocalENV_ProductionBetask: 'https://customer-core.betaskthai.com',
-      IPPotocalENV_ProductionLoyalty: 'https://customer-core.betaskthai.com',
+      IPPotocalENV_ProductionLoyalty: 'https://api-beloyalty.betaskthai.com',
       // IPPotocalENV_Developer: 'https://hw.api-belinked.betaskthai.com',
       IPPotocalENV_Developer: 'http://localhost:5004',
       IPPotocalENV_DeveloperBetask: 'http://localhost:5006',

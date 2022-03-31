@@ -3658,13 +3658,21 @@ export default {
       // }
     },
     async getDataCalendaBooking () {
-      console.log('getDataCalendaBooking')
-      try {
-        await this.$refs.CalendarBooking.getDataReturn()
-      } catch (e) { console.log(e) }
+      console.log('this.$session.id()', this.$session.id())
+      if (this.$session.id() !== undefined) {
+        console.log('getDataCalendaBooking')
+        try {
+          await this.$refs.CalendarBooking.getDataReturn()
+        } catch (e) { console.log(e) }
       // this.$refs.CalendarBooking.getDataFlow()
       // this.$refs.CalendarBooking.getDataBranch()
       // this.$refs.CalendarBooking.getBookingList()
+      } else {
+        this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
+        clearInterval(this.setTimerCalendar)
+        this.setTimerCalendar = null
+        this.$router.push('/Core/Login')
+      }
     },
     async addDataSet () {
       // console.log('this.setTimer', this.setTimer)
@@ -5422,7 +5430,15 @@ export default {
     addData () {
       this.loadingAdd = true
       this.validate('ADD')
-      setTimeout(() => this.addDataSubmit(), 500)
+      console.log('this.$session.exists()', this.$session.exists())
+      if (this.$session.id() !== undefined) {
+        setTimeout(() => this.addDataSubmit(), 500)
+      } else {
+        this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
+        clearInterval(this.setTimerCalendar)
+        this.setTimerCalendar = null
+        this.$router.push('/Core/Login')
+      }
     },
     addDataInsert () {
       // this.swalConfig.title = 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?'
@@ -5515,44 +5531,58 @@ export default {
         }
       }
       console.log('Add', Add)
-      axios
-        .post(this.DNS_IP + '/Booking/add', Add)
-        .then(async response => {
+      if (this.$session.id() !== undefined) {
+        axios
+          .post(this.DNS_IP + '/Booking/add', Add)
+          .then(async response => {
           // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-          await this.confirmChkAdd(response.data)
+            await this.confirmChkAdd(response.data)
           // console.log('addDataGlobal DNS_IP + /job/add', response)
-        })
-        .catch(error => {
-          console.log('error function addData : ', error)
-        })
+          })
+          .catch(error => {
+            console.log('error function addData : ', error)
+          })
         // })
         // .catch(error => {
         //   console.log('Cencel : ', error)
         //   this.closeSetTimeGetCalenda()
         // })
+      } else {
+        this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
+        clearInterval(this.setTimerCalendar)
+        this.setTimerCalendar = null
+        this.$router.push('/Core/Login')
+      }
     },
     async addDataSubmit () {
       if (this.validAdd === true) {
-        let checkDupliRegNo = this.fieldNameItem.filter(el => { return el.fieldName === 'เลขทะเบียน' })
-        if (checkDupliRegNo.length > 0) {
-          console.log('checkDupliRegNo', checkDupliRegNo[0].fieldValue.replace(/ /g, ''))
-          await axios
-            .get(this.DNS_IP + '/booking_view/getSearchDuplicate?shopId=' + this.session.data.shopId + '&fieldValue=' + checkDupliRegNo[0].fieldValue.replace(/ /g, '') +
+        if (this.$session.id() !== undefined) {
+          let checkDupliRegNo = this.fieldNameItem.filter(el => { return el.fieldName === 'เลขทะเบียน' })
+          if (checkDupliRegNo.length > 0) {
+            console.log('checkDupliRegNo', checkDupliRegNo[0].fieldValue.replace(/ /g, ''))
+            await axios
+              .get(this.DNS_IP + '/booking_view/getSearchDuplicate?shopId=' + this.session.data.shopId + '&fieldValue=' + checkDupliRegNo[0].fieldValue.replace(/ /g, '') +
             '&flowId=' + this.formAdd.flowId + '&dueDate=' + this.date)
-            .then(response => {
-              let rs = response.data
-              if (rs.status === false) {
+              .then(response => {
+                let rs = response.data
+                if (rs.status === false) {
                 // this.addDataInsert()
-                this.dialogAddCon = true
-              } else {
-                var dateEdit = this.format_dateNotime(this.date)
-                this.textError = 'เลขทะเบียนนี้ วันที่ ' + dateEdit + ' ได้ทำรายการนัดหมายไปแล้ว'
-                this.dialogError = true
-                this.loadingAdd = false
-              }
-            })
+                  this.dialogAddCon = true
+                } else {
+                  var dateEdit = this.format_dateNotime(this.date)
+                  this.textError = 'เลขทะเบียนนี้ วันที่ ' + dateEdit + ' ได้ทำรายการนัดหมายไปแล้ว'
+                  this.dialogError = true
+                  this.loadingAdd = false
+                }
+              })
+          } else {
+            this.dialogAddCon = true
+          }
         } else {
-          this.dialogAddCon = true
+          this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
+          clearInterval(this.setTimerCalendar)
+          this.setTimerCalendar = null
+          this.$router.push('/Core/Login')
         }
       } else {
         this.loadingAdd = false
