@@ -19,6 +19,35 @@
             </v-btn>
           </v-col>
         </v-row>
+        <v-dialog
+            v-model="dialogError"
+            persistent
+            max-width="500px"
+          >
+            <v-card>
+              <v-card-title class="text-h5">
+                ผิดพลาด
+              </v-card-title>
+              <v-card-text>ขออภัย Admin User นี้มีอยู่ในระบบอยู่แล้ว</v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  dark
+                  color="red darken-1"
+                  @click="dialogError = false"
+                >
+                  รับทราบ
+                </v-btn>
+                <v-btn
+                  dark
+                  color="green darken-1"
+                  @click="gotoWebLoyalty()"
+                >
+                  ไปยังเว็บ Loyalty
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
       </div>
     </v-main>
   </div>
@@ -32,10 +61,15 @@ export default {
   },
   data () {
     return {
-      session: this.$session.getAll()
+      session: this.$session.getAll(),
+      dialogError: false
     }
   },
   methods: {
+    gotoWebLoyalty () {
+      window.open('https://betask-loyalty-admin.web.app', '_blank')
+      this.dialogError = false
+    },
     async gotoLoyalty () {
       console.log('session', this.session.data)
       await axios
@@ -75,7 +109,7 @@ export default {
                 this.dataReady = true
               })
           } else {
-            this.$swal('ผิดพลาด', 'ขออภัย Admin User นี้มีอยู่ในระบบอยู่แล้ว', 'error')
+            this.dialogError = true
           }
         })// eslint-disable-next-line handle-callback-err
         .catch(async (error) => {

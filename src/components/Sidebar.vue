@@ -620,7 +620,8 @@ export default {
         { title: 'พนักงาน', icon: 'mdi-account-multiple', to: '/Master/Employee' },
         { title: 'ช่องทางการชำระเงิน', icon: 'mdi-credit-card-outline', to: '/Master/PaymentType' },
         { title: 'จัดการบริษัท', icon: 'mdi-home-city', to: '/System/EditShop' },
-        { title: 'สมัครเเละจัดการยูเซอร์', icon: 'mdi-account-circle', to: '/System/ManageUser' }
+        { title: 'สมัครเเละจัดการยูเซอร์', icon: 'mdi-account-circle', to: '/System/ManageUser' },
+        { title: 'พิมพ์ใบเสร็จ', icon: 'mdi-printer-search', to: '/PrintPdf/PrintInvoice' }
       ]
       this.broadCast = [
         { title: 'กลุ่มเป้าหมาย', icon: 'mdi-account-group', to: '/BroadCast/Audience' },

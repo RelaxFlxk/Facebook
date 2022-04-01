@@ -2,21 +2,25 @@
   <div>
     <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
     <v-main>
-      <br>
-      <br>
+      <div class="col-md-12 ml-sm-auto col-lg-12 px-4">
+        <v-row class="no-gutters">
+          <v-col cols="12" md="6" lg="6" class="text-left">
+            <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
+          </v-col>
+        </v-row>
         <v-row >
           <v-col cols="6">
             <v-menu
-               ref="menu"
-               v-model="menu1"
-               :close-on-content-click="false"
-               transition="scale-transition"
-               offset-y
-               max-width="290px"
-               min-width="auto"
+              ref="menu"
+              v-model="menu1"
+              :close-on-content-click="false"
+              transition="scale-transition"
+              offset-y
+              max-width="290px"
+              min-width="auto"
             >
-               <template v-slot:activator="{ on, attrs }">
-               <v-text-field
+              <template v-slot:activator="{ on, attrs }">
+              <v-text-field
                   v-model="dateEvent"
                   label="วันที่ออกใบเสร็จ"
                   persistent-hint
@@ -26,13 +30,13 @@
                   prepend-icon="mdi-calendar"
                   v-bind="attrs"
                   v-on="on"
-               ></v-text-field>
-               </template>
-               <v-date-picker
-               v-model="dateEvent"
-               no-title
-               @input="menu1 = false, exportTest()"
-               ></v-date-picker>
+              ></v-text-field>
+              </template>
+              <v-date-picker
+              v-model="dateEvent"
+              no-title
+              @input="menu1 = false, exportTest()"
+              ></v-date-picker>
             </v-menu>
           </v-col>
           <!-- <v-col cols="6">
@@ -46,7 +50,8 @@
             </v-btn>
           </v-col> -->
         </v-row>
-        <iframe id='pdfV' style="width:100%; height: 1500px"> </iframe>
+        <iframe id='pdfV' style="width:100%; height: 1200px"> </iframe>
+      </div>
     </v-main>
   </div>
 </template>
@@ -61,20 +66,44 @@ export default {
   },
   data () {
     return {
-      session: this.$session.getAll().data,
+      breadcrumbs: [
+        {
+          text: 'Home',
+          disabled: false,
+          href: '/Core/Home'
+        },
+        {
+          text: 'พิมพ์ใบเสร็จ',
+          disabled: false,
+          href: '/PrintPdf/PrintInvoice'
+        }
+      ],
       menu1: false,
-      dateEvent: ''
+      dateEvent: '',
+      session: this.$session.getAll()
     }
   },
   async mounted () {
-
+    if (!this.$session.exists()) {
+      if (this.$route.query.dateEvent) {
+        this.$router.push('/Core/Login?dateEvent=' + this.$route.query.dateEvent + '&type=printInvoice')
+      } else {
+        this.$router.push('/Core/Login')
+      }
+      // this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
+    } else {
+      if (this.$route.query.dateEvent) {
+        this.dateEvent = this.$route.query.dateEvent
+        this.exportTest()
+      }
+    }
   },
   methods: {
     async exportTest () {
       if (this.dateEvent !== '') {
         await axios
           .get(
-            this.DNS_IP_Betask + '/planPayTransaction/get?shopId=' + this.session.shopId + '&dateEvent=' + this.dateEvent
+            this.DNS_IP_Betask + '/planPayTransaction/get?shopId=' + this.$session.getAll().data.shopId + '&dateEvent=' + this.dateEvent
           )
           .then(async response1 => {
             let rs = response1.data
@@ -113,12 +142,12 @@ export default {
                     bold: true
                   },
                   {
-                    text: this.session.shopName,
+                    text: this.$session.getAll().data.shopName,
                     fontSize: 14,
                     color: 'black'
                   },
                   {
-                    text: this.session.contactTel,
+                    text: this.$session.getAll().data.contactTel,
                     fontSize: 14,
                     color: 'black'
                   },

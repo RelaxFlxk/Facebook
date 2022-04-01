@@ -3535,126 +3535,133 @@ export default {
     },
     editDataSelectSubmit () {
       // if (this.validEdit !== false) {
-      this.dataEditReady = false
-      let rs = this.BookingDataItemEdit
-      let Add = []
-      let fielditem = this.BookingDataItemEdit
-      console.log('this.BookingDataItemEdit', this.BookingDataItemEdit)
-      var fastTrack = 'False'
-      var extraJob = 'False'
-      switch (this.formEdit.radiosRemark) {
-        case 'ซ่อมปกติ':
-          fastTrack = 'False'
-          extraJob = 'False'
-          break
-        case 'ExtraJob':
-          fastTrack = 'False'
-          extraJob = 'True'
-          break
-        case 'FastTrack':
-          fastTrack = 'True'
-          extraJob = 'False'
-          break
-      }
-      for (let i = 0; i < rs.length; i++) {
-        let d = rs[i]
-        let update = {}
-        if (d.conditionField === '' || d.conditionField === null) {
-          update.fieldId = d.fieldId
-          update.bookingDataId = d.bookingDataId
-          update.bookingFieldId = d.bookingFieldId
-          update.bookNo = d.bookNo
-          update.fieldValue = d.fieldValue.replace(/%/g, '%%')
-          update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
-          update.timeText = this.timeEdit.text
-          update.flowId = this.formEdit.flowId
-          update.masBranchID = this.formEdit.masBranchID
-          update.fastTrack = fastTrack
-          update.extraJob = extraJob
-          update.LAST_USER = this.$session.getAll().data.userName
-          update.empSelect = this.empSelectEdit
-          update.shopId = this.session.data.shopId
-          Add.push(update)
-        } else {
-          if (
-            fielditem.filter(row => {
-              return row.fieldId === parseInt(d.conditionField)
-            }).length > 0
-          ) {
+      if (this.$session.id() !== undefined) {
+        this.dataEditReady = false
+        let rs = this.BookingDataItemEdit
+        let Add = []
+        let fielditem = this.BookingDataItemEdit
+        console.log('this.BookingDataItemEdit', this.BookingDataItemEdit)
+        var fastTrack = 'False'
+        var extraJob = 'False'
+        switch (this.formEdit.radiosRemark) {
+          case 'ซ่อมปกติ':
+            fastTrack = 'False'
+            extraJob = 'False'
+            break
+          case 'ExtraJob':
+            fastTrack = 'False'
+            extraJob = 'True'
+            break
+          case 'FastTrack':
+            fastTrack = 'True'
+            extraJob = 'False'
+            break
+        }
+        for (let i = 0; i < rs.length; i++) {
+          let d = rs[i]
+          let update = {}
+          if (d.conditionField === '' || d.conditionField === null) {
+            update.fieldId = d.fieldId
+            update.bookingDataId = d.bookingDataId
+            update.bookingFieldId = d.bookingFieldId
+            update.bookNo = d.bookNo
+            update.fieldValue = d.fieldValue.replace(/%/g, '%%')
+            update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
+            update.timeText = this.timeEdit.text
+            update.flowId = this.formEdit.flowId
+            update.masBranchID = this.formEdit.masBranchID
+            update.fastTrack = fastTrack
+            update.extraJob = extraJob
+            update.LAST_USER = this.$session.getAll().data.userName
+            update.empSelect = this.empSelectEdit
+            update.shopId = this.session.data.shopId
+            Add.push(update)
+          } else {
             if (
-              d.conditionValue ===
+              fielditem.filter(row => {
+                return row.fieldId === parseInt(d.conditionField)
+              }).length > 0
+            ) {
+              if (
+                d.conditionValue ===
               fielditem.filter(row => {
                 return row.fieldId === parseInt(d.conditionField)
               })[0].fieldValue
-            ) {
-              update.fieldId = d.fieldId
-              update.bookingDataId = d.bookingDataId
-              update.bookingFieldId = d.bookingFieldId
-              update.bookNo = d.bookNo
-              update.fieldValue = d.fieldValue.replace(/%/g, '%%')
-              update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
-              update.timeText = this.timeEdit.text
-              update.flowId = this.formEdit.flowId
-              update.masBranchID = this.formEdit.masBranchID
-              update.fastTrack = fastTrack
-              update.extraJob = extraJob
-              update.LAST_USER = this.$session.getAll().data.userName
-              update.empSelect = this.empSelectEdit
-              update.shopId = this.session.data.shopId
-              Add.push(update)
-            }
-          } else if (d.conditionField === 'flow') {
-            if (parseInt(d.conditionValue) === parseInt(this.formEdit.flowId)) {
-              update.fieldId = d.fieldId
-              update.bookingDataId = d.bookingDataId
-              update.bookingFieldId = d.bookingFieldId
-              update.bookNo = d.bookNo
-              update.fieldValue = d.fieldValue.replace(/%/g, '%%')
-              update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
-              update.timeText = this.timeEdit.text
-              update.flowId = this.formEdit.flowId
-              update.masBranchID = this.formEdit.masBranchID
-              update.fastTrack = fastTrack
-              update.extraJob = extraJob
-              update.LAST_USER = this.$session.getAll().data.userName
-              update.empSelect = this.empSelectEdit
-              update.shopId = this.session.data.shopId
-              Add.push(update)
+              ) {
+                update.fieldId = d.fieldId
+                update.bookingDataId = d.bookingDataId
+                update.bookingFieldId = d.bookingFieldId
+                update.bookNo = d.bookNo
+                update.fieldValue = d.fieldValue.replace(/%/g, '%%')
+                update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
+                update.timeText = this.timeEdit.text
+                update.flowId = this.formEdit.flowId
+                update.masBranchID = this.formEdit.masBranchID
+                update.fastTrack = fastTrack
+                update.extraJob = extraJob
+                update.LAST_USER = this.$session.getAll().data.userName
+                update.empSelect = this.empSelectEdit
+                update.shopId = this.session.data.shopId
+                Add.push(update)
+              }
+            } else if (d.conditionField === 'flow') {
+              if (parseInt(d.conditionValue) === parseInt(this.formEdit.flowId)) {
+                update.fieldId = d.fieldId
+                update.bookingDataId = d.bookingDataId
+                update.bookingFieldId = d.bookingFieldId
+                update.bookNo = d.bookNo
+                update.fieldValue = d.fieldValue.replace(/%/g, '%%')
+                update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
+                update.timeText = this.timeEdit.text
+                update.flowId = this.formEdit.flowId
+                update.masBranchID = this.formEdit.masBranchID
+                update.fastTrack = fastTrack
+                update.extraJob = extraJob
+                update.LAST_USER = this.$session.getAll().data.userName
+                update.empSelect = this.empSelectEdit
+                update.shopId = this.session.data.shopId
+                Add.push(update)
+              }
             }
           }
         }
-      }
-      console.log('Add', Add)
-      this.swalConfig.title = 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?'
-      this.$swal(this.swalConfig)
-        .then(async result => {
-          await axios
-            .post(
+        console.log('Add', Add)
+        this.swalConfig.title = 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?'
+        this.$swal(this.swalConfig)
+          .then(async result => {
+            await axios
+              .post(
               // eslint-disable-next-line quotes
-              this.DNS_IP + "/BookingData/editAdmin",
-              Add
-            )
-            .then(async response => {
-              if (this.statusSearch === 'no') {
-                await this.getBookingList()
-              } else {
-                await this.searchAny()
-              }
-              // this.getTimesChange('update')
-              this.formEdit.radiosRemark = ''
-              if (this.getSelectText) {
-                this.getSelect(this.getSelectText, this.getSelectCount)
-              }
-              this.getDataCalendaBooking()
-              this.dialogEditData = false
-              this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
-              this.dataEditReady = true
-              this.loadingEdit = false
-            })
-        }).catch(error => {
-          this.dataEditReady = true
-          console.log('close alert : ', error)
-        })
+                this.DNS_IP + "/BookingData/editAdmin",
+                Add
+              )
+              .then(async response => {
+                if (this.statusSearch === 'no') {
+                  await this.getBookingList()
+                } else {
+                  await this.searchAny()
+                }
+                // this.getTimesChange('update')
+                this.formEdit.radiosRemark = ''
+                if (this.getSelectText) {
+                  this.getSelect(this.getSelectText, this.getSelectCount)
+                }
+                this.getDataCalendaBooking()
+                this.dialogEditData = false
+                this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
+                this.dataEditReady = true
+                this.loadingEdit = false
+              })
+          }).catch(error => {
+            this.dataEditReady = true
+            console.log('close alert : ', error)
+          })
+      } else {
+        this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
+        clearInterval(this.setTimerCalendar)
+        this.setTimerCalendar = null
+        this.$router.push('/Core/Login')
+      }
       // }
     },
     async getDataCalendaBooking () {
@@ -5430,108 +5437,100 @@ export default {
     addData () {
       this.loadingAdd = true
       this.validate('ADD')
-      console.log('this.$session.exists()', this.$session.exists())
-      if (this.$session.id() !== undefined) {
-        setTimeout(() => this.addDataSubmit(), 500)
-      } else {
-        this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
-        clearInterval(this.setTimerCalendar)
-        this.setTimerCalendar = null
-        this.$router.push('/Core/Login')
-      }
+      setTimeout(() => this.addDataSubmit(), 500)
     },
     addDataInsert () {
       // this.swalConfig.title = 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?'
       // this.$swal(this.swalConfig)
       //   .then(async result => {
-      this.dataReadyAdd = false
-      var fastTrack = 'False'
-      var extraJob = 'False'
-      switch (this.formAdd.radiosRemark) {
-        case 'ซ่อมปกติ':
-          fastTrack = 'False'
-          extraJob = 'False'
-          break
-        case 'ExtraJob':
-          fastTrack = 'False'
-          extraJob = 'True'
-          break
-        case 'FastTrack':
-          fastTrack = 'True'
-          extraJob = 'False'
-          break
-      }
-      let rs = this.fieldNameItem
-      let Add = []
-      let fielditem = this.fieldNameItem
-      console.log('this.fieldNameItem', this.fieldNameItem)
-      for (let i = 0; i < rs.length; i++) {
-        let d = rs[i]
-        let update = {}
-        if (d.conditionField === '' || d.conditionField === null) {
-          update.masBranchID = this.formAdd.masBranchID
-          update.bookingFieldId = d.bookingFieldId
-          update.remark = this.remark
-          update.flowId = this.formAdd.flowId
-          update.fieldId = d.fieldId
-          update.fieldValue = d.fieldValue
-          update.shopId = d.shopId
-          update.dueDate = this.date + ' ' + this.time.value
-          update.timeText = this.time.text
-          update.userId = 'user-skip'
-          update.pageName = 'BookingList'
-          update.sourceLink = 'direct'
-          update.fastTrack = fastTrack
-          update.extraJob = extraJob
-          update.empSelect = this.empSelectAdd
-          update.adminLogin = this.session.data.userName
-          Add.push(update)
-        } else {
-          if (fielditem.filter(row => { return row.fieldId === parseInt(d.conditionField) }).length > 0) {
-            if (d.conditionValue === fielditem.filter(row => { return row.fieldId === parseInt(d.conditionField) })[0].fieldValue) {
-              update.masBranchID = this.formAdd.masBranchID
-              update.bookingFieldId = d.bookingFieldId
-              update.remark = this.remark
-              update.flowId = this.formAdd.flowId
-              update.fieldId = d.fieldId
-              update.fieldValue = d.fieldValue
-              update.shopId = d.shopId
-              update.dueDate = this.date + ' ' + this.time.value
-              update.timeText = this.time.text
-              update.sourceLink = 'direct'
-              update.userId = 'user-skip'
-              update.pageName = 'BookingList'
-              update.fastTrack = fastTrack
-              update.extraJob = extraJob
-              update.empSelect = this.empSelectAdd
-              update.adminLogin = this.session.data.userName
-              Add.push(update)
-            }
-          } else if (d.conditionField === 'flow') {
-            if (parseInt(d.conditionValue) === parseInt(this.formAdd.flowId)) {
-              update.masBranchID = this.formAdd.masBranchID
-              update.bookingFieldId = d.bookingFieldId
-              update.remark = this.remark
-              update.flowId = this.formAdd.flowId
-              update.fieldId = d.fieldId
-              update.fieldValue = d.fieldValue
-              update.shopId = d.shopId
-              update.dueDate = this.date + ' ' + this.time.value
-              update.timeText = this.time.text
-              update.sourceLink = 'direct'
-              update.userId = 'user-skip'
-              update.pageName = 'BookingList'
-              update.fastTrack = fastTrack
-              update.extraJob = extraJob
-              update.empSelect = this.empSelectAdd
-              update.adminLogin = this.session.data.userName
-              Add.push(update)
+      if (this.$session.id() !== undefined) {
+        this.dataReadyAdd = false
+        var fastTrack = 'False'
+        var extraJob = 'False'
+        switch (this.formAdd.radiosRemark) {
+          case 'ซ่อมปกติ':
+            fastTrack = 'False'
+            extraJob = 'False'
+            break
+          case 'ExtraJob':
+            fastTrack = 'False'
+            extraJob = 'True'
+            break
+          case 'FastTrack':
+            fastTrack = 'True'
+            extraJob = 'False'
+            break
+        }
+        let rs = this.fieldNameItem
+        let Add = []
+        let fielditem = this.fieldNameItem
+        console.log('this.fieldNameItem', this.fieldNameItem)
+        for (let i = 0; i < rs.length; i++) {
+          let d = rs[i]
+          let update = {}
+          if (d.conditionField === '' || d.conditionField === null) {
+            update.masBranchID = this.formAdd.masBranchID
+            update.bookingFieldId = d.bookingFieldId
+            update.remark = this.remark
+            update.flowId = this.formAdd.flowId
+            update.fieldId = d.fieldId
+            update.fieldValue = d.fieldValue
+            update.shopId = d.shopId
+            update.dueDate = this.date + ' ' + this.time.value
+            update.timeText = this.time.text
+            update.userId = 'user-skip'
+            update.pageName = 'BookingList'
+            update.sourceLink = 'direct'
+            update.fastTrack = fastTrack
+            update.extraJob = extraJob
+            update.empSelect = this.empSelectAdd
+            update.adminLogin = this.session.data.userName
+            Add.push(update)
+          } else {
+            if (fielditem.filter(row => { return row.fieldId === parseInt(d.conditionField) }).length > 0) {
+              if (d.conditionValue === fielditem.filter(row => { return row.fieldId === parseInt(d.conditionField) })[0].fieldValue) {
+                update.masBranchID = this.formAdd.masBranchID
+                update.bookingFieldId = d.bookingFieldId
+                update.remark = this.remark
+                update.flowId = this.formAdd.flowId
+                update.fieldId = d.fieldId
+                update.fieldValue = d.fieldValue
+                update.shopId = d.shopId
+                update.dueDate = this.date + ' ' + this.time.value
+                update.timeText = this.time.text
+                update.sourceLink = 'direct'
+                update.userId = 'user-skip'
+                update.pageName = 'BookingList'
+                update.fastTrack = fastTrack
+                update.extraJob = extraJob
+                update.empSelect = this.empSelectAdd
+                update.adminLogin = this.session.data.userName
+                Add.push(update)
+              }
+            } else if (d.conditionField === 'flow') {
+              if (parseInt(d.conditionValue) === parseInt(this.formAdd.flowId)) {
+                update.masBranchID = this.formAdd.masBranchID
+                update.bookingFieldId = d.bookingFieldId
+                update.remark = this.remark
+                update.flowId = this.formAdd.flowId
+                update.fieldId = d.fieldId
+                update.fieldValue = d.fieldValue
+                update.shopId = d.shopId
+                update.dueDate = this.date + ' ' + this.time.value
+                update.timeText = this.time.text
+                update.sourceLink = 'direct'
+                update.userId = 'user-skip'
+                update.pageName = 'BookingList'
+                update.fastTrack = fastTrack
+                update.extraJob = extraJob
+                update.empSelect = this.empSelectAdd
+                update.adminLogin = this.session.data.userName
+                Add.push(update)
+              }
             }
           }
         }
-      }
-      console.log('Add', Add)
-      if (this.$session.id() !== undefined) {
+        console.log('Add', Add)
         axios
           .post(this.DNS_IP + '/Booking/add', Add)
           .then(async response => {
@@ -5825,141 +5824,148 @@ export default {
       setTimeout(() => this.addDataJobSubmit(), 500)
     },
     addDataJobSubmit () {
-      if (this.dataItem.filter(row => row.bookNo === this.BookingDataItem[0].bookNo).length > 0) {
-        if (this.validUpdate === true) {
-          console.log('this.BookingDataItem', this.BookingDataItem)
-          let Add = []
-          let fielditem = this.flowfieldNameitem
-          for (var i = 0; i < this.BookingDataItem.length; i++) {
-            var d = this.BookingDataItem[i]
-            let update = {}
-            let addData = false
-            var dataField = this.editedItemSeleteField.filter(el => { return parseInt(el.fieldId) === parseInt(d.fieldId) })
-            if (dataField[0].conditionField === '' || dataField[0].conditionField === null) {
-              addData = true
-            } else {
-              if (
-                fielditem.filter(row => {
-                  return row.fieldId === parseInt(d.conditionField)
-                }).length > 0
-              ) {
-                console.log('this', fielditem)
-                if (d.conditionValue === fielditem.filter(row => {
-                  return row.fieldId === parseInt(d.conditionField)
-                })[0].fieldValue
+      if (this.$session.id() !== undefined) {
+        if (this.dataItem.filter(row => row.bookNo === this.BookingDataItem[0].bookNo).length > 0) {
+          if (this.validUpdate === true) {
+            console.log('this.BookingDataItem', this.BookingDataItem)
+            let Add = []
+            let fielditem = this.flowfieldNameitem
+            for (var i = 0; i < this.BookingDataItem.length; i++) {
+              var d = this.BookingDataItem[i]
+              let update = {}
+              let addData = false
+              var dataField = this.editedItemSeleteField.filter(el => { return parseInt(el.fieldId) === parseInt(d.fieldId) })
+              if (dataField[0].conditionField === '' || dataField[0].conditionField === null) {
+                addData = true
+              } else {
+                if (
+                  fielditem.filter(row => {
+                    return row.fieldId === parseInt(d.conditionField)
+                  }).length > 0
                 ) {
-                  addData = true
+                  console.log('this', fielditem)
+                  if (d.conditionValue === fielditem.filter(row => {
+                    return row.fieldId === parseInt(d.conditionField)
+                  })[0].fieldValue
+                  ) {
+                    addData = true
+                  } else if (d.conditionField === 'flow') {
+                    addData = true
+                  }
                 } else if (d.conditionField === 'flow') {
                   addData = true
                 }
-              } else if (d.conditionField === 'flow') {
-                addData = true
+              }
+              if (addData) {
+                if (d.fieldValue !== '') {
+                  update.masBranchID = this.BookingDataItem[0].masBranchID
+                  update.CREATE_USER = d.userName
+                  update.LAST_USER = d.userName
+                  update.packageId = d.packageId
+                  update.checkCar = ''
+                  update.userId = d.userId
+                  update.endDate = this.endDate
+                  update.endTime = this.endTime.value
+                  update.fieldId = d.fieldId
+                  update.fieldName = d.fieldName
+                  update.fieldType = dataField[0].fieldType
+                  update.fieldValue = d.fieldValue
+                  update.flowId = d.flowId
+                  update.empSelect = this.empSelectJob
+                  update.conditionField = dataField[0].conditionField
+                  update.conditionValue = dataField[0].conditionValue
+                  update.optionField = dataField[0].optionField
+                  update.shopId = dataField[0].shopId
+                  update.showCard = dataField[0].showCard
+                  Add.push(update)
+                }
               }
             }
-            if (addData) {
-              if (d.fieldValue !== '') {
-                update.masBranchID = this.BookingDataItem[0].masBranchID
-                update.CREATE_USER = d.userName
-                update.LAST_USER = d.userName
-                update.packageId = d.packageId
-                update.checkCar = ''
-                update.userId = d.userId
-                update.endDate = this.endDate
-                update.endTime = this.endTime.value
-                update.fieldId = d.fieldId
-                update.fieldName = d.fieldName
-                update.fieldType = dataField[0].fieldType
-                update.fieldValue = d.fieldValue
-                update.flowId = d.flowId
-                update.empSelect = this.empSelectJob
-                update.conditionField = dataField[0].conditionField
-                update.conditionValue = dataField[0].conditionValue
-                update.optionField = dataField[0].optionField
-                update.shopId = dataField[0].shopId
-                update.showCard = dataField[0].showCard
-                Add.push(update)
-              }
-            }
-          }
-          console.log('this.Add', Add)
-          this.swalConfig.title = 'ต้องการนำรายการนี้ เข้าตารางใช่หรือไม่?'
-          this.$swal(this.swalConfig).then(async result => {
-            this.dataEditJobReady = false
-            await axios
-              .post(this.DNS_IP + '/job/add', Add)
-              .then(async response => {
-                this.endDate = ''
-                this.endTime = ''
-                this.empSelectJob = ''
-                if (response.data.status) {
-                  var dt = {
-                    bookNo: this.BookingDataItem[0].bookNo,
-                    statusJob: 'job',
-                    jobNo: response.data.jobNo
-                  }
-                  await axios
-                    .post(
-                      this.DNS_IP +
+            console.log('this.Add', Add)
+            this.swalConfig.title = 'ต้องการนำรายการนี้ เข้าตารางใช่หรือไม่?'
+            this.$swal(this.swalConfig).then(async result => {
+              this.dataEditJobReady = false
+              await axios
+                .post(this.DNS_IP + '/job/add', Add)
+                .then(async response => {
+                  this.endDate = ''
+                  this.endTime = ''
+                  this.empSelectJob = ''
+                  if (response.data.status) {
+                    var dt = {
+                      bookNo: this.BookingDataItem[0].bookNo,
+                      statusJob: 'job',
+                      jobNo: response.data.jobNo
+                    }
+                    await axios
+                      .post(
+                        this.DNS_IP +
                     '/Booking/editStatus/' +
                     this.BookingDataItem[0].bookNo,
-                      dt
-                    )
-                    .then(async response1 => {
-                      await this.pushMsg(response.data.jobNo)
-                      var dtt = {
-                        bookNo: this.BookingDataItem[0].bookNo,
-                        contactDate: this.format_date(new Date()),
-                        status: 'confirmJob',
-                        statusUse: 'use',
-                        shopId: this.$session.getAll().data.shopId,
-                        CREATE_USER: this.session.data.userName,
-                        LAST_USER: this.session.data.userName
-                      }
-                      axios
-                        .post(this.DNS_IP + '/booking_transaction/add', dtt)
-                        .then(async response => {
-                          this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
-                          if (this.statusSearch === 'no') {
-                            await this.getBookingList()
-                          } else {
-                            await this.searchAny()
-                          }
-                          this.dialogEdit = false
-                          this.dataEditJobReady = true
-                          var dataJob = this.dataItem.filter(el => { return el.bookNo === this.dataQrcode.bookNo })
-                          this.getjob(dataJob[0])
-                          this.dialogJob = true
-                        })
-                    })
-                }
-              })
+                        dt
+                      )
+                      .then(async response1 => {
+                        await this.pushMsg(response.data.jobNo)
+                        var dtt = {
+                          bookNo: this.BookingDataItem[0].bookNo,
+                          contactDate: this.format_date(new Date()),
+                          status: 'confirmJob',
+                          statusUse: 'use',
+                          shopId: this.$session.getAll().data.shopId,
+                          CREATE_USER: this.session.data.userName,
+                          LAST_USER: this.session.data.userName
+                        }
+                        axios
+                          .post(this.DNS_IP + '/booking_transaction/add', dtt)
+                          .then(async response => {
+                            this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
+                            if (this.statusSearch === 'no') {
+                              await this.getBookingList()
+                            } else {
+                              await this.searchAny()
+                            }
+                            this.dialogEdit = false
+                            this.dataEditJobReady = true
+                            var dataJob = this.dataItem.filter(el => { return el.bookNo === this.dataQrcode.bookNo })
+                            this.getjob(dataJob[0])
+                            this.dialogJob = true
+                          })
+                      })
+                  }
+                })
+            })
+          }
+        } else {
+          this.$swal('ผิดพลาด', 'ไม่มีนัดหมายเข้ารับบริการนี้', 'error').then(async response => {
+            this.dialogEdit = false
+            if (this.statusSearch === 'no') {
+              await this.getBookingList()
+            } else {
+              await this.searchAny()
+            }
+            // this.getTimesChange('update')
+            if (this.getSelectText) {
+              this.getSelect(this.getSelectText, this.getSelectCount)
+            }
+          }).catch(error => {
+            console.log('error function addData : ', error)
+            this.dialogEdit = false
+            if (this.statusSearch === 'no') {
+              this.getBookingList()
+            } else {
+              this.searchAny()
+            }
+            // this.getTimesChange('update')
+            if (this.getSelectText) {
+              this.getSelect(this.getSelectText, this.getSelectCount)
+            }
           })
         }
       } else {
-        this.$swal('ผิดพลาด', 'ไม่มีนัดหมายเข้ารับบริการนี้', 'error').then(async response => {
-          this.dialogEdit = false
-          if (this.statusSearch === 'no') {
-            await this.getBookingList()
-          } else {
-            await this.searchAny()
-          }
-          // this.getTimesChange('update')
-          if (this.getSelectText) {
-            this.getSelect(this.getSelectText, this.getSelectCount)
-          }
-        }).catch(error => {
-          console.log('error function addData : ', error)
-          this.dialogEdit = false
-          if (this.statusSearch === 'no') {
-            this.getBookingList()
-          } else {
-            this.searchAny()
-          }
-          // this.getTimesChange('update')
-          if (this.getSelectText) {
-            this.getSelect(this.getSelectText, this.getSelectCount)
-          }
-        })
+        this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
+        clearInterval(this.setTimerCalendar)
+        this.setTimerCalendar = null
+        this.$router.push('/Core/Login')
       }
     },
     async pushMsg (jobNo) {
@@ -6063,71 +6069,78 @@ export default {
       this.dialogConfirm = true
     },
     onConfirm (item) {
-      console.log('item', item)
-      this.dataConfirmReady = false
-      var dt = {
-        bookNo: item.bookNo,
-        contactDate: this.format_date(new Date()),
-        status: 'confirm',
-        statusUse: 'use',
-        shopId: this.$session.getAll().data.shopId,
-        CREATE_USER: this.session.data.userName,
-        LAST_USER: this.session.data.userName
-      }
-      axios
-        .post(this.DNS_IP + '/booking_transaction/add', dt)
-        .then(async response => {
-          this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-          await this.updateRemarkAndEmpSelect(item)
-          this.getDataCalendaBooking()
-          let DTitem = item.userId
-          console.log('DTITEM', DTitem)
-          if (DTitem !== 'user-skip') {
-            if (this.statusSearch === 'no') {
-              await this.getBookingList()
-            } else {
-              await this.searchAny()
-            }
-            // this.getTimesChange('update')
-            if (this.getSelectText) {
-              this.getSelect(this.getSelectText, this.getSelectCount)
-            }
-            let pushText = {
-              'to': item.lineUserId,
-              'messages': [
-                {
-                  'type': 'text',
-                  'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
+      if (this.$session.id() !== undefined) {
+        console.log('item', item)
+        this.dataConfirmReady = false
+        var dt = {
+          bookNo: item.bookNo,
+          contactDate: this.format_date(new Date()),
+          status: 'confirm',
+          statusUse: 'use',
+          shopId: this.$session.getAll().data.shopId,
+          CREATE_USER: this.session.data.userName,
+          LAST_USER: this.session.data.userName
+        }
+        axios
+          .post(this.DNS_IP + '/booking_transaction/add', dt)
+          .then(async response => {
+            this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+            await this.updateRemarkAndEmpSelect(item)
+            this.getDataCalendaBooking()
+            let DTitem = item.userId
+            console.log('DTITEM', DTitem)
+            if (DTitem !== 'user-skip') {
+              if (this.statusSearch === 'no') {
+                await this.getBookingList()
+              } else {
+                await this.searchAny()
+              }
+              // this.getTimesChange('update')
+              if (this.getSelectText) {
+                this.getSelect(this.getSelectText, this.getSelectCount)
+              }
+              let pushText = {
+                'to': item.lineUserId,
+                'messages': [
+                  {
+                    'type': 'text',
+                    'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
                           \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}`
-                }
-              ]
-            }
-            axios
-              .post(
-                this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
-                pushText
-              )
-              .catch(error => {
-                console.log('error function addData : ', error)
-              })
-          } else {
-            if (this.statusSearch === 'no') {
-              await this.getBookingList()
+                  }
+                ]
+              }
+              axios
+                .post(
+                  this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
+                  pushText
+                )
+                .catch(error => {
+                  console.log('error function addData : ', error)
+                })
             } else {
-              await this.searchAny()
+              if (this.statusSearch === 'no') {
+                await this.getBookingList()
+              } else {
+                await this.searchAny()
+              }
+              // this.getTimesChange('update')
+              if (this.getSelectText) {
+                this.getSelect(this.getSelectText, this.getSelectCount)
+              }
             }
-            // this.getTimesChange('update')
-            if (this.getSelectText) {
-              this.getSelect(this.getSelectText, this.getSelectCount)
-            }
-          }
-          this.dataConfirmReady = true
-          this.dialogConfirm = false
-          console.log('addDataGlobal', response)
-        })
-        .catch(error => {
-          console.log('error function addData : ', error)
-        })
+            this.dataConfirmReady = true
+            this.dialogConfirm = false
+            console.log('addDataGlobal', response)
+          })
+          .catch(error => {
+            console.log('error function addData : ', error)
+          })
+      } else {
+        this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
+        clearInterval(this.setTimerCalendar)
+        this.setTimerCalendar = null
+        this.$router.push('/Core/Login')
+      }
     },
     async updateRemarkAndEmpSelect (item) {
       var dt = {
@@ -6167,41 +6180,48 @@ export default {
     },
     onCancelChk () {
       if (this.validRemove === true) {
-        this.dataCancelReady = false
-        var dt = {
-          bookNo: this.bookNoRemove.bookNo,
-          contactDate: this.format_date(new Date()),
-          status: 'cancel',
-          statusUse: 'use',
-          shopId: this.$session.getAll().data.shopId,
-          CREATE_USER: this.session.data.userName,
-          LAST_USER: this.session.data.userName,
-          remarkRemove: this.remarkRemove.replace(/%/g, '%%')
+        if (this.$session.id() !== undefined) {
+          this.dataCancelReady = false
+          var dt = {
+            bookNo: this.bookNoRemove.bookNo,
+            contactDate: this.format_date(new Date()),
+            status: 'cancel',
+            statusUse: 'use',
+            shopId: this.$session.getAll().data.shopId,
+            CREATE_USER: this.session.data.userName,
+            LAST_USER: this.session.data.userName,
+            remarkRemove: this.remarkRemove.replace(/%/g, '%%')
+          }
+          axios
+            .post(this.DNS_IP + '/booking_transaction/add', dt)
+            .then(async response => {
+              await this.updateRemark(this.bookNoRemove)
+              this.$swal('เรียบร้อย', 'ยกเลิกเรียบร้อย', 'success')
+              console.log('addDataGlobal', response)
+              if (this.statusSearch === 'no') {
+                await this.getBookingList()
+              } else {
+                await this.searchAny()
+              }
+              // this.getTimesChange('update')
+              if (this.getSelectText) {
+                this.getSelect(this.getSelectText, this.getSelectCount)
+              }
+              this.getDataCalendaBooking()
+              this.dataCancelReady = true
+              this.dialogRemove = false
+              this.remarkRemove = ''
+              this.bookNo = ''
+            })
+            .catch(error => {
+              console.log('error function addData : ', error)
+            })
+        } else {
+          this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
+          clearInterval(this.setTimerCalendar)
+          this.setTimerCalendar = null
+          this.$router.push('/Core/Login')
         }
-        axios
-          .post(this.DNS_IP + '/booking_transaction/add', dt)
-          .then(async response => {
-            await this.updateRemark(this.bookNoRemove)
-            this.$swal('เรียบร้อย', 'ยกเลิกเรียบร้อย', 'success')
-            console.log('addDataGlobal', response)
-            if (this.statusSearch === 'no') {
-              await this.getBookingList()
-            } else {
-              await this.searchAny()
-            }
-            // this.getTimesChange('update')
-            if (this.getSelectText) {
-              this.getSelect(this.getSelectText, this.getSelectCount)
-            }
-            this.getDataCalendaBooking()
-            this.dataCancelReady = true
-            this.dialogRemove = false
-            this.remarkRemove = ''
-            this.bookNo = ''
-          })
-          .catch(error => {
-            console.log('error function addData : ', error)
-          })
       }
     },
     async changeChk (item, changeStatus) {
@@ -6234,62 +6254,74 @@ export default {
       console.log('formChange', this.formChange)
       this.swalConfig.title = 'ต้องการ เปลี่ยนเวลานัดหมาย ใช่หรือไม่?'
       this.$swal(this.swalConfig).then(async result => {
-        var dtChange = {
-          changeDueDate: 'change',
-          dueDate: this.formChange.date + ' ' + this.formChange.time.value,
-          timeText: this.formChange.time.text,
-          LAST_USER: this.session.data.userName
-        }
-        await axios
-          .post(
+        if (this.$session.id() !== undefined) {
+          var dtChange = {
+            changeDueDate: 'change',
+            dueDate: this.formChange.date + ' ' + this.formChange.time.value,
+            timeText: this.formChange.time.text,
+            LAST_USER: this.session.data.userName
+          }
+          await axios
+            .post(
             // eslint-disable-next-line quotes
-            this.DNS_IP + "/BookingData/edit/" + item.bookNo,
-            dtChange
-          )
-          .then(async response => {
-            var dt = {
-              bookNo: item.bookNo,
-              contactDate: this.format_date(new Date()),
-              status: changeStatus,
-              statusUse: 'use',
-              shopId: this.$session.getAll().data.shopId,
-              CREATE_USER: this.session.data.userName,
-              LAST_USER: this.session.data.userName,
-              changDate: this.formChange.date + ' ' + this.formChange.time.value
-            }
-            await axios
-              .post(this.DNS_IP + '/booking_transaction/add', dt)
-              .then(async response => {
-                console.log('addDataGlobal', response)
-                if (changeStatus === 'confirm') {
-                  if (item.userId !== 'user-skip') {
-                    if (this.statusSearch === 'no') {
-                      await this.getBookingList()
-                    } else {
-                      await this.searchAny()
-                    }
-                    // this.getTimesChange('update')
-                    if (this.getSelectText) {
-                      this.getSelect(this.getSelectText, this.getSelectCount)
-                    }
-                    let pushText = {
-                      'to': item.lineUserId,
-                      'messages': [
-                        {
-                          'type': 'text',
-                          'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
+              this.DNS_IP + "/BookingData/edit/" + item.bookNo,
+              dtChange
+            )
+            .then(async response => {
+              var dt = {
+                bookNo: item.bookNo,
+                contactDate: this.format_date(new Date()),
+                status: changeStatus,
+                statusUse: 'use',
+                shopId: this.$session.getAll().data.shopId,
+                CREATE_USER: this.session.data.userName,
+                LAST_USER: this.session.data.userName,
+                changDate: this.formChange.date + ' ' + this.formChange.time.value
+              }
+              await axios
+                .post(this.DNS_IP + '/booking_transaction/add', dt)
+                .then(async response => {
+                  console.log('addDataGlobal', response)
+                  if (changeStatus === 'confirm') {
+                    if (item.userId !== 'user-skip') {
+                      if (this.statusSearch === 'no') {
+                        await this.getBookingList()
+                      } else {
+                        await this.searchAny()
+                      }
+                      // this.getTimesChange('update')
+                      if (this.getSelectText) {
+                        this.getSelect(this.getSelectText, this.getSelectCount)
+                      }
+                      let pushText = {
+                        'to': item.lineUserId,
+                        'messages': [
+                          {
+                            'type': 'text',
+                            'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
                           \nวันเดือนปี ${this.format_dateFUllTime(this.formChange.date + ' ' + this.formChange.time.value)}`
-                        }
-                      ]
+                          }
+                        ]
+                      }
+                      axios
+                        .post(
+                          this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
+                          pushText
+                        )
+                        .catch(error => {
+                          console.log('error function addData : ', error)
+                        })
+                    } else {
+                      if (this.statusSearch === 'no') {
+                        await this.getBookingList()
+                      } else {
+                        await this.searchAny()
+                      }
+                      // this.getTimesChange('update')
+                      if (this.getSelectText) {
+                        this.getSelect(this.getSelectText, this.getSelectCount)
+                      }
                     }
-                    axios
-                      .post(
-                        this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
-                        pushText
-                      )
-                      .catch(error => {
-                        console.log('error function addData : ', error)
-                      })
                   } else {
                     if (this.statusSearch === 'no') {
                       await this.getBookingList()
@@ -6301,26 +6333,21 @@ export default {
                       this.getSelect(this.getSelectText, this.getSelectCount)
                     }
                   }
-                } else {
-                  if (this.statusSearch === 'no') {
-                    await this.getBookingList()
-                  } else {
-                    await this.searchAny()
-                  }
-                  // this.getTimesChange('update')
-                  if (this.getSelectText) {
-                    this.getSelect(this.getSelectText, this.getSelectCount)
-                  }
-                }
-                this.getDataCalendaBooking()
-                this.$swal('เรียบร้อย', 'เปลี่ยนเวลานัดหมาย เรียบร้อย', 'success')
-                this.dataChangeReady = true
-                this.dialogChange = false
-              })
-              .catch(error => {
-                console.log('error function addData : ', error)
-              })
-          })
+                  this.getDataCalendaBooking()
+                  this.$swal('เรียบร้อย', 'เปลี่ยนเวลานัดหมาย เรียบร้อย', 'success')
+                  this.dataChangeReady = true
+                  this.dialogChange = false
+                })
+                .catch(error => {
+                  console.log('error function addData : ', error)
+                })
+            })
+        } else {
+          this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
+          clearInterval(this.setTimerCalendar)
+          this.setTimerCalendar = null
+          this.$router.push('/Core/Login')
+        }
       }).catch(error => {
         this.dataChangeReady = true
         console.log('catch alear : ', error)
@@ -6360,20 +6387,27 @@ export default {
       this.swalConfig.title = 'ต้องการ ยืนยันข้อมูล ใช่หรือไม่?'
       this.$swal(this.swalConfig)
         .then(async () => {
-          await axios
-            .post(
-              this.DNS_IP + '/job/update/' + this.jobitem[0].Id, this.skip
-            ).then(async (response) => {
-              console.log(response)
-              if (response.data.status) {
-                this.getDataCalendaBooking()
-                this.$swal('เรียบร้อย', 'ปรับปรุงเรียบร้อย', 'success')
-                this.dialogJob = false
-              } else {
-                this.$swal('ผิดพลาด', 'เนื่องจากรายการนี้มีคนนำเข้าแล้ว', 'error')
-                this.dialogJob = false
-              }
-            })
+          if (this.$session.id() !== undefined) {
+            await axios
+              .post(
+                this.DNS_IP + '/job/update/' + this.jobitem[0].Id, this.skip
+              ).then(async (response) => {
+                console.log(response)
+                if (response.data.status) {
+                  this.getDataCalendaBooking()
+                  this.$swal('เรียบร้อย', 'ปรับปรุงเรียบร้อย', 'success')
+                  this.dialogJob = false
+                } else {
+                  this.$swal('ผิดพลาด', 'เนื่องจากรายการนี้มีคนนำเข้าแล้ว', 'error')
+                  this.dialogJob = false
+                }
+              })
+          } else {
+            this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
+            clearInterval(this.setTimerCalendar)
+            this.setTimerCalendar = null
+            this.$router.push('/Core/Login')
+          }
         })
     },
     async setDataChang (item) {
