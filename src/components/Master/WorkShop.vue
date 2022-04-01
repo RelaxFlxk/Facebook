@@ -227,14 +227,16 @@ export default {
       await axios.get(this.DNS_IP + '/WorkShopLayout/get?flowId=' + this.DataflowId + '&shopId=' + this.shopId + '&masBranchID=' + this.DataBranchID)
         .then((response) => {
           let rs = response.data
-          // console.log('rs', rs)
+          console.log('rs', rs)
           for (let i = 0; i < rs.length; i++) {
             let d = rs[i]
             var workData = []
             var workDataUse = []
             workData = JSON.parse(d.workData)
-            console.log('workData', workData)
+            console.log('workData', d.workData)
+            console.log('this.stepItemSelete.filt', this.stepItemSelete)
             if (workData.length > 0) {
+              console.log('1')
               for (let x = 0; x < workData.length; x++) {
                 let t = workData[x]
                 let s = {}
@@ -242,6 +244,7 @@ export default {
                 s.stepId = t.stepId
                 s.stepTitle = this.stepItemSelete.filter(el => { return el.stepId === t.stepId })[0].stepTitle
                 workDataUse.push(s)
+                console.log('2')
               }
             } else {
               workDataUse = []
@@ -254,10 +257,10 @@ export default {
           }
           const flowId = this.DataflowId
           this.getStep(flowId)
-          // console.log('this.Layout', this.Layout)
+          console.log('this.Layout', this.Layout)
         })
         .catch((error) => {
-          console.log('error function addDataGlobal : ', error)
+          console.log('error function addDataGlobal7777777777 : ', error)
         })
     },
     async getStep (flowId) {
@@ -290,10 +293,26 @@ export default {
       const dt = this.Layout
       for (let i = 0; i < dt.length; i++) {
         let d = dt[i]
-        let workDt = {
-          workData: JSON.stringify(d.workData)
+        let dtwork = []
+        // console.log('testlength', d.workData.length)
+        if (d.workData.length > 0) {
+          dtwork = d.workData.map(item => (
+            {
+              'stepId': item.stepId,
+              'sortNo': item.sortNo
+            }
+          ))
+          // console.log('-------------------', JSON.stringify(itemworkData))
+        } else {
+
+          // console.log('-------------------', JSON.stringify(itemworkData))
         }
-        console.log('update', workDt)
+        console.log('dtwork', JSON.stringify(dtwork))
+        console.log('d.workData', JSON.stringify(d.workData))
+        let workDt = {
+          workData: JSON.stringify(dtwork)
+        }
+        // console.log('update', workDt)
         await axios
           .post(
             this.DNS_IP + '/WorkShopLayout/update/' + d.workShopId, workDt

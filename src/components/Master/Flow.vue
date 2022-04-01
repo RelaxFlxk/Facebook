@@ -1962,8 +1962,25 @@ export default {
           console.log('error function editDataGlobal : ', error)
         })
     },
+    async UpdateworkShoplayout (ID) {
+      console.log('UpdateworkShoplayout', ID)
+      await axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + '/WorkShopLayout/DeleteStep/' + ID
+        )
+        .then(async response => {
+          // Debug response
+          console.log('WorkShopLayoutSucces')
+        })
+      // eslint-disable-next-line handle-callback-err
+        .catch(error => {
+          console.log('error function editDataGlobal : ', error)
+        })
+    },
     async deleteStepTitle () {
       console.log('stepId', this.formUpdateStep.stepId)
+      let workShopId = this.formUpdateStep.stepId
       this.dataReady = false
       this.$swal({
         title: 'ต้องการ ลบข้อมูล ใช่หรือไม่?',
@@ -1977,6 +1994,7 @@ export default {
         .then(async result => {
           this.formUpdateStep.LAST_USER = this.session.data.userName
           var ID = this.formUpdateStep.stepId
+          await this.UpdateworkShoplayout(workShopId)
           await axios
             .post(
               // eslint-disable-next-line quotes
@@ -1993,6 +2011,7 @@ export default {
               console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
               console.log('flowid', this.formUpdateStep.flowId)
               this.$swal('เรียบร้อย', 'ลบข้อมูล เรียบร้อย', 'success')
+              // await this.UpdateworkShoplayout(workShopId)
               this.dialogDeleteStepTitle = false
               await this.getStepFlow({ flowId: this.formUpdateStep.flowId })
               await this.getDataGlobal(
