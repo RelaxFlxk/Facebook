@@ -237,7 +237,7 @@
             tile
             dark
             class="nav-button-dark"
-            @click.prevent="chkPlan()">
+            @click.prevent="chkPlan(), dialogCash = true">
             <v-icon color="white">mdi-briefcase-edit-outline</v-icon>&nbsp;&nbsp;จัดการแพคเกจ
           </v-btn>
         <v-divider class="ma-0"></v-divider>
@@ -271,7 +271,7 @@
             </v-btn>
           </div>
         </v-card-text>
-        <v-card-text>
+        <v-card-text v-if="dataReadyGet">
           <v-row>
             <v-col col="6" v-for="(item, index) in dataPackage" :key="index">
               <v-container>
@@ -329,6 +329,40 @@
             </v-btn>
           </div>
         </v-card-text>
+        <v-card-text v-if="!dataReadyGet">
+          <div class="text-center">
+              <v-progress-circular
+                :size="50"
+                color="primary"
+                indeterminate
+              ></v-progress-circular>
+
+              <v-progress-circular
+                :width="3"
+                color="red"
+                indeterminate
+              ></v-progress-circular>
+
+              <v-progress-circular
+                :size="70"
+                :width="7"
+                color="purple"
+                indeterminate
+              ></v-progress-circular>
+
+              <v-progress-circular
+                :width="3"
+                color="green"
+                indeterminate
+              ></v-progress-circular>
+
+              <v-progress-circular
+                :size="50"
+                color="amber"
+                indeterminate
+              ></v-progress-circular>
+            </div>
+        </v-card-text>
       </v-card>
     </v-dialog>
       <v-dialog
@@ -373,6 +407,14 @@
                   ></v-checkbox>
                   <v-text-field v-model="checkCondition" dense outlined readonly label="ท่านยอมรับเงื่อนไข และค่าใช้จ่ายในการเปลี่ยนแผน หรือไม่"></v-text-field>
                 </v-row>
+              </v-col>
+              <v-col cols="12" class="pb-0">
+                <div class="text-center">
+                  <v-alert
+                    outlined
+                    type="warning"
+                  >* บริษัทจะไม่มีการคืนเงินในทุกกรณี *</v-alert>
+                </div>
               </v-col>
               <v-col cols="12" class="pb-0">
                 <div class="text-center">
@@ -528,6 +570,7 @@ export default {
       title: 'Be-Linked',
       dataReadyCancel: true,
       dataReady: true,
+      dataReadyGet: true,
       drawer: true,
       mini: false,
       session: this.$session.getAll(),
@@ -646,58 +689,6 @@ export default {
     billingPlan (dt) {
       console.log('billingPlan', dt)
       this.dataCondition = []
-      // if (parseInt(dt.pricePackage || '0') === 0) {
-      //   this.$swal({
-      //     title: 'ต้องการ อัพเดทสมาชิก ใช่หรือไม่?',
-      //     type: 'question',
-      //     showCancelButton: true,
-      //     confirmButtonColor: '#3085d6',
-      //     cancelButtonColor: '#b3b1ab',
-      //     confirmButtonText: 'ใช่',
-      //     cancelButtonText: 'ไม่'
-      //   })
-      //     .then(async result => {
-      //       if (dt.pricePackage === '') {
-      //         var ds = {
-      //           billingPlan: dt.id,
-      //           LAST_USER: this.$session.getAll().data.userName,
-      //           billingCustomerId: '',
-      //           billingCustomerCardId: '',
-      //           billingScheduleId: '',
-      //           billingCustomerData: ''
-      //         }
-      //         axios
-      //           .post(
-      //             // eslint-disable-next-line quotes
-      //             this.DNS_IP + "/sys_shop/edit/" + this.$session.getAll().data.shopId,
-      //             ds
-      //           )
-      //           .then(async response => {
-      //             this.chkPlan()
-      //             this.$swal('เรียบร้อย', 'คุณได้อัพเดทเป็นสมาชิกสายฟรีแล้ว', 'success')
-      //           })
-      //       } else {
-      //         this.$OmiseCard.open({
-      //           amount: parseInt(dt.pricePackage + '00'),
-      //           currency: 'THB',
-      //           defaultPaymentMethod: 'credit_card',
-      //           onCreateTokenSuccess: (nonce) => {
-      //             if (nonce.startsWith('tokn_')) {
-      //               this.omiseToken = nonce
-      //               this.getCustomersOmise(nonce, dt)
-      //             } else {
-      //               this.omiseSource = nonce
-      //             }
-      //             // form.submit()
-      //           }
-      //         })
-      //       }
-      //     })
-      //     .catch(error => {
-      //       this.dataReady = true
-      //       console.log('error function editDataGlobal : ', error)
-      //     })
-      // } else {
       this.dialogCondition = true
       this.dataCondition = dt
       // }
@@ -725,8 +716,10 @@ export default {
               this.$swal('เรียบร้อย', 'คุณได้อัพเดทเป็นสมาชิกสายฟรีแล้ว', 'success')
               this.checkCondition = 'ไม่ยอมรับ'
               this.dataReady = true
+              this.dialogCondition = false
             })
         } else {
+          this.dataReadyGet = false
           this.$OmiseCard.open({
             amount: parseInt(dt.pricePackage + '00'),
             currency: 'THB',
@@ -735,10 +728,13 @@ export default {
               if (nonce.startsWith('tokn_')) {
                 this.omiseToken = nonce
                 this.getCustomersOmise(nonce, dt)
+                this.dialogCondition = false
               } else {
                 this.omiseSource = nonce
                 this.checkCondition = 'ไม่ยอมรับ'
                 this.dataReady = true
+                this.dialogCondition = false
+                this.chkPlan()
               }
             // form.submit()
             }
@@ -777,6 +773,7 @@ export default {
     async chkPlan () {
       this.dataBilling = ''
       this.billingCustomerId = ''
+      this.dataReadyGet = false
       await axios
         .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.$session.getAll().data.shopId)
         .then(async response => {
@@ -821,7 +818,7 @@ export default {
         })
       console.log('this.dataBilling', this.dataBilling)
       console.log('this.dataPackage', this.dataPackage)
-      this.dialogCash = true
+      this.dataReadyGet = true
     },
     async chkSchedule () {
       this.chkDateSchedule = moment(moment(new Date(), 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
@@ -864,6 +861,7 @@ export default {
           this.chkPlan()
           this.$swal('เรียบร้อย', 'คุณได้อัพเดทเป็นสมาชิกสายฟรีแล้ว', 'success')
           this.checkCondition = 'ไม่ยอมรับ'
+          this.dialogCancel = false
           this.dataReadyCancel = true
         })
     }
