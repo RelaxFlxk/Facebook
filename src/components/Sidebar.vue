@@ -615,10 +615,10 @@ export default {
     this.$OmiseCard.configure({
       publicKey: this.$omise_public_key
     })
-    // console.log('this.chkDateSchedule', this.chkDateSchedule)
-    // if (this.chkDateSchedule === '' || this.chkDateSchedule !== moment(moment(new Date(), 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')) {
-    //   this.chkSchedule()
-    // }
+    console.log('this.chkDateSchedule', this.chkDateSchedule)
+    if (this.chkDateSchedule === '' || this.chkDateSchedule !== moment(moment(new Date(), 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')) {
+      this.chkSchedule()
+    }
   },
   methods: {
     logout () {
