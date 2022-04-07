@@ -3518,22 +3518,33 @@ export default {
               let rs = response.data
               if (rs.status === false) {
               // this.addDataInsert()
-                this.editDataSelectSubmit()
+                this.swalConfig.title = 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?'
+                this.$swal(this.swalConfig)
+                  .then(async result => {
+                    this.editDataSelectSubmit()
+                  })
               } else {
                 var dateEdit = this.format_dateNotime(this.dateEdit)
                 this.textError = 'เลขทะเบียนนี้ วันที่ ' + dateEdit + ' ได้ทำรายการนัดหมายไปแล้ว'
                 this.dialogError = true
                 this.loadingEdit = false
               }
+            }).catch(error => {
+              setTimeout(() => this.checkDuplicate(), 3000)
+              console.log('close alert : ', error)
             })
         } else {
-          this.editDataSelectSubmit()
+          this.swalConfig.title = 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?'
+          this.$swal(this.swalConfig)
+            .then(async result => {
+              this.editDataSelectSubmit()
+            })
         }
       } else {
         this.loadingEdit = false
       }
     },
-    editDataSelectSubmit () {
+    async editDataSelectSubmit () {
       // if (this.validEdit !== false) {
       if (this.$session.id() !== undefined) {
         this.dataEditReady = false
@@ -3626,36 +3637,41 @@ export default {
           }
         }
         console.log('Add', Add)
-        this.swalConfig.title = 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?'
-        this.$swal(this.swalConfig)
-          .then(async result => {
-            await axios
-              .post(
-              // eslint-disable-next-line quotes
-                this.DNS_IP + "/BookingData/editAdmin",
-                Add
-              )
-              .then(async response => {
-                if (this.statusSearch === 'no') {
-                  await this.getBookingList()
-                } else {
-                  await this.searchAny()
-                }
-                // this.getTimesChange('update')
-                this.formEdit.radiosRemark = ''
-                if (this.getSelectText) {
-                  this.getSelect(this.getSelectText, this.getSelectCount)
-                }
-                this.getDataCalendaBooking()
-                this.dialogEditData = false
-                this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
-                this.dataEditReady = true
-                this.loadingEdit = false
-              })
-          }).catch(error => {
+        // this.swalConfig.title = 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?'
+        // this.$swal(this.swalConfig)
+        //   .then(async result => {
+        await axios
+          .post(
+            // eslint-disable-next-line quotes
+            this.DNS_IP + "/BookingData/editAdmin",
+            Add
+          )
+          .then(async response => {
+            if (this.statusSearch === 'no') {
+              await this.getBookingList()
+            } else {
+              await this.searchAny()
+            }
+            // this.getTimesChange('update')
+            this.formEdit.radiosRemark = ''
+            if (this.getSelectText) {
+              this.getSelect(this.getSelectText, this.getSelectCount)
+            }
+            this.getDataCalendaBooking()
+            this.dialogEditData = false
+            this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
             this.dataEditReady = true
+            this.loadingEdit = false
+          }).catch(error => {
+            // this.dataEditReady = true
+            setTimeout(() => this.editDataSelectSubmit(), 3000)
             console.log('close alert : ', error)
           })
+          // }).catch(error => {
+          //   // this.dataEditReady = true
+          //   setTimeout(() => this.editDataSelectSubmit(), 3000)
+          //   console.log('close alert : ', error)
+          // })
       } else {
         this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
         clearInterval(this.setTimerCalendar)
@@ -5163,76 +5179,80 @@ export default {
             for (let i = 0; i < response.data.length; i++) {
               let d = response.data[i]
               let s = {}
-              s.bookNo = d.bookNo
-              s.flowId = d.flowId
-              s.flowName = d.flowName
-              s.dueDate = d.dueDate
-              if (d.timeText === null || d.timeText === '') {
-                d.timeText = d.timeDue
-              }
-              s.dueDateText = this.format_dateNotime(d.dueDate) + ' ' + d.timeText
-              s.shopId = d.shopId
-              s.remark = d.remark || ''
-              s.masBranchID = d.masBranchID
-              s.empSelect = d.empSelect
-              s.empFull_NameTH = d.empFull_NameTH || ''
-              s.empFull_NameTH = s.empFull_NameTH.replace('นางสาว', '')
-              s.empFull_NameTH = s.empFull_NameTH.replace('นาย', '')
-              s.empFull_NameTH = s.empFull_NameTH.replace('นาง', '')
-              s.userId = d.userId
-              s.chkConfirm = false
-              s.chkCancel = false
-              s.address = d.address
-              s.addressLatLong = d.addressLatLong
-              s.jobNo = d.jobNo
-              s.timeText = d.timeText
-              s.remarkRemove = d.remarkRemove || ''
-              s.remarkConfirm1 = (d.remarkConfirm1 === 'true' || d.remarkConfirm1 === 'True')
-              s.remarkConfirm2 = (d.remarkConfirm2 === 'true' || d.remarkConfirm2 === 'True')
-              s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
-              s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
-              s.lineUserId = d.lineUserId
-              s.timeDueHtext = d.timeDueH + ':00'
-              s.timeDuetext = d.timeDue
-              this.countAll = this.countAll + 1
-              if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
-                s.chkConfirm = true
-                s.chkCancel = false
-              }
-              if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
+              if (this.BookingDataList[d.bookNo] !== undefined) {
+                s.bookNo = d.bookNo
+                s.flowId = d.flowId
+                s.flowName = d.flowName
+                s.dueDate = d.dueDate
+                if (d.timeText === null || d.timeText === '') {
+                  d.timeText = d.timeDue
+                }
+                s.dueDateText = this.format_dateNotime(d.dueDate) + ' ' + d.timeText
+                s.shopId = d.shopId
+                s.remark = d.remark || ''
+                s.masBranchID = d.masBranchID
+                s.empSelect = d.empSelect
+                s.empFull_NameTH = d.empFull_NameTH || ''
+                s.empFull_NameTH = s.empFull_NameTH.replace('นางสาว', '')
+                s.empFull_NameTH = s.empFull_NameTH.replace('นาย', '')
+                s.empFull_NameTH = s.empFull_NameTH.replace('นาง', '')
+                s.userId = d.userId
                 s.chkConfirm = false
-                s.chkCancel = true
+                s.chkCancel = false
+                s.address = d.address
+                s.addressLatLong = d.addressLatLong
+                s.jobNo = d.jobNo
+                s.timeText = d.timeText
+                s.remarkRemove = d.remarkRemove || ''
+                s.remarkConfirm1 = (d.remarkConfirm1 === 'true' || d.remarkConfirm1 === 'True')
+                s.remarkConfirm2 = (d.remarkConfirm2 === 'true' || d.remarkConfirm2 === 'True')
+                s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
+                s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
+                s.lineUserId = d.lineUserId
+                s.timeDueHtext = d.timeDueH + ':00'
+                s.timeDuetext = d.timeDue
+                this.countAll = this.countAll + 1
+                if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
+                  s.chkConfirm = true
+                  s.chkCancel = false
+                }
+                if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
+                  s.chkConfirm = false
+                  s.chkCancel = true
+                }
+                s.statusBt = d.statusBt || 'wait'
+                switch (d.statusBt) {
+                  case 'confirm':
+                    s.statusBtText = 'ยืนยันแล้ว'
+                    this.countConfirm = this.countConfirm + 1
+                    break
+                  case 'cancel':
+                    s.statusBtText = 'ยกเลิก'
+                    this.countCancel = this.countCancel + 1
+                    break
+                  case 'confirmJob':
+                    s.statusBtText = 'รับรถแล้ว'
+                    this.countJob = this.countJob + 1
+                    break
+                  default:
+                    s.statusBtText = 'รายการนัดหมายใหม่'
+                    this.countWaiting = this.countWaiting + 1
+                    break
+                }
+                var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
+                if (chkTime.length === 0) {
+                  dataItemTimes.push(s)
+                }
+                s.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
+                s.cusReg = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เลขทะเบียน')
+                s.tel = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เบอร์โทร')
+                s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
+                s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
+                s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
+                dataItems.push(s)
+              } else {
+                console.log('BookingNo no bookingData', d.bookNo)
               }
-              s.statusBt = d.statusBt || 'wait'
-              switch (d.statusBt) {
-                case 'confirm':
-                  s.statusBtText = 'ยืนยันแล้ว'
-                  this.countConfirm = this.countConfirm + 1
-                  break
-                case 'cancel':
-                  s.statusBtText = 'ยกเลิก'
-                  this.countCancel = this.countCancel + 1
-                  break
-                case 'confirmJob':
-                  s.statusBtText = 'รับรถแล้ว'
-                  this.countJob = this.countJob + 1
-                  break
-                default:
-                  s.statusBtText = 'รายการนัดหมายใหม่'
-                  this.countWaiting = this.countWaiting + 1
-                  break
-              }
-              var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
-              if (chkTime.length === 0) {
-                dataItemTimes.push(s)
-              }
-              s.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
-              s.cusReg = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เลขทะเบียน')
-              s.tel = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เบอร์โทร')
-              s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
-              s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
-              s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
-              dataItems.push(s)
             }
           }
           if (dataItems.length === 0 || dataItems.status === false) {
@@ -5568,6 +5588,7 @@ export default {
           })
           .catch(error => {
             console.log('error function addData : ', error)
+            setTimeout(() => this.addDataInsert(), 3000)
           })
         // })
         // .catch(error => {
@@ -5601,6 +5622,9 @@ export default {
                   this.dialogError = true
                   this.loadingAdd = false
                 }
+              }).catch(error => {
+                console.log('error function addData : ', error)
+                setTimeout(() => this.addDataSubmit(), 3000)
               })
           } else {
             this.dialogAddCon = true
@@ -5644,6 +5668,7 @@ export default {
         })
         .catch(error => {
           console.log('error function addData : ', error)
+          setTimeout(() => this.confirmChkAdd(), 3000)
         })
     },
     async clearDataAdd () {
@@ -5960,6 +5985,9 @@ export default {
                           })
                       })
                   }
+                }).catch(error => {
+                  setTimeout(() => this.addDataJobSubmit(), 3000)
+                  console.log('error function addData : ', error)
                 })
             })
           }
