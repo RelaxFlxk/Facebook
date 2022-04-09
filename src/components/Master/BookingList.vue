@@ -3513,7 +3513,7 @@ export default {
           // console.log('checkDupliRegNo', checkDupliRegNo[0].fieldValue.replace(/ /g, ''))
           await axios
             .get(this.DNS_IP + '/booking_view/getSearchDuplicate?shopId=' + this.session.data.shopId + '&fieldValue=' + checkDupliRegNo[0].fieldValue.replace(/ /g, '') +
-            '&flowId=' + this.formEdit.flowId + '&dueDate=' + this.dateEdit + '&noBookNo=' + checkDupliRegNo[0].bookNo)
+            '&flowId=' + this.formEdit.flowId + '&dueDate=' + this.dateEdit + '&noBookNo=' + checkDupliRegNo[0].bookNo + '&statusBt=noCancel')
             .then(response => {
               let rs = response.data
               if (rs.status === false) {
@@ -3522,6 +3522,9 @@ export default {
                 this.$swal(this.swalConfig)
                   .then(async result => {
                     this.editDataSelectSubmit()
+                  }).catch(error => {
+                    this.loadingEdit = false
+                    console.log('editDataSelectSubmit error', error)
                   })
               } else {
                 var dateEdit = this.format_dateNotime(this.dateEdit)
@@ -3538,6 +3541,9 @@ export default {
           this.$swal(this.swalConfig)
             .then(async result => {
               this.editDataSelectSubmit()
+            }).catch(error => {
+              this.loadingEdit = false
+              console.log('editDataSelectSubmit error', error)
             })
         }
       } else {
@@ -5610,7 +5616,7 @@ export default {
             console.log('checkDupliRegNo', checkDupliRegNo[0].fieldValue.replace(/ /g, ''))
             await axios
               .get(this.DNS_IP + '/booking_view/getSearchDuplicate?shopId=' + this.session.data.shopId + '&fieldValue=' + checkDupliRegNo[0].fieldValue.replace(/ /g, '') +
-            '&flowId=' + this.formAdd.flowId + '&dueDate=' + this.date)
+            '&flowId=' + this.formAdd.flowId + '&dueDate=' + this.date + '&statusBt=noCancel')
               .then(response => {
                 let rs = response.data
                 if (rs.status === false) {
