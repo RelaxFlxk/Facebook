@@ -895,13 +895,21 @@ export default {
           if (rs.length > 0) {
             for (let i = 0; i < rs.length; i++) {
               let d = rs[i]
+              // console.log('dataList', d)
               if (d.insightEvent !== null) {
-                d.countSend = JSON.parse(d.insightEvent).overview.delivered
-                if (JSON.parse(d.insightEvent).clicks.length === 0) {
-                  d.click = 0
+                // console.log('JSON.parse(d.insightEvent)', d.insightEvent.includes('Not Found'))
+                if (!d.insightEvent.includes('Not Found')) {
+                  d.countSend = JSON.parse(d.insightEvent).overview.delivered
+                  if (JSON.parse(d.insightEvent).clicks.length === 0) {
+                    d.click = 0
+                  } else {
+                    d.click = JSON.parse(d.insightEvent).clicks[0].click
+                  }
                 } else {
-                  d.click = JSON.parse(d.insightEvent).clicks[0].click
+                  d.click = 0
                 }
+              } else {
+                d.click = 0
               }
               this.dataItem.push(d)
             }
