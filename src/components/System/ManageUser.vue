@@ -21,7 +21,7 @@
               @click="(dialogAdd = true)"
             >
               <v-icon left>mdi-text-box-plus</v-icon>
-              Add User
+              เพิ่มรหัสผู้ใช้งาน
             </v-btn>
           </v-col>
         </v-row>
@@ -59,38 +59,61 @@
                         :src="require('@/assets/Grouptitle.svg')"
                       ></v-img>
                     </v-col>
-                    <v-col cols="12">
+                    <v-row>
+                    <v-col cols="6" class="pb-0 pt-0">
                       <v-text-field
+                        clearable
                         v-model="name"
-                        :rules="nameRules"
                         label="ชื่อ-นามสกุล"
                         required
+                        :rules="empSelectAdd === '' || empSelectAdd === null ? nameRules : [true]"
+                        :disabled="empSelectAdd === '' || empSelectAdd === null ? false : true"
                       ></v-text-field>
+                    </v-col>
+                    <v-col cols="6" class="pb-0 pt-0">
+                      <v-select
+                        required
+                        :rules="name === '' || name === null ? nameRules : [true]"
+                        :disabled="name === '' || name === null ? false : true"
+                        v-model="empSelectAdd"
+                        :items="empItem"
+                        label="พนักงาน Onsite"
+                        menu-props="auto"
+                        item-text="text"
+                        item-value="value"
+                        return-object
+                        clearable
+                      ></v-select>
+                    </v-col>
+                    </v-row>
+                    <!-- <v-row>
+                      <v-col cols="12" class="pb-0 pt-0">
+                        <v-select
+                          v-model="USER_ROLE"
+                          :items="USER_ROLEitem"
+                          label="สิทธิการใช้งาน"
+                          outlined
+                          dense
+                          required
+                        ></v-select>
+                      </v-col>
+                    </v-row> -->
+                    <v-row>
+                    <v-col cols="12" class="pt-0">
                       <v-text-field
                         v-model="email"
                         :rules="emailRules"
-                        label=" Email"
+                        label=" Email (Username)"
                         required
                       ></v-text-field>
                       <v-text-field
                         v-model="password"
-                        :rules="nameRules"
+                        :rules="passRules"
                         label="password"
                         required
                       ></v-text-field>
-                       <v-text-field
-                        v-model="email"
-                        label="User Name"
-                        disabled
-                        required
-                      ></v-text-field>
-                       <v-text-field
-                        v-model="password"
-                        label="Password"
-                        disabled
-                        required
-                      ></v-text-field>
                     </v-col>
+                    </v-row>
                   </v-col>
                 </v-row>
                 <div class="text-center">
@@ -120,28 +143,48 @@
               <v-card-text>
                 <v-container>
                   <v-row>
+                    <v-col cols="6" class="pb-0 pt-0">
+                      <v-text-field
+                        clearable
+                        v-model="formUpdate.userFirst_NameTH"
+                        label="ชื่อ-นามสกุล"
+                        required
+                        :rules="empSelectEdit === '' || empSelectEdit === null ? nameRules : [true]"
+                        :disabled="empSelectEdit === '' || empSelectEdit === null ? false : true"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="6" class="pb-0 pt-0" v-if="formUpdate.USER_ROLE !== 'admin'">
+                      <v-select
+                        required
+                        :rules="formUpdate.userFirst_NameTH === '' || formUpdate.userFirst_NameTH === null ? nameRules : [true]"
+                        :disabled="formUpdate.userFirst_NameTH === '' || formUpdate.userFirst_NameTH === null ? false : true"
+                        v-model="empSelectEdit"
+                        :items="empItemEdit"
+                        label="พนักงาน Onsite"
+                        menu-props="auto"
+                        item-text="text"
+                        item-value="value"
+                        return-object
+                        clearable
+                      ></v-select>
+                    </v-col>
+                    </v-row>
+                  <v-row>
                       <v-col cols="4">
                       <v-text-field
-                        label="user Name"
+                        label="Username"
                         v-model="formUpdate.userName"
                         required
                         :rules="emailRules"
+                        disabled
                       ></v-text-field>
                     </v-col>
                     <v-col cols="4">
                       <v-text-field
-                        label="password"
+                        label="Password"
                         v-model="formUpdate.userPassword"
                         required
-                        :rules="nameRules"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="4">
-                      <v-text-field
-                        label="Name"
-                        v-model="formUpdate.userFirst_NameTH"
-                        required
-                        :rules="nameRules"
+                        :rules="passRules"
                       ></v-text-field>
                     </v-col>
                   </v-row>
@@ -208,7 +251,7 @@
             </template>
             <template v-slot:[`item.action`]="{ item }">
                <v-btn
-                      v-if="item.USER_ROLE === 'user'"
+                      v-if="item.USER_ROLE === 'user' || item.USER_ROLE === 'onsite'"
                       color="red"
                       dark
                       fab
@@ -278,6 +321,10 @@ export default {
       optionProvince: [],
       formUpdate: {},
       filesShop: null,
+      empItem: [],
+      empItemEdit: [],
+      empSelectAdd: '',
+      empSelectEdit: '',
       formUpdateItem: {
         userTypeGroupCode: '',
         userTypeGroupName: '',
@@ -293,8 +340,17 @@ export default {
       name: '',
       lastName: '',
       password: '',
+      USER_ROLE: '',
+      USER_ROLEitem: [
+        { text: 'Admin', value: 'admin' },
+        { text: 'User', value: 'user' },
+        { text: 'Onsite', value: 'onsite' }
+      ],
       nameRules: [
         v => !!v || 'Name is required'
+      ],
+      passRules: [
+        v => !!v || 'Password is required'
       ],
       email: '',
       emailRules: [
@@ -310,7 +366,7 @@ export default {
           href: '/Core/Home'
         },
         {
-          text: 'จัดการUser',
+          text: 'จัดการ รหัสผู้ใช้งาน',
           disabled: true,
           href: '/System/ManageUser'
         }
@@ -318,11 +374,9 @@ export default {
       // End Menu Config
       // Data Table Config
       columns: [
-        { text: 'userCode', value: 'userCode' },
-        // { text: 'ID', value: 'shopId' },
-        { text: 'userName', value: 'userName' },
-        { text: 'userPassword', value: 'userPassword' },
-        { text: 'USER_ROLE', value: 'USER_ROLE' },
+        { text: 'Username', value: 'userName' },
+        { text: 'Password', value: 'userPassword' },
+        { text: 'สิทธิใช้งาน', value: 'USER_ROLE' },
         { text: 'วันที่สร้าง', value: 'CREATE_DATE' },
         { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
         { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
@@ -336,11 +390,76 @@ export default {
     // this.getDataTypeGroup()
     this.dataReady = false
     // Get Data
-    this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
-    console.log(this.dataItem + this.path + this.session.data.shopId)
+    await this.getData(this.DNS_IP, this.path, this.session.data.shopId)
   },
   methods: {
+    async getData (DNS_IP, PATH, shopId) {
+      // Clear Data ทุกครั้ง
+      this.dataItem = []
+      // Clear ช่องค้นหา
+      this.searchAll = ''
+
+      await axios
+        .get(
+          // eslint-disable-next-line quotes
+          DNS_IP + PATH + "get?shopId=" + shopId
+        )
+        .then(async (response) => {
+          // var dateObj = new Date(response.data.CREATE_DATE)
+          // var momentObj = moment(dateObj)
+          // response.data.CREATE_DATE = momentObj.format('YYYY-MM-DD')
+          console.log('getData', response.data)
+          this.getEmpSelect()
+          this.dataReady = true
+          this.dataItem = response.data
+          if (this.dataItem.length === 0 || this.dataItem.status === false) {
+            this.dataItem = []
+          }
+        })
+        // eslint-disable-next-line handle-callback-err
+        .catch((error) => {
+          console.log(error)
+          this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
+          this.dataReady = true
+        })
+    },
+    async getEmpSelect () {
+      console.log('dataItem', this.dataItem)
+      this.empItem = []
+      await axios
+        .get(this.DNS_IP + '/empSelect/getUse?shopId=' + this.session.data.shopId)
+        .then(async response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              if (this.dataItem.filter(el => { return parseInt(el.empId) === d.empId }).length === 0) {
+                d.text = d.empFull_NameTH
+                d.value = d.empId
+                this.empItem.push(d)
+              }
+            }
+          }
+        })
+    },
+    async getEmpSelectEdit () {
+      this.empItemEdit = []
+      await axios
+        .get(this.DNS_IP + '/empSelect/getUse?shopId=' + this.session.data.shopId)
+        .then(async response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              d.text = d.empFull_NameTH
+              d.value = d.empId
+              this.empItemEdit.push(d)
+            }
+          }
+        })
+    },
     async addData () {
+      console.log('this.empSelectAdd', this.empSelectAdd)
       this.$refs.form.validate()
       if (this.$refs.form.validate() === false) {
         console.log('false', this.session.data.shopId)
@@ -348,18 +467,32 @@ export default {
         axios
           .get(this.DNS_IP + '/system_user/get?userName=' + this.email)
           .then(response1 => {
-            console.log('status', response1.data.status)
-            if (response1.data.status === false) {
-              let data = [{
+            let data = []
+            if (this.empSelectAdd === '' || this.empSelectAdd === null) {
+              data = [{
                 'userCode': 'SYS_USER_' + (new Date()).getTime(),
                 'userName': this.email,
                 'userFirst_NameTH': this.name,
                 'userPassword': this.password,
                 'USER_ROLE': 'user',
-                'CREATE_USER': 'admin',
-                'LAST_USER': 'admin',
+                'CREATE_USER': this.session.data.userName,
+                'LAST_USER': this.session.data.userName,
                 'shopId': this.session.data.shopId
               }]
+            } else {
+              data = [{
+                'userCode': 'SYS_USER_' + (new Date()).getTime(),
+                'userName': this.email,
+                'userFirst_NameTH': this.empSelectAdd.text,
+                'userPassword': this.password,
+                'USER_ROLE': 'onsite',
+                'empId': this.empSelectAdd.value,
+                'CREATE_USER': this.session.data.userName,
+                'LAST_USER': this.session.data.userName,
+                'shopId': this.session.data.shopId
+              }]
+            }
+            if (response1.data.status === false) {
               console.log(data)
               this.$swal({
                 title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
@@ -376,7 +509,7 @@ export default {
                     this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
                     this.clearDataAdd()
                     this.dialogAdd = false
-                    this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
+                    this.getData(this.DNS_IP, this.path, this.session.data.shopId)
                     console.log('addDataGlobal DNS_IP + /job/add', response)
                   })
                   .catch(error => {
@@ -420,59 +553,84 @@ export default {
             console.log('status', status)
 
             this.$swal('เรียบร้อย', 'ลบข้อมูลเรียบร้อย', 'success')
-            this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
+            this.getData(this.DNS_IP, this.path, this.session.data.shopId)
             // Close Dialog
             this.dialogDelete = false
           })
       })
     },
-    getDataById (item) {
+    async getDataById (item) {
+      await this.getEmpSelectEdit()
       this.formUpdate = item
+      if (item.empId === '' || item.empId === null) {
+        this.formUpdate.userFirst_NameTH = item.userFirst_NameTH
+        this.empSelectEdit = ''
+      } else {
+        this.formUpdate.userFirst_NameTH = ''
+        this.empSelectEdit = this.empItemEdit.filter(el => { return el.value === parseInt(item.empId) })[0] || ''
+      }
       console.log('dff', this.formUpdate)
+      console.log('empSelectEdit', this.empSelectEdit)
     },
     editData () {
       this.$refs.form_update.validate()
       if (this.$refs.form_update.validate() === false) {
         console.log('false', this.session.data.shopId)
       } else {
-        axios
-          .get(this.DNS_IP + '/system_user/get?userName=' + this.formUpdate.userName)
-          .then(response1 => {
-            console.log('status', response1.data.status)
-            if (response1.data.status === false) {
-              this.$swal({
-                title: `ต้องการ เเก้ไขข้อมูล ใช่หรือไม่?`,
-                type: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#fa0202',
-                cancelButtonColor: '#b3b1ab',
-                confirmButtonText: 'ใช่',
-                cancelButtonText: 'ไม่'
-              }).then(async result => {
-                let data = [{
-                  'userName': this.formUpdate.userName,
-                  'userFirst_NameTH': this.formUpdate.userFirst_NameTH,
-                  'userPassword': this.formUpdate.userPassword
-                }]
-                console.log('dd', data)
-
-                await axios
-                  .post(
-                  // eslint-disable-next-line quotes
-                    this.DNS_IP + "/system_user/edit/" + this.formUpdate.userId, ...data
-                  )
-                  .then(async response => {
-                    this.$swal('เรียบร้อย', 'แก้ไขข้อมูลเรียบร้อย', 'success')
-                    this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
-                    // Close Dialog
-                    this.dialogEdit = false
-                  })
-              })
+        this.$swal({
+          title: `ต้องการ แก้ไขข้อมูล ใช่หรือไม่?`,
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#0c86b3',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        }).then(async result => {
+          let data = []
+          if (this.formUpdate.USER_ROLE === 'admin') {
+            data = [{
+              'userName': this.formUpdate.userName,
+              'userFirst_NameTH': this.formUpdate.userFirst_NameTH,
+              'userPassword': this.formUpdate.userPassword,
+              'USER_ROLE': 'admin',
+              'empId': '',
+              'LAST_USER': this.session.data.userName
+            }]
+          } else {
+            if (this.empSelectEdit === '' || this.empSelectEdit === null) {
+              data = [{
+                'userName': this.formUpdate.userName,
+                'userFirst_NameTH': this.formUpdate.userFirst_NameTH,
+                'userPassword': this.formUpdate.userPassword,
+                'USER_ROLE': 'user',
+                'empId': '',
+                'LAST_USER': this.session.data.userName
+              }]
             } else {
-              this.$swal('ผิดพลาด', 'อีเมลของท่าน มีอยู่ในระบบแล้ว กรุณากรอกอีเมลใหม่', 'error')
-              this.dataReady = true
+              data = [{
+                'userName': this.formUpdate.userName,
+                'userFirst_NameTH': this.formUpdate.userFirst_NameTH,
+                'userPassword': this.formUpdate.userPassword,
+                'USER_ROLE': 'onsite',
+                'LAST_USER': this.session.data.userName,
+                'empId': this.empSelectEdit.value
+              }]
             }
-          })
+          }
+          console.log('dd', data)
+
+          await axios
+            .post(
+              // eslint-disable-next-line quotes
+              this.DNS_IP + "/system_user/edit/" + this.formUpdate.userId, ...data
+            )
+            .then(async response => {
+              this.$swal('เรียบร้อย', 'แก้ไขข้อมูลเรียบร้อย', 'success')
+              this.getData(this.DNS_IP, this.path, this.session.data.shopId)
+              // Close Dialog
+              this.dialogEdit = false
+            })
+        })
       }
     }
   }

@@ -7,6 +7,7 @@ import Dashbord from '@/components/Dashbord'
 import BroadCast from '@/components/BroadCast'
 import Payment from '@/components/Payment'
 import PrintPdf from '@/components/PrintPdf'
+import Onsite from '@/components/Onsite'
 
 Vue.use(Router)
 
@@ -75,6 +76,11 @@ export default new Router({
     path: '/Master/BookingList',
     name: 'BookingList',
     component: Master.BookingList
+  },
+  {
+    path: '/Master/BookingListOnsite',
+    name: 'BookingListOnsite',
+    component: Master.BookingListOnsite
   },
   {
     path: '/Master/Rating',
@@ -260,6 +266,11 @@ export default new Router({
     path: '/PrintPdf/PrintInvoice',
     name: 'PrintInvoice',
     component: PrintPdf.PrintInvoice
+  },
+  {
+    path: '/Onsite/JobList',
+    name: 'JobList',
+    component: Onsite.JobList
   }
   ]
 })

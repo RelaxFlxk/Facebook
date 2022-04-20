@@ -106,6 +106,27 @@
                     v-model="valid_add"
                     lazy-validation
                   >
+                  <v-row justify="center">
+                    <v-col cols="12" class="text-center">
+                      <v-img
+                        aspect-ratio="6"
+                        contain
+                        :src="formAdd.pictureUrlPreview"
+                      ></v-img>
+                      <!-- <v-avatar size="100px"><img alt="Avatar" :src="formAdd.pictureUrl"></v-avatar> -->
+                      <br />
+                      <v-file-input
+                        required
+                        counter
+                        show-size
+                        accept="image/png, image/jpeg, image/bmp"
+                        prepend-icon="mdi-camera"
+                        label="รูปพนักงาน (ถ้ามี)"
+                        @change="selectImgAdd"
+                        v-model="filesAdd"
+                      ></v-file-input>
+                    </v-col>
+                  </v-row>
                   <v-row>
                       <v-col cols="4">
                       <v-select
@@ -195,6 +216,27 @@
                     v-model="valid_update"
                     lazy-validation
                   >
+                  <v-row justify="center">
+                    <v-col cols="12" class="text-center">
+                      <v-img
+                        aspect-ratio="6"
+                        contain
+                        :src="formUpdate.pictureUrlPreview"
+                      ></v-img>
+                      <!-- <v-avatar size="100px"><img alt="Avatar" :src="formAdd.pictureUrl"></v-avatar> -->
+                      <br />
+                      <v-file-input
+                        required
+                        counter
+                        show-size
+                        accept="image/png, image/jpeg, image/bmp"
+                        prepend-icon="mdi-camera"
+                        label="รูปพนักงาน (ถ้ามี)"
+                        @change="selectImgUpdate"
+                        v-model="filesUpdate"
+                      ></v-file-input>
+                    </v-col>
+                  </v-row>
                   <v-row>
                       <v-col cols="4">
                       <v-select
@@ -250,7 +292,7 @@
                   x-large
                   color="blue darken-1"
                   text
-                  @click="dialogEdit = false"
+                  @click="dialogEdit = false, dataReady = true"
                 >
                   <v-icon left> mdi-cancel</v-icon>
                   ปิด
@@ -321,7 +363,7 @@
                   x-large
                   color="dark darken-1"
                   text
-                  @click="dialogDelete = false"
+                  @click="dialogDelete = false, dataReady = true"
                 >
                   <v-icon left> mdi-cancel</v-icon>
                   ปิด
@@ -472,6 +514,8 @@ export default {
         empFirst_NameTH: '',
         empLast_NameTH: '',
         privacyPage: '',
+        empImge: '',
+        pictureUrlPreview: '',
         shopId: this.$session.getAll().data.shopId
       },
       formUpdate: {
@@ -479,6 +523,8 @@ export default {
         empTitle_NameTH: '',
         empFirst_NameTH: '',
         empLast_NameTH: '',
+        empImge: '',
+        pictureUrlPreview: '',
         privacyPage: ''
       },
       formUpdateItem: {
@@ -486,7 +532,8 @@ export default {
         empTitle_NameTH: '',
         empFirst_NameTH: '',
         empLast_NameTH: '',
-        privacyPage: ''
+        privacyPage: '',
+        empImge: ''
       },
       privacyPageSelect: [
         { text: 'หน้านัดหมาย', value: 'booking' },
@@ -528,7 +575,9 @@ export default {
             value: 'utf-8'
           }
         ]
-      ]
+      ],
+      filesUpdate: null,
+      filesAdd: null
       // End Export Config
     }
   },
@@ -539,6 +588,26 @@ export default {
     this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
   },
   methods: {
+    selectImgAdd () {
+      if (this.filesAdd) {
+        this.formAdd.pictureUrlPreview = URL.createObjectURL(
+          this.filesAdd
+        )
+      } else {
+        this.formAdd.pictureUrlPreview = ''
+      }
+      // console.log(event)
+    },
+    selectImgUpdate () {
+      if (this.filesUpdate) {
+        this.formUpdate.pictureUrlPreview = URL.createObjectURL(
+          this.filesUpdate
+        )
+      } else {
+        this.formUpdate.pictureUrlPreview = ''
+      }
+      // console.log(event)
+    },
     validate (Action) {
       switch (Action) {
         case 'ADD':
@@ -566,7 +635,16 @@ export default {
       //
       // Get ID /main.js
       this.dataReady = false
-      this.getDataByIdGlobal(this.DNS_IP, this.path, 'empId', item.empId)
+      this.PK = item.empId
+      // this.getDataByIdGlobal(this.DNS_IP, this.path, 'empId', item.empId)
+      Object.assign(this.formUpdate, item)
+      if (item.empImge !== null) {
+        this.formUpdate.pictureUrlPreview = item.empImge
+      }
+      // delete this.formUpdate[FIELD_PK_NAME]
+      delete this.formUpdate['LAST_DATE']
+      delete this.formUpdate['CREATE_DATE']
+      delete this.formUpdate['RECORD_STATUS']
     },
     async addData () {
       //
@@ -603,6 +681,20 @@ export default {
         cancelButtonText: 'ไม่'
       })
         .then(async (result) => {
+          if (this.filesAdd) {
+            const _this = this
+            let params = new FormData()
+            params.append('file', this.filesAdd)
+            await axios
+              .post(this.DNS_IP + `/file/upload/employee`, params)
+              .then(function (response) {
+                _this.formAdd.empImge = response.data
+                console.log('url Pic', response.data)
+              })
+          } else {
+            this.formAdd.empImge = ''
+          }
+          delete this.formAdd['pictureUrlPreview']
           await axios
             .post(
               // eslint-disable-next-line quotes
@@ -649,7 +741,7 @@ export default {
           }
         }
       }
-      console.log('this.formUpdateItem', this.formUpdateItem)
+      // console.log('this.formUpdateItem', this.formUpdateItem)
 
       // Debug
       console.log('EDIT PK : ', this.PK)
@@ -658,12 +750,12 @@ export default {
       // สำหรับ แก้ไขข้อมูล
       // ต้องระบุ  Last User ว่าใครเป็นคนแก้ไขล่าสุด
       //
+      // this.dataReady = false
+      // this.editDataGlobal(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
       this.dataReady = false
-      this.editDataGlobal(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
-      this.dataReady = false
-      this.submitEdit(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
+      this.submitEdit(this.DNS_IP, this.path)
     },
-    async submitEdit (DNS_IP, PATH, ID, DT) {
+    async submitEdit (DNS_IP, PATH) {
       // this.editDataGlobal(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
       this.dataReady = false
 
@@ -677,16 +769,24 @@ export default {
         cancelButtonText: 'ไม่'
       })
         .then(async (result) => {
+          if (this.filesUpdate) {
+            const _this = this
+            let params = new FormData()
+            params.append('file', this.filesUpdate)
+            await axios
+              .post(this.DNS_IP + `/file/upload/employee`, params)
+              .then(function (response) {
+                _this.formUpdateItem.empImge = response.data
+                console.log('url Pic', response.data)
+              })
+          } else {
+            this.formUpdateItem.empImge = this.formUpdate.pictureUrlPreview
+          }
           await axios
             .post(
               // eslint-disable-next-line quotes
-              DNS_IP + PATH + "edit/" + ID,
-              DT,
-              {
-                headers: {
-                  'Application-Key': this.$session.getAll().ApplicationKey
-                }
-              }
+              DNS_IP + PATH + "edit/" + this.PK,
+              this.formUpdateItem
             )
             .then(async (response) => {
               // Debug response
@@ -695,7 +795,7 @@ export default {
               this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
               // Close Dialog
               this.dialogEdit = false
-
+              this.filesUpdate = ''
               // Load Data
               await this.getDataGlobal(DNS_IP, PATH, this.$session.getAll().data.shopId)
             })
@@ -803,76 +903,6 @@ export default {
           this.dataReady = true
         })
     },
-    // importDataApprove (action) {
-    //   console.log('Action', action)
-    //   var titleMsg = ''
-    //   if (action === 'add') {
-    //     titleMsg = 'ท่านต้องการ นำเข้าข้อมูลจากไฟล์นี้ ใช่หรือไม่'
-    //   } else if (action === 'delete') {
-    //     titleMsg = 'ท่านต้องการ ลบข้อมูลจากไฟล์นี้ ใช่หรือไม่'
-    //   } else {
-    //     titleMsg = 'ท่านต้องการ ปรับปรุงข้อมูลจากไฟล์นี้ ใช่หรือไม่'
-    //   }
-
-    //   this.$swal({
-    //     title: titleMsg,
-    //     type: 'question',
-    //     showCancelButton: true,
-    //     confirmButtonColor: '#3085d6',
-    //     cancelButtonColor: '#b3b1ab',
-    //     confirmButtonText: 'ใช่',
-    //     cancelButtonText: 'ไม่'
-    //   })
-    //     .then(async (result) => {
-    //       console.log('this.dataItemImport', this.dataItemImport)
-    //       // for (var key in this.dataItemImport) {
-    //       //   this.PK = this.dataItemImport[key].empId
-    //       //   if (action === 'add') {
-    //       //     console.log('add')
-    //       //     await this.importDataAdd(this.dataItemImport[key])
-    //       //     checkError = true
-    //       //   } else {
-    //       //     await axios
-    //       //       .get(
-    //       //         // eslint-disable-next-line quotes
-    //       //         this.DNS_IP +
-    //       //           this.path +
-    //       //           'get?empId=' +
-    //       //           this.dataItemImport[key].empId
-    //       //       )
-    //       //       .then(async (response) => {
-    //       //         if (action === 'update') {
-    //       //           await this.importDataUpdate(this.dataItemImport[key])
-    //       //           checkError = true
-    //       //         }
-    //       //         if (action === 'delete') {
-    //       //           await this.importDataDelete(this.dataItemImport[key])
-    //       //           checkError = true
-    //       //         }
-    //       //       })
-    //       //       // eslint-disable-next-line handle-callback-err
-    //       //       .catch((error) => {
-    //       //         checkError = false
-
-    //       //         console.log('error /empSelect/get?empId : ', error)
-    //       //       })
-    //       //   }
-    //       // }
-    //       // console.log(checkError)
-    //       // if (checkError === true) {
-    //       //   this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-    //       //   await this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
-    //       // } else {
-    //       //   this.dataItemImport = []
-    //       //   this.dataItemImportChecKHide = true
-    //       //   alert('โปรดใส่ไฟล์ให้ถูกต้อง')
-    //       // }
-    //     })
-    //     .catch((error) => {
-    //       console.log('error function importDataApprove : ', error)
-    //       this.dataReady = true
-    //     })
-    // },
     async importDataAdd (dt) {
       Object.assign(this.formAdd, dt)
       this.formAdd.CREATE_USER = this.$session.getAll().data.userName
@@ -1009,6 +1039,7 @@ export default {
           this.formAdd[key] = ''
         }
       }
+      this.filesAdd = ''
 
       // eslint-disable-next-line no-redeclare
       for (var key in this.search) {
@@ -1019,6 +1050,7 @@ export default {
           this.search[key] = ''
         }
       }
+      this.filesUpdate = ''
     }
   }
 }

@@ -21,6 +21,7 @@ import BookingMobile from './BookingMobile'
 import BoardControlM from './BoardControlM'
 import UpdateNotify from './UpdateNotify'
 import SettingLineNotify from './SettingLineNotify'
+import BookingListOnsite from './BookingListOnsite'
 export default {
   CustomField,
   Flow,
@@ -44,5 +45,6 @@ export default {
   BookingMobile,
   BoardControlM,
   UpdateNotify,
-  SettingLineNotify
+  SettingLineNotify,
+  BookingListOnsite
 }

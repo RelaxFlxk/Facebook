@@ -217,9 +217,7 @@
                             :items="stepItemSelete"
                             hide-default-footer
                           >
-                            <template
-                              v-slot:[`item.actions2`]="{ item, index }"
-                            >
+                            <template v-slot:[`item.actions2`]="{ item, index }" v-if="checkOnsite !== 'True'">
                               <v-btn
                                 v-show="index !== 0"
                                 color="173053"
@@ -244,14 +242,14 @@
                                 </v-icon>
                               </v-btn>
                             </template>
-                            <template v-slot:[`item.sendCard`]="{ item }">
+                            <template v-slot:[`item.sendCard`]="{ item }" v-if="checkOnsite !== 'True'">
                               <v-checkbox
                                 false-value="False"
                                 true-value="True"
                                 v-model="item.sendCard"
                               ></v-checkbox>
                             </template>
-                            <template v-slot:[`item.action`]="{ item }">
+                            <template v-slot:[`item.action`]="{ item }" v-if="checkOnsite !== 'True'">
                               <v-btn
                                 color="question"
                                 fab
@@ -311,8 +309,7 @@
                             </v-card>
                           </v-dialog>
                           <!-- END delete step -->
-
-                          <v-col cols="12" class="v-margit_button text-center">
+                          <v-col cols="12" v-if="checkOnsite !== 'True'" class="v-margit_button text-center">
                             <v-btn
                               color="#1B437C"
                               depressed
@@ -389,14 +386,21 @@
                         <v-col cols="12" class="pb-0 pt-0">
                           <v-checkbox
                             label="แจ้งยอดค่าชำระ"
-                            class=""
                             false-value="False"
                             true-value="True"
                             v-model="formAdd.checkPayment"
                           ></v-checkbox>
                         </v-col>
+                        <v-col cols="12" class="pb-0 pt-0">
+                          <v-checkbox
+                            label="Onsite"
+                            false-value="False"
+                            true-value="True"
+                            v-model="formAdd.checkOnsite"
+                          ></v-checkbox>
+                        </v-col>
                         <v-col cols="12">
-                          <v-row style="height: 50px" justify="center">
+                          <v-row justify="center">
                             <v-btn
                               color="primary"
                               dark
@@ -569,6 +573,14 @@
                             false-value="False"
                             true-value="True"
                             v-model="formUpdate.checkPayment"
+                          ></v-checkbox>
+                        </v-col>
+                        <v-col cols="12" class="pb-0 pt-0">
+                          <v-checkbox
+                            label="Onsite"
+                            false-value="False"
+                            true-value="True"
+                            v-model="formUpdate.checkOnsite"
                           ></v-checkbox>
                         </v-col>
                         <v-col cols="12">
@@ -1094,6 +1106,7 @@ export default {
         CREATE_USER: '',
         LAST_USER: '',
         checkPayment: 'True',
+        checkOnsite: 'False',
         shopId: this.$session.getAll().data.shopId
       },
       formAddStep: {
@@ -1126,6 +1139,7 @@ export default {
         flowName: '',
         LAST_USER: '',
         checkPayment: 'True',
+        checkOnsite: 'False',
         shopId: ''
       },
       formUpdateItemFlow: {
@@ -1149,6 +1163,7 @@ export default {
         flowId: '',
         flowName: '',
         checkPayment: 'True',
+        checkOnsite: 'False',
         LAST_USER: ''
       },
       columnsStep: [
@@ -1209,7 +1224,8 @@ export default {
       validAdd: true,
       validUpdate: true,
       validCondition: true,
-      editedIndex: -1
+      editedIndex: -1,
+      checkOnsite: ''
       // End Data Table Config
     }
   },
@@ -1584,6 +1600,7 @@ export default {
               this.stepItemSelete.push(d)
               this.formUpdateStep.stepTitle = response.data.stepTitle
             }
+            console.log('this.stepItemSelete', JSON.stringify(this.stepItemSelete))
           }
         })
     },
@@ -1616,7 +1633,9 @@ export default {
       this.desserts = []
       this.dataReady = false
       this.PK = item.flowCode
+      this.formUpdate.checkOnsite = item.checkOnsite
       console.log('item: ', item)
+      this.checkOnsite = item.checkOnsite
       await axios
         .get(
           // eslint-disable-next-line quotes
@@ -1692,12 +1711,7 @@ export default {
             .post(
               // eslint-disable-next-line quotes
               this.DNS_IP + this.path + "add",
-              this.formAdd,
-              {
-                headers: {
-                  'Application-Key': this.$session.getAll().ApplicationKey
-                }
-              }
+              this.formAdd
             )
             .then(async response => {
               // Debug response
@@ -1746,17 +1760,12 @@ export default {
           console.log('stepTitle', this.formAddStep.stepTitle)
           console.log('stepId', this.formAddStep.stepId)
           console.log('shopId', this.shopId)
-          console.log('forAdd', this.formAddStep)
+          console.log('formAddStep', this.formAddStep)
           await axios
             .post(
               // eslint-disable-next-line quotes
               this.DNS_IP + "/flowStep/" + "add",
-              this.formAddStep,
-              {
-                headers: {
-                  'Application-Key': this.$session.getAll().ApplicationKey
-                }
-              }
+              this.formAddStep
             )
             .then(async response => {
               // Debug response
