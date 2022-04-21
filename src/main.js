@@ -67,9 +67,9 @@ Vue.mixin({
       IPPotocalENV_ProductionBetask: 'https://customer-core.betaskthai.com',
       IPPotocalENV_ProductionLoyalty: 'https://api-beloyalty.betaskthai.com',
       // IPPotocalENV_Developer: 'https://hw.api-belinked.betaskthai.com',
-      IPPotocalENV_Developer: 'http://localhost:5004',
+      IPPotocalENV_Developer: 'http://localhost:5001',
       IPPotocalENV_DeveloperBetask: 'http://localhost:5006',
-      IPPotocalENV_DeveloperLoyalty: 'http://localhost:5001',
+      IPPotocalENV_DeveloperLoyalty: 'http://localhost:5004',
       main_profile: {
         userLineuserId: 'U97a2b1814542579b9e5d7c1b891538ab',
         pictureUrl: 'https://profile.line-scdn.net/0hI98EFerAFhYFPD-Dk3VpQTl5GHtyEhBefVoNdiA_SSMtWFdIbV0KIiU9HCApCFUSbVxZJSZpSyQh',
@@ -79,7 +79,9 @@ Vue.mixin({
       dataItemImport: [],
       export_data: [],
       searchAll: '',
-      dataReady: true
+      dataReady: true,
+      monthNamesThai: ['', 'ม.ค', 'ก.พ', 'มี.ค', 'เม.ย', 'พ.ค', 'มิ.ย', 'ก.ค', 'ส.ค', 'ก.ย', 'ต.ค', 'พ.ย', 'ธ.ค']
+
     }
   },
   async mounted () {
@@ -111,6 +113,11 @@ Vue.mixin({
     format_dateNotime (value) {
       if (value) {
         return moment(moment(new Date(value), 'DD/MM/YYYY').toDate()).format('DD/MM/YYYY')
+      }
+    },
+    format_dateThai (value) {
+      if (value) {
+        return moment(moment(new Date(value), 'DD/MM/YYYY').toDate()).format('DD') + ' ' + this.monthNamesThai[moment(moment(new Date(value), 'DD/MM/YYYY').toDate()).format('M')]
       }
     },
     // YYYY-MM-DD

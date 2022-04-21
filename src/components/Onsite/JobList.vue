@@ -2,7 +2,7 @@
   <div>
     <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
     <v-main>
-      <div class="col-md-12 ml-sm-auto col-lg-12 px-4">
+      <div class="px-lg-4">
         <v-row class="no-gutters">
           <v-col cols="12" md="6" lg="6" class="text-left">
             <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
@@ -26,7 +26,10 @@
         </v-row>
         <v-row>
           <v-col cols="12">
-            <v-tabs v-model="tab" align-with-title>
+            <v-tabs v-model="tab"
+            background-color="blue lighten-5"
+            grow
+            >
               <v-tabs-slider color="red"></v-tabs-slider>
 
               <v-tab v-for="(item, indexitem) in itemFlowStep" :key="indexitem">
@@ -37,6 +40,7 @@
               <v-tab-item
                 v-for="(item, indexitem) in itemFlowStep"
                 :key="indexitem"
+                style="background-color:#eee"
               >
                 <div
                   v-for="(items, indexitems) in itemJob.filter(el => {
@@ -45,12 +49,91 @@
                   :key="indexitems"
                 >
                   <v-card
-                    class="ma-2 p-1"
-                    width="340"
-                    height="160"
+                    class="mx-2 mt-4 p-1"
                     color="#FFFFFF"
-                    elevation="6"
+                    elevation="2"
                   >
+                    <v-row>
+                      <v-col class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
+                        <v-sheet
+                          rounded="xl"
+                          width="100"
+                          height="100"
+                          color="blue darken-1"
+                          class="text-center justify-center pt-4"
+                        >
+                          <span class="font-weight-bold white--text text-subtitle-2">{{format_dateThai(items.dueDate)}}</span><br>
+                          <v-icon dark>
+                            mdi-clock-outline
+                          </v-icon> <span class="font-weight-bold white--text">{{momenTime(items.dueDate)}}</span>
+                        </v-sheet>
+                      </v-col>
+                      <v-col cols="8" class="pl-3">
+                        <template v-for="(itemJobs, indexitemJob) in dataJob.filter(
+                            el => {
+                              return el.jobNo === items.jobNo;
+                            }
+                          )"
+                        >
+                        <div :key="indexitemJob">
+                          <span class="font-weight-bold">{{itemJobs.fieldName}} :</span>
+                          <span>{{itemJobs.fieldValue}}</span>
+                        </div>
+                        </template>
+                        <!-- <div>
+                          <span class="font-weight-bold">วันเวลาที่เริ่ม :</span>
+                          <span>{{items.onsiteStartDateFomatTH}}</span>
+                        </div> -->
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col class="m-2">
+                        <v-btn
+                          tile
+                          color="deep-orange white--text"
+                          @click="setShowMap(items)"
+                        >
+                          <v-icon left>
+                            mdi-map-marker-radius-outline
+                          </v-icon>
+                          แผนที่
+                        </v-btn>
+                        <v-btn
+                          tile
+                          color="yellow darken-3 white--text"
+                          @click="callCustomer(dataJob)"
+                        >
+                          <v-icon left>
+                            mdi-phone-outline
+                          </v-icon>
+                          โทร
+                        </v-btn>
+                        <v-btn
+                          tile
+                          color="info"
+                        >
+                          <v-icon left>
+                            mdi-clipboard-text-outline
+                          </v-icon>
+                          รายละเอียด
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+                    <v-card-actions>
+                        <v-btn
+                          v-if="items.sortNo === 1"
+                          block
+                          color="success"
+                          class="mr-3"
+                          @click="updateJobStart(items.sortNo, items.jobId)"
+                        >
+                          <v-icon left>
+                            mdi-account-check-outline
+                          </v-icon>
+                          เริ่มงาน
+                        </v-btn>
+                    </v-card-actions>
+
                     <v-row>
                       <v-col cols="4" class="pr-1">
                         <v-img
@@ -59,61 +142,7 @@
                           max-width="200"
                           :src="items.memberPicture"
                         ></v-img>
-                        <v-btn
-                          v-if="items.sortNo === 1"
-                          tile
-                          x-small
-                          color="success"
-                          @click="updateJobStart(items.sortNo, items.jobId)"
-                        >
-                          <v-icon left>
-                            mdi-account-check-outline
-                          </v-icon>
-                          เริ่มงาน
-                        </v-btn>
-                        <v-btn
-                          tile
-                          x-small
-                          color="info"
-                          @click="setShowMap(items)"
-                        >
-                          <v-icon left>
-                            mdi-map-marker-radius-outline
-                          </v-icon>
-                          MAP
-                        </v-btn>
                         <!-- <v-btn class="ml-3" color="green" outlined rounded x-small>รับงาน</v-btn> -->
-                      </v-col>
-                      <v-col cols="8" class="pb-6">
-                        <v-row
-                          class="font12 headline1"
-                          v-for="(itemJobs, indexitemJob) in dataJob.filter(
-                            el => {
-                              return el.jobNo === items.jobNo;
-                            }
-                          )"
-                          :key="indexitemJob"
-                        >
-                          <v-col class="pl-0 pt-0 pb-0">{{
-                            itemJobs.fieldName + " : " + itemJobs.fieldValue
-                          }}</v-col>
-                          <!-- <v-btn class="mr-4 mt-3" v-if="item.packageId !== packageId" color="green" outlined rounded x-small @click="UpdatePackage(item.packageId,'ตกลง',item.packageName)">ตกลง</v-btn>
-                                    <v-btn class="mr-4 mt-3" v-if="item.packageId === packageId" color="red" outlined rounded x-small @click="UpdatePackage(item.packageId,'ยกเลิก',item.packageName)">ยกเลิก</v-btn> -->
-                        </v-row>
-                        <v-row class="font12 headline1">
-                          <v-col class="pl-0 pt-0 pb-0"
-                            >วันที่นัดหมาย : {{ items.dueDateFomatTH }}</v-col
-                          >
-                        </v-row>
-                        <v-row class="font12 headline1">
-                          <v-col class="pl-0 pt-0 pb-0"
-                            >วันเวลาที่เริ่ม :
-                            {{ items.onsiteStartDateFomatTH }}</v-col
-                          >
-                        </v-row>
-                        <!-- <v-row class="font14 headline1">
-                                    <v-col class="pl-0 pt-0 pb-0">วันหมดอายุ  {{new Date(item.expirePackage * 1000).toLocaleString().substr(0,9)}} </v-col>
-                                </v-row> -->
                       </v-col>
                     </v-row>
                   </v-card>
@@ -130,12 +159,12 @@
                 <v-container>
                   <v-row>
                     <v-col cols="12" class="pb-0">
-                      <v-text-field
-                        v-model="address"
+                      <v-textarea
+                        :value="address"
                         outlined
-                        label="ชื่อของที่อยู่"
+                        label="รายละเอียดที่อยู่"
                         auto-grow
-                      ></v-text-field>
+                      ></v-textarea>
                     </v-col>
                     <v-col cols="12" class="pb-0">
                       <v-card class="text-center">
@@ -199,11 +228,11 @@ export default {
   computed: {
     dialogwidth () {
       switch (this.$vuetify.breakpoint.name) {
-        case 'xs': return '70%'
-        case 'sm': return '60%'
-        case 'md': return '50%'
-        case 'lg': return '50%'
-        case 'xl': return '50%'
+        case 'xs': return '90%'
+        case 'sm': return '90%'
+        case 'md': return '80%'
+        case 'lg': return '80%'
+        case 'xl': return '80%'
       }
     }
   },
@@ -257,6 +286,14 @@ export default {
         this.center = JSON.parse(dt.addressLatLong)
         this.address = dt.address
         this.dialogMap = true
+      }
+    },
+    callCustomer (dataJob) {
+      let phone = dataJob.filter((items) => {
+        return items.fieldName === 'เบอร์โทร'
+      })
+      if (phone.length > 0) {
+        window.location.href = `tel://${phone[0]['fieldValue']}`
       }
     },
     async getDataFlow () {
