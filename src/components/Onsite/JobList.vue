@@ -79,8 +79,12 @@
                         </div>
                         </template>
                         <div v-if="items.onsiteStartDateFomatTH">
-                          <span class="font-weight-bold">วันเวลาที่เริ่ม :</span>
+                          <span class="font-weight-bold">เริ่มงาน :</span>
                           <span>{{items.onsiteStartDateFomatTH}}</span>
+                        </div>
+                        <div v-if="items.onsiteEndDateFomatTH">
+                          <span class="font-weight-bold">เสร็จงาน :</span>
+                          <span>{{items.onsiteEndDateFomatTH}}</span>
                         </div>
                       </v-col>
                     </v-row>
