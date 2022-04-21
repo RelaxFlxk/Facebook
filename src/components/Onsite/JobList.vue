@@ -29,7 +29,7 @@
             <v-tabs v-model="tab" align-with-title>
               <v-tabs-slider color="red"></v-tabs-slider>
 
-              <v-tab v-for="(item, indexitem) in itemFlowStep" :key="indexitem">
+              <v-tab v-for="(item, indexitem) in itemFlowStep" @click="cheSort(item)" :key="indexitem">
                 {{ item.text }}
               </v-tab>
             </v-tabs>
@@ -46,8 +46,8 @@
                 >
                   <v-card
                     class="ma-2 p-1"
-                    width="340"
-                    height="160"
+                    width="95%"
+                    height="100%"
                     color="#FFFFFF"
                     elevation="6"
                   >
@@ -55,8 +55,8 @@
                       <v-col cols="4" class="pr-1">
                         <v-img
                           contain
-                          max-height="80"
-                          max-width="200"
+                          max-height="80px"
+                          max-width="200px"
                           :src="items.memberPicture"
                         ></v-img>
                         <v-btn
@@ -70,6 +70,18 @@
                             mdi-account-check-outline
                           </v-icon>
                           เริ่มงาน
+                        </v-btn>
+                        <v-btn
+                          v-if="items.sortNo === 2"
+                          tile
+                          x-small
+                          color="success"
+                          @click="closeJobStart(items.sortNo, items.jobId)"
+                        >
+                          <v-icon left>
+                            mdi-water-check
+                          </v-icon>
+                          ปิดงาน
                         </v-btn>
                         <v-btn
                           tile
@@ -105,17 +117,115 @@
                             >วันที่นัดหมาย : {{ items.dueDateFomatTH }}</v-col
                           >
                         </v-row>
-                        <v-row class="font12 headline1">
+                        <v-row class="font12 headline1" v-if="items.onsiteStartDateFomatTH">
                           <v-col class="pl-0 pt-0 pb-0"
                             >วันเวลาที่เริ่ม :
                             {{ items.onsiteStartDateFomatTH }}</v-col
                           >
                         </v-row>
-                        <!-- <v-row class="font14 headline1">
-                                    <v-col class="pl-0 pt-0 pb-0">วันหมดอายุ  {{new Date(item.expirePackage * 1000).toLocaleString().substr(0,9)}} </v-col>
-                                </v-row> -->
                       </v-col>
                     </v-row>
+                    <div v-if="sortNo === 2">
+                      <v-row>
+                        <v-col cols="6" class="pb-0 text-center"><v-subheader>Before</v-subheader></v-col>
+                        <v-col cols="6" class="pb-0 text-center"><v-subheader>After</v-subheader></v-col>
+                      </v-row>
+                      <v-row v-for="(itemBeforeAfter, indexBeforeAfter) in items.dataBeforeAfter" :key="indexBeforeAfter">
+                        <v-col cols="6" class="pb-0">
+                          <v-img
+                            aspect-ratio="2"
+                            contain
+                            :src="itemBeforeAfter.beforeImage"
+                          ></v-img>
+                            <v-row >
+                              <v-col cols="6" class="text-right">
+                                <v-file-input
+                                hide-input
+                                class="pt-0 ml-6"
+                                color="info"
+                                accept="image/*"
+                                @change="selectImgUpdate(itemBeforeAfter,'before')"
+                                v-model="itemBeforeAfter.filesBefore"
+                                prepend-icon="mdi-camera"
+                              ></v-file-input>
+                              </v-col>
+                              <v-col cols="6" class="text-left" v-if="itemBeforeAfter.beforeImage">
+                                <v-btn
+                                icon
+                                dark
+                                x-small
+                                color="red"
+                                @click="deleteBeforeAfter(itemBeforeAfter,'before')"
+                              >
+                                <v-icon dark>
+                                  mdi-delete-circle
+                                </v-icon>
+                              </v-btn>
+                              </v-col>
+                            </v-row>
+                        </v-col>
+                        <v-col cols="6" class="pb-0">
+                          <v-img
+                            aspect-ratio="2"
+                            contain
+                            :src="itemBeforeAfter.afterImage"
+                          ></v-img>
+                          <v-row >
+                              <v-col cols="6" class="text-right">
+                                <v-file-input
+                                hide-input
+                                class="pt-0 ml-6"
+                                color="info"
+                                accept="image/*"
+                                @change="selectImgUpdate(itemBeforeAfter,'after')"
+                                v-model="itemBeforeAfter.filesAfter"
+                                prepend-icon="mdi-camera"
+                              ></v-file-input>
+                              </v-col>
+                              <v-col cols="6" class="text-left" v-if="itemBeforeAfter.afterImage">
+                                <v-btn
+                                icon
+                                dark
+                                x-small
+                                color="red"
+                                 @click="deleteBeforeAfter(itemBeforeAfter,'after')"
+                              >
+                                <v-icon dark>
+                                  mdi-delete-circle
+                                </v-icon>
+                              </v-btn>
+                              </v-col>
+                            </v-row>
+                        </v-col>
+                        <v-col cols="12" class="pb-0 pt-0 text-center">
+                          <v-btn
+                            tile
+                            x-small
+                            color="error"
+                            @click="deleteBeforeAfterAll(itemBeforeAfter)"
+                          >
+                            <v-icon left>
+                              mdi-delete-circle
+                            </v-icon>
+                            ทั้งหมด
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" class="pt-0 text-center">
+                          <v-btn
+                            class="ma-2"
+                            outlined
+                            small
+                            fab
+                            @click="addBeforeAfter(items.dataBeforeAfter, items)"
+                            color="indigo"
+                          >
+                            <v-icon>mdi-plus-circle-multiple</v-icon>
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+                    </div>
                   </v-card>
                 </div>
               </v-tab-item>
@@ -135,11 +245,11 @@
                         outlined
                         label="ชื่อของที่อยู่"
                         auto-grow
+                        readonly
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" class="pb-0">
                       <v-card class="text-center">
-                        <v-container>
                           <GmapMap
                             v-if="center !== null"
                             :center="center"
@@ -148,21 +258,19 @@
                             :options="{ disableDefaultUI: true }"
                           >
                             <GmapMarker @click="gotoMap()" :position="center" />
-                            <!-- <gmap-info-window
-                          @closeclick="window_open=false"
-                          :opened="window_open"
-                          :position="center"
-                          :options="{
-                            pixelOffset: {
-                              width: 0,
-                              height: -35
-                            }
-                          }"
-                      >
-                          {{address}}
-                      </gmap-info-window> -->
+                            <gmap-info-window
+                              :opened="true"
+                              :position="center"
+                              :options="{
+                                pixelOffset: {
+                                  width: 0,
+                                  height: -35
+                                }
+                              }"
+                          >
+                              กดที่หมุดเพื่อ นำทาง
+                          </gmap-info-window>
                           </GmapMap>
-                        </v-container>
                       </v-card>
                     </v-col>
                   </v-row>
@@ -191,19 +299,21 @@
 import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import moment from 'moment-timezone' // แปลง date
+import UploadButton from 'vuetify-upload-button'
 export default {
   name: 'JobList',
   components: {
-    'left-menu-admin': adminLeftMenu
+    'left-menu-admin': adminLeftMenu,
+    'upload-btn': UploadButton
   },
   computed: {
     dialogwidth () {
       switch (this.$vuetify.breakpoint.name) {
-        case 'xs': return '70%'
-        case 'sm': return '60%'
-        case 'md': return '50%'
-        case 'lg': return '50%'
-        case 'xl': return '50%'
+        case 'xs': return '90%'
+        case 'sm': return '80%'
+        case 'md': return '70%'
+        case 'lg': return '70%'
+        case 'xl': return '70%'
       }
     }
   },
@@ -234,13 +344,134 @@ export default {
       dataJob: [],
       center: null,
       address: '',
-      dialogMap: false
+      dialogMap: false,
+      sortNo: ''
     }
   },
   async mounted () {
     this.getDataFlow()
   },
   methods: {
+    handleFileImportBefore () {
+      window.addEventListener('focus', () => {
+      }, { once: true })
+
+      // Trigger click on the FileInput
+      this.$refs.uploaderBefore.click()
+    },
+    async addBeforeAfter (item, dt) {
+      console.log('addBeforeAfter', item)
+      if (item[item.length - 1].afterImage === null && item[item.length - 1].beforeImage === null) {
+        this.$swal(
+          'ผิดพลาด',
+          'กรุณาเพิ่มรูปภาพด้านบนก่อน',
+          'error'
+        )
+      } else {
+        item = []
+        let dajobBeforeAfter = {
+          jobId: dt.jobId,
+          CREATE_USER: this.session.data.userName,
+          LAST_USER: this.session.data.userName
+        }
+        await axios
+          .post(this.DNS_IP + '/jobBeforeAfter/add', dajobBeforeAfter)
+          .then(async response => {
+            await this.checkEmpJob()
+            // await axios
+            //   .get(
+            //     this.DNS_IP + '/jobBeforeAfter/get?jobId=' + dt.jobId
+            //   )
+            //   .then(async responses => {
+            //     item = responses.data
+            //   })
+          })
+      }
+    },
+    async selectImgUpdate (item, text) {
+      console.log(item, text)
+      if (text === 'after') {
+        if (item.filesAfter) {
+          let urlPic = ''
+          let params = new FormData()
+          params.append('file', item.filesAfter)
+          await axios
+            .post(this.DNS_IP + `/file/upload/beforeAfter`, params)
+            .then(async function (response) {
+              console.log('url Pic', response.data)
+              urlPic = response.data
+            })
+          let dajobBeforeAfter = {
+            afterImage: urlPic,
+            LAST_USER: this.session.data.userName
+          }
+          await axios
+            .post(this.DNS_IP + '/jobBeforeAfter/edit/' + item.id, dajobBeforeAfter)
+            .then(async responses => {
+              item.afterImage = urlPic
+            })
+        }
+      } else {
+        if (item.filesBefore) {
+          let urlPic = ''
+          let params = new FormData()
+          params.append('file', item.filesBefore)
+          await axios
+            .post(this.DNS_IP + `/file/upload/beforeAfter`, params)
+            .then(async function (response) {
+              console.log('url Pic', response.data)
+              urlPic = response.data
+            })
+          let dajobBeforeAfter = {
+            beforeImage: urlPic,
+            LAST_USER: this.session.data.userName
+          }
+          await axios
+            .post(this.DNS_IP + '/jobBeforeAfter/edit/' + item.id, dajobBeforeAfter)
+            .then(async responses => {
+              item.beforeImage = urlPic
+            })
+        }
+      }
+    },
+    async deleteBeforeAfter (item, text) {
+      console.log(item, text)
+      if (text === 'after') {
+        let dajobBeforeAfter = {
+          afterImage: 'is null',
+          LAST_USER: this.session.data.userName
+        }
+        await axios
+          .post(this.DNS_IP + '/jobBeforeAfter/edit/' + item.id, dajobBeforeAfter)
+          .then(async responses => {
+            await this.checkEmpJob()
+          })
+      } else {
+        let dajobBeforeAfter = {
+          beforeImage: 'is null',
+          LAST_USER: this.session.data.userName
+        }
+        await axios
+          .post(this.DNS_IP + '/jobBeforeAfter/edit/' + item.id, dajobBeforeAfter)
+          .then(async responses => {
+            await this.checkEmpJob()
+          })
+      }
+    },
+    async deleteBeforeAfterAll (item) {
+      let dajobBeforeAfter = {
+        LAST_USER: this.session.data.userName
+      }
+      await axios
+        .post(this.DNS_IP + '/jobBeforeAfter/delete/' + item.id, dajobBeforeAfter)
+        .then(async responses => {
+          await this.checkEmpJob()
+        })
+    },
+    cheSort (item) {
+      console.log('cheSort', item.allData.sortNo)
+      this.sortNo = item.allData.sortNo
+    },
     gotoMap () {
       window.open('https://www.google.com/maps/dir/?api=1&travelmode=driving&layer=traffic&destination=' + this.center.lat + ',' + this.center.lng, '_blank')
     //   window.location.href =
@@ -318,7 +549,32 @@ export default {
           if (rs.status === false) {
             this.itemJob = []
           } else {
-            this.itemJob = rs
+            for (let i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              if (d.sortNo === 2) {
+                await axios
+                  .get(
+                    this.DNS_IP + '/jobBeforeAfter/get?jobId=' + d.jobId
+                  )
+                  .then(async responses => {
+                    if (responses.data.status === false) {
+                      d.dataBeforeAfter = [{'beforeImage': null, 'afterImage': null, 'filesBefore': null, 'filesAfter': null}]
+                      let dajobBeforeAfter = {
+                        jobId: d.jobId,
+                        CREATE_USER: this.session.data.userName,
+                        LAST_USER: this.session.data.userName
+                      }
+                      await axios
+                        .post(this.DNS_IP + '/jobBeforeAfter/add', dajobBeforeAfter)
+                        .then(async responses => {
+                        })
+                    } else {
+                      d.dataBeforeAfter = responses.data
+                    }
+                  })
+              }
+              this.itemJob.push(d)
+            }
             console.log('this.itemJob', this.itemJob)
           }
         })
@@ -353,7 +609,7 @@ export default {
         }).length === 0
       ) {
         console.log('itemFlowStep', this.itemFlowStep)
-        this.swalConfig.title = 'ต้องการ รับงานนี้ ใช่หรือไม่?'
+        this.swalConfig.title = 'ต้องการ เริ่มงานนี้ ใช่หรือไม่?'
         this.$swal(this.swalConfig).then(async () => {
           if (this.$session.id() !== undefined) {
             var dt = {}
@@ -377,8 +633,17 @@ export default {
               .then(async response => {
                 console.log(response)
                 if (response.data.status) {
-                  this.getDataJob()
-                  this.$swal('เรียบร้อย', 'รับงานนี้เรียบร้อย', 'success')
+                  let dajobBeforeAfter = {
+                    jobId: jobId,
+                    CREATE_USER: this.session.data.userName,
+                    LAST_USER: this.session.data.userName
+                  }
+                  await axios
+                    .post(this.DNS_IP + '/jobBeforeAfter/add', dajobBeforeAfter)
+                    .then(async responses => {
+                      this.getDataJob()
+                      this.$swal('เรียบร้อย', 'รับงานนี้เรียบร้อย', 'success')
+                    })
                 } else {
                   this.$swal(
                     'ผิดพลาด',
@@ -399,6 +664,42 @@ export default {
           'error'
         )
       }
+    },
+    closeJobStart (sortNo, jobId) {
+      console.log('itemFlowStep', this.itemFlowStep)
+      this.swalConfig.title = 'ต้องการ ปิดงานนี้ ใช่หรือไม่?'
+      this.$swal(this.swalConfig).then(async () => {
+        if (this.$session.id() !== undefined) {
+          var dt = {}
+          var stepIdSelect = this.itemFlowStep.filter(el => {
+            return el.allData.sortNo === sortNo + 1
+          })[0].value
+          if (sortNo === 2) {
+            dt = {
+              stepId: stepIdSelect,
+              onsiteEndDate: moment(
+                moment(new Date()),
+                'YYYY-MM-DD HH:mm:ss'
+              ).format('YYYY-MM-DD HH:mm:ss'),
+              LAST_USER: this.session.data.userName
+            }
+          }
+          console.log('updateJob', dt)
+          console.log(sortNo, jobId)
+          await axios
+            .post(this.DNS_IP + '/job/editAll/' + jobId, dt)
+            .then(async response => {
+              console.log(response)
+              if (response.data.status) {
+                this.getDataJob()
+                this.$swal('เรียบร้อย', 'ปิดงานนี้เรียบร้อย', 'success')
+              }
+            })
+        } else {
+          this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
+          this.$router.push('/Core/Login')
+        }
+      })
     }
   }
 }
