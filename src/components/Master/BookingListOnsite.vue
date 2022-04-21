@@ -392,8 +392,7 @@
                           ></v-select>
                           <template v-if="fieldNameItem">
                             <div
-                              v-for="(item, index) in fieldNameItem"
-                              :key="index"
+                              v-for="(item, index) in fieldNameItem" :key="index"
                             >
                               <template
                                 v-if="
@@ -1097,7 +1096,7 @@
                       {{item.stepTitle}}
                     </v-col>
                   </v-row> -->
-                  <v-row v-if="empSelectJob !== ''">
+                  <v-row v-if="empSelectJob !== '' && checkEventInfo.length > 0">
                     <v-col cols="12" class="pb-0 pt-0">
                     <v-sheet height="64">
                       <v-toolbar dense>
@@ -1152,7 +1151,7 @@
                                   v-if="eventInfo[date].sortNo1 > 0"
                                   class="mr-1"
                                   style="cursor: pointer"
-                                  @click.native="openTaskList(date, 'fastTrack')"
+                                  @click.native="openCalendaList(date, 'sortNo1')"
                                 >
                                   <template v-slot:badge>
                                     <v-avatar class="mb-1" color="orange darken-1">
@@ -1174,7 +1173,7 @@
                                   v-if="eventInfo[date].sortNo2 > 0"
                                   class="mr-1"
                                   style="cursor: pointer"
-                                  @click.native="openTaskList(date, 'fastTrack')"
+                                  @click.native="openCalendaList(date, 'sortNo2')"
                                 >
                                   <template v-slot:badge>
                                     <v-avatar class="mb-1" color="blue darken-1">
@@ -1280,7 +1279,7 @@
                             ></v-select>
                           </v-col>
                         </v-row>
-                        <v-row v-if="empSelectJob !== ''">
+                        <v-row v-if="empSelectJob !== '' && checkEventInfo.length > 0">
                           <v-col cols="12" class="pb-0 pt-0">
                           <v-sheet height="64">
                             <v-toolbar dense>
@@ -1316,6 +1315,7 @@
                               ref="calendaronsite"
                               :now="today"
                               v-model="today"
+                              :events="events"
                               locale="th-TH"
                               color="primary"
                               type="month"
@@ -1335,7 +1335,7 @@
                                         v-if="eventInfo[date].sortNo1 > 0"
                                         class="mr-1"
                                         style="cursor: pointer"
-                                        @click.native="openTaskList(date, 'fastTrack')"
+                                        @click.native="openCalendaList(date, 'sortNo1')"
                                       >
                                         <template v-slot:badge>
                                           <v-avatar class="mb-1" color="orange darken-1">
@@ -1357,7 +1357,7 @@
                                         v-if="eventInfo[date].sortNo2 > 0"
                                         class="mr-1"
                                         style="cursor: pointer"
-                                        @click.native="openTaskList(date, 'fastTrack')"
+                                        @click.native="openCalendaList(date, 'sortNo2')"
                                       >
                                         <template v-slot:badge>
                                           <v-avatar class="mb-1" color="blue darken-1">
@@ -2983,6 +2983,78 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
+          <v-dialog v-model="dialogCalenda" width="600">
+            <v-card>
+              <v-card-title class="text-h6 grey lighten-2">
+                รายชื่อลูกค้านัดหมาย
+              </v-card-title>
+              <br />
+              <template v-for="(sumItems, index1) in dataSummary">
+                <!-- {{sumItems}} -->
+                <v-row v-bind:key="'sum'+index1" no-gutters>
+                <template v-for="(items, index2) in sumItems">
+                  <v-col cols="auto" v-bind:key="'sum'+index1+index2">
+                    <v-chip
+                      class="ma-2"
+                      :color="index1 + ' darken-2'"
+                      text-color="white"
+                    >
+                      <v-avatar
+                        left
+                        :class="index1 + ' darken-4'"
+                      >
+                        {{items.length}}
+                      </v-avatar>
+                      {{index2}}
+                    </v-chip>
+                  </v-col>
+                </template>
+                </v-row>
+              </template>
+              <v-card-text
+                v-for="(items, index) in dataCalendar"
+                :key="index"
+              >
+                <v-card elevation="2">
+                  <v-list-item :style="((items.bgcolor) ? 'background-color:' + items.bgcolor + ' !important' : '') ">
+                    <v-list-item-content>
+                      <v-row style="color:#fff;">
+                        <v-col cols="3">
+                          <!-- <h3>{{items.timeDue}}</h3><br> -->
+                          <h3>{{items.timeDue}}</h3><br>
+                          <v-icon dark class="mr-1" v-if="items.sortNo === 1">
+                              mdi-water-plus
+                          </v-icon>
+                          <v-icon dark class="mr-1" v-else-if="items.sortNo === 2">
+                              mdi-water-check
+                          </v-icon>
+                          <v-icon dark class="mr-1" v-else>
+                              mdi-clock-outline
+                          </v-icon>
+                        </v-col>
+                        <v-col cols="9">
+                          <v-row>
+                            <v-col cols="8"><h4>คุณ {{ items.name }}</h4></v-col>
+                            <v-col cols="4" class="text-right">{{items.licenseNo}}</v-col>
+                          </v-row>
+                          โทร {{ items.tel }}
+                        </v-col>
+                      </v-row>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-card>
+              </v-card-text>
+
+              <v-divider></v-divider>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" text @click="dialogCalenda = false">
+                  ยืนยัน
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
       </div>
     </v-main>
   </div>
@@ -3137,9 +3209,12 @@ export default {
     let startDate = null
     let endDate = null
     return {
-      today: this.momenDate_1(new Date()),
+      dataCalendar: [],
+      dataSummary: [],
+      today: '',
       events: [],
       eventInfo: [],
+      checkEventInfo: [],
       StatusPackage: {
         status: 'ตกลง',
         color: 'green',
@@ -3224,6 +3299,7 @@ export default {
       dataEditReady: true,
       dataConfirmReady: true,
       dataCancelReady: true,
+      dialogCalenda: false,
       dialogExport: false,
       dialogRemove: false,
       dialogError: false,
@@ -3443,6 +3519,115 @@ export default {
     })
   },
   methods: {
+    async openCalendaList (date, text) {
+      this.dataSummary = []
+      this.dataCalendar = []
+      let dataJobData = []
+      if (text === 'sortNo1') {
+        // let jobNo = this.checkEventInfo.filter(el => { return el.start === date && el.sortNo === 2 })[0].jobNo
+        await axios
+          .get(
+          // eslint-disable-next-line quotes
+            this.DNS_IP +
+            '/job/get?shopId=' +
+            this.session.data.shopId +
+            '&empStepId=' + this.empSelectJob + '&dueDate=' + date + '&sortNo=1'
+          )
+          .then(async response => {
+            if (response.data.status === false) {
+              dataJobData = []
+            } else {
+              // dataJobData = response.data
+              response.data.forEach((row) => {
+                if (typeof (dataJobData[row.jobNo]) === 'undefined') {
+                  dataJobData[row.jobNo] = []
+                }
+                dataJobData[row.jobNo].push(row)
+              })
+              console.log('dataJobData', dataJobData)
+              console.log('checkEventInfo', this.checkEventInfo.filter(el => { return el.start === date && el.sortNo === 1 }))
+              for (let i = 0; i < this.checkEventInfo.filter(el => { return el.start === date && el.sortNo === 1 }).length; i++) {
+                var d = this.checkEventInfo.filter(el => { return el.start === date && el.sortNo === 1 })[i]
+                d.name = dataJobData[d.jobNo].filter((row) => { return row.fieldName === 'ชื่อ' })[0].fieldValue
+                d.licenseNo = dataJobData[d.jobNo].filter((row) => { return row.fieldName === 'เลขทะเบียน' })[0].fieldValue
+                d.tel = dataJobData[d.jobNo].filter((row) => { return row.fieldName === 'เบอร์โทร' })[0].fieldValue
+                d.timeDue = dataJobData[d.jobNo][0].timeDue
+                d.dueDate = dataJobData[d.jobNo][0].dueDate
+                d.bgcolor = 'orange'
+                this.dataCalendar.push(d)
+              }
+
+              this.dataCalendar.sort((a, b) => {
+                let keyA = new Date(a.dueDate)
+                let keyB = new Date(b.dueDate)
+                if (keyA < keyB) return -1
+                if (keyA > keyB) return 1
+                return 0
+              })
+              console.log('this.dataCalendar', this.dataCalendar)
+              this.dataSummary = this.dataCalendar.reduce((r, a) => {
+                r[a.bgcolor] = r[a.bgcolor] || {}
+                r[a.bgcolor][a.timeDue] = r[a.bgcolor][a.timeDue] || []
+                r[a.bgcolor][a.timeDue].push(a)
+                return r
+              }, Object.create(null))
+              console.log('this.dataSummary', this.dataSummary)
+            }
+          })
+        this.dialogCalenda = true
+      } else {
+        await axios
+          .get(
+          // eslint-disable-next-line quotes
+            this.DNS_IP +
+            '/job/get?shopId=' +
+            this.session.data.shopId +
+            '&empStepId=' + this.empSelectJob + '&dueDate=' + date + '&sortNo=2'
+          )
+          .then(async response => {
+            if (response.data.status === false) {
+              dataJobData = []
+            } else {
+              // dataJobData = response.data
+              response.data.forEach((row) => {
+                if (typeof (dataJobData[row.jobNo]) === 'undefined') {
+                  dataJobData[row.jobNo] = []
+                }
+                dataJobData[row.jobNo].push(row)
+              })
+              console.log('dataJobData', dataJobData)
+              console.log('checkEventInfo', this.checkEventInfo.filter(el => { return el.start === date && el.sortNo === 2 }))
+              for (let i = 0; i < this.checkEventInfo.filter(el => { return el.start === date && el.sortNo === 2 }).length; i++) {
+                var d = this.checkEventInfo.filter(el => { return el.start === date && el.sortNo === 2 })[i]
+                d.name = dataJobData[d.jobNo].filter((row) => { return row.fieldName === 'ชื่อ' })[0].fieldValue
+                d.licenseNo = dataJobData[d.jobNo].filter((row) => { return row.fieldName === 'เลขทะเบียน' })[0].fieldValue
+                d.tel = dataJobData[d.jobNo].filter((row) => { return row.fieldName === 'เบอร์โทร' })[0].fieldValue
+                d.timeDue = dataJobData[d.jobNo][0].timeDue
+                d.dueDate = dataJobData[d.jobNo][0].dueDate
+                d.bgcolor = 'blue'
+                this.dataCalendar.push(d)
+              }
+
+              this.dataCalendar.sort((a, b) => {
+                let keyA = new Date(a.dueDate)
+                let keyB = new Date(b.dueDate)
+                if (keyA < keyB) return -1
+                if (keyA > keyB) return 1
+                return 0
+              })
+              console.log('this.dataCalendar', this.dataCalendar)
+              this.dataSummary = this.dataCalendar.reduce((r, a) => {
+                r[a.bgcolor] = r[a.bgcolor] || {}
+                r[a.bgcolor][a.timeDue] = r[a.bgcolor][a.timeDue] || []
+                r[a.bgcolor][a.timeDue].push(a)
+                return r
+              }, Object.create(null))
+              console.log('this.dataSummary', this.dataSummary)
+            }
+          })
+        this.dialogCalenda = true
+      }
+    },
     async prev () {
       this.$refs.calendaronsite.prev()
       // this.getBookingList()
@@ -6034,6 +6219,7 @@ export default {
               let d = bookingData[i]
               itemIncustomField.push(d.fieldId)
             }
+            console.log('itemIncustomField', itemIncustomField)
             await axios
               .get(this.DNS_IP + '/customField/fieldId?fieldId=' + itemIncustomField)
               .then(async responses => {
@@ -6322,18 +6508,6 @@ export default {
     },
     async checkEmpJob () {
       console.log('this.$refs.calendaronsite', this.$refs.calendaronsite)
-      // this.dataEmpOnsite = []
-      // await axios
-      //   .get(
-      //     this.DNS_IP + '/job/getList?shopId=' + this.session.data.shopId + '&empStep=' + this.empSelectJob
-      //   )
-      //   .then(async response => {
-      //     let rs = response.data
-      //     if (rs.status === false) {
-      //       this.dataEmpOnsite = []
-      //     } else {
-      //       this.dataEmpOnsite = rs
-      //       console.log('this.dataEmpOnsite', this.dataEmpOnsite)
       var flowId = ''
       if (this.flowId !== '') {
         flowId = this.flowId
@@ -6341,6 +6515,7 @@ export default {
         flowId = this.BookingDataItem[0].flowId
       }
       this.eventInfo = []
+      this.checkEventInfo = []
       await axios
         .get(
           this.DNS_IP + '/booking_view/getCountNotimeJob?shopId=' + this.session.data.shopId + '&empStep=' + this.empSelectJob + '&flowId=' + flowId
@@ -6366,8 +6541,11 @@ export default {
               } else if (d.sortNo === 3) {
                 this.eventInfo[dueDate].sortNo3++
               }
+              this.checkEventInfo.push(d)
             }
+            this.today = moment(moment(new Date()), 'YYYY-MM-DD').format('YYYY-MM-DD')
             console.log('this.eventInfo', this.eventInfo)
+            console.log('this.checkEventInfo', this.checkEventInfo)
             this.$refs.calendaronsite.checkChange()
           }
         })
@@ -6389,6 +6567,7 @@ export default {
       //       this.dataEmpOnsite = []
       //     } else {
       this.eventInfo = []
+      this.checkEventInfo = []
       await axios
         .get(
           this.DNS_IP + '/booking_view/getCountNotimeJob?shopId=' + this.session.data.shopId + '&empStep=' + this.empSelectJob + '&flowId=' + this.BookingDataItem[0].flowId + '&dueDate=' + year + '-' + month
@@ -6414,7 +6593,9 @@ export default {
               } else if (d.sortNo === 3) {
                 this.eventInfo[dueDate].sortNo3++
               }
+              this.checkEventInfo.push(d)
             }
+            this.today = moment(moment(new Date()), 'YYYY-MM-DD').format('YYYY-MM-DD')
             console.log('this.eventInfo', this.eventInfo)
             this.$refs.calendaronsite.checkChange()
           }

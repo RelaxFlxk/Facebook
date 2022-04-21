@@ -28,7 +28,7 @@
     "md5": "^2.3.0",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.34",
-    "pdfmake": "^0.2.4",
+    "pdfmake": "^0.2.5",
     "qrcode": "^1.4.4",
     "qrcode.vue": "^1.7.0",
     "read-excel-file": "^5.0.0",
@@ -52,6 +52,7 @@
     "vue2-google-maps": "^0.10.7",
     "vuedraggable": "^2.24.3",
     "vuetify": "^2.3.16",
+    "vuetify-upload-button": "^2.0.2",
     "xlsx": "^0.16.9"
   },
   "devDependencies": {
