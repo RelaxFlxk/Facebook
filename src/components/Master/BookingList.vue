@@ -1860,7 +1860,7 @@
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
                     <!-- confirm -->
-                    <v-tooltip bottom v-if="showMap === 'แสดง' && item.addressLatLong !== null">
+                    <v-tooltip bottom v-if="item.addressLatLong !== null">
                       <template v-slot:activator="{ on, attrs }">
                         <v-btn
                           color="blue-grey darken-1"
@@ -2025,19 +2025,18 @@
                         :options="{ disableDefaultUI: true }"
                       >
                         <GmapMarker @click="gotoMap()" :position="center" />
-                        <!-- <gmap-info-window
-                          @closeclick="window_open=false"
-                          :opened="window_open"
-                          :position="center"
-                          :options="{
-                            pixelOffset: {
-                              width: 0,
-                              height: -35
-                            }
-                          }"
-                      >
-                          {{address}}
-                      </gmap-info-window> -->
+                        <gmap-info-window
+                              :opened="true"
+                              :position="center"
+                              :options="{
+                                pixelOffset: {
+                                  width: 0,
+                                  height: -35
+                                }
+                              }"
+                          >
+                              กดที่หมุดเพื่อ นำทาง
+                          </gmap-info-window>
                       </GmapMap>
                       </v-container>
                     </v-card>
@@ -2151,7 +2150,7 @@
                       <v-btn
                         small
                         color="#E0E0E0"
-                        @click="(dialogEditData = false)"
+                        @click="(dialogEditData = false, this.dataEditReady = true)"
                       >
                         <v-icon color="#173053">mdi-close</v-icon>
                       </v-btn>
@@ -2950,7 +2949,7 @@ export default {
         { text: 'เบอร์โทร', value: 'tel' },
         { text: 'ทะเบียนรถ', value: 'cusReg' },
         { text: 'สถานะนัดหมาย', value: 'statusBtText' },
-        { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
+        { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
         { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
         // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
       ],
@@ -3126,26 +3125,27 @@ export default {
       clearInterval(this.setTimerCalendar)
       this.setTimerCalendar = null
     },
-    async getShowMap () {
-      await axios
-        .get(
-          this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
-        )
-        .then(async response1 => {
-          let rs = response1.data
-          if (rs.status !== false) {
-            if (rs[0].showMap === null || rs[0].showMap === '') {
-              this.showMap = 'ไม่แสดง'
-            } else {
-              this.showMap = rs[0].showMap
-            }
-          } else {
-            this.showMap = 'ไม่แสดง'
-          }
-        })
-    },
+    // async getShowMap () {
+    //   await axios
+    //     .get(
+    //       this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+    //     )
+    //     .then(async response1 => {
+    //       let rs = response1.data
+    //       if (rs.status !== false) {
+    //         if (rs[0].showMap === null || rs[0].showMap === '') {
+    //           this.showMap = 'ไม่แสดง'
+    //         } else {
+    //           this.showMap = rs[0].showMap
+    //         }
+    //       } else {
+    //         this.showMap = 'ไม่แสดง'
+    //       }
+    //     })
+    // },
     gotoMap () {
-      window.location.href = 'https://www.google.com/maps/dir/?api=1&travelmode=driving&layer=traffic&destination=' + this.center.lat + ',' + this.center.lng
+      window.open('https://www.google.com/maps/dir/?api=1&travelmode=driving&layer=traffic&destination=' + this.center.lat + ',' + this.center.lng, '_blank')
+      // window.location.href = 'https://www.google.com/maps/dir/?api=1&travelmode=driving&layer=traffic&destination=' + this.center.lat + ',' + this.center.lng
     },
     setShowMap (dt) {
       this.center = null
@@ -3181,7 +3181,7 @@ export default {
             '/booking_view/getSearch?shopId=' +
             this.session.data.shopId +
             '&fieldValue=' +
-            this.searchOther
+            this.searchOther + '&checkOnsite=is null'
           )
           .then(async response => {
           // console.log('getData', response.data)
@@ -3333,7 +3333,7 @@ export default {
     async onSaveRemark () {
       var dt = {
         LAST_USER: this.session.data.userName,
-        remark: this.remark.replace(/%/g, '%%')
+        remark: (this.remark || '').replace(/%/g, '%%')
       }
       await axios
         .post(
@@ -3513,7 +3513,7 @@ export default {
           // console.log('checkDupliRegNo', checkDupliRegNo[0].fieldValue.replace(/ /g, ''))
           await axios
             .get(this.DNS_IP + '/booking_view/getSearchDuplicate?shopId=' + this.session.data.shopId + '&fieldValue=' + checkDupliRegNo[0].fieldValue.replace(/ /g, '') +
-            '&flowId=' + this.formEdit.flowId + '&dueDate=' + this.dateEdit + '&noBookNo=' + checkDupliRegNo[0].bookNo + '&statusBt=noCancel')
+            '&flowId=' + this.formEdit.flowId + '&dueDate=' + this.dateEdit + '&noBookNo=' + checkDupliRegNo[0].bookNo + '&statusBt=noCancel' + '&checkOnsite=is null')
             .then(response => {
               let rs = response.data
               if (rs.status === false) {
@@ -3582,7 +3582,7 @@ export default {
             update.bookingDataId = d.bookingDataId
             update.bookingFieldId = d.bookingFieldId
             update.bookNo = d.bookNo
-            update.fieldValue = d.fieldValue.replace(/%/g, '%%')
+            update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%')
             update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
             update.timeText = this.timeEdit.text
             update.flowId = this.formEdit.flowId
@@ -3609,7 +3609,7 @@ export default {
                 update.bookingDataId = d.bookingDataId
                 update.bookingFieldId = d.bookingFieldId
                 update.bookNo = d.bookNo
-                update.fieldValue = d.fieldValue.replace(/%/g, '%%')
+                update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%')
                 update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
                 update.timeText = this.timeEdit.text
                 update.flowId = this.formEdit.flowId
@@ -3627,7 +3627,7 @@ export default {
                 update.bookingDataId = d.bookingDataId
                 update.bookingFieldId = d.bookingFieldId
                 update.bookNo = d.bookNo
-                update.fieldValue = d.fieldValue.replace(/%/g, '%%')
+                update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%')
                 update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
                 update.timeText = this.timeEdit.text
                 update.flowId = this.formEdit.flowId
@@ -3691,7 +3691,7 @@ export default {
       if (this.$session.id() !== undefined) {
         console.log('getDataCalendaBooking')
         try {
-          await this.$refs.CalendarBooking.getDataReturn()
+          await this.$refs.CalendarBooking.getDataReturn('&checkOnsite=is null')
         } catch (e) { console.log(e) }
       // this.$refs.CalendarBooking.getDataFlow()
       // this.$refs.CalendarBooking.getDataBranch()
@@ -3704,19 +3704,14 @@ export default {
       }
     },
     async addDataSet () {
-      // console.log('this.setTimer', this.setTimer)
-      // clearTimeout(this.setTimer)
-      // this.setTimer = null
-      // console.log('this.setTimer', this.setTimer)
-      // this.getDataCalendaBooking()
-      // this.$refs.CalendarBooking.getDataReturn()
       let _this = this
       this.setTimerCalendar = setInterval(function () { _this.getDataCalendaBooking() }, 20000)
       // var _this = this
       // this.setTimerCalendar = setInterval(function () { _this.getDataCalendaBooking() }, 30000)
       this.dialogAdd = true
+      setTimeout(() => this.getDataCalendaBooking(), 1000)
       if (this.branch.length === 0) {
-        await this.getDataBranch()
+        this.getDataBranch()
       }
       this.getBookingField()
       this.checkTime()
@@ -4470,10 +4465,10 @@ export default {
           //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
         })
     },
-    async getDataFromAPI (url, fieldId, fieldName) {
+    async getDataFromAPI (url, fieldId, fieldName, param) {
       let result = []
       await axios
-        .get(this.DNS_IP + `${url}?shopId=${this.session.data.shopId}`)
+        .get(this.DNS_IP + `${url}?shopId=${this.session.data.shopId}${param}`)
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
@@ -4493,7 +4488,7 @@ export default {
       return result
     },
     async getDataFlow () {
-      this.DataFlowName = await this.getDataFromAPI('/flow/get', 'flowId', 'flowName')
+      this.DataFlowName = await this.getDataFromAPI('/flow/get', 'flowId', 'flowName', '&checkOnsite=is null')
     },
     async getDataBranch () {
       // if (localStorage.getItem('BRANCH') === null) {
@@ -4502,7 +4497,7 @@ export default {
       //   localStorage.setItem('BRANCH', JSON.stringify(temp))
       // }
       // this.branch = JSON.parse(localStorage.getItem('BRANCH'))
-      this.branch = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName')
+      this.branch = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName', '')
     },
     getDataFromFieldName (data, key) {
       if (data !== undefined) {
@@ -4524,7 +4519,7 @@ export default {
             this.session.data.shopId +
             '&masBranchID=' +
             this.masBranchIDExport +
-            '&dateRange=' + new Date(this.dateRange.startDate).toISOString().substr(0, 10) + '/' + new Date(this.dateRange.endDate).toISOString().substr(0, 10)
+            '&dateRange=' + new Date(this.dateRange.startDate).toISOString().substr(0, 10) + '/' + new Date(this.dateRange.endDate).toISOString().substr(0, 10) + '&checkOnsite=is null'
         )
         .then(async response => {
           console.log('getData', response.data)
@@ -4644,12 +4639,12 @@ export default {
           { text: 'ชื่อลูกค้า', value: 'cusName' },
           { text: 'เบอร์โทร', value: 'tel' },
           { text: 'ทะเบียนรถ', value: 'cusReg' },
-          { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
+          { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
           { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
           { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
           { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
           { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
-          // { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
+          // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
           // { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
           // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
         ]
@@ -4714,7 +4709,7 @@ export default {
             { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
             { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
             { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
-            // { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
+            // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
             // { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
             // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
           ]
@@ -4727,7 +4722,7 @@ export default {
             { text: 'ชื่อลูกค้า', value: 'cusName' },
             { text: 'เบอร์โทร', value: 'tel' },
             { text: 'ทะเบียนรถ', value: 'cusReg' },
-            { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
+            { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
             { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
             { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
             { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
@@ -4740,7 +4735,7 @@ export default {
             { text: 'ชื่อลูกค้า', value: 'cusName' },
             { text: 'เบอร์โทร', value: 'tel' },
             { text: 'ทะเบียนรถ', value: 'cusReg' },
-            { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
+            { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
             { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
             { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
         }
@@ -4806,7 +4801,7 @@ export default {
                     this.session.data.shopId +
                     '&masBranchID=' +
                     this.masBranchID +
-                    '&dueDate=' + moment(moment(this.timeTable, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+                    '&dueDate=' + moment(moment(this.timeTable, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD') + '&checkOnsite=is null'
               )
               .then(async response => {
                 console.log('getData', response.data)
@@ -5166,7 +5161,7 @@ export default {
       this.searchAll2 = ''
       var dataItemTimes = []
       var dataItems = []
-      await this.getShowMap()
+      // await this.getShowMap()
       await this.getBookingDataList(this.dateStart)
       await axios
         .get(
@@ -5177,7 +5172,7 @@ export default {
             '&masBranchID=' +
             this.masBranchID +
             '&dueDate=' +
-            this.dateStart
+            this.dateStart + '&checkOnsite=is null'
         )
         .then(async response => {
           // console.log('getData', response.data)
@@ -5616,7 +5611,7 @@ export default {
             console.log('checkDupliRegNo', checkDupliRegNo[0].fieldValue.replace(/ /g, ''))
             await axios
               .get(this.DNS_IP + '/booking_view/getSearchDuplicate?shopId=' + this.session.data.shopId + '&fieldValue=' + checkDupliRegNo[0].fieldValue.replace(/ /g, '') +
-            '&flowId=' + this.formAdd.flowId + '&dueDate=' + this.date + '&statusBt=noCancel')
+            '&flowId=' + this.formAdd.flowId + '&dueDate=' + this.date + '&statusBt=noCancel' + '&checkOnsite=is null')
               .then(response => {
                 let rs = response.data
                 if (rs.status === false) {
@@ -6208,7 +6203,7 @@ export default {
       var dt = {
         LAST_USER: this.session.data.userName,
         empSelect: this.empSelect,
-        remark: this.remark.replace(/%/g, '%%')
+        remark: (this.remark || '').replace(/%/g, '%%')
       }
       await axios
         .post(
@@ -6252,7 +6247,7 @@ export default {
             shopId: this.$session.getAll().data.shopId,
             CREATE_USER: this.session.data.userName,
             LAST_USER: this.session.data.userName,
-            remarkRemove: this.remarkRemove.replace(/%/g, '%%')
+            remarkRemove: (this.remarkRemove || '').replace(/%/g, '%%')
           }
           axios
             .post(this.DNS_IP + '/booking_transaction/add', dt)
@@ -6292,7 +6287,7 @@ export default {
         if (this.remark !== '') {
           var dt = {
             LAST_USER: this.session.data.userName,
-            remark: this.remark.replace(/%/g, '%%')
+            remark: (this.remark || '').replace(/%/g, '%%')
           }
           await axios
             .post(

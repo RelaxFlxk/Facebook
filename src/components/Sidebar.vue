@@ -89,33 +89,6 @@
 
     <v-list-group
       dense
-        :value="broadCastValue"
-        prepend-icon="mdi-graph-outline"
-        color="white"
-        no-action
-        v-if="broadCast.length > 0"
-      >
-      <template v-slot:activator>
-          <v-list-item-title class="menu-head text-wrap">เครื่องมือการตลาด</v-list-item-title>
-        </template>
-
-        <v-list-item
-          v-for="(item, i) in broadCast"
-          :key="i"
-          :to="item.to"
-          router
-          exact
-          dense
-        >
-          <v-list-item-icon>
-            <v-icon v-text="item.icon" dense color="white"></v-icon>
-          </v-list-item-icon>
-          <v-list-item-title v-text="item.title" class="text-wrap" dense color="white"></v-list-item-title>
-        </v-list-item>
-      </v-list-group>
-
-    <v-list-group
-      dense
         :value="workflowValue"
         prepend-icon="mdi-toolbox "
         color="white"
@@ -140,6 +113,33 @@
           <v-list-item-title dense class="text-wrap" v-text="item.title"></v-list-item-title>
         </v-list-item>
     </v-list-group>
+
+    <v-list-group
+      dense
+        :value="broadCastValue"
+        prepend-icon="mdi-graph-outline"
+        color="white"
+        no-action
+        v-if="broadCast.length > 0"
+      >
+      <template v-slot:activator>
+          <v-list-item-title class="menu-head text-wrap">เครื่องมือการตลาด</v-list-item-title>
+        </template>
+
+        <v-list-item
+          v-for="(item, i) in broadCast"
+          :key="i"
+          :to="item.to"
+          router
+          exact
+          dense
+        >
+          <v-list-item-icon>
+            <v-icon v-text="item.icon" dense color="white"></v-icon>
+          </v-list-item-icon>
+          <v-list-item-title v-text="item.title" class="text-wrap" dense color="white"></v-list-item-title>
+        </v-list-item>
+      </v-list-group>
 
     <v-list-group
       dense

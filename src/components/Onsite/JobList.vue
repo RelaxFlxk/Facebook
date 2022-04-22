@@ -67,11 +67,7 @@
                         </v-sheet>
                       </v-col>
                       <v-col cols="8" class="pl-3">
-                        <template v-for="(itemJobs, indexitemJob) in dataJob.filter(
-                            el => {
-                              return el.jobNo === items.jobNo;
-                            }
-                          )"
+                        <template v-for="(itemJobs, indexitemJob) in dataJob.filter(el => {return el.jobNo === items.jobNo;})"
                         >
                         <div :key="indexitemJob">
                           <span class="font-weight-bold">{{itemJobs.fieldName}} :</span>
@@ -103,7 +99,7 @@
                         <v-btn
                           tile
                           color="yellow darken-3 white--text"
-                          @click="callCustomer(dataJob)"
+                          @click="callCustomer(dataJob.filter(el => {return el.jobNo === items.jobNo;}))"
                         >
                           <v-icon left>
                             mdi-phone-outline
@@ -376,6 +372,18 @@ export default {
     this.getDataFlow()
   },
   methods: {
+    callCustomer (data) {
+      console.log('dataJob', data)
+      if (data.filter(el => { return el.fieldName === 'เบอร์โทร' }).length > 0) {
+        window.location = 'tel:' + data.filter(el => { return el.fieldName === 'เบอร์โทร' })[0].fieldValue
+      } else {
+        this.$swal(
+          'ผิดพลาด',
+          'ไม่มีเบอร์โทร',
+          'error'
+        )
+      }
+    },
     handleFileImportBefore () {
       window.addEventListener('focus', () => {
       }, { once: true })
@@ -555,6 +563,11 @@ export default {
       await this.getDataFlowStep()
       await this.checkEmpJob()
       await this.getJobData()
+      if (this.itemJob.filter(el => { return el.sortNo === 2 }).length > 0) {
+        this.tab = 1
+      } else {
+        this.tab = 0
+      }
     },
     async checkEmpJob () {
       this.itemJob = []

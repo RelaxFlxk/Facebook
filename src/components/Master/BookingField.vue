@@ -345,7 +345,7 @@
                       ></v-checkbox>
                       <v-text-field v-model="showTime" readonly label="แสดงเวลาการจองหรือไม่"></v-text-field>
                     </v-row>
-                    <v-row align="center">
+                    <!-- <v-row align="center">
                       <v-checkbox
                         false-value="ไม่แสดง"
                         true-value="แสดง"
@@ -354,7 +354,7 @@
                         class="shrink ml-6 mr-0 mt-0 mb-6"
                       ></v-checkbox>
                       <v-text-field v-model="showMap" readonly label="แสดงแผนที่หรือไม่"></v-text-field>
-                    </v-row>
+                    </v-row> -->
                     <v-data-table
                       v-model="itemdetell"
                       :headers="FieldSelect"

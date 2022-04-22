@@ -695,7 +695,7 @@
                             ></v-select>
                             </v-col>
                           </v-row>
-                          <v-row>
+                          <!-- <v-row>
                             <v-col class="pt-0">
                               <v-radio-group v-model="formAdd.radiosRemark" row required :rules ="[rules.required]">
                                 <v-radio value="ซ่อมปกติ">
@@ -715,7 +715,7 @@
                                 </v-radio>
                               </v-radio-group>
                             </v-col>
-                          </v-row>
+                          </v-row> -->
                           <v-row>
                             <v-col class="pt-0">
                               <v-select
@@ -1197,9 +1197,36 @@
                   </v-row>
                   </v-form>
                   <br>
+                  <template v-if="BookingDataItem.length > 0">
+                  <div class="text-center" v-if="BookingDataItem[0].addressLatLong === null">
+                    <v-alert
+                        dense
+                        outlined
+                        type="error"
+                      >
+                      <v-row align="center">
+                        <v-col class="grow">
+                          เนื่องจาก นัดหมายนี้ยังไม่มี แผนที่ กรุณานำ QR code หรือ ส่งลิงค์ ให้ลูกค้ากรอกด้วย !!
+                        </v-col>
+                        <v-col class="shrink">
+                          <v-btn
+                            tile
+                            color="success"
+                            @click="getQrCOde(BookingDataItem[0])"
+                          >
+                            <v-icon left>
+                              mdi-qrcode-scan
+                            </v-icon>
+                            เปิด QR Code
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+                      </v-alert>
+                  </div>
                   <div class="text-center">
                     <v-btn
                       elevation="2"
+                      v-if="BookingDataItem[0].addressLatLong !== null"
                       small
                       dark
                       color="#173053"
@@ -1212,6 +1239,7 @@
                       <v-icon color="#173053">mdi-close</v-icon> ยกเลิก
                     </v-btn>
                   </div>
+                  </template>
                 </v-container>
               </v-card-text>
               <v-card-text  v-if="!dataEditJobReady">
@@ -1919,7 +1947,7 @@
                       fab
                       v-if="item.statusBt === 'confirm'"
                       small
-                      @click.stop="(dialogEdit = true), getBookingData(item), checkTimeFlow()"
+                      @click.stop="(dialogEdit = true), getBookingData(item), checkTimeFlow(), getEmpSelectAdd()"
                     >
                       <v-icon dark> mdi-account-plus </v-icon>
                     </v-btn>
@@ -1932,16 +1960,6 @@
                       @click.stop="(dialogDelete = true), getDataById(item)"
                     >
                       <v-icon> mdi-delete </v-icon>
-                    </v-btn>
-                    <v-btn
-                      color="info"
-                      dark
-                      v-if="item.statusBt === 'confirmJob'"
-                      fab
-                      small
-                      @click.stop="(dialogJob = true), getjob(item)"
-                    >
-                      <v-icon> mdi-qrcode-scan </v-icon>
                     </v-btn>
                   </template>
                 </v-data-table>
@@ -2030,7 +2048,7 @@
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
                     <!-- confirm -->
-                    <v-tooltip bottom v-if="showMap === 'แสดง' && item.addressLatLong !== null">
+                    <v-tooltip bottom v-if="item.addressLatLong !== null">
                       <template v-slot:activator="{ on, attrs }">
                         <v-btn
                           color="blue-grey darken-1"
@@ -2067,7 +2085,7 @@
                           color="primary"
                           fab
                           small
-                          @click.stop="(dialogEdit = true), getBookingDataJob(item, 'qrcode')"
+                          @click.stop="(dialogEdit = true), getBookingDataJob(item, 'qrcode'), getEmpSelectAdd()"
                           v-bind="attrs"
                           v-on="on"
                         >
@@ -2107,7 +2125,7 @@
                       </template>
                       <span>เปลี่ยนเวลานัดหมาย</span>
                     </v-tooltip>
-                    <v-tooltip bottom v-if="item.statusBt !== 'cancel' && item.statusBt !== 'confirmJob'">
+                    <v-tooltip bottom v-if="item.statusBt !== 'cancel' && item.statusBt !== 'confirmJob' && item.statusBt !== 'confirm'">
                       <template v-slot:activator="{ on, attrs }">
                         <v-btn
                           color="error"
@@ -2130,7 +2148,7 @@
                           dark
                           fab
                           small
-                          @click.stop="(dialogJob = true), getjob(item)"
+                          @click.stop="(dialogJob = true), getjob(item), getEmpSelectAdd()"
                           v-bind="attrs"
                           v-on="on"
                         >
@@ -2154,6 +2172,22 @@
                         </v-btn>
                       </template>
                       <span>ลบรายการนี้</span>
+                    </v-tooltip>
+                    <v-tooltip bottom v-if="item.userId === 'user-skip' || item.userId === ''">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          color="purple"
+                          dark
+                          fab
+                          small
+                          @click.stop="getQrCOde(item)"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <v-icon> mdi-qrcode-scan </v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Qr Code เพื่อขอที่อยู่</span>
                     </v-tooltip>
                   </template>
                 </v-data-table>
@@ -2195,19 +2229,18 @@
                         :options="{ disableDefaultUI: true }"
                       >
                         <GmapMarker @click="gotoMap()" :position="center" />
-                        <!-- <gmap-info-window
-                          @closeclick="window_open=false"
-                          :opened="window_open"
-                          :position="center"
-                          :options="{
-                            pixelOffset: {
-                              width: 0,
-                              height: -35
-                            }
-                          }"
-                      >
-                          {{address}}
-                      </gmap-info-window> -->
+                        <gmap-info-window
+                              :opened="true"
+                              :position="center"
+                              :options="{
+                                pixelOffset: {
+                                  width: 0,
+                                  height: -35
+                                }
+                              }"
+                          >
+                              กดที่หมุดเพื่อ นำทาง
+                          </gmap-info-window>
                       </GmapMap>
                       </v-container>
                     </v-card>
@@ -2354,6 +2387,20 @@
                     </v-select>
                   </v-col>
                 </v-row>
+                 <v-row>
+                  <v-col class="pt-0">
+                    <v-select
+                      v-model="empSelectAdd"
+                      :items="empSelectStepAdd"
+                      label="พนักงานที่รับนัดหมาย"
+                      menu-props="auto"
+                      outlined
+                      required
+                      :rules="[rules.required]"
+                      dense
+                    ></v-select>
+                  </v-col>
+                </v-row>
                 <v-row>
                   <v-col cols= "12"  class="pb-0 pt-0">
                   <v-textarea
@@ -2434,33 +2481,10 @@
                       </v-btn>
                     </v-col>
                     <v-row justify="center">
-                      <!-- <v-col
-                        cols="6"
-                      > -->
-                      <!-- <v-col
-                        cols="8"
-                        class="text-center d-none d-sm-flex"
-                        style="margin: auto 0;"
-                      > -->
-                        <!-- <v-col class="text-center">
-                          <CalendarBooking ref="CalendarBooking"></CalendarBooking> -->
-                          <!-- <v-img
-                            class="v-margit_img_reward"
-                            :src="require('@/assets/AddBookingList.svg')"
-                            max-width="470.37"
-                            max-height="247"
-                          ></v-img> -->
-                        <!-- </v-col> -->
-                      <!-- </v-col> -->
-
                       <v-col cols="12">
                       <!-- <v-col cols="12" sm="6" md="6" lg="6" class="v-margit_text_add mt-0 pa-0"> -->
                         <v-col class="text-center pa-3 ml-2">
                           <h3 style="font-size:10vw;" class="underline-06">แก้ไขข้อมูล</h3>
-                          <!-- <v-img
-                            class="v_text_add"
-                            :src="require('@/assets/Grouptitle.svg')"
-                          ></v-img> -->
                         </v-col>
                         <v-form ref="form_edit" v-model="validEdit" lazy-validation>
                         <v-col cols="12" v-if="dataEditReady">
@@ -2801,7 +2825,7 @@
                             ></v-select>
                             </v-col>
                           </v-row>
-                          <v-row>
+                          <!-- <v-row>
                             <v-col class="pt-0">
                               <v-radio-group v-model="formEdit.radiosRemark" row  required :rules ="[rules.required]">
                                 <v-radio value="ซ่อมปกติ">
@@ -2821,7 +2845,7 @@
                                 </v-radio>
                               </v-radio-group>
                             </v-col>
-                          </v-row>
+                          </v-row> -->
                           <v-row>
                             <v-col class="pt-0">
                               <v-select
@@ -3055,6 +3079,61 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
+          <v-dialog v-model="dialogQrCode" persistent :max-width="dialogwidth">
+            <v-card
+              style="background: linear-gradient(180deg, #FFFFFF 0%, #E1F3FF 100%);">
+                <v-container >
+                  <v-row >
+                    <v-col cols="12">
+                      <div class=" text-center">
+                      <br/>
+                        <br>
+                        <h2 style="font-weight: 900; color:#FFA000">QR Code และ Link สำหรับ รับที่อยู่ลูกค้า !</h2>
+                        <qrcode-vue :value="value" :size="size" level="H" :foreground="foreground" />
+                        <v-row align-content="center">
+                        <v-col cols="12"  class="pb-0">
+                          <v-text-field
+                            v-model="Redirect"
+                            style="background-color:#050C42;"
+                            solo
+                            disabled
+                            id="myInput"
+                            dense
+                          >
+                          </v-text-field>
+                        </v-col>
+                      </v-row>
+                      <v-row justify="center" no-gutters>
+                        <v-col cols="6" class="text-center">
+                          <v-btn
+                            color="#1B437C"
+                            small
+                            fab
+                            dark
+                            @click="FunCopy()"
+                          >
+                            <v-icon>mdi-content-copy</v-icon>
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+                    </div>
+                  </v-col>
+                </v-row>
+                </v-container>
+                <v-row >
+                  <v-col cols="12">
+                      <v-container class="text-center" >
+                        <v-btn small class="ma-2" color="error" @click="dialogQrCode = false" dark >
+                            ปิดหน้านี้
+                            <v-icon dark right>
+                                mdi-minus-circle
+                            </v-icon>
+                        </v-btn>
+                      </v-container>
+                  </v-col>
+                </v-row>
+              </v-card>
+          </v-dialog>
       </div>
     </v-main>
   </div>
@@ -3209,6 +3288,7 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      Redirect: 'https://liff.line.me/1656581804-7KRQyqo5/BookingAddress?shopId=' + this.$session.getAll().data.shopId,
       dataCalendar: [],
       dataSummary: [],
       today: '',
@@ -3299,6 +3379,7 @@ export default {
       dataEditReady: true,
       dataConfirmReady: true,
       dataCancelReady: true,
+      dialogQrCode: false,
       dialogCalenda: false,
       dialogExport: false,
       dialogRemove: false,
@@ -3341,7 +3422,7 @@ export default {
         { text: 'เบอร์โทร', value: 'tel' },
         { text: 'ทะเบียนรถ', value: 'cusReg' },
         { text: 'สถานะนัดหมาย', value: 'statusBtText' },
-        { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
+        // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
         { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
         // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
       ],
@@ -3502,13 +3583,13 @@ export default {
     // this.dataReady = false
     if (this.$route.query.bookNo) {
       await this.getDataBranch()
-      await this.getEmpSelectAdd()
+      // await this.getEmpSelectAdd()
       this.getCustomFieldStart()
       this.getDataFlow()
       await this.scanQrcode()
     } else {
       await this.getDataBranch()
-      await this.getEmpSelectAdd()
+      // await this.getEmpSelectAdd()
       this.getCustomFieldStart()
       this.getDataFlow()
       this.getBookingList()
@@ -3519,6 +3600,17 @@ export default {
     })
   },
   methods: {
+    FunCopy (text) {
+      var copyText = document.getElementById('myInput')
+      copyText.select()
+      copyText.setSelectionRange(0, 99999)
+      navigator.clipboard.writeText(copyText.value + '&bookNo=' + this.bookNo)
+    },
+    getQrCOde (item) {
+      this.bookNo = item.bookNo
+      this.value = this.Redirect + '&bookNo=' + this.bookNo
+      this.dialogQrCode = true
+    },
     async openCalendaList (date, text) {
       this.dataSummary = []
       this.dataCalendar = []
@@ -3531,7 +3623,7 @@ export default {
             this.DNS_IP +
             '/job/get?shopId=' +
             this.session.data.shopId +
-            '&empStepId=' + this.empSelectJob + '&dueDate=' + date + '&sortNo=1'
+            '&empStepId=' + this.empSelectJob + '&dueDate=' + date + '&sortNo=1' + '&checkOnsite=True'
           )
           .then(async response => {
             if (response.data.status === false) {
@@ -3548,9 +3640,14 @@ export default {
               console.log('checkEventInfo', this.checkEventInfo.filter(el => { return el.start === date && el.sortNo === 1 }))
               for (let i = 0; i < this.checkEventInfo.filter(el => { return el.start === date && el.sortNo === 1 }).length; i++) {
                 var d = this.checkEventInfo.filter(el => { return el.start === date && el.sortNo === 1 })[i]
-                d.name = dataJobData[d.jobNo].filter((row) => { return row.fieldName === 'ชื่อ' })[0].fieldValue
-                d.licenseNo = dataJobData[d.jobNo].filter((row) => { return row.fieldName === 'เลขทะเบียน' })[0].fieldValue
-                d.tel = dataJobData[d.jobNo].filter((row) => { return row.fieldName === 'เบอร์โทร' })[0].fieldValue
+                d.name = dataJobData[d.jobNo].filter((row) => { return row.fieldName === 'ชื่อ' })
+                d.licenseNo = dataJobData[d.jobNo].filter((row) => { return row.fieldName === 'เลขทะเบียน' })
+                d.tel = dataJobData[d.jobNo].filter((row) => { return row.fieldName === 'เบอร์โทร' })
+                d.carModel = dataJobData[d.jobNo].filter((row) => { return row.fieldName === 'รุ่นรถ' })
+                d.name = (d.name.length > 0) ? d.name[0].fieldValue : ''
+                d.licenseNo = (d.licenseNo.length > 0) ? d.licenseNo[0].fieldValue : ''
+                d.tel = (d.tel.length > 0) ? d.tel[0].fieldValue : ''
+                d.carModel = (d.carModel.length > 0) ? d.carModel[0].fieldValue : ''
                 d.timeDue = dataJobData[d.jobNo][0].timeDue
                 d.dueDate = dataJobData[d.jobNo][0].dueDate
                 d.bgcolor = 'orange'
@@ -3582,7 +3679,7 @@ export default {
             this.DNS_IP +
             '/job/get?shopId=' +
             this.session.data.shopId +
-            '&empStepId=' + this.empSelectJob + '&dueDate=' + date + '&sortNo=2'
+            '&empStepId=' + this.empSelectJob + '&dueDate=' + date + '&sortNo=2' + '&checkOnsite=True'
           )
           .then(async response => {
             if (response.data.status === false) {
@@ -3700,24 +3797,24 @@ export default {
       clearInterval(this.setTimerCalendar)
       this.setTimerCalendar = null
     },
-    async getShowMap () {
-      await axios
-        .get(
-          this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
-        )
-        .then(async response1 => {
-          let rs = response1.data
-          if (rs.status !== false) {
-            if (rs[0].showMap === null || rs[0].showMap === '') {
-              this.showMap = 'ไม่แสดง'
-            } else {
-              this.showMap = rs[0].showMap
-            }
-          } else {
-            this.showMap = 'ไม่แสดง'
-          }
-        })
-    },
+    // async getShowMap () {
+    //   await axios
+    //     .get(
+    //       this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+    //     )
+    //     .then(async response1 => {
+    //       let rs = response1.data
+    //       if (rs.status !== false) {
+    //         if (rs[0].showMap === null || rs[0].showMap === '') {
+    //           this.showMap = 'ไม่แสดง'
+    //         } else {
+    //           this.showMap = rs[0].showMap
+    //         }
+    //       } else {
+    //         this.showMap = 'ไม่แสดง'
+    //       }
+    //     })
+    // },
     gotoMap () {
       window.open('https://www.google.com/maps/dir/?api=1&travelmode=driving&layer=traffic&destination=' + this.center.lat + ',' + this.center.lng, '_blank')
       // window.location.href = 'https://www.google.com/maps/dir/?api=1&travelmode=driving&layer=traffic&destination=' + this.center.lat + ',' + this.center.lng
@@ -3756,8 +3853,7 @@ export default {
             '/booking_view/getSearch?shopId=' +
             this.session.data.shopId +
             '&fieldValue=' +
-            this.searchOther +
-            '&checkOnsite=True'
+            this.searchOther + '&checkOnsite=True'
           )
           .then(async response => {
           // console.log('getData', response.data)
@@ -3933,6 +4029,7 @@ export default {
     async setDataEdit (dt) {
       // this.dialogEditData = true
       await this.getBookingField()
+      this.getEmpSelectAddBooking()
       // await this.getBookingData(dt, 'edit')
       console.log('setDataEdit', dt)
       this.BookingDataItemEdit = []
@@ -4088,7 +4185,7 @@ export default {
           // console.log('checkDupliRegNo', checkDupliRegNo[0].fieldValue.replace(/ /g, ''))
           await axios
             .get(this.DNS_IP + '/booking_view/getSearchDuplicate?shopId=' + this.session.data.shopId + '&fieldValue=' + checkDupliRegNo[0].fieldValue.replace(/ /g, '') +
-            '&flowId=' + this.formEdit.flowId + '&dueDate=' + this.dateEdit + '&noBookNo=' + checkDupliRegNo[0].bookNo + '&statusBt=noCancel')
+            '&flowId=' + this.formEdit.flowId + '&dueDate=' + this.dateEdit + '&noBookNo=' + checkDupliRegNo[0].bookNo + '&statusBt=noCancel' + '&checkOnsite=True')
             .then(response => {
               let rs = response.data
               if (rs.status === false) {
@@ -4266,7 +4363,7 @@ export default {
       if (this.$session.id() !== undefined) {
         console.log('getDataCalendaBooking')
         try {
-          await this.$refs.CalendarBooking.getDataReturn()
+          await this.$refs.CalendarBooking.getDataReturn('&checkOnsite=True')
         } catch (e) { console.log(e) }
       // this.$refs.CalendarBooking.getDataFlow()
       // this.$refs.CalendarBooking.getDataBranch()
@@ -4279,20 +4376,16 @@ export default {
       }
     },
     async addDataSet () {
-      // console.log('this.setTimer', this.setTimer)
-      // clearTimeout(this.setTimer)
-      // this.setTimer = null
-      // console.log('this.setTimer', this.setTimer)
-      // this.getDataCalendaBooking()
-      // this.$refs.CalendarBooking.getDataReturn()
       let _this = this
       this.setTimerCalendar = setInterval(function () { _this.getDataCalendaBooking() }, 20000)
       // var _this = this
       // this.setTimerCalendar = setInterval(function () { _this.getDataCalendaBooking() }, 30000)
       this.dialogAdd = true
+      setTimeout(() => this.getDataCalendaBooking(), 1000)
       if (this.branch.length === 0) {
         await this.getDataBranch()
       }
+      this.getEmpSelectAddBooking()
       this.getBookingField()
       this.checkTime()
       this.remark = ''
@@ -4300,7 +4393,7 @@ export default {
     async getDataDefault () {
       this.loadingRefresh = true
       await this.getDataBranch()
-      await this.getEmpSelectAdd()
+      // await this.getEmpSelectAdd()
       this.getCustomFieldStart()
       this.getDataFlow()
       await this.getBookingList()
@@ -5099,7 +5192,7 @@ export default {
             this.session.data.shopId +
             '&masBranchID=' +
             this.masBranchIDExport +
-            '&dateRange=' + new Date(this.dateRange.startDate).toISOString().substr(0, 10) + '/' + new Date(this.dateRange.endDate).toISOString().substr(0, 10)
+            '&dateRange=' + new Date(this.dateRange.startDate).toISOString().substr(0, 10) + '/' + new Date(this.dateRange.endDate).toISOString().substr(0, 10) + '&checkOnsite=True'
         )
         .then(async response => {
           console.log('getData', response.data)
@@ -5219,7 +5312,7 @@ export default {
           { text: 'ชื่อลูกค้า', value: 'cusName' },
           { text: 'เบอร์โทร', value: 'tel' },
           { text: 'ทะเบียนรถ', value: 'cusReg' },
-          { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
+          // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
           { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
           { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
           { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
@@ -5302,7 +5395,7 @@ export default {
             { text: 'ชื่อลูกค้า', value: 'cusName' },
             { text: 'เบอร์โทร', value: 'tel' },
             { text: 'ทะเบียนรถ', value: 'cusReg' },
-            { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
+            // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
             { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
             { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
             { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
@@ -5315,7 +5408,7 @@ export default {
             { text: 'ชื่อลูกค้า', value: 'cusName' },
             { text: 'เบอร์โทร', value: 'tel' },
             { text: 'ทะเบียนรถ', value: 'cusReg' },
-            { text: 'คุณสมบัติเพิ่มเตืม', value: 'action3', sortable: false, align: 'center' },
+            // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
             { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
             { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
         }
@@ -5381,7 +5474,7 @@ export default {
                     this.session.data.shopId +
                     '&masBranchID=' +
                     this.masBranchID +
-                    '&dueDate=' + moment(moment(this.timeTable, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+                    '&dueDate=' + moment(moment(this.timeTable, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD') + '&checkOnsite=True'
               )
               .then(async response => {
                 console.log('getData', response.data)
@@ -5582,7 +5675,7 @@ export default {
       this.searchAll2 = ''
       var dataItemTimes = []
       var dataItems = []
-      await this.getShowMap()
+      // await this.getShowMap()
       await this.getBookingDataList(this.dateStart)
       await axios
         .get(
@@ -6006,8 +6099,9 @@ export default {
         axios
           .post(this.DNS_IP + '/Booking/add', Add)
           .then(async response => {
-          // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-            await this.confirmChkAdd(response.data)
+            this.clearDataAdd()
+            this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+            // await this.confirmChkAdd(response.data)
           // console.log('addDataGlobal DNS_IP + /job/add', response)
           })
           .catch(error => {
@@ -6034,7 +6128,7 @@ export default {
             console.log('checkDupliRegNo', checkDupliRegNo[0].fieldValue.replace(/ /g, ''))
             await axios
               .get(this.DNS_IP + '/booking_view/getSearchDuplicate?shopId=' + this.session.data.shopId + '&fieldValue=' + checkDupliRegNo[0].fieldValue.replace(/ /g, '') +
-            '&flowId=' + this.formAdd.flowId + '&dueDate=' + this.date + '&statusBt=noCancel')
+            '&flowId=' + this.formAdd.flowId + '&dueDate=' + this.date + '&statusBt=noCancel' + '&checkOnsite=True')
               .then(response => {
                 let rs = response.data
                 if (rs.status === false) {
@@ -6070,31 +6164,31 @@ export default {
           this.clearData()
         })
     },
-    async confirmChkAdd (item) {
-      console.log('item', item)
-      var dt = {
-        bookNo: item.bookNo,
-        contactDate: this.format_date(new Date()),
-        status: 'confirm',
-        statusUse: 'use',
-        shopId: this.$session.getAll().data.shopId,
-        CREATE_USER: this.session.data.userName,
-        LAST_USER: this.session.data.userName
-      }
-      await axios
-        .post(this.DNS_IP + '/booking_transaction/add', dt)
-        .then(async response => {
-          this.getDataCalendaBooking()
-          this.clearDataAdd()
-          this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-          // await this.getBookingList()
-          // this.getTimesChange('update')
-        })
-        .catch(error => {
-          console.log('error function addData : ', error)
-          setTimeout(() => this.confirmChkAdd(), 3000)
-        })
-    },
+    // async confirmChkAdd (item) {
+    //   console.log('item', item)
+    //   var dt = {
+    //     bookNo: item.bookNo,
+    //     contactDate: this.format_date(new Date()),
+    //     status: 'confirm',
+    //     statusUse: 'use',
+    //     shopId: this.$session.getAll().data.shopId,
+    //     CREATE_USER: this.session.data.userName,
+    //     LAST_USER: this.session.data.userName
+    //   }
+    //   await axios
+    //     .post(this.DNS_IP + '/booking_transaction/add', dt)
+    //     .then(async response => {
+    //       this.getDataCalendaBooking()
+    //       this.clearDataAdd()
+    //       this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+    //       // await this.getBookingList()
+    //       // this.getTimesChange('update')
+    //     })
+    //     .catch(error => {
+    //       console.log('error function addData : ', error)
+    //       setTimeout(() => this.confirmChkAdd(), 3000)
+    //     })
+    // },
     async clearDataAdd () {
       this.dataReady = false
       if (this.statusSearch === 'no') {
@@ -6242,6 +6336,7 @@ export default {
                             d.bookingDataId = dataBD[0].bookingDataId
                             d.flowId = dataBD[0].flowId
                             d.masBranchID = dataBD[0].masBranchID
+                            d.addressLatLong = dataBD[0].addressLatLong
                             // d.conditionField = d.conditionField
                             // d.fieldId = d.fieldId
                             // d.fieldType = d.fieldType
@@ -6302,6 +6397,8 @@ export default {
         })
     },
     async confirmChk (item) {
+      this.getEmpSelectAddBooking()
+      this.empSelectAdd = parseInt(item.empSelect || 0)
       this.dialogConfirm = true
       this.dataConfirmReady = false
       console.log('confirmChkItem', item)
@@ -6382,7 +6479,7 @@ export default {
                   update.fieldType = dataField[0].fieldType
                   update.fieldValue = d.fieldValue
                   update.flowId = d.flowId
-                  update.empStep = this.empSelectJob
+                  // update.empStep = this.empSelectJob
                   // update.empSelect = this.$session.getAll().data.shopId
                   update.conditionField = dataField[0].conditionField
                   update.conditionValue = dataField[0].conditionValue
@@ -6426,6 +6523,7 @@ export default {
                       bookNo: this.BookingDataItem[0].bookNo,
                       statusJob: 'confirm',
                       jobNo: response.data.jobNo,
+                      empSelect: this.empSelectAdd,
                       remark: this.remark
                     }
                     await axios
@@ -6507,7 +6605,6 @@ export default {
       }
     },
     async checkEmpJob () {
-      console.log('this.$refs.calendaronsite', this.$refs.calendaronsite)
       var flowId = ''
       if (this.flowId !== '') {
         flowId = this.flowId
@@ -6518,7 +6615,7 @@ export default {
       this.checkEventInfo = []
       await axios
         .get(
-          this.DNS_IP + '/booking_view/getCountNotimeJob?shopId=' + this.session.data.shopId + '&empStep=' + this.empSelectJob + '&flowId=' + flowId
+          this.DNS_IP + '/booking_view/getCountNotimeJob?shopId=' + this.session.data.shopId + '&empStep=' + this.empSelectJob + '&flowId=' + flowId + '&checkOnsite=True'
         )
         .then(async responses => {
           if (responses.data.status === false) {
@@ -6570,7 +6667,7 @@ export default {
       this.checkEventInfo = []
       await axios
         .get(
-          this.DNS_IP + '/booking_view/getCountNotimeJob?shopId=' + this.session.data.shopId + '&empStep=' + this.empSelectJob + '&flowId=' + this.BookingDataItem[0].flowId + '&dueDate=' + year + '-' + month
+          this.DNS_IP + '/booking_view/getCountNotimeJob?shopId=' + this.session.data.shopId + '&empStep=' + this.empSelectJob + '&flowId=' + this.BookingDataItem[0].flowId + '&dueDate=' + year + '-' + month + '&checkOnsite=True'
         )
         .then(async responses => {
           if (responses.data.status === false) {
@@ -6838,6 +6935,23 @@ export default {
       this.empSelectStepAdd = []
       await axios
         .get(this.DNS_IP + '/empSelect/getUse?empIdUser=isNotNull&shopId=' + this.$session.getAll().data.shopId)
+        .then(async response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              var s = {}
+              s.text = d.empFull_NameTH
+              s.value = d.empId
+              this.empSelectStepAdd.push(s)
+            }
+          }
+        })
+    },
+    async getEmpSelectAddBooking () {
+      this.empSelectStepAdd = []
+      await axios
+        .get(this.DNS_IP + '/empSelect/getUse?privacyPage=booking&shopId=' + this.$session.getAll().data.shopId)
         .then(async response => {
           let rs = response.data
           if (rs.length > 0) {
