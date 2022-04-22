@@ -319,12 +319,10 @@
 import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import moment from 'moment-timezone' // แปลง date
-import UploadButton from 'vuetify-upload-button'
 export default {
   name: 'JobList',
   components: {
-    'left-menu-admin': adminLeftMenu,
-    'upload-btn': UploadButton
+    'left-menu-admin': adminLeftMenu
   },
   computed: {
     dialogwidth () {
