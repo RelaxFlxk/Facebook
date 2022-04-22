@@ -2460,7 +2460,7 @@
                           <v-row>
                             <v-col class="pb-0">
                               <v-menu
-                                v-model="menuDate"
+                                v-model="menuDateEdit"
                                 :close-on-content-click="false"
                                 :nudge-right="40"
                                 transition="scale-transition"
@@ -2483,7 +2483,7 @@
                                 </template>
                                 <v-date-picker
                                   v-model="dateEdit"
-                                  @input="menuDate = false"
+                                  @input="menuDateEdit = false"
                                   :min="
                                     new Date(
                                       Date.now() -
@@ -2913,6 +2913,7 @@ export default {
       dialogError: false,
       dataReady: false,
       menuDate: false,
+      menuDateEdit: false,
       menuDateChange: false,
       date: '',
       time: '',
@@ -3704,6 +3705,7 @@ export default {
       }
     },
     async addDataSet () {
+      this.remark = ''
       let _this = this
       this.setTimerCalendar = setInterval(function () { _this.getDataCalendaBooking() }, 20000)
       // var _this = this
@@ -3715,7 +3717,6 @@ export default {
       }
       this.getBookingField()
       this.checkTime()
-      this.remark = ''
     },
     async getDataDefault () {
       this.loadingRefresh = true
