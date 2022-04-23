@@ -2858,6 +2858,40 @@
                               ></v-select>
                             </v-col>
                           </v-row>
+                          <v-row>
+                            <v-col class="InputData pb-0 pt-0" cols="12">
+                                <v-text-field
+                                v-model="address"
+                                label="ชื่อของที่อยู่"
+                                outlined
+                                required
+                                ></v-text-field>
+                            </v-col>
+                            <v-col class="InputData" cols="12">
+                              <v-card class="p-3">
+                                <vue-google-autocomplete
+                                    id="map"
+                                    ref="vueautocomplete"
+                                    classname="form-control"
+                                    placeholder="ค้นหาที่อยู่ลูกค้า (สถานที่ใกล้เคียง)"
+                                    v-on:placechanged="updatePlace"
+                                    country="th"
+                                >
+                                </vue-google-autocomplete>
+                                <hr>
+                                <!-- <gmap-autocomplete @place_changed="updatePlace"/> -->
+                                <GmapMap
+                                  v-if="center !== null"
+                                  :center="center"
+                                  :zoom="15"
+                                  style="width: 100%; height: 200px"
+                                  :options="{ disableDefaultUI: true, fullscreenControl: true, zoomControl: true }"
+                                >
+                                  <GmapMarker :position="center" :draggable="true" @drag="updateCoordinates" />
+                                </GmapMap>
+                              </v-card>
+                            </v-col>
+                          </v-row>
                           <div class="text-center">
                             <v-btn
                               elevation="2"
@@ -3138,6 +3172,7 @@
     </v-main>
   </div>
 </template>
+
 <style scoped>
 .today {
   background-color: #C1DFFF;
@@ -3231,6 +3266,7 @@ body {
 }
 </style>
 <script>
+import VueGoogleAutocomplete from 'vue-google-autocomplete'
 import axios from 'axios' // api
 import draggable from 'vuedraggable'
 import adminLeftMenu from '../Sidebar.vue' // เมนู
@@ -3260,7 +3296,8 @@ export default {
     QrcodeVue,
     PivotTable,
     BookingQueue,
-    CalendarBooking
+    CalendarBooking,
+    VueGoogleAutocomplete
   },
   computed: {
     filteredSelect () {
@@ -4005,7 +4042,7 @@ export default {
     async onSaveRemark () {
       var dt = {
         LAST_USER: this.session.data.userName,
-        remark: this.remark.replace(/%/g, '%%')
+        remark: (this.remark || '').replace(/%/g, '%%')
       }
       await axios
         .post(
@@ -4027,17 +4064,60 @@ export default {
           }
         })
     },
+    // async geolocate () {
+    //   await navigator.geolocation.getCurrentPosition(
+    //     async (position) => {
+    //       const center = {
+    //         lat: position.coords.latitude,
+    //         lng: position.coords.longitude
+    //       }
+    //       if (center) {
+    //         this.center = center
+    //       }
+    //     },
+    //     (error) => {
+    //       this.center = null
+    //       // this.center.lat = null
+    //       // this.center.lng = null
+    //       console.log('error map :', error.message)
+    //     }
+    //   )
+    // },
+    updatePlace (place) {
+      console.log(place)
+      this.center = {
+        lat: place.latitude,
+        lng: place.longitude
+      }
+      // console.log(place.geometry.location)
+      // this.updateCoordinates(place.geometry.location)
+    },
+    updateCoordinates (location, text) {
+      if (text === 'search') {
+        this.center = {
+          lat: location.latitude,
+          lng: location.longitude
+        }
+      } else {
+        this.center = {
+          lat: location.latLng.lat(),
+          lng: location.latLng.lng()
+        }
+      }
+    },
     async setDataEdit (dt) {
       // this.dialogEditData = true
       await this.getBookingField()
       this.getEmpSelectAddBooking()
+      // await this.geolocate()
       // await this.getBookingData(dt, 'edit')
       console.log('setDataEdit', dt)
       this.BookingDataItemEdit = []
       this.formEdit.masBranchID = dt.masBranchID
       this.formEdit.flowId = dt.flowId
       this.empSelectEdit = parseInt(dt.empSelect)
-
+      this.address = dt.address
+      this.center = JSON.parse(dt.addressLatLong) || null
       this.timeavailable = []
       let dtTime = await this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
       // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
@@ -4255,7 +4335,7 @@ export default {
             update.bookingDataId = d.bookingDataId
             update.bookingFieldId = d.bookingFieldId
             update.bookNo = d.bookNo
-            update.fieldValue = d.fieldValue.replace(/%/g, '%%')
+            update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%')
             update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
             update.timeText = this.timeEdit.text
             update.flowId = this.formEdit.flowId
@@ -4265,6 +4345,8 @@ export default {
             update.LAST_USER = this.$session.getAll().data.userName
             update.empSelect = this.empSelectEdit
             update.shopId = this.session.data.shopId
+            update.address = this.address
+            update.addressLatLong = JSON.stringify(this.center)
             Add.push(update)
           } else {
             if (
@@ -4282,7 +4364,7 @@ export default {
                 update.bookingDataId = d.bookingDataId
                 update.bookingFieldId = d.bookingFieldId
                 update.bookNo = d.bookNo
-                update.fieldValue = d.fieldValue.replace(/%/g, '%%')
+                update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%')
                 update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
                 update.timeText = this.timeEdit.text
                 update.flowId = this.formEdit.flowId
@@ -4292,6 +4374,8 @@ export default {
                 update.LAST_USER = this.$session.getAll().data.userName
                 update.empSelect = this.empSelectEdit
                 update.shopId = this.session.data.shopId
+                update.address = this.address
+                update.addressLatLong = JSON.stringify(this.center)
                 Add.push(update)
               }
             } else if (d.conditionField === 'flow') {
@@ -4300,7 +4384,7 @@ export default {
                 update.bookingDataId = d.bookingDataId
                 update.bookingFieldId = d.bookingFieldId
                 update.bookNo = d.bookNo
-                update.fieldValue = d.fieldValue.replace(/%/g, '%%')
+                update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%')
                 update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
                 update.timeText = this.timeEdit.text
                 update.flowId = this.formEdit.flowId
@@ -4310,6 +4394,8 @@ export default {
                 update.LAST_USER = this.$session.getAll().data.userName
                 update.empSelect = this.empSelectEdit
                 update.shopId = this.session.data.shopId
+                update.address = this.address
+                update.addressLatLong = JSON.stringify(this.center)
                 Add.push(update)
               }
             }
@@ -4332,6 +4418,9 @@ export default {
               await this.searchAny()
             }
             // this.getTimesChange('update')
+            this.formEdit.radiosRemark = ''
+            this.address = ''
+            this.center = null
             this.formEdit.radiosRemark = ''
             if (this.getSelectText) {
               this.getSelect(this.getSelectText, this.getSelectCount)
@@ -7044,7 +7133,7 @@ export default {
       var dt = {
         LAST_USER: this.session.data.userName,
         empSelect: this.empSelect,
-        remark: this.remark.replace(/%/g, '%%')
+        remark: (this.remark || '').replace(/%/g, '%%')
       }
       await axios
         .post(
@@ -7088,7 +7177,7 @@ export default {
             shopId: this.$session.getAll().data.shopId,
             CREATE_USER: this.session.data.userName,
             LAST_USER: this.session.data.userName,
-            remarkRemove: this.remarkRemove.replace(/%/g, '%%')
+            remarkRemove: (this.remarkRemove || '').replace(/%/g, '%%')
           }
           axios
             .post(this.DNS_IP + '/booking_transaction/add', dt)
@@ -7128,7 +7217,7 @@ export default {
         if (this.remark !== '') {
           var dt = {
             LAST_USER: this.session.data.userName,
-            remark: this.remark.replace(/%/g, '%%')
+            remark: (this.remark || '').replace(/%/g, '%%')
           }
           await axios
             .post(
