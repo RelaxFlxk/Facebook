@@ -427,24 +427,27 @@ export default {
   methods: {
     async beforeCreate () {
       if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
-        if (JSON.parse(localStorage.getItem('sessionData')).shopId === this.$route.query.shopId) {
-          await this.getDataFlow()
-          if (this.$route.query.type === 'jobList' && JSON.parse(localStorage.getItem('sessionData')).empId === this.$route.query.empId) {
-            if (this.$session.id() !== undefined) {
-              await this.checkJobList()
-            } else {
-              this.$session.start()
-              this.$session.set('data', JSON.parse(localStorage.getItem('sessionData')))
-              await this.checkJobList()
-            }
+        if (JSON.parse(localStorage.getItem('sessionData')).shopId === this.$route.query.shopId && this.$route.query.type === 'jobList' && JSON.parse(localStorage.getItem('sessionData')).empId === this.$route.query.empId) {
+          if (this.$session.id() !== undefined) {
+            await this.getDataFlow()
+            await this.checkJobList()
+          } else {
+            this.$session.start()
+            this.$session.set('data', JSON.parse(localStorage.getItem('sessionData')))
+            await this.getDataFlow()
+            await this.checkJobList()
           }
-        } else if (JSON.parse(localStorage.getItem('sessionData')).shopId === this.session.data.shopId) {
-          await this.getDataFlow()
         } else {
           if (this.$route.query.type === 'jobList') {
             this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId + '&type=jobList&empId=' + this.$route.query.empId)
           } else {
-            this.$router.push('/Core/Login')
+            if (this.$session.id() === undefined) {
+              this.$session.start()
+              this.$session.set('data', JSON.parse(localStorage.getItem('sessionData')))
+              await this.getDataFlow()
+            } else {
+              await this.getDataFlow()
+            }
           }
         }
       } else {
@@ -492,10 +495,11 @@ export default {
             await this.getDataFlowStep()
             await this.checkEmpJob()
             await this.getJobData()
-            if (response.data[0].sortNo === 1) {
-              this.tab = 0
-            } else {
+            if (response.data[0].sortNo === 2) {
               this.tab = 1
+              this.sortNo = 2
+            } else {
+              this.tab = 0
             }
             this.jobNo = this.$route.query.jobNo
           }
