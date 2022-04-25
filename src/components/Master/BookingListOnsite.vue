@@ -2119,7 +2119,7 @@
                       </template>
                       <span>ยืนยันนัดหมาย</span>
                     </v-tooltip>
-                    <v-tooltip bottom>
+                    <v-tooltip bottom v-if="item.statusBt !== 'wait'">
                       <template v-slot:activator="{ on, attrs }">
                         <v-btn
                           color="warning"
