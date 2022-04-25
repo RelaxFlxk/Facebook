@@ -268,7 +268,7 @@ export default {
         console.log('job')
         console.log('dataitem.shopId', dataitem.shopId, this.$route.query.shopId)
         if (this.$route.query.type === 'jobList') {
-          this.$router.push('/Onsite/JobList?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId + '&type=jobList')
+          this.$router.push('/Onsite/JobList?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId + '&type=jobList&empId=' + this.$route.query.empId)
         } else {
           if (dataitem.shopId === this.$route.query.shopId) {
           // this.jobNo = this.$route.query.jobNo
