@@ -20,9 +20,10 @@ import * as VueGoogleMaps from 'vue2-google-maps'
 Vue.use(VueGoogleMaps, {
   load: {
     key: 'AIzaSyCnDosnYWNnKQxLbsI5Cy_iw_VC5oyc1Ck',
-    libraries: 'places' // This is required if you use the Autocomplete plugin
-  },
-  installComponents: true
+    libraries: 'places',
+    region: 'TH',
+    language: 'th'
+  }
 })
 
 Sentry.init({
@@ -67,9 +68,11 @@ Vue.mixin({
       IPPotocalENV_ProductionBetask: 'https://customer-core.betaskthai.com',
       IPPotocalENV_ProductionLoyalty: 'https://api-beloyalty.betaskthai.com',
       // IPPotocalENV_Developer: 'https://hw.api-belinked.betaskthai.com',
-      IPPotocalENV_Developer: 'http://localhost:5001',
+      IPPotocalENV_Developer: 'http://localhost:5004',
+      // IPPotocalENV_Developer: 'http://localhost:5001',
       IPPotocalENV_DeveloperBetask: 'http://localhost:5006',
-      IPPotocalENV_DeveloperLoyalty: 'http://localhost:5004',
+      IPPotocalENV_DeveloperLoyalty: 'http://localhost:5001',
+      // IPPotocalENV_DeveloperLoyalty: 'http://localhost:5004',
       main_profile: {
         userLineuserId: 'U97a2b1814542579b9e5d7c1b891538ab',
         pictureUrl: 'https://profile.line-scdn.net/0hI98EFerAFhYFPD-Dk3VpQTl5GHtyEhBefVoNdiA_SSMtWFdIbV0KIiU9HCApCFUSbVxZJSZpSyQh',

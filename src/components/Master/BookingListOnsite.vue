@@ -2869,20 +2869,25 @@
                             </v-col>
                             <v-col class="InputData" cols="12">
                               <v-card class="p-3">
-                                <vue-google-autocomplete
-                                    id="map"
-                                    ref="vueautocomplete"
-                                    classname="form-control"
-                                    placeholder="ค้นหาที่อยู่ลูกค้า (สถานที่ใกล้เคียง)"
-                                    v-on:placechanged="updatePlace"
-                                    country="th"
-                                >
-                                </vue-google-autocomplete>
+                                <!-- <GmapAutocomplete>
+                                  <template v-slot:input="slotProps">
+                                      <v-text-field
+                                        outlined
+                                        prepend-inner-icon="place"
+                                        placeholder="Location Of Event"
+                                        ref="input"
+                                        v-on:listeners="slotProps.listeners"
+                                        v-on:attrs="slotProps.attrs">
+                                      </v-text-field>
+                                  </template>
+                                </GmapAutocomplete> -->
+                                <GmapAutocomplete @place_changed="updatePlace" />
                                 <hr>
                                 <!-- <gmap-autocomplete @place_changed="updatePlace"/> -->
                                 <GmapMap
                                   v-if="center !== null"
                                   :center="center"
+                                  @click='updateCoordinates'
                                   :zoom="15"
                                   style="width: 100%; height: 200px"
                                   :options="{ disableDefaultUI: true, fullscreenControl: true, zoomControl: true }"
@@ -3174,6 +3179,12 @@
 </template>
 
 <style scoped>
+.pac-target-input {
+  padding: 10px;
+  width: 100%;
+  border-style: solid;
+  border-radius: 10px;
+}
 .today {
   background-color: #C1DFFF;
 }
@@ -3266,7 +3277,6 @@ body {
 }
 </style>
 <script>
-import VueGoogleAutocomplete from 'vue-google-autocomplete'
 import axios from 'axios' // api
 import draggable from 'vuedraggable'
 import adminLeftMenu from '../Sidebar.vue' // เมนู
@@ -3296,8 +3306,7 @@ export default {
     QrcodeVue,
     PivotTable,
     BookingQueue,
-    CalendarBooking,
-    VueGoogleAutocomplete
+    CalendarBooking
   },
   computed: {
     filteredSelect () {
@@ -4084,25 +4093,20 @@ export default {
     //   )
     // },
     updatePlace (place) {
-      console.log(place)
+      // console.log(place)
       this.center = {
-        lat: place.latitude,
-        lng: place.longitude
+        // lat: place.latitude,
+        // lng: place.longitude
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng()
       }
       // console.log(place.geometry.location)
       // this.updateCoordinates(place.geometry.location)
     },
-    updateCoordinates (location, text) {
-      if (text === 'search') {
-        this.center = {
-          lat: location.latitude,
-          lng: location.longitude
-        }
-      } else {
-        this.center = {
-          lat: location.latLng.lat(),
-          lng: location.latLng.lng()
-        }
+    updateCoordinates (location) {
+      this.center = {
+        lat: location.latLng.lat(),
+        lng: location.latLng.lng()
       }
     },
     async setDataEdit (dt) {
