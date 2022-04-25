@@ -430,7 +430,13 @@ export default {
         if (JSON.parse(localStorage.getItem('sessionData')).shopId === this.$route.query.shopId) {
           await this.getDataFlow()
           if (this.$route.query.type === 'jobList' && JSON.parse(localStorage.getItem('sessionData')).empId === this.$route.query.empId) {
-            await this.checkJobList()
+            if (this.$session.id() !== undefined) {
+              await this.checkJobList()
+            } else {
+              this.$session.start()
+              this.$session.set('data', JSON.parse(localStorage.getItem('sessionData')))
+              await this.checkJobList()
+            }
           }
         } else if (JSON.parse(localStorage.getItem('sessionData')).shopId === this.session.data.shopId) {
           await this.getDataFlow()
