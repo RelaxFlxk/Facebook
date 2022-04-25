@@ -708,6 +708,7 @@ export default {
       await this.getJobData()
       if (this.itemJob.filter(el => { return el.sortNo === 2 }).length > 0) {
         this.tab = 1
+        this.sortNo = 2
       } else {
         this.tab = 0
       }
