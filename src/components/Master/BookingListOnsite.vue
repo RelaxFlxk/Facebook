@@ -6506,6 +6506,7 @@ export default {
       this.dialogConfirm = true
       this.dataConfirmReady = false
       console.log('confirmChkItem', item)
+      this.totalPrice = ''
       this.dataConfirm = item
       this.remark = item.remark
       this.lineUserId = item.lineUserId || ''
@@ -6514,15 +6515,17 @@ export default {
       console.log('checkPayment', this.checkPayment)
       console.log('DataFlowName', this.DataFlowName)
       // await this.getEmpSelect(item)
-      await this.getPackage(item)
-      await this.getCoin(item)
-      if (this.dataPackage.length > 0) {
-        if (this.dataPackage.filter(el => { return el.packageId === item.packageId }).length > 0) {
-          var dataPack = this.dataPackage.filter(el => { return el.packageId === item.packageId })
-          // this.packageId = dataPack[0].value
-          this.UpdatePackage(dataPack[0].value, 'ตกลง', dataPack[0].text)
-        } else {
-          this.UpdatePackage('', 'ยกเลิก', '')
+      if (this.lineUserId !== '') {
+        await this.getPackage(item)
+        await this.getCoin(item)
+        if (this.dataPackage.length > 0) {
+          if (this.dataPackage.filter(el => { return el.packageId === item.packageId }).length > 0) {
+            var dataPack = this.dataPackage.filter(el => { return el.packageId === item.packageId })
+            // this.packageId = dataPack[0].value
+            this.UpdatePackage(dataPack[0].value, 'ตกลง', dataPack[0].text)
+          } else {
+            this.UpdatePackage('', 'ยกเลิก', '')
+          }
         }
       }
       await this.getBookingDataJob(item, '')
@@ -6840,6 +6843,7 @@ export default {
     addEmpJob () {
       this.validate('UPDATE')
       console.log('this.empSelectJob', this.empSelectJob)
+      console.log('this.BookingDataItem[0]', this.BookingDataItem[0])
       setTimeout(() => this.addEmpJobSubmit(), 500)
     },
     async addEmpJobSubmit () {
@@ -6849,6 +6853,7 @@ export default {
           this.dataEditJobReady = false
           var updateJob = {
             empStep: this.empSelectJob,
+            userId: this.BookingDataItem[0].userId,
             LAST_USER: this.$session.getAll().data.userName
           }
           console.log('updateJobNo', updateJob)
