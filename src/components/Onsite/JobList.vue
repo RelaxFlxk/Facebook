@@ -870,7 +870,7 @@ export default {
           console.log('updateJob', dt)
           console.log(sortNo, jobId)
           await axios
-            .post(this.DNS_IP + '/job/editAll/' + jobId)
+            .post(this.DNS_IP + '/job/editAll/' + jobId, dt)
             .then(async response => {
               console.log(response)
               if (response.data.status) {

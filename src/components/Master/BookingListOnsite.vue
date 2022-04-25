@@ -7423,13 +7423,15 @@ export default {
               .post(this.DNS_IP + '/job/updateJobNo/' + this.jobitem[0].jobNo, updateJob)
               .then(async response => {
                 this.$swal('เรียบร้อย', 'เปลี่ยนพนักงาน เรียบร้อย', 'success')
-                if (this.jobitem[0].lineUserId !== '') {
-                  var dt = {
-                    updateStatusSend: 'false'
+                if (parseInt(this.jobitem[0].empStepId) !== this.empSelectJob) {
+                  if (this.jobitem[0].lineUserId !== '') {
+                    var dt = {
+                      updateStatusSend: 'false'
+                    }
+                    await axios
+                      .post(this.DNS_IP + '/BookingOnsite/pushEmpCustomer/' + this.jobitem[0].bookNo, dt)
+                      .then(async response1 => {})
                   }
-                  await axios
-                    .post(this.DNS_IP + '/BookingOnsite/pushEmpCustomer/' + this.jobitem[0].bookNo, dt)
-                    .then(async response1 => {})
                 }
                 if (this.statusSearch === 'no') {
                   await this.getBookingList()
