@@ -50,7 +50,7 @@
                     class="mx-2 mt-4 p-1"
                     color="#FFFFFF"
                     elevation="2"
-                  >
+                    :style="items.jobNo === jobNo ? 'border: 1px solid red;' : 'border: 1px solid white;'">
                   <v-row>
                       <v-col class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
                         <v-sheet
@@ -109,6 +109,7 @@
                         <v-btn
                           tile
                           color="info"
+                          @click="detailsJob(items)"
                         >
                           <v-icon left>
                             mdi-clipboard-text-outline
@@ -363,13 +364,85 @@ export default {
       center: null,
       address: '',
       dialogMap: false,
-      sortNo: ''
+      sortNo: '',
+      jobNo: ''
     }
   },
   async mounted () {
-    this.getDataFlow()
+    this.beforeCreate()
   },
   methods: {
+    async beforeCreate () {
+      if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
+        if (JSON.parse(localStorage.getItem('sessionData')).shopId === this.$route.query.shopId) {
+          await this.getDataFlow()
+          if (this.$route.query.type === 'jobList' && this.session.data.empId === this.$route.query.empId) {
+            await this.checkJobList()
+          }
+        } else {
+          if (this.$route.query.type === 'jobList') {
+            this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId + '&type=jobList')
+          } else {
+            this.$router.push('/Core/Login')
+          }
+        }
+      } else {
+        if (!this.$session.exists()) {
+          if (this.$route.query.type === 'jobList') {
+            this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId + '&type=jobList')
+          } else {
+            this.$router.push('/Core/Login')
+          }
+        } else {
+          if (this.session.data.shopId === this.$route.query.shopId && this.$route.query.type === 'jobList' && this.session.data.empId === this.$route.query.empId) {
+            localStorage.setItem('sessionData', JSON.stringify(this.session.data))
+            await this.getDataFlow()
+            await this.checkJobList()
+          } else if (this.$session.id() !== undefined) {
+            localStorage.setItem('sessionData', JSON.stringify(this.session.data))
+            await this.getDataFlow()
+          } else {
+            if (this.$route.query.type === 'jobList') {
+              this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId + '&type=jobList')
+            } else {
+              this.$router.push('/Core/Login')
+            }
+          }
+        }
+      }
+      // console.log(JSON.stringify(this.session.data))
+    },
+    async checkJobList () {
+      await axios
+        .get(
+          this.DNS_IP +
+            '/job/getList?shopId=' +
+            this.session.data.shopId +
+            '&empStep=' +
+            this.session.data.empId +
+            '&jobNo=' + this.$route.query.jobNo
+        )
+        .then(async response => {
+          console.log('beforeCreate', response.data)
+          if (response.data.status === false) {
+
+          } else {
+            this.selectFlow = parseInt(response.data[0].flowId)
+            await this.getDataFlowStep()
+            await this.checkEmpJob()
+            await this.getJobData()
+            if (response.data[0].sortNo === 1) {
+              this.tab = 0
+            } else {
+              this.tab = 1
+            }
+            this.jobNo = this.$route.query.jobNo
+          }
+        })
+    },
+    detailsJob (data) {
+      console.log('detailsJob', data)
+    },
     callCustomer (data) {
       console.log('dataJob', data)
       if (data.filter(el => { return el.fieldName === 'เบอร์โทร' }).length > 0) {

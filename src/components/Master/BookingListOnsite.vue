@@ -1538,12 +1538,21 @@
                       elevation="10"
                       color="#173053"
                       dark
+                      small
+                      :disabled="!validChange"
+                      @click="changeChk(dataChange, 'confirm')"
+                      >เปลี่ยนวันเวลานัดหมาย</v-btn
+                    >
+                    <!-- <v-btn
+                      elevation="10"
+                      color="#173053"
+                      dark
                       v-if="getSelectText !== 'confirm'"
                       small
                       :disabled="!validChange"
                       @click="changeChk(dataChange, 'change')"
                       >เปลี่ยนวันเวลานัดหมาย</v-btn
-                    >
+                    > -->
                     <v-btn
                       elevation="10"
                       color="#173053"
@@ -6389,6 +6398,7 @@ export default {
     },
     async getBookingDataJob (dt, text) {
       console.log('itemBookingData', dt)
+      this.lineUserId = dt.lineUserId
       this.dueDateText = dt.dueDateText
       this.jobNo = dt.jobNo
       this.checkTimeFlow()
@@ -6642,10 +6652,19 @@ export default {
                           .post(this.DNS_IP + '/booking_transaction/add', dtt)
                           .then(async response => {
                             this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
-                            if (this.statusSearch === 'no') {
-                              await this.getBookingList()
+                            if (this.lineUserId !== '') {
+                              this.pushMsgCustomer(this.BookingDataItem[0].bookNo)
+                              if (this.statusSearch === 'no') {
+                                await this.getBookingList()
+                              } else {
+                                await this.searchAny()
+                              }
                             } else {
-                              await this.searchAny()
+                              if (this.statusSearch === 'no') {
+                                await this.getBookingList()
+                              } else {
+                                await this.searchAny()
+                              }
                             }
                             this.dialogConfirm = false
                             this.dataConfirmReady = true
@@ -6697,6 +6716,14 @@ export default {
         this.setTimerCalendar = null
         this.$router.push('/Core/Login')
       }
+    },
+    async pushMsgCustomer (bookNo) {
+      let updateStatusSend = {
+        updateStatusSend: 'false'
+      }
+      await axios
+        .post(this.DNS_IP + '/BookingOnsite/pushMsgCustomer/' + bookNo, updateStatusSend)
+        .then(async response => {})
     },
     async checkEmpJob () {
       var flowId = ''
@@ -6855,6 +6882,7 @@ export default {
                     .then(async response => {
                       this.$swal('เรียบร้อย', 'มอบหมายงานให้พนักงาน Onsite เรียบร้อย', 'success')
                       this.empSelectJob = ''
+                      this.lineNotifyGroupOnsite(this.BookingDataItem[0].bookNo)
                       if (this.statusSearch === 'no') {
                         await this.getBookingList()
                       } else {
@@ -6876,65 +6904,79 @@ export default {
         this.$router.push('/Core/Login')
       }
     },
-    async pushMsg (jobNo) {
-      const result = await axios
-        .get(
-          this.DNS_IP +
-            '/member/get?shopId=' +
-            this.session.data.shopId +
-            '&liffUserId=' +
-            this.BookingDataItem[0].userId
-        )
-        .catch(error => {
-          console.log('error function addData : ', error)
-        })
-      console.log('result', result.data.status)
-      if (result.data.status === false) {
-        let statusSend = {
-          statusSend: 'false'
-        }
-        await axios.post(this.DNS_IP + '/job/updateJobNo/' + jobNo, statusSend)
-        console.log('statusSend', 'false')
-        let updateStatusSend = {
-          updateStatusSend: 'false'
-        }
-        await axios
-          .post(
-            this.DNS_IP + '/job/pushQr/' + jobNo,
-            updateStatusSend
-          )
-          .then(
-            this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-            // this.clearData()
-            // this.$router.push('/Master/FlowStep')
-          )
-          .catch(error => {
-            console.log('error function addDataGlobal : ', error)
-          })
-      } else {
-        let statusSend = {
-          statusSend: 'true'
-        }
-        await axios
-          .post(this.DNS_IP + '/job/updateJobNo/' + jobNo, statusSend)
-          .then(async response => {
-            // let lineUserId = result.data[0].lineUserId
-            console.log('statusSend', 'true')
-            let updateStatusSend = {
+    async lineNotifyGroupOnsite (bookNo) {
+      await axios
+        .post(this.DNS_IP + '/Booking/LineNotifyGroupOnsite/' + bookNo)
+        .then(async response => {
+          if (this.lineUserId !== '') {
+            var dt = {
               updateStatusSend: 'false'
             }
             await axios
-              .post(
-                this.DNS_IP + '/job/pushMsg/' + response.data.jobId,
-                updateStatusSend
-              )
-              .catch(error => {
-                console.log('error function addData : ', error)
-              })
-          })
-      }
-      // this.clearData()
+              .post(this.DNS_IP + '/BookingOnsite/pushEmpCustomer/' + bookNo, dt)
+              .then(async response1 => {})
+          }
+        })
     },
+    // async pushMsg (jobNo) {
+    //   const result = await axios
+    //     .get(
+    //       this.DNS_IP +
+    //         '/member/get?shopId=' +
+    //         this.session.data.shopId +
+    //         '&liffUserId=' +
+    //         this.BookingDataItem[0].userId
+    //     )
+    //     .catch(error => {
+    //       console.log('error function addData : ', error)
+    //     })
+    //   console.log('result', result.data.status)
+    //   if (result.data.status === false) {
+    //     let statusSend = {
+    //       statusSend: 'false'
+    //     }
+    //     await axios.post(this.DNS_IP + '/job/updateJobNo/' + jobNo, statusSend)
+    //     console.log('statusSend', 'false')
+    //     let updateStatusSend = {
+    //       updateStatusSend: 'false'
+    //     }
+    //     await axios
+    //       .post(
+    //         this.DNS_IP + '/job/pushQr/' + jobNo,
+    //         updateStatusSend
+    //       )
+    //       .then(
+    //         this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+    //         // this.clearData()
+    //         // this.$router.push('/Master/FlowStep')
+    //       )
+    //       .catch(error => {
+    //         console.log('error function addDataGlobal : ', error)
+    //       })
+    //   } else {
+    //     let statusSend = {
+    //       statusSend: 'true'
+    //     }
+    //     await axios
+    //       .post(this.DNS_IP + '/job/updateJobNo/' + jobNo, statusSend)
+    //       .then(async response => {
+    //         // let lineUserId = result.data[0].lineUserId
+    //         console.log('statusSend', 'true')
+    //         let updateStatusSend = {
+    //           updateStatusSend: 'false'
+    //         }
+    //         await axios
+    //           .post(
+    //             this.DNS_IP + '/job/pushMsg/' + response.data.jobId,
+    //             updateStatusSend
+    //           )
+    //           .catch(error => {
+    //             console.log('error function addData : ', error)
+    //           })
+    //       })
+    //   }
+    //   // this.clearData()
+    // },
     async usePackage () {
       var params = {
         shopId: this.$session.getAll().data.shopId,
@@ -7242,7 +7284,7 @@ export default {
     },
     onChangeChk (item, changeStatus) {
       console.log('item', item)
-      console.log('formChange', this.formChange)
+      console.log('changeStatus', changeStatus)
       this.swalConfig.title = 'ต้องการ เปลี่ยนเวลานัดหมาย ใช่หรือไม่?'
       this.$swal(this.swalConfig).then(async result => {
         if (this.$session.id() !== undefined) {
@@ -7289,7 +7331,7 @@ export default {
                         'messages': [
                           {
                             'type': 'text',
-                            'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
+                            'text': ` ✍️ ยืนยันเปลี่ยนเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
                           \nวันเดือนปี ${this.format_dateFUllTime(this.formChange.date + ' ' + this.formChange.time.value)}`
                           }
                         ]
@@ -7368,6 +7410,7 @@ export default {
       }
     },
     async jobConfirm () {
+      console.log('this.jobitem', this.jobitem)
       this.swalConfig.title = 'ต้องการ เปลี่ยนพนักงาน ใช่หรือไม่?'
       this.$swal(this.swalConfig)
         .then(async () => {
@@ -7376,11 +7419,18 @@ export default {
               empStep: this.empSelectJob,
               LAST_USER: this.$session.getAll().data.userName
             }
-            console.log('updateJobNo', updateJob)
             await axios
               .post(this.DNS_IP + '/job/updateJobNo/' + this.jobitem[0].jobNo, updateJob)
               .then(async response => {
                 this.$swal('เรียบร้อย', 'เปลี่ยนพนักงาน เรียบร้อย', 'success')
+                if (this.jobitem[0].lineUserId !== '') {
+                  var dt = {
+                    updateStatusSend: 'false'
+                  }
+                  await axios
+                    .post(this.DNS_IP + '/BookingOnsite/pushEmpCustomer/' + this.jobitem[0].bookNo, dt)
+                    .then(async response1 => {})
+                }
                 if (this.statusSearch === 'no') {
                   await this.getBookingList()
                 } else {

@@ -267,77 +267,43 @@ export default {
       } else if (this.$route.query.jobNo !== undefined && this.$route.query.type !== 'job') {
         console.log('job')
         console.log('dataitem.shopId', dataitem.shopId, this.$route.query.shopId)
-        if (dataitem.shopId === this.$route.query.shopId) {
-          // this.jobNo = this.$route.query.jobNo
-          console.log('jobMach')
-          // this.queryData = 'jobNo'
-          this.$router.push('/Master/jobQrCode?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId)
+        if (this.$route.query.type === 'jobList') {
+          this.$router.push('/Onsite/JobList?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId + '&type=jobList')
         } else {
-          this.$swal({
-            title: 'ข้อมูลงานไม่ถูกต้อง?',
-            type: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#b3b1ab',
-            confirmButtonText: 'ใช่',
-            cancelButtonText: 'ไม่'
-          }).then(async () => {
-            this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId)
-          // await _this.getTokenCheck()
-          })
-            .catch(async () => {
+          if (dataitem.shopId === this.$route.query.shopId) {
+          // this.jobNo = this.$route.query.jobNo
+            console.log('jobMach')
+            // this.queryData = 'jobNo'
+            this.$router.push('/Master/jobQrCode?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId)
+          } else {
+            this.$swal({
+              title: 'ข้อมูลงานไม่ถูกต้อง?',
+              type: 'question',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#b3b1ab',
+              confirmButtonText: 'ใช่',
+              cancelButtonText: 'ไม่'
+            }).then(async () => {
               this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId)
+              // await _this.getTokenCheck()
             })
+              .catch(async () => {
+                this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId)
+              })
+          }
         }
       } else if (this.$route.query.bookNo !== undefined && this.$route.query.type === 'job') {
         this.$router.push('/Master/BookingList?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId + '&type=' + this.$route.query.type)
       } else if (this.$route.query.dateEvent !== undefined && this.$route.query.type === 'printInvoice') {
         this.$router.push('/PrintPdf/PrintInvoice?dateEvent=' + this.$route.query.dateEvent)
       } else {
-        this.$router.push('/Dashbord/ReportBooking')
+        if (dataitem.USER_ROLE === 'onsite') {
+          this.$router.push('/Onsite/JobList')
+        } else {
+          this.$router.push('/Dashbord/ReportBooking')
+        }
       }
-    },
-    async getTokenCheck () {
-      await axios
-        .get(
-          // eslint-disable-next-line quotes
-          this.DNS_IP +
-            '/system_token/getKey?tokenName=' +
-            this.$route.query.access
-        )
-        .then(async (response) => {
-          await this.getPrivacy()
-        })
-        // eslint-disable-next-line handle-callback-err
-        .catch((error) => {
-          this.$router.push('/Core/LoginFailed')
-          console.log(error)
-        })
-    },
-    async getPrivacy () {
-      this.dataReady = false
-      this.formPrivacy = {}
-      await axios
-        .get(
-          // eslint-disable-next-line quotes
-          this.DNS_IP +
-            '/system_privacy/get?RECORD_STATUS=N&privacyConfigStatus=ON'
-        )
-        .then(async (response) => {
-          this.hidePrivacy = false
-          this.dataReady = true
-          this.privacyConfigDetail = response.data[0].privacyConfigDetail
-          this.formCheckPrivacy.privacyConfigCode =
-            response.data[0].privacyConfigCode
-          // formCheckPrivacy
-          // console.log(this.formPrivacy)
-        })
-        // eslint-disable-next-line handle-callback-err
-        .catch((error) => {
-          this.hidePrivacy = true
-          this.dataReady = true
-          console.log(error)
-        })
     },
     async onSubmit () {
       this.dataReady = false
