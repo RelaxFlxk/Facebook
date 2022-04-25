@@ -67,13 +67,10 @@
                         </v-sheet>
                       </v-col>
                       <v-col cols="8" class="pl-3">
-                        <template v-for="(itemJobs, indexitemJob) in dataJob.filter(el => {return el.jobNo === items.jobNo;})"
-                        >
-                        <div :key="indexitemJob">
+                        <div v-for="(itemJobs, indexitemJob) in dataJob.filter(el => {return el.jobNo === items.jobNo;})" :key="indexitemJob">
                           <span class="font-weight-bold">{{itemJobs.fieldName}} :</span>
                           <span>{{itemJobs.fieldValue}}</span>
                         </div>
-                        </template>
                         <div v-if="items.onsiteStartDateFomatTH">
                           <span class="font-weight-bold">เริ่มงาน :</span>
                           <span>{{items.onsiteStartDateFomatTH}}</span>
@@ -109,7 +106,7 @@
                         <v-btn
                           tile
                           color="info"
-                          @click="detailsJob(items)"
+                          @click="detailsJob(items, dataJob.filter(el => {return el.jobNo === items.jobNo;}))"
                         >
                           <v-icon left>
                             mdi-clipboard-text-outline
@@ -124,7 +121,7 @@
                           block
                           color="success"
                           class="mr-3"
-                          @click="updateJobStart(items.sortNo, items.jobId)"
+                          @click="updateJobStart(items.sortNo, items.jobId, items)"
                         >
                           <v-icon left>
                             mdi-account-check-outline
@@ -135,7 +132,7 @@
                           v-if="items.sortNo === 2"
                           block
                           color="success"
-                          @click="closeJobStart(items.sortNo, items.jobId)"
+                          @click="closeJobStart(items.sortNo, items.jobId, items)"
                         >
                           <v-icon left>
                             mdi-water-check
@@ -312,6 +309,59 @@
             </v-card>
           </v-dialog>
         </v-row>
+        <v-dialog v-model="dialogDetail" :max-width="dialogwidth">
+            <v-card class="text-center">
+              <v-card-title><b>รายละเอียดนัดหมาย</b></v-card-title>
+              <v-card-text>
+                <v-row>
+                  <v-col class="text-right">ประเภทบริการ</v-col>
+                  <v-col class="text-left">{{dataInfo.flowName}}</v-col>
+                </v-row>
+                <v-row>
+                  <v-col class="text-right">วันที่ต้องการนัดหมาย</v-col>
+                  <v-col class="text-left">{{dataInfo.dueDateFomatTH}}</v-col>
+                </v-row>
+                <v-row  v-for="(row, indexitemJob) in dataJob.filter(el => {return el.jobNo === dataInfo.jobNo;})" :key="indexitemJob">
+                  <v-col class="text-right">{{row.fieldName}}</v-col>
+                  <v-col class="text-left">{{row.fieldValue}}</v-col>
+                </v-row>
+                <template v-if="dataInfoPackage.length > 0">
+                  <v-subheader>ข้อมูลแพ็คเกจ</v-subheader>
+                  <v-card
+                    class="mb-0 mt-0"
+                    height="auto"
+                    style="box-shadow: 0px 4px 4px 0px #00000040;padding:15px;border-radius: 20px;"
+                  >
+                    <v-row v-for="(item, indexInfoPackage) in dataInfoPackage" :key="indexInfoPackage">
+                      <v-col cols="4" style="padding-top:10px;" align="center">
+                        <img :src="item.packageImg" style="width: 85px; height: 85px;border-radius: 25px;border-style: solid;border-color: #eeee;" class="link"/>
+                      </v-col>
+                      <v-col cols="8" class="pl-3 pr-0 text-left">
+                        <div class="font16 bold mt-1">
+                          <v-col class="pa-0">{{ item.packageName }}</v-col>
+                          <v-col class="pl-0 pt-0 pb-1 font12">ใช้ก่อนวันที่ {{ format_dateFUllTime(new Date(item.expirePackage * 1000)) }}</v-col>
+                          <v-col class="pl-0 pt-0 pb-1 font12">จำนวนการใช้ {{ item.balanceAmount }} / {{ item.amount }}</v-col>
+                          <v-col v-if="item.packageDetail" class="pl-0 pt-0 pb-1 font12">รายละเอียด {{item.packageDetail}}</v-col>
+                        </div>
+                      </v-col>
+                    </v-row>
+                  </v-card>
+                </template>
+              </v-card-text>
+              <v-row>
+                <v-col cols="12">
+                  <v-btn
+                    depressed
+                    color="error"
+                    block
+                    @click="dialogDetail = false"
+                  >
+                  ปิดหน้านี้
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-card>
+          </v-dialog>
       </div>
     </v-main>
   </div>
@@ -355,6 +405,7 @@ export default {
           href: '/Onsite/JobList'
         }
       ],
+      dialogDetail: false,
       itemFlow: [],
       selectFlow: '',
       tab: null,
@@ -365,7 +416,9 @@ export default {
       address: '',
       dialogMap: false,
       sortNo: '',
-      jobNo: ''
+      jobNo: '',
+      dataInfo: {},
+      dataInfoPackage: []
     }
   },
   async mounted () {
@@ -379,9 +432,11 @@ export default {
           if (this.$route.query.type === 'jobList' && this.session.data.empId === this.$route.query.empId) {
             await this.checkJobList()
           }
+        } else if (JSON.parse(localStorage.getItem('sessionData')).shopId === this.session.data.shopId) {
+          await this.getDataFlow()
         } else {
           if (this.$route.query.type === 'jobList') {
-            this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId + '&type=jobList')
+            this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId + '&type=jobList&empId=' + this.$route.query.empId)
           } else {
             this.$router.push('/Core/Login')
           }
@@ -389,7 +444,7 @@ export default {
       } else {
         if (!this.$session.exists()) {
           if (this.$route.query.type === 'jobList') {
-            this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId + '&type=jobList')
+            this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId + '&type=jobList&empId=' + this.$route.query.empId)
           } else {
             this.$router.push('/Core/Login')
           }
@@ -398,12 +453,12 @@ export default {
             localStorage.setItem('sessionData', JSON.stringify(this.session.data))
             await this.getDataFlow()
             await this.checkJobList()
-          } else if (this.$session.id() !== undefined) {
+          } else if (this.$session.id() !== undefined && this.$route.query.type === undefined) {
             localStorage.setItem('sessionData', JSON.stringify(this.session.data))
             await this.getDataFlow()
           } else {
             if (this.$route.query.type === 'jobList') {
-              this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId + '&type=jobList')
+              this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId + '&type=jobList&empId=' + this.$route.query.empId)
             } else {
               this.$router.push('/Core/Login')
             }
@@ -440,8 +495,25 @@ export default {
           }
         })
     },
-    detailsJob (data) {
+    async detailsJob (data, packageId) {
+      this.dataInfo = {}
+      this.dataInfoPackage = []
+      this.dataInfo = data
       console.log('detailsJob', data)
+      var packageIds = packageId[0].packageId || ''
+      if (packageIds !== '') {
+        await axios.get(this.DNS_IP_Loyalty + '/PackageLog/get?shopId=' + data.shopId + '&lineUserId=' + data.lineUserId + '&packageId=' + packageIds).then(response => {
+          console.log('PackageLog', response.data)
+          let rs = response.data
+          if (rs.status === false) {
+            this.dataInfoPackage = []
+          } else {
+            this.dataInfoPackage = rs
+          }
+        })
+      }
+      console.log('this.dataInfoPackage', this.dataInfoPackage)
+      this.dialogDetail = true
     },
     callCustomer (data) {
       console.log('dataJob', data)
@@ -709,7 +781,7 @@ export default {
           }
         })
     },
-    updateJobStart (sortNo, jobId) {
+    updateJobStart (sortNo, jobId, data) {
       console.log('this.itemJob', this.itemJob)
       if (
         this.itemJob.filter(el => {
@@ -749,6 +821,9 @@ export default {
                   await axios
                     .post(this.DNS_IP + '/jobBeforeAfter/add', dajobBeforeAfter)
                     .then(async responses => {
+                      if (data.lineUserId) {
+                        this.pushMessageCus(data.jobNo)
+                      }
                       this.getDataJob()
                       this.$swal('เรียบร้อย', 'รับงานนี้เรียบร้อย', 'success')
                     })
@@ -773,7 +848,7 @@ export default {
         )
       }
     },
-    closeJobStart (sortNo, jobId) {
+    closeJobStart (sortNo, jobId, data) {
       console.log('itemFlowStep', this.itemFlowStep)
       this.swalConfig.title = 'ต้องการ ปิดงานนี้ ใช่หรือไม่?'
       this.$swal(this.swalConfig).then(async () => {
@@ -795,10 +870,13 @@ export default {
           console.log('updateJob', dt)
           console.log(sortNo, jobId)
           await axios
-            .post(this.DNS_IP + '/job/editAll/' + jobId, dt)
+            .post(this.DNS_IP + '/job/editAll/' + jobId)
             .then(async response => {
               console.log(response)
               if (response.data.status) {
+                if (data.lineUserId) {
+                  this.pushMessageCus(data.jobNo, 'close')
+                }
                 this.getDataJob()
                 this.$swal('เรียบร้อย', 'ปิดงานนี้เรียบร้อย', 'success')
               }
@@ -808,6 +886,14 @@ export default {
           this.$router.push('/Core/Login')
         }
       })
+    },
+    pushMessageCus (jobNo) {
+      let updateStatusSend = {
+        updateStatusSend: 'false'
+      }
+      axios
+        .post(this.DNS_IP + '/BookingOnsite/pushProgress/' + jobNo, updateStatusSend)
+        .then(async responses => {})
     }
   }
 }
