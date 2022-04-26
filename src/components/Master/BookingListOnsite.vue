@@ -2348,8 +2348,8 @@
                               <v-col cols="8" class="pb-6" >
                                 <v-row class="font16 headline1">
                                     <v-col class="pl-0 pt-2 pb-0">{{item.packageName}}</v-col>
-                                    <v-btn class="mr-4 mt-3" v-if="item.packageId !== packageId" color="green" outlined rounded x-small @click="UpdatePackage(item.packageId,'ตกลง',item.packageName)">ตกลง</v-btn>
-                                    <v-btn class="mr-4 mt-3" v-if="item.packageId === packageId" color="red" outlined rounded x-small @click="UpdatePackage(item.packageId,'ยกเลิก',item.packageName)">ยกเลิก</v-btn>
+                                    <v-btn class="mr-4 mt-3" v-if="item.packageId !== packageId" color="green" outlined rounded x-small @click="UpdatePackage(item.packageId,'ตกลง',item.packageName, item)">ตกลง</v-btn>
+                                    <v-btn class="mr-4 mt-3" v-if="item.packageId === packageId" color="red" outlined rounded x-small @click="UpdatePackage(item.packageId,'ยกเลิก',item.packageName, item)">ยกเลิก</v-btn>
                                 </v-row>
                                 <v-row class="font14 headline1">
                                     <v-col class="pl-1 pt-0 pb-0">จำนวนการใช้  {{item.balanceAmount}} / {{item.amount}} </v-col>
@@ -3353,7 +3353,8 @@ export default {
       StatusPackage: {
         status: 'ตกลง',
         color: 'green',
-        packageName: ''
+        packageName: '',
+        token: ''
       },
       options2: {
         locale: 'en-US',
@@ -3791,17 +3792,19 @@ export default {
       // this.getBookingList()
       await this.checkEmpJobCalenda()
     },
-    async UpdatePackage (packageId, StatusPackage, packageName) {
+    async UpdatePackage (packageId, StatusPackage, packageName, data) {
       if (StatusPackage === 'ตกลง') {
         this.packageId = packageId
         // this.StatusPackage.status = 'ยกเลิก'
         // this.StatusPackage.color = 'red'
         this.StatusPackage.packageName = packageName
+        this.StatusPackage.token = data.token
       } else {
         this.packageId = ''
         // this.StatusPackage.status = 'ตกลง'
         // this.StatusPackage.color = 'green'
         this.StatusPackage.packageName = ''
+        this.StatusPackage.token = ''
       }
     },
     async getCoin (dt) {
@@ -6522,9 +6525,9 @@ export default {
           if (this.dataPackage.filter(el => { return el.packageId === item.packageId }).length > 0) {
             var dataPack = this.dataPackage.filter(el => { return el.packageId === item.packageId })
             // this.packageId = dataPack[0].value
-            this.UpdatePackage(dataPack[0].value, 'ตกลง', dataPack[0].text)
+            this.UpdatePackage(dataPack[0].value, 'ตกลง', dataPack[0].text, dataPack[0])
           } else {
-            this.UpdatePackage('', 'ยกเลิก', '')
+            this.UpdatePackage('', 'ยกเลิก', '', '')
           }
         }
       }
@@ -6532,7 +6535,7 @@ export default {
       this.dataConfirmReady = true
     },
     addDataJob () {
-      // console.log('totalPrice', this.totalPrice)
+      console.log('this.StatusPackage', this.StatusPackage)
       this.validate('UPDATE')
       setTimeout(() => this.addDataJobSubmit(), 500)
     },
@@ -6669,6 +6672,17 @@ export default {
                                 await this.searchAny()
                               }
                             }
+                            this.empSelectAdd = ''
+                            this.totalPrice = ''
+                            this.remark = ''
+                            this.productExchangeRateId = ''
+                            this.StatusPackage = {
+                              status: 'ตกลง',
+                              color: 'green',
+                              packageName: '',
+                              token: ''
+                            }
+                            this.packageId = ''
                             this.dialogConfirm = false
                             this.dataConfirmReady = true
                             // var dataJob = this.dataItem.filter(el => { return el.bookNo === this.dataQrcode.bookNo })
@@ -6985,7 +6999,7 @@ export default {
     async usePackage () {
       var params = {
         shopId: this.$session.getAll().data.shopId,
-        token: this.packageId.token
+        token: this.StatusPackage.token
       }
       await axios({
         method: 'post',
@@ -6994,7 +7008,7 @@ export default {
           lineUserId: this.lineUserId,
           lineId: this.userId
         },
-        url: this.DNS_IP_Loyalty + '/use_package/edit',
+        url: this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token,
         data: params
       }).then((response) => {})
     },
