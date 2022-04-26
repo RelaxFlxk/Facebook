@@ -7431,12 +7431,19 @@ export default {
                 if (parseInt(this.jobitem[0].empStepId) !== this.empSelectJob) {
                   if (this.jobitem[0].lineUserId !== '') {
                     var dt = {
-                      updateStatusSend: 'false'
+                      updateStatusSend: 'false',
+                      oldEmpName: this.jobitem[0].empStep
                     }
                     await axios
                       .post(this.DNS_IP + '/BookingOnsite/pushEmpCustomer/' + this.jobitem[0].bookNo, dt)
                       .then(async response1 => {})
                   }
+                  var dtNoti = {
+                    oldEmpName: this.jobitem[0].empStep
+                  }
+                  await axios
+                    .post(this.DNS_IP + '/Booking/LineNotifyGroupOnsite/' + this.jobitem[0].bookNo, dtNoti)
+                    .then(async response1 => {})
                 }
                 if (this.statusSearch === 'no') {
                   await this.getBookingList()
