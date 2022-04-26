@@ -3829,11 +3829,6 @@ export default {
       }
     },
     async getPackage (dt) {
-      // this.fieldNameItem.forEach((field, index) => {
-      //   if (field.fieldId === 101) {
-      //     this.fieldNameItem[index].fieldValue = String(this.fromAdd.flowId)
-      //   }
-      // })
       this.dataPackage = []
       await axios.get(this.DNS_IP_Loyalty + '/PackageLog/get?shopId=' + dt.shopId + '&lineUserId=' + dt.lineUserId +
       '&flowId=' + dt.flowId).then(response => {
@@ -3845,7 +3840,6 @@ export default {
             d.text = d.packageName
             d.value = d.packageId
             this.dataPackage.push(d)
-            // console.log('this.DataFlowName', this.DataFlowName)
           }
         } else {
           this.dataPackage = []
@@ -6520,7 +6514,16 @@ export default {
       // await this.getEmpSelect(item)
       if (this.lineUserId !== '') {
         await this.getPackage(item)
-        await this.getCoin(item)
+        await axios
+          .get(this.DNS_IP_Loyalty + '/member/get?lineUserId=' + this.lineUserId + '&shopId=' + this.$session.getAll().data.shopId)
+          .then(async responseMember => {
+            if (responseMember.data.status === false) {
+              this.productExchangeRateId = ''
+              this.dataCoin = []
+            } else {
+              await this.getCoin(item)
+            }
+          })
         if (this.dataPackage.length > 0) {
           if (this.dataPackage.filter(el => { return el.packageId === item.packageId }).length > 0) {
             var dataPack = this.dataPackage.filter(el => { return el.packageId === item.packageId })
