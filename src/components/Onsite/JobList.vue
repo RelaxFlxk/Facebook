@@ -2,7 +2,7 @@
   <div>
     <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
     <v-main>
-      <div class="px-lg-4">
+      <div class="px-lg-4" style="overflow-x: hidden;">
         <v-row class="no-gutters">
           <v-col cols="12" md="6" lg="6" class="text-left">
             <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
@@ -439,17 +439,21 @@ export default {
           } else {
             this.$session.start()
             this.$session.set('data', JSON.parse(localStorage.getItem('sessionData')))
-            await this.getDataFlow()
-            await this.checkJobList()
+            location.reload()
+            // await this.getDataFlow()
+            // await this.checkJobList()
           }
         } else {
           if (this.$route.query.type === 'jobList') {
-            this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId + '&type=jobList&empId=' + this.$route.query.empId)
+            this.$swal('ผิดพลาด', 'รายการนี้ไม่ได้มอบหมายให้คุณ', 'error')
+            this.$router.push('/Onsite/JobList')
+            // this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId + '&type=jobList&empId=' + this.$route.query.empId)
           } else {
             if (this.$session.id() === undefined) {
               this.$session.start()
               this.$session.set('data', JSON.parse(localStorage.getItem('sessionData')))
-              await this.getDataFlow()
+              // await this.getDataFlow()
+              location.reload()
             } else {
               await this.getDataFlow()
             }
@@ -463,32 +467,34 @@ export default {
             this.$router.push('/Core/Login')
           }
         } else {
-          if (this.session.data.shopId === this.$route.query.shopId && this.$route.query.type === 'jobList' && this.session.data.empId === this.$route.query.empId) {
-            localStorage.setItem('sessionData', JSON.stringify(this.session.data))
+          if (this.$session.getAll().data.shopId === this.$route.query.shopId && this.$route.query.type === 'jobList' && this.$session.getAll().data.empId === this.$route.query.empId) {
+            localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
             await this.getDataFlow()
             await this.checkJobList()
           } else if (this.$session.id() !== undefined && this.$route.query.type === undefined) {
-            localStorage.setItem('sessionData', JSON.stringify(this.session.data))
+            localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
             await this.getDataFlow()
           } else {
             if (this.$route.query.type === 'jobList') {
-              this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId + '&type=jobList&empId=' + this.$route.query.empId)
+              this.$swal('ผิดพลาด', 'รายการนี้ไม่ได้มอบหมายให้คุณ', 'error')
+              this.$router.push('/Onsite/JobList')
+              // this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId + '&type=jobList&empId=' + this.$route.query.empId)
             } else {
               this.$router.push('/Core/Login')
             }
           }
         }
       }
-      // console.log(JSON.stringify(this.session.data))
+      // console.log(JSON.stringify(this.$session.getAll().data))
     },
     async checkJobList () {
       await axios
         .get(
           this.DNS_IP +
             '/job/getList?shopId=' +
-            this.session.data.shopId +
+            this.$session.getAll().data.shopId +
             '&empStep=' +
-            this.session.data.empId +
+            this.$session.getAll().data.empId +
             '&jobNo=' + this.$route.query.jobNo
         )
         .then(async response => {
@@ -505,6 +511,7 @@ export default {
               this.sortNo = 2
             } else {
               this.tab = 0
+              this.sortNo = ''
             }
             this.jobNo = this.$route.query.jobNo
           }
@@ -561,8 +568,8 @@ export default {
         item = []
         let dajobBeforeAfter = {
           jobId: dt.jobId,
-          CREATE_USER: this.session.data.userName,
-          LAST_USER: this.session.data.userName
+          CREATE_USER: this.$session.getAll().data.userName,
+          LAST_USER: this.$session.getAll().data.userName
         }
         await axios
           .post(this.DNS_IP + '/jobBeforeAfter/add', dajobBeforeAfter)
@@ -593,7 +600,7 @@ export default {
             })
           let dajobBeforeAfter = {
             afterImage: urlPic,
-            LAST_USER: this.session.data.userName
+            LAST_USER: this.$session.getAll().data.userName
           }
           await axios
             .post(this.DNS_IP + '/jobBeforeAfter/edit/' + item.id, dajobBeforeAfter)
@@ -614,7 +621,7 @@ export default {
             })
           let dajobBeforeAfter = {
             beforeImage: urlPic,
-            LAST_USER: this.session.data.userName
+            LAST_USER: this.$session.getAll().data.userName
           }
           await axios
             .post(this.DNS_IP + '/jobBeforeAfter/edit/' + item.id, dajobBeforeAfter)
@@ -626,37 +633,43 @@ export default {
     },
     async deleteBeforeAfter (item, text) {
       console.log(item, text)
-      if (text === 'after') {
-        let dajobBeforeAfter = {
-          afterImage: 'is null',
-          LAST_USER: this.session.data.userName
+      this.swalConfig.title = 'ต้องการ ลบรูปนี้ ใช่หรือไม่?'
+      this.$swal(this.swalConfig).then(async () => {
+        if (text === 'after') {
+          let dajobBeforeAfter = {
+            afterImage: 'is null',
+            LAST_USER: this.$session.getAll().data.userName
+          }
+          await axios
+            .post(this.DNS_IP + '/jobBeforeAfter/edit/' + item.id, dajobBeforeAfter)
+            .then(async responses => {
+              await this.checkEmpJob()
+            })
+        } else {
+          let dajobBeforeAfter = {
+            beforeImage: 'is null',
+            LAST_USER: this.$session.getAll().data.userName
+          }
+          await axios
+            .post(this.DNS_IP + '/jobBeforeAfter/edit/' + item.id, dajobBeforeAfter)
+            .then(async responses => {
+              await this.checkEmpJob()
+            })
         }
-        await axios
-          .post(this.DNS_IP + '/jobBeforeAfter/edit/' + item.id, dajobBeforeAfter)
-          .then(async responses => {
-            await this.checkEmpJob()
-          })
-      } else {
-        let dajobBeforeAfter = {
-          beforeImage: 'is null',
-          LAST_USER: this.session.data.userName
-        }
-        await axios
-          .post(this.DNS_IP + '/jobBeforeAfter/edit/' + item.id, dajobBeforeAfter)
-          .then(async responses => {
-            await this.checkEmpJob()
-          })
-      }
+      })
     },
     async deleteBeforeAfterAll (item) {
-      let dajobBeforeAfter = {
-        LAST_USER: this.session.data.userName
-      }
-      await axios
-        .post(this.DNS_IP + '/jobBeforeAfter/delete/' + item.id, dajobBeforeAfter)
-        .then(async responses => {
-          await this.checkEmpJob()
-        })
+      this.swalConfig.title = 'ต้องการ ลบรูปทั้งหมดในแถว ใช่หรือไม่?'
+      this.$swal(this.swalConfig).then(async () => {
+        let dajobBeforeAfter = {
+          LAST_USER: this.$session.getAll().data.userName
+        }
+        await axios
+          .post(this.DNS_IP + '/jobBeforeAfter/delete/' + item.id, dajobBeforeAfter)
+          .then(async responses => {
+            await this.checkEmpJob()
+          })
+      })
     },
     cheSort (item) {
       console.log('cheSort', item.allData.sortNo)
@@ -699,7 +712,7 @@ export default {
     async getDataFromAPI (url, fieldId, fieldName, param) {
       let result = []
       await axios
-        .get(this.DNS_IP + `${url}?shopId=${this.session.data.shopId}${param}`)
+        .get(this.DNS_IP + `${url}?shopId=${this.$session.getAll().data.shopId}${param}`)
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
@@ -726,6 +739,7 @@ export default {
         this.sortNo = 2
       } else {
         this.tab = 0
+        this.sortNo = ''
       }
     },
     async checkEmpJob () {
@@ -734,9 +748,9 @@ export default {
         .get(
           this.DNS_IP +
             '/job/getList?shopId=' +
-            this.session.data.shopId +
+            this.$session.getAll().data.shopId +
             '&empStep=' +
-            this.session.data.empId +
+            this.$session.getAll().data.empId +
             '&flowId=' +
             this.selectFlow
         )
@@ -757,8 +771,8 @@ export default {
                       d.dataBeforeAfter = [{'beforeImage': null, 'afterImage': null, 'filesBefore': null, 'filesAfter': null}]
                       let dajobBeforeAfter = {
                         jobId: d.jobId,
-                        CREATE_USER: this.session.data.userName,
-                        LAST_USER: this.session.data.userName
+                        CREATE_USER: this.$session.getAll().data.userName,
+                        LAST_USER: this.$session.getAll().data.userName
                       }
                       await axios
                         .post(this.DNS_IP + '/jobBeforeAfter/add', dajobBeforeAfter)
@@ -782,9 +796,9 @@ export default {
         .get(
           this.DNS_IP +
             '/job/get?shopId=' +
-            this.session.data.shopId +
+            this.$session.getAll().data.shopId +
             '&empStepId=' +
-            this.session.data.empId +
+            this.$session.getAll().data.empId +
             '&flowId=' +
             this.selectFlow
         )
@@ -820,7 +834,7 @@ export default {
                   moment(new Date()),
                   'YYYY-MM-DD HH:mm:ss'
                 ).format('YYYY-MM-DD HH:mm:ss'),
-                LAST_USER: this.session.data.userName
+                LAST_USER: this.$session.getAll().data.userName
               }
             }
             console.log('updateJob', dt)
@@ -832,8 +846,8 @@ export default {
                 if (response.data.status) {
                   let dajobBeforeAfter = {
                     jobId: jobId,
-                    CREATE_USER: this.session.data.userName,
-                    LAST_USER: this.session.data.userName
+                    CREATE_USER: this.$session.getAll().data.userName,
+                    LAST_USER: this.$session.getAll().data.userName
                   }
                   await axios
                     .post(this.DNS_IP + '/jobBeforeAfter/add', dajobBeforeAfter)
@@ -881,7 +895,7 @@ export default {
                 moment(new Date()),
                 'YYYY-MM-DD HH:mm:ss'
               ).format('YYYY-MM-DD HH:mm:ss'),
-              LAST_USER: this.session.data.userName
+              LAST_USER: this.$session.getAll().data.userName
             }
           }
           console.log('updateJob', dt)
