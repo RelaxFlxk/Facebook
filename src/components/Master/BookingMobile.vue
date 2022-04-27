@@ -172,26 +172,7 @@
                 readonly
               ></v-text-field>
             </v-row>
-            <!-- <v-col
-              v-for="(item, indexitem) in BookingDataItem"
-              :key="indexitem"
-              cols="12"
-              class="pa-1"
-            >
-            <v-row class="pa-0 pb-0 pt-0">
-              <v-text-field
-                :label="item.fieldName"
-                :value="item.fieldValue"
-                class="pa-2 pb-3 pt-0"
-                outlined
-                dense
-                readonly
-              >
-              </v-text-field>
-              <v-icon class="pa-3 pb-10 pt-0" v-if="item.fieldName === 'เบอร์โทร'" large color="#64DD17" @click="dial(item.phone)">call</v-icon>
-              </v-row>
-            </v-col> -->
-            <v-col cols='12' class="pb-0 pt-0 mt-0">
+            <v-col cols='12' class="pb-0 pt-0 mt-0" v-if="dataItem[0].checkOnsite !== 'True'">
               <v-radio-group v-model="radiosRemark" row>
                 <!-- <template v-slot:label>
                   <div>Your favourite <strong>search engine</strong></div>
@@ -230,11 +211,25 @@
                 id="v-step-2"
                 v-if="
                   dataItem[0].statusBt !== 'confirmJob' &&
-                    dataItem[0].statusBt !== 'confirm'
+                    dataItem[0].statusBt !== 'confirm' && dataItem[0].checkOnsite !== 'True'
                 "
                 :disabled="dataItem[0].chkConfirm"
                 small
                 @click.stop="confirmChk(dataItem[0])"
+              >
+                <v-icon dark> mdi-phone-check </v-icon>
+              </v-btn>
+              <v-btn
+                color="success"
+                fab
+                id="v-step-2"
+                v-if="
+                  dataItem[0].statusBt !== 'confirmJob' &&
+                    dataItem[0].statusBt !== 'confirm' && dataItem[0].checkOnsite === 'True'
+                "
+                :disabled="dataItem[0].chkConfirm"
+                small
+                @click.stop="confirmChkOnsite(dataItem[0])"
               >
                 <v-icon dark> mdi-phone-check </v-icon>
               </v-btn>
@@ -253,7 +248,20 @@
                 id="v-step-2"
                 v-if="
                   dataItem[0].statusBt !== 'cancel' &&
-                    dataItem[0].statusBt !== 'confirmJob'
+                    dataItem[0].statusBt !== 'confirmJob' && dataItem[0].statusBt !== 'confirm'  && dataItem[0].checkOnsite === 'True'
+                "
+                small
+                @click.stop="setDataRemove(dataItem[0])"
+              >
+                <v-icon dark> mdi-phone-cancel </v-icon>
+              </v-btn>
+              <v-btn
+                color="error"
+                fab
+                id="v-step-2"
+                v-if="
+                  dataItem[0].statusBt !== 'cancel' &&
+                    dataItem[0].statusBt !== 'confirmJob' && dataItem[0].checkOnsite !== 'True'
                 "
                 small
                 @click.stop="setDataRemove(dataItem[0])"
@@ -458,64 +466,271 @@
               </v-card-text>
             </v-card>
           </v-dialog>
-          <v-dialog v-model="dialogRemove" max-width="70%">
-            <v-card class="text-center">
-              <v-card-title>
-                ยกเลิกรายการนี้
-              </v-card-title>
-              <v-card-text>
-                <v-container>
-                <v-row>
-                  <v-textarea
-                    v-model="remarkRemove"
-                    outlined
-                    label="หมายเหตุในการยกเลิก"
-                    auto-grow
-                  ></v-textarea>
-                </v-row>
-                <v-row>
-                  <v-select
-                    v-model="empSelect"
-                    :items="empSelectStep"
-                    label="พนักงานที่รับนัดหมาย"
-                    menu-props="auto"
-                    outlined
-                    dense
-                  ></v-select>
-                </v-row>
-                <div class="text-center">
-                  <v-btn
-                    elevation="10"
-                    color="#173053"
-                    dark
-                    small
-                    @click="cancelChk()"
-                    >ยกเลิกรายการนี้</v-btn
-                  >
-                  <v-btn
-                    elevation="10"
-                    color="#173053"
-                    outlined
-                    style="background-color:#FFFFFF"
-                    small
-                    @click="dialogRemove = false"
-                    >ยกเลิก</v-btn
-                  >
-                </div>
-                </v-container>
-              </v-card-text>
-            </v-card>
-          </v-dialog>
-          <BookingQueue :branchParent="branch" :masBranchIDParent="masBranchID" :drawerParent="drawer" :menu1Parent="menu1" :timeTableParent="timeTable" :rulesParent="rules" :masterTimeParent="masterTime" :dataItemTimesChangeParent="dataItemTimesChange" :getTimesChangeParent="getTimesChange" :toggleParent="toggle" @updateTimeTable="updateTimeTablefromChild"></BookingQueue>
+    <v-dialog v-model="dialogRemove" max-width="70%">
+      <v-card class="text-center">
+        <v-card-title>
+          ยกเลิกรายการนี้
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+          <v-row>
+            <v-textarea
+              v-model="remarkRemove"
+              outlined
+              label="หมายเหตุในการยกเลิก"
+              auto-grow
+            ></v-textarea>
+          </v-row>
+          <v-row>
+            <v-select
+              v-model="empSelect"
+              :items="empSelectStep"
+              label="พนักงานที่รับนัดหมาย"
+              menu-props="auto"
+              outlined
+              dense
+            ></v-select>
+          </v-row>
+          <div class="text-center">
+            <v-btn
+              elevation="10"
+              color="#173053"
+              dark
+              small
+              @click="cancelChk()"
+              >ยกเลิกรายการนี้</v-btn
+            >
+            <v-btn
+              elevation="10"
+              color="#173053"
+              outlined
+              style="background-color:#FFFFFF"
+              small
+              @click="dialogRemove = false"
+              >ยกเลิก</v-btn
+            >
+          </div>
+          </v-container>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="dialogConfirmOnsite" max-width="90%">
+      <v-form ref="form_update" v-model="validUpdate" lazy-validation>
+        <v-card class="text-center">
+          <v-container>
+            <v-card-title>
+              ยืนยันรายการนี้
+            </v-card-title>
+          </v-container>
+          <v-card-text v-if="dataConfirmReady">
+            <v-container>
+            <v-row>
+              <v-col
+                v-for="(item, indexitem) in BookingDataItem"
+                :key="indexitem"
+                cols="12"
+                class="pb-0"
+              >
+                <v-text-field
+                  :label="item.fieldName"
+                  :value="item.fieldValue"
+                  outlined
+                  dense
+                  readonly
+                ></v-text-field>
+                <!-- {{item.fieldName}} : {{item.fieldValue}} -->
+              </v-col>
+              <!-- <v-col cols= "12" class="pb-0">
+              <v-select
+                v-model="empSelect"
+                :items="empSelectStep"
+                label="พนักงานที่รับนัดหมาย"
+                menu-props="auto"
+                outlined
+                dense
+              ></v-select>
+              </v-col> -->
+            </v-row>
+            <v-row>
+              <v-col cols="12" class="pb-0  pt-0" v-if="checkPayment === 'True'">
+                <VuetifyMoney
+                  v-model="totalPrice"
+                  placeholder="ค่าใช้จ่ายทั้งหมด"
+                  dense
+                  label="ค่าใช้จ่ายทั้งหมด"
+                  required
+                  outlined
+                  :rules="[rules.required]"
+                  v-bind:options="options2"
+                />
+              </v-col>
+              <v-col class="pb-0 pt-0" cols="12" v-if="dataPackage.length > 0">
+                <v-card class="pl-1">
+                  <v-subheader>ลูกค้ามี {{dataPackage.length}} แพ็คเกจ</v-subheader>
+                  <v-subheader v-show="StatusPackage.packageName">ลูกค้าได้ทำการเลือกแพ็คเกจ {{StatusPackage.packageName}}</v-subheader>
+                  <v-slide-group
+                    active-class="success"
+                    >
+                    <v-slide-item v-for="(item, index) in dataPackage" :key="index">
+                        <v-card
+                        class="ma-2 p-1"
+                        width="340"
+                        height="90"
+                        color="#FFFFFF"
+                        elevation="6"
+                        >
+                        <v-row>
+                          <v-col cols="4" class="pr-1">
+                            <v-img
+                          contain
+                          max-height="80"
+                          max-width="200"
+                          :src="item.packageImg"
+                        ></v-img>
+                          </v-col>
+                          <v-col cols="8" class="pb-6" >
+                            <v-row class="font16 headline1">
+                                <v-col class="pl-0 pt-2 pb-0">{{item.packageName}}</v-col>
+                                <v-btn class="mr-4 mt-3" v-if="item.packageId !== packageId" color="green" outlined rounded x-small @click="UpdatePackage(item.packageId,'ตกลง',item.packageName, item)">ตกลง</v-btn>
+                                <v-btn class="mr-4 mt-3" v-if="item.packageId === packageId" color="red" outlined rounded x-small @click="UpdatePackage(item.packageId,'ยกเลิก',item.packageName, item)">ยกเลิก</v-btn>
+                            </v-row>
+                            <v-row class="font14 headline1">
+                                <v-col class="pl-1 pt-0 pb-0">จำนวนการใช้  {{item.balanceAmount}} / {{item.amount}} </v-col>
+                            </v-row>
+                            <v-row class="font14 headline1">
+                                <v-col class="pl-0 pt-0 pb-0">วันหมดอายุ  {{new Date(item.expirePackage * 1000).toLocaleString().substr(0,9)}} </v-col>
+                            </v-row>
+                          </v-col>
+                        </v-row>
+                        </v-card>
+                    </v-slide-item>
+                </v-slide-group>
+                </v-card>
+                <br>
+              </v-col>
+              <!-- <v-col class="pb-0 pt-0"  cols="12" v-if="dataPackage.length > 0">
+                <v-select
+                  v-model="packageId"
+                  :items="dataPackage"
+                  dense
+                  label="แพ็กเก็ต *"
+                  outlined
+                  required
+                  clearable
+                  item-text="packageName"
+                  item-value="packageId"
+                  return-object
+                  :rules="[rules.required]"
+                >
+                </v-select>
+              </v-col> -->
+              <v-col class="pb-0 pt-0"  cols="12"  v-if="dataCoin.length > 0 && checkPayment === 'True'">
+                <v-select
+                  v-model="productExchangeRateId"
+                  :items="dataCoin"
+                  dense
+                  outlined
+                  label="เลือกอัตราแลกเปลี่ยน (แจก Coin Loyalty) *"
+                  clearable
+                  item-text="text"
+                  item-value="value"
+                  return-object
+                >
+                </v-select>
+              </v-col>
+            </v-row>
+              <v-row>
+              <v-col class="pt-0">
+                <v-select
+                  v-model="empSelectAdd"
+                  :items="empSelectStepAdd"
+                  label="พนักงานที่รับนัดหมาย"
+                  menu-props="auto"
+                  outlined
+                  required
+                  :rules="[rules.required]"
+                  dense
+                ></v-select>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols= "12"  class="pb-0 pt-0">
+              <v-textarea
+                v-model="remark"
+                outlined
+                label="หมายเหตุเพิ่มเติม"
+                auto-grow
+              ></v-textarea>
+              </v-col>
+            </v-row>
+            <div class="text-center">
+              <v-btn
+                elevation="10"
+                color="#173053"
+                dark
+                small
+                @click="addDataJob(dataConfirm)"
+                >ยืนยันรายการนี้</v-btn
+              >
+              <v-btn
+                elevation="10"
+                color="#173053"
+                outlined
+                style="background-color:#FFFFFF"
+                small
+                @click="dialogConfirmOnsite = false"
+                >ยกเลิก</v-btn
+              >
+            </div>
+            </v-container>
+          </v-card-text>
+            <div class="text-center" v-if="!dataConfirmReady">
+              <v-progress-circular
+                :size="50"
+                color="primary"
+                indeterminate
+              ></v-progress-circular>
+
+              <v-progress-circular
+                :width="3"
+                color="red"
+                indeterminate
+              ></v-progress-circular>
+
+              <v-progress-circular
+                :size="70"
+                :width="7"
+                color="purple"
+                indeterminate
+              ></v-progress-circular>
+
+              <v-progress-circular
+                :width="3"
+                color="green"
+                indeterminate
+              ></v-progress-circular>
+
+              <v-progress-circular
+                :size="50"
+                color="amber"
+                indeterminate
+              ></v-progress-circular>
+              </div>
+        </v-card>
+      </v-form>
+      </v-dialog>
+    <BookingQueue :branchParent="branch" :masBranchIDParent="masBranchID" :drawerParent="drawer" :menu1Parent="menu1" :timeTableParent="timeTable" :rulesParent="rules" :masterTimeParent="masterTime" :dataItemTimesChangeParent="dataItemTimesChange" :getTimesChangeParent="getTimesChange" :toggleParent="toggle" @updateTimeTable="updateTimeTablefromChild"></BookingQueue>
   </div>
 </template>
 <script>
 import axios from 'axios' // api
 import moment from 'moment-timezone'
 import BookingQueue from './BookingQueueMobile.vue'
+import VuetifyMoney from '../VuetifyMoney.vue'
 export default {
   components: {
-    BookingQueue
+    BookingQueue,
+    VuetifyMoney
   },
   name: 'BookingList',
   data () {
@@ -558,6 +773,7 @@ export default {
       dialogJob: false,
       dialogConfirm: false,
       dialogRemove: false,
+      dialogConfirmOnsite: false,
       drawer: false,
       formChange: {
         date: '',
@@ -579,31 +795,554 @@ export default {
       flowIdSelect: '',
       dialogMap: false,
       center: null,
-      address: ''
+      address: '',
+      totalPrice: '',
+      packageId: '',
+      dataPackage: [],
+      flowId: '',
+      dataCoin: [],
+      productExchangeRateId: '',
+      dataConfirmReady: true,
+      validUpdate: true,
+      DataFlowName: [],
+      empSelectStepAdd: [],
+      editedItemSeleteField: [],
+      empSelectAdd: '',
+      remark: '',
+      lineUserId: '',
+      checkPayment: '',
+      dueDateText: '',
+      userId: '',
+      StatusPackage: {
+        status: 'ตกลง',
+        color: 'green',
+        packageName: '',
+        token: ''
+      },
+      options2: {
+        locale: 'en-US',
+        prefix: '',
+        suffix: '',
+        length: 9,
+        precision: 0
+      },
+      swalConfig: {
+        title: null,
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      }
     }
   },
   async mounted () {
     await this.beforeCreate()
   },
   methods: {
-    async getShowMap () {
-      await axios
-        .get(
-          this.DNS_IP + '/BookingField/get?shopId=' + this.$route.query.shopId
-        )
-        .then(async response1 => {
-          let rs = response1.data
-          if (rs.status !== false) {
-            if (rs[0].showMap === null || rs[0].showMap === '') {
-              this.showMap = 'ไม่แสดง'
-            } else {
-              this.showMap = rs[0].showMap
+    validate (Action) {
+      switch (Action) {
+        case 'UPDATE':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_update.validate()
+          })
+          break
+
+        default:
+          break
+      }
+    },
+    async getCustomFieldStart () {
+      this.editedItemSeleteField = []
+      axios
+        .get(this.DNS_IP + '/customField/get?shopId=' + this.$session.getAll().data.shopId)
+        .then(async response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (let i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              let s = {}
+              s.fieldId = d.fieldId
+              s.fieldName = d.fieldName
+              s.fieldType = d.fieldType
+              s.optionField = d.optionField
+              s.conditionField = d.conditionField
+              s.conditionValue = d.conditionValue
+              s.shopId = d.shopId
+              s.showCard = d.showCard
+              s.fieldValue = ''
+              this.editedItemSeleteField.push(s)
             }
-          } else {
-            this.showMap = 'ไม่แสดง'
+            // console.log('this.editedItemSeleteField', this.editedItemSeleteField)
           }
         })
     },
+    async getEmpSelectAddBooking () {
+      this.empSelectStepAdd = []
+      await axios
+        .get(this.DNS_IP + '/empSelect/getUse?privacyPage=booking&shopId=' + this.$session.getAll().data.shopId)
+        .then(async response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              var s = {}
+              s.text = d.empFull_NameTH
+              s.value = d.empId
+              this.empSelectStepAdd.push(s)
+            }
+          }
+        })
+    },
+    async UpdatePackage (packageId, StatusPackage, packageName, data) {
+      if (StatusPackage === 'ตกลง') {
+        this.packageId = packageId
+        // this.StatusPackage.status = 'ยกเลิก'
+        // this.StatusPackage.color = 'red'
+        this.StatusPackage.packageName = packageName
+        this.StatusPackage.token = data.token
+      } else {
+        this.packageId = ''
+        // this.StatusPackage.status = 'ตกลง'
+        // this.StatusPackage.color = 'green'
+        this.StatusPackage.packageName = ''
+        this.StatusPackage.token = ''
+      }
+    },
+    async getCoin (dt) {
+      if (this.lineUserId !== '') {
+        this.dataCoin = []
+        await axios.get(this.DNS_IP_Loyalty + '/productExchangeRate/get?shopId=' + dt.shopId +
+      '&flowId=' + dt.flowId).then(response => {
+          console.log('productExchangeRate', response.data)
+          let rs = response.data
+          if (rs.status !== false) {
+            for (var i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              d.text = d.name
+              d.value = d.productExchangeRateId
+              this.dataCoin.push(d)
+            // console.log('this.DataFlowName', this.DataFlowName)
+            }
+          } else {
+            this.dataCoin = []
+          }
+        })
+      }
+    },
+    async getPackage (dt) {
+      this.dataPackage = []
+      await axios.get(this.DNS_IP_Loyalty + '/PackageLog/get?shopId=' + dt.shopId + '&lineUserId=' + dt.lineUserId +
+      '&flowId=' + dt.flowId).then(response => {
+        console.log('PackageLog', response.data)
+        let rs = response.data
+        if (rs.status !== false) {
+          for (var i = 0; i < rs.length; i++) {
+            let d = rs[i]
+            d.text = d.packageName
+            d.value = d.packageId
+            this.dataPackage.push(d)
+          }
+        } else {
+          this.dataPackage = []
+        }
+      })
+    },
+    async confirmChkOnsite (item) {
+      await this.getEmpSelectAddBooking()
+      await this.getDataFlow()
+      this.getCustomFieldStart()
+      this.empSelectAdd = parseInt(item.empSelect || 0)
+      this.dialogConfirmOnsite = true
+      this.dataConfirmReady = false
+      console.log('confirmChkItem', item)
+      console.log('this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.checkPayment', this.DataFlowName)
+      this.totalPrice = ''
+      this.dataConfirm = item
+      this.remark = item.remark
+      this.lineUserId = item.lineUserId || ''
+      this.userId = item.userId
+      this.checkPayment = this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.checkPayment
+      console.log('checkPayment', this.checkPayment)
+      console.log('DataFlowName', this.DataFlowName)
+      // await this.getEmpSelect(item)
+      if (this.lineUserId !== '') {
+        await this.getPackage(item)
+        await axios
+          .get(this.DNS_IP_Loyalty + '/member/get?lineUserId=' + this.lineUserId + '&shopId=' + this.$session.getAll().data.shopId)
+          .then(async responseMember => {
+            if (responseMember.data.status === false) {
+              this.productExchangeRateId = ''
+              this.dataCoin = []
+            } else {
+              await this.getCoin(item)
+            }
+          })
+        if (this.dataPackage.length > 0) {
+          if (this.dataPackage.filter(el => { return el.packageId === item.packageId }).length > 0) {
+            var dataPack = this.dataPackage.filter(el => { return el.packageId === item.packageId })
+            // this.packageId = dataPack[0].value
+            this.UpdatePackage(dataPack[0].value, 'ตกลง', dataPack[0].text, dataPack[0])
+          } else {
+            this.UpdatePackage('', 'ยกเลิก', '', '')
+          }
+        }
+      }
+      await this.getBookingDataJob(item, '')
+      this.dataConfirmReady = true
+    },
+    async getBookingDataJob (dt, text) {
+      console.log('itemBookingData', dt)
+      this.lineUserId = dt.lineUserId
+      this.dueDateText = dt.dueDateText
+      this.jobNo = dt.jobNo
+      this.BookingDataItem = []
+      let itemIncustomField = []
+      await axios
+        .get(
+          this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+        )
+        .then(async response1 => {
+          let rs2 = response1.data
+          if (rs2.length > 0) {
+            let bookingData = []
+            bookingData = JSON.parse(rs2[0].flowfieldName)
+            for (let i = 0; i < bookingData.length; i++) {
+              let d = bookingData[i]
+              itemIncustomField.push(d.fieldId)
+            }
+            console.log('itemIncustomField', itemIncustomField)
+            await axios
+              .get(this.DNS_IP + '/customField/fieldId?fieldId=' + itemIncustomField)
+              .then(async responses => {
+                let rs1 = responses.data
+                await axios
+                  .get(this.DNS_IP + '/BookingDataSelect/get?bookNo=' + dt.bookNo)
+                  .then(async response => {
+                    let rs = response.data
+                    if (rs.length > 0) {
+                      console.log('BookingDataSelect', rs)
+                      console.log('customField', rs1)
+                      for (var i = 0; i < rs1.length; i++) {
+                        var d = rs1[i]
+                        // var s = {}
+                        var dataBD = rs.filter(el => { return parseInt(el.fieldId) === parseInt(d.fieldId) })
+                        if (dataBD.length > 0) {
+                          if (dt.flowId === dataBD[0].flowId) {
+                            d.bookNo = dataBD[0].bookNo
+                            d.bookingFieldId = rs2[0].bookingFieldId
+                            d.bookingDataId = dataBD[0].bookingDataId
+                            d.flowId = dataBD[0].flowId
+                            d.masBranchID = dataBD[0].masBranchID
+                            d.addressLatLong = dataBD[0].addressLatLong
+                            // d.conditionField = d.conditionField
+                            // d.fieldId = d.fieldId
+                            // d.fieldType = d.fieldType
+                            d.fieldValue = dataBD[0].fieldValue
+                            d.packageId = dataBD[0].packageId
+                            // d.fieldName = d.fieldName
+                            // d.conditionField = d.conditionField
+                            // d.conditionValue = d.conditionValue
+                            // d.requiredField = d.requiredField
+                            // d.optionField = d.optionField
+                            // d.userId = d.userId
+                            if (rs[0].userId === 'user-skip') {
+                              d.userId = ''
+                            } else {
+                              d.userId = rs[0].userId
+                            }
+                            d.shopId = this.session.data.shopId
+                            d.userName = this.$session.getAll().data.userName
+                            this.BookingDataItem.push(d)
+                          }
+                        }
+                      }
+                      // await this.getBookingField()
+                      await this.getflowfield(dt)
+                      this.dataEditJobReady = true
+                    }
+                  })
+              })
+          }
+        })
+    },
+    addDataJob () {
+      console.log('this.dataItem', this.dataItem)
+      console.log('this.BookingDataItem', this.BookingDataItem)
+      this.validate('UPDATE')
+      setTimeout(() => this.addDataJobSubmit(), 500)
+    },
+    addDataJobSubmit () {
+      if (this.$session.id() !== undefined) {
+        if (this.dataItem.filter(row => row.bookNo === this.BookingDataItem[0].bookNo).length > 0) {
+          if (this.validUpdate === true) {
+            this.dataConfirmReady = false
+            // console.log('this.BookingDataItem', this.BookingDataItem)
+            let Add = []
+            let fielditem = this.flowfieldNameitem
+            for (var i = 0; i < this.BookingDataItem.length; i++) {
+              var d = this.BookingDataItem[i]
+              let update = {}
+              let addData = false
+              var dataField = this.editedItemSeleteField.filter(el => { return parseInt(el.fieldId) === parseInt(d.fieldId) })
+              if (dataField[0].conditionField === '' || dataField[0].conditionField === null) {
+                addData = true
+              } else {
+                if (
+                  fielditem.filter(row => {
+                    return row.fieldId === parseInt(d.conditionField)
+                  }).length > 0
+                ) {
+                  console.log('this', fielditem)
+                  if (d.conditionValue === fielditem.filter(row => {
+                    return row.fieldId === parseInt(d.conditionField)
+                  })[0].fieldValue
+                  ) {
+                    addData = true
+                  } else if (d.conditionField === 'flow') {
+                    addData = true
+                  }
+                } else if (d.conditionField === 'flow') {
+                  addData = true
+                }
+              }
+              if (addData) {
+                if (d.fieldValue !== '') {
+                  update.masBranchID = this.BookingDataItem[0].masBranchID
+                  update.CREATE_USER = d.userName
+                  update.LAST_USER = d.userName
+                  update.packageId = this.packageId
+                  update.totalPrice = this.totalPrice || '0'
+                  update.checkCar = ''
+                  update.userId = d.userId
+                  // update.endDate = this.endDate
+                  // update.endTime = this.endTime.value
+                  update.fieldId = d.fieldId
+                  update.fieldName = d.fieldName
+                  update.fieldType = dataField[0].fieldType
+                  update.fieldValue = d.fieldValue
+                  update.flowId = d.flowId
+                  // update.empStep = this.empSelectJob
+                  // update.empSelect = this.$session.getAll().data.shopId
+                  update.conditionField = dataField[0].conditionField
+                  update.conditionValue = dataField[0].conditionValue
+                  update.optionField = dataField[0].optionField
+                  update.shopId = dataField[0].shopId
+                  update.showCard = dataField[0].showCard
+                  Add.push(update)
+                }
+              }
+            }
+            console.log('this.Add', Add)
+            this.swalConfig.title = 'ต้องการยืนยันรายการ ใช่หรือไม่?'
+            this.$swal(this.swalConfig).then(async result => {
+              this.dataEditJobReady = false
+              await axios
+                .post(this.DNS_IP + '/job/add', Add)
+                .then(async response => {
+                  this.endDate = ''
+                  this.endTime = ''
+                  this.empSelectJob = ''
+                  if (response.data.status) {
+                    if (this.packageId !== '' && this.productExchangeRateId === '') {
+                      await this.usePackage()
+                    } else if (this.packageId === '' && this.productExchangeRateId !== '') {
+                      if (this.lineUserId !== '') {
+                        if (this.totalPrice !== '') {
+                          await this.useCoin(this.totalPrice)
+                        }
+                      }
+                    } else if (this.packageId !== '' && this.productExchangeRateId !== '') {
+                      if (this.lineUserId !== '') {
+                        if (this.totalPrice !== '') {
+                          await this.useCoin(this.totalPrice)
+                        }
+                        await this.usePackage()
+                      } else {
+                        await this.usePackage()
+                      }
+                    }
+                    var dt = {
+                      bookNo: this.BookingDataItem[0].bookNo,
+                      statusJob: 'confirm',
+                      jobNo: response.data.jobNo,
+                      empSelect: this.empSelectAdd,
+                      remark: this.remark
+                    }
+                    await axios
+                      .post(
+                        this.DNS_IP +
+                    '/Booking/editStatus/' +
+                    this.BookingDataItem[0].bookNo,
+                        dt
+                      )
+                      .then(async response1 => {
+                        // await this.pushMsg(response.data.jobNo)
+                        var dtt = {
+                          bookNo: this.BookingDataItem[0].bookNo,
+                          contactDate: this.format_date(new Date()),
+                          status: 'confirm',
+                          statusUse: 'use',
+                          shopId: this.$session.getAll().data.shopId,
+                          CREATE_USER: this.$session.getAll().data.userName,
+                          LAST_USER: this.$session.getAll().data.userName
+                        }
+                        axios
+                          .post(this.DNS_IP + '/booking_transaction/add', dtt)
+                          .then(async response => {
+                            this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
+                            if (this.lineUserId !== '') {
+                              this.pushMsgCustomer(this.BookingDataItem[0].bookNo)
+                              this.chkBookingNo()
+                            } else {
+                              this.chkBookingNo()
+                            }
+                            this.empSelectAdd = ''
+                            this.totalPrice = ''
+                            this.remark = ''
+                            this.productExchangeRateId = ''
+                            this.StatusPackage = {
+                              status: 'ตกลง',
+                              color: 'green',
+                              packageName: '',
+                              token: ''
+                            }
+                            this.packageId = ''
+                            this.dialogConfirmOnsite = false
+                            this.dataConfirmReady = true
+                            // var dataJob = this.dataItem.filter(el => { return el.bookNo === this.dataQrcode.bookNo })
+                            // this.getjob(dataJob[0])
+                            // this.dialogJob = true
+                          })
+                      })
+                  }
+                }).catch(error => {
+                  setTimeout(() => this.addDataJobSubmit(), 3000)
+                  console.log('error function addDataJobSubmit : ', error)
+                })
+            }).catch(error => {
+              this.dataConfirmReady = true
+              console.log('error alert : ', error)
+            })
+          }
+        } else {
+          this.dataConfirmReady = true
+          this.$swal('ผิดพลาด', 'ไม่มีนัดหมายเข้ารับบริการนี้', 'error').then(async response => {
+            this.dialogConfirmOnsite = false
+            this.chkBookingNo()
+          }).catch(error => {
+            console.log('error function addData : ', error)
+            this.dialogConfirmOnsite = false
+            this.chkBookingNo()
+          })
+        }
+      } else {
+        this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
+        clearInterval(this.setTimerCalendar)
+        this.setTimerCalendar = null
+        this.$router.push('/Core/Login')
+      }
+    },
+    async pushMsgCustomer (bookNo) {
+      let updateStatusSend = {
+        updateStatusSend: 'false'
+      }
+      await axios
+        .post(this.DNS_IP + '/BookingOnsite/pushMsgCustomer/' + bookNo, updateStatusSend)
+        .then(async response => {})
+    },
+    async usePackage () {
+      var params = {
+        shopId: this.$session.getAll().data.shopId,
+        token: this.StatusPackage.token
+      }
+      await axios({
+        method: 'post',
+        headers: {
+          shopId: this.$session.getAll().data.shopId,
+          lineUserId: this.lineUserId,
+          lineId: this.userId
+        },
+        url: this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token,
+        data: params
+      }).then((response) => {})
+    },
+    async useCoin (totalPrice) {
+      // productExchangeRateId
+      const today = new Date()
+      // console.log(today)
+      const date =
+            today.getFullYear() +
+            '' +
+            (today.getMonth() + 1) +
+            '' +
+            today.getDate()
+      const time =
+            today.getHours() + '' + today.getMinutes() + '' + today.getSeconds()
+      const token = date + '' + time
+      var point = ''
+      if (this.productExchangeRateId.exchangeRate === 0) {
+        point = 0
+      } else {
+        point = parseInt(totalPrice) / this.productExchangeRateId.exchangeRate
+      }
+      var md5 = require('md5')
+      var tokenKey = md5(token)
+      let ds = {
+        productExchangeRateId: this.productExchangeRateId.value,
+        amount: parseInt(totalPrice),
+        refId: '',
+        point: parseInt(point),
+        token: tokenKey,
+        status: 'waiting',
+        statusMemberCard: 'collect',
+        CREATE_USER: this.$session.getAll().data.userName,
+        LAST_USER: this.$session.getAll().data.userName,
+        shopId: this.$session.getAll().data.shopId,
+        qrCodeURL: `https://liff.line.me/1656906322-RnAKKNyq/collect?shopId=${this.$session.getAll().data.shopId}&token=${tokenKey}`
+        // masBranchID: '',
+        // branchName: ''
+      }
+      console.log('ds', ds)
+      await axios
+        .post(this.DNS_IP_Loyalty + '/qrcode/add', ds)
+        .then(async response => {
+          var params = {
+            shopId: this.$session.getAll().data.shopId,
+            token: tokenKey
+          }
+          await axios({
+            method: 'post',
+            headers: {
+              shopId: this.$session.getAll().data.shopId,
+              lineUserId: this.lineUserId,
+              lineId: this.userId
+            },
+            url: this.DNS_IP_Loyalty + '/memberCard/edit',
+            data: params
+          }).then((response) => {})
+        })
+    },
+    // async getShowMap () {
+    //   await axios
+    //     .get(
+    //       this.DNS_IP + '/BookingField/get?shopId=' + this.$route.query.shopId
+    //     )
+    //     .then(async response1 => {
+    //       let rs = response1.data
+    //       if (rs.status !== false) {
+    //         if (rs[0].showMap === null || rs[0].showMap === '') {
+    //           this.showMap = 'ไม่แสดง'
+    //         } else {
+    //           this.showMap = rs[0].showMap
+    //         }
+    //       } else {
+    //         this.showMap = 'ไม่แสดง'
+    //       }
+    //     })
+    // },
     gotoMap () {
       window.location.href = 'https://www.google.com/maps/dir/?api=1&travelmode=driving&layer=traffic&destination=' + this.center.lat + ',' + this.center.lng
     },
@@ -624,6 +1363,8 @@ export default {
       // console.log(JSON.parse(localStorage.getItem('sessionData')))
       if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
         if (JSON.parse(localStorage.getItem('sessionData')).shopId === this.$route.query.shopId) {
+          this.$session.start()
+          this.$session.set('data', JSON.parse(localStorage.getItem('sessionData')))
           await this.chkBookingNo()
           await this.getDataBranch()
         } else {
@@ -633,8 +1374,8 @@ export default {
         if (!this.$session.exists()) {
           this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
         } else {
-          if (this.session.data.shopId === this.$route.query.shopId) {
-            localStorage.setItem('sessionData', JSON.stringify(this.session.data))
+          if (this.$session.getAll().data.shopId === this.$route.query.shopId) {
+            localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
             await this.chkBookingNo()
             await this.getDataBranch()
           } else {
@@ -642,7 +1383,7 @@ export default {
           }
         }
       }
-      console.log(JSON.stringify(this.session.data))
+      // console.log(JSON.stringify(this.$session.getAll().data))
     },
     getDataFromFieldName (data, key) {
       return data.filter(function (el) {
@@ -653,12 +1394,15 @@ export default {
       this.timeTable = timeTable
     },
     async getDataBranch () {
-      this.branch = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName')
+      this.branch = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName', '')
     },
-    async getDataFromAPI (url, fieldId, fieldName) {
+    async getDataFlow () {
+      this.DataFlowName = await this.getDataFromAPI('/flow/get', 'flowId', 'flowName', '&checkOnsite=True')
+    },
+    async getDataFromAPI (url, fieldId, fieldName, param) {
       let result = []
       await axios
-        .get(this.DNS_IP + `${url}?shopId=${this.$route.query.shopId}`)
+        .get(this.DNS_IP + `${url}?shopId=${this.$route.query.shopId}${param}`)
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
@@ -692,24 +1436,6 @@ export default {
         if (text === 'all') {
           this.dataItemTimesChange = this.dataItemBooking
         } else {
-          // if (moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM') === this.dateStart) {
-          //   console.log('month old')
-          //   this.dataItemTimesChange = this.dataItemBooking.filter(el => {
-          //     let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-          //     return dueDate === this.timeTable
-          //   // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-          //   }).sort((a, b) => {
-          //     if (a.timeDuetext < b.timeDuetext) return -1
-          //     return a.timeDuetext > b.timeDuetext ? 1 : 0
-          //   })
-          // } else {
-          //   var data = this.dataItemCheck.filter(el => {
-          //     let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-          //     return dueDate === this.timeTable
-          //   // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-          //   })
-          //   console.log('data', data)
-          //   if (data.length === 0) {
           if (this.masBranchID) {
             this.masBranchID = this.masBranchID
           } else {
@@ -777,20 +1503,6 @@ export default {
                       s.statusBtText = 'รายการนัดหมายใหม่'
                       break
                   }
-                  // let dataBookingData = []
-                  // await axios
-                  //   .get(
-                  //     this.DNS_IP + `/BookingData/get?bookNo=${d.bookNo}`
-                  //   )
-                  //   .then(async responses => {
-                  //     dataBookingData = responses.data
-                  //   })
-                  // s.cusName = this.getDataFromFieldName(dataBookingData, 'ชื่อ')
-                  // s.cusReg = this.getDataFromFieldName(dataBookingData, 'เลขทะเบียน')
-                  // s.tel = this.getDataFromFieldName(dataBookingData, 'เบอร์โทร')
-                  // s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
-                  // s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
-                  // s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
 
                   s.cusName = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'ชื่อ')
                   s.cusReg = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'เลขทะเบียน')
@@ -823,179 +1535,12 @@ export default {
                 })
               }
             })
-            // } else {
-            //   console.log('month new else')
-            //   this.dataItemTimesChange = this.dataItemCheck.filter(el => {
-            //     let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-            //     return dueDate === this.timeTable
-            //     // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-            //   }).sort((a, b) => {
-            //     if (a.timeDuetext < b.timeDuetext) return -1
-            //     return a.timeDuetext > b.timeDuetext ? 1 : 0
-            //   })
-            // }
         }
         console.log('this.dataItemTimesChange', this.dataItemTimesChange)
       } catch (err) {
         console.log(err)
       }
     },
-    // async getTimesChange (text) {
-    //   try {
-    //     this.dataItemTimesChange = []
-    //     // console.log('this.dataItem', this.dataItem.filter(el => { return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable }))
-    //     if (text === 'all') {
-    //       this.dataItemTimesChange = this.dataItemBooking
-    //     } else {
-    //       if (moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM') === this.dateStart) {
-    //         console.log('month old')
-    //         this.dataItemTimesChange = this.dataItemBooking.filter(el => {
-    //           let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-    //           return dueDate === this.timeTable
-    //         // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-    //         }).sort((a, b) => {
-    //           if (a.timeDuetext < b.timeDuetext) return -1
-    //           return a.timeDuetext > b.timeDuetext ? 1 : 0
-    //         })
-    //       } else {
-    //         var data = this.dataItemCheck.filter(el => {
-    //           let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-    //           return dueDate === this.timeTable
-    //         // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-    //         })
-    //         console.log('data', data)
-    //         if (data.length === 0) {
-    //           if (this.masBranchID) {
-    //             this.masBranchID = this.masBranchID
-    //           } else {
-    //             if (this.branch.length > 0) {
-    //               this.masBranchID = this.branch[0].value
-    //             } else {
-    //               this.masBranchID = ''
-    //             }
-    //           }
-    //           this.dataItemCheck = []
-    //           var dataItems = []
-    //           // var dataItemTimes = []
-    //           var dateStart = moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM')
-    //           console.log('dateStartxx', dateStart)
-    //           await this.getBookingDataListTimechange(dateStart)
-    //           await axios
-    //             .get(
-    //               // eslint-disable-next-line quotes
-    //               this.DNS_IP +
-    //                 '/booking_view/get?shopId=' +
-    //                 this.$route.query.shopId +
-    //                 '&masBranchID=' +
-    //                 this.masBranchID +
-    //                 '&dueDate=' + moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM')
-    //             )
-    //             .then(async response => {
-    //               console.log('getData', response.data)
-    //               if (response.data.length > 0) {
-    //                 for (let i = 0; i < response.data.length; i++) {
-    //                   let d = response.data[i]
-    //                   let s = {}
-    //                   s.bookNo = d.bookNo
-    //                   s.flowId = d.flowId
-    //                   s.flowName = d.flowName
-    //                   s.dueDate = d.dueDate
-    //                   s.userId = d.userId
-    //                   s.chkConfirm = false
-    //                   s.chkCancel = false
-    //                   s.jobNo = d.jobNo
-    //                   s.remarkRemove = d.remarkRemove || ''
-    //                   s.timeDueHtext = d.timeDueH + ':00'
-    //                   s.timeDuetext = d.timeDue
-    //                   s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
-    //                   s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
-    //                   if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
-    //                     s.chkConfirm = true
-    //                     s.chkCancel = false
-    //                   }
-    //                   if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
-    //                     s.chkConfirm = false
-    //                     s.chkCancel = true
-    //                   }
-    //                   s.statusBt = d.statusBt || 'wait'
-    //                   switch (d.statusBt) {
-    //                     case 'confirm':
-    //                       s.statusBtText = 'ยืนยันแล้ว'
-    //                       break
-    //                     case 'cancel':
-    //                       s.statusBtText = 'ยกเลิก'
-    //                       break
-    //                     case 'confirmJob':
-    //                       s.statusBtText = 'รับรถแล้ว'
-    //                       break
-    //                     default:
-    //                       s.statusBtText = 'รายการนัดหมายใหม่'
-    //                       break
-    //                   }
-    //                   // let dataBookingData = []
-    //                   // await axios
-    //                   //   .get(
-    //                   //     this.DNS_IP + `/BookingData/get?bookNo=${d.bookNo}`
-    //                   //   )
-    //                   //   .then(async responses => {
-    //                   //     dataBookingData = responses.data
-    //                   //   })
-    //                   // s.cusName = this.getDataFromFieldName(dataBookingData, 'ชื่อ')
-    //                   // s.cusReg = this.getDataFromFieldName(dataBookingData, 'เลขทะเบียน')
-    //                   // s.tel = this.getDataFromFieldName(dataBookingData, 'เบอร์โทร')
-    //                   // s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
-    //                   // s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
-    //                   // s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
-
-    //                   s.cusName = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'ชื่อ')
-    //                   s.cusReg = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'เลขทะเบียน')
-    //                   s.tel = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'เบอร์โทร')
-    //                   s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
-    //                   s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
-    //                   s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
-    //                   // var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
-    //                   // if (chkTime.length === 0) {
-    //                   //   dataItemTimes.push(s)
-    //                   // }
-    //                   dataItems.push(s)
-    //                 }
-    //               }
-    //               if (dataItems.length === 0 || dataItems.status === false) {
-    //                 this.dataItemCheck = []
-    //                 // this.dataItemTime = []
-    //                 // this.dataReady = true
-    //                 // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
-    //               } else {
-    //                 console.log('month new if')
-    //                 this.dataItemCheck = dataItems
-    //                 this.dataItemTimesChange = this.dataItemCheck.filter(el => {
-    //                   let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-    //                   return dueDate === this.timeTable
-    //                   // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-    //                 }).sort((a, b) => {
-    //                   if (a.timeDuetext < b.timeDuetext) return -1
-    //                   return a.timeDuetext > b.timeDuetext ? 1 : 0
-    //                 })
-    //               }
-    //             })
-    //         } else {
-    //           console.log('month new else')
-    //           this.dataItemTimesChange = this.dataItemCheck.filter(el => {
-    //             let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-    //             return dueDate === this.timeTable
-    //             // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-    //           }).sort((a, b) => {
-    //             if (a.timeDuetext < b.timeDuetext) return -1
-    //             return a.timeDuetext > b.timeDuetext ? 1 : 0
-    //           })
-    //         }
-    //       }
-    //     }
-    //     console.log('this.dataItemTimesChange', this.dataItemTimesChange)
-    //   } catch (err) {
-    //     console.log(err)
-    //   }
-    // },
     async getBookingDataListTimechange (dateStart) {
       this.BookingDataListTimechange = []
       if (this.masBranchID) {
@@ -1026,7 +1571,7 @@ export default {
       this.BookingDataItem = []
       this.dataReady = false
       this.bookNo = this.$route.query.bookNo
-      await this.getShowMap()
+      // await this.getShowMap()
       if (this.bookNo === undefined) {
         // console.log('11111111111111', this.bookNo)
       } else {
@@ -1066,9 +1611,12 @@ export default {
                 s.chkConfirm = false
                 s.chkCancel = false
                 s.jobNo = d.jobNo
-                s.address = d.address
-                s.addressLatLong = d.addressLatLong
+                s.address = d.address || ''
+                s.checkOnsite = d.checkOnsite || 'False'
+                s.addressLatLong = d.addressLatLong || ''
                 s.lineUserId = d.lineUserId
+                s.empSelect = d.empSelect
+                s.packageId = d.packageId
                 s.remarkConfirm1 = (d.remarkConfirm1 === 'true' || d.remarkConfirm1 === 'True')
                 s.remarkConfirm2 = (d.remarkConfirm2 === 'true' || d.remarkConfirm2 === 'True')
                 s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
@@ -1136,9 +1684,15 @@ export default {
               console.log('dataItems', dataItems)
               if (dataItems.length === 0 || dataItems.status === false) {
                 this.dataItem = []
+                this.showMap = ''
                 // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
               } else {
                 this.dataItem = dataItems
+                if (dataItems[0].addressLatLong === '') {
+                  this.showMap = 'ไม่แสดง'
+                } else {
+                  this.showMap = 'แสดง'
+                }
                 // this.dataReady = true
                 await this.getBookingList(dataItems[0])
               }
@@ -1249,53 +1803,57 @@ export default {
       this.dialogConfirm = true
     },
     onConfirm (item) {
-      var dt = {
-        bookNo: item.bookNo,
-        contactDate: this.format_date(new Date()),
-        status: 'confirm',
-        statusUse: 'use',
-        shopId: this.$session.getAll().data.shopId,
-        CREATE_USER: this.session.data.userName,
-        LAST_USER: this.session.data.userName
-      }
-      axios
-        .post(this.DNS_IP + '/booking_transaction/add', dt)
-        .then(async response => {
-          await this.updateRemark(item)
-          this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-          let DTitem = item.userId
-          console.log('DTITEM', DTitem)
-          if (DTitem !== 'user-skip') {
-            await this.chkBookingNo()
-            // this.getTimesChange('update')
-            let pushText = {
-              'to': item.lineUserId,
-              'messages': [
-                {
-                  'type': 'text',
-                  'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
+      if (this.dataItem[0].checkOnsite === 'True') {
+
+      } else {
+        var dt = {
+          bookNo: item.bookNo,
+          contactDate: this.format_date(new Date()),
+          status: 'confirm',
+          statusUse: 'use',
+          shopId: this.$session.getAll().data.shopId,
+          CREATE_USER: this.$session.getAll().data.userName,
+          LAST_USER: this.$session.getAll().data.userName
+        }
+        axios
+          .post(this.DNS_IP + '/booking_transaction/add', dt)
+          .then(async response => {
+            await this.updateRemark(item)
+            this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+            let DTitem = item.userId
+            console.log('DTITEM', DTitem)
+            if (DTitem !== 'user-skip') {
+              await this.chkBookingNo()
+              // this.getTimesChange('update')
+              let pushText = {
+                'to': item.lineUserId,
+                'messages': [
+                  {
+                    'type': 'text',
+                    'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
                           \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}`
-                }
-              ]
-            }
-            axios
-              .post(
-                this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
-                pushText
-              )
-              .catch(error => {
-                console.log('error function addData : ', error)
-              })
-          } else {
-            await this.chkBookingNo()
+                  }
+                ]
+              }
+              axios
+                .post(
+                  this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
+                  pushText
+                )
+                .catch(error => {
+                  console.log('error function addData : ', error)
+                })
+            } else {
+              await this.chkBookingNo()
             // this.getTimesChange('update')
-          }
-          this.dialogConfirm = false
-          console.log('addDataGlobal', response)
-        })
-        .catch(error => {
-          console.log('error function addData : ', error)
-        })
+            }
+            this.dialogConfirm = false
+            console.log('addDataGlobal', response)
+          })
+          .catch(error => {
+            console.log('error function addData : ', error)
+          })
+      }
     },
     async setDataRemove (item) {
       this.bookNoRemove = item
@@ -1309,8 +1867,8 @@ export default {
         status: 'cancel',
         statusUse: 'use',
         shopId: this.$session.getAll().data.shopId,
-        CREATE_USER: this.session.data.userName,
-        LAST_USER: this.session.data.userName,
+        CREATE_USER: this.$session.getAll().data.userName,
+        LAST_USER: this.$session.getAll().data.userName,
         remarkRemove: this.remarkRemove
       }
       axios
@@ -1334,21 +1892,21 @@ export default {
         dt = {
           fastTrack: 'False',
           extraJob: 'False',
-          LAST_USER: this.session.data.userName,
+          LAST_USER: this.$session.getAll().data.userName,
           empSelect: this.empSelect
         }
       } else if (this.radiosRemark === 'ExtraJob') {
         dt = {
           fastTrack: 'False',
           extraJob: 'True',
-          LAST_USER: this.session.data.userName,
+          LAST_USER: this.$session.getAll().data.userName,
           empSelect: this.empSelect
         }
       } else if (this.radiosRemark === 'FastTrack') {
         dt = {
           fastTrack: 'True',
           extraJob: 'False',
-          LAST_USER: this.session.data.userName,
+          LAST_USER: this.$session.getAll().data.userName,
           empSelect: this.empSelect
         }
       }
@@ -1414,7 +1972,7 @@ export default {
           changeDueDate: 'change',
           dueDate: this.formChange.date + ' ' + this.formChange.time.value,
           timeText: this.formChange.time.text,
-          LAST_USER: this.session.data.userName
+          LAST_USER: this.$session.getAll().data.userName
         }
         await axios
           .post(
@@ -1429,8 +1987,8 @@ export default {
               status: 'change',
               statusUse: 'use',
               shopId: this.$session.getAll().data.shopId,
-              CREATE_USER: this.session.data.userName,
-              LAST_USER: this.session.data.userName,
+              CREATE_USER: this.$session.getAll().data.userName,
+              LAST_USER: this.$session.getAll().data.userName,
               changDate: this.formChange.date + ' ' + this.formChange.time.value
             }
             await axios
