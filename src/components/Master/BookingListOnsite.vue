@@ -1096,9 +1096,9 @@
                       {{item.stepTitle}}
                     </v-col>
                   </v-row> -->
-                  <v-row v-if="empSelectJob !== '' && checkEventInfo.length > 0">
+                  <v-row v-if="empSelectJob !== ''">
                     <v-col cols="12" class="pb-0 pt-0">
-                    <v-sheet height="64">
+                      <v-sheet height="64">
                       <v-toolbar dense>
                         <v-btn
                           fab
@@ -1122,11 +1122,18 @@
                             mdi-chevron-right
                           </v-icon>
                         </v-btn>
-                        <v-toolbar-title v-if="$refs.calendaronsite">{{
+                        <!-- <v-toolbar-title v-if="$refs.calendaronsite">{{
                           $refs.calendaronsite.title
+                        }}</v-toolbar-title> -->
+                        <v-toolbar-title>{{
+                          monthNamesThai[parseInt(today.split("-")[1])] + ' ' + today.split("-")[0]
                         }}</v-toolbar-title>
                       </v-toolbar>
                     </v-sheet>
+                    </v-col>
+                  </v-row>
+                  <v-row v-if="empSelectJob !== '' && checkEventInfo.length > 0">
+                    <v-col cols="12" class="pb-0 pt-0">
                       <v-sheet>
                       <v-calendar
                         ref="calendaronsite"
@@ -1193,6 +1200,28 @@
                         </template>
                       </v-calendar>
                       </v-sheet>
+                    </v-col>
+                  </v-row>
+                  <v-row v-if="empSelectJob !== '' && checkEventInfo.length === 0">
+                    <v-col cols="12" class="pb-0 pt-0">
+                      <v-sheet>
+                      <v-calendar
+                        ref="calendaronsite"
+                        :now="today"
+                        v-model="today"
+                        locale="th-TH"
+                        color="primary"
+                        type="month"
+                      ></v-calendar>
+                      </v-sheet>
+                    </v-col>
+                    <v-col cols="12">
+                    <v-alert
+                      text
+                      type="success"
+                    >
+                      เดือน <strong>{{monthNamesThai[parseInt(today.split("-")[1])]}}</strong> พนักงานท่านนี้ <strong>ว่างงาน</strong>
+                    </v-alert>
                     </v-col>
                   </v-row>
                   </v-form>
@@ -1307,9 +1336,9 @@
                             ></v-select>
                           </v-col>
                         </v-row>
-                        <v-row v-if="empSelectJob !== '' && checkEventInfo.length > 0">
+                        <v-row v-if="empSelectJob !== ''">
                           <v-col cols="12" class="pb-0 pt-0">
-                          <v-sheet height="64">
+                            <v-sheet height="64">
                             <v-toolbar dense>
                               <v-btn
                                 fab
@@ -1333,17 +1362,23 @@
                                   mdi-chevron-right
                                 </v-icon>
                               </v-btn>
-                              <v-toolbar-title v-if="$refs.calendaronsite">{{
+                              <!-- <v-toolbar-title v-if="$refs.calendaronsite">{{
                                 $refs.calendaronsite.title
+                              }}</v-toolbar-title> -->
+                              <v-toolbar-title>{{
+                                monthNamesThai[parseInt(today.split("-")[1])] + ' ' + today.split("-")[0]
                               }}</v-toolbar-title>
                             </v-toolbar>
                           </v-sheet>
+                          </v-col>
+                        </v-row>
+                        <v-row v-if="empSelectJob !== '' && checkEventInfo.length > 0">
+                          <v-col cols="12" class="pb-0 pt-0">
                             <v-sheet>
                             <v-calendar
                               ref="calendaronsite"
                               :now="today"
                               v-model="today"
-                              :events="events"
                               locale="th-TH"
                               color="primary"
                               type="month"
@@ -1405,6 +1440,28 @@
                               </template>
                             </v-calendar>
                             </v-sheet>
+                          </v-col>
+                        </v-row>
+                        <v-row v-if="empSelectJob !== '' && checkEventInfo.length === 0">
+                          <v-col cols="12" class="pb-0 pt-0">
+                            <v-sheet>
+                            <v-calendar
+                              ref="calendaronsite"
+                              :now="today"
+                              v-model="today"
+                              locale="th-TH"
+                              color="primary"
+                              type="month"
+                            ></v-calendar>
+                            </v-sheet>
+                          </v-col>
+                          <v-col cols="12">
+                          <v-alert
+                            text
+                            type="success"
+                          >
+                            เดือน <strong>{{monthNamesThai[parseInt(today.split("-")[1])]}}</strong> พนักงานท่านนี้ <strong>ว่างงาน</strong>
+                          </v-alert>
                           </v-col>
                         </v-row>
                     </div>
@@ -3343,6 +3400,7 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      monthNamesThai: ['', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'],
       Redirect: 'https://liff.line.me/1656581804-7KRQyqo5/BookingAddress?shopId=' + this.$session.getAll().data.shopId,
       dataCalendar: [],
       dataSummary: [],
@@ -3650,6 +3708,7 @@ export default {
       this.getCustomFieldStart()
       this.getDataFlow()
       this.getBookingList()
+      this.$refs.calendaronsite.checkChange()
     }
     this.$root.$on('closeSetTimeGetCalenda', () => {
       // your code goes here
@@ -6746,6 +6805,10 @@ export default {
         .then(async response => {})
     },
     async checkEmpJob () {
+      this.today = this.dateStart + '-15'
+      const dateSplit = this.today.split('-')
+      const year = String(dateSplit[0])
+      const month = String(dateSplit[1])
       var flowId = ''
       if (this.flowId !== '') {
         flowId = this.flowId
@@ -6753,13 +6816,14 @@ export default {
         flowId = this.BookingDataItem[0].flowId
       }
       this.eventInfo = []
-      this.checkEventInfo = []
       await axios
         .get(
-          this.DNS_IP + '/booking_view/getCountNotimeJob?shopId=' + this.session.data.shopId + '&empStep=' + this.empSelectJob + '&flowId=' + flowId + '&checkOnsite=True'
+          this.DNS_IP + '/booking_view/getCountNotimeJob?shopId=' + this.session.data.shopId + '&empStep=' + this.empSelectJob + '&flowId=' + flowId + '&dueDate=' + year + '-' + month + '&checkOnsite=True'
         )
         .then(async responses => {
           if (responses.data.status === false) {
+            this.eventInfo = []
+            this.checkEventInfo = []
           } else {
             for (var x = 0; x < responses.data.length; x++) {
               var d = responses.data[x]
@@ -6779,39 +6843,38 @@ export default {
               } else if (d.sortNo === 3) {
                 this.eventInfo[dueDate].sortNo3++
               }
-              this.checkEventInfo.push(d)
             }
-            this.today = moment(moment(new Date()), 'YYYY-MM-DD').format('YYYY-MM-DD')
+            this.checkEventInfo = responses.data
             console.log('this.eventInfo', this.eventInfo)
             console.log('this.checkEventInfo', this.checkEventInfo)
-            this.$refs.calendaronsite.checkChange()
           }
         })
-        //   }
-        // })
+      // this.$refs.calendaronsite.checkChange()
+      //   }
+      // })
     },
     async checkEmpJobCalenda () {
+      console.log('this.today', this.today)
       // this.dataEmpOnsite = []
+      // this.today = moment(moment(new Date()), 'YYYY-MM-DD').format('YYYY-MM-DD')
       const dateSplit = this.today.split('-')
       const year = String(dateSplit[0])
       const month = String(dateSplit[1])
-      // await axios
-      //   .get(
-      //     this.DNS_IP + '/job/getList?shopId=' + this.session.data.shopId + '&empStep=' + this.empSelectJob + '&dueDate=' + year + '-' + month
-      //   )
-      //   .then(async response => {
-      //     let rs = response.data
-      //     if (rs.status === false) {
-      //       this.dataEmpOnsite = []
-      //     } else {
+      var flowId = ''
+      if (this.flowId !== '') {
+        flowId = this.flowId
+      } else {
+        flowId = this.BookingDataItem[0].flowId
+      }
       this.eventInfo = []
-      this.checkEventInfo = []
       await axios
         .get(
-          this.DNS_IP + '/booking_view/getCountNotimeJob?shopId=' + this.session.data.shopId + '&empStep=' + this.empSelectJob + '&flowId=' + this.BookingDataItem[0].flowId + '&dueDate=' + year + '-' + month + '&checkOnsite=True'
+          this.DNS_IP + '/booking_view/getCountNotimeJob?shopId=' + this.session.data.shopId + '&empStep=' + this.empSelectJob + '&flowId=' + flowId + '&dueDate=' + year + '-' + month + '&checkOnsite=True'
         )
         .then(async responses => {
           if (responses.data.status === false) {
+            this.eventInfo = []
+            this.checkEventInfo = []
           } else {
             for (var x = 0; x < responses.data.length; x++) {
               var d = responses.data[x]
@@ -6831,31 +6894,13 @@ export default {
               } else if (d.sortNo === 3) {
                 this.eventInfo[dueDate].sortNo3++
               }
-              this.checkEventInfo.push(d)
             }
-            this.today = moment(moment(new Date()), 'YYYY-MM-DD').format('YYYY-MM-DD')
+            this.checkEventInfo = responses.data
             console.log('this.eventInfo', this.eventInfo)
-            this.$refs.calendaronsite.checkChange()
+            console.log('this.checkEventInfo', this.checkEventInfo)
           }
         })
-      // let defaultData = rs.reduce((r, a) => {
-      //   // let bookNo = a.bookNo
-      //   // let filter = (a.fieldName === 'เลขทะเบียน') ? a.fieldValue : null
-      //   // if (filter !== null) {
-      //   r[a.sortNo] = r[a.sortNo] || []
-      //   // r[a.sortNo][a.stepTitle] = r[a.sortNo][a.stepTitle] || []
-      //   //   r[filter][bookNo] = r[filter][bookNo] || []
-      //   console.log('a', a)
-      //   r[a.sortNo].push(a)
-      //   // r[a.sortNo][a.stepTitle].push(a)
-      //   // }
-      //   return r
-      // }, Object.create(null))
-      // this.dataEmpOnsite = defaultData
-        //     this.dataEmpOnsite = rs
-        //     console.log('this.dataEmpOnsite', this.dataEmpOnsite)
-        //   }
-        // })
+      // this.$refs.calendaronsite.checkChange()
     },
     addEmpJob () {
       this.validate('UPDATE')
