@@ -60,10 +60,14 @@
                           color="blue darken-1"
                           class="text-center justify-center pt-4"
                         >
-                          <span class="font-weight-bold white--text text-subtitle-2">{{format_dateThai(items.dueDate)}}</span><br>
+                          <!-- <span class="font-weight-bold white--text text-subtitle-2">{{format_dateThai(items.dueDate)}}</span><br>
                           <v-icon dark>
                             mdi-clock-outline
-                          </v-icon> <span class="font-weight-bold white--text">{{momenTime(items.dueDate)}}</span>
+                          </v-icon> <span class="font-weight-bold white--text">{{momenTime(items.dueDate)}}</span> -->
+                          <span class="font-weight-bold white--text text-subtitle-2">{{items.dataShow}}</span><br>
+                          <v-icon dark>
+                            mdi-clock-outline
+                          </v-icon> <span class="font-weight-bold white--text">{{items.timeDue}}</span>
                         </v-sheet>
                       </v-col>
                       <v-col cols="8" class="pl-3">
@@ -388,6 +392,7 @@ export default {
   },
   data () {
     return {
+      monthNamesThai: ['', 'ม.ค', 'ก.พ', 'มี.ค', 'เม.ย', 'พ.ค', 'มิ.ย', 'ก.ค', 'ส.ค', 'ก.ย', 'ต.ค', 'พ.ย', 'ธ.ค'],
       swalConfig: {
         title: null,
         type: 'question',
@@ -764,6 +769,7 @@ export default {
                     }
                   })
               }
+              d.dataShow = d.dueDateD + ' ' + this.monthNamesThai[parseInt(d.dueDateM)]
               this.itemJob.push(d)
             }
             console.log('this.itemJob', this.itemJob)

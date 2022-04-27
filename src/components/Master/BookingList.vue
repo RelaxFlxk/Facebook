@@ -3321,6 +3321,7 @@ export default {
           .catch(error => {
             console.log(error)
             this.dataReady = true
+            setTimeout(() => this.searchAny(), 3000)
           //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
           })
       } else {
@@ -5129,15 +5130,14 @@ export default {
               this.BookingDataList[row.bookNo].push(row)
             })
           }
+        }).catch(error => {
+          // this.dataEditReady = true
+          setTimeout(() => this.getBookingDataList(dateStart, searchOther), 3000)
+          console.log('catch getBookingDataList : ', error)
         })
       console.log('this.BookingDataList1', this.BookingDataList)
     },
     async getBookingList () {
-      // Clear Data ทุกครั้ง
-      // this.setTimer = setInterval(this.getDataDefault(), 100000)
-      // console.log('this.masBranchID1', this.masBranchID)
-      // console.log('this.setTimer', this.setTimer)
-
       clearInterval(this.setTimerCalendar)
       this.setTimerCalendar = null
 
@@ -5286,10 +5286,6 @@ export default {
                 this.dataItemTime.push(h)
               }
             }
-            // this.dataItemTime = dataItemTimes.sort((a, b) => {
-            //   if (a.timeDueHtext < b.timeDueHtext) return -1
-            //   return a.timeDueHtext > b.timeDueHtext ? 1 : 0
-            // })
             console.log('dataItemTime', this.dataItemTime)
             // await this.getTimesChange('update')
             if (this.getSelectText) {
@@ -5304,6 +5300,7 @@ export default {
         .catch(error => {
           console.log(error)
           this.dataReady = true
+          setTimeout(() => this.getBookingList(), 3000)
           //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
         })
     },
