@@ -24,7 +24,7 @@
             </v-select>
           </v-col>
         </v-row>
-        <v-row>
+        <v-row class="fixed_scroll">
           <v-col cols="12">
             <v-tabs v-model="tab" background-color="blue lighten-5" grow>
               <v-tabs-slider color="red"></v-tabs-slider>
@@ -930,6 +930,10 @@ export default {
 }
 </script>
 <style scoped>
+.fixed_scroll {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
 .a {
   display: block;
   margin-left: auto;
