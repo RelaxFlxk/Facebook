@@ -6809,7 +6809,8 @@ export default {
                       statusJob: 'confirm',
                       jobNo: response.data.jobNo,
                       empSelect: this.empSelectAdd,
-                      remark: this.remark
+                      remark: this.remark,
+                      packageId: this.packageId || ''
                     }
                     await axios
                       .post(
