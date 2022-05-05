@@ -72,16 +72,6 @@
                     </v-col>
                     <v-col cols="6" class="pb-0 pt-0">
                       <v-select
-                        :items="checkEmp"
-                        v-model="SelectEmpAdd"
-                        label="งานที่พนักงานรับผิดชอบ"
-                        menu-props="auto"
-                        item-text="text"
-                        item-value="value"
-                        clearable
-                      ></v-select>
-                      <v-select
-                        v-if="SelectEmpAdd.length > 0"
                         required
                         :rules="name === '' || name === null ? nameRules : [true]"
                         :disabled="name === '' || name === null ? false : true"
@@ -96,18 +86,18 @@
                       ></v-select>
                     </v-col>
                     </v-row>
-                    <!-- <v-row>
+                    <v-row v-if="empSelectAdd || '' !== ''">
                       <v-col cols="12" class="pb-0 pt-0">
                         <v-select
                           v-model="USER_ROLE"
                           :items="USER_ROLEitem"
                           label="สิทธิการใช้งาน"
-                          outlined
                           dense
                           required
+                          :rules="emptyRules"
                         ></v-select>
                       </v-col>
-                    </v-row> -->
+                    </v-row>
                     <v-row>
                     <v-col cols="12" class="pt-0">
                       <v-text-field
@@ -166,16 +156,6 @@
                     <v-col cols="6" class="pb-0 pt-0" v-if="formUpdate.USER_ROLE !== 'admin'">
                       <v-select
                         required
-                        v-model="SelectEmpEdit"
-                        :items="checkEmp"
-                        label="งานที่พนักงานรับผิดชอบ"
-                        clearable
-                      ></v-select>
-                      {{SelectEmpEdit}}
-                      {{empSelectEdit}}
-                      <v-select
-                        v-if="SelectEmpEdit.length > 0"
-                        required
                         :rules="formUpdate.userFirst_NameTH === '' || formUpdate.userFirst_NameTH === null ? nameRules : [true]"
                         :disabled="formUpdate.userFirst_NameTH === '' || formUpdate.userFirst_NameTH === null ? false : true"
                         v-model="empSelectEdit"
@@ -207,6 +187,15 @@
                         :rules="passRules"
                       ></v-text-field>
                     </v-col>
+                    <v-col cols="4" v-if="empSelectEdit || '' !== ''">
+                        <v-select
+                          v-model="USER_ROLE"
+                          :items="USER_ROLEitem"
+                          label="สิทธิการใช้งาน"
+                          required
+                          :rules="emptyRules"
+                        ></v-select>
+                      </v-col>
                   </v-row>
                 </v-container>
               </v-card-text>
@@ -362,12 +351,16 @@ export default {
       password: '',
       USER_ROLE: '',
       USER_ROLEitem: [
-        { text: 'Admin', value: 'admin' },
-        { text: 'User', value: 'user' },
-        { text: 'Onsite', value: 'onsite' }
+        // { text: 'Admin', value: 'admin' },
+        // { text: 'User', value: 'user' },
+        { text: 'Onsite', value: 'onsite' },
+        { text: 'Board', value: 'board' }
       ],
       nameRules: [
         v => !!v || 'Name is required'
+      ],
+      emptyRules: [
+        v => !!v || 'required'
       ],
       passRules: [
         v => !!v || 'Password is required'
@@ -401,13 +394,7 @@ export default {
         { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
         { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
       ],
-      dataItem: [],
-      checkEmp: [
-        { text: 'พนักงาน Board', value: 'board' },
-        { text: 'พนักงาน Onsite', value: 'onsite' }
-      ],
-      SelectEmpAdd: '',
-      SelectEmpEdit: ''
+      dataItem: []
       // End Data Table Config
     }
   },
@@ -486,13 +473,6 @@ export default {
     },
     async addData () {
       console.log('this.empSelectAdd', this.empSelectAdd)
-      let userRoleitem = ''
-      if (this.SelectEmp === 'พนักงาน Board') {
-        userRoleitem = 'board'
-      } else if (this.SelectEmp === 'พนักงาน Onsite') {
-        userRoleitem = 'onsite'
-      }
-
       this.$refs.form.validate()
       if (this.$refs.form.validate() === false) {
         console.log('false', this.session.data.shopId)
@@ -518,7 +498,7 @@ export default {
                 'userName': this.email,
                 'userFirst_NameTH': this.empSelectAdd.text,
                 'userPassword': this.password,
-                'USER_ROLE': userRoleitem,
+                'USER_ROLE': this.USER_ROLE,
                 'empId': this.empSelectAdd.value,
                 'CREATE_USER': this.session.data.userName,
                 'LAST_USER': this.session.data.userName,
@@ -593,8 +573,13 @@ export default {
       })
     },
     async getDataById (item) {
+      console.log('item', item)
       await this.getEmpSelectEdit()
       this.formUpdate = item
+      this.USER_ROLE = item.USER_ROLE || ''
+      if (this.USER_ROLE === 'user' || this.USER_ROLE === 'admin') {
+        this.USER_ROLE = ''
+      }
       if (item.empId === '' || item.empId === null) {
         this.formUpdate.userFirst_NameTH = item.userFirst_NameTH
         this.empSelectEdit = ''
@@ -606,13 +591,8 @@ export default {
       console.log('empSelectEdit', this.empSelectEdit)
     },
     editData () {
+      console.log('this.$refs.form_update.validate()', this.$refs.form_update.validate())
       this.$refs.form_update.validate()
-      let userRoleitem = ''
-      if (this.SelectEmp === 'พนักงาน Board') {
-        userRoleitem = 'board'
-      } else if (this.SelectEmp === 'พนักงาน Onsite') {
-        userRoleitem = 'onsite'
-      }
       if (this.$refs.form_update.validate() === false) {
         console.log('false', this.session.data.shopId)
       } else {
@@ -650,7 +630,7 @@ export default {
                 'userName': this.formUpdate.userName,
                 'userFirst_NameTH': this.formUpdate.userFirst_NameTH,
                 'userPassword': this.formUpdate.userPassword,
-                'USER_ROLE': userRoleitem,
+                'USER_ROLE': this.USER_ROLE,
                 'LAST_USER': this.session.data.userName,
                 'empId': this.empSelectEdit.value
               }]
