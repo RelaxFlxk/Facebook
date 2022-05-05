@@ -72,12 +72,22 @@
                     </v-col>
                     <v-col cols="6" class="pb-0 pt-0">
                       <v-select
+                        :items="checkEmp"
+                        v-model="SelectEmpAdd"
+                        label="งานที่พนักงานรับผิดชอบ"
+                        menu-props="auto"
+                        item-text="text"
+                        item-value="value"
+                        clearable
+                      ></v-select>
+                      <v-select
+                        v-if="SelectEmpAdd.length > 0"
                         required
                         :rules="name === '' || name === null ? nameRules : [true]"
                         :disabled="name === '' || name === null ? false : true"
                         v-model="empSelectAdd"
                         :items="empItem"
-                        label="พนักงาน Onsite"
+                        label="พนักงาน"
                         menu-props="auto"
                         item-text="text"
                         item-value="value"
@@ -156,11 +166,21 @@
                     <v-col cols="6" class="pb-0 pt-0" v-if="formUpdate.USER_ROLE !== 'admin'">
                       <v-select
                         required
+                        v-model="SelectEmpEdit"
+                        :items="checkEmp"
+                        label="งานที่พนักงานรับผิดชอบ"
+                        clearable
+                      ></v-select>
+                      {{SelectEmpEdit}}
+                      {{empSelectEdit}}
+                      <v-select
+                        v-if="SelectEmpEdit.length > 0"
+                        required
                         :rules="formUpdate.userFirst_NameTH === '' || formUpdate.userFirst_NameTH === null ? nameRules : [true]"
                         :disabled="formUpdate.userFirst_NameTH === '' || formUpdate.userFirst_NameTH === null ? false : true"
                         v-model="empSelectEdit"
                         :items="empItemEdit"
-                        label="พนักงาน Onsite"
+                        label="พนักงาน"
                         menu-props="auto"
                         item-text="text"
                         item-value="value"
@@ -381,7 +401,13 @@ export default {
         { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
         { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
       ],
-      dataItem: []
+      dataItem: [],
+      checkEmp: [
+        { text: 'พนักงาน Board', value: 'board' },
+        { text: 'พนักงาน Onsite', value: 'onsite' }
+      ],
+      SelectEmpAdd: '',
+      SelectEmpEdit: ''
       // End Data Table Config
     }
   },
@@ -460,6 +486,13 @@ export default {
     },
     async addData () {
       console.log('this.empSelectAdd', this.empSelectAdd)
+      let userRoleitem = ''
+      if (this.SelectEmp === 'พนักงาน Board') {
+        userRoleitem = 'board'
+      } else if (this.SelectEmp === 'พนักงาน Onsite') {
+        userRoleitem = 'onsite'
+      }
+
       this.$refs.form.validate()
       if (this.$refs.form.validate() === false) {
         console.log('false', this.session.data.shopId)
@@ -485,7 +518,7 @@ export default {
                 'userName': this.email,
                 'userFirst_NameTH': this.empSelectAdd.text,
                 'userPassword': this.password,
-                'USER_ROLE': 'onsite',
+                'USER_ROLE': userRoleitem,
                 'empId': this.empSelectAdd.value,
                 'CREATE_USER': this.session.data.userName,
                 'LAST_USER': this.session.data.userName,
@@ -574,6 +607,12 @@ export default {
     },
     editData () {
       this.$refs.form_update.validate()
+      let userRoleitem = ''
+      if (this.SelectEmp === 'พนักงาน Board') {
+        userRoleitem = 'board'
+      } else if (this.SelectEmp === 'พนักงาน Onsite') {
+        userRoleitem = 'onsite'
+      }
       if (this.$refs.form_update.validate() === false) {
         console.log('false', this.session.data.shopId)
       } else {
@@ -611,7 +650,7 @@ export default {
                 'userName': this.formUpdate.userName,
                 'userFirst_NameTH': this.formUpdate.userFirst_NameTH,
                 'userPassword': this.formUpdate.userPassword,
-                'USER_ROLE': 'onsite',
+                'USER_ROLE': userRoleitem,
                 'LAST_USER': this.session.data.userName,
                 'empId': this.empSelectEdit.value
               }]
