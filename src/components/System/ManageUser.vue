@@ -478,7 +478,7 @@ export default {
         console.log('false', this.session.data.shopId)
       } else {
         axios
-          .get(this.DNS_IP + '/system_user/get?userName=' + this.email)
+          .get(this.DNS_IP + '/system_user/get?userName=' + this.email + '&shopId=' + this.session.data.shopId)
           .then(response1 => {
             let data = []
             if (this.empSelectAdd === '' || this.empSelectAdd === null) {
@@ -519,11 +519,18 @@ export default {
                 axios
                   .post(this.DNS_IP + `/admin_register_user/?userName=${this.session.data.userName}&shopId=${this.session.data.shopId}`, ...data)
                   .then(response => {
-                    this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-                    this.clearDataAdd()
-                    this.dialogAdd = false
-                    this.getData(this.DNS_IP, this.path, this.session.data.shopId)
-                    console.log('addDataGlobal DNS_IP + /job/add', response)
+                    if (response.data.status) {
+                      this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+                      this.clearDataAdd()
+                      this.dialogAdd = false
+                      this.getData(this.DNS_IP, this.path, this.session.data.shopId)
+                      console.log('addDataGlobal DNS_IP + /job/add', response)
+                    } else {
+                      this.$swal('ผิดพลาด', 'สิทธิการใช้งานไม่สามารถ สร้างรหัสผู้ใช้ได้', 'error')
+                      this.clearDataAdd()
+                      this.dialogAdd = false
+                      this.getData(this.DNS_IP, this.path, this.session.data.shopId)
+                    }
                   })
                   .catch(error => {
                     console.log('error function addData : ', error)
