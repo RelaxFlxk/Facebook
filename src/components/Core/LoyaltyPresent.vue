@@ -109,16 +109,6 @@ export default {
                 dt
               )
               .then(async (response) => {
-                var dataBetask = {
-                  shopId: this.session.data.shopId,
-                  shopImge: this.session.data.shopImge,
-                  shopName: this.session.data.shopName,
-                  CREATE_USER: this.session.data.userName,
-                  LAST_USER: this.session.data.userName,
-                  contactTel: this.session.data.contactTel,
-                  contactEmail: this.session.data.contactEmail
-                }
-                await this.addBetaskDB(dataBetask)
                 this.$swal('เรียบร้อย', 'สร้างร้าน เรียบร้อย', 'success')
                 this.overlay = false
                 window.location.href = `https://betask-loyalty-admin.web.app/core/login`
