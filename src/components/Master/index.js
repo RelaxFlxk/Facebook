@@ -16,6 +16,7 @@ import PaymentType from './PaymentType.vue'
 import Rating from './Rating'
 import CalendarBooking from './CalendarBooking'
 import BoardControl from './BoardControl'
+import BoardControlEmp from './BoardControlEmp'
 import SettingLineGroup from './SettingLineGroup'
 import BookingMobile from './BookingMobile'
 import BoardControlM from './BoardControlM'
@@ -41,6 +42,7 @@ export default {
   Rating,
   CalendarBooking,
   BoardControl,
+  BoardControlEmp,
   SettingLineGroup,
   BookingMobile,
   BoardControlM,

@@ -222,6 +222,33 @@
         </v-list-item>
       </v-list-group>
 
+        <v-list-group
+          dense
+            :value="true"
+            prepend-icon="mdi-toolbox"
+            color="white"
+            no-action
+            v-if="boardSide.length > 0"
+          >
+          <template v-slot:activator>
+            <v-list-item-title class="menu-head text-wrap">จัดการงานในศูนย์</v-list-item-title>
+          </template>
+
+            <v-list-item
+              v-for="(item, i) in boardSide"
+              :key="i"
+              :to="item.to"
+              router
+              exact
+              dense
+            >
+              <v-list-item-icon>
+                <v-icon v-text="item.icon" dense  color="white"></v-icon>
+              </v-list-item-icon>
+              <v-list-item-title class="text-wrap" dense v-text="item.title"></v-list-item-title>
+            </v-list-item>
+        </v-list-group>
+
       <v-list-group
       dense
         :value="true"
@@ -602,6 +629,7 @@ export default {
       mini: false,
       session: this.$session.getAll(),
       onsiteSide: [],
+      boardSide: [],
       workflow: [],
       master: [],
       corporate: [],
@@ -650,6 +678,8 @@ export default {
     this.items = []
     if (this.session.data.USER_ROLE === 'onsite') {
       this.onsite()
+    } else if (this.session.data.USER_ROLE === 'board') {
+      this.board()
     } else {
       this.adminChk()
     }
@@ -756,6 +786,13 @@ export default {
       // this.$router.push('/Onsite/JobList')
       this.onsiteSide = [
         { title: 'รายการงานทั้งหมด', icon: 'mdi-account-plus', to: '/Onsite/JobList', type: 'customer' }
+      ]
+    },
+    board () {
+      console.log('testboard')
+      // this.$router.push('/Onsite/JobList')
+      this.boardSide = [
+        { title: 'กระดานการทำงาน', icon: 'mdi-clipboard-check-multiple-outline', to: '/Master/BoardControlEmp', type: 'workflow' }
       ]
     },
     billingPlan (dt) {

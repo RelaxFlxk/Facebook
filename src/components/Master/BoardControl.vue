@@ -108,7 +108,7 @@
               <v-icon class="mr-1 text-right" color="#1B437C">
                 mdi-view-dashboard
               </v-icon>
-              Grid View
+              Mobile
             </v-btn>
             <v-btn
               v-if="layout === 'list'"
@@ -123,7 +123,7 @@
               >
                 mdi-format-list-text
               </v-icon>
-              List View
+              Desktop
             </v-btn>
             </v-btn-toggle>
           </v-col>
@@ -482,22 +482,38 @@
           :class="classWork"
           v-show="masBranchID"
         >
-          <v-row>
-            <v-col class="colum" v-for="(element, work) in Layout" :key="work">
+          <v-row >
+            <v-col class="colum pa-1"  v-for="(element, work) in Layout" :key="work" >
               <div
                 v-for="(item, indexitem) in Layout[work].workData"
                 :key="indexitem"
                 class="pb-0 pt-0"
               >
-                <v-card class="mb-2">
-                  <v-card id="cardTitle" elevation="12">
+                <v-card class="pa-0" style="background-color: #f0eeee;">
+                  <v-card id="cardTitle" class="mb-n1">
                     <v-card-title class="ma-3">
-                      <v-row>
+                      <v-row class="pa-0">
                         <v-col cols="8" class="pa-1">
-                          <strong>{{ item.stepTitle }}</strong>
+                          <v-tooltip
+                            :color="codeColor[work]"
+                            v-if="item.stepTitle.length > 11"
+                            top
+                            >
+                              <template v-slot:activator="{ on, attrs }">
+                                <strong
+                                  class="ml-2"
+                                  v-bind="attrs"
+                                  v-on="on"
+                                >
+                                {{ item.stepTitle.substring(0, 11)}}...
+                                </strong>
+                              </template>
+                              <span>{{item.stepTitle}}</span>
+                            </v-tooltip>
+                          <strong class="ml-2" v-if="item.stepTitle.length <= 11">{{ item.stepTitle }}</strong>
                         </v-col>
-                        <v-col cols="4" class="text-right pb-1 pt-0">
-                          <strong>{{
+                        <v-col cols="4" class="text-right pb-1 pt-0 ">
+                          <strong class="pa-0">{{
                             allJob.filter(row => {
                               return row.stepId == item.stepId
                             }).length
@@ -511,20 +527,17 @@
                   </v-card>
 
                   <div
-                    class="mt-2"
+                    class="mt-n1"
                     v-for="(itemsJob, indexJob) in allJob.filter(row => {
                       return row.stepId == item.stepId
                     })"
                     :key="indexJob"
+                    :style="'border-left-style: solid;border-width: 5px;border-color:' + codeColor[work] +';'"
                   >
-                    <v-list-item>
+                    <v-list-item class="pa-1 pb-2">
                       <v-alert
-                        class="allFrame pb-3"
-                        style="min-height: 150px;"
-                        :color="codeColor[work]"
-                        border="left"
-                        elevation="2"
-                        colored-border
+                        class="allFrame pa-2 pt-0 mb-n1"
+                        min-height="111"
                       >
                         <div
                           class="bodyFrame"
@@ -533,16 +546,118 @@
                           })"
                           :key="index"
                         >
-                        <div v-if="items.showCard === 'True' && items.fieldValue !== ''">
-                          {{ items.fieldValue }}<br />
+                        <div style="height:20px;" v-if="items.showCard === 'True' && items.fieldValue !== ''">
+                          <v-tooltip
+                            :color="codeColor[work]"
+                            v-if="items.fieldValue.length > 9"
+                            top
+                            >
+                              <template v-slot:activator="{ on, attrs }">
+                                <p
+                                  class="ma-0"
+                                  v-bind="attrs"
+                                  v-on="on"
+                                >
+                                {{ items.fieldValue.substring(0, 9)}}...
+                                </p>
+                              </template>
+                              <span>{{items.fieldValue}}</span>
+                            </v-tooltip>
+                          <p class="ma-0" v-if="items.fieldValue.length <= 9">{{ items.fieldValue }}</p>
                         </div>
                         </div>
-                        <v-icon large color="black"> mdi-account</v-icon>
-                        <strong>{{
-                          JobDataItem.filter(row => {
-                            return row.jobId == itemsJob.jobId
-                          })[0].empStep
-                        }}</strong>
+                        <v-row style="height:50px;" class="pa-0 ps-3 pt-5">
+                          <v-col cols="12" class="mt-1 pa-0">
+                            <p class="font-weight-medium mb-0">
+                              <!-- <v-icon class="pb-1 mr-1 ml-1" large > mdi-shield-account</v-icon> -->
+                              <v-tooltip top
+                                v-if="itemsJob.statusTime === 'timeStart' || itemsJob.statusTime === null">
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-icon
+                                    class="pb-1 mr-1 ml-1"
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      x-large
+                                      color="#84C650"
+                                      @click="updateTimeEmp(itemsJob,'timeStart')"
+                                    >
+                                      mdi-timer
+                                    </v-icon>
+                                  </template>
+                                  <span>จับเวลา</span>
+                                </v-tooltip>
+                                <v-tooltip top
+                                v-if="itemsJob.statusTime === 'timeEnd' && itemsJob.statusTime !== null">
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-icon
+                                    class="pb-1 mr-1 ml-1"
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      x-large
+                                      color="#DE6467"
+                                      @click="updateTimeEmp(itemsJob,'timeEnd')"
+                                    >
+                                      mdi-timer-off
+                                    </v-icon>
+                                  </template>
+                                  <span>หยุดเวลา</span>
+                                </v-tooltip>
+                                {{JobDataItem.filter(row => {return row.jobId == itemsJob.jobId})[0].empStep}}
+                            </p>
+                          </v-col>
+                          <v-col cols="6" md="6" sm="12" class="mt-n1 pa-0" style="left:105px;right: 10px;bottom:110px">
+                            <v-tooltip top
+                                v-if="parseInt(itemsJob.totalDateDiff) <= 2"
+                                color="#DE6467"
+                                >
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-icon
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      x-large
+                                      color="#DE6467"
+                                    >
+                                      mdi-alarm-light
+                                    </v-icon>
+                                  </template>
+                                  <span style="background-color:#DE6467;">{{ itemsJob.totalDateDiff }}</span>
+                             </v-tooltip>
+                             <v-tooltip top
+                                v-else-if="parseInt(itemsJob.totalDateDiff) <= 4 &&parseInt(itemsJob.totalDateDiff) >= 2"
+                                color="#FED966"
+                                >
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-icon
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      x-large
+                                      color="#FED966"
+                                    >
+                                      mdi-alarm-light
+                                    </v-icon>
+                                  </template>
+                                  <span style="background-color:#FED966;">{{ itemsJob.totalDateDiff }}</span>
+                             </v-tooltip>
+                             <v-tooltip top
+                                v-else-if="parseInt(itemsJob.totalDateDiff) >= 4"
+                                color="#4F93D0"
+                                >
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-icon
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      x-large
+                                      color="#4F93D0"
+                                    >
+                                      mdi-alarm-light
+                                    </v-icon>
+                                  </template>
+                                  <span style="background-color:#4F93D0;">{{ itemsJob.totalDateDiff }}</span>
+                             </v-tooltip>
+                        <!-- end diffDate -->
+                        <v-spacer></v-spacer>
+                          </v-col>
+                        </v-row>
                         <!-- <v-avatar
                 color="brown"
               >
@@ -553,43 +668,6 @@
                         }}</span>
               </v-avatar> -->
                         <!-- diffDate -->
-                        <v-chip
-                          v-if="parseInt(itemsJob.totalDateDiff) <= 2"
-                          class="ma-2"
-                          color="#DE6467"
-                          draggable
-                          justify="center"
-                          align="center"
-                        >
-                          {{ itemsJob.totalDateDiff }}
-                        </v-chip>
-                        <v-chip
-                          v-else-if="
-                            parseInt(itemsJob.totalDateDiff) <= 4 &&
-                              parseInt(itemsJob.totalDateDiff) >= 2
-                          "
-                          class="ma-2"
-                          color="#FED966"
-                          text-color="white"
-                          draggable
-                          justify="center"
-                          align="center"
-                        >
-                          {{ itemsJob.totalDateDiff }}
-                        </v-chip>
-                        <v-chip
-                          v-else-if="parseInt(itemsJob.totalDateDiff) >= 4"
-                          class="ma-2"
-                          color="#4F93D0"
-                          text-color="white"
-                          draggable
-                          justify="center"
-                          align="center"
-                        >
-                          {{ itemsJob.totalDateDiff }}
-                        </v-chip>
-                        <!-- end diffDate -->
-                        <v-spacer></v-spacer>
                         <v-container
                           class="grey lighten-4"
                           style="position:absolute; width:30px; right:0px; top:0px;"
@@ -626,7 +704,7 @@
                             </v-tooltip>
                           </v-row>
                           <!-- end update satatus car -->
-                          <v-row class="pt-2 pl-1">
+                          <v-row class="pt-0 pl-1">
                             <v-icon
                               large
                               color="#DE6467"
@@ -636,7 +714,7 @@
                               mdi-square-edit-outline
                             </v-icon>
                           </v-row>
-                          <v-row class="pt-2 pl-1">
+                          <v-row class="pt-0 pl-1">
                             <v-icon
                             v-if="
                                 allJob.filter(row => {
@@ -663,7 +741,7 @@
                               mdi-layers-triple
                             </v-icon>
                           </v-row>
-                          <v-row class="pt-2 pl-1">
+                          <v-row class="pt-0 pl-1">
                             <v-icon
                               large
                               color="#84C650"
@@ -675,7 +753,7 @@
                             </v-icon>
 
                           </v-row>
-                          <v-row class="pt-2 pl-1">
+                          <v-row class="pt-0 pl-1">
                             <v-icon
                               large
                               color="#A12BFD"
@@ -803,45 +881,89 @@
                           </v-chip>
                         </v-col>
                         <v-col cols="12" class="text-right">
-                            <v-chip
-                            v-if="parseInt(itemsJob.totalDateDiff) <= 2"
-                            class="ma-2"
-                            color="#DE6467"
-                            text-color="white"
-                            x-small
-                            draggable
-                            justify="center"
-                            align="center"
-                          >
-                            {{ itemsJob.totalDateDiff }} วัน
-                          </v-chip>
-                          <v-chip
-                            v-else-if="
-                              parseInt(itemsJob.totalDateDiff) <= 4 &&
-                                parseInt(itemsJob.totalDateDiff) >= 2
-                            "
-                            class="ma-2"
-                            color="#FED966"
-                            text-color="white"
-                            draggable
-                            x-small
-                            justify="center"
-                            align="center"
-                          >
-                            {{ itemsJob.totalDateDiff }} วัน
-                          </v-chip>
-                          <v-chip
-                            v-else-if="parseInt(itemsJob.totalDateDiff) >= 4"
-                            class="ma-2"
-                            color="#4F93D0"
-                            text-color="white"
-                            draggable
-                            x-small
-                            justify="center"
-                            align="center"
-                          >
-                            {{ itemsJob.totalDateDiff }} วัน
-                          </v-chip>
+                          <v-tooltip top
+                        v-if="itemsJob.statusTime === 'timeStart' || itemsJob.statusTime === null">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                              v-bind="attrs"
+                              v-on="on"
+                              x-large
+                              color="#84C650"
+                              @click="updateTimeEmp(itemsJob,'timeStart')"
+                            >
+                              mdi-timer
+                            </v-icon>
+                          </template>
+                          <span>จับเวลา</span>
+                        </v-tooltip>
+                        <v-tooltip top
+                        v-if="itemsJob.statusTime === 'timeEnd' && itemsJob.statusTime !== null">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                              v-bind="attrs"
+                              v-on="on"
+                              x-large
+                              color="#DE6467"
+                              @click="updateTimeEmp(itemsJob,'timeEnd')"
+                            >
+                              mdi-timer-off
+                            </v-icon>
+                          </template>
+                          <span>หยุดเวลา</span>
+                        </v-tooltip>
+                        <strong>{{
+                          JobDataItem.filter(row => {
+                            return row.jobId == itemsJob.jobId
+                          })[0].empStep
+                        }}</strong>
+                          <v-tooltip top
+                                v-if="parseInt(itemsJob.totalDateDiff) <= 2"
+                                color="#DE6467"
+                                >
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-icon
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      x-large
+                                      color="#DE6467"
+                                    >
+                                      mdi-alarm-light
+                                    </v-icon>
+                                  </template>
+                                  <span style="background-color:#DE6467;">{{ itemsJob.totalDateDiff }}</span>
+                             </v-tooltip>
+                             <v-tooltip top
+                                v-else-if="parseInt(itemsJob.totalDateDiff) <= 4 &&parseInt(itemsJob.totalDateDiff) >= 2"
+                                color="#FED966"
+                                >
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-icon
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      x-large
+                                      color="#FED966"
+                                    >
+                                      mdi-alarm-light
+                                    </v-icon>
+                                  </template>
+                                  <span style="background-color:#FED966;">{{ itemsJob.totalDateDiff }}</span>
+                             </v-tooltip>
+                             <v-tooltip top
+                                v-else-if="parseInt(itemsJob.totalDateDiff) >= 4"
+                                color="#4F93D0"
+                                >
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-icon
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      x-large
+                                      color="#4F93D0"
+                                    >
+                                      mdi-alarm-light
+                                    </v-icon>
+                                  </template>
+                                  <span style="background-color:#4F93D0;">{{ itemsJob.totalDateDiff }}</span>
+                             </v-tooltip>
                           <!-- update satatus car -->
                           <v-tooltip bottom>
                             <template v-slot:activator="{ on, attrs }">
@@ -1427,8 +1549,8 @@ export default {
     },
     async getLayout () {
       this.Layout = []
-      console.log('Branch' + this.masBranchID)
-      console.log('this.stepItemSelete', this.stepItemSelete)
+      // console.log('Branch' + this.masBranchID)
+      // console.log('this.stepItemSelete', this.stepItemSelete)
       await axios
         .get(
           this.DNS_IP +
@@ -1467,7 +1589,7 @@ export default {
               workData: workDataUse
             })
           }
-          console.log('this.Layout', this.Layout)
+          // console.log('this.Layout', this.Layout)
         })
         .catch(error => {
           console.log('error function addDataGlobal : ', error)
@@ -1492,7 +1614,7 @@ export default {
               d.value = d.stepId
               this.stepItemSelete.push(d)
             }
-            console.log('stepItemSelete', this.stepItemSelete)
+            // console.log('stepItemSelete', this.stepItemSelete)
           }
         })
     },
@@ -1510,7 +1632,7 @@ export default {
               s.value = d.empId
               this.empSeleteStep.push(s)
             }
-            console.log('empSeleteStep', this.empSeleteStep)
+            // console.log('empSeleteStep', this.empSeleteStep)
           }
         })
     },
@@ -1531,8 +1653,8 @@ export default {
         .then(async response => {
           this.dataReady = true
           var jobs = []
-          console.log('res', response.data.length)
-          console.log('res', response.data)
+          // console.log('res', response.data.length)
+          // console.log('res', response.data)
           // console.log('userId', this.formUpdate.userId === 'NULL')
           if (response.data.length > 0) {
             for (var i = 0; i < response.data.length; i++) {
@@ -1557,9 +1679,11 @@ export default {
                     endTime: d.endTime,
                     checkPayment: d.checkPayment,
                     empStepId: d.empStepId,
+                    empId: d.empId,
                     lineUserId: d.lineUserId,
                     userId: d.userId,
-                    packageId: d.packageId
+                    packageId: d.packageId,
+                    statusTime: d.statusTime
                   })
                 }
               }
@@ -1574,6 +1698,7 @@ export default {
                 this.allJob = []
               }
             }
+            console.log('allJob', this.allJob)
           } else {
             this.JobDataItem = []
             this.allJob = []
@@ -1705,9 +1830,7 @@ export default {
     },
     async onUpdate () {
       this.formUpdate.stepId = this.formUpdate.stepTitle.stepId
-      // console.log('stepId', this.formUpdate.stepTitle.stepId)
-      // console.log('id', this.formUpdate.jobId)
-      // console.log('formUpdate', this.formUpdate)
+      // console.log('formUpdate', this.formUpdate.empStep)
       // console.log('allJob', this.allJob)
       // console.log('empSeleteStep', this.empSeleteStep)
       // console.log('empStep', this.formUpdate.empStep)
@@ -1749,6 +1872,7 @@ export default {
                 //     this.allJob[index].stepId = this.formUpdate.stepId
                 //   }
                 // })
+                await this.updateTimeEmp(this.allJob.filter((item) => item.jobId === this.formUpdate.jobId)[0], 'closeStep', this.formUpdate.empStep)
                 this.flowId = flowId
                 await this.pushmessage(this.formUpdate.jobId)
                 this.dialog = false
@@ -2099,13 +2223,56 @@ export default {
         }).catch((error) => {
           console.log('error function addData : ', error)
         })
+    },
+    async updateTimeEmp (itemsJob, status, empIdstep) {
+      let dt = this.format_date(new Date())
+      console.log('dtttttttttttt', dt)
+      console.log('ddddddddddddddddd', itemsJob)
+      itemsJob.Time = dt
+      itemsJob.statusTime = status
+      console.log('itemsJobitemsJob', itemsJob)
+      if (status === 'closeStep') {
+        itemsJob.empId = empIdstep
+        if (itemsJob.empId !== '' && itemsJob.empId !== null) {
+          await axios.post(this.DNS_IP + '/TimeEmp_Log_Update/get', itemsJob).then(async (response) => {
+
+          }).catch((error) => {
+            console.log('error function addData : ', error)
+          })
+        } else {
+          console.log('ผิดพลาด', 'กรุณาเลือกพนักงานที่รับผิดชอบ', 'error')
+        }
+      } else {
+        this.$swal({
+          title: 'อัพเดท เวลา ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ยกเลิก'
+        }).then(async (result) => {
+          if (itemsJob.empId !== '' && itemsJob.empId !== null) {
+            await axios.post(this.DNS_IP + '/TimeEmp_Log_Update/get', itemsJob).then(async (response) => {
+              await this.$swal('เรียบร้อย', 'อัพเดทเวลาสำเร็จ', 'success')
+              await this.getStepFlow()
+              await this.getLayout()
+              await this.getJobData()
+            }).catch((error) => {
+              console.log('error function addData : ', error)
+            })
+          } else {
+            this.$swal('ผิดพลาด', 'กรุณาเลือกพนักงานที่รับผิดชอบ', 'error')
+          }
+        })
+      }
     }
   }
 }
 </script>
 <style scoped>
 .theme--light.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled) {
-  background-color: #ffffff !important;
+  background-color: #f0eeee !important;
 }
 .workRow {
   display: inline-block;
@@ -2114,9 +2281,9 @@ export default {
 }
 .colum {
   margin-top: 1rem;
-  width: 250px;
+  width: 200px;
   background-color: #f0eeee;
-  margin-left: 5px;
+  margin-left: 1.5px;
 }
 .allFrame {
   padding-top: 0px;
@@ -2181,9 +2348,6 @@ export default {
 #v-text-editLayout {
   height: 50px;
   width: 238px;
-}
-.bodyFrame {
-  padding-top: 1px;
 }
 body {
   overflow: auto;

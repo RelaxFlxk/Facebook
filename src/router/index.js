@@ -183,6 +183,11 @@ export default new Router({
     component: Master.BoardControl
   },
   {
+    path: '/Master/BoardControlEmp',
+    name: 'BoardControlEmp',
+    component: Master.BoardControlEmp
+  },
+  {
     path: '/Master/BoardControlM',
     name: 'BoardControlM',
     component: Master.BoardControlM
