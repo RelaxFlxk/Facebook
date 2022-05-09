@@ -455,6 +455,7 @@ export default {
             )
             .then(async response => {
               // Debug response
+              this.updateBetaskDB(dt, this.$session.getAll().data.shopId)
               console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
 
               this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
@@ -484,6 +485,16 @@ export default {
         .catch(error => {
           this.dataReady = true
           console.log('error function editDataGlobal : ', error)
+        })
+    },
+    async updateBetaskDB (ds, shopId) {
+      await axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP_Betask + "/sys_shop/edit/" + shopId,
+          ds
+        )
+        .then(async response => {
         })
     },
     async clearDataUpdate () {
