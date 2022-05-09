@@ -802,7 +802,7 @@ export default {
       this.dataCondition = dt
       // }
     },
-    submitBillingPlan (dt) {
+    async submitBillingPlan (dt) {
       if (this.checkCondition === 'ยอมรับ') {
         this.dataReady = false
         if (dt.pricePackage === '') {
@@ -814,13 +814,14 @@ export default {
             billingScheduleId: '',
             billingCustomerData: ''
           }
-          axios
+          await axios
             .post(
             // eslint-disable-next-line quotes
               this.DNS_IP + "/sys_shop/edit/" + this.$session.getAll().data.shopId,
               ds
             )
             .then(async response => {
+              await this.updateBetaskDB(ds, this.$session.getAll().data.shopId)
               this.chkPlan()
               this.$swal('เรียบร้อย', 'คุณได้อัพเดทเป็นสมาชิกสายฟรีแล้ว', 'success')
               this.checkCondition = 'ไม่ยอมรับ'
@@ -950,7 +951,7 @@ export default {
           })
       }
     },
-    cancelPlan () {
+    async cancelPlan () {
       this.dataReadyCancel = false
       var ds = {
         billingPlan: 'free',
@@ -960,18 +961,29 @@ export default {
         billingScheduleId: '',
         billingCustomerData: ''
       }
-      axios
+      await axios
         .post(
           // eslint-disable-next-line quotes
           this.DNS_IP + "/sys_shop/edit/" + this.$session.getAll().data.shopId,
           ds
         )
         .then(async response => {
+          await this.updateBetaskDB(ds, this.$session.getAll().data.shopId)
           this.chkPlan()
           this.$swal('เรียบร้อย', 'คุณได้อัพเดทเป็นสมาชิกสายฟรีแล้ว', 'success')
           this.checkCondition = 'ไม่ยอมรับ'
           this.dialogCancel = false
           this.dataReadyCancel = true
+        })
+    },
+    async updateBetaskDB (ds, shopId) {
+      await axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP_Betask + "/sys_shop/edit/" + shopId,
+          ds
+        )
+        .then(async response => {
         })
     }
   }
