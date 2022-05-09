@@ -4,6 +4,12 @@
     <v-main>
       <div class="pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4">
         <v-row>
+          <v-overlay :value="overlay">
+            <v-progress-circular
+              indeterminate
+              size="64"
+            ></v-progress-circular>
+          </v-overlay>
           <v-col cols="6" class="text-left">
           </v-col>
           <v-col cols="6" class="v-margit_button text-right">
@@ -62,15 +68,18 @@ export default {
   data () {
     return {
       session: this.$session.getAll(),
-      dialogError: false
+      dialogError: false,
+      overlay: false
     }
   },
   methods: {
     gotoWebLoyalty () {
       window.open('https://betask-loyalty-admin.web.app', '_blank')
       this.dialogError = false
+      this.overlay = false
     },
     async gotoLoyalty () {
+      this.overlay = true
       console.log('session', this.session.data)
       await axios
         .get(
@@ -88,7 +97,9 @@ export default {
               userName: this.session.data.userName,
               password: this.session.data.userPassword,
               userCode: this.session.data.userCode,
-              userCreate: this.session.data.userName
+              userCreate: this.session.data.userName,
+              contactTel: this.session.data.contactTel,
+              contactEmail: this.session.data.contactEmail
             }
             console.log('add', dt)
             await axios
@@ -98,7 +109,18 @@ export default {
                 dt
               )
               .then(async (response) => {
+                var dataBetask = {
+                  shopId: this.session.data.shopId,
+                  shopImge: this.session.data.shopImge,
+                  shopName: this.session.data.shopName,
+                  CREATE_USER: this.session.data.userName,
+                  LAST_USER: this.session.data.userName,
+                  contactTel: this.session.data.contactTel,
+                  contactEmail: this.session.data.contactEmail
+                }
+                await this.addBetaskDB(dataBetask)
                 this.$swal('เรียบร้อย', 'สร้างร้าน เรียบร้อย', 'success')
+                this.overlay = false
                 window.location.href = `https://betask-loyalty-admin.web.app/core/login`
                 // this.$router.push('/Core/Login')
               })
@@ -110,10 +132,21 @@ export default {
               })
           } else {
             this.dialogError = true
+            this.overlay = false
           }
         })// eslint-disable-next-line handle-callback-err
         .catch(async (error) => {
           console.log(error)
+          this.overlay = false
+        })
+    },
+    async addBetaskDB (ds) {
+      await axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP_Betask + "/sys_shop/addLoyalty", ds
+        )
+        .then(async response => {
         })
     }
   }

@@ -455,7 +455,18 @@ export default {
             )
             .then(async response => {
               // Debug response
-              this.updateBetaskDB(dt, this.$session.getAll().data.shopId)
+              var ds = {
+                shopName: this.formUpdate.shopName,
+                shopImge: this.formUpdate.shopImge,
+                contactTel: this.formUpdate.contactTel,
+                LAST_USER: this.session.data.userName,
+                contactEmail: this.formUpdate.contactEmail,
+                primaryColor: this.formUpdate.primaryColor,
+                secondaryColor: this.formUpdate.secondaryColor,
+                darkMode: darkMode,
+                sourceProgram: 'belinked'
+              }
+              this.updateBetaskDB(ds, this.$session.getAll().data.shopId)
               console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
 
               this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
@@ -491,7 +502,7 @@ export default {
       await axios
         .post(
           // eslint-disable-next-line quotes
-          this.DNS_IP_Betask + "/sys_shop/edit/" + shopId,
+          this.DNS_IP_Betask + "/sys_shop/editData/" + shopId,
           ds
         )
         .then(async response => {
