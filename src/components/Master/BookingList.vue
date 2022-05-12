@@ -5883,6 +5883,7 @@ export default {
             console.log('this.BookingDataItem', this.BookingDataItem)
             let Add = []
             let fielditem = this.flowfieldNameitem
+            console.log('fielditem', fielditem)
             for (var i = 0; i < this.BookingDataItem.length; i++) {
               var d = this.BookingDataItem[i]
               let update = {}
@@ -5891,16 +5892,9 @@ export default {
               if (dataField[0].conditionField === '' || dataField[0].conditionField === null) {
                 addData = true
               } else {
-                if (
-                  fielditem.filter(row => {
-                    return row.fieldId === parseInt(d.conditionField)
-                  }).length > 0
-                ) {
+                if (fielditem.filter(row => { return row.fieldId === parseInt(d.conditionField) }).length > 0) {
                   console.log('this', fielditem)
-                  if (d.conditionValue === fielditem.filter(row => {
-                    return row.fieldId === parseInt(d.conditionField)
-                  })[0].fieldValue
-                  ) {
+                  if (d.conditionValue === fielditem.filter(row => { return row.fieldId === parseInt(d.conditionField) })[0].fieldValue) {
                     addData = true
                   } else if (d.conditionField === 'flow') {
                     addData = true
@@ -5911,7 +5905,7 @@ export default {
               }
               if (addData) {
                 if (d.fieldValue !== '') {
-                  update.masBranchID = this.BookingDataItem[0].masBranchID
+                  update.masBranchID = this.BookingDataItem[0].masBranchID || ''
                   update.CREATE_USER = d.userName
                   update.LAST_USER = d.userName
                   update.packageId = d.packageId
@@ -5921,17 +5915,44 @@ export default {
                   update.endTime = this.endTime.value
                   update.fieldId = d.fieldId
                   update.fieldName = d.fieldName
-                  update.fieldType = dataField[0].fieldType
+                  update.fieldType = dataField[0].fieldType || ''
                   update.fieldValue = d.fieldValue
                   update.flowId = d.flowId
                   update.empSelect = this.empSelectJob
-                  update.conditionField = dataField[0].conditionField
-                  update.conditionValue = dataField[0].conditionValue
-                  update.optionField = dataField[0].optionField
-                  update.shopId = dataField[0].shopId
-                  update.showCard = dataField[0].showCard
+                  update.conditionField = dataField[0].conditionField || ''
+                  update.conditionValue = dataField[0].conditionValue || ''
+                  update.optionField = dataField[0].optionField || ''
+                  update.shopId = dataField[0].shopId || ''
+                  update.showCard = dataField[0].showCard || ''
                   Add.push(update)
                 }
+              }
+            }
+            for (var x = 0; x < fielditem.length; x++) {
+              var t = fielditem[x]
+              if (Add.filter(row => { return row.fieldId === t.fieldId }).length === 0) {
+                let update = {}
+                let dataField = this.editedItemSeleteField.filter(el => { return parseInt(el.fieldId) === parseInt(t.fieldId) })
+                update.masBranchID = this.BookingDataItem[0].masBranchID || ''
+                update.CREATE_USER = Add[0].CREATE_USER
+                update.LAST_USER = Add[0].CREATE_USER
+                update.packageId = Add[0].packageId
+                update.checkCar = ''
+                update.userId = Add[0].userId
+                update.endDate = this.endDate
+                update.endTime = this.endTime.value
+                update.fieldId = t.fieldId
+                update.fieldName = t.fieldName
+                update.fieldType = dataField[0].fieldType || ''
+                update.fieldValue = t.fieldValue
+                update.flowId = d.flowId
+                update.empSelect = this.empSelectJob
+                update.conditionField = dataField[0].conditionField || ''
+                update.conditionValue = dataField[0].conditionValue || ''
+                update.optionField = dataField[0].optionField || ''
+                update.shopId = dataField[0].shopId || ''
+                update.showCard = dataField[0].showCard || ''
+                Add.push(update)
               }
             }
             console.log('this.Add', Add)
