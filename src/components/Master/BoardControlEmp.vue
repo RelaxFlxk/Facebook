@@ -97,6 +97,56 @@
                           </v-card-title>
                         </v-col>
                         <v-col cols="4" class="ps-6 pb-4 mb-n1">
+                          <v-col class="mb-n7 pa-0" style="left:55px;right: 0px;bottom:10px">
+                                  <v-tooltip top
+                                v-if="parseInt(itemsJob.totalDateDiff) <= 2"
+                                color="#DE6467"
+                                >
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-icon
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      x-large
+                                      color="#DE6467"
+                                    >
+                                      mdi-alarm-light
+                                    </v-icon>
+                                  </template>
+                                  <span style="background-color:#DE6467;">{{ itemsJob.totalDateDiff }}</span>
+                             </v-tooltip>
+                             <v-tooltip top
+                                v-else-if="parseInt(itemsJob.totalDateDiff) <= 4 &&parseInt(itemsJob.totalDateDiff) >= 2"
+                                color="#FED966"
+                                >
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-icon
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      x-large
+                                      color="#FED966"
+                                    >
+                                      mdi-alarm-light
+                                    </v-icon>
+                                  </template>
+                                  <span style="background-color:#FED966;">{{ itemsJob.totalDateDiff }}</span>
+                             </v-tooltip>
+                             <v-tooltip top
+                                v-else-if="parseInt(itemsJob.totalDateDiff) >= 4"
+                                color="#4F93D0"
+                                >
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-icon
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      x-large
+                                      color="#4F93D0"
+                                    >
+                                      mdi-alarm-light
+                                    </v-icon>
+                                  </template>
+                                  <span style="background-color:#4F93D0;">{{ itemsJob.totalDateDiff }}</span>
+                             </v-tooltip>
+                             </v-col>
                                 <v-icon
                                   v-if="itemsJob.statusTime === 'timeStart' || itemsJob.statusTime === null"
                                   style="font-size:40px !important;"
@@ -135,6 +185,7 @@
                                 >
                                 00:00:00
                                 </p>
+
                         </v-col>
                       </v-row>
                     </v-card>
