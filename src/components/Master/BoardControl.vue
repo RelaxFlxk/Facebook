@@ -490,7 +490,7 @@
                 class="pb-0 pt-0"
               >
                 <v-card class="pa-0" style="background-color: #f0eeee;">
-                  <v-card id="cardTitle" class="mb-n1">
+                  <v-card id="cardTitle" class="mb-1">
                     <v-card-title class="ma-3">
                       <v-row class="pa-0">
                         <v-col cols="8" class="pa-1">
@@ -2273,6 +2273,9 @@ export default {
 <style scoped>
 .theme--light.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled) {
   background-color: #f0eeee !important;
+}
+.v-card__subtitle, .v-card__text, .v-card__title {
+  padding: 0px !important;
 }
 .workRow {
   display: inline-block;
