@@ -605,7 +605,7 @@
                                 {{JobDataItem.filter(row => {return row.jobId == itemsJob.jobId})[0].empStep}}
                             </p>
                           </v-col>
-                          <v-col cols="6" md="6" sm="12" class="mt-n1 pa-0" style="left:105px;right: 10px;bottom:110px">
+                          <v-col cols="6" md="6" sm="12" class="mt-n1 pa-0" style="left:105px;right: 10px;bottom:105px">
                             <v-tooltip top
                                 v-if="parseInt(itemsJob.totalDateDiff) <= 2"
                                 color="#DE6467"
@@ -727,7 +727,7 @@
                                   setUpdate(itemsJob, 'editFlow', item)
                               "
                             >
-                              mdi-layers-triple
+                              mdi-shuffle-variant
                             </v-icon>
                             <v-icon
                             v-if="
@@ -738,7 +738,7 @@
                               large
                               color="#9E9E9E"
                             >
-                              mdi-layers-triple
+                              mdi-shuffle-variant
                             </v-icon>
                           </v-row>
                           <v-row class="pt-0 pl-1">
@@ -749,7 +749,7 @@
                                 ;(dialogDelete = true), setUpdate(itemsJob, 'closeJob')
                               "
                             >
-                              mdi-tag
+                              mdi-cash-usd-outline
                             </v-icon>
 
                           </v-row>
@@ -761,7 +761,7 @@
                                 ;(dialogProgress = true), getJobitem(itemsJob)
                               "
                             >
-                              mdi-monitor-eye
+                              mdi-chart-timeline-variant
                             </v-icon>
 
                           </v-row>
@@ -1015,7 +1015,7 @@
                                 setUpdate(itemsJob, 'editFlow', item)
                             "
                           >
-                            mdi-layers-triple
+                             mdi-shuffle-variant
                           </v-icon>
                           <v-icon
                           v-if="
@@ -1026,7 +1026,7 @@
                             large
                             color="#9E9E9E"
                           >
-                            mdi-layers-triple
+                             mdi-shuffle-variant
                           </v-icon>
 
                           <v-icon
@@ -1034,7 +1034,7 @@
                             color="#84C650"
                             @click=";(dialogDelete = true), setUpdate(itemsJob)"
                           >
-                            mdi-tag
+                            mdi-cash-usd-outline
                           </v-icon>
                           <!-- <v-icon
                               large
@@ -1058,7 +1058,7 @@
           v-model="dialogProgress"
           max-width="600"
         >
-          <v-card class="p-3" style="background: linear-gradient(180deg, #FFFFFF 0%, #E1F3FF 100%);">
+          <v-card class="p-3">
             <v-timeline>
               <v-timeline-item
                 v-for="(item , index) in timelineitem" :key="index"
@@ -1068,10 +1068,10 @@
                 <template v-slot:opposite>
                   <span>{{format_dateNotime(item.DTLAST_DATE)}}</span>
                 </template>
-                <v-card class="elevation-2 p-2">
-                  <v-card-title class="text-h6" style="color:#173053;">
+                <v-card class="elevation-2 p-2" color="#F5F5F5">
+                  <v-card-title class="text-h6">
                   </v-card-title>
-                  <v-card-text>
+                  <v-card-text dark>
                     <p style="margin-bottom: 0px;color:#000000;">ขั้นตอน {{item.stepTitle}}</p>
                     <!-- <p style="margin-bottom: 0px; color:#173053;">ขั้นตอน {{item.stepTitle}}</p> -->
                     <p style="margin-bottom: 0px;"> เวลาที่รับงาน {{momenTime(item.DTLAST_DATE)}}</p>

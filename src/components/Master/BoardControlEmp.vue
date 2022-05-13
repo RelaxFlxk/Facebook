@@ -71,7 +71,10 @@
                     >
                       <v-row >
                         <v-col cols="8" class="pa-2 pl-8 pb-4 mb-n1">
-                          <h4 class="ma-0 mt-1 text-center font-weight-medium" style="height:22px;color:#FFFFFF;"><v-icon color="yellow" class="mr-1 mb-2">mdi-hammer-wrench</v-icon>{{JobDataItem.filter(row => { return row.jobId == itemsJob.jobId})[0].stepTitle}}</h4>
+                          <h4 class="ma-0 mt-1 text-center font-weight-medium" style="height:22px;color:#FFFFFF;">
+                            <v-icon color="yellow" class="mr-1 mb-2">mdi-hammer-wrench</v-icon>
+                            {{JobDataItem.filter(row => { return row.jobId == itemsJob.jobId})[0].stepTitle}}
+                          </h4>
                           <v-card-title
                           v-for="(items, index) in JobDataItem.filter(row => { return row.jobId == itemsJob.jobId})" :key="index"
                           >
@@ -360,6 +363,8 @@ export default {
           this.dataReady = true
           var jobs = []
           // console.log('res', response.data.length)
+          let itemstart = []
+          let itemEnd = []
           console.log('res', response.data)
           if (response.data.length > 0) {
             for (var i = 0; i < response.data.length; i++) {
@@ -374,28 +379,55 @@ export default {
                     // jobs.push(element.jobId)
                     JobDataItem.push(s)
                   }
-                  allJob.push({
-                    jobId: d.jobId,
-                    jobNo: d.jobNo,
-                    stepId: d.stepId,
-                    checkCar: d.checkCar,
-                    totalDateDiff: d.totalDateDiff,
-                    endDate: d.endDate,
-                    endTime: d.endTime,
-                    checkPayment: d.checkPayment,
-                    empStepId: d.empStepId,
-                    empId: d.empId,
-                    lineUserId: d.lineUserId,
-                    userId: d.userId,
-                    packageId: d.packageId,
-                    statusTime: d.statusTime,
-                    timeStart: d.timeStart,
-                    timeEnd: d.timeEnd,
-                    totalTime: d.totalTime,
-                    flowName: d.flowName,
-                    showTime: '',
-                    countTime: 0
-                  })
+                  if (d.statusTime === 'timeEnd') {
+                    console.log('TTTTTTTTTTTT')
+                    itemstart.push({
+                      jobId: d.jobId,
+                      jobNo: d.jobNo,
+                      stepId: d.stepId,
+                      checkCar: d.checkCar,
+                      totalDateDiff: d.totalDateDiff,
+                      endDate: d.endDate,
+                      endTime: d.endTime,
+                      checkPayment: d.checkPayment,
+                      empStepId: d.empStepId,
+                      empId: d.empId,
+                      lineUserId: d.lineUserId,
+                      userId: d.userId,
+                      packageId: d.packageId,
+                      statusTime: d.statusTime,
+                      timeStart: d.timeStart,
+                      timeEnd: d.timeEnd,
+                      totalTime: d.totalTime,
+                      flowName: d.flowName,
+                      showTime: '',
+                      countTime: 0
+                    })
+                  } else {
+                    console.log('AAAAAAAAAAAA')
+                    itemEnd.push({
+                      jobId: d.jobId,
+                      jobNo: d.jobNo,
+                      stepId: d.stepId,
+                      checkCar: d.checkCar,
+                      totalDateDiff: d.totalDateDiff,
+                      endDate: d.endDate,
+                      endTime: d.endTime,
+                      checkPayment: d.checkPayment,
+                      empStepId: d.empStepId,
+                      empId: d.empId,
+                      lineUserId: d.lineUserId,
+                      userId: d.userId,
+                      packageId: d.packageId,
+                      statusTime: d.statusTime,
+                      timeStart: d.timeStart,
+                      timeEnd: d.timeEnd,
+                      totalTime: d.totalTime,
+                      flowName: d.flowName,
+                      showTime: '',
+                      countTime: 0
+                    })
+                  }
                 }
               }
               if (JobDataItem.length > 0) {
@@ -403,13 +435,14 @@ export default {
               } else {
                 this.JobDataItem = []
               }
-              if (allJob.length > 0) {
-                this.allJob = allJob
-              } else {
-                this.allJob = []
-              }
             }
-            console.log('this.JobDataItem', this.JobDataItem)
+            allJob.push(...itemstart, ...itemEnd)
+            console.log('allJob', allJob)
+            if (allJob.length > 0) {
+              this.allJob = allJob
+            } else {
+              this.allJob = []
+            }
           } else {
             this.JobDataItem = []
             this.allJob = []
@@ -428,7 +461,7 @@ export default {
       this.flownameTap = Array.from(new Set(dt))
     },
     async getJobitem (item) {
-      console.log('*******************', item)
+      // console.log('*******************', item)
       this.timelineitem = []
       await axios
         .get(this.DNS_IP + '/job_logCloseJob/' + item.jobNo).then((response) => {
@@ -481,7 +514,7 @@ export default {
         // console.log('dtttttttttttt', dt)
         itemsJob.Time = dt
         itemsJob.statusTime = status
-        console.log('itemsJobitemsJob', itemsJob)
+        // console.log('itemsJobitemsJob', itemsJob)
         if (itemsJob.empId !== '' && itemsJob.empId !== null) {
           await axios.post(this.DNS_IP + '/TimeEmp_Log_Update/get', itemsJob).then(async (response) => {
             await this.$swal('เรียบร้อย', 'อัพเดทเวลาสำเร็จ', 'success')
@@ -510,20 +543,17 @@ export default {
                   d.showTime = this.convertHMS(d.totalTime)
                 }
               } else {
-                console.log('tttttttttttttttttt')
                 d.showTime = this.convertHMS(d.totalTime)
               }
               time.push(d)
             }
             this.timeItem = time
           }
-          console.log('timeItem', this.timeItem)
           clearInterval(this.clearInter)
           this.clearInter = null
           this.clearInter = setInterval(this.setTimeshow, 1000)
         }).catch((error) => {
           console.log('error function addData : ', error)
-          console.log('False')
         })
     },
     setTimeshow (tr, dt) {
@@ -560,7 +590,7 @@ export default {
       // var oneday = 1000 * 60
       let strDateTime2 = new Date()
       var defDate = (strDateTime2.getTime() - new Date(strDateTime1).getTime()) / 1000
-      console.log('def', defDate)
+      // console.log('def', defDate)
       return defDate
     }
   }
@@ -569,6 +599,9 @@ export default {
 <style scoped>
 .theme--light.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled) {
   background-color: #f0eeee !important;
+}
+.v-card__subtitle, .v-card__text, .v-card__title {
+  padding: 0px !important;
 }
 .workRow {
   display: inline-block;

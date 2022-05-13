@@ -718,10 +718,10 @@ export default {
         { title: 'ปฏิทินนัดหมาย', icon: 'mdi-calendar-search', to: '/Master/CalendarBooking', type: 'booking' }
       ]
       this.Dashboard = [
-        { title: 'นัดหมายเข้ารับบริการ', icon: 'mdi-application-settings', to: '/Dashbord/ReportBooking', type: 'Dashboard' },
-        { title: 'งานซ่อม', icon: 'mdi-application-settings', to: '/Dashbord/Report', type: 'Dashboard' },
+        { title: 'นัดหมายเข้ารับบริการ', icon: 'mdi-clipboard-check-multiple-outline', to: '/Dashbord/ReportBooking', type: 'Dashboard' },
+        { title: 'งานซ่อม', icon: 'mdi-cog-transfer', to: '/Dashbord/Report', type: 'Dashboard' },
+        { title: 'ReportEmpMain', icon: 'mdi-account-clock-outline', to: '/Dashbord/ReportEmpMain', type: 'Dashboard' },
         { title: 'Performance', icon: 'mdi-application-settings', to: '/Dashbord/Performance', type: 'Dashboard' }
-
       ]
       this.workflow = [
         // { title: 'รับรถลูกค้ารายใหม่', icon: 'mdi-account-plus', to: '/Master/RegisterAdd' },
