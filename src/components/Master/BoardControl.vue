@@ -2341,9 +2341,9 @@ export default {
   color: #1b437c;
 }
 #cardTitle {
-  width: auto;
-  height: auto;
-  border-radius: 2px;
+  width: auto !important;
+  height: 32px !important;
+  border-radius: 2px !important;
 }
 #v-text-editLayout {
   height: 50px;
