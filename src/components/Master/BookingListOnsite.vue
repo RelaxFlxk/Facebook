@@ -3678,7 +3678,8 @@ export default {
       dataEmpOnsite: [],
       checkPayment: '',
       sortNo: '',
-      statusBt: ''
+      statusBt: '',
+      tokenKey: ''
     }
   },
   beforeCreate () {
@@ -6721,6 +6722,7 @@ export default {
             this.dataConfirmReady = false
             // console.log('this.BookingDataItem', this.BookingDataItem)
             let Add = []
+            this.tokenKey = ''
             let fielditem = this.flowfieldNameitem
             for (var i = 0; i < this.BookingDataItem.length; i++) {
               var d = this.BookingDataItem[i]
@@ -6785,6 +6787,7 @@ export default {
                   this.endDate = ''
                   this.endTime = ''
                   this.empSelectJob = ''
+                  let statusCoin = ''
                   if (response.data.status) {
                     if (this.packageId !== '' && this.productExchangeRateId === '') {
                       await this.usePackage()
@@ -6792,12 +6795,14 @@ export default {
                       if (this.lineUserId !== '') {
                         if (this.totalPrice !== '') {
                           await this.useCoin(this.totalPrice)
+                          statusCoin = 'use'
                         }
                       }
                     } else if (this.packageId !== '' && this.productExchangeRateId !== '') {
                       if (this.lineUserId !== '') {
                         if (this.totalPrice !== '') {
                           await this.useCoin(this.totalPrice)
+                          statusCoin = 'use'
                         }
                         await this.usePackage()
                       } else {
@@ -6835,7 +6840,7 @@ export default {
                           .then(async response => {
                             this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
                             if (this.lineUserId !== '') {
-                              this.pushMsgCustomer(this.BookingDataItem[0].bookNo)
+                              this.pushMsgCustomer(this.BookingDataItem[0].bookNo, statusCoin)
                               if (this.statusSearch === 'no') {
                                 await this.getBookingList()
                               } else {
@@ -6910,9 +6915,19 @@ export default {
         this.$router.push('/Core/Login')
       }
     },
-    async pushMsgCustomer (bookNo) {
-      let updateStatusSend = {
-        updateStatusSend: 'false'
+    async pushMsgCustomer (bookNo, statusCoin) {
+      let updateStatusSend = {}
+      if (statusCoin === 'use') {
+        updateStatusSend = {
+          updateStatusSend: 'false',
+          statusCoin: 'use',
+          tokenKey: this.tokenKey
+        }
+      } else {
+        updateStatusSend = {
+          updateStatusSend: 'false',
+          statusCoin: 'no'
+        }
       }
       await axios
         .post(this.DNS_IP + '/BookingOnsite/pushMsgCustomer/' + bookNo, updateStatusSend)
@@ -7227,7 +7242,9 @@ export default {
             },
             url: this.DNS_IP_Loyalty + '/memberCard/edit',
             data: params
-          }).then((response) => {})
+          }).then((response) => {
+            this.tokenKey = tokenKey
+          })
         })
     },
     async getEmpSelect (item) {
