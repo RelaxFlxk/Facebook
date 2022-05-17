@@ -749,7 +749,7 @@ export default {
         { title: 'เพิ่ม/ลบ สถานะการบริการ', icon: 'mdi-transit-connection-variant', to: '/Master/Flow', type: 'settings' },
         { title: 'จัดโครงสร้างกระดาน', icon: 'dashboard', to: '/Master/WorkShop', type: 'settings' },
         { title: 'จัดการ ช่องกรอกข้อมูล', icon: 'mdi-account-edit', to: '/Master/CustomField', type: 'settings' },
-        { title: 'จัดการ LineGroup', icon: 'mdi-wrench', to: '/Master/SettingLineGroup', type: 'settings' },
+        // { title: 'จัดการ LineGroup', icon: 'mdi-wrench', to: '/Master/SettingLineGroup', type: 'settings' },
         { title: 'จัดการ Notify', icon: 'mdi-bell-plus', to: '/Master/SettingLineNotify', type: 'settings' }
       ]
       // this.master = [this.customer[0], this.booking[0], this.Dashboard[0], this.workflow[0], this.corporate[0], this.broadCast[0], this.settings[0]]
