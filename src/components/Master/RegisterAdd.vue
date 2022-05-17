@@ -841,7 +841,7 @@ export default {
                 }
                 await axios
                   .post(
-                    this.DNS_IP + '/job/pushQr/' + response.data.jobNo,
+                    this.DNS_IP + '/job/NotifyQrcode/' + response.data.jobNo,
                     updateStatusSend
                   )
                   .then(

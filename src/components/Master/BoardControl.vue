@@ -8,14 +8,14 @@
         <v-col cols="6" style="font-family: Roboto; font-style: normal; font-weight: bold; font-size: 24px; line-height: 28px; color: #1b437c;">กระดานทำงาน</v-col>
         <v-col cols="6" class="text-right">
             <v-btn-toggle borderless>
-            <v-btn
+            <!-- <v-btn
               color="#1B437C"
               text
               @click="newCars()"
             >
               <v-icon left>mdi-car-2-plus</v-icon>
               <span class="hidden-sm-and-down">รับรถใหม่</span>
-            </v-btn>
+            </v-btn> -->
             <v-btn
               color="#1B437C"
               text
@@ -493,10 +493,10 @@
                   <v-card id="cardTitle" class="mb-1">
                     <v-card-title class="ma-3">
                       <v-row class="pa-0">
-                        <v-col cols="8" class="pa-1">
+                        <v-col cols="10" class="pa-1">
                           <v-tooltip
                             :color="codeColor[work]"
-                            v-if="item.stepTitle.length > 11"
+                            v-if="item.stepTitle.length > 18"
                             top
                             >
                               <template v-slot:activator="{ on, attrs }">
@@ -505,14 +505,14 @@
                                   v-bind="attrs"
                                   v-on="on"
                                 >
-                                {{ item.stepTitle.substring(0, 11)}}...
+                                {{ item.stepTitle.substring(0, 18)}}...
                                 </strong>
                               </template>
                               <span>{{item.stepTitle}}</span>
                             </v-tooltip>
-                          <strong class="ml-2" v-if="item.stepTitle.length <= 11">{{ item.stepTitle }}</strong>
+                          <strong class="ml-2" v-if="item.stepTitle.length <= 18">{{ item.stepTitle }}</strong>
                         </v-col>
-                        <v-col cols="4" class="text-right pb-1 pt-0 ">
+                        <v-col cols="2" class="text-right pb-1 pt-1 pl-0 ">
                           <strong class="pa-0">{{
                             allJob.filter(row => {
                               return row.stepId == item.stepId
@@ -571,6 +571,7 @@
                             <p class="font-weight-medium mb-0">
                               <!-- <v-icon class="pb-1 mr-1 ml-1" large > mdi-shield-account</v-icon> -->
                               <v-tooltip top
+                              color="#84C650"
                                 v-if="itemsJob.statusTime === 'timeStart' || itemsJob.statusTime === null">
                                   <template v-slot:activator="{ on, attrs }">
                                     <v-icon
@@ -587,6 +588,7 @@
                                   <span>จับเวลา</span>
                                 </v-tooltip>
                                 <v-tooltip top
+                                color="#DE6467"
                                 v-if="itemsJob.statusTime === 'timeEnd' && itemsJob.statusTime !== null">
                                   <template v-slot:activator="{ on, attrs }">
                                     <v-icon
@@ -674,14 +676,15 @@
                         >
                           <!-- update satatus car -->
                           <v-row class="pl-1">
-                            <v-tooltip bottom>
+                            <v-tooltip top
+                            color="#4F93D0"
+                            >
                             <template v-slot:activator="{ on, attrs }">
                             <v-icon
                               v-if="
                                 allJob.filter(row => {
                                   return row.jobId == itemsJob.jobId
-                                })[0].checkCar == 'False'
-                              "
+                                })[0].checkCar == 'False'"
                               color="#9E9E9E"
                               depressed
                               @click="updateStatusCars(itemsJob.jobId, 'False')"
@@ -696,53 +699,86 @@
                               color="#4F93D0"
                               depressed
                               @click="updateStatusCars(itemsJob.jobId, 'True')"
+                              v-bind="attrs"
+                              v-on="on"
                             >
                               mdi-car
                             </v-icon>
                             </template>
-                            <span>รถไม่อยู่</span>
+                            <span>สถานะ รถอยู่ / รถไม่อยู่</span>
                             </v-tooltip>
                           </v-row>
                           <!-- end update satatus car -->
                           <v-row class="pt-0 pl-1">
-                            <v-icon
-                              large
-                              color="#DE6467"
-                              dark
-                              @click=";(dialogEdit = true), setUpdate(itemsJob)"
+                            <v-tooltip top
+                            color="#DE6467">
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-icon
+                                  large
+                                  color="#DE6467"
+                                  v-bind="attrs"
+                                  v-on="on"
+                                  dark
+                                  @click=";(dialogEdit = true), setUpdate(itemsJob)"
                             >
                               mdi-square-edit-outline
                             </v-icon>
+                              </template>
+                              <span>แก้ไขข้อมูล</span>
+                            </v-tooltip>
                           </v-row>
                           <v-row class="pt-0 pl-1">
-                            <v-icon
-                            v-if="
-                                allJob.filter(row => {
+                        <v-tooltip
+                         v-if="allJob.filter(row => {
                                   return row.jobId == itemsJob.jobId
                                 })[0].checkCar !== 'False'
                               "
+                        top
+                        color="#FF8C00">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-icon
                               large
-                              color="#FED966"
+                              color="#FF8C00"
                               @click=";(dialog = true),
                                   setUpdate(itemsJob, 'editFlow', item)
                               "
+                              v-bind="attrs"
+                              v-on="on"
                             >
                               mdi-shuffle-variant
                             </v-icon>
+                          </template>
+                          <span>เปลี่ยนขั้นตอนการทำงาน</span>
+                        </v-tooltip>
+                        <v-tooltip top
+                        color="#FF8C00"
+                        >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-icon
+                        v-if="
+                            allJob.filter(row => {
+                              return row.jobId == itemsJob.jobId
+                            })[0].checkCar == 'False'
+                          "
+                          v-bind="attrs"
+                          v-on="on"
+                          large
+                          color="#9E9E9E"
+                        >
+                          mdi-shuffle-variant
+                        </v-icon>
+                      </template>
+                      <span>เปลี่ยนขั้นตอนการทำงาน</span>
+                    </v-tooltip>
+                    </v-row>
+                      <v-row class="pt-0 pl-1">
+                        <v-tooltip top
+                        color="#84C650"
+                        >
+                          <template v-slot:activator="{ on, attrs }">
                             <v-icon
-                            v-if="
-                                allJob.filter(row => {
-                                  return row.jobId == itemsJob.jobId
-                                })[0].checkCar == 'False'
-                              "
-                              large
-                              color="#9E9E9E"
-                            >
-                              mdi-shuffle-variant
-                            </v-icon>
-                          </v-row>
-                          <v-row class="pt-0 pl-1">
-                            <v-icon
+                              v-bind="attrs"
+                              v-on="on"
                               large
                               color="#84C650"
                               @click="
@@ -751,19 +787,27 @@
                             >
                               mdi-cash-usd-outline
                             </v-icon>
-
+                          </template>
+                          <span>จบงาน</span>
+                        </v-tooltip>
                           </v-row>
                           <v-row class="pt-0 pl-1">
-                            <v-icon
-                              large
-                              color="#A12BFD"
-                              @click="
-                                ;(dialogProgress = true), getJobitem(itemsJob)
-                              "
-                            >
-                              mdi-chart-timeline-variant
-                            </v-icon>
-
+                            <v-tooltip top color="#A12BFD">
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-icon
+                                  large
+                                  color="#A12BFD"
+                                  @click="
+                                    ;(dialogProgress = true), getJobitem(itemsJob)
+                                  "
+                                    v-bind="attrs"
+                                    v-on="on"
+                                >
+                                  mdi-chart-timeline-variant
+                                </v-icon>
+                              </template>
+                              <span>ประวัติการทำงาน</span>
+                            </v-tooltip>
                           </v-row>
                         </v-container>
                       </v-alert>
@@ -965,77 +1009,115 @@
                                   <span style="background-color:#4F93D0;">{{ itemsJob.totalDateDiff }}</span>
                              </v-tooltip>
                           <!-- update satatus car -->
-                          <v-tooltip bottom>
-                            <template v-slot:activator="{ on, attrs }">
-                          <v-icon
-                            v-if="
-                              allJob.filter(row => {
-                                return row.jobId == itemsJob.jobId
-                              })[0].checkCar == 'False'
-                            "
-                            color="#9E9E9E"
-                            depressed
-                            @click="updateStatusCars(itemsJob.jobId, 'False')"
-                            v-bind="attrs"
-                            v-on="on"
-                          >
-                            mdi-car
-                          </v-icon>
-
-                          <v-icon
-                            v-else
+                          <v-tooltip top
                             color="#4F93D0"
-                            depressed
-                            @click="updateStatusCars(itemsJob.jobId, 'True')"
-                          >
-                            mdi-car
-                          </v-icon>
+                            >
+                            <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                              v-if="
+                                allJob.filter(row => {
+                                  return row.jobId == itemsJob.jobId
+                                })[0].checkCar == 'False'"
+                              color="#9E9E9E"
+                              depressed
+                              @click="updateStatusCars(itemsJob.jobId, 'False')"
+                              v-bind="attrs"
+                              v-on="on"
+                            >
+                              mdi-car
+                            </v-icon>
+
+                            <v-icon
+                              v-else
+                              color="#4F93D0"
+                              depressed
+                              @click="updateStatusCars(itemsJob.jobId, 'True')"
+                              v-bind="attrs"
+                              v-on="on"
+                            >
+                              mdi-car
+                            </v-icon>
                             </template>
-                            <span>รถไม่อยู่</span>
-                          </v-tooltip>
+                            <span>สถานะ รถอยู่ / รถไม่อยู่</span>
+                            </v-tooltip>
                           <!-- end update satatus car -->
-                          <v-icon
-                            large
-                            color="#DE6467"
-                            dark
-                            @click=";(dialogEdit = true), setUpdate(itemsJob)"
-                          >
-                            mdi-square-edit-outline
-                          </v-icon>
+                          <v-tooltip top
+                            color="#DE6467">
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-icon
+                                  large
+                                  color="#DE6467"
+                                  v-bind="attrs"
+                                  v-on="on"
+                                  dark
+                                  @click=";(dialogEdit = true), setUpdate(itemsJob)"
+                            >
+                              mdi-square-edit-outline
+                            </v-icon>
+                              </template>
+                              <span>แก้ไขข้อมูล</span>
+                            </v-tooltip>
 
-                          <v-icon
-                          v-if="
-                              allJob.filter(row => {
-                                return row.jobId == itemsJob.jobId
-                              })[0].checkCar !== 'False'
-                            "
-                            large
-                            color="#FED966"
-                            @click=";(dialog = true),
-                                setUpdate(itemsJob, 'editFlow', item)
-                            "
-                          >
-                             mdi-shuffle-variant
-                          </v-icon>
-                          <v-icon
-                          v-if="
-                              allJob.filter(row => {
-                                return row.jobId == itemsJob.jobId
-                              })[0].checkCar == 'False'
-                            "
-                            large
-                            color="#9E9E9E"
-                          >
-                             mdi-shuffle-variant
-                          </v-icon>
-
-                          <v-icon
-                            large
-                            color="#84C650"
-                            @click=";(dialogDelete = true), setUpdate(itemsJob)"
-                          >
-                            mdi-cash-usd-outline
-                          </v-icon>
+                          <v-tooltip
+                         v-if="allJob.filter(row => {
+                                  return row.jobId == itemsJob.jobId
+                                })[0].checkCar !== 'False'
+                              "
+                        top
+                        color="#FF8C00">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                              large
+                              color="#FF8C00"
+                              @click=";(dialog = true),
+                                  setUpdate(itemsJob, 'editFlow', item)
+                              "
+                              v-bind="attrs"
+                              v-on="on"
+                            >
+                              mdi-shuffle-variant
+                            </v-icon>
+                          </template>
+                          <span>เปลี่ยนขั้นตอนการทำงาน</span>
+                        </v-tooltip>
+                        <v-tooltip top
+                        color="#FF8C00"
+                        >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-icon
+                        v-if="
+                            allJob.filter(row => {
+                              return row.jobId == itemsJob.jobId
+                            })[0].checkCar == 'False'
+                          "
+                          v-bind="attrs"
+                          v-on="on"
+                          large
+                          color="#9E9E9E"
+                        >
+                          mdi-shuffle-variant
+                        </v-icon>
+                      </template>
+                      <span>เปลี่ยนขั้นตอนการทำงาน</span>
+                    </v-tooltip>
+                    <v-tooltip top
+                        color="#84C650"
+                        >
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                              v-bind="attrs"
+                              v-on="on"
+                              large
+                              color="#84C650"
+                              @click="
+                                ;(dialogDelete = true), setUpdate(itemsJob, 'closeJob')
+                              "
+                            >
+                              mdi-cash-usd-outline
+                            </v-icon>
+                          </template>
+                          <span>จบงาน</span>
+                        </v-tooltip>
                           <!-- <v-icon
                               large
                               color="#A12BFD"

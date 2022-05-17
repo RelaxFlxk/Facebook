@@ -6069,7 +6069,7 @@ export default {
         }
         await axios
           .post(
-            this.DNS_IP + '/job/pushQr/' + jobNo,
+            this.DNS_IP + '/job/NotifyQrcode/' + jobNo,
             updateStatusSend
           )
           .then(
