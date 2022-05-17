@@ -381,7 +381,8 @@ export default {
       eventInfo: [],
       monthData: null,
       bookingData: [],
-      editedItemSeleteField: []
+      editedItemSeleteField: [],
+      paramUse: ''
     }
   },
   beforeCreate () {
@@ -416,9 +417,14 @@ export default {
       // this.getBookingData()
     },
     async getDataFlow (param) {
+      if (param !== undefined) {
+        this.paramUse = param
+      } else {
+        this.paramUse = ''
+      }
       this.DataFlowName = []
       await axios
-        .get(this.DNS_IP + '/flow/get?shopId=' + this.$session.getAll().data.shopId + param)
+        .get(this.DNS_IP + '/flow/get?shopId=' + this.$session.getAll().data.shopId + this.paramUse)
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
@@ -429,7 +435,9 @@ export default {
               d.value = d.flowId
               this.DataFlowName.push(d)
             }
-            this.flowId = this.DataFlowName[0].value
+            if (this.flowId === '') {
+              this.flowId = this.DataFlowName[0].value
+            }
           } else {
             this.DataFlowName = []
           }
@@ -467,17 +475,24 @@ export default {
       await axios
         .get(url)
         .then(async response => {
-          response.data.forEach((row) => {
-            if (typeof (this.bookingData[row.bookNo]) === 'undefined') {
-              this.bookingData[row.bookNo] = []
-            }
-            this.bookingData[row.bookNo].push(row)
-          })
+          if (response.data.length > 0) {
+            response.data.forEach((row) => {
+              if (typeof (this.bookingData[row.bookNo]) === 'undefined') {
+                this.bookingData[row.bookNo] = []
+              }
+              this.bookingData[row.bookNo].push(row)
+            })
+          }
         })
     },
     async getBookingList (param) {
       console.log('getBookingList')
       await this.getBookingData()
+      if (param !== undefined) {
+        this.paramUse = param
+      } else {
+        this.paramUse = ''
+      }
       // if (this.masBranchName) {
       //   this.masBranchName = this.masBranchName
       // } else {
@@ -504,7 +519,7 @@ export default {
             '-' +
             month +
             '&masBranchName=' +
-            this.masBranchName.text + param
+            this.masBranchName.text + this.paramUse
         } else {
           url = this.DNS_IP +
             '/booking_view/get?shopId=' +
@@ -515,7 +530,7 @@ export default {
             month +
             '&masBranchName=' +
             this.masBranchName.text +
-            '&flowId=' + this.flowId + param
+            '&flowId=' + this.flowId + this.paramUse
         }
         await axios
           .get(url)
@@ -561,7 +576,7 @@ export default {
             '-' +
             month +
             '&masBranchName=' +
-            this.masBranchName.text + param
+            this.masBranchName.text + this.paramUse
         } else {
           url = this.DNS_IP +
             '/booking_view/getCountNotime?shopId=' +
@@ -572,7 +587,7 @@ export default {
             month +
             '&masBranchName=' +
             this.masBranchName.text +
-            '&flowId=' + this.flowId + param
+            '&flowId=' + this.flowId + this.paramUse
         }
         await axios
           .get(url)
@@ -638,7 +653,7 @@ export default {
                   '-' +
                   month +
                   '&masBranchName=' +
-                  this.masBranchName.text + param
+                  this.masBranchName.text + this.paramUse
               } else {
                 url = this.DNS_IP +
                   '/booking_view/getCount?shopId=' +
@@ -649,7 +664,7 @@ export default {
                   month +
                   '&masBranchName=' +
                   this.masBranchName.text +
-                  '&flowId=' + this.flowId + param
+                  '&flowId=' + this.flowId + this.paramUse
               }
               await axios
                 .get(url)
