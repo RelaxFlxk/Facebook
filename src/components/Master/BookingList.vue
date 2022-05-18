@@ -5876,47 +5876,87 @@ export default {
       this.validate('UPDATE')
       setTimeout(() => this.addDataJobSubmit(), 500)
     },
-    addDataJobSubmit () {
+    async addDataJobSubmit () {
       if (this.$session.id() !== undefined) {
         if (this.dataItem.filter(row => row.bookNo === this.BookingDataItem[0].bookNo).length > 0) {
           if (this.validUpdate === true) {
-            console.log('this.BookingDataItem', this.BookingDataItem)
-            let Add = []
-            let fielditem = this.flowfieldNameitem
-            console.log('fielditem', fielditem)
-            for (var i = 0; i < this.BookingDataItem.length; i++) {
-              var d = this.BookingDataItem[i]
-              let update = {}
-              let addData = false
-              var dataField = this.editedItemSeleteField.filter(el => { return parseInt(el.fieldId) === parseInt(d.fieldId) })
-              if (dataField[0].conditionField === '' || dataField[0].conditionField === null) {
-                addData = true
-              } else {
-                if (fielditem.filter(row => { return row.fieldId === parseInt(d.conditionField) }).length > 0) {
-                  console.log('this', fielditem)
-                  if (d.conditionValue === fielditem.filter(row => { return row.fieldId === parseInt(d.conditionField) })[0].fieldValue) {
-                    addData = true
+            let checkJobno = ''
+            await axios.get(this.DNS_IP + '/booking_view/get?bookNo=' + this.BookingDataItem[0].bookNo)
+              .then(async response => {
+                let rs = response.data
+                console.log('checkJobNoInBooking', rs)
+                if (rs.status === false) {
+                  checkJobno = 'ไม่มีข้อมูล'
+                } else {
+                  checkJobno = rs[0].jobNo || ''
+                }
+              })
+            if (checkJobno === '') {
+              console.log('this.BookingDataItem', this.BookingDataItem)
+              let Add = []
+              let fielditem = this.flowfieldNameitem
+              console.log('fielditem', fielditem)
+              for (var i = 0; i < this.BookingDataItem.length; i++) {
+                var d = this.BookingDataItem[i]
+                let update = {}
+                let addData = false
+                var dataField = this.editedItemSeleteField.filter(el => { return parseInt(el.fieldId) === parseInt(d.fieldId) })
+                if (dataField[0].conditionField === '' || dataField[0].conditionField === null) {
+                  addData = true
+                } else {
+                  if (fielditem.filter(row => { return row.fieldId === parseInt(d.conditionField) }).length > 0) {
+                    console.log('this', fielditem)
+                    if (d.conditionValue === fielditem.filter(row => { return row.fieldId === parseInt(d.conditionField) })[0].fieldValue) {
+                      addData = true
+                    } else if (d.conditionField === 'flow') {
+                      addData = true
+                    }
                   } else if (d.conditionField === 'flow') {
                     addData = true
                   }
-                } else if (d.conditionField === 'flow') {
-                  addData = true
+                }
+                if (addData) {
+                  if (d.fieldValue !== '') {
+                    update.masBranchID = this.BookingDataItem[0].masBranchID || ''
+                    update.CREATE_USER = d.userName
+                    update.LAST_USER = d.userName
+                    update.packageId = d.packageId
+                    update.checkCar = ''
+                    update.userId = d.userId
+                    update.endDate = this.endDate
+                    update.endTime = this.endTime.value
+                    update.fieldId = d.fieldId
+                    update.fieldName = d.fieldName
+                    update.fieldType = dataField[0].fieldType || ''
+                    update.fieldValue = d.fieldValue
+                    update.flowId = d.flowId
+                    update.empSelect = this.empSelectJob
+                    update.conditionField = dataField[0].conditionField || ''
+                    update.conditionValue = dataField[0].conditionValue || ''
+                    update.optionField = dataField[0].optionField || ''
+                    update.shopId = dataField[0].shopId || ''
+                    update.showCard = dataField[0].showCard || ''
+                    Add.push(update)
+                  }
                 }
               }
-              if (addData) {
-                if (d.fieldValue !== '') {
+              for (var x = 0; x < fielditem.length; x++) {
+                var t = fielditem[x]
+                if (Add.filter(row => { return row.fieldId === t.fieldId }).length === 0) {
+                  let update = {}
+                  let dataField = this.editedItemSeleteField.filter(el => { return parseInt(el.fieldId) === parseInt(t.fieldId) })
                   update.masBranchID = this.BookingDataItem[0].masBranchID || ''
-                  update.CREATE_USER = d.userName
-                  update.LAST_USER = d.userName
-                  update.packageId = d.packageId
+                  update.CREATE_USER = Add[0].CREATE_USER
+                  update.LAST_USER = Add[0].CREATE_USER
+                  update.packageId = Add[0].packageId
                   update.checkCar = ''
-                  update.userId = d.userId
+                  update.userId = Add[0].userId
                   update.endDate = this.endDate
                   update.endTime = this.endTime.value
-                  update.fieldId = d.fieldId
-                  update.fieldName = d.fieldName
+                  update.fieldId = t.fieldId
+                  update.fieldName = t.fieldName
                   update.fieldType = dataField[0].fieldType || ''
-                  update.fieldValue = d.fieldValue
+                  update.fieldValue = t.fieldValue
                   update.flowId = d.flowId
                   update.empSelect = this.empSelectJob
                   update.conditionField = dataField[0].conditionField || ''
@@ -5927,90 +5967,89 @@ export default {
                   Add.push(update)
                 }
               }
-            }
-            for (var x = 0; x < fielditem.length; x++) {
-              var t = fielditem[x]
-              if (Add.filter(row => { return row.fieldId === t.fieldId }).length === 0) {
-                let update = {}
-                let dataField = this.editedItemSeleteField.filter(el => { return parseInt(el.fieldId) === parseInt(t.fieldId) })
-                update.masBranchID = this.BookingDataItem[0].masBranchID || ''
-                update.CREATE_USER = Add[0].CREATE_USER
-                update.LAST_USER = Add[0].CREATE_USER
-                update.packageId = Add[0].packageId
-                update.checkCar = ''
-                update.userId = Add[0].userId
-                update.endDate = this.endDate
-                update.endTime = this.endTime.value
-                update.fieldId = t.fieldId
-                update.fieldName = t.fieldName
-                update.fieldType = dataField[0].fieldType || ''
-                update.fieldValue = t.fieldValue
-                update.flowId = d.flowId
-                update.empSelect = this.empSelectJob
-                update.conditionField = dataField[0].conditionField || ''
-                update.conditionValue = dataField[0].conditionValue || ''
-                update.optionField = dataField[0].optionField || ''
-                update.shopId = dataField[0].shopId || ''
-                update.showCard = dataField[0].showCard || ''
-                Add.push(update)
-              }
-            }
-            console.log('this.Add', Add)
-            this.swalConfig.title = 'ต้องการนำรายการนี้ เข้าตารางใช่หรือไม่?'
-            this.$swal(this.swalConfig).then(async result => {
-              this.dataEditJobReady = false
-              await axios
-                .post(this.DNS_IP + '/job/add', Add)
-                .then(async response => {
-                  this.endDate = ''
-                  this.endTime = ''
-                  this.empSelectJob = ''
-                  if (response.data.status) {
-                    var dt = {
-                      bookNo: this.BookingDataItem[0].bookNo,
-                      statusJob: 'job',
-                      jobNo: response.data.jobNo
-                    }
-                    await axios
-                      .post(
-                        this.DNS_IP +
+              console.log('this.Add', Add)
+              this.swalConfig.title = 'ต้องการนำรายการนี้ เข้าตารางใช่หรือไม่?'
+              this.$swal(this.swalConfig)
+                .then(async result => {
+                  this.dataEditJobReady = false
+                  await axios
+                    .post(this.DNS_IP + '/job/add', Add)
+                    .then(async response => {
+                      this.endDate = ''
+                      this.endTime = ''
+                      this.empSelectJob = ''
+                      if (response.data.status) {
+                        var dt = {
+                          bookNo: this.BookingDataItem[0].bookNo,
+                          statusJob: 'job',
+                          jobNo: response.data.jobNo
+                        }
+                        await axios
+                          .post(
+                            this.DNS_IP +
                     '/Booking/editStatus/' +
                     this.BookingDataItem[0].bookNo,
-                        dt
-                      )
-                      .then(async response1 => {
-                        await this.pushMsg(response.data.jobNo)
-                        var dtt = {
-                          bookNo: this.BookingDataItem[0].bookNo,
-                          contactDate: this.format_date(new Date()),
-                          status: 'confirmJob',
-                          statusUse: 'use',
-                          shopId: this.$session.getAll().data.shopId,
-                          CREATE_USER: this.session.data.userName,
-                          LAST_USER: this.session.data.userName
-                        }
-                        axios
-                          .post(this.DNS_IP + '/booking_transaction/add', dtt)
-                          .then(async response => {
-                            this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
-                            if (this.statusSearch === 'no') {
-                              await this.getBookingList()
-                            } else {
-                              await this.searchAny()
+                            dt
+                          )
+                          .then(async response1 => {
+                            await this.pushMsg(response.data.jobNo)
+                            var dtt = {
+                              bookNo: this.BookingDataItem[0].bookNo,
+                              contactDate: this.format_date(new Date()),
+                              status: 'confirmJob',
+                              statusUse: 'use',
+                              shopId: this.$session.getAll().data.shopId,
+                              CREATE_USER: this.session.data.userName,
+                              LAST_USER: this.session.data.userName
                             }
-                            this.dialogEdit = false
-                            this.dataEditJobReady = true
-                            var dataJob = this.dataItem.filter(el => { return el.bookNo === this.dataQrcode.bookNo })
-                            this.getjob(dataJob[0])
-                            this.dialogJob = true
+                            axios
+                              .post(this.DNS_IP + '/booking_transaction/add', dtt)
+                              .then(async response => {
+                                this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
+                                if (this.statusSearch === 'no') {
+                                  await this.getBookingList()
+                                } else {
+                                  await this.searchAny()
+                                }
+                                this.dialogEdit = false
+                                this.dataEditJobReady = true
+                                var dataJob = this.dataItem.filter(el => { return el.bookNo === this.dataQrcode.bookNo })
+                                this.getjob(dataJob[0])
+                                this.dialogJob = true
+                              })
                           })
-                      })
-                  }
-                }).catch(error => {
-                  setTimeout(() => this.addDataJobSubmit(), 3000)
-                  console.log('error function addData : ', error)
+                      }
+                    }).catch(error => {
+                      setTimeout(() => this.addDataJobSubmit(), 3000)
+                      console.log('error function addData : ', error)
+                    })
                 })
-            })
+            } else {
+              this.$swal('ผิดพลาด', 'รายการนี้ได้นำเข้ากระดานการทำงานแล้ว', 'error').then(async response => {
+                this.dialogEdit = false
+                if (this.statusSearch === 'no') {
+                  await this.getBookingList()
+                } else {
+                  await this.searchAny()
+                }
+                // this.getTimesChange('update')
+                if (this.getSelectText) {
+                  this.getSelect(this.getSelectText, this.getSelectCount)
+                }
+              }).catch(error => {
+                console.log('error function addData : ', error)
+                this.dialogEdit = false
+                if (this.statusSearch === 'no') {
+                  this.getBookingList()
+                } else {
+                  this.searchAny()
+                }
+                // this.getTimesChange('update')
+                if (this.getSelectText) {
+                  this.getSelect(this.getSelectText, this.getSelectCount)
+                }
+              })
+            }
           }
         } else {
           this.$swal('ผิดพลาด', 'ไม่มีนัดหมายเข้ารับบริการนี้', 'error').then(async response => {
