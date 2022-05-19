@@ -602,7 +602,7 @@
                 <v-text-field
                   v-model="searchAll2"
                   append-icon="mdi-magnify"
-                  label="Search"
+                  label="ค้นหาข้อมูล"
                   single-line
                   hide-details
                 ></v-text-field>
@@ -659,6 +659,7 @@
                       fab
                       dark
                       x-small
+                      v-if="item.fieldName !== 'ชื่อ' && item.fieldName !== 'เลขทะเบียน' && item.fieldName !== 'เบอร์โทร'"
                       @click.stop="getDataById(item), validate('UPDATE'), validate('ADDOPTION'), (dialogEdit = true)"
                     >
                       <v-icon> mdi-tools </v-icon>
@@ -668,6 +669,7 @@
                       dark
                       fab
                       x-small
+                      v-if="item.fieldName !== 'ชื่อ' && item.fieldName !== 'เลขทะเบียน' && item.fieldName !== 'เบอร์โทร'"
                       @click.stop="(dialogDelete = true), getDataById(item)"
                     >
                       <v-icon> mdi-delete </v-icon>
