@@ -1923,7 +1923,7 @@
                       </template>
                       <span>ยืนยันนัดหมาย</span>
                     </v-tooltip>
-                    <v-tooltip bottom>
+                    <v-tooltip bottom v-if="item.statusBt !== 'confirmJob'">
                       <template v-slot:activator="{ on, attrs }">
                         <v-btn
                           color="warning"
@@ -2458,7 +2458,7 @@
                                 </template>
                             </div>
                           </template>
-                          <v-row>
+                          <v-row v-if="getSelectText !== 'confirmJob'">
                             <v-col class="pb-0">
                               <v-menu
                                 v-model="menuDateEdit"
@@ -2525,7 +2525,7 @@
                             </v-col>
                           </v-row>
                           <v-row>
-                            <v-col class="pt-0">
+                            <v-col class="pt-0 pb-0">
                               <v-radio-group v-model="formEdit.radiosRemark" row  required :rules ="[rules.required]">
                                 <v-radio value="ซ่อมปกติ">
                                   <template v-slot:label>
@@ -2545,7 +2545,7 @@
                               </v-radio-group>
                             </v-col>
                           </v-row>
-                          <v-row>
+                          <v-row v-if="getSelectText !== 'confirmJob'">
                             <v-col class="pt-0">
                               <v-select
                                 v-model="empSelectEdit"
@@ -5237,7 +5237,109 @@ export default {
                     s.statusBtText = 'รับรถแล้ว'
                     this.countJob = this.countJob + 1
                     break
-                  default:
+                  // default:
+                  //   s.statusBtText = 'รายการนัดหมายใหม่'
+                  //   this.countWaiting = this.countWaiting + 1
+                  //   break
+                }
+                var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
+                if (chkTime.length === 0) {
+                  dataItemTimes.push(s)
+                }
+                s.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
+                s.cusReg = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เลขทะเบียน')
+                s.tel = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เบอร์โทร')
+                s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
+                s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
+                s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
+                if (s.statusBt !== 'wait') {
+                  dataItems.push(s)
+                }
+              } else {
+                console.log('BookingNo no bookingData', d.bookNo)
+              }
+            }
+          }
+        })
+        // eslint-disable-next-line handle-callback-err
+        .catch(error => {
+          console.log(error)
+          this.dataReady = true
+          //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
+        })
+      let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&statusBt=is null`
+      await axios
+        .get(url)
+        .then(async response => {
+          if (response.data.status !== false) {
+            response.data.forEach((row) => {
+              if (typeof (this.BookingDataList[row.bookNo]) === 'undefined') {
+                this.BookingDataList[row.bookNo] = []
+              }
+              this.BookingDataList[row.bookNo].push(row)
+            })
+          }
+        })
+      await axios
+        .get(
+          // eslint-disable-next-line quotes
+          this.DNS_IP +
+                '/booking_view/get?shopId=' +
+                this.session.data.shopId +
+                '&masBranchID=' +
+                this.masBranchID +
+                '&statusBt=null&checkOnsite=is null'
+        )
+        .then(async responses => {
+          if (responses.data.length > 0) {
+            console.log('length', responses.data.length)
+            for (let i = 0; i < responses.data.length; i++) {
+              let d = responses.data[i]
+              let s = {}
+              if (this.BookingDataList[d.bookNo] !== undefined) {
+                s.bookNo = d.bookNo
+                s.flowId = d.flowId
+                s.flowName = d.flowName
+                s.dueDate = d.dueDate
+                if (d.timeText === null || d.timeText === '') {
+                  d.timeText = d.timeDue
+                }
+                s.dueDateText = this.format_dateNotime(d.dueDate) + ' ' + d.timeText
+                s.shopId = d.shopId
+                s.remark = d.remark || ''
+                s.masBranchID = d.masBranchID
+                s.empSelect = d.empSelect
+                s.empFull_NameTH = d.empFull_NameTH || ''
+                s.empFull_NameTH = s.empFull_NameTH.replace('นางสาว', '')
+                s.empFull_NameTH = s.empFull_NameTH.replace('นาย', '')
+                s.empFull_NameTH = s.empFull_NameTH.replace('นาง', '')
+                s.userId = d.userId
+                s.chkConfirm = false
+                s.chkCancel = false
+                s.address = d.address
+                s.addressLatLong = d.addressLatLong
+                s.jobNo = d.jobNo
+                s.timeText = d.timeText
+                s.remarkRemove = d.remarkRemove || ''
+                s.remarkConfirm1 = (d.remarkConfirm1 === 'true' || d.remarkConfirm1 === 'True')
+                s.remarkConfirm2 = (d.remarkConfirm2 === 'true' || d.remarkConfirm2 === 'True')
+                s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
+                s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
+                s.lineUserId = d.lineUserId
+                s.timeDueHtext = d.timeDueH + ':00'
+                s.timeDuetext = d.timeDue
+                this.countAll = this.countAll + 1
+                if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
+                  s.chkConfirm = true
+                  s.chkCancel = false
+                }
+                if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
+                  s.chkConfirm = false
+                  s.chkCancel = true
+                }
+                s.statusBt = d.statusBt || 'wait'
+                switch (s.statusBt) {
+                  case 'wait':
                     s.statusBtText = 'รายการนัดหมายใหม่'
                     this.countWaiting = this.countWaiting + 1
                     break
@@ -5253,56 +5355,50 @@ export default {
                 s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
                 s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
                 dataItems.push(s)
+                console.log('this.countWaiting', this.countWaiting)
               } else {
                 console.log('BookingNo no bookingData', d.bookNo)
               }
             }
           }
-          if (dataItems.length === 0 || dataItems.status === false) {
-            this.dataItem = []
-            this.dataItemTime = []
-            // await this.getTimesChange('update')
-            if (this.getSelectText) {
-              this.getSelect(this.getSelectText, 0)
-            } else {
-              this.getSelect('wait', this.countWaiting)
-            }
-            this.dataReady = true
-            // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
-          } else {
-            this.dataItem = dataItems
-            var datause = dataItemTimes.sort((a, b) => {
-              if (a.timeDueHtext < b.timeDueHtext) return -1
-              return a.timeDueHtext > b.timeDueHtext ? 1 : 0
-            })
-            for (var k = 0; k < datause.length; k++) {
-              var t = datause[k]
-              var h = {}
-              h.timeDueHtext = t.timeDueHtext
-              let chkTimes = this.dataItemTime.filter(el => { return el.timeDueHtext === t.timeDueHtext })
-              // console.log('chkTimes', chkTimes)
-              if (chkTimes.length === 0) {
-                console.log('datause(H)', h)
-                this.dataItemTime.push(h)
-              }
-            }
-            console.log('dataItemTime', this.dataItemTime)
-            // await this.getTimesChange('update')
-            if (this.getSelectText) {
-              this.getSelect(this.getSelectText, 0)
-            } else {
-              this.getSelect('wait', this.countWaiting)
-            }
-            this.dataReady = true
+        })
+      if (dataItems.length === 0 || dataItems.status === false) {
+        this.dataItem = []
+        this.dataItemTime = []
+        // await this.getTimesChange('update')
+        if (this.getSelectText) {
+          this.getSelect(this.getSelectText, 0)
+        } else {
+          this.getSelect('wait', this.countWaiting)
+        }
+        this.dataReady = true
+        // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
+      } else {
+        this.dataItem = dataItems
+        var datause = dataItemTimes.sort((a, b) => {
+          if (a.timeDueHtext < b.timeDueHtext) return -1
+          return a.timeDueHtext > b.timeDueHtext ? 1 : 0
+        })
+        for (var k = 0; k < datause.length; k++) {
+          var t = datause[k]
+          var h = {}
+          h.timeDueHtext = t.timeDueHtext
+          let chkTimes = this.dataItemTime.filter(el => { return el.timeDueHtext === t.timeDueHtext })
+          // console.log('chkTimes', chkTimes)
+          if (chkTimes.length === 0) {
+            console.log('datause(H)', h)
+            this.dataItemTime.push(h)
           }
-        })
-        // eslint-disable-next-line handle-callback-err
-        .catch(error => {
-          console.log(error)
-          this.dataReady = true
-          setTimeout(() => this.getBookingList(), 3000)
-          //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
-        })
+        }
+        console.log('dataItemTime', this.dataItemTime)
+        // await this.getTimesChange('update')
+        if (this.getSelectText) {
+          this.getSelect(this.getSelectText, 0)
+        } else {
+          this.getSelect('wait', this.countWaiting)
+        }
+        this.dataReady = true
+      }
     },
     async getBookingField () {
       // this.bookingField = []
