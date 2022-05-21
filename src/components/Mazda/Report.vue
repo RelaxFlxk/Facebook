@@ -1,6 +1,11 @@
 <template>
    <div style="overflow-x: scroll;">
       <table v-if="dataReady" border="1" cellspacing="1" cellpadding="2">
+         <tr>
+            <td align="center"><b>เวลา</b></td>
+            <td align="center"><b>Fast Track</b></td>
+            <td align="center" colspan="20"><b>เช็คระยะ ซ่อมทั่วไป</b></td>
+         </tr>
          <tr v-for="(row, index) in dataReport" v-bind:key="index">
             <td align="center" style="min-width: 100px;height: 150px;">{{index.replace('time-', '')}}:00/<br>{{index.replace('time-', '')}}:15</td>
             <td width="150" valign="top" v-for="(col, index2) in row" v-bind:key="index + '_' + index2" align="center" :rowspan="col.rowspan">
