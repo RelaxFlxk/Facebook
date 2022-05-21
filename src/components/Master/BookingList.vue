@@ -1546,7 +1546,7 @@
           </v-dialog>
           <!-- data table -->
           <v-col cols="12" >
-            <BookingQueue :branchParent="branch" :masBranchIDParent="masBranchID" :drawerParent="drawer" :menu1Parent="menu1" :timeTableParent="timeTable" :rulesParent="rules" :masterTimeParent="masterTime" :dataItemTimesChangeParent="dataItemTimesChange" :getTimesChangeParent="getTimesChange" :exportExcelParent="exportExcel" :dataRemoveExportParent="dataRemoveExport" :exportExcelRemoveParent="exportExcelRemove" :toggleParent="toggle" @updateTimeTable="updateTimeTablefromChild"></BookingQueue>
+            <BookingQueue :branchParent="branch" :masBranchIDParent="masBranchID" :drawerParent="drawer" :menu1Parent="menu1" :timeTableParent="timeTable" :rulesParent="rules" :masterTimeParent="masterTime" :dataItemTimesChangeParent="dataItemTimesChange" :getTimesChangeParent="getTimesChange" :exportExcelParent="exportExcel" :exportExcelMazdaParent="exportExcelMazda" :dataRemoveExportParent="dataRemoveExport" :exportExcelRemoveParent="exportExcelRemove" :toggleParent="toggle" @updateTimeTable="updateTimeTablefromChild"></BookingQueue>
             <v-card elevation="7" v-if="dataReady">
               <div>
                 <v-btn
@@ -3808,6 +3808,10 @@ export default {
             console.log('error function addData : ', error)
           })
       }
+    },
+    exportExcelMazda () {
+      const url = `${window.location.origin}/mazda/report?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&timeTable=${this.timeTable}&checkOnsite=is null`
+      window.open(url, '_blank').focus()
     },
     exportExcel () {
       let dataExport = []

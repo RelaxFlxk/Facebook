@@ -59,6 +59,17 @@
                &nbsp;Export Cancel
             </v-btn>
          </v-col>
+         <v-col class="pt-0" cols="auto" v-if="dataItemTimesChange.filter(el => { return (el.statusBt==='confirmJob' || el.statusBt==='confirm') }).length > 0">
+            <v-btn
+               color="normal"
+               small
+               @click="exportExcelMazda()"
+               dark
+            >
+               <v-icon right dark>mdi-microsoft-excel</v-icon>
+               &nbsp;Mazda Export
+            </v-btn>
+         </v-col>
          </v-row>
          <button class="close-btn" @click="toggle()">X</button>
          <!-- <v-simple-table dense>
@@ -265,7 +276,7 @@
 </template>
 <script>
 export default {
-  props: ['branchParent', 'masBranchIDParent', 'drawerParent', 'menu1Parent', 'timeTableParent', 'rulesParent', 'masterTimeParent', 'dataItemTimesChangeParent', 'getTimesChangeParent', 'exportExcelParent', 'toggleParent', 'updateTimeTable', 'dataRemoveExportParent', 'exportExcelRemoveParent'],
+  props: ['branchParent', 'masBranchIDParent', 'drawerParent', 'menu1Parent', 'timeTableParent', 'rulesParent', 'masterTimeParent', 'dataItemTimesChangeParent', 'getTimesChangeParent', 'exportExcelParent', 'exportExcelMazdaParent', 'toggleParent', 'updateTimeTable', 'dataRemoveExportParent', 'exportExcelRemoveParent'],
   components: {},
   created () {},
   computed: {
@@ -305,6 +316,9 @@ export default {
     },
     exportExcelRemove () {
       this.exportExcelRemoveParent()
+    },
+    exportExcelMazda () {
+      this.exportExcelMazdaParent()
     },
     toggle () {
       this.toggleParent()

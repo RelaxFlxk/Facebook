@@ -8,6 +8,7 @@ import BroadCast from '@/components/BroadCast'
 import Payment from '@/components/Payment'
 import PrintPdf from '@/components/PrintPdf'
 import Onsite from '@/components/Onsite'
+import Mazda from '@/components/Mazda'
 
 Vue.use(Router)
 
@@ -279,8 +280,13 @@ export default new Router({
   },
   {
     path: '/Onsite/JobList',
-    name: 'JobList',
+    name: 'JobListOnsite',
     component: Onsite.JobList
+  },
+  {
+    path: '/mazda/report',
+    name: 'MazdaReport',
+    component: Mazda.Report
   }
   ]
 })
