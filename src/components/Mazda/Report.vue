@@ -8,43 +8,45 @@
          </tr>
          <tr v-for="(row, index) in dataReport" v-bind:key="index">
             <td align="center" style="min-width: 100px;height: 150px;">{{index.replace('time-', '')}}:00/<br>{{index.replace('time-', '')}}:15</td>
-            <td width="150" valign="top" v-for="(col, index2) in row" v-bind:key="index + '_' + index2" align="center" :rowspan="col.rowspan">
-               <table v-if="col.cusName">
-                  <tr v-if="(col.colType === 'even')" style="height:30px;background-color:#ddd;"><td>&nbsp;</td></tr>
-                  <tr :rowspan="(col.colType === 'even') ? '1' : '2'" valign="top"><td>
-                     <table border="0" class="table_info">
-                        <!-- <tr><td align="center"><b>{{col.timeDuetext || '&nbsp;'}}</b></td></tr> -->
-                        <tr><td align="center" :style="'height: ' + (190 * col.rowspan) + 'px;'">
-                           <template v-if="col.cusName">
-                              {{col.cusName}}<br>
-                              {{col.carModel}}<br>
-                              {{col.cusReg}}<br>
-                              {{col.serviceDetail}}<br>
-                              T.{{col.tel}}<br>
-                           </template>
-                        </td></tr>
-                     </table>
-                  </td></tr>
-                  <tr><td>
-                     <table border=1 class="table_detail">
-                        <tr align="center">
-                           <td>DCRC<br>นัด</td>
-                           <td>ลค.<br>นัด</td>
-                           <td>โทรเตือน</td>
-                           <td>ตรงเวลา</td>
-                           <td>ไม่ตรง</td>
-                        </tr>
-                        <tr align="center">
-                           <td v-if="col.remark">{{(col.remark.substring(0,1) !== 'ล' ? col.remark.substring(0,3) : '')}}</td>
-                           <td v-if="col.remark">{{(col.remark.substring(0,1) === 'ล' ? (col.remark).replace('ล.', '').substring(0,4) : '')}}</td>
-                           <td v-if="col.remarkConfirm1">{{(col.remarkConfirm1 ? '1' : '')}}</td>
-                           <td>&nbsp;</td>
-                           <td>&nbsp;</td>
-                        </tr>
-                     </table>
-                  </td></tr>
-               </table>
-            </td>
+            <template v-for="(col, index2) in row">
+               <td width="150" valign="top"  v-bind:key="index + '_' + index2" align="center" :rowspan="col.rowspan" v-if="col.colType !== 'remove'">
+                  <table v-if="col.cusName">
+                     <tr v-if="(col.colType === 'even')" style="height:30px;background-color:#ddd;"><td>&nbsp;</td></tr>
+                     <tr :rowspan="(col.colType === 'even') ? '1' : '2'" valign="top"><td>
+                        <table border="0" class="table_info">
+                           <tr><td align="center"><b>{{col.timeText || '&nbsp;'}}</b></td></tr>
+                           <tr><td align="center" :style="'height: ' + (190 * col.rowspan) + 'px;'">
+                              <template v-if="col.cusName">
+                                 {{col.cusName}}<br>
+                                 {{col.carModel}}<br>
+                                 {{col.cusReg}}<br>
+                                 {{col.serviceDetail}}<br>
+                                 T.{{col.tel}}<br>
+                              </template>
+                           </td></tr>
+                        </table>
+                     </td></tr>
+                     <tr><td>
+                        <table border=1 class="table_detail">
+                           <tr align="center">
+                              <td>DCRC<br>นัด</td>
+                              <td>ลค.<br>นัด</td>
+                              <td>โทรเตือน</td>
+                              <td>ตรงเวลา</td>
+                              <td>ไม่ตรง</td>
+                           </tr>
+                           <tr align="center">
+                              <td v-if="col.remark">{{(col.remark.substring(0,1) !== 'ล' ? col.remark.substring(0,3) : '')}}</td>
+                              <td v-if="col.remark">{{(col.remark.substring(0,1) === 'ล' ? (col.remark).replace('ล.', '').substring(0,4) : '')}}</td>
+                              <td v-if="col.remarkConfirm1">{{(col.remarkConfirm1 ? '1' : '')}}</td>
+                              <td>&nbsp;</td>
+                              <td>&nbsp;</td>
+                           </tr>
+                        </table>
+                     </td></tr>
+                  </table>
+               </td>
+            </template>
          </tr>
       </table>
    </div>
@@ -188,6 +190,7 @@ export default {
                   if (a.timeDuetext < b.timeDuetext) return -1
                   return a.timeDuetext > b.timeDuetext ? 1 : 0
                 })
+
                 let timebox = ''
                 let indexOdd = 1
                 let indexEven = 2
@@ -200,8 +203,8 @@ export default {
                     timebox = row['timeDueH']
                     if (!this.dataReport['time-' + timebox]) {
                       this.dataReport['time-' + timebox] = {}
+                      this.dataReport['time-' + timebox][0] = { colType: 'fasttrack' }
                     }
-                    this.dataReport['time-' + timebox][0] = { colType: 'fasttrack' }
                     indexOdd = 1
                     indexEven = 2
                   }
@@ -232,7 +235,9 @@ export default {
                       if (!this.dataReport['time-' + timebox2]) {
                         this.dataReport['time-' + timebox2] = {}
                       }
-                      this.dataReport['time-' + timebox2][0] = { colType: 'fasttrack' }
+                      console.log('time-' + timebox2)
+                      this.dataReport['time-' + timebox2][0] = { colType: 'remove' }
+                      console.log(this.dataReport['time-' + timebox2][0])
                     }
                     row.colType = 'fasttrack'
                     this.dataReport['time-' + timebox1][0] = row
