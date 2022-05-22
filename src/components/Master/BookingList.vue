@@ -1082,6 +1082,7 @@
                             prepend-icon="mdi-calendar"
                             v-bind="attrs"
                             v-on="on"
+                            readonly
                           ></v-text-field>
                         </template>
                         <v-date-picker
@@ -6118,6 +6119,18 @@ export default {
                                 this.dialogJob = true
                               })
                           })
+                      } else {
+                        this.$swal('ผิดพลาด', 'กรุณาทำรายการใหม่', 'error')
+                        this.dialogEdit = false
+                        if (this.statusSearch === 'no') {
+                          await this.getBookingList()
+                        } else {
+                          await this.searchAny()
+                        }
+                        // this.getTimesChange('update')
+                        if (this.getSelectText) {
+                          this.getSelect(this.getSelectText, this.getSelectCount)
+                        }
                       }
                     }).catch(error => {
                       setTimeout(() => this.addDataJobSubmit(), 3000)
