@@ -490,7 +490,7 @@
                 class="pb-0 pt-0"
               >
                 <v-card class="pa-0" style="background-color: #f0eeee;" >
-                  <v-card id="cardTitle" class="mb-1" :color="codeColor[work]">
+                  <v-card id="cardTitle" class="mb-1" :style="'background-color:' + codeColor[work] + ';'">
                     <v-card-title class="ma-3" >
                       <v-row class="pa-0" style="color: white;">
                         <v-col cols="10" class="pa-1">
