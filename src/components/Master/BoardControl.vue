@@ -489,10 +489,10 @@
                 :key="indexitem"
                 class="pb-0 pt-0"
               >
-                <v-card class="pa-0" style="background-color: #f0eeee;">
-                  <v-card id="cardTitle" class="mb-1">
-                    <v-card-title class="ma-3">
-                      <v-row class="pa-0">
+                <v-card class="pa-0" style="background-color: #f0eeee;" >
+                  <v-card id="cardTitle" class="mb-1" :color="codeColor[work]">
+                    <v-card-title class="ma-3" >
+                      <v-row class="pa-0" style="color: white;">
                         <v-col cols="10" class="pa-1">
                           <v-tooltip
                             :color="codeColor[work]"
@@ -593,7 +593,9 @@
                         <!-- end diffDate -->
                           </v-col>
                         <v-col cols="10" class="pa-0 ps-3">
-                      <strong class="text-center">{{JobDataItem.filter(row => {return row.jobId == itemsJob.jobId && row.fieldName === 'เลขทะเบียน'})[0].fieldValue}}</strong>
+                      <strong class="text-center">
+                        {{JobDataItem.filter(row => {return row.jobId == itemsJob.jobId && row.fieldName === 'เลขทะเบียน'})[0].fieldValue}}
+                      </strong>
                         </v-col>
                       </v-row>
                         <div
