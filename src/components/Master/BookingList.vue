@@ -820,7 +820,7 @@
           <v-dialog v-model="dialogEdit" persistent :max-width="dialogwidth">
             <v-card class="text-center">
               <v-card-title>นำเข้ากระดานการทำงาน</v-card-title>
-              <v-card-text  v-if="dataEditJobReady">
+              <v-card-text  v-if="dataEditJobReady && statusConfirmJob">
                 <v-container>
                   <v-col
                     v-for="(item, indexitem) in BookingDataItem"
@@ -1148,6 +1148,15 @@
                     </v-btn>
                   </div>
                 </v-container>
+              </v-card-text>
+              <v-card-text  v-if="dataEditJobReady && !statusConfirmJob && BookingDataItem.length > 0">
+                <strong><h2>เนื่องจากวันที่นัดหมาย {{format_dateNotime(dueDate)}} ซึ่งยังไม่ถึงเวลานัด</h2></strong>
+                <strong style="color: red;"><h3>กรุณาตรวจสอบข้อมูล หรือ เปลี่ยนเวลานัดหมายใหม่</h3></strong>
+                <div class="text-center">
+                  <v-btn small color="red" dark @click="dialogEdit = false, getDataDefault(), searchOther = '', showColorSearch = false, statusSearch = 'no'">
+                    <v-icon color="#173053">mdi-close</v-icon> ปิดหน้าต่าง
+                  </v-btn>
+                </div>
               </v-card-text>
               <v-card-text  v-if="!dataEditJobReady">
                 <v-container>
@@ -2852,6 +2861,8 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      dueDate: '',
+      statusConfirmJob: false,
       filters: '',
       loadingEdit: false,
       loadingAdd: false,
@@ -5888,6 +5899,17 @@ export default {
       this.checkTimeFlow()
       this.BookingDataItem = []
       let itemIncustomField = []
+      this.statusConfirmJob = false
+      this.dueDate = dt.dueDate
+      let dateCurrent = this.momenDate_1(new Date())
+      let dueDate = this.momenDate_1(dt.dueDate)
+      if (dateCurrent >= dueDate) {
+        this.statusConfirmJob = true
+      } else {
+        this.statusConfirmJob = false
+      }
+      console.log('this.statusConfirmJob', this.statusConfirmJob)
+
       await axios
         .get(
           this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
@@ -5923,6 +5945,7 @@ export default {
                             d.bookingDataId = dataBD[0].bookingDataId
                             d.flowId = dataBD[0].flowId
                             d.masBranchID = dataBD[0].masBranchID
+                            // d.dueDate = dt.dueDate
                             // d.conditionField = d.conditionField
                             // d.fieldId = d.fieldId
                             // d.fieldType = d.fieldType
