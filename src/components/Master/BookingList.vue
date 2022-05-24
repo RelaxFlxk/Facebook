@@ -1200,17 +1200,22 @@
                         <br>
                         <h2 style="font-weight: 900; color:#FFA000">ติดตามสถานะ!</h2>
                         <qrcode-vue v-if="userId === ''" :value="value" :size="size" level="H" :foreground="foreground" />
+                        <template v-if="jobitem.length > 0">
                          <div v-if="userId !== ''" class="avatar text-center">
                             <v-avatar v-if="memberPicture !== ''" size="120" style="border:5px solid #FFFFFF;">
                                 <img :src= memberPicture>
                             </v-avatar>
-                            <v-avatar v-else size="120" style="border:5px solid #FFFFFF;">
+                            <v-avatar v-if="memberPicture === '' && userId === 'user-skip' && jobitem[0].recordStatus === 'D'" size="120" style="border:5px solid #FFFFFF;">
                                 <v-img
                                   class="v_text_add"
                                   :src="require('@/assets/OtherP.svg')"
                                 ></v-img>
                             </v-avatar>
                             <!-- <p class="text-center">{{profile.displayName}}</p> -->
+                        </div>
+                        </template>
+                         <div v-if="jobitem.length > 0" class="avatar text-center">
+                           <qrcode-vue v-if="userId === 'user-skip' && jobitem[0].recordStatus === 'N'" :value="value" :size="size" level="H" :foreground="foreground" />
                         </div>
                     </div>
                   </v-col>
@@ -1221,9 +1226,12 @@
                       <v-container class="text-center" >
                         <v-container>
                             <div v-for="(p , index) in jobitem" :key="index">
-                            <h4>{{p.name}} : {{p.value}}</h4>
-                            <!-- <h4 v-if="p.showCard === 'True' ">{{p.name}} : {{p.value}}</h4> -->
-                        </div>
+                              <h4>{{p.name}} : {{p.value}}</h4>
+                              <!-- <h4 v-if="p.showCard === 'True' ">{{p.name}} : {{p.value}}</h4> -->
+                            </div>
+                            <div v-if="jobitem.length > 0">
+                              <strong style="color: red;" v-if="jobitem[0].recordStatus === 'D'"><h2>รายการนี้ปิดไปแล้ว</h2></strong>
+                            </div>
                         </v-container>
                         <v-btn small class="ma-2" color="primary" v-if="userId === ''" @click="jobConfirm" dark>
                                 SKIP
@@ -6598,7 +6606,8 @@ export default {
                 Id: d.jobId,
                 value: d.fieldValue,
                 name: d.fieldName,
-                showCard: d.showCard
+                showCard: d.showCard,
+                recordStatus: d.RECORD_STATUS
               }
               Id = d.userId || ''
               memberPicture = d.memberPicture || ''
@@ -6607,6 +6616,7 @@ export default {
             this.userId = Id
             this.memberPicture = memberPicture
             this.value = this.pathToweb + this.jobitem[0].Id + '&shopId=' + this.$session.getAll().data.shopId
+            console.log('this.value', this.value)
             // this.getUserId()
           }
         })
