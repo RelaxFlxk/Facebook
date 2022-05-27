@@ -64,6 +64,16 @@
               class="ma-2"
             ></v-select>
           </v-col>
+          <v-col>
+            <v-text-field
+              dense
+              v-model="searchOther"
+              append-icon="mdi-text-box-search"
+              label="ค้นหาทั้งหมด"
+              @click:append="searchAny()"
+              outlined
+            ></v-text-field>
+          </v-col>
           </v-row>
         <v-row>
           <!-- <v-col :cols="colsWidth" class="text-h6" color="#ABB1C7"> นัดส่ง:</v-col> -->
@@ -1548,7 +1558,10 @@ export default {
       dataPackage: [],
       flowId: '',
       dataCoin: '',
-      productExchangeRateId: ''
+      productExchangeRateId: '',
+      searchOther: '',
+      allJobSupport: [],
+      jobDataItemSupport: []
     }
   },
   async mounted () {
@@ -1564,6 +1577,46 @@ export default {
     // await this.getLayoutDefault()
   },
   methods: {
+    async searchAny () {
+      // await this.getStepFlow()
+      if (this.allJobSupport.length > 0) {
+        this.allJob = this.allJobSupport
+      }
+      if (this.jobDataItemSupport.length > 0) {
+        this.JobDataItem = this.jobDataItemSupport
+      }
+      this.allJobSupport = this.allJob
+      this.jobDataItemSupport = this.JobDataItem
+      // let dataSearch = this.jobDataItemSupport.filter(el => { return el.fieldValue.includes(this.searchOther) })
+      let jobIds = this.jobDataItemSupport.filter(el => { return el.fieldValue.includes(this.searchOther) })
+      console.log('jobIds', jobIds)
+      let dataSearch = []
+      for (let i = 0; i < jobIds.length; i++) {
+        let d = jobIds[i]
+        if (this.jobDataItemSupport.filter(el => { return el.jobId === d.jobId }).length > 0) {
+          for (let i = 0; i < this.jobDataItemSupport.filter(el => { return el.jobId === d.jobId }).length; i++) {
+            let s = this.jobDataItemSupport.filter(el => { return el.jobId === d.jobId })[i]
+            dataSearch.push(s)
+          }
+        }
+      //  (this.jobDataItemSupport.filter(el => { return el.jobId === d.jobId }))
+      }
+      if (dataSearch.length > 0) {
+        let allJob = []
+        for (let i = 0; i < jobIds.length; i++) {
+          let d = jobIds[i]
+          allJob.push(this.allJobSupport.filter(el => { return el.jobId === d.jobId })[0])
+        }
+        console.log('dataSearch', dataSearch)
+        console.log('allJob', allJob)
+
+        this.JobDataItem = dataSearch
+        this.allJob = allJob
+        this.closeSetTime()
+      } else {
+        this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
+      }
+    },
     setTimeJob () {
       let _this = this
       this.setTimerJob = setInterval(function () { _this.getJobData() }, 60000)
@@ -1776,16 +1829,16 @@ export default {
                   })
                 }
               }
-              if (JobDataItem.length > 0) {
-                this.JobDataItem = JobDataItem
-              } else {
-                this.JobDataItem = []
-              }
-              if (allJob.length > 0) {
-                this.allJob = allJob
-              } else {
-                this.allJob = []
-              }
+            }
+            if (JobDataItem.length > 0) {
+              this.JobDataItem = JobDataItem
+            } else {
+              this.JobDataItem = []
+            }
+            if (allJob.length > 0) {
+              this.allJob = allJob
+            } else {
+              this.allJob = []
             }
             console.log('allJob', this.allJob)
           } else {

@@ -198,6 +198,14 @@
               required
               @change="dataReady = false,getBookingList()"
             ></v-select>
+            <v-select
+              v-model="flowSelect"
+              :items="DataFlowName"
+              label="ประเภทบริการ"
+              outlined
+              dense
+              @change="dataReady = false,getBookingList()"
+            ></v-select>
             <v-btn
               elevation="4"
               block
@@ -2861,6 +2869,7 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      flowSelect: '',
       dueDate: '',
       statusConfirmJob: false,
       filters: '',
@@ -3749,7 +3758,7 @@ export default {
       await this.getBookingList()
       // await this.getTimesChange('update')
       this.getSelect(this.getSelectText, this.getSelectCount)
-      this.getDataCalendaBooking()
+      // this.getDataCalendaBooking()
       this.loadingRefresh = false
     },
     async getDataSetTime () {
@@ -4828,7 +4837,7 @@ export default {
                     this.session.data.shopId +
                     '&masBranchID=' +
                     this.masBranchID +
-                    '&dueDate=' + moment(moment(this.timeTable, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD') + '&checkOnsite=is null'
+                    '&dueDate=' + moment(moment(this.timeTable, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD') + '&checkOnsite=is null&flowId=' + this.flowSelect
               )
               .then(async response => {
                 console.log('getData', response.data)
@@ -5172,8 +5181,24 @@ export default {
           this.masBranchID = this.branch[0].value
         } else {
           this.masBranchID = ''
+          await this.getDataBranch()
+          this.masBranchID = this.branch[0].value
+          // this.getBookingList()
         }
       }
+      if (this.flowSelect !== '') {
+        this.flowSelect = this.flowSelect
+      } else {
+        if (this.DataFlowName.length > 0) {
+          this.flowSelect = this.DataFlowName[0].value
+        } else {
+          this.flowSelect = ''
+          await this.getDataFlow()
+          this.flowSelect = this.DataFlowName[0].value
+          // this.getBookingList()
+        }
+      }
+      console.log('this.flowSelect', this.flowSelect)
       // this.dataReady = false
       this.selectedStatus = true
       // this.getSelectText = ''
@@ -5198,10 +5223,10 @@ export default {
             '&masBranchID=' +
             this.masBranchID +
             '&dueDate=' +
-            this.dateStart + '&checkOnsite=is null'
+            this.dateStart + '&checkOnsite=is null&flowId=' + this.flowSelect
         )
         .then(async response => {
-          // console.log('getData', response.data)
+          console.log('getData', response.data.length)
           if (response.data.length > 0) {
             for (let i = 0; i < response.data.length; i++) {
               let d = response.data[i]
@@ -5312,11 +5337,11 @@ export default {
                 this.session.data.shopId +
                 '&masBranchID=' +
                 this.masBranchID +
-                '&statusBt=null&checkOnsite=is null'
+                '&statusBt=null&checkOnsite=is null&flowId=' + this.flowSelect
         )
         .then(async responses => {
           if (responses.data.length > 0) {
-            console.log('length', responses.data.length)
+            // console.log('length', responses.data.length)
             for (let i = 0; i < responses.data.length; i++) {
               let d = responses.data[i]
               let s = {}
@@ -5379,7 +5404,7 @@ export default {
                 s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
                 s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
                 dataItems.push(s)
-                console.log('this.countWaiting', this.countWaiting)
+                // console.log('this.countWaiting', this.countWaiting)
               } else {
                 console.log('BookingNo no bookingData', d.bookNo)
               }
@@ -5780,7 +5805,7 @@ export default {
       await axios
         .post(this.DNS_IP + '/booking_transaction/add', dt)
         .then(async response => {
-          this.getDataCalendaBooking()
+          // this.getDataCalendaBooking()
           this.clearDataAdd()
           this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
           // await this.getBookingList()
@@ -5802,8 +5827,8 @@ export default {
       if (this.getSelectText) {
         this.getSelect(this.getSelectText, this.getSelectCount)
       }
-      clearInterval(this.setTimerCalendar)
-      this.setTimerCalendar = null
+      // clearInterval(this.setTimerCalendar)
+      // this.setTimerCalendar = null
       this.getDataCalendaBooking()
       // this.countWaiting = 0
       // this.countConfirm = 0
