@@ -64,15 +64,23 @@
               class="ma-2"
             ></v-select>
           </v-col>
-          <v-col>
+          <v-col :cols="colsWidth" v-if="allJob.length > 0">
             <v-text-field
+            class="ma-2"
               dense
               v-model="searchOther"
+              :append-outer-icon="searchOther ? 'mdi-refresh-circle' : ''"
               append-icon="mdi-text-box-search"
               label="ค้นหาทั้งหมด"
+              @click:append-outer="refreshData()"
               @click:append="searchAny()"
               outlined
-            ></v-text-field>
+            >
+              <v-tooltip slot="append-icon" bottom>
+                <v-icon slot="activator" color="primary" dark>home</v-icon>
+                <span>Tooltip</span>
+              </v-tooltip>
+            </v-text-field>
           </v-col>
           </v-row>
         <v-row>
@@ -1577,44 +1585,53 @@ export default {
     // await this.getLayoutDefault()
   },
   methods: {
+    refreshData () {
+      this.searchOther = ''
+      this.allJob = this.allJobSupport
+      this.JobDataItem = this.jobDataItemSupport
+    },
     async searchAny () {
       // await this.getStepFlow()
-      if (this.allJobSupport.length > 0) {
-        this.allJob = this.allJobSupport
-      }
-      if (this.jobDataItemSupport.length > 0) {
-        this.JobDataItem = this.jobDataItemSupport
-      }
-      this.allJobSupport = this.allJob
-      this.jobDataItemSupport = this.JobDataItem
-      // let dataSearch = this.jobDataItemSupport.filter(el => { return el.fieldValue.includes(this.searchOther) })
-      let jobIds = this.jobDataItemSupport.filter(el => { return el.fieldValue.includes(this.searchOther) })
-      console.log('jobIds', jobIds)
-      let dataSearch = []
-      for (let i = 0; i < jobIds.length; i++) {
-        let d = jobIds[i]
-        if (this.jobDataItemSupport.filter(el => { return el.jobId === d.jobId }).length > 0) {
-          for (let i = 0; i < this.jobDataItemSupport.filter(el => { return el.jobId === d.jobId }).length; i++) {
-            let s = this.jobDataItemSupport.filter(el => { return el.jobId === d.jobId })[i]
-            dataSearch.push(s)
-          }
+      if (this.searchOther.length > 0) {
+        if (this.allJobSupport.length > 0) {
+          this.allJob = this.allJobSupport
         }
-      //  (this.jobDataItemSupport.filter(el => { return el.jobId === d.jobId }))
-      }
-      if (dataSearch.length > 0) {
-        let allJob = []
+        if (this.jobDataItemSupport.length > 0) {
+          this.JobDataItem = this.jobDataItemSupport
+        }
+        this.allJobSupport = this.allJob
+        this.jobDataItemSupport = this.JobDataItem
+        // let dataSearch = this.jobDataItemSupport.filter(el => { return el.fieldValue.includes(this.searchOther) })
+        let jobIds = this.jobDataItemSupport.filter(el => { return el.fieldValue.includes(this.searchOther) })
+        console.log('jobIds', jobIds)
+        let dataSearch = []
         for (let i = 0; i < jobIds.length; i++) {
           let d = jobIds[i]
-          allJob.push(this.allJobSupport.filter(el => { return el.jobId === d.jobId })[0])
+          if (this.jobDataItemSupport.filter(el => { return el.jobId === d.jobId }).length > 0) {
+            for (let i = 0; i < this.jobDataItemSupport.filter(el => { return el.jobId === d.jobId }).length; i++) {
+              let s = this.jobDataItemSupport.filter(el => { return el.jobId === d.jobId })[i]
+              dataSearch.push(s)
+            }
+          }
+          //  (this.jobDataItemSupport.filter(el => { return el.jobId === d.jobId }))
         }
-        console.log('dataSearch', dataSearch)
-        console.log('allJob', allJob)
+        if (dataSearch.length > 0) {
+          let allJob = []
+          for (let i = 0; i < jobIds.length; i++) {
+            let d = jobIds[i]
+            allJob.push(this.allJobSupport.filter(el => { return el.jobId === d.jobId })[0])
+          }
+          console.log('dataSearch', dataSearch)
+          console.log('allJob', allJob)
 
-        this.JobDataItem = dataSearch
-        this.allJob = allJob
-        this.closeSetTime()
+          this.JobDataItem = dataSearch
+          this.allJob = allJob
+          this.closeSetTime()
+        } else {
+          this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
+        }
       } else {
-        this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
+        this.$swal('ผิดพลาด', 'กรุณากรอกข้อความที่จะค้นหา', 'error')
       }
     },
     setTimeJob () {

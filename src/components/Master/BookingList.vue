@@ -216,16 +216,6 @@
             >
               {{changeBackgroundColor ? 'ซ่อน' : 'แสดง'}}
             </v-btn>
-            <hr>
-            <v-text-field
-              dense
-              v-model="searchOther"
-              append-icon="mdi-text-box-search"
-              label="ค้นหาทั้งหมด"
-              :color="showColorSearch ? 'green' : 'info'"
-              @click:append="searchAny(), showColorSearch = true, statusSearch = 'yes', dataReady = false"
-              outlined
-            ></v-text-field>
           </v-col>
         </v-row>
         <v-row>
@@ -1574,8 +1564,10 @@
           <v-col cols="12" >
             <BookingQueue :branchParent="branch" :masBranchIDParent="masBranchID" :drawerParent="drawer" :menu1Parent="menu1" :timeTableParent="timeTable" :rulesParent="rules" :masterTimeParent="masterTime" :dataItemTimesChangeParent="dataItemTimesChange" :getTimesChangeParent="getTimesChange" :exportExcelParent="exportExcel" :exportExcelMazdaParent="exportExcelMazda" :dataRemoveExportParent="dataRemoveExport" :exportExcelRemoveParent="exportExcelRemove" :toggleParent="toggle" @updateTimeTable="updateTimeTablefromChild"></BookingQueue>
             <v-card elevation="7" v-if="dataReady">
-              <div>
-                <v-btn
+              <v-card-text>
+              <v-row>
+                <v-col col="auto">
+                  <v-btn
                   v-if="dataItem.length > 0"
                   color="blue-grey"
                   class="ma-2 white--text"
@@ -1599,7 +1591,21 @@
                 >
                   ตรวจสอบคิวจองรายเดือน
                 </v-btn>
-              </div>
+                </v-col>
+                <v-col class="text-right" col="auto">
+                  <v-text-field
+                    dense
+                    v-model="searchOther"
+                    append-icon="mdi-text-box-search"
+                    label="ค้นหาทั้งหมด"
+                    :color="showColorSearch ? 'green' : 'info'"
+                    @click:append="searchAny(), showColorSearch = true, statusSearch = 'yes', dataReady = false"
+                    outlined
+                  ></v-text-field>
+                </v-col>
+                <v-col class="text-right" cols="auto"></v-col>
+              </v-row>
+              </v-card-text>
               <v-card-title>
                 <v-text-field
                   v-model="searchAll2"
