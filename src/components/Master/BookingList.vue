@@ -5823,29 +5823,11 @@ export default {
         })
     },
     async clearDataAdd () {
-      this.dataReady = false
-      if (this.statusSearch === 'no') {
-        await this.getBookingList()
-      } else {
-        await this.searchAny()
-      }
-      // this.getTimesChange('update')
-      if (this.getSelectText) {
-        this.getSelect(this.getSelectText, this.getSelectCount)
-      }
-      // clearInterval(this.setTimerCalendar)
-      // this.setTimerCalendar = null
-      this.getDataCalendaBooking()
-      // this.countWaiting = 0
-      // this.countConfirm = 0
-      // this.countCancel = 0
-      // this.countJob = 0
-      // this.countAll = 0
+      this.dataReady = true
       this.date = ''
       this.time = ''
       this.empSelectAdd = ''
       this.remark = ''
-      // this.fieldNameItem = []
       this.formAdd.radiosRemark = ''
       this.DataflowId = ''
       this.formAdd.bookingId = null
@@ -5859,6 +5841,17 @@ export default {
       this.dialogAddCon = false
       this.loadingAdd = false
       this.dataReadyAdd = true
+      clearInterval(this.setTimerCalendar)
+      this.setTimerCalendar = null
+      if (this.statusSearch === 'no') {
+        this.getBookingList()
+      } else {
+        this.searchAny()
+      }
+      if (this.getSelectText) {
+        this.getSelect(this.getSelectText, this.getSelectCount)
+      }
+      this.getDataCalendaBooking()
     },
     async getDataById (dt) {
       console.log('dt', dt)
