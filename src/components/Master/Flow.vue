@@ -1633,50 +1633,63 @@ export default {
       this.desserts = []
       this.dataReady = false
       this.PK = item.flowCode
-      this.formUpdate.checkOnsite = item.checkOnsite
+      this.formUpdate.checkOnsite = item.checkOnsite || 'False'
       console.log('item: ', item)
-      this.checkOnsite = item.checkOnsite
-      await axios
-        .get(
-          // eslint-disable-next-line quotes
-          this.DNS_IP +
-            this.path +
-            'getCode?' +
-            'flowCode=' +
-            item.flowCode +
-            '&shopId=' +
-            this.shopId,
-          {
-            headers: {
-              'Application-Key': this.$session.getAll().ApplicationKey
-            }
-          }
-        )
-        .then(async response => {
-          console.log('get flowCode : ', response.data[0].flowfieldName)
-          this.dataReady = true
-          if (response.data) {
-            // Object.assign(this.formUpdate, response.data)
-            this.formUpdate.flowName = response.data[0].flowName
-            this.formUpdate.flowId = response.data[0].flowId
-            this.formUpdate.flowCode = response.data[0].flowCode
-            this.formUpdate.checkPayment = response.data[0].checkPayment || 'True'
-            this.shopId = this.$session.getAll().data.shopId
-            this.fieldType = this.formUpdate.fieldType
-            // this.desserts = JSON.parse(response.data[0].flowfieldName)
-            await this.getField(JSON.parse(response.data[0].flowfieldName))
-            // this.getDataCompany()
-            this.getCustomField('edit', JSON.parse(response.data[0].flowfieldName))
-            // this.getStepTitle(this.formUpdateStep.stepTitle)
-            this.dataReady = true
-            console.log(this.formUpdate)
-          }
-        })
-        // eslint-disable-next-line handle-callback-err
-        .catch(error => {
-          this.dataReady = true
-          console.log('error function getDataById : ', error)
-        })
+      this.checkOnsite = item.checkOnsite || 'False'
+      this.formUpdate.flowName = item.flowName
+      this.formUpdate.flowId = item.flowId
+      this.formUpdate.flowCode = item.flowCode
+      this.formUpdate.checkPayment = item.checkPayment || 'True'
+      this.shopId = this.$session.getAll().data.shopId
+      this.fieldType = this.formUpdate.fieldType
+      // this.desserts = JSON.parse(response.data[0].flowfieldName)
+      await this.getField(JSON.parse(item.flowfieldName))
+      // this.getDataCompany()
+      this.getCustomField('edit', JSON.parse(item.flowfieldName))
+      // this.getStepTitle(this.formUpdateStep.stepTitle)
+      this.dataReady = true
+      console.log(this.formUpdate)
+      // await axios
+      //   .get(
+      //     // eslint-disable-next-line quotes
+      //     this.DNS_IP +
+      //       this.path +
+      //       'getCode?' +
+      //       'flowCode=' +
+      //       item.flowCode +
+      //       '&shopId=' +
+      //       this.shopId,
+      //     {
+      //       headers: {
+      //         'Application-Key': this.$session.getAll().ApplicationKey
+      //       }
+      //     }
+      //   )
+      //   .then(async response => {
+      //     console.log('get flowCode : ', response.data[0].flowfieldName)
+      //     this.dataReady = true
+      //     if (response.data) {
+      //       // Object.assign(this.formUpdate, response.data)
+      //       this.formUpdate.flowName = response.data[0].flowName
+      //       this.formUpdate.flowId = response.data[0].flowId
+      //       this.formUpdate.flowCode = response.data[0].flowCode
+      //       this.formUpdate.checkPayment = response.data[0].checkPayment || 'True'
+      //       this.shopId = this.$session.getAll().data.shopId
+      //       this.fieldType = this.formUpdate.fieldType
+      //       // this.desserts = JSON.parse(response.data[0].flowfieldName)
+      //       await this.getField(JSON.parse(response.data[0].flowfieldName))
+      //       // this.getDataCompany()
+      //       this.getCustomField('edit', JSON.parse(response.data[0].flowfieldName))
+      //       // this.getStepTitle(this.formUpdateStep.stepTitle)
+      //       this.dataReady = true
+      //       console.log(this.formUpdate)
+      //     }
+      //   })
+      //   // eslint-disable-next-line handle-callback-err
+      //   .catch(error => {
+      //     this.dataReady = true
+      //     console.log('error function getDataById : ', error)
+      //   })
     },
     async addData () {
       this.dataReady = false
