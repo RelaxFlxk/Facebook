@@ -12,6 +12,7 @@ import BookingflowName from './BookingflowName.vue'
 import BookingC3line from './BookingC3line.vue'
 import BookingChartCarAndFlow from './BookingChartCarAndFlow.vue'
 import ReportEmpMain from './ReportEmpMain.vue'
+import ReportFRT from './ReportFRT.vue'
 export default {
   Report,
   Report2,
@@ -26,5 +27,6 @@ export default {
   BookingflowName,
   BookingC3line,
   BookingChartCarAndFlow,
-  ReportEmpMain
+  ReportEmpMain,
+  ReportFRT
 }

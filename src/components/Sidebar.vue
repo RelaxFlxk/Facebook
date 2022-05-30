@@ -720,7 +720,7 @@ export default {
       this.Dashboard = [
         { title: 'นัดหมายเข้ารับบริการ', icon: 'mdi-clipboard-check-multiple-outline', to: '/Dashbord/ReportBooking', type: 'Dashboard' },
         { title: 'งานซ่อม', icon: 'mdi-cog-transfer', to: '/Dashbord/Report', type: 'Dashboard' },
-        { title: 'ReportEmpMain', icon: 'mdi-account-clock-outline', to: '/Dashbord/ReportEmpMain', type: 'Dashboard' },
+        { title: 'ReportFRT', icon: 'mdi-account-clock-outline', to: '/Dashbord/ReportFRT', type: 'Dashboard' },
         { title: 'Performance', icon: 'mdi-application-settings', to: '/Dashbord/Performance', type: 'Dashboard' }
       ]
       this.workflow = [

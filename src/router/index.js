@@ -219,6 +219,11 @@ export default new Router({
     component: Dashbord.ReportEmpMain
   },
   {
+    path: '/Dashbord/ReportFRT',
+    name: 'ReportFRT',
+    component: Dashbord.ReportFRT
+  },
+  {
     path: '/Dashbord/Report2',
     name: 'Report2',
     component: Dashbord.Report2
