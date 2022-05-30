@@ -41,7 +41,7 @@
                 v-model="dateRange"
                 />
                 <v-btn
-                  small class="ml-5 mt-2" color="#173053" dark
+                  small class="ml-5 mt-2" color="#1B437C" dark
                   readonly
                   @click="getall()"
                 >
@@ -54,26 +54,60 @@
           v-if="perforTime.length > 0"
           color="#FFFFFF"
           class="pa-6">
-            <v-card
+          <v-row>
+          <v-col class="pa-0" cols="8">
+            <p  class="text-center font-weight-bold" style="font-size:50px !important;color:#1B437C;">
+              Dashboard ( FRT )
+              </p>
+          </v-col>
+          <v-col
+          class="text-right pa-0"
+          cols="4"
+        >
+          <v-text-field
+            class="ma-2"
+              dense
+              background-color="#f0eeee"
+              v-model="searchJob"
+              :append-outer-icon="searchJob ? 'mdi-refresh-circle' : ''"
+              append-icon="mdi-text-box-search"
+              label="ค้นหาทั้งหมด"
+              @click:append-outer="refreshData()"
+              @click:append="searchData()"
+              solo
+            >
+            </v-text-field>
+        </v-col>
+          </v-row>
+          <v-card
+          :v-if="perforTime.length > 0"
           class="pa-2 mt-5"
-          color="#f0eeee"
+          color="#FFFFFF"
           elevation="5"
           background-color="primary"
           min-height="200px"
            v-for="(jobTitle , jobTitleK) in perforTime" :key="jobTitleK">
             <v-row>
-
-              <v-col cols="12" class="pa-5 pt-1">
-               <v-row class="pa-3 mt-1 ms-3" style="width:100%;height:max-content;">
+              <v-col cols="12" class="pb-0 mt-3">
+                <p
+                v-if="jobTitle.datatime[0].totalTimeAll > 0"
+                class="text-center font-weight-bold ma-0"
+                style="font-size:30px !important;"
+                >
+                {{'⏱ เวลารวมทั้งหมด ' + jobTitle.datatime[0].totalTimeAll + ' นาที'}}
+                </p>
+              </v-col>
+              <v-col cols="12" class="pa-5 pt-0 mt-n2">
+               <v-row class="pa-3 pt-0 mt-1 ms-3" style="width:100%;height:max-content;">
                   <!-- <div v-for="(step , stepK) in jobTitle.datatime" :key="stepK">
                   <v-card  width="50px" height="100px"></v-card>
                 </div> -->
                 <div class="pa-0 ma-0 mb-3 ms-2" v-for="(step , stepK) in jobTitle.datatime" :key="stepK"
-                :style="'width:' + (step.totalTimeStepPer - 2 ) + '%;background-color:#f0eeee;'"
+                :style="'width:' + (step.totalTimeStepPer - 2 ) + '%;background-color:#FFFFFF;'"
                 >
                   <p v-if="step.totalTimeStepPer > 0"
                   class="text-center ma-0 mb-2"
-                  style="background-color:#f0eeee;"
+                  style="background-color:#FFFFFF;"
                   >
                   <v-icon
                   :color="codeColor[stepK]"
@@ -85,7 +119,7 @@
                   v-if="step.totalTimeStepPer > 0"
                   width="100%"
                   height="100%"
-                  style="background-color:#f0eeee;border: 1px solid  #000000;display:flex;"
+                  style="background-color:#FFFFFF;border: 1px solid  #000000;display:flex;"
                   >
                       <v-col class="pa-0 ma-0" v-for="(empTime , empTimeK) in step.timeEmp" :key="empTimeK"
                       :style="'min-width:' +
@@ -103,7 +137,7 @@
                           :style="'width:' + empTime.leadTimePer +'%;height:100%;background-color:#FFFF66;'">
                           </div>
                            </template>
-                        <span>{{empTime.leadTime + ' นาที'}}</span>
+                        <span>{{step.stepTitle + ' ' + (empTime.leadTime) + ' นาที'}}</span>
                       </v-tooltip>
 
                       <v-tooltip :color="codeColor[stepK]" bottom>
@@ -112,7 +146,7 @@
                             :style="'width:' + empTime.totalTimePer +'%;height:100%;background-color: #7FFF00;'">
                           </div>
                           </template>
-                        <span>{{empTime.totalTime + ' นาที'}}</span>
+                        <span>{{step.stepTitle + ' ' + (empTime.totalTime) + ' นาที'}}</span>
                       </v-tooltip>
 
                       <v-tooltip :color="codeColor[stepK]" bottom>
@@ -121,7 +155,7 @@
                             :style="'width:' + (100 - (empTime.leadTimePer + empTime.totalTimePer)) +'%;height:100%;background-color:#FFFF66;'">
                         </div>
                          </template>
-                        <span>{{empTime.leadEndTime + ' นาที'}}</span>
+                        <span>{{step.stepTitle + ' ' + (empTime.leadEndTime) + ' นาที'}}</span>
                       </v-tooltip>
 
                       </div>
@@ -132,20 +166,21 @@
                       <v-tooltip :color="codeColor[stepK]" bottom>
                         <template v-slot:activator="{ on, attrs }">
                          <div v-bind="attrs" v-on="on" class="text-center pa-0 ma-0" v-if="empTime.leadTimePer > 0"
-                          :style="'width:' + empTime.leadTimePer +'%;height:100%;background-color:#FFFF66;'">
+                          :style="'width:' + (empTime.leadTimePer + empTime.leadEndTimePer) +'%;height:100%;background-color:#FFFF66;'">
                           </div>
                       </template>
-                        <span>{{empTime.leadTime + ' นาที'}}</span>
+                        <span>{{step.stepTitle + ' ' + (empTime.leadTime + empTime.leadEndTime) + ' นาที'}}</span>
                       </v-tooltip>
 
-                      <v-tooltip :color="codeColor[stepK]" bottom>
+                      <!-- <v-tooltip :color="codeColor[stepK]" bottom>
                         <template v-slot:activator="{ on, attrs }">
                           <div v-bind="attrs" v-on="on" class="text-center pa-0 ma-0" v-if="empTime.leadEndTime > 0 && (empTimeK === (step.timeEmp.length - 1))"
-                            :style="'width:' + empTime.leadEndTimePer +'%;height:100%;background-color: #FFFF66;'">
+                            :style="'width:' + empTime.leadEndTimePer +'%;height:100%;background-color: #FFFFFF;'">
                           </div>
                       </template>
                         <span>{{empTime.leadEndTime + ' นาที'}}</span>
-                      </v-tooltip>
+                      </v-tooltip> -->
+
                       </div>
                       <!-- เคสที่ มี totalTime > 0 && leadEndTimePer เป็น Array ตัวสุดท้าย -->
                       <div class="text-center pa-0 ma-0" v-else-if="empTime.totalTime > 0 && (empTimeK === (step.timeEmp.length - 1))"
@@ -157,7 +192,7 @@
                             :style="'width:' + empTime.totalTimePer +'%;height:100%;background-color: #7FFF00;'">
                           </div>
                       </template>
-                        <span>{{empTime.totalTime + ' นาที'}}</span>
+                        <span>{{step.stepTitle + ' ' + (empTime.totalTime) + ' นาที'}}</span>
                       </v-tooltip>
 
                       <v-tooltip :color="codeColor[stepK]" bottom>
@@ -166,7 +201,7 @@
                             :style="'width:' + empTime.leadEndTimePer +'%;height:100%;background-color: #FFFF66;'">
                           </div>
                       </template>
-                        <span>{{empTime.leadEndTime + ' นาที'}}</span>
+                        <span>{{step.stepTitle + ' ' + (empTime.leadEndTime) + ' นาที'}}</span>
                       </v-tooltip>
 
                       </div>
@@ -177,7 +212,7 @@
                          :style="'width:' + 100 +'%;height:100%;background-color:#FFFF66;'">
                       </div>
                       </template>
-                        <span>{{empTime.leadTime + ' นาที'}}</span>
+                        <span>{{step.stepTitle + ' ' + (empTime.leadTime) + ' นาที'}}</span>
                       </v-tooltip>
                       <!-- เคสที่ มี totalTime > 0 -->
                       <v-tooltip :color="codeColor[stepK]" bottom v-else-if="empTime.totalTime > 0">
@@ -186,7 +221,7 @@
                         :style="'width:' + 100 +'%;height:100%;background-color: #7FFF00;'">
                       </div>
                       </template>
-                        <span>{{empTime.totalTime + ' นาที'}}</span>
+                        <span>{{step.stepTitle + ' ' + (empTime.totalTime) + ' นาที'}}</span>
                       </v-tooltip>
                       </v-col>
                       <!-- เคสที่ มี timeEmp = 0 && ไม่ใช่ Array ปิดจ็อบ -->
@@ -196,14 +231,14 @@
                         :style="'width:' + 100 +'%;height:100%;background-color: #FFFF66;'">
                       </div>
                       </template>
-                        <span>{{step.totalTimeStep + ' นาที'}}</span>
+                        <span>{{step.stepTitle + ' ' + (step.totalTimeStep) + ' นาที'}}</span>
                       </v-tooltip>
                   </v-card>
                 </div>
                </v-row>
               </v-col>
-              <v-col cols="12" class="pa-5 pb-6">
-                <v-row v-if="jobTitle.showdetail === true" class="pa-0 ma-0" style="background-color: #FFFFFF;">
+              <v-col cols="12" class="pa-5 pb-6" v-if="jobTitle.showdetail === true">
+                <v-row  class="pa-0 ma-0" style="background-color: #FFFFFF;">
                   <v-col cols="4" class="pa-0 ma-0 ps-16 mt-6" >
                     <div class="pa-0 ma-0" v-for="(jobItem , jobItemK) in jobTitle.Jobitem" :key="jobItemK">
                       <p
@@ -246,14 +281,7 @@
                       LeadTime
                     </p>
                   </v-col >
-                  <v-col cols="8" class="pa-0 ma-0 ps-11 pt-2" >
-                    <p
-                        v-if="jobTitle.datatime[0].totalTimeAll > 0"
-                        class="text-center font-weight-bold ma-0 mb-0 mt-n1"
-                        style="font-size:25px !important;"
-                        >
-                        {{'⏱ เวลารวมทั้งหมด ' + jobTitle.datatime[0].totalTimeAll + ' นาที'}}
-                        </p>
+                  <v-col cols="8" class="pa-0 ma-0 ps-11 pt-8" >
                     <div class="pa-0 ma-0" v-for="(step , stepK) in jobTitle.datatime" :key="stepK">
                       <v-row class="pa-0 mb-6">
                         <v-icon
@@ -289,17 +317,17 @@
                     v-if="jobTitle.showdetail === true"
                     class="text-right pa-0 ma-0"
                     >
-                    <v-tooltip bottom >
+                    <v-tooltip color="#1B437C" bottom >
                       <template v-slot:activator="{ on, attrs }">
                         <v-btn
                           class="ma-2"
                           small
-                          color="#FFFFFF"
+                          color="#1B437C"
                           v-bind="attrs"
                           v-on="on"
                           @click="jobTitle.showdetail = false"
                         >
-                          <v-icon large color="#173053">
+                          <v-icon large color="#FFFFFF">
                             mdi-menu-up
                           </v-icon>
                         </v-btn>
@@ -311,33 +339,34 @@
                 </v-row>
               </v-col>
             </v-row>
-            <v-row>
+            <v-row class="pa-0 ma-0 pt-6 ms-16">
               <v-col v-if="jobTitle.showdetail === false" cols="10" class="text-center pa-0 ma-0 " >
-                <h2 class="ma-0 mb-7">
+                <p class="text-center font-weight-bold ma-0 ms-16"
+                style="font-size:30px !important;">
                   <v-icon
                   class="ma-0 mb-3"
-                  color="#FF0000"
+                  color="#1B437C"
                   style="font-size:40px !important;"
                   >
                     mdi-car-arrow-right
                   </v-icon>
                   {{jobTitle.Jobitem.filter((item) => item.fieldName === 'เลขทะเบียน')[0].fieldValue}}
-                </h2>
+                </p>
               </v-col>
               <v-col cols="2"  v-if="jobTitle.showdetail === false"
               class="text-right pa-0 ma-0 "
               >
-              <v-tooltip bottom >
+              <v-tooltip color="#1B437C" bottom >
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
                 class="ma-2 mr-7 mb-3"
                 small
-                color="#FFFFFF"
+                color="#1B437C"
                 v-bind="attrs"
                 v-on="on"
                 @click="jobTitle.showdetail = true"
               >
-                <v-icon large color="#173053">
+                <v-icon large color="#FFFFFF">
                   mdi-menu-down
                 </v-icon>
               </v-btn>
@@ -460,7 +489,8 @@ export default {
       allJob: [],
       allJobLog: [],
       EmpTime: [],
-      perforTime: []
+      perforTime: [],
+      searchJob: ''
     }
   },
   async mounted () {
@@ -648,13 +678,37 @@ export default {
         dtitem.push(s)
       })
       this.perforTime = dtitem
-      console.log('this.perforTime', this.perforTime)
+      // console.log('this.perforTime', this.perforTime)
     },
     jsTimeDiff (Time1, Time2) {
       var oneday = 1000 * 60
       var defDate = (new Date(Time2).getTime() - new Date(Time1).getTime()) / oneday
       // console.log('def', Time1, Time2)
       return defDate
+    },
+    async searchData () {
+      // console.log('Up', this.searchJob.toUpperCase())
+      // console.log('Low', this.searchJob.toLowerCase())
+      let test = this.allJob.filter((item) => (item.fieldValue.replace(/ +/g, '')).includes(this.searchJob.toLowerCase().replace(/ +/g, '')) || (item.fieldValue.replace(/ +/g, '')).includes(this.searchJob.toUpperCase().replace(/ +/g, '')))
+      if (test.length > 0) {
+        this.jobId = []
+        let item = test.reduce((r, a) => {
+          let jobId = a.jobId
+          r[jobId] = r[jobId]
+          return r
+        }, Object.create(null))
+        for (let x in item) {
+          this.jobId.push(x)
+        }
+        // console.log('test', this.jobId)
+        this.genDataFRT()
+      } else {
+        this.$swal('ผิดพลาด', 'ไม่พบข้อมูล', 'error')
+      }
+    },
+    async refreshData () {
+      this.searchJob = ''
+      this.getall()
     }
   }
 }
