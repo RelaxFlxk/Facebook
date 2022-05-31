@@ -1201,9 +1201,57 @@
               style="background: linear-gradient(180deg, #FFFFFF 0%, #E1F3FF 100%);">
                 <v-container >
                   <v-row >
-                    <v-col cols="12">
+                    <v-col cols="12" v-if="checkShowSelectUser">
                       <div class=" text-center">
-                      <br/>
+                        <v-tabs
+                          v-model="tabSelectUser"
+                          background-color="#1B437C"
+                          centered
+                          dark
+                          icons-and-text
+                        >
+                          <v-tabs-slider></v-tabs-slider>
+                          <v-tab>
+                            ลูกค้าที่นัดหมาย
+                            <v-icon>mdi-card-account-phone</v-icon>
+                          </v-tab>
+
+                          <v-tab>
+                            แสกน QR / Skip
+                            <v-icon>mdi-qrcode-edit</v-icon>
+                          </v-tab>
+
+                          <v-tab-item style="background: linear-gradient(180deg, #FFFFFF 0%, #E1F3FF 100%);">
+                            <br>
+                            <v-row justify="center" class="spacer" no-gutters>
+                              <v-col cols="4" sm="2" md="1">
+                                <v-avatar
+                                  size="60px"
+                                >
+                                  <img
+                                    alt="Avatar"
+                                    :src="dataSelectUser.picture"
+                                  >
+                                </v-avatar>
+                              </v-col>
+                              <v-col cols="6" sm="4" md="2">คุณ {{dataSelectUser.name}}</v-col>
+                            </v-row>
+                            <v-row justify="center" class="spacer" no-gutters>
+                              <v-col col="12"><strong>ลูกค้าที่นัดหมาย</strong></v-col>
+                            </v-row>
+                          </v-tab-item>
+                          <v-tab-item style="background: linear-gradient(180deg, #FFFFFF 0%, #E1F3FF 100%);">
+                            <br>
+                            <div v-if="jobitem.length > 0 && userId === ''" class="avatar text-center">
+                              <qrcode-vue :value="value" :size="size" level="H" :foreground="foreground" />
+                            </div>
+                          </v-tab-item>
+                        </v-tabs>
+                      </div>
+                    </v-col>
+                    <v-col cols="12" v-if="!checkShowSelectUser">
+                      <div class=" text-center">
+                      <br>
                         <br>
                         <h2 style="font-weight: 900; color:#FFA000">ติดตามสถานะ!</h2>
                         <qrcode-vue v-if="userId === ''" :value="value" :size="size" level="H" :foreground="foreground" />
@@ -1240,18 +1288,52 @@
                               <strong style="color: red;" v-if="jobitem[0].recordStatus === 'D'"><h2>รายการนี้ปิดไปแล้ว</h2></strong>
                             </div>
                         </v-container>
+                        <template v-if="!checkShowSelectUser">
+                          <v-btn small class="ma-2" color="success" v-if="userId === ''" @click="pushMsgSelectUser" dark>
+                            ส่ง QR Code
+                          <v-icon dark right>
+                          mdi-checkbox-marked-circle
+                          </v-icon>
+                        </v-btn>
                         <v-btn small class="ma-2" color="primary" v-if="userId === ''" @click="jobConfirm" dark>
-                                SKIP
-                            <v-icon dark right>
+                            SKIP
+                          <v-icon dark right>
+                          mdi-checkbox-marked-circle
+                          </v-icon>
+                        </v-btn>
+                        <v-btn small class="ma-2" color="error" @click="dialogJob = false" dark >
+                        Close
+                        <v-icon dark right>
+                            mdi-minus-circle
+                        </v-icon>
+                        </v-btn>
+                        </template>
+                        <template v-if="checkShowSelectUser">
+                        <v-btn small class="ma-2" color="success" v-if="userId === '' && tabSelectUser === 1" @click="pushMsgSelectUser" dark>
+                            ส่ง QR Code
+                          <v-icon dark right>
+                          mdi-checkbox-marked-circle
+                          </v-icon>
+                        </v-btn>
+                        <v-btn small class="ma-2" color="primary" v-if="userId === '' && tabSelectUser === 1" @click="jobConfirm" dark>
+                            SKIP
+                          <v-icon dark right>
+                          mdi-checkbox-marked-circle
+                          </v-icon>
+                        </v-btn>
+                        <v-btn small class="ma-2" color="primary" v-if="tabSelectUser === 0 || tabSelectUser === null" @click="jobConfirmUser" dark>
+                            ลูกค้าท่านเดียวกับที่นัดหมาย
+                          <v-icon dark right>
                             mdi-checkbox-marked-circle
+                          </v-icon>
+                        </v-btn>
+                        <v-btn small class="ma-2" color="error" @click="dialogJob = false" dark >
+                            Close
+                            <v-icon dark right>
+                                mdi-minus-circle
                             </v-icon>
-                            </v-btn>
-                            <v-btn small class="ma-2" color="error" @click="dialogJob = false" dark >
-                                Close
-                                <v-icon dark right>
-                                    mdi-minus-circle
-                                </v-icon>
-                            </v-btn>
+                        </v-btn>
+                        </template>
                     </v-container>
                   </v-col>
                 </v-row>
@@ -3119,7 +3201,10 @@ export default {
       address: '',
       empSelectJob: '',
       textError: '',
-      dataReadyAdd: true
+      dataReadyAdd: true,
+      checkShowSelectUser: false,
+      tabSelectUser: null,
+      dataSelectUser: {}
     }
   },
   beforeCreate () {
@@ -6078,7 +6163,7 @@ export default {
                     update.LAST_USER = d.userName
                     update.packageId = d.packageId
                     update.checkCar = ''
-                    update.userId = d.userId
+                    // update.userId = d.userId
                     update.endDate = this.endDate
                     update.endTime = this.endTime.value
                     update.fieldId = d.fieldId
@@ -6106,7 +6191,7 @@ export default {
                   update.LAST_USER = Add[0].CREATE_USER
                   update.packageId = Add[0].packageId
                   update.checkCar = ''
-                  update.userId = Add[0].userId
+                  // update.userId = Add[0].userId
                   update.endDate = this.endDate
                   update.endTime = this.endTime.value
                   update.fieldId = t.fieldId
@@ -6286,27 +6371,6 @@ export default {
           )
           .catch(error => {
             console.log('error function addDataGlobal : ', error)
-          })
-      } else {
-        let statusSend = {
-          statusSend: 'true'
-        }
-        await axios
-          .post(this.DNS_IP + '/job/updateJobNo/' + jobNo, statusSend)
-          .then(async response => {
-            // let lineUserId = result.data[0].lineUserId
-            console.log('statusSend', 'true')
-            let updateStatusSend = {
-              updateStatusSend: 'false'
-            }
-            await axios
-              .post(
-                this.DNS_IP + '/job/pushMsg/' + response.data.jobId,
-                updateStatusSend
-              )
-              .catch(error => {
-                console.log('error function addData : ', error)
-              })
           })
       }
       // this.clearData()
@@ -6637,11 +6701,29 @@ export default {
         console.log('catch alear : ', error)
       })
     },
-    getjob (item) {
+    async getjob (item) {
       console.log(item)
       this.jobitem = []
       if (item.jobNo !== '') {
-        axios.get(this.DNS_IP + '/job/getJobNo?jobNo=' + item.jobNo).then((response) => {
+        let checkBookingMember = ''
+        const result = await axios
+          .get(
+            this.DNS_IP +
+            '/member/get?shopId=' +
+            this.session.data.shopId +
+            '&liffUserId=' +
+            item.userId
+          )
+          .catch(error => {
+            console.log('error function addData : ', error)
+          })
+        console.log('result', result.data)
+        if (result.data.status === false) {
+          checkBookingMember = ''
+        } else {
+          checkBookingMember = result.data[0]
+        }
+        await axios.get(this.DNS_IP + '/job/getJobNo?jobNo=' + item.jobNo).then((response) => {
           let rs = response.data
           let Id = ''
           let memberPicture = ''
@@ -6654,6 +6736,7 @@ export default {
                 value: d.fieldValue,
                 name: d.fieldName,
                 showCard: d.showCard,
+                jobNo: d.jobNo,
                 recordStatus: d.RECORD_STATUS
               }
               Id = d.userId || ''
@@ -6662,6 +6745,13 @@ export default {
             }
             this.userId = Id
             this.memberPicture = memberPicture
+            if (checkBookingMember !== '' && this.memberPicture === '') {
+              this.checkShowSelectUser = true
+              this.dataSelectUser = checkBookingMember
+            } else {
+              this.checkShowSelectUser = false
+              this.dataSelectUser = ''
+            }
             this.value = this.pathToweb + this.jobitem[0].Id + '&shopId=' + this.$session.getAll().data.shopId
             console.log('this.value', this.value)
             // this.getUserId()
@@ -6694,6 +6784,82 @@ export default {
             this.setTimerCalendar = null
             this.$router.push('/Core/Login')
           }
+        })
+    },
+    async jobConfirmUser () {
+      console.log('this.jobitem', this.jobitem)
+      console.log('this.BookingDataItem', this.BookingDataItem)
+      this.swalConfig.title = 'ต้องการ ยืนยันข้อมูล ใช่หรือไม่?'
+      this.$swal(this.swalConfig)
+        .then(async () => {
+          if (this.$session.id() !== undefined) {
+            let dt = {
+              userId: this.dataSelectUser.liffUserId
+            }
+            await axios
+              .post(
+                this.DNS_IP + '/job/update/' + this.jobitem[0].Id, dt
+              ).then(async (response) => {
+                console.log(response)
+                if (response.data.status) {
+                  let statusSend = {
+                    statusSend: 'true'
+                  }
+                  await axios
+                    .post(this.DNS_IP + '/job/updateJobNo/' + this.jobitem[0].jobNo, statusSend)
+                    .then(async response => {
+                    // let lineUserId = result.data[0].lineUserId
+                      console.log('statusSend', 'true')
+                      let updateStatusSend = {
+                        updateStatusSend: 'false'
+                      }
+                      await axios
+                        .post(
+                          this.DNS_IP + '/job/pushMsg/' + response.data.jobId,
+                          updateStatusSend
+                        )
+                        .catch(error => {
+                          console.log('error function addData : ', error)
+                        })
+                    })
+                  this.getDataCalendaBooking()
+                  this.$swal('เรียบร้อย', 'ปรับปรุงเรียบร้อย', 'success')
+                  this.dialogJob = false
+                } else {
+                  this.$swal('ผิดพลาด', 'เนื่องจากรายการนี้มีคนนำเข้าแล้ว', 'error')
+                  this.dialogJob = false
+                }
+              })
+          } else {
+            this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
+            clearInterval(this.setTimerCalendar)
+            this.setTimerCalendar = null
+            this.$router.push('/Core/Login')
+          }
+        })
+    },
+    async pushMsgSelectUser () {
+      let statusSend = {
+        statusSend: 'false'
+      }
+      await axios.post(this.DNS_IP + '/job/updateJobNo/' + this.jobitem[0].jobNo, statusSend)
+      console.log('statusSend', 'false')
+      let updateStatusSend = {
+        updateStatusSend: 'false'
+      }
+      await axios
+        .post(
+          this.DNS_IP + '/job/NotifyQrcode/' + this.jobitem[0].jobNo,
+          updateStatusSend
+        )
+        .then(async response => {
+          this.$swal('เรียบร้อย', 'ส่ง QR Code กลุ่มของท่านเรียบร้อย', 'success')
+          this.dialogJob = false
+          // this.clearData()
+          // this.$router.push('/Master/FlowStep')
+        })
+        .catch(error => {
+          console.log('error function addDataGlobal : ', error)
         })
     },
     async setDataChang (item) {
