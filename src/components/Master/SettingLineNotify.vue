@@ -36,26 +36,39 @@
                   class="ma-3"
                 ></v-select>
               </v-col>
-              <v-col class="pa-0" cols="6" md='6'>
+              <v-col class="pa-0" cols="12" md='12'>
                 <v-container fluid>
                   <p class="text-center">ประเภทบริการ</p>
                   <div v-for="(item , index) in flowData" :key="index">
-                    <v-checkbox
-                    v-model="item.checkitem"
-                    :label="item.text"
+                   <v-row>
+                    <v-col cols="6" class="text-center">
+                      <p class="pa-0 ma-0 mt-4">{{item.text}}</p>
+                    </v-col>
+                    <v-col cols="3">
+                      <v-checkbox
+                    v-model="item.checkBooking"
+                    label="Booking"
                   ></v-checkbox>
+                    </v-col>
+                     <v-col cols="3">
+                  <v-checkbox
+                    v-model="item.checkJob"
+                    label="Job"
+                  ></v-checkbox>
+                    </v-col>
+                   </v-row>
                   </div>
                 </v-container>
               </v-col>
-              <v-col class="pa-0" cols="6" md='6'>
+              <!-- <v-col class="pa-0" cols="6" md='6'>
                 <v-container fluid>
-                    <p class="text-center">การนัดหมายเข้ารับบริการ</p>
+                    <p class="text-center">การBooking</p>
                     <v-checkbox
                     v-model="BookingSend"
                     label="Booking"
                   ></v-checkbox>
                 </v-container>
-              </v-col>
+              </v-col> -->
             </v-row>
             <div class="text-center">
               <v-btn
@@ -97,24 +110,28 @@
                   class="ma-3"
                 ></v-select>
               </v-col>
-              <v-col class="pa-0" cols="6" md='6'>
+              <v-col class="pa-0" cols="12" md='12'>
                 <v-container fluid>
                   <p class="text-center">ประเภทบริการ</p>
                   <div v-for="(item , index) in itemSelectEdit" :key="index">
-                    <v-checkbox
-                    v-model="item.checkitem"
-                    :label="item.text"
-                  ></v-checkbox>
-                  </div>
-                </v-container>
-              </v-col>
-              <v-col class="pa-0" cols="6" md='6'>
-                <v-container fluid>
-                    <p class="text-center">การนัดหมายเข้ารับบริการ</p>
-                    <v-checkbox
-                    v-model="BookingSendEdit"
+                     <v-row>
+                    <v-col cols="6" class="text-center">
+                      <p class="pa-0 ma-0 mt-4">{{item.text}}</p>
+                    </v-col>
+                    <v-col cols="3">
+                      <v-checkbox
+                    v-model="item.checkBooking"
                     label="Booking"
                   ></v-checkbox>
+                    </v-col>
+                     <v-col cols="3">
+                  <v-checkbox
+                    v-model="item.checkJob"
+                    label="Job"
+                  ></v-checkbox>
+                    </v-col>
+                   </v-row>
+                  </div>
                 </v-container>
               </v-col>
             </v-row>
@@ -328,8 +345,10 @@ export default {
       }
       let checkitemSelect = []
       this.flowData.forEach(v => {
-        if (v.checkitem === true) {
-          checkitemSelect.push(v.checkitem)
+        if (v.checkBooking === true) {
+          checkitemSelect.push(v.checkBooking)
+        } else if (v.checkJob === true) {
+          checkitemSelect.push(v.checkJob)
         }
       })
       let dataAdd = {}
@@ -456,8 +475,10 @@ export default {
       console.log('params', JSON.stringify(data))
       let checkitemSelect = []
       this.itemSelectEdit.forEach(v => {
-        if (v.checkitem === true) {
-          checkitemSelect.push(v.checkitem)
+        if (v.checkBooking === true) {
+          checkitemSelect.push(v.checkBooking)
+        } else if (v.checkJob === true) {
+          checkitemSelect.push(v.checkJob)
         }
       })
       if (this.BookingSendEdit === false && checkitemSelect.length === 0) {

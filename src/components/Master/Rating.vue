@@ -182,35 +182,27 @@ export default {
           if (rs.length > 0) {
             for (let i = 0; i < rs.length; i++) {
               let d = rs[i]
-              let t = i + 1
-              if (t === rs.length) {
-                let s = {}
-                s.empStep = d.empStep
-                s.endDate = d.endDate
-                s.totalPrice = s.totalPrice
-                s.DTCREATE_DATE = d.CREATE_DATE
-                s.DTLAST_DATE = d.LAST_DATE
-                s.stepTitle = d.stepTitle
-                s.timediff = d.timediff
-                s.Counttime = 0
-                this.timelineitem.push(s)
-              } else {
-                let s = {}
-                s.empStep = d.empStep
-                s.endDate = d.endDate
-                s.totalPrice = s.totalPrice
-                s.DTCREATE_DATE = d.CREATE_DATE
-                s.DTLAST_DATE = d.LAST_DATE
-                s.stepTitle = d.stepTitle
-                s.timediff = d.timediff
-                s.Counttime = rs[t].timediff - d.timediff
-                this.timelineitem.push(s)
-              }
+              let s = {}
+              s.empStep = d.empStep
+              s.endDate = d.endDate
+              s.totalPrice = s.totalPrice
+              s.DTCREATE_DATE = d.CREATE_DATE
+              s.DTLAST_DATE = d.LAST_DATE
+              s.stepTitle = d.stepTitle
+              s.timediff = d.timediff
+              s.Counttime = this.jsTimeDiff(d.CREATE_DATE, d.LAST_DATE)
+              this.timelineitem.push(s)
             }
           }
         }).catch((error) => {
           console.log('error function addData : ', error)
         })
+    },
+    jsTimeDiff (Time1, Time2) {
+      var oneday = 1000 * 60
+      var defDate = (new Date(Time2).getTime() - new Date(Time1).getTime()) / oneday
+      // console.log('def', Time1, Time2)
+      return defDate
     },
     async clearData () {
       this.timelineitem = []
