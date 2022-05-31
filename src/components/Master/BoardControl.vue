@@ -1589,9 +1589,11 @@ export default {
       this.searchOther = ''
       this.allJob = this.allJobSupport
       this.JobDataItem = this.jobDataItemSupport
+      this.setTimeJob()
     },
     async searchAny () {
       // await this.getStepFlow()
+      this.closeSetTime()
       if (this.searchOther.length > 0) {
         if (this.allJobSupport.length > 0) {
           this.allJob = this.allJobSupport
@@ -1602,7 +1604,7 @@ export default {
         this.allJobSupport = this.allJob
         this.jobDataItemSupport = this.JobDataItem
         // let dataSearch = this.jobDataItemSupport.filter(el => { return el.fieldValue.includes(this.searchOther) })
-        let jobIds = this.jobDataItemSupport.filter(el => { return el.fieldValue.includes(this.searchOther) })
+        let jobIds = this.jobDataItemSupport.filter(el => { return el.fieldValue.replace(/ +/g, '').includes(this.searchOther.toLowerCase().replace(/ +/g, '')) })
         console.log('jobIds', jobIds)
         let dataSearch = []
         for (let i = 0; i < jobIds.length; i++) {
@@ -1644,6 +1646,7 @@ export default {
     },
     async chkFlowName () {
       if (this.flowId !== '') {
+        this.closeSetTime()
         await this.getStepFlow()
         await this.getLayout()
         await this.getJobData()
@@ -1654,6 +1657,7 @@ export default {
     },
     async chkBranchName () {
       if (this.masBranchID !== '') {
+        this.closeSetTime()
         await this.getStepFlow()
         await this.getLayout()
         await this.getJobData()

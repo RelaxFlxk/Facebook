@@ -1842,19 +1842,28 @@
                     >
                       <v-icon dark> mdi-phone-cancel </v-icon>
                     </v-btn>
-                    <v-tooltip right>
+                    <v-tooltip bottom v-if="item.statusBt !== 'confirmJob'">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-btn
+                        <v-badge
+                          avatar
+                          bordered
+                          overlap
+                          :content="item.countChangeTime"
                           color="warning"
-                          fab
-                          v-if="item.statusBt !== 'confirmJob'"
-                          small
-                          @click.stop="setDataChang(item)"
-                          v-bind="attrs"
-                          v-on="on"
+                          class="mr-1"
+                          style="cursor: pointer"
                         >
-                          <v-icon> mdi-calendar-clock </v-icon>
-                        </v-btn>
+                          <v-btn
+                            color="warning"
+                            fab
+                            small
+                            @click.stop="setDataChang(item)"
+                            v-bind="attrs"
+                            v-on="on"
+                          >
+                            <v-icon> mdi-calendar-clock </v-icon>
+                          </v-btn>
+                        </v-badge>
                       </template>
                       <span>เปลี่ยนเวลานัดหมาย</span>
                     </v-tooltip>
@@ -2039,16 +2048,26 @@
                     </v-tooltip>
                     <v-tooltip bottom v-if="item.statusBt !== 'confirmJob'">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-btn
+                        <v-badge
+                          avatar
+                          bordered
+                          overlap
+                          :content="item.countChangeTime"
                           color="warning"
-                          fab
-                          small
-                          @click.stop="setDataChang(item)"
-                          v-bind="attrs"
-                          v-on="on"
+                          class="mr-1"
+                          style="cursor: pointer"
                         >
-                          <v-icon> mdi-calendar-clock </v-icon>
-                        </v-btn>
+                          <v-btn
+                            color="warning"
+                            fab
+                            small
+                            @click.stop="setDataChang(item)"
+                            v-bind="attrs"
+                            v-on="on"
+                          >
+                            <v-icon> mdi-calendar-clock </v-icon>
+                          </v-btn>
+                        </v-badge>
                       </template>
                       <span>เปลี่ยนเวลานัดหมาย</span>
                     </v-tooltip>
@@ -3346,6 +3365,7 @@ export default {
                   s.timeDuetext = d.timeDue
                   s.address = d.address
                   s.addressLatLong = d.addressLatLong
+                  s.countChangeTime = d.countChangeTime || '0'
                   this.countAll = this.countAll + 1
                   if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
                     s.chkConfirm = true
@@ -5354,6 +5374,7 @@ export default {
                 s.lineUserId = d.lineUserId
                 s.timeDueHtext = d.timeDueH + ':00'
                 s.timeDuetext = d.timeDue
+                s.countChangeTime = d.countChangeTime || '0'
                 this.countAll = this.countAll + 1
                 if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
                   s.chkConfirm = true
@@ -5468,6 +5489,7 @@ export default {
                 s.lineUserId = d.lineUserId
                 s.timeDueHtext = d.timeDueH + ':00'
                 s.timeDuetext = d.timeDue
+                s.countChangeTime = d.countChangeTime || '0'
                 this.countAll = this.countAll + 1
                 if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
                   s.chkConfirm = true
@@ -6603,62 +6625,80 @@ export default {
       this.swalConfig.title = 'ต้องการ เปลี่ยนเวลานัดหมาย ใช่หรือไม่?'
       this.$swal(this.swalConfig).then(async result => {
         if (this.$session.id() !== undefined) {
-          var dtChange = {
-            changeDueDate: 'change',
-            dueDate: this.formChange.date + ' ' + this.formChange.time.value,
-            timeText: this.formChange.time.text,
-            LAST_USER: this.session.data.userName
-          }
-          await axios
-            .post(
-            // eslint-disable-next-line quotes
-              this.DNS_IP + "/BookingData/edit/" + item.bookNo,
-              dtChange
-            )
-            .then(async response => {
-              var dt = {
-                bookNo: item.bookNo,
-                contactDate: this.format_date(new Date()),
-                status: changeStatus,
-                statusUse: 'use',
-                shopId: this.$session.getAll().data.shopId,
-                CREATE_USER: this.session.data.userName,
-                LAST_USER: this.session.data.userName,
-                changDate: this.formChange.date + ' ' + this.formChange.time.value
-              }
-              await axios
-                .post(this.DNS_IP + '/booking_transaction/add', dt)
-                .then(async response => {
-                  console.log('addDataGlobal', response)
-                  if (changeStatus === 'confirm') {
-                    if (item.userId !== 'user-skip') {
-                      if (this.statusSearch === 'no') {
-                        await this.getBookingList()
-                      } else {
-                        await this.searchAny()
-                      }
-                      // this.getTimesChange('update')
-                      if (this.getSelectText) {
-                        this.getSelect(this.getSelectText, this.getSelectCount)
-                      }
-                      let pushText = {
-                        'to': item.lineUserId,
-                        'messages': [
-                          {
-                            'type': 'text',
-                            'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
+          let checkCountTime = await axios.get(this.DNS_IP + '/booking_view/get?bookNo=' + item.bookNo)
+          console.log('checkCountTime', checkCountTime)
+          if (checkCountTime.data.status === false) {
+            this.onChangeChk(item, changeStatus)
+          } else {
+            let countTime = checkCountTime.data[0].countChangeTime || 0
+            var dtChange = {
+              countChangeTime: countTime + 1,
+              changeDueDate: 'change',
+              dueDate: this.formChange.date + ' ' + this.formChange.time.value,
+              timeText: this.formChange.time.text,
+              LAST_USER: this.session.data.userName
+            }
+            await axios
+              .post(
+                // eslint-disable-next-line quotes
+                this.DNS_IP + "/BookingData/edit/" + item.bookNo,
+                dtChange
+              )
+              .then(async response => {
+                var dt = {
+                  bookNo: item.bookNo,
+                  contactDate: this.format_date(new Date()),
+                  status: changeStatus,
+                  statusUse: 'use',
+                  shopId: this.$session.getAll().data.shopId,
+                  CREATE_USER: this.session.data.userName,
+                  LAST_USER: this.session.data.userName,
+                  changDate: this.formChange.date + ' ' + this.formChange.time.value
+                }
+                await axios
+                  .post(this.DNS_IP + '/booking_transaction/add', dt)
+                  .then(async response => {
+                    console.log('addDataGlobal', response)
+                    if (changeStatus === 'confirm') {
+                      if (item.userId !== 'user-skip') {
+                        if (this.statusSearch === 'no') {
+                          await this.getBookingList()
+                        } else {
+                          await this.searchAny()
+                        }
+                        // this.getTimesChange('update')
+                        if (this.getSelectText) {
+                          this.getSelect(this.getSelectText, this.getSelectCount)
+                        }
+                        let pushText = {
+                          'to': item.lineUserId,
+                          'messages': [
+                            {
+                              'type': 'text',
+                              'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
                           \nวันเดือนปี ${this.format_dateFUllTime(this.formChange.date + ' ' + this.formChange.time.value)}`
-                          }
-                        ]
+                            }
+                          ]
+                        }
+                        axios
+                          .post(
+                            this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
+                            pushText
+                          )
+                          .catch(error => {
+                            console.log('error function addData : ', error)
+                          })
+                      } else {
+                        if (this.statusSearch === 'no') {
+                          await this.getBookingList()
+                        } else {
+                          await this.searchAny()
+                        }
+                        // this.getTimesChange('update')
+                        if (this.getSelectText) {
+                          this.getSelect(this.getSelectText, this.getSelectCount)
+                        }
                       }
-                      axios
-                        .post(
-                          this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
-                          pushText
-                        )
-                        .catch(error => {
-                          console.log('error function addData : ', error)
-                        })
                     } else {
                       if (this.statusSearch === 'no') {
                         await this.getBookingList()
@@ -6670,26 +6710,16 @@ export default {
                         this.getSelect(this.getSelectText, this.getSelectCount)
                       }
                     }
-                  } else {
-                    if (this.statusSearch === 'no') {
-                      await this.getBookingList()
-                    } else {
-                      await this.searchAny()
-                    }
-                    // this.getTimesChange('update')
-                    if (this.getSelectText) {
-                      this.getSelect(this.getSelectText, this.getSelectCount)
-                    }
-                  }
-                  this.getDataCalendaBooking()
-                  this.$swal('เรียบร้อย', 'เปลี่ยนเวลานัดหมาย เรียบร้อย', 'success')
-                  this.dataChangeReady = true
-                  this.dialogChange = false
-                })
-                .catch(error => {
-                  console.log('error function addData : ', error)
-                })
-            })
+                    // this.getDataCalendaBooking()
+                    this.$swal('เรียบร้อย', 'เปลี่ยนเวลานัดหมาย เรียบร้อย', 'success')
+                    this.dataChangeReady = true
+                    this.dialogChange = false
+                  })
+                  .catch(error => {
+                    console.log('error function addData : ', error)
+                  })
+              })
+          }
         } else {
           this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
           clearInterval(this.setTimerCalendar)
