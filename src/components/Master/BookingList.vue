@@ -2053,6 +2053,7 @@
                           bordered
                           overlap
                           :content="item.countChangeTime"
+                          :value="item.countChangeTime"
                           color="warning"
                           class="mr-1"
                           style="cursor: pointer"
@@ -3335,11 +3336,15 @@ export default {
                   s.bookNo = d.bookNo
                   s.flowId = d.flowId
                   s.flowName = d.flowName
-                  s.dueDate = d.dueDate
+                  s.dueDate = d.dueDate || ''
                   if (d.timeText === null || d.timeText === '') {
                     d.timeText = d.timeDue
                   }
-                  s.dueDateText = this.format_dateNotime(d.dueDate) + ' ' + d.timeText
+                  if (s.dueDate === '') {
+                    s.dueDateText = 'ไม่มีเวลานัดหมาย'
+                  } else {
+                    s.dueDateText = this.format_dateNotime(d.dueDate) + ' ' + d.timeText
+                  }
                   s.shopId = d.shopId
                   s.remark = d.remark || ''
                   s.masBranchID = d.masBranchID
@@ -3365,7 +3370,7 @@ export default {
                   s.timeDuetext = d.timeDue
                   s.address = d.address
                   s.addressLatLong = d.addressLatLong
-                  s.countChangeTime = d.countChangeTime || '0'
+                  s.countChangeTime = d.countChangeTime || 0
                   this.countAll = this.countAll + 1
                   if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
                     s.chkConfirm = true
@@ -5346,11 +5351,15 @@ export default {
                 s.bookNo = d.bookNo
                 s.flowId = d.flowId
                 s.flowName = d.flowName
-                s.dueDate = d.dueDate
+                s.dueDate = d.dueDate || ''
                 if (d.timeText === null || d.timeText === '') {
                   d.timeText = d.timeDue
                 }
-                s.dueDateText = this.format_dateNotime(d.dueDate) + ' ' + d.timeText
+                if (s.dueDate === '') {
+                  s.dueDateText = 'ไม่มีเวลานัดหมาย'
+                } else {
+                  s.dueDateText = this.format_dateNotime(d.dueDate) + ' ' + d.timeText
+                }
                 s.shopId = d.shopId
                 s.remark = d.remark || ''
                 s.masBranchID = d.masBranchID
@@ -5374,7 +5383,7 @@ export default {
                 s.lineUserId = d.lineUserId
                 s.timeDueHtext = d.timeDueH + ':00'
                 s.timeDuetext = d.timeDue
-                s.countChangeTime = d.countChangeTime || '0'
+                s.countChangeTime = d.countChangeTime || 0
                 this.countAll = this.countAll + 1
                 if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
                   s.chkConfirm = true
@@ -5461,11 +5470,15 @@ export default {
                 s.bookNo = d.bookNo
                 s.flowId = d.flowId
                 s.flowName = d.flowName
-                s.dueDate = d.dueDate
+                s.dueDate = d.dueDate || ''
                 if (d.timeText === null || d.timeText === '') {
                   d.timeText = d.timeDue
                 }
-                s.dueDateText = this.format_dateNotime(d.dueDate) + ' ' + d.timeText
+                if (s.dueDate === '') {
+                  s.dueDateText = 'ไม่มีเวลานัดหมาย'
+                } else {
+                  s.dueDateText = this.format_dateNotime(d.dueDate) + ' ' + d.timeText
+                }
                 s.shopId = d.shopId
                 s.remark = d.remark || ''
                 s.masBranchID = d.masBranchID
@@ -5489,7 +5502,7 @@ export default {
                 s.lineUserId = d.lineUserId
                 s.timeDueHtext = d.timeDueH + ':00'
                 s.timeDuetext = d.timeDue
-                s.countChangeTime = d.countChangeTime || '0'
+                s.countChangeTime = d.countChangeTime || 0
                 this.countAll = this.countAll + 1
                 if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
                   s.chkConfirm = true
