@@ -98,12 +98,12 @@
                 </p>
               </v-col>
               <v-col cols="12" class="pa-5 pt-0 mt-n2">
-               <v-row class="pa-3 pt-0 mt-1 ms-3" style="width:100%;height:max-content;">
+               <v-row class="flex-nowrap pa-3 pt-0 mt-1 ms-3" style="width:100%;height:max-content;">
                   <!-- <div v-for="(step , stepK) in jobTitle.datatime" :key="stepK">
                   <v-card  width="50px" height="100px"></v-card>
                 </div> -->
                 <div class="pa-0 ma-0 mb-3 ms-2" v-for="(step , stepK) in jobTitle.datatime" :key="stepK"
-                :style="'width:' + (step.totalTimeStepPer - 2 ) + '%;background-color:#FFFFFF;'"
+                :style="'width:' + (step.totalTimeStepPer) + '%;background-color:#FFFFFF;'"
                 >
                   <p v-if="step.totalTimeStepPer > 0"
                   class="text-center ma-0 mb-2"
@@ -678,7 +678,7 @@ export default {
         dtitem.push(s)
       })
       this.perforTime = dtitem
-      // console.log('this.perforTime', this.perforTime)
+      console.log('this.perforTime', this.perforTime)
     },
     jsTimeDiff (Time1, Time2) {
       var oneday = 1000 * 60
