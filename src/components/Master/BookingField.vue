@@ -334,6 +334,209 @@
               <v-col cols="12" md="12" sm="12">
                 <v-card min-height="50%">
                   <v-col cols="12" class="text-center">
+                    <h4 class="text-center">ตั้งค่า หน้ารายชื่อนัดหมาย</h4>
+                    <v-row align="center">
+                      <v-expansion-panels
+                          multiple
+                        >
+                        <v-expansion-panel>
+                          <v-expansion-panel-header>จัดการชื่อกระบวกการทำงาน</v-expansion-panel-header>
+                          <v-form ref="form_process" v-model="validProcess" lazy-validation>
+                          <v-expansion-panel-content>
+                            <v-row>
+                              <v-col cols="6" class="pb-0 pt-0">
+                                <v-text-field
+                                  v-model="dataTypeProcess1"
+                                  dense
+                                  label="กระบวนการ 1"
+                                  required
+                                  :rules="[rules.required]"
+                                ></v-text-field>
+                              </v-col>
+                              <v-col cols="6" class="pb-0 pt-0">
+                                <v-text-field
+                                  v-model="dataTypeProcess2"
+                                  dense
+                                  label="กระบวนการ 2"
+                                  required
+                                  :rules="[rules.required]"
+                                ></v-text-field>
+                              </v-col>
+                              <v-col cols="6" class="pb-0 pt-0">
+                                <v-text-field
+                                  v-model="dataTypeProcess3"
+                                  dense
+                                  label="กระบวนการ 3"
+                                  required
+                                  :rules="[rules.required]"
+                                ></v-text-field>
+                              </v-col>
+                              <v-col cols="6" class="pb-0 pt-0">
+                                <v-text-field
+                                  v-model="dataTypeProcess4"
+                                  dense
+                                  label="กระบวนการ 4"
+                                  required
+                                  :rules="[rules.required]"
+                                ></v-text-field>
+                              </v-col>
+                            </v-row>
+                            <v-subheader>ตัวอย่าง</v-subheader>
+                            <v-row>
+                                <v-col cols="6" class="text-center pb-0">
+                                  <v-alert
+                                    color="orange"
+                                    dark
+                                    dense
+                                    icon="mdi-phone-ring"
+                                    prominent
+                                  >
+                                    <div>
+                                      <strong>{{dataTypeProcess1}}</strong>
+                                    </div>
+                                    <div>จำนวน : 99</div>
+                                  </v-alert>
+                                </v-col>
+                                <v-col cols="6" class="text-center pb-0">
+                                  <v-alert
+                                    color="green"
+                                    dark
+                                    dense
+                                    icon="mdi-phone-check"
+                                    prominent
+                                  >
+                                    <div>
+                                      <strong>{{dataTypeProcess2}}</strong>
+                                    </div>
+                                    <div>จำนวน : 99</div>
+                                  </v-alert>
+                                </v-col>
+                              </v-row>
+                              <v-row>
+                                <v-col cols="6" class="text-center pb-0">
+                                  <v-alert
+                                    color="red"
+                                    dark
+                                    dense
+                                    icon="mdi-phone-cancel"
+                                    prominent
+                                  >
+                                    <div>
+                                      <strong>{{dataTypeProcess3}}</strong>
+                                    </div>
+                                    <div>จำนวน : 99</div>
+                                  </v-alert>
+                                </v-col>
+                                <v-col cols="6" class="text-center pb-0">
+                                  <v-alert
+                                    color="blue"
+                                    dark
+                                    dense
+                                    icon="mdi-car-cog"
+                                    prominent
+                                  >
+                                    <div>
+                                      <strong>{{dataTypeProcess4}}</strong>
+                                    </div>
+                                    <div>จำนวน : 99</div>
+                                  </v-alert>
+                                </v-col>
+                              </v-row>
+                              <div class="text-center">
+                              <v-btn
+                                elevation="2"
+                                small
+                                dark
+                                @click="updateTypeProcess()"
+                                color="info"
+                              >
+                                <v-icon left>mdi-content-save-edit</v-icon>
+                                เปลี่ยนแปลง
+                              </v-btn>
+                            </div>
+                          </v-expansion-panel-content>
+                           </v-form>
+                        </v-expansion-panel>
+                        <v-expansion-panel>
+                          <v-expansion-panel-header>จัดการชื่อประเภทงาน</v-expansion-panel-header>
+                          <v-form ref="form_job" v-model="validJob" lazy-validation>
+                          <v-expansion-panel-content>
+                            <v-row>
+                              <v-col col="4" class="pb-0 pt-0">
+                                <v-text-field
+                                  v-model="dataTypeJob1"
+                                  dense
+                                  label="ประเภทงานที่ 1"
+                                  required
+                                  :rules="[rules.required]"
+                                ></v-text-field>
+                              </v-col>
+                              <v-col col="4" class="pb-0 pt-0">
+                                <v-text-field
+                                  v-model="dataTypeJob2"
+                                  dense
+                                  label="ประเภทงานที่ 2"
+                                  required
+                                  :rules="[rules.required]"
+                                ></v-text-field>
+                              </v-col>
+                              <v-col col="4" class="pb-0 pt-0">
+                                <v-text-field
+                                  v-model="dataTypeJob3"
+                                  dense
+                                  label="ประเภทงานที่ 3"
+                                  required
+                                  :rules="[rules.required]"
+                                ></v-text-field>
+                              </v-col>
+                            </v-row>
+                            <v-subheader>ตัวอย่าง</v-subheader>
+                            <v-row>
+                              <v-col cols="12"  class="pb-0 pt-0">
+                                <v-radio-group row>
+                                  <v-radio :value="dataTypeJob1">
+                                    <template v-slot:label>
+                                      <div class="mt-3"><strong class="primary--text">{{dataTypeJob1}}</strong></div>
+                                    </template>
+                                  </v-radio>
+                                  <v-radio :value="dataTypeJob2">
+                                    <template v-slot:label>
+                                      <div class="mt-3"><strong class="error--text">{{dataTypeJob2}}</strong></div>
+                                    </template>
+                                  </v-radio>
+                                  <v-radio :value="dataTypeJob3">
+                                    <template v-slot:label>
+                                      <div class="mt-3"><strong class="orange--text">{{dataTypeJob3}}</strong></div>
+                                    </template>
+                                  </v-radio>
+                                </v-radio-group>
+                              </v-col>
+                            </v-row>
+                            <div class="text-center">
+                              <v-btn
+                                elevation="2"
+                                small
+                                dark
+                                @click="updateTypeJob()"
+                                color="info"
+                              >
+                                <v-icon left>mdi-content-save-edit</v-icon>
+                                เปลี่ยนแปลง
+                              </v-btn>
+                            </div>
+                          </v-expansion-panel-content>
+                          </v-form>
+                        </v-expansion-panel>
+                      </v-expansion-panels>
+                    </v-row>
+                  </v-col>
+                </v-card>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" md="12" sm="12">
+                <v-card min-height="50%">
+                  <v-col cols="12" class="text-center">
                     <h4 class="text-center">โปรดเลือกข้อมูลที่ต้องการแสดง</h4>
                     <v-row align="center">
                       <v-checkbox
@@ -442,6 +645,14 @@ export default {
   },
   data () {
     return {
+      panelTypeJob: [0],
+      dataTypeJob1: '',
+      dataTypeJob2: '',
+      dataTypeJob3: '',
+      dataTypeProcess1: '',
+      dataTypeProcess2: '',
+      dataTypeProcess3: '',
+      dataTypeProcess4: '',
       itemdetell: [],
       Redirect:
         'https://liff.line.me/1656581804-7KRQyqo5/Booking?shopId=' +
@@ -453,6 +664,8 @@ export default {
       menuDate: false,
       dialogOther: false,
       validOther: false,
+      validJob: false,
+      validProcess: false,
       textOther: '',
       date: '',
       time: '',
@@ -531,6 +744,18 @@ export default {
             self.$refs.form_other.validate()
           })
           break
+        case 'updateTypeJob':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_job.validate()
+          })
+          break
+        case 'updateTypeProcess':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_process.validate()
+          })
+          break
         default:
           break
       }
@@ -553,6 +778,13 @@ export default {
             console.log('this.IdUpdate', this.IdUpdate)
             console.log('rs', rs)
             if (rs.length > 0) {
+              this.dataTypeJob1 = rs[0].typeJob1 || ''
+              this.dataTypeJob2 = rs[0].typeJob2 || ''
+              this.dataTypeJob3 = rs[0].typeJob3 || ''
+              this.dataTypeProcess1 = rs[0].typeProcess1 || ''
+              this.dataTypeProcess2 = rs[0].typeProcess2 || ''
+              this.dataTypeProcess3 = rs[0].typeProcess3 || ''
+              this.dataTypeProcess4 = rs[0].typeProcess4 || ''
               let bookingData = []
               if (rs[0].showTime === null || rs[0].showTime === '') {
                 this.showTime = 'แสดง'
@@ -711,6 +943,49 @@ export default {
         .catch(error => {
           console.log('error function addData : ', error)
         })
+    },
+    updateTypeJob () {
+      this.validate('updateTypeJob')
+      setTimeout(() => this.updateTypeJobSubmit(), 500)
+    },
+    updateTypeJobSubmit () {
+      if (this.validJob !== false) {
+        let url = '/BookingField/edit/' + this.IdUpdate
+        let dt = {
+          typeJob1: this.dataTypeJob1,
+          typeJob2: this.dataTypeJob2,
+          typeJob3: this.dataTypeJob3,
+          LAST_USER: this.session.data.userName
+        }
+        axios
+          .post(this.DNS_IP + url, dt)
+          .then(async response => {
+            this.$swal('สำเร็จ', 'เปลี่ยนแปลงเรียบร้อย', 'success')
+            await this.getBookingField()
+          })
+      }
+    },
+    updateTypeProcess () {
+      this.validate('updateTypeProcess')
+      setTimeout(() => this.updateTypeProcessSubmit(), 500)
+    },
+    updateTypeProcessSubmit () {
+      if (this.validJob !== false) {
+        let url = '/BookingField/edit/' + this.IdUpdate
+        let dt = {
+          typeProcess1: this.dataTypeProcess1,
+          typeProcess2: this.dataTypeProcess2,
+          typeProcess3: this.dataTypeProcess3,
+          typeProcess4: this.dataTypeProcess4,
+          LAST_USER: this.session.data.userName
+        }
+        axios
+          .post(this.DNS_IP + url, dt)
+          .then(async response => {
+            this.$swal('สำเร็จ', 'เปลี่ยนแปลงเรียบร้อย', 'success')
+            await this.getBookingField()
+          })
+      }
     }
     // FunCopy () {
     //   var copyText = document.getElementById('myInput')
