@@ -1801,7 +1801,7 @@
                           v-model="item.fastTrack"
                           @click.stop="item.fastTrack=!item.fastTrack;confirmRemark(item, 'fastTrack')"
                         >
-                          {{dataTypeJob2}}
+                          {{dataTypeJob3}}
                         </v-chip>
                       </v-col>
                       <v-col>
@@ -1812,7 +1812,7 @@
                           v-model="item.extraJob"
                           @click.stop="item.extraJob=!item.extraJob;confirmRemark(item, 'extraJob')"
                         >
-                          {{dataTypeJob3}}
+                          {{dataTypeJob2}}
                         </v-chip>
                       </v-col>
                     </v-row>
@@ -1966,7 +1966,7 @@
                           v-model="item.fastTrack"
                           @click.stop="item.fastTrack=!item.fastTrack;confirmRemark(item, 'fastTrack')"
                         >
-                          {{dataTypeJob2}}
+                          {{dataTypeJob3}}
                         </v-chip>
                       </v-col>
                       <v-col>
@@ -1977,7 +1977,7 @@
                           v-model="item.extraJob"
                           @click.stop="item.extraJob=!item.extraJob;confirmRemark(item, 'extraJob')"
                         >
-                          {{dataTypeJob3}}
+                          {{dataTypeJob2}}
                         </v-chip>
                       </v-col>
                     </v-row>
