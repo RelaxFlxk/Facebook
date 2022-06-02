@@ -643,6 +643,16 @@ export default {
     'left-menu-admin': adminLeftMenu,
     VuetifyMoney
   },
+  beforeCreate () {
+    // if (localStorage.userName) {
+    //   console.log(localStorage.userName)
+    // } else {
+    //   console.log('not user')
+    // }
+    if (!this.$session.exists()) {
+      this.$router.push('/Core/Login')
+    }
+  },
   data () {
     return {
       panelTypeJob: [0],

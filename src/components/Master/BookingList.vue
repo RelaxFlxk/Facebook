@@ -83,7 +83,7 @@
                   @click="getSelect('wait',countWaiting)"
                 >
                   <div>
-                    <strong>รอโทรยืนยัน</strong>
+                    <strong>{{dataTypeProcess1}}</strong>
                   </div>
                   <div>จำนวน : {{countWaiting}}</div>
                 </v-alert>
@@ -98,7 +98,7 @@
                   @click="getSelect('confirm',countConfirm)"
                 >
                   <div>
-                    <strong>ยืนยันแล้ว</strong>
+                    <strong>{{dataTypeProcess2}}</strong>
                   </div>
                   <div>จำนวน : {{countConfirm}}</div>
                 </v-alert>
@@ -115,7 +115,7 @@
                   @click="getSelect('cancel',countCancel)"
                 >
                   <div>
-                    <strong>ยกเลิก</strong>
+                    <strong>{{dataTypeProcess3}}</strong>
                   </div>
                   <div>จำนวน : {{countCancel}}</div>
                 </v-alert>
@@ -130,7 +130,7 @@
                   @click="getSelect('confirmJob',countJob)"
                 >
                    <div>
-                    <strong>รับรถแล้ว</strong>
+                    <strong>{{dataTypeProcess4}}</strong>
                   </div>
                   <div>จำนวน : {{countJob}}</div>
                 </v-alert>
@@ -699,17 +699,17 @@
                               <v-radio-group v-model="formAdd.radiosRemark" row required :rules ="[rules.required]">
                                 <v-radio value="ซ่อมปกติ">
                                   <template v-slot:label>
-                                    <div class="mt-3"><strong class="primary--text">ซ่อมปกติ</strong></div>
+                                    <div class="mt-3"><strong class="primary--text">{{dataTypeJob1}}</strong></div>
                                   </template>
                                 </v-radio>
                                 <v-radio value="ExtraJob">
                                   <template v-slot:label>
-                                    <div class="mt-3"><strong class="error--text">Extra Job</strong></div>
+                                    <div class="mt-3"><strong class="error--text">{{dataTypeJob2}}</strong></div>
                                   </template>
                                 </v-radio>
                                 <v-radio value="FastTrack">
                                   <template v-slot:label>
-                                    <div class="mt-3"><strong class="orange--text">Fast Track</strong></div>
+                                    <div class="mt-3"><strong class="orange--text">{{dataTypeJob3}}</strong></div>
                                   </template>
                                 </v-radio>
                               </v-radio-group>
@@ -1801,7 +1801,7 @@
                           v-model="item.fastTrack"
                           @click.stop="item.fastTrack=!item.fastTrack;confirmRemark(item, 'fastTrack')"
                         >
-                          Fast Track
+                          {{dataTypeJob2}}
                         </v-chip>
                       </v-col>
                       <v-col>
@@ -1812,7 +1812,7 @@
                           v-model="item.extraJob"
                           @click.stop="item.extraJob=!item.extraJob;confirmRemark(item, 'extraJob')"
                         >
-                          Extra Job
+                          {{dataTypeJob3}}
                         </v-chip>
                       </v-col>
                     </v-row>
@@ -1966,7 +1966,7 @@
                           v-model="item.fastTrack"
                           @click.stop="item.fastTrack=!item.fastTrack;confirmRemark(item, 'fastTrack')"
                         >
-                          Fast Track
+                          {{dataTypeJob2}}
                         </v-chip>
                       </v-col>
                       <v-col>
@@ -1977,7 +1977,7 @@
                           v-model="item.extraJob"
                           @click.stop="item.extraJob=!item.extraJob;confirmRemark(item, 'extraJob')"
                         >
-                          Extra Job
+                          {{dataTypeJob3}}
                         </v-chip>
                       </v-col>
                     </v-row>
@@ -2663,17 +2663,17 @@
                               <v-radio-group v-model="formEdit.radiosRemark" row  required :rules ="[rules.required]">
                                 <v-radio value="ซ่อมปกติ">
                                   <template v-slot:label>
-                                    <div class="mt-3"><strong class="primary--text">ซ่อมปกติ</strong></div>
+                                    <div class="mt-3"><strong class="primary--text">{{dataTypeJob1}}</strong></div>
                                   </template>
                                 </v-radio>
                                 <v-radio value="ExtraJob">
                                   <template v-slot:label>
-                                    <div class="mt-3"><strong class="error--text">Extra Job</strong></div>
+                                    <div class="mt-3"><strong class="error--text">{{dataTypeJob2}}</strong></div>
                                   </template>
                                 </v-radio>
                                 <v-radio value="FastTrack">
                                   <template v-slot:label>
-                                    <div class="mt-3"><strong class="orange--text">Fast Track</strong></div>
+                                    <div class="mt-3"><strong class="orange--text">{{dataTypeJob3}}</strong></div>
                                   </template>
                                 </v-radio>
                               </v-radio-group>
@@ -3224,7 +3224,14 @@ export default {
       dataReadyAdd: true,
       checkShowSelectUser: false,
       tabSelectUser: null,
-      dataSelectUser: {}
+      dataSelectUser: {},
+      dataTypeJob1: '',
+      dataTypeJob2: '',
+      dataTypeJob3: '',
+      dataTypeProcess1: '',
+      dataTypeProcess2: '',
+      dataTypeProcess3: '',
+      dataTypeProcess4: ''
     }
   },
   beforeCreate () {
@@ -3244,15 +3251,18 @@ export default {
   },
   async mounted () {
     // this.dataReady = false
+    console.log('localStorage', localStorage.getItem('typeData'))
     if (this.$route.query.bookNo) {
       await this.getDataBranch()
       await this.getEmpSelectAdd()
+      await this.getBookingFieldText()
       this.getCustomFieldStart()
       this.getDataFlow()
       await this.scanQrcode()
     } else {
       await this.getDataBranch()
       await this.getEmpSelectAdd()
+      await this.getBookingFieldText()
       this.getCustomFieldStart()
       this.getDataFlow()
       this.getBookingList()
@@ -3263,6 +3273,38 @@ export default {
     })
   },
   methods: {
+    async getBookingFieldText () {
+      if (JSON.parse(localStorage.getItem('sessionData')) === null) {
+        await axios
+          .get(
+            this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+          )
+          .then(async response => {
+            let rs = response.data
+            console.log('rs', rs)
+            if (rs.status === false) {
+              this.$swal('ผิดพลาด', 'เนื่องจากไม่สามารถเรียกชื่อกระบวนการ และประเภทงานได้', 'success')
+            } else {
+              localStorage.setItem('typeData', JSON.stringify(rs[0]))
+              this.dataTypeJob1 = JSON.parse(localStorage.getItem('typeData')).typeJob1 || ''
+              this.dataTypeJob2 = JSON.parse(localStorage.getItem('typeData')).typeJob2 || ''
+              this.dataTypeJob3 = JSON.parse(localStorage.getItem('typeData')).typeJob3 || ''
+              this.dataTypeProcess1 = JSON.parse(localStorage.getItem('typeData')).typeProcess1 || ''
+              this.dataTypeProcess2 = JSON.parse(localStorage.getItem('typeData')).typeProcess2 || ''
+              this.dataTypeProcess3 = JSON.parse(localStorage.getItem('typeData')).typeProcess3 || ''
+              this.dataTypeProcess4 = JSON.parse(localStorage.getItem('typeData')).typeProcess4 || ''
+            }
+          })
+      } else {
+        this.dataTypeJob1 = JSON.parse(localStorage.getItem('typeData')).typeJob1 || ''
+        this.dataTypeJob2 = JSON.parse(localStorage.getItem('typeData')).typeJob2 || ''
+        this.dataTypeJob3 = JSON.parse(localStorage.getItem('typeData')).typeJob3 || ''
+        this.dataTypeProcess1 = JSON.parse(localStorage.getItem('typeData')).typeProcess1 || ''
+        this.dataTypeProcess2 = JSON.parse(localStorage.getItem('typeData')).typeProcess2 || ''
+        this.dataTypeProcess3 = JSON.parse(localStorage.getItem('typeData')).typeProcess3 || ''
+        this.dataTypeProcess4 = JSON.parse(localStorage.getItem('typeData')).typeProcess4 || ''
+      }
+    },
     closeSetTimeGetCalenda () {
       clearInterval(this.setTimerCalendar)
       this.setTimerCalendar = null
@@ -4026,7 +4068,7 @@ export default {
             serviceDetail = serviceDetail.trim() || t.flowName
             console.log('serviceDetail', serviceDetail)
 
-            s.type = 'Fast Track'
+            s.type = this.dataTypeJob3
             s.runNo = runNo
             s.dateBooking = this.format_dateNotime(this.timeTable)
             s.licenseNo = t.cusReg
@@ -4037,7 +4079,7 @@ export default {
             s.cusReg = t.cusReg
             s.flowName = serviceDetail
             s.empFull_NameTH = t.empFull_NameTH
-            s.extraJob = t.extraJob ? 'Extra Job' : ''
+            s.extraJob = t.extraJob ? this.dataTypeJob2 : ''
             s.carModel = this.getDataFromFieldName(this.BookingDataListTimechange[t.bookNo], 'รุ่นรถ')
             s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
             s.tel = t.tel
@@ -4213,7 +4255,7 @@ export default {
               serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
             })
             serviceDetail = serviceDetail.trim() || t.flowName
-            s.type = 'Fast Track'
+            s.type = this.dataTypeJob3
             s.runNo = runNo
             s.dateBooking = this.format_dateNotime(this.timeTable)
             s.licenseNo = t.cusReg
@@ -4225,7 +4267,7 @@ export default {
             s.cusReg = t.cusReg
             s.flowName = serviceDetail
             s.empFull_NameTH = t.empFull_NameTH
-            s.extraJob = t.extraJob ? 'Extra Job' : ''
+            s.extraJob = t.extraJob ? this.dataTypeJob2 : ''
             s.tel = t.tel
             s.carModel = this.getDataFromFieldName(this.BookingDataListTimechange[t.bookNo], 'รุ่นรถ')
             s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
