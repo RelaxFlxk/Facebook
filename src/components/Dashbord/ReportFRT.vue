@@ -689,7 +689,7 @@ export default {
     async searchData () {
       // console.log('Up', this.searchJob.toUpperCase())
       // console.log('Low', this.searchJob.toLowerCase())
-      let test = this.allJob.filter((item) => (item.fieldValue.replace(/ +/g, '')).includes(this.searchJob.toLowerCase().replace(/ +/g, '')) || (item.fieldValue.replace(/ +/g, '')).includes(this.searchJob.toUpperCase().replace(/ +/g, '')))
+      let test = this.allJob.filter((item) => (item.fieldValue.replace(/ |-/g, '')).includes(this.searchJob.toLowerCase().replace(/ |-/g, '')) || (item.fieldValue.replace(/ |-/g, '')).includes(this.searchJob.toUpperCase().replace(/ |-/g, '')))
       if (test.length > 0) {
         this.jobId = []
         let item = test.reduce((r, a) => {

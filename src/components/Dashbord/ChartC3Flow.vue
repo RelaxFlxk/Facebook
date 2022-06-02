@@ -256,7 +256,7 @@ export default {
       this.genDataTable()
     },
     async genDataTable (dataFilter, i) {
-      // console.log('datafilter', dataFilter, i)
+      console.log('datafilter', dataFilter, i)
       let Tableitem = []
       let dataitem = []
       let datafilter = this.dessertsItem

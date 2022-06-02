@@ -1604,7 +1604,7 @@ export default {
         this.allJobSupport = this.allJob
         this.jobDataItemSupport = this.JobDataItem
         // let dataSearch = this.jobDataItemSupport.filter(el => { return el.fieldValue.includes(this.searchOther) })
-        let jobIds = this.jobDataItemSupport.filter(el => { return el.fieldValue.replace(/ +/g, '').includes(this.searchOther.toLowerCase().replace(/ +/g, '')) })
+        let jobIds = this.jobDataItemSupport.filter(el => { return el.fieldValue.replace(/ |-/g, '').includes(this.searchOther.toLowerCase().replace(/ |-/g, '')) })
         console.log('jobIds', jobIds)
         let dataSearch = []
         for (let i = 0; i < jobIds.length; i++) {
