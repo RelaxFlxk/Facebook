@@ -428,7 +428,8 @@ export default {
       ],
       flowId: '',
       timeItem: [],
-      clearInter: null
+      clearInter: null,
+      clearInterAll: null
     }
   },
   async mounted () {
@@ -438,12 +439,18 @@ export default {
     // await this.getLayoutDefault()
   },
   methods: {
+    async getInterval () {
+      clearInterval(this.clearInterAll)
+      this.clearInterAll = null
+      this.clearInterAll = setInterval(this.getall, 20000)
+    },
     async getall () {
       if (this.masBranchID !== '' && this.flowId !== '' && this.dateRange !== '') {
         await this.getStepFlow()
         await this.getLayout()
         await this.getJobData()
         await this.getTime()
+        await this.getInterval()
       } else {
         this.$swal('ผิดพลาด', 'กรุณาเลือก ประเภทบริการ', 'error')
       }
