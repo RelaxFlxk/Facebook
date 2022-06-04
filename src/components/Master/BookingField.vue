@@ -340,7 +340,7 @@
                           multiple
                         >
                         <v-expansion-panel>
-                          <v-expansion-panel-header>จัดการชื่อกระบวกการทำงาน</v-expansion-panel-header>
+                          <v-expansion-panel-header>จัดการชื่อกระบวนการทำงาน</v-expansion-panel-header>
                           <v-form ref="form_process" v-model="validProcess" lazy-validation>
                           <v-expansion-panel-content>
                             <v-row>
