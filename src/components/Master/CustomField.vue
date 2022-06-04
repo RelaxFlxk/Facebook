@@ -89,12 +89,12 @@
                       </v-col>
                     <v-col cols="12">
                       <v-row style="height: 35px">
-                      <v-subheader id="subtext">title</v-subheader>
+                      <v-subheader id="subtext">ชื่อช่องกรอกข้อมูล</v-subheader>
                       </v-row>
                       <v-row style="height: 50px">
                       <v-text-field
                         v-model="formAdd.fieldName"
-                        placeholder="Title"
+                        placeholder="ชื่อช่องกรอกข้อมูล"
                         dense
                         required
                         :rules="[
@@ -105,7 +105,23 @@
                     </v-col>
                     <v-col cols="12">
                       <v-row style="height: 35px">
-                      <v-subheader id="subtext">type</v-subheader>
+                      <v-subheader id="subtext">ชื่อช่องกรอกข้อมูล ภาษาอังกฤษ</v-subheader>
+                      </v-row>
+                      <v-row style="height: 50px">
+                      <v-text-field
+                        v-model="formAdd.fieldNameEn"
+                        placeholder="ชื่อช่องกรอกข้อมูล ภาษาอังกฤษ"
+                        dense
+                        required
+                        :rules="[
+                          rules.required
+                        ]"
+                      ></v-text-field>
+                      </v-row>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-row style="height: 35px">
+                      <v-subheader id="subtext">ประเภทช่องกรอกข้อมูล</v-subheader>
                       </v-row>
 
                       <v-row style="height: 50px">
@@ -179,7 +195,7 @@
                         @click="addDataOption(formAddOption)"
                       >
                         <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                        ADD
+                        เพิ่ม
                       </v-btn>
                       <v-btn v-if="!checkDataEdit"
                         elevation="2"
@@ -190,7 +206,7 @@
                         @click="saveAdd()"
                       >
                         <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                        EDIT
+                        แก้ไข
                       </v-btn>
                       </v-row>
 
@@ -265,7 +281,7 @@
                         @click="addData()"
                       >
                         <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                        เพิ่ม
+                        เพิ่มข้อมูล
                       </v-btn>
                       </div>
                       </v-col>
@@ -329,12 +345,12 @@
                       </v-col>
                     <v-col cols="12">
                       <v-row style="height: 35px">
-                      <v-subheader id="subtext">title</v-subheader>
+                      <v-subheader id="subtext">ชื่อช่องกรอกข้อมูล</v-subheader>
                       </v-row>
                       <v-row style="height: 50px">
                       <v-text-field
                         v-model="formUpdate.fieldName"
-                        placeholder="Title"
+                        placeholder="ชื่อช่องกรอกข้อมูล"
                         dense
                         required
                         :rules="[
@@ -345,7 +361,23 @@
                     </v-col>
                     <v-col cols="12">
                       <v-row style="height: 35px">
-                      <v-subheader id="subtext">type</v-subheader>
+                      <v-subheader id="subtext">ชื่อช่องกรอกข้อมูล ภาษาอังกฤษ</v-subheader>
+                      </v-row>
+                      <v-row style="height: 50px">
+                      <v-text-field
+                        v-model="formUpdate.fieldNameEn"
+                        placeholder="ชื่อช่องกรอกข้อมูล ภาษาอังกฤษ"
+                        dense
+                        required
+                        :rules="[
+                          rules.required
+                        ]"
+                      ></v-text-field>
+                      </v-row>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-row style="height: 35px">
+                      <v-subheader id="subtext">ประเภทช่องกรอกข้อมูล</v-subheader>
                       </v-row>
 
                       <v-row style="height: 50px">
@@ -419,7 +451,7 @@
                         @click="addDataOption(formUpdateOption)"
                       >
                         <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                        ADD
+                        เพิ่ม
                       </v-btn>
                       <v-btn v-if="!checkDataEdit"
                         elevation="2"
@@ -430,7 +462,7 @@
                         @click="save()"
                       >
                         <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                        EDIT
+                        แก้ไข
                       </v-btn>
                       </v-row>
 
@@ -790,6 +822,7 @@ export default {
       searchAll2: '',
       formAdd: {
         fieldName: '',
+        fieldNameEn: '',
         fieldType: '',
         optionFieldType: '',
         CREATE_USER: '',
@@ -807,6 +840,7 @@ export default {
       formUpdate: {
         fieldId: '',
         fieldName: '',
+        fieldNameEn: '',
         fieldType: '',
         optionFieldType: '',
         LAST_USER: '',
@@ -855,7 +889,8 @@ export default {
       // Data Table Config
       columns: [
         // { text: 'ID', value: 'fieldId' },
-        { text: 'ชื่อ Field', value: 'fieldName', align: 'center' },
+        { text: 'ชื่อช่องกรอกข้อมูล', value: 'fieldName', align: 'center' },
+        { text: 'ชื่อช่องกรอกข้อมูล ภาษาอังกฤษ', value: 'fieldNameEn', align: 'center' },
         { text: 'ประเภท Field', value: 'fieldType', align: 'center' },
         { text: ' ', value: 'actions2', sortable: false, align: 'center' },
         { text: 'Action', value: 'action', sortable: false, align: 'center' }
