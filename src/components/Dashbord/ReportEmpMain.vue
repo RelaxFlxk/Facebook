@@ -34,20 +34,13 @@
             ></v-select>
           </v-col>
           <v-col :cols="colsWidth">
-              <div style="display: flex">
-                <date-range-picker
-                ref="picker"
-                :locale-data="{ firstDay: 1, format: 'yyyy-mm-dd' }"
-                v-model="dateRange"
-                />
-                <v-btn
+              <v-btn
                   small class="ml-5 mt-2" color="#173053" dark
                   readonly
                   @click="getall()"
                 >
-                  กรุณาเลือกวันที่
+                  ค้นหา
                 </v-btn>
-              </div>
             </v-col>
           </v-row>
         <v-divider></v-divider>
@@ -99,9 +92,9 @@
                 class="pb-0 pt-0"
               >
                 <v-card class="pa-0" style="background-color: #f0eeee;">
-                  <v-card id="cardTitle" class="mb-1">
+                  <v-card id="cardTitle" class="mb-1" :style="'background-color:' + codeColor[work] + ';'">
                     <v-card-title class="ma-3">
-                      <v-row class="pa-0">
+                      <v-row class="pa-0" style="color: white;">
                         <v-col cols="10" class="pa-1">
                           <v-tooltip
                             :color="codeColor[work]"
@@ -442,7 +435,7 @@ export default {
     async getInterval () {
       clearInterval(this.clearInterAll)
       this.clearInterAll = null
-      this.clearInterAll = setInterval(this.getall, 20000)
+      this.clearInterAll = setInterval(this.getJobData, 20000)
     },
     async getall () {
       if (this.masBranchID !== '' && this.flowId !== '' && this.dateRange !== '') {
@@ -585,15 +578,21 @@ export default {
         })
     },
     async getJobData () {
+      console.log('test')
       // this.JobDataItem = []
       // this.allJob = []
-      let startDate = this.momenDate_1(this.dateRange.startDate)
-      let endDate = this.momenDate_1(this.dateRange.endDate)
+      // let startDate = this.momenDate_1(this.dateRange.startDate)
+      // let endDate = this.momenDate_1(this.dateRange.endDate)
       var JobDataItem = []
       var allJob = []
       axios
         .get(
-          this.DNS_IP + '/job/DashBordTime?flowId=' + this.flowId + '&masBranchID=' + this.masBranchID + '&shopId=' + this.shopId + '&startDate=' + startDate + '&endDate=' + endDate + '&checkOnsite=is null'
+          this.DNS_IP +
+            '/job/get?checkUser=check&flowId=' +
+            this.flowId +
+            '&masBranchID=' + this.masBranchID +
+            '&shopId=' +
+            this.shopId + '&checkOnsite=is null'
         )
         .then(async response => {
           this.dataReady = true

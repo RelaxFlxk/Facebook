@@ -92,21 +92,6 @@
           >
             นัดส่ง:
           </v-card-title> -->
-          <v-col cols="12">
-            <strong class="text-h6">นัดส่ง:</strong>
-            <v-chip color="#DE6467" text-color="white">
-              ภายใน 2 วัน
-            </v-chip>
-
-            <v-chip color="#FED966" text-color="white">
-              ภายใน 4 วัน
-            </v-chip>
-
-            <v-chip color="#4F93D0" text-color="white">
-              มากกว่า 4 วัน
-            </v-chip>
-          </v-col>
-
           <v-col cols="12" class="text-right" text color="#ABB1C7" v-if="allJob.length > 0">
             <v-btn-toggle>
             <v-btn
@@ -558,64 +543,6 @@
                         width="100%"
                         min-height="120px"
                       >
-                      <v-row class="mb-n2 pa-0 mt-n1" >
-                          <v-col cols="2" class="pa-0 ps-3" >
-                            <v-tooltip top
-                                v-if="parseInt(itemsJob.totalDateDiff) <= 2"
-                                color="#DE6467"
-                                >
-                                  <template v-slot:activator="{ on, attrs }">
-                                    <v-icon
-                                      v-bind="attrs"
-                                      v-on="on"
-                                      x-large
-                                      color="#DE6467"
-                                    >
-                                      mdi-alarm-light
-                                    </v-icon>
-                                  </template>
-                                  <span style="background-color:#DE6467;">{{ itemsJob.totalDateDiff }}</span>
-                             </v-tooltip>
-                             <v-tooltip top
-                                v-else-if="parseInt(itemsJob.totalDateDiff) <= 4 &&parseInt(itemsJob.totalDateDiff) >= 2"
-                                color="#FED966"
-                                >
-                                  <template v-slot:activator="{ on, attrs }">
-                                    <v-icon
-                                      v-bind="attrs"
-                                      v-on="on"
-                                      x-large
-                                      color="#FED966"
-                                    >
-                                      mdi-alarm-light
-                                    </v-icon>
-                                  </template>
-                                  <span style="background-color:#FED966;">{{ itemsJob.totalDateDiff }}</span>
-                             </v-tooltip>
-                             <v-tooltip top
-                                v-else-if="parseInt(itemsJob.totalDateDiff) >= 4"
-                                color="#4F93D0"
-                                >
-                                  <template v-slot:activator="{ on, attrs }">
-                                    <v-icon
-                                      v-bind="attrs"
-                                      v-on="on"
-                                      x-large
-                                      color="#4F93D0"
-                                    >
-                                      mdi-alarm-light
-                                    </v-icon>
-                                  </template>
-                                  <span style="background-color:#4F93D0;">{{ itemsJob.totalDateDiff }}</span>
-                             </v-tooltip>
-                        <!-- end diffDate -->
-                          </v-col>
-                        <v-col cols="10" class="pa-0 ps-3">
-                      <strong class="text-center">
-                        {{JobDataItem.filter(row => {return row.jobId == itemsJob.jobId && row.fieldName === 'เลขทะเบียน'})[0].fieldValue}}
-                      </strong>
-                        </v-col>
-                      </v-row>
                         <div
                           class="bodyFrame"
                           v-for="(items, index) in JobDataItem.filter(row => {
@@ -648,7 +575,7 @@
                             <p class="font-weight-medium mb-0 pb-1">
                               <!-- <v-icon class="pb-1 mr-1 ml-1" large > mdi-shield-account</v-icon> -->
                               <v-tooltip top
-                              color="#84C650"
+                              color="#1B437C"
                                 v-if="itemsJob.statusTime === 'timeStart' || itemsJob.statusTime === null">
                                   <template v-slot:activator="{ on, attrs }">
                                     <v-icon
@@ -656,30 +583,12 @@
                                       v-bind="attrs"
                                       v-on="on"
                                       x-large
-                                      color="#84C650"
-                                      @click="updateTimeEmp(itemsJob,'timeStart')"
+                                      color="#1B437C"
                                     >
-                                      mdi-timer
+                                      mdi-account-arrow-right
                                     </v-icon>
                                   </template>
-                                  <span>จับเวลา</span>
-                                </v-tooltip>
-                                <v-tooltip top
-                                color="#DE6467"
-                                v-if="itemsJob.statusTime === 'timeEnd' && itemsJob.statusTime !== null">
-                                  <template v-slot:activator="{ on, attrs }">
-                                    <v-icon
-                                    class="pb-1 mr-1 ml-1"
-                                      v-bind="attrs"
-                                      v-on="on"
-                                      x-large
-                                      color="#DE6467"
-                                      @click="updateTimeEmp(itemsJob,'timeEnd')"
-                                    >
-                                      mdi-timer-off
-                                    </v-icon>
-                                  </template>
-                                  <span>หยุดเวลา</span>
+                                  <span>พนักงานที่รับผิดชอบ</span>
                                 </v-tooltip>
                                 {{JobDataItem.filter(row => {return row.jobId == itemsJob.jobId})[0].empStep}}
                             </p>
@@ -699,40 +608,6 @@
                           class="grey lighten-4"
                           style="position:absolute; width:30px; right:0px; top:0px;"
                         >
-                          <!-- update satatus car -->
-                          <v-row class="pl-1">
-                            <v-tooltip top
-                            color="#4F93D0"
-                            >
-                            <template v-slot:activator="{ on, attrs }">
-                            <v-icon
-                              v-if="
-                                allJob.filter(row => {
-                                  return row.jobId == itemsJob.jobId
-                                })[0].checkCar == 'False'"
-                              color="#9E9E9E"
-                              depressed
-                              @click="updateStatusCars(itemsJob.jobId, 'False')"
-                              v-bind="attrs"
-                              v-on="on"
-                            >
-                              mdi-car
-                            </v-icon>
-
-                            <v-icon
-                              v-else
-                              color="#4F93D0"
-                              depressed
-                              @click="updateStatusCars(itemsJob.jobId, 'True')"
-                              v-bind="attrs"
-                              v-on="on"
-                            >
-                              mdi-car
-                            </v-icon>
-                            </template>
-                            <span>สถานะ รถอยู่ / รถไม่อยู่</span>
-                            </v-tooltip>
-                          </v-row>
                           <!-- end update satatus car -->
                           <v-row class="pt-0 pl-1">
                             <v-tooltip top
@@ -950,121 +825,26 @@
                           </v-chip>
                         </v-col>
                         <v-col cols="12" class="text-right">
-                          <v-tooltip top
-                        v-if="itemsJob.statusTime === 'timeStart' || itemsJob.statusTime === null">
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-icon
-                              v-bind="attrs"
-                              v-on="on"
-                              x-large
-                              color="#84C650"
-                              @click="updateTimeEmp(itemsJob,'timeStart')"
+                            <v-tooltip top
+                            color="#1B437C">
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-icon
+                                  large
+                                  color="#1B437C"
+                                  v-bind="attrs"
+                                  v-on="on"
+                                  dark
                             >
-                              mdi-timer
+                              mdi-account-arrow-right
                             </v-icon>
-                          </template>
-                          <span>จับเวลา</span>
-                        </v-tooltip>
-                        <v-tooltip top
-                        v-if="itemsJob.statusTime === 'timeEnd' && itemsJob.statusTime !== null">
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-icon
-                              v-bind="attrs"
-                              v-on="on"
-                              x-large
-                              color="#DE6467"
-                              @click="updateTimeEmp(itemsJob,'timeEnd')"
-                            >
-                              mdi-timer-off
-                            </v-icon>
-                          </template>
-                          <span>หยุดเวลา</span>
-                        </v-tooltip>
+                              </template>
+                              <span>พนักงานที่รับผิดชอบ</span>
+                            </v-tooltip>
                         <strong>{{
                           JobDataItem.filter(row => {
                             return row.jobId == itemsJob.jobId
                           })[0].empStep
                         }}</strong>
-                          <v-tooltip top
-                                v-if="parseInt(itemsJob.totalDateDiff) <= 2"
-                                color="#DE6467"
-                                >
-                                  <template v-slot:activator="{ on, attrs }">
-                                    <v-icon
-                                      v-bind="attrs"
-                                      v-on="on"
-                                      x-large
-                                      color="#DE6467"
-                                    >
-                                      mdi-alarm-light
-                                    </v-icon>
-                                  </template>
-                                  <span style="background-color:#DE6467;">{{ itemsJob.totalDateDiff }}</span>
-                             </v-tooltip>
-                             <v-tooltip top
-                                v-else-if="parseInt(itemsJob.totalDateDiff) <= 4 &&parseInt(itemsJob.totalDateDiff) >= 2"
-                                color="#FED966"
-                                >
-                                  <template v-slot:activator="{ on, attrs }">
-                                    <v-icon
-                                      v-bind="attrs"
-                                      v-on="on"
-                                      x-large
-                                      color="#FED966"
-                                    >
-                                      mdi-alarm-light
-                                    </v-icon>
-                                  </template>
-                                  <span style="background-color:#FED966;">{{ itemsJob.totalDateDiff }}</span>
-                             </v-tooltip>
-                             <v-tooltip top
-                                v-else-if="parseInt(itemsJob.totalDateDiff) >= 4"
-                                color="#4F93D0"
-                                >
-                                  <template v-slot:activator="{ on, attrs }">
-                                    <v-icon
-                                      v-bind="attrs"
-                                      v-on="on"
-                                      x-large
-                                      color="#4F93D0"
-                                    >
-                                      mdi-alarm-light
-                                    </v-icon>
-                                  </template>
-                                  <span style="background-color:#4F93D0;">{{ itemsJob.totalDateDiff }}</span>
-                             </v-tooltip>
-                          <!-- update satatus car -->
-                          <v-tooltip top
-                            color="#4F93D0"
-                            >
-                            <template v-slot:activator="{ on, attrs }">
-                            <v-icon
-                              v-if="
-                                allJob.filter(row => {
-                                  return row.jobId == itemsJob.jobId
-                                })[0].checkCar == 'False'"
-                              color="#9E9E9E"
-                              depressed
-                              @click="updateStatusCars(itemsJob.jobId, 'False')"
-                              v-bind="attrs"
-                              v-on="on"
-                            >
-                              mdi-car
-                            </v-icon>
-
-                            <v-icon
-                              v-else
-                              color="#4F93D0"
-                              depressed
-                              @click="updateStatusCars(itemsJob.jobId, 'True')"
-                              v-bind="attrs"
-                              v-on="on"
-                            >
-                              mdi-car
-                            </v-icon>
-                            </template>
-                            <span>สถานะ รถอยู่ / รถไม่อยู่</span>
-                            </v-tooltip>
                           <!-- end update satatus car -->
                           <v-tooltip top
                             color="#DE6467">

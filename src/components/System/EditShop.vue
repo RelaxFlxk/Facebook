@@ -94,6 +94,17 @@
                           </v-switch>
                       </v-col>
                     </v-row>
+
+                     <v-row>
+                      <v-col cols="12" class="pb-0">
+                          <v-textarea
+                            outlined
+                            label="ข้อความตอบกลับการนัดหมาย"
+                            v-model="formUpdate.bookingthankText"
+                          ></v-textarea>
+                      </v-col>
+                    </v-row>
+
                     <v-row>
                       <v-col cols="6" class="pb-2 pt-0">
                         <v-subheader>สีหลัก</v-subheader>
@@ -390,6 +401,11 @@ export default {
       } else {
         this.formUpdate.darkMode = false
       }
+      if (this.formUpdate.bookingthankText === null) {
+        this.formUpdate.bookingthankText = ''
+      } else {
+        console.log('bookingthankText', this.formUpdate.bookingthankText)
+      }
       // this.formUpdate.primaryColor = item.primaryColor
       // this.formUpdate.secondaryColor = item.secondaryColor
       // if (this.formUpdate.ZIP_CD.length >= 5) {
@@ -432,6 +448,12 @@ export default {
           } else {
             darkMode = 'False'
           }
+          let bookingthankText = null
+          if (this.formUpdate.bookingthankText === '') {
+            bookingthankText = null
+          } else {
+            bookingthankText = this.formUpdate.bookingthankText
+          }
           var dt = {
             shopName: this.formUpdate.shopName,
             shopImge: this.formUpdate.shopImge,
@@ -440,7 +462,8 @@ export default {
             contactEmail: this.formUpdate.contactEmail,
             primaryColor: this.formUpdate.primaryColor,
             secondaryColor: this.formUpdate.secondaryColor,
-            darkMode: darkMode
+            darkMode: darkMode,
+            bookingthankText: bookingthankText
           }
           await axios
             .post(
@@ -464,6 +487,7 @@ export default {
                 primaryColor: this.formUpdate.primaryColor,
                 secondaryColor: this.formUpdate.secondaryColor,
                 darkMode: darkMode,
+                bookingthankText: bookingthankText,
                 sourceProgram: 'belinked'
               }
               this.updateBetaskDB(ds, this.$session.getAll().data.shopId)

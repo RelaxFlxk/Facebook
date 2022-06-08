@@ -38,26 +38,26 @@
               </v-col>
               <v-col class="pa-0" cols="12" md='12'>
                 <v-container fluid>
-                  <p class="text-center">ประเภทบริการ</p>
-                  <div v-for="(item , index) in flowData" :key="index">
-                   <v-row>
-                    <v-col cols="6" class="text-center">
-                      <p class="pa-0 ma-0 mt-4">{{item.text}}</p>
+                  <h4 class="text-center font-weight-black mb-5">ประเภทบริการ</h4>
+                   <v-row v-for="(item , index) in flowData" :key="index" class="mb-1" style="border-style: groove;">
+                    <v-col cols="12" class="text-center">
+                      <p class="pa-0 ma-0 mt-4 font-weight-black">{{item.text}}</p>
                     </v-col>
-                    <v-col cols="3">
-                      <v-checkbox
-                    v-model="item.checkBooking"
-                    label="Booking"
-                  ></v-checkbox>
-                    </v-col>
-                     <v-col cols="3">
-                  <v-checkbox
-                    v-model="item.checkJob"
-                    label="Job"
-                  ></v-checkbox>
+                    <v-col class="pa-0 ps-4 ma-0" cols="12">
+                      <v-checkbox class="pa-0 ma-0"
+                        v-model="item.checkBooking"
+                        label="นัดหมายเข้ารับบริการ"
+                      ></v-checkbox>
+                      <v-checkbox class="pa-0 ma-0"
+                        v-model="item.checkJob"
+                        label="กระดานการทำงาน"
+                      ></v-checkbox>
+                      <v-checkbox class="pa-0 ma-0"
+                        v-model="item.checkEpmtime"
+                        label="การบันทึกเวลาพนักงาน"
+                      ></v-checkbox>
                     </v-col>
                    </v-row>
-                  </div>
                 </v-container>
               </v-col>
               <!-- <v-col class="pa-0" cols="6" md='6'>
@@ -112,26 +112,30 @@
               </v-col>
               <v-col class="pa-0" cols="12" md='12'>
                 <v-container fluid>
-                  <p class="text-center">ประเภทบริการ</p>
-                  <div v-for="(item , index) in itemSelectEdit" :key="index">
-                     <v-row>
-                    <v-col cols="6" class="text-center">
-                      <p class="pa-0 ma-0 mt-4">{{item.text}}</p>
+                  <h4 class="text-center font-weight-black mb-5">ประเภทบริการ</h4>
+                   <v-row v-for="(item , index) in itemSelectEdit" :key="index" class="mb-1" style="border-style: groove;">
+                    <v-col cols="12" class="text-center">
+                      <p class="pa-0 ma-0 mt-4 font-weight-black">{{item.text}}</p>
                     </v-col>
-                    <v-col cols="3">
-                      <v-checkbox
-                    v-model="item.checkBooking"
-                    label="Booking"
-                  ></v-checkbox>
+                    <v-col class="pa-0 ps-4 ma-0" cols="12">
+                      <v-checkbox class="pa-0 ma-0"
+                        v-model="item.checkBooking"
+                        label="นัดหมายเข้ารับบริการ"
+                      ></v-checkbox>
                     </v-col>
-                     <v-col cols="3">
-                  <v-checkbox
-                    v-model="item.checkJob"
-                    label="Job"
-                  ></v-checkbox>
+                    <v-col class="pa-0 ps-4 ma-0" cols="12">
+                      <v-checkbox class="pa-0 ma-0"
+                        v-model="item.checkJob"
+                        label="กระดานการทำงาน"
+                      ></v-checkbox>
+                    </v-col>
+                    <v-col class="pa-0 ps-4 ma-0" cols="12">
+                      <v-checkbox class="pa-0 ma-0"
+                        v-model="item.checkEpmtime"
+                        label="การบันทึกเวลาพนักงาน"
+                      ></v-checkbox>
                     </v-col>
                    </v-row>
-                  </div>
                 </v-container>
               </v-col>
             </v-row>
@@ -277,7 +281,7 @@ export default {
       await axios
         .get(this.DNS_IP + '/lineNotifySetUp/get?shopId=' + this.shopId).then((response) => {
           let rs = response.data
-          // console.log('rs', rs)
+          console.log('rs', rs)
           if (rs.length > 0) {
             this.LineGroupitem = rs
             // for (let i = 0; i < rs.length; i++) {
@@ -298,14 +302,13 @@ export default {
       await axios
         .get(this.DNS_IP + '/flow/get?shopId=' + this.shopId).then((response) => {
           let rs = response.data
-          // console.log('rs2', rs)
+          console.log('rs2', rs)
           if (rs.length > 0) {
             for (let i = 0; i < rs.length; i++) {
               let d = rs[i]
               let s = {}
               s.text = d.flowName
               s.value = d.flowId
-              s.checkitem = false
               this.flowData.push(s)
             }
             // this.flowData = rs
@@ -349,6 +352,8 @@ export default {
           checkitemSelect.push(v.checkBooking)
         } else if (v.checkJob === true) {
           checkitemSelect.push(v.checkJob)
+        } else if (v.checkEpmtime === true) {
+          checkitemSelect.push(v.checkEpmtime)
         }
       })
       let dataAdd = {}
@@ -479,6 +484,8 @@ export default {
           checkitemSelect.push(v.checkBooking)
         } else if (v.checkJob === true) {
           checkitemSelect.push(v.checkJob)
+        } else if (v.checkEpmtime === true) {
+          checkitemSelect.push(v.checkEpmtime)
         }
       })
       if (this.BookingSendEdit === false && checkitemSelect.length === 0) {
