@@ -399,6 +399,14 @@
                             v-model="formAdd.checkOnsite"
                           ></v-checkbox>
                         </v-col>
+                        <v-col cols="12" class="pb-0 pt-0">
+                          <v-checkbox
+                            label="เงินมัดจำ"
+                            false-value="False"
+                            true-value="True"
+                            v-model="formAdd.checkDeposit"
+                          ></v-checkbox>
+                        </v-col>
                         <v-col cols="12">
                           <v-row justify="center">
                             <v-btn
@@ -581,6 +589,14 @@
                             false-value="False"
                             true-value="True"
                             v-model="formUpdate.checkOnsite"
+                          ></v-checkbox>
+                        </v-col>
+                        <v-col cols="12" class="pb-0 pt-0">
+                          <v-checkbox
+                            label="เงินมัดจำ"
+                            false-value="False"
+                            true-value="True"
+                            v-model="formUpdate.checkDeposit"
                           ></v-checkbox>
                         </v-col>
                         <v-col cols="12">
@@ -1107,6 +1123,7 @@ export default {
         LAST_USER: '',
         checkPayment: 'True',
         checkOnsite: 'False',
+        checkDeposit: 'False',
         shopId: this.$session.getAll().data.shopId
       },
       formAddStep: {
@@ -1140,6 +1157,7 @@ export default {
         LAST_USER: '',
         checkPayment: 'True',
         checkOnsite: 'False',
+        checkDeposit: 'False',
         shopId: ''
       },
       formUpdateItemFlow: {
@@ -1640,6 +1658,7 @@ export default {
       this.formUpdate.flowId = item.flowId
       this.formUpdate.flowCode = item.flowCode
       this.formUpdate.checkPayment = item.checkPayment || 'True'
+      this.formUpdate.checkDeposit = item.checkDeposit || 'False'
       this.shopId = this.$session.getAll().data.shopId
       this.fieldType = this.formUpdate.fieldType
       // this.desserts = JSON.parse(response.data[0].flowfieldName)

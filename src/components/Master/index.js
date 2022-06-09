@@ -24,6 +24,7 @@ import UpdateNotify from './UpdateNotify'
 import SettingLineNotify from './SettingLineNotify'
 import BookingListOnsite from './BookingListOnsite'
 import BoardControlBeauty from './BoardControlBeauty'
+import BookingListBeauty from './BookingListBeauty'
 export default {
   CustomField,
   Flow,
@@ -50,5 +51,6 @@ export default {
   UpdateNotify,
   SettingLineNotify,
   BookingListOnsite,
-  BoardControlBeauty
+  BoardControlBeauty,
+  BookingListBeauty
 }

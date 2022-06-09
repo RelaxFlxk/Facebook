@@ -84,6 +84,11 @@ export default new Router({
     component: Master.BookingListOnsite
   },
   {
+    path: '/Master/BookingListBeauty',
+    name: 'BookingListBeauty',
+    component: Master.BookingListBeauty
+  },
+  {
     path: '/Master/Rating',
     name: 'Rating',
     component: Master.Rating

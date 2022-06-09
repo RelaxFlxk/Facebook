@@ -711,28 +711,40 @@ export default {
         { title: 'ข้อมูลลงทะเบียนลูกค้า', icon: 'mdi-account-plus', to: '/System/ListMember', type: 'customer' },
         { title: 'ข้อมูลคะแนนบริการ', icon: 'mdi-star-check', to: '/Master/Rating', type: 'customer' }
       ]
-      this.booking = [
-        { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingLink', type: 'booking' },
-        { title: 'รายชื่อลูกค้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingList', type: 'booking' },
-        { title: '(Onsite)รายชื่อลูกค้านัดหมาย', icon: 'mdi-car-shift-pattern', to: '/Master/BookingListOnsite', type: 'booking' },
-        { title: 'ปฏิทินนัดหมาย', icon: 'mdi-calendar-search', to: '/Master/CalendarBooking', type: 'booking' }
-      ]
-      this.Dashboard = [
-        { title: 'นัดหมายเข้ารับบริการ', icon: 'mdi-clipboard-check-multiple-outline', to: '/Dashbord/ReportBooking', type: 'Dashboard' },
-        { title: 'งานในศูนย์', icon: 'mdi-cog-transfer', to: '/Dashbord/Report', type: 'Dashboard' },
-        { title: 'ReportFRT', icon: 'mdi-account-clock-outline', to: '/Dashbord/ReportFRT', type: 'Dashboard' },
-        { title: 'ReportEmp', icon: 'mdi-account-clock-outline', to: '/Dashbord/ReportEmpMain', type: 'Dashboard' },
-        { title: 'Performance', icon: 'mdi-application-settings', to: '/Dashbord/Performance', type: 'Dashboard' }
-      ]
-      this.workflow = [
-        // { title: 'รับรถลูกค้ารายใหม่', icon: 'mdi-account-plus', to: '/Master/RegisterAdd' },
-        // { title: 'จัดการงานบนกระดาน', icon: 'mdi-clipboard-check-multiple-outline', to: '/Master/FlowStep' },
-        { title: 'กระดานการทำงาน', icon: 'mdi-clipboard-check-multiple-outline', to: '/Master/BoardControl', type: 'workflow' }
-        // { title: 'เพิ่ม/ลบ กระดาน', icon: 'mdi-application-cog', to: '/Master/JobList' },
-        // { title: 'รายชื่อร้านค้า', icon: 'mdi-playlist-check', to: '/System/ListShop' },
-        // { title: 'กลุ่มผู้ใช้งาน', icon: 'mdi-account-group', to: '/System/UserTypeGroup' },
-        // { title: 'Vgroup', icon: 'mdi-account-group', to: '/System/VgroupMapCoin' }
-      ]
+      if (this.session.data.category === 'ธุรกิจรถยนต์') {
+        this.booking = [
+          { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingLink', type: 'booking' },
+          { title: 'รายชื่อลูกค้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingList', type: 'booking' },
+          { title: '(Onsite)รายชื่อลูกค้านัดหมาย', icon: 'mdi-car-shift-pattern', to: '/Master/BookingListOnsite', type: 'booking' },
+          { title: 'ปฏิทินนัดหมาย', icon: 'mdi-calendar-search', to: '/Master/CalendarBooking', type: 'booking' }
+        ]
+        this.Dashboard = [
+          { title: 'นัดหมายเข้ารับบริการ', icon: 'mdi-clipboard-check-multiple-outline', to: '/Dashbord/ReportBooking', type: 'Dashboard' },
+          { title: 'งานในศูนย์', icon: 'mdi-cog-transfer', to: '/Dashbord/Report', type: 'Dashboard' },
+          { title: 'ReportFRT', icon: 'mdi-account-clock-outline', to: '/Dashbord/ReportFRT', type: 'Dashboard' },
+          { title: 'ReportEmp', icon: 'mdi-account-clock-outline', to: '/Dashbord/ReportEmpMain', type: 'Dashboard' }
+          // { title: 'Performance', icon: 'mdi-application-settings', to: '/Dashbord/Performance', type: 'Dashboard' }
+        ]
+        this.workflow = [
+          { title: 'กระดานการทำงาน', icon: 'mdi-clipboard-check-multiple-outline', to: '/Master/BoardControl', type: 'workflow' }
+        ]
+      } else {
+        this.booking = [
+          { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingLink', type: 'booking' },
+          { title: 'รายชื่อลูกค้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingListBeauty', type: 'booking' },
+          { title: 'ปฏิทินนัดหมาย', icon: 'mdi-calendar-search', to: '/Master/CalendarBooking', type: 'booking' }
+        ]
+        this.Dashboard = [
+          { title: 'นัดหมายเข้ารับบริการ', icon: 'mdi-clipboard-check-multiple-outline', to: '/Dashbord/ReportBooking', type: 'Dashboard' },
+          { title: 'งานในศูนย์', icon: 'mdi-cog-transfer', to: '/Dashbord/Report', type: 'Dashboard' }
+          // { title: 'ReportFRT', icon: 'mdi-account-clock-outline', to: '/Dashbord/ReportFRT', type: 'Dashboard' },
+          // { title: 'ReportEmp', icon: 'mdi-account-clock-outline', to: '/Dashbord/ReportEmpMain', type: 'Dashboard' }
+          // { title: 'Performance', icon: 'mdi-application-settings', to: '/Dashbord/Performance', type: 'Dashboard' }
+        ]
+        this.workflow = [
+          { title: 'กระดานการทำงาน', icon: 'mdi-clipboard-check-multiple-outline', to: '/Master/BoardControlBeauty', type: 'workflow' }
+        ]
+      }
       this.corporate = [
         { title: 'สาขา', icon: 'mdi-home-group', to: '/Master/Branch', type: 'corporate' },
         { title: 'พนักงาน', icon: 'mdi-account-multiple', to: '/Master/Employee', type: 'corporate' },

@@ -305,6 +305,19 @@
                           </v-col>
                         </v-row>
                       </v-col>
+                      <v-col class="pt-0 pb-0" cols="12">
+                        <v-row justify="center">
+                          <v-col class="pt-0 pb-0" cols="12">
+                            <v-autocomplete
+                              dense
+                              label="ชื่อพนักงานที่รับผิดชอบ"
+                              v-model="formUpdate.empStep"
+                              :items="empSeleteStep"
+                              :rules="[rules.required]"
+                            ></v-autocomplete>
+                          </v-col>
+                        </v-row>
+                      </v-col>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -559,6 +572,15 @@
                         min-height="120px"
                       >
                       <v-row class="mb-n2 pa-0 mt-n1" >
+                        <v-col cols="2" class="pa-0 ps-3" v-if="itemsJob.fastTrack === 'True'">
+                          <v-icon x-large
+                              color="orange darken-3">
+                              mdi-flash
+                          </v-icon>
+                        </v-col>
+                         <v-col cols="10" class="pa-0 ps-3"  v-if="itemsJob.fastTrack === 'True'">
+                           {{dataTypeJob3}}
+                         </v-col>
                           <v-col cols="2" class="pa-0 ps-3" >
                             <v-tooltip top
                                 v-if="parseInt(itemsJob.totalDateDiff) <= 2"
@@ -1579,7 +1601,14 @@ export default {
       productExchangeRateId: '',
       searchOther: '',
       allJobSupport: [],
-      jobDataItemSupport: []
+      jobDataItemSupport: [],
+      dataTypeJob1: '',
+      dataTypeJob2: '',
+      dataTypeJob3: '',
+      dataTypeProcess1: '',
+      dataTypeProcess2: '',
+      dataTypeProcess3: '',
+      dataTypeProcess4: ''
     }
   },
   async mounted () {
@@ -1592,9 +1621,42 @@ export default {
     await this.getDataFlow()
     await this.getDataBranch()
     await this.getEmpSelect()
+    await this.getBookingFieldText()
     // await this.getLayoutDefault()
   },
   methods: {
+    async getBookingFieldText () {
+      if (JSON.parse(localStorage.getItem('sessionData')) === null) {
+        await axios
+          .get(
+            this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+          )
+          .then(async response => {
+            let rs = response.data
+            console.log('rs', rs)
+            if (rs.status === false) {
+              this.$swal('ผิดพลาด', 'เนื่องจากไม่สามารถเรียกชื่อกระบวนการ และประเภทงานได้', 'success')
+            } else {
+              localStorage.setItem('typeData', JSON.stringify(rs[0]))
+              this.dataTypeJob1 = JSON.parse(localStorage.getItem('typeData')).typeJob1 || ''
+              this.dataTypeJob2 = JSON.parse(localStorage.getItem('typeData')).typeJob2 || ''
+              this.dataTypeJob3 = JSON.parse(localStorage.getItem('typeData')).typeJob3 || ''
+              this.dataTypeProcess1 = JSON.parse(localStorage.getItem('typeData')).typeProcess1 || ''
+              this.dataTypeProcess2 = JSON.parse(localStorage.getItem('typeData')).typeProcess2 || ''
+              this.dataTypeProcess3 = JSON.parse(localStorage.getItem('typeData')).typeProcess3 || ''
+              this.dataTypeProcess4 = JSON.parse(localStorage.getItem('typeData')).typeProcess4 || ''
+            }
+          })
+      } else {
+        this.dataTypeJob1 = JSON.parse(localStorage.getItem('typeData')).typeJob1 || ''
+        this.dataTypeJob2 = JSON.parse(localStorage.getItem('typeData')).typeJob2 || ''
+        this.dataTypeJob3 = JSON.parse(localStorage.getItem('typeData')).typeJob3 || ''
+        this.dataTypeProcess1 = JSON.parse(localStorage.getItem('typeData')).typeProcess1 || ''
+        this.dataTypeProcess2 = JSON.parse(localStorage.getItem('typeData')).typeProcess2 || ''
+        this.dataTypeProcess3 = JSON.parse(localStorage.getItem('typeData')).typeProcess3 || ''
+        this.dataTypeProcess4 = JSON.parse(localStorage.getItem('typeData')).typeProcess4 || ''
+      }
+    },
     refreshData () {
       this.searchOther = ''
       this.allJob = this.allJobSupport
@@ -1856,7 +1918,9 @@ export default {
                     lineUserId: d.lineUserId,
                     userId: d.userId,
                     packageId: d.packageId,
-                    statusTime: d.statusTime
+                    statusTime: d.statusTime,
+                    fastTrack: d.fastTrack,
+                    extraJob: d.extraJob
                   })
                 }
               }
@@ -2315,6 +2379,7 @@ export default {
           s.fieldValue = d.fieldValue
           s.endDate = this.formUpdate.endDate
           s.endTime = this.formUpdate.endTime
+          s.empStep = this.formUpdate.empStep
           s.LAST_USER = d.LAST_USER
           dt.push(s)
         }
