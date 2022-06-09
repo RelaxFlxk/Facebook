@@ -94,7 +94,19 @@
                           </v-switch>
                       </v-col>
                     </v-row>
-
+                    <v-row>
+                      <v-col>
+                        <v-select
+                          v-model="formUpdate.category"
+                          :items="category"
+                          label="ประเภทธุรกิจ"
+                          outlined
+                          dense
+                          required
+                          :rules="[rules.required]"
+                        ></v-select>
+                      </v-col>
+                    </v-row>
                      <v-row>
                       <v-col cols="12" class="pb-0">
                           <v-textarea
@@ -264,9 +276,14 @@ export default {
         optionProvinceNew: '',
         primaryColor: '',
         secondaryColor: '',
-        darkMode: false
+        darkMode: false,
+        category: ''
       },
       filesShop: null,
+      category: [
+        { text: 'ธุรกิจรถยนต์', value: 'ธุรกิจรถยนต์' },
+        { text: 'ธุรกิจอื่นๆ', value: 'ธุรกิจอื่นๆ' }
+      ],
       formUpdateItem: {
         userTypeGroupCode: '',
         userTypeGroupName: '',
@@ -318,7 +335,8 @@ export default {
         { text: 'ชื่อร้าน', value: 'shopName' },
         { text: 'เบอร์ร้าน', value: 'contactTel' },
         { text: 'E-mail', value: 'contactEmail' },
-        { text: 'วันที่หมดอายุ', value: 'expireDate' },
+        { text: 'ประเภทธุรกิจ', value: 'category' },
+        // { text: 'วันที่หมดอายุ', value: 'expireDate' },
         { text: 'วันที่สร้าง', value: 'CREATE_DATE' },
         { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
         { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
@@ -462,6 +480,7 @@ export default {
             contactEmail: this.formUpdate.contactEmail,
             primaryColor: this.formUpdate.primaryColor,
             secondaryColor: this.formUpdate.secondaryColor,
+            category: this.formUpdate.category,
             darkMode: darkMode,
             bookingthankText: bookingthankText
           }
