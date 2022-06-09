@@ -3283,7 +3283,7 @@ export default {
             let rs = response.data
             console.log('rs', rs)
             if (rs.status === false) {
-              this.$swal('ผิดพลาด', 'เนื่องจากไม่สามารถเรียกชื่อกระบวนการ และประเภทงานได้', 'success')
+              this.$swal('ผิดพลาด', 'เนื่องจากไม่สามารถเรียกชื่อกระบวนการ และประเภทงานได้', 'error')
             } else {
               localStorage.setItem('typeData', JSON.stringify(rs[0]))
               this.dataTypeJob1 = JSON.parse(localStorage.getItem('typeData')).typeJob1 || ''

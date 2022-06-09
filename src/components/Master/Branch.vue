@@ -46,6 +46,16 @@
                           v-bind:options="options2" />
                     </v-col>
                   </v-row>
+                   <v-row>
+                  <v-col cols="6">
+                      <VuetifyMoney
+                          label="จำนวนที่รับงานด่วน / วัน"
+                          v-model="formAdd.countFastTrack"
+                          placeholder="จำนวนที่รับงานด่วน / วัน"
+                          required
+                          v-bind:options="options2" />
+                    </v-col>
+                  </v-row>
                   <v-row>
                     <v-col cols="3">
                       <v-text-field
@@ -221,6 +231,16 @@
                           label="จำนวนคนเข้าใช้บริการ / วัน"
                           v-model="formUpdate.countCus"
                           placeholder="จำนวนคนเข้าใช้บริการ / วัน"
+                          required
+                          v-bind:options="options2" />
+                    </v-col>
+                  </v-row>
+                   <v-row>
+                  <v-col cols="6">
+                      <VuetifyMoney
+                          label="จำนวนที่รับงานด่วน / วัน"
+                          v-model="formUpdate.countFastTrack"
+                          placeholder="จำนวนที่รับงานด่วน / วัน"
                           required
                           v-bind:options="options2" />
                     </v-col>
@@ -548,6 +568,7 @@ export default {
         masBranchCode: '',
         masBranchName: '',
         countCus: 0,
+        countFastTrack: 0,
         time: '',
         setTime: '',
         shopId: this.$session.getAll().data.shopId
@@ -555,12 +576,14 @@ export default {
       formUpdate: {
         masBranchCode: '',
         countCus: 0,
+        countFastTrack: 0,
         masBranchName: '',
         setTime: '',
         time: ''
       },
       formUpdateItem: {
         countCus: 0,
+        countFastTrack: 0,
         setTime: '',
         masBranchName: ''
       },
@@ -577,6 +600,7 @@ export default {
       columns: [
         { text: 'สาขา', value: 'masBranchName' },
         { text: 'จำนวนคนเข้าใช้บริการ / วัน', value: 'countCus', align: 'center' },
+        { text: 'จำนวนที่รับงานด่วน / วัน', value: 'countFastTrack', align: 'center' },
         { text: 'วันที่สร้าง', value: 'CREATE_DATE' },
         { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
         { text: 'Action', value: 'action', sortable: false, align: 'center' }
@@ -842,15 +866,20 @@ export default {
     },
     async editData () {
       if (this.dataItemAddTime.length > 0) {
-        this.formUpdateItem.countCus = this.formUpdate.countCus
+        // this.formUpdateItem.countCus = this.formUpdate.countCus
         this.formUpdateItem.masBranchName = this.formUpdate.masBranchName
         this.formUpdateItem.setTime = JSON.stringify(this.dataItemAddTime)
         // Config User ทำรายการล่าสุด
         this.formUpdateItem.LAST_USER = this.$session.getAll().data.userName
         if (this.formUpdate.countCus) {
-          this.formUpdate.countCus = this.formUpdate.countCus
+          this.formUpdateItem.countCus = this.formUpdate.countCus
         } else {
-          this.formUpdate.countCus = 0
+          this.formUpdateItem.countCus = 0
+        }
+        if (this.formUpdate.countFastTrack) {
+          this.formUpdateItem.countFastTrack = this.formUpdate.countFastTrack
+        } else {
+          this.formUpdateItem.countFastTrack = 0
         }
         // End Config User ทำรายการล่าสุด
         console.log('this.formUpdateItem', this.formUpdateItem)

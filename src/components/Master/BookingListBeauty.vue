@@ -3699,7 +3699,19 @@ export default {
         this.swalConfig.title = 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?'
         this.$swal(this.swalConfig)
           .then(async result => {
-            this.editDataSelectSubmit()
+            if (this.formEdit.radiosRemark === 'FastTrack') {
+              let getcount = await this.getCountFastTrack(this.dateEdit, this.formEdit.flowId, this.formEdit.masBranchID)
+              let setCountFast = this.branch.filter(el => { return el.value === this.formEdit.masBranchID })[0].allData.countFastTrack
+              if (getcount < setCountFast) {
+                this.editDataSelectSubmit()
+              } else {
+                this.textError = 'จำนวนงานด่วนต่อวัน เกินกว่าที่ตั้งไว้'
+                this.dialogError = true
+                this.loadingEdit = false
+              }
+            } else {
+              this.editDataSelectSubmit()
+            }
           }).catch(error => {
             this.loadingEdit = false
             console.log('editDataSelectSubmit error', error)
@@ -3919,8 +3931,39 @@ export default {
       this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
       // console.log('timevailable', this.timeavailable)
     },
+    async getCountFastTrack (dateS, flowId, branch) {
+      let result = []
+      let dateSelect = ''
+      if (dateS) {
+        dateSelect = this.momenDate_1(dateS)
+      } else {
+        dateSelect = this.momenDate_1(new Date())
+      }
+      await axios
+        .get(
+          // eslint-disable-next-line quotes
+          this.DNS_IP +
+            '/booking_view/getCountFastTrack?shopId=' +
+            this.session.data.shopId +
+            '&masBranchID=' +
+            branch +
+            '&dueDate=' +
+            dateSelect + '&checkOnsite=is null&flowId=' + flowId + '&fastTrack=True'
+        )
+        .then(async response => {
+          console.log('response.data[0].countFastTrack', response.data[0].countFastTrack)
+          if (response.data.status === false) {
+            result = 'ไม่มีข้อมูล'
+          } else {
+            result = response.data[0].countFastTrack
+          }
+        })
+      return result
+    },
     async confirmRemark (item, text) {
+      console.log('item', item)
       let dt = null
+      let errorMessage = ''
       if (text === 'inAdvance') {
         dt = {
           remarkConfirm1: item.remarkConfirm1,
@@ -3938,10 +3981,28 @@ export default {
           LAST_USER: this.session.data.userName
         }
       } else if (text === 'fastTrack') {
-        dt = {
-          extraJob: (item.fastTrack) ? false : item.extraJob,
-          fastTrack: item.fastTrack,
-          LAST_USER: this.session.data.userName
+        if (item.fastTrack === true) {
+          let getcount = await this.getCountFastTrack(item.dueDate, this.flowSelect, this.masBranchID)
+          let setCountFast = this.branch.filter(el => { return el.value === this.masBranchID })[0].allData.countFastTrack
+          console.log('getcount', getcount)
+          console.log('setCountFast', setCountFast)
+          if (getcount < setCountFast) {
+            dt = {
+              extraJob: (item.fastTrack) ? false : item.extraJob,
+              fastTrack: item.fastTrack,
+              LAST_USER: this.session.data.userName
+            }
+          } else {
+            dt = null
+            item.fastTrack = false
+            errorMessage = 'จำนวนงานด่วนต่อวัน เกินกว่าที่ตั้งไว้'
+          }
+        } else {
+          dt = {
+            extraJob: (item.fastTrack) ? false : item.extraJob,
+            fastTrack: item.fastTrack,
+            LAST_USER: this.session.data.userName
+          }
         }
       }
       if (dt) {
@@ -3962,6 +4023,8 @@ export default {
           .catch(error => {
             console.log('error function addData : ', error)
           })
+      } else {
+        this.$swal('ผิดพลาด', errorMessage, 'error')
       }
     },
     exportExcelMazda () {
@@ -5882,7 +5945,19 @@ export default {
     async addDataSubmit () {
       if (this.validAdd === true) {
         if (this.$session.id() !== undefined) {
-          this.dialogAddCon = true
+          if (this.formAdd.radiosRemark === 'FastTrack') {
+            let getcount = await this.getCountFastTrack(this.date, this.formAdd.flowId, this.formAdd.masBranchID)
+            let setCountFast = this.branch.filter(el => { return el.value === this.formAdd.masBranchID })[0].allData.countFastTrack
+            if (getcount < setCountFast) {
+              this.dialogAddCon = true
+            } else {
+              this.textError = 'จำนวนงานด่วนต่อวัน เกินกว่าที่ตั้งไว้'
+              this.dialogError = true
+              this.loadingAdd = false
+            }
+          } else {
+            this.dialogAddCon = true
+          }
         } else {
           this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
           clearInterval(this.setTimerCalendar)
@@ -6470,7 +6545,7 @@ export default {
                 'messages': [
                   {
                     'type': 'text',
-                    'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
+                    'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}
                           \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}`
                   }
                 ]
@@ -6671,7 +6746,7 @@ export default {
                           'messages': [
                             {
                               'type': 'text',
-                              'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
+                              'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}
                           \nวันเดือนปี ${this.format_dateFUllTime(this.formChange.date + ' ' + this.formChange.time.value)}`
                             }
                           ]
