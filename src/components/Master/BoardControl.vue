@@ -196,8 +196,9 @@
                 </v-container>
               </v-card-text>
               <v-col class="text-center pt-0">
-                <v-btn color="#1B437C" depressed dark @click="onUpdate()">
-                  <v-icon left>
+                <v-btn color="#1B437C" depressed class="white--text" @click="onUpdate()" :loading="loadingStep"
+                  :disabled="loadingStep">
+                  <v-icon left dark>
                     mdi-swap-horizontal
                   </v-icon>
                   เปลี่ยนสถานะ
@@ -213,8 +214,8 @@
 
         <v-dialog v-model="dialogEdit" persistent max-width="80%">
           <v-card>
-            <v-form ref="form_edit" lazy-validation>
               <v-card-text>
+                <v-form ref="form_update" v-model="validUpdate" lazy-validation>
                 <v-container>
                   <v-col class="text-right">
                     <v-btn
@@ -313,6 +314,7 @@
                               label="ชื่อพนักงานที่รับผิดชอบ"
                               v-model="formUpdate.empStep"
                               :items="empSeleteStep"
+                              required
                               :rules="[rules.required]"
                             ></v-autocomplete>
                           </v-col>
@@ -321,21 +323,23 @@
                     </v-col>
                   </v-row>
                 </v-container>
+                </v-form>
               </v-card-text>
               <v-col  class="text-center pt-0 pb-0">
                 <v-btn
-                  dark
                   elevation="2"
                   depressed
+                  :loading="loadingUpdate"
+                  :disabled="loadingUpdate"
                   color="#1B437C"
+                  class="white--text"
                   @click="editData()"
                 >
-                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                  <v-icon dark left>mdi-checkbox-marked-circle</v-icon>
                   แก้ไข
                 </v-btn>
               </v-col>
               <br>
-            </v-form>
           </v-card>
         </v-dialog>
         <!-- END DIALOG แก้ไขข้อมูล ใน card -->
@@ -401,17 +405,21 @@
                   </v-col>
                   <v-col class="text-center"  cols="12">
                     <v-btn
-                      dark
+                      class="white--text"
                       elevation="2"
                       depressed
                       color="#1B437C"
+                      :loading="loadingCloseJob"
+                      :disabled="loadingCloseJob"
                       @click="closeJob()"
                     >
-                      <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                      <v-icon dark left>mdi-checkbox-marked-circle</v-icon>
                       ชำระเงิน
                     </v-btn>
                     <v-btn
                       color="primary"
+                      :loading="loadingCloseJob"
+                      :disabled="loadingCloseJob"
                       depressed
                       @click=";(dialogDelete = false), clearData(), setTimeJob()"
                     >
@@ -1476,7 +1484,19 @@ export default {
           (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
           'กรุณากรอกตัวเลข 0 ถึง 9',
         counterTel: value => value.length <= 10 || 'Max 10 characters',
-        required: value => !!value || 'กรุณากรอก.'
+        IDcardRules: value =>
+          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999999) ||
+          'กรุณากรอกตัวเลข 0 ถึง 9',
+        required: value => !!value || 'กรุณากรอก.',
+        resizeImag: value =>
+          !value ||
+          value.size < 2000000 ||
+          'Avatar size should be less than 2 MB!',
+        counterIDcard: value => value.length <= 13 || 'Max 13 characters',
+        email: value => {
+          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+          return pattern.test(value) || 'Invalid e-mail.'
+        }
       },
       columnsStep: [
         { text: 'Title', value: 'stepTitle' },
@@ -1608,7 +1628,11 @@ export default {
       dataTypeProcess1: '',
       dataTypeProcess2: '',
       dataTypeProcess3: '',
-      dataTypeProcess4: ''
+      dataTypeProcess4: '',
+      validUpdate: true,
+      loadingUpdate: false,
+      loadingStep: false,
+      loadingCloseJob: false
     }
   },
   async mounted () {
@@ -1625,6 +1649,50 @@ export default {
     // await this.getLayoutDefault()
   },
   methods: {
+    validate (Action) {
+      console.log('Action', Action)
+      switch (Action) {
+        case 'ADD':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_add.validate()
+          })
+          break
+        case 'UPDATE':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_update.validate()
+          })
+          break
+        case 'EDIT':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_edit.validate()
+          })
+          break
+        case 'REMOVE':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_remove.validate()
+          })
+          break
+        case 'CHANGE':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_change.validate()
+          })
+          break
+        case 'EXPORT':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_export.validate()
+          })
+          break
+
+        default:
+          break
+      }
+    },
     async getBookingFieldText () {
       if (JSON.parse(localStorage.getItem('sessionData')) === null) {
         await axios
@@ -1980,14 +2048,14 @@ export default {
       this.checkPayment = item.checkPayment
       var dataStepItemSelete = this.stepItemSelete
       // var index = dataStepItemSelete.findIndex(key => key.text === stepTitle)
-      this.formUpdate.jobId = item.jobId
-      this.formUpdate.jobNo = item.jobNo
-      this.updateEndDateOld = this.momenDate_1(item.endDate)
-      this.updateEndTimeOld = item.endTime
-      this.formUpdate.endDate = this.momenDate_1(item.endDate)
-      this.formUpdate.endTime = item.endTime
-      this.formDelete.jobNo = item.jobNo
-      this.formUpdate.empStep = parseInt(item.empStepId)
+      this.formUpdate.jobId = item.jobId || ''
+      this.formUpdate.jobNo = item.jobNo || ''
+      this.updateEndDateOld = this.momenDate_1(item.endDate) || ''
+      this.updateEndTimeOld = item.endTime || ''
+      this.formUpdate.endDate = this.momenDate_1(item.endDate) || ''
+      this.formUpdate.endTime = item.endTime || ''
+      this.formDelete.jobNo = item.jobNo || ''
+      this.formUpdate.empStep = parseInt(item.empStepId) || ''
       var lineUserId = ''
       var userId = ''
       if (item.lineUserId === null || item.lineUserId === '' || item.lineUserId === 'user-skip' || item.lineUserId === undefined) {
@@ -2074,9 +2142,14 @@ export default {
     async onUpdate () {
       this.formUpdate.stepId = this.formUpdate.stepTitle.stepId
       console.log('formUpdate', this.formUpdate)
+      this.loadingStep = true
       // console.log('allJob', this.allJob)
       // console.log('empSeleteStep', this.empSeleteStep)
-      // console.log('empStep', this.formUpdate.empStep)
+      if (this.empSeleteStep.filter(el => { return el.value === parseInt(this.formUpdate.empStep) }).length === 0) {
+        this.formUpdate.empStep = ''
+      }
+      console.log('empStep', this.formUpdate.empStep)
+
       if (this.formUpdate.empStep !== '' && this.formUpdate.stepTitle !== '') {
         this.dataReady = false
         this.$swal({
@@ -2120,6 +2193,7 @@ export default {
                 await this.pushmessage(this.formUpdate.jobId)
                 await this.NotifyEmpTime(this.formUpdate.jobNo)
                 this.dialog = false
+                this.loadingStep = false
                 this.$swal('เรียบร้อย', 'แก้ไขสถานะ เรียบร้อย', 'success')
                 this.getStepFlow()
                 this.getLayout()
@@ -2132,15 +2206,18 @@ export default {
             // eslint-disable-next-line handle-callback-err
               .catch(error => {
                 this.dataReady = true
+                this.loadingStep = false
                 console.log('error function editDataGlobal : ', error)
               })
           })
           .catch(error => {
             this.dataReady = true
+            this.loadingStep = false
             console.log('error function editDataGlobal : ', error)
           })
       } else {
         this.$swal('ผิดพลาด', 'กรุณากรอกข้อมูลให้ครบ', 'error')
+        this.loadingStep = false
       }
     },
     async clearData () {
@@ -2201,12 +2278,14 @@ export default {
         .then(console.log(jobNo))
     },
     closeJob () {
+      this.loadingCloseJob = true
       console.log('this.productExchangeRateId', this.productExchangeRateId)
       console.log('this.packageId', this.packageId)
       if (this.checkPayment === 'True') {
         if (this.formDelete.totalPrice !== '') {
           this.closeJobSubmit(this.formDelete.totalPrice)
         } else {
+          this.loadingCloseJob = false
           this.$swal('ผิดพลาก', 'กรุณาใส่จำนวนเงิน', 'error')
         }
       } else {
@@ -2259,10 +2338,14 @@ export default {
             await this.getJobData()
             this.setTimeJob()
             this.dialogDelete = false
+            this.loadingCloseJob = false
             this.formDelete.totalPrice = 0
             console.log('shopId:', this.shopId)
             console.log('form:', this.formDelete)
           })
+      }).catch(error => {
+        this.loadingCloseJob = false
+        console.log('Close Job Error', error)
       })
     },
     async usePackage () {
@@ -2337,97 +2420,109 @@ export default {
           }).then((response) => {})
         })
     },
-    async editData () {
-      console.log(
-        this.JobDataItem.filter(row => {
-          return row.jobId === this.formUpdate.jobId
-        })
-      )
-      this.jobNo = ''
-      console.log('shopId', this.shopId)
-      console.log('formEditData', this.formEditData)
-      this.$swal({
-        title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      }).then(async result => {
+    editData () {
+      if (this.empSeleteStep.filter(el => { return el.value === parseInt(this.formUpdate.empStep) }).length === 0) {
+        this.formUpdate.empStep = ''
+      }
+      this.loadingUpdate = true
+      this.validate('UPDATE')
+      setTimeout(() => this.editDataSumit(), 500)
+    },
+    async editDataSumit () {
+      console.log('this.validUpdate', this.validUpdate)
+      if (this.validUpdate === true) {
+        this.jobNo = ''
+        console.log('shopId', this.shopId)
+        console.log('formEditData', this.formEditData)
+        this.$swal({
+          title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        }).then(async result => {
         // var ID = this.formUpdate.jobId
-        let rs = this.JobDataItem.filter(row => {
-          return row.jobId === this.formUpdate.jobId
-        })
-        console.log('rs JobDataItem', rs)
-        let dt = []
-        var cusName = ''
-        var cusReg = ''
-        var jobDate = this.formUpdate.endDate + ' ' + this.formUpdate.endTime
-        for (var i = 0; i < rs.length; i++) {
-          var d = rs[i]
-          var s = {}
-          s.jobNo = d.jobNo
-          s.jobId = d.jobId
-          s.fieldId = d.fieldId
-          if (d.fieldName === 'ชื่อ') {
-            cusName = d.fieldValue
+          let rs = this.JobDataItem.filter(row => {
+            return row.jobId === this.formUpdate.jobId
+          })
+          console.log('rs JobDataItem', rs)
+          let dt = []
+          var cusName = ''
+          var cusReg = ''
+          var jobDate = this.formUpdate.endDate + ' ' + this.formUpdate.endTime
+          for (var i = 0; i < rs.length; i++) {
+            var d = rs[i]
+            var s = {}
+            s.jobNo = d.jobNo
+            s.jobId = d.jobId
+            s.fieldId = d.fieldId
+            if (d.fieldName === 'ชื่อ') {
+              cusName = d.fieldValue
+            }
+            if (d.fieldName === 'เลขทะเบียน') {
+              cusReg = d.fieldValue
+            }
+            s.fieldValue = d.fieldValue
+            s.endDate = this.formUpdate.endDate
+            s.endTime = this.formUpdate.endTime
+            s.empStep = this.formUpdate.empStep
+            s.LAST_USER = d.LAST_USER
+            dt.push(s)
           }
-          if (d.fieldName === 'เลขทะเบียน') {
-            cusReg = d.fieldValue
-          }
-          s.fieldValue = d.fieldValue
-          s.endDate = this.formUpdate.endDate
-          s.endTime = this.formUpdate.endTime
-          s.empStep = this.formUpdate.empStep
-          s.LAST_USER = d.LAST_USER
-          dt.push(s)
-        }
-        console.log('dt', dt)
-        await axios
-          .post(
+          console.log('dt', dt)
+          await axios
+            .post(
             // eslint-disable-next-line quotes
-            this.DNS_IP + '/jobData/editData',
-            dt
-          )
-          .then(async response => {
-            this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
-            var dateNew = this.formUpdate.endDate + this.formUpdate.endTime
-            var dateOld = this.updateEndDateOld + this.updateEndTimeOld
-            var jodDateOld = this.updateEndDateOld + ' ' + this.updateEndTimeOld
-            console.log(dateNew, dateOld)
-            console.log(this.lineUserId)
-            if (dateNew !== dateOld && this.lineUserId !== '') {
+              this.DNS_IP + '/jobData/editData',
+              dt
+            )
+            .then(async response => {
+              this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
+              var dateNew = this.formUpdate.endDate + this.formUpdate.endTime
+              var dateOld = this.updateEndDateOld + this.updateEndTimeOld
+              var jodDateOld = this.updateEndDateOld + ' ' + this.updateEndTimeOld
+              console.log(dateNew, dateOld)
+              console.log(this.lineUserId)
+              if (dateNew !== dateOld && this.lineUserId !== '') {
               // แจ้งเตือนลูกค้า this.lineUserId
-              let pushText = {
-                'to': this.lineUserId,
-                'messages': [
-                  {
-                    'type': 'text',
-                    'text': ` ✍️ มีการเปลี่ยนแปลงเวลาวันรับรถ\n ✅ ชื่อ : ${cusName}\n ✅ เลขทะเบียน : ${cusReg}
+                let pushText = {
+                  'to': this.lineUserId,
+                  'messages': [
+                    {
+                      'type': 'text',
+                      'text': ` ✍️ มีการเปลี่ยนแปลงเวลาวันรับรถ\n ✅ ชื่อ : ${cusName}\n ✅ เลขทะเบียน : ${cusReg}
                           \nจาก วันที่ ${this.format_dateFUllTime(jodDateOld)}
                           \nเป็น วันที่ ${this.format_dateFUllTime(jobDate)}`
-                  }
-                ]
+                    }
+                  ]
+                }
+                axios
+                  .post(
+                    this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
+                    pushText
+                  )
+                  .catch(error => {
+                    console.log('error function addData : ', error)
+                  })
               }
-              axios
-                .post(
-                  this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
-                  pushText
-                )
-                .catch(error => {
-                  console.log('error function addData : ', error)
-                })
-            }
-            this.getStepFlow()
-            this.getLayout()
-            await this.getJobData()
-            this.setTimeJob()
-            this.dialogEdit = false
-            console.log('shopId:', this.shopId)
-            console.log('form:', this.formEditData)
-          })
-      })
+              this.getStepFlow()
+              this.getLayout()
+              await this.getJobData()
+              this.setTimeJob()
+              this.dialogEdit = false
+              this.loadingUpdate = false
+              console.log('shopId:', this.shopId)
+              console.log('form:', this.formEditData)
+            })
+        }).catch((error) => {
+          this.loadingUpdate = false
+          console.log('error Update', error)
+        })
+      } else {
+        this.loadingUpdate = false
+      }
     },
     async getJobitem (item) {
       console.log('*******************', item)
