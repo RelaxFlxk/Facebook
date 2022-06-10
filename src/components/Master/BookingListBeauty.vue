@@ -376,6 +376,7 @@
                             outlined
                             dense
                             required
+                            @change="setFlowAdd()"
                             :rules="[rules.required]"
                           ></v-select>
                           <v-select
@@ -713,6 +714,50 @@
                                   </template>
                                 </v-radio>
                               </v-radio-group>
+                            </v-col>
+                          </v-row>
+                          <v-row v-if="checkDepositAdd === 'True'">
+                            <v-col cols="12" class="pt-0">
+                              <v-checkbox
+                                :label="`มีมัดจำหรือไม่ : ${dataDepositAdd.toString()}`"
+                                false-value="ไม่มี"
+                                true-value="มี"
+                                v-model="dataDepositAdd"
+                                hide-details
+                                @change="dataDepositAdd === 'มี' ? panelDeposit = [0] : panelDeposit = []"
+                              ></v-checkbox>
+                              <!-- <v-text-field v-model="dataDepositAdd" dense outlined readonly label="มีมัดจำหรือไม่"></v-text-field> -->
+                            </v-col>
+                            <v-col cols="12" class="pt-0" v-if="dataDepositAdd === 'มี'">
+                              <v-expansion-panels
+                                v-model="panelDeposit"
+                                multiple
+                              >
+                                <v-expansion-panel>
+                                  <v-expansion-panel-header>อัพเดทหลักฐานเงินมัดจำ</v-expansion-panel-header>
+                                  <v-expansion-panel-content>
+                                    <v-row justify="center">
+                                      <v-col cols="12" class="text-center">
+                                        <v-img
+                                          aspect-ratio="3"
+                                          contain
+                                          :src="formAdd.pictureUrlPreviewDeposit"
+                                        ></v-img>
+                                        <br />
+                                        <v-file-input
+                                          counter
+                                          show-size
+                                          accept="image/png, image/jpeg, image/bmp"
+                                          prepend-icon="mdi-camera"
+                                          label="รูปหลักฐานการมัดจำ"
+                                          @change="selectImgAdd"
+                                          v-model="filesDepositAdd"
+                                        ></v-file-input>
+                                      </v-col>
+                                    </v-row>
+                                  </v-expansion-panel-content>
+                                </v-expansion-panel>
+                              </v-expansion-panels>
                             </v-col>
                           </v-row>
                           <v-row>
@@ -1928,6 +1973,38 @@
                       เพิ่มหมายเหตุ
                     </v-btn>
                   </template>
+                  <template v-slot:[`item.action4`]="{ item }">
+                    <v-chip
+                      filter
+                      dark
+                      v-if="item.depositStatus === 'False'"
+                      color="grey darken-1"
+                      @click="dialogDeposit = true, bookNo = item.bookNo"
+                    >
+                      อัพเดทสถานะเงินมัดจำ
+                    </v-chip>
+                    <v-row v-if="item.depositStatus === 'True'">
+                      <v-col col="auto">
+                        <v-avatar color="primary" size="40" v-if="item.depositImge !== ''">
+                          <img :src="item.depositImge" alt="img"/></v-avatar>
+                        <v-avatar color="error" size="40" v-else>
+                          <v-icon dark>
+                            mdi-image-edit
+                          </v-icon>
+                        </v-avatar>
+                      </v-col>
+                      <v-col col="auto">
+                        <v-chip
+                          filter
+                          dark
+                          color="green darken-1"
+                          @click="dialogDeposit = true, bookNo = item.bookNo, statusDeposit = true"
+                        >
+                          แก้ไขสถานะเงินมัดจำ
+                        </v-chip>
+                      </v-col>
+                    </v-row>
+                  </template>
                   <template v-slot:[`item.action2`]="{ item }">
                     <v-row>
                       <v-col>
@@ -2842,6 +2919,84 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
+          <v-dialog v-model="dialogDeposit" persistent max-width="80%">
+            <v-card>
+              <v-card-title>
+                <span class="headline">อัพเดทหลักฐานเงินมัดจำ</span>
+              </v-card-title>
+              <v-card-text>
+                <v-container>
+                   <v-form
+                    ref="form_deposit"
+                    v-model="valid_deposit"
+                    lazy-validation
+                  >
+                  <v-row justify="center">
+                    <v-col cols="12" class="text-center">
+                      <v-img
+                        aspect-ratio="6"
+                        contain
+                        :src="pictureUrlPreviewDeposit"
+                      ></v-img>
+                      <br />
+                      <v-file-input
+                        required
+                        :rules="[rules.resizeImag]"
+                        counter
+                        show-size
+                        accept="image/png, image/jpeg, image/bmp"
+                        prepend-icon="mdi-camera"
+                        label="รูปหลักฐานการมัดจำ"
+                        @change="selectImgDeposit"
+                        v-model="filesDeposit"
+                      ></v-file-input>
+                    </v-col>
+                  </v-row>
+                   </v-form>
+                </v-container>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  elevation="2"
+                  x-large
+                  color="red darken-1"
+                  text
+                  @click="dialogDeposit = false"
+                  :loading="loadingDeposit"
+                  :disabled="loadingDeposit"
+                >
+                  <v-icon left> mdi-cancel</v-icon>
+                  ปิด
+                </v-btn>
+                <v-btn
+                  elevation="2"
+                  x-large
+                  color="success"
+                  text
+                  @click="editStatusDeposit()"
+                  :loading="loadingDeposit"
+                  :disabled="loadingDeposit"
+                >
+                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                  อัพเดท
+                </v-btn>
+                <v-btn
+                  v-if="statusDeposit === true"
+                  elevation="2"
+                  x-large
+                  color="error"
+                  text
+                  @click="cancelStatusDeposit()"
+                  :loading="loadingDeposit"
+                  :disabled="loadingDeposit"
+                >
+                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                  ยกเลิกสถานะเงินมัดจำ
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
       </div>
     </v-main>
   </div>
@@ -2977,10 +3132,19 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      panelDeposit: [],
+      dataDepositAdd: 'ไม่มี',
+      pictureUrlPreviewDeposit: null,
+      pictureUrlDeposit: null,
+      filesDeposit: null,
+      filesDepositAdd: null,
+      valid_deposit: true,
+      statusDeposit: false,
       flowSelect: '',
       dueDate: '',
       statusConfirmJob: false,
       filters: '',
+      loadingDeposit: false,
       loadingEdit: false,
       loadingAdd: false,
       loadingRefresh: false,
@@ -3049,6 +3213,7 @@ export default {
       dialogExport: false,
       dialogRemove: false,
       dialogError: false,
+      dialogDeposit: false,
       dataReady: false,
       menuDate: false,
       menuDateEdit: false,
@@ -3109,7 +3274,10 @@ export default {
         dueDate: '',
         shopId: this.$session.getAll().data.shopId,
         bookingFieldId: '',
-        radiosRemark: ''
+        radiosRemark: '',
+        depositStatus: '',
+        depositImge: '',
+        pictureUrlPreviewDeposit: ''
       },
       formEdit: {
         bookingId: null,
@@ -3231,7 +3399,8 @@ export default {
       dataTypeProcess1: '',
       dataTypeProcess2: '',
       dataTypeProcess3: '',
-      dataTypeProcess4: ''
+      dataTypeProcess4: '',
+      checkDepositAdd: ''
     }
   },
   beforeCreate () {
@@ -3273,6 +3442,102 @@ export default {
     })
   },
   methods: {
+    async editStatusDeposit () {
+      this.loadingDeposit = true
+      console.log('bookNo', this.bookNo)
+      if (this.filesDeposit) {
+        const _this = this
+        let params = new FormData()
+        params.append('file', this.filesDeposit)
+        await axios
+          .post(this.DNS_IP + `/file/upload/deposit`, params)
+          .then(function (response) {
+            _this.pictureUrlDeposit = response.data
+            console.log('url Pic', response.data)
+          })
+      } else {
+        this.pictureUrlDeposit = this.pictureUrlPreviewDeposit
+      }
+      let dt = {
+        depositStatus: 'True',
+        depositImge: this.pictureUrlDeposit,
+        LAST_USER: this.session.data.userName
+      }
+      await axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + "/Booking/edit/" + this.bookNo,
+          dt
+        )
+        .then(async response => {
+          this.$swal('เรียบร้อย', 'อัพเดทหลักฐานเงินมัดจำเรียบร้อย', 'success')
+          this.dialogDeposit = false
+          this.pictureUrlDeposit = null
+          this.filesDeposit = null
+          this.loadingDeposit = false
+          if (this.statusSearch === 'no') {
+            await this.getBookingList()
+          } else {
+            await this.searchAny()
+          }
+          // this.getTimesChange('update')
+          if (this.getSelectText) {
+            this.getSelect(this.getSelectText, this.getSelectCount)
+          }
+        })
+    },
+    async cancelStatusDeposit () {
+      this.loadingDeposit = true
+      console.log('bookNo', this.bookNo)
+      let dt = {
+        depositStatus: 'False',
+        LAST_USER: this.session.data.userName
+      }
+      await axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + "/Booking/edit/" + this.bookNo,
+          dt
+        )
+        .then(async response => {
+          this.$swal('เรียบร้อย', 'อัพเดทหลักฐานเงินมัดจำเรียบร้อย', 'success')
+          this.loadingDeposit = false
+          this.dialogDeposit = false
+          this.statusDeposit = false
+          if (this.statusSearch === 'no') {
+            await this.getBookingList()
+          } else {
+            await this.searchAny()
+          }
+          // this.getTimesChange('update')
+          if (this.getSelectText) {
+            this.getSelect(this.getSelectText, this.getSelectCount)
+          }
+        })
+    },
+    selectImgDeposit () {
+      if (this.filesDeposit) {
+        this.pictureUrlPreviewDeposit = URL.createObjectURL(
+          this.filesDeposit
+        )
+      } else {
+        this.pictureUrlPreviewDeposit = ''
+      }
+      // console.log(event)
+    },
+    selectImgAdd () {
+      if (this.filesDepositAdd) {
+        this.formAdd.pictureUrlPreviewDeposit = URL.createObjectURL(
+          this.filesDepositAdd
+        )
+      } else {
+        this.formAdd.pictureUrlPreviewDeposit = ''
+      }
+      // console.log(event)
+    },
+    setFlowAdd () {
+      this.checkDepositAdd = this.DataFlowName.filter(el => { return el.value === this.formAdd.flowId })[0].allData.checkDeposit || 'False'
+    },
     async getBookingFieldText () {
       if (JSON.parse(localStorage.getItem('sessionData')) === null) {
         await axios
@@ -3309,24 +3574,6 @@ export default {
       clearInterval(this.setTimerCalendar)
       this.setTimerCalendar = null
     },
-    // async getShowMap () {
-    //   await axios
-    //     .get(
-    //       this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
-    //     )
-    //     .then(async response1 => {
-    //       let rs = response1.data
-    //       if (rs.status !== false) {
-    //         if (rs[0].showMap === null || rs[0].showMap === '') {
-    //           this.showMap = 'ไม่แสดง'
-    //         } else {
-    //           this.showMap = rs[0].showMap
-    //         }
-    //       } else {
-    //         this.showMap = 'ไม่แสดง'
-    //       }
-    //     })
-    // },
     gotoMap () {
       window.open('https://www.google.com/maps/dir/?api=1&travelmode=driving&layer=traffic&destination=' + this.center.lat + ',' + this.center.lng, '_blank')
       // window.location.href = 'https://www.google.com/maps/dir/?api=1&travelmode=driving&layer=traffic&destination=' + this.center.lat + ',' + this.center.lng
@@ -3407,6 +3654,8 @@ export default {
                   s.remarkConfirm2 = (d.remarkConfirm2 === 'true' || d.remarkConfirm2 === 'True')
                   s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
                   s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
+                  s.depositStatus = d.depositStatus || 'False'
+                  s.depositImge = d.depositImge || ''
                   s.lineUserId = d.lineUserId
                   s.timeDueHtext = d.timeDueH + ':00'
                   s.timeDuetext = d.timeDue
@@ -4491,6 +4740,12 @@ export default {
             self.$refs.form_export.validate()
           })
           break
+        case 'DEPOSIT':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_deposit.validate()
+          })
+          break
 
         default:
           break
@@ -4856,22 +5111,37 @@ export default {
           this.dataItemSelect = []
         }
         console.log('dataSelect', this.dataItemSelect)
-        this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+        let checkDeposit = this.DataFlowName.filter(el => { return el.value === this.flowSelect })[0].allData.checkDeposit || 'False'
+        if (checkDeposit === 'True') {
+          this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
           // { text: 'Booking Id', value: 'bookNo' },
-          { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
-          // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-          { text: 'ชื่อบริการ', value: 'flowNameShow' },
-          { text: 'ชื่อลูกค้า', value: 'cusName' },
-          { text: 'เบอร์โทร', value: 'tel' },
-          { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
-          { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-          { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
-          { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
-          { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
-          // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
-          // { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
-          // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
-        ]
+            { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+            // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+            { text: 'ชื่อบริการ', value: 'flowNameShow' },
+            { text: 'ชื่อลูกค้า', value: 'cusName' },
+            { text: 'เบอร์โทร', value: 'tel' },
+            { text: 'เงินมัดจำ', value: 'action4', sortable: false, align: 'center' },
+            { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+            { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+            { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
+            { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
+            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
+          ]
+        } else {
+          this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+          // { text: 'Booking Id', value: 'bookNo' },
+            { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+            // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+            { text: 'ชื่อบริการ', value: 'flowNameShow' },
+            { text: 'ชื่อลูกค้า', value: 'cusName' },
+            { text: 'เบอร์โทร', value: 'tel' },
+            { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+            { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+            { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
+            { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
+            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
+          ]
+        }
       } else {
         var dataSelect = this.dataItem.filter(el => { return el.statusBt === text })
         // console.log('fieldflow', dataSelect)
@@ -4937,17 +5207,84 @@ export default {
             // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
           ]
         } else if (text === 'confirm') {
-          this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+          let checkDeposit = this.DataFlowName.filter(el => { return el.value === this.flowSelect })[0].allData.checkDeposit || 'False'
+          if (checkDeposit === 'True') {
+            this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+              // { text: 'Booking Id', value: 'bookNo' },
+              { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+              // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+              { text: 'ชื่อบริการ', value: 'flowNameShow' },
+              { text: 'ชื่อลูกค้า', value: 'cusName' },
+              { text: 'เบอร์โทร', value: 'tel' },
+              { text: 'เงินมัดจำ', value: 'action4', sortable: false, align: 'center' },
+              { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+              { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
+              { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
+              { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
+            ]
+          } else {
+            this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+              // { text: 'Booking Id', value: 'bookNo' },
+              { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+              // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+              { text: 'ชื่อบริการ', value: 'flowNameShow' },
+              { text: 'ชื่อลูกค้า', value: 'cusName' },
+              { text: 'เบอร์โทร', value: 'tel' },
+              { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+              { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
+              { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
+              { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
+            ]
+          }
+          // this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+          //   // { text: 'Booking Id', value: 'bookNo' },
+          //   { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+          //   // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+          //   { text: 'ชื่อบริการ', value: 'flowNameShow' },
+          //   { text: 'ชื่อลูกค้า', value: 'cusName' },
+          //   { text: 'เบอร์โทร', value: 'tel' },
+          //   { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+          //   { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+          //   { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
+          //   { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
+        } else if (text === 'wait') {
+          let checkDeposit = this.DataFlowName.filter(el => { return el.value === this.flowSelect })[0].allData.checkDeposit || 'False'
+          if (checkDeposit === 'True') {
+            this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
             // { text: 'Booking Id', value: 'bookNo' },
-            { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
-            // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'ชื่อบริการ', value: 'flowNameShow' },
-            { text: 'ชื่อลูกค้า', value: 'cusName' },
-            { text: 'เบอร์โทร', value: 'tel' },
-            { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
-            { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-            { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
-            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
+              { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+              // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+              { text: 'ชื่อบริการ', value: 'flowNameShow' },
+              { text: 'ชื่อลูกค้า', value: 'cusName' },
+              { text: 'เบอร์โทร', value: 'tel' },
+              { text: 'เงินมัดจำ', value: 'action4', sortable: false, align: 'center' },
+              { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+              { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
+          } else {
+            this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+            // { text: 'Booking Id', value: 'bookNo' },
+              { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+              // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+              { text: 'ชื่อบริการ', value: 'flowNameShow' },
+              { text: 'ชื่อลูกค้า', value: 'cusName' },
+              { text: 'เบอร์โทร', value: 'tel' },
+              { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+              { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
+          }
+          // this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+          //   // { text: 'Booking Id', value: 'bookNo' },
+          //   { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+          //   // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+          //   { text: 'ชื่อบริการ', value: 'flowNameShow' },
+          //   { text: 'ชื่อลูกค้า', value: 'cusName' },
+          //   { text: 'เบอร์โทร', value: 'tel' },
+          //   { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+          //   { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+          //   { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
         } else {
           this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
             // { text: 'Booking Id', value: 'bookNo' },
@@ -5134,165 +5471,6 @@ export default {
         console.log(err)
       }
     },
-    // async getTimesChange (text) {
-    //   try {
-    //     this.dataItemTimesChange = []
-    //     this.dataRemoveExport = []
-    //     // console.log('this.dataItem', this.dataItem.filter(el => { return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable }))
-    //     if (text === 'all') {
-    //       this.dataItemTimesChange = this.dataItem
-    //       this.dataRemoveExport = this.dataItemTimesChange.filter(el => { return el.statusBt === 'cancel' })
-    //       this.BookingDataListTimechange = this.BookingDataList
-    //     } else {
-    //       if (moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM') === this.dateStart) {
-    //         console.log('month old')
-    //         this.dataItemTimesChange = this.dataItem.filter(el => {
-    //           let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-    //           return dueDate === this.timeTable
-    //         // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-    //         }).sort((a, b) => {
-    //           if (a.timeDuetext < b.timeDuetext) return -1
-    //           return a.timeDuetext > b.timeDuetext ? 1 : 0
-    //         })
-    //         this.BookingDataListTimechange = this.BookingDataList
-    //       } else {
-    //         var data = this.dataItemCheck.filter(el => {
-    //           let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-    //           return dueDate === this.timeTable
-    //         // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-    //         })
-    //         console.log('data', data)
-    //         if (data.length === 0) {
-    //           if (this.masBranchID) {
-    //             this.masBranchID = this.masBranchID
-    //           } else {
-    //             if (this.branch.length > 0) {
-    //               this.masBranchID = this.branch[0].value
-    //             } else {
-    //               this.masBranchID = ''
-    //             }
-    //           }
-    //           this.dataItemCheck = []
-    //           var dataItems = []
-    //           if (this.timeTable !== '') {
-    //             var dateStart = moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM')
-    //             console.log('dateStartxx', dateStart)
-    //             await this.getBookingDataListTimechange(dateStart)
-
-    //             // var dataItemTimes = []
-    //             await axios
-    //               .get(
-    //               // eslint-disable-next-line quotes
-    //                 this.DNS_IP +
-    //                 '/booking_view/get?shopId=' +
-    //                 this.session.data.shopId +
-    //                 '&masBranchID=' +
-    //                 this.masBranchID +
-    //                 '&dueDate=' + moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM')
-    //               )
-    //               .then(async response => {
-    //                 console.log('getData', response.data)
-    //                 if (response.data.length > 0) {
-    //                   for (let i = 0; i < response.data.length; i++) {
-    //                     let d = response.data[i]
-    //                     let s = {}
-    //                     s.bookNo = d.bookNo
-    //                     s.flowId = d.flowId
-    //                     s.flowName = d.flowName
-    //                     s.dueDate = d.dueDate
-    //                     s.remarkRemove = d.remarkRemove
-    //                     s.userId = d.userId
-    //                     s.chkConfirm = false
-    //                     s.chkCancel = false
-    //                     s.jobNo = d.jobNo
-    //                     s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
-    //                     s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
-    //                     s.remarkRemove = d.remarkRemove || ''
-    //                     s.timeDueHtext = d.timeDueH + ':00'
-    //                     s.timeDuetext = d.timeDue
-    //                     if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
-    //                       s.chkConfirm = true
-    //                       s.chkCancel = false
-    //                     }
-    //                     if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
-    //                       s.chkConfirm = false
-    //                       s.chkCancel = true
-    //                     }
-    //                     s.statusBt = d.statusBt || 'wait'
-    //                     switch (d.statusBt) {
-    //                       case 'confirm':
-    //                         s.statusBtText = 'ยืนยันแล้ว'
-    //                         break
-    //                       case 'cancel':
-    //                         s.statusBtText = 'ยกเลิก'
-    //                         break
-    //                       case 'confirmJob':
-    //                         s.statusBtText = 'รับรถแล้ว'
-    //                         break
-    //                       default:
-    //                         s.statusBtText = 'รายการนัดหมายใหม่'
-    //                         break
-    //                     }
-    //                     // let dataBookingData = []
-    //                     // await axios
-    //                     //   .get(
-    //                     //     this.DNS_IP + `/BookingData/getView?bookNo=${d.bookNo}`
-    //                     //   )
-    //                     //   .then(async responses => {
-    //                     //     dataBookingData = responses.data
-    //                     //   })
-    //                     s.cusName = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'ชื่อ')
-    //                     s.cusReg = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'เลขทะเบียน')
-    //                     s.tel = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'เบอร์โทร')
-    //                     s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
-    //                     s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
-    //                     s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
-    //                     // var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
-    //                     // if (chkTime.length === 0) {
-    //                     //   dataItemTimes.push(s)
-    //                     // }
-    //                     dataItems.push(s)
-    //                   }
-    //                 }
-    //                 if (dataItems.length === 0 || dataItems.status === false) {
-    //                   this.dataItemCheck = []
-    //                 // this.dataItemTime = []
-    //                 // this.dataReady = true
-    //                 // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
-    //                 } else {
-    //                 // console.log('month new if')
-    //                   console.log('month new if', dataItems)
-    //                   this.dataItemCheck = dataItems
-    //                   this.dataItemTimesChange = this.dataItemCheck.filter(el => {
-    //                     let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-    //                     return dueDate === this.timeTable
-    //                   // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-    //                   }).sort((a, b) => {
-    //                     if (a.timeDuetext < b.timeDuetext) return -1
-    //                     return a.timeDuetext > b.timeDuetext ? 1 : 0
-    //                   })
-    //                 }
-    //               })
-    //           }
-    //         } else {
-    //           console.log('month new else')
-    //           this.dataItemTimesChange = this.dataItemCheck.filter(el => {
-    //             let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-    //             return dueDate === this.timeTable
-    //             // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-    //           }).sort((a, b) => {
-    //             if (a.timeDuetext < b.timeDuetext) return -1
-    //             return a.timeDuetext > b.timeDuetext ? 1 : 0
-    //           })
-    //         }
-    //       }
-    //       this.dataRemoveExport = this.dataItemTimesChange.filter(el => { return el.statusBt === 'cancel' })
-    //       console.log('this.dataRemoveExport', this.dataRemoveExport)
-    //     }
-    //   } catch (err) {
-    //     console.log(err)
-    //   }
-    // },
     async getBookingDataListTimechange (dateStart) {
       this.BookingDataListTimechange = []
       if (this.masBranchID) {
@@ -5449,6 +5627,8 @@ export default {
                 s.remarkConfirm2 = (d.remarkConfirm2 === 'true' || d.remarkConfirm2 === 'True')
                 s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
                 s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
+                s.depositStatus = d.depositStatus || 'False'
+                s.depositImge = d.depositImge || ''
                 s.lineUserId = d.lineUserId
                 s.timeDueHtext = d.timeDueH + ':00'
                 s.timeDuetext = d.timeDue
@@ -5568,6 +5748,8 @@ export default {
                 s.remarkConfirm2 = (d.remarkConfirm2 === 'true' || d.remarkConfirm2 === 'True')
                 s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
                 s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
+                s.depositStatus = d.depositStatus || 'False'
+                s.depositImge = d.depositImge || ''
                 s.lineUserId = d.lineUserId
                 s.timeDueHtext = d.timeDueH + ':00'
                 s.timeDuetext = d.timeDue
@@ -5827,7 +6009,7 @@ export default {
       this.validate('ADD')
       setTimeout(() => this.addDataSubmit(), 500)
     },
-    addDataInsert () {
+    async addDataInsert () {
       // this.swalConfig.title = 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?'
       // this.$swal(this.swalConfig)
       //   .then(async result => {
@@ -5852,6 +6034,30 @@ export default {
         let rs = this.fieldNameItem
         let Add = []
         let fielditem = this.fieldNameItem
+        if (this.checkDepositAdd === 'False') {
+          this.formAdd.depositStatus = ''
+          this.formAdd.depositImge = ''
+        } else {
+          if (this.dataDepositAdd === 'มี') {
+            this.formAdd.depositStatus = 'True'
+            if (this.filesDepositAdd) {
+              const _this = this
+              let params = new FormData()
+              params.append('file', this.filesDepositAdd)
+              await axios
+                .post(this.DNS_IP + `/file/upload/deposit`, params)
+                .then(function (response) {
+                  _this.formAdd.depositImge = response.data
+                  console.log('url Pic', response.data)
+                })
+            } else {
+              this.formAdd.depositImge = this.pictureUrlPreviewDeposit
+            }
+          } else {
+            this.formAdd.depositStatus = 'False'
+            this.formAdd.depositImge = ''
+          }
+        }
         console.log('this.fieldNameItem', this.fieldNameItem)
         for (let i = 0; i < rs.length; i++) {
           let d = rs[i]
@@ -5871,6 +6077,8 @@ export default {
             update.sourceLink = 'direct'
             update.fastTrack = fastTrack
             update.extraJob = extraJob
+            update.depositStatus = this.formAdd.depositStatus
+            update.depositImge = this.formAdd.depositImge
             update.empSelect = this.empSelectAdd
             update.adminLogin = this.session.data.userName
             Add.push(update)
@@ -5891,6 +6099,8 @@ export default {
                 update.pageName = 'BookingList'
                 update.fastTrack = fastTrack
                 update.extraJob = extraJob
+                update.depositStatus = this.formAdd.depositStatus
+                update.depositImge = this.formAdd.depositImge
                 update.empSelect = this.empSelectAdd
                 update.adminLogin = this.session.data.userName
                 Add.push(update)
@@ -5911,6 +6121,8 @@ export default {
                 update.pageName = 'BookingList'
                 update.fastTrack = fastTrack
                 update.extraJob = extraJob
+                update.depositStatus = this.formAdd.depositStatus
+                update.depositImge = this.formAdd.depositImge
                 update.empSelect = this.empSelectAdd
                 update.adminLogin = this.session.data.userName
                 Add.push(update)
@@ -5923,7 +6135,12 @@ export default {
           .post(this.DNS_IP + '/Booking/add', Add)
           .then(async response => {
           // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-            await this.confirmChkAdd(response.data)
+            if (this.dataDepositAdd === 'มี') {
+              await this.confirmChkAdd(response.data)
+            } else {
+              this.clearDataAdd()
+              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+            }
           // console.log('addDataGlobal DNS_IP + /job/add', response)
           })
           .catch(error => {
@@ -6007,6 +6224,11 @@ export default {
       this.empSelectAdd = ''
       this.remark = ''
       this.formAdd.radiosRemark = ''
+      this.formAdd.depositStatus = ''
+      this.formAdd.depositImge = ''
+      this.formAdd.pictureUrlPreviewDeposit = ''
+      this.filesDepositAdd = null
+      this.dataDepositAdd = 'ไม่มี'
       this.DataflowId = ''
       this.formAdd.bookingId = null
       this.formAdd.fieldId = ''
