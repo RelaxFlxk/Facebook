@@ -209,6 +209,11 @@ export default new Router({
     component: Master.SettingLineNotify
   },
   {
+    path: '/Master/SettingTag',
+    name: 'SettingTag',
+    component: Master.SettingTag
+  },
+  {
     path: '/UpdateNotify',
     name: 'UpdateNotify',
     component: Master.UpdateNotify

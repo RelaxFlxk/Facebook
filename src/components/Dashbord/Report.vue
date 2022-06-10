@@ -45,7 +45,7 @@
           <v-row>
             <v-col :cols="resCol">
               <h4 style="margin-bottom: 0px;">Performance</h4>
-                <h6 >งานทั้งหมด / งานที่กำลังซ่อม / งานที่ซ่อมเสร็จแล้ว</h6>
+                <h6 >{{titleText[0] + ' / ' + titleText[1] + ' / ' + titleText[2]}}</h6>
             </v-col>
           </v-row>
           <v-row  v-if="chartBranch">
@@ -70,7 +70,7 @@
                           align="center"
                           class="justify-center"
                         >
-                      <h5>จำนวนรถทั้งหมด</h5>
+                      <h5>{{titleText[0]}}</h5>
                         </v-row>
                      </v-card-text>
                    </v-col>
@@ -98,7 +98,7 @@
                           align="center"
                           class="justify-center"
                         >
-                      <h5>จำนวนรถที่ซ่อมอยู่</h5>
+                      <h5>{{titleText[1]}}</h5>
                         </v-row>
                      </v-card-text>
                    </v-col>
@@ -126,7 +126,7 @@
                           align="center"
                           class="justify-center"
                         >
-                      <h5>จำนวนรถที่ซ่อมเสร็จ</h5>
+                      <h5>{{titleText[2]}}</h5>
                         </v-row>
                      </v-card-text>
                    </v-col>
@@ -143,7 +143,7 @@
           </v-col>
           <v-col cols="8" lg="8" md="12" sm="12" xs="12">
             <v-card class="pa-2" >
-              <h3 class="text-center">รายละเอียดงานซ่อม</h3>
+              <h3 class="text-center">รายละเอียดงาน</h3>
               <v-card height="4"  :color="TBcolor"></v-card>
               <v-data-table
               :headers="headers"
@@ -234,14 +234,7 @@ export default {
       SelectFlowName: [],
       center: {},
       session: this.$session.getAll(),
-      headers: [
-        { text: 'ชื่อ', value: 'Name' },
-        { text: 'เลขทะเบียน', value: 'carNo' },
-        { text: 'วันที่รับรถ', value: 'CREATE_DATE' },
-        { text: 'วันที่ส่งรถ', value: 'endDate' },
-        { text: 'ประเภทบริการ', value: 'flowName' },
-        { text: 'จำนวนวันที่ซ่อม', value: 'totalDateDiff' }
-      ],
+      headers: [],
       desserts: [],
       dessertsItem: [],
       // Menu Config
@@ -324,16 +317,41 @@ export default {
         'rgb(255,212,91)',
         'rgb(238,108,77)',
         'rgb(41,50,65)'
-      ]
+      ],
+      titleText: []
     }
   },
   async mounted () {
     this.dataReady = false
+    await this.Ifshopcategory()
     await this.getDataBranch()
     await this.getFlow()
     await this.getBranchCard()
   },
   methods: {
+    async Ifshopcategory () {
+      console.log('this.session.data.category', this.session.data.category)
+      if (this.session.data.category === 'ธุรกิจรถยนต์') {
+        this.titleText = ['จำนวนรถทั้งหมด', 'จำนวนรถที่ซ่อมอยู่', 'จำนวนรถที่ซ่อมเสร็จ']
+        this.headers = [
+          { text: 'ชื่อ', value: 'Name' },
+          { text: 'เลขทะเบียน', value: 'carNo' },
+          { text: 'วันที่รับรถ', value: 'CREATE_DATE' },
+          { text: 'วันที่ส่งรถ', value: 'endDate' },
+          { text: 'ประเภทบริการ', value: 'flowName' },
+          { text: 'จำนวนวันที่ซ่อม', value: 'totalDateDiff' }
+        ]
+      } else {
+        this.titleText = ['ลูกค้าทังหมด', 'จำนวนลูกค้าในศูนย์บริการ', ' จำนวนลูกค้าที่ใช้บริการเสร็จแล้ว']
+        this.headers = [
+          { text: 'ชื่อ', value: 'Name' },
+          { text: 'เบอร์โทร', value: 'phoneNumber' },
+          { text: 'วันที่เริ่มงาน', value: 'CREATE_DATE' },
+          { text: 'วันที่เสร็จงาน', value: 'endDate' },
+          { text: 'ประเภทบริการ', value: 'flowName' }
+        ]
+      }
+    },
     async getBranchCard (ItemmasBranchName) {
       // get ข้อมูล Chart แต่ละ Flow
       await this.getBranch()
@@ -479,6 +497,7 @@ export default {
         let dt = {}
         dt.Name = dataitem.filter(item => item.jobId === element.jobId).filter(item2 => item2.fieldName === 'ชื่อ').map(row => row.fieldValue)[0]
         dt.carNo = dataitem.filter(item => item.jobId === element.jobId).filter(item2 => item2.fieldName === 'เลขทะเบียน').map(row => row.fieldValue)[0]
+        dt.phoneNumber = dataitem.filter(item => item.jobId === element.jobId).filter(item2 => item2.fieldName === 'เบอร์โทร').map(row => row.fieldValue)[0]
         dt.endDate = this.format_dateNotime(dataitem.filter(item => item.jobId === element.jobId).map(row => row.endDate)[0])
         dt.flowName = dataitem.filter(item => item.jobId === element.jobId).map(row => row.flowName)[0]
         dt.dateTotal = dataitem.filter(item => item.jobId === element.jobId).map(row => row.totalDateDiff)[0]

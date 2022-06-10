@@ -43,9 +43,10 @@
        </v-col>
        <v-col cols="8" lg="8" md="12" sm="12" xs="12">
             <v-card elevation="8" class="pa-4" v-if="chartBranch">
-              <h3 class="text-center">รายละเอียดงานซ่อม</h3>
+              <h3 class="text-center">รายละเอียดงาน</h3>
               <v-card height="4"  :color="TBcolor"></v-card>
               <v-data-table
+              v-if="headers"
               :headers="headers"
               :items="desserts"
               :items-per-page="4"
@@ -84,16 +85,7 @@ export default {
       session: this.$session.getAll(),
       shopId: this.$session.getAll().data.shopId,
       chartBranch: null,
-      headers: [
-        { text: 'ชื่อ', value: 'Name' },
-        { text: 'เลขทะเบียน', value: 'carNo' },
-        { text: 'วันที่รับรถ', value: 'CREATE_DATE' },
-        { text: 'วันที่ส่งรถ', value: 'endDate' },
-        { text: 'ประเภทบริการ', value: 'flowName' },
-        { text: 'จำนวนวันที่ซ่อม', value: 'totalDateDiff' },
-        { text: 'สรุปค่าใช้จ่าย', value: 'totalPrice' },
-        { text: 'ผู้รับผิดชอบ', value: 'empStep' }
-      ],
+      headers: [],
       desserts: [],
       dessertsItem: [],
       startDate: '',
@@ -105,6 +97,30 @@ export default {
     // await this.getBranch()
   },
   methods: {
+    async Ifshopcategory () {
+      if (this.session.data.category === 'ธุรกิจรถยนต์') {
+        this.headers = [
+          { text: 'ชื่อ', value: 'Name' },
+          { text: 'เลขทะเบียน', value: 'carNo' },
+          { text: 'วันที่รับรถ', value: 'CREATE_DATE' },
+          { text: 'วันที่ส่งรถ', value: 'endDate' },
+          { text: 'ประเภทบริการ', value: 'flowName' },
+          { text: 'จำนวนวันที่ซ่อม', value: 'totalDateDiff' },
+          { text: 'สรุปค่าใช้จ่าย', value: 'totalPrice' },
+          { text: 'ผู้รับผิดชอบ', value: 'empStep' }
+        ]
+      } else {
+        this.headers = [
+          { text: 'ชื่อ', value: 'Name' },
+          { text: 'เบอร์โทร', value: 'phoneNumber' },
+          { text: 'วันที่เริ่มงาน', value: 'CREATE_DATE' },
+          { text: 'วันที่เสร็จงาน', value: 'endDate' },
+          { text: 'ประเภทบริการ', value: 'flowName' },
+          { text: 'สรุปค่าใช้จ่าย', value: 'totalPrice' },
+          { text: 'ผู้รับผิดชอบ', value: 'empStep' }
+        ]
+      }
+    },
     async getCloseJob (masBranchName, dateRange) {
       this.chartBranch = null
       this.startDate = this.momenDate_1(dateRange.startDate)
@@ -140,6 +156,7 @@ export default {
           }
         }
         this.dessertsItem = rs
+        this.Ifshopcategory()
         this.genDataTable()
         // console.log('rs', rs)
         this.genChart(JobGood, JobLate, TotalJob)
@@ -186,6 +203,7 @@ export default {
         let dt = {}
         dt.Name = dataitem.filter(item => item.jobId === element.jobId).filter(item2 => item2.fieldName === 'ชื่อ').map(row => row.fieldValue)[0]
         dt.carNo = dataitem.filter(item => item.jobId === element.jobId).filter(item2 => item2.fieldName === 'เลขทะเบียน').map(row => row.fieldValue)[0]
+        dt.phoneNumber = dataitem.filter(item => item.jobId === element.jobId).filter(item2 => item2.fieldName === 'เบอร์โทร').map(row => row.fieldValue)[0]
         dt.endDate = this.format_dateNotime(dataitem.filter(item => item.jobId === element.jobId).map(row => row.endDate)[0])
         dt.flowName = dataitem.filter(item => item.jobId === element.jobId).map(row => row.flowName)[0]
         dt.dateTotal = dataitem.filter(item => item.jobId === element.jobId).map(row => row.totalDateDiff)[0]

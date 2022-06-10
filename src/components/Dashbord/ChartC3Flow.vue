@@ -104,15 +104,7 @@ export default {
       chartItem: [],
       chartBranch: null,
       chartName: [],
-      headers: [
-        { text: 'ชื่อ', value: 'Name' },
-        { text: 'เลขทะเบียน', value: 'carNo' },
-        { text: 'วันที่รับรถ', value: 'CREATE_DATE' },
-        { text: 'วันที่ส่งรถ', value: 'endDate' },
-        { text: 'ประเภทบริการ', value: 'flowName' },
-        { text: 'จำนวนวันที่ซ่อม', value: 'totalDateDiff' },
-        { text: 'ผู้รับผิดชอบ', value: 'empStep' }
-      ],
+      headers: [],
       desserts: [],
       dessertsItem: [],
       dialog: false,
@@ -124,6 +116,28 @@ export default {
     // await this.getBranch()
   },
   methods: {
+    async Ifshopcategory () {
+      if (this.session.data.category === 'ธุรกิจรถยนต์') {
+        this.headers = [
+          { text: 'ชื่อ', value: 'Name' },
+          { text: 'เลขทะเบียน', value: 'carNo' },
+          { text: 'วันที่รับรถ', value: 'CREATE_DATE' },
+          { text: 'วันที่ส่งรถ', value: 'endDate' },
+          { text: 'ประเภทบริการ', value: 'flowName' },
+          { text: 'จำนวนวันที่ซ่อม', value: 'totalDateDiff' },
+          { text: 'ผู้รับผิดชอบ', value: 'empStep' }
+        ]
+      } else {
+        this.headers = [
+          { text: 'ชื่อ', value: 'Name' },
+          { text: 'เบอร์โทร', value: 'phoneNumber' },
+          { text: 'วันที่เริ่มงาน', value: 'CREATE_DATE' },
+          { text: 'วันที่เสร็จงาน', value: 'endDate' },
+          { text: 'ประเภทบริการ', value: 'flowName' },
+          { text: 'ผู้รับผิดชอบ', value: 'empStep' }
+        ]
+      }
+    },
     async getFlow (masBranchName, dateRange) {
       await this.getDataflow()
       this.startDate = this.momenDate_1(dateRange.startDate)
@@ -136,6 +150,7 @@ export default {
             // console.log('rs', rs)
             if (rs.length > 0) {
               this.genChart(rs)
+              this.Ifshopcategory()
             }
           })
           .catch((error) => {
@@ -149,6 +164,7 @@ export default {
             // console.log('rs', rs)
             if (rs.length > 0) {
               this.genChart(rs)
+              this.Ifshopcategory()
             }
           })
           .catch((error) => {
@@ -272,6 +288,7 @@ export default {
         let dt = {}
         dt.Name = dataitem.filter(item => item.jobId === element.jobId).filter(item2 => item2.fieldName === 'ชื่อ').map(row => row.fieldValue)[0]
         dt.carNo = dataitem.filter(item => item.jobId === element.jobId).filter(item2 => item2.fieldName === 'เลขทะเบียน').map(row => row.fieldValue)[0]
+        dt.phoneNumber = dataitem.filter(item => item.jobId === element.jobId).filter(item2 => item2.fieldName === 'เบอร์โทร').map(row => row.fieldValue)[0]
         dt.endDate = this.format_dateNotime(dataitem.filter(item => item.jobId === element.jobId).map(row => row.endDate)[0])
         dt.flowName = dataitem.filter(item => item.jobId === element.jobId).map(row => row.flowName)[0]
         dt.dateTotal = dataitem.filter(item => item.jobId === element.jobId).map(row => row.totalDateDiff)[0]
