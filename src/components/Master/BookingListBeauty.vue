@@ -1962,16 +1962,34 @@
                   </template>
                   <template v-slot:[`item.cusName`]="{ item }">
                     <!-- <p>{{ item.cusName }}</p> -->
-                    <v-chip
-                      class="ma-2"
-                      close
-                      outlined
-                      color="teal"
-                      close-icon="mdi-tag-plus"
-                      @click:close="close"
-                    >
-                      {{ item.cusName }}
-                    </v-chip>
+                    <v-row v-if="item.depositStatus === 'True'">
+                      <v-col class="pa-0" cols="12">
+                        <v-chip
+                          class="ma-2"
+                          close
+                          outlined
+                          color="teal"
+                          close-icon="mdi-tag-plus"
+                          @click:close="getTagData(), dialogTag = true, tagData = item.tagData, bookNo = item.bookNo"
+                        >
+                          {{ item.cusName }}
+                        </v-chip>
+                      </v-col>
+                      <template  v-if="item.tagData.length > 0">
+                        <v-col class="pa-0" cols="12" v-for="(item , index) in item.tagDataShow" :key="index">
+                          <v-chip
+                            class="ma-2"
+                            color="indigo"
+                            text-color="white"
+                          >
+                            <v-avatar left>
+                              <v-icon>mdi-tag-multiple</v-icon>
+                            </v-avatar>
+                            {{item.text}}
+                          </v-chip>
+                        </v-col>
+                      </template>
+                    </v-row>
                   </template>
                   <template v-slot:[`item.remark`]="{ item }">
                     <a v-if="item.remark !== ''" @click.stop="openRemark(item)" style="cursor:hand"><u>{{ item.remark }}</u></a>
@@ -2932,6 +2950,66 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
+          <v-dialog v-model="dialogTag" persistent max-width="40%">
+            <v-card>
+              <v-card-title>
+                <span class="headline">เพิ่ม Tag</span>
+              </v-card-title>
+              <v-card-text>
+                <v-container>
+                  <v-autocomplete
+                    v-model="tagData"
+                    :items="tagItem"
+                    outlined
+                    dense
+                    chips
+                    small-chips
+                    label="Outlined"
+                    multiple
+                  ></v-autocomplete>
+                </v-container>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  elevation="2"
+                  x-large
+                  color="red darken-1"
+                  text
+                  @click="dialogTag = false"
+                  :loading="loadingTag"
+                  :disabled="loadingTag"
+                >
+                  <v-icon left> mdi-cancel</v-icon>
+                  ปิด
+                </v-btn>
+                <v-btn
+                  elevation="2"
+                  x-large
+                  color="wait"
+                  text
+                  @click="editTagData()"
+                  :loading="loadingTag"
+                  :disabled="loadingTag"
+                >
+                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                  อัพเดท
+                </v-btn>
+                <v-btn
+                  elevation="2"
+                  x-large
+                  color="success"
+                  text
+                  @click="dialogAddTag = true"
+                  :loading="loadingTag"
+                  :disabled="loadingTag"
+                >
+                  <v-icon left>mdi-tag-plus</v-icon>
+                  เพิ่ม Tag
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
           <v-dialog v-model="dialogDeposit" persistent max-width="80%">
             <v-card>
               <v-card-title>
@@ -3010,6 +3088,47 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
+          <v-dialog
+          v-model="dialogAddTag"
+          persistent
+          max-width="30%"
+        >
+          <v-card class="pa-10" min-height="400">
+            <v-row class="pa-16">
+              <v-col class="pa-0" cols="12">
+                <!-- <p>{{itemBranch}}</p> -->
+                <v-text-field
+                  v-model="tagName"
+                  label="กรอกข้อมูล Tag"
+                  outlined
+                ></v-text-field>
+              </v-col>
+              <!-- <v-col class="pa-0" cols="6" md='6'>
+                <v-container fluid>
+                    <p class="text-center">การBooking</p>
+                    <v-checkbox
+                    v-model="BookingSend"
+                    label="Booking"
+                  ></v-checkbox>
+                </v-container>
+              </v-col> -->
+            </v-row>
+            <div class="text-center">
+              <v-btn
+                small class="ma-2" color="#173053" dark
+                @click="AddDataTag()"
+              >
+                บันทึก
+              </v-btn>
+              <v-btn
+                small class="ma-2" color="#173053" outlined dark
+                @click="dialogAddTag = false , tagName = ''"
+              >
+                ปิด
+              </v-btn>
+            </div>
+          </v-card>
+        </v-dialog>
       </div>
     </v-main>
   </div>
@@ -3145,6 +3264,10 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      tagName: '',
+      dialogAddTag: false,
+      tagItem: [],
+      tagData: [],
       panelDeposit: [],
       dataDepositAdd: 'ไม่มี',
       pictureUrlPreviewDeposit: null,
@@ -3157,6 +3280,7 @@ export default {
       dueDate: '',
       statusConfirmJob: false,
       filters: '',
+      loadingTag: false,
       loadingDeposit: false,
       loadingEdit: false,
       loadingAdd: false,
@@ -3223,6 +3347,7 @@ export default {
       dataEditReady: true,
       dataConfirmReady: true,
       dataCancelReady: true,
+      dialogTag: false,
       dialogExport: false,
       dialogRemove: false,
       dialogError: false,
@@ -3455,6 +3580,75 @@ export default {
     })
   },
   methods: {
+    async AddDataTag () {
+      await axios
+        .get(this.DNS_IP + '/Mas_Tag/get?shopId=' + this.session.data.shopId + '&tagName=' + this.tagName).then((response) => {
+          let rs = response.data
+          console.log('rs', rs)
+          if (rs.status === false) {
+            this.$swal({
+              title: 'ต้องการ เพิ่มข้อมูล ใช่หรือไม่?',
+              type: 'question',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#b3b1ab',
+              confirmButtonText: 'ใช่',
+              cancelButtonText: 'ไม่'
+            }).then(async () => {
+              let dt = {
+                tagName: this.tagName,
+                CREATE_USER: this.$session.getAll().data.USER_ROLE,
+                LAST_USER: this.$session.getAll().data.USER_ROLE,
+                shopId: this.$session.getAll().data.shopId
+              }
+              await axios
+                .post(this.DNS_IP + '/Mas_Tag/add', dt)
+                .then(async (response) => {
+                  this.$swal('บันทึกข้อมูลเรียบร้อย', ' ', 'success')
+                  this.dialogAddTag = false
+                  this.getTagData()
+                })
+              // eslint-disable-next-line handle-callback-err
+                .catch((error) => {
+                  console.log('error function addData : ', error)
+                })
+            })
+          } else {
+            this.$swal('มีข้อมูลอยู่แล้ว', ' ', 'error')
+          }
+        }).catch((error) => {
+          console.log('error function addData : ', error)
+        })
+    },
+    async getTagData () {
+      this.tagItem = await this.getDataFromAPI('/Mas_Tag/get', 'tagId', 'tagName', '')
+    },
+    async editTagData () {
+      console.log('tagData', this.tagData)
+      let dt = {
+        tagData: JSON.stringify(this.tagData),
+        LAST_USER: this.session.data.userName
+      }
+      await axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + "/Booking/edit/" + this.bookNo,
+          dt
+        )
+        .then(async response => {
+          this.$swal('เรียบร้อย', 'อัพเดท Tag เรียบร้อย', 'success')
+          this.dialogTag = false
+          if (this.statusSearch === 'no') {
+            await this.getBookingList()
+          } else {
+            await this.searchAny()
+          }
+          // this.getTimesChange('update')
+          if (this.getSelectText) {
+            this.getSelect(this.getSelectText, this.getSelectCount)
+          }
+        })
+    },
     async editStatusDeposit () {
       this.loadingDeposit = true
       console.log('bookNo', this.bookNo)
@@ -3675,6 +3869,21 @@ export default {
                   s.address = d.address
                   s.addressLatLong = d.addressLatLong
                   s.countChangeTime = d.countChangeTime || 0
+                  s.tagData = JSON.parse(d.tagData) || []
+                  if (s.tagData.length > 0) {
+                    s.tagDataShow = []
+                    let tagData = s.tagData
+                    for (let i = 0; i < tagData.length; i++) {
+                      let d = tagData[i]
+                      let x = {}
+                      let checkTagItem = this.tagItem.filter(el => { return el.value === d })
+                      if (checkTagItem.length > 0) {
+                        x.text = checkTagItem[0].text
+                        x.value = checkTagItem[0].value
+                        s.tagDataShow.push(x)
+                      }
+                    }
+                  }
                   this.countAll = this.countAll + 1
                   if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
                     s.chkConfirm = true
@@ -5547,6 +5756,7 @@ export default {
       console.log('this.BookingDataList1', this.BookingDataList)
     },
     async getBookingList () {
+      await this.getTagData()
       clearInterval(this.setTimerCalendar)
       this.setTimerCalendar = null
 
@@ -5646,6 +5856,21 @@ export default {
                 s.timeDueHtext = d.timeDueH + ':00'
                 s.timeDuetext = d.timeDue
                 s.countChangeTime = d.countChangeTime || 0
+                s.tagData = JSON.parse(d.tagData) || []
+                if (s.tagData.length > 0) {
+                  s.tagDataShow = []
+                  let tagData = s.tagData
+                  for (let i = 0; i < tagData.length; i++) {
+                    let d = tagData[i]
+                    let x = {}
+                    let checkTagItem = this.tagItem.filter(el => { return el.value === d })
+                    if (checkTagItem.length > 0) {
+                      x.text = checkTagItem[0].text
+                      x.value = checkTagItem[0].value
+                      s.tagDataShow.push(x)
+                    }
+                  }
+                }
                 this.countAll = this.countAll + 1
                 if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
                   s.chkConfirm = true
@@ -5767,6 +5992,21 @@ export default {
                 s.timeDueHtext = d.timeDueH + ':00'
                 s.timeDuetext = d.timeDue
                 s.countChangeTime = d.countChangeTime || 0
+                s.tagData = JSON.parse(d.tagData) || []
+                if (s.tagData.length > 0) {
+                  s.tagDataShow = []
+                  let tagData = s.tagData
+                  for (let i = 0; i < tagData.length; i++) {
+                    let d = tagData[i]
+                    let x = {}
+                    let checkTagItem = this.tagItem.filter(el => { return el.value === d })
+                    if (checkTagItem.length > 0) {
+                      x.text = checkTagItem[0].text
+                      x.value = checkTagItem[0].value
+                      s.tagDataShow.push(x)
+                    }
+                  }
+                }
                 this.countAll = this.countAll + 1
                 if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
                   s.chkConfirm = true
