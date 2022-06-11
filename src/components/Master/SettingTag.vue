@@ -278,6 +278,7 @@ export default {
                   this.$swal('บันทึกข้อมูลเรียบร้อย', ' ', 'success')
                   this.dialogAdd = false
                   this.getMasTag()
+                  this.formAdd.tagName = ''
                 })
               // eslint-disable-next-line handle-callback-err
                 .catch((error) => {
