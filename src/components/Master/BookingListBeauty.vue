@@ -1960,6 +1960,19 @@
                   <template v-slot:[`item.dueDate`]="{ item }">
                     {{ (item.dueDate) }}
                   </template>
+                  <template v-slot:[`item.cusName`]="{ item }">
+                    <!-- <p>{{ item.cusName }}</p> -->
+                    <v-chip
+                      class="ma-2"
+                      close
+                      outlined
+                      color="teal"
+                      close-icon="mdi-tag-plus"
+                      @click:close="close"
+                    >
+                      {{ item.cusName }}
+                    </v-chip>
+                  </template>
                   <template v-slot:[`item.remark`]="{ item }">
                     <a v-if="item.remark !== ''" @click.stop="openRemark(item)" style="cursor:hand"><u>{{ item.remark }}</u></a>
                     <v-btn

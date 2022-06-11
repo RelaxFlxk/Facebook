@@ -259,36 +259,33 @@ export default {
     async AddData () {
       console.log('add', this.formAdd)
       await axios
-        .get(this.DNS_IP + '/Mas_Tag/get?shopId=' + this.shopId).then((response) => {
+        .get(this.DNS_IP + '/Mas_Tag/get?shopId=' + this.shopId + '&tagName=' + this.formAdd.tagName).then((response) => {
           let rs = response.data
           console.log('rs', rs)
-          if (rs.length > 0) {
-            console.log('test', rs.filter((item) => item.tagName === this.formAdd.tagName))
-            if (rs.filter((item) => item.tagName === this.formAdd.tagName).length > 0) {
-              this.$swal('มีข้อมูลอยู่แล้ว', ' ', 'error')
-            } else {
-              this.$swal({
-                title: 'ต้องการ เพิ่มข้อมูล ใช่หรือไม่?',
-                type: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#b3b1ab',
-                confirmButtonText: 'ใช่',
-                cancelButtonText: 'ไม่'
-              }).then(async () => {
-                await axios
-                  .post(this.DNS_IP + '/Mas_Tag/add', this.formAdd)
-                  .then(async (response) => {
-                    this.$swal('บันทึกข้อมูลเรียบร้อย', ' ', 'success')
-                    this.dialogAdd = false
-                    this.getMasTag()
-                  })
-                  // eslint-disable-next-line handle-callback-err
-                  .catch((error) => {
-                    console.log('error function addData : ', error)
-                  })
-              })
-            }
+          if (rs.status === false) {
+            this.$swal({
+              title: 'ต้องการ เพิ่มข้อมูล ใช่หรือไม่?',
+              type: 'question',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#b3b1ab',
+              confirmButtonText: 'ใช่',
+              cancelButtonText: 'ไม่'
+            }).then(async () => {
+              await axios
+                .post(this.DNS_IP + '/Mas_Tag/add', this.formAdd)
+                .then(async (response) => {
+                  this.$swal('บันทึกข้อมูลเรียบร้อย', ' ', 'success')
+                  this.dialogAdd = false
+                  this.getMasTag()
+                })
+              // eslint-disable-next-line handle-callback-err
+                .catch((error) => {
+                  console.log('error function addData : ', error)
+                })
+            })
+          } else {
+            this.$swal('มีข้อมูลอยู่แล้ว', ' ', 'error')
           }
         }).catch((error) => {
           console.log('error function addData : ', error)
