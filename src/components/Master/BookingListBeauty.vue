@@ -1961,8 +1961,7 @@
                     {{ (item.dueDate) }}
                   </template>
                   <template v-slot:[`item.cusName`]="{ item }">
-                    <!-- <p>{{ item.cusName }}</p> -->
-                    <v-row v-if="item.depositStatus === 'True'">
+                    <v-row>
                       <v-col cols="12">
                         <v-row>
                           <v-col col="auto">
@@ -1982,16 +1981,6 @@
                             </v-btn>
                           </v-col>
                         </v-row>
-                        <!-- <v-chip
-                          class="ma-2"
-                          close
-                          outlined
-                          color="teal"
-                          close-icon="mdi-tag-plus"
-                          @click:close="getTagData(), dialogTag = true, tagData = item.tagData, bookNo = item.bookNo"
-                        >
-                          {{ item.cusName }}
-                        </v-chip> -->
                       </v-col>
                       <v-col cols="12" class="pt-0"  v-if="item.tagData.length > 0">
                         <v-chip-group
@@ -2008,18 +1997,6 @@
                             {{ item.text }}
                           </v-chip>
                         </v-chip-group>
-                        <!-- <v-col class="pa-0" cols="12" v-for="(item , index) in item.tagDataShow" :key="index">
-                          <v-chip
-                            class="ma-2"
-                            color="indigo"
-                            text-color="white"
-                          >
-                            <v-avatar left>
-                              <v-icon>mdi-tag-multiple</v-icon>
-                            </v-avatar>
-                            {{item.text}}
-                          </v-chip>
-                        </v-col> -->
                       </v-col>
                     </v-row>
                   </template>
