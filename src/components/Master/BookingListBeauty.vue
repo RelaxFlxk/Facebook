@@ -1963,8 +1963,26 @@
                   <template v-slot:[`item.cusName`]="{ item }">
                     <!-- <p>{{ item.cusName }}</p> -->
                     <v-row v-if="item.depositStatus === 'True'">
-                      <v-col class="pa-0" cols="12">
-                        <v-chip
+                      <v-col cols="12">
+                        <v-row>
+                          <v-col col="auto">
+                             {{ item.cusName }}
+                          </v-col>
+                          <v-col col="auto" class="text-left">
+                            <v-btn
+                              fab
+                              dark
+                              x-small
+                              color="teal"
+                              @click="getTagData(), dialogTag = true, tagData = item.tagData, bookNo = item.bookNo"
+                            >
+                              <v-icon dark>
+                                mdi-tag-plus
+                              </v-icon>
+                            </v-btn>
+                          </v-col>
+                        </v-row>
+                        <!-- <v-chip
                           class="ma-2"
                           close
                           outlined
@@ -1973,10 +1991,24 @@
                           @click:close="getTagData(), dialogTag = true, tagData = item.tagData, bookNo = item.bookNo"
                         >
                           {{ item.cusName }}
-                        </v-chip>
+                        </v-chip> -->
                       </v-col>
-                      <template  v-if="item.tagData.length > 0">
-                        <v-col class="pa-0" cols="12" v-for="(item , index) in item.tagDataShow" :key="index">
+                      <v-col cols="12" class="pt-0"  v-if="item.tagData.length > 0">
+                        <v-chip-group
+                          active-class="primary--text"
+                          column
+                        >
+                          <v-chip
+                            text-color="white" color="cyan"
+                            v-for="(item , index) in item.tagDataShow" :key="index"
+                          >
+                            <v-avatar left>
+                              <v-icon>mdi-tag-multiple</v-icon>
+                            </v-avatar>
+                            {{ item.text }}
+                          </v-chip>
+                        </v-chip-group>
+                        <!-- <v-col class="pa-0" cols="12" v-for="(item , index) in item.tagDataShow" :key="index">
                           <v-chip
                             class="ma-2"
                             color="indigo"
@@ -1987,8 +2019,8 @@
                             </v-avatar>
                             {{item.text}}
                           </v-chip>
-                        </v-col>
-                      </template>
+                        </v-col> -->
+                      </v-col>
                     </v-row>
                   </template>
                   <template v-slot:[`item.remark`]="{ item }">
@@ -2015,7 +2047,7 @@
                       อัพเดทสถานะเงินมัดจำ
                     </v-chip>
                     <v-row v-if="item.depositStatus === 'True'">
-                      <v-col col="auto">
+                      <!-- <v-col col="auto">
                         <v-avatar color="primary" size="40" v-if="item.depositImge !== ''">
                           <img :src="item.depositImge" alt="img"/></v-avatar>
                         <v-avatar color="error" size="40" v-else>
@@ -2023,13 +2055,13 @@
                             mdi-image-edit
                           </v-icon>
                         </v-avatar>
-                      </v-col>
+                      </v-col> -->
                       <v-col col="auto">
                         <v-chip
                           filter
                           dark
                           color="green darken-1"
-                          @click="dialogDeposit = true, bookNo = item.bookNo, statusDeposit = true"
+                          @click="dialogDeposit = true, bookNo = item.bookNo, statusDeposit = true, pictureUrlPreviewDeposit = item.depositImge || ''"
                         >
                           แก้ไขสถานะเงินมัดจำ
                         </v-chip>
@@ -2953,7 +2985,7 @@
           <v-dialog v-model="dialogTag" persistent max-width="40%">
             <v-card>
               <v-card-title>
-                <span class="headline">เพิ่ม Tag</span>
+                <span class="headline">อัพเดท Tag</span>
               </v-card-title>
               <v-card-text>
                 <v-container>
@@ -3015,7 +3047,27 @@
               <v-card-title>
                 <span class="headline">อัพเดทหลักฐานเงินมัดจำ</span>
               </v-card-title>
-              <v-card-text>
+              <v-card-text v-if="pictureUrlPreviewDeposit === ''">
+                <v-alert
+                    dense
+                    border="left"
+                    type="warning"
+                  >
+                    <strong>ไม่มี รูปหลักฐานการมัดจำ</strong>
+                  </v-alert>
+                  <v-file-input
+                        required
+                        :rules="[rules.resizeImag]"
+                        counter
+                        show-size
+                        accept="image/png, image/jpeg, image/bmp"
+                        prepend-icon="mdi-camera"
+                        label="รูปหลักฐานการมัดจำ"
+                        @change="selectImgDeposit"
+                        v-model="filesDeposit"
+                      ></v-file-input>
+              </v-card-text>
+              <v-card-text v-else>
                 <v-container>
                    <v-form
                     ref="form_deposit"
@@ -3093,40 +3145,33 @@
           persistent
           max-width="30%"
         >
-          <v-card class="pa-10" min-height="400">
-            <v-row class="pa-16">
-              <v-col class="pa-0" cols="12">
-                <!-- <p>{{itemBranch}}</p> -->
-                <v-text-field
-                  v-model="tagName"
-                  label="กรอกข้อมูล Tag"
-                  outlined
-                ></v-text-field>
-              </v-col>
-              <!-- <v-col class="pa-0" cols="6" md='6'>
-                <v-container fluid>
-                    <p class="text-center">การBooking</p>
-                    <v-checkbox
-                    v-model="BookingSend"
-                    label="Booking"
-                  ></v-checkbox>
+          <v-card>
+            <v-card-title>
+                <span class="headline">เพิ่ม Tag</span>
+              </v-card-title>
+              <v-card-text>
+                <v-container>
+                  <v-text-field
+                    v-model="tagName"
+                    label="กรอกข้อมูล Tag"
+                    outlined
+                  ></v-text-field>
+                  <div class="text-center">
+                    <v-btn
+                      small class="ma-2" color="#173053" dark
+                      @click="AddDataTag()"
+                    >
+                      บันทึก
+                    </v-btn>
+                    <v-btn
+                      small class="ma-2" color="#173053" outlined dark
+                      @click="dialogAddTag = false , tagName = ''"
+                    >
+                      ปิด
+                    </v-btn>
+                  </div>
                 </v-container>
-              </v-col> -->
-            </v-row>
-            <div class="text-center">
-              <v-btn
-                small class="ma-2" color="#173053" dark
-                @click="AddDataTag()"
-              >
-                บันทึก
-              </v-btn>
-              <v-btn
-                small class="ma-2" color="#173053" outlined dark
-                @click="dialogAddTag = false , tagName = ''"
-              >
-                ปิด
-              </v-btn>
-            </div>
+              </v-card-text>
           </v-card>
         </v-dialog>
       </div>
