@@ -1964,8 +1964,11 @@
                     <v-row>
                       <v-col cols="12">
                         <v-row>
-                          <v-col col="auto">
+                          <v-col col="auto" class="text-ceter" v-if="item.userId === 'user-skip' || item.userId === '' || item.userId === null">
                              {{ item.cusName }}
+                          </v-col>
+                          <v-col col="auto" class="text-ceter" v-else>
+                            <a @click.stop="openHistory(item)" style="cursor:hand"><u>{{ item.cusName }}</u></a>
                           </v-col>
                           <v-col col="auto" class="text-left">
                             <v-btn
@@ -3151,6 +3154,76 @@
               </v-card-text>
           </v-card>
         </v-dialog>
+        <v-dialog v-model="dialogHistory" persistent max-width="30%">
+            <v-card>
+              <v-card-title>
+                <span class="headline">ประวัติเข้ารับบริการ</span>
+              </v-card-title>
+              <v-card-text>
+                <v-container>
+                   <v-row >
+                    <v-col class="main" col="12" md="12" sm="12" >
+                      <v-card class="p-3 " min-height="70vh" rounded>
+                        <div class="avatar text-center">
+                          <v-avatar size="120" style="border:5px solid #FFFFFF;">
+                          <img
+                            :src="pictureUrHistory"
+                            alt="John"
+                          >
+                        </v-avatar>
+                        </div>
+                        <br>
+                        <v-select
+                          v-model="Carnumber"
+                          :items="Carnumberitem"
+                          label="ค้นหาทะเบียนรถ"
+                          dense
+                          solo
+                          @change="SelectDataHistory"
+                        ></v-select>
+                          <v-timeline
+                          align-top
+                          dense
+                          v-if="Carnumber.length > 0"
+                          >
+                                <v-timeline-item
+                              v-for="(item , index) in HistoryData[0]" :key="index"
+                              >
+                                <template v-slot:icon>
+                                  <v-icon
+                                  small dark>
+                                  event</v-icon>
+                                </template>
+                              <div v-for="(item2 , index2) in item" :key="index2">
+                              <v-card-text class="text-start"><h6 class="font-weight-bold">{{format_dateThai(item2[0].dueDate)}}</h6></v-card-text>
+                              <v-card-text class="text-start"><h6 class="font-weight-bold">{{item2[0].flowName}}</h6></v-card-text>
+                              <v-card-text class="text-start"><h6 class="font-weight-bold">{{item2[0].masBranchName}}</h6></v-card-text>
+                              <div v-for="(item3 , index3) in item2" :key="index3">
+                                    <v-card-text class="text-start" v-if="item3.fieldValue !== ''"><strong>{{item3.fieldName}} : </strong> {{item3.fieldValue}}</v-card-text>
+                              </div>
+                              </div>
+                                </v-timeline-item>
+                          </v-timeline>
+                      </v-card>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  elevation="2"
+                  x-large
+                  color="red darken-1"
+                  text
+                  @click="dialogHistory = false"
+                >
+                  <v-icon left> mdi-cancel</v-icon>
+                  ปิด
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
       </div>
     </v-main>
   </div>
@@ -3286,7 +3359,9 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      pictureUrHistory: '',
       tagName: '',
+      dialogHistory: false,
       dialogAddTag: false,
       tagItem: [],
       tagData: [],
@@ -3560,7 +3635,11 @@ export default {
       dataTypeProcess2: '',
       dataTypeProcess3: '',
       dataTypeProcess4: '',
-      checkDepositAdd: ''
+      checkDepositAdd: '',
+      defaultData: [],
+      Carnumberitem: [],
+      HistoryData: [],
+      Carnumber: []
     }
   },
   beforeCreate () {
@@ -3602,6 +3681,58 @@ export default {
     })
   },
   methods: {
+    async SelectDataHistory () {
+      this.HistoryData = []
+      this.HistoryData.push(this.defaultData[this.Carnumber])
+      console.log('this.HistoryData', this.HistoryData)
+    },
+    async openHistory (item) {
+      console.log('item', item)
+      this.pictureUrHistory = item.memberPicture
+      const BookingData = await axios.get(this.DNS_IP + '/BookingData/get_history?shopId=' + this.$session.getAll().data.shopId + '&userId=' + item.userId)
+        .then(async (response) => {
+          return response.data
+        })
+        .catch((error) => {
+          console.log('error function addData : ', error)
+          return null
+        })
+      await this.ConvertHistoryData(BookingData)
+    },
+    async ConvertHistoryData (BookingData) {
+      this.HistoryData = []
+      // console.log('BookingData', BookingData)
+      if (BookingData !== null) {
+        if (BookingData.length > 0) {
+          this.defaultData = BookingData.reduce((r, a) => {
+            let bookNo = a.bookNo
+            let filter = (a.fieldName === 'เลขทะเบียน') ? a.fieldValue : null
+            if (filter !== null) {
+              r[filter] = r[filter] || {}
+              r[filter][bookNo] = r[filter][bookNo] || []
+              r[filter][bookNo].push(BookingData.filter(item => item.bookNo === a.bookNo))
+              this.Carnumberitem.push(filter)
+            }
+            return r
+          }, Object.create(null))
+
+          console.log(this.defaultData)
+          this.dialogHistory = true
+        } else if (BookingData.status === false) {
+          this.$swal('ไม่พบประวัติการเข้ารับบริการ', 'กรูณาตรวจสอบข้อมูล', 'info')
+          this.dialogHistory = false
+        }
+      } else {
+        this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
+          this.dialogHistory = false
+        }).catch((error) => {
+          console.log('error function addData : ', error)
+          this.dialogHistory = false
+        })
+      }
+
+      // console.log('this.HistoryData', this.HistoryData)
+    },
     async AddDataTag () {
       await axios
         .get(this.DNS_IP + '/Mas_Tag/get?shopId=' + this.session.data.shopId + '&tagName=' + this.tagName).then((response) => {
@@ -3886,6 +4017,7 @@ export default {
                   s.depositStatus = d.depositStatus || 'False'
                   s.depositImge = d.depositImge || ''
                   s.lineUserId = d.lineUserId
+                  s.memberPicture = d.memberPicture
                   s.timeDueHtext = d.timeDueH + ':00'
                   s.timeDuetext = d.timeDue
                   s.address = d.address
@@ -5073,6 +5205,7 @@ export default {
                 s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
                 s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
                 s.lineUserId = d.lineUserId
+                s.memberPicture = d.memberPicture
                 s.timeDueHtext = d.timeDueH + ':00'
                 s.timeDuetext = d.timeDue
 
@@ -5875,6 +6008,7 @@ export default {
                 s.depositStatus = d.depositStatus || 'False'
                 s.depositImge = d.depositImge || ''
                 s.lineUserId = d.lineUserId
+                s.memberPicture = d.memberPicture
                 s.timeDueHtext = d.timeDueH + ':00'
                 s.timeDuetext = d.timeDue
                 s.countChangeTime = d.countChangeTime || 0
@@ -6011,6 +6145,7 @@ export default {
                 s.depositStatus = d.depositStatus || 'False'
                 s.depositImge = d.depositImge || ''
                 s.lineUserId = d.lineUserId
+                s.memberPicture = d.memberPicture
                 s.timeDueHtext = d.timeDueH + ':00'
                 s.timeDuetext = d.timeDue
                 s.countChangeTime = d.countChangeTime || 0
