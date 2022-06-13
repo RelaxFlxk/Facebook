@@ -2715,6 +2715,8 @@
                               color="red"
                               dark
                               @click="dialogEditData = false"
+                              :loading="loadingEdit"
+                              :disabled="loadingEdit"
                             >
                               <v-icon left>mdi-close</v-icon>
                               ปิด
@@ -3697,8 +3699,6 @@ export default {
       if (this.validEdit !== false) {
         this.loadingEdit = true
         let checkDupliRegNo = this.BookingDataItemEdit.filter(el => { return el.fieldName === 'เลขทะเบียน' })
-        console.log('checkDupliRegNo', checkDupliRegNo[0].fieldValue.replace(/ /g, ''))
-        console.log('checkDupliRegNo1', checkDupliRegNo[0])
         if (checkDupliRegNo.length > 0) {
           // console.log('checkDupliRegNo', checkDupliRegNo[0].fieldValue.replace(/ /g, ''))
           await axios
@@ -5920,7 +5920,6 @@ export default {
         if (this.$session.id() !== undefined) {
           let checkDupliRegNo = this.fieldNameItem.filter(el => { return el.fieldName === 'เลขทะเบียน' })
           if (checkDupliRegNo.length > 0) {
-            console.log('checkDupliRegNo', checkDupliRegNo[0].fieldValue.replace(/ /g, ''))
             await axios
               .get(this.DNS_IP + '/booking_view/getSearchDuplicate?shopId=' + this.session.data.shopId + '&fieldValue=' + checkDupliRegNo[0].fieldValue.replace(/ /g, '') +
             '&flowId=' + this.formAdd.flowId + '&dueDate=' + this.date + '&statusBt=noCancel' + '&checkOnsite=is null')
