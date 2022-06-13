@@ -564,7 +564,6 @@
                       </v-row>
                     </v-card-title>
                   </v-card>
-
                   <div
                     class="mt-n1"
                     v-for="(itemsJob, indexJob) in allJob.filter(row => {
@@ -573,7 +572,7 @@
                     :key="indexJob"
                     :style="'border-left-style: solid;border-width: 5px;border-color:' + codeColor[work] +';'"
                   >
-                    <v-list-item class="pa-1 pb-2">
+                    <v-list-item class="pa-1 pb-2" v-if="itemsJob">
                       <v-alert
                         class="pa-2 pt-0 mb-n1"
                         width="100%"
@@ -784,10 +783,6 @@
                           </v-row>
                           <v-row class="pt-0 pl-1">
                         <v-tooltip
-                         v-if="allJob.filter(row => {
-                                  return row.jobId == itemsJob.jobId
-                                })[0].checkCar !== 'False'
-                              "
                         top
                         color="#FF8C00">
                           <template v-slot:activator="{ on, attrs }">
@@ -799,32 +794,29 @@
                               "
                               v-bind="attrs"
                               v-on="on"
+                              :disabled ="allJob.filter(row => { return row.jobId == itemsJob.jobId})[0].checkCar === 'False' ? true : false "
                             >
                               mdi-shuffle-variant
                             </v-icon>
                           </template>
                           <span>เปลี่ยนขั้นตอนการทำงาน</span>
                         </v-tooltip>
-                        <v-tooltip top
-                        color="#FF8C00"
+                        <!-- <v-tooltip top
+                        color="#9E9E9E"
                         >
                       <template v-slot:activator="{ on, attrs }">
                         <v-icon
-                        v-if="
-                            allJob.filter(row => {
-                              return row.jobId == itemsJob.jobId
-                            })[0].checkCar == 'False'
-                          "
                           v-bind="attrs"
                           v-on="on"
                           large
                           color="#9E9E9E"
+                          :disabled ="allJob.filter(row => { return row.jobId == itemsJob.jobId})[0].checkCar === 'False' ? true : false "
                         >
                           mdi-shuffle-variant
                         </v-icon>
                       </template>
                       <span>เปลี่ยนขั้นตอนการทำงาน</span>
-                    </v-tooltip>
+                    </v-tooltip> -->
                     </v-row>
                       <v-row class="pt-0 pl-1">
                         <v-tooltip top
@@ -1870,7 +1862,7 @@ export default {
             var workData = []
             var workDataUse = []
             workData = JSON.parse(d.workData)
-            console.log('workData', workData)
+            // console.log('workData', workData)
             if (workData.length > 0) {
               for (let x = 0; x < workData.length; x++) {
                 let t = workData[x]
@@ -1892,7 +1884,7 @@ export default {
               workData: workDataUse
             })
           }
-          // console.log('this.Layout', this.Layout)
+          console.log('this.Layout', this.Layout)
         })
         .catch(error => {
           console.log('error function addDataGlobal : ', error)
@@ -1976,7 +1968,7 @@ export default {
                     jobId: d.jobId,
                     jobNo: d.jobNo,
                     stepId: d.stepId,
-                    checkCar: d.checkCar,
+                    checkCar: d.checkCar || 'True',
                     totalDateDiff: d.totalDateDiff,
                     endDate: d.endDate,
                     endTime: d.endTime,
@@ -2194,9 +2186,9 @@ export default {
                 await this.NotifyEmpTime(this.formUpdate.jobNo)
                 this.dialog = false
                 this.loadingStep = false
+                await this.getStepFlow()
+                // await this.getLayout()
                 this.$swal('เรียบร้อย', 'แก้ไขสถานะ เรียบร้อย', 'success')
-                this.getStepFlow()
-                this.getLayout()
                 await this.getJobData()
                 this.setTimeJob()
               // console.log('allJob', this.allJob)
