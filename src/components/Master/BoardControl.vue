@@ -2227,6 +2227,8 @@ export default {
     async updateStatusCars (item, status) {
       console.log(this.formUpdate.jobId)
       console.log(item)
+      clearInterval(this.setTimerJob)
+      this.setTimerJob = null
       this.$swal({
         title: 'อัพเดท สถานะรถ ใช่หรือไม่?',
         type: 'question',
@@ -2256,11 +2258,16 @@ export default {
           .then(async response => {
             this.$swal('เรียบร้อย', 'อัพเดท สถานะรถ เรียบร้อย', 'success')
             this.getStepFlow()
-            this.getLayout()
+            // this.getLayout()
             await this.getJobData()
+            this.setTimeJob()
             console.log('shopId:', this.shopId)
             console.log('form:', this.formUpdateCar)
           })
+      }).catch(error => {
+        this.loadingCloseJob = false
+        this.setTimeJob()
+        console.log('Close Job Error', error)
       })
     },
     async pushmessagePrice (jobNo) {

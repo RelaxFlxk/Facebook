@@ -6431,24 +6431,42 @@ export default {
           statusSend: 'false'
         }
         await axios.post(this.DNS_IP + '/job/updateJobNo/' + jobNo, statusSend)
-        console.log('statusSend', 'false')
-        let updateStatusSend = {
-          updateStatusSend: 'false'
-        }
-        await axios
-          .post(
-            this.DNS_IP + '/job/NotifyQrcode/' + jobNo,
-            updateStatusSend
-          )
-          .then(
-            this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-            // this.clearData()
-            // this.$router.push('/Master/FlowStep')
-          )
-          .catch(error => {
-            console.log('error function addDataGlobal : ', error)
-          })
+        // console.log('statusSend', 'false')
+        // let updateStatusSend = {
+        //   updateStatusSend: 'false'
+        // }
+        // await axios
+        //   .post(
+        //     this.DNS_IP + '/job/NotifyQrcode/' + jobNo,
+        //     updateStatusSend
+        //   )
+        //   .then(
+        //     this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+        //     // this.clearData()
+        //     // this.$router.push('/Master/FlowStep')
+        //   )
+        //   .catch(error => {
+        //     console.log('error function addDataGlobal : ', error)
+        //   })
       }
+      // } else {
+      //   let updateStatusSend = {
+      //     updateStatusSend: 'false'
+      //   }
+      //   await axios
+      //     .post(
+      //       this.DNS_IP + '/job/NotifyQrcode/' + jobNo,
+      //       updateStatusSend
+      //     )
+      //     .then(
+      //       this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+      //       // this.clearData()
+      //       // this.$router.push('/Master/FlowStep')
+      //     )
+      //     .catch(error => {
+      //       console.log('error function addDataGlobal : ', error)
+      //     })
+      // }
       // this.clearData()
     },
     async getEmpSelect (item) {
@@ -6844,6 +6862,7 @@ export default {
       }
     },
     async jobConfirm () {
+      console.log('this.jobitem[0]', this.jobitem[0])
       this.swalConfig.title = 'ต้องการ ยืนยันข้อมูล ใช่หรือไม่?'
       this.$swal(this.swalConfig)
         .then(async () => {
@@ -6854,6 +6873,22 @@ export default {
               ).then(async (response) => {
                 console.log(response)
                 if (response.data.status) {
+                  let updateStatusSend = {
+                    updateStatusSend: 'false'
+                  }
+                  await axios
+                    .post(
+                      this.DNS_IP + '/job/NotifyQrcode/' + this.jobitem[0].jobNo,
+                      updateStatusSend
+                    )
+                    .then(
+                      this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+                      // this.clearData()
+                      // this.$router.push('/Master/FlowStep')
+                    )
+                    .catch(error => {
+                      console.log('error function addDataGlobal : ', error)
+                    })
                   this.getDataCalendaBooking()
                   this.$swal('เรียบร้อย', 'ปรับปรุงเรียบร้อย', 'success')
                   this.dialogJob = false
@@ -6895,7 +6930,7 @@ export default {
                     // let lineUserId = result.data[0].lineUserId
                       console.log('statusSend', 'true')
                       let updateStatusSend = {
-                        updateStatusSend: 'false'
+                        updateStatusSend: 'true'
                       }
                       await axios
                         .post(
@@ -6904,6 +6939,22 @@ export default {
                         )
                         .catch(error => {
                           console.log('error function addData : ', error)
+                        })
+                      let updateStatusSendNoti = {
+                        updateStatusSend: 'true'
+                      }
+                      await axios
+                        .post(
+                          this.DNS_IP + '/job/NotifyQrcode/' + this.jobitem[0].jobNo,
+                          updateStatusSendNoti
+                        )
+                        .then(
+                          // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+                          // this.clearData()
+                          // this.$router.push('/Master/FlowStep')
+                        )
+                        .catch(error => {
+                          console.log('error function addDataGlobal : ', error)
                         })
                     })
                   this.getDataCalendaBooking()
