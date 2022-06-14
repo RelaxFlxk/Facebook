@@ -72,7 +72,91 @@
         <v-row>
           <v-col cols="12" md="8" lg="8" class="text-left">
             <template  v-if="changeBackgroundColor">
-            <v-row>
+              <v-row>
+              <v-col cols="5" class="text-center pb-0">
+                <v-row>
+                  <v-col cols="12">
+                    <v-alert
+                      :color="'orange ' + ((getSelectText === 'wait') ? '' : 'lighten-4')"
+                      :dark="((getSelectText === 'wait') ? true : false)"
+                      dense
+                      icon="mdi-phone-ring"
+                      prominent
+                      @click="getSelect('wait',countWaiting)"
+                    >
+                      <div>
+                        <strong>{{dataTypeProcess1}}</strong>
+                      </div>
+                      <div>จำนวน : {{countWaiting}}</div>
+                    </v-alert>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-alert
+                      :color="'red ' + ((getSelectText === 'cancel') ? '' : 'lighten-4')"
+                      :dark="((getSelectText === 'cancel') ? true : false)"
+                      dense
+                      icon="mdi-phone-cancel"
+                      prominent
+                      @click="getSelect('cancel',countCancel)"
+                    >
+                      <div>
+                        <strong>{{dataTypeProcess3}}</strong>
+                      </div>
+                      <div>จำนวน : {{countCancel}}</div>
+                    </v-alert>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col cols="7" class="text-center pb-0 ma-auto">
+                <v-row>
+                  <v-col cols="6" class="pb-0 pr-1 pl-0">
+                    <v-alert
+                      :color="'green ' + ((getSelectText === 'confirm') ? '' : 'lighten-4')"
+                      :dark="((getSelectText === 'confirm') ? true : false)"
+                      dense
+                      icon="mdi-phone-check"
+                      prominent
+                      @click="getSelect('confirm',countConfirm)"
+                    >
+                      <div>
+                        <strong>{{dataTypeProcess2}}</strong>
+                      </div>
+                      <div>จำนวน : {{countConfirm}}</div>
+                    </v-alert>
+                  </v-col>
+                  <v-col cols="6" class="pb-0 pl-1 pr-0">
+                    <v-alert
+                      :color="'blue ' + ((getSelectText === 'confirmJob') ? '' : 'lighten-4')"
+                      :dark="((getSelectText === 'confirmJob') ? true : false)"
+                      dense
+                      icon="mdi-car-cog"
+                      prominent
+                      @click="getSelect('confirmJob',countJob)"
+                    >
+                      <div>
+                        <strong>{{dataTypeProcess4}}</strong>
+                      </div>
+                      <div>จำนวน : {{countJob}}</div>
+                    </v-alert>
+                  </v-col>
+                  <v-col cols="12" class="pt-0 pl-0 pr-0">
+                    <v-alert
+                      :color="'teal ' + ((getSelectText === 'confirmSum') ? '' : 'lighten-4')"
+                      :dark="((getSelectText === 'confirmSum') ? true : false)"
+                      dense
+                      icon="mdi-expand-all"
+                      @click="getSelect('confirmSum',(countConfirm + countJob))"
+                    >
+                      <div>
+                        <strong>รวม</strong>  : {{countConfirm + countJob}}
+                      </div>
+                      <!-- <div>จำนวน : {{countConfirm + countJob}}</div> -->
+                    </v-alert>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
+            <!-- <v-row>
               <v-col cols="6" class="text-center pb-0">
                 <v-alert
                   :color="'orange ' + ((getSelectText === 'wait') ? '' : 'lighten-4')"
@@ -135,7 +219,7 @@
                   <div>จำนวน : {{countJob}}</div>
                 </v-alert>
               </v-col>
-            </v-row>
+            </v-row> -->
             <v-row>
               <v-col cols="12" class="text-center pb-0  pt-0">
                 <v-btn
@@ -1396,7 +1480,7 @@
                         <v-textarea
                           v-model="remark"
                           outlined
-                          v-if="getSelectText === 'confirm'"
+                          v-if="checkSelectText === 'confirm'"
                           label="หมายเหตุเพิ่มเติม"
                           auto-grow
                         ></v-textarea>
@@ -1484,7 +1568,7 @@
                       elevation="10"
                       color="#173053"
                       dark
-                      v-if="getSelectText !== 'confirm'"
+                      v-if="checkSelectText !== 'confirm'"
                       small
                       :disabled="!validChange"
                       @click="changeChk(dataChange, 'change')"
@@ -2712,7 +2796,7 @@
                                 </template>
                             </div>
                           </template>
-                          <v-row v-if="getSelectText !== 'confirmJob'">
+                          <v-row v-if="checkSelectText !== 'confirmJob'">
                             <v-col class="pb-0">
                               <v-menu
                                 v-model="menuDateEdit"
@@ -2799,7 +2883,7 @@
                               </v-radio-group>
                             </v-col>
                           </v-row>
-                          <v-row v-if="getSelectText !== 'confirmJob'">
+                          <v-row v-if="checkSelectText !== 'confirmJob'">
                             <v-col class="pt-0">
                               <v-select
                                 v-model="empSelectEdit"
@@ -3359,6 +3443,7 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      checkSelectText: '',
       pictureUrHistory: '',
       tagName: '',
       dialogHistory: false,
@@ -4171,6 +4256,7 @@ export default {
         })
     },
     async setDataEdit (dt) {
+      this.checkSelectText = dt.statusBt
       // this.dialogEditData = true
       await this.getBookingField()
       // await this.getBookingData(dt, 'edit')
@@ -5456,6 +5542,7 @@ export default {
       if (text === 'all') {
         // this.dataItemSelect = this.dataItem
         if (this.dataItem.length > 0) {
+          this.checkSelectText = this.dataItem[0].statusBt
           for (let x = 0; x < this.dataItem.length; x++) {
             let t = this.dataItem[x]
             let serviceDetail = ''
@@ -5520,9 +5607,15 @@ export default {
           ]
         }
       } else {
-        var dataSelect = this.dataItem.filter(el => { return el.statusBt === text })
+        var dataSelect = []
+        if (text === 'confirmSum') {
+          dataSelect = this.dataItem.filter(el => { return el.statusBt === 'confirm' || el.statusBt === 'confirmJob' })
+        } else {
+          dataSelect = this.dataItem.filter(el => { return el.statusBt === text })
+        }
         // console.log('fieldflow', dataSelect)
         if (dataSelect.length > 0) {
+          this.checkSelectText = dataSelect[0].statusBt
           for (let x = 0; x < dataSelect.length; x++) {
             let t = dataSelect[x]
             let serviceDetail = ''
@@ -7596,6 +7689,7 @@ export default {
         })
     },
     async setDataChang (item) {
+      this.checkSelectText = item.statusBt
       console.log('dueDate', item.dueDate)
       console.log('timeText', item.timeText)
       await this.checkTimeFlow()
