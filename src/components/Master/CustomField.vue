@@ -1306,6 +1306,7 @@ export default {
         cancelButtonText: 'ไม่'
       })
         .then(async (result) => {
+          this.formAdd.shopId = this.$session.getAll().data.shopId
           if (this.checkbox === 'true') {
             this.formAdd.conditionField = this.formAdd.conditionField.value
           } else {

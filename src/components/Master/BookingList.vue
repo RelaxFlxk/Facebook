@@ -6527,6 +6527,7 @@ export default {
               var s = {}
               s.text = d.empFirst_NameTH
               s.value = d.empId
+              s.allData = d
               this.empSelectStepAdd.push(s)
             }
           }
@@ -6873,6 +6874,23 @@ export default {
               memberPicture = d.memberPicture || ''
               this.jobitem.push(s)
             }
+            let empNameSelect = ''
+            let dataCheckEmpSelect = this.empSelectStepAdd.filter(el => { return el.allData.empId === parseInt(rs[0].empSelect) })
+            if (dataCheckEmpSelect.length > 0) {
+              empNameSelect = dataCheckEmpSelect[0].allData.empFull_NameTH
+              this.jobitem.push(
+                {
+                  Id: rs[0].jobId,
+                  value: empNameSelect,
+                  name: 'พนักงานที่นำเข้ากระดานทำงาน',
+                  showCard: 'True',
+                  jobNo: rs[0].jobNo,
+                  recordStatus: rs[0].RECORD_STATUS
+                }
+              )
+            }
+            // console.log('empNameSelect', empNameSelect)
+            // console.log('dataCheckEmpSelect', dataCheckEmpSelect)
             this.userId = Id
             this.memberPicture = memberPicture
             if (checkBookingMember !== '' && this.memberPicture === '') {

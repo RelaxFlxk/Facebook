@@ -485,7 +485,7 @@ export default {
         }
       ],
       // End Menu Config
-      itemsTitle: ['นาย', 'นาง', 'นางสาว'],
+      itemsTitle: ['นาย', 'นาง', 'นางสาว', 'คุณ'],
       dataReady: true,
       dateTime: '', // Generate DateTime
       date: this.momenDate_1(new Date()),
