@@ -3639,8 +3639,9 @@ export default {
                     if (rs.length > 0) {
                       console.log('BookingDataSelect', rs)
                       console.log('customField', rs1)
-                      for (var i = 0; i < rs1.length; i++) {
-                        var d = rs1[i]
+                      let sortrs = rs1.sort((a, b) => a.sortNoField - b.sortNoField)
+                      for (var i = 0; i < sortrs.length; i++) {
+                        var d = sortrs[i]
                         var s = {}
                         var dataBD = rs.filter(el => { return parseInt(el.fieldId) === parseInt(d.fieldId) })
                         // console.log('dataBD', dataBD)
@@ -4426,8 +4427,9 @@ export default {
         .then(async response => {
           let rs = response.data
           if (rs.length > 0) {
-            for (let i = 0; i < rs.length; i++) {
-              let d = rs[i]
+            let sortrs = rs.sort((a, b) => a.sortNoField - b.sortNoField)
+            for (let i = 0; i < sortrs.length; i++) {
+              let d = sortrs[i]
               let s = {}
               s.fieldId = d.fieldId
               s.fieldName = d.fieldName
@@ -5691,8 +5693,9 @@ export default {
           let rs = response.data
           // let aa = []
           if (rs.length > 0) {
-            for (let i = 0; i < rs.length; i++) {
-              let d = rs[i]
+            let sortrs = rs.sort((a, b) => a.sortNoField - b.sortNoField)
+            for (let i = 0; i < sortrs.length; i++) {
+              let d = sortrs[i]
               let s = {}
               s.fieldId = d.fieldId
               s.fieldName = d.fieldName
@@ -5770,8 +5773,9 @@ export default {
         .then(async response => {
           let rs = response.data
           console.log('rs', rs)
-          for (var i = 0; i < rs.length; i++) {
-            let d = rs[i]
+          let sortrs = rs.sort((a, b) => a.sortNoField - b.sortNoField)
+          for (var i = 0; i < sortrs.length; i++) {
+            let d = sortrs[i]
             let s = {}
             s.fieldId = d.fieldId
             s.flowId = flowId
@@ -6141,8 +6145,9 @@ export default {
                     if (rs.length > 0) {
                       console.log('BookingDataSelect', rs)
                       console.log('customField', rs1)
-                      for (var i = 0; i < rs1.length; i++) {
-                        var d = rs1[i]
+                      let sortrs = rs1.sort((a, b) => a.sortNoField - b.sortNoField)
+                      for (var i = 0; i < sortrs.length; i++) {
+                        var d = sortrs[i]
                         // var s = {}
                         var dataBD = rs.filter(el => { return parseInt(el.fieldId) === parseInt(d.fieldId) })
                         if (dataBD.length > 0) {
