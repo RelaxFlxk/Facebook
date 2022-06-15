@@ -75,7 +75,7 @@
             <v-row>
               <v-col cols="5" class="text-center pb-0">
                 <v-row>
-                  <v-col cols="12">
+                  <v-col cols="12" class="pb-0 mt-9">
                     <v-alert
                       :color="'orange ' + ((getSelectText === 'wait') ? '' : 'lighten-4')"
                       :dark="((getSelectText === 'wait') ? true : false)"
@@ -90,7 +90,7 @@
                       <div>จำนวน : {{countWaiting}}</div>
                     </v-alert>
                   </v-col>
-                  <v-col cols="12">
+                  <v-col cols="12" class="pt-0">
                     <v-alert
                       :color="'red ' + ((getSelectText === 'cancel') ? '' : 'lighten-4')"
                       :dark="((getSelectText === 'cancel') ? true : false)"
