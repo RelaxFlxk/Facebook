@@ -5980,13 +5980,6 @@ export default {
         this.loadingAdd = false
       }
     },
-    async pushMsglineGroup (bookNo) {
-      await axios
-        .post(this.DNS_IP + '/Booking/pushMsgLineGroup/' + bookNo)
-        .then(response => {
-          this.clearData()
-        })
-    },
     async confirmChkAdd (item) {
       console.log('item', item)
       var dt = {
@@ -6470,9 +6463,7 @@ export default {
             updateStatusSend
           )
           .then(
-            this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-            // this.clearData()
-            // this.$router.push('/Master/FlowStep')
+            // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
           )
           .catch(error => {
             console.log('error function addDataGlobal : ', error)
@@ -6487,15 +6478,12 @@ export default {
             updateStatusSend
           )
           .then(
-            this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-            // this.clearData()
-            // this.$router.push('/Master/FlowStep')
+            // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
           )
           .catch(error => {
             console.log('error function addDataGlobal : ', error)
           })
       }
-      this.clearData()
     },
     async getEmpSelect (item) {
       this.empSelectStep = []
