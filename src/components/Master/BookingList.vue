@@ -6928,7 +6928,7 @@ export default {
                   //   .catch(error => {
                   //     console.log('error function addDataGlobal : ', error)
                   //   })
-                  this.getDataCalendaBooking()
+                  // this.getDataCalendaBooking()
                   this.$swal('เรียบร้อย', 'ปรับปรุงเรียบร้อย', 'success')
                   this.dialogJob = false
                 } else {
@@ -6996,7 +6996,7 @@ export default {
                       //     console.log('error function addDataGlobal : ', error)
                       //   })
                     })
-                  this.getDataCalendaBooking()
+                  // this.getDataCalendaBooking()
                   this.$swal('เรียบร้อย', 'ปรับปรุงเรียบร้อย', 'success')
                   this.dialogJob = false
                 } else {
