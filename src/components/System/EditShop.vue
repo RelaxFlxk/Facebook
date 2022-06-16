@@ -468,7 +468,7 @@ export default {
           }
           let bookingthankText = null
           if (this.formUpdate.bookingthankText === '') {
-            bookingthankText = null
+            bookingthankText = ''
           } else {
             bookingthankText = this.formUpdate.bookingthankText
           }
