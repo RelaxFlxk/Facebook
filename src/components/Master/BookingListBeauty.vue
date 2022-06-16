@@ -2190,7 +2190,118 @@
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
                     <!-- confirm -->
-                    <v-tooltip bottom v-if="item.addressLatLong !== null">
+                    <VueCustomTooltip label="ดูแผนที่" position="is-top" v-if="item.addressLatLong !== null">
+                    <!-- <VueCustomTooltip label="ดูแผนที่" :position="filteredSelect.length === 1 ? 'is-top' : 'is-bottom'" v-if="item.addressLatLong !== null"> -->
+                      <v-btn
+                          color="blue-grey darken-1"
+                          fab
+                          small
+                          dark
+                          @click.stop="setShowMap(item)"
+                        >
+                          <v-icon dark> mdi-map-marker-radius-outline </v-icon>
+                        </v-btn>
+                    </VueCustomTooltip>
+                    <VueCustomTooltip label="แก้ไขข้อมูล" position="is-top">
+                        <v-btn
+                          color="yellow"
+                          fab
+                          small
+                          @click.stop="setDataEdit(item)"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <v-icon dark> mdi-tools </v-icon>
+                        </v-btn>
+                    </VueCustomTooltip>
+                    <VueCustomTooltip label="รับรถเข้าศูนย์" position="is-top"  v-if="item.statusBt === 'confirm'">
+                        <v-btn
+                          color="primary"
+                          fab
+                          small
+                          @click.stop="(dialogEdit = true), getBookingDataJob(item, 'qrcode')"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <v-icon dark> mdi-account-plus </v-icon>
+                        </v-btn>
+                    </VueCustomTooltip>
+                    <VueCustomTooltip label="ยืนยันนัดหมาย" position="is-top" v-if="item.statusBt !== 'confirmJob' && item.statusBt !== 'confirm'">
+                        <v-btn
+                          color="success"
+                          fab
+                          :disabled="item.chkConfirm"
+                          small
+                          @click.stop="confirmChk(item)"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <v-icon dark> mdi-phone-check </v-icon>
+                        </v-btn>
+                    </VueCustomTooltip>
+                    <VueCustomTooltip label="เปลี่ยนเวลานัดหมาย" position="is-top" v-if="item.statusBt !== 'confirmJob'">
+                        <v-badge
+                          avatar
+                          bordered
+                          overlap
+                          :content="item.countChangeTime"
+                          :value="item.countChangeTime"
+                          color="warning"
+                          class="mr-1"
+                          style="cursor: pointer"
+                        >
+                          <v-btn
+                            color="warning"
+                            fab
+                            small
+                            @click.stop="setDataChang(item)"
+                            v-bind="attrs"
+                            v-on="on"
+                          >
+                            <v-icon> mdi-calendar-clock </v-icon>
+                          </v-btn>
+                        </v-badge>
+                    </VueCustomTooltip>
+                    <VueCustomTooltip label="ยกเลิกนัดหมาย" position="is-top" v-if="item.statusBt !== 'cancel' && item.statusBt !== 'confirmJob'">
+                        <v-btn
+                          color="error"
+                          fab
+                          small
+                          :disabled="item.chkCancel"
+                          @click.stop="setDataRemove(item)"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <v-icon dark> mdi-phone-cancel </v-icon>
+                        </v-btn>
+                    </VueCustomTooltip>
+                    <VueCustomTooltip label="QR Code สำหรับให้ลูกค้า" position="is-top" bottom v-if="item.statusBt === 'confirmJob'">
+                        <v-btn
+                          color="info"
+                          dark
+                          fab
+                          small
+                          @click.stop="(dialogJob = true), getjob(item)"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <v-icon> mdi-qrcode-scan </v-icon>
+                        </v-btn>
+                    </VueCustomTooltip>
+                    <VueCustomTooltip label="ลบรายการนี้" position="is-top" bottom v-if="item.statusBt === 'cancel'">
+                        <v-btn
+                          color="red"
+                          dark
+                          fab
+                          small
+                          @click.stop="(dialogDelete = true), getDataById(item)"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <v-icon> mdi-delete </v-icon>
+                        </v-btn>
+                    </VueCustomTooltip>
+                    <!-- <v-tooltip bottom v-if="item.addressLatLong !== null">
                       <template v-slot:activator="{ on, attrs }">
                         <v-btn
                           color="blue-grey darken-1"
@@ -2325,7 +2436,7 @@
                         </v-btn>
                       </template>
                       <span>ลบรายการนี้</span>
-                    </v-tooltip>
+                    </v-tooltip> -->
                   </template>
                 </v-data-table>
               </v-card-text>
