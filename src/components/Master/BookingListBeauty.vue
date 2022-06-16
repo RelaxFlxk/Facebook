@@ -6294,16 +6294,14 @@ export default {
             this.session.data.shopId +
             '&masBranchID=' +
             this.masBranchID +
-            '&dueDate=' +
-            this.dateStart + '&statusBt=null&checkOnsite=is null'
+            '&statusBt=null&checkOnsite=is null'
       } else {
         urlApiwait = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.session.data.shopId +
             '&masBranchID=' +
             this.masBranchID +
-            '&dueDate=' +
-            this.dateStart + '&statusBt=null&checkOnsite=is null&flowId=' + this.flowSelect
+            '&statusBt=null&checkOnsite=is null&flowId=' + this.flowSelect
       }
       await axios
         .get(urlApiwait)

@@ -14,6 +14,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "@adamdehaven/vue-custom-tooltip": "^1.4.4",
     "@chenfengyuan/vue-qrcode": "^1.0.2",
     "@click2buy/vue-pivot-table": "^1.1.6",
     "@sentry/tracing": "^6.16.1",

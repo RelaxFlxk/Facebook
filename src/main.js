@@ -16,7 +16,15 @@ import { PivotViewPlugin } from '@syncfusion/ej2-vue-pivotview'
 import * as Sentry from '@sentry/vue'
 import { Integrations } from '@sentry/tracing'
 import * as VueGoogleMaps from 'vue2-google-maps'
+import VueCustomTooltip from '@adamdehaven/vue-custom-tooltip'
 
+Vue.use(VueCustomTooltip, {
+  name: 'VueCustomTooltip',
+  color: '#fff',
+  background: '#000',
+  borderRadius: 10,
+  fontWeight: 900
+})
 Vue.use(VueGoogleMaps, {
   load: {
     key: 'AIzaSyCnDosnYWNnKQxLbsI5Cy_iw_VC5oyc1Ck',
