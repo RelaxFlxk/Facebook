@@ -2101,6 +2101,7 @@
                     </v-btn>
                   </template>
                   <template v-slot:[`item.action4`]="{ item }">
+                    <template v-if="item.depositCheckStatus === 'True'">
                     <v-chip
                       filter
                       dark
@@ -2131,6 +2132,7 @@
                         </v-chip>
                       </v-col>
                     </v-row>
+                    </template>
                   </template>
                   <template v-slot:[`item.action2`]="{ item }">
                     <v-row>
@@ -4069,6 +4071,12 @@ export default {
                   // console.log('d.bookNo', d.bookNo)
                   s.bookNo = d.bookNo
                   s.flowId = d.flowId
+                  let checkDeposit = this.DataFlowName.filter(el => { return el.value === parseInt(d.flowId) })
+                  if (checkDeposit.length > 0) {
+                    s.depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
+                  } else {
+                    s.depositCheckStatus = 'False'
+                  }
                   s.flowName = d.flowName
                   s.dueDate = d.dueDate || ''
                   if (d.timeText === null || d.timeText === '') {
@@ -5433,7 +5441,30 @@ export default {
       return result
     },
     async getDataFlow () {
-      this.DataFlowName = await this.getDataFromAPI('/flow/get', 'flowId', 'flowName', '&checkOnsite=is null')
+      this.DataFlowName = await this.getDataFromAPIFlow('/flow/get', 'flowId', 'flowName', '&checkOnsite=is null')
+    },
+    async getDataFromAPIFlow (url, fieldId, fieldName, param) {
+      let result = []
+      await axios
+        .get(this.DNS_IP + `${url}?shopId=${this.session.data.shopId}${param}`)
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            result.push({ text: 'ทั้งหมด', value: 'AllFlow' })
+            for (var i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              let s = {}
+              s.text = d[fieldName]
+              s.value = d[fieldId]
+              s.allData = d
+              result.push(s)
+              // console.log('this.DataFlowName', this.DataFlowName)
+            }
+          } else {
+            result = []
+          }
+        })
+      return result
     },
     async getDataBranch () {
       // if (localStorage.getItem('BRANCH') === null) {
@@ -5576,38 +5607,54 @@ export default {
         } else {
           this.dataItemSelect = []
         }
-        console.log('dataSelect', this.dataItemSelect)
-        let checkDeposit = this.DataFlowName.filter(el => { return el.value === this.flowSelect })[0].allData.checkDeposit || 'False'
-        if (checkDeposit === 'True') {
-          this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+        // console.log('dataSelect', this.dataItemSelect)
+        // let checkDeposit = this.DataFlowName.filter(el => { return el.value === this.flowSelect })
+        // if (checkDeposit.length > 0) {
+        //   let dataDeposit = checkDeposit[0].allData.checkDeposit || 'False'
+        //   if (dataDeposit === 'True') {
+        //     this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+        //       // { text: 'Booking Id', value: 'bookNo' },
+        //       { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+        //       // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+        //       { text: 'ชื่อบริการ', value: 'flowNameShow' },
+        //       { text: 'ชื่อลูกค้า', value: 'cusName' },
+        //       { text: 'เบอร์โทร', value: 'tel' },
+        //       { text: 'เงินมัดจำ', value: 'action4', sortable: false, align: 'center' },
+        //       { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+        //       { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+        //       { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
+        //       { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
+        //       { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
+        //     ]
+        //   } else {
+        //     this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+        //       // { text: 'Booking Id', value: 'bookNo' },
+        //       { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+        //       // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+        //       { text: 'ชื่อบริการ', value: 'flowNameShow' },
+        //       { text: 'ชื่อลูกค้า', value: 'cusName' },
+        //       { text: 'เบอร์โทร', value: 'tel' },
+        //       { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+        //       { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+        //       { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
+        //       { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
+        //       { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
+        //     ]
+        //   }
+        this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
           // { text: 'Booking Id', value: 'bookNo' },
-            { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
-            // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'ชื่อบริการ', value: 'flowNameShow' },
-            { text: 'ชื่อลูกค้า', value: 'cusName' },
-            { text: 'เบอร์โทร', value: 'tel' },
-            { text: 'เงินมัดจำ', value: 'action4', sortable: false, align: 'center' },
-            { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
-            { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-            { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
-            { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
-            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
-          ]
-        } else {
-          this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
-          // { text: 'Booking Id', value: 'bookNo' },
-            { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
-            // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'ชื่อบริการ', value: 'flowNameShow' },
-            { text: 'ชื่อลูกค้า', value: 'cusName' },
-            { text: 'เบอร์โทร', value: 'tel' },
-            { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
-            { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-            { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
-            { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
-            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
-          ]
-        }
+          { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+          // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+          { text: 'ชื่อบริการ', value: 'flowNameShow' },
+          { text: 'ชื่อลูกค้า', value: 'cusName' },
+          { text: 'เบอร์โทร', value: 'tel' },
+          { text: 'เงินมัดจำ', value: 'action4', sortable: false, align: 'center' },
+          { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+          { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+          { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
+          { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
+          { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
+        ]
       } else {
         var dataSelect = []
         if (text === 'confirmSum') {
@@ -5679,37 +5726,51 @@ export default {
             // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
           ]
         } else if (text === 'confirm') {
-          let checkDeposit = this.DataFlowName.filter(el => { return el.value === this.flowSelect })[0].allData.checkDeposit || 'False'
-          if (checkDeposit === 'True') {
-            this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
-              // { text: 'Booking Id', value: 'bookNo' },
-              { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
-              // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-              { text: 'ชื่อบริการ', value: 'flowNameShow' },
-              { text: 'ชื่อลูกค้า', value: 'cusName' },
-              { text: 'เบอร์โทร', value: 'tel' },
-              { text: 'เงินมัดจำ', value: 'action4', sortable: false, align: 'center' },
-              { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
-              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-              { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
-              { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
-              { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
-            ]
-          } else {
-            this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
-              // { text: 'Booking Id', value: 'bookNo' },
-              { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
-              // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-              { text: 'ชื่อบริการ', value: 'flowNameShow' },
-              { text: 'ชื่อลูกค้า', value: 'cusName' },
-              { text: 'เบอร์โทร', value: 'tel' },
-              { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
-              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-              { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
-              { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
-              { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
-            ]
-          }
+          // let checkDeposit = this.DataFlowName.filter(el => { return el.value === this.flowSelect })[0].allData.checkDeposit || 'False'
+          // if (checkDeposit === 'True') {
+          //   this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+          //     // { text: 'Booking Id', value: 'bookNo' },
+          //     { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+          //     // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+          //     { text: 'ชื่อบริการ', value: 'flowNameShow' },
+          //     { text: 'ชื่อลูกค้า', value: 'cusName' },
+          //     { text: 'เบอร์โทร', value: 'tel' },
+          //     { text: 'เงินมัดจำ', value: 'action4', sortable: false, align: 'center' },
+          //     { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+          //     { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+          //     { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
+          //     { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
+          //     { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
+          //   ]
+          // } else {
+          //   this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+          //     // { text: 'Booking Id', value: 'bookNo' },
+          //     { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+          //     // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+          //     { text: 'ชื่อบริการ', value: 'flowNameShow' },
+          //     { text: 'ชื่อลูกค้า', value: 'cusName' },
+          //     { text: 'เบอร์โทร', value: 'tel' },
+          //     { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+          //     { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+          //     { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
+          //     { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
+          //     { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
+          //   ]
+          // }
+          this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+            // { text: 'Booking Id', value: 'bookNo' },
+            { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+            // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+            { text: 'ชื่อบริการ', value: 'flowNameShow' },
+            { text: 'ชื่อลูกค้า', value: 'cusName' },
+            { text: 'เบอร์โทร', value: 'tel' },
+            { text: 'เงินมัดจำ', value: 'action4', sortable: false, align: 'center' },
+            { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+            { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+            { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
+            { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
+            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
+          ]
           // this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
           //   // { text: 'Booking Id', value: 'bookNo' },
           //   { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
@@ -5722,31 +5783,42 @@ export default {
           //   { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
           //   { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
         } else if (text === 'wait') {
-          let checkDeposit = this.DataFlowName.filter(el => { return el.value === this.flowSelect })[0].allData.checkDeposit || 'False'
-          if (checkDeposit === 'True') {
-            this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+          // let checkDeposit = this.DataFlowName.filter(el => { return el.value === this.flowSelect })[0].allData.checkDeposit || 'False'
+          // if (checkDeposit === 'True') {
+          //   this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+          //   // { text: 'Booking Id', value: 'bookNo' },
+          //     { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+          //     // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+          //     { text: 'ชื่อบริการ', value: 'flowNameShow' },
+          //     { text: 'ชื่อลูกค้า', value: 'cusName' },
+          //     { text: 'เบอร์โทร', value: 'tel' },
+          //     { text: 'เงินมัดจำ', value: 'action4', sortable: false, align: 'center' },
+          //     { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+          //     { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+          //     { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
+          // } else {
+          //   this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+          //   // { text: 'Booking Id', value: 'bookNo' },
+          //     { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+          //     // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+          //     { text: 'ชื่อบริการ', value: 'flowNameShow' },
+          //     { text: 'ชื่อลูกค้า', value: 'cusName' },
+          //     { text: 'เบอร์โทร', value: 'tel' },
+          //     { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+          //     { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+          //     { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
+          // }
+          this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
             // { text: 'Booking Id', value: 'bookNo' },
-              { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
-              // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-              { text: 'ชื่อบริการ', value: 'flowNameShow' },
-              { text: 'ชื่อลูกค้า', value: 'cusName' },
-              { text: 'เบอร์โทร', value: 'tel' },
-              { text: 'เงินมัดจำ', value: 'action4', sortable: false, align: 'center' },
-              { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
-              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-              { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
-          } else {
-            this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
-            // { text: 'Booking Id', value: 'bookNo' },
-              { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
-              // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-              { text: 'ชื่อบริการ', value: 'flowNameShow' },
-              { text: 'ชื่อลูกค้า', value: 'cusName' },
-              { text: 'เบอร์โทร', value: 'tel' },
-              { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
-              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-              { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
-          }
+            { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+            // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+            { text: 'ชื่อบริการ', value: 'flowNameShow' },
+            { text: 'ชื่อลูกค้า', value: 'cusName' },
+            { text: 'เบอร์โทร', value: 'tel' },
+            { text: 'เงินมัดจำ', value: 'action4', sortable: false, align: 'center' },
+            { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+            { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
           // this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
           //   // { text: 'Booking Id', value: 'bookNo' },
           //   { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
@@ -5823,15 +5895,27 @@ export default {
             await this.getBookingDataListTimechange(dateStart)
 
             // var dataItemTimes = []
+            let urlApi = ''
+            if (this.flowSelect === 'AllFlow') {
+              urlApi = this.DNS_IP +
+            '/booking_view/get?shopId=' +
+            this.session.data.shopId +
+            '&masBranchID=' +
+            this.masBranchID +
+            '&dueDate=' +
+            this.dateStart + '&checkOnsite=is null'
+            } else {
+              urlApi = this.DNS_IP +
+            '/booking_view/get?shopId=' +
+            this.session.data.shopId +
+            '&masBranchID=' +
+            this.masBranchID +
+            '&dueDate=' +
+            this.dateStart + '&checkOnsite=is null&flowId=' + this.flowSelect
+            }
             await axios
               .get(
-                // eslint-disable-next-line quotes
-                this.DNS_IP +
-                    '/booking_view/get?shopId=' +
-                    this.session.data.shopId +
-                    '&masBranchID=' +
-                    this.masBranchID +
-                    '&dueDate=' + moment(moment(this.timeTable, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD') + '&checkOnsite=is null&flowId=' + this.flowSelect
+                urlApi
               )
               .then(async response => {
                 console.log('getData', response.data)
@@ -6050,17 +6134,26 @@ export default {
       var dataItems = []
       // await this.getShowMap()
       await this.getBookingDataList(this.dateStart)
-      await axios
-        .get(
-          // eslint-disable-next-line quotes
-          this.DNS_IP +
+      let urlApi = ''
+      if (this.flowSelect === 'AllFlow') {
+        urlApi = this.DNS_IP +
+            '/booking_view/get?shopId=' +
+            this.session.data.shopId +
+            '&masBranchID=' +
+            this.masBranchID +
+            '&dueDate=' +
+            this.dateStart + '&checkOnsite=is null'
+      } else {
+        urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.session.data.shopId +
             '&masBranchID=' +
             this.masBranchID +
             '&dueDate=' +
             this.dateStart + '&checkOnsite=is null&flowId=' + this.flowSelect
-        )
+      }
+      await axios
+        .get(urlApi)
         .then(async response => {
           console.log('getData', response.data.length)
           if (response.data.length > 0) {
@@ -6070,6 +6163,12 @@ export default {
               if (this.BookingDataList[d.bookNo] !== undefined) {
                 s.bookNo = d.bookNo
                 s.flowId = d.flowId
+                let checkDeposit = this.DataFlowName.filter(el => { return el.value === parseInt(d.flowId) })
+                if (checkDeposit.length > 0) {
+                  s.depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
+                } else {
+                  s.depositCheckStatus = 'False'
+                }
                 s.flowName = d.flowName
                 s.dueDate = d.dueDate || ''
                 if (d.timeText === null || d.timeText === '') {
@@ -6188,16 +6287,26 @@ export default {
             })
           }
         })
+      let urlApiwait = ''
+      if (this.flowSelect === 'AllFlow') {
+        urlApiwait = this.DNS_IP +
+            '/booking_view/get?shopId=' +
+            this.session.data.shopId +
+            '&masBranchID=' +
+            this.masBranchID +
+            '&dueDate=' +
+            this.dateStart + '&statusBt=null&checkOnsite=is null'
+      } else {
+        urlApiwait = this.DNS_IP +
+            '/booking_view/get?shopId=' +
+            this.session.data.shopId +
+            '&masBranchID=' +
+            this.masBranchID +
+            '&dueDate=' +
+            this.dateStart + '&statusBt=null&checkOnsite=is null&flowId=' + this.flowSelect
+      }
       await axios
-        .get(
-          // eslint-disable-next-line quotes
-          this.DNS_IP +
-                '/booking_view/get?shopId=' +
-                this.session.data.shopId +
-                '&masBranchID=' +
-                this.masBranchID +
-                '&statusBt=null&checkOnsite=is null&flowId=' + this.flowSelect
-        )
+        .get(urlApiwait)
         .then(async responses => {
           if (responses.data.length > 0) {
             // console.log('length', responses.data.length)
@@ -6207,6 +6316,12 @@ export default {
               if (this.BookingDataList[d.bookNo] !== undefined) {
                 s.bookNo = d.bookNo
                 s.flowId = d.flowId
+                let checkDeposit = this.DataFlowName.filter(el => { return el.value === parseInt(d.flowId) })
+                if (checkDeposit.length > 0) {
+                  s.depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
+                } else {
+                  s.depositCheckStatus = 'False'
+                }
                 s.flowName = d.flowName
                 s.dueDate = d.dueDate || ''
                 if (d.timeText === null || d.timeText === '') {
