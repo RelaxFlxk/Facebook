@@ -1778,6 +1778,18 @@ export default {
     },
     async chkFlowName () {
       if (this.flowId !== '') {
+        switch (this.$vuetify.breakpoint.name) {
+          case 'xs': this.layout = 'list'
+            break
+          case 'sm': this.layout = 'list'
+            break
+          case 'md': this.layout = 'grid'
+            break
+          case 'lg': this.layout = 'grid'
+            break
+          case 'xl': this.layout = 'grid'
+            break
+        }
         this.closeSetTime()
         await this.getStepFlow()
         await this.getLayout()
@@ -1789,6 +1801,18 @@ export default {
     },
     async chkBranchName () {
       if (this.masBranchID !== '') {
+        switch (this.$vuetify.breakpoint.name) {
+          case 'xs': this.layout = 'list'
+            break
+          case 'sm': this.layout = 'list'
+            break
+          case 'md': this.layout = 'list'
+            break
+          case 'lg': this.layout = 'list'
+            break
+          case 'xl': this.layout = 'list'
+            break
+        }
         this.closeSetTime()
         await this.getStepFlow()
         await this.getLayout()

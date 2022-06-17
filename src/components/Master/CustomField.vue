@@ -136,7 +136,7 @@
                       </v-row>
 
                       <v-row style="height: 35px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
-                      <v-subheader id="subtext">optionField</v-subheader>
+                      <v-subheader id="subtext">ประเภทของตัวเลือกข้อมูล</v-subheader>
                       </v-row>
                       <v-row style="height: 50px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
                         <v-select
@@ -151,9 +151,9 @@
 
                     <v-form ref="form_addOption" v-model="validAddOption" lazy-validation>
                     <v-row>
-                    <v-col cols="6">
+                    <v-col cols="4">
                       <v-row style="height: 35px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
-                      <v-subheader id="subtext" >Text:</v-subheader >
+                      <v-subheader id="subtext" >ไทย:</v-subheader >
                       </v-row>
                       <v-row style="height: 50px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
                       <v-text-field
@@ -167,7 +167,23 @@
                       ></v-text-field>
                       </v-row>
                     </v-col>
-                     <v-col cols="6">
+                     <v-col cols="4">
+                      <v-row style="height: 35px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
+                      <v-subheader id="subtext" >อังกฤษ:</v-subheader >
+                      </v-row>
+                      <v-row style="height: 50px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
+                      <v-text-field
+                        v-model="formAddOption.optionTextEng"
+                        placeholder="TextEng"
+                        dense
+                        required
+                        :rules="[
+                          rules.required
+                        ]"
+                      ></v-text-field>
+                      </v-row>
+                    </v-col>
+                     <v-col cols="4">
                       <v-row style="height: 35px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
                       <v-subheader id="subtext">Value:</v-subheader>
                       </v-row>
@@ -185,7 +201,7 @@
                      </v-form>
                     <br>
 
-                      <v-row justify="center" v-if="formAddOption.optionText && formAddOption.optionValue">
+                      <v-row justify="center" v-if="formAddOption.optionText && formAddOption.optionValue && formAddOption.optionTextEng">
                       <v-btn v-if="checkDataEdit"
                         elevation="2"
                         x-large
@@ -391,7 +407,7 @@
                       </v-row>
 
                       <v-row style="height: 35px" v-if="formUpdate.fieldType === 'optionField'">
-                      <v-subheader id="subtext">optionField</v-subheader>
+                      <v-subheader id="subtext">ประเภทของตัวเลือกข้อมูล</v-subheader>
                       </v-row>
                       <v-row style="height: 50px" v-if="formUpdate.fieldType === 'optionField'">
                         <v-select
@@ -407,9 +423,9 @@
 
                     <v-form ref="form_addOption" v-model="validAddOption" lazy-validation>
                     <v-row>
-                    <v-col cols="6">
+                    <v-col cols="4">
                       <v-row style="height: 35px" v-if="formUpdate.fieldType === 'optionField'">
-                      <v-subheader id="subtext" >Text:</v-subheader >
+                      <v-subheader id="subtext" >ไทย:</v-subheader >
                       </v-row>
                       <v-row style="height: 50px" v-if="formUpdate.fieldType === 'optionField'">
                       <v-text-field
@@ -423,7 +439,23 @@
                       ></v-text-field>
                       </v-row>
                     </v-col>
-                     <v-col cols="6">
+                    <v-col cols="4">
+                      <v-row style="height: 35px" v-if="formUpdate.fieldType === 'optionField'">
+                      <v-subheader id="subtext" >อังกฤษ:</v-subheader >
+                      </v-row>
+                      <v-row style="height: 50px" v-if="formUpdate.fieldType === 'optionField'">
+                      <v-text-field
+                        v-model="formUpdateOption.optionTextEng"
+                        placeholder="TextEng"
+                        dense
+                        required
+                        :rules="[
+                          rules.required
+                        ]"
+                      ></v-text-field>
+                      </v-row>
+                    </v-col>
+                     <v-col cols="4">
                       <v-row style="height: 35px" v-if="formUpdate.fieldType === 'optionField'">
                       <v-subheader id="subtext">Value:</v-subheader>
                       </v-row>
@@ -856,11 +888,13 @@ export default {
       formUpdateConditionField: '',
       formAddOption: {
         optionText: '',
+        optionTextEng: '',
         optionValue: '',
         shopId: ''
       },
       formUpdateOption: {
         optionText: '',
+        optionTextEng: '',
         optionValue: '',
         shopId: ''
       },
@@ -906,7 +940,8 @@ export default {
       },
       editedIndex: -1,
       columnsOption: [
-        { text: 'Text', value: 'text' },
+        { text: 'ไทย', value: 'text' },
+        { text: 'อังกฤษ', value: 'textEng' },
         { text: 'Value', value: 'value' },
         { text: 'Actions', value: 'actions', sortable: false }
       ],
@@ -1088,6 +1123,7 @@ export default {
       console.log(this.checkDataEdit)
       this.$nextTick(() => {
         this.formUpdateOption.optionText = ''
+        this.formUpdateOption.optionTextEng = ''
         this.formUpdateOption.optionValue = ''
         this.editedIndex = -1
       })
@@ -1101,11 +1137,12 @@ export default {
     },
     save () {
       console.log(this.formUpdateOption.optionText)
+      console.log(this.formUpdateOption.optionTextEng)
       console.log(this.formUpdateOption.optionValue)
       if (this.editedIndex > -1) {
-        Object.assign(this.dataItemOption[this.editedIndex], {text: this.formUpdateOption.optionText, value: this.formUpdateOption.optionValue})
+        Object.assign(this.dataItemOption[this.editedIndex], {text: this.formUpdateOption.optionText, textEng: this.formUpdateOption.optionTextEng, value: this.formUpdateOption.optionValue})
       } else {
-        this.dataItemOption.push({text: this.formUpdateOption.optionText, value: this.formUpdateOption.optionValue})
+        this.dataItemOption.push({text: this.formUpdateOption.optionText, textEng: this.formUpdateOption.optionTextEng, value: this.formUpdateOption.optionValue})
       }
       this.checkDataEdit = true
       this.close()
@@ -1113,6 +1150,7 @@ export default {
     editItem (item) {
       this.checkDataEdit = false
       this.formUpdateOption.optionText = item.text
+      this.formUpdateOption.optionTextEng = item.textEng
       this.formUpdateOption.optionValue = item.value
       this.editedIndex = this.dataItemOption.indexOf(item)
       // this.editedItem = Object.assign({}, item)
@@ -1121,6 +1159,7 @@ export default {
     editItemAdd (item) {
       this.checkDataEdit = false
       this.formAddOption.optionText = item.text
+      this.formAddOption.optionTextEng = item.textEng
       this.formAddOption.optionValue = item.value
       this.editedIndex = this.dataItemOption.indexOf(item)
       // this.editedItem = Object.assign({}, item)
@@ -1140,6 +1179,7 @@ export default {
       this.$nextTick(() => {
         this.formAddOption.optionText = ''
         this.formAddOption.optionValue = ''
+        this.formAddOption.optionTextEng = ''
         this.editedIndex = -1
       })
     },
@@ -1152,11 +1192,12 @@ export default {
     },
     saveAdd () {
       console.log(this.formAddOption.optionText)
+      console.log(this.formAddOption.optionTextEng)
       console.log(this.formAddOption.optionValue)
       if (this.editedIndex > -1) {
-        Object.assign(this.dataItemOption[this.editedIndex], {text: this.formAddOption.optionText, value: this.formAddOption.optionValue})
+        Object.assign(this.dataItemOption[this.editedIndex], {text: this.formAddOption.optionText, textEng: this.formAddOption.optionTextEng, value: this.formAddOption.optionValue})
       } else {
-        this.dataItemOption.push({text: this.formAddOption.optionText, value: this.formAddOption.optionValue})
+        this.dataItemOption.push({text: this.formAddOption.optionText, textEng: this.formAddOption.optionTextEng, value: this.formAddOption.optionValue})
       }
       this.checkDataEdit = true
       this.close()
@@ -1259,7 +1300,7 @@ export default {
     },
     async addDataOption (item) {
       console.log(item)
-      this.dataItemOption.push({'text': item.optionText, 'value': item.optionValue})
+      this.dataItemOption.push({'text': item.optionText, 'textEng': item.optionTextEng, 'value': item.optionValue})
       this.clearDataOption()
     },
     getCondition () {
