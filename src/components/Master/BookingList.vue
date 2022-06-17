@@ -2022,8 +2022,6 @@
                           fab
                           small
                           @click.stop="setDataEdit(item)"
-                          v-bind="attrs"
-                          v-on="on"
                         >
                           <v-icon dark> mdi-tools </v-icon>
                         </v-btn>
@@ -2034,8 +2032,6 @@
                           fab
                           small
                           @click.stop="(dialogEdit = true), getBookingDataJob(item, 'qrcode')"
-                          v-bind="attrs"
-                          v-on="on"
                         >
                           <v-icon dark> mdi-account-plus </v-icon>
                         </v-btn>
@@ -2047,8 +2043,6 @@
                           :disabled="item.chkConfirm"
                           small
                           @click.stop="confirmChk(item)"
-                          v-bind="attrs"
-                          v-on="on"
                         >
                           <v-icon dark> mdi-phone-check </v-icon>
                         </v-btn>
@@ -2069,8 +2063,6 @@
                             fab
                             small
                             @click.stop="setDataChang(item)"
-                            v-bind="attrs"
-                            v-on="on"
                           >
                             <v-icon> mdi-calendar-clock </v-icon>
                           </v-btn>
@@ -2083,8 +2075,6 @@
                           small
                           :disabled="item.chkCancel"
                           @click.stop="setDataRemove(item)"
-                          v-bind="attrs"
-                          v-on="on"
                         >
                           <v-icon dark> mdi-phone-cancel </v-icon>
                         </v-btn>
@@ -2096,8 +2086,6 @@
                           fab
                           small
                           @click.stop="(dialogJob = true), getjob(item)"
-                          v-bind="attrs"
-                          v-on="on"
                         >
                           <v-icon> mdi-qrcode-scan </v-icon>
                         </v-btn>
@@ -2109,8 +2097,6 @@
                           fab
                           small
                           @click.stop="(dialogDelete = true), getDataById(item)"
-                          v-bind="attrs"
-                          v-on="on"
                         >
                           <v-icon> mdi-delete </v-icon>
                         </v-btn>

@@ -34,7 +34,7 @@
                   </span>
                 </template>
               </v-btn>
-              <v-btn
+              <!-- <v-btn
                 color="primary"
                 style="z-index:8;margin-right: 5px;"
                 id="v-step-0"
@@ -43,7 +43,7 @@
               >
                 <v-icon left>mdi-text-box-plus</v-icon>
                 Qr Code
-              </v-btn>
+              </v-btn> -->
               <v-btn
                 color="primary"
                 style="z-index:8;margin-right: 5px;"
@@ -455,7 +455,7 @@
                         <v-col cols="12">
                           <v-select
                             v-model="formAdd.flowId"
-                            :items="DataFlowName"
+                            :items="dataFlowSelectAdd"
                             label="ประเภทบริการ"
                             outlined
                             dense
@@ -486,6 +486,17 @@
                               >
                                 <v-col cols="12" class="InputData" v-if="item.fieldType == 'text'">
                                   <v-text-field
+                                    v-if="item.fieldName === 'เบอร์โทร'"
+                                    v-mask="'###-###-####'"
+                                    v-model="item.fieldValue"
+                                    :label="item.fieldName"
+                                    outlined
+                                    dense
+                                    required
+                                    :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                  ></v-text-field>
+                                  <v-text-field
+                                    v-else
                                     v-model="item.fieldValue"
                                     :label="item.fieldName"
                                     outlined
@@ -496,6 +507,17 @@
                                 </v-col>
                                 <v-col cols="12" class="InputData" v-if="item.fieldType == 'number'">
                                   <v-text-field
+                                    v-if="item.fieldName === 'เบอร์โทร'"
+                                    v-mask="'###-###-####'"
+                                    v-model="item.fieldValue"
+                                    :label="item.fieldName"
+                                    outlined
+                                    dense
+                                    required
+                                    :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                  ></v-text-field>
+                                  <v-text-field
+                                    v-else
                                     v-model="item.fieldValue"
                                     :label="item.fieldName"
                                     outlined
@@ -578,6 +600,17 @@
                                 >
                                   <v-col cols="12" class="InputData" v-if="item.fieldType == 'text'">
                                     <v-text-field
+                                      v-if="item.fieldName === 'เบอร์โทร'"
+                                      v-mask="'###-###-####'"
+                                      v-model="item.fieldValue"
+                                      :label="item.fieldName"
+                                      outlined
+                                      required
+                                      dense
+                                      :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                    ></v-text-field>
+                                    <v-text-field
+                                      v-else
                                       v-model="item.fieldValue"
                                       :label="item.fieldName"
                                       outlined
@@ -588,6 +621,17 @@
                                   </v-col>
                                   <v-col cols="12" class="InputData" v-if="item.fieldType == 'number'">
                                     <v-text-field
+                                      v-if="item.fieldName === 'เบอร์โทร'"
+                                      v-mask="'###-###-####'"
+                                      v-model="item.fieldValue"
+                                      :label="item.fieldName"
+                                      outlined
+                                      required
+                                      dense
+                                      :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                    ></v-text-field>
+                                    <v-text-field
+                                      v-else
                                       v-model="item.fieldValue"
                                       :label="item.fieldName"
                                       outlined
@@ -652,6 +696,16 @@
                                   <template v-if="parseInt(item.conditionValue) === parseInt(formAdd.flowId) ">
                                     <v-col cols="12" class="InputData" v-if="item.fieldType == 'text'">
                                       <v-text-field
+                                        v-if="item.fieldName === 'เบอร์โทร'"
+                                        v-mask="'###-###-####'"
+                                        v-model="item.fieldValue"
+                                        :label="item.fieldName"
+                                        dense
+                                        :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                        outlined
+                                      ></v-text-field>
+                                      <v-text-field
+                                        v-else
                                         v-model="item.fieldValue"
                                         :label="item.fieldName"
                                         dense
@@ -661,6 +715,16 @@
                                     </v-col>
                                     <v-col cols="12" class="InputData" v-if="item.fieldType == 'number'">
                                       <v-text-field
+                                        v-if="item.fieldName === 'เบอร์โทร'"
+                                        v-mask="'###-###-####'"
+                                        v-model="item.fieldValue"
+                                        :label="item.fieldName"
+                                        dense
+                                        :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                        outlined
+                                      ></v-text-field>
+                                      <v-text-field
+                                        v-else
                                         v-model="item.fieldValue"
                                         :label="item.fieldName"
                                         dense
@@ -972,6 +1036,16 @@
                         <div v-if="p.fieldType == 'text'">
                           <br />
                           <v-text-field
+                            v-if="p.fieldName === 'เบอร์โทร'"
+                            v-mask="'###-###-####'"
+                            v-model="p.fieldValue"
+                            :label="p.fieldName"
+                            dense
+                            :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                            outlined
+                          ></v-text-field>
+                          <v-text-field
+                            v-else
                             v-model="p.fieldValue"
                             :label="p.fieldName"
                             dense
@@ -983,6 +1057,16 @@
                           <br />
                           <!-- <p>{{p.fieldName}}</p> -->
                           <v-text-field
+                            v-if="p.fieldName === 'เบอร์โทร'"
+                            v-mask="'###-###-####'"
+                            v-model="p.fieldValue"
+                            :label="p.fieldName"
+                            dense
+                            :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                            outlined
+                          ></v-text-field>
+                          <v-text-field
+                            v-else
                             v-model="p.fieldValue"
                             :label="p.fieldName"
                             dense
@@ -1114,6 +1198,16 @@
                         <div v-if="p.fieldType == 'text'">
                           <br />
                           <v-text-field
+                            v-if="p.fieldName === 'เบอร์โทร'"
+                            v-mask="'###-###-####'"
+                            v-model="p.fieldValue"
+                            :label="p.fieldName"
+                            dense
+                            :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                            outlined
+                          ></v-text-field>
+                          <v-text-field
+                            v-else
                             v-model="p.fieldValue"
                             :label="p.fieldName"
                             dense
@@ -1124,6 +1218,16 @@
                         <div v-if="p.fieldType == 'number'">
                           <br />
                           <v-text-field
+                            v-if="p.fieldName === 'เบอร์โทร'"
+                            v-mask="'###-###-####'"
+                            v-model="p.fieldValue"
+                            :label="p.fieldName"
+                            dense
+                            :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                            outlined
+                          ></v-text-field>
+                          <v-text-field
+                            v-else
                             v-model="p.fieldValue"
                             :label="p.fieldName"
                             dense
@@ -2208,10 +2312,18 @@
                           fab
                           small
                           @click.stop="setDataEdit(item)"
-                          v-bind="attrs"
-                          v-on="on"
                         >
                           <v-icon dark> mdi-tools </v-icon>
+                        </v-btn>
+                    </VueCustomTooltip>
+                    <VueCustomTooltip label="กลับไปสถานะก่อนหน้า" position="is-top"  v-if="item.statusBt === 'confirm'">
+                        <v-btn
+                          color="indigo"
+                          fab
+                          small
+                          @click.stop="updateStatusBookingTransaction(item)"
+                        >
+                          <v-icon dark> mdi-skip-backward </v-icon>
                         </v-btn>
                     </VueCustomTooltip>
                     <VueCustomTooltip label="รับรถเข้าศูนย์" position="is-top"  v-if="item.statusBt === 'confirm'">
@@ -2220,8 +2332,6 @@
                           fab
                           small
                           @click.stop="(dialogEdit = true), getBookingDataJob(item, 'qrcode')"
-                          v-bind="attrs"
-                          v-on="on"
                         >
                           <v-icon dark> mdi-account-plus </v-icon>
                         </v-btn>
@@ -2233,8 +2343,6 @@
                           :disabled="item.chkConfirm"
                           small
                           @click.stop="confirmChk(item)"
-                          v-bind="attrs"
-                          v-on="on"
                         >
                           <v-icon dark> mdi-phone-check </v-icon>
                         </v-btn>
@@ -2255,8 +2363,6 @@
                             fab
                             small
                             @click.stop="setDataChang(item)"
-                            v-bind="attrs"
-                            v-on="on"
                           >
                             <v-icon> mdi-calendar-clock </v-icon>
                           </v-btn>
@@ -2269,8 +2375,6 @@
                           small
                           :disabled="item.chkCancel"
                           @click.stop="setDataRemove(item)"
-                          v-bind="attrs"
-                          v-on="on"
                         >
                           <v-icon dark> mdi-phone-cancel </v-icon>
                         </v-btn>
@@ -2282,8 +2386,6 @@
                           fab
                           small
                           @click.stop="(dialogJob = true), getjob(item)"
-                          v-bind="attrs"
-                          v-on="on"
                         >
                           <v-icon> mdi-qrcode-scan </v-icon>
                         </v-btn>
@@ -2295,8 +2397,6 @@
                           fab
                           small
                           @click.stop="(dialogDelete = true), getDataById(item)"
-                          v-bind="attrs"
-                          v-on="on"
                         >
                           <v-icon> mdi-delete </v-icon>
                         </v-btn>
@@ -2640,7 +2740,7 @@
                         <v-col cols="12" v-if="dataEditReady">
                           <v-select
                             v-model="formEdit.flowId"
-                            :items="DataFlowName"
+                            :items="dataFlowSelectEdit"
                             label="ประเภทบริการ"
                             outlined
                             dense
@@ -2670,6 +2770,17 @@
                               >
                                 <v-col cols="12" class="InputData" v-if="item.fieldType == 'text'">
                                   <v-text-field
+                                    v-if="item.fieldName === 'เบอร์โทร'"
+                                    v-mask="'###-###-####'"
+                                    v-model="item.fieldValue"
+                                    :label="item.fieldName"
+                                    outlined
+                                    dense
+                                    required
+                                    :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                  ></v-text-field>
+                                  <v-text-field
+                                    v-else
                                     v-model="item.fieldValue"
                                     :label="item.fieldName"
                                     outlined
@@ -2680,6 +2791,17 @@
                                 </v-col>
                                 <v-col cols="12" class="InputData" v-if="item.fieldType == 'number'">
                                   <v-text-field
+                                    v-if="item.fieldName === 'เบอร์โทร'"
+                                    v-mask="'###-###-####'"
+                                    v-model="item.fieldValue"
+                                    :label="item.fieldName"
+                                    outlined
+                                    dense
+                                    required
+                                    :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                  ></v-text-field>
+                                  <v-text-field
+                                    v-else
                                     v-model="item.fieldValue"
                                     :label="item.fieldName"
                                     outlined
@@ -2762,6 +2884,17 @@
                                 >
                                   <v-col cols="12" class="InputData" v-if="item.fieldType == 'text'">
                                     <v-text-field
+                                      v-if="item.fieldName === 'เบอร์โทร'"
+                                      v-model="item.fieldValue"
+                                      :label="item.fieldName"
+                                      v-mask="'###-###-####'"
+                                      outlined
+                                      dense
+                                      required
+                                      :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                    ></v-text-field>
+                                    <v-text-field
+                                      v-else
                                       v-model="item.fieldValue"
                                       :label="item.fieldName"
                                       outlined
@@ -2772,6 +2905,17 @@
                                   </v-col>
                                   <v-col cols="12" class="InputData" v-if="item.fieldType == 'number'">
                                     <v-text-field
+                                      v-if="item.fieldName === 'เบอร์โทร'"
+                                      v-mask="'###-###-####'"
+                                      v-model="item.fieldValue"
+                                      :label="item.fieldName"
+                                      outlined
+                                      required
+                                      dense
+                                      :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                    ></v-text-field>
+                                    <v-text-field
+                                      v-else
                                       v-model="item.fieldValue"
                                       :label="item.fieldName"
                                       outlined
@@ -2836,6 +2980,16 @@
                                   <template v-if="parseInt(item.conditionValue) === parseInt(formEdit.flowId) ">
                                     <v-col cols="12" class="InputData" v-if="item.fieldType == 'text'">
                                       <v-text-field
+                                        v-if="item.fieldName === 'เบอร์โทร'"
+                                        v-mask="'###-###-####'"
+                                        v-model="item.fieldValue"
+                                        :label="item.fieldName"
+                                        dense
+                                        :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                        outlined
+                                      ></v-text-field>
+                                      <v-text-field
+                                        v-else
                                         v-model="item.fieldValue"
                                         :label="item.fieldName"
                                         dense
@@ -2845,6 +2999,16 @@
                                     </v-col>
                                     <v-col cols="12" class="InputData" v-if="item.fieldType == 'number'">
                                       <v-text-field
+                                        v-if="item.fieldName === 'เบอร์โทร'"
+                                        v-mask="'###-###-####'"
+                                        v-model="item.fieldValue"
+                                        :label="item.fieldName"
+                                        dense
+                                        :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                        outlined
+                                      ></v-text-field>
+                                      <v-text-field
+                                        v-else
                                         v-model="item.fieldValue"
                                         :label="item.fieldName"
                                         dense
@@ -3076,8 +3240,7 @@
                 </v-card-text>
             </v-card>
           </v-dialog>
-          <v-dialog
-            v-model="dialogAddCon"
+          <v-dialog v-model="dialogAddCon"
             persistent
             max-width="500px"
           >
@@ -3137,8 +3300,7 @@
               </div>
             </v-card>
           </v-dialog>
-          <v-dialog
-            v-model="dialogError"
+          <v-dialog v-model="dialogError"
             persistent
             max-width="500px"
           >
@@ -3173,7 +3335,7 @@
                     dense
                     chips
                     small-chips
-                    label="Outlined"
+                    label="รายการ Tag"
                     multiple
                   ></v-autocomplete>
                 </v-container>
@@ -3317,8 +3479,7 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
-          <v-dialog
-          v-model="dialogAddTag"
+          <v-dialog v-model="dialogAddTag"
           persistent
           max-width="30%"
         >
@@ -3556,6 +3717,8 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      dataFlowSelectAdd: [],
+      dataFlowSelectEdit: [],
       checkSelectText: '',
       pictureUrHistory: '',
       tagName: '',
@@ -3879,6 +4042,65 @@ export default {
     })
   },
   methods: {
+    updateStatusBookingTransaction (item) {
+      this.$swal({
+        title: 'ต้องการ ย้ายนัดหมายนี้กลับไปสถานะก่อนหน้า ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      }).then(async () => {
+        var dt = {
+          bookNo: item.bookNo,
+          contactDate: this.format_date(new Date()),
+          status: 'wait',
+          statusUse: 'use',
+          shopId: this.$session.getAll().data.shopId,
+          CREATE_USER: this.session.data.userName,
+          LAST_USER: this.session.data.userName
+        }
+        await axios
+          .post(this.DNS_IP + '/booking_transaction/add', dt)
+          .then(async response => {
+          // this.getDataCalendaBooking()
+            await this.onUpdateRemark('เนื่องจากลูกค้าไม่สะดวก รอโทรยืนยันอีกครั้ง', item.bookNo)
+            this.$swal('เรียบร้อย', 'ย้ายนัดหมายนี้กลับไปสถานะก่อนหน้า เรียบร้อย', 'success')
+          // await this.getBookingList()
+          // this.getTimesChange('update')
+          })
+          .catch(error => {
+            console.log('error function addData : ', error)
+            setTimeout(() => this.confirmChkAdd(), 3000)
+          })
+      })
+    },
+    async onUpdateRemark (text, bookNo) {
+      var dt = {
+        LAST_USER: this.session.data.userName,
+        remark: text
+      }
+      await axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + "/Booking/edit/" + bookNo,
+          dt
+        )
+        .then(async response => {
+          if (this.statusSearch === 'no') {
+            await this.getBookingList()
+          } else {
+            await this.searchAny()
+          }
+          // this.getTimesChange('update')
+          if (this.getSelectText) {
+            this.getSelect(this.getSelectText, this.getSelectCount)
+          }
+          clearInterval(this.setTimerCalendar)
+          this.setTimerCalendar = null
+        })
+    },
     async SelectDataHistory () {
       this.HistoryData = []
       this.HistoryData.push(this.defaultData[this.Carnumber])
@@ -5552,12 +5774,10 @@ export default {
       return result
     },
     async getDataFlow () {
-      this.DataFlowName = await this.getDataFromAPIFlow('/flow/get', 'flowId', 'flowName', '&checkOnsite=is null')
-    },
-    async getDataFromAPIFlow (url, fieldId, fieldName, param) {
       let result = []
+      let resultOption = []
       await axios
-        .get(this.DNS_IP + `${url}?shopId=${this.session.data.shopId}${param}`)
+        .get(this.DNS_IP + `/flow/get?shopId=${this.session.data.shopId}&checkOnsite=is null`)
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
@@ -5565,17 +5785,21 @@ export default {
             for (var i = 0; i < rs.length; i++) {
               let d = rs[i]
               let s = {}
-              s.text = d[fieldName]
-              s.value = d[fieldId]
+              s.text = d.flowName
+              s.value = d.flowId
               s.allData = d
               result.push(s)
+              resultOption.push(s)
               // console.log('this.DataFlowName', this.DataFlowName)
             }
           } else {
             result = []
+            resultOption = []
           }
         })
-      return result
+      this.DataFlowName = result
+      this.dataFlowSelectAdd = resultOption
+      this.dataFlowSelectEdit = resultOption
     },
     async getDataBranch () {
       // if (localStorage.getItem('BRANCH') === null) {
@@ -6866,11 +7090,22 @@ export default {
           .post(this.DNS_IP + '/Booking/add', Add)
           .then(async response => {
           // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-            if (this.dataDepositAdd === 'มี') {
-              await this.confirmChkAdd(response.data)
+            let checkDeposit = this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })
+            let depositCheckStatus = ''
+            if (checkDeposit.length > 0) {
+              depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
             } else {
-              this.clearDataAdd()
-              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              depositCheckStatus = 'False'
+            }
+            if (depositCheckStatus === 'True') {
+              if (this.dataDepositAdd === 'มี') {
+                await this.confirmChkAdd(response.data)
+              } else {
+                this.clearDataAdd()
+                this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              }
+            } else {
+              await this.confirmChkAdd(response.data)
             }
           // console.log('addDataGlobal DNS_IP + /job/add', response)
           })
