@@ -29,8 +29,18 @@
                   <v-row>
                     <v-col cols="6">
                       <v-text-field
-                        label="สาขา"
+                        label="ชื่อสาขา (ภาษาไทย)"
                         v-model="formAdd.masBranchName"
+                        :rules="nameRules"
+                        :counter="50"
+                        maxlength="50"
+
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="6">
+                      <v-text-field
+                        label="ชื่อสาขา (ภาษาอังกฤษ)"
+                        v-model="formAdd.masBranchNameEn"
                         :rules="nameRules"
                         :counter="50"
                         maxlength="50"
@@ -218,8 +228,18 @@
                   <v-row>
                     <v-col cols="6">
                       <v-text-field
-                        label="สาขา"
+                        label="ชื่อสาขา (ภาษาไทย)"
                         v-model="formUpdate.masBranchName"
+                        :rules="nameRules"
+                        :counter="50"
+                        maxlength="50"
+
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="6">
+                      <v-text-field
+                        label="ชื่อสาขา (ภาษาอังกฤษ)"
+                        v-model="formUpdate.masBranchNameEn"
                         :rules="nameRules"
                         :counter="50"
                         maxlength="50"
@@ -567,6 +587,7 @@ export default {
       formAdd: {
         masBranchCode: '',
         masBranchName: '',
+        masBranchNameEn: '',
         countCus: 0,
         countFastTrack: 0,
         time: '',
@@ -578,6 +599,7 @@ export default {
         countCus: 0,
         countFastTrack: 0,
         masBranchName: '',
+        masBranchNameEn: '',
         setTime: '',
         time: ''
       },
@@ -585,7 +607,8 @@ export default {
         countCus: 0,
         countFastTrack: 0,
         setTime: '',
-        masBranchName: ''
+        masBranchName: '',
+        masBranchNameEn: ''
       },
       nameRules: [
         (v) => !!v || 'Name is required',
@@ -806,7 +829,7 @@ export default {
         delete this.formAdd['time']
         this.dataReady = false
         if (this.formAdd.masBranchName === '') {
-          this.$swal('ผิดพลาด', 'กรอกชื่อ แผนก', 'error')
+          this.$swal('ผิดพลาด', 'กรอกชื่อ สาขา', 'error')
         } else if (this.formAdd.masBranchCode === '') {
           this.$swal('ผิดพลาด', 'กรุณาเลือก สาขา', 'error')
         } else {
@@ -868,6 +891,7 @@ export default {
       if (this.dataItemAddTime.length > 0) {
         // this.formUpdateItem.countCus = this.formUpdate.countCus
         this.formUpdateItem.masBranchName = this.formUpdate.masBranchName
+        this.formUpdateItem.masBranchNameEn = this.formUpdate.masBranchNameEn
         this.formUpdateItem.setTime = JSON.stringify(this.dataItemAddTime)
         // Config User ทำรายการล่าสุด
         this.formUpdateItem.LAST_USER = this.$session.getAll().data.userName
@@ -961,6 +985,7 @@ export default {
       this.dataReady = true
       this.formAdd.masBranchCode = ''
       this.formAdd.masBranchName = ''
+      this.formAdd.masBranchNameEn = ''
       this.formAdd.countCus = 0
       this.formAdd.shopId = this.$session.getAll().data.shopId
       this.dataItemAddTime = []

@@ -2378,14 +2378,14 @@
                       v-bind:options="options2"
                     />
                   </v-col>
-                  <v-col class="pb-0 pt-0" cols="12" v-if="dataPackage.length > 0">
+                  <v-col class="pb-0 pt-0" cols="12" v-if="dataPackage.filter(el => { return el.balanceAmount > 0 }).length > 0">
                     <v-card class="pl-1">
-                      <v-subheader>ลูกค้ามี {{dataPackage.length}} แพ็คเกจ</v-subheader>
+                      <v-subheader>ลูกค้ามี {{dataPackage.filter(el => { return el.balanceAmount > 0 }).length}} แพ็คเกจ</v-subheader>
                       <v-subheader v-show="StatusPackage.packageName">ลูกค้าได้ทำการเลือกแพ็คเกจ {{StatusPackage.packageName}}</v-subheader>
                       <v-slide-group
                         active-class="success"
                         >
-                        <v-slide-item v-for="(item, index) in dataPackage" :key="index">
+                        <v-slide-item v-for="(item, index) in dataPackage.filter(el => { return el.balanceAmount > 0 })" :key="index">
                             <v-card
                             class="ma-2 p-1"
                             width="340"

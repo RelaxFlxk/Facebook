@@ -1013,6 +1013,132 @@
               <v-card-title>นำเข้ากระดานการทำงาน</v-card-title>
               <v-card-text  v-if="dataEditJobReady && statusConfirmJob">
                 <v-container>
+                  <v-col class="pb-0 pt-0" cols="12" v-if="dataPackage.filter(el => { return el.balanceAmount > 0 }).length > 0 && dataPackageDefault === false">
+                    <v-card class="pl-1">
+                      <v-subheader>ลูกค้ามี {{dataPackage.filter(el => { return el.balanceAmount > 0 }).length}} แพ็คเกจ</v-subheader>
+                      <v-subheader v-show="StatusPackage.packageName">ลูกค้าได้ทำการเลือกแพ็คเกจ {{StatusPackage.packageName}}</v-subheader>
+                      <v-slide-group
+                        active-class="success"
+                        show-arrows
+                        >
+                        <v-slide-item v-for="(item, index) in dataPackage.filter(el => { return el.balanceAmount > 0 })" :key="index">
+                            <v-card
+                            class="ma-2 p-1"
+                            width="340"
+                            height="100"
+                            color="#FFFFFF"
+                            elevation="6"
+                            >
+                            <v-row>
+                              <v-col cols="4" class="pr-1">
+                                <v-img
+                              contain
+                              max-height="80"
+                              max-width="200"
+                              :src="item.packageImg"
+                            ></v-img>
+                              </v-col>
+                              <v-col cols="8" class="pb-6" >
+                                <v-row class="font16 headline1">
+                                    <v-col class="pl-0 pt-2 pb-0">{{item.packageName}}</v-col>
+                                    <v-btn class="mr-4 mt-3" v-if="item.packageId !== packageId" color="green" outlined rounded x-small @click="UpdatePackage(item.packageId,'ตกลง',item.packageName, item), jobCheckPackage = true">ตกลง</v-btn>
+                                    <v-btn class="mr-4 mt-3" v-if="item.packageId === packageId" color="red" outlined rounded x-small @click="UpdatePackage(item.packageId,'ยกเลิก',item.packageName, item), jobCheckPackage = false">ยกเลิก</v-btn>
+                                </v-row>
+                                <v-row class="font14 headline1">
+                                    <v-col class="pl-0 pt-0 pb-0">จำนวนการใช้  {{item.balanceAmount}} / {{item.amount}} </v-col>
+                                </v-row>
+                                <v-row class="font14 headline1">
+                                    <v-col class="pl-0 pt-0 pb-0">
+                                      <VueCustomTooltip label="สามารถใช้ได้" position="is-top" v-if="dateTimestamp <= item.expirePackage">
+                                        <v-icon
+                                          large
+                                          color="teal darken-2"
+                                        >
+                                          mdi-clock-check
+                                        </v-icon>
+                                      </VueCustomTooltip>
+                                      <VueCustomTooltip label="หมดอายุแล้ว" position="is-top" v-if="dateTimestamp > item.expirePackage">
+                                        <v-icon
+                                          large
+                                          color="red darken-2"
+                                        >
+                                          mdi-clock-alert
+                                        </v-icon>
+                                      </VueCustomTooltip>
+                                      >> วันหมดอายุ  {{new Date(item.expirePackage * 1000).toLocaleString().substr(0,9)}}
+                                    </v-col>
+                                </v-row>
+                              </v-col>
+                            </v-row>
+                            </v-card>
+                        </v-slide-item>
+                    </v-slide-group>
+                    </v-card>
+                    <br>
+                  </v-col>
+                  <v-col class="pb-0 pt-0" cols="12" v-if="dataPackage.filter(el => { return el.balanceAmount > 0 }).length > 0 && dataPackageDefault === true">
+                    <v-card class="pl-1">
+                      <v-subheader>ลูกค้ามี {{dataPackage.filter(el => { return el.balanceAmount > 0 && el.packageId === packageId }).length}} แพ็คเกจ</v-subheader>
+                      <v-subheader v-show="StatusPackage.packageName">ลูกค้าได้ทำการเลือกแพ็คเกจ {{StatusPackage.packageName}}</v-subheader>
+                      <v-slide-group
+                        active-class="success"
+                        show-arrows
+                        >
+                        <v-slide-item v-for="(item, index) in dataPackage.filter(el => { return el.balanceAmount > 0 && el.packageId === packageId })" :key="index">
+                            <v-card
+                            class="ma-2 p-1"
+                            width="340"
+                            height="100"
+                            color="#FFFFFF"
+                            elevation="6"
+                            >
+                            <v-row>
+                              <v-col cols="4" class="pr-1">
+                                <v-img
+                              contain
+                              max-height="80"
+                              max-width="200"
+                              :src="item.packageImg"
+                            ></v-img>
+                              </v-col>
+                              <v-col cols="8" class="pb-6" >
+                                <v-row class="font16 headline1">
+                                    <v-col class="pl-0 pt-2 pb-0">{{item.packageName}}</v-col>
+                                    <!-- <v-btn class="mr-4 mt-3" v-if="item.packageId !== packageId" color="green" outlined rounded x-small @click="UpdatePackage(item.packageId,'ตกลง',item.packageName, item)">ตกลง</v-btn>
+                                    <v-btn class="mr-4 mt-3" v-if="item.packageId === packageId" color="red" outlined rounded x-small @click="UpdatePackage(item.packageId,'ยกเลิก',item.packageName, item)">ยกเลิก</v-btn> -->
+                                </v-row>
+                                <v-row class="font14 headline1">
+                                    <v-col class="pl-0 pt-0 pb-0">จำนวนการใช้  {{item.balanceAmount}} / {{item.amount}} </v-col>
+                                </v-row>
+                                <v-row class="font14 headline1">
+                                    <v-col class="pl-0 pt-0 pb-0">
+                                      <VueCustomTooltip label="สามารถใช้ได้" position="is-top" v-if="dateTimestamp <= item.expirePackage">
+                                        <v-icon
+                                          large
+                                          color="teal darken-2"
+                                        >
+                                          mdi-clock-check
+                                        </v-icon>
+                                      </VueCustomTooltip>
+                                      <VueCustomTooltip label="หมดอายุแล้ว" position="is-top" v-if="dateTimestamp > item.expirePackage">
+                                        <v-icon
+                                          large
+                                          color="red darken-2"
+                                        >
+                                          mdi-clock-alert
+                                        </v-icon>
+                                      </VueCustomTooltip>
+                                      >> วันหมดอายุ  {{new Date(item.expirePackage * 1000).toLocaleString().substr(0,9)}}
+                                    </v-col>
+                                </v-row>
+                              </v-col>
+                            </v-row>
+                            </v-card>
+                        </v-slide-item>
+                    </v-slide-group>
+                    </v-card>
+                    <br>
+                  </v-col>
                   <v-col
                     v-for="(item, indexitem) in BookingDataItem"
                     :key="indexitem"
@@ -1833,6 +1959,78 @@
               </v-form>
             </v-card>
           </v-dialog>
+          <v-dialog v-model="dialogRemarkReturn" :max-width="dialogwidth">
+            <v-card class="text-center">
+              <v-card-title>
+                หมายเหตุเรียกกลับ
+              </v-card-title>
+              <!-- <v-form ref="form_remove" v-model="validRemove" lazy-validation> -->
+                <v-container>
+              <v-card-text>
+                <v-row>
+                  <v-col cols= "12" class="pb-0">
+                    <v-menu
+                      ref="menuReturn"
+                      v-model="menuReturn"
+                      :close-on-content-click="false"
+                      transition="scale-transition"
+                      offset-y
+                      max-width="290px"
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          v-model="dateReturn"
+                          label="วันที่เรียกลูกค้ากลับมา"
+                          persistent-hint
+                          dense
+                          outlined
+                          prepend-icon="mdi-calendar"
+                          v-bind="attrs"
+                          v-on="on"
+                          readonly
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        v-model="dateReturn"
+                        no-title
+                        @input="menuReturn = false"
+                      ></v-date-picker>
+                    </v-menu>
+                  </v-col>
+                  <v-col cols= "12">
+                  <v-textarea
+                    v-model="remarkReturn"
+                    outlined
+                    label="หมายเหตุเรียกกลับ"
+                    auto-grow
+                  ></v-textarea>
+                  </v-col>
+                </v-row>
+                <div class="text-center">
+                  <v-btn
+                    elevation="10"
+                    color="#173053"
+                    dark
+                    small
+                    @click="onSaveRemarkReturn()"
+                    >อัพเดทหมายเหตุ</v-btn
+                  >
+                  <v-btn
+                    elevation="10"
+                    color="#173053"
+                    outlined
+                    style="background-color:#FFFFFF"
+                    small
+                    @click="dialogRemarkReturn = false"
+                    >ยกเลิก</v-btn
+                  >
+                </div>
+              </v-card-text>
+              </v-container>
+              <!-- </v-form> -->
+            </v-card>
+          </v-dialog>
           <v-dialog v-model="dialogRemark" :max-width="dialogwidth">
             <v-card class="text-center">
               <v-card-title>
@@ -2190,6 +2388,19 @@
                         </v-chip-group>
                       </v-col>
                     </v-row>
+                  </template>
+                  <template v-slot:[`item.remarkReturn`]="{ item }">
+                    <a v-if="item.remarkReturn !== ''" @click.stop="openRemarkReturn(item)" style="cursor:hand"><u>{{ item.remarkReturn }}</u></a>
+                    <v-btn
+                      color="purple"
+                      small
+                      v-if="item.remarkReturn === ''"
+                      dark
+                      @click.stop="openRemarkReturn(item)"
+                    >
+                      <v-icon left dark> mdi-playlist-edit </v-icon>
+                      เพิ่มหมายเหตุเรียกกลับ
+                    </v-btn>
                   </template>
                   <template v-slot:[`item.remark`]="{ item }">
                     <a v-if="item.remark !== ''" @click.stop="openRemark(item)" style="cursor:hand"><u>{{ item.remark }}</u></a>
@@ -2618,6 +2829,69 @@
               <v-card-text v-if="dataConfirmReady">
                 <v-container>
                 <v-row>
+                  <v-col class="pb-0 pt-0" cols="12" v-if="dataPackage.filter(el => { return el.balanceAmount > 0 }).length > 0">
+                    <v-card class="pl-1">
+                      <v-subheader>ลูกค้ามี {{dataPackage.filter(el => { return el.balanceAmount > 0 }).length}} แพ็คเกจ</v-subheader>
+                      <v-subheader v-show="StatusPackage.packageName">ลูกค้าได้ทำการเลือกแพ็คเกจ {{StatusPackage.packageName}}</v-subheader>
+                      <v-slide-group
+                        active-class="success"
+                        show-arrows
+                        >
+                        <v-slide-item v-for="(item, index) in dataPackage.filter(el => { return el.balanceAmount > 0 })" :key="index">
+                            <v-card
+                            class="ma-2 p-1"
+                            width="340"
+                            height="100"
+                            color="#FFFFFF"
+                            elevation="6"
+                            >
+                            <v-row>
+                              <v-col cols="4" class="pr-1">
+                                <v-img
+                              contain
+                              max-height="80"
+                              max-width="200"
+                              :src="item.packageImg"
+                            ></v-img>
+                              </v-col>
+                              <v-col cols="8" class="pb-6" >
+                                <v-row class="font16 headline1">
+                                    <v-col class="pl-0 pt-2 pb-0">{{item.packageName}}</v-col>
+                                    <v-btn class="mr-4 mt-3" v-if="item.packageId !== packageId" color="green" outlined rounded x-small @click="UpdatePackage(item.packageId,'ตกลง',item.packageName, item)">ตกลง</v-btn>
+                                    <v-btn class="mr-4 mt-3" v-if="item.packageId === packageId" color="red" outlined rounded x-small @click="UpdatePackage(item.packageId,'ยกเลิก',item.packageName, item)">ยกเลิก</v-btn>
+                                </v-row>
+                                <v-row class="font14 headline1">
+                                    <v-col class="pl-0 pt-0 pb-0">จำนวนการใช้  {{item.balanceAmount}} / {{item.amount}} </v-col>
+                                </v-row>
+                                <v-row class="font14 headline1">
+                                    <v-col class="pl-0 pt-0 pb-0">
+                                      <VueCustomTooltip label="สามารถใช้ได้" position="is-top" v-if="dateTimestamp <= item.expirePackage">
+                                        <v-icon
+                                          large
+                                          color="teal darken-2"
+                                        >
+                                          mdi-clock-check
+                                        </v-icon>
+                                      </VueCustomTooltip>
+                                      <VueCustomTooltip label="หมดอายุแล้ว" position="is-top" v-if="dateTimestamp > item.expirePackage">
+                                        <v-icon
+                                          large
+                                          color="red darken-2"
+                                        >
+                                          mdi-clock-alert
+                                        </v-icon>
+                                      </VueCustomTooltip>
+                                      >> วันหมดอายุ  {{new Date(item.expirePackage * 1000).toLocaleString().substr(0,9)}}
+                                    </v-col>
+                                </v-row>
+                              </v-col>
+                            </v-row>
+                            </v-card>
+                        </v-slide-item>
+                    </v-slide-group>
+                    </v-card>
+                    <br>
+                  </v-col>
                   <v-col cols= "12" class="pb-0">
                   <v-select
                     v-model="empSelect"
@@ -3717,6 +3991,17 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      dataPackageDefault: false,
+      jobCheckPackage: false,
+      dateTimestamp: '',
+      packageId: '',
+      dataPackage: [],
+      StatusPackage: {
+        status: 'ตกลง',
+        color: 'green',
+        packageName: '',
+        token: ''
+      },
       dataFlowSelectAdd: [],
       dataFlowSelectEdit: [],
       checkSelectText: '',
@@ -3912,8 +4197,10 @@ export default {
       dialogDelete: false,
       dialogChange: false,
       dialogRemark: false,
+      dialogRemarkReturn: false,
       dialogJob: false,
       dialogAddCon: false,
+      menuReturn: false,
       menu: false,
       menu1: false,
       menuStart: false,
@@ -3972,6 +4259,8 @@ export default {
       dataQrcode: [],
       bookNoRemark: '',
       remark: '',
+      remarkReturn: '',
+      dateReturn: '',
       showMap: '',
       setTimer: null,
       setTimerCalendar: null,
@@ -4000,7 +4289,8 @@ export default {
       defaultData: [],
       Carnumberitem: [],
       HistoryData: [],
-      Carnumber: []
+      Carnumber: [],
+      lineUserId: ''
     }
   },
   beforeCreate () {
@@ -4042,6 +4332,39 @@ export default {
     })
   },
   methods: {
+    async getPackage (dt) {
+      this.dataPackage = []
+      await axios.get(this.DNS_IP_Loyalty + '/PackageLog/get?shopId=' + dt.shopId + '&lineUserId=' + dt.lineUserId +
+      '&flowId=' + dt.flowId).then(response => {
+        console.log('PackageLog', response.data)
+        let rs = response.data
+        if (rs.status !== false) {
+          for (var i = 0; i < rs.length; i++) {
+            let d = rs[i]
+            d.text = d.packageName
+            d.value = d.packageId
+            this.dataPackage.push(d)
+          }
+        } else {
+          this.dataPackage = []
+        }
+      })
+    },
+    async UpdatePackage (packageId, StatusPackage, packageName, data) {
+      if (StatusPackage === 'ตกลง') {
+        this.packageId = packageId
+        // this.StatusPackage.status = 'ยกเลิก'
+        // this.StatusPackage.color = 'red'
+        this.StatusPackage.packageName = packageName
+        this.StatusPackage.token = data.token
+      } else {
+        this.packageId = ''
+        // this.StatusPackage.status = 'ตกลง'
+        // this.StatusPackage.color = 'green'
+        this.StatusPackage.packageName = ''
+        this.StatusPackage.token = ''
+      }
+    },
     updateStatusBookingTransaction (item) {
       this.$swal({
         title: 'ต้องการ ย้ายนัดหมายนี้กลับไปสถานะก่อนหน้า ใช่หรือไม่?',
@@ -4449,6 +4772,9 @@ export default {
                   s.address = d.address
                   s.addressLatLong = d.addressLatLong
                   s.countChangeTime = d.countChangeTime || 0
+                  s.remarkReturn = d.remarkReturn || ''
+                  s.dateReturn = d.dateReturn || ''
+                  s.packageId = d.packageId || ''
                   s.tagData = JSON.parse(d.tagData) || []
                   if (s.tagData.length > 0) {
                     s.tagDataShow = []
@@ -4571,6 +4897,23 @@ export default {
       this.remark = item.remark
       this.dialogRemark = true
     },
+    async openRemarkReturn (item) {
+      console.log('openRemarkReturn', item)
+      await axios.get(this.DNS_IP + '/job/getJobNo?jobNo=' + item.jobNo).then((response) => {
+        let rs = response.data
+        console.log('getJobNo', rs)
+        if (rs.length > 0) {
+          this.lineUserId = rs[0].lineUserId || ''
+        } else {
+          this.lineUserId = ''
+        }
+      })
+      this.dateReturn = item.dateReturn
+      this.bookNoRemark = item.bookNo
+      // this.lineUserId = item.lineUserId
+      this.remarkReturn = item.remarkReturn
+      this.dialogRemarkReturn = true
+    },
     async onSaveRemark () {
       var dt = {
         LAST_USER: this.session.data.userName,
@@ -4595,6 +4938,60 @@ export default {
             this.getSelect(this.getSelectText, this.getSelectCount)
           }
         })
+    },
+    async onSaveRemarkReturn () {
+      if (this.remarkReturn !== '' && this.dateReturn !== '') {
+        var dt = {
+          bookNo: this.bookNoRemark,
+          remarkReturn: (this.remarkReturn || '').replace(/%/g, '%%'),
+          dateReturn: this.dateReturn,
+          lineUserId: this.lineUserId,
+          shopId: this.session.data.shopId,
+          CREATE_USER: this.session.data.userName,
+          LAST_USER: this.session.data.userName
+        }
+        await axios
+          .post(
+          // eslint-disable-next-line quotes
+            this.DNS_IP + "/bookingRemarkReturnLog/addRecordD",
+            dt
+          )
+          .then(async response => {
+            this.$swal('เรียบร้อย', 'เปลี่ยนแปลงหมายเหตุเรียบร้อย', 'success')
+            this.dialogRemarkReturn = false
+            if (this.lineUserId !== '') {
+              let pushText = {
+                'to': this.lineUserId,
+                'messages': [
+                  {
+                    'type': 'text',
+                    'text': ` 📣 คุณลูกค้ามีนัด\n 🛎 ${this.remarkReturn}
+                          \nวันที่กลับมาใช้บริการ ${this.format_dateNotime(this.dateReturn)}`
+                  }
+                ]
+              }
+              axios
+                .post(
+                  this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
+                  pushText
+                )
+                .catch(error => {
+                  console.log('error function addData : ', error)
+                })
+            }
+            if (this.statusSearch === 'no') {
+              await this.getBookingList()
+            } else {
+              await this.searchAny()
+            }
+            // this.getTimesChange('update')
+            if (this.getSelectText) {
+              this.getSelect(this.getSelectText, this.getSelectCount)
+            }
+          })
+      } else {
+        this.$swal('ผิดพลาด', 'กรุณากรอก หมายเหตุ และวันที่เรียกลูกค้ากลับ', 'error')
+      }
     },
     async setDataEdit (dt) {
       this.checkSelectText = dt.statusBt
@@ -5988,7 +6385,8 @@ export default {
           { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
           { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
           { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
-          { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
+          { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' },
+          { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center' }
         ]
       } else {
         var dataSelect = []
@@ -6164,6 +6562,18 @@ export default {
           //   { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
           //   { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
           //   { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
+        } else if (text === 'confirmJob') {
+          this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+            // { text: 'Booking Id', value: 'bookNo' },
+            { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+            // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+            { text: 'ชื่อบริการ', value: 'flowNameShow' },
+            { text: 'ชื่อลูกค้า', value: 'cusName' },
+            { text: 'เบอร์โทร', value: 'tel' },
+            { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+            { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' },
+            { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center' }]
         } else {
           this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
             // { text: 'Booking Id', value: 'bookNo' },
@@ -6541,6 +6951,9 @@ export default {
                 s.timeDueHtext = d.timeDueH + ':00'
                 s.timeDuetext = d.timeDue
                 s.countChangeTime = d.countChangeTime || 0
+                s.remarkReturn = d.remarkReturn || ''
+                s.dateReturn = d.dateReturn || ''
+                s.packageId = d.packageId || ''
                 s.tagData = JSON.parse(d.tagData) || []
                 if (s.tagData.length > 0) {
                   s.tagDataShow = []
@@ -6692,6 +7105,9 @@ export default {
                 s.timeDueHtext = d.timeDueH + ':00'
                 s.timeDuetext = d.timeDue
                 s.countChangeTime = d.countChangeTime || 0
+                s.remarkReturn = d.remarkReturn || ''
+                s.dateReturn = d.dateReturn || ''
+                s.packageId = d.packageId || ''
                 s.tagData = JSON.parse(d.tagData) || []
                 if (s.tagData.length > 0) {
                   s.tagDataShow = []
@@ -7286,6 +7702,31 @@ export default {
         })
     },
     async getBookingDataJob (dt, text) {
+      this.jobCheckPackage = false
+      console.log('dt', dt)
+      this.dateTimestamp = moment().unix()
+      this.remark = dt.remark
+      this.userId = dt.userId
+      this.lineUserId = dt.lineUserId
+      console.log(this.userId, this.lineUserId)
+      if (dt.packageId !== '') {
+        this.dataPackageDefault = true
+      } else {
+        this.dataPackageDefault = false
+      }
+      await this.getPackage(dt)
+      if (this.dataPackage.length > 0) {
+        console.log('dataPackage', this.dataPackage.filter(el => { return el.packageId === dt.packageId }))
+        if (this.dataPackage.filter(el => { return el.packageId === dt.packageId }).length > 0) {
+          var dataPack = this.dataPackage.filter(el => { return el.packageId === dt.packageId })
+          this.dataPackageDefault = true
+          // this.packageId = dataPack[0].value
+          this.UpdatePackage(dataPack[0].value, 'ตกลง', dataPack[0].text, dataPack[0])
+        } else {
+          this.UpdatePackage('', 'ยกเลิก', '', '')
+          this.dataPackageDefault = false
+        }
+      }
       this.checkTimeFlow()
       this.BookingDataItem = []
       let itemIncustomField = []
@@ -7528,6 +7969,10 @@ export default {
                             axios
                               .post(this.DNS_IP + '/booking_transaction/add', dtt)
                               .then(async response => {
+                                if (this.jobCheckPackage) {
+                                  console.log('usePackage')
+                                  await this.usePackage()
+                                }
                                 this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
                                 if (this.statusSearch === 'no') {
                                   await this.getBookingList()
@@ -7693,9 +8138,23 @@ export default {
         })
     },
     async confirmChk (item) {
+      this.dateTimestamp = moment().unix()
       this.dataConfirm = item
       this.remark = item.remark
+      this.userId = item.userId
+      this.lineUserId = item.lineUserId
+      console.log(this.userId, this.lineUserId)
       await this.getEmpSelect(item)
+      await this.getPackage(item)
+      if (this.dataPackage.length > 0) {
+        if (this.dataPackage.filter(el => { return el.packageId === item.packageId }).length > 0) {
+          var dataPack = this.dataPackage.filter(el => { return el.packageId === item.packageId })
+          // this.packageId = dataPack[0].value
+          this.UpdatePackage(dataPack[0].value, 'ตกลง', dataPack[0].text, dataPack[0])
+        } else {
+          this.UpdatePackage('', 'ยกเลิก', '', '')
+        }
+      }
       this.dialogConfirm = true
     },
     onConfirm (item) {
@@ -7709,14 +8168,18 @@ export default {
           statusUse: 'use',
           shopId: this.$session.getAll().data.shopId,
           CREATE_USER: this.session.data.userName,
-          LAST_USER: this.session.data.userName
+          LAST_USER: this.session.data.userName,
+          packageId: this.packageId
         }
         axios
           .post(this.DNS_IP + '/booking_transaction/add', dt)
           .then(async response => {
             this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
             await this.updateRemarkAndEmpSelect(item)
-            this.getDataCalendaBooking()
+            // this.getDataCalendaBooking()
+            if (this.packageId !== '') {
+              await this.usePackage()
+            }
             let DTitem = item.userId
             console.log('DTITEM', DTitem)
             if (DTitem !== 'user-skip') {
@@ -7771,6 +8234,22 @@ export default {
         this.setTimerCalendar = null
         this.$router.push('/Core/Login')
       }
+    },
+    async usePackage () {
+      var params = {
+        shopId: this.$session.getAll().data.shopId,
+        token: this.StatusPackage.token
+      }
+      await axios({
+        method: 'post',
+        headers: {
+          shopId: this.$session.getAll().data.shopId,
+          lineUserId: this.lineUserId,
+          lineId: this.userId
+        },
+        url: this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token,
+        data: params
+      }).then((response) => {})
     },
     async updateRemarkAndEmpSelect (item) {
       var dt = {
