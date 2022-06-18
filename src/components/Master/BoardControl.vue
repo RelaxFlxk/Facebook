@@ -1197,18 +1197,19 @@
                 <template v-slot:opposite>
                   <span>{{format_dateNotime(item.DTLAST_DATE)}}</span>
                 </template>
-                <v-card class="elevation-2 p-2" color="#F5F5F5">
-                  <v-card-title class="text-h6">
-                  </v-card-title>
-                  <v-card-text dark>
-                    <p style="margin-bottom: 0px;color:#000000;">ขั้นตอน {{item.stepTitle}}</p>
-                    <!-- <p style="margin-bottom: 0px; color:#173053;">ขั้นตอน {{item.stepTitle}}</p> -->
-                    <p style="margin-bottom: 0px;"> เวลาที่รับงาน {{momenTime(item.DTLAST_DATE)}}</p>
-                    <p style="margin-bottom: 0px;"> ผู้รับผิดชอบ {{item.empStep}}</p>
-                    <p style="margin-bottom: 0px;">เวลาการทำงาน {{item.Counttime}} นาที</p>
-                    <!-- <p style="margin-bottom: 0px;">วันที่เปลี่ยน {{format_dateNotime(item.DTLAST_DATE)}}</p> -->
-                  </v-card-text>
-                </v-card>
+                <v-card  class="elevation-2 p-2" :style="'border-top: 8px solid ' + codeColor[index]+ ';'">
+              <v-card-title class="text-h6" style="color:#173053;">
+              </v-card-title>
+              <v-card-text>
+                <p class="font-weight-black" style="margin-bottom: 0px;color:#000000;">ขั้นตอน {{item.stepTitle}}</p>
+                <!-- <p style="margin-bottom: 0px; color:#173053;">ขั้นตอน {{item.stepTitle}}</p> -->
+                <p v-if="item.stepTitle !== 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;"> เวลาที่รับงาน {{momenTime(item.DTLAST_DATE)}}</p>
+                <p v-if="item.stepTitle !== 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;"> ผู้รับผิดชอบ {{item.empStep}}</p>
+                <p v-if="item.stepTitle !== 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;">เวลาการทำงาน {{item.Counttime}} นาที</p>
+                <p v-if="item.stepTitle === 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;">สรุปค่าใช้จ่าย {{item.totalPrice}} บาท</p>
+                <!-- <p style="margin-bottom: 0px;">วันที่เปลี่ยน {{format_dateNotime(item.DTLAST_DATE)}}</p> -->
+              </v-card-text>
+            </v-card>
               </v-timeline-item>
             </v-timeline>
             <br>
@@ -2563,15 +2564,27 @@ export default {
               s.totalPrice = s.totalPrice
               s.DTCREATE_DATE = d.CREATE_DATE
               s.DTLAST_DATE = d.LAST_DATE
-              s.stepTitle = d.stepTitle
+              s.stepTitle = d.totalPrice === null ? d.stepTitle : 'ปิดจ๊อบ'
               s.timediff = d.timediff
-              s.Counttime = this.jsTimeDiff(d.CREATE_DATE, d.LAST_DATE)
+              s.Counttime = this.convertHMS(this.jsTimeDiff(d.CREATE_DATE, d.LAST_DATE))
+              s.totalPrice = d.totalPrice
               this.timelineitem.push(s)
             }
           }
         }).catch((error) => {
           console.log('error function addData : ', error)
         })
+    },
+    convertHMS (value) {
+      const sec = parseInt(value, 10) // convert value to number if it's string
+      let hours = Math.floor(sec / 3600) // get hours
+      let minutes = Math.floor((sec - (hours * 3600)) / 60) // get minutes
+      let seconds = sec - (hours * 3600) - (minutes * 60) // get seconds
+      // add 0 if value < 10; Example: 2 => 02
+      if (hours < 10) { hours = '0' + hours }
+      if (minutes < 10) { minutes = '0' + minutes }
+      if (seconds < 10) { seconds = '0' + seconds }
+      return hours + ':' + minutes + ':' + seconds // Return is HH : MM : SS
     },
     jsTimeDiff (Time1, Time2) {
       var oneday = 1000 * 60

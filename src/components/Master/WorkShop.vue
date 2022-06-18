@@ -54,14 +54,11 @@
                 <draggable v-model="Layout[i].workData" group="workshop" @change="UpdateworkShop ()">
                   <div  v-for="(element , workData) in Layout[i].workData" :key="workData">
                     <v-card
-                    class="mb-12"
+                    class="pa-3 mb-12"
                     width="220"
+                    :color="codeColor[i]"
                    >
-                     <v-toolbar
-
-                    >
-                    <p style="color:#1B437C">{{element.stepTitle}}</p>
-                    </v-toolbar>
+                    <strong dark style="color:#FFFFFF">{{element.stepTitle}}</strong>
                     </v-card>
                   </div>
                 </draggable>
@@ -131,19 +128,26 @@ export default {
       },
       CCSS: 'rgb(142, 202, 230)',
       codeColor: [
-        '#EB56F6',
-        '#824D99',
         '#4D67AB',
+        '#4E79C4',
+        '#57A2AC',
+        '#824D99',
         '#84C650',
-        '#FED966',
+        '#C65050',
         '#CE2220',
-        '#A06ACC',
-        '#204E5B',
-        '#2BB989',
-        '#F9B232',
-        '#F29200',
-        '#B23232',
-        '#57A2AC'
+        '#E67F33',
+        '#EB56F6',
+        '#FED966',
+        '#4D67AB',
+        '#4E79C4',
+        '#57A2AC',
+        '#824D99',
+        '#84C650',
+        '#C65050',
+        '#CE2220',
+        '#E67F33',
+        '#EB56F6',
+        '#FED966'
       ],
       numberRules: [ (v) => (!isNaN(parseFloat(v)) && v >= 0 && v <= 9999999999) ]
     }
