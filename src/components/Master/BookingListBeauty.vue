@@ -1018,7 +1018,8 @@
                       <v-subheader>ลูกค้ามี {{dataPackage.filter(el => { return el.balanceAmount > 0 }).length}} แพ็คเกจ</v-subheader>
                       <v-subheader v-show="StatusPackage.packageName">ลูกค้าได้ทำการเลือกแพ็คเกจ {{StatusPackage.packageName}}</v-subheader>
                       <v-slide-group
-                        active-class="success"
+                        v-model="modelPackageIndexConfirmJob"
+                        center-active
                         show-arrows
                         >
                         <v-slide-item v-for="(item, index) in dataPackage.filter(el => { return el.balanceAmount > 0 })" :key="index">
@@ -1028,6 +1029,7 @@
                             height="100"
                             color="#FFFFFF"
                             elevation="6"
+                            :style="item.packageId === packageId && item.token === tokenPackage ? 'border: 1px solid green;' : 'border: 1px solid white;'"
                             >
                             <v-row>
                               <v-col cols="4" class="pr-1">
@@ -1041,8 +1043,9 @@
                               <v-col cols="8" class="pb-6" >
                                 <v-row class="font16 headline1">
                                     <v-col class="pl-0 pt-2 pb-0">{{item.packageName}}</v-col>
-                                    <v-btn class="mr-4 mt-3" v-if="item.packageId !== packageId" color="green" outlined rounded x-small @click="UpdatePackage(item.packageId,'ตกลง',item.packageName, item), jobCheckPackage = true">ตกลง</v-btn>
-                                    <v-btn class="mr-4 mt-3" v-if="item.packageId === packageId" color="red" outlined rounded x-small @click="UpdatePackage(item.packageId,'ยกเลิก',item.packageName, item), jobCheckPackage = false">ยกเลิก</v-btn>
+                                    <v-btn class="mr-4 mt-3" v-if="item.packageId !== packageId && item.token !== tokenPackage" color="green" outlined rounded x-small @click="UpdatePackage(item.packageId,'ตกลง',item.packageName, item, item.token), jobCheckPackage = true">ตกลง</v-btn>
+                                    <v-btn class="mr-4 mt-3" v-if="item.packageId === packageId && item.token !== tokenPackage" color="green" outlined rounded x-small @click="UpdatePackage(item.packageId,'ตกลง',item.packageName, item, item.token), jobCheckPackage = true">ตกลง</v-btn>
+                                    <v-btn class="mr-4 mt-3" v-if="item.packageId === packageId && item.token === tokenPackage" color="red" outlined rounded x-small @click="UpdatePackage(item.packageId,'ยกเลิก',item.packageName, item, item.token), jobCheckPackage = false">ยกเลิก</v-btn>
                                 </v-row>
                                 <v-row class="font14 headline1">
                                     <v-col class="pl-0 pt-0 pb-0">จำนวนการใช้  {{item.balanceAmount}} / {{item.amount}} </v-col>
@@ -1078,19 +1081,21 @@
                   </v-col>
                   <v-col class="pb-0 pt-0" cols="12" v-if="dataPackage.filter(el => { return el.balanceAmount > 0 }).length > 0 && dataPackageDefault === true">
                     <v-card class="pl-1">
-                      <v-subheader>ลูกค้ามี {{dataPackage.filter(el => { return el.balanceAmount > 0 && el.packageId === packageId }).length}} แพ็คเกจ</v-subheader>
+                      <v-subheader>ลูกค้ามี {{dataPackage.filter(el => { return el.balanceAmount > 0 }).length}} แพ็คเกจ</v-subheader>
                       <v-subheader v-show="StatusPackage.packageName">ลูกค้าได้ทำการเลือกแพ็คเกจ {{StatusPackage.packageName}}</v-subheader>
                       <v-slide-group
-                        active-class="success"
+                        v-model="modelPackageIndexConfirmJob"
+                        center-active
                         show-arrows
                         >
-                        <v-slide-item v-for="(item, index) in dataPackage.filter(el => { return el.balanceAmount > 0 && el.packageId === packageId })" :key="index">
+                        <v-slide-item v-for="(item, index) in dataPackage.filter(el => { return el.balanceAmount > 0 })" :key="index">
                             <v-card
                             class="ma-2 p-1"
                             width="340"
                             height="100"
                             color="#FFFFFF"
                             elevation="6"
+                            :style="item.packageId === packageId && item.token === tokenPackage ? 'border: 1px solid green;' : 'border: 1px solid white;'"
                             >
                             <v-row>
                               <v-col cols="4" class="pr-1">
@@ -2834,8 +2839,9 @@
                       <v-subheader>ลูกค้ามี {{dataPackage.filter(el => { return el.balanceAmount > 0 }).length}} แพ็คเกจ</v-subheader>
                       <v-subheader v-show="StatusPackage.packageName">ลูกค้าได้ทำการเลือกแพ็คเกจ {{StatusPackage.packageName}}</v-subheader>
                       <v-slide-group
-                        active-class="success"
+                        v-model="modelPackageIndexConfirm"
                         show-arrows
+                        center-active
                         >
                         <v-slide-item v-for="(item, index) in dataPackage.filter(el => { return el.balanceAmount > 0 })" :key="index">
                             <v-card
@@ -2844,7 +2850,16 @@
                             height="100"
                             color="#FFFFFF"
                             elevation="6"
+                            :style="item.packageId === packageId && item.token === tokenPackage ? 'border: 1px solid green;' : 'border: 1px solid white;'"
                             >
+                            <!-- <v-card
+                            class="ma-2 p-1"
+                            width="340"
+                            height="100"
+                            color="#FFFFFF"
+                            elevation="6"
+                            :style="item.packageId === packageId && item.token === tokenPackage ? 'border: 1px solid green;' : 'border: 1px solid white;'"
+                            > -->
                             <v-row>
                               <v-col cols="4" class="pr-1">
                                 <v-img
@@ -2857,8 +2872,9 @@
                               <v-col cols="8" class="pb-6" >
                                 <v-row class="font16 headline1">
                                     <v-col class="pl-0 pt-2 pb-0">{{item.packageName}}</v-col>
-                                    <v-btn class="mr-4 mt-3" v-if="item.packageId !== packageId" color="green" outlined rounded x-small @click="UpdatePackage(item.packageId,'ตกลง',item.packageName, item)">ตกลง</v-btn>
-                                    <v-btn class="mr-4 mt-3" v-if="item.packageId === packageId" color="red" outlined rounded x-small @click="UpdatePackage(item.packageId,'ยกเลิก',item.packageName, item)">ยกเลิก</v-btn>
+                                    <v-btn class="mr-4 mt-3" v-if="item.packageId !== packageId && item.token !== tokenPackage" color="green" outlined rounded x-small @click="UpdatePackage(item.packageId,'ตกลง',item.packageName, item, item.token)">ตกลง</v-btn>
+                                    <v-btn class="mr-4 mt-3" v-if="item.packageId === packageId && item.token !== tokenPackage" color="green" outlined rounded x-small @click="UpdatePackage(item.packageId,'ตกลง',item.packageName, item, item.token)">ตกลง</v-btn>
+                                    <v-btn class="mr-4 mt-3" v-if="item.packageId === packageId && item.token === tokenPackage" color="red" outlined rounded x-small @click="UpdatePackage(item.packageId,'ยกเลิก',item.packageName, item, item.token)">ยกเลิก</v-btn>
                                 </v-row>
                                 <v-row class="font14 headline1">
                                     <v-col class="pl-0 pt-0 pb-0">จำนวนการใช้  {{item.balanceAmount}} / {{item.amount}} </v-col>
@@ -3010,6 +3026,71 @@
                             :src="require('@/assets/Grouptitle.svg')"
                           ></v-img> -->
                         </v-col>
+                        <v-col class="pb-0 pt-0" cols="12" v-if="dataPackage.filter(el => { return el.balanceAmount > 0 && el.packageId === packageId && el.token === tokenPackage }).length > 0 && dataPackageDefault === true">
+                        <v-card class="pl-1">
+                          <!-- <v-subheader>ลูกค้ามี {{dataPackage.filter(el => { return el.balanceAmount > 0 && el.packageId === packageId && el.token === tokenPackage }).length}} แพ็คเกจ</v-subheader> -->
+                          <v-subheader v-show="StatusPackage.packageName">ลูกค้าได้ทำการเลือกแพ็คเกจ {{StatusPackage.packageName}}</v-subheader>
+                          <v-slide-group
+                            v-model="modelPackageIndexConfirm"
+                            center-active
+                            show-arrows
+                            >
+                            <v-slide-item v-for="(item, index) in dataPackage.filter(el => { return el.balanceAmount > 0 && el.packageId === packageId && el.token === tokenPackage })" :key="index">
+                                <v-card
+                                class="ma-2 p-1"
+                                width="340"
+                                height="100"
+                                color="#FFFFFF"
+                                elevation="6"
+                                :style="item.packageId === packageId && item.token === tokenPackage ? 'border: 1px solid green;' : 'border: 1px solid white;'"
+                                >
+                                <v-row>
+                                  <v-col cols="4" class="pr-1">
+                                    <v-img
+                                  contain
+                                  max-height="80"
+                                  max-width="200"
+                                  :src="item.packageImg"
+                                ></v-img>
+                                  </v-col>
+                                  <v-col cols="8" class="pb-6" >
+                                    <v-row class="font16 headline1">
+                                        <v-col class="pl-0 pt-2 pb-0">{{item.packageName}}</v-col>
+                                        <!-- <v-btn class="mr-4 mt-3" v-if="item.packageId !== packageId" color="green" outlined rounded x-small @click="UpdatePackage(item.packageId,'ตกลง',item.packageName, item)">ตกลง</v-btn>
+                                        <v-btn class="mr-4 mt-3" v-if="item.packageId === packageId" color="red" outlined rounded x-small @click="UpdatePackage(item.packageId,'ยกเลิก',item.packageName, item)">ยกเลิก</v-btn> -->
+                                    </v-row>
+                                    <v-row class="font14 headline1">
+                                        <v-col class="pl-0 pt-0 pb-0">จำนวนการใช้  {{item.balanceAmount}} / {{item.amount}} </v-col>
+                                    </v-row>
+                                    <v-row class="font14 headline1">
+                                        <v-col class="pl-0 pt-0 pb-0">
+                                          <VueCustomTooltip label="สามารถใช้ได้" position="is-top" v-if="dateTimestamp <= item.expirePackage">
+                                            <v-icon
+                                              large
+                                              color="teal darken-2"
+                                            >
+                                              mdi-clock-check
+                                            </v-icon>
+                                          </VueCustomTooltip>
+                                          <VueCustomTooltip label="หมดอายุแล้ว" position="is-top" v-if="dateTimestamp > item.expirePackage">
+                                            <v-icon
+                                              large
+                                              color="red darken-2"
+                                            >
+                                              mdi-clock-alert
+                                            </v-icon>
+                                          </VueCustomTooltip>
+                                          >> วันหมดอายุ  {{new Date(item.expirePackage * 1000).toLocaleString().substr(0,9)}}
+                                        </v-col>
+                                    </v-row>
+                                  </v-col>
+                                </v-row>
+                                </v-card>
+                            </v-slide-item>
+                        </v-slide-group>
+                        </v-card>
+                        <br>
+                      </v-col>
                         <v-form ref="form_edit" v-model="validEdit" lazy-validation>
                         <v-col cols="12" v-if="dataEditReady">
                           <v-select
@@ -3861,6 +3942,10 @@
   </div>
 </template>
 <style scoped>
+.border-active {
+  border-style: solid;
+  border-color: red;
+}
 .custom-loader {
     animation: loader 1s infinite;
     display: flex;
@@ -3991,10 +4076,13 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      modelPackageIndexConfirm: null,
+      modelPackageIndexConfirmJob: null,
       dataPackageDefault: false,
       jobCheckPackage: false,
       dateTimestamp: '',
       packageId: '',
+      tokenPackage: '',
       dataPackage: [],
       StatusPackage: {
         status: 'ตกลง',
@@ -4350,19 +4438,26 @@ export default {
         }
       })
     },
-    async UpdatePackage (packageId, StatusPackage, packageName, data) {
+    async UpdatePackage (packageId, StatusPackage, packageName, data, tokenPackage) {
       if (StatusPackage === 'ตกลง') {
         this.packageId = packageId
+        this.tokenPackage = tokenPackage
         // this.StatusPackage.status = 'ยกเลิก'
         // this.StatusPackage.color = 'red'
         this.StatusPackage.packageName = packageName
         this.StatusPackage.token = data.token
+        // console.log(this.dataPackage.findIndex(x => x.token === tokenPackage && x.packageId === packageId))
+        this.modelPackageIndexConfirm = this.dataPackage.findIndex(x => x.token === tokenPackage && x.packageId === packageId) - 1
+        this.modelPackageIndexConfirmJob = this.dataPackage.findIndex(x => x.token === tokenPackage && x.packageId === packageId) - 1
       } else {
         this.packageId = ''
+        this.tokenPackage = ''
         // this.StatusPackage.status = 'ตกลง'
         // this.StatusPackage.color = 'green'
         this.StatusPackage.packageName = ''
         this.StatusPackage.token = ''
+        this.modelPackageIndexConfirm = null
+        this.modelPackageIndexConfirmJob = null
       }
     },
     updateStatusBookingTransaction (item) {
@@ -4775,6 +4870,7 @@ export default {
                   s.remarkReturn = d.remarkReturn || ''
                   s.dateReturn = d.dateReturn || ''
                   s.packageId = d.packageId || ''
+                  s.tokenPackage = d.tokenPackage || ''
                   s.tagData = JSON.parse(d.tagData) || []
                   if (s.tagData.length > 0) {
                     s.tagDataShow = []
@@ -5017,6 +5113,19 @@ export default {
         }
       } else {
         this.timeEdit = { text: dt.dueDate.slice(-5), value: dt.dueDate.slice(-5) }
+      }
+      await this.getPackage(dt)
+      if (this.dataPackage.length > 0) {
+        console.log('dataPackage', this.dataPackage.filter(el => { return el.packageId === dt.packageId }))
+        if (this.dataPackage.filter(el => { return el.packageId === dt.packageId }).length > 0) {
+          var dataPack = this.dataPackage.filter(el => { return el.packageId === dt.packageId })
+          this.dataPackageDefault = true
+          // this.packageId = dataPack[0].value
+          this.UpdatePackage(dataPack[0].value, 'ตกลง', dataPack[0].text, dataPack[0], dt.tokenPackage)
+        } else {
+          this.UpdatePackage('', 'ยกเลิก', '', '', '')
+          this.dataPackageDefault = false
+        }
       }
       var extraJob = ''
       var fastTrack = ''
@@ -6954,6 +7063,7 @@ export default {
                 s.remarkReturn = d.remarkReturn || ''
                 s.dateReturn = d.dateReturn || ''
                 s.packageId = d.packageId || ''
+                s.tokenPackage = d.tokenPackage || ''
                 s.tagData = JSON.parse(d.tagData) || []
                 if (s.tagData.length > 0) {
                   s.tagDataShow = []
@@ -7108,6 +7218,7 @@ export default {
                 s.remarkReturn = d.remarkReturn || ''
                 s.dateReturn = d.dateReturn || ''
                 s.packageId = d.packageId || ''
+                s.tokenPackage = d.tokenPackage || ''
                 s.tagData = JSON.parse(d.tagData) || []
                 if (s.tagData.length > 0) {
                   s.tagDataShow = []
@@ -7721,9 +7832,9 @@ export default {
           var dataPack = this.dataPackage.filter(el => { return el.packageId === dt.packageId })
           this.dataPackageDefault = true
           // this.packageId = dataPack[0].value
-          this.UpdatePackage(dataPack[0].value, 'ตกลง', dataPack[0].text, dataPack[0])
+          this.UpdatePackage(dataPack[0].value, 'ตกลง', dataPack[0].text, dataPack[0], dt.tokenPackage)
         } else {
-          this.UpdatePackage('', 'ยกเลิก', '', '')
+          this.UpdatePackage('', 'ยกเลิก', '', '', '')
           this.dataPackageDefault = false
         }
       }
@@ -7932,6 +8043,7 @@ export default {
                 }
               }
               console.log('this.Add', Add)
+              console.log(this.packageId, this.tokenPackage)
               this.swalConfig.title = 'ต้องการนำรายการนี้ เข้าตารางใช่หรือไม่?'
               this.$swal(this.swalConfig)
                 .then(async result => {
@@ -7964,7 +8076,9 @@ export default {
                               statusUse: 'use',
                               shopId: this.$session.getAll().data.shopId,
                               CREATE_USER: this.session.data.userName,
-                              LAST_USER: this.session.data.userName
+                              LAST_USER: this.session.data.userName,
+                              packageId: this.packageId,
+                              tokenPackage: this.tokenPackage
                             }
                             axios
                               .post(this.DNS_IP + '/booking_transaction/add', dtt)
@@ -8150,9 +8264,9 @@ export default {
         if (this.dataPackage.filter(el => { return el.packageId === item.packageId }).length > 0) {
           var dataPack = this.dataPackage.filter(el => { return el.packageId === item.packageId })
           // this.packageId = dataPack[0].value
-          this.UpdatePackage(dataPack[0].value, 'ตกลง', dataPack[0].text, dataPack[0])
+          this.UpdatePackage(dataPack[0].value, 'ตกลง', dataPack[0].text, dataPack[0], item.tokenPackage)
         } else {
-          this.UpdatePackage('', 'ยกเลิก', '', '')
+          this.UpdatePackage('', 'ยกเลิก', '', '', '')
         }
       }
       this.dialogConfirm = true
@@ -8169,7 +8283,8 @@ export default {
           shopId: this.$session.getAll().data.shopId,
           CREATE_USER: this.session.data.userName,
           LAST_USER: this.session.data.userName,
-          packageId: this.packageId
+          packageId: this.packageId,
+          tokenPackage: this.tokenPackage
         }
         axios
           .post(this.DNS_IP + '/booking_transaction/add', dt)

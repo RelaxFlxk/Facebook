@@ -376,7 +376,17 @@
                         <v-col cols="12" class="pb-0">
                           <v-text-field
                             v-model="formAdd.flowName"
-                            label="ชื่อขั้นตอน"
+                            label="ชื่อขั้นตอน (ภาษาไทย)"
+                            outlined
+                            dense
+                            required
+                            :rules="[rules.required]"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" class="pb-0">
+                          <v-text-field
+                            v-model="formAdd.flowNameEn"
+                            label="ชื่อขั้นตอน (ภาษาอังกฤษ)"
                             outlined
                             dense
                             required
@@ -568,7 +578,17 @@
                         <v-col cols="12" class="pb-0">
                           <v-text-field
                             v-model="formUpdate.flowName"
-                            label="ชื่อขั้นตอน"
+                            label="ชื่อขั้นตอน (ภาษาไทย)"
+                            outlined
+                            dense
+                            required
+                            :rules="[rules.required]"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" class="pb-0">
+                          <v-text-field
+                            v-model="formUpdate.flowNameEn"
+                            label="ชื่อขั้นตอน (ภาษาอังกฤษ)"
                             outlined
                             dense
                             required
@@ -1118,6 +1138,7 @@ export default {
         flowCode: '',
         flowId: '',
         flowName: '',
+        flowNameEn: '',
         flowfieldName: [],
         CREATE_USER: '',
         LAST_USER: '',
@@ -1154,6 +1175,7 @@ export default {
         fieldType: '',
         flowId: '',
         flowName: '',
+        flowNameEn: '',
         LAST_USER: '',
         checkPayment: 'True',
         checkOnsite: 'False',
@@ -1180,6 +1202,7 @@ export default {
         fieldType: '',
         flowId: '',
         flowName: '',
+        flowNameEn: '',
         checkPayment: 'True',
         checkOnsite: 'False',
         LAST_USER: ''
@@ -1655,6 +1678,7 @@ export default {
       console.log('item: ', item)
       this.checkOnsite = item.checkOnsite || 'False'
       this.formUpdate.flowName = item.flowName
+      this.formUpdate.flowNameEn = item.flowNameEn
       this.formUpdate.flowId = item.flowId
       this.formUpdate.flowCode = item.flowCode
       this.formUpdate.checkPayment = item.checkPayment || 'True'

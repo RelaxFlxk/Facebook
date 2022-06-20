@@ -973,8 +973,8 @@ export default {
     this.dataReady = false
     // Get Data
     // this.getOption()
-    this.getCondition()
     await this.getDataFlow()
+    await this.getCondition()
     this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
   },
   methods: {
