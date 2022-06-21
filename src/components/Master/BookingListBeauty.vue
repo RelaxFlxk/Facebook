@@ -3887,9 +3887,9 @@
                         </div>
                         <br>
                         <v-select
-                          v-model="Carnumber"
-                          :items="Carnumberitem"
-                          label="ค้นหาทะเบียนรถ"
+                          v-model="phonenum"
+                          :items="phonenumItem"
+                          label="ค้นหาทะเบอร์โทร"
                           dense
                           solo
                           @change="SelectDataHistory"
@@ -3897,7 +3897,7 @@
                           <v-timeline
                           align-top
                           dense
-                          v-if="Carnumber.length > 0"
+                          v-if="phonenum.length > 0"
                           >
                                 <v-timeline-item
                               v-for="(item , index) in HistoryData[0]" :key="index"
@@ -4375,9 +4375,9 @@ export default {
       dataTypeProcess4: '',
       checkDepositAdd: '',
       defaultData: [],
-      Carnumberitem: [],
+      phonenumItem: [],
       HistoryData: [],
-      Carnumber: [],
+      phonenum: [],
       lineUserId: ''
     }
   },
@@ -4521,7 +4521,7 @@ export default {
     },
     async SelectDataHistory () {
       this.HistoryData = []
-      this.HistoryData.push(this.defaultData[this.Carnumber])
+      this.HistoryData.push(this.defaultData[this.phonenum])
       console.log('this.HistoryData', this.HistoryData)
     },
     async openHistory (item) {
@@ -4544,17 +4544,18 @@ export default {
         if (BookingData.length > 0) {
           this.defaultData = BookingData.reduce((r, a) => {
             let bookNo = a.bookNo
-            let filter = (a.fieldName === 'เลขทะเบียน') ? a.fieldValue : null
+            let filter = (a.fieldName === 'เบอร์โทร') ? a.fieldValue : null
             if (filter !== null) {
               r[filter] = r[filter] || {}
               r[filter][bookNo] = r[filter][bookNo] || []
               r[filter][bookNo].push(BookingData.filter(item => item.bookNo === a.bookNo))
-              this.Carnumberitem.push(filter)
+              this.phonenumItem.push(filter)
             }
             return r
           }, Object.create(null))
 
           console.log(this.defaultData)
+          this.phonenum = ''
           this.dialogHistory = true
         } else if (BookingData.status === false) {
           this.$swal('ไม่พบประวัติการเข้ารับบริการ', 'กรูณาตรวจสอบข้อมูล', 'info')
