@@ -1651,6 +1651,14 @@
                             <div v-if="jobitem.length > 0">
                               <strong style="color: red;" v-if="jobitem[0].recordStatus === 'D'"><h2>รายการนี้ปิดไปแล้ว</h2></strong>
                             </div>
+                            <div>
+                              <v-btn small class="ma-2" color="success" v-if="userId !== '' && recordStatusJob === 'N'" @click="dialogCloseJob = true" dark>
+                                  ปิดงานนี้
+                                <v-icon dark right>
+                                  mdi-cash-usd-outline
+                                </v-icon>
+                              </v-btn>
+                            </div>
                         </v-container>
                         <template v-if="!checkShowSelectUser">
                           <v-btn small class="ma-2" color="success" v-if="userId === ''" @click="pushMsgSelectUser" dark>
@@ -2606,6 +2614,17 @@
                           <v-icon> mdi-qrcode-scan </v-icon>
                         </v-btn>
                     </VueCustomTooltip>
+                    <!-- <VueCustomTooltip label="จบงาน" position="is-top" bottom v-if="item.statusBt === 'confirmJob' && item.jobNo !== ''">
+                        <v-btn
+                          color="#84C650"
+                          dark
+                          fab
+                          small
+                          @click.stop="(dialogCloseJob = true), getjob(item)"
+                        >
+                          <v-icon>  mdi-cash-usd-outline </v-icon>
+                        </v-btn>
+                    </VueCustomTooltip> -->
                     <VueCustomTooltip label="ลบรายการนี้" position="is-top" bottom v-if="item.statusBt === 'cancel'">
                         <v-btn
                           color="red"
@@ -3937,6 +3956,108 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
+          <!-- DIALOG ค่าใช้จ่าย -->
+        <v-dialog v-model="dialogCloseJob" persistent max-width="400px">
+          <v-card v-if="checkPayment === 'True'">
+            <center>
+              <v-col>
+                <v-img
+                  :aspect-ratio="1"
+                  width="300"
+                  height="100%"
+                  :src="require('@/assets/paymentCloseJob.png')"
+                ></v-img>
+              </v-col>
+            </center>
+            <v-col class="text-center">
+              <span class="headline">ค่าใช้จ่าย</span>
+            </v-col>
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col cols="12" class="pb-0">
+                    <VuetifyMoney
+                      v-model="formCloseJob.totalPrice"
+                      placeholder="ค่าใช้จ่ายทั้งหมด"
+                      dense
+                      label="ค่าใช้จ่ายทั้งหมด"
+                      required
+                      outlined
+                      :rules="[rules.required]"
+                      v-bind:options="options2"
+                    />
+                  </v-col>
+                  <v-col class="text-center"  cols="12">
+                    <v-btn
+                      class="white--text"
+                      elevation="2"
+                      depressed
+                      color="#1B437C"
+                      :loading="loadingCloseJob"
+                      :disabled="loadingCloseJob"
+                      @click="closeJob()"
+                    >
+                      <v-icon dark left>mdi-checkbox-marked-circle</v-icon>
+                      ชำระเงิน
+                    </v-btn>
+                    <v-btn
+                      color="primary"
+                      :loading="loadingCloseJob"
+                      :disabled="loadingCloseJob"
+                      depressed
+                      @click=";(dialogCloseJob = false)"
+                    >
+                      <v-icon left> mdi-cancel</v-icon>
+                      ยกเลิก
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+          </v-card>
+          <v-card v-if="checkPayment === 'False'">
+            <center>
+              <v-col>
+                <v-img
+                  :aspect-ratio="1"
+                  width="300"
+                  height="100%"
+                  :src="require('@/assets/closeJob.png')"
+                ></v-img>
+              </v-col>
+            </center>
+            <v-col class="text-center">
+              <span class="headline">จบกระบวนการซ่อม</span>
+            </v-col>
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col class="text-center"  cols="12">
+                    <v-btn
+                      dark
+                      elevation="2"
+                      depressed
+                      color="#1B437C"
+                      @click="closeJob()"
+                    >
+                      <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                      จบกระบวนการซ่อม
+                    </v-btn>
+                    <v-btn
+                      color="primary"
+                      depressed
+                      @click=";(dialogCloseJob = false)"
+                    >
+                      <v-icon left> mdi-cancel</v-icon>
+                      ยกเลิก
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
+        <!-- end add -->
       </div>
     </v-main>
   </div>
@@ -4076,6 +4197,22 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      options2: {
+        locale: 'en-US',
+        prefix: '',
+        suffix: '',
+        length: 9,
+        precision: 0
+      },
+      recordStatusJob: '',
+      checkPayment: 'True',
+      formCloseJob: {
+        jobId: '',
+        jobNo: '',
+        totalPrice: 0
+      },
+      dialogCloseJob: false,
+      loadingCloseJob: false,
       modelPackageIndexConfirm: null,
       modelPackageIndexConfirmJob: null,
       dataPackageDefault: false,
@@ -4420,6 +4557,85 @@ export default {
     })
   },
   methods: {
+    closeJob () {
+      this.loadingCloseJob = true
+      if (this.checkPayment === 'True') {
+        if (this.formCloseJob.totalPrice !== '') {
+          this.closeJobSubmit(this.formCloseJob.totalPrice)
+        } else {
+          this.loadingCloseJob = false
+          this.$swal('ผิดพลาก', 'กรุณาใส่จำนวนเงิน', 'error')
+        }
+      } else {
+        this.closeJobSubmit('0')
+      }
+    },
+    closeJobSubmit (totalPrice) {
+      console.log('form:', this.formCloseJob)
+      this.$swal({
+        title: 'ให้บริการ เสร็จเรียบร้อยแล้ว ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#fa0202',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      }).then(async response => {
+        var ID = this.formCloseJob.jobId
+        let ds = {
+          jobNo: this.formCloseJob.jobNo,
+          shopId: this.$session.getAll().data.shopId,
+          totalPrice: totalPrice,
+          LAST_USER: this.session.data.userName,
+          statusDelete: 'true'
+        }
+        console.log('ds', ds)
+        let checkJob = ''
+        await axios.get(this.DNS_IP + '/job/getJobNo?jobNo=' + this.formCloseJob.jobNo).then((response) => {
+          let rs = response.data
+          console.log('getJobNo', rs)
+          if (rs.length > 0) {
+            checkJob = rs[0].RECORD_STATUS
+          }
+        })
+        if (checkJob === 'N') {
+          await axios
+            .post(this.DNS_IP + '/job/editPrice/' + ID, ds)
+            .then(async response => {
+              await this.pushmessagePrice(this.formCloseJob.jobNo)
+              this.$swal('เรียบร้อย', 'ให้บริการ เสร็จเรียบร้อยแล้ว', 'success')
+              if (this.statusSearch === 'no') {
+                await this.getBookingList()
+              } else {
+                await this.searchAny()
+              }
+              // this.getTimesChange('update')
+              if (this.getSelectText) {
+                this.getSelect(this.getSelectText, this.getSelectCount)
+              }
+              this.dialogCloseJob = false
+              this.dialogJob = false
+              this.loadingCloseJob = false
+              this.formCloseJob.totalPrice = 0
+            })
+        } else {
+          this.$swal('ผิดพลาด', 'รายการนี้ปิดงานไปแล้ว', 'error')
+          this.dialogCloseJob = false
+          this.dialogJob = false
+          this.loadingCloseJob = false
+          this.formCloseJob.totalPrice = 0
+        }
+      }).catch(error => {
+        this.loadingCloseJob = false
+        console.log('Close Job Error', error)
+      })
+    },
+    async pushmessagePrice (jobNo) {
+      let updateStatusSend = { updateStatusSend: 'false', checkPayment: this.checkPayment }
+      await axios
+        .post(this.DNS_IP + '/job/pushClosejob/' + jobNo, updateStatusSend)
+        .then(console.log(jobNo))
+    },
     async getPackage (dt) {
       this.dataPackage = []
       await axios.get(this.DNS_IP_Loyalty + '/PackageLog/get?shopId=' + dt.shopId + '&lineUserId=' + dt.lineUserId +
@@ -8622,6 +8838,7 @@ export default {
                 name: d.fieldName,
                 showCard: d.showCard,
                 jobNo: d.jobNo,
+                checkPayment: d.checkPayment,
                 recordStatus: d.RECORD_STATUS
               }
               Id = d.userId || ''
@@ -8638,6 +8855,10 @@ export default {
               this.dataSelectUser = ''
             }
             this.value = this.pathToweb + this.jobitem[0].Id + '&shopId=' + this.$session.getAll().data.shopId
+            this.recordStatusJob = this.jobitem[0].recordStatus
+            this.checkPayment = this.jobitem[0].checkPayment
+            this.formCloseJob.jobNo = this.jobitem[0].jobNo
+            this.formCloseJob.jobId = this.jobitem[0].Id
             console.log('this.value', this.value)
             // this.getUserId()
           }

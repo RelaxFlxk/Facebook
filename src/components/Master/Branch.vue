@@ -81,6 +81,12 @@
                            label="ตั้งค่าเวลาที่ต้องการ"
                            placeholder="HH:mm"
                       ></v-text-field>
+                      <VuetifyMoney
+                          label="Limit Booking"
+                          v-model="formAdd.limitBooking"
+                          placeholder="Limit Booking"
+                          required
+                          v-bind:options="options2" />
                       <v-select
                         v-if="dataItemAddTime.length > 0"
                         :items="dataItemAddTime"
@@ -127,6 +133,17 @@
                       </v-btn>
                     </v-col>
                     <v-col cols="7">
+                      <h4 class="text-center">ต้องการตั้ง Limit การจอง</h4>
+                      <v-row align="center">
+                        <v-checkbox
+                          false-value="False"
+                          true-value="True"
+                          v-model="formAdd.limitBookingCheck"
+                          hide-details
+                          class="shrink ml-6 mr-0 mt-0 mb-6"
+                        ></v-checkbox>
+                        <v-text-field v-model="formAdd.limitBookingCheck" readonly label="ต้องการตั้ง Limit การจองหรือไม่"></v-text-field>
+                         </v-row>
                       <v-data-table
                         :headers="columnsAddTime"
                         :items="dataItemAddTime"
@@ -280,6 +297,12 @@
                            label="ตั้งค่าเวลาที่ต้องการ"
                            placeholder="HH:mm"
                       ></v-text-field>
+                       <VuetifyMoney
+                          label="Limit Booking"
+                          v-model="formAdd.limitBooking"
+                          placeholder="Limit Booking"
+                          required
+                          v-bind:options="options2" />
                       <v-select
                         v-if="dataItemAddTime.length > 0"
                         :items="dataItemAddTime"
@@ -322,6 +345,17 @@
                       </v-btn>
                     </v-col>
                     <v-col cols="7">
+                      <h4 class="text-center">ต้องการตั้ง Limit การจอง</h4>
+                      <v-row align="center">
+                        <v-checkbox
+                          false-value="False"
+                          true-value="True"
+                          v-model="formUpdate.limitBookingCheck"
+                          hide-details
+                          class="shrink ml-6 mr-0 mt-0 mb-6"
+                        ></v-checkbox>
+                        <v-text-field v-model="formUpdate.limitBookingCheck" readonly label="ต้องการตั้ง Limit การจองหรือไม่"></v-text-field>
+                         </v-row>
                       <v-data-table
                         :headers="columnsAddTime"
                         :items="dataItemAddTime"
@@ -592,6 +626,8 @@ export default {
         countFastTrack: 0,
         time: '',
         setTime: '',
+        limitBooking: 0,
+        limitBookingCheck: 'Fales',
         shopId: this.$session.getAll().data.shopId
       },
       formUpdate: {
@@ -601,12 +637,14 @@ export default {
         masBranchName: '',
         masBranchNameEn: '',
         setTime: '',
+        limitBookingCheck: 'Fales',
         time: ''
       },
       formUpdateItem: {
         countCus: 0,
         countFastTrack: 0,
         setTime: '',
+        limitBookingCheck: 'Fales',
         masBranchName: '',
         masBranchNameEn: ''
       },
@@ -633,6 +671,7 @@ export default {
       columnsAddTime: [
         { text: 'แสดงเวลา', value: 'text' },
         { text: 'เวลา', value: 'value' },
+        { text: 'Limit Booking', value: 'limitBooking', align: 'center' },
         // { text: 'เรียงตำแหน่ง', value: 'actions1', align: 'center' },
         { text: 'จัดการเวลา', value: 'actions2', align: 'center' }
       ],
@@ -649,7 +688,7 @@ export default {
   },
   methods: {
     presetTime () {
-      this.dataItemAddTime = [{'value': '08:00', 'text': '08:00'}, {'value': '08:30', 'text': '08:30'}, {'value': '09:00', 'text': '09:00'}, {'value': '09:30', 'text': '09:30'}, {'value': '10:00', 'text': '10:00'}, {'value': '10:30', 'text': '10:30'}, {'value': '11:00', 'text': '11:00'}, {'value': '11:30', 'text': '11:30'}, {'value': '12:00', 'text': '12:00'}, {'value': '12:30', 'text': '12:30'}, {'value': '13:00', 'text': '13:00'}, {'value': '13:30', 'text': '13:30'}, {'value': '14:00', 'text': '14:00'}, {'value': '14:30', 'text': '14:30'}, {'value': '15:00', 'text': '15:00'}, {'value': '15:30', 'text': '15:30'}, {'value': '16:00', 'text': '16:00'}, {'value': '16:30', 'text': '16:30'}, {'value': '17:00', 'text': '17:00'}]
+      this.dataItemAddTime = [{'value': '08:00', 'text': '08:00', 'limitBooking': ''}, {'value': '08:30', 'text': '08:30', 'limitBooking': ''}, {'value': '09:00', 'text': '09:00', 'limitBooking': ''}, {'value': '09:30', 'text': '09:30', 'limitBooking': ''}, {'value': '10:00', 'text': '10:00', 'limitBooking': ''}, {'value': '10:30', 'text': '10:30', 'limitBooking': ''}, {'value': '11:00', 'text': '11:00', 'limitBooking': ''}, {'value': '11:30', 'text': '11:30', 'limitBooking': ''}, {'value': '12:00', 'text': '12:00', 'limitBooking': ''}, {'value': '12:30', 'text': '12:30', 'limitBooking': ''}, {'value': '13:00', 'text': '13:00', 'limitBooking': ''}, {'value': '13:30', 'text': '13:30', 'limitBooking': ''}, {'value': '14:00', 'text': '14:00', 'limitBooking': ''}, {'value': '14:30', 'text': '14:30', 'limitBooking': ''}, {'value': '15:00', 'text': '15:00', 'limitBooking': ''}, {'value': '15:30', 'text': '15:30', 'limitBooking': ''}, {'value': '16:00', 'text': '16:00', 'limitBooking': ''}, {'value': '16:30', 'text': '16:30', 'limitBooking': ''}, {'value': '17:00', 'text': '17:00', 'limitBooking': ''}]
     },
     addDataTimeAdd () {
       if (this.formAdd.time !== '' && this.timeText !== '') {
@@ -664,7 +703,7 @@ export default {
             let nummm = 100 + parseInt(mm)
             let strhh = numhh.toString().substring(1, 3)
             let strmm = nummm.toString().substring(1, 3)
-            this.dataItemAddTime.push({value: strhh + ':' + strmm, text: this.timeText})
+            this.dataItemAddTime.push({value: strhh + ':' + strmm, text: this.timeText, limitBooking: this.formAdd.limitBooking})
           } else {
             // let numhh = 100 + parseInt(hh)
             // let nummm = 100 + parseInt(mm)
@@ -677,7 +716,7 @@ export default {
             let nummm = 100 + parseInt(mm)
             let strhh = numhh.toString().substring(1, 3)
             let strmm = nummm.toString().substring(1, 3)
-            this.dataItemAddTime.push({value: strhh + ':' + strmm, text: this.timeText})
+            this.dataItemAddTime.push({value: strhh + ':' + strmm, text: this.timeText, limitBooking: this.formAdd.limitBooking})
             this.dataItemAddTime.sort(function (a, b) {
               return a.value.localeCompare(b.value)
             })
@@ -715,6 +754,7 @@ export default {
     getUpdateAdd (item, text, index) {
       if (text === 'update') {
         this.formAdd.time = item.value
+        this.formAdd.limitBooking = item.limitBooking
         this.timeText = item.text
         this.typeTimeAdd = text
         this.indexTimeAdd = index
@@ -751,9 +791,11 @@ export default {
           let strmm = nummm.toString().substring(1, 3)
           this.dataItemAddTime[this.indexTimeAdd].value = strhh + ':' + strmm
           this.dataItemAddTime[this.indexTimeAdd].text = this.timeText
+          this.dataItemAddTime[this.indexTimeAdd].limitBooking = this.formAdd.limitBooking
           this.typeTimeAdd = 'add'
           this.formAdd.time = ''
           this.timeText = ''
+          this.formAdd.limitBooking = 0
           this.dataItemAddTime.sort(function (a, b) {
             return a.value.localeCompare(b.value)
           })
@@ -800,11 +842,22 @@ export default {
       } else {
         this.formUpdate.countCus = 0
       }
+      this.formUpdate.limitBookingCheck = item.limitBookingCheck || 'Fales'
       console.log('this.formUpdate.setTime', item.setTime)
       if (item.setTime === null || item.setTime === '') {
         this.dataItemAddTime = []
       } else {
-        this.dataItemAddTime = JSON.parse(item.setTime)
+        let setTime = JSON.parse(item.setTime)
+        if (setTime[0].limitBooking === undefined) {
+          console.log('dasdas')
+          for (let i = 0; i < setTime.length; i++) {
+            let d = setTime[i]
+            d.limitBooking = ''
+            this.dataItemAddTime.push(d)
+          }
+        } else {
+          this.dataItemAddTime = setTime
+        }
       }
     },
     async addData () {
@@ -823,15 +876,25 @@ export default {
         }
 
         console.log('form', JSON.stringify(this.formAdd))
+        console.log('this.dataItemAddTime', this.dataItemAddTime)
 
         this.formAdd.masBranchCode = this.code + this.generateCodeGlobal()
         this.formAdd.setTime = JSON.stringify(this.dataItemAddTime)
         delete this.formAdd['time']
+        delete this.formAdd['limitBooking']
         this.dataReady = false
         if (this.formAdd.masBranchName === '') {
           this.$swal('ผิดพลาด', 'กรอกชื่อ สาขา', 'error')
         } else if (this.formAdd.masBranchCode === '') {
           this.$swal('ผิดพลาด', 'กรุณาเลือก สาขา', 'error')
+        } else if (this.formAdd.limitBookingCheck === 'True') {
+          if (this.dataItemAddTime.filter(el => { return el.limitBooking === '' }).length === 0) {
+            this.dataReady = false
+            this.submitAdd()
+          } else {
+            this.dataReady = true
+            this.$swal('ผิดพลาด', 'กรุณาเลือก ใส่จำนวน Limit Booking ให้ครบ เนื่องจากท่านได้เลือกที่จะ ตั้ง Limit การจอง', 'error')
+          }
         } else {
           this.dataReady = false
           this.submitAdd()
@@ -905,6 +968,7 @@ export default {
         } else {
           this.formUpdateItem.countFastTrack = 0
         }
+        this.formUpdateItem.limitBookingCheck = this.formUpdate.limitBookingCheck
         // End Config User ทำรายการล่าสุด
         console.log('this.formUpdateItem', this.formUpdateItem)
 
@@ -915,10 +979,19 @@ export default {
         // สำหรับ แก้ไขข้อมูล
         // ต้องระบุ  Last User ว่าใครเป็นคนแก้ไขล่าสุด
         //
-        this.dataReady = false
 
-        this.dataReady = false
-        this.submitEdit(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
+        if (this.formUpdateItem.limitBookingCheck === 'True') {
+          if (this.dataItemAddTime.filter(el => { return el.limitBooking === '' }).length === 0) {
+            this.dataReady = false
+            this.submitEdit(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
+          } else {
+            this.dataReady = true
+            this.$swal('ผิดพลาด', 'กรุณาเลือก ใส่จำนวน Limit Booking ให้ครบ เนื่องจากท่านได้เลือกที่จะ ตั้ง Limit การจอง', 'error')
+          }
+        } else {
+          this.dataReady = false
+          this.submitEdit(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
+        }
       } else {
         this.$swal('ผิดพลาด', 'กรุณาตั้งเวลาที่จะให้ในสาขานี้', 'error')
       }
