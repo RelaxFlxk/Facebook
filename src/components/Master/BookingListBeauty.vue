@@ -1649,6 +1649,12 @@
                               <!-- <h4 v-if="p.showCard === 'True' ">{{p.name}} : {{p.value}}</h4> -->
                             </div>
                             <div v-if="jobitem.length > 0">
+                              <v-btn small class="ma-2" color="teal" v-if="jobitem[0].recordStatus === 'D'" @click="setBookingingAgain()" dark>
+                                  นัดหมายอีกครั้ง
+                                <v-icon dark right>
+                                  mdi-notebook-check
+                                </v-icon>
+                              </v-btn>
                               <strong style="color: red;" v-if="jobitem[0].recordStatus === 'D'"><h2>รายการนี้ปิดไปแล้ว</h2></strong>
                             </div>
                             <div>
@@ -4058,6 +4064,111 @@
           </v-card>
         </v-dialog>
         <!-- end add -->
+        <v-dialog v-model="dialogBookingAgain" persistent :max-width="dialogwidth">
+            <v-card class="text-center">
+              <v-card-title>นัดหมายอีกครั้ง</v-card-title>
+              <v-form ref="form_bookingAgain" v-model="validBookingAgain" lazy-validation>
+                <v-card-text>
+                  <v-container>
+                    <v-row>
+                       <v-col class="pa-0" cols= "12" v-for="(item, index) in bookingData" :key="index">
+                        <h6 class="text-center" v-if="item.fieldValue !== ''"><strong>{{item.fieldName}} : </strong> {{item.fieldValue}}</h6>
+                       </v-col>
+                    </v-row>
+                  <v-row>
+                    <v-col cols="12" md="6" lg="6">
+                      <v-menu
+                        v-model="menuDataBokkAgain"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="auto"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            v-model="date"
+                            label="วันที่"
+                            prepend-icon="mdi-calendar"
+                            readonly
+                            outlined
+                            dense
+                            v-bind="attrs"
+                            v-on="on"
+                            required
+                            :rules="[rules.required]"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker
+                          v-model="date"
+                          @input="menuDataBokkAgain = false"
+                          :min="
+                            new Date(
+                              Date.now() -
+                                new Date().getTimezoneOffset() * 60000
+                            )
+                              .toISOString()
+                              .substr(0, 10)
+                          "
+                        ></v-date-picker>
+                      </v-menu>
+                    </v-col>
+                    <v-col  cols="12" md="6" lg="6">
+                         <v-select
+                            required
+                            :rules="[rules.required]"
+                            v-model="time"
+                            :items="timeavailable"
+                            label="เวลา"
+                            item-text="text"
+                            item-value="text"
+                            persistent-hint
+                            return-object
+                            outlined
+                            dense
+                          ></v-select>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                      <v-col cols= "12">
+                        <v-textarea
+                          required
+                          :rules="[rules.required]"
+                          v-model="remark"
+                          outlined
+                          label="หมายเหตุเพิ่มเติม"
+                          auto-grow
+                        ></v-textarea>
+                      </v-col>
+                  </v-row>
+                  <div class="text-center">
+                    <v-btn
+                      elevation="10"
+                      color="green darken-1"
+                      dark
+                      small
+                      :loading="loadingBookingAgain"
+                      :disabled="loadingBookingAgain"
+                      @click="addBookingAgain()"
+                      >ยืนยันนัดหมาย</v-btn
+                    >
+                    <v-btn
+                      elevation="10"
+                      color="#173053"
+                      outlined
+                      style="background-color:#FFFFFF"
+                      small
+                      :loading="loadingBookingAgain"
+                      :disabled="loadingBookingAgain"
+                      @click="dialogBookingAgain = false"
+                      >ยกเลิก</v-btn
+                    >
+                  </div>
+                  </v-container>
+                </v-card-text>
+              </v-form>
+            </v-card>
+          </v-dialog>
       </div>
     </v-main>
   </div>
@@ -4324,6 +4435,7 @@ export default {
       menuDate: false,
       menuDateEdit: false,
       menuDateChange: false,
+      menuDataBokkAgain: false,
       date: '',
       time: '',
       empSelectAdd: '',
@@ -4415,6 +4527,7 @@ export default {
       validRemove: true,
       validChange: true,
       validExport: true,
+      validBookingAgain: true,
       // Dialog Config ADD EDIT DELETE IMPORT
       dialogAdd: false,
       dialogEdit: false,
@@ -4515,7 +4628,12 @@ export default {
       phonenumItem: [],
       HistoryData: [],
       phonenum: [],
-      lineUserId: ''
+      lineUserId: '',
+      limitBookingCheck: 'False',
+      booking: [],
+      bookingData: [],
+      dialogBookingAgain: false,
+      loadingBookingAgain: false
     }
   },
   beforeCreate () {
@@ -6272,6 +6390,12 @@ export default {
           this.$nextTick(() => {
             let self = this
             self.$refs.form_deposit.validate()
+          })
+          break
+        case 'BOOKAGAIN':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_bookingAgain.validate()
           })
           break
 
@@ -8159,7 +8283,6 @@ export default {
             if (text === 'qrcode') {
               this.dataQrcode = dt
             }
-            // await this.getBookingField()
             await this.getflowfield(dt)
           }
         })
@@ -8804,6 +8927,7 @@ export default {
     },
     async getjob (item) {
       console.log(item)
+      this.bookNo = item.bookNo
       this.jobitem = []
       if (item.jobNo !== '') {
         let checkBookingMember = ''
@@ -8967,6 +9091,110 @@ export default {
         .catch(error => {
           console.log('error function addDataGlobal : ', error)
         })
+    },
+    async setBookingingAgain () {
+      // await this.getBookingField()
+      console.log(this.userId)
+      console.log(this.bookNo)
+      let booking = await axios.get(this.DNS_IP + '/booking_view/get?shopId=' + this.session.data.shopId + '&bookNo=' + this.bookNo + '&checkOnsite=is null')
+      let bookingData = await axios.get(this.DNS_IP + '/BookingData/get?shopId=' + this.session.data.shopId + '&bookNo=' + booking.data[0].bookNo)
+      // console.log('this.fieldNameItem', this.fieldNameItem)
+      this.booking = booking.data
+      this.bookingData = bookingData.data
+      console.log('booking', booking)
+      console.log('bookingData', bookingData)
+      this.timeavailable = []
+      let dtTime = this.branch.filter(item => { return item.value === booking.data[0].masBranchID })
+      // console.log('test', dtTime)
+      this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+      this.dialogBookingAgain = true
+    },
+    addBookingAgain () {
+      this.loadingBookingAgain = true
+      this.validate('BOOKAGAIN')
+      setTimeout(() => this.addBookingAgainSubmit(), 500)
+    },
+    addBookingAgainSubmit () {
+      if (this.validBookingAgain === true) {
+        let rs = this.bookingData
+        let Add = []
+        for (let i = 0; i < rs.length; i++) {
+          let d = rs[i]
+          let update = {}
+          d.fieldValue = d.fieldValue || ''
+          if (d.fieldValue !== '') {
+            update.masBranchID = this.booking[0].masBranchID
+            update.bookingFieldId = d.bookingFieldId
+            update.remark = this.remark
+            update.flowId = this.booking[0].flowId
+            update.fieldId = d.fieldId
+            update.fieldValue = d.fieldValue
+            update.shopId = d.shopId
+            update.dueDate = this.date + ' ' + this.time.value
+            update.timeText = this.time.text
+            update.userId = this.userId
+            update.pageName = 'BookingList'
+            update.sourceLink = 'direct'
+            update.fastTrack = this.booking[0].fastTrack || ''
+            update.extraJob = this.booking[0].extraJob || ''
+            update.depositStatus = this.booking[0].depositStatus || ''
+            update.depositImge = this.booking[0].depositImge || ''
+            update.empSelect = this.booking[0].empSelect
+            update.adminLogin = this.session.data.userName
+            Add.push(update)
+          }
+        }
+        console.log('Add', Add)
+        this.swalConfig.title = 'ต้องการนำรายการนี้ เข้าตารางใช่หรือไม่?'
+        this.$swal(this.swalConfig).then(async result => {
+          axios
+            .post(this.DNS_IP + '/Booking/add', Add)
+            .then(async response => {
+              await this.confirmChkAdd(response.data)
+              let booking = await axios.get(this.DNS_IP + '/booking_view/get?shopId=' + this.session.data.shopId + '&bookNo=' + response.data.bookNo + '&checkOnsite=is null')
+              let bookingData = await axios.get(this.DNS_IP + '/BookingData/get?shopId=' + this.session.data.shopId + '&bookNo=' + response.data.bookNo)
+              let cusName = this.getDataFromFieldName(bookingData.data, 'ชื่อ')
+              if (booking.data[0].lineUserId) {
+                let pushText = {
+                  'to': booking.data[0].lineUserId,
+                  'messages': [
+                    {
+                      'type': 'text',
+                      'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${(cusName.length > 0) ? cusName[0].fieldValue : ''}
+                          \nวันเดือนปี ${this.format_dateFUllTime(booking.data[0].dueDate)}`
+                    }
+                  ]
+                }
+                axios
+                  .post(
+                    this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
+                    pushText
+                  )
+                  .catch(error => {
+                    console.log('error function addData : ', error)
+                  })
+              }
+              this.date = ''
+              this.time = ''
+              this.booking = []
+              this.bookingData = []
+              if (this.statusSearch === 'no') {
+                await this.getBookingList()
+              } else {
+                await this.searchAny()
+              }
+              // this.getTimesChange('update')
+              if (this.getSelectText) {
+                this.getSelect(this.getSelectText, this.getSelectCount)
+              }
+              this.loadingBookingAgain = false
+              this.dialogBookingAgain = false
+              this.dialogJob = false
+            })
+        })
+      } else {
+        this.loadingBookingAgain = false
+      }
     },
     async setDataChang (item) {
       this.checkSelectText = item.statusBt
