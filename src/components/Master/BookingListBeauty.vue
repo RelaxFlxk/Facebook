@@ -1735,6 +1735,33 @@
                         ></v-textarea>
                       </v-col>
                   </v-row>
+                   <v-row v-if="limitBookingCheck === 'True'">
+                    <v-col cols="12" md="6" lg="6">
+                      <h4 class="text-center">ต้องการใช้ Limit การจองหรือไม่</h4>
+                      <v-row align="center">
+                        <v-checkbox
+                          false-value="False"
+                          true-value="True"
+                          v-model="limitBookingSelect"
+                          hide-details
+                          class="shrink ml-6 mr-0 mt-3 mb-6"
+                        ></v-checkbox>
+                        <v-text-field class="mt-3" dense outlined :value="limitBookingSelect === 'True' ? 'ต้องการ' : 'ไม่ต้องการ'" readonly label="Limit การจอง"></v-text-field>
+                         </v-row>
+                    </v-col>
+                    <v-col cols="12" md="6" lg="6" v-if="limitBookingSelect === 'True'">
+                      <v-select
+                        v-model="selectCountBookingLimit"
+                        :items="[1,2,3,4,5,6,7,8]"
+                        label="จำนวนชั่วโมง Limit"
+                        outlined
+                        dense
+                        class="mt-10"
+                        @change="setCountTime()"
+                      ></v-select>
+                    </v-col>
+                   </v-row>
+                   <v-divider></v-divider>
                   <v-row>
                     <v-col cols="12" md="6" lg="6">
                       <v-menu
@@ -1799,6 +1826,7 @@
                             outlined
                             dense
                             required
+                            @change="setCountTime()"
                             :rules ="[rules.required]"
                           ></v-select>
                     </v-col>
@@ -4315,6 +4343,13 @@ export default {
         length: 9,
         precision: 0
       },
+      options1: {
+        locale: 'en-US',
+        prefix: '',
+        suffix: '',
+        length: 1,
+        precision: 0
+      },
       recordStatusJob: '',
       checkPayment: 'True',
       formCloseJob: {
@@ -4629,11 +4664,18 @@ export default {
       HistoryData: [],
       phonenum: [],
       lineUserId: '',
-      limitBookingCheck: 'False',
       booking: [],
       bookingData: [],
       dialogBookingAgain: false,
-      loadingBookingAgain: false
+      loadingBookingAgain: false,
+      limitBookingCheck: 'False',
+      limitBookingSelect: 'Fales',
+      limitCountBranch: 0,
+      limitCountBranchOld: 0,
+      countBookingLimit: 0,
+      selectCountBookingLimit: 1,
+      dueDateOld: '',
+      masBranchIDLimit: ''
     }
   },
   beforeCreate () {
@@ -5176,6 +5218,8 @@ export default {
                   s.shopId = d.shopId
                   s.remark = d.remark || ''
                   s.masBranchID = d.masBranchID
+                  s.limitBookingCheck = d.limitBookingCheck
+                  s.countHourLimit = d.countHourLimit
                   s.empSelect = d.empSelect
                   s.empFull_NameTH = d.empFull_NameTH || ''
                   s.empFull_NameTH = s.empFull_NameTH.replace('นางสาว', '')
@@ -7377,6 +7421,8 @@ export default {
                 s.shopId = d.shopId
                 s.remark = d.remark || ''
                 s.masBranchID = d.masBranchID
+                s.limitBookingCheck = d.limitBookingCheck
+                s.countHourLimit = d.countHourLimit
                 s.empSelect = d.empSelect
                 s.empFull_NameTH = d.empFull_NameTH || ''
                 s.empFull_NameTH = s.empFull_NameTH.replace('นางสาว', '')
@@ -7532,6 +7578,8 @@ export default {
                 s.shopId = d.shopId
                 s.remark = d.remark || ''
                 s.masBranchID = d.masBranchID
+                s.limitBookingCheck = d.limitBookingCheck
+                s.countHourLimit = d.countHourLimit
                 s.empSelect = d.empSelect
                 s.empFull_NameTH = d.empFull_NameTH || ''
                 s.empFull_NameTH = s.empFull_NameTH.replace('นางสาว', '')
@@ -8819,6 +8867,12 @@ export default {
       this.swalConfig.title = 'ต้องการ เปลี่ยนเวลานัดหมาย ใช่หรือไม่?'
       this.$swal(this.swalConfig).then(async result => {
         if (this.$session.id() !== undefined) {
+          if (this.limitBookingCheck === 'True' && this.limitBookingSelect === 'True') {
+            await this.manageLimitBooking()
+            this.selectCountBookingLimit = this.selectCountBookingLimit
+          } else {
+            this.selectCountBookingLimit = ''
+          }
           let checkCountTime = await axios.get(this.DNS_IP + '/booking_view/get?bookNo=' + item.bookNo)
           console.log('checkCountTime', checkCountTime)
           if (checkCountTime.data.status === false) {
@@ -8830,7 +8884,8 @@ export default {
               changeDueDate: 'change',
               dueDate: this.formChange.date + ' ' + this.formChange.time.value,
               timeText: this.formChange.time.text,
-              LAST_USER: this.session.data.userName
+              LAST_USER: this.session.data.userName,
+              countHourLimit: this.selectCountBookingLimit
             }
             await axios
               .post(
@@ -8924,6 +8979,27 @@ export default {
         this.dataChangeReady = true
         console.log('catch alear : ', error)
       })
+    },
+    async manageLimitBooking () {
+      var dt = {
+        dataLimit: this.limitCountBranch,
+        dataLimitOld: this.limitCountBranchOld,
+        dueDateNew: this.formChange.date,
+        dueDateOld: this.dueDateOld,
+        masBranchIDLimit: this.masBranchIDLimit,
+        shopId: this.$session.getAll().data.shopId,
+        CREATE_USER: this.session.data.userName,
+        LAST_USER: this.session.data.userName
+      }
+      console.log('manageLimitBooking', dt)
+      await axios
+        .post(this.DNS_IP + '/LimitBookingDate/manage', dt)
+        .then(async response => {
+          this.limitCountBranch = []
+          this.limitCountBranchOld = []
+          this.dueDateOld = ''
+          this.masBranchIDLimit = ''
+        })
     },
     async getjob (item) {
       console.log(item)
@@ -9197,9 +9273,13 @@ export default {
       }
     },
     async setDataChang (item) {
+      this.limitBookingCheck = item.limitBookingCheck || 'False'
+      item.countHourLimit = item.countHourLimit || 0
+      this.countBookingLimit = 0
+      this.dueDateOld = this.momenDate_1(item.dueDate)
+      this.masBranchIDLimit = item.masBranchID
+      console.log('this.dueDateOld', this.dueDateOld)
       this.checkSelectText = item.statusBt
-      console.log('dueDate', item.dueDate)
-      console.log('timeText', item.timeText)
       await this.checkTimeFlow()
       this.dataChange = item
       this.remark = item.remark
@@ -9213,8 +9293,23 @@ export default {
       } else {
         this.formChange.time = { text: this.momenTime(item.dueDate), value: this.momenTime(item.dueDate) }
       }
+
+      let limitCountBranchOld = 0
+      let setTimeOld = JSON.parse(this.branch.filter(el => { return el.value === parseInt(item.masBranchID) })[0].allData.setTime)
+      let indexOld = setTimeOld.findIndex((element) => element.value === this.momenTime(item.dueDate))
+      limitCountBranchOld = setTimeOld.slice(indexOld, indexOld + item.countHourLimit)
+      this.limitCountBranchOld = limitCountBranchOld
+
       this.dialogChange = true
       console.log(this.formChange)
+      this.setCountTime()
+    },
+    setCountTime () {
+      let limitCountBranch = 0
+      let setTime = JSON.parse(this.branch.filter(el => { return el.value === parseInt(this.masBranchIDLimit) })[0].allData.setTime)
+      let index = setTime.findIndex((element) => element.value === this.formChange.time.value)
+      limitCountBranch = setTime.slice(index, index + this.selectCountBookingLimit)
+      this.limitCountBranch = limitCountBranch
     },
     async openInfo (item) {
       this.detailInfo = await this.getBookingData(item)
