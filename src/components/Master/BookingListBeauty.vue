@@ -8999,6 +8999,8 @@ export default {
           this.limitCountBranchOld = []
           this.dueDateOld = ''
           this.masBranchIDLimit = ''
+          this.countBookingLimit = 0
+          this.selectCountBookingLimit = 1
         })
     },
     async getjob (item) {
