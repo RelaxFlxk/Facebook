@@ -9001,6 +9001,8 @@ export default {
           this.masBranchIDLimit = ''
           this.countBookingLimit = 0
           this.selectCountBookingLimit = 1
+          this.limitBookingCheck = 'False'
+          this.limitBookingSelect = 'False'
         })
     },
     async getjob (item) {
