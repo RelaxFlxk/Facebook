@@ -1761,6 +1761,36 @@
                       ></v-select>
                     </v-col>
                    </v-row>
+                   <h4 v-if="limitBookingSelect === 'True'" class="text-center">ตารางนี้แสดงผลลัพธ์เมื่อท่านเลือกจำนวนชั่วโมง / Limit ที่ตั้งไว้</h4>
+                   <v-row v-if="limitBookingSelect === 'True' && dataLimitBookingDate.length > 0">
+                    <v-col cols="12">
+                      <v-data-table
+                        :headers="headersLimitBookingDate"
+                        :items="dataLimitBookingDate"
+                        :items-per-page="10"
+                        dense
+                        class="elevation-1"
+                      >
+                        <template v-slot:[`item.countBookingLimit`]="{ item }">
+                          <v-chip
+                            class="ma-2 white--text"
+                            :color="item.color"
+                          >
+                            <strong>{{item.countBookingLimit}}</strong>
+                          </v-chip>
+                        </template>
+                      </v-data-table>
+                    </v-col>
+                   </v-row>
+                   <v-row v-if="limitBookingSelect === 'True' && dataLimitBookingDate.length === 0">
+                      <v-col cols="12" class="text-center">
+                      <v-alert
+                        type="success"
+                      >
+                        <strong>ท่านสามารถนัดหมายในวันที่ : {{formChange.date}} ได้ทุกเวลา</strong>
+                      </v-alert>
+                      </v-col>
+                    </v-row>
                    <v-divider></v-divider>
                   <v-row>
                     <v-col cols="12" md="6" lg="6">
@@ -1788,7 +1818,7 @@
                         </template>
                         <v-date-picker
                           v-model="formChange.date"
-                          @input="menuDateChange = false"
+                          @input="menuDateChange = false, getDataLimitBooking()"
                           :min="
                             new Date(
                               Date.now() -
@@ -4336,6 +4366,16 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      headersLimitBookingDate: [
+        {
+          text: 'เวลา',
+          align: 'center',
+          sortable: true,
+          value: 'bookingTime'
+        },
+        { text: 'จำนวน Limit ปัจจุบัน / จำนวน Limit ที่ตั้งไว้', value: 'countBookingLimit', align: 'center' }
+      ],
+      dataLimitBookingDate: [],
       options2: {
         locale: 'en-US',
         prefix: '',
@@ -4675,6 +4715,7 @@ export default {
       countBookingLimit: 0,
       selectCountBookingLimit: 1,
       dueDateOld: '',
+      dueDateTimeOld: '',
       masBranchIDLimit: ''
     }
   },
@@ -8879,8 +8920,17 @@ export default {
             this.onChangeChk(item, changeStatus)
           } else {
             let countTime = checkCountTime.data[0].countChangeTime || 0
+            let dueOld = this.dueDateOld + this.dueDateTimeOld
+            let dueNew = this.formChange.date + this.formChange.time.value
+            console.log('dueNew', dueNew)
+            console.log('dueOld', dueOld)
+            if (dueOld === dueNew) {
+              countTime = countTime + 0
+            } else {
+              countTime = countTime + 1
+            }
             var dtChange = {
-              countChangeTime: countTime + 1,
+              countChangeTime: countTime,
               changeDueDate: 'change',
               dueDate: this.formChange.date + ' ' + this.formChange.time.value,
               timeText: this.formChange.time.text,
@@ -8995,14 +9045,6 @@ export default {
       await axios
         .post(this.DNS_IP + '/LimitBookingDate/manage', dt)
         .then(async response => {
-          this.limitCountBranch = []
-          this.limitCountBranchOld = []
-          this.dueDateOld = ''
-          this.masBranchIDLimit = ''
-          this.countBookingLimit = 0
-          this.selectCountBookingLimit = 1
-          this.limitBookingCheck = 'False'
-          this.limitBookingSelect = 'False'
         })
     },
     async getjob (item) {
@@ -9277,10 +9319,21 @@ export default {
       }
     },
     async setDataChang (item) {
+      // clear Limit
+      this.limitCountBranch = []
+      this.limitCountBranchOld = []
+      this.dueDateOld = ''
+      this.masBranchIDLimit = ''
+      this.countBookingLimit = 0
+      this.selectCountBookingLimit = 1
+      this.limitBookingCheck = 'False'
+      this.limitBookingSelect = 'False'
+      /// /////////////////////
       this.limitBookingCheck = item.limitBookingCheck || 'False'
       item.countHourLimit = item.countHourLimit || 0
       this.countBookingLimit = 0
       this.dueDateOld = this.momenDate_1(item.dueDate)
+      this.dueDateTimeOld = this.momenTime(item.dueDate)
       this.masBranchIDLimit = item.masBranchID
       console.log('this.dueDateOld', this.dueDateOld)
       this.checkSelectText = item.statusBt
@@ -9314,6 +9367,75 @@ export default {
       let index = setTime.findIndex((element) => element.value === this.formChange.time.value)
       limitCountBranch = setTime.slice(index, index + this.selectCountBookingLimit)
       this.limitCountBranch = limitCountBranch
+      this.getDataLimitBooking()
+    },
+    async getDataLimitBooking () {
+      this.dataLimitBookingDate = []
+      let setTime = JSON.parse(this.branch.filter(el => { return el.value === parseInt(this.masBranchIDLimit) })[0].allData.setTime)
+      let limitBooking = 0
+      if (setTime.length > 0) {
+        limitBooking = setTime.filter(el => { return el.value === this.formChange.time.value })[0].limitBooking
+      } else {
+        limitBooking = 0
+      }
+      if (limitBooking !== 0) {
+        await axios
+          .get(
+            this.DNS_IP + '/LimitBookingDate/get?shopId=' + this.session.data.shopId + '&bookingDate=' + this.formChange.date
+          )
+          .then(async response => {
+            let rs = response.data
+            if (rs.status === false) {
+              this.dataLimitBookingDate = []
+            } else {
+              for (let i = 0; i < rs.length; i++) {
+                let d = rs[i]
+                let s = {}
+                s.bookingTime = d.bookingTime
+                s.countBookingLimit = d.countBooking + '/' + limitBooking
+                s.countBooking = d.countBooking
+                // if (d.countBooking === parseInt(limitBooking)) {
+                //   s.color = 'orange darken-1'
+                // } else
+                if (d.countBooking > parseInt(limitBooking)) {
+                  s.color = 'red darken-1'
+                } else if (d.countBooking <= parseInt(limitBooking)) {
+                  s.color = 'blue darken-1'
+                }
+                this.dataLimitBookingDate.push(s)
+              }
+              for (let i = 0; i < this.limitCountBranch.length; i++) {
+                let s = {}
+                let d = this.limitCountBranch[i]
+                if (this.dataLimitBookingDate.filter(el => { return el.bookingTime === d.value }).length > 0) {
+                  let index = this.dataLimitBookingDate.findIndex((element) => element.bookingTime === d.value)
+                  this.dataLimitBookingDate[index].countBooking = this.dataLimitBookingDate[index].countBooking + 1
+                  this.dataLimitBookingDate[index].countBookingLimit = this.dataLimitBookingDate[index].countBooking + '/' + limitBooking
+                  // if (this.dataLimitBookingDate[index].countBooking === parseInt(limitBooking)) {
+                  //   this.dataLimitBookingDate[index].color = 'orange darken-1'
+                  // } else
+                  if (this.dataLimitBookingDate[index].countBooking > parseInt(limitBooking)) {
+                    this.dataLimitBookingDate[index].color = 'red darken-1'
+                  } else if (this.dataLimitBookingDate[index].countBooking <= parseInt(limitBooking)) {
+                    this.dataLimitBookingDate[index].color = 'blue darken-1'
+                  }
+                } else {
+                  s.bookingTime = d.value
+                  s.countBooking = 1
+                  s.countBookingLimit = 1 + '/' + limitBooking
+                  s.color = 'blue darken-1'
+                  this.dataLimitBookingDate.push(s)
+                }
+              }
+              this.dataLimitBookingDate = this.dataLimitBookingDate.sort((a, b) => {
+                if (a.bookingTime < b.bookingTime) return -1
+                return a.bookingTime > b.bookingTime ? 1 : 0
+              })
+              console.log(' this.dataLimitBookingDate', this.dataLimitBookingDate)
+              console.log('limitBooking', limitBooking)
+            }
+          })
+      }
     },
     async openInfo (item) {
       this.detailInfo = await this.getBookingData(item)
