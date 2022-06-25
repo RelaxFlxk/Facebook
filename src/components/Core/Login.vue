@@ -300,6 +300,8 @@ export default {
       } else {
         if (dataitem.USER_ROLE === 'onsite') {
           this.$router.push('/Onsite/JobList')
+        } else if (dataitem.USER_ROLE === 'board') {
+          this.$router.push('/Master/BoardControlEmp')
         } else {
           this.$router.push('/Dashbord/ReportBooking')
         }

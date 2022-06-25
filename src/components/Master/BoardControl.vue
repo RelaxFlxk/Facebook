@@ -2048,7 +2048,11 @@ export default {
       this.$router.push('/Master/RegisterAdd')
     },
     async editLayout () {
-      this.$router.push('/Master/WorkShop')
+      if (this.flowId !== '' && this.masBranchID !== '') {
+        this.$router.push('/Master/WorkShop?flowId=' + this.flowId + '&masBranchID=' + this.masBranchID)
+      } else {
+        this.$router.push('/Master/WorkShop')
+      }
     },
     itemCars (item) {
       this.item_newcars = item

@@ -156,6 +156,7 @@ export default {
     this.showData()
     await this.getDataMasbranch()
     await this.getStepFlow()
+    await this.redirectBybord()
   },
   methods: {
     showData () {
@@ -224,6 +225,13 @@ export default {
           // console.log('DataMasbranch', this.DataMasbranch)
         }
       })
+    },
+    async redirectBybord () {
+      if (this.$route.query.flowId && this.$route.query.masBranchID) {
+        this.DataflowId = this.$route.query.flowId
+        this.DataBranchID = this.$route.query.masBranchID
+        this.getLayout()
+      }
     },
     async getLayout () {
       await this.getStepFlow(this.DataflowId)

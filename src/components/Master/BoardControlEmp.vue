@@ -172,7 +172,7 @@
                                 </v-icon>
                                 <p
                                 class="font-weight-black"
-                                  v-if="itemsJob.statusTime === 'timeEnd' && itemsJob.statusTime !== null"
+                                v-if="itemsJob.statusTime === 'timeEnd' && itemsJob.statusTime !== null"
                                 >
                                 {{itemsJob.showTime}}
                                 </p>
@@ -306,10 +306,13 @@ export default {
       flownameTap: [],
       tab: null,
       timeItem: [],
-      clearInter: null
+      clearInter: null,
+      localStorageTimeCount: 0
     }
   },
   async mounted () {
+    clearInterval(this.clearInter)
+    this.clearInter = null
     await this.beforeCreate()
   },
   methods: {
@@ -365,7 +368,7 @@ export default {
           // console.log('res', response.data.length)
           let itemstart = []
           let itemEnd = []
-          console.log('res', response.data)
+          // console.log('res', response.data)
           if (response.data.length > 0) {
             for (var i = 0; i < response.data.length; i++) {
               var d = response.data[i]
@@ -437,7 +440,7 @@ export default {
               }
             }
             allJob.push(...itemstart, ...itemEnd)
-            console.log('allJob', allJob)
+            // console.log('allJob', allJob)
             if (allJob.length > 0) {
               this.allJob = allJob
             } else {
@@ -460,46 +463,6 @@ export default {
       })
       this.flownameTap = Array.from(new Set(dt))
     },
-    async getJobitem (item) {
-      // console.log('*******************', item)
-      this.timelineitem = []
-      await axios
-        .get(this.DNS_IP + '/job_logCloseJob/' + item.jobNo).then((response) => {
-          let rs = response.data
-          console.log('rs', rs)
-          if (rs.length > 0) {
-            for (let i = 0; i < rs.length; i++) {
-              let d = rs[i]
-              let t = i + 1
-              if (t === rs.length) {
-                let s = {}
-                s.empStep = d.empStep
-                s.endDate = d.endDate
-                s.totalPrice = s.totalPrice
-                s.DTCREATE_DATE = d.CREATE_DATE
-                s.DTLAST_DATE = d.LAST_DATE
-                s.stepTitle = d.stepTitle
-                s.timediff = d.timediff
-                s.Counttime = 0
-                this.timelineitem.push(s)
-              } else {
-                let s = {}
-                s.empStep = d.empStep
-                s.endDate = d.endDate
-                s.totalPrice = s.totalPrice
-                s.DTCREATE_DATE = d.CREATE_DATE
-                s.DTLAST_DATE = d.LAST_DATE
-                s.stepTitle = d.stepTitle
-                s.timediff = d.timediff
-                s.Counttime = rs[t].timediff - d.timediff
-                this.timelineitem.push(s)
-              }
-            }
-          }
-        }).catch((error) => {
-          console.log('error function addData : ', error)
-        })
-    },
     async updateTimeEmp (itemsJob, status) {
       this.$swal({
         title: 'อัพเดท เวลา ใช่หรือไม่?',
@@ -511,6 +474,7 @@ export default {
         cancelButtonText: 'ยกเลิก'
       }).then(async (result) => {
         let dt = this.format_date(new Date())
+        clearInterval(this.clearInter)
         // console.log('dtttttttttttt', dt)
         itemsJob.Time = dt
         itemsJob.statusTime = status
@@ -533,17 +497,23 @@ export default {
         .get(this.DNS_IP + '/TimeEmp_Log/totalTime/' + this.$session.getAll().data.empId).then((response) => {
           let rs = response.data
           let time = []
+          // let refreshTime = localStorage.getItem('timecount') ? localStorage.getItem('timecount') : 0
           if (rs.length > 0) {
             for (let i = 0; i < rs.length; i++) {
               let d = rs[i]
               if (this.allJob.filter(i => { return i.jobId === d.jobId && i.stepId === d.stepId && i.empId === d.empId }).length > 0) {
                 if (this.allJob.filter(i => { return i.jobId === d.jobId && i.stepId === d.stepId && i.empId === d.empId })[0].statusTime === 'timeEnd') {
+                  // console.log('505')
+                  // console.log('start time', this.allJob.filter(i => { return i.jobId === d.jobId && i.stepId === d.stepId && i.empId === d.empId })[0].timeStart)
                   let TimeNow = this.jsTimeDiff(this.allJob.filter(i => { return i.jobId === d.jobId && i.stepId === d.stepId && i.empId === d.empId })[0].timeStart)
-                  d.totalTime = d.totalTime + TimeNow
-                  d.showTime = this.convertHMS(d.totalTime)
+                  d.totalTime = (d.totalTime / 60) + TimeNow
+                  d.showTime = this.convertHMS(d.totalTime * 60)
+                  // console.log('ddddd', d.totalTime)
+                  // console.log('TimeNow', d.showTime)
+                  // console.log('showTime', this.convertHMS(((d.totalTime / 60) + TimeNow) * 60))
                 }
               } else {
-                d.showTime = this.convertHMS(d.totalTime)
+                d.showTime = this.convertHMS(d.totalTime * 60)
               }
               time.push(d)
             }
@@ -563,15 +533,16 @@ export default {
         //   // console.log('showTime', this.jsTimeDiff(new Date(d.timeStart)))
         // }
         if (this.timeItem.filter((item) => { return item.jobId === d.jobId && item.stepId === d.stepId }).length > 0) {
-          let showTime = this.timeItem.filter((item) => { return item.jobId === d.jobId && item.stepId === d.stepId })[0].totalTime
+          let showTime = this.timeItem.filter((item) => { return item.jobId === d.jobId && item.stepId === d.stepId })[0].totalTime / 60
           if (d.countTime === 0) {
             d.countTime = showTime + 1
+            // console.log('if', typeof showTime)
           } else {
             d.countTime = d.countTime + 1
+            // console.log('else', d)
           }
           d.showTime = this.convertHMS(d.countTime)
-          // console.log('test', d.countTime)
-          // console.log('showTime', d.showTime)
+          // console.log('test', this.jsTimeDiff(d.timeStart))
         }
       }
     },
@@ -588,8 +559,9 @@ export default {
     },
     jsTimeDiff (strDateTime1) {
       // var oneday = 1000 * 60
+      console.log('new Date()', new Date())
       let strDateTime2 = new Date()
-      var defDate = (strDateTime2.getTime() - new Date(strDateTime1).getTime()) / 1000
+      var defDate = (strDateTime2.getTime() - new Date(strDateTime1).getTime()) / 60000
       // console.log('def', defDate)
       return defDate
     }
