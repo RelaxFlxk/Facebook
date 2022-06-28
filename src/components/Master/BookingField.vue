@@ -548,16 +548,16 @@
                       ></v-checkbox>
                       <v-text-field v-model="showTime" readonly label="แสดงเวลาการจองหรือไม่"></v-text-field>
                     </v-row>
-                    <!-- <v-row align="center">
+                    <v-row align="center">
                       <v-checkbox
-                        false-value="ไม่แสดง"
-                        true-value="แสดง"
-                        v-model="showMap"
+                        false-value="False"
+                        true-value="True"
+                        v-model="showLimitBooking"
                         hide-details
                         class="shrink ml-6 mr-0 mt-0 mb-6"
                       ></v-checkbox>
-                      <v-text-field v-model="showMap" readonly label="แสดงแผนที่หรือไม่"></v-text-field>
-                    </v-row> -->
+                      <v-text-field :value="showLimitBooking === 'True' ? 'แสดง' : 'ไม่แสดง'" readonly label="แสดงชั่วโมงของงานหรือไม่"></v-text-field>
+                    </v-row>
                     <v-data-table
                       v-model="itemdetell"
                       :headers="FieldSelect"
@@ -578,7 +578,7 @@
                       color="#1B437C"
                       dark
                       @click="addBooking()"
-                      >SAVE</v-btn
+                      >บันทึกข้อมูล</v-btn
                     >
                   </v-col>
                 </v-card>
@@ -628,6 +628,12 @@
                       </v-dialog>
           </v-col>
         </v-row>
+        <v-overlay :value="dataReady">
+          <v-progress-circular
+            indeterminate
+            size="64"
+          ></v-progress-circular>
+        </v-overlay>
       </v-container>
     </v-main>
   </div>
@@ -655,6 +661,7 @@ export default {
   },
   data () {
     return {
+      dataReady: false,
       panelTypeJob: [0],
       dataTypeJob1: '',
       dataTypeJob2: '',
@@ -681,6 +688,7 @@ export default {
       time: '',
       showTime: 'แสดง',
       showMap: 'ไม่แสดง',
+      showLimitBooking: 'False',
       options2: {
         locale: 'en-US',
         prefix: '',
@@ -806,6 +814,7 @@ export default {
               } else {
                 this.showMap = rs[0].showMap
               }
+              this.showLimitBooking = rs[0].showLimitBooking || 'Fales'
               bookingData = JSON.parse(rs[0].flowfieldName)
               for (let i = 0; i < bookingData.length; i++) {
                 let d = bookingData[i]
@@ -885,6 +894,7 @@ export default {
         })
     },
     async addBooking () {
+      this.dataReady = true
       let booking = {}
       let UpdateField = []
       // this.Redirect = this.DNS_IP + '/booking?shopId=' + this.$route.query.shopId
@@ -901,6 +911,7 @@ export default {
       booking.shopId = this.shopId
       booking.showTime = this.showTime
       booking.showMap = this.showMap
+      booking.showLimitBooking = this.showLimitBooking
       booking.LAST_USER = this.session.data.userName
       console.log('dtbooking', booking)
       this.$swal({
@@ -916,6 +927,7 @@ export default {
           await this.saveBooking(booking)
         })
         .catch(error => {
+          this.dataReady = false
           console.log('Cencel : ', error)
         })
     },
@@ -947,11 +959,13 @@ export default {
           }
 
           this.$swal('บันทึกข้อมูลเรียบร้อย', ' ', 'success')
-          this.getBookingField()
+          await this.getBookingField()
+          this.dataReady = false
           console.log(`addDataGlobal DNS_IP + ${url}`, response)
         })
         .catch(error => {
           console.log('error function addData : ', error)
+          this.dataReady = false
         })
     },
     updateTypeJob () {
