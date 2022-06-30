@@ -26,7 +26,8 @@
                     v-model="valid_add"
                     lazy-validation
                   >
-                  <v-row>
+                  <v-card class="pa-5 mb-5">
+                    <v-row>
                     <v-col cols="6">
                       <v-text-field
                         label="ชื่อสาขา (ภาษาไทย)"
@@ -34,6 +35,7 @@
                         :rules="nameRules"
                         :counter="50"
                         maxlength="50"
+                        outlined
 
                       ></v-text-field>
                     </v-col>
@@ -44,6 +46,7 @@
                         :rules="nameRules"
                         :counter="50"
                         maxlength="50"
+                        outlined
 
                       ></v-text-field>
                     </v-col>
@@ -53,19 +56,20 @@
                           v-model="formAdd.countCus"
                           placeholder="จำนวนคนเข้าใช้บริการ / วัน"
                           required
+                          outlined
                           v-bind:options="options2" />
                     </v-col>
-                  </v-row>
-                   <v-row>
-                  <v-col cols="6">
+                    <v-col cols="6">
                       <VuetifyMoney
                           label="จำนวนที่รับงานด่วน / วัน"
                           v-model="formAdd.countFastTrack"
                           placeholder="จำนวนที่รับงานด่วน / วัน"
                           required
+                          outlined
                           v-bind:options="options2" />
                     </v-col>
                   </v-row>
+                  <v-divider></v-divider>
                   <v-row>
                     <v-col cols="3">
                       <v-text-field
@@ -73,6 +77,7 @@
                         v-model="timeText"
                         :counter="50"
                         maxlength="50"
+                        outlined
 
                       ></v-text-field>
                       <v-text-field
@@ -80,12 +85,14 @@
                            v-mask="'##:##'"
                            label="ตั้งค่าเวลาที่ต้องการ"
                            placeholder="HH:mm"
+                           outlined
                       ></v-text-field>
                       <VuetifyMoney
                           label="Limit Booking"
                           v-model="formAdd.limitBooking"
                           placeholder="Limit Booking"
                           required
+                          outlined
                           v-bind:options="options2" />
                       <v-select
                         v-if="dataItemAddTime.length > 0"
@@ -93,6 +100,7 @@
                         label="ตัวอย่างการแสดงเวลา"
                         item-text="text"
                         item-value="text"
+                        outlined
                       ></v-select>
                       <v-btn
                         block
@@ -133,16 +141,20 @@
                       </v-btn>
                     </v-col>
                     <v-col cols="7">
-                      <h4 class="text-center">ต้องการตั้ง Limit การจอง</h4>
-                      <v-row align="center">
+                      <!-- <h4 class="text-center">ต้องการตั้ง Limit การจอง</h4> -->
+                      <v-row align="center" class="ma-5">
+                        <!-- <p class="pb-3">ตั้ง Limit การนัดหมาย</p> -->
                         <v-checkbox
+
                           false-value="False"
                           true-value="True"
                           v-model="formAdd.limitBookingCheck"
+                          label="ตั้ง Limit การนัดหมาย"
                           hide-details
-                          class="shrink ml-6 mr-0 mt-0 mb-6"
+                          class="shrink ml-6 mr-0 mt-0 mb-2"
                         ></v-checkbox>
-                        <v-text-field v-model="formAdd.limitBookingCheck" readonly label="ต้องการตั้ง Limit การจองหรือไม่"></v-text-field>
+
+                        <!-- <v-text-field class="mr-5" v-model="formAdd.limitBookingCheck" outlined readonly label="ต้องการตั้ง Limit การจองหรือไม่"></v-text-field> -->
                          </v-row>
                       <v-data-table
                         :headers="columnsAddTime"
@@ -199,17 +211,19 @@
                     </v-col>
 
                   </v-row>
+                  </v-card>
                   <v-row>
-                    <v-col cols="6">
+                    <v-col cols="12">
                       <v-card class="pa-3" min-height="200">
-                        <strong>วันหยุดทั่วไปของบริษัท</strong>
-                        {{formAdditem.dateDayoffText}}
+                        <strong >วันหยุดทั่วไปของบริษัท</strong>
                         <v-select
+                        class="mt-5"
                         v-model="formAdditem.dateDayoffText"
                         :items="itemDateStop"
                         chips
                         label="เลือกวันหยุด"
                         multiple
+                        outlined
                       ></v-select>
                       </v-card>
                     </v-col>
@@ -218,7 +232,6 @@
                     <v-col cols="12">
                       <v-card class="pa-6">
                         <strong>วันหยุดประจำปีของบริษัท</strong>
-                        {{formAdditem.dateDayCustom}}
                         <v-date-picker
                         v-model="formAdditem.dateDayCustom"
                           multiple
@@ -268,11 +281,12 @@
               <v-card-text>
                 <v-container>
                    <v-form
-                    ref="form_update"
+                     ref="form_update"
                     v-model="valid_update"
                     lazy-validation
                   >
-                  <v-row>
+                  <v-card class="pa-5 mb-5">
+                    <v-row>
                     <v-col cols="6">
                       <v-text-field
                         label="ชื่อสาขา (ภาษาไทย)"
@@ -280,6 +294,7 @@
                         :rules="nameRules"
                         :counter="50"
                         maxlength="50"
+                        outlined
 
                       ></v-text-field>
                     </v-col>
@@ -290,6 +305,7 @@
                         :rules="nameRules"
                         :counter="50"
                         maxlength="50"
+                        outlined
 
                       ></v-text-field>
                     </v-col>
@@ -299,19 +315,20 @@
                           v-model="formUpdate.countCus"
                           placeholder="จำนวนคนเข้าใช้บริการ / วัน"
                           required
+                          outlined
                           v-bind:options="options2" />
                     </v-col>
-                  </v-row>
-                   <v-row>
-                  <v-col cols="6">
+                    <v-col cols="6">
                       <VuetifyMoney
                           label="จำนวนที่รับงานด่วน / วัน"
                           v-model="formUpdate.countFastTrack"
                           placeholder="จำนวนที่รับงานด่วน / วัน"
                           required
+                          outlined
                           v-bind:options="options2" />
                     </v-col>
                   </v-row>
+                  <v-divider></v-divider>
                   <v-row>
                     <v-col cols="3">
                       <v-text-field
@@ -319,6 +336,7 @@
                         v-model="timeText"
                         :counter="50"
                         maxlength="50"
+                        outlined
 
                       ></v-text-field>
                       <v-text-field
@@ -326,12 +344,14 @@
                            v-mask="'##:##'"
                            label="ตั้งค่าเวลาที่ต้องการ"
                            placeholder="HH:mm"
+                           outlined
                       ></v-text-field>
-                       <VuetifyMoney
+                      <VuetifyMoney
                           label="Limit Booking"
                           v-model="formAdd.limitBooking"
                           placeholder="Limit Booking"
                           required
+                          outlined
                           v-bind:options="options2" />
                       <v-select
                         v-if="dataItemAddTime.length > 0"
@@ -339,14 +359,8 @@
                         label="ตัวอย่างการแสดงเวลา"
                         item-text="text"
                         item-value="text"
+                        outlined
                       ></v-select>
-                      <!-- <v-select
-                        v-if="dataItemAddTime.length > 0"
-                        :items="dataItemAddTime"
-                        label="ตัวอย่างการแสดงเวลา"
-                        item-text="text"
-                        item-value="text"
-                      ></v-select> -->
                     </v-col>
                     <v-col cols="2">
                       <v-btn
@@ -375,16 +389,20 @@
                       </v-btn>
                     </v-col>
                     <v-col cols="7">
-                      <h4 class="text-center">ต้องการตั้ง Limit การจอง</h4>
-                      <v-row align="center">
+                      <!-- <h4 class="text-center">ต้องการตั้ง Limit การจอง</h4> -->
+                      <v-row align="center" class="ma-5">
+                        <!-- <p class="pb-3">ตั้ง Limit การนัดหมาย</p> -->
                         <v-checkbox
+
                           false-value="False"
                           true-value="True"
                           v-model="formUpdate.limitBookingCheck"
+                          label="ตั้ง Limit การนัดหมาย"
                           hide-details
-                          class="shrink ml-6 mr-0 mt-0 mb-6"
+                          class="shrink ml-6 mr-0 mt-0 mb-2"
                         ></v-checkbox>
-                        <v-text-field v-model="formUpdate.limitBookingCheck" readonly label="ต้องการตั้ง Limit การจองหรือไม่"></v-text-field>
+
+                        <!-- <v-text-field class="mr-5" v-model="formAdd.limitBookingCheck" outlined readonly label="ต้องการตั้ง Limit การจองหรือไม่"></v-text-field> -->
                          </v-row>
                       <v-data-table
                         :headers="columnsAddTime"
@@ -439,17 +457,21 @@
                             </template>
                       </v-data-table>
                     </v-col>
+
                   </v-row>
+                  </v-card>
                   <v-row>
-                    <v-col cols="6">
+                    <v-col cols="12">
                       <v-card class="pa-3" min-height="200">
-                        <strong>วันหยุดทั่วไปของบริษัท</strong>
+                        <strong >วันหยุดทั่วไปของบริษัท</strong>
                         <v-select
+                        class="mt-5"
                         v-model="formUpdate.dateDayoffText"
                         :items="itemDateStop"
                         chips
                         label="เลือกวันหยุด"
                         multiple
+                        outlined
                       ></v-select>
                       </v-card>
                     </v-col>
@@ -467,7 +489,7 @@
                       </v-card>
                     </v-col>
                   </v-row>
-                   </v-form>
+                  </v-form>
                 </v-container>
               </v-card-text>
               <v-card-actions>
@@ -601,6 +623,14 @@
           </v-col>
           <!-- end data table -->
         </v-row>
+        {{picker}}
+        {{activePicker}}
+        <v-date-picker
+    v-model="date2"
+    :active-picker.sync="activePicker"
+     :max="(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)"
+        min="1950-01-01"
+  ></v-date-picker>
       </div>
     </v-main>
   </div>
@@ -627,9 +657,16 @@ export default {
   created () {
     setInterval(this.getNowGlobal, 1000)
   },
+  watch: {
+    menu (val) {
+      val && setTimeout(() => (this.activePicker = 'YEAR'))
+    }
+  },
   data () {
     return {
       picker: null,
+      date2: null,
+      activePicker: 'MONTH',
       PK: '',
       path: '/master_branch/', // Path Model
       // Menu Config

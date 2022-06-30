@@ -31,6 +31,7 @@
                 solo
                 class='pl-15'
                 v-model="form.userName"
+                 @keyup.enter="onSubmit()"
               ></v-text-field>
             </v-row>
           </v-col>
@@ -44,6 +45,7 @@
                 placeholder="Password"
                 solo
                 v-model="form.userPassword"
+                @keyup.enter="onSubmit()"
                 type="password"
               ></v-text-field>
             </v-row>

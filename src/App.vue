@@ -166,8 +166,12 @@ table tr:last-child td:last-child {
 .v-select-list {
   background-color: var(--nav-bg) !important;
 }
+.v-simple-checkbox .v-icon {
+    cursor: pointer !important;
+    color: rgb(255, 255, 255) !important;
+}
 .v-input--selection-controls__input>.v-icon {
-  color: var(--nav-bg) !important;
+  color: var(--nav-bg) ;
 }
 .v-picker {
   background-color: var(--date-picker-footer) !important;
@@ -336,4 +340,5 @@ table tr:last-child td:last-child {
     border-bottom: 2px solid #555 !important;
     color: #000 !important;
 }
+
 </style>

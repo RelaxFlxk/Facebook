@@ -39,9 +39,9 @@
               <v-col class="pa-0" cols="12" md='12'>
                 <v-container fluid>
                   <h4 class="text-center font-weight-black mb-5">ประเภทบริการ</h4>
-                   <v-row v-for="(item , index) in flowData" :key="index" class="mb-1" style="border-style: groove;">
+                   <v-row v-for="(item , index) in flowData" :key="index" class="mb-1"  style="border-style: groove;">
                     <v-col cols="12" class="text-center">
-                      <p class="pa-0 ma-0 mt-4 font-weight-black">{{item.text}}</p>
+                      <p class="pa-0 ma-0 mt-4 font-weight-black" >{{item.text}}</p>
                     </v-col>
                     <v-col class="pa-0 ps-4 ma-0" cols="12">
                       <v-checkbox class="pa-0 ma-0"

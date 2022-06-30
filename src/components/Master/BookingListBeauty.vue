@@ -4231,83 +4231,6 @@
     </v-main>
   </div>
 </template>
-<style scoped>
-.border-active {
-  border-style: solid;
-  border-color: red;
-}
-.custom-loader {
-    animation: loader 1s infinite;
-    display: flex;
-  }
-  @-moz-keyframes loader {
-    from {
-      transform: rotate(0);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  @-webkit-keyframes loader {
-    from {
-      transform: rotate(0);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  @-o-keyframes loader {
-    from {
-      transform: rotate(0);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  @keyframes loader {
-    from {
-      transform: rotate(0);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-.theme--light.v-divider {
-    border-color: rgba(243, 5, 25, 0.904) !important;
-}
-.slidein {
-  max-width: 40%;
-  padding: 2em 1em;
-  position: fixed;
-  z-index: 100;
-  top: 0;
-  right: 0;
-  background: #fff;
-  height: 100%;
-  overflow: scroll;
-  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.5);
-  transition: all 0.5s ease-in-out;
-}
-button {
-  padding: .5em 1em;
-  border-radius: 3em;
-  font-size: 1.1em;
-}
-/* before the element is shown, start off the screen to the right */
-
-/* General styles unrelated to slide in */
-body {
-  font-family: 'Mulish', sans-serif;
-}
-
-.toggle {
-  margin: 1em;
-}
-.InputData{
-  margin: 0px !important;
-  padding: 0px !important;
-}
-</style>
 <script>
 import axios from 'axios' // api
 import draggable from 'vuedraggable'
@@ -9445,3 +9368,78 @@ export default {
   }
 }
 </script>
+<style scoped>s
+.border-active {
+  border-style: solid;
+  border-color: red;
+}
+.custom-loader {
+    animation: loader 1s infinite;
+    display: flex;
+  }
+  @-moz-keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @-webkit-keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @-o-keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+.slidein {
+  max-width: 40%;
+  padding: 2em 1em;
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  right: 0;
+  background: #fff;
+  height: 100%;
+  overflow: scroll;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.5);
+  transition: all 0.5s ease-in-out;
+}
+button {
+  padding: .5em 1em;
+  border-radius: 3em;
+  font-size: 1.1em;
+}
+/* before the element is shown, start off the screen to the right */
+
+/* General styles unrelated to slide in */
+body {
+  font-family: 'Mulish', sans-serif;
+}
+
+.toggle {
+  margin: 1em;
+}
+.InputData{
+  margin: 0px !important;
+  padding: 0px !important;
+}
+</style>

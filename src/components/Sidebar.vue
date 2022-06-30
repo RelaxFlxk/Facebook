@@ -13,7 +13,7 @@
         </v-list-item-avatar>
         <v-list-item-content><strong style="color: white;">{{ session.data.shopName }}</strong></v-list-item-content> -->
     </v-app-bar>
-    <v-navigation-drawer v-model="drawer" bottom fixed app>
+    <v-navigation-drawer dark v-model="drawer" bottom fixed app>
       <v-list>
         <v-list-item>
           <v-col>
