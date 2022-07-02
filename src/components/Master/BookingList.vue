@@ -1786,7 +1786,7 @@
                   <template v-slot:[`item.action2`]="{ item }">
                     <v-row>
                       <v-col>
-                        <v-chip
+                        <!-- <v-chip
                           filter
                           dark
                           v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
@@ -1795,7 +1795,18 @@
                           @click.stop="item.remarkConfirm1=!item.remarkConfirm1;confirmRemark(item, 'inAdvance')"
                         >
                           1 วัน
-                        </v-chip>
+                        </v-chip> -->
+                        <v-btn
+                          elevation="2"
+                          rounded
+                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
+                          :color="(item.remarkConfirm1) ? 'green darken-2' : 'grey darken-1'"
+                          @click.stop="item.remarkConfirm1=!item.remarkConfirm1;confirmRemark(item, 'inAdvance')"
+                          :loading="loadingConfirmDay"
+                          :disabled="loadingConfirmDay"
+                        >
+                          1 วัน
+                        </v-btn>
                       </v-col>
                       <!-- <v-col>
                         <v-chip
@@ -1951,7 +1962,19 @@
                   <template v-slot:[`item.action2`]="{ item }">
                     <v-row>
                       <v-col>
-                        <v-chip
+                        <v-btn
+                          elevation="2"
+                          rounded
+                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
+                          :color="(item.remarkConfirm1) ? 'green darken-2' : 'grey darken-1'"
+                          @click.stop="item.remarkConfirm1=!item.remarkConfirm1;confirmRemark(item, 'inAdvance')"
+                          :loading="loadingConfirmDay"
+                          :disabled="loadingConfirmDay"
+                          class="white--text"
+                        >
+                          1 วัน
+                        </v-btn>
+                        <!-- <v-chip
                           filter
                           dark
                           v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
@@ -1960,7 +1983,7 @@
                           @click.stop="item.remarkConfirm1=!item.remarkConfirm1;confirmRemark(item, 'inAdvance')"
                         >
                           1 วัน
-                        </v-chip>
+                        </v-chip> -->
                       </v-col>
                       <!-- <v-col>
                         <v-chip
@@ -3104,6 +3127,7 @@ export default {
       loadingEdit: false,
       loadingAdd: false,
       loadingRefresh: false,
+      loadingConfirmDay: false,
       menuDateSearch: false,
       timeTable: '',
       drawer: false,
@@ -4074,6 +4098,7 @@ export default {
     async confirmRemark (item, text) {
       let dt = null
       if (text === 'inAdvance') {
+        this.loadingConfirmDay = true
         dt = {
           remarkConfirm1: item.remarkConfirm1,
           LAST_USER: this.session.data.userName
@@ -4105,6 +4130,7 @@ export default {
             } else {
               await this.searchAny()
             }
+            this.loadingConfirmDay = false
             // this.getTimesChange('update')
             if (this.getSelectText) {
               this.getSelect(this.getSelectText, this.getSelectCount)
