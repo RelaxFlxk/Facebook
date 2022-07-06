@@ -145,7 +145,7 @@
                       <v-row align="center" class="ma-5">
                         <!-- <p class="pb-3">ตั้ง Limit การนัดหมาย</p> -->
                         <v-checkbox
-
+                          @click="chekshowTime()"
                           false-value="False"
                           true-value="True"
                           v-model="formAdd.limitBookingCheck"
@@ -393,7 +393,7 @@
                       <v-row align="center" class="ma-5">
                         <!-- <p class="pb-3">ตั้ง Limit การนัดหมาย</p> -->
                         <v-checkbox
-
+                          @click="chekshowTime()"
                           false-value="False"
                           true-value="True"
                           v-model="formUpdate.limitBookingCheck"
@@ -597,7 +597,7 @@
                       fab
                       dark
                       small
-                      @click.stop="(dialogEdit = true), getDataById(item), validate('UPDATE')"
+                      @click.stop="(dialogEdit = true),chekshowTime('open',item), getDataById(item), validate('UPDATE')"
                     >
                       <v-icon dark> mdi-tools </v-icon>
                     </v-btn>
@@ -782,7 +782,8 @@ export default {
       itemDateStop: ['วันอาทิตย์', 'วันจันทร์', 'วันอังคาร', 'วันพุธ', 'วันพฤหัสบดี', 'วันศุกร์', 'วันเสาร์'],
       itemDateStopValue: [0, 1, 2, 3, 4, 5, 6],
       arrayDates: ['2022-06-09', '2020-06-21', '2020-06-23', '2020-06-10'],
-      day: [1, 2, 6]
+      day: [1, 2, 6],
+      BookingFieldshowtime: null
     }
   },
   async mounted () {
@@ -790,8 +791,47 @@ export default {
     this.dataReady = false
     // Get Data
     this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
+    this.getBookingField()
   },
   methods: {
+    chekshowTime (open, item) {
+      if (open) {
+        if (this.BookingFieldshowtime === 'แสดง') {
+        } else {
+          console.log('this.formUpdate.limitBookingCheck', this.formUpdate.limitBookingCheck)
+          if (item.limitBookingCheck === 'True') {
+            this.$swal('ปิด LimitBooking ', 'กรุณาเปิดการแสดงเวลานัดหมายเพื่อเปิด LimitBooking', 'error').then(() => {
+              this.formUpdate.limitBookingCheck = 'False'
+            })
+          } else {
+            console.log('else')
+            this.formUpdate.limitBookingCheck = 'False'
+          }
+        }
+      } else {
+        if (this.BookingFieldshowtime === 'แสดง') {
+        } else {
+          this.$swal('ร้านของคุณไม่สามารถเปิด LimitBooking ได้', 'กรุณาเปิดการแสดงเวลานัดหมาย', 'error').then(() => {
+            this.formUpdate.limitBookingCheck = 'False'
+            this.formAdd.limitBookingCheck = 'False'
+          })
+        }
+      }
+    },
+    async getBookingField () {
+      await axios
+        .get(this.DNS_IP + '/BookingField/get?shopId=' + this.shopId)
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            this.BookingFieldshowtime = rs[0].showTime
+            console.log('testtttttttttt', this.BookingFieldshowtime)
+          }
+        })
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
+    },
     allowedDates (val) {
       if (this.day.filter(el => { return el === new Date(val).getDay() }).length === 0 && this.arrayDates.filter(el => { return el === val }).length === 0) {
         return val
