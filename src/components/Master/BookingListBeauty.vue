@@ -7753,6 +7753,7 @@ export default {
         })
     },
     async getflowfield (item) {
+      this.flowfieldNameitem = []
       let itemIncustomField = []
       await axios
         .get(
@@ -7764,15 +7765,19 @@ export default {
         )
         .then(response => {
           let tt = response.data
-          // console.log('tt', tt)
-          let flowId = tt[0].flowId
-          let flowfieldName = []
-          flowfieldName = JSON.parse(tt[0].flowfieldName)
-          for (let a = 0; a < flowfieldName.length; a++) {
-            let d = flowfieldName[a]
-            itemIncustomField.push(d.fieldId)
+          console.log('tt', tt)
+          if (tt.length > 0) {
+            let flowId = tt[0].flowId
+            let flowfieldName = []
+            flowfieldName = JSON.parse(tt[0].flowfieldName)
+            if (flowfieldName.length > 0) {
+              for (let a = 0; a < flowfieldName.length; a++) {
+                let d = flowfieldName[a]
+                itemIncustomField.push(d.fieldId)
+              }
+              this.getCustomfieldFlow(itemIncustomField, flowId)
+            }
           }
-          this.getCustomfieldFlow(itemIncustomField, flowId)
           // console.log('itemIncustomField', itemIncustomField)
         })
     },
@@ -8211,6 +8216,7 @@ export default {
         )
         .then(async response1 => {
           let rs2 = response1.data
+          console.log('BookingField', rs2)
           if (rs2.length > 0) {
             let bookingData = []
             bookingData = JSON.parse(rs2[0].flowfieldName)
@@ -9284,20 +9290,25 @@ export default {
       console.log(this.formChange)
       this.setCountTime()
     },
-    setCountTime () {
+    async setCountTime () {
+      console.log('this.formChange.time', this.formChange.time)
       let limitCountBranch = 0
       let setTime = JSON.parse(this.branch.filter(el => { return el.value === parseInt(this.masBranchIDLimit) })[0].allData.setTime)
       let index = setTime.findIndex((element) => element.value === this.formChange.time.value)
       limitCountBranch = setTime.slice(index, index + this.selectCountBookingLimit)
       this.limitCountBranch = limitCountBranch
-      this.getDataLimitBooking()
+      await this.getDataLimitBooking()
     },
     async getDataLimitBooking () {
       this.dataLimitBookingDate = []
       let setTime = JSON.parse(this.branch.filter(el => { return el.value === parseInt(this.masBranchIDLimit) })[0].allData.setTime)
       let limitBooking = 0
       if (setTime.length > 0) {
-        limitBooking = setTime.filter(el => { return el.value === this.formChange.time.value })[0].limitBooking
+        if (setTime.filter(el => { return el.value === this.formChange.time.value }).length > 0) {
+          limitBooking = setTime.filter(el => { return el.value === this.formChange.time.value })[0].limitBooking
+        } else {
+          limitBooking = 0
+        }
       } else {
         limitBooking = 0
       }
