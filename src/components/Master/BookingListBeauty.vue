@@ -80,7 +80,7 @@
                       :color="'orange ' + ((getSelectText === 'wait') ? '' : 'lighten-4')"
                       :dark="((getSelectText === 'wait') ? true : false)"
                       dense
-                      icon="mdi-phone-ring"
+                      icon="mdi-bell-alert-outline"
                       prominent
                       @click="getSelect('wait',countWaiting)"
                     >
@@ -95,7 +95,7 @@
                       :color="'red ' + ((getSelectText === 'cancel') ? '' : 'lighten-4')"
                       :dark="((getSelectText === 'cancel') ? true : false)"
                       dense
-                      icon="mdi-phone-cancel"
+                      icon="mdi-calendar-remove"
                       prominent
                       @click="getSelect('cancel',countCancel)"
                     >
@@ -114,7 +114,7 @@
                       :color="'green ' + ((getSelectText === 'confirm') ? '' : 'lighten-4')"
                       :dark="((getSelectText === 'confirm') ? true : false)"
                       dense
-                      icon="mdi-phone-check"
+                      icon="mdi-email-check"
                       prominent
                       @click="getSelect('confirm',countConfirm)"
                     >
@@ -129,7 +129,7 @@
                       :color="'blue ' + ((getSelectText === 'confirmJob') ? '' : 'lighten-4')"
                       :dark="((getSelectText === 'confirmJob') ? true : false)"
                       dense
-                      icon="mdi-car-cog"
+                      icon="mdi-account-check"
                       prominent
                       @click="getSelect('confirmJob',countJob)"
                     >
@@ -9379,6 +9379,7 @@ export default {
   }
 }
 </script>
+
 <style scoped>s
 .border-active {
   border-style: solid;
