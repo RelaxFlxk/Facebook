@@ -9,20 +9,91 @@
       </v-row>
       <v-container>
         <v-row>
-          <v-col cols="12" md="5" sm="5" class="main">
+          <EditShop v-show="showEdit" ref="dialogEdit"></EditShop>
+          <v-col cols="12" md="5" sm="5" class="main" style="background-color:#FFFFFF;">
             <div class="Bar">
+                <v-row>
+                  <v-col class="pa-0" cols="8">
+                    <v-btn
+                class="ma-5 mr-1"
+                  :color="DarkModeButton"
+                  dark
+                  @click="getDialogEdit()"
+                >
+                <v-icon dark>
+                  mdi-cog-sync
+                </v-icon>
+                ปรับแต่งหน้านัดหมาย
+                </v-btn>
+                  </v-col>
+                  <v-col class="pa-0" cols="4">
+                    <v-btn
+                class="ma-5 ml-0"
+                  color="green"
+                  dark
+                  @click="getShop()"
+                >
+                Preview
+                </v-btn>
+                  </v-col>
+                </v-row>
               <v-card
-                class="content p-3"
-                style="background: linear-gradient(180deg, #FFFFFF 0%, #E1F3FF 100%);"
+              :ripple="false"
+              :img="ImgCover"
+              height="240px"
+              width="100%"
               >
-                <h5 class="text-center" style="color:red;">(ตัวอย่าง)</h5>
-                <v-img
-                  :src="require('@/assets/Booking.png')"
-                  class="a"
-                  style="width:56.3px;height:67.03px"
-                ></v-img>
-                <h4 class="text-center">นัดหมายเข้ารับบริการ</h4>
-                <div
+              </v-card>
+              <v-card
+                class="pa-2 pb-10 mt-n10"
+                :color="DarkModeBackground"
+                :style="'background-color:'+ DarkModeBackground +';min-height: 100vh;border-radius: 45px 45px 0px 0px;'"
+              >
+              <v-row>
+                <v-col class="text-center">
+                  <v-avatar class="mt-n16 pa-1" style="" :color="DarkModeBackground" size="150">
+                  <img
+                    :src="LoGo"
+                  >
+                </v-avatar>
+                </v-col>
+              </v-row>
+              <h3 class="text-center" :style="'color:' + DarkModefont +';'">{{'นัดหมายเข้ารับบริการ'}}</h3>
+              <h5 class="text-center" :style="'color:' + DarkModefont +';'" v-if="shop.length > 0">{{shop[0].shopName}}</h5>
+              <v-col cols="12" class="text-center  pa-0 mb-3" >
+                <v-btn
+                  class="mx-2"
+                  dark
+                  :color="DarkModeButton"
+                  @click="dialogHistory = true"
+                  readonly
+                >
+                ประวัติการเข้ารับบริการ
+                <v-icon
+                  right
+                  dark
+                >
+                  mdi-history
+                </v-icon>
+                  <!-- <v-icon dark>
+                    mdi-history
+                  </v-icon> -->
+                </v-btn>
+            <!-- <v-btn
+              tile
+              small
+              dark
+              :color="DarkModeButton"
+              @click="dialogHistory = true"
+            >
+              <v-icon left>
+                mdi-history
+              </v-icon>
+              {{languageSelect === 0 ? 'เรียกข้อมูลเดิม' : 'Used History'}}
+            </v-btn> -->
+          </v-col>
+                <div class="pa-2 pt-8" :style="'background-color:' + DarkMode + ';border-radius: 15px 15px 15px 15px;'">
+                  <div
                   v-for="(itemFix, indexFix) in fixtureField"
                   :key="indexFix"
                 >
@@ -32,7 +103,130 @@
 
                   ></v-text-field>
                 </div>
-                <v-row>
+                      <form class="Review">
+                      <div v-for="(item, index) in Fielditem" :key="index">
+                        <div v-if="item.showitem == true">
+                  <div v-if="item.conditionField === '' || item.conditionField === null ">
+                    <div v-if="item.fieldType == 'text'">
+                    <v-text-field
+                    v-model="item.fieldValue"
+                    :label="item.fieldName"
+                    outlined
+                    required
+
+                    ></v-text-field>
+                  </div>
+                  <div v-if="item.fieldType == 'number'">
+                    <v-text-field
+                    v-model="item.fieldValue"
+                    :label="item.fieldName"
+                    outlined
+                    required
+
+                    ></v-text-field>
+                  </div>
+                  <div v-if="item.fieldType== 'Autocompletes'">
+                    <v-autocomplete
+                      v-model="item.fieldValue"
+                      :items="JSON.parse(item.optionField)"
+                      outlined
+                      :label="item.fieldName"
+                      required
+
+                    ></v-autocomplete>
+                  </div>
+                  <div v-if="item.fieldType== 'Selects'">
+                    <v-select
+                      v-model="item.fieldValue"
+                      :items="JSON.parse(item.optionField)"
+                      menu-props="auto"
+                      :label="item.fieldName"
+                      required
+
+                      outlined
+                    ></v-select>
+                  </div>
+                  <div v-if="item.fieldType== 'Radio'" style="padding:0px;">
+                    <v-container fluid style="padding:0px;">
+                      <v-radio-group
+                      column
+                    v-model="item.fieldValue"
+                    style="margin:0px;">
+                      <template v-slot:label>
+                      </template>
+                      <div v-for="radios in JSON.parse(item.optionField)" :key="radios.toISOString">
+                      <v-radio
+                        :label="radios.text"
+                        :value="radios.value"
+                      ></v-radio>
+                      </div>
+                    </v-radio-group>
+                    </v-container>
+                  </div>
+                  </div>
+                <div v-if="item.conditionField !== '' && Fielditem.filter((row) => { return row.fieldId === parseInt(item.conditionField)}).length > 0">
+                  <div v-if="item.conditionValue === Fielditem.filter((row) => { return row.fieldId === parseInt(item.conditionField)})[0].fieldValue">
+                    <div v-if="item.fieldType == 'text'">
+                    <v-text-field
+                    v-model="item.fieldValue"
+                    :label="item.fieldName"
+                    outlined
+                    required
+
+                    ></v-text-field>
+                    </div>
+                    <div v-if="item.fieldType == 'number'">
+                      <v-text-field
+                      v-model="item.fieldValue"
+                      :label="item.fieldName"
+                      outlined
+                      required
+
+                      ></v-text-field>
+                    </div>
+                    <div v-if="item.fieldType== 'Autocompletes'">
+                      <v-autocomplete
+                        v-model="item.fieldValue"
+                        :items="JSON.parse(item.optionField)"
+                        outlined
+                        :label="item.fieldName"
+                        required
+
+                      ></v-autocomplete>
+                    </div>
+                    <div v-if="item.fieldType== 'Selects'">
+                      <v-select
+                        v-model="item.fieldValue"
+                        :items="JSON.parse(item.optionField)"
+                        menu-props="auto"
+                        :label="item.fieldName"
+                        required
+
+                        outlined
+                      ></v-select>
+                    </div>
+                    <div v-if="item.fieldType== 'Radio'" style="padding:0px;">
+                      <v-container fluid style="padding:0px;">
+                        <v-radio-group row
+                      v-model="item.fieldValue"
+                      style="margin:0px;">
+                        <template v-slot:label>
+                        </template>
+                        <div v-for="radios in JSON.parse(item.optionField)" :key="radios.toISOString">
+                        <v-radio
+                          :label="radios.text"
+                          :value="radios.value"
+                        ></v-radio>
+                        </div>
+                      </v-radio-group>
+                      </v-container>
+                    </div>
+                    </div>
+                  </div>
+                        </div>
+                      </div>
+                    </form>
+                    <v-row>
                   <v-col cols="6">
                     <v-menu
                       ref="menu"
@@ -41,6 +235,7 @@
                       :return-value.sync="date"
                       transition="scale-transition"
                       offset-y
+                      readonly
                       required
                       min-width="auto"
                     >
@@ -53,6 +248,7 @@
                           v-bind="attrs"
                           v-on="on"
                           required
+                          outlined
                         ></v-text-field>
                       </template>
                       <v-date-picker
@@ -79,154 +275,38 @@
                   </v-col>
                   <v-col cols="6">
                     <v-text-field
+                    outlined
                       v-model="time"
                       label="เวลา"
                       type="time"
                       suffix=""
                       required
+                      readonly
                     ></v-text-field>
                   </v-col>
                 </v-row>
-                <form class="Review">
-                  <div v-for="(item, index) in Fielditem" :key="index">
-                    <div v-if="item.showitem == true">
-              <div v-if="item.conditionField === '' || item.conditionField === null ">
-                <div v-if="item.fieldType == 'text'">
-                <v-text-field
-                v-model="item.fieldValue"
-                :label="item.fieldName"
-                outlined
-                required
-
-                ></v-text-field>
-              </div>
-              <div v-if="item.fieldType == 'number'">
-                <v-text-field
-                v-model="item.fieldValue"
-                :label="item.fieldName"
-                outlined
-                required
-
-                ></v-text-field>
-              </div>
-              <div v-if="item.fieldType== 'Autocompletes'">
-                <v-autocomplete
-                  v-model="item.fieldValue"
-                  :items="JSON.parse(item.optionField)"
-                  outlined
-                  :label="item.fieldName"
-                  required
-
-                ></v-autocomplete>
-              </div>
-              <div v-if="item.fieldType== 'Selects'">
-                <v-select
-                  v-model="item.fieldValue"
-                  :items="JSON.parse(item.optionField)"
-                  menu-props="auto"
-                  :label="item.fieldName"
-                  required
-
-                  outlined
-                ></v-select>
-              </div>
-              <div v-if="item.fieldType== 'Radio'" style="padding:0px;">
-                <v-container fluid style="padding:0px;">
-                  <v-radio-group
-                  column
-                v-model="item.fieldValue"
-                style="margin:0px;">
-                  <template v-slot:label>
-                  </template>
-                  <div v-for="radios in JSON.parse(item.optionField)" :key="radios.toISOString">
-                  <v-radio
-                    :label="radios.text"
-                    :value="radios.value"
-                  ></v-radio>
-                  </div>
-                </v-radio-group>
-                </v-container>
-              </div>
-              </div>
-            <div v-if="item.conditionField !== '' && Fielditem.filter((row) => { return row.fieldId === parseInt(item.conditionField)}).length > 0">
-              <div v-if="item.conditionValue === Fielditem.filter((row) => { return row.fieldId === parseInt(item.conditionField)})[0].fieldValue">
-                <div v-if="item.fieldType == 'text'">
-                <v-text-field
-                v-model="item.fieldValue"
-                :label="item.fieldName"
-                outlined
-                required
-
-                ></v-text-field>
                 </div>
-                <div v-if="item.fieldType == 'number'">
-                  <v-text-field
-                  v-model="item.fieldValue"
-                  :label="item.fieldName"
-                  outlined
-                  required
 
-                  ></v-text-field>
-                </div>
-                <div v-if="item.fieldType== 'Autocompletes'">
-                  <v-autocomplete
-                    v-model="item.fieldValue"
-                    :items="JSON.parse(item.optionField)"
-                    outlined
-                    :label="item.fieldName"
-                    required
-
-                  ></v-autocomplete>
-                </div>
-                <div v-if="item.fieldType== 'Selects'">
-                  <v-select
-                    v-model="item.fieldValue"
-                    :items="JSON.parse(item.optionField)"
-                    menu-props="auto"
-                    :label="item.fieldName"
-                    required
-
-                    outlined
-                  ></v-select>
-                </div>
-                <div v-if="item.fieldType== 'Radio'" style="padding:0px;">
-                  <v-container fluid style="padding:0px;">
-                    <v-radio-group row
-                  v-model="item.fieldValue"
-                  style="margin:0px;">
-                    <template v-slot:label>
-                    </template>
-                    <div v-for="radios in JSON.parse(item.optionField)" :key="radios.toISOString">
-                    <v-radio
-                      :label="radios.text"
-                      :value="radios.value"
-                    ></v-radio>
-                    </div>
-                  </v-radio-group>
-                  </v-container>
-                </div>
-                </div>
-              </div>
-                    </div>
-                  </div>
-                </form>
-                <div class="text-center">
-              <!-- <v-btn
-              elevation="10"
-              color="#173053" dark
-              small
-            >SAVE</v-btn>
+               <div class="text-center mt-5" >
+              <v-btn
+              class="button"
+              :color="DarkModeButton"
+              dark
+              large
+               readonly
+            >{{'ยืนยัน'}}</v-btn>
             <v-btn
-              elevation="10"
-              color="#173053" outlined
-              style="background-color:#FFFFFF"
-              small
-            >CANCEL</v-btn> -->
+              class="button"
+              large
+              :color="DarkModeButton"
+              dark
+               readonly
+            >{{'ยกเลิก'}}</v-btn>
             </div>
               </v-card>
             </div>
           </v-col>
-          <v-col cols="12" md="7" sm="7" class="main">
+          <v-col cols="12" md="7" sm="7" class="main" style="background-color:#FFFFFF;">
             <v-row>
               <v-col cols="12" md="12" sm="12">
                 <div v-if="Redirect !== ''">
@@ -643,11 +723,13 @@
 import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
+import EditShop from '../System/EditShop.vue'
 
 export default {
   components: {
     'left-menu-admin': adminLeftMenu,
-    VuetifyMoney
+    VuetifyMoney,
+    EditShop
   },
   beforeCreate () {
     // if (localStorage.userName) {
@@ -661,6 +743,16 @@ export default {
   },
   data () {
     return {
+      showEdit: false,
+      shop: [],
+      ColorByShop: [],
+      DarkMode: '',
+      DarkModeStatus: null,
+      DarkModeButton: '',
+      DarkModeBackground: '',
+      DarkModefont: '',
+      LoGo: [],
+      ImgCover: '',
       dataReady: false,
       panelTypeJob: [0],
       dataTypeJob1: '',
@@ -751,9 +843,64 @@ export default {
     }
   },
   async mounted () {
+    await this.getShop()
     await this.getBookingField()
   },
   methods: {
+    getDialogEdit () {
+      this.$refs.dialogEdit.editDataByBookingField(this.shop)
+    },
+    async getShop () {
+      if (this.shopId) {
+        await axios.get(this.DNS_IP + '/sys_shop/get?shopId=' + this.shopId).then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            this.shop = rs
+            rs.forEach(v => {
+              if (v.primaryColor) {
+                this.ColorByShop.push(v.primaryColor, v.secondaryColor)
+                this.DarkModeBackground = v.primaryColor
+                this.DarkModeButton = v.secondaryColor
+              } else {
+                this.ColorByShop.push('#E1F3FF', '#FFFFFF')
+                this.DarkModeBackground = '#FFFFFF'
+                this.DarkModeButton = '#E1F3FF'
+              }
+              if (v.shopImge) {
+                this.LoGo = v.shopImge
+              } else {
+                this.LoGo = require('@/assets/LogoDefault.jpg')
+              }
+              if (v.shopImageCover) {
+                this.ImgCover = v.shopImageCover
+              } else {
+                if (v.category === 'ธุรกิจรถยนต์') {
+                  this.ImgCover = require('@/assets/Cover2.jpg')
+                } else {
+                  this.ImgCover = require('@/assets/Cover2.jpg')
+                }
+              }
+              if (v.darkMode === 'True') {
+                this.DarkMode = '#FFFFFF'
+                this.DarkModefont = '#FFFFFF'
+                this.DarkModeStatus = true
+              } else {
+                this.DarkMode = '#ffffff00'
+                this.DarkModefont = '#000000'
+                this.DarkModeStatus = false
+              }
+            })
+          } else {
+            this.shop = null
+          }
+          console.log('this.shop ', this.shop)
+        })
+      } else {
+        this.ColorByShop.push('#E1F3FF', '#FFFFFF')
+        this.DarkMode = '#ffffff00'
+        this.DarkModefont = '#173053'
+      }
+    },
     validate (Action) {
       switch (Action) {
         case 'other':
@@ -1022,6 +1169,20 @@ export default {
 </script>
 
 <style scoped>
+.button {
+  width: 45%;
+  color: #fff;
+  font-weight: 200;
+  letter-spacing: 1px;
+  margin: 6px 3px;
+  padding: 10px 28px;
+  border-radius: 25px !important;
+  background-color: #0047A5;
+}
+.v-simple-checkbox .v-icon {
+    cursor: pointer !important;
+    color: #1b437c !important;
+}
 span.v-btn__content {
   color: #1b437c !important;
 }

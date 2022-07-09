@@ -10,18 +10,17 @@
       <v-container>
         <v-row>
           <v-col cols="12">
-            <h2>ระบบนัดหมาย สามารถใช้ได้กับทุกช่องทาง</h2>
+            <h3>ระบบนัดหมาย สามารถใช้ได้กับทุกช่องทาง</h3>
           </v-col>
         </v-row>
-        <v-row>
-          <v-col cols="12" md="7" sm="7" lg="7" class="main">
-            <v-row>
-              <v-col cols="12" md="12" sm="12">
+        <div class="text-center"  style="width:40%;">
+          <v-row>
+              <v-col cols="12" md="12" sm="12" style="background-color:#FFFFFF;">
                 <div v-if="Redirect !== ''">
                   <v-card class="p-3" style="background-color:#050C42;">
-                    <h3 class="text-center" style="color:#FFFFFF;">
+                    <h4 class="text-center" style="color:#FFFFFF;">
                       Copy ลิ้งนี้ไปใส่ช่องทางต่างๆ เพิ่อเริ่มใช้งาน!
-                    </h3>
+                    </h4>
                     <v-img
                       :src="require('@/assets/Blue_Arrow_PNG.png')"
                       class="a"
@@ -29,7 +28,7 @@
                     ></v-img>
                     <v-card-text>
                       <v-row align-content="center">
-                        <v-col cols="12"  class="pb-0">
+                        <v-col cols="12"   class="pb-0">
                           <v-text-field
                             v-model="Redirect"
                             style="background-color:#050C42;"
@@ -132,209 +131,10 @@
                           </v-card-text>
                         </v-card>
                       </v-dialog>
-                      <v-row>
-                        <v-col cols="12" md="12" sm="12" class="main">
-                          <div class="Bar">
-                            <v-card
-                              class="content p-3"
-                              style="background: linear-gradient(180deg, #FFFFFF 0%, #E1F3FF 100%);"
-                            >
-                              <h5 class="text-center" style="color:red;">(ตัวอย่าง)</h5>
-                              <v-img
-                                :src="require('@/assets/Booking.png')"
-                                class="a"
-                                style="width:56.3px;height:67.03px"
-                              ></v-img>
-                              <h4 class="text-center">นัดหมายเข้ารับบริการ</h4>
-                              <div
-                                v-for="(itemFix, indexFix) in fixtureField"
-                                :key="indexFix"
-                              >
-                                <v-text-field
-                                  :label="itemFix.fieldName"
-                                  outlined
-
-                                ></v-text-field>
-                              </div>
-                              <v-row>
-                                <v-col cols="6">
-                                  <v-menu
-                                    ref="menu"
-                                    v-model="menuDate"
-                                    :close-on-content-click="false"
-                                    :return-value.sync="date"
-                                    transition="scale-transition"
-                                    offset-y
-                                    required
-                                    min-width="auto"
-                                  >
-                                    <template v-slot:activator="{ on, attrs }">
-                                      <v-text-field
-                                        v-model="date"
-                                        label="วันที่"
-                                        prepend-icon="mdi-calendar"
-                                        readonly
-                                        v-bind="attrs"
-                                        v-on="on"
-                                        required
-                                      ></v-text-field>
-                                    </template>
-                                    <v-date-picker
-                                      v-model="date"
-                                      no-title
-                                      scrollable
-                                      :min="
-                                        new Date(
-                                          Date.now() - new Date().getTimezoneOffset() * 60000
-                                        )
-                                          .toISOString()
-                                          .substr(0, 10)
-                                      "
-                                    >
-                                      <v-spacer></v-spacer>
-                                      <v-btn text color="primary" @click="menuDate = false">
-                                        Cancel
-                                      </v-btn>
-                                      <v-btn text color="primary">
-                                        OK
-                                      </v-btn>
-                                    </v-date-picker>
-                                  </v-menu>
-                                </v-col>
-                                <v-col cols="6">
-                                  <v-text-field
-                                    v-model="time"
-                                    label="เวลา"
-                                    type="time"
-                                    suffix=""
-                                    required
-                                  ></v-text-field>
-                                </v-col>
-                              </v-row>
-                              <form class="Review">
-                                <div v-for="(item, index) in Fielditem" :key="index">
-                                  <div v-if="item.showitem == true">
-                            <div v-if="item.conditionField === '' || item.conditionField === null ">
-                              <div v-if="item.fieldType == 'text'">
-                              <v-text-field
-                              v-model="item.fieldValue"
-                              :label="item.fieldName"
-                              outlined
-                              required
-
-                              ></v-text-field>
-                            </div>
-                            <div v-if="item.fieldType == 'number'">
-                              <v-text-field
-                              v-model="item.fieldValue"
-                              :label="item.fieldName"
-                              outlined
-                              required
-
-                              ></v-text-field>
-                            </div>
-                            <div v-if="item.fieldType== 'Autocompletes'">
-                              <v-autocomplete
-                                v-model="item.fieldValue"
-                                :items="JSON.parse(item.optionField)"
-                                outlined
-                                :label="item.fieldName"
-                                required
-
-                              ></v-autocomplete>
-                            </div>
-                            <div v-if="item.fieldType== 'Selects'">
-                              <v-select
-                                v-model="item.fieldValue"
-                                :items="JSON.parse(item.optionField)"
-                                menu-props="auto"
-                                :label="item.fieldName"
-                                required
-
-                                outlined
-                              ></v-select>
-                            </div>
-                            <div v-if="item.fieldType== 'Radio'" style="padding:0px;">
-                              <v-container fluid style="padding:0px;">
-                                <v-radio-group
-                                column
-                              v-model="item.fieldValue"
-                              style="margin:0px;">
-                                <template v-slot:label>
-                                </template>
-                                <div v-for="radios in JSON.parse(item.optionField)" :key="radios.toISOString">
-                                <v-radio
-                                  :label="radios.text"
-                                  :value="radios.value"
-                                ></v-radio>
-                                </div>
-                              </v-radio-group>
-                              </v-container>
-                            </div>
-                            </div>
-                          <div v-if="item.conditionField !== '' && Fielditem.filter((row) => { return row.fieldId === parseInt(item.conditionField)}).length > 0">
-                            <div v-if="item.conditionValue === Fielditem.filter((row) => { return row.fieldId === parseInt(item.conditionField)})[0].fieldValue">
-                              <div v-if="item.fieldType == 'text'">
-                              <v-text-field
-                              v-model="item.fieldValue"
-                              :label="item.fieldName"
-                              outlined
-                              required
-
-                              ></v-text-field>
-                              </div>
-                              <div v-if="item.fieldType == 'number'">
-                                <v-text-field
-                                v-model="item.fieldValue"
-                                :label="item.fieldName"
-                                outlined
-                                required
-
-                                ></v-text-field>
-                              </div>
-                              <div v-if="item.fieldType== 'Autocompletes'">
-                                <v-autocomplete
-                                  v-model="item.fieldValue"
-                                  :items="JSON.parse(item.optionField)"
-                                  outlined
-                                  :label="item.fieldName"
-                                  required
-
-                                ></v-autocomplete>
-                              </div>
-                              <div v-if="item.fieldType== 'Selects'">
-                                <v-select
-                                  v-model="item.fieldValue"
-                                  :items="JSON.parse(item.optionField)"
-                                  menu-props="auto"
-                                  :label="item.fieldName"
-                                  required
-
-                                  outlined
-                                ></v-select>
-                              </div>
-                              <div v-if="item.fieldType== 'Radio'" style="padding:0px;">
-                                <v-container fluid style="padding:0px;">
-                                  <v-radio-group row
-                                v-model="item.fieldValue"
-                                style="margin:0px;">
-                                  <template v-slot:label>
-                                  </template>
-                                  <div v-for="radios in JSON.parse(item.optionField)" :key="radios.toISOString">
-                                  <v-radio
-                                    :label="radios.text"
-                                    :value="radios.value"
-                                  ></v-radio>
-                                  </div>
-                                </v-radio-group>
-                                </v-container>
-                              </div>
-                              </div>
-                            </div>
-                                  </div>
-                                </div>
-                              </form>
-                            </v-card>
+                      <v-row class="pa-0">
+                        <v-col cols="12" md="12" sm="12" class="pa-0" style="background-color:#FFFFFF;">
+                          <div class="pa-1">
+                           <Showbooking class="pa-0" ></Showbooking>
                           </div>
                         </v-col>
                       </v-row>
@@ -353,8 +153,7 @@
                 </div>
               </v-col>
             </v-row>
-          </v-col>
-        </v-row>
+        </div>
       </v-container>
     </v-main>
   </div>
@@ -364,11 +163,13 @@
 import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
+import Showbooking from './Showbooking.vue'
 
 export default {
   components: {
     'left-menu-admin': adminLeftMenu,
-    VuetifyMoney
+    VuetifyMoney,
+    Showbooking
   },
   data () {
     return {

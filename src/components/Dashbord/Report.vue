@@ -61,7 +61,7 @@
                      style="font-size:70px !important; margin:3px -10px 10px 55px;"
                     x-large
                     color="green"
-                  >mdi-car</v-icon>
+                  >mdi-home-edit</v-icon>
                    </v-col>
                    <v-col cols="10" lg="8" md="8" sm="6" xs="6">
                     <v-card-title class="justify-center" ><h2>{{carditem.cardTotal}}</h2></v-card-title>

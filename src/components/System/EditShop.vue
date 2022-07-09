@@ -10,7 +10,7 @@
         ></v-breadcrumbs>
         <v-row>
           <!-- edit -->
-          <v-dialog v-model="dialogEdit" persistent max-width="50%">
+          <v-dialog ref="dialogEdit" v-model="dialogEdit" persistent max-width="50%">
             <v-card class="text-center">
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
                 <v-card-text>
@@ -26,12 +26,17 @@
                       </v-col>
                     </v-row>
                     <v-row justify="center">
-                          <v-col cols="12" class="text-center">
-                            <v-img
+                          <v-col cols="6 " class="text-center">
+                            <v-avatar
+                              color="#FFFFFF"
+                              size="150"
+                            >
+                             <v-img
                               aspect-ratio="6"
                               contain
                               :src="formUpdate.pictureUrlPreview"
                             ></v-img>
+                            </v-avatar>
                             <!-- <v-avatar size="100px"><img alt="Avatar" :src="formAdd.pictureUrl"></v-avatar> -->
                             <br />
                             <v-file-input
@@ -41,9 +46,35 @@
                               :rules="[rules.resizeImag]"
                               accept="image/png, image/jpeg, image/bmp"
                               prepend-icon="mdi-camera"
-                              label="Image"
+                              label="รูปโปรไฟล์"
                               @change="selectImgUpdate"
                               v-model="filesUpdate"
+                            ></v-file-input>
+                          </v-col>
+                          <v-col cols="6 " class="text-center">
+                            <v-avatar
+                              tile
+                              color="#FFFFFF"
+                              size="150"
+                            >
+                             <v-img
+                              aspect-ratio="6"
+                              contain
+                              :src="formUpdate.pictureCoverUrlPreview"
+                            ></v-img>
+                            </v-avatar>
+                            <!-- <v-avatar size="100px"><img alt="Avatar" :src="formAdd.pictureUrl"></v-avatar> -->
+                            <br />
+                            <v-file-input
+                              required
+                              counter
+                              show-size
+                              :rules="[rules.resizeImag]"
+                              accept="image/png, image/jpeg, image/bmp"
+                              prepend-icon="mdi-camera"
+                              label="รูป Cover"
+                              @change="selectImgCoverUpdate"
+                              v-model="filesUpdateImgCover"
                             ></v-file-input>
                           </v-col>
                         </v-row>
@@ -119,7 +150,7 @@
 
                     <v-row>
                       <v-col cols="6" class="pb-2 pt-0">
-                        <v-subheader>สีหลัก</v-subheader>
+                        <v-subheader>สีพื้นหลัง</v-subheader>
                         <v-color-picker
                           dot-size="25"
                           v-model="formUpdate.primaryColor"
@@ -129,7 +160,7 @@
                         ></v-color-picker>
                       </v-col>
                       <v-col cols="6" class="pb-2 pt-0">
-                        <v-subheader>สีรอง</v-subheader>
+                        <v-subheader>สีปุ่ม</v-subheader>
                         <v-color-picker
                           dot-size="25"
                           v-model="formUpdate.secondaryColor"
@@ -238,6 +269,7 @@ export default {
   },
   data () {
     return {
+      showComponents: false,
       PK: '',
       path: '/sys_shop/', // Path Model
       returnLink: '/system/EditShop',
@@ -264,6 +296,7 @@ export default {
       optionProvince: [],
       formUpdate: {
         pictureUrlPreview: '',
+        pictureCoverUrlPreview: '',
         contactTel: '',
         shopName: '',
         shopImge: '',
@@ -274,6 +307,7 @@ export default {
         optionSubDistrictNew: '',
         optionDistrictNew: '',
         optionProvinceNew: '',
+        shopImageCover: '',
         primaryColor: '',
         secondaryColor: '',
         darkMode: false,
@@ -343,6 +377,7 @@ export default {
       ],
       dataItem: [],
       filesUpdate: null,
+      filesUpdateImgCover: null,
       validUpdate: true
       // End Data Table Config
     }
@@ -365,6 +400,13 @@ export default {
     )
   },
   methods: {
+    editDataByBookingField (item) {
+      console.log('item1111111111111111111111111111', item)
+      this.dialogEdit = true
+      this.getDataById(item[0])
+      this.validate('UPDATE')
+      // this.getDataById()
+    },
     selectImgUpdate () {
       if (this.filesUpdate) {
         this.formUpdate.pictureUrlPreview = URL.createObjectURL(
@@ -372,6 +414,16 @@ export default {
         )
       } else {
         this.formUpdate.pictureUrlPreview = ''
+      }
+      // console.log(event)
+    },
+    selectImgCoverUpdate () {
+      if (this.filesUpdateImgCover) {
+        this.formUpdate.pictureCoverUrlPreview = URL.createObjectURL(
+          this.filesUpdateImgCover
+        )
+      } else {
+        this.formUpdate.pictureCoverUrlPreview = ''
       }
       // console.log(event)
     },
@@ -414,6 +466,7 @@ export default {
         'YYYY-MM-DD HH:mm'
       )
       this.formUpdate.pictureUrlPreview = this.formUpdate.shopImge
+      this.formUpdate.pictureCoverUrlPreview = this.formUpdate.shopImageCover
       if (this.formUpdate.darkMode === 'True') {
         this.formUpdate.darkMode = true
       } else {
@@ -460,6 +513,19 @@ export default {
           } else {
             this.formUpdate.shopImge = this.formUpdate.pictureUrlPreview
           }
+          if (this.filesUpdateImgCover) {
+            const _this = this
+            let params = new FormData()
+            params.append('file', this.filesUpdateImgCover)
+            await axios
+              .post(this.DNS_IP + `/file/upload/shop`, params)
+              .then(function (response) {
+                _this.formUpdate.shopImageCover = response.data
+                console.log('url Pic', response.data)
+              })
+          } else {
+            this.formUpdate.shopImageCover = this.formUpdate.pictureCoverUrlPreview
+          }
           var darkMode = ''
           if (this.formUpdate.darkMode === true) {
             darkMode = 'True'
@@ -475,6 +541,7 @@ export default {
           var dt = {
             shopName: this.formUpdate.shopName,
             shopImge: this.formUpdate.shopImge,
+            shopImageCover: this.formUpdate.shopImageCover,
             contactTel: this.formUpdate.contactTel,
             LAST_USER: this.session.data.userName,
             contactEmail: this.formUpdate.contactEmail,
@@ -500,6 +567,7 @@ export default {
               var ds = {
                 shopName: this.formUpdate.shopName,
                 shopImge: this.formUpdate.shopImge,
+                shopImageCover: this.formUpdate.shopImageCover,
                 contactTel: this.formUpdate.contactTel,
                 LAST_USER: this.session.data.userName,
                 contactEmail: this.formUpdate.contactEmail,
