@@ -3950,7 +3950,7 @@
               </v-card-text>
           </v-card>
         </v-dialog>
-        <v-dialog v-model="dialogHistory" persistent max-width="30%">
+        <v-dialog v-model="dialogHistory" persistent max-width="50%">
             <v-card>
               <v-card-title>
                 <span class="headline">ประวัติเข้ารับบริการ</span>
