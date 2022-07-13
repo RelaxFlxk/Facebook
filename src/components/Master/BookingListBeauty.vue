@@ -2624,6 +2624,17 @@
                           <v-icon dark> mdi-account-plus </v-icon>
                         </v-btn>
                     </VueCustomTooltip>
+                    <VueCustomTooltip label="Copy Link (ผูกลูกค้า)" position="is-top"  v-if="item.statusBt === 'confirm' && (item.userId === 'user-skip' || item.userId === '' || item.userId === null)">
+                        <v-btn
+                          color="cyan"
+                          fab
+                          small
+                          v-clipboard:success="onCopySuccess"
+                          v-clipboard:copy="'https://liff.line.me/1656581804-7KRQyqo5/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId"
+                        >
+                          <v-icon dark> mdi-content-copy </v-icon>
+                        </v-btn>
+                    </VueCustomTooltip>
                     <VueCustomTooltip label="ยืนยันนัดหมาย" position="is-top" v-if="item.statusBt !== 'confirmJob' && item.statusBt !== 'confirm'">
                         <v-btn
                           color="success"
@@ -4681,6 +4692,9 @@ export default {
     })
   },
   methods: {
+    onCopySuccess () {
+      this.$swal('เรียบร้อย', 'คัดลอกสำเร็จ', 'success')
+    },
     closeJob () {
       this.loadingCloseJob = true
       if (this.checkPayment === 'True') {
