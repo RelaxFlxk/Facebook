@@ -17,6 +17,9 @@ import * as Sentry from '@sentry/vue'
 import { Integrations } from '@sentry/tracing'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import VueCustomTooltip from '@adamdehaven/vue-custom-tooltip'
+import VueClipboard from 'vue-clipboard2'
+
+Vue.use(VueClipboard)
 
 Vue.use(VueCustomTooltip, {
   name: 'VueCustomTooltip',

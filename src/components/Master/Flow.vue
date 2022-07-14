@@ -880,7 +880,7 @@
                                   <v-textarea
                                     v-model="item.text"
                                     auto-grow
-                                    rows="1"
+                                    row="1"
                                     label="รายละเอียด"
                                     outlined
                                     dense
@@ -1694,11 +1694,12 @@ export default {
     },
     getCondition (item) {
       this.dataCondition = []
-      console.log(item)
+      // console.log(item.dataCondition.replace(/\n/g, '\\\\n').replace(/\r/g, '\\\\r').replace(/\t/g, '\\\\t'))
+      // console.log('this.dataCondition', item.dataCondition)
       if (item.dataCondition === null) {
         this.dataCondition = []
       } else {
-        this.dataCondition = JSON.parse(item.dataCondition)
+        this.dataCondition = JSON.parse(item.dataCondition.replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t'))
       }
       this.dataCountCondition = item.countCondition || ''
       this.showCondition = item.showCondition || 'ไม่แสดง'
