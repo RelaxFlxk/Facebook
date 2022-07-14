@@ -481,7 +481,8 @@
                       <v-card class="pa-6">
                         <strong>วันหยุดประจำปีของบริษัท</strong>
                         <v-date-picker
-                        v-model="formUpdate.dateDayCustom"
+                          v-model="formUpdate.dateDayCustom"
+                          :allowed-dates="allowedDates"
                           multiple
                           full-width
                           class="mt-4"
@@ -832,11 +833,6 @@ export default {
           console.log('error function addData : ', error)
         })
     },
-    allowedDates (val) {
-      if (this.day.filter(el => { return el === new Date(val).getDay() }).length === 0 && this.arrayDates.filter(el => { return el === val }).length === 0) {
-        return val
-      }
-    },
     presetTime () {
       this.dataItemAddTime = [{'value': '08:00', 'text': '08:00', 'limitBooking': ''}, {'value': '08:30', 'text': '08:30', 'limitBooking': ''}, {'value': '09:00', 'text': '09:00', 'limitBooking': ''}, {'value': '09:30', 'text': '09:30', 'limitBooking': ''}, {'value': '10:00', 'text': '10:00', 'limitBooking': ''}, {'value': '10:30', 'text': '10:30', 'limitBooking': ''}, {'value': '11:00', 'text': '11:00', 'limitBooking': ''}, {'value': '11:30', 'text': '11:30', 'limitBooking': ''}, {'value': '12:00', 'text': '12:00', 'limitBooking': ''}, {'value': '12:30', 'text': '12:30', 'limitBooking': ''}, {'value': '13:00', 'text': '13:00', 'limitBooking': ''}, {'value': '13:30', 'text': '13:30', 'limitBooking': ''}, {'value': '14:00', 'text': '14:00', 'limitBooking': ''}, {'value': '14:30', 'text': '14:30', 'limitBooking': ''}, {'value': '15:00', 'text': '15:00', 'limitBooking': ''}, {'value': '15:30', 'text': '15:30', 'limitBooking': ''}, {'value': '16:00', 'text': '16:00', 'limitBooking': ''}, {'value': '16:30', 'text': '16:30', 'limitBooking': ''}, {'value': '17:00', 'text': '17:00', 'limitBooking': ''}]
     },
@@ -1020,6 +1016,18 @@ export default {
         }
       }
       console.log('testget', this.formUpdate)
+    },
+    allowedDates (val) {
+      // console.log('val', val)
+      // this.getMonth(this.pickerDate)
+      if (this.formUpdate.dateDayoffValue !== null) {
+        // console.log('test', moment(val).format('YYYY-MM-DD'))
+        if (JSON.parse(this.formUpdate.dateDayoffValue).filter(el => { return el === new Date(val).getDay() }).length === 0) {
+          return val
+        }
+      } else {
+        return val
+      }
     },
     async addData () {
       //

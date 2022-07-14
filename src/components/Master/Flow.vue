@@ -960,6 +960,180 @@
           </v-dialog>
           <!-- end condition -->
 
+        <!-- dialog limitbookint -->
+        <v-dialog v-model="dialoglimitbooking" persistent>
+          <v-card min-width="400px" min-height="500px" class="pa-5">
+            <v-card-title>
+                <span class="headline">แก้ไข LimitBooking</span>
+              </v-card-title>
+              <v-card-text>
+                <v-container>
+                  <v-form
+                     ref="form_update"
+                    v-model="valid_update"
+                    lazy-validation
+                  >
+                  <v-card class="pa-5 mb-5">
+                    <v-row>
+                    <v-col cols="3">
+                      <v-text-field
+                        label="แสดงเวลา"
+                        v-model="timeText"
+                        :counter="50"
+                        maxlength="50"
+                        outlined
+
+                      ></v-text-field>
+                      <v-text-field
+                          v-model="formUpdateLimitbooking.time"
+                           v-mask="'##:##'"
+                           label="ตั้งค่าเวลาที่ต้องการ"
+                           placeholder="HH:mm"
+                           outlined
+                      ></v-text-field>
+                      <VuetifyMoney
+                          label="Limit Booking"
+                          v-model="formUpdateLimitbooking.limitBooking"
+                          placeholder="Limit Booking"
+                          required
+                          outlined
+                          v-bind:options="options2" />
+                      <v-select
+                        v-if="dataItemAddTime.length > 0"
+                        :items="dataItemAddTime"
+                        label="ตัวอย่างการแสดงเวลา"
+                        item-text="text"
+                        item-value="text"
+                        outlined
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="2">
+                      <v-btn
+                        class="mx-2"
+                        fab
+                        dark
+                        v-if="typeTimeAdd === 'add'"
+                        color="indigo"
+                        @click="addDataTimeAdd()"
+                      >
+                        <v-icon dark>
+                          mdi-plus
+                        </v-icon>
+                      </v-btn>
+                      <v-btn
+                        class="mx-2"
+                        fab
+                        dark
+                        v-if="typeTimeAdd === 'update'"
+                        color="question"
+                        @click="UpdateDataTimeAdd()"
+                      >
+                        <v-icon dark>
+                          mdi-tools
+                        </v-icon>
+                      </v-btn>
+                    </v-col>
+                    <v-col cols="7">
+                      <!-- <h4 class="text-center">ต้องการตั้ง Limit การจอง</h4> -->
+                      <v-row align="center" class="ma-5">
+                        <!-- <p class="pb-3">ตั้ง Limit การนัดหมาย</p> -->
+                        <v-checkbox
+                          @click="chekshowTime()"
+                          false-value="False"
+                          true-value="True"
+                          v-model="formUpdateLimitbooking.limitBookingCheck"
+                          label="ตั้ง Limit การนัดหมาย"
+                          hide-details
+                          class="shrink ml-6 mr-0 mt-0 mb-2"
+                        ></v-checkbox>
+
+                        <!-- <v-text-field class="mr-5" v-model="formAdd.limitBookingCheck" outlined readonly label="ต้องการตั้ง Limit การจองหรือไม่"></v-text-field> -->
+                         </v-row>
+                      <v-data-table
+                        :headers="columnsAddTime"
+                        :items="dataItemAddTime"
+                        :items-per-page="All"
+                      >
+                        <!-- <template v-slot:[`item.actions1`]="{ item, index }">
+                            <v-btn
+                              v-show="index !== 0"
+                              color="173053"
+                              fab
+                              x-small
+                              outlined
+                              @click="actionUp(item, index)"
+                            >
+                              <v-icon color="#173053">
+                                mdi-chevron-up
+                              </v-icon>
+                            </v-btn>
+                            <v-btn
+                              color="173053"
+                              fab
+                              x-small
+                              v-show="index < (dataItemAddTime.length -1)"
+                              outlined
+                              @click="actionDown(item, index)"
+                            >
+                              <v-icon color="#173053">
+                                mdi-chevron-down
+                              </v-icon>
+                            </v-btn>
+                          </template> -->
+                           <template v-slot:[`item.actions2`]="{ item, index }">
+                              <v-btn
+                                color="question"
+                                fab
+                                dark
+                                x-small
+                                @click.stop="getUpdateAdd(item, 'update', index)"
+                              >
+                                <v-icon color="#FFFFFF"> mdi-tools </v-icon>
+                              </v-btn>
+                              <v-btn
+                                color="red"
+                                dark
+                                fab
+                                x-small
+                                @click.stop="getUpdateAdd(item, 'delete', index)"
+                              >
+                                <v-icon> mdi-delete </v-icon>
+                              </v-btn>
+                            </template>
+                      </v-data-table>
+                    </v-col>
+
+                  </v-row>
+                  </v-card>
+                  </v-form>
+                </v-container>
+              </v-card-text>
+                <div class="text-right">
+                  <v-btn
+                  elevation="2"
+                  x-large
+                  color="blue darken-1"
+                  text
+                  @click="dialoglimitbooking = false, clearLimit()"
+                >
+                  <v-icon left> mdi-cancel</v-icon>
+                  ปิด
+                </v-btn>
+                  <v-btn
+                  elevation="2"
+                  x-large
+                  color="success"
+                  text
+                 :disabled="!valid_update"
+                  @click="EditlimitBooking()"
+                >
+                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                  แก้ไข
+                </v-btn>
+                </div>
+          </v-card>
+        </v-dialog>
+
           <!-- data table -->
           <v-col cols="12">
             <v-card elevation="7" v-if="dataReady">
@@ -985,6 +1159,16 @@
                     {{ format_dateFUllTime(item.LAST_DATE) }}
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
+                    <v-btn
+                      color="purple"
+                      fab
+                      x-small
+                      @click="
+                          (dialoglimitbooking = true),getlimitbooking(item)
+                      "
+                    >
+                      <v-icon color="#FFFFFF"> mdi-calendar-clock </v-icon>
+                    </v-btn>
                     <v-btn
                       color="info"
                       fab
@@ -1063,6 +1247,27 @@ export default {
   },
   data () {
     return {
+      valid_update: true,
+      BookingFieldshowtime: null,
+      formUpdateLimitbooking: {
+        flowId: null,
+        time: '',
+        setTime: '',
+        limitBooking: 0,
+        limitBookingCheck: 'Fales',
+        shopId: this.$session.getAll().data.shopId
+      },
+      typeTimeAdd: 'add',
+      timeText: '',
+      indexTimeAdd: 0,
+      dataItemAddTime: [],
+      columnsAddTime: [
+        { text: 'แสดงเวลา', value: 'text' },
+        { text: 'เวลา', value: 'value' },
+        { text: 'Limit Booking', value: 'limitBooking', align: 'center' },
+        // { text: 'เรียงตำแหน่ง', value: 'actions1', align: 'center' },
+        { text: 'จัดการเวลา', value: 'actions2', align: 'center' }
+      ],
       flowId: '',
       dataCondition: [],
       oldDataCondition: [],
@@ -1114,6 +1319,7 @@ export default {
       menu3: false,
       menu4: false,
       // Dialog Config ADD EDIT DELETE IMPORT
+      dialoglimitbooking: false,
       dialogAddField: false,
       dialogEditField: false,
       dialogAdd: false,
@@ -1275,8 +1481,217 @@ export default {
     // Get Data
     await this.getCustomField()
     await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
+    await this.getBookingField()
   },
   methods: {
+    async EditlimitBooking () {
+      console.log('Editdata', this.formUpdateLimitbooking)
+      console.log('dataitem', this.dataItemAddTime)
+      let Dataitem = {
+        'limitBookingCheck': this.formUpdateLimitbooking.limitBookingCheck,
+        'setTime': JSON.stringify(this.dataItemAddTime)
+      }
+      console.log('Dataitem', Dataitem)
+      this.$swal({
+        title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async (result) => {
+          await axios
+            .post(this.DNS_IP + '/flow/editData/' + this.formUpdateLimitbooking.flowId, Dataitem)
+            .then(async (response) => {
+              this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
+              this.dialoglimitbooking = false
+              await this.clearLimit()
+            })
+            .catch(error => {
+              console.log('error function addData : ', error)
+            })
+        })
+    },
+    async clearLimit () {
+      this.timeText = ''
+      this.formUpdateLimitbooking.setTime = ''
+      this.formUpdateLimitbooking.limitBookingCheck = ''
+      this.formUpdateLimitbooking.limitBooking = ''
+      this.formUpdateLimitbooking.flowId = []
+      this.typeTimeAdd = 'add'
+      this.indexTimeAdd = 0
+    },
+    async getlimitbooking (item) {
+      this.formUpdateLimitbooking.flowId = item.flowId
+      console.log('this.formUpdateLimitbooking.flowId', this.formUpdateLimitbooking.flowId)
+      let dt = []
+      await axios
+        .get(this.DNS_IP + '/flow/get?flowId=' + item.flowId)
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            dt = rs
+            this.formUpdateLimitbooking.limitBookingCheck = rs[0].limitBookingCheck || 'Fales'
+            console.log('this.formUpdate.setTime', rs[0].setTime)
+            if (rs[0].setTime === null || rs[0].setTime === '') {
+              this.dataItemAddTime = []
+            } else {
+              let setTime = JSON.parse(rs[0].setTime)
+              if (setTime[0].limitBooking === undefined) {
+                // console.log('dasdas')
+                for (let i = 0; i < setTime.length; i++) {
+                  let d = setTime[i]
+                  d.limitBooking = ''
+                  this.dataItemAddTime.push(d)
+                }
+              } else {
+                this.dataItemAddTime = setTime
+              }
+            }
+            console.log('testget', this.formUpdateLimitbooking)
+          }
+        })
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
+      console.log('dt', dt)
+      await this.chekshowTime('open', dt[0])
+    },
+    chekshowTime (open, item) {
+      if (open) {
+        if (this.BookingFieldshowtime === 'แสดง') {
+        } else {
+          console.log('this.formUpdate.limitBookingCheck', this.formUpdateLimitbooking.limitBookingCheck)
+          if (item.limitBookingCheck === 'True') {
+            this.$swal('ปิด LimitBooking ', 'กรุณาเปิดการแสดงเวลานัดหมายเพื่อเปิด LimitBooking', 'error').then(() => {
+              this.formUpdateLimitbooking.limitBookingCheck = 'False'
+            })
+          } else {
+            console.log('else')
+            this.formUpdateLimitbooking.limitBookingCheck = 'False'
+          }
+        }
+      } else {
+        if (this.BookingFieldshowtime === 'แสดง') {
+        } else {
+          this.$swal('ร้านของคุณไม่สามารถเปิด LimitBooking ได้', 'กรุณาเปิดการแสดงเวลานัดหมาย', 'error').then(() => {
+            this.formUpdateLimitbooking.limitBookingCheck = 'False'
+            this.formAdd.limitBookingCheck = 'False'
+          })
+        }
+      }
+    },
+    getUpdateAdd (item, text, index) {
+      if (text === 'update') {
+        this.formUpdateLimitbooking.time = item.value
+        this.formUpdateLimitbooking.limitBooking = item.limitBooking
+        this.timeText = item.text
+        this.typeTimeAdd = text
+        this.indexTimeAdd = index
+      } else {
+        this.dataItemAddTime.splice(index, 1)
+        // console.log('this.dataItemAddTime', this.dataItemAddTime)
+        // for (var i = 0; i < this.dataItemAddTime.length; i++) {
+        //   var d = this.dataItemAddTime[i]
+        //   d.sortNo = i + 1
+        // }
+        this.dataItemAddTime.sort(function (a, b) {
+          return a.value.localeCompare(b.value)
+        })
+        this.typeTimeAdd = 'add'
+      }
+    },
+    UpdateDataTimeAdd () {
+      if (this.formUpdateLimitbooking.time !== '' && this.timeText !== '') {
+        var dataTime = this.formUpdateLimitbooking.time.split(':')
+        var hh = dataTime[0]
+        var mm = dataTime[1]
+        console.log(dataTime)
+        if (parseInt(hh) <= 24 && parseInt(mm) <= 59) {
+          // let numhh = 100 + parseInt(hh)
+          // let nummm = 100 + parseInt(mm)
+          // let strhh = numhh.toString().substring(1, 3)
+          // let strmm = nummm.toString().substring(1, 3)
+          // if (this.dataItemAddTime.filter(el => { return el.value === strhh + ':' + strmm }).length > 0) {
+          //   this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกมีอยู่ในรายการแล้ว', 'error')
+          // } else {
+          let numhh = 100 + parseInt(hh)
+          let nummm = 100 + parseInt(mm)
+          let strhh = numhh.toString().substring(1, 3)
+          let strmm = nummm.toString().substring(1, 3)
+          this.dataItemAddTime[this.indexTimeAdd].value = strhh + ':' + strmm
+          this.dataItemAddTime[this.indexTimeAdd].text = this.timeText
+          this.dataItemAddTime[this.indexTimeAdd].limitBooking = this.formUpdateLimitbooking.limitBooking
+          this.typeTimeAdd = 'add'
+          this.formUpdateLimitbooking.time = ''
+          this.timeText = ''
+          this.formUpdateLimitbooking.limitBooking = 0
+          this.dataItemAddTime.sort(function (a, b) {
+            return a.value.localeCompare(b.value)
+          })
+          // }
+        } else {
+          this.$swal('ผิดพลาด', 'กรุณาตรวจสอบเวลาให้ถูกต้อง', 'error')
+        }
+      } else {
+        this.$swal('ผิดพลาด', 'กรุณากรอกข้อมูลให้ครบ', 'error')
+      }
+    },
+    addDataTimeAdd () {
+      if (this.formUpdateLimitbooking.time !== '' && this.timeText !== '') {
+        var dataTime = this.formUpdateLimitbooking.time.split(':')
+        var hh = dataTime[0]
+        var mm = dataTime[1]
+        console.log(dataTime)
+        if (parseInt(hh) <= 24 && parseInt(mm) <= 59) {
+          if (this.dataItemAddTime.length === 0) {
+            // this.dataItemAddTime.push({value: this.formUpdateLimitbooking.time, text: this.formUpdateLimitbooking.time, sortNo: 1})
+            let numhh = 100 + parseInt(hh)
+            let nummm = 100 + parseInt(mm)
+            let strhh = numhh.toString().substring(1, 3)
+            let strmm = nummm.toString().substring(1, 3)
+            this.dataItemAddTime.push({value: strhh + ':' + strmm, text: this.timeText, limitBooking: this.formUpdateLimitbooking.limitBooking})
+          } else {
+            // let numhh = 100 + parseInt(hh)
+            // let nummm = 100 + parseInt(mm)
+            // let strhh = numhh.toString().substring(1, 3)
+            // let strmm = nummm.toString().substring(1, 3)
+            // if (this.dataItemAddTime.filter(el => { return el.value === strhh + ':' + strmm }).length > 0) {
+            //   this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกมีอยู่ในรายการแล้ว', 'error')
+            // } else {
+            let numhh = 100 + parseInt(hh)
+            let nummm = 100 + parseInt(mm)
+            let strhh = numhh.toString().substring(1, 3)
+            let strmm = nummm.toString().substring(1, 3)
+            this.dataItemAddTime.push({value: strhh + ':' + strmm, text: this.timeText, limitBooking: this.formUpdateLimitbooking.limitBooking})
+            this.dataItemAddTime.sort(function (a, b) {
+              return a.value.localeCompare(b.value)
+            })
+            // }
+          }
+        } else {
+          this.$swal('ผิดพลาด', 'กรุณาตรวจสอบเวลาให้ถูกต้อง', 'error')
+        }
+      } else {
+        this.$swal('ผิดพลาด', 'กรุณากรอกข้อมูลให้ครบ', 'error')
+      }
+    },
+    async getBookingField () {
+      await axios
+        .get(this.DNS_IP + '/BookingField/get?shopId=' + this.shopId)
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            this.BookingFieldshowtime = rs[0].showTime
+            console.log('this.BookingFieldshowtime', this.BookingFieldshowtime)
+          }
+        })
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
+    },
     getCondition (item) {
       this.dataCondition = []
       console.log(item)
