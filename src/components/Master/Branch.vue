@@ -231,7 +231,20 @@
                   <v-row>
                     <v-col cols="12">
                       <v-card class="pa-6">
-                        <strong>วันหยุดประจำปีของบริษัท</strong>
+                        <v-row>
+                          <v-col cols="6">
+                            <strong>วันหยุดประจำปีของบริษัท</strong>
+                          </v-col>
+                          <v-col cols="6">
+                            <v-select
+                              v-model="formAdditem.typeDayCustom"
+                              :item-text="typeDayCustomitem.text"
+                              :items="typeDayCustomitem"
+                              label="ประเภทของวันหยุด"
+                              outlined
+                            ></v-select>
+                          </v-col>
+                        </v-row>
                         <v-date-picker
                         v-model="formAdditem.dateDayCustom"
                           multiple
@@ -479,7 +492,20 @@
                   <v-row>
                     <v-col cols="12">
                       <v-card class="pa-6">
-                        <strong>วันหยุดประจำปีของบริษัท</strong>
+                        <v-row>
+                          <v-col cols="6">
+                            <strong>วันหยุดประจำปีของบริษัท</strong>
+                          </v-col>
+                          <v-col cols="6">
+                            <v-select
+                              v-model="formUpdate.typeDayCustom"
+                              :item-text="typeDayCustomitem.text"
+                              :items="typeDayCustomitem"
+                              label="ประเภทของวันหยุด"
+                              outlined
+                            ></v-select>
+                          </v-col>
+                        </v-row>
                         <v-date-picker
                           v-model="formUpdate.dateDayCustom"
                           :allowed-dates="allowedDates"
@@ -709,7 +735,8 @@ export default {
       formAdditem: {
         dateDayoffText: [],
         dateDayoffValue: [],
-        dateDayCustom: []
+        dateDayCustom: [],
+        typeDayCustom: ''
       },
       formAdd: {
         masBranchCode: '',
@@ -724,7 +751,8 @@ export default {
         shopId: this.$session.getAll().data.shopId,
         dateDayoffText: [],
         dateDayoffValue: [],
-        dateDayCustom: []
+        dateDayCustom: [],
+        typeDayCustom: ''
       },
       formUpdate: {
         masBranchCode: '',
@@ -737,7 +765,8 @@ export default {
         time: '',
         dateDayoffText: [],
         dateDayoffValue: [],
-        dateDayCustom: []
+        dateDayCustom: [],
+        typeDayCustom: ''
       },
       formUpdateItem: {
         countCus: 0,
@@ -748,7 +777,8 @@ export default {
         masBranchNameEn: '',
         dateDayoffText: [],
         dateDayoffValue: [],
-        dateDayCustom: []
+        dateDayCustom: [],
+        typeDayCustom: ''
       },
       nameRules: [
         (v) => !!v || 'Name is required',
@@ -784,7 +814,17 @@ export default {
       itemDateStopValue: [0, 1, 2, 3, 4, 5, 6],
       arrayDates: ['2022-06-09', '2020-06-21', '2020-06-23', '2020-06-10'],
       day: [1, 2, 6],
-      BookingFieldshowtime: null
+      BookingFieldshowtime: null,
+      typeDayCustomitem: [
+        {
+          text: 'วันที่เปิด',
+          value: 'on'
+        },
+        {
+          text: 'วันที่ปิด',
+          value: 'off'
+        }
+      ]
     }
   },
   async mounted () {
@@ -982,6 +1022,7 @@ export default {
       this.dataReady = false
       Object.assign(this.formUpdate, item)
       this.PK = item.masBranchID
+      console.log('testttttttttttttt', item)
       // this.getDataByIdGlobal(this.DNS_IP, this.path, 'masBranchID', item.masBranchID)
       if (item.dateDayoffText === null || item.dateDayoffText === '') {
         this.formUpdate.dateDayoffText = []
@@ -998,6 +1039,7 @@ export default {
       } else {
         this.formUpdate.countCus = 0
       }
+      this.formUpdate.typeDayCustom = item.typeDayCustom
       this.formUpdate.limitBookingCheck = item.limitBookingCheck || 'Fales'
       console.log('this.formUpdate.setTime', item.setTime)
       if (item.setTime === null || item.setTime === '') {
@@ -1055,6 +1097,7 @@ export default {
             dd.push(k)
           }
         })
+        this.formAdd.typeDayCustom = this.formAdditem.typeDayCustom === '' ? 'off' : this.formAdditem.typeDayCustom
         this.formAdd.dateDayoffValue = JSON.stringify(dd)
         this.formAdd.dateDayCustom = JSON.stringify(this.formAdditem.dateDayCustom)
         console.log('this.formAdd', this.formAdd)
@@ -1138,6 +1181,7 @@ export default {
         this.formUpdateItem.masBranchNameEn = this.formUpdate.masBranchNameEn
         this.formUpdateItem.setTime = JSON.stringify(this.dataItemAddTime)
         this.formUpdateItem.dateDayoffText = JSON.stringify(this.formUpdate.dateDayoffText)
+        this.formUpdateItem.typeDayCustom = this.formUpdate.typeDayCustom
         let dd = []
         this.itemDateStop.forEach((v, k) => {
           // console.log('test', this.formUpdate.dateDayoffText.filter(item => item === v))
@@ -1252,11 +1296,16 @@ export default {
       this.formAdd.masBranchNameEn = ''
       this.formAdd.dateDayoffText = []
       this.formAdd.dateDayCustom = []
+      this.formAdd.typeDayCustom = []
       this.formAdd.countCus = 0
       this.formAdd.shopId = this.$session.getAll().data.shopId
       this.dataItemAddTime = []
       this.typeTimeAdd = 'add'
       this.indexTimeAdd = 0
+      this.formAdditem.dateDayoffText = []
+      this.formAdditem.dateDayoffValue = []
+      this.formAdditem.dateDayCustom = []
+      this.formAdditem.typeDayCustom = ''
     }
   }
 }
