@@ -9,16 +9,6 @@
           </v-col>
           <v-col cols="12" md="6" lg="6" class="v-margit_button text-right">
             <v-btn-toggle>
-              <!-- <v-btn
-                color="warning"
-                style="z-index:8;margin-right: 5px;"
-                id="v-step-0"
-                depressed
-                @click="getDataDefault()"
-              >
-                <v-icon left>mdi-refresh-circle</v-icon>
-                Refresh
-              </v-btn> -->
               <v-btn
                 :loading="loadingRefresh"
                 :disabled="loadingRefresh"
@@ -34,16 +24,6 @@
                   </span>
                 </template>
               </v-btn>
-              <!-- <v-btn
-                color="primary"
-                style="z-index:8;margin-right: 5px;"
-                id="v-step-0"
-                depressed
-                @click="$router.push('./Qrcodereader')"
-              >
-                <v-icon left>mdi-text-box-plus</v-icon>
-                Qr Code
-              </v-btn> -->
               <v-btn
                 color="primary"
                 style="z-index:8;margin-right: 5px;"
@@ -428,19 +408,8 @@
                       <v-col
                         cols="9"
                       >
-                      <!-- <v-col
-                        cols="8"
-                        class="text-center d-none d-sm-flex"
-                        style="margin: auto 0;"
-                      > -->
                         <v-col class="text-center">
                           <CalendarBooking ref="CalendarBooking"></CalendarBooking>
-                          <!-- <v-img
-                            class="v-margit_img_reward"
-                            :src="require('@/assets/AddBookingList.svg')"
-                            max-width="470.37"
-                            max-height="247"
-                          ></v-img> -->
                         </v-col>
                       </v-col>
 
@@ -460,10 +429,30 @@
                             outlined
                             dense
                             required
-                            @change="setFlowAdd()"
+                            @change="setFlowAdd(), checkTime()"
                             :rules="[rules.required]"
                           ></v-select>
+                          <!-- <v-select
+                            v-model="formAdd.flowId"
+                            :items="dataFlowSelectAdd"
+                            label="ประเภทบริการ"
+                            outlined
+                            dense
+                            required
+                            @change="setFlowAdd()"
+                            :rules="[rules.required]"
+                          ></v-select> -->
                           <v-select
+                            v-model="formAdd.masBranchID"
+                            :items="branch"
+                            label="สาขา"
+                            outlined
+                            dense
+                            required
+                            :rules="[rules.required]"
+                            @change="SetallowedDates()"
+                          ></v-select>
+                          <!-- <v-select
                             v-model="formAdd.masBranchID"
                             :items="branch"
                             label="สาขา"
@@ -472,7 +461,7 @@
                             required
                             @change="checkTime()"
                             :rules="[rules.required]"
-                          ></v-select>
+                          ></v-select> -->
                           <template v-if="fieldNameItem">
                             <div
                               v-for="(item, index) in fieldNameItem"
@@ -790,44 +779,60 @@
                             </div>
                           </template>
                           <v-row>
+                            <div v-if="formAdd.masBranchID && formAdd.flowId">
                             <v-col class="pb-0">
                               <v-menu
+                                ref="menu"
                                 v-model="menuDate"
                                 :close-on-content-click="false"
-                                :nudge-right="40"
+                                :return-value.sync="date"
+                                :rules="[rules.required]"
                                 transition="scale-transition"
                                 offset-y
+                                required
                                 min-width="auto"
                               >
                                 <template v-slot:activator="{ on, attrs }">
                                   <v-text-field
                                     v-model="date"
-                                    label="วันที่"
-                                    prepend-icon="mdi-calendar"
                                     readonly
-                                    v-bind="attrs"
-                                    dense
+                                    label="วันที่"
                                     outlined
+                                    dense
+                                    v-bind="attrs"
                                     v-on="on"
                                     required
+                                    @click="pickerDate ? getMonth(pickerDate) : null"
                                     :rules="[rules.required]"
-                                  ></v-text-field>
+                                  >
+                                    <template #prepend>
+                                      <v-icon right>
+                                        mdi-calendar
+                                      </v-icon>
+                                    </template>
+                                  </v-text-field>
                                 </template>
+                                <!-- <div class="text-center">
+                                <v-progress-circular
+                                  indeterminate
+                                  color="primary"
+                                ></v-progress-circular>
+                                </div> -->
                                 <v-date-picker
                                   v-model="date"
-                                  @input="menuDate = false"
-                                  :min="
-                                    new Date(
-                                      Date.now() -
-                                        new Date().getTimezoneOffset() * 60000
-                                    )
-                                      .toISOString()
-                                      .substr(0, 10)
-                                  "
-                                ></v-date-picker>
+                                  no-title
+                                  scrollable
+                                  :allowed-dates="allowedDates"
+                                  :picker-date.sync="pickerDate"
+                                  @change="setLimitBooking(date)"
+                                  @input="(menuDate = false), $refs.menu.save(date)"
+                                  :min="currentDate"
+                                >
+                                </v-date-picker>
                               </v-menu>
                             </v-col>
-                            <v-col class="pb-0" v-if="timeavailable.length > 0">
+                            </div>
+                            <v-col class="pb-0" v-if="timeavailable.length > 0 && date !== ''">
                               <v-select
                               v-model="time"
                               :items="timeavailable"
@@ -1735,7 +1740,7 @@
                         ></v-textarea>
                       </v-col>
                   </v-row>
-                   <v-row v-if="limitBookingCheck === 'True'">
+                   <!-- <v-row v-if="limitBookingCheck === 'True'">
                     <v-col cols="12" md="6" lg="6">
                       <h4 class="text-center">ต้องการใช้ Limit การจองหรือไม่</h4>
                       <v-row align="center">
@@ -1757,7 +1762,7 @@
                         outlined
                         dense
                         class="mt-10"
-                        @change="setCountTime()"
+                        @change="setCountTime(dataChange)"
                       ></v-select>
                     </v-col>
                    </v-row>
@@ -1790,7 +1795,7 @@
                         <strong>ท่านสามารถนัดหมายในวันที่ : {{formChange.date}} ได้ทุกเวลา</strong>
                       </v-alert>
                       </v-col>
-                    </v-row>
+                    </v-row> -->
                    <v-divider></v-divider>
                   <v-row>
                     <v-col cols="12" md="6" lg="6">
@@ -1818,7 +1823,7 @@
                         </template>
                         <v-date-picker
                           v-model="formChange.date"
-                          @input="menuDateChange = false, getDataLimitBooking()"
+                          @input="menuDateChange = false, getDataLimitBooking(dataChange)"
                           :min="
                             new Date(
                               Date.now() -
@@ -1828,23 +1833,9 @@
                               .substr(0, 10)
                           "
                         ></v-date-picker>
-                        <!-- <v-date-picker
-                          v-model="formChange.date"
-                          @input="menuDateChange = false"
-                        ></v-date-picker> -->
                       </v-menu>
                     </v-col>
                     <v-col  cols="12" md="6" lg="6">
-                      <!-- <v-select
-                          v-model="formChange.time"
-                          :items="timeavailable"
-                          label="เวลา"
-                          menu-props="auto"
-                          outlined
-                          dense
-                          required
-                          :rules ="[rules.required]"
-                        ></v-select> -->
                          <v-select
                             v-model="formChange.time"
                             :items="timeavailable"
@@ -1856,7 +1847,7 @@
                             outlined
                             dense
                             required
-                            @change="setCountTime()"
+                            @change="setCountTime(dataChange)"
                             :rules ="[rules.required]"
                           ></v-select>
                     </v-col>
@@ -2173,7 +2164,6 @@
                   </v-icon>
                 </v-btn>
                 <v-btn
-                  v-if="dataItem.length > 0"
                   color="blue-grey"
                   class="ma-2 white--text"
                   small
@@ -2285,18 +2275,6 @@
                           1 วัน
                         </v-chip>
                       </v-col>
-                      <!-- <v-col>
-                        <v-chip
-                          filter
-                          dark
-                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
-                          :color="(item.remarkConfirm2) ? 'green darken-2' : 'grey darken-1'"
-                          v-model="item.remarkConfirm2"
-                          @click.stop="item.remarkConfirm2=!item.remarkConfirm2;confirmRemark(item, 'inDay')"
-                        >
-                          30 นาที
-                        </v-chip>
-                      </v-col> -->
                     </v-row>
                   </template>
                   <template v-slot:[`item.action3`]="{ item }">
@@ -2381,7 +2359,7 @@
                       fab
                       v-if="item.statusBt === 'confirm'"
                       small
-                      @click.stop="(dialogEdit = true), getBookingData(item), checkTimeFlow()"
+                      @click.stop="(dialogEdit = true), getBookingData(item), checkTimeFlow(item)"
                     >
                       <v-icon dark> mdi-account-plus </v-icon>
                     </v-btn>
@@ -3194,6 +3172,7 @@
                             outlined
                             dense
                             required
+                            @change="checkTimeEdit()"
                             :rules="[rules.required]"
                           ></v-select>
                           <v-select
@@ -3203,7 +3182,6 @@
                             outlined
                             dense
                             required
-                            @change="checkTimeEdit()"
                             :rules="[rules.required]"
                           ></v-select>
                           <template v-if="BookingDataItemEdit">
@@ -4296,10 +4274,23 @@ export default {
       }
     }
   },
+  watch: {
+    // menuDate (val) {
+    //   val && setTimeout(() => (this.$refs.dateRef.activePicker = 'month'))
+    // },
+    pickerDate (newval, oldval) {
+      this.getMonth(newval)
+      // this.allowedDates()
+      // here you can check if month changed using newval and oldval
+    }
+  },
   data () {
     let startDate = null
     let endDate = null
     return {
+      pickerDate: null,
+      currentDate: moment().format('YYYY-MM-DD'),
+      currentMonth: moment().format('YYYY-MM'),
       headersLimitBookingDate: [
         {
           text: 'เวลา',
@@ -4650,7 +4641,18 @@ export default {
       selectCountBookingLimit: 1,
       dueDateOld: '',
       dueDateTimeOld: '',
-      masBranchIDLimit: ''
+      masBranchIDLimit: '',
+      flowIDLimit: '',
+      dateDayoff: [],
+      dateDayCustom: [],
+      dateDaylimit: null,
+      flowItemLimit: [],
+      checkLimitBooking: {
+        ID: '',
+        countBooking: null,
+        limitCheck: null,
+        limitBooking: 0
+      }
     }
   },
   beforeCreate () {
@@ -4692,6 +4694,187 @@ export default {
     })
   },
   methods: {
+    async checkLimit () {
+      this.checkLimitBooking.ID = 'NO'
+      this.checkLimitBooking.countBooking = 1
+      let LimitBooking = await this.getLimitBooking()
+      if (LimitBooking.status === false) {
+        this.checkLimitBooking.ID = 'NO'
+        this.checkLimitBooking.countBooking = 1
+        console.log('1257')
+      } else {
+        console.log('1259', LimitBooking)
+        LimitBooking.forEach((item) => {
+          let dt = JSON.parse(this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.setTime) || []
+          // let dt = JSON.parse(this.branchData.filter(item => { return item.masBranchID === this.formAdd.masBranchID })[0].setTime) || []
+          let dtint = parseInt(dt.filter(item => item.value === this.time.value)[0].limitBooking)
+          console.log('test', dtint)
+          // console.log('test', item.flowId === this.formAdd.flowId && this.momenDate_1(item.bookingDate) === this.date && item.bookingTime === this.time.value)
+          // if (item.masBranchID === this.formAdd.masBranchID && this.momenDate_1(item.bookingDate) === this.date && item.bookingTime === this.time.value) {
+          if (item.flowId === this.formAdd.flowId && this.momenDate_1(item.bookingDate) === this.date && item.bookingTime === this.time.value) {
+            this.checkLimitBooking.ID = item.id
+            console.log('1266')
+            this.checkLimitBooking.countBooking = parseInt(item.countBooking) + 1
+            this.checkLimitBooking.limitCheck = parseInt(item.countBooking) >= dtint ? 'false' : 'true'
+            this.checkLimitBooking.limitBooking = dtint
+            // console.log('item.masBranchID', item)
+          }
+        })
+      }
+      console.log('this.checkLimitBooking', this.checkLimitBooking)
+    },
+    async getMonth (month) {
+      console.log('month', month)
+      // const result = await axios.get(this.DNS_IP + '/LimitBookingDate/get_LimitDate?shopId=' + this.$session.getAll().data.shopId + '&masBranchID=' + this.formAdd.masBranchID + '&bookingDate=' + month)
+      const result = await axios.get(this.DNS_IP + '/LimitBookingDate/get_LimitDate?shopId=' + this.$session.getAll().data.shopId + '&flowId=' + this.formAdd.flowId + '&bookingDate=' + month)
+      if (result.data.length > 0) {
+        console.log('getMonth IF', result.data)
+        this.dateDaylimit = []
+        let dt = result.data
+        if (dt[0].limitBookingCheck === 'True') {
+          console.log('limitBookingCheck === True')
+          dt.forEach((v, k) => {
+            if (JSON.parse(v.setTime)) {
+              let count = 0
+              JSON.parse(v.setTime).forEach((v2, k2) => {
+                count += parseInt(v2.limitBooking)
+              })
+              if (v.sum >= count) {
+                this.dateDaylimit.push(
+                  moment(v.bookingDate).format('YYYY-MM-DD')
+                )
+              }
+            }
+          })
+        } else {
+          console.log('limitBookingCheck === False')
+          this.dateDaylimit = []
+        }
+
+        // this.dateDaylimit = result.data.map((item) => { return this.momenDate_1(item.bookingDate) })
+      } else {
+        console.log('getMonth ELSE')
+        this.dateDaylimit = []
+      }
+      // console.log('this.dateDaylimit', this.dateDaylimit)
+    },
+    allowedDates (val) {
+      if (this.dateDaylimit) {
+        if (this.branch.filter(el => el.value === this.formAdd.masBranchID)[0].allData.typeDayCustom === 'on') {
+          return val === this.dateDayCustom.filter(el => el === val)[0]
+        } else {
+          if (
+            this.dateDayoff.filter(el => {
+              return el === new Date(val).getDay()
+            }).length === 0 &&
+          this.dateDayCustom.filter(el => {
+            return el === val
+          }).length === 0 &&
+          this.dateDaylimit.filter(el => {
+            return el === val
+          }).length === 0
+          ) {
+            return val
+          }
+        }
+      }
+    },
+    async setLimitBooking (dateitem) {
+      this.time = ''
+      this.timeavailable = []
+
+      // LimitBookingBy Flow
+      // this.limitBookingCheck = this.flowItemLimit.filter(item => { return item.flowId === this.formAdd.flowId })[0].limitBookingCheck || 'False'
+      // let setTimeOld = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) })[0].allData.setTime)
+
+      // LimitBookingBy masBranch
+      this.limitBookingCheck = this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.limitBookingCheck || 'False'
+      if (this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.limitBookingCheck || 'False') {
+        let TimeData = []
+        let currentDate = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTime) || []
+        if (
+          moment(dateitem).format('YYYY-MM-DD') ===
+          moment().format('YYYY-MM-DD')
+        ) {
+          TimeData = currentDate.filter(
+            item => moment().format(item.value) > moment().format('HH:mm')
+          )
+        } else {
+          TimeData = currentDate
+        }
+        this.timeavailable = TimeData
+        console.log('TimeData', TimeData)
+        let LimitBooking = await this.getLimitBooking()
+        console.log('LimitBooking', LimitBooking)
+        if (LimitBooking.status !== false) {
+          if (LimitBooking.length > 0) {
+            LimitBooking.forEach((i, n) => {
+              this.timeavailable.forEach((v, k) => {
+                if (i.bookingTime === v.value) {
+                  if (i.countBooking >= parseInt(v.limitBooking)) {
+                    this.timeavailable.splice(k, 1)
+                  }
+                }
+              })
+            })
+            if (this.timeavailable.length === 0) {
+              this.$swal(
+                'คิวเต็มแล้ว',
+                'กรุณาเลือกวันที่ใหม่อีกครั้ง',
+                'error'
+              )
+              this.date = ''
+            }
+          }
+          console.log('this.timeavailable IF', this.timeavailable)
+        } else {
+          this.timeavailable = TimeData
+          console.log('this.timeavailable ELSE', this.timeavailable)
+        }
+      } else {
+        console.log('this.timeavailable ELSEEEEE', this.timeavailable)
+        // LimitBookingBy Flow
+        // this.timeavailable = JSON.parse(this.flowItemLimit.filter(item => { return item.flowId === this.formAdd.flowId })[0].setTime) || []
+
+        // LimitBookingBy masBranch
+        this.timeavailable = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTime) || []
+      }
+    },
+    async getLimitBooking () {
+      // console.log('date', this.date)
+      // let LimitBooking = axios.get(this.DNS_IP + '/LimitBookingDate/get?shopId=' + this.$session.getAll().data.shopId + '&masBranchID=' + this.formAdd.masBranchID + '&bookingDate=' + this.date).then(async (response) => {
+      //   let rs = response.data
+      //   return rs
+      // })
+      // return LimitBooking
+      let LimitBooking = axios.get(this.DNS_IP + '/LimitBookingDate/get?shopId=' + this.$session.getAll().data.shopId + '&flowId=' + this.formAdd.flowId + '&bookingDate=' + this.date).then(async (response) => {
+        let rs = response.data
+        return rs
+      })
+      return LimitBooking
+    },
+    SetallowedDates () {
+      this.branch.forEach((v, k) => {
+        console.log('v', v)
+        if (v.allData.masBranchID === this.formAdd.masBranchID) {
+          // console.log('Value', v.dateDayoffValue)
+          v.allData.dateDayCustom = v.allData.dateDayCustom || ''
+          v.allData.dateDayoffValue = v.allData.dateDayoffValue || ''
+          if (v.allData.dateDayoffValue !== '') {
+            // console.log('if')
+            this.dateDayoff = JSON.parse(v.allData.dateDayoffValue)
+          } else {
+            // console.log('else')
+            this.dateDayoff = []
+          }
+          if (v.dateDayCustom !== '') {
+            this.dateDayCustom = JSON.parse(v.allData.dateDayCustom)
+          } else {
+            this.dateDayCustom = []
+          }
+        }
+      })
+    },
     onCopySuccess () {
       this.$swal('เรียบร้อย', 'คัดลอกสำเร็จ', 'success')
     },
@@ -5777,7 +5960,7 @@ export default {
       if (this.$session.id() !== undefined) {
         console.log('getDataCalendaBooking')
         try {
-          await this.$refs.CalendarBooking.getDataReturn('&checkOnsite=is null')
+          await this.$refs.CalendarBooking.getDataReturn('&checkOnsite=is null', this.dateStart)
         } catch (e) { console.log(e) }
       // this.$refs.CalendarBooking.getDataFlow()
       // this.$refs.CalendarBooking.getDataBranch()
@@ -5828,21 +6011,25 @@ export default {
     },
     checkTime () {
       this.timeavailable = []
-      let dtTime = this.branch.filter(item => { return item.value === this.formAdd.masBranchID })
+      // console.log('dataFlowSelectAdd', this.dataFlowSelectAdd)
+      let dtTime = this.dataFlowSelectAdd.filter(item => { return item.value === this.formAdd.flowId })
+      // let dtTime = this.branch.filter(item => { return item.value === this.formAdd.masBranchID })
       // console.log('test', dtTime)
       this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
       // console.log('timevailable', this.timeavailable)
     },
     checkTimeEdit () {
       this.timeavailable = []
-      let dtTime = this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
+      let dtTime = this.dataFlowSelectEdit.filter(item => { return item.value === this.formEdit.flowId })
+      // let dtTime = this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
       // console.log('test', dtTime)
       this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
       // console.log('timevailable', this.timeavailable)
     },
-    checkTimeFlow () {
+    checkTimeFlow (dt) {
       this.timeavailable = []
-      let dtTime = this.branch.filter(item => { return item.value === this.masBranchID })
+      // let dtTime = this.branch.filter(item => { return item.value === this.masBranchID })
+      let dtTime = this.DataFlowName.filter(item => { return item.value === dt.flowId })
       // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
       this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
       // console.log('timevailable', this.timeavailable)
@@ -6604,7 +6791,7 @@ export default {
             this.masBranchID = this.dataItem[0].masBranchID
             console.log('dtTime', this.dataItem[0].masBranchID)
             await this.getBookingData(this.dataItem[0])
-            this.checkTimeFlow()
+            this.checkTimeFlow(item)
             // this.timeavailable = []
             // console.log('dtTime', this.dataItem[0].masBranchID)
             // let dtTime = this.branch.filter(item => { return item.value === this.dataItem[0].masBranchID })
@@ -7817,7 +8004,7 @@ export default {
             s.CREATE_USER = ''
             s.LAST_USER = ''
             s.showCard = d.showCard
-            s.shopId = this.shopId
+            s.shopId = this.$session.getAll().data.shopId
             s.endDate = ''
             s.endTime = ''
             s.checkCar = 'False'
@@ -7913,6 +8100,12 @@ export default {
           }
         }
         console.log('this.fieldNameItem', this.fieldNameItem)
+        let limitBookingCheck = ''
+        if (this.checkLimitBooking.limitCheck === 'true' || null) {
+          limitBookingCheck = 'True'
+        } else {
+          limitBookingCheck = 'False'
+        }
         for (let i = 0; i < rs.length; i++) {
           let d = rs[i]
           let update = {}
@@ -7935,6 +8128,10 @@ export default {
             update.depositImge = this.formAdd.depositImge
             update.empSelect = this.empSelectAdd
             update.adminLogin = this.session.data.userName
+            update.limitBookingCheck = limitBookingCheck
+            update.limitBookingId = this.checkLimitBooking.ID
+            update.limitBookingCount = this.checkLimitBooking.countBooking
+            update.getLimitBooking = this.checkLimitBooking.limitBooking
             Add.push(update)
           } else {
             if (fielditem.filter(row => { return row.fieldId === parseInt(d.conditionField) }).length > 0) {
@@ -7957,6 +8154,10 @@ export default {
                 update.depositImge = this.formAdd.depositImge
                 update.empSelect = this.empSelectAdd
                 update.adminLogin = this.session.data.userName
+                update.limitBookingCheck = limitBookingCheck
+                update.limitBookingId = this.checkLimitBooking.ID
+                update.limitBookingCount = this.checkLimitBooking.countBooking
+                update.getLimitBooking = this.checkLimitBooking.limitBooking
                 Add.push(update)
               }
             } else if (d.conditionField === 'flow') {
@@ -7979,6 +8180,10 @@ export default {
                 update.depositImge = this.formAdd.depositImge
                 update.empSelect = this.empSelectAdd
                 update.adminLogin = this.session.data.userName
+                update.limitBookingCheck = limitBookingCheck
+                update.limitBookingId = this.checkLimitBooking.ID
+                update.limitBookingCount = this.checkLimitBooking.countBooking
+                update.getLimitBooking = this.checkLimitBooking.limitBooking
                 Add.push(update)
               }
             }
@@ -7989,22 +8194,28 @@ export default {
           .post(this.DNS_IP + '/Booking/add', Add)
           .then(async response => {
           // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-            let checkDeposit = this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })
-            let depositCheckStatus = ''
-            if (checkDeposit.length > 0) {
-              depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
+            if (response.data.message === 'LimitBooking_Full') {
+              this.$swal('คิวเต็มแล้ว', 'กรุณาเลือกวันที่และเวลาใหม่อีกครั้ง', 'error')
+              this.date = ''
+              this.time = ''
             } else {
-              depositCheckStatus = 'False'
-            }
-            if (depositCheckStatus === 'True') {
-              if (this.dataDepositAdd === 'มี') {
-                await this.confirmChkAdd(response.data)
+              let checkDeposit = this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })
+              let depositCheckStatus = ''
+              if (checkDeposit.length > 0) {
+                depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
               } else {
-                this.clearDataAdd()
-                this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+                depositCheckStatus = 'False'
               }
-            } else {
-              await this.confirmChkAdd(response.data)
+              if (depositCheckStatus === 'True') {
+                if (this.dataDepositAdd === 'มี') {
+                  await this.confirmChkAdd(response.data)
+                } else {
+                  this.clearDataAdd()
+                  this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+                }
+              } else {
+                await this.confirmChkAdd(response.data)
+              }
             }
           // console.log('addDataGlobal DNS_IP + /job/add', response)
           })
@@ -8031,14 +8242,44 @@ export default {
             let getcount = await this.getCountFastTrack(this.date, this.formAdd.flowId, this.formAdd.masBranchID)
             let setCountFast = this.branch.filter(el => { return el.value === this.formAdd.masBranchID })[0].allData.countFastTrack
             if (getcount < setCountFast) {
-              this.dialogAddCon = true
+              if (this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.limitBookingCheck === 'True') {
+                await this.checkLimit()
+                // console.log('test', this.branchData.filter(item => { return item.masBranchID === this.formAdd.masBranchID })[0].setTime)
+                if (this.checkLimitBooking.limitCheck === 'true') {
+                  this.dialogAddCon = true
+                }
+              } else if (this.checkLimitBooking.limitCheck === 'false') {
+                console.log('else1402')
+                this.$swal('คิวเต็มแล้ว', 'กรุณาเลือกวันที่ใหม่อีกครั้ง', 'error')
+                this.date = ''
+                this.time = ''
+              } else {
+                this.dialogAddCon = true
+                console.log('else1407')
+              }
             } else {
               this.textError = 'จำนวนงานด่วนต่อวัน เกินกว่าที่ตั้งไว้'
               this.dialogError = true
               this.loadingAdd = false
             }
           } else {
-            this.dialogAddCon = true
+            if (this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.limitBookingCheck === 'True') {
+              await this.checkLimit()
+              // console.log('test', this.branchData.filter(item => { return item.masBranchID === this.formAdd.masBranchID })[0].setTime)
+              if (this.checkLimitBooking.limitCheck === 'true') {
+                this.dialogAddCon = true
+              } else if (this.checkLimitBooking.limitCheck === 'false') {
+                console.log('else1402')
+                this.$swal('คิวเต็มแล้ว', 'กรุณาเลือกวันที่ใหม่อีกครั้ง', 'error')
+                this.date = ''
+                this.time = ''
+              } else {
+                this.dialogAddCon = true
+                console.log('else1407')
+              }
+            } else {
+              this.dialogAddCon = true
+            }
           }
         } else {
           this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
@@ -8210,7 +8451,7 @@ export default {
           this.dataPackageDefault = false
         }
       }
-      this.checkTimeFlow()
+      this.checkTimeFlow(dt)
       this.BookingDataItem = []
       let itemIncustomField = []
       this.statusConfirmJob = false
@@ -8980,6 +9221,7 @@ export default {
         dueDateNew: this.formChange.date,
         dueDateOld: this.dueDateOld,
         masBranchIDLimit: this.masBranchIDLimit,
+        flowId: this.flowIDLimit,
         shopId: this.$session.getAll().data.shopId,
         CREATE_USER: this.session.data.userName,
         LAST_USER: this.session.data.userName
@@ -9267,6 +9509,7 @@ export default {
       this.limitCountBranchOld = []
       this.dueDateOld = ''
       this.masBranchIDLimit = ''
+      this.flowIDLimit = ''
       this.countBookingLimit = 0
       this.selectCountBookingLimit = 1
       this.limitBookingCheck = 'False'
@@ -9278,9 +9521,10 @@ export default {
       this.dueDateOld = this.momenDate_1(item.dueDate)
       this.dueDateTimeOld = this.momenTime(item.dueDate)
       this.masBranchIDLimit = item.masBranchID
+      this.flowIDLimit = item.flowId
       console.log('this.dueDateOld', this.dueDateOld)
       this.checkSelectText = item.statusBt
-      await this.checkTimeFlow()
+      await this.checkTimeFlow(item)
       this.dataChange = item
       this.remark = item.remark
       this.formChange.date = this.momenDate_1(item.dueDate)
@@ -9295,27 +9539,30 @@ export default {
       }
 
       let limitCountBranchOld = 0
-      let setTimeOld = JSON.parse(this.branch.filter(el => { return el.value === parseInt(item.masBranchID) })[0].allData.setTime)
+      let setTimeOld = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) })[0].allData.setTime)
+      // let setTimeOld = JSON.parse(this.branch.filter(el => { return el.value === parseInt(item.masBranchID) })[0].allData.setTime)
       let indexOld = setTimeOld.findIndex((element) => element.value === this.momenTime(item.dueDate))
       limitCountBranchOld = setTimeOld.slice(indexOld, indexOld + item.countHourLimit)
       this.limitCountBranchOld = limitCountBranchOld
 
       this.dialogChange = true
       console.log(this.formChange)
-      this.setCountTime()
+      this.setCountTime(item)
     },
-    async setCountTime () {
+    async setCountTime (dt) {
       console.log('this.formChange.time', this.formChange.time)
       let limitCountBranch = 0
-      let setTime = JSON.parse(this.branch.filter(el => { return el.value === parseInt(this.masBranchIDLimit) })[0].allData.setTime)
+      // let setTime = JSON.parse(this.branch.filter(el => { return el.value === parseInt(this.masBranchIDLimit) })[0].allData.setTime)
+      let setTime = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(dt.flowId) })[0].allData.setTime)
       let index = setTime.findIndex((element) => element.value === this.formChange.time.value)
       limitCountBranch = setTime.slice(index, index + this.selectCountBookingLimit)
       this.limitCountBranch = limitCountBranch
-      await this.getDataLimitBooking()
+      await this.getDataLimitBooking(dt)
     },
-    async getDataLimitBooking () {
+    async getDataLimitBooking (dt) {
       this.dataLimitBookingDate = []
-      let setTime = JSON.parse(this.branch.filter(el => { return el.value === parseInt(this.masBranchIDLimit) })[0].allData.setTime)
+      // let setTime = JSON.parse(this.branch.filter(el => { return el.value === parseInt(this.masBranchIDLimit) })[0].allData.setTime)
+      let setTime = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(dt.flowId) })[0].allData.setTime)
       let limitBooking = 0
       if (setTime.length > 0) {
         if (setTime.filter(el => { return el.value === this.formChange.time.value }).length > 0) {

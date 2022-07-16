@@ -713,7 +713,8 @@ export default {
       ]
       if (this.session.data.category === 'ธุรกิจรถยนต์') {
         this.booking = [
-          { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingLink', type: 'booking' },
+          { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingField', type: 'booking' },
+          // { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingLink', type: 'booking' },
           { title: 'รายชื่อลูกค้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingList', type: 'booking' },
           { title: '(Onsite)รายชื่อลูกค้านัดหมาย', icon: 'mdi-car-shift-pattern', to: '/Master/BookingListOnsite', type: 'booking' },
           { title: 'ปฏิทินนัดหมาย', icon: 'mdi-calendar-search', to: '/Master/CalendarBooking', type: 'booking' }
@@ -730,7 +731,8 @@ export default {
         ]
       } else {
         this.booking = [
-          { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingLink', type: 'booking' },
+          // { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingLink', type: 'booking' },
+          { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingField', type: 'booking' },
           { title: 'รายชื่อลูกค้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingListBeauty', type: 'booking' },
           { title: 'ปฏิทินนัดหมาย', icon: 'mdi-calendar-search', to: '/Master/CalendarBooking', type: 'booking' }
         ]

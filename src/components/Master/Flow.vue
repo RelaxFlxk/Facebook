@@ -964,7 +964,7 @@
         <v-dialog v-model="dialoglimitbooking" persistent>
           <v-card min-width="400px" min-height="500px" class="pa-5">
             <v-card-title>
-                <span class="headline">แก้ไข LimitBooking</span>
+                <span class="headline">เพิ่ม / แก้ไขเวลา</span>
               </v-card-title>
               <v-card-text>
                 <v-container>
@@ -1006,6 +1006,17 @@
                         item-value="text"
                         outlined
                       ></v-select>
+                      <v-btn
+                        block
+                        color="teal"
+                        elevation="2"
+                        rounded
+                        small
+                        dark
+                        @click="presetTime()"
+                      >
+                        แบบร่าง เวลา
+                      </v-btn>
                     </v-col>
                     <v-col cols="2">
                       <v-btn
@@ -1042,12 +1053,9 @@
                           false-value="False"
                           true-value="True"
                           v-model="formUpdateLimitbooking.limitBookingCheck"
-                          label="ตั้ง Limit การนัดหมาย"
                           hide-details
                           class="shrink ml-6 mr-0 mt-0 mb-2"
                         ></v-checkbox>
-
-                        <!-- <v-text-field class="mr-5" v-model="formAdd.limitBookingCheck" outlined readonly label="ต้องการตั้ง Limit การจองหรือไม่"></v-text-field> -->
                          </v-row>
                       <v-data-table
                         :headers="columnsAddTime"
@@ -1484,7 +1492,21 @@ export default {
     await this.getBookingField()
   },
   methods: {
-    async EditlimitBooking () {
+    presetTime () {
+      this.dataItemAddTime = [{'value': '08:00', 'text': '08:00', 'limitBooking': ''}, {'value': '08:30', 'text': '08:30', 'limitBooking': ''}, {'value': '09:00', 'text': '09:00', 'limitBooking': ''}, {'value': '09:30', 'text': '09:30', 'limitBooking': ''}, {'value': '10:00', 'text': '10:00', 'limitBooking': ''}, {'value': '10:30', 'text': '10:30', 'limitBooking': ''}, {'value': '11:00', 'text': '11:00', 'limitBooking': ''}, {'value': '11:30', 'text': '11:30', 'limitBooking': ''}, {'value': '12:00', 'text': '12:00', 'limitBooking': ''}, {'value': '12:30', 'text': '12:30', 'limitBooking': ''}, {'value': '13:00', 'text': '13:00', 'limitBooking': ''}, {'value': '13:30', 'text': '13:30', 'limitBooking': ''}, {'value': '14:00', 'text': '14:00', 'limitBooking': ''}, {'value': '14:30', 'text': '14:30', 'limitBooking': ''}, {'value': '15:00', 'text': '15:00', 'limitBooking': ''}, {'value': '15:30', 'text': '15:30', 'limitBooking': ''}, {'value': '16:00', 'text': '16:00', 'limitBooking': ''}, {'value': '16:30', 'text': '16:30', 'limitBooking': ''}, {'value': '17:00', 'text': '17:00', 'limitBooking': ''}]
+    },
+    EditlimitBooking () {
+      if (this.formUpdateLimitbooking.limitBookingCheck === 'True') {
+        if (this.dataItemAddTime.filter(el => { return el.limitBooking === '' }).length === 0) {
+          this.EditlimitBookingSubmit()
+        } else {
+          this.$swal('ผิดพลาด', 'กรุณาเลือก ใส่จำนวน Limit Booking ให้ครบ เนื่องจากท่านได้เลือกที่จะ ตั้ง Limit การจอง', 'error')
+        }
+      } else {
+        this.EditlimitBookingSubmit()
+      }
+    },
+    async EditlimitBookingSubmit () {
       console.log('Editdata', this.formUpdateLimitbooking)
       console.log('dataitem', this.dataItemAddTime)
       let Dataitem = {
@@ -1578,7 +1600,6 @@ export default {
         } else {
           this.$swal('ร้านของคุณไม่สามารถเปิด LimitBooking ได้', 'กรุณาเปิดการแสดงเวลานัดหมาย', 'error').then(() => {
             this.formUpdateLimitbooking.limitBookingCheck = 'False'
-            this.formAdd.limitBookingCheck = 'False'
           })
         }
       }

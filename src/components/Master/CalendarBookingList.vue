@@ -398,12 +398,12 @@ export default {
     // await this.getBookingData()
   },
   methods: {
-    async getDataReturn (text) {
+    async getDataReturn (text, date) {
       console.log('getDataReturn')
       this.getCustomFieldStart()
       await this.getDataFlow(text)
       await this.getDataBranch()
-      await this.getBookingList(text)
+      await this.getBookingList(text, date)
       this.$refs.calendar.checkChange()
     },
     prev () {
@@ -485,7 +485,7 @@ export default {
           }
         })
     },
-    async getBookingList (param) {
+    async getBookingList (param, dateMonth) {
       console.log('getBookingList')
       await this.getBookingData()
       if (param !== undefined) {
@@ -508,26 +508,27 @@ export default {
       const year = String(dateSplit[0])
       const month = String(dateSplit[1])
       this.countCus = this.masBranchName.countCus
+      let bookingDate = ''
+      if (dateMonth !== undefined) {
+        bookingDate = '&dueDate=' + dateMonth
+        this.today = dateMonth + '-01'
+      } else {
+        bookingDate = '&dueDate=' + year + '-' + month
+      }
       if (this.type === 'month') {
         let url = ''
         if (this.flowId === 'allFlow') {
           url = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.$session.getAll().data.shopId +
-            '&dueDate=' +
-            year +
-            '-' +
-            month +
+            bookingDate +
             '&masBranchName=' +
             this.masBranchName.text + this.paramUse
         } else {
           url = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.$session.getAll().data.shopId +
-            '&dueDate=' +
-            year +
-            '-' +
-            month +
+            bookingDate +
             '&masBranchName=' +
             this.masBranchName.text +
             '&flowId=' + this.flowId + this.paramUse
@@ -571,20 +572,14 @@ export default {
           url = this.DNS_IP +
             '/booking_view/getCountNotime?shopId=' +
             this.$session.getAll().data.shopId +
-            '&dueDate=' +
-            year +
-            '-' +
-            month +
+            bookingDate +
             '&masBranchName=' +
             this.masBranchName.text + this.paramUse
         } else {
           url = this.DNS_IP +
             '/booking_view/getCountNotime?shopId=' +
             this.$session.getAll().data.shopId +
-            '&dueDate=' +
-            year +
-            '-' +
-            month +
+            bookingDate +
             '&masBranchName=' +
             this.masBranchName.text +
             '&flowId=' + this.flowId + this.paramUse
@@ -648,20 +643,14 @@ export default {
                 url = this.DNS_IP +
                   '/booking_view/getCount?shopId=' +
                   this.$session.getAll().data.shopId +
-                  '&dueDate=' +
-                  year +
-                  '-' +
-                  month +
+                  bookingDate +
                   '&masBranchName=' +
                   this.masBranchName.text + this.paramUse
               } else {
                 url = this.DNS_IP +
                   '/booking_view/getCount?shopId=' +
                   this.$session.getAll().data.shopId +
-                  '&dueDate=' +
-                  year +
-                  '-' +
-                  month +
+                  bookingDate +
                   '&masBranchName=' +
                   this.masBranchName.text +
                   '&flowId=' + this.flowId + this.paramUse
