@@ -390,7 +390,9 @@
           </v-dialog>
           <!-- end add -->
           <!-- ADD -->
-          <v-dialog v-model="dialogAdd" hide-overlay fullscreen>
+          <v-dialog v-model="dialogAdd"
+          max-width="100%"
+          persistent>
           <!-- <v-dialog v-model="dialogAdd" persistent max-width="70%"> -->
             <v-card class="text-center">
               <v-form ref="form_add" v-model="validAdd" lazy-validation>
