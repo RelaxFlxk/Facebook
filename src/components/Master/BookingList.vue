@@ -346,7 +346,8 @@
           </v-dialog>
           <!-- end add -->
           <!-- ADD -->
-          <v-dialog v-model="dialogAdd" hide-overlay fullscreen>
+          <v-dialog v-model="dialogAdd" max-width="100%"
+          persistent>
           <!-- <v-dialog v-model="dialogAdd" persistent max-width="70%"> -->
             <v-card class="text-center">
               <v-form ref="form_add" v-model="validAdd" lazy-validation>
@@ -396,6 +397,7 @@
                             outlined
                             dense
                             required
+                            @change="checkTime(), date = ''"
                             :rules="[rules.required]"
                           ></v-select>
                           <v-select
@@ -405,8 +407,8 @@
                             outlined
                             dense
                             required
-                            @change="checkTime()"
                             :rules="[rules.required]"
+                            @change="SetallowedDates(), date = ''"
                           ></v-select>
                           <template v-if="fieldNameItem">
                             <div
@@ -421,6 +423,17 @@
                               >
                                 <v-col cols="12" class="InputData" v-if="item.fieldType == 'text'">
                                   <v-text-field
+                                    v-if="item.fieldName === 'เบอร์โทร'"
+                                    v-mask="'###-###-####'"
+                                    v-model="item.fieldValue"
+                                    :label="item.fieldName"
+                                    outlined
+                                    dense
+                                    required
+                                    :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                  ></v-text-field>
+                                  <v-text-field
+                                    v-else
                                     v-model="item.fieldValue"
                                     :label="item.fieldName"
                                     outlined
@@ -431,6 +444,17 @@
                                 </v-col>
                                 <v-col cols="12" class="InputData" v-if="item.fieldType == 'number'">
                                   <v-text-field
+                                    v-if="item.fieldName === 'เบอร์โทร'"
+                                    v-mask="'###-###-####'"
+                                    v-model="item.fieldValue"
+                                    :label="item.fieldName"
+                                    outlined
+                                    dense
+                                    required
+                                    :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                  ></v-text-field>
+                                  <v-text-field
+                                    v-else
                                     v-model="item.fieldValue"
                                     :label="item.fieldName"
                                     outlined
@@ -513,6 +537,17 @@
                                 >
                                   <v-col cols="12" class="InputData" v-if="item.fieldType == 'text'">
                                     <v-text-field
+                                      v-if="item.fieldName === 'เบอร์โทร'"
+                                      v-mask="'###-###-####'"
+                                      v-model="item.fieldValue"
+                                      :label="item.fieldName"
+                                      outlined
+                                      dense
+                                      required
+                                      :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                    ></v-text-field>
+                                    <v-text-field
+                                      v-else
                                       v-model="item.fieldValue"
                                       :label="item.fieldName"
                                       outlined
@@ -523,6 +558,17 @@
                                   </v-col>
                                   <v-col cols="12" class="InputData" v-if="item.fieldType == 'number'">
                                     <v-text-field
+                                      v-if="item.fieldName === 'เบอร์โทร'"
+                                      v-mask="'###-###-####'"
+                                      v-model="item.fieldValue"
+                                      :label="item.fieldName"
+                                      outlined
+                                      dense
+                                      required
+                                      :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                    ></v-text-field>
+                                    <v-text-field
+                                      v-else
                                       v-model="item.fieldValue"
                                       :label="item.fieldName"
                                       outlined
@@ -587,6 +633,17 @@
                                   <template v-if="parseInt(item.conditionValue) === parseInt(formAdd.flowId) ">
                                     <v-col cols="12" class="InputData" v-if="item.fieldType == 'text'">
                                       <v-text-field
+                                        v-if="item.fieldName === 'เบอร์โทร'"
+                                        v-mask="'###-###-####'"
+                                        v-model="item.fieldValue"
+                                        :label="item.fieldName"
+                                        outlined
+                                        dense
+                                        required
+                                        :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                      ></v-text-field>
+                                      <v-text-field
+                                      v-else
                                         v-model="item.fieldValue"
                                         :label="item.fieldName"
                                         dense
@@ -596,6 +653,17 @@
                                     </v-col>
                                     <v-col cols="12" class="InputData" v-if="item.fieldType == 'number'">
                                       <v-text-field
+                                        v-if="item.fieldName === 'เบอร์โทร'"
+                                        v-mask="'###-###-####'"
+                                        v-model="item.fieldValue"
+                                        :label="item.fieldName"
+                                        outlined
+                                        dense
+                                        required
+                                        :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                      ></v-text-field>
+                                      <v-text-field
+                                        v-else
                                         v-model="item.fieldValue"
                                         :label="item.fieldName"
                                         dense
@@ -661,7 +729,75 @@
                             </div>
                           </template>
                           <v-row>
+                            <div v-if="formAdd.masBranchID && formAdd.flowId">
                             <v-col class="pb-0">
+                              <v-menu
+                                ref="menu"
+                                v-model="menuDate"
+                                :close-on-content-click="false"
+                                :return-value.sync="date"
+                                :rules="[rules.required]"
+                                transition="scale-transition"
+                                offset-y
+                                required
+                                min-width="auto"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                    v-model="date"
+                                    readonly
+                                    label="วันที่"
+                                    outlined
+                                    dense
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    required
+                                    @click="pickerDate ? getMonth(pickerDate) : null"
+                                    :rules="[rules.required]"
+                                  >
+                                    <template #prepend>
+                                      <v-icon right>
+                                        mdi-calendar
+                                      </v-icon>
+                                    </template>
+                                  </v-text-field>
+                                </template>
+                                <!-- <div class="text-center">
+                                <v-progress-circular
+                                  indeterminate
+                                  color="primary"
+                                ></v-progress-circular>
+                                </div> -->
+                                <v-date-picker
+                                  v-model="date"
+                                  no-title
+                                  scrollable
+                                  :allowed-dates="allowedDates"
+                                  :picker-date.sync="pickerDate"
+                                  @change="setLimitBooking(date)"
+                                  @input="(menuDate = false), $refs.menu.save(date)"
+                                  :min="currentDate"
+                                >
+                                </v-date-picker>
+                              </v-menu>
+                            </v-col>
+                            </div>
+                            <v-col class="pb-0" v-if="timeavailable.length > 0 && date !== ''">
+                              <v-select
+                              v-model="time"
+                              :items="timeavailable"
+                              label="เวลา"
+                              item-text="text"
+                              item-value="text"
+                              persistent-hint
+                              return-object
+                              outlined
+                              dense
+                              required
+                              :rules ="[rules.required]"
+                            ></v-select>
+                            </v-col>
+                            <!-- <v-col class="pb-0">
                               <v-menu
                                 v-model="menuDate"
                                 :close-on-content-click="false"
@@ -712,7 +848,7 @@
                               required
                               :rules ="[rules.required]"
                             ></v-select>
-                            </v-col>
+                            </v-col> -->
                           </v-row>
                           <v-row>
                             <v-col class="pt-0">
@@ -863,6 +999,16 @@
                         <div v-if="p.fieldType == 'text'">
                           <br />
                           <v-text-field
+                            v-if="p.fieldName === 'เบอร์โทร'"
+                            v-mask="'###-###-####'"
+                            v-model="p.fieldValue"
+                            :label="p.fieldName"
+                            dense
+                            :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                            outlined
+                          ></v-text-field>
+                          <v-text-field
+                            v-else
                             v-model="p.fieldValue"
                             :label="p.fieldName"
                             dense
@@ -874,6 +1020,16 @@
                           <br />
                           <!-- <p>{{p.fieldName}}</p> -->
                           <v-text-field
+                            v-if="p.fieldName === 'เบอร์โทร'"
+                            v-mask="'###-###-####'"
+                            v-model="p.fieldValue"
+                            :label="p.fieldName"
+                            dense
+                            :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                            outlined
+                          ></v-text-field>
+                          <v-text-field
+                            v-else
                             v-model="p.fieldValue"
                             :label="p.fieldName"
                             dense
@@ -1005,6 +1161,16 @@
                         <div v-if="p.fieldType == 'text'">
                           <br />
                           <v-text-field
+                            v-if="p.fieldName === 'เบอร์โทร'"
+                            v-mask="'###-###-####'"
+                            v-model="p.fieldValue"
+                            :label="p.fieldName"
+                            dense
+                            :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                            outlined
+                          ></v-text-field>
+                          <v-text-field
+                            v-else
                             v-model="p.fieldValue"
                             :label="p.fieldName"
                             dense
@@ -1015,6 +1181,16 @@
                         <div v-if="p.fieldType == 'number'">
                           <br />
                           <v-text-field
+                            v-if="p.fieldName === 'เบอร์โทร'"
+                            v-mask="'###-###-####'"
+                            v-model="p.fieldValue"
+                            :label="p.fieldName"
+                            dense
+                            :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                            outlined
+                          ></v-text-field>
+                          <v-text-field
+                            v-else
                             v-model="p.fieldValue"
                             :label="p.fieldName"
                             dense
@@ -2493,6 +2669,17 @@
                               >
                                 <v-col cols="12" class="InputData" v-if="item.fieldType == 'text'">
                                   <v-text-field
+                                    v-if="item.fieldName === 'เบอร์โทร'"
+                                    v-mask="'###-###-####'"
+                                    v-model="item.fieldValue"
+                                    :label="item.fieldName"
+                                    outlined
+                                    dense
+                                    required
+                                    :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                  ></v-text-field>
+                                  <v-text-field
+                                    v-else
                                     v-model="item.fieldValue"
                                     :label="item.fieldName"
                                     outlined
@@ -2503,6 +2690,17 @@
                                 </v-col>
                                 <v-col cols="12" class="InputData" v-if="item.fieldType == 'number'">
                                   <v-text-field
+                                    v-if="item.fieldName === 'เบอร์โทร'"
+                                    v-mask="'###-###-####'"
+                                    v-model="item.fieldValue"
+                                    :label="item.fieldName"
+                                    outlined
+                                    dense
+                                    required
+                                    :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                  ></v-text-field>
+                                  <v-text-field
+                                    v-else
                                     v-model="item.fieldValue"
                                     :label="item.fieldName"
                                     outlined
@@ -2585,6 +2783,17 @@
                                 >
                                   <v-col cols="12" class="InputData" v-if="item.fieldType == 'text'">
                                     <v-text-field
+                                      v-if="item.fieldName === 'เบอร์โทร'"
+                                      v-mask="'###-###-####'"
+                                      v-model="item.fieldValue"
+                                      :label="item.fieldName"
+                                      outlined
+                                      dense
+                                      required
+                                      :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                    ></v-text-field>
+                                    <v-text-field
+                                      v-else
                                       v-model="item.fieldValue"
                                       :label="item.fieldName"
                                       outlined
@@ -2595,6 +2804,17 @@
                                   </v-col>
                                   <v-col cols="12" class="InputData" v-if="item.fieldType == 'number'">
                                     <v-text-field
+                                      v-if="item.fieldName === 'เบอร์โทร'"
+                                      v-mask="'###-###-####'"
+                                      v-model="item.fieldValue"
+                                      :label="item.fieldName"
+                                      outlined
+                                      dense
+                                      required
+                                      :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                    ></v-text-field>
+                                    <v-text-field
+                                      v-else
                                       v-model="item.fieldValue"
                                       :label="item.fieldName"
                                       outlined
@@ -2659,6 +2879,17 @@
                                   <template v-if="parseInt(item.conditionValue) === parseInt(formEdit.flowId) ">
                                     <v-col cols="12" class="InputData" v-if="item.fieldType == 'text'">
                                       <v-text-field
+                                        v-if="item.fieldName === 'เบอร์โทร'"
+                                        v-mask="'###-###-####'"
+                                        v-model="item.fieldValue"
+                                        :label="item.fieldName"
+                                        outlined
+                                        dense
+                                        required
+                                        :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                      ></v-text-field>
+                                      <v-text-field
+                                        v-else
                                         v-model="item.fieldValue"
                                         :label="item.fieldName"
                                         dense
@@ -2668,6 +2899,17 @@
                                     </v-col>
                                     <v-col cols="12" class="InputData" v-if="item.fieldType == 'number'">
                                       <v-text-field
+                                        v-if="item.fieldName === 'เบอร์โทร'"
+                                        v-mask="'###-###-####'"
+                                        v-model="item.fieldValue"
+                                        :label="item.fieldName"
+                                        outlined
+                                        dense
+                                        required
+                                        :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                      ></v-text-field>
+                                      <v-text-field
+                                        v-else
                                         v-model="item.fieldValue"
                                         :label="item.fieldName"
                                         dense
@@ -3115,10 +3357,23 @@ export default {
       }
     }
   },
+  watch: {
+    // menuDate (val) {
+    //   val && setTimeout(() => (this.$refs.dateRef.activePicker = 'month'))
+    // },
+    pickerDate (newval, oldval) {
+      this.getMonth(newval)
+      // this.allowedDates()
+      // here you can check if month changed using newval and oldval
+    }
+  },
   data () {
     let startDate = null
     let endDate = null
     return {
+      pickerDate: null,
+      currentDate: moment().format('YYYY-MM-DD'),
+      currentMonth: moment().format('YYYY-MM'),
       checkSelectText: '',
       flowSelect: '',
       dueDate: '',
@@ -3375,7 +3630,17 @@ export default {
       dataTypeProcess1: '',
       dataTypeProcess2: '',
       dataTypeProcess3: '',
-      dataTypeProcess4: ''
+      dataTypeProcess4: '',
+      dateDayoff: [],
+      dateDayCustom: [],
+      dateDaylimit: null,
+      flowItemLimit: [],
+      checkLimitBooking: {
+        ID: '',
+        countBooking: null,
+        limitCheck: null,
+        limitBooking: 0
+      }
     }
   },
   beforeCreate () {
@@ -3417,6 +3682,187 @@ export default {
     })
   },
   methods: {
+    async checkLimit () {
+      this.checkLimitBooking.ID = 'NO'
+      this.checkLimitBooking.countBooking = 1
+      let LimitBooking = await this.getLimitBooking()
+      if (LimitBooking.status === false) {
+        this.checkLimitBooking.ID = 'NO'
+        this.checkLimitBooking.countBooking = 1
+        console.log('1257')
+      } else {
+        console.log('1259', LimitBooking)
+        LimitBooking.forEach((item) => {
+          let dt = JSON.parse(this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.setTime) || []
+          // let dt = JSON.parse(this.branchData.filter(item => { return item.masBranchID === this.formAdd.masBranchID })[0].setTime) || []
+          let dtint = parseInt(dt.filter(item => item.value === this.time.value)[0].limitBooking || '0')
+          console.log('test', dtint)
+          // console.log('test', item.flowId === this.formAdd.flowId && this.momenDate_1(item.bookingDate) === this.date && item.bookingTime === this.time.value)
+          // if (item.masBranchID === this.formAdd.masBranchID && this.momenDate_1(item.bookingDate) === this.date && item.bookingTime === this.time.value) {
+          if (item.flowId === this.formAdd.flowId && this.momenDate_1(item.bookingDate) === this.date && item.bookingTime === this.time.value) {
+            this.checkLimitBooking.ID = item.id
+            console.log('1266')
+            this.checkLimitBooking.countBooking = parseInt(item.countBooking) + 1
+            this.checkLimitBooking.limitCheck = parseInt(item.countBooking) >= dtint ? 'false' : 'true'
+            this.checkLimitBooking.limitBooking = dtint
+            // console.log('item.masBranchID', item)
+          }
+        })
+      }
+      console.log('this.checkLimitBooking', this.checkLimitBooking)
+    },
+    async getLimitBooking () {
+      // console.log('date', this.date)
+      // let LimitBooking = axios.get(this.DNS_IP + '/LimitBookingDate/get?shopId=' + this.$session.getAll().data.shopId + '&masBranchID=' + this.formAdd.masBranchID + '&bookingDate=' + this.date).then(async (response) => {
+      //   let rs = response.data
+      //   return rs
+      // })
+      // return LimitBooking
+      let LimitBooking = axios.get(this.DNS_IP + '/LimitBookingDate/get?shopId=' + this.$session.getAll().data.shopId + '&flowId=' + this.formAdd.flowId + '&bookingDate=' + this.date).then(async (response) => {
+        let rs = response.data
+        return rs
+      })
+      return LimitBooking
+    },
+    allowedDates (val) {
+      if (this.dateDaylimit) {
+        if (this.branch.filter(el => el.value === this.formAdd.masBranchID)[0].allData.typeDayCustom === 'on') {
+          return val === this.dateDayCustom.filter(el => el === val)[0]
+        } else {
+          if (
+            this.dateDayoff.filter(el => {
+              return el === new Date(val).getDay()
+            }).length === 0 &&
+          this.dateDayCustom.filter(el => {
+            return el === val
+          }).length === 0 &&
+          this.dateDaylimit.filter(el => {
+            return el === val
+          }).length === 0
+          ) {
+            return val
+          }
+        }
+      }
+    },
+    async setLimitBooking (dateitem) {
+      this.time = ''
+      this.timeavailable = []
+
+      // LimitBookingBy Flow
+      // this.limitBookingCheck = this.flowItemLimit.filter(item => { return item.flowId === this.formAdd.flowId })[0].limitBookingCheck || 'False'
+      // let setTimeOld = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) })[0].allData.setTime)
+
+      // LimitBookingBy masBranch
+      this.limitBookingCheck = this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.limitBookingCheck || 'False'
+      if (this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.limitBookingCheck || 'False') {
+        let TimeData = []
+        let currentDate = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTime) || []
+        if (
+          moment(dateitem).format('YYYY-MM-DD') ===
+          moment().format('YYYY-MM-DD')
+        ) {
+          TimeData = currentDate.filter(
+            item => moment().format(item.value) > moment().format('HH:mm')
+          )
+        } else {
+          TimeData = currentDate
+        }
+        this.timeavailable = TimeData
+        console.log('TimeData', TimeData)
+        let LimitBooking = await this.getLimitBooking()
+        console.log('LimitBooking', LimitBooking)
+        if (LimitBooking.status !== false) {
+          if (LimitBooking.length > 0) {
+            LimitBooking.forEach((i, n) => {
+              this.timeavailable.forEach((v, k) => {
+                if (i.bookingTime === v.value) {
+                  if (i.countBooking >= parseInt(v.limitBooking)) {
+                    this.timeavailable.splice(k, 1)
+                  }
+                }
+              })
+            })
+            if (this.timeavailable.length === 0) {
+              this.$swal(
+                'คิวเต็มแล้ว',
+                'กรุณาเลือกวันที่ใหม่อีกครั้ง',
+                'error'
+              )
+              this.date = ''
+            }
+          }
+          console.log('this.timeavailable IF', this.timeavailable)
+        } else {
+          this.timeavailable = TimeData
+          console.log('this.timeavailable ELSE', this.timeavailable)
+        }
+      } else {
+        console.log('this.timeavailable ELSEEEEE', this.timeavailable)
+        // LimitBookingBy Flow
+        // this.timeavailable = JSON.parse(this.flowItemLimit.filter(item => { return item.flowId === this.formAdd.flowId })[0].setTime) || []
+
+        // LimitBookingBy masBranch
+        this.timeavailable = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTime) || []
+      }
+    },
+    async getMonth (month) {
+      console.log('month', month)
+      // const result = await axios.get(this.DNS_IP + '/LimitBookingDate/get_LimitDate?shopId=' + this.$session.getAll().data.shopId + '&masBranchID=' + this.formAdd.masBranchID + '&bookingDate=' + month)
+      const result = await axios.get(this.DNS_IP + '/LimitBookingDate/get_LimitDate?shopId=' + this.$session.getAll().data.shopId + '&flowId=' + this.formAdd.flowId + '&bookingDate=' + month)
+      if (result.data.length > 0) {
+        console.log('getMonth IF', result.data)
+        this.dateDaylimit = []
+        let dt = result.data
+        if (dt[0].limitBookingCheck === 'True') {
+          console.log('limitBookingCheck === True')
+          dt.forEach((v, k) => {
+            if (JSON.parse(v.setTime)) {
+              let count = 0
+              JSON.parse(v.setTime).forEach((v2, k2) => {
+                count += parseInt(v2.limitBooking)
+              })
+              if (v.sum >= count) {
+                this.dateDaylimit.push(
+                  moment(v.bookingDate).format('YYYY-MM-DD')
+                )
+              }
+            }
+          })
+        } else {
+          console.log('limitBookingCheck === False')
+          this.dateDaylimit = []
+        }
+
+        // this.dateDaylimit = result.data.map((item) => { return this.momenDate_1(item.bookingDate) })
+      } else {
+        console.log('getMonth ELSE')
+        this.dateDaylimit = []
+      }
+      // console.log('this.dateDaylimit', this.dateDaylimit)
+    },
+    SetallowedDates () {
+      this.branch.forEach((v, k) => {
+        console.log('v', v)
+        if (v.allData.masBranchID === this.formAdd.masBranchID) {
+          // console.log('Value', v.dateDayoffValue)
+          v.allData.dateDayCustom = v.allData.dateDayCustom || ''
+          v.allData.dateDayoffValue = v.allData.dateDayoffValue || ''
+          if (v.allData.dateDayoffValue !== '') {
+            // console.log('if')
+            this.dateDayoff = JSON.parse(v.allData.dateDayoffValue)
+          } else {
+            // console.log('else')
+            this.dateDayoff = []
+          }
+          if (v.dateDayCustom !== '') {
+            this.dateDayCustom = JSON.parse(v.allData.dateDayCustom)
+          } else {
+            this.dateDayCustom = []
+          }
+        }
+      })
+    },
     async getBookingFieldText () {
       if (JSON.parse(localStorage.getItem('sessionData')) === null) {
         await axios
@@ -4955,7 +5401,12 @@ export default {
               if (tempField.length > 0) {
                 if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
                   if (tempField[0].fieldValue) {
-                    convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+                    // convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+                    if (JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue }).length === 0) {
+                      convertTextField = tempField[0].fieldValue || ''
+                    } else {
+                      convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+                    }
                   } else {
                     convertTextField = tempField[0].fieldValue
                   }
@@ -5026,7 +5477,12 @@ export default {
                 if (tempField.length > 0) {
                   if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
                     if (tempField[0].fieldValue) {
-                      convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+                      // convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+                      if (JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue }).length === 0) {
+                        convertTextField = tempField[0].fieldValue || ''
+                      } else {
+                        convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+                      }
                     } else {
                       convertTextField = tempField[0].fieldValue || ''
                     }
@@ -5978,6 +6434,12 @@ export default {
             extraJob = 'False'
             break
         }
+        let limitBookingCheck = ''
+        if (this.checkLimitBooking.limitCheck === 'true' || null) {
+          limitBookingCheck = 'True'
+        } else {
+          limitBookingCheck = 'False'
+        }
         let rs = this.fieldNameItem
         let Add = []
         let fielditem = this.fieldNameItem
@@ -5994,6 +6456,8 @@ export default {
             update.fieldValue = d.fieldValue
             update.shopId = d.shopId
             update.dueDate = this.date + ' ' + this.time.value
+            update.dateSelect = this.date
+            update.timeSelect = this.time.value
             update.timeText = this.time.text
             update.userId = 'user-skip'
             update.pageName = 'BookingList'
@@ -6002,6 +6466,10 @@ export default {
             update.extraJob = extraJob
             update.empSelect = this.empSelectAdd
             update.adminLogin = this.session.data.userName
+            update.limitBookingCheck = limitBookingCheck
+            update.limitBookingId = this.checkLimitBooking.ID
+            update.limitBookingCount = this.checkLimitBooking.countBooking
+            update.getLimitBooking = this.checkLimitBooking.limitBooking
             Add.push(update)
           } else {
             if (fielditem.filter(row => { return row.fieldId === parseInt(d.conditionField) }).length > 0) {
@@ -6014,6 +6482,8 @@ export default {
                 update.fieldValue = d.fieldValue
                 update.shopId = d.shopId
                 update.dueDate = this.date + ' ' + this.time.value
+                update.dateSelect = this.date
+                update.timeSelect = this.time.value
                 update.timeText = this.time.text
                 update.sourceLink = 'direct'
                 update.userId = 'user-skip'
@@ -6022,6 +6492,10 @@ export default {
                 update.extraJob = extraJob
                 update.empSelect = this.empSelectAdd
                 update.adminLogin = this.session.data.userName
+                update.limitBookingCheck = limitBookingCheck
+                update.limitBookingId = this.checkLimitBooking.ID
+                update.limitBookingCount = this.checkLimitBooking.countBooking
+                update.getLimitBooking = this.checkLimitBooking.limitBooking
                 Add.push(update)
               }
             } else if (d.conditionField === 'flow') {
@@ -6034,6 +6508,8 @@ export default {
                 update.fieldValue = d.fieldValue
                 update.shopId = d.shopId
                 update.dueDate = this.date + ' ' + this.time.value
+                update.dateSelect = this.date
+                update.timeSelect = this.time.value
                 update.timeText = this.time.text
                 update.sourceLink = 'direct'
                 update.userId = 'user-skip'
@@ -6042,6 +6518,10 @@ export default {
                 update.extraJob = extraJob
                 update.empSelect = this.empSelectAdd
                 update.adminLogin = this.session.data.userName
+                update.limitBookingCheck = limitBookingCheck
+                update.limitBookingId = this.checkLimitBooking.ID
+                update.limitBookingCount = this.checkLimitBooking.countBooking
+                update.getLimitBooking = this.checkLimitBooking.limitBooking
                 Add.push(update)
               }
             }
@@ -6079,11 +6559,30 @@ export default {
             await axios
               .get(this.DNS_IP + '/booking_view/getSearchDuplicate?shopId=' + this.session.data.shopId + '&fieldValue=' + checkDupliRegNo[0].fieldValue.replace(/ /g, '') +
             '&flowId=' + this.formAdd.flowId + '&dueDate=' + this.date + '&statusBt=noCancel' + '&checkOnsite=is null')
-              .then(response => {
+              .then(async response => {
                 let rs = response.data
                 if (rs.status === false) {
-                // this.addDataInsert()
-                  this.dialogAddCon = true
+                  if (this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.limitBookingCheck === 'True') {
+                    await this.checkLimit()
+                    console.log('this.checkLimitBooking.limitCheck', this.checkLimitBooking)
+                    // console.log('test', this.branchData.filter(item => { return item.masBranchID === this.formAdd.masBranchID })[0].setTime)
+                    if (this.checkLimitBooking.limitCheck === 'true') {
+                      this.dialogAddCon = true
+                    } else if (this.checkLimitBooking.limitCheck === 'false') {
+                      console.log('else1402')
+                      this.$swal('คิวเต็มแล้ว', 'กรุณาเลือกวันที่ใหม่อีกครั้ง', 'error')
+                      this.date = ''
+                      this.time = ''
+                    } else {
+                      this.checkLimitBooking.limitCheck = 'true'
+                      this.dialogAddCon = true
+                      console.log('else1407')
+                    }
+                  } else {
+                    this.checkLimitBooking.limitCheck = 'false'
+                    this.dialogAddCon = true
+                    console.log('else1407')
+                  }
                 } else {
                   var dateEdit = this.format_dateNotime(this.date)
                   this.textError = 'เลขทะเบียนนี้ วันที่ ' + dateEdit + ' ได้ทำรายการนัดหมายไปแล้ว'
@@ -6095,7 +6594,25 @@ export default {
                 setTimeout(() => this.addDataSubmit(), 3000)
               })
           } else {
-            this.dialogAddCon = true
+            if (this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.limitBookingCheck === 'True') {
+              await this.checkLimit()
+              // console.log('test', this.branchData.filter(item => { return item.masBranchID === this.formAdd.masBranchID })[0].setTime)
+              if (this.checkLimitBooking.limitCheck === 'true') {
+                this.dialogAddCon = true
+              } else if (this.checkLimitBooking.limitCheck === 'false') {
+                console.log('else1402')
+                this.$swal('คิวเต็มแล้ว', 'กรุณาเลือกวันที่ใหม่อีกครั้ง', 'error')
+                this.date = ''
+                this.time = ''
+              } else {
+                this.checkLimitBooking.limitCheck = 'true'
+                this.dialogAddCon = true
+                console.log('else1407')
+              }
+            } else {
+              this.checkLimitBooking.limitCheck = 'false'
+              this.dialogAddCon = true
+            }
           }
         } else {
           this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')

@@ -415,7 +415,19 @@
                             false-value="False"
                             true-value="True"
                             v-model="formAdd.checkDeposit"
+                            @change="formAdd.amountDeposit = 0"
                           ></v-checkbox>
+                        </v-col>
+                        <v-col cols="12" class="pb-0 pt-0">
+                          <VuetifyMoney
+                            v-if="formAdd.checkDeposit === 'True'"
+                            label="จำนวนเงินมัดจำ"
+                            v-model="formAdd.amountDeposit"
+                            required
+                            :rules="[rules.required]"
+                            outlined
+                            dense
+                            v-bind:options="options2" />
                         </v-col>
                         <v-col cols="12">
                           <v-row justify="center">
@@ -617,7 +629,19 @@
                             false-value="False"
                             true-value="True"
                             v-model="formUpdate.checkDeposit"
+                            @change="formUpdate.amountDeposit = 0"
                           ></v-checkbox>
+                        </v-col>
+                        <v-col cols="12" class="pb-0 pt-0">
+                          <VuetifyMoney
+                            v-if="formUpdate.checkDeposit === 'True'"
+                            label="จำนวนเงินมัดจำ"
+                            v-model="formUpdate.amountDeposit"
+                            required
+                            :rules="[rules.required]"
+                            outlined
+                            dense
+                            v-bind:options="options2" />
                         </v-col>
                         <v-col cols="12">
                           <v-row style="height: 50px" justify="center">
@@ -1052,6 +1076,7 @@
                           @click="chekshowTime()"
                           false-value="False"
                           true-value="True"
+                          label="ตั้ง Limit การนัดหมาย"
                           v-model="formUpdateLimitbooking.limitBookingCheck"
                           hide-details
                           class="shrink ml-6 mr-0 mt-0 mb-2"
@@ -1060,57 +1085,31 @@
                       <v-data-table
                         :headers="columnsAddTime"
                         :items="dataItemAddTime"
-                        :items-per-page="All"
+                        disable-pagination
+                        hide-default-footer
                       >
-                        <!-- <template v-slot:[`item.actions1`]="{ item, index }">
-                            <v-btn
-                              v-show="index !== 0"
-                              color="173053"
-                              fab
-                              x-small
-                              outlined
-                              @click="actionUp(item, index)"
-                            >
-                              <v-icon color="#173053">
-                                mdi-chevron-up
-                              </v-icon>
-                            </v-btn>
-                            <v-btn
-                              color="173053"
-                              fab
-                              x-small
-                              v-show="index < (dataItemAddTime.length -1)"
-                              outlined
-                              @click="actionDown(item, index)"
-                            >
-                              <v-icon color="#173053">
-                                mdi-chevron-down
-                              </v-icon>
-                            </v-btn>
-                          </template> -->
-                           <template v-slot:[`item.actions2`]="{ item, index }">
-                              <v-btn
-                                color="question"
-                                fab
-                                dark
-                                x-small
-                                @click.stop="getUpdateAdd(item, 'update', index)"
-                              >
-                                <v-icon color="#FFFFFF"> mdi-tools </v-icon>
-                              </v-btn>
-                              <v-btn
-                                color="red"
-                                dark
-                                fab
-                                x-small
-                                @click.stop="getUpdateAdd(item, 'delete', index)"
-                              >
-                                <v-icon> mdi-delete </v-icon>
-                              </v-btn>
-                            </template>
+                        <template v-slot:[`item.actions2`]="{ item, index }">
+                          <v-btn
+                            color="question"
+                            fab
+                            dark
+                            x-small
+                            @click.stop="getUpdateAdd(item, 'update', index)"
+                          >
+                            <v-icon color="#FFFFFF"> mdi-tools </v-icon>
+                          </v-btn>
+                          <v-btn
+                            color="red"
+                            dark
+                            fab
+                            x-small
+                            @click.stop="getUpdateAdd(item, 'delete', index)"
+                          >
+                            <v-icon> mdi-delete </v-icon>
+                          </v-btn>
+                        </template>
                       </v-data-table>
                     </v-col>
-
                   </v-row>
                   </v-card>
                   </v-form>
@@ -1359,6 +1358,7 @@ export default {
         checkPayment: 'True',
         checkOnsite: 'False',
         checkDeposit: 'False',
+        amountDeposit: 0,
         shopId: this.$session.getAll().data.shopId
       },
       formAddStep: {
@@ -1394,6 +1394,7 @@ export default {
         checkPayment: 'True',
         checkOnsite: 'False',
         checkDeposit: 'False',
+        amountDeposit: 0,
         shopId: ''
       },
       formUpdateItemFlow: {
@@ -2118,6 +2119,7 @@ export default {
       this.formUpdate.flowNameEn = item.flowNameEn
       this.formUpdate.flowId = item.flowId
       this.formUpdate.flowCode = item.flowCode
+      this.formUpdate.amountDeposit = item.amountDeposit || 0
       this.formUpdate.checkPayment = item.checkPayment || 'True'
       this.formUpdate.checkDeposit = item.checkDeposit || 'False'
       this.shopId = this.$session.getAll().data.shopId

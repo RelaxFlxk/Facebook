@@ -431,7 +431,7 @@
                             outlined
                             dense
                             required
-                            @change="setFlowAdd(), checkTime()"
+                            @change="setFlowAdd(), checkTime(), date = ''"
                             :rules="[rules.required]"
                           ></v-select>
                           <!-- <v-select
@@ -452,7 +452,7 @@
                             dense
                             required
                             :rules="[rules.required]"
-                            @change="SetallowedDates()"
+                            @change="SetallowedDates(), date = ''"
                           ></v-select>
                           <!-- <v-select
                             v-model="formAdd.masBranchID"
@@ -4709,7 +4709,7 @@ export default {
         LimitBooking.forEach((item) => {
           let dt = JSON.parse(this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.setTime) || []
           // let dt = JSON.parse(this.branchData.filter(item => { return item.masBranchID === this.formAdd.masBranchID })[0].setTime) || []
-          let dtint = parseInt(dt.filter(item => item.value === this.time.value)[0].limitBooking)
+          let dtint = parseInt(dt.filter(item => item.value === this.time.value)[0].limitBooking || '0')
           console.log('test', dtint)
           // console.log('test', item.flowId === this.formAdd.flowId && this.momenDate_1(item.bookingDate) === this.date && item.bookingTime === this.time.value)
           // if (item.masBranchID === this.formAdd.masBranchID && this.momenDate_1(item.bookingDate) === this.date && item.bookingTime === this.time.value) {
@@ -8089,6 +8089,8 @@ export default {
             update.fieldValue = d.fieldValue
             update.shopId = d.shopId
             update.dueDate = this.date + ' ' + this.time.value
+            update.dateSelect = this.date
+            update.timeSelect = this.time.value
             update.timeText = this.time.text
             update.userId = 'user-skip'
             update.pageName = 'BookingList'
@@ -8115,6 +8117,8 @@ export default {
                 update.fieldValue = d.fieldValue
                 update.shopId = d.shopId
                 update.dueDate = this.date + ' ' + this.time.value
+                update.dateSelect = this.date
+                update.timeSelect = this.time.value
                 update.timeText = this.time.text
                 update.sourceLink = 'direct'
                 update.userId = 'user-skip'
@@ -8141,6 +8145,8 @@ export default {
                 update.fieldValue = d.fieldValue
                 update.shopId = d.shopId
                 update.dueDate = this.date + ' ' + this.time.value
+                update.dateSelect = this.date
+                update.timeSelect = this.time.value
                 update.timeText = this.time.text
                 update.sourceLink = 'direct'
                 update.userId = 'user-skip'
@@ -8218,13 +8224,18 @@ export default {
                 // console.log('test', this.branchData.filter(item => { return item.masBranchID === this.formAdd.masBranchID })[0].setTime)
                 if (this.checkLimitBooking.limitCheck === 'true') {
                   this.dialogAddCon = true
+                } else if (this.checkLimitBooking.limitCheck === 'false') {
+                  console.log('else1402')
+                  this.$swal('คิวเต็มแล้ว', 'กรุณาเลือกวันที่ใหม่อีกครั้ง', 'error')
+                  this.date = ''
+                  this.time = ''
+                } else {
+                  this.checkLimitBooking.limitCheck = 'true'
+                  this.dialogAddCon = true
+                  console.log('else1407')
                 }
-              } else if (this.checkLimitBooking.limitCheck === 'false') {
-                console.log('else1402')
-                this.$swal('คิวเต็มแล้ว', 'กรุณาเลือกวันที่ใหม่อีกครั้ง', 'error')
-                this.date = ''
-                this.time = ''
               } else {
+                this.checkLimitBooking.limitCheck = 'false'
                 this.dialogAddCon = true
                 console.log('else1407')
               }
@@ -8246,10 +8257,12 @@ export default {
                 this.time = ''
               } else {
                 this.dialogAddCon = true
+                this.checkLimitBooking.limitCheck = 'true'
                 console.log('else1407')
               }
             } else {
               this.dialogAddCon = true
+              this.checkLimitBooking.limitCheck = 'false'
             }
           }
         } else {
