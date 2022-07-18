@@ -6983,7 +6983,12 @@ export default {
               if (tempField.length > 0) {
                 if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
                   if (tempField[0].fieldValue) {
-                    convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+                    if (JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue }).length === 0) {
+                      convertTextField = tempField[0].fieldValue || ''
+                    } else {
+                      convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+                    }
+                    // convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
                   } else {
                     convertTextField = tempField[0].fieldValue
                   }
@@ -7063,29 +7068,24 @@ export default {
             let t = dataSelect[x]
             let serviceDetail = ''
             let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
-            // fieldflow.forEach((row) => {
-            //   let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
-            //   serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
-            // })
-            // console.log('fieldflow1', fieldflow)
-            // console.log('this.BookingDataList', this.BookingDataList)
             if (fieldflow.length > 0) {
               fieldflow.forEach((row) => {
-                // console.log('this.BookingDataList[t.bookNo]', this.BookingDataList[t.bookNo])
-                // console.log('[t.bookNo]', t.bookNo)
                 let tempField = []
                 if (this.BookingDataList[t.bookNo] !== undefined) {
                   tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
                 } else {
                   tempField = []
                 }
-                // console.log('tempField', tempField)
-                // console.log('fieldType', row.fieldType)
                 let convertTextField = ''
                 if (tempField.length > 0) {
                   if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
                     if (tempField[0].fieldValue) {
-                      convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+                      // console.log('7088', JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue }))
+                      if (JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue }).length === 0) {
+                        convertTextField = tempField[0].fieldValue || ''
+                      } else {
+                        convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+                      }
                     } else {
                       convertTextField = tempField[0].fieldValue || ''
                     }
@@ -7120,37 +7120,6 @@ export default {
             // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
           ]
         } else if (text === 'confirm') {
-          // let checkDeposit = this.DataFlowName.filter(el => { return el.value === this.flowSelect })[0].allData.checkDeposit || 'False'
-          // if (checkDeposit === 'True') {
-          //   this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
-          //     // { text: 'Booking Id', value: 'bookNo' },
-          //     { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
-          //     // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-          //     { text: 'ชื่อบริการ', value: 'flowNameShow' },
-          //     { text: 'ชื่อลูกค้า', value: 'cusName' },
-          //     { text: 'เบอร์โทร', value: 'tel' },
-          //     { text: 'เงินมัดจำ', value: 'action4', sortable: false, align: 'center' },
-          //     { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
-          //     { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-          //     { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
-          //     { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
-          //     { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
-          //   ]
-          // } else {
-          //   this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
-          //     // { text: 'Booking Id', value: 'bookNo' },
-          //     { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
-          //     // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-          //     { text: 'ชื่อบริการ', value: 'flowNameShow' },
-          //     { text: 'ชื่อลูกค้า', value: 'cusName' },
-          //     { text: 'เบอร์โทร', value: 'tel' },
-          //     { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
-          //     { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-          //     { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
-          //     { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
-          //     { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
-          //   ]
-          // }
           this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
             // { text: 'Booking Id', value: 'bookNo' },
             { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
