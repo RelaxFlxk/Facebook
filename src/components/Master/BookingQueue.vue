@@ -1,7 +1,7 @@
 <template>
    <transition name="slide">
       <div class="slidein" v-if="drawer" :style="'max-width:'+width+' !important'">
-         <h4 @click="toggle">ตรวจสอบคิวจองรายวัน</h4>
+         <h4 class="ml-6" @click="toggle()">ตรวจสอบคิวจองรายวัน</h4>
          <v-row no-gutters>
          <v-col cols="12">
             <v-menu

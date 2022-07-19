@@ -5643,7 +5643,8 @@ export default {
       this.empSelectEdit = parseInt(dt.empSelect)
 
       this.timeavailable = []
-      let dtTime = await this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
+      // let dtTime = await this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
+      let dtTime = this.dataFlowSelectEdit.filter(item => { return item.value === this.formEdit.flowId })
       // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
       this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
       this.dateEdit = moment(moment(dt.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
@@ -9177,6 +9178,26 @@ export default {
                         this.getSelect(this.getSelectText, this.getSelectCount)
                       }
                     }
+                    // Update LimitBooking
+                    // if (this.formChange.date + ' ' + this.formChange.time.value >= this.format_date(new Date())) {
+                    //   let chkStatLimit = this.DataFlowName.filter(el => { return el.value === item.flowId })
+                    //   if (chkStatLimit.length > 0) {
+                    //     if (chkStatLimit[0].allData.limitBookingCheck === 'True') {
+                    //       let dueOld = this.dueDateOld + this.dueDateTimeOld
+                    //       let dueNew = this.formChange.date + this.formChange.time.value
+                    //       let limitBookingCount = this.timeavailable.filter(el => { return el.value === this.formChange.time.value })
+                    //       let limitBookingCounts = 0
+                    //       if (limitBookingCount.length > 0) {
+                    //         limitBookingCounts = parseInt(limitBookingCount[0].limitBooking)
+                    //       } else {
+                    //         limitBookingCounts = 0
+                    //       }
+                    //       if (dueOld !== dueNew) {
+                    //         this.updateLimitBookingChange(item, this.dueDateOld, this.dueDateTimeOld, this.formChange.date, this.formChange.time.value, limitBookingCounts)
+                    //       }
+                    //     }
+                    //   }
+                    // }
                     // this.getDataCalendaBooking()
                     this.$swal('เรียบร้อย', 'เปลี่ยนเวลานัดหมาย เรียบร้อย', 'success')
                     this.dataChangeReady = true
@@ -9196,6 +9217,24 @@ export default {
       }).catch(error => {
         this.dataChangeReady = true
         console.log('catch alear : ', error)
+      })
+    },
+    async updateLimitBookingChange (item, dueDateOld, dueDateTimeOld, dueDateNew, dueDateTimeNew, limitBookingCount) {
+      let dt = {
+        dueDateOld: dueDateOld,
+        dueDateTimeOld: dueDateTimeOld,
+        dueDateNew: dueDateNew,
+        dueDateTimeNew: dueDateTimeNew,
+        flowId: item.flowId,
+        masBranchID: item.masBranchID,
+        dateSelect: dueDateNew,
+        timeSelect: dueDateTimeNew,
+        shopId: item.shopId,
+        userId: item.userId,
+        limitBookingCount: limitBookingCount
+      }
+      await axios.post(this.DNS_IP + '/Booking/updateLimitBookingChangeTime', dt).then(async response => {
+        return response.data
       })
     },
     async manageLimitBooking () {
@@ -9506,7 +9545,6 @@ export default {
       this.dueDateTimeOld = this.momenTime(item.dueDate)
       this.masBranchIDLimit = item.masBranchID
       this.flowIDLimit = item.flowId
-      console.log('this.dueDateOld', this.dueDateOld)
       this.checkSelectText = item.statusBt
       await this.checkTimeFlow(item)
       this.dataChange = item

@@ -1596,16 +1596,6 @@
                       </v-menu>
                     </v-col>
                     <v-col  cols="12" md="6" lg="6">
-                      <!-- <v-select
-                          v-model="formChange.time"
-                          :items="timeavailable"
-                          label="เวลา"
-                          menu-props="auto"
-                          outlined
-                          dense
-                          required
-                          :rules ="[rules.required]"
-                        ></v-select> -->
                          <v-select
                             v-model="formChange.time"
                             :items="timeavailable"
@@ -2080,7 +2070,7 @@
                       fab
                       v-if="item.statusBt === 'confirm'"
                       small
-                      @click.stop="(dialogEdit = true), getBookingData(item), checkTimeFlow()"
+                      @click.stop="(dialogEdit = true), getBookingData(item), checkTimeFlow(item)"
                     >
                       <v-icon dark> mdi-account-plus </v-icon>
                     </v-btn>
@@ -3640,7 +3630,9 @@ export default {
         countBooking: null,
         limitCheck: null,
         limitBooking: 0
-      }
+      },
+      dueDateOld: '',
+      dueDateTimeOld: ''
     }
   },
   beforeCreate () {
@@ -4147,9 +4139,10 @@ export default {
       this.empSelectEdit = parseInt(dt.empSelect)
 
       this.timeavailable = []
-      let dtTime = await this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
-      // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
+      let dtTime = this.dataFlowSelectEdit.filter(item => { return item.value === this.formEdit.flowId })
       this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+      // let dtTime = await this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
+      // this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
       this.dateEdit = moment(moment(dt.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
       if (this.timeavailable.filter(el => { return el.text === dt.timeText }).length > 0) {
         if (dt.timeText) {
@@ -4522,25 +4515,48 @@ export default {
     },
     checkTime () {
       this.timeavailable = []
-      let dtTime = this.branch.filter(item => { return item.value === this.formAdd.masBranchID })
+      // console.log('dataFlowSelectAdd', this.dataFlowSelectAdd)
+      let dtTime = this.dataFlowSelectAdd.filter(item => { return item.value === this.formAdd.flowId })
+      // let dtTime = this.branch.filter(item => { return item.value === this.formAdd.masBranchID })
       // console.log('test', dtTime)
       this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
       // console.log('timevailable', this.timeavailable)
     },
     checkTimeEdit () {
       this.timeavailable = []
-      let dtTime = this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
+      let dtTime = this.dataFlowSelectEdit.filter(item => { return item.value === this.formEdit.flowId })
+      // let dtTime = this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
       // console.log('test', dtTime)
       this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
       // console.log('timevailable', this.timeavailable)
     },
-    checkTimeFlow () {
+    checkTimeFlow (dt) {
       this.timeavailable = []
-      let dtTime = this.branch.filter(item => { return item.value === this.masBranchID })
+      // let dtTime = this.branch.filter(item => { return item.value === this.masBranchID })
+      let dtTime = this.DataFlowName.filter(item => { return item.value === dt.flowId })
       // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
       this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
       // console.log('timevailable', this.timeavailable)
     },
+    // checkTime () {
+    //   this.timeavailable = []
+    //   let dtTime = this.branch.filter(item => { return item.value === this.formAdd.masBranchID })
+    //   // console.log('test', dtTime)
+    //   this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+    //   // console.log('timevailable', this.timeavailable)
+    // },
+    // checkTimeEdit () {
+    //   this.timeavailable = []
+    //   let dtTime = this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
+    //   // console.log('test', dtTime)
+    //   this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+    //   // console.log('timevailable', this.timeavailable)
+    // },
+    // checkTimeFlow () {
+    //   this.timeavailable = []
+    //   let dtTime = this.branch.filter(item => { return item.value === this.masBranchID })
+    //   this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+    // },
     async confirmRemark (item, text) {
       let dt = null
       if (text === 'inAdvance') {
@@ -5236,7 +5252,7 @@ export default {
             this.masBranchID = this.dataItem[0].masBranchID
             console.log('dtTime', this.dataItem[0].masBranchID)
             await this.getBookingData(this.dataItem[0])
-            this.checkTimeFlow()
+            this.checkTimeFlow(item)
             // this.timeavailable = []
             // console.log('dtTime', this.dataItem[0].masBranchID)
             // let dtTime = this.branch.filter(item => { return item.value === this.dataItem[0].masBranchID })
@@ -5274,8 +5290,36 @@ export default {
         })
       return result
     },
+    // async getDataFlow () {
+    //   this.DataFlowName = await this.getDataFromAPI('/flow/get', 'flowId', 'flowName', '&checkOnsite=is null')
+    // },
     async getDataFlow () {
-      this.DataFlowName = await this.getDataFromAPI('/flow/get', 'flowId', 'flowName', '&checkOnsite=is null')
+      let result = []
+      let resultOption = []
+      await axios
+        .get(this.DNS_IP + `/flow/get?shopId=${this.session.data.shopId}&checkOnsite=is null`)
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            // result.push({ text: 'ทั้งหมด', value: 'AllFlow' })
+            for (var i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              let s = {}
+              s.text = d.flowName
+              s.value = d.flowId
+              s.allData = d
+              result.push(s)
+              resultOption.push(s)
+              // console.log('this.DataFlowName', this.DataFlowName)
+            }
+          } else {
+            result = []
+            resultOption = []
+          }
+        })
+      this.DataFlowName = result
+      this.dataFlowSelectAdd = resultOption
+      this.dataFlowSelectEdit = resultOption
     },
     async getDataBranch () {
       // if (localStorage.getItem('BRANCH') === null) {
@@ -6747,7 +6791,7 @@ export default {
         })
     },
     async getBookingDataJob (dt, text) {
-      this.checkTimeFlow()
+      this.checkTimeFlow(dt)
       this.BookingDataItem = []
       let itemIncustomField = []
       this.statusConfirmJob = false
@@ -7354,8 +7398,6 @@ export default {
       }
     },
     onChangeChk (item, changeStatus) {
-      console.log('item', item)
-      console.log('formChange', this.formChange)
       this.swalConfig.title = 'ต้องการ เปลี่ยนเวลานัดหมาย ใช่หรือไม่?'
       this.$swal(this.swalConfig).then(async result => {
         if (this.$session.id() !== undefined) {
@@ -7365,8 +7407,15 @@ export default {
             this.onChangeChk(item, changeStatus)
           } else {
             let countTime = checkCountTime.data[0].countChangeTime || 0
+            let dueOld = this.dueDateOld + this.dueDateTimeOld
+            let dueNew = this.formChange.date + this.formChange.time.value
+            if (dueOld === dueNew) {
+              countTime = countTime + 0
+            } else {
+              countTime = countTime + 1
+            }
             var dtChange = {
-              countChangeTime: countTime + 1,
+              countChangeTime: countTime,
               changeDueDate: 'change',
               dueDate: this.formChange.date + ' ' + this.formChange.time.value,
               timeText: this.formChange.time.text,
@@ -7392,7 +7441,6 @@ export default {
                 await axios
                   .post(this.DNS_IP + '/booking_transaction/add', dt)
                   .then(async response => {
-                    console.log('addDataGlobal', response)
                     if (changeStatus === 'confirm') {
                       if (item.userId !== 'user-skip') {
                         if (this.statusSearch === 'no') {
@@ -7444,6 +7492,26 @@ export default {
                         this.getSelect(this.getSelectText, this.getSelectCount)
                       }
                     }
+                    // Update LimitBooking
+                    // if (this.formChange.date + ' ' + this.formChange.time.value >= this.format_date(new Date())) {
+                    //   let chkStatLimit = this.DataFlowName.filter(el => { return el.value === item.flowId })
+                    //   if (chkStatLimit.length > 0) {
+                    //     if (chkStatLimit[0].allData.limitBookingCheck === 'True') {
+                    //       let dueOld = this.dueDateOld + this.dueDateTimeOld
+                    //       let dueNew = this.formChange.date + this.formChange.time.value
+                    //       let limitBookingCount = this.timeavailable.filter(el => { return el.value === this.formChange.time.value })
+                    //       let limitBookingCounts = 0
+                    //       if (limitBookingCount.length > 0) {
+                    //         limitBookingCounts = parseInt(limitBookingCount[0].limitBooking)
+                    //       } else {
+                    //         limitBookingCounts = 0
+                    //       }
+                    //       if (dueOld !== dueNew) {
+                    //         this.updateLimitBookingChange(item, this.dueDateOld, this.dueDateTimeOld, this.formChange.date, this.formChange.time.value, limitBookingCounts)
+                    //       }
+                    //     }
+                    //   }
+                    // }
                     // this.getDataCalendaBooking()
                     this.$swal('เรียบร้อย', 'เปลี่ยนเวลานัดหมาย เรียบร้อย', 'success')
                     this.dataChangeReady = true
@@ -7463,6 +7531,24 @@ export default {
       }).catch(error => {
         this.dataChangeReady = true
         console.log('catch alear : ', error)
+      })
+    },
+    async updateLimitBookingChange (item, dueDateOld, dueDateTimeOld, dueDateNew, dueDateTimeNew, limitBookingCount) {
+      let dt = {
+        dueDateOld: dueDateOld,
+        dueDateTimeOld: dueDateTimeOld,
+        dueDateNew: dueDateNew,
+        dueDateTimeNew: dueDateTimeNew,
+        flowId: item.flowId,
+        masBranchID: item.masBranchID,
+        dateSelect: dueDateNew,
+        timeSelect: dueDateTimeNew,
+        shopId: item.shopId,
+        userId: item.userId,
+        limitBookingCount: limitBookingCount
+      }
+      await axios.post(this.DNS_IP + '/Booking/updateLimitBookingChangeTime', dt).then(async response => {
+        return response.data
       })
     },
     async getjob (item) {
@@ -7680,10 +7766,12 @@ export default {
       this.checkSelectText = item.statusBt
       console.log('dueDate', item.dueDate)
       console.log('timeText', item.timeText)
-      await this.checkTimeFlow()
+      this.checkTimeFlow(item)
       this.dataChange = item
       this.remark = item.remark
       this.formChange.date = this.momenDate_1(item.dueDate)
+      this.dueDateOld = this.momenDate_1(item.dueDate)
+      this.dueDateTimeOld = this.momenTime(item.dueDate)
       if (this.timeavailable.filter(el => { return el.text === item.timeText }).length > 0) {
         if (item.timeText) {
           this.formChange.time = { text: item.timeText, value: this.momenTime(item.dueDate) }
