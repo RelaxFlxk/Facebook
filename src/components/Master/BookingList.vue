@@ -4499,7 +4499,7 @@ export default {
       if (this.$session.id() !== undefined) {
         console.log('getDataCalendaBooking')
         try {
-          await this.$refs.CalendarBooking.getDataReturn('&checkOnsite=is null')
+          await this.$refs.CalendarBooking.getDataReturn('&checkOnsite=is null', this.dateStart)
         } catch (e) { console.log(e) }
       // this.$refs.CalendarBooking.getDataFlow()
       // this.$refs.CalendarBooking.getDataBranch()
