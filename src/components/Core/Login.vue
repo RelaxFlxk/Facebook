@@ -305,7 +305,8 @@ export default {
         } else if (dataitem.USER_ROLE === 'board') {
           this.$router.push('/Master/BoardControlEmp')
         } else {
-          this.$router.push('/Dashbord/ReportBooking')
+          // this.$router.push('/Dashbord/ReportBooking')
+          this.$router.push('/Master/BookingField')
         }
       }
     },
