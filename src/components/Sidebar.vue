@@ -323,6 +323,19 @@
             >
               ยกเลิกแผนการชำระเงิน
             </v-btn>
+            <v-btn
+              class="mx-2"
+              fab
+              dark
+              small
+              outlined
+              @click="dialogCash = false"
+              color="red"
+            >
+              <v-icon dark>
+                mdi-close
+              </v-icon>
+            </v-btn>
           </div>
         </v-card-text>
         <v-card-text v-if="dataReadyGet">
@@ -552,7 +565,7 @@
       max-width="500px"
     >
       <v-card>
-        <v-card-title class="text-h5">
+        <v-card-title>
           ยกเลิกแผนการชำระเงิน
         </v-card-title>
         <v-card-text>ต้องการ ยกเลิกแผนการชำระเงิน ใช่หรือไม่?</v-card-text>
@@ -760,7 +773,7 @@ export default {
         { title: 'บรอดแคสต์', icon: 'mdi-bullhorn', to: '/BroadCast/BroadCast', type: 'broadCast' }
       ]
       this.settings = [
-        { title: 'จัดการข้อมูลนัดหมาย', icon: 'mdi-book-cog-outline', to: '/Master/BookingField', type: 'settings' },
+        // { title: 'จัดการข้อมูลนัดหมาย', icon: 'mdi-book-cog-outline', to: '/Master/BookingField', type: 'settings' },
         { title: 'เพิ่ม/ลบ สถานะการบริการ', icon: 'mdi-transit-connection-variant', to: '/Master/Flow', type: 'settings' },
         { title: 'จัดโครงสร้างกระดาน', icon: 'dashboard', to: '/Master/WorkShop', type: 'settings' },
         { title: 'จัดการ ช่องกรอกข้อมูล', icon: 'mdi-account-edit', to: '/Master/CustomField', type: 'settings' },

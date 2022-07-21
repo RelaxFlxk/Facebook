@@ -140,7 +140,7 @@
                     :type="type"
                   >
                   <template v-slot:day-label="{ day }">
-                    <span style="font-size:26px !important;">{{day}}</span>
+                    <span style="font-size:20px !important;">{{day}}</span>
                   </template>
                   <template v-slot:day="{ date }">
                     <div v-if="eventInfo[date] && eventInfo[date].all > 0" :class="(date === today) ? 'today' : ''">

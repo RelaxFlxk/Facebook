@@ -194,7 +194,7 @@
               <v-btn
                 color="#173053"
                 fab
-                small
+                x-small
                 dark
                 @click="setEdit(item) , dialog=true"
               >
@@ -203,7 +203,7 @@
               <v-btn
                 color="red"
                 fab
-                small
+                x-small
                 dark
                 @click="DeleteGroup(item)"
               >

@@ -55,7 +55,7 @@
               <v-row>
               <v-col cols="5" class="text-center pb-0">
                 <v-row>
-                  <v-col cols="12" class="pb-0 mt-9">
+                  <v-col cols="12" class="pb-0 mt-6">
                     <v-alert
                       :color="'orange ' + ((getSelectText === 'wait') ? '' : 'lighten-4')"
                       :dark="((getSelectText === 'wait') ? true : false)"
@@ -3941,7 +3941,7 @@
               </v-card-text>
           </v-card>
         </v-dialog>
-        <v-dialog v-model="dialogHistory" persistent max-width="50%">
+        <v-dialog v-model="dialogHistory" scrollable persistent max-width="50%">
             <v-card>
               <v-card-title>
                 <span class="headline">ประวัติเข้ารับบริการ</span>
@@ -6181,8 +6181,8 @@ export default {
       // console.log('this.dataItemTimesChange', this.dataItemTimesChange)
       // console.log('this.dataItemTime', this.dataItemTime)
       var datause = this.dataItemTime.sort((a, b) => {
-        if (this.format_date(a.timeDuetext) < this.format_date(b.timeDuetext)) return -1
-        return this.format_date(a.timeDuetext) > this.format_date(b.timeDuetext) ? 1 : 0
+        if (a.timeDuetext < b.timeDuetext) return -1
+        return a.timeDuetext > b.timeDuetext ? 1 : 0
       })
       for (let i = 0; i < datause.length; i++) {
         // var d = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === item.timeDueHtext })[i]
@@ -6191,8 +6191,8 @@ export default {
         console.log('s.dataSelect', dataSelect)
         if (dataSelect.length > 0) {
           var datauseSelect = dataSelect.sort((a, b) => {
-            if (this.format_date(a.timeDuetext) < this.format_date(b.timeDuetext)) return -1
-            return this.format_date(a.timeDuetext) > this.format_date(b.timeDuetext) ? 1 : 0
+            if (a.dueDateTimeStamp < b.dueDateTimeStamp) return -1
+            return a.dueDateTimeStamp > b.dueDateTimeStamp ? 1 : 0
           })
 
           for (let x = 0; x < datauseSelect.length; x++) {
@@ -6275,8 +6275,8 @@ export default {
       dataExport.push(s)
       runNo = 0
       var datause2 = this.dataItemTime.sort((a, b) => {
-        if (this.format_date(a.timeDuetext) < this.format_date(b.timeDuetext)) return -1
-        return this.format_date(a.timeDuetext) > this.format_date(b.timeDuetext) ? 1 : 0
+        if (a.timeDuetext < b.timeDuetext) return -1
+        return a.timeDuetext > b.timeDuetext ? 1 : 0
       })
       for (let i = 0; i < datause2.length; i++) {
         let d = datause2[i]
@@ -6285,8 +6285,8 @@ export default {
         // console.log('this.BookingDataList', this.BookingDataListTimechange)
         if (dataSelect.length > 0) {
           var datauseSelect2 = dataSelect.sort((a, b) => {
-            if (this.format_date(a.timeDuetext) < this.format_date(b.timeDuetext)) return -1
-            return this.format_date(a.timeDuetext) > this.format_date(b.timeDuetext) ? 1 : 0
+            if (a.dueDateTimeStamp < b.dueDateTimeStamp) return -1
+            return a.dueDateTimeStamp > b.dueDateTimeStamp ? 1 : 0
           })
 
           for (let x = 0; x < datauseSelect2.length; x++) {
@@ -6379,8 +6379,8 @@ export default {
       this.dataexportRemove = []
       let runNo = 0
       var datause = this.dataItemTime.sort((a, b) => {
-        if (this.format_date(a.timeDuetext) < this.format_date(b.timeDuetext)) return -1
-        return this.format_date(a.timeDuetext) > this.format_date(b.timeDuetext) ? 1 : 0
+        if (a.timeDuetext < b.timeDuetext) return -1
+        return a.timeDuetext > b.timeDuetext ? 1 : 0
       })
       for (let i = 0; i < datause.length; i++) {
         // var d = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === item.timeDueHtext })[i]
@@ -6389,8 +6389,8 @@ export default {
         // console.log('s.dataSelect', dataSelect)
         if (dataSelect.length > 0) {
           var datauseSelect = dataSelect.sort((a, b) => {
-            if (this.format_date(a.timeDuetext) < this.format_date(b.timeDuetext)) return -1
-            return this.format_date(a.timeDuetext) > this.format_date(b.timeDuetext) ? 1 : 0
+            if (a.dueDateTimeStamp < b.dueDateTimeStamp) return -1
+            return a.dueDateTimeStamp > b.dueDateTimeStamp ? 1 : 0
           })
           for (let x = 0; x < datauseSelect.length; x++) {
             runNo++
@@ -6463,8 +6463,8 @@ export default {
       dataExport.push(s)
       runNo = 0
       var datause2 = this.dataItemTime.sort((a, b) => {
-        if (this.format_date(a.timeDuetext) < this.format_date(b.timeDuetext)) return -1
-        return this.format_date(a.timeDuetext) > this.format_date(b.timeDuetext) ? 1 : 0
+        if (a.timeDuetext < b.timeDuetext) return -1
+        return a.timeDuetext > b.timeDuetext ? 1 : 0
       })
       for (let i = 0; i < datause2.length; i++) {
         let d = datause2[i]
@@ -6472,8 +6472,8 @@ export default {
         // console.log('s.dataSelect', dataSelect)
         if (dataSelect.length > 0) {
           var datauseSelect2 = dataSelect.sort((a, b) => {
-            if (this.format_date(a.timeDuetext) < this.format_date(b.timeDuetext)) return -1
-            return this.format_date(a.timeDuetext) > this.format_date(b.timeDuetext) ? 1 : 0
+            if (a.dueDateTimeStamp < b.dueDateTimeStamp) return -1
+            return a.dueDateTimeStamp > b.dueDateTimeStamp ? 1 : 0
           })
           for (let x = 0; x < datauseSelect2.length; x++) {
             runNo++
@@ -7275,8 +7275,8 @@ export default {
           //     return dueDate === this.timeTable
           //   // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
           //   }).sort((a, b) => {
-          //     if (this.format_date(a.timeDuetext) < this.format_date(b.timeDuetext)) return -1
-          //     return this.format_date(a.timeDuetext) > this.format_date(b.timeDuetext) ? 1 : 0
+          //     if (a.timeDuetext < b.timeDuetext) return -1
+          //     return a.timeDuetext > b.timeDuetext ? 1 : 0
           //   })
           //   this.BookingDataListTimechange = this.BookingDataList
           // }
@@ -7338,6 +7338,7 @@ export default {
                     s.flowId = d.flowId
                     s.flowName = d.flowName
                     s.dueDate = d.dueDate
+                    s.dueDateTimeStamp = d.dueDateTimeStamp
                     s.remarkRemove = d.remarkRemove
                     s.remark = d.remark
                     s.userId = d.userId
@@ -7404,16 +7405,16 @@ export default {
                   console.log('month new if', dataItems)
                   this.dataItemCheck = dataItems
                   this.dataItemTimesChange = this.dataItemCheck.sort((a, b) => {
-                    if (this.format_date(a.timeDuetext) < this.format_date(b.timeDuetext)) return -1
-                    return this.format_date(a.timeDuetext) > this.format_date(b.timeDuetext) ? 1 : 0
+                    if (a.timeDuetext < b.timeDuetext) return -1
+                    return a.timeDuetext > b.timeDuetext ? 1 : 0
                   })
                   // this.dataItemTimesChange = this.dataItemCheck.filter(el => {
                   //   let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
                   //   return dueDate === this.timeTable
                   //   // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
                   // }).sort((a, b) => {
-                  //   if (this.format_date(a.timeDuetext) < this.format_date(b.timeDuetext)) return -1
-                  //   return this.format_date(a.timeDuetext) > this.format_date(b.timeDuetext) ? 1 : 0
+                  //   if (a.timeDuetext < b.timeDuetext) return -1
+                  //   return a.timeDuetext > b.timeDuetext ? 1 : 0
                   // })
                   this.dataRemoveExport = this.dataItemTimesChange.filter(el => { return el.statusBt === 'cancel' })
                   // console.log('this.dataRemoveExport', this.dataRemoveExport)
@@ -7427,8 +7428,8 @@ export default {
           //     return dueDate === this.timeTable
           //     // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
           //   }).sort((a, b) => {
-          //     if (this.format_date(a.timeDuetext) < this.format_date(b.timeDuetext)) return -1
-          //     return this.format_date(a.timeDuetext) > this.format_date(b.timeDuetext) ? 1 : 0
+          //     if (a.timeDuetext < b.timeDuetext) return -1
+          //     return a.timeDuetext > b.timeDuetext ? 1 : 0
           //   })
           // }
         }
@@ -9036,6 +9037,8 @@ export default {
     },
     async setDataRemove (item) {
       this.bookNoRemove = item
+      this.dueDateOld = this.momenDate_1(item.dueDate)
+      this.dueDateTimeOld = this.momenTime(item.dueDate)
       await this.getEmpSelect(item)
       this.dialogRemove = true
     },
@@ -9043,44 +9046,48 @@ export default {
       this.validate('REMOVE')
       setTimeout(() => this.onCancelChk(), 500)
     },
-    onCancelChk () {
+    async updateLimitBookingCancel (item, dueDateOld, dueDateTimeOld) {
+      let result = []
+      let dt = {
+        flowId: item.flowId,
+        dateSelect: dueDateOld,
+        timeSelect: dueDateTimeOld,
+        shopId: item.shopId,
+        userId: item.userId
+      }
+      await axios.post(this.DNS_IP + '/Booking/updateLimitBookingCancel', dt).then(async response => {
+        result = response.data
+      })
+      return result
+    },
+    async onCancelChk () {
       if (this.validRemove === true) {
         if (this.$session.id() !== undefined) {
-          this.dataCancelReady = false
-          var dt = {
-            bookNo: this.bookNoRemove.bookNo,
-            contactDate: this.format_date(new Date()),
-            status: 'cancel',
-            statusUse: 'use',
-            shopId: this.$session.getAll().data.shopId,
-            CREATE_USER: this.session.data.userName,
-            LAST_USER: this.session.data.userName,
-            remarkRemove: (this.remarkRemove || '').replace(/%/g, '%%')
-          }
-          axios
-            .post(this.DNS_IP + '/booking_transaction/add', dt)
-            .then(async response => {
-              await this.updateRemark(this.bookNoRemove)
-              this.$swal('เรียบร้อย', 'ยกเลิกเรียบร้อย', 'success')
-              console.log('addDataGlobal', response)
-              if (this.statusSearch === 'no') {
-                await this.getBookingList()
+          let chkStatLimit = this.DataFlowName.filter(el => { return el.value === this.bookNoRemove.flowId })
+          if (chkStatLimit.length > 0) {
+            if (chkStatLimit[0].allData.limitBookingCheck === 'True') {
+              // let dueOld = this.dueDateOld + this.dueDateTimeOld
+              // let limitBookingCount = this.timeavailable.filter(el => { return el.value === this.formChange.time.value })
+              // console.log('limitBookingCount', limitBookingCount)
+              // let limitBookingCounts = 0
+              // if (limitBookingCount.length > 0) {
+              //   limitBookingCounts = parseInt(limitBookingCount[0].limitBooking)
+              // } else {
+              //   limitBookingCounts = 0
+              // }
+              let chkStatus = await this.updateLimitBookingCancel(this.bookNoRemove, this.dueDateOld, this.dueDateTimeOld)
+              console.log('chkStatus', chkStatus)
+              if (chkStatus.status) {
+                this.onCancelChkSubmit()
               } else {
-                await this.searchAny()
+                this.onCancelChkSubmit()
               }
-              // this.getTimesChange('update')
-              if (this.getSelectText) {
-                this.getSelect(this.getSelectText, this.getSelectCount)
-              }
-              this.getDataCalendaBooking()
-              this.dataCancelReady = true
-              this.dialogRemove = false
-              this.remarkRemove = ''
-              this.bookNo = ''
-            })
-            .catch(error => {
-              console.log('error function addData : ', error)
-            })
+            } else {
+              this.onCancelChkSubmit()
+            }
+          } else {
+            this.onCancelChkSubmit()
+          }
         } else {
           this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
           clearInterval(this.setTimerCalendar)
@@ -9088,6 +9095,44 @@ export default {
           this.$router.push('/Core/Login')
         }
       }
+    },
+    onCancelChkSubmit () {
+      this.dataCancelReady = false
+      var dt = {
+        bookNo: this.bookNoRemove.bookNo,
+        contactDate: this.format_date(new Date()),
+        status: 'cancel',
+        statusUse: 'use',
+        shopId: this.$session.getAll().data.shopId,
+        CREATE_USER: this.session.data.userName,
+        LAST_USER: this.session.data.userName,
+        remarkRemove: (this.remarkRemove || '').replace(/%/g, '%%')
+      }
+      axios
+        .post(this.DNS_IP + '/booking_transaction/add', dt)
+        .then(async response => {
+          await this.updateRemark(this.bookNoRemove)
+          this.$swal('เรียบร้อย', 'ยกเลิกเรียบร้อย', 'success')
+          console.log('addDataGlobal', response)
+          if (this.statusSearch === 'no') {
+            await this.getBookingList()
+          } else {
+            await this.searchAny()
+          }
+          // this.getTimesChange('update')
+          if (this.getSelectText) {
+            this.getSelect(this.getSelectText, this.getSelectCount)
+          }
+          // this.getDataCalendaBooking()
+          this.dataCancelReady = true
+          this.dialogRemove = false
+          this.remarkRemove = ''
+          this.bookNo = ''
+        })
+        .catch(error => {
+          console.log('error function addData : ', error)
+          this.dataCancelReady = true
+        })
     },
     async changeChk (item, changeStatus) {
       this.dataChangeReady = false
@@ -9120,12 +9165,6 @@ export default {
       this.swalConfig.title = 'ต้องการ เปลี่ยนเวลานัดหมาย ใช่หรือไม่?'
       this.$swal(this.swalConfig).then(async result => {
         if (this.$session.id() !== undefined) {
-          // if (this.limitBookingCheck === 'True' && this.limitBookingSelect === 'True') {
-          //   await this.manageLimitBooking()
-          //   this.selectCountBookingLimit = this.selectCountBookingLimit
-          // } else {
-          //   this.selectCountBookingLimit = ''
-          // }
           let checkCountTime = await axios.get(this.DNS_IP + '/booking_view/get?bookNo=' + item.bookNo)
           console.log('checkCountTime', checkCountTime)
           if (checkCountTime.data.status === false) {
@@ -9275,6 +9314,7 @@ export default {
         })
     },
     async updateLimitBookingChange (item, dueDateOld, dueDateTimeOld, dueDateNew, dueDateTimeNew, limitBookingCount) {
+      let result = []
       let dt = {
         dueDateOld: dueDateOld,
         dueDateTimeOld: dueDateTimeOld,
@@ -9289,8 +9329,9 @@ export default {
         limitBookingCount: limitBookingCount
       }
       await axios.post(this.DNS_IP + '/Booking/updateLimitBookingChangeTime', dt).then(async response => {
-        return response.data
+        result = response.data
       })
+      return result
     },
     async manageLimitBooking () {
       var dt = {
