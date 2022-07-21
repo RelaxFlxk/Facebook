@@ -1343,7 +1343,7 @@
                   </div>
                 </v-container>
               </v-card-text>
-              <v-card-text  v-if="dataEditJobReady && !statusConfirmJob && BookingDataItem.length > 0">
+              <v-card-text  v-if="dataEditJobReady && !statusConfirmJob">
                 <strong><h2>เนื่องจากวันที่นัดหมาย {{format_dateNotime(dueDate)}} ซึ่งยังไม่ถึงเวลานัด</h2></strong>
                 <strong style="color: red;"><h3>กรุณาตรวจสอบข้อมูล หรือ เปลี่ยนเวลานัดหมายใหม่</h3></strong>
                 <div class="text-center">
@@ -5132,6 +5132,7 @@ export default {
       if (dateCurrent >= dueDate) {
         this.statusConfirmJob = true
       } else {
+        this.dueDate = item.dueDate
         this.statusConfirmJob = false
       }
       if (this.statusConfirmJob) {

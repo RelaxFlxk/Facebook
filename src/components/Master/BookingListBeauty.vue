@@ -1518,7 +1518,7 @@
                   </div>
                 </v-container>
               </v-card-text>
-              <v-card-text  v-if="dataEditJobReady && !statusConfirmJob && BookingDataItem.length > 0">
+              <v-card-text  v-if="dataEditJobReady && !statusConfirmJob">
                 <strong><h2>เนื่องจากวันที่นัดหมาย {{format_dateNotime(dueDate)}} ซึ่งยังไม่ถึงเวลานัด</h2></strong>
                 <strong style="color: red;"><h3>กรุณาตรวจสอบข้อมูล หรือ เปลี่ยนเวลานัดหมายใหม่</h3></strong>
                 <div class="text-center">
@@ -4676,8 +4676,9 @@ export default {
   },
   async mounted () {
     // this.dataReady = false
-    console.log('localStorage', localStorage.getItem('typeData'))
+    // console.log('localStorage', localStorage.getItem('typeData'))
     if (this.$route.query.bookNo) {
+      // this.beforeCreateScan()
       await this.getDataBranch()
       await this.getEmpSelectAdd()
       await this.getBookingFieldText()
@@ -4699,6 +4700,33 @@ export default {
     })
   },
   methods: {
+    // async beforeCreateScan () {
+    //   if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
+    //     if (JSON.parse(localStorage.getItem('sessionData')).shopId === this.$route.query.shopId && this.$route.query.type === 'job') {
+    //       if (this.$session.id() !== undefined) {
+    //       } else {
+    //         this.$session.start()
+    //         this.$session.set('data', JSON.parse(localStorage.getItem('sessionData')))
+    //         location.reload()
+    //       }
+    //     }
+    //   } else {
+    //     if (!this.$session.exists()) {
+    //       if (this.$route.query.type === 'job') {
+    //         this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId + '&type=' + this.$route.query.type)
+    //       } else {
+    //         this.$router.push('/Core/Login')
+    //       }
+    //     } else {
+    //       if (this.$session.getAll().data.shopId === this.$route.query.shopId && this.$route.query.type === 'job') {
+    //         localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
+    //       } else {
+    //         this.$router.push('/Core/Login')
+    //       }
+    //     }
+    //   }
+    //   // console.log(JSON.stringify(this.$session.getAll().data))
+    // },
     async checkLimit () {
       this.checkLimitBooking.ID = 'NO'
       this.checkLimitBooking.countBooking = 1
@@ -6679,6 +6707,7 @@ export default {
       if (dateCurrent >= dueDate) {
         this.statusConfirmJob = true
       } else {
+        this.dueDate = item.dueDate
         this.statusConfirmJob = false
       }
       if (this.statusConfirmJob) {
