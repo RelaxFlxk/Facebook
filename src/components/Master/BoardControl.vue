@@ -5,7 +5,7 @@
       <div class="pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4">
         <!-- <v-col class="ma-2" id="text-Board">กระดานทำงาน</v-col> -->
         <v-row>
-        <v-col cols="6" style="font-family: Roboto; font-style: normal; font-weight: bold; font-size: 24px; line-height: 28px; color: #1b437c;">กระดานทำงาน</v-col>
+        <v-col cols="6" style="font-size: 20px; line-height: 28px; color: #1b437c;">กระดานทำงาน</v-col>
         <v-col cols="6" class="text-right">
             <v-btn-toggle borderless>
             <!-- <v-btn
@@ -540,7 +540,7 @@
                             >
                               <template v-slot:activator="{ on, attrs }">
                                 <strong
-                                  class="ml-2"
+                                  class="ml-2 textLayout"
                                   v-bind="attrs"
                                   v-on="on"
                                 >
@@ -549,10 +549,10 @@
                               </template>
                               <span>{{item.stepTitle}}</span>
                             </v-tooltip>
-                          <strong class="ml-2" v-if="item.stepTitle.length <= 18">{{ item.stepTitle }}</strong>
+                          <strong class="ml-2 textLayout" v-if="item.stepTitle.length <= 18">{{ item.stepTitle }}</strong>
                         </v-col>
                         <v-col cols="2" class="text-right pb-1 pt-1 pl-0 ">
-                          <strong class="pa-0">{{
+                          <strong class="pa-0 textLayout">{{
                             allJob.filter(row => {
                               return row.stepId == item.stepId
                             }).length
@@ -580,7 +580,7 @@
                       >
                       <v-row class="mb-n2 pa-0 mt-n1" >
                         <v-col cols="2" class="pa-0 ps-3" v-if="itemsJob.fastTrack === 'True'">
-                          <v-icon x-large
+                          <v-icon
                               color="orange darken-3">
                               mdi-flash
                           </v-icon>
@@ -597,7 +597,6 @@
                                     <v-icon
                                       v-bind="attrs"
                                       v-on="on"
-                                      x-large
                                       color="#DE6467"
                                     >
                                       mdi-alarm-light
@@ -613,7 +612,6 @@
                                     <v-icon
                                       v-bind="attrs"
                                       v-on="on"
-                                      x-large
                                       color="#FED966"
                                     >
                                       mdi-alarm-light
@@ -629,7 +627,6 @@
                                     <v-icon
                                       v-bind="attrs"
                                       v-on="on"
-                                      x-large
                                       color="#4F93D0"
                                     >
                                       mdi-alarm-light
@@ -639,8 +636,8 @@
                              </v-tooltip>
                         <!-- end diffDate -->
                           </v-col>
-                        <v-col cols="10" class="pa-0 ps-3">
-                      <strong class="text-center">
+                        <v-col cols="10" class="pb-1 pr-0 pl-0 ps-3 pt-0">
+                      <strong class="text-center bodyFrame">
                         {{JobDataItem.filter(row => {return row.jobId == itemsJob.jobId && row.fieldName === 'เลขทะเบียน'})[0].fieldValue}}
                       </strong>
                         </v-col>
@@ -684,7 +681,6 @@
                                     class="pb-1 mr-1 ml-1"
                                       v-bind="attrs"
                                       v-on="on"
-                                      x-large
                                       color="#84C650"
                                       @click="updateTimeEmp(itemsJob,'timeStart')"
                                     >
@@ -701,7 +697,6 @@
                                     class="pb-1 mr-1 ml-1"
                                       v-bind="attrs"
                                       v-on="on"
-                                      x-large
                                       color="#DE6467"
                                       @click="updateTimeEmp(itemsJob,'timeEnd')"
                                     >
@@ -768,7 +763,6 @@
                             color="#DE6467">
                               <template v-slot:activator="{ on, attrs }">
                                 <v-icon
-                                  large
                                   color="#DE6467"
                                   v-bind="attrs"
                                   v-on="on"
@@ -787,7 +781,6 @@
                         color="#FF8C00">
                           <template v-slot:activator="{ on, attrs }">
                             <v-icon
-                              large
                               color="#FF8C00"
                               @click=";(dialog = true),
                                   setUpdate(itemsJob, 'editFlow', item)
@@ -826,7 +819,6 @@
                             <v-icon
                               v-bind="attrs"
                               v-on="on"
-                              large
                               color="#84C650"
                               @click="
                                 ;(dialogDelete = true), setUpdate(itemsJob, 'closeJob')
@@ -842,7 +834,6 @@
                             <v-tooltip top color="#A12BFD">
                               <template v-slot:activator="{ on, attrs }">
                                 <v-icon
-                                  large
                                   color="#A12BFD"
                                   @click="
                                     ;(dialogProgress = true), getJobitem(itemsJob)
@@ -978,7 +969,6 @@
                             <v-icon
                               v-bind="attrs"
                               v-on="on"
-                              x-large
                               color="#84C650"
                               @click="updateTimeEmp(itemsJob,'timeStart')"
                             >
@@ -993,7 +983,6 @@
                             <v-icon
                               v-bind="attrs"
                               v-on="on"
-                              x-large
                               color="#DE6467"
                               @click="updateTimeEmp(itemsJob,'timeEnd')"
                             >
@@ -1015,7 +1004,6 @@
                                     <v-icon
                                       v-bind="attrs"
                                       v-on="on"
-                                      x-large
                                       color="#DE6467"
                                     >
                                       mdi-alarm-light
@@ -1031,7 +1019,6 @@
                                     <v-icon
                                       v-bind="attrs"
                                       v-on="on"
-                                      x-large
                                       color="#FED966"
                                     >
                                       mdi-alarm-light
@@ -1047,7 +1034,6 @@
                                     <v-icon
                                       v-bind="attrs"
                                       v-on="on"
-                                      x-large
                                       color="#4F93D0"
                                     >
                                       mdi-alarm-light
@@ -1092,7 +1078,6 @@
                             color="#DE6467">
                               <template v-slot:activator="{ on, attrs }">
                                 <v-icon
-                                  large
                                   color="#DE6467"
                                   v-bind="attrs"
                                   v-on="on"
@@ -1114,7 +1099,6 @@
                         color="#FF8C00">
                           <template v-slot:activator="{ on, attrs }">
                             <v-icon
-                              large
                               color="#FF8C00"
                               @click=";(dialog = true),
                                   setUpdate(itemsJob, 'editFlow', item)
@@ -1139,7 +1123,6 @@
                           "
                           v-bind="attrs"
                           v-on="on"
-                          large
                           color="#9E9E9E"
                         >
                           mdi-shuffle-variant
@@ -1154,7 +1137,6 @@
                             <v-icon
                               v-bind="attrs"
                               v-on="on"
-                              large
                               color="#84C650"
                               @click="
                                 ;(dialogDelete = true), setUpdate(itemsJob, 'closeJob')
@@ -2648,6 +2630,12 @@ export default {
 }
 .v-card__subtitle, .v-card__text, .v-card__title {
   padding: 0px !important;
+}
+.textLayout {
+  font-size: 16px !important;
+}
+.bodyFrame {
+  font-size: 15px !important;
 }
 .workRow {
   display: inline-block;

@@ -223,7 +223,7 @@
                       color="question"
                       fab
                       dark
-                      x-small
+                      small
                       @click.stop="
                         ;(dialogEdit = true),
                           getDataById(item),

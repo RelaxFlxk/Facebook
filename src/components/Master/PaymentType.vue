@@ -60,7 +60,7 @@
                     <v-container fluid>
                       <v-col>
                       <v-row style="height: 35px">
-                      <v-subheader id="subtext">ประเภทการชำระเงิน</v-subheader>
+                      <v-subheader>ประเภทการชำระเงิน</v-subheader>
                       </v-row>
                       </v-col>
                       <v-textarea
@@ -147,7 +147,7 @@
                     <v-container fluid>
                       <v-col>
                       <v-row style="height: 35px">
-                      <v-subheader id="subtext">ประเภทการชำระเงิน</v-subheader>
+                      <v-subheader>ประเภทการชำระเงิน</v-subheader>
                       </v-row>
                       </v-col>
                       <v-textarea
@@ -194,7 +194,7 @@
                   <v-row>
                     <v-col cols="12">
                       <v-row style="height: 35px">
-                        <v-subheader id="subtext">ประเภทการชำระเงิน</v-subheader>
+                        <v-subheader>ประเภทการชำระเงิน</v-subheader>
                       </v-row>
                       <v-row style="height: 70px">
                         <v-container fluid>
@@ -273,9 +273,10 @@
                       color="question"
                       fab
                       small
+                      dark
                       @click.stop="(dialogEdit = true), getDataById(item)"
                     >
-                      <v-icon dark> mdi-tools </v-icon>
+                      <v-icon> mdi-tools </v-icon>
                     </v-btn>
                     <v-btn
                       color="red"
@@ -488,6 +489,7 @@ export default {
       //
       this.formAdd.CREATE_USER = this.$session.getAll().data.userName
       this.formAdd.LAST_USER = this.$session.getAll().data.userName
+      this.formAdd.shopId = this.$session.getAll().data.shopId
 
       console.log('form', JSON.stringify(this.formAdd))
 

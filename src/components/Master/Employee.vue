@@ -9,7 +9,7 @@
           <v-col cols="12">
             <v-btn color="primary" depressed @click="dialogAdd = true, validate('ADD')">
               <v-icon left>mdi-text-box-plus</v-icon>
-              Add
+              เพิ่ม
             </v-btn>
             <v-btn color="primary" @click="exportData()">
               <v-icon left>mdi-download</v-icon>
@@ -1030,27 +1030,23 @@ export default {
         })
     },
     async clearData () {
-      // eslint-disable-next-line no-redeclare
-      for (var key in this.formAdd) {
-        console.log('Key', key)
-        console.log('Value', this.formAdd)
-
-        if (this.formAdd[key]) {
-          this.formAdd[key] = ''
-        }
-      }
-      this.filesAdd = ''
-
-      // eslint-disable-next-line no-redeclare
-      for (var key in this.search) {
-        console.log('Key', key)
-        console.log('Value', this.search)
-
-        if (this.search[key]) {
-          this.search[key] = ''
-        }
-      }
-      this.filesUpdate = ''
+      this.formAdd.empCode = ''
+      this.formAdd.empTitle_NameTH = ''
+      this.formAdd.empFirst_NameTH = ''
+      this.formAdd.empLast_NameTH = ''
+      this.formAdd.privacyPage = ''
+      this.formAdd.empImge = ''
+      this.formAdd.pictureUrlPreview = ''
+      this.formAdd.shopId = this.$session.getAll().data.shopId
+      this.formUpdate.empCode = ''
+      this.formUpdate.empTitle_NameTH = ''
+      this.formUpdate.empFirst_NameTH = ''
+      this.formUpdate.empLast_NameTH = ''
+      this.formUpdate.empImge = ''
+      this.formUpdate.pictureUrlPreview = ''
+      this.formUpdate.privacyPage = ''
+      this.filesAdd = null
+      this.filesUpdate = null
     }
   }
 }

@@ -1205,7 +1205,7 @@
                     <v-btn
                       color="purple"
                       fab
-                      x-small
+                      small
                       @click="
                           (dialoglimitbooking = true),getlimitbooking(item)
                       "
@@ -1215,7 +1215,7 @@
                     <v-btn
                       color="info"
                       fab
-                      x-small
+                      small
                       @click="
                           getCondition(item)
                       "
@@ -1225,7 +1225,7 @@
                     <v-btn
                       color="#4CAF50"
                       fab
-                      x-small
+                      small
                       @click="
                         (dialogStep = true),
                           getDataById(item),
@@ -1238,7 +1238,7 @@
                       color="question"
                       fab
                       dark
-                      x-small
+                      small
                       @click.stop="
                         (dialogEdit = true),
                           getDataById(item),
@@ -1251,7 +1251,7 @@
                       color="red"
                       dark
                       fab
-                      x-small
+                      small
                       @click.stop="(dialogDelete = true), getDataById(item)"
                     >
                       <v-icon> mdi-delete </v-icon>

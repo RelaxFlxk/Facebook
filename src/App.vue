@@ -20,17 +20,19 @@ export default {
 /* @import "../node_modules/@syncfusion/ej2-navigations/styles/material.css"; */
 @import "../node_modules/@syncfusion/ej2-grids/styles/material.css";
 @import "../node_modules/@syncfusion/ej2-pivotview/styles/material.css";
-@font-face {
-  font-family: Kittithada;
+
+@import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
+/* @font-face {
+  font-family: 'Kanit', sans-serif;
   src: url('/static/fonts/Kittithada/PSL242pro.ttf');
 }
 @font-face {
   font-family: KittithadaBold;
   src: url('/static/fonts/Kittithada/PSL245pro.ttf');
-}
+} */
 *, .v-application {
-  font-family: Kittithada;
-  font-size: 22px !important;
+  font-family: 'Kanit', sans-serif;
+  /* font-size: 18px !important; */
 }
 :root {
   --nav-bg: #1B437C;
@@ -50,7 +52,9 @@ export default {
   --date-picker-table-body: #1B437C;
 }
 .KittithadaBold {
-  font-family: KittithadaBold !important;
+  /* font-family: KittithadaBold !important; */
+  font-family: 'Kanit', sans-serif;
+  font-weight: 400;
 }
 .nav-bg {
   background-color: var(--nav-bg) !important;
@@ -62,15 +66,16 @@ h2 {
   font-size: 2rem !important;
 }
 h3 {
-  font-family: Kittithada;
+  font-family: 'Kanit', sans-serif;
   font-size: 1.55rem !important;
 }
 .h3-Bold {
-  font-family: KittithadaBold;
+  font-family: 'Kanit', sans-serif;
+  font-weight: 400;
   font-size: 1.65rem !important;
 }
 h4 {
-  font-family: Kittithada;
+  font-family: 'Kanit', sans-serif;
   font-size: 1.15rem !important;
 }
 .svg-container {
@@ -109,7 +114,7 @@ h4 {
 }
 .chartHead {
   font-size: 1.65rem!important;
-  font-weight: 300;
+  font-weight: 400;
   letter-spacing: .0125em!important;
 }
 .v-navigation-drawer .v-list {
@@ -157,8 +162,10 @@ table tr:last-child td:last-child {
 
 .v-list-item__title{
   color: var(--nav-text) !important;
-  font-family: KittithadaBold;
-  font-size: 22px !important;
+  /* font-family: KittithadaBold;
+  font-size: 22px !important; */
+  font-family: 'Kanit', sans-serif;
+  font-weight: 400;
 }
 /* .v-list-item {
   background-color: var(--nav-bg) !important;
@@ -194,8 +201,10 @@ table tr:last-child td:last-child {
 }
 .menu-head {
   color: var(--nav-text);
-  font-family: KittithadaBold;
-  font-size: 26px !important;
+  /* font-family: KittithadaBold;
+  font-size: 26px !important; */
+  font-family: 'Kanit', sans-serif;
+  font-weight: 400;
 }
 .v-list-item--active {
   background-color: var(--nav-text-active);

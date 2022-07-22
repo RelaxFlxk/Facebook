@@ -296,7 +296,11 @@ export default {
           }
         }
       } else if (this.$route.query.bookNo !== undefined && this.$route.query.type === 'job') {
-        this.$router.push('/Master/BookingList?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId + '&type=' + this.$route.query.type)
+        if (dataitem.category === 'ธุรกิจรถยนต์') {
+          this.$router.push('/Master/BookingList?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId + '&type=' + this.$route.query.type)
+        } else {
+          this.$router.push('/Master/BookingListBeauty?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId + '&type=' + this.$route.query.type)
+        }
       } else if (this.$route.query.dateEvent !== undefined && this.$route.query.type === 'printInvoice') {
         this.$router.push('/PrintPdf/PrintInvoice?dateEvent=' + this.$route.query.dateEvent)
       } else {

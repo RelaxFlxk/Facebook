@@ -89,7 +89,7 @@
                       </v-col>
                     <v-col cols="12">
                       <v-row style="height: 35px">
-                      <v-subheader id="subtext">ชื่อช่องกรอกข้อมูล</v-subheader>
+                      <v-subheader >ชื่อช่องกรอกข้อมูล</v-subheader>
                       </v-row>
                       <v-row style="height: 50px">
                       <v-text-field
@@ -105,7 +105,7 @@
                     </v-col>
                     <v-col cols="12">
                       <v-row style="height: 35px">
-                      <v-subheader id="subtext">ชื่อช่องกรอกข้อมูล ภาษาอังกฤษ</v-subheader>
+                      <v-subheader >ชื่อช่องกรอกข้อมูล ภาษาอังกฤษ</v-subheader>
                       </v-row>
                       <v-row style="height: 50px">
                       <v-text-field
@@ -121,7 +121,7 @@
                     </v-col>
                     <v-col cols="12">
                       <v-row style="height: 35px">
-                      <v-subheader id="subtext">ประเภทช่องกรอกข้อมูล</v-subheader>
+                      <v-subheader >ประเภทช่องกรอกข้อมูล</v-subheader>
                       </v-row>
 
                       <v-row style="height: 50px">
@@ -136,7 +136,7 @@
                       </v-row>
 
                       <v-row style="height: 35px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
-                      <v-subheader id="subtext">ประเภทของตัวเลือกข้อมูล</v-subheader>
+                      <v-subheader >ประเภทของตัวเลือกข้อมูล</v-subheader>
                       </v-row>
                       <v-row style="height: 50px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
                         <v-select
@@ -153,7 +153,7 @@
                     <v-row>
                     <v-col cols="4">
                       <v-row style="height: 35px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
-                      <v-subheader id="subtext" >ไทย:</v-subheader >
+                      <v-subheader  >ไทย:</v-subheader >
                       </v-row>
                       <v-row style="height: 50px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
                       <v-text-field
@@ -169,7 +169,7 @@
                     </v-col>
                      <v-col cols="4">
                       <v-row style="height: 35px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
-                      <v-subheader id="subtext" >อังกฤษ:</v-subheader >
+                      <v-subheader  >อังกฤษ:</v-subheader >
                       </v-row>
                       <v-row style="height: 50px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
                       <v-text-field
@@ -185,7 +185,7 @@
                     </v-col>
                      <v-col cols="4">
                       <v-row style="height: 35px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
-                      <v-subheader id="subtext">Value:</v-subheader>
+                      <v-subheader >Value:</v-subheader>
                       </v-row>
                       <v-row style="height: 50px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
                       <v-text-field
@@ -245,7 +245,7 @@
                       <!-- checkbox -->
 
                       <v-row style="height: 35px" v-if="checkbox === 'true'">
-                      <v-subheader id="subtext">ช่องกรอกข้อมูล</v-subheader>
+                      <v-subheader >ช่องกรอกข้อมูล</v-subheader>
                       </v-row>
                       <v-row style="height: 50px" v-if="checkbox === 'true'">
                         <v-select
@@ -261,7 +261,7 @@
                       </v-row>
                       <!-- END -->
                       <v-row style="height: 35px" v-if="checkbox === 'true' && formAdd.conditionField">
-                      <v-subheader id="subtext">Value:</v-subheader>
+                      <v-subheader >Value:</v-subheader>
                       </v-row>
                       <v-row style="height: 50px" v-if="checkbox === 'true' && formAdd.conditionField &&
                       (formAdd.conditionField.fieldType === 'Selects' || formAdd.conditionField.fieldType === 'Radio' || formAdd.conditionField.fieldType === 'Autocompletes' || formAdd.conditionField.fieldType === 'flow')">
@@ -361,7 +361,7 @@
                       </v-col>
                     <v-col cols="12">
                       <v-row style="height: 35px">
-                      <v-subheader id="subtext">ชื่อช่องกรอกข้อมูล</v-subheader>
+                      <v-subheader >ชื่อช่องกรอกข้อมูล</v-subheader>
                       </v-row>
                       <v-row style="height: 50px">
                       <v-text-field
@@ -377,7 +377,7 @@
                     </v-col>
                     <v-col cols="12">
                       <v-row style="height: 35px">
-                      <v-subheader id="subtext">ชื่อช่องกรอกข้อมูล ภาษาอังกฤษ</v-subheader>
+                      <v-subheader >ชื่อช่องกรอกข้อมูล ภาษาอังกฤษ</v-subheader>
                       </v-row>
                       <v-row style="height: 50px">
                       <v-text-field
@@ -393,7 +393,7 @@
                     </v-col>
                     <v-col cols="12">
                       <v-row style="height: 35px">
-                      <v-subheader id="subtext">ประเภทช่องกรอกข้อมูล</v-subheader>
+                      <v-subheader >ประเภทช่องกรอกข้อมูล</v-subheader>
                       </v-row>
 
                       <v-row style="height: 50px">
@@ -407,7 +407,7 @@
                       </v-row>
 
                       <v-row style="height: 35px" v-if="formUpdate.fieldType === 'optionField'">
-                      <v-subheader id="subtext">ประเภทของตัวเลือกข้อมูล</v-subheader>
+                      <v-subheader >ประเภทของตัวเลือกข้อมูล</v-subheader>
                       </v-row>
                       <v-row style="height: 50px" v-if="formUpdate.fieldType === 'optionField'">
                         <v-select
@@ -425,7 +425,7 @@
                     <v-row>
                     <v-col cols="4">
                       <v-row style="height: 35px" v-if="formUpdate.fieldType === 'optionField'">
-                      <v-subheader id="subtext" >ไทย:</v-subheader >
+                      <v-subheader  >ไทย:</v-subheader >
                       </v-row>
                       <v-row style="height: 50px" v-if="formUpdate.fieldType === 'optionField'">
                       <v-text-field
@@ -441,7 +441,7 @@
                     </v-col>
                     <v-col cols="4">
                       <v-row style="height: 35px" v-if="formUpdate.fieldType === 'optionField'">
-                      <v-subheader id="subtext" >อังกฤษ:</v-subheader >
+                      <v-subheader  >อังกฤษ:</v-subheader >
                       </v-row>
                       <v-row style="height: 50px" v-if="formUpdate.fieldType === 'optionField'">
                       <v-text-field
@@ -457,7 +457,7 @@
                     </v-col>
                      <v-col cols="4">
                       <v-row style="height: 35px" v-if="formUpdate.fieldType === 'optionField'">
-                      <v-subheader id="subtext">Value:</v-subheader>
+                      <v-subheader >Value:</v-subheader>
                       </v-row>
                       <v-row style="height: 50px" v-if="formUpdate.fieldType === 'optionField'">
                       <v-text-field
@@ -518,7 +518,7 @@
                       </v-container>
                       <!-- checkbox -->
                       <v-row style="height: 35px" v-if="checkbox === 'true'">
-                      <v-subheader id="subtext">ช่องกรอกข้อมูล</v-subheader>
+                      <v-subheader >ช่องกรอกข้อมูล</v-subheader>
                       </v-row>
                       <v-row style="height: 50px" v-if="checkbox === 'true'">
                         <v-select
@@ -534,7 +534,7 @@
                       </v-row>
                       <!-- END -->
                       <v-row style="height: 35px" v-if="checkbox === 'true' && formUpdate.conditionField">
-                      <v-subheader id="subtext">Value:</v-subheader>
+                      <v-subheader >Value:</v-subheader>
                       </v-row>
                       <v-row style="height: 50px" v-if="checkbox === 'true' && formUpdate.conditionField &&
                       (formUpdateConditionField.fieldType === 'Selects' || formUpdateConditionField.fieldType === 'Radio' || formUpdateConditionField.fieldType === 'Autocompletes' || formUpdateConditionField.fieldType === 'flow')">
@@ -557,7 +557,7 @@
                         ></v-text-field>
                       </v-row>
                       <!-- <v-row style="height: 35px" v-if="checkbox == 'true'">
-                      <v-subheader id="subtext">Field</v-subheader>
+                      <v-subheader >Field</v-subheader>
                       </v-row>
                       <v-row style="height: 50px" v-if="checkbox == 'true'">
                         <v-select
@@ -567,7 +567,7 @@
                           </v-select>
                       </v-row>
                         <v-row style="height: 35px" v-if="checkbox == 'true'">
-                      <v-subheader id="subtext">Value:</v-subheader>
+                      <v-subheader >Value:</v-subheader>
                       </v-row>
                       <v-row style="height: 50px" v-if="checkbox == 'true'">
                       <v-text-field
@@ -620,7 +620,7 @@
                   <v-row>
                     <v-col cols="12">
                       <v-row style="height: 35px">
-                        <v-subheader id="subtext">รหัส Filed</v-subheader>
+                        <v-subheader >รหัส Filed</v-subheader>
                       </v-row>
                       <v-row style="height: 70px">
                         <v-text-field
@@ -696,7 +696,7 @@
                         v-show="index !== 0"
                         color="173053"
                         fab
-                        x-small
+                        small
                         outlined
                         @click="actionUp(item.fieldId)"
                       >
@@ -708,7 +708,7 @@
                         v-show="index !== dataItem.length-1"
                         color="173053"
                         fab
-                        x-small
+                        small
                         outlined
                         @click="actionDown(item.fieldId)"
                       >
@@ -722,7 +722,7 @@
                       color="#1B437C"
                       fab
                       dark
-                      x-small
+                      small
                       v-if="item.fieldName !== 'ชื่อ' && item.fieldName !== 'เลขทะเบียน' && item.fieldName !== 'เบอร์โทร'"
                       @click.stop="getDataById(item), validate('UPDATE'), validate('ADDOPTION'), (dialogEdit = true)"
                     >
@@ -732,7 +732,7 @@
                       color="red"
                       dark
                       fab
-                      x-small
+                      small
                       v-if="item.fieldName !== 'ชื่อ' && item.fieldName !== 'เลขทะเบียน' && item.fieldName !== 'เบอร์โทร'"
                       @click.stop="(dialogDelete = true), getDataById(item)"
                     >
@@ -1547,5 +1547,8 @@ export default {
 .v_text_edit {
   Width: 255px;
   Height: 52px;
+}
+.subtextSize {
+  font-size: 20;
 }
 </style>

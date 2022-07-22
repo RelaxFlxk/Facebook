@@ -424,7 +424,7 @@
                           <v-form ref="form_process" v-model="validProcess" lazy-validation>
                           <v-expansion-panel-content>
                             <v-row>
-                              <v-col cols="6" class="pb-0 pt-0">
+                              <v-col cols="6" class="pb-0 pt-1">
                                 <v-text-field
                                   v-model="dataTypeProcess1"
                                   dense
@@ -433,7 +433,7 @@
                                   :rules="[rules.required]"
                                 ></v-text-field>
                               </v-col>
-                              <v-col cols="6" class="pb-0 pt-0">
+                              <v-col cols="6" class="pb-0 pt-1">
                                 <v-text-field
                                   v-model="dataTypeProcess2"
                                   dense
@@ -468,7 +468,7 @@
                                     color="orange"
                                     dark
                                     dense
-                                    icon="mdi-phone-ring"
+                                    icon="mdi-bell-alert-outline"
                                     prominent
                                   >
                                     <div>
@@ -482,7 +482,7 @@
                                     color="green"
                                     dark
                                     dense
-                                    icon="mdi-phone-check"
+                                    icon="mdi-email-check"
                                     prominent
                                   >
                                     <div>
@@ -498,7 +498,7 @@
                                     color="red"
                                     dark
                                     dense
-                                    icon="mdi-phone-cancel"
+                                    icon="mdi-calendar-remove"
                                     prominent
                                   >
                                     <div>
@@ -512,7 +512,7 @@
                                     color="blue"
                                     dark
                                     dense
-                                    icon="mdi-car-cog"
+                                    icon="mdi-account-check"
                                     prominent
                                   >
                                     <div>
@@ -542,7 +542,7 @@
                           <v-form ref="form_job" v-model="validJob" lazy-validation>
                           <v-expansion-panel-content>
                             <v-row>
-                              <v-col col="4" class="pb-0 pt-0">
+                              <v-col col="4" class="pb-0 pt-2">
                                 <v-text-field
                                   v-model="dataTypeJob1"
                                   dense
@@ -551,7 +551,7 @@
                                   :rules="[rules.required]"
                                 ></v-text-field>
                               </v-col>
-                              <v-col col="4" class="pb-0 pt-0">
+                              <v-col col="4" class="pb-0 pt-2">
                                 <v-text-field
                                   v-model="dataTypeJob2"
                                   dense
@@ -560,7 +560,7 @@
                                   :rules="[rules.required]"
                                 ></v-text-field>
                               </v-col>
-                              <v-col col="4" class="pb-0 pt-0">
+                              <v-col col="4" class="pb-0 pt-2">
                                 <v-text-field
                                   v-model="dataTypeJob3"
                                   dense
