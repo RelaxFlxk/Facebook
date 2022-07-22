@@ -419,6 +419,24 @@
                           ></v-checkbox>
                         </v-col>
                         <v-col cols="12" class="pb-0 pt-0">
+                          <v-text-field
+                          v-if="formAdd.checkDeposit === 'True'"
+                            v-model="formAdd.promptPayName"
+                            label="ชื่อบัญชีพร้อมเพย์"
+                            outlined
+                            dense
+                            required
+                            :rules="[rules.required]"
+                          ></v-text-field>
+                          <v-text-field
+                          v-if="formAdd.checkDeposit === 'True'"
+                            v-model="formAdd.promptPayID"
+                            label="หมายเลขพร้อมเพย์"
+                            outlined
+                            dense
+                            required
+                            :rules="[rules.required]"
+                          ></v-text-field>
                           <VuetifyMoney
                             v-if="formAdd.checkDeposit === 'True'"
                             label="จำนวนเงินมัดจำ"
@@ -633,6 +651,24 @@
                           ></v-checkbox>
                         </v-col>
                         <v-col cols="12" class="pb-0 pt-0">
+                          <v-text-field
+                          v-if="formUpdate.checkDeposit === 'True'"
+                            v-model="formUpdate.promptPayName"
+                            label="ชื่อบัญชีพร้อมเพย์"
+                            outlined
+                            dense
+                            required
+                            :rules="[rules.required]"
+                          ></v-text-field>
+                          <v-text-field
+                          v-if="formUpdate.checkDeposit === 'True'"
+                            v-model="formUpdate.promptPayID"
+                            label="หมายเลขพร้อมเพย์"
+                            outlined
+                            dense
+                            required
+                            :rules="[rules.required]"
+                          ></v-text-field>
                           <VuetifyMoney
                             v-if="formUpdate.checkDeposit === 'True'"
                             label="จำนวนเงินมัดจำ"
@@ -1358,6 +1394,8 @@ export default {
         checkPayment: 'True',
         checkOnsite: 'False',
         checkDeposit: 'False',
+        promptPayID: null,
+        promptPayName: null,
         amountDeposit: 0,
         shopId: this.$session.getAll().data.shopId
       },
@@ -1395,6 +1433,8 @@ export default {
         checkOnsite: 'False',
         checkDeposit: 'False',
         amountDeposit: 0,
+        promptPayID: null,
+        promptPayName: null,
         shopId: ''
       },
       formUpdateItemFlow: {
@@ -2122,6 +2162,8 @@ export default {
       this.formUpdate.amountDeposit = item.amountDeposit || 0
       this.formUpdate.checkPayment = item.checkPayment || 'True'
       this.formUpdate.checkDeposit = item.checkDeposit || 'False'
+      this.formUpdate.promptPayID = item.promptPayID || ''
+      this.formUpdate.promptPayName = item.promptPayName || ''
       this.shopId = this.$session.getAll().data.shopId
       this.fieldType = this.formUpdate.fieldType
       // this.desserts = JSON.parse(response.data[0].flowfieldName)
@@ -2290,7 +2332,7 @@ export default {
         })
     },
     async editData () {
-      // console.log('this.formUpdate', this.formUpdate)
+      console.log('this.formUpdate', this.formUpdate)
       let fieldId = []
       for (let i = 0; i < this.desserts.length; i++) {
         let d = this.desserts[i]
