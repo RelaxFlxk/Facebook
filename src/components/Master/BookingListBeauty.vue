@@ -1519,7 +1519,7 @@
                 </v-container>
               </v-card-text>
               <v-card-text  v-if="dataEditJobReady && !statusConfirmJob">
-                <strong><h2>เนื่องจากวันที่นัดหมาย {{format_dateNotime(dueDate)}} ซึ่งยังไม่ถึงเวลานัด</h2></strong>
+                <strong><h2>เนื่องจากวันที่นัดหมาย {{format_dateNotime(dueDate)}} ไม่ตรงกับวันที่ปัจจุบัน</h2></strong>
                 <strong style="color: red;"><h3>กรุณาตรวจสอบข้อมูล หรือ เปลี่ยนเวลานัดหมายใหม่</h3></strong>
                 <div class="text-center">
                   <v-btn small color="red" dark @click="dialogEdit = false, getDataDefault(), searchOther = '', showColorSearch = false, statusSearch = 'no'">
@@ -2594,7 +2594,7 @@
                           <v-icon dark> mdi-skip-backward </v-icon>
                         </v-btn>
                     </VueCustomTooltip>
-                    <VueCustomTooltip label="รับรถเข้าศูนย์" position="is-top"  v-if="item.statusBt === 'confirm'">
+                    <VueCustomTooltip label="รับเข้าบริการ" position="is-top"  v-if="item.statusBt === 'confirm'">
                         <v-btn
                           color="primary"
                           fab
@@ -4675,8 +4675,6 @@ export default {
     }
   },
   async mounted () {
-    // this.dataReady = false
-    // console.log('localStorage', localStorage.getItem('typeData'))
     if (this.$route.query.bookNo) {
       // this.beforeCreateScan()
       await this.getDataBranch()
@@ -4694,39 +4692,15 @@ export default {
       this.getDataFlow()
       this.getBookingList()
     }
+    // this.dataReady = false
+    // console.log('localStorage', localStorage.getItem('typeData'))
     this.$root.$on('closeSetTimeGetCalenda', () => {
       // your code goes here
       this.closeSetTimeGetCalenda()
     })
+    // await this.beforeCreate()
   },
   methods: {
-    // async beforeCreateScan () {
-    //   if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
-    //     if (JSON.parse(localStorage.getItem('sessionData')).shopId === this.$route.query.shopId && this.$route.query.type === 'job') {
-    //       if (this.$session.id() !== undefined) {
-    //       } else {
-    //         this.$session.start()
-    //         this.$session.set('data', JSON.parse(localStorage.getItem('sessionData')))
-    //         location.reload()
-    //       }
-    //     }
-    //   } else {
-    //     if (!this.$session.exists()) {
-    //       if (this.$route.query.type === 'job') {
-    //         this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId + '&type=' + this.$route.query.type)
-    //       } else {
-    //         this.$router.push('/Core/Login')
-    //       }
-    //     } else {
-    //       if (this.$session.getAll().data.shopId === this.$route.query.shopId && this.$route.query.type === 'job') {
-    //         localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
-    //       } else {
-    //         this.$router.push('/Core/Login')
-    //       }
-    //     }
-    //   }
-    //   // console.log(JSON.stringify(this.$session.getAll().data))
-    // },
     async checkLimit () {
       this.checkLimitBooking.ID = 'NO'
       this.checkLimitBooking.countBooking = 1
@@ -8505,115 +8479,118 @@ export default {
         })
     },
     async getBookingDataJob (dt, text) {
-      this.jobCheckPackage = false
-      console.log('dt', dt)
-      this.dateTimestamp = moment().unix()
-      this.remark = dt.remark
-      this.userId = dt.userId
-      this.lineUserId = dt.lineUserId
-      console.log(this.userId, this.lineUserId)
-      if (dt.packageId !== '') {
-        this.dataPackageDefault = true
-      } else {
-        this.dataPackageDefault = false
-      }
-      await this.getPackage(dt)
-      if (this.dataPackage.length > 0) {
-        console.log('dataPackage', this.dataPackage.filter(el => { return el.packageId === dt.packageId }))
-        if (this.dataPackage.filter(el => { return el.packageId === dt.packageId }).length > 0) {
-          var dataPack = this.dataPackage.filter(el => { return el.packageId === dt.packageId })
-          this.dataPackageDefault = true
-          // this.packageId = dataPack[0].value
-          this.UpdatePackage(dataPack[0].value, 'ตกลง', dataPack[0].text, dataPack[0], dt.tokenPackage)
-        } else {
-          this.UpdatePackage('', 'ยกเลิก', '', '', '')
-          this.dataPackageDefault = false
-        }
-      }
-      this.checkTimeFlow(dt)
-      this.BookingDataItem = []
-      let itemIncustomField = []
-      this.statusConfirmJob = false
-      this.dueDate = dt.dueDate
       let dateCurrent = this.momenDate_1(new Date())
       let dueDate = this.momenDate_1(dt.dueDate)
+      console.log(dateCurrent, dueDate)
       if (dateCurrent >= dueDate) {
         this.statusConfirmJob = true
       } else {
         this.statusConfirmJob = false
       }
       console.log('this.statusConfirmJob', this.statusConfirmJob)
+      if (this.statusConfirmJob) {
+        this.jobCheckPackage = false
+        console.log('dt', dt)
+        this.dateTimestamp = moment().unix()
+        this.remark = dt.remark
+        this.userId = dt.userId
+        this.lineUserId = dt.lineUserId
+        console.log(this.userId, this.lineUserId)
+        if (dt.packageId !== '') {
+          this.dataPackageDefault = true
+        } else {
+          this.dataPackageDefault = false
+        }
+        await this.getPackage(dt)
+        if (this.dataPackage.length > 0) {
+          console.log('dataPackage', this.dataPackage.filter(el => { return el.packageId === dt.packageId }))
+          if (this.dataPackage.filter(el => { return el.packageId === dt.packageId }).length > 0) {
+            var dataPack = this.dataPackage.filter(el => { return el.packageId === dt.packageId })
+            this.dataPackageDefault = true
+            // this.packageId = dataPack[0].value
+            this.UpdatePackage(dataPack[0].value, 'ตกลง', dataPack[0].text, dataPack[0], dt.tokenPackage)
+          } else {
+            this.UpdatePackage('', 'ยกเลิก', '', '', '')
+            this.dataPackageDefault = false
+          }
+        }
+        this.checkTimeFlow(dt)
+        this.BookingDataItem = []
+        let itemIncustomField = []
+        // this.statusConfirmJob = false
+        this.dueDate = dt.dueDate
 
-      await axios
-        .get(
-          this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
-        )
-        .then(async response1 => {
-          let rs2 = response1.data
-          console.log('BookingField', rs2)
-          if (rs2.length > 0) {
-            let bookingData = []
-            bookingData = JSON.parse(rs2[0].flowfieldName)
-            for (let i = 0; i < bookingData.length; i++) {
-              let d = bookingData[i]
-              itemIncustomField.push(d.fieldId)
-            }
-            await axios
-              .get(this.DNS_IP + '/customField/fieldId?fieldId=' + itemIncustomField)
-              .then(async responses => {
-                let rs1 = responses.data
-                await axios
-                  .get(this.DNS_IP + '/BookingDataSelect/get?bookNo=' + dt.bookNo)
-                  .then(async response => {
-                    let rs = response.data
-                    if (rs.length > 0) {
-                      console.log('BookingDataSelect', rs)
-                      console.log('customField', rs1)
-                      let sortrs = rs1.sort((a, b) => a.sortNoField - b.sortNoField)
-                      for (var i = 0; i < sortrs.length; i++) {
-                        var d = sortrs[i]
-                        // var s = {}
-                        var dataBD = rs.filter(el => { return parseInt(el.fieldId) === parseInt(d.fieldId) })
-                        if (dataBD.length > 0) {
-                          if (dt.flowId === dataBD[0].flowId) {
-                            d.bookNo = dataBD[0].bookNo
-                            d.bookingFieldId = rs2[0].bookingFieldId
-                            d.bookingDataId = dataBD[0].bookingDataId
-                            d.flowId = dataBD[0].flowId
-                            d.masBranchID = dataBD[0].masBranchID
-                            // d.dueDate = dt.dueDate
-                            // d.conditionField = d.conditionField
-                            // d.fieldId = d.fieldId
-                            // d.fieldType = d.fieldType
-                            d.fieldValue = dataBD[0].fieldValue
-                            d.packageId = dataBD[0].packageId
-                            // d.fieldName = d.fieldName
-                            // d.conditionField = d.conditionField
-                            // d.conditionValue = d.conditionValue
-                            // d.requiredField = d.requiredField
-                            // d.optionField = d.optionField
-                            // d.userId = d.userId
-                            if (rs[0].userId === 'user-skip') {
-                              d.userId = ''
-                            } else {
-                              d.userId = rs[0].userId
+        await axios
+          .get(
+            this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+          )
+          .then(async response1 => {
+            let rs2 = response1.data
+            console.log('BookingField', rs2)
+            if (rs2.length > 0) {
+              let bookingData = []
+              bookingData = JSON.parse(rs2[0].flowfieldName)
+              for (let i = 0; i < bookingData.length; i++) {
+                let d = bookingData[i]
+                itemIncustomField.push(d.fieldId)
+              }
+              await axios
+                .get(this.DNS_IP + '/customField/fieldId?fieldId=' + itemIncustomField)
+                .then(async responses => {
+                  let rs1 = responses.data
+                  await axios
+                    .get(this.DNS_IP + '/BookingDataSelect/get?bookNo=' + dt.bookNo)
+                    .then(async response => {
+                      let rs = response.data
+                      if (rs.length > 0) {
+                        console.log('BookingDataSelect', rs)
+                        console.log('customField', rs1)
+                        let sortrs = rs1.sort((a, b) => a.sortNoField - b.sortNoField)
+                        for (var i = 0; i < sortrs.length; i++) {
+                          var d = sortrs[i]
+                          // var s = {}
+                          var dataBD = rs.filter(el => { return parseInt(el.fieldId) === parseInt(d.fieldId) })
+                          if (dataBD.length > 0) {
+                            if (dt.flowId === dataBD[0].flowId) {
+                              d.bookNo = dataBD[0].bookNo
+                              d.bookingFieldId = rs2[0].bookingFieldId
+                              d.bookingDataId = dataBD[0].bookingDataId
+                              d.flowId = dataBD[0].flowId
+                              d.masBranchID = dataBD[0].masBranchID
+                              // d.dueDate = dt.dueDate
+                              // d.conditionField = d.conditionField
+                              // d.fieldId = d.fieldId
+                              // d.fieldType = d.fieldType
+                              d.fieldValue = dataBD[0].fieldValue
+                              d.packageId = dataBD[0].packageId
+                              // d.fieldName = d.fieldName
+                              // d.conditionField = d.conditionField
+                              // d.conditionValue = d.conditionValue
+                              // d.requiredField = d.requiredField
+                              // d.optionField = d.optionField
+                              // d.userId = d.userId
+                              if (rs[0].userId === 'user-skip') {
+                                d.userId = ''
+                              } else {
+                                d.userId = rs[0].userId
+                              }
+                              d.shopId = this.session.data.shopId
+                              d.userName = this.$session.getAll().data.userName
+                              this.BookingDataItem.push(d)
                             }
-                            d.shopId = this.session.data.shopId
-                            d.userName = this.$session.getAll().data.userName
-                            this.BookingDataItem.push(d)
                           }
                         }
+                        if (text === 'qrcode') {
+                          this.dataQrcode = dt
+                        }
+                        // await this.getBookingField()
+                        await this.getflowfield(dt)
                       }
-                      if (text === 'qrcode') {
-                        this.dataQrcode = dt
-                      }
-                      // await this.getBookingField()
-                      await this.getflowfield(dt)
-                    }
-                  })
-              })
-          }
-        })
+                    })
+                })
+            }
+          })
+      }
     },
     async getBookingData (dt, text) {
       this.BookingDataItem = []

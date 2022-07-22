@@ -27,6 +27,7 @@ import BoardControlBeauty from './BoardControlBeauty'
 import BookingListBeauty from './BookingListBeauty'
 import SettingTag from './SettingTag'
 import Showbooking from './Showbooking'
+import BookingMobileConfirmJob from './BookingMobileConfirmJob'
 export default {
   CustomField,
   Flow,
@@ -56,5 +57,6 @@ export default {
   BoardControlBeauty,
   BookingListBeauty,
   SettingTag,
-  Showbooking
+  Showbooking,
+  BookingMobileConfirmJob
 }

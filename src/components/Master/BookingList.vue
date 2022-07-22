@@ -1344,7 +1344,7 @@
                 </v-container>
               </v-card-text>
               <v-card-text  v-if="dataEditJobReady && !statusConfirmJob">
-                <strong><h2>เนื่องจากวันที่นัดหมาย {{format_dateNotime(dueDate)}} ซึ่งยังไม่ถึงเวลานัด</h2></strong>
+                <strong><h2>เนื่องจากวันที่นัดหมาย {{format_dateNotime(dueDate)}} ไม่ตรงกับวันที่ปัจจุบัน</h2></strong>
                 <strong style="color: red;"><h3>กรุณาตรวจสอบข้อมูล หรือ เปลี่ยนเวลานัดหมายใหม่</h3></strong>
                 <div class="text-center">
                   <v-btn small color="red" dark @click="dialogEdit = false, getDataDefault(), searchOther = '', showColorSearch = false, statusSearch = 'no'">
@@ -3651,8 +3651,6 @@ export default {
     }
   },
   async mounted () {
-    // this.dataReady = false
-    console.log('localStorage', localStorage.getItem('typeData'))
     if (this.$route.query.bookNo) {
       await this.getDataBranch()
       await this.getEmpSelectAdd()
@@ -6820,76 +6818,77 @@ export default {
         this.statusConfirmJob = false
       }
       console.log('this.statusConfirmJob', this.statusConfirmJob)
-
-      await axios
-        .get(
-          this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
-        )
-        .then(async response1 => {
-          let rs2 = response1.data
-          if (rs2.length > 0) {
-            let bookingData = []
-            bookingData = JSON.parse(rs2[0].flowfieldName)
-            for (let i = 0; i < bookingData.length; i++) {
-              let d = bookingData[i]
-              itemIncustomField.push(d.fieldId)
-            }
-            await axios
-              .get(this.DNS_IP + '/customField/fieldId?fieldId=' + itemIncustomField)
-              .then(async responses => {
-                let rs1 = responses.data
-                await axios
-                  .get(this.DNS_IP + '/BookingDataSelect/get?bookNo=' + dt.bookNo)
-                  .then(async response => {
-                    let rs = response.data
-                    if (rs.length > 0) {
-                      console.log('BookingDataSelect', rs)
-                      console.log('customField', rs1)
-                      let sortrs = rs1.sort((a, b) => a.sortNoField - b.sortNoField)
-                      for (var i = 0; i < sortrs.length; i++) {
-                        var d = sortrs[i]
-                        // var s = {}
-                        var dataBD = rs.filter(el => { return parseInt(el.fieldId) === parseInt(d.fieldId) })
-                        if (dataBD.length > 0) {
-                          if (dt.flowId === dataBD[0].flowId) {
-                            d.bookNo = dataBD[0].bookNo
-                            d.bookingFieldId = rs2[0].bookingFieldId
-                            d.bookingDataId = dataBD[0].bookingDataId
-                            d.flowId = dataBD[0].flowId
-                            d.masBranchID = dataBD[0].masBranchID
-                            // d.dueDate = dt.dueDate
-                            // d.conditionField = d.conditionField
-                            // d.fieldId = d.fieldId
-                            // d.fieldType = d.fieldType
-                            d.fieldValue = dataBD[0].fieldValue
-                            d.packageId = dataBD[0].packageId
-                            // d.fieldName = d.fieldName
-                            // d.conditionField = d.conditionField
-                            // d.conditionValue = d.conditionValue
-                            // d.requiredField = d.requiredField
-                            // d.optionField = d.optionField
-                            // d.userId = d.userId
-                            if (rs[0].userId === 'user-skip') {
-                              d.userId = ''
-                            } else {
-                              d.userId = rs[0].userId
+      if (this.statusConfirmJob) {
+        await axios
+          .get(
+            this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+          )
+          .then(async response1 => {
+            let rs2 = response1.data
+            if (rs2.length > 0) {
+              let bookingData = []
+              bookingData = JSON.parse(rs2[0].flowfieldName)
+              for (let i = 0; i < bookingData.length; i++) {
+                let d = bookingData[i]
+                itemIncustomField.push(d.fieldId)
+              }
+              await axios
+                .get(this.DNS_IP + '/customField/fieldId?fieldId=' + itemIncustomField)
+                .then(async responses => {
+                  let rs1 = responses.data
+                  await axios
+                    .get(this.DNS_IP + '/BookingDataSelect/get?bookNo=' + dt.bookNo)
+                    .then(async response => {
+                      let rs = response.data
+                      if (rs.length > 0) {
+                        console.log('BookingDataSelect', rs)
+                        console.log('customField', rs1)
+                        let sortrs = rs1.sort((a, b) => a.sortNoField - b.sortNoField)
+                        for (var i = 0; i < sortrs.length; i++) {
+                          var d = sortrs[i]
+                          // var s = {}
+                          var dataBD = rs.filter(el => { return parseInt(el.fieldId) === parseInt(d.fieldId) })
+                          if (dataBD.length > 0) {
+                            if (dt.flowId === dataBD[0].flowId) {
+                              d.bookNo = dataBD[0].bookNo
+                              d.bookingFieldId = rs2[0].bookingFieldId
+                              d.bookingDataId = dataBD[0].bookingDataId
+                              d.flowId = dataBD[0].flowId
+                              d.masBranchID = dataBD[0].masBranchID
+                              // d.dueDate = dt.dueDate
+                              // d.conditionField = d.conditionField
+                              // d.fieldId = d.fieldId
+                              // d.fieldType = d.fieldType
+                              d.fieldValue = dataBD[0].fieldValue
+                              d.packageId = dataBD[0].packageId
+                              // d.fieldName = d.fieldName
+                              // d.conditionField = d.conditionField
+                              // d.conditionValue = d.conditionValue
+                              // d.requiredField = d.requiredField
+                              // d.optionField = d.optionField
+                              // d.userId = d.userId
+                              if (rs[0].userId === 'user-skip') {
+                                d.userId = ''
+                              } else {
+                                d.userId = rs[0].userId
+                              }
+                              d.shopId = this.session.data.shopId
+                              d.userName = this.$session.getAll().data.userName
+                              this.BookingDataItem.push(d)
                             }
-                            d.shopId = this.session.data.shopId
-                            d.userName = this.$session.getAll().data.userName
-                            this.BookingDataItem.push(d)
                           }
                         }
+                        if (text === 'qrcode') {
+                          this.dataQrcode = dt
+                        }
+                        // await this.getBookingField()
+                        await this.getflowfield(dt)
                       }
-                      if (text === 'qrcode') {
-                        this.dataQrcode = dt
-                      }
-                      // await this.getBookingField()
-                      await this.getflowfield(dt)
-                    }
-                  })
-              })
-          }
-        })
+                    })
+                })
+            }
+          })
+      }
     },
     async getBookingData (dt, text) {
       this.BookingDataItem = []

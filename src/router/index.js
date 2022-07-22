@@ -224,6 +224,11 @@ export default new Router({
     component: Master.BookingMobile
   },
   {
+    path: '/BookingMobileConfirmJob',
+    name: 'BookingMobileConfirmJob',
+    component: Master.BookingMobileConfirmJob
+  },
+  {
     path: '/Dashbord/Report',
     name: 'Report',
     component: Dashbord.Report
