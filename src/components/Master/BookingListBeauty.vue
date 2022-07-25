@@ -9053,7 +9053,8 @@ export default {
                   {
                     'type': 'text',
                     'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}
-                          \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}`
+                          \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}
+                          \n${this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) })[0].allData.remarkConfirm || ''}`
                   }
                 ]
               }
@@ -9368,7 +9369,8 @@ export default {
                       {
                         'type': 'text',
                         'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}
-                    \nวันเดือนปี ${this.format_dateFUllTime(this.formChange.date + ' ' + this.formChange.time.value)}`
+                    \nวันเดือนปี ${this.format_dateFUllTime(this.formChange.date + ' ' + this.formChange.time.value)}
+                    \n${this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) })[0].allData.remarkConfirm || ''}`
                       }
                     ]
                   }
@@ -9685,7 +9687,8 @@ export default {
                     {
                       'type': 'text',
                       'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${(cusName.length > 0) ? cusName[0].fieldValue : ''}
-                          \nวันเดือนปี ${this.format_dateFUllTime(booking.data[0].dueDate)}`
+                          \nวันเดือนปี ${this.format_dateFUllTime(booking.data[0].dueDate)}
+                          \n${this.DataFlowName.filter(el => { return el.value === parseInt(booking.data[0].flowId) })[0].allData.remarkConfirm || ''}`
                     }
                   ]
                 }
