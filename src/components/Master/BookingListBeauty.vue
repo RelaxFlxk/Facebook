@@ -3963,7 +3963,7 @@
                         <v-select
                           v-model="phonenum"
                           :items="phonenumItem"
-                          label="ค้นหาทะเบอร์โทร"
+                          label="ค้นหาเบอร์โทร"
                           dense
                           solo
                           @change="SelectDataHistory"
@@ -3973,22 +3973,54 @@
                           dense
                           v-if="phonenum.length > 0"
                           >
-                                <v-timeline-item
-                              v-for="(item , index) in HistoryData[0]" :key="index"
+                              <v-timeline-item
+                               v-for="(item , index) in HistoryData[0]" :key="index"
                               >
                                 <template v-slot:icon>
                                   <v-icon
-                                  small dark>
-                                  event</v-icon>
-                                </template>
-                              <div v-for="(item2 , index2) in item" :key="index2">
-                              <v-card-text class="text-start"><h6 class="font-weight-bold">{{format_dateThai(item2[0].dueDate)}}</h6></v-card-text>
-                              <v-card-text class="text-start"><h6 class="font-weight-bold">{{item2[0].flowName}}</h6></v-card-text>
-                              <v-card-text class="text-start"><h6 class="font-weight-bold">{{item2[0].masBranchName}}</h6></v-card-text>
-                              <div v-for="(item3 , index3) in item2" :key="index3">
+                                    small dark>
+                                    event</v-icon>
+                                  </template>
+                                <div v-for="(item2 , index2) in item" :key="index2">
+                                  <v-card-text class="text-start"><h6 class="font-weight-bold">{{format_dateThai(item2[0].dueDate)}}</h6></v-card-text>
+                                  <v-card-text class="text-start"><h6 class="font-weight-bold">{{item2[0].flowName}}</h6></v-card-text>
+                                  <v-card-text class="text-start"><h6 class="font-weight-bold">{{item2[0].masBranchName}}</h6></v-card-text>
+                                  <div v-for="(item3 , index3) in item2" :key="index3">
                                     <v-card-text class="text-start" v-if="item3.fieldValue !== ''"><strong>{{item3.fieldName}} : </strong> {{item3.fieldValue}}</v-card-text>
-                              </div>
-                              </div>
+                                  </div>
+                                  <v-card-text v-if="item2[0].statusUpload1 === 'True' || item2[0].statusUpload2 === 'True'">
+                                    <v-row>
+                                      <v-col cols="auto" v-if="item2[0].statusUpload1 === 'True'">
+                                        <v-btn
+                                          tile
+                                          color="#173053"
+                                          dark
+                                          small
+                                          @click="showFileUpload(item2[0], '1')"
+                                        >
+                                          <v-icon left>
+                                            mdi-file-find
+                                          </v-icon>
+                                          Show File 1
+                                        </v-btn>
+                                      </v-col>
+                                      <v-col cols="auto" v-if="item2[0].statusUpload2 === 'True'">
+                                        <v-btn
+                                          tile
+                                          color="#173053"
+                                          dark
+                                          small
+                                          @click="showFileUpload(item2[0], '2')"
+                                        >
+                                          <v-icon left>
+                                            mdi-file-find
+                                          </v-icon>
+                                          Show File 2
+                                        </v-btn>
+                                      </v-col>
+                                    </v-row>
+                                  </v-card-text>
+                                </div>
                                 </v-timeline-item>
                           </v-timeline>
                       </v-card>
@@ -4218,6 +4250,33 @@
               </v-form>
             </v-card>
           </v-dialog>
+
+        <v-dialog v-model="dialogShowFileUpload" persistent max-width="80%">
+          <v-card>
+            <v-card-title>
+              File Upload
+            </v-card-title>
+            <v-card-text>
+            <v-row justify="center">
+              <v-col class="videoWrapper">
+                <iframe :src="srcUpload"></iframe>
+              </v-col>
+            </v-row>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                elevation="2"
+                color="red darken-1"
+                text
+                @click="dialogShowFileUpload = false"
+              >
+                <v-icon left> mdi-cancel</v-icon>
+                ปิด
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </div>
     </v-main>
   </div>
@@ -4290,6 +4349,8 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      srcUpload: '',
+      dialogShowFileUpload: false,
       pickerDate: null,
       currentDate: moment().format('YYYY-MM-DD'),
       currentMonth: moment().format('YYYY-MM'),
@@ -4701,6 +4762,14 @@ export default {
     // await this.beforeCreate()
   },
   methods: {
+    showFileUpload (item, text) {
+      if (text === '1') {
+        this.srcUpload = item.fileUpload1
+      } else {
+        this.srcUpload = item.fileUpload2
+      }
+      this.dialogShowFileUpload = true
+    },
     async checkLimit () {
       this.checkLimitBooking.ID = 'NO'
       this.checkLimitBooking.countBooking = 1
@@ -5084,6 +5153,7 @@ export default {
     },
     async ConvertHistoryData (BookingData) {
       this.HistoryData = []
+      this.phonenumItem = []
       // console.log('BookingData', BookingData)
       if (BookingData !== null) {
         if (BookingData.length > 0) {
@@ -9786,7 +9856,22 @@ export default {
 }
 </script>
 
-<style scoped>s
+<style scoped>
+.videoWrapper {
+  position: relative;
+  padding-bottom: 56.25%;
+  /* 16:9 */
+  padding-top: 25px;
+  height: 0;
+}
+
+.videoWrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
 .border-active {
   border-style: solid;
   border-color: red;
