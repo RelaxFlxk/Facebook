@@ -5,7 +5,7 @@
       <div class="pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4">
         <!-- <v-col class="ma-2" id="text-Board">กระดานทำงาน</v-col> -->
         <v-row>
-        <v-col cols="6" style="font-family: Roboto; font-style: normal; font-weight: bold; font-size: 24px; line-height: 28px; color: #1b437c;">กระดานทำงาน</v-col>
+        <v-col cols="6" style="font-size: 20px; line-height: 28px; color: #1b437c;">กระดานทำงาน</v-col>
         <v-col cols="6" class="text-right">
             <v-btn-toggle borderless>
             <!-- <v-btn
@@ -504,7 +504,7 @@
                             >
                               <template v-slot:activator="{ on, attrs }">
                                 <strong
-                                  class="ml-2"
+                                  class="ml-2 textLayout"
                                   v-bind="attrs"
                                   v-on="on"
                                 >
@@ -513,10 +513,10 @@
                               </template>
                               <span>{{item.stepTitle}}</span>
                             </v-tooltip>
-                          <strong class="ml-2" v-if="item.stepTitle.length <= 18">{{ item.stepTitle }}</strong>
+                          <strong class="ml-2 textLayout" v-if="item.stepTitle.length <= 18">{{ item.stepTitle }}</strong>
                         </v-col>
                         <v-col cols="2" class="text-right pb-1 pt-1 pl-0 ">
-                          <strong class="pa-0">{{
+                          <strong class="pa-0 textLayout">{{
                             allJob.filter(row => {
                               return row.stepId == item.stepId
                             }).length
@@ -582,7 +582,6 @@
                                     class="pb-1 mr-1 ml-1"
                                       v-bind="attrs"
                                       v-on="on"
-                                      x-large
                                       color="#1B437C"
                                     >
                                       mdi-account-arrow-right
@@ -614,7 +613,6 @@
                             color="#DE6467">
                               <template v-slot:activator="{ on, attrs }">
                                 <v-icon
-                                  large
                                   color="#DE6467"
                                   v-bind="attrs"
                                   v-on="on"
@@ -637,7 +635,6 @@
                         color="#FF8C00">
                           <template v-slot:activator="{ on, attrs }">
                             <v-icon
-                              large
                               color="#FF8C00"
                               @click=";(dialog = true),
                                   setUpdate(itemsJob, 'editFlow', item)
@@ -662,7 +659,6 @@
                           "
                           v-bind="attrs"
                           v-on="on"
-                          large
                           color="#9E9E9E"
                         >
                           mdi-shuffle-variant
@@ -679,7 +675,6 @@
                             <v-icon
                               v-bind="attrs"
                               v-on="on"
-                              large
                               color="#84C650"
                               @click="
                                 ;(dialogDelete = true), setUpdate(itemsJob, 'closeJob')
@@ -695,7 +690,6 @@
                             <v-tooltip top color="#A12BFD">
                               <template v-slot:activator="{ on, attrs }">
                                 <v-icon
-                                  large
                                   color="#A12BFD"
                                   @click="
                                     ;(dialogProgress = true), getJobitem(itemsJob)
@@ -829,7 +823,6 @@
                             color="#1B437C">
                               <template v-slot:activator="{ on, attrs }">
                                 <v-icon
-                                  large
                                   color="#1B437C"
                                   v-bind="attrs"
                                   v-on="on"
@@ -850,7 +843,6 @@
                             color="#DE6467">
                               <template v-slot:activator="{ on, attrs }">
                                 <v-icon
-                                  large
                                   color="#DE6467"
                                   v-bind="attrs"
                                   v-on="on"
@@ -872,7 +864,6 @@
                         color="#FF8C00">
                           <template v-slot:activator="{ on, attrs }">
                             <v-icon
-                              large
                               color="#FF8C00"
                               @click=";(dialog = true),
                                   setUpdate(itemsJob, 'editFlow', item)
@@ -897,7 +888,6 @@
                           "
                           v-bind="attrs"
                           v-on="on"
-                          large
                           color="#9E9E9E"
                         >
                           mdi-shuffle-variant
@@ -912,7 +902,6 @@
                             <v-icon
                               v-bind="attrs"
                               v-on="on"
-                              large
                               color="#84C650"
                               @click="
                                 ;(dialogDelete = true), setUpdate(itemsJob, 'closeJob')
@@ -2223,6 +2212,9 @@ export default {
 }
 </script>
 <style scoped>
+.textLayout {
+  font-size: 16px !important;
+}
 .theme--light.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled) {
   background-color: #f0eeee !important;
 }

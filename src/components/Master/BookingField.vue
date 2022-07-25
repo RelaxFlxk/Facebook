@@ -617,6 +617,73 @@
               <v-col cols="12" md="12" sm="12">
                 <v-card min-height="50%">
                   <v-col cols="12" class="text-center">
+                    <h4 class="text-center">ตั้งค่า Upload File</h4>
+                    <v-row align="center">
+                      <v-expansion-panels
+                          multiple
+                        >
+                        <v-expansion-panel>
+                          <v-expansion-panel-header>จัดการ Upload File</v-expansion-panel-header>
+                          <v-expansion-panel-content>
+                            <h4 class="text-center">โปรดเลือกข้อมูลที่ต้องการแสดง</h4>
+                            <v-row>
+                              <v-col cols="6">
+                                <v-row align="center">
+                                  <v-checkbox
+                                    false-value="False"
+                                    true-value="True"
+                                    v-model="showUpload1"
+                                    hide-details
+                                    class="shrink ml-6 mr-0 mt-0 mb-6"
+                                  ></v-checkbox>
+                                  <v-text-field :value="showUpload1 === 'True' ? 'แสดง' : 'ไม่แสดง'" readonly label="แสดง Upload File ตัวที่ 1"></v-text-field>
+                                </v-row>
+                              </v-col>
+                               <v-col cols="6" class="pt-0">
+                                <v-text-field v-model="textUpload1" :readonly="showUpload1 === 'True' ? false : true" label="หัวข้อที่ต้องการแสดง"></v-text-field>
+                               </v-col>
+                            </v-row>
+                            <v-row>
+                              <v-col cols="6">
+                                <v-row align="center">
+                                  <v-checkbox
+                                    false-value="False"
+                                    true-value="True"
+                                    v-model="showUpload2"
+                                    hide-details
+                                    class="shrink ml-6 mr-0 mt-0 mb-6"
+                                  ></v-checkbox>
+                                  <v-text-field :value="showUpload2 === 'True' ? 'แสดง' : 'ไม่แสดง'" readonly label="แสดง Upload File ตัวที่ 2"></v-text-field>
+                                </v-row>
+                              </v-col>
+                               <v-col cols="6" class="pt-0">
+                                <v-text-field v-model="textUpload2" :readonly="showUpload2 === 'True' ? false : true" label="หัวข้อที่ต้องการแสดง"></v-text-field>
+                               </v-col>
+                            </v-row>
+                            <div class="text-center">
+                              <v-btn
+                                elevation="2"
+                                small
+                                dark
+                                @click="updateUploadFile()"
+                                color="info"
+                              >
+                                <v-icon left>mdi-content-save-edit</v-icon>
+                                เปลี่ยนแปลง
+                              </v-btn>
+                            </div>
+                          </v-expansion-panel-content>
+                        </v-expansion-panel>
+                      </v-expansion-panels>
+                    </v-row>
+                  </v-col>
+                </v-card>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" md="12" sm="12">
+                <v-card min-height="50%">
+                  <v-col cols="12" class="text-center">
                     <h4 class="text-center">โปรดเลือกข้อมูลที่ต้องการแสดง</h4>
                     <v-row align="center">
                       <v-checkbox
@@ -743,6 +810,10 @@ export default {
   },
   data () {
     return {
+      showUpload1: 'False',
+      showUpload2: 'False',
+      textUpload1: '',
+      textUpload2: '',
       showEdit: false,
       shop: [],
       ColorByShop: [],
@@ -950,6 +1021,8 @@ export default {
               this.dataTypeProcess2 = rs[0].typeProcess2 || ''
               this.dataTypeProcess3 = rs[0].typeProcess3 || ''
               this.dataTypeProcess4 = rs[0].typeProcess4 || ''
+              this.textUpload1 = rs[0].textUpload1 || 'Upload File 1'
+              this.textUpload2 = rs[0].textUpload2 || 'Upload File 2'
               let bookingData = []
               if (rs[0].showTime === null || rs[0].showTime === '') {
                 this.showTime = 'แสดง'
@@ -960,6 +1033,16 @@ export default {
                 this.showMap = 'ไม่แสดง'
               } else {
                 this.showMap = rs[0].showMap
+              }
+              if (rs[0].showUpload1 === null || rs[0].showUpload1 === '') {
+                this.showUpload1 = 'Flase'
+              } else {
+                this.showUpload1 = rs[0].showUpload1
+              }
+              if (rs[0].showUpload2 === null || rs[0].showUpload2 === '') {
+                this.showUpload2 = 'Flase'
+              } else {
+                this.showUpload2 = rs[0].showUpload2
               }
               this.showLimitBooking = rs[0].showLimitBooking || 'Fales'
               bookingData = JSON.parse(rs[0].flowfieldName)
@@ -1121,6 +1204,7 @@ export default {
     },
     updateTypeJobSubmit () {
       if (this.validJob !== false) {
+        this.dataReady = true
         let url = '/BookingField/edit/' + this.IdUpdate
         let dt = {
           typeJob1: this.dataTypeJob1,
@@ -1133,6 +1217,7 @@ export default {
           .then(async response => {
             this.$swal('สำเร็จ', 'เปลี่ยนแปลงเรียบร้อย', 'success')
             await this.getBookingField()
+            this.dataReady = false
           })
       }
     },
@@ -1142,6 +1227,7 @@ export default {
     },
     updateTypeProcessSubmit () {
       if (this.validJob !== false) {
+        this.dataReady = true
         let url = '/BookingField/edit/' + this.IdUpdate
         let dt = {
           typeProcess1: this.dataTypeProcess1,
@@ -1155,8 +1241,27 @@ export default {
           .then(async response => {
             this.$swal('สำเร็จ', 'เปลี่ยนแปลงเรียบร้อย', 'success')
             await this.getBookingField()
+            this.dataReady = false
           })
       }
+    },
+    updateUploadFile () {
+      this.dataReady = true
+      let url = '/BookingField/edit/' + this.IdUpdate
+      let dt = {
+        showUpload1: this.showUpload1,
+        showUpload2: this.showUpload2,
+        textUpload1: this.textUpload1 || 'Upload File 1',
+        textUpload2: this.textUpload2 || 'Upload File 2',
+        LAST_USER: this.session.data.userName
+      }
+      axios
+        .post(this.DNS_IP + url, dt)
+        .then(async response => {
+          this.$swal('สำเร็จ', 'เปลี่ยนแปลงเรียบร้อย', 'success')
+          await this.getBookingField()
+          this.dataReady = false
+        })
     }
     // FunCopy () {
     //   var copyText = document.getElementById('myInput')
