@@ -447,6 +447,15 @@
                             dense
                             v-bind:options="options2" />
                         </v-col>
+                        <v-col
+                          cols="12"
+                        >
+                          <v-textarea
+                            outlined
+                            v-model="formAdd.remarkConfirm"
+                            label="หมายเหตุการยืนยันนัดหมาย"
+                          ></v-textarea>
+                        </v-col>
                         <v-col cols="12">
                           <v-row justify="center">
                             <v-btn
@@ -678,6 +687,15 @@
                             outlined
                             dense
                             v-bind:options="options2" />
+                        </v-col>
+                        <v-col
+                          cols="12"
+                        >
+                          <v-textarea
+                            outlined
+                            v-model="formUpdate.remarkConfirm"
+                            label="หมายเหตุการยืนยันนัดหมาย"
+                          ></v-textarea>
                         </v-col>
                         <v-col cols="12">
                           <v-row style="height: 50px" justify="center">
@@ -1397,7 +1415,8 @@ export default {
         promptPayID: null,
         promptPayName: null,
         amountDeposit: 0,
-        shopId: this.$session.getAll().data.shopId
+        shopId: this.$session.getAll().data.shopId,
+        remarkConfirm: ''
       },
       formAddStep: {
         stepId: '',
@@ -1435,7 +1454,8 @@ export default {
         amountDeposit: 0,
         promptPayID: null,
         promptPayName: null,
-        shopId: ''
+        shopId: '',
+        remarkConfirm: ''
       },
       formUpdateItemFlow: {
         fieldId: '',
@@ -1460,7 +1480,8 @@ export default {
         flowNameEn: '',
         checkPayment: 'True',
         checkOnsite: 'False',
-        LAST_USER: ''
+        LAST_USER: '',
+        remarkConfirm: ''
       },
       columnsStep: [
         { text: 'AC', value: 'sendCard' },
@@ -2164,6 +2185,7 @@ export default {
       this.formUpdate.checkDeposit = item.checkDeposit || 'False'
       this.formUpdate.promptPayID = item.promptPayID || ''
       this.formUpdate.promptPayName = item.promptPayName || ''
+      this.formUpdate.remarkConfirm = item.remarkConfirm || ''
       this.shopId = this.$session.getAll().data.shopId
       this.fieldType = this.formUpdate.fieldType
       // this.desserts = JSON.parse(response.data[0].flowfieldName)
