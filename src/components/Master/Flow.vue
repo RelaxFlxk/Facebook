@@ -419,6 +419,14 @@
                           ></v-checkbox>
                         </v-col>
                         <v-col cols="12" class="pb-0 pt-0">
+                          <v-select
+                            v-if="formAdd.checkDeposit === 'True'"
+                            v-model="formAdd.depositTime"
+                            :items="depositTimeItem"
+                            label="ชำระเงินมัดจำภายในกี่ชั่วโมง"
+                            outlined
+                            dense
+                          ></v-select>
                           <v-text-field
                           v-if="formAdd.checkDeposit === 'True'"
                             v-model="formAdd.promptPayName"
@@ -660,6 +668,14 @@
                           ></v-checkbox>
                         </v-col>
                         <v-col cols="12" class="pb-0 pt-0">
+                          <v-select
+                            v-if="formUpdate.checkDeposit === 'True'"
+                            v-model="formUpdate.depositTime"
+                            :items="depositTimeItem"
+                            label="ชำระเงินมัดจำภายในกี่ชั่วโมง"
+                            outlined
+                            dense
+                          ></v-select>
                           <v-text-field
                           v-if="formUpdate.checkDeposit === 'True'"
                             v-model="formUpdate.promptPayName"
@@ -1401,6 +1417,8 @@ export default {
       // Search All
       searchAll: '',
       searchAll2: '',
+      depositTimeItem: ['NO', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13',
+        '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24'],
       formAdd: {
         flowCode: '',
         flowId: '',
@@ -1412,6 +1430,7 @@ export default {
         checkPayment: 'True',
         checkOnsite: 'False',
         checkDeposit: 'False',
+        depositTime: 'NO',
         promptPayID: null,
         promptPayName: null,
         amountDeposit: 0,
@@ -1451,6 +1470,7 @@ export default {
         checkPayment: 'True',
         checkOnsite: 'False',
         checkDeposit: 'False',
+        depositTime: '',
         amountDeposit: 0,
         promptPayID: null,
         promptPayName: null,
@@ -2186,6 +2206,7 @@ export default {
       this.formUpdate.promptPayID = item.promptPayID || ''
       this.formUpdate.promptPayName = item.promptPayName || ''
       this.formUpdate.remarkConfirm = item.remarkConfirm || ''
+      this.formUpdate.depositTime = item.depositTime || 'NO'
       this.shopId = this.$session.getAll().data.shopId
       this.fieldType = this.formUpdate.fieldType
       // this.desserts = JSON.parse(response.data[0].flowfieldName)
@@ -2647,7 +2668,11 @@ export default {
       // eslint-disable-next-line no-redeclare
       for (var key in this.formAdd) {
         if (this.formAdd[key]) {
-          this.formAdd[key] = ''
+          if (key === 'depositTime') {
+            this.formAdd[key] = 'NO'
+          } else {
+            this.formAdd[key] = ''
+          }
         }
       }
 
