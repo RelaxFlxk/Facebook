@@ -3873,7 +3873,7 @@
                   x-large
                   color="red darken-1"
                   text
-                  @click="dialogDeposit = false"
+                  @click="dialogDeposit = false, pictureUrlPreviewDeposit = null"
                   :loading="loadingDeposit"
                   :disabled="loadingDeposit"
                 >
@@ -5289,6 +5289,7 @@ export default {
           this.pictureUrlDeposit = null
           this.filesDeposit = null
           this.loadingDeposit = false
+          this.pictureUrlPreviewDeposit = null
           if (this.statusSearch === 'no') {
             await this.getBookingList()
           } else {
@@ -5315,9 +5316,12 @@ export default {
         )
         .then(async response => {
           this.$swal('เรียบร้อย', 'อัพเดทหลักฐานเงินมัดจำเรียบร้อย', 'success')
+          this.pictureUrlDeposit = null
+          this.filesDeposit = null
           this.loadingDeposit = false
           this.dialogDeposit = false
           this.statusDeposit = false
+          this.pictureUrlPreviewDeposit = null
           if (this.statusSearch === 'no') {
             await this.getBookingList()
           } else {
