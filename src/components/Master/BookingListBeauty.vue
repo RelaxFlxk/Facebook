@@ -3849,6 +3849,7 @@
                       <v-img
                         aspect-ratio="6"
                         contain
+                        @click="gotoPicture(pictureUrlPreviewDeposit)"
                         :src="pictureUrlPreviewDeposit"
                       ></v-img>
                       <br />
@@ -4764,6 +4765,9 @@ export default {
     // await this.beforeCreate()
   },
   methods: {
+    gotoPicture (Linkitem) {
+      window.open(Linkitem, '_blank')
+    },
     SetallowedDatesChange (flowId) {
       this.dataFlowSelectAdd.forEach((v, k) => {
         console.log('v', v)
