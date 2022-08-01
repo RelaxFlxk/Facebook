@@ -423,7 +423,7 @@
                             v-if="formAdd.checkDeposit === 'True'"
                             v-model="formAdd.depositTime"
                             :items="depositTimeItem"
-                            label="ชำระเงินมัดจำภายในกี่ชั่วโมง"
+                            label="ชำระเงินมัดจำภายในกี่นาที"
                             outlined
                             dense
                           ></v-select>
@@ -672,7 +672,7 @@
                             v-if="formUpdate.checkDeposit === 'True'"
                             v-model="formUpdate.depositTime"
                             :items="depositTimeItem"
-                            label="ชำระเงินมัดจำภายในกี่ชั่วโมง"
+                            label="ชำระเงินมัดจำภายในกี่นาที"
                             outlined
                             dense
                           ></v-select>
@@ -1182,6 +1182,52 @@
                     </v-col>
                   </v-row>
                   </v-card>
+                   <v-row>
+                    <v-col cols="12">
+                      <v-card class="pa-3" >
+                        <strong >วันหยุดทั่วไปของบริษัท</strong>
+                        <v-select
+                        class="mt-8"
+                        v-model="formUpdateLimitbooking.dateDayoffText"
+                        :items="itemDateStop"
+                        small-chips
+                        dense
+                        label="เลือกวันหยุด"
+                        multiple
+                        outlined
+                        @change="changedateDayoff()"
+                      ></v-select>
+                      </v-card>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12">
+                      <v-card class="pa-6">
+                        <v-row>
+                          <v-col cols="6">
+                            <strong>วันหยุดประจำปีของบริษัท </strong>
+                          </v-col>
+                          <v-col cols="6">
+                            <v-select
+                              v-model="formUpdateLimitbooking.typeDayCustom"
+                              :item-text="typeDayCustomitem.text"
+                              :items="typeDayCustomitem"
+                              label="ประเภทของวันหยุด"
+                              dense
+                              outlined
+                            ></v-select>
+                          </v-col>
+                        </v-row>
+                        <v-date-picker
+                          v-model="formUpdateLimitbooking.dateDayCustom"
+                          :allowed-dates="allowedDates"
+                          multiple
+                          full-width
+                          class="mt-4"
+                        ></v-date-picker>
+                      </v-card>
+                    </v-col>
+                  </v-row>
                   </v-form>
                 </v-container>
               </v-card-text>
@@ -1332,8 +1378,24 @@ export default {
         setTime: '',
         limitBooking: 0,
         limitBookingCheck: 'Fales',
-        shopId: this.$session.getAll().data.shopId
+        shopId: this.$session.getAll().data.shopId,
+        dateDayoffText: [],
+        dateDayoffValue: [],
+        dateDayCustom: [],
+        typeDayCustom: ''
       },
+      typeDayCustomitem: [
+        {
+          text: 'วันที่เปิด',
+          value: 'on'
+        },
+        {
+          text: 'วันที่ปิด',
+          value: 'off'
+        }
+      ],
+      itemDateStop: ['วันอาทิตย์', 'วันจันทร์', 'วันอังคาร', 'วันพุธ', 'วันพฤหัสบดี', 'วันศุกร์', 'วันเสาร์'],
+      itemDateStopValue: [0, 1, 2, 3, 4, 5, 6],
       typeTimeAdd: 'add',
       timeText: '',
       indexTimeAdd: 0,
@@ -1417,8 +1479,12 @@ export default {
       // Search All
       searchAll: '',
       searchAll2: '',
-      depositTimeItem: ['NO', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13',
-        '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24'],
+      depositTimeItem: [
+        { text: 'ไม่จำกัดเวลามัดจำ', value: 'NO' },
+        { text: '10 นาที', value: '10' },
+        { text: 'ครึ่งชั่วโมง', value: '30' },
+        { text: '1 ชั่วโมง', value: '60' }
+      ],
       formAdd: {
         flowCode: '',
         flowId: '',
@@ -1591,9 +1657,20 @@ export default {
     async EditlimitBookingSubmit () {
       console.log('Editdata', this.formUpdateLimitbooking)
       console.log('dataitem', this.dataItemAddTime)
+      let dd = []
+      this.itemDateStop.forEach((v, k) => {
+        // console.log('test', this.formUpdate.dateDayoffText.filter(item => item === v))
+        if (this.formUpdateLimitbooking.dateDayoffText.filter(item => item === v).length > 0) {
+          dd.push(k)
+        }
+      })
       let Dataitem = {
         'limitBookingCheck': this.formUpdateLimitbooking.limitBookingCheck,
-        'setTime': JSON.stringify(this.dataItemAddTime)
+        'setTime': JSON.stringify(this.dataItemAddTime),
+        'dateDayoffText': JSON.stringify(this.formUpdateLimitbooking.dateDayoffText),
+        'dateDayoffValue': JSON.stringify(dd),
+        'dateDayCustom': JSON.stringify(this.formUpdateLimitbooking.dateDayCustom),
+        'typeDayCustom': this.formUpdateLimitbooking.typeDayCustom
       }
       console.log('Dataitem', Dataitem)
       this.$swal({
@@ -1629,7 +1706,7 @@ export default {
     },
     async getlimitbooking (item) {
       this.formUpdateLimitbooking.flowId = item.flowId
-      console.log('this.formUpdateLimitbooking.flowId', this.formUpdateLimitbooking.flowId)
+      // console.log('this.formUpdateLimitbooking.flowId', this.formUpdateLimitbooking.flowId)
       let dt = []
       await axios
         .get(this.DNS_IP + '/flow/get?flowId=' + item.flowId)
@@ -1637,8 +1714,21 @@ export default {
           let rs = response.data
           if (rs.length > 0) {
             dt = rs
+            console.log('rs', rs)
             this.formUpdateLimitbooking.limitBookingCheck = rs[0].limitBookingCheck || 'Fales'
-            console.log('this.formUpdate.setTime', rs[0].setTime)
+            if (rs[0].dateDayoffText === null || rs[0].dateDayoffText === '') {
+              this.formUpdateLimitbooking.dateDayoffText = []
+            } else {
+              this.formUpdateLimitbooking.dateDayoffText = JSON.parse(rs[0].dateDayoffText)
+            }
+            if (rs[0].dateDayCustom === null || rs[0].dateDayCustom === '') {
+              this.formUpdateLimitbooking.dateDayCustom = []
+            } else {
+              this.formUpdateLimitbooking.dateDayCustom = JSON.parse(rs[0].dateDayCustom)
+            }
+            this.formUpdateLimitbooking.typeDayCustom = rs[0].typeDayCustom
+            this.formUpdateLimitbooking.dateDayoffValue = rs[0].dateDayoffValue
+            // console.log('this.formUpdateLimitbooking.setTime', rs[0].setTime)
             if (rs[0].setTime === null || rs[0].setTime === '') {
               this.dataItemAddTime = []
             } else {
@@ -1654,7 +1744,7 @@ export default {
                 this.dataItemAddTime = setTime
               }
             }
-            console.log('testget', this.formUpdateLimitbooking)
+            console.log('testgetgetlimitbooking', this.formUpdateLimitbooking)
           }
         })
         .catch(error => {
@@ -1704,6 +1794,28 @@ export default {
           return a.value.localeCompare(b.value)
         })
         this.typeTimeAdd = 'add'
+      }
+    },
+    changedateDayoff () {
+      let dd = []
+      this.itemDateStop.forEach((v, k) => {
+        // console.log('test', this.formUpdate.dateDayoffText.filter(item => item === v))
+        if (this.formUpdateLimitbooking.dateDayoffText.filter(item => item === v).length > 0) {
+          dd.push(k)
+        }
+      })
+      this.formUpdateLimitbooking.dateDayoffValue = JSON.stringify(dd)
+    },
+    allowedDates (val) {
+      console.log('val', val)
+      // this.getMonth(this.pickerDate)
+      if (this.formUpdateLimitbooking.dateDayoffValue !== null && this.formUpdateLimitbooking.dateDayoffValue.length > 0) {
+        if (JSON.parse(this.formUpdateLimitbooking.dateDayoffValue).filter(el => { return el === new Date(val).getDay() }).length === 0) {
+          return val
+        }
+      } else {
+        // console.log('val', val)
+        return val
       }
     },
     UpdateDataTimeAdd () {
