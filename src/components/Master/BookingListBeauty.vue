@@ -1858,6 +1858,7 @@
                     <v-btn
                       elevation="10"
                       color="green darken-1"
+                      v-if="checkSelectText !== 'cancel'"
                       dark
                       small
                       :disabled="!validChange"
@@ -5884,11 +5885,53 @@ export default {
         this.swalConfig.title = 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?'
         this.$swal(this.swalConfig)
           .then(async result => {
-            if (this.formEdit.radiosRemark === 'FastTrack') {
-              let getcount = await this.getCountFastTrack(this.dateEdit, this.formEdit.flowId, this.formEdit.masBranchID)
-              let setCountFast = this.branch.filter(el => { return el.value === this.formEdit.masBranchID })[0].allData.countFastTrack
-              if (getcount < setCountFast) {
+            if (this.getSelectText === 'cancel') {
+              this.editDataSelectSubmit()
+            } else {
+              if (this.formEdit.radiosRemark === 'FastTrack') {
+                let getcount = await this.getCountFastTrack(this.dateEdit, this.formEdit.flowId, this.formEdit.masBranchID)
+                let setCountFast = this.branch.filter(el => { return el.value === this.formEdit.masBranchID })[0].allData.countFastTrack
+                if (getcount < setCountFast) {
+                  let chkStatLimit = this.dataFlowSelectEdit.filter(el => { return el.value === this.formEdit.flowId })
+                  console.log('this.getSelectText', this.getSelectText)
+                  if (chkStatLimit.length > 0) {
+                    if (chkStatLimit[0].allData.limitBookingCheck === 'True') {
+                      let dueOld = this.dueDateOld + this.dueDateTimeOld
+                      let dueNew = this.dateEdit + this.timeEdit.value
+                      let limitBookingCount = this.timeavailable.filter(el => { return el.value === this.timeEdit.value })
+                      console.log('limitBookingCount', limitBookingCount)
+                      let limitBookingCounts = 0
+                      if (limitBookingCount.length > 0) {
+                        limitBookingCounts = parseInt(limitBookingCount[0].limitBooking)
+                      } else {
+                        limitBookingCounts = 0
+                      }
+                      if (dueOld !== dueNew) {
+                        let chkStatus = await this.updateLimitBookingChange(this.dataEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
+                        console.log('chkStatus', chkStatus)
+                        if (chkStatus.status) {
+                          this.editDataSelectSubmit()
+                        } else {
+                          this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
+                          this.loadingEdit = false
+                        }
+                      } else {
+                        this.editDataSelectSubmit()
+                      }
+                    } else {
+                      this.editDataSelectSubmit()
+                    }
+                  } else {
+                    this.editDataSelectSubmit()
+                  }
+                } else {
+                  this.textError = 'จำนวนงานด่วนต่อวัน เกินกว่าที่ตั้งไว้'
+                  this.dialogError = true
+                  this.loadingEdit = false
+                }
+              } else {
                 let chkStatLimit = this.dataFlowSelectEdit.filter(el => { return el.value === this.formEdit.flowId })
+                console.log('this.getSelectText', this.getSelectText)
                 if (chkStatLimit.length > 0) {
                   if (chkStatLimit[0].allData.limitBookingCheck === 'True') {
                     let dueOld = this.dueDateOld + this.dueDateTimeOld
@@ -5919,13 +5962,7 @@ export default {
                 } else {
                   this.editDataSelectSubmit()
                 }
-              } else {
-                this.textError = 'จำนวนงานด่วนต่อวัน เกินกว่าที่ตั้งไว้'
-                this.dialogError = true
-                this.loadingEdit = false
               }
-            } else {
-              this.editDataSelectSubmit()
             }
           }).catch(error => {
             this.loadingEdit = false
@@ -8426,7 +8463,6 @@ export default {
         })
     },
     async confirmChkAdd (item) {
-      console.log('item', item)
       var dt = {
         bookNo: item.bookNo,
         contactDate: this.format_date(new Date()),
@@ -9019,11 +9055,17 @@ export default {
       if (this.$session.id() !== undefined) {
         console.log('item', item)
         this.dataConfirmReady = false
+        let dts = JSON.parse(this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
+
+        let dtint = parseInt(dts.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
+        console.log('dtint', dtint)
         var dt = {
           bookNo: item.bookNo,
           contactDate: this.format_date(new Date()),
           status: 'confirm',
           statusUse: 'use',
+          pageStatus: this.getSelectText,
+          limitBookingCount: dtint,
           shopId: this.$session.getAll().data.shopId,
           CREATE_USER: this.session.data.userName,
           LAST_USER: this.session.data.userName,
@@ -9033,57 +9075,61 @@ export default {
         axios
           .post(this.DNS_IP + '/booking_transaction/add', dt)
           .then(async response => {
-            this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-            await this.updateRemarkAndEmpSelect(item)
-            // this.getDataCalendaBooking()
-            if (this.packageId !== '') {
-              await this.usePackage()
-            }
-            let DTitem = item.userId
-            console.log('DTITEM', DTitem)
-            if (DTitem !== 'user-skip') {
-              if (this.statusSearch === 'no') {
-                await this.getBookingList()
+            if (response.data.status === true) {
+              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              await this.updateRemarkAndEmpSelect(item)
+              // this.getDataCalendaBooking()
+              if (this.packageId !== '') {
+                await this.usePackage()
+              }
+              let DTitem = item.userId
+              console.log('DTITEM', DTitem)
+              if (DTitem !== 'user-skip') {
+                if (this.statusSearch === 'no') {
+                  await this.getBookingList()
+                } else {
+                  await this.searchAny()
+                }
+                // this.getTimesChange('update')
+                if (this.getSelectText) {
+                  this.getSelect(this.getSelectText, this.getSelectCount)
+                }
+                let pushText = {
+                  'to': item.lineUserId,
+                  'messages': [
+                    {
+                      'type': 'text',
+                      'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}
+                            \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}
+                            \n${this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) })[0].allData.remarkConfirm || ''}`
+                    }
+                  ]
+                }
+                axios
+                  .post(
+                    this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
+                    pushText
+                  )
+                  .catch(error => {
+                    console.log('error function addData : ', error)
+                  })
               } else {
-                await this.searchAny()
+                if (this.statusSearch === 'no') {
+                  await this.getBookingList()
+                } else {
+                  await this.searchAny()
+                }
+                // this.getTimesChange('update')
+                if (this.getSelectText) {
+                  this.getSelect(this.getSelectText, this.getSelectCount)
+                }
               }
-              // this.getTimesChange('update')
-              if (this.getSelectText) {
-                this.getSelect(this.getSelectText, this.getSelectCount)
-              }
-              let pushText = {
-                'to': item.lineUserId,
-                'messages': [
-                  {
-                    'type': 'text',
-                    'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}
-                          \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}
-                          \n${this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) })[0].allData.remarkConfirm || ''}`
-                  }
-                ]
-              }
-              axios
-                .post(
-                  this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
-                  pushText
-                )
-                .catch(error => {
-                  console.log('error function addData : ', error)
-                })
+              this.dataConfirmReady = true
+              this.dialogConfirm = false
             } else {
-              if (this.statusSearch === 'no') {
-                await this.getBookingList()
-              } else {
-                await this.searchAny()
-              }
-              // this.getTimesChange('update')
-              if (this.getSelectText) {
-                this.getSelect(this.getSelectText, this.getSelectCount)
-              }
+              this.dataConfirmReady = true
+              this.$swal('ผิดพลาด', response.data.message, 'error')
             }
-            this.dataConfirmReady = true
-            this.dialogConfirm = false
-            console.log('addDataGlobal', response)
           })
           .catch(error => {
             console.log('error function addData : ', error)
@@ -9269,31 +9315,35 @@ export default {
       this.$swal(this.swalConfig).then(async result => {
         if (this.$session.id() !== undefined) {
           let checkCountTime = await axios.get(this.DNS_IP + '/booking_view/get?bookNo=' + item.bookNo)
-          console.log('checkCountTime', checkCountTime)
           if (checkCountTime.data.status === false) {
             this.onChangeChk(item, changeStatus)
           } else {
-            let chkStatLimit = this.DataFlowName.filter(el => { return el.value === item.flowId })
-            if (chkStatLimit.length > 0) {
-              if (chkStatLimit[0].allData.limitBookingCheck === 'True') {
-                let dueOld = this.dueDateOld + this.dueDateTimeOld
-                let dueNew = this.formChange.date + this.formChange.time.value
-                let limitBookingCount = this.timeavailable.filter(el => { return el.value === this.formChange.time.value })
-                console.log('limitBookingCount', limitBookingCount)
-                let limitBookingCounts = 0
-                if (limitBookingCount.length > 0) {
-                  limitBookingCounts = parseInt(limitBookingCount[0].limitBooking)
-                } else {
-                  limitBookingCounts = 0
-                }
-                if (dueOld !== dueNew) {
-                  let chkStatus = await this.updateLimitBookingChange(item, this.dueDateOld, this.dueDateTimeOld, this.formChange.date, this.formChange.time.value, limitBookingCounts)
-                  console.log('chkStatus', chkStatus)
-                  if (chkStatus.status) {
-                    this.onChangeChkSubmit(item, changeStatus, checkCountTime)
+            if (this.getSelectText === 'cancel') {
+              this.onChangeChkSubmit(item, changeStatus, checkCountTime)
+            } else {
+              let chkStatLimit = this.DataFlowName.filter(el => { return el.value === item.flowId })
+              if (chkStatLimit.length > 0) {
+                if (chkStatLimit[0].allData.limitBookingCheck === 'True') {
+                  let dueOld = this.dueDateOld + this.dueDateTimeOld
+                  let dueNew = this.formChange.date + this.formChange.time.value
+                  let limitBookingCount = this.timeavailable.filter(el => { return el.value === this.formChange.time.value })
+                  let limitBookingCounts = 0
+                  if (limitBookingCount.length > 0) {
+                    limitBookingCounts = parseInt(limitBookingCount[0].limitBooking)
                   } else {
-                    this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-                    this.dataChangeReady = true
+                    limitBookingCounts = 0
+                  }
+                  if (dueOld !== dueNew) {
+                    let chkStatus = await this.updateLimitBookingChange(item, this.dueDateOld, this.dueDateTimeOld, this.formChange.date, this.formChange.time.value, limitBookingCounts)
+                    console.log('chkStatus', chkStatus)
+                    if (chkStatus.status) {
+                      this.onChangeChkSubmit(item, changeStatus, checkCountTime)
+                    } else {
+                      this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
+                      this.dataChangeReady = true
+                    }
+                  } else {
+                    this.onChangeChkSubmit(item, changeStatus, checkCountTime)
                   }
                 } else {
                   this.onChangeChkSubmit(item, changeStatus, checkCountTime)
@@ -9301,8 +9351,6 @@ export default {
               } else {
                 this.onChangeChkSubmit(item, changeStatus, checkCountTime)
               }
-            } else {
-              this.onChangeChkSubmit(item, changeStatus, checkCountTime)
             }
           }
         } else {
