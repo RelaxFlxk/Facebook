@@ -431,7 +431,7 @@
                             outlined
                             dense
                             required
-                            @change="setFlowAdd(), checkTime(), date = ''"
+                            @change="SetallowedDates(),setFlowAdd(), checkTime(), date = ''"
                             :rules="[rules.required]"
                           ></v-select>
                           <!-- <v-select
@@ -452,7 +452,6 @@
                             dense
                             required
                             :rules="[rules.required]"
-                            @change="SetallowedDates(), date = ''"
                           ></v-select>
                           <!-- <v-select
                             v-model="formAdd.masBranchID"
@@ -781,7 +780,7 @@
                             </div>
                           </template>
                           <v-row>
-                            <div v-if="formAdd.masBranchID && formAdd.flowId">
+                            <div v-if="formAdd.flowId">
                             <v-col class="pb-0">
                               <v-menu
                                 ref="menu"
@@ -1825,6 +1824,7 @@
                         </template>
                         <v-date-picker
                           v-model="formChange.date"
+                          :allowed-dates="allowedDatesChange"
                           @input="menuDateChange = false, getDataLimitBooking(dataChange)"
                           :min="
                             new Date(
@@ -3175,7 +3175,7 @@
                             outlined
                             dense
                             required
-                            @change="checkTimeEdit()"
+                            @change="SetallowedDatesEdit(), checkTimeEdit()"
                             :rules="[rules.required]"
                           ></v-select>
                           <v-select
@@ -3529,6 +3529,7 @@
                                 </template>
                                 <v-date-picker
                                   v-model="dateEdit"
+                                  :allowed-dates="allowedDatesEdit"
                                   @input="menuDateEdit = false"
                                   :min="
                                     new Date(
@@ -4763,6 +4764,86 @@ export default {
     // await this.beforeCreate()
   },
   methods: {
+    SetallowedDatesChange (flowId) {
+      this.dataFlowSelectAdd.forEach((v, k) => {
+        console.log('v', v)
+        if (v.allData.flowId === flowId) {
+          // console.log('Value', v.dateDayoffValue)
+          v.allData.dateDayCustom = v.allData.dateDayCustom || ''
+          v.allData.dateDayoffValue = v.allData.dateDayoffValue || ''
+          if (v.allData.dateDayoffValue !== '') {
+            console.log('if')
+            this.dateDayoff = JSON.parse(v.allData.dateDayoffValue)
+          } else {
+            console.log('else')
+            this.dateDayoff = []
+          }
+          if (v.dateDayCustom !== '') {
+            this.dateDayCustom = JSON.parse(v.allData.dateDayCustom)
+          } else {
+            this.dateDayCustom = []
+          }
+        }
+      })
+    },
+    allowedDatesChange (val) {
+      // if (this.dateDaylimit) {
+      if (this.dataFlowSelectAdd.filter(el => el.value === this.flowIDLimit)[0].allData.typeDayCustom === 'on') {
+        return val === this.dateDayCustom.filter(el => el === val)[0]
+      } else {
+        if (
+          this.dateDayoff.filter(el => {
+            return el === new Date(val).getDay()
+          }).length === 0 &&
+        this.dateDayCustom.filter(el => {
+          return el === val
+        }).length === 0
+        ) {
+          return val
+        }
+      }
+      // }
+    },
+    SetallowedDatesEdit () {
+      this.dataFlowSelectEdit.forEach((v, k) => {
+        console.log('v', v)
+        if (v.allData.flowId === this.formEdit.flowId) {
+          // console.log('Value', v.dateDayoffValue)
+          v.allData.dateDayCustom = v.allData.dateDayCustom || ''
+          v.allData.dateDayoffValue = v.allData.dateDayoffValue || ''
+          if (v.allData.dateDayoffValue !== '') {
+            console.log('if')
+            this.dateDayoff = JSON.parse(v.allData.dateDayoffValue)
+          } else {
+            console.log('else')
+            this.dateDayoff = []
+          }
+          if (v.dateDayCustom !== '') {
+            this.dateDayCustom = JSON.parse(v.allData.dateDayCustom)
+          } else {
+            this.dateDayCustom = []
+          }
+        }
+      })
+    },
+    allowedDatesEdit (val) {
+      // if (this.dateDaylimit) {
+      if (this.dataFlowSelectEdit.filter(el => el.value === this.formEdit.flowId)[0].allData.typeDayCustom === 'on') {
+        return val === this.dateDayCustom.filter(el => el === val)[0]
+      } else {
+        if (
+          this.dateDayoff.filter(el => {
+            return el === new Date(val).getDay()
+          }).length === 0 &&
+        this.dateDayCustom.filter(el => {
+          return el === val
+        }).length === 0
+        ) {
+          return val
+        }
+      }
+      // }
+    },
     showFileUpload (item, text) {
       if (text === '1') {
         this.srcUpload = item.fileUpload1
@@ -4837,7 +4918,7 @@ export default {
     },
     allowedDates (val) {
       if (this.dateDaylimit) {
-        if (this.branch.filter(el => el.value === this.formAdd.masBranchID)[0].allData.typeDayCustom === 'on') {
+        if (this.dataFlowSelectAdd.filter(el => el.value === this.formAdd.flowId)[0].allData.typeDayCustom === 'on') {
           return val === this.dateDayCustom.filter(el => el === val)[0]
         } else {
           if (
@@ -4855,6 +4936,25 @@ export default {
           }
         }
       }
+      // if (this.dateDaylimit) {
+      //   if (this.branch.filter(el => el.value === this.formAdd.masBranchID)[0].allData.typeDayCustom === 'on') {
+      //     return val === this.dateDayCustom.filter(el => el === val)[0]
+      //   } else {
+      //     if (
+      //       this.dateDayoff.filter(el => {
+      //         return el === new Date(val).getDay()
+      //       }).length === 0 &&
+      //     this.dateDayCustom.filter(el => {
+      //       return el === val
+      //     }).length === 0 &&
+      //     this.dateDaylimit.filter(el => {
+      //       return el === val
+      //     }).length === 0
+      //     ) {
+      //       return val
+      //     }
+      //   }
+      // }
     },
     async setLimitBooking (dateitem) {
       this.time = ''
@@ -4932,9 +5032,9 @@ export default {
       return LimitBooking
     },
     SetallowedDates () {
-      this.branch.forEach((v, k) => {
+      this.dataFlowSelectAdd.forEach((v, k) => {
         console.log('v', v)
-        if (v.allData.masBranchID === this.formAdd.masBranchID) {
+        if (v.allData.flowId === this.formAdd.flowId) {
           // console.log('Value', v.dateDayoffValue)
           v.allData.dateDayCustom = v.allData.dateDayCustom || ''
           v.allData.dateDayoffValue = v.allData.dateDayoffValue || ''
@@ -4952,6 +5052,26 @@ export default {
           }
         }
       })
+      // this.branch.forEach((v, k) => {
+      //   console.log('v', v)
+      //   if (v.allData.masBranchID === this.formAdd.masBranchID) {
+      //     // console.log('Value', v.dateDayoffValue)
+      //     v.allData.dateDayCustom = v.allData.dateDayCustom || ''
+      //     v.allData.dateDayoffValue = v.allData.dateDayoffValue || ''
+      //     if (v.allData.dateDayoffValue !== '') {
+      //       // console.log('if')
+      //       this.dateDayoff = JSON.parse(v.allData.dateDayoffValue)
+      //     } else {
+      //       // console.log('else')
+      //       this.dateDayoff = []
+      //     }
+      //     if (v.dateDayCustom !== '') {
+      //       this.dateDayCustom = JSON.parse(v.allData.dateDayCustom)
+      //     } else {
+      //       this.dateDayCustom = []
+      //     }
+      //   }
+      // })
     },
     onCopySuccess () {
       this.$swal('เรียบร้อย', 'คัดลอกสำเร็จ', 'success')
@@ -5741,6 +5861,7 @@ export default {
       } else {
         this.timeEdit = { text: dt.dueDate.slice(-5), value: dt.dueDate.slice(-5) }
       }
+      this.SetallowedDatesEdit()
       await this.getPackage(dt)
       if (this.dataPackage.length > 0) {
         console.log('dataPackage', this.dataPackage.filter(el => { return el.packageId === dt.packageId }))
@@ -9795,6 +9916,7 @@ export default {
       this.flowIDLimit = item.flowId
       this.checkSelectText = item.statusBt
       await this.checkTimeFlow(item)
+      this.SetallowedDatesChange(item.flowId)
       this.dataChange = item
       this.remark = item.remark
       this.formChange.date = this.momenDate_1(item.dueDate)
