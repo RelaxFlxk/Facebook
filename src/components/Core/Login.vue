@@ -1,164 +1,180 @@
 <template>
-  <div id="login" style="margin: auto 0;" class="bgPage">
+  <div id="login" class="bgPage">
+    <NavbarRegister />
     <v-row>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" align="center">
         <v-img
-          :src="require('@/assets/logIn.svg')"
+          contain
+          width="60%"
+          :src="require('@/assets/Mascot-Betask.png')"
         ></v-img>
       </v-col>
-      <v-col cols="12" md="6" class="text-center pa-0 mt-16">
-        <v-row class="mb-6" justify="center" no-gutters>
-          <v-col md="auto">
-            <h2 class='v-subheader pr-16'>ยินดีต้อนรับ!</h2>
+      <v-col>
+         <v-container fluid>
+        <v-row class="text-center" justify="center" no-gutters>
+          <v-col cols="10">
+            <h2>
+              <strong style="color: #001d6e;"
+                >เข้าร่วม BeTask</strong
+              >
+            </h2>
+            <p><strong>ลงชื่อเข้าใช้บัญชีของคุณ</strong></p>
           </v-col>
         </v-row>
-        <!-- <v-row class="mt-15" justify="center" no-gutters>
-          <v-col cols="10">
-             <v-img
-              width="120px"
-              :src="require('@/assets/Welcome.svg')"
-            ></v-img>
-          </v-col>
-        </v-row> -->
-        <v-row>
-          <v-col cols="10" class='pa-0'>
-            <v-row>
-              <v-subheader class="pl-15" id="subtext">Username</v-subheader>
-            </v-row>
-            <v-row>
+        <div>
+            <v-row justify="center" no-gutters>
+               <v-col cols="10" class="pa-0">
               <v-text-field
-                placeholder="Username"
-                solo
-                class='pl-15'
+                label="อีเมล"
+                outlined
                 v-model="form.userName"
-                 @keyup.enter="onSubmit()"
+                @keyup.enter="onSubmit()"
               ></v-text-field>
+                        </v-col>
             </v-row>
-          </v-col>
-          <v-col cols="10" class='pa-0'>
-            <v-row>
-              <v-subheader class="pl-15" id="subtext">Password</v-subheader>
-            </v-row>
-            <v-row>
-               <v-text-field
-               class='pl-15'
-                placeholder="Password"
-                solo
+            <v-row justify="center" no-gutters style="height: 70px">
+                        <v-col cols="10" class="pa-0">
+              <v-text-field
+                class=""
+                label="รหัสผ่าน"
+                outlined
                 v-model="form.userPassword"
                 @keyup.enter="onSubmit()"
                 type="password"
               ></v-text-field>
+                        </v-col>
             </v-row>
-          </v-col>
-          <v-col cols="10" class='pl-15'>
-            <v-row>
-              <v-btn
-                color="#173053"
-                dark
-                @click="onSubmit()"
-              >
-                <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                เข้าสู่ระบบ
-              </v-btn>
-              <v-btn text @click="dialog = true, validate('UPDATE')">
-              ลืมรหัสผ่าน?
-            </v-btn>
+            <v-row justify="center" no-gutters style="height: 70px">
+              <v-col cols="10" style="display: flex;justify-content: center;">
+                <vue-recaptcha ref="recaptcha" @verify="verifyMethod" @render="renderMethod" sitekey="6Lef5A8hAAAAAIffpLLp_mpt_UFbcuq6l_mXbh8e"></vue-recaptcha>
+              </v-col>
             </v-row>
-          </v-col>
-          <v-col cols="5">
-          </v-col>
-          <v-col cols="5" align="right">
-            <!-- <v-list-tile @click="dialog = true, validate('UPDATE')">Forgot Password?</v-list-tile> -->
-          </v-col>
-          <v-col cols="10" style="padding-left: 50px">
-            <h6>คุณได้ลงทะเบียนแล้วหรือยัง? <a href="https://betask-linked.web.app/register">ลงทะเบียน!</a></h6>
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
-    <v-dialog
-      v-model="dialog"
-      persistent
-      max-width="445"
-    >
-      <v-card>
-        <v-container>
-          <v-card-text>
-              <v-row class="mb-6" justify="center">
-                <v-col md="auto">
-                  <v-img :src="require('@/assets/forgotPassword.svg')" class="a" style="width:103px;height:103px"></v-img>
-                </v-col>
-              </v-row>
-          </v-card-text>
-          <v-card-text>
-              <v-row class="mb-6" justify="center" no-gutters>
-                <v-col md="auto">
-                  <h1 style="font-size:10vw;" class="underline-06">Forget Password?</h1>
-                  <!-- <h1 style="color:black;"><strong>Forget Password?</strong></h1> -->
-                </v-col>
-              </v-row>
-          <v-form ref="form_update" v-model="validUpdate" lazy-validation>
-          <v-row no-gutter>
-            <v-subheader class="pl-16"><strong>Username/ Email</strong></v-subheader>
-          </v-row>
-          <v-row
-          no-gutter
-              justify="center"
-            >
-              <v-col lg="12" class="pt-0 pb-0">
-                <v-text-field
-                  prepend-icon="mdi-account"
-                  v-model="form.newUserName"
-                  label="Username"
-                  solo
-                  :rules="[rules.email]"
-                  required
-                ></v-text-field>
-              </v-col>
-              <v-col lg="12" class="pa-0">
-                <v-subheader class="pl-16">Enter you email address and we will send you an email for reset password</v-subheader>
-              </v-col>
-          </v-row>
-          </v-form>
-        </v-card-text>
-        <br>
-        <v-row justify="center" no-gutter>
-               <v-col md="auto">
-            <v-btn
-              elevation="2"
-              x-large
-              dark
-              color="#1B437C"
-              @click="onSubmitForgot()"
-              :disabled="!validUpdate"
-            >
-              <v-icon left>mdi-checkbox-marked-circle</v-icon>
-              Reset Password
-            </v-btn>
+            <v-row v-if="recapStatus" justify="center" class="mt-3" no-gutters style="height: 40px;">
+              <v-col cols="10">
+                <v-alert text
+                  outlined type="error">
+                  กรุณากดยืนยันตัว.
+                </v-alert>
               </v-col>
             </v-row>
             <v-row justify="center" no-gutter>
-               <v-col md="auto">
-                <a class="v-subheader" @click="dialog = false">Return to Signin</a>
-               </v-col>
+              <v-col cols="10">
+                <v-btn
+                  color="#001D6E"
+                  style="font-size: 20px"
+                  dark
+                  x-large
+                  block
+                  @click="onSubmit()"
+                >
+                  เข้าสู่ระบบ
+                </v-btn>
+              </v-col>
             </v-row>
+          <v-col style="display:flex;justify-content: center;" >
+              <div class="mr-1" style="font-size: 18px">ลืม?</div>
+              <div style="font-size: 18px; color: #001d6e;cursor: pointer;text-decoration: underline;" @click="dialog = true, validate('UPDATE')">รหัสผ่าน</div>
+          </v-col>
+          <v-col>
+            <h6>
+              คุณได้ลงทะเบียนแล้วหรือยัง?
+              <a style="cursor: pointer;
+    text-decoration: underline;" href="https://betask-linked.web.app/register">ลงทะเบียน!</a>
+            </h6>
+          </v-col>
+        </div>
+         </v-container>
+      </v-col>
+    </v-row>
+    <v-dialog v-model="dialog" persistent max-width="445">
+      <v-card>
+        <v-container>
+          <v-card-text>
+            <v-row class="mb-6" justify="center">
+              <v-col md="auto">
+                <v-img
+                  :src="require('@/assets/forgotPassword.svg')"
+                  class="a"
+                  style="width: 103px; height: 103px"
+                ></v-img>
+              </v-col>
+            </v-row>
+          </v-card-text>
+          <v-card-text>
+            <v-row class="mb-6" justify="center" no-gutters>
+              <v-col md="auto">
+                <h1 style="font-size: 10vw" class="underline-06">
+                  Forget Password?
+                </h1>
+              </v-col>
+            </v-row>
+            <v-form ref="form_update" v-model="validUpdate" lazy-validation>
+              <v-row no-gutter>
+                <v-subheader class="pl-16"
+                  ><strong>Username/ Email</strong></v-subheader
+                >
+              </v-row>
+              <v-row no-gutter justify="center">
+                <v-col lg="12" class="pt-0 pb-0">
+                  <v-text-field
+                    prepend-icon="mdi-account"
+                    v-model="form.newUserName"
+                    label="Username"
+                    solo
+                    :rules="[rules.email]"
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col lg="12" class="pa-0">
+                  <v-subheader class="pl-16"
+                    >Enter you email address and we will send you an email for
+                    reset password</v-subheader
+                  >
+                </v-col>
+              </v-row>
+            </v-form>
+          </v-card-text>
+          <br />
+          <v-row justify="center" no-gutter>
+            <v-col md="auto">
+              <v-btn
+                elevation="2"
+                x-large
+                dark
+                color="#1B437C"
+                @click="onSubmitForgot()"
+                :disabled="!validUpdate"
+              >
+                <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                Reset Password
+              </v-btn>
+            </v-col>
+          </v-row>
+          <v-row justify="center" no-gutter>
+            <v-col md="auto">
+              <a class="v-subheader" @click="dialog = false"
+                >Return to Signin</a
+              >
+            </v-col>
+          </v-row>
         </v-container>
       </v-card>
     </v-dialog>
-      <div v-if="!dataReady" class="text-center">
-        <v-progress-circular
-          indeterminate
-          color="primary"
-        ></v-progress-circular>
-      </div>
+    <div v-if="!dataReady" class="text-center">
+      <v-progress-circular indeterminate color="primary"></v-progress-circular>
+    </div>
   </div>
 </template>
 <script>
 import axios from 'axios'
 import VuetifyLogo from '../logo'
+import NavbarRegister from './NavbarRegister'
+import VueRecaptcha from 'vue-recaptcha'
 export default {
   components: {
-    VuetifyLogo
+    VuetifyLogo,
+    NavbarRegister,
+    'vue-recaptcha': VueRecaptcha
   },
   name: 'Login',
   // beforeCreate () {
@@ -212,7 +228,10 @@ export default {
       },
       dataReady: true,
       hidePrivacy: true,
-      validUpdate: true
+      validUpdate: true,
+      recapchaToken: '',
+      recapStatus: false
+
     }
   },
   // eslint-disable-next-line space-before-function-paren
@@ -240,6 +259,14 @@ export default {
         default:
           break
       }
+    },
+    verifyMethod (a) {
+      this.recapchaToken = a
+      this.recapStatus = false
+      console.log('token', a)
+    },
+    renderMethod (c) {
+      console.log(c)
     },
     async checkbookNo (dataitem) {
       if (this.$route.query.bookNo !== undefined && this.$route.query.type !== 'job') {
@@ -322,35 +349,40 @@ export default {
       this.dataReady = false
       this.form.type = 'username'
       console.log(JSON.stringify(this.form))
-      await axios
-        .get(
+      if (this.recapchaToken !== '') {
+        await axios
+          .get(
           // eslint-disable-next-line quotes
-          this.DNS_IP +
+            this.DNS_IP +
             '/system_user/auth?userName=' +
             this.form.userName +
             '&userPassword=' +
             this.form.userPassword
-        )
-        .then(async (response) => {
-          if (response.data.status !== false) {
-            console.log('response.data[0]', response.data[0])
-            if (response.data[0]) {
-              this.$session.start()
-              this.$session.set('data', response.data[0])
-              localStorage.clear()
-              this.checkbookNo(response.data[0])
-            } else {
-              this.dataReady = true
-              this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง1', 'error')
+          )
+          .then(async (response) => {
+            if (response.data.status !== false) {
+              console.log('response.data[0]', response.data[0])
+              if (response.data[0]) {
+                this.$session.start()
+                this.$session.set('data', response.data[0])
+                localStorage.clear()
+                this.checkbookNo(response.data[0])
+              } else {
+                this.dataReady = true
+                this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง1', 'error')
+              }
             }
-          }
-        })
+          })
         // eslint-disable-next-line handle-callback-err
-        .catch((error) => {
-          this.dataReady = true
-          console.log(error)
-          this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง2', 'error')
-        })
+          .catch((error) => {
+            this.dataReady = true
+            console.log(error)
+            this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง2', 'error')
+          })
+      } else {
+        this.recapStatus = true
+        this.dataReady = true
+      }
     },
     async onSubmitForgot () {
       // this.dataReady = false
@@ -423,12 +455,12 @@ export default {
 </script>
 <style scoped>
 .bgPage {
-  background: linear-gradient(180deg, #FFFFFF 10%, #E1F3FF 100%);
+  background: linear-gradient(180deg, #ffffff 10%, #e1f3ff 100%);
   height: 100%;
-  left: 0%;
+  /* left: 0%;
   right: 0%;
   top: 0%;
-  bottom: 0%;
+  bottom: 0%; */
 }
 h1,
 h2 {
@@ -460,7 +492,6 @@ a {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  padding: 130px 30px 30px 30px;
   /* margin-top: 100px;
   margin-left: 10px;
   margin-right: 10px;
