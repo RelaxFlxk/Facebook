@@ -37,7 +37,7 @@
             <v-list-item-group color="primary">
               <v-list-item v-for="(item, i) in items" :key="i">
                 <v-list-item-icon>
-                  <v-icon v-text="item.icon"></v-icon>
+                  <v-icon color="white" v-text="item.icon"></v-icon>
                 </v-list-item-icon>
                 <v-list-item-content @click="toPage(item)">
                   <v-list-item-title v-text="item.text"></v-list-item-title>
