@@ -299,6 +299,7 @@ export default {
         })
     },
     async getFLow () {
+      this.flowData = []
       await axios
         .get(this.DNS_IP + '/flow/get?shopId=' + this.shopId).then((response) => {
           let rs = response.data
