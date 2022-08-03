@@ -2395,7 +2395,7 @@
                   :search="searchAll2"
                   :items-per-page="10"
                 >
-                  <template v-slot:[`item.CREATE_DATE`]="{ item }">
+                  <!-- <template v-slot:[`item.CREATE_DATE`]="{ item }">
                     {{ format_dateNotime(item.CREATE_DATE) }}
                   </template>
                   <template v-slot:[`item.LAST_DATE`]="{ item }">
@@ -2403,7 +2403,7 @@
                   </template>
                   <template v-slot:[`item.dueDate`]="{ item }">
                     {{ (item.dueDate) }}
-                  </template>
+                  </template> -->
                   <template v-slot:[`item.cusName`]="{ item }">
                     <v-row>
                       <v-col cols="12">
@@ -3956,10 +3956,13 @@
                       <v-card class="p-3 " min-height="70vh" rounded>
                         <div class="avatar text-center">
                           <v-avatar size="120" style="border:5px solid #FFFFFF;">
-                          <img
+                          <v-img
+                            v-if="pictureUrHistory"
                             :src="pictureUrHistory"
-                            alt="John"
-                          >
+                          ></v-img>
+                          <v-icon size="100" color="orange" v-else>
+                            mdi-tooltip-account
+                          </v-icon>
                         </v-avatar>
                         </div>
                         <br>
