@@ -7333,7 +7333,7 @@ export default {
         //   }
         this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
           // { text: 'Booking Id', value: 'bookNo' },
-          { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+          { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
           // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
           { text: 'ชื่อบริการ', value: 'flowNameShow' },
           { text: 'ชื่อลูกค้า', value: 'cusName' },
@@ -7399,7 +7399,7 @@ export default {
         if (text === 'cancel') {
           this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
             // { text: 'Booking Id', value: 'bookNo' },
-            { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+            { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
             { text: 'ชื่อบริการ', value: 'flowNameShow' },
             { text: 'ชื่อลูกค้า', value: 'cusName' },
@@ -7414,7 +7414,7 @@ export default {
         } else if (text === 'confirm') {
           this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
             // { text: 'Booking Id', value: 'bookNo' },
-            { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+            { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
             { text: 'ชื่อบริการ', value: 'flowNameShow' },
             { text: 'ชื่อลูกค้า', value: 'cusName' },
@@ -7465,7 +7465,7 @@ export default {
           // }
           this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
             // { text: 'Booking Id', value: 'bookNo' },
-            { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+            { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
             { text: 'ชื่อบริการ', value: 'flowNameShow' },
             { text: 'ชื่อลูกค้า', value: 'cusName' },
@@ -7487,7 +7487,7 @@ export default {
         } else if (text === 'confirmJob') {
           this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
             // { text: 'Booking Id', value: 'bookNo' },
-            { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+            { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
             { text: 'ชื่อบริการ', value: 'flowNameShow' },
             { text: 'ชื่อลูกค้า', value: 'cusName' },
@@ -7499,7 +7499,7 @@ export default {
         } else {
           this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
             // { text: 'Booking Id', value: 'bookNo' },
-            { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
+            { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
             { text: 'ชื่อบริการ', value: 'flowNameShow' },
             { text: 'ชื่อลูกค้า', value: 'cusName' },
