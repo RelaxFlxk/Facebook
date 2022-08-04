@@ -1590,6 +1590,9 @@ export default {
                           if (dataBooking.data.status === false) {
                             console.log(dataBooking)
                           } else {
+                            if (dataBooking.data[0].lineUserId) {
+                              this.sendMessageConfirm(dataBooking.data[0])
+                            }
                             this.getjob(dataBooking.data[0])
                             this.dialogJob = true
                           }
@@ -1605,6 +1608,26 @@ export default {
               })
           })
       }
+    },
+    sendMessageConfirm (item) {
+      let pushText = {
+        'to': item.lineUserId,
+        'messages': [
+          {
+            'type': 'text',
+            'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}
+              \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}`
+          }
+        ]
+      }
+      axios
+        .post(
+          this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
+          pushText
+        )
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
     },
     async getjob (item) {
       console.log(item)

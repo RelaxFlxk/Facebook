@@ -1822,19 +1822,34 @@ export default {
             this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
             let DTitem = item.userId
             console.log('DTITEM', DTitem)
+            this.dialogConfirm = false
             if (DTitem !== 'user-skip') {
               await this.chkBookingNo()
               // this.getTimesChange('update')
-              let pushText = {
-                'to': item.lineUserId,
-                'messages': [
-                  {
-                    'type': 'text',
-                    'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
-                          \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}
-                          \n${this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) })[0].allData.remarkConfirm || ''}`
-                  }
-                ]
+              let pushText = {}
+              if (this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) }).length > 0) {
+                pushText = {
+                  'to': item.lineUserId,
+                  'messages': [
+                    {
+                      'type': 'text',
+                      'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
+                              \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}
+                              \n${this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) })[0].allData.remarkConfirm || ''}`
+                    }
+                  ]
+                }
+              } else {
+                pushText = {
+                  'to': item.lineUserId,
+                  'messages': [
+                    {
+                      'type': 'text',
+                      'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
+                              \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}`
+                    }
+                  ]
+                }
               }
               axios
                 .post(

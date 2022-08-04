@@ -4790,24 +4790,31 @@ export default {
           } else {
             this.dateDayCustom = []
           }
+        } else {
+          this.dateDayoff = []
+          this.dateDayCustom = []
         }
       })
     },
     allowedDatesChange (val) {
       // if (this.dateDaylimit) {
-      if (this.dataFlowSelectAdd.filter(el => el.value === this.flowIDLimit)[0].allData.typeDayCustom === 'on') {
-        return val === this.dateDayCustom.filter(el => el === val)[0]
-      } else {
-        if (
-          this.dateDayoff.filter(el => {
-            return el === new Date(val).getDay()
-          }).length === 0 &&
-        this.dateDayCustom.filter(el => {
-          return el === val
-        }).length === 0
-        ) {
-          return val
+      if (this.dataFlowSelectAdd.filter(el => el.value === this.flowIDLimit).length > 0) {
+        if (this.dataFlowSelectAdd.filter(el => el.value === this.flowIDLimit)[0].allData.typeDayCustom === 'on') {
+          return val === this.dateDayCustom.filter(el => el === val)[0]
+        } else {
+          if (
+            this.dateDayoff.filter(el => {
+              return el === new Date(val).getDay()
+            }).length === 0 &&
+          this.dateDayCustom.filter(el => {
+            return el === val
+          }).length === 0
+          ) {
+            return val
+          }
         }
+      } else {
+        return val
       }
       // }
     },
@@ -4830,24 +4837,31 @@ export default {
           } else {
             this.dateDayCustom = []
           }
+        } else {
+          this.dateDayoff = []
+          this.dateDayCustom = []
         }
       })
     },
     allowedDatesEdit (val) {
       // if (this.dateDaylimit) {
-      if (this.dataFlowSelectEdit.filter(el => el.value === this.formEdit.flowId)[0].allData.typeDayCustom === 'on') {
-        return val === this.dateDayCustom.filter(el => el === val)[0]
-      } else {
-        if (
-          this.dateDayoff.filter(el => {
-            return el === new Date(val).getDay()
-          }).length === 0 &&
-        this.dateDayCustom.filter(el => {
-          return el === val
-        }).length === 0
-        ) {
-          return val
+      if (this.dataFlowSelectEdit.filter(el => el.value === this.formEdit.flowId).length > 0) {
+        if (this.dataFlowSelectEdit.filter(el => el.value === this.formEdit.flowId)[0].allData.typeDayCustom === 'on') {
+          return val === this.dateDayCustom.filter(el => el === val)[0]
+        } else {
+          if (
+            this.dateDayoff.filter(el => {
+              return el === new Date(val).getDay()
+            }).length === 0 &&
+          this.dateDayCustom.filter(el => {
+            return el === val
+          }).length === 0
+          ) {
+            return val
+          }
         }
+      } else {
+        return val
       }
       // }
     },
@@ -4925,67 +4939,38 @@ export default {
     },
     allowedDates (val) {
       if (this.dateDaylimit) {
-        if (this.dataFlowSelectAdd.filter(el => el.value === this.formAdd.flowId)[0].allData.typeDayCustom === 'on') {
-          return val === this.dateDayCustom.filter(el => el === val)[0]
-        } else {
-          if (
-            this.dateDayoff.filter(el => {
-              return el === new Date(val).getDay()
+        if (this.dataFlowSelectAdd.filter(el => el.value === this.formAdd.flowId).length > 0) {
+          if (this.dataFlowSelectAdd.filter(el => el.value === this.formAdd.flowId)[0].allData.typeDayCustom === 'on') {
+            return val === this.dateDayCustom.filter(el => el === val)[0]
+          } else {
+            if (
+              this.dateDayoff.filter(el => {
+                return el === new Date(val).getDay()
+              }).length === 0 &&
+            this.dateDayCustom.filter(el => {
+              return el === val
             }).length === 0 &&
-          this.dateDayCustom.filter(el => {
-            return el === val
-          }).length === 0 &&
-          this.dateDaylimit.filter(el => {
-            return el === val
-          }).length === 0
-          ) {
-            return val
+            this.dateDaylimit.filter(el => {
+              return el === val
+            }).length === 0
+            ) {
+              return val
+            }
           }
+        } else {
+          return val
         }
+      } else {
+        return val
       }
-      // if (this.dateDaylimit) {
-      //   if (this.branch.filter(el => el.value === this.formAdd.masBranchID)[0].allData.typeDayCustom === 'on') {
-      //     return val === this.dateDayCustom.filter(el => el === val)[0]
-      //   } else {
-      //     if (
-      //       this.dateDayoff.filter(el => {
-      //         return el === new Date(val).getDay()
-      //       }).length === 0 &&
-      //     this.dateDayCustom.filter(el => {
-      //       return el === val
-      //     }).length === 0 &&
-      //     this.dateDaylimit.filter(el => {
-      //       return el === val
-      //     }).length === 0
-      //     ) {
-      //       return val
-      //     }
-      //   }
-      // }
     },
     async setLimitBooking (dateitem) {
       this.time = ''
       this.timeavailable = []
-
-      // LimitBookingBy Flow
-      // this.limitBookingCheck = this.flowItemLimit.filter(item => { return item.flowId === this.formAdd.flowId })[0].limitBookingCheck || 'False'
-      // let setTimeOld = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) })[0].allData.setTime)
-
-      // LimitBookingBy masBranch
       this.limitBookingCheck = this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.limitBookingCheck || 'False'
       if (this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.limitBookingCheck || 'False') {
         let TimeData = []
         let currentDate = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTime) || []
-        // if (
-        //   moment(dateitem).format('YYYY-MM-DD') ===
-        //   moment().format('YYYY-MM-DD')
-        // ) {
-        //   TimeData = currentDate.filter(
-        //     item => moment().format(item.value) > moment().format('HH:mm')
-        //   )
-        // } else {
-        //   TimeData = currentDate
-        // }
         TimeData = currentDate
         this.timeavailable = TimeData
         console.log('TimeData', TimeData)
@@ -5853,22 +5838,24 @@ export default {
       this.dueDateOld = this.momenDate_1(dt.dueDate)
       this.dueDateTimeOld = this.momenTime(dt.dueDate)
 
+      this.SetallowedDatesEdit()
+      this.dateEdit = moment(moment(dt.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
       this.timeavailable = []
       // let dtTime = await this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
       let dtTime = this.dataFlowSelectEdit.filter(item => { return item.value === this.formEdit.flowId })
-      // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
-      this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
-      this.dateEdit = moment(moment(dt.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-      if (this.timeavailable.filter(el => { return el.text === dt.timeText }).length > 0) {
-        if (dt.timeText) {
-          this.timeEdit = { text: dt.timeText, value: dt.dueDate.slice(-5) }
+      if (dtTime.length > 0) {
+        // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
+        this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+        if (this.timeavailable.filter(el => { return el.text === dt.timeText }).length > 0) {
+          if (dt.timeText) {
+            this.timeEdit = { text: dt.timeText, value: dt.dueDate.slice(-5) }
+          } else {
+            this.timeEdit = { text: dt.dueDate.slice(-5), value: dt.dueDate.slice(-5) }
+          }
         } else {
           this.timeEdit = { text: dt.dueDate.slice(-5), value: dt.dueDate.slice(-5) }
         }
-      } else {
-        this.timeEdit = { text: dt.dueDate.slice(-5), value: dt.dueDate.slice(-5) }
       }
-      this.SetallowedDatesEdit()
       await this.getPackage(dt)
       if (this.dataPackage.length > 0) {
         console.log('dataPackage', this.dataPackage.filter(el => { return el.packageId === dt.packageId }))
@@ -5921,13 +5908,13 @@ export default {
               .get(this.DNS_IP + '/customField/fieldId?fieldId=' + itemIncustomField)
               .then(async responses => {
                 let rs1 = responses.data
+                console.log('customField', rs1)
                 await axios
                   .get(this.DNS_IP + '/BookingDataSelect/get?bookNo=' + dt.bookNo)
                   .then(async response => {
                     let rs = response.data
+                    console.log('BookingDataSelect', rs)
                     if (rs.length > 0) {
-                      console.log('BookingDataSelect', rs)
-                      console.log('customField', rs1)
                       let sortrs = rs1.sort((a, b) => a.sortNoField - b.sortNoField)
                       for (var i = 0; i < sortrs.length; i++) {
                         var d = sortrs[i]
@@ -6294,26 +6281,32 @@ export default {
       this.timeavailable = []
       // console.log('dataFlowSelectAdd', this.dataFlowSelectAdd)
       let dtTime = this.dataFlowSelectAdd.filter(item => { return item.value === this.formAdd.flowId })
-      // let dtTime = this.branch.filter(item => { return item.value === this.formAdd.masBranchID })
-      // console.log('test', dtTime)
-      this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
-      // console.log('timevailable', this.timeavailable)
+      if (dtTime.length > 0) {
+        // let dtTime = this.branch.filter(item => { return item.value === this.formAdd.masBranchID })
+        // console.log('test', dtTime)
+        this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+        // console.log('timevailable', this.timeavailable)
+      }
     },
     checkTimeEdit () {
       this.timeavailable = []
       let dtTime = this.dataFlowSelectEdit.filter(item => { return item.value === this.formEdit.flowId })
-      // let dtTime = this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
-      // console.log('test', dtTime)
-      this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
-      // console.log('timevailable', this.timeavailable)
+      if (dtTime.length > 0) {
+        // let dtTime = this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
+        // console.log('test', dtTime)
+        this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+        // console.log('timevailable', this.timeavailable)
+      }
     },
     checkTimeFlow (dt) {
       this.timeavailable = []
       // let dtTime = this.branch.filter(item => { return item.value === this.masBranchID })
       let dtTime = this.DataFlowName.filter(item => { return item.value === dt.flowId })
-      // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
-      this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
-      // console.log('timevailable', this.timeavailable)
+      if (dtTime.length > 0) {
+        // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
+        this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+        // console.log('timevailable', this.timeavailable)
+      }
     },
     async getCountFastTrack (dateS, flowId, branch) {
       let result = []
@@ -9183,9 +9176,13 @@ export default {
       if (this.$session.id() !== undefined) {
         console.log('item', item)
         this.dataConfirmReady = false
-        let dts = JSON.parse(this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
-
-        let dtint = parseInt(dts.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
+        let dtint = '0'
+        if (this.DataFlowName.filter(el => { return el.value === item.flowId }).length > 0) {
+          let dts = JSON.parse(this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
+          dtint = parseInt(dts.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
+        } else {
+          dtint = '0'
+        }
         console.log('dtint', dtint)
         var dt = {
           bookNo: item.bookNo,
@@ -9222,16 +9219,30 @@ export default {
                 if (this.getSelectText) {
                   this.getSelect(this.getSelectText, this.getSelectCount)
                 }
-                let pushText = {
-                  'to': item.lineUserId,
-                  'messages': [
-                    {
-                      'type': 'text',
-                      'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}
-                            \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}
-                            \n${this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) })[0].allData.remarkConfirm || ''}`
-                    }
-                  ]
+                let pushText = {}
+                if (this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) }).length > 0) {
+                  pushText = {
+                    'to': item.lineUserId,
+                    'messages': [
+                      {
+                        'type': 'text',
+                        'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}
+                              \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}
+                              \n${this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) })[0].allData.remarkConfirm || ''}`
+                      }
+                    ]
+                  }
+                } else {
+                  pushText = {
+                    'to': item.lineUserId,
+                    'messages': [
+                      {
+                        'type': 'text',
+                        'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}
+                              \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}`
+                      }
+                    ]
+                  }
                 }
                 axios
                   .post(
@@ -9413,27 +9424,32 @@ export default {
     },
     async changeChk (item, changeStatus) {
       this.dataChangeReady = false
-      if (item.statusBt === 'confirm') {
-        if (this.remark !== '') {
-          var dt = {
-            LAST_USER: this.session.data.userName,
-            remark: (this.remark || '').replace(/%/g, '%%')
+      if (this.formChange.time !== '') {
+        if (item.statusBt === 'confirm') {
+          if (this.remark !== '') {
+            var dt = {
+              LAST_USER: this.session.data.userName,
+              remark: (this.remark || '').replace(/%/g, '%%')
+            }
+            await axios
+              .post(
+                // eslint-disable-next-line quotes
+                this.DNS_IP + "/Booking/edit/" + item.bookNo,
+                dt
+              )
+              .then(async response => {
+                this.onChangeChk(item, changeStatus)
+              })
+          } else {
+            this.$swal('ผิดพลาด', 'กรุณาใส่ หมายเหตุเพิ่มเติม', 'error')
+            this.dataChangeReady = true
           }
-          await axios
-            .post(
-              // eslint-disable-next-line quotes
-              this.DNS_IP + "/Booking/edit/" + item.bookNo,
-              dt
-            )
-            .then(async response => {
-              this.onChangeChk(item, changeStatus)
-            })
         } else {
-          this.$swal('ผิดพลาด', 'กรุณาใส่ หมายเหตุเพิ่มเติม', 'error')
-          this.dataChangeReady = true
+          this.onChangeChk(item, changeStatus)
         }
       } else {
-        this.onChangeChk(item, changeStatus)
+        this.dataChangeReady = true
+        this.$swal('ผิดพลาด', 'กรุณาเลือกเวลา', 'error')
       }
     },
     onChangeChk (item, changeStatus) {
@@ -9905,6 +9921,7 @@ export default {
     },
     async setDataChang (item) {
       // clear Limit
+      console.log('setDataChang', item)
       this.limitCountBranch = []
       this.limitCountBranchOld = []
       this.masBranchIDLimit = ''
@@ -9922,41 +9939,51 @@ export default {
       this.masBranchIDLimit = item.masBranchID
       this.flowIDLimit = item.flowId
       this.checkSelectText = item.statusBt
-      await this.checkTimeFlow(item)
-      this.SetallowedDatesChange(item.flowId)
+      this.checkTimeFlow(item)
       this.dataChange = item
       this.remark = item.remark
       this.formChange.date = this.momenDate_1(item.dueDate)
-      if (this.timeavailable.filter(el => { return el.text === item.timeText }).length > 0) {
-        if (item.timeText) {
-          this.formChange.time = { text: item.timeText, value: this.momenTime(item.dueDate) }
+      console.log('this.timeavailable', this.timeavailable)
+      if (this.timeavailable.length > 0) {
+        if (this.timeavailable.filter(el => { return el.text === item.timeText }).length > 0) {
+          if (item.timeText) {
+            this.formChange.time = { text: item.timeText, value: this.momenTime(item.dueDate) }
+          } else {
+            this.formChange.time = { text: this.momenTime(item.dueDate), value: this.momenTime(item.dueDate) }
+          }
         } else {
           this.formChange.time = { text: this.momenTime(item.dueDate), value: this.momenTime(item.dueDate) }
         }
-      } else {
-        this.formChange.time = { text: this.momenTime(item.dueDate), value: this.momenTime(item.dueDate) }
       }
 
       let limitCountBranchOld = 0
-      let setTimeOld = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) })[0].allData.setTime)
-      // let setTimeOld = JSON.parse(this.branch.filter(el => { return el.value === parseInt(item.masBranchID) })[0].allData.setTime)
-      let indexOld = setTimeOld.findIndex((element) => element.value === this.momenTime(item.dueDate))
-      limitCountBranchOld = setTimeOld.slice(indexOld, indexOld + item.countHourLimit)
-      this.limitCountBranchOld = limitCountBranchOld
+      if (this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) }).length > 0) {
+        let setTimeOld = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) })[0].allData.setTime)
+        console.log('setTimeOld', setTimeOld)
+        if (setTimeOld) {
+          // let setTimeOld = JSON.parse(this.branch.filter(el => { return el.value === parseInt(item.masBranchID) })[0].allData.setTime)
+          let indexOld = setTimeOld.findIndex((element) => element.value === this.momenTime(item.dueDate))
+          limitCountBranchOld = setTimeOld.slice(indexOld, indexOld + item.countHourLimit)
+          this.limitCountBranchOld = limitCountBranchOld
+        }
+      }
 
       this.dialogChange = true
       console.log(this.formChange)
       this.setCountTime(item)
+      this.SetallowedDatesChange(item.flowId)
     },
     async setCountTime (dt) {
       console.log('this.formChange.time', this.formChange.time)
       let limitCountBranch = 0
-      // let setTime = JSON.parse(this.branch.filter(el => { return el.value === parseInt(this.masBranchIDLimit) })[0].allData.setTime)
-      let setTime = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(dt.flowId) })[0].allData.setTime)
-      let index = setTime.findIndex((element) => element.value === this.formChange.time.value)
-      limitCountBranch = setTime.slice(index, index + this.selectCountBookingLimit)
-      this.limitCountBranch = limitCountBranch
-      await this.getDataLimitBooking(dt)
+      if (this.DataFlowName.filter(el => { return el.value === parseInt(dt.flowId) }).length > 0) {
+        // let setTime = JSON.parse(this.branch.filter(el => { return el.value === parseInt(this.masBranchIDLimit) })[0].allData.setTime)
+        let setTime = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(dt.flowId) })[0].allData.setTime)
+        let index = setTime.findIndex((element) => element.value === this.formChange.time.value)
+        limitCountBranch = setTime.slice(index, index + this.selectCountBookingLimit)
+        this.limitCountBranch = limitCountBranch
+        await this.getDataLimitBooking(dt)
+      }
     },
     async getDataLimitBooking (dt) {
       this.dataLimitBookingDate = []
