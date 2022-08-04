@@ -997,10 +997,15 @@ export default {
       }
     },
     FunCopy (text) {
-      var copyText = document.getElementById('myInput')
-      copyText.select()
-      copyText.setSelectionRange(0, 99999)
-      navigator.clipboard.writeText(copyText.value + '&source=' + text)
+      if (text === 'line') {
+        let copyText = 'https://liff.line.me/1656581804-32mk7OgE?shopId=' + this.$session.getAll().data.shopId
+        navigator.clipboard.writeText(copyText + '&source=' + text)
+      } else {
+        let copyText = document.getElementById('myInput')
+        copyText.select()
+        copyText.setSelectionRange(0, 99999)
+        navigator.clipboard.writeText(copyText.value + '&source=' + text)
+      }
     },
     async getBookingField () {
       let itemIncustomField = []
