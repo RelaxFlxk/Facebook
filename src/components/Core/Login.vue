@@ -2,7 +2,7 @@
   <div id="login" class="bgPage">
     <NavbarRegister />
     <v-row>
-      <v-col cols="12" md="6" align="center" :style="resCol === '6' ? 'padding-top: 30px;' : 'padding-top: 0'">
+      <v-col cols="12" md="6" align="center" :style="resCol === '6' ? 'padding-top: 30px;' : 'padding-top: 20px'">
         <v-img
           contain
           width="60%"
