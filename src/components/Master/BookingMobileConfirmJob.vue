@@ -1342,7 +1342,12 @@ export default {
                 }
               })
             this.dataReady = true
-            this.timeavailable = JSON.parse(this.DataFlowName.filter(el => { return el.value === this.BookingDataItemEdit[0].flowId })[0].allData.setTime) || []
+            this.timeavailable = []
+            if (this.DataFlowName.filter(el => { return el.value === this.BookingDataItemEdit[0].flowId }).length > 0) {
+              this.timeavailable = JSON.parse(this.DataFlowName.filter(el => { return el.value === this.BookingDataItemEdit[0].flowId })[0].allData.setTime)
+            } else {
+              this.timeavailable = []
+            }
             let checkStep = await axios.get(this.DNS_IP + '/flowStep/get?flowId=' + this.BookingDataItemEdit[0].flowId)
             this.getflowfield()
             console.log('checkStep', checkStep)
@@ -1617,7 +1622,7 @@ export default {
           'messages': [
             {
               'type': 'text',
-              'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}
+              'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${this.dataItem[0].cusName}
                               \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}
                               \n${this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) })[0].allData.remarkConfirm || ''}`
             }
@@ -1629,7 +1634,7 @@ export default {
           'messages': [
             {
               'type': 'text',
-              'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}
+              'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${this.dataItem[0].cusName}
                               \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}`
             }
           ]
