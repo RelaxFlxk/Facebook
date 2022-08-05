@@ -1,32 +1,32 @@
 <template>
   <div>
     <v-toolbar
-      :height="widthScreen > 560 ? '120' : '80'"
+      :height="widthScreen >= 855 ? '120' : '80'"
       :style="widthScreen > 375 ? 'padding-left:10px;' : 'padding-left:0px;'"
     >
       <!-- <v-app-bar-nav-icon><v-img :width="widthScreen > 375 ? '100%' : '60%'" :src="require('@/assets/Logo_betask copy.png')" /></v-app-bar-nav-icon> -->
 
       <v-toolbar-title
         ><v-img
-          :width="widthScreen > 560 ? '100%' : '70%'"
+          :width="widthScreen >= 855 ? '100%' : '70%'"
           :src="require('@/assets/Logo_betask copy.png')"
       /></v-toolbar-title>
 
-      <ul v-if="widthScreen > 560">
-        <li><a href="https://betaskthai.com/">หน้าหลัก</a></li>
-        <li><a href="https://betaskthai.com/about_us/">เกี่ยวกับเรา</a></li>
-        <li><a href="https://betaskthai.com/be_linked/">บริการของเรา</a></li>
-        <li><a href="https://betaskthai.com/blog/">บทความ</a></li>
-        <li><a href="https://betaskthai.com/contact_us/">ติดต่อเรา</a></li>
+      <ul v-if="widthScreen >= 855">
+        <li><v-icon color="white" style="margin-bottom: 5px;margin-right: 10px;">mdi-home</v-icon><a href="https://betaskthai.com/">หน้าหลัก</a></li>
+        <li><v-icon color="white" style="margin-bottom: 5px;margin-right: 10px;">mdi-information-outline</v-icon><a href="https://betaskthai.com/about_us/">เกี่ยวกับเรา</a></li>
+        <li><v-icon color="white" style="margin-bottom: 5px;margin-right: 10px;">mdi-flag</v-icon><a href="https://betaskthai.com/be_linked/">บริการของเรา</a></li>
+        <li><v-icon color="white" style="margin-bottom: 5px;margin-right: 10px;">mdi-book-open-blank-variant</v-icon><a href="https://betaskthai.com/blog/">บทความ</a></li>
+        <li><v-icon color="white" style="margin-bottom: 5px;margin-right: 10px;">mdi-card-account-mail</v-icon><a href="https://betaskthai.com/contact_us/">ติดต่อเรา</a></li>
       </ul>
-      <v-menu offset-y v-if="widthScreen < 560">
+      <v-menu offset-y v-if="widthScreen < 855">
         <template v-slot:activator="{ on, attrs }">
           <v-btn
             v-bind="attrs"
             v-on="on"
             x-large
             icon
-            v-if="widthScreen <= 560"
+            v-if="widthScreen <= 855"
           >
             <v-icon class="iconify" data-icon="heroicons-outline:menu"></v-icon>
           </v-btn>
@@ -70,7 +70,7 @@ export default {
       ],
       device: 'browser',
       widthScreen: window.screen.width,
-      // dialogPrivacyNotice: true,
+      dialogPrivacyNotice: true,
       overlay: false,
       form: {
         nameCompany: '',
@@ -161,7 +161,10 @@ export default {
 ul li {
   display: inline-block;
   padding: 10px 30px;
-  color: #1b437c;
+  color: white;
+  background-color: #1b437c;
+  border-radius: 50px;
+  margin-left: 25px;
 }
 ul li a {
   text-decoration: none;
@@ -172,7 +175,7 @@ ul li a {
   justify-content: space-around;
 }
 a {
-  color: #1b437c;
-  font-size: 22px;
+  color: white ! important;
+  font-size: 15px;
 }
 </style>

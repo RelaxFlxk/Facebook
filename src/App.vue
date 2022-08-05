@@ -34,6 +34,12 @@ export default {
   font-family: 'Kanit', sans-serif;
   /* font-size: 18px !important; */
 }
+html, body {
+  margin:0;
+  padding:0;
+  height: 100vh;
+  overflow-x: hidden;
+  }
 :root {
   --nav-bg: #1B437C;
   --nav-text: #ffffff;
@@ -140,6 +146,9 @@ table tr:last-child td:last-child {
 } */
 .v-application a {
   color: var(--nav-bg) !important;
+}
+.v-toolbar__content {
+  justify-content: space-around;
 }
 /*
 .theme--light.v-btn {

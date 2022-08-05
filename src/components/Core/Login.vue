@@ -1,58 +1,176 @@
 <template>
   <div id="login" class="bgPage">
+    <v-dialog v-model="dialogPopup" persistent>
+      <v-card style="background: linear-gradient(180deg, #ffffff 10%, #e1f3ff 100%);" height="auto">
+        <v-container fluid class="pa-4">
+          <!-- <div class="mb-2" style="text-align: end;">
+            <v-card-title style="justify-content: space-between;"><div class="pl-3">กรุณาเลือก</div> <v-avatar color="#FAD4D4" size="35">
+                  <span style="color:red;padding-bottom: 4px;"><v-icon class="iconify" color="red" data-icon="fluent:receipt-add-20-regular"></v-icon></span>
+            </v-avatar></v-card-title>
+          </div> -->
+          <v-row dense>
+            <v-col cols="6" style="border-right: 2px solid #ccd1e4;">
+              <div style="text-align: center;">
+                <v-avatar color="#9A9897" size="50">
+                  <span><span><v-icon class="iconify" color="white" style="font-size: 30px;" data-icon="fa:calendar"></v-icon></span></span>
+                </v-avatar>
+                <div>นัดหมาย</div>
+                <div>Boooking</div>
+              </div>
+            </v-col>
+            <v-col cols="6">
+              <div height="200px" style="text-align: center;">
+                <v-avatar color="#9A9897" size="50">
+                  <span><v-icon class="iconify" color="white" style="font-size: 40px;" data-icon="fluent:receipt-add-20-regular"></v-icon></span>
+                </v-avatar>
+                <div>แนบหลักฐานโอนเงิน</div>
+                <div>Uploaded file</div>
+              </div>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card>
+    </v-dialog>
     <NavbarRegister />
     <v-row>
       <v-col cols="12" md="6" align="center">
+        <div class="pt-7">
+          <div
+            v-if="resCol === '6'"
+            style="display: flex; margin: 0 auto; padding-left: 15px"
+          >
+            <div style="text-align: center">
+              <v-avatar color="#1C3879" size="70">
+                <span class="white--text text-h4">1</span>
+              </v-avatar>
+              <div
+                style="white-space: nowrap; margin-top: 20px; font-size: 19px"
+              >
+                สมัครสมาชิกบริษัท/ ร้าน
+              </div>
+            </div>
+            <hr />
+            <div style="text-align: center">
+              <v-avatar color="#1C3879" size="70">
+                <span class="white--text text-h4">2</span>
+              </v-avatar>
+              <div
+                style="white-space: nowrap; margin-top: 20px; font-size: 19px"
+              >
+                สร้างบัญชี Line Official Account
+              </div>
+            </div>
+            <hr />
+            <div style="text-align: center; margin-left: 30px">
+              <v-avatar color="#1C3879" size="70">
+                <span class="white--text text-h4">3</span>
+              </v-avatar>
+              <div
+                style="white-space: nowrap; margin-top: 20px; font-size: 19px"
+              >
+                เข้าสู่ระบบ
+              </div>
+            </div>
+          </div>
+          <div
+            v-if="resCol === '12'"
+            style="display: flex; margin: 0 auto; width: 300px"
+          >
+            <div style="text-align: center">
+              <v-avatar color="#1C3879" size="50">
+                <span class="white--text text-h7">1</span>
+              </v-avatar>
+              <div
+                style="white-space: nowrap; margin-top: 10px; font-size: 14px"
+              >
+                สมัครสมาชิก
+              </div>
+            </div>
+            <hr style="margin-top: 20px" />
+            <div style="text-align: center">
+              <v-avatar color="#1C3879" size="50">
+                <span class="white--text text-h7">2</span>
+              </v-avatar>
+              <div
+                style="white-space: nowrap; margin-top: 10px; font-size: 14px"
+              >
+                สร้าง Line OA
+              </div>
+            </div>
+            <hr style="margin-top: 20px" />
+            <div style="text-align: center; margin-left: 10px">
+              <v-avatar color="#1C3879" size="50">
+                <span class="white--text text-h7">3</span>
+              </v-avatar>
+              <div
+                style="white-space: nowrap; margin-top: 10px; font-size: 14px"
+              >
+                เข้าสู่ระบบ
+              </div>
+            </div>
+          </div>
+        </div>
         <v-img
           contain
-          width="60%"
+          width="55%"
           :src="require('@/assets/Mascot-Betask.png')"
         ></v-img>
       </v-col>
       <v-col>
-         <v-container fluid>
-        <v-row class="text-center" justify="center" no-gutters>
-          <v-col cols="10">
-            <h2>
-              <strong style="color: #001d6e;"
-                >เข้าร่วม BeTask</strong
-              >
-            </h2>
-            <p><strong>ลงชื่อเข้าใช้บัญชีของคุณ</strong></p>
-          </v-col>
-        </v-row>
-        <div>
+        <v-container
+          fluid
+          :style="resCol === '6' ? 'padding-top: 70px;' : 'padding-top: 0'"
+        >
+          <v-row class="text-center" justify="center" no-gutters>
+            <v-col cols="10">
+              <h2>
+                <strong style="color: #001d6e">เข้าร่วม BeTask</strong>
+              </h2>
+              <p><strong>ลงชื่อเข้าใช้บัญชีของคุณ</strong></p>
+            </v-col>
+          </v-row>
+          <div>
             <v-row justify="center" no-gutters>
-               <v-col cols="10" class="pa-0">
-              <v-text-field
-                label="อีเมล"
-                outlined
-                v-model="form.userName"
-                @keyup.enter="onSubmit()"
-              ></v-text-field>
-                        </v-col>
-            </v-row>
-            <v-row justify="center" no-gutters style="height: 70px">
-                        <v-col cols="10" class="pa-0">
-              <v-text-field
-                class=""
-                label="รหัสผ่าน"
-                outlined
-                v-model="form.userPassword"
-                @keyup.enter="onSubmit()"
-                type="password"
-              ></v-text-field>
-                        </v-col>
-            </v-row>
-            <v-row justify="center" no-gutters style="height: 70px">
-              <v-col cols="10" style="display: flex;justify-content: center;">
-                <vue-recaptcha ref="recaptcha" @verify="verifyMethod" @render="renderMethod" sitekey="6Lef5A8hAAAAAIffpLLp_mpt_UFbcuq6l_mXbh8e"></vue-recaptcha>
+              <v-col cols="10" class="pa-0">
+                <v-text-field
+                  label="อีเมล"
+                  outlined
+                  v-model="form.userName"
+                  @keyup.enter="onSubmit()"
+                ></v-text-field>
               </v-col>
             </v-row>
-            <v-row v-if="recapStatus" justify="center" class="mt-3" no-gutters style="height: 40px;">
+            <v-row justify="center" no-gutters style="height: 70px">
+              <v-col cols="10" class="pa-0">
+                <v-text-field
+                  class=""
+                  label="รหัสผ่าน"
+                  outlined
+                  v-model="form.userPassword"
+                  @keyup.enter="onSubmit()"
+                  type="password"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row justify="center" no-gutters style="height: 70px">
+              <v-col cols="10" style="display: flex; justify-content: center">
+                <vue-recaptcha
+                  ref="recaptcha"
+                  @verify="verifyMethod"
+                  @render="renderMethod"
+                  sitekey="6Lef5A8hAAAAAIffpLLp_mpt_UFbcuq6l_mXbh8e"
+                ></vue-recaptcha>
+              </v-col>
+            </v-row>
+            <v-row
+              v-if="recapStatus"
+              justify="center"
+              class="mt-3"
+              no-gutters
+              style="height: 40px"
+            >
               <v-col cols="10">
-                <v-alert text
-                  outlined type="error">
+                <v-alert text outlined type="error">
                   กรุณากดยืนยันตัว.
                 </v-alert>
               </v-col>
@@ -71,19 +189,32 @@
                 </v-btn>
               </v-col>
             </v-row>
-          <v-col style="display:flex;justify-content: center;" >
+            <v-col style="display: flex; justify-content: center">
               <div class="mr-1" style="font-size: 18px">ลืม?</div>
-              <div style="font-size: 18px; color: #001d6e;cursor: pointer;text-decoration: underline;" @click="dialog = true, validate('UPDATE')">รหัสผ่าน</div>
-          </v-col>
-          <v-col>
-            <h6>
-              คุณได้ลงทะเบียนแล้วหรือยัง?
-              <a style="cursor: pointer;
-    text-decoration: underline;" href="https://betask-linked.web.app/register">ลงทะเบียน!</a>
-            </h6>
-          </v-col>
-        </div>
-         </v-container>
+              <div
+                style="
+                  font-size: 18px;
+                  color: #001d6e;
+                  cursor: pointer;
+                  text-decoration: underline;
+                "
+                @click="(dialog = true), validate('UPDATE')"
+              >
+                รหัสผ่าน
+              </div>
+            </v-col>
+            <v-col>
+              <h6>
+                คุณได้ลงทะเบียนแล้วหรือยัง?
+                <a
+                  style="cursor: pointer; text-decoration: underline"
+                  href="https://betask-linked.web.app/register"
+                  >ลงทะเบียน!</a
+                >
+              </h6>
+            </v-col>
+          </div>
+        </v-container>
       </v-col>
     </v-row>
     <v-dialog v-model="dialog" persistent max-width="445">
@@ -177,16 +308,49 @@ export default {
     'vue-recaptcha': VueRecaptcha
   },
   name: 'Login',
+  computed: {
+    resCol () {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs':
+          return '12'
+        case 'sm':
+          return '12'
+        case 'md':
+          return '6'
+        case 'lg':
+          return '6'
+        case 'xl':
+          return '6'
+      }
+      console.log(
+        'this.$vuetify.breakpoint.name',
+        this.$vuetify.breakpoint.name
+      )
+    }
+  },
   // beforeCreate () {
   //   this.$liff.init({ liffId: this.$liff_id_login }, function (data) {})
   // },
   data () {
     return {
       session: this.$session.getAll(),
+      cards: [
+        {
+          title: 'Favorite road trips',
+          src: 'https://cdn.vuetifyjs.com/images/cards/road.jpg',
+          flex: 6
+        },
+        {
+          title: 'Best airlines',
+          src: 'https://cdn.vuetifyjs.com/images/cards/plane.jpg',
+          flex: 6
+        }
+      ],
       queryData: '',
       bookNo: '',
       jobNo: '',
       dialog: false,
+      dialogPopup: true,
       sheet: false,
       profile: [],
       privacyConfigDetail: '',
@@ -194,21 +358,22 @@ export default {
       widthScreen: window.screen.width,
       menu: [],
       rules: {
-        numberRules: value =>
+        numberRules: (value) =>
           (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
           'กรุณากรอกตัวเลข 0 ถึง 9',
-        counterTel: value => value.length <= 10 || 'Max 10 characters',
-        IDcardRules: value =>
+        counterTel: (value) => value.length <= 10 || 'Max 10 characters',
+        IDcardRules: (value) =>
           (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999999) ||
           'กรุณากรอกตัวเลข 0 ถึง 9',
-        required: value => !!value || 'กรุณากรอก.',
-        resizeImag: value =>
+        required: (value) => !!value || 'กรุณากรอก.',
+        resizeImag: (value) =>
           !value ||
           value.size < 2000000 ||
           'Avatar size should be less than 2 MB!',
-        counterIDcard: value => value.length <= 13 || 'Max 13 characters',
-        email: value => {
-          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        counterIDcard: (value) => value.length <= 13 || 'Max 13 characters',
+        email: (value) => {
+          const pattern =
+            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
           return pattern.test(value) || 'Invalid e-mail.'
         }
       },
@@ -231,7 +396,6 @@ export default {
       validUpdate: true,
       recapchaToken: '',
       recapStatus: false
-
     }
   },
   // eslint-disable-next-line space-before-function-paren
@@ -269,15 +433,32 @@ export default {
       console.log(c)
     },
     async checkbookNo (dataitem) {
-      if (this.$route.query.bookNo !== undefined && this.$route.query.type !== 'job') {
+      if (
+        this.$route.query.bookNo !== undefined &&
+        this.$route.query.type !== 'job'
+      ) {
         if (dataitem.shopId === this.$route.query.shopId) {
           this.bookNo = this.$route.query.bookNo
           this.queryData = 'bookNo'
           console.log('dataitem.shopId', dataitem.shopId)
           if (this.$route.query.type === 'bookConfirm') {
-            this.$router.push('/BookingMobileConfirmJob?' + this.queryData + '=' + this.bookNo + '&shopId=' + this.$route.query.shopId)
+            this.$router.push(
+              '/BookingMobileConfirmJob?' +
+                this.queryData +
+                '=' +
+                this.bookNo +
+                '&shopId=' +
+                this.$route.query.shopId
+            )
           } else {
-            this.$router.push('/BookingMobile?' + this.queryData + '=' + this.bookNo + '&shopId=' + this.$route.query.shopId)
+            this.$router.push(
+              '/BookingMobile?' +
+                this.queryData +
+                '=' +
+                this.bookNo +
+                '&shopId=' +
+                this.$route.query.shopId
+            )
           }
         } else {
           this.$swal({
@@ -288,26 +469,46 @@ export default {
             cancelButtonColor: '#b3b1ab',
             confirmButtonText: 'ใช่',
             cancelButtonText: 'ไม่'
-          }).then(async () => {
-            this.dataReady = true
-            this.$router.push('/Core/Login')
-          // await _this.getTokenCheck()
           })
+            .then(async () => {
+              this.dataReady = true
+              this.$router.push('/Core/Login')
+              // await _this.getTokenCheck()
+            })
             .catch(async () => {
               this.$router.push('/Core/Login')
             })
         }
-      } else if (this.$route.query.jobNo !== undefined && this.$route.query.type !== 'job') {
+      } else if (
+        this.$route.query.jobNo !== undefined &&
+        this.$route.query.type !== 'job'
+      ) {
         console.log('job')
-        console.log('dataitem.shopId', dataitem.shopId, this.$route.query.shopId)
+        console.log(
+          'dataitem.shopId',
+          dataitem.shopId,
+          this.$route.query.shopId
+        )
         if (this.$route.query.type === 'jobList') {
-          this.$router.push('/Onsite/JobList?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId + '&type=jobList&empId=' + this.$route.query.empId)
+          this.$router.push(
+            '/Onsite/JobList?jobNo=' +
+              this.$route.query.jobNo +
+              '&shopId=' +
+              this.$route.query.shopId +
+              '&type=jobList&empId=' +
+              this.$route.query.empId
+          )
         } else {
           if (dataitem.shopId === this.$route.query.shopId) {
-          // this.jobNo = this.$route.query.jobNo
+            // this.jobNo = this.$route.query.jobNo
             console.log('jobMach')
             // this.queryData = 'jobNo'
-            this.$router.push('/Master/jobQrCode?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId)
+            this.$router.push(
+              '/Master/jobQrCode?jobNo=' +
+                this.$route.query.jobNo +
+                '&shopId=' +
+                this.$route.query.shopId
+            )
           } else {
             this.$swal({
               title: 'ข้อมูลงานไม่ถูกต้อง?',
@@ -317,23 +518,56 @@ export default {
               cancelButtonColor: '#b3b1ab',
               confirmButtonText: 'ใช่',
               cancelButtonText: 'ไม่'
-            }).then(async () => {
-              this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId)
-              // await _this.getTokenCheck()
             })
+              .then(async () => {
+                this.$router.push(
+                  '/Core/Login?jobNo=' +
+                    this.$route.query.jobNo +
+                    '&shopId=' +
+                    this.$route.query.shopId
+                )
+                // await _this.getTokenCheck()
+              })
               .catch(async () => {
-                this.$router.push('/Core/Login?jobNo=' + this.$route.query.jobNo + '&shopId=' + this.$route.query.shopId)
+                this.$router.push(
+                  '/Core/Login?jobNo=' +
+                    this.$route.query.jobNo +
+                    '&shopId=' +
+                    this.$route.query.shopId
+                )
               })
           }
         }
-      } else if (this.$route.query.bookNo !== undefined && this.$route.query.type === 'job') {
+      } else if (
+        this.$route.query.bookNo !== undefined &&
+        this.$route.query.type === 'job'
+      ) {
         if (dataitem.category === 'ธุรกิจรถยนต์') {
-          this.$router.push('/Master/BookingList?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId + '&type=' + this.$route.query.type)
+          this.$router.push(
+            '/Master/BookingList?bookNo=' +
+              this.$route.query.bookNo +
+              '&shopId=' +
+              this.$route.query.shopId +
+              '&type=' +
+              this.$route.query.type
+          )
         } else {
-          this.$router.push('/Master/BookingListBeauty?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId + '&type=' + this.$route.query.type)
+          this.$router.push(
+            '/Master/BookingListBeauty?bookNo=' +
+              this.$route.query.bookNo +
+              '&shopId=' +
+              this.$route.query.shopId +
+              '&type=' +
+              this.$route.query.type
+          )
         }
-      } else if (this.$route.query.dateEvent !== undefined && this.$route.query.type === 'printInvoice') {
-        this.$router.push('/PrintPdf/PrintInvoice?dateEvent=' + this.$route.query.dateEvent)
+      } else if (
+        this.$route.query.dateEvent !== undefined &&
+        this.$route.query.type === 'printInvoice'
+      ) {
+        this.$router.push(
+          '/PrintPdf/PrintInvoice?dateEvent=' + this.$route.query.dateEvent
+        )
       } else {
         if (dataitem.USER_ROLE === 'onsite') {
           this.$router.push('/Onsite/JobList')
@@ -352,12 +586,12 @@ export default {
       if (this.recapchaToken !== '') {
         await axios
           .get(
-          // eslint-disable-next-line quotes
+            // eslint-disable-next-line quotes
             this.DNS_IP +
-            '/system_user/auth?userName=' +
-            this.form.userName +
-            '&userPassword=' +
-            this.form.userPassword
+              '/system_user/auth?userName=' +
+              this.form.userName +
+              '&userPassword=' +
+              this.form.userPassword
           )
           .then(async (response) => {
             if (response.data.status !== false) {
@@ -373,7 +607,7 @@ export default {
               }
             }
           })
-        // eslint-disable-next-line handle-callback-err
+          // eslint-disable-next-line handle-callback-err
           .catch((error) => {
             this.dataReady = true
             console.log(error)
@@ -391,9 +625,7 @@ export default {
       await axios
         .get(
           // eslint-disable-next-line quotes
-          this.DNS_IP +
-            '/system_user/get?userName=' +
-            this.form.newUserName
+          this.DNS_IP + "/system_user/get?userName=" + this.form.newUserName
         )
         .then(async (response) => {
           if (response.data.status !== false) {
@@ -403,32 +635,35 @@ export default {
               let token = md5(autogen)
 
               let dt = {
-                'refId': response.data[0].userId,
-                'typeJob': 'forgot',
-                'status': 'wait',
-                'token': token,
-                'CREATE_USER': response.data[0].userName,
-                'LAST_USER': response.data[0].userName
+                refId: response.data[0].userId,
+                typeJob: 'forgot',
+                status: 'wait',
+                token: token,
+                CREATE_USER: response.data[0].userName,
+                LAST_USER: response.data[0].userName
               }
               await axios
-                .post(
-                  this.DNS_IP + '/token_email/add', dt
-                )
-                .then(async response1 => {
+                .post(this.DNS_IP + '/token_email/add', dt)
+                .then(async (response1) => {
                   console.log('response1', response1.data.status)
                   if (response1.data.status) {
                     let dt = {
-                      'email': response.data[0].userName,
-                      'status': 'forgot',
-                      'token': token
+                      email: response.data[0].userName,
+                      status: 'forgot',
+                      token: token
                     }
                     await axios
                       .post(
-                        'https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Welcome-sendMail', dt
+                        'https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Welcome-sendMail',
+                        dt
                       )
-                      .then(async response => {
+                      .then(async (response) => {
                         this.dialog = false
-                        this.$swal('เรียบร้อย', 'กรุณาตรวจสอบ Email ของท่าน', 'success')
+                        this.$swal(
+                          'เรียบร้อย',
+                          'กรุณาตรวจสอบ Email ของท่าน',
+                          'success'
+                        )
                         // location.reload()
                         this.form.newUserName = ''
                       })
@@ -498,7 +733,7 @@ a {
   margin-bottom: 60px; */
 }
 .v-subheader {
-    color: #1B437C !important;
+  color: #1b437c !important;
 }
 #xxxxxx {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
@@ -510,6 +745,15 @@ a {
   margin-left: 10px;
   margin-right: 10px;
   margin-bottom: 10px;
+}
+hr {
+  border: none;
+  border-top: 4px dotted grey;
+  color: #fff;
+  background-color: #fff;
+  height: 1px;
+  width: 50%;
+  margin-top: 30px;
 }
 /* body {
   background-color: lightgreen;
