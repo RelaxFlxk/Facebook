@@ -765,7 +765,7 @@ export default {
         if (!this.$session.exists()) {
           this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId + '&type=bookConfirm')
         } else {
-          if (this.$session.getAll().data.shopId === this.$route.query.shopId) {
+          if (this.$route.query.shopId === this.$session.getAll().data.shopId) {
             localStorage.setItem(
               'sessionData',
               JSON.stringify(this.$session.getAll().data)
@@ -1610,19 +1610,34 @@ export default {
       }
     },
     sendMessageConfirm (item) {
-      let pushText = {
-        'to': item.lineUserId,
-        'messages': [
-          {
-            'type': 'text',
-            'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}
-              \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}`
-          }
-        ]
+      let pushText = {}
+      if (this.DataFlowName.filter(el => { return el.value === parseInt(this.BookingDataItemEdit[0].flowName) }).length > 0) {
+        pushText = {
+          'to': item.lineUserId,
+          'messages': [
+            {
+              'type': 'text',
+              'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}
+                              \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}
+                              \n${this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) })[0].allData.remarkConfirm || ''}`
+            }
+          ]
+        }
+      } else {
+        pushText = {
+          'to': item.lineUserId,
+          'messages': [
+            {
+              'type': 'text',
+              'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}
+                              \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}`
+            }
+          ]
+        }
       }
       axios
         .post(
-          this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
+          this.DNS_IP + '/line/pushmessage?shopId=' + this.$route.query.shopId,
           pushText
         )
         .catch(error => {
