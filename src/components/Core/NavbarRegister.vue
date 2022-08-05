@@ -13,11 +13,11 @@
       /></v-toolbar-title>
 
       <ul v-if="widthScreen >= 855">
-        <li><v-icon color="white" style="margin-bottom: 5px;margin-right: 10px;">mdi-home</v-icon><a href="https://betaskthai.com/">หน้าหลัก</a></li>
-        <li><v-icon color="white" style="margin-bottom: 5px;margin-right: 10px;">mdi-information-outline</v-icon><a href="https://betaskthai.com/about_us/">เกี่ยวกับเรา</a></li>
-        <li><v-icon color="white" style="margin-bottom: 5px;margin-right: 10px;">mdi-flag</v-icon><a href="https://betaskthai.com/be_linked/">บริการของเรา</a></li>
-        <li><v-icon color="white" style="margin-bottom: 5px;margin-right: 10px;">mdi-book-open-blank-variant</v-icon><a href="https://betaskthai.com/blog/">บทความ</a></li>
-        <li><v-icon color="white" style="margin-bottom: 5px;margin-right: 10px;">mdi-card-account-mail</v-icon><a href="https://betaskthai.com/contact_us/">ติดต่อเรา</a></li>
+        <li><a href="https://betaskthai.com/">หน้าหลัก</a></li>
+        <li><a href="https://betaskthai.com/about_us/">เกี่ยวกับเรา</a></li>
+        <li><a href="https://betaskthai.com/be_linked/">บริการของเรา</a></li>
+        <li><a href="https://betaskthai.com/blog/">บทความ</a></li>
+        <li><a href="https://betaskthai.com/contact_us/">ติดต่อเรา</a></li>
       </ul>
       <v-menu offset-y v-if="widthScreen < 855">
         <template v-slot:activator="{ on, attrs }">
@@ -161,8 +161,7 @@ export default {
 ul li {
   display: inline-block;
   padding: 10px 30px;
-  color: white;
-  background-color: #1b437c;
+  color: #1b437c;
   border-radius: 50px;
   margin-left: 25px;
 }
@@ -175,7 +174,7 @@ ul li a {
   justify-content: space-around;
 }
 a {
-  color: white ! important;
-  font-size: 15px;
+  color: #1b437c;
+  font-size: 20px;
 }
 </style>
