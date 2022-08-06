@@ -1595,9 +1595,9 @@ export default {
                           if (dataBooking.data.status === false) {
                             console.log(dataBooking)
                           } else {
-                            if (dataBooking.data[0].lineUserId) {
-                              this.sendMessageConfirm(dataBooking.data[0])
-                            }
+                            // if (dataBooking.data[0].lineUserId) {
+                            //   this.sendMessageConfirm(dataBooking.data[0])
+                            // }
                             this.getjob(dataBooking.data[0])
                             this.dialogJob = true
                           }
