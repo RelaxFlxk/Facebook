@@ -342,21 +342,34 @@
           <!-- end  -->
 
           <!-- add  -->
-          <v-dialog v-model="dialogAdd" persistent max-width="80%">
+          <v-dialog v-model="dialogAdd" persistent max-width="30%">
             <v-card>
               <v-form ref="form_add" v-model="validAdd" lazy-validation>
                 <v-card-text>
                   <v-container>
                     <v-col class="text-right">
-                      <v-icon
-                        small
-                        color="#173053"
+                      <!-- <v-icon
+                        background-color="#F3F3F3"
+                        color="#FE4A01 "
                         @click="(dialogAdd = false), clearData()"
                         >mdi-close</v-icon
-                      >
+                      > -->
+                        <v-btn
+                          class="mx-2 mr-n5 mt-n5"
+                          fab
+                          small
+                          dark
+                          color="#F3F3F3"
+                          @click="(dialogAdd = false), clearData()"
+                        >
+                          <v-icon dark
+                          color="#FE4A01 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
                     </v-col>
                     <v-row justify="center">
-                      <v-col cols="5" class="text-center">
+                      <!-- <v-col cols="5" class="text-center">
                         <v-col class="text-center" style="margin: auto 0;">
                           <v-img
                             class="v-margit_img_reward"
@@ -364,14 +377,15 @@
                             max-width="330"
                           ></v-img>
                         </v-col>
-                      </v-col>
+                      </v-col> -->
 
-                      <v-col cols="6" class="v-margit_text_add mt-1">
+                      <v-col cols="12" class="v-margit_text_add mt-1">
                         <v-col class="text-center">
-                          <v-img
+                          <!-- <v-img
                             class="v_text_add"
                             :src="require('@/assets/Grouptitle.svg')"
-                          ></v-img>
+                          ></v-img> -->
+                          <h2 class="font-weight-bold" style="color:#173053;">เพิ่มข้อมูล</h2>
                         </v-col>
                         <v-col cols="12" class="pb-0">
                           <v-text-field
@@ -382,8 +396,6 @@
                             required
                             :rules="[rules.required]"
                           ></v-text-field>
-                        </v-col>
-                        <v-col cols="12" class="pb-0">
                           <v-text-field
                             v-model="formAdd.flowNameEn"
                             label="ชื่อขั้นตอน (ภาษาอังกฤษ)"
@@ -394,29 +406,33 @@
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12" class="pb-0 pt-0">
-                          <v-checkbox
-                            label="แจ้งยอดค่าชำระ"
-                            false-value="False"
-                            true-value="True"
-                            v-model="formAdd.checkPayment"
-                          ></v-checkbox>
-                        </v-col>
-                        <v-col cols="12" class="pb-0 pt-0">
-                          <v-checkbox
-                            label="Onsite"
-                            false-value="False"
-                            true-value="True"
-                            v-model="formAdd.checkOnsite"
-                          ></v-checkbox>
-                        </v-col>
-                        <v-col cols="12" class="pb-0 pt-0">
-                          <v-checkbox
-                            label="เงินมัดจำ"
-                            false-value="False"
-                            true-value="True"
-                            v-model="formAdd.checkDeposit"
-                            @change="formAdd.amountDeposit = 0"
-                          ></v-checkbox>
+                          <v-row>
+                            <v-col>
+                              <v-checkbox
+                              label="แจ้งยอดค่าชำระ"
+                              false-value="False"
+                              true-value="True"
+                              v-model="formAdd.checkPayment"
+                              ></v-checkbox>
+                            </v-col>
+                            <v-col>
+                              <v-checkbox
+                                label="Onsite"
+                                false-value="False"
+                                true-value="True"
+                                v-model="formAdd.checkOnsite"
+                              ></v-checkbox>
+                            </v-col>
+                            <v-col>
+                              <v-checkbox
+                                label="เงินมัดจำ"
+                                false-value="False"
+                                true-value="True"
+                                v-model="formAdd.checkDeposit"
+                                @change="formAdd.amountDeposit = 0"
+                              ></v-checkbox>
+                            </v-col>
+                          </v-row>
                         </v-col>
                         <v-col cols="12" class="pb-0 pt-0">
                           <v-select
@@ -464,7 +480,7 @@
                             label="หมายเหตุการยืนยันนัดหมาย"
                           ></v-textarea>
                         </v-col>
-                        <v-col cols="12">
+                        <!-- <v-col cols="12">
                           <v-row justify="center">
                             <v-btn
                               color="primary"
@@ -565,7 +581,7 @@
                               </v-card>
                             </v-dialog>
                           </v-row>
-                        </v-col>
+                        </v-col> -->
                         <br />
                         <div class="text-center">
                           <v-btn
@@ -577,7 +593,7 @@
                             @click="addData()"
                           >
                             <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                            เพิ่ม
+                            บันทึกข้อมูล
                           </v-btn>
                         </div>
                       </v-col>
@@ -590,40 +606,55 @@
           <!-- end add -->
 
           <!-- edit -->
-          <v-dialog v-model="dialogEdit" persistent max-width="80%">
+          <v-dialog v-model="dialogEdit" persistent max-width="30%">
             <v-card>
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
                 <v-card-text>
                   <v-container>
                     <v-col class="text-right">
                       <v-col class="text-right">
-                        <v-icon
+                        <!-- <v-icon
                           small
                           color="#173053"
                           @click="(dialogEdit = false), clearData()"
                           >mdi-close</v-icon
+                        > -->
+                        <v-btn
+                          class="mx-2 mr-n10 mt-n10"
+                          fab
+                          small
+                          dark
+                          color="#F3F3F3"
+                          @click="(dialogEdit = false), clearData()"
                         >
+                          <v-icon dark
+                          color="#FE4A01 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
                       </v-col>
                     </v-col>
                     <v-row justify="center">
-                      <v-col cols="5" class="text-center"  style="margin: auto 0;">
+                      <!-- <v-col cols="5" class="text-center"  style="margin: auto 0;">
                         <v-col>
                           <v-img
                             id="v-img-cars"
                             :src="require('@/assets/cars.png')"
                           ></v-img>
                         </v-col>
-                      </v-col>
+                      </v-col> -->
 
-                      <v-col cols="6" class="v-margit_text_add mt-1">
+                      <v-col cols="12" class="v-margit_text_add mt-1">
                         <v-col class="text-center">
-                          <v-img
+                          <!-- <v-img
                             id="v_text_edits"
                             :src="require('@/assets/GroupEditTitle.svg')"
-                          ></v-img>
+                          ></v-img> -->
+                          <h2 class="font-weight-bold" style="color:#173053;">แก้ไขข้อมูล</h2>
                         </v-col>
                         <v-col cols="12" class="pb-0">
                           <v-text-field
+                            class="pa-0"
                             v-model="formUpdate.flowName"
                             label="ชื่อขั้นตอน (ภาษาไทย)"
                             outlined
@@ -631,9 +662,8 @@
                             required
                             :rules="[rules.required]"
                           ></v-text-field>
-                        </v-col>
-                        <v-col cols="12" class="pb-0">
                           <v-text-field
+                            class="pa-0"
                             v-model="formUpdate.flowNameEn"
                             label="ชื่อขั้นตอน (ภาษาอังกฤษ)"
                             outlined
@@ -643,29 +673,33 @@
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12" class="pb-0 pt-0">
-                          <v-checkbox
+                          <v-row>
+                            <v-col>
+                            <v-checkbox
                             label="แจ้งยอดค่าชำระ"
                             false-value="False"
                             true-value="True"
                             v-model="formUpdate.checkPayment"
                           ></v-checkbox>
-                        </v-col>
-                        <v-col cols="12" class="pb-0 pt-0">
-                          <v-checkbox
+                          </v-col>
+                          <v-col>
+                            <v-checkbox
                             label="Onsite"
                             false-value="False"
                             true-value="True"
                             v-model="formUpdate.checkOnsite"
                           ></v-checkbox>
-                        </v-col>
-                        <v-col cols="12" class="pb-0 pt-0">
-                          <v-checkbox
+                          </v-col>
+                          <v-col>
+                            <v-checkbox
                             label="เงินมัดจำ"
                             false-value="False"
                             true-value="True"
                             v-model="formUpdate.checkDeposit"
                             @change="formUpdate.amountDeposit = 0"
                           ></v-checkbox>
+                          </v-col>
+                          </v-row>
                         </v-col>
                         <v-col cols="12" class="pb-0 pt-0">
                           <v-select
@@ -713,7 +747,8 @@
                             label="หมายเหตุการยืนยันนัดหมาย"
                           ></v-textarea>
                         </v-col>
-                        <v-col cols="12">
+                        <!-- สำหรับ ธุรกิจรถยนต์ -->
+                        <!-- <v-col cols="12">
                           <v-row style="height: 50px" justify="center">
                             <v-btn
                               color="primary"
@@ -812,7 +847,7 @@
                               </v-card>
                             </v-dialog>
                           </v-row>
-                        </v-col>
+                        </v-col> -->
                         <v-col id="margin">
                           <v-row justify="center">
                             <v-btn
@@ -824,7 +859,7 @@
                               @click="editData()"
                             >
                               <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                              แก้ไข
+                              บันทึกข้อมูล
                             </v-btn>
                           </v-row>
                         </v-col>
@@ -2834,5 +2869,23 @@ export default {
 #v-img-cars {
   height: 280.2578125px;
   width: 401.6603088378906px;
+}
+/* width */
+::-webkit-scrollbar {
+  width: 2px;
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #173053;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #173053;
 }
 </style>
