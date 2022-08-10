@@ -52,16 +52,22 @@
                   return (
                     el.statusBt === "confirmJob" || el.statusBt === "confirm"
                   );
-                }).length +
-                " คัน"
+                }).length
+            }}{{
+              $session.getAll().data.category === "ธุรกิจรถยนต์"
+                ? " คัน"
+                : " รายการ"
             }}
             /
             {{
               branch.filter(row => {
                 return row.allData.masBranchID === masBranchID;
               })[0].allData.countCus
+            }}{{
+              $session.getAll().data.category === "ธุรกิจรถยนต์"
+                ? " คัน"
+                : " รายการ"
             }}
-            คัน
           </strong>
         </v-col>
         <!-- {{dataItemTimesChange.filter(el => { return (el.statusBt==='confirmJob' || el.statusBt==='confirm') })}} -->
@@ -72,14 +78,19 @@
                 :color="'grey lighten-' + (index + 1)"
                 v-bind:key="'chip' + index"
               >
-                {{ item.name + " : " + item.count + " คัน" }}
+                {{ item.name + " : " + item.count }}
+                {{
+              $session.getAll().data.category === "ธุรกิจรถยนต์"
+                ? " คัน"
+                : " รายการ"
+            }}
               </v-chip>
             </template>
           </v-chip-group>
         </v-col>
       </v-row>
       <v-row justify="center">
-        <v-expansion-panels>
+        <!-- <v-expansion-panels>
                <v-expansion-panel
                   v-for="(item, indexitem) in masterTime" :key="indexitem"
                >
@@ -195,8 +206,8 @@
                      </v-card>
                   </v-expansion-panel-content>
                </v-expansion-panel>
-               </v-expansion-panels>
-        <!-- <v-expansion-panels>
+               </v-expansion-panels> -->
+        <v-expansion-panels>
           <v-expansion-panel
             v-for="(item, indexitem) in masterTime"
             :key="indexitem"
@@ -571,10 +582,10 @@
                   </v-list-item>
                   <v-card-text>
                     <v-row class="white--text">
-                      <v-col cols="12" class="pt-0 pb-0">
+                      <v-col v-if="items.cusName" cols="12" class="pt-0 pb-0">
                         คุณ {{ items.cusName }}
                       </v-col>
-                      <v-col cols="12" class="pt-0 pb-0">
+                      <v-col v-if="items.cusReg" cols="12" class="pt-0 pb-0">
                         ทะเบียน {{ items.cusReg }}
                       </v-col>
                     </v-row>
@@ -583,7 +594,7 @@
               </v-card>
             </v-expansion-panel-content>
           </v-expansion-panel>
-        </v-expansion-panels> -->
+        </v-expansion-panels>
       </v-row>
     </div>
   </transition>
