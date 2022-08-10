@@ -724,7 +724,7 @@ export default {
         { title: 'ข้อมูลลงทะเบียนลูกค้า', icon: 'mdi-account-plus', to: '/System/ListMember', type: 'customer' },
         { title: 'ข้อมูลคะแนนบริการ', icon: 'mdi-star-check', to: '/Master/Rating', type: 'customer' }
       ]
-      if (this.session.data.category === 'ธุรกิจรถยนต์') {
+      if (this.session.data.shopId === 'U9084920b3005bd1dcb57af1ae6bdba32') {
         this.booking = [
           { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingField', type: 'booking' },
           // { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingLink', type: 'booking' },
