@@ -68,6 +68,7 @@
             dataItemTimesChange.filter(el => {
               return el.statusBt === 'confirmJob' || el.statusBt === 'confirm';
             }).length > 0
+            &&  $session.getAll().data.category === 'ธุรกิจรถยนต์'
           "
         >
           <v-btn color="normal" small @click="exportExcelMazda()" dark>
@@ -114,7 +115,11 @@
                 :color="'grey lighten-' + (index + 1)"
                 v-bind:key="'chip' + index"
               >
-                {{ item.name + " : " + item.count + " คัน" }}
+                {{ item.name + " : " + item.count }}{{
+               $session.getAll().data.category === "ธุรกิจรถยนต์"
+                  ? " คัน"
+                  : " รายการ"
+               }}
               </v-chip>
             </template>
           </v-chip-group>
