@@ -1591,6 +1591,7 @@ export default {
             '&masBranchID=' + this.masBranchID +
             '&shopId=' +
             this.shopId + '&checkOnsite=is null'
+          // '&stepId=is null'
         )
         .then(async response => {
           this.dataReady = true
