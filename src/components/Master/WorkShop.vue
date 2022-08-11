@@ -281,24 +281,30 @@ export default {
         .get(this.DNS_IP + '/flowStep/get?flowId=' + flowId + '&shopId=' + this.shopId)
         .then(async response => {
           let rs = response.data
-          const dt = rs.map((item) => {
-            return {
-              stepId: item.stepId,
-              stepTitle: item.stepTitle,
-              sortNo: item.sortNo
-            }
-          })
-          console.log('dt', dt)
-          let datastep = []
-          for (let i = 0; i < this.Layout.length; i++) {
-            let aa = this.Layout[i]
-            if (aa.workData.length > 0) {
-              for (let y = 0; y < aa.workData.length; y++) {
-                datastep.push(aa.workData[y].stepId)
+          if (rs.status === false) {
+            this.stepData = []
+            this.DataflowId = ''
+            this.$swal('ผิดพลาด', 'กรุณากำหนดขั้นตอนการทำงาน', 'error')
+          } else {
+            const dt = rs.map((item) => {
+              return {
+                stepId: item.stepId,
+                stepTitle: item.stepTitle,
+                sortNo: item.sortNo
+              }
+            })
+            console.log('dt', dt)
+            let datastep = []
+            for (let i = 0; i < this.Layout.length; i++) {
+              let aa = this.Layout[i]
+              if (aa.workData.length > 0) {
+                for (let y = 0; y < aa.workData.length; y++) {
+                  datastep.push(aa.workData[y].stepId)
+                }
               }
             }
+            this.stepData = dt.filter(item => !datastep.includes(item.stepId))
           }
-          this.stepData = dt.filter(item => !datastep.includes(item.stepId))
         })
     },
     async UpdateworkShop () {

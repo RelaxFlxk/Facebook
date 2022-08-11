@@ -7252,7 +7252,7 @@ export default {
       this.getSelectText = text
       this.getSelectCount = count || 0
       this.dataItemSelect = []
-      this.dataItemTimesChange = []
+      // this.dataItemTimesChange = []
       this.columnsSelected = []
       console.log('text', text)
       // if (count > 0) {
@@ -7517,32 +7517,11 @@ export default {
       try {
         this.dataItemTimesChange = []
         this.dataRemoveExport = []
-        // console.log('this.dataItem', this.dataItem.filter(el => { return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable }))
         if (text === 'all') {
           this.dataItemTimesChange = this.dataItem
           this.dataRemoveExport = this.dataItemTimesChange.filter(el => { return el.statusBt === 'cancel' })
           this.BookingDataListTimechange = this.BookingDataList
         } else {
-          // if (moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM') === this.dateStart) {
-          //   console.log('month old')
-          //   this.dataItemTimesChange = this.dataItem.filter(el => {
-          //     let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-          //     return dueDate === this.timeTable
-          //   // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-          //   }).sort((a, b) => {
-          //     if (a.timeDuetext < b.timeDuetext) return -1
-          //     return a.timeDuetext > b.timeDuetext ? 1 : 0
-          //   })
-          //   this.BookingDataListTimechange = this.BookingDataList
-          // }
-          // } else {
-          //   var data = this.dataItemCheck.filter(el => {
-          //     let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-          //     return dueDate === this.timeTable
-          //   // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-          //   })
-          //   console.log('data', data)
-          //   if (data.length === 0) {
           if (this.masBranchID) {
             this.masBranchID = this.masBranchID
           } else {
@@ -7569,7 +7548,7 @@ export default {
             '&masBranchID=' +
             this.masBranchID +
             '&dueDate=' +
-            this.dateStart + '&checkOnsite=is null'
+            this.timeTable + '&checkOnsite=is null'
             } else {
               urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
@@ -7577,7 +7556,7 @@ export default {
             '&masBranchID=' +
             this.masBranchID +
             '&dueDate=' +
-            this.dateStart + '&checkOnsite=is null&flowId=' + this.flowSelect
+            this.timeTable + '&checkOnsite=is null&flowId=' + this.flowSelect
             }
             await axios
               .get(
@@ -7629,24 +7608,12 @@ export default {
                         s.statusBtText = 'รายการนัดหมายใหม่'
                         break
                     }
-                    // let dataBookingData = []
-                    // await axios
-                    //   .get(
-                    //     this.DNS_IP + `/BookingData/getView?bookNo=${d.bookNo}`
-                    //   )
-                    //   .then(async responses => {
-                    //     dataBookingData = responses.data
-                    //   })
                     s.cusName = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'ชื่อ')
                     s.cusReg = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'เลขทะเบียน')
                     s.tel = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'เบอร์โทร')
                     s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
                     s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
                     s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
-                    // var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
-                    // if (chkTime.length === 0) {
-                    //   dataItemTimes.push(s)
-                    // }
                     dataItems.push(s)
                   }
                 }

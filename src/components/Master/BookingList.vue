@@ -5481,7 +5481,7 @@ export default {
       this.getSelectText = text
       this.getSelectCount = count || 0
       this.dataItemSelect = []
-      this.dataItemTimesChange = []
+      // this.dataItemTimesChange = []
       this.columnsSelected = []
       console.log('text', text)
       // if (count > 0) {
