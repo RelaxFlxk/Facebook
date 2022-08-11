@@ -748,106 +748,115 @@
                           ></v-textarea>
                         </v-col>
                         <!-- สำหรับ ธุรกิจรถยนต์ -->
-                        <!-- <v-col cols="12">
-                          <v-row style="height: 50px" justify="center">
-                            <v-btn
-                              color="primary"
-                              dark
-                              x-small
-                              @click="
-                                (dialogEditField = true),
-                                  (editedItem2.fieldName = ''),
-                                  (editedItem2.fieldId = '')
-                              "
-                              class="mb-2"
-                            >
-                              เพิ่ม ช่องกรอกข้อมูล
-                            </v-btn>
-                          </v-row>
-                          <v-row justify="center">
-                            <v-data-table
-                              dense
-                              :headers="headers"
-                              :items="desserts"
-                              hide-default-footer
-                              class="elevation-1 custom_table_class"
-                            >
-                              <template v-slot:[`item.actions`]="{ item }">
-                                <v-icon
-                                  small
-                                  color="#7F87A7"
-                                  @click="deleteItem(item)"
+                        <v-expansion-panels>
+                          <v-expansion-panel>
+                            <v-expansion-panel-header>
+                              เพิ่มช่องกรอกข้อมูล
+                            </v-expansion-panel-header>
+                            <v-expansion-panel-content>
+                              <v-col cols="12">
+                              <v-row style="height: 50px" justify="center">
+                                <v-btn
+                                  color="primary"
+                                  dark
+                                  x-small
+                                  @click="
+                                    (dialogEditField = true),
+                                      (editedItem2.fieldName = ''),
+                                      (editedItem2.fieldId = '')
+                                  "
+                                  class="mb-2"
                                 >
-                                  mdi-delete
-                                </v-icon>
-                              </template>
-                              <template v-slot:[`item.showCard`]="{ item }">
-                                <v-checkbox
-                                  false-value="False"
-                                  true-value="True"
-                                  v-model="item.showCard"
-                                ></v-checkbox>
-                              </template>
-                            </v-data-table>
-                            <v-dialog
-                              v-model="dialogEditField"
-                              max-width="500px"
-                            >
-                              <v-card>
-                                <v-card-text>
-                                  <v-container>
-                                    <v-row>
-                                      <v-col cols="12">
-                                        <center>
-                                          <v-col>
-                                            <v-img
-                                              id="v-img-fieldName"
-                                              :src="
-                                                require('@/assets/maintenance.png')
-                                              "
-                                            ></v-img>
+                                  เพิ่ม ช่องกรอกข้อมูล
+                                </v-btn>
+                              </v-row>
+                              <v-row justify="center">
+                                <v-data-table
+                                  dense
+                                  :headers="headers"
+                                  :items="desserts"
+                                  hide-default-footer
+                                  class="elevation-1 custom_table_class"
+                                >
+                                  <template v-slot:[`item.actions`]="{ item }">
+                                    <v-icon
+                                      small
+                                      color="#7F87A7"
+                                      @click="deleteItem(item)"
+                                    >
+                                      mdi-delete
+                                    </v-icon>
+                                  </template>
+                                  <template v-slot:[`item.showCard`]="{ item }">
+                                    <v-checkbox
+                                      false-value="False"
+                                      true-value="True"
+                                      v-model="item.showCard"
+                                    ></v-checkbox>
+                                  </template>
+                                </v-data-table>
+                                <v-dialog
+                                  v-model="dialogEditField"
+                                  max-width="500px"
+                                >
+                                  <v-card>
+                                    <v-card-text>
+                                      <v-container>
+                                        <v-row>
+                                          <v-col cols="12">
+                                            <center>
+                                              <v-col>
+                                                <v-img
+                                                  id="v-img-fieldName"
+                                                  :src="
+                                                    require('@/assets/maintenance.png')
+                                                  "
+                                                ></v-img>
+                                              </v-col>
+                                            </center>
+                                            <v-row style="height: 35px">
+                                              <v-subheader id="subtext"
+                                                >ช่องกรอกข้อมูล</v-subheader
+                                              >
+                                            </v-row>
+                                            <v-row style="height: 50px">
+                                              <v-select
+                                                v-model="editedItem2.fieldName"
+                                                :items="editedItemSelete"
+                                                item-text="text"
+                                                dense
+                                                return-object
+                                              ></v-select>
+                                            </v-row>
                                           </v-col>
-                                        </center>
-                                        <v-row style="height: 35px">
-                                          <v-subheader id="subtext"
-                                            >ช่องกรอกข้อมูล</v-subheader
-                                          >
                                         </v-row>
-                                        <v-row style="height: 50px">
-                                          <v-select
-                                            v-model="editedItem2.fieldName"
-                                            :items="editedItemSelete"
-                                            item-text="text"
-                                            dense
-                                            return-object
-                                          ></v-select>
-                                        </v-row>
-                                      </v-col>
-                                    </v-row>
-                                  </v-container>
-                                </v-card-text>
+                                      </v-container>
+                                    </v-card-text>
 
-                                <v-card-actions>
-                                  <v-spacer></v-spacer>
-                                  <v-btn
-                                    color="#173053"
-                                    dark
-                                    @click="dialogEditField = false"
-                                  >
-                                    ยกเลิก
-                                  </v-btn>
-                                  <v-btn
-                                    color="#173053"
-                                    dark
-                                    @click="save(editedItem2)"
-                                  >
-                                    บันทึกข้อมูล
-                                  </v-btn>
-                                </v-card-actions>
-                              </v-card>
-                            </v-dialog>
-                          </v-row>
-                        </v-col> -->
+                                    <v-card-actions>
+                                      <v-spacer></v-spacer>
+                                      <v-btn
+                                        color="#173053"
+                                        dark
+                                        @click="dialogEditField = false"
+                                      >
+                                        ยกเลิก
+                                      </v-btn>
+                                      <v-btn
+                                        color="#173053"
+                                        dark
+                                        @click="save(editedItem2)"
+                                      >
+                                        บันทึกข้อมูล
+                                      </v-btn>
+                                    </v-card-actions>
+                                  </v-card>
+                                </v-dialog>
+                              </v-row>
+                            </v-col>
+                            </v-expansion-panel-content>
+                          </v-expansion-panel>
+                        </v-expansion-panels>
                         <v-col id="margin">
                           <v-row justify="center">
                             <v-btn
