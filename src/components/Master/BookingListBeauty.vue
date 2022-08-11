@@ -6283,8 +6283,14 @@ export default {
       if (dtTime.length > 0) {
         // let dtTime = this.branch.filter(item => { return item.value === this.formAdd.masBranchID })
         // console.log('test', dtTime)
-        this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+        // this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
         // console.log('timevailable', this.timeavailable)
+        if (dtTime.map(item => item.allData.setTime) === null) {
+          this.timeavailable = []
+          // this.$swal('แจ้งเตือน', 'เนื่องจากยังไม่ได้ตั้งค่าเวลา', 'info')
+        } else {
+          this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+        }
       }
     },
     checkTimeEdit () {
@@ -6293,8 +6299,14 @@ export default {
       if (dtTime.length > 0) {
         // let dtTime = this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
         // console.log('test', dtTime)
-        this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+        // this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
         // console.log('timevailable', this.timeavailable)
+        if (dtTime.map(item => item.allData.setTime) === null) {
+          this.timeavailable = []
+          // this.$swal('แจ้งเตือน', 'เนื่องจากยังไม่ได้ตั้งค่าเวลา', 'info')
+        } else {
+          this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+        }
       }
     },
     checkTimeFlow (dt) {
@@ -6303,7 +6315,12 @@ export default {
       let dtTime = this.DataFlowName.filter(item => { return item.value === dt.flowId })
       if (dtTime.length > 0) {
         // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
-        this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+        if (dtTime.map(item => item.allData.setTime) === null) {
+          this.timeavailable = []
+          // this.$swal('แจ้งเตือน', 'เนื่องจากยังไม่ได้ตั้งค่าเวลา', 'info')
+        } else {
+          this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+        }
         // console.log('timevailable', this.timeavailable)
       }
     },
@@ -8684,7 +8701,16 @@ export default {
       } else {
         this.statusConfirmJob = false
       }
-      console.log('this.statusConfirmJob', this.statusConfirmJob)
+      // console.log('this.statusConfirmJob', this.statusConfirmJob)
+      let checkStep = await axios.get(this.DNS_IP + '/flowStep/get?flowId=' + dt.flowId)
+      console.log('checkStep', checkStep)
+      if (checkStep.data.status === false) {
+        this.endDate = this.momenDate_1(new Date())
+        this.endTime = this.momenTime(new Date())
+        this.statusShowDateConfiremjob = false
+      } else {
+        this.statusShowDateConfiremjob = true
+      }
       if (this.statusConfirmJob) {
         this.jobCheckPackage = false
         console.log('dt', dt)
@@ -9745,9 +9771,17 @@ export default {
       console.log('booking', booking)
       console.log('bookingData', bookingData)
       this.timeavailable = []
-      let dtTime = this.branch.filter(item => { return item.value === booking.data[0].masBranchID })
+      let dtTime = this.dataFlowSelectAdd.filter(item => { return item.value === booking.data[0].flowId })
+      if (dtTime.length > 0) {
+        if (dtTime.map(item => item.allData.setTime) === null) {
+          this.timeavailable = []
+        } else {
+          this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+        }
+      }
+      // let dtTime = this.branch.filter(item => { return item.value === booking.data[0].masBranchID })
       // console.log('test', dtTime)
-      this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+      // this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
       this.dialogBookingAgain = true
     },
     addBookingAgain () {
