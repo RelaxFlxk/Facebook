@@ -164,6 +164,7 @@ ul li {
   color: #1b437c;
   border-radius: 50px;
   margin-left: 25px;
+  white-space: nowrap;
 }
 ul li a {
   text-decoration: none;
