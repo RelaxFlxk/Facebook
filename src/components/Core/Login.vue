@@ -17,7 +17,7 @@
           <v-row class="text-center" justify="center" no-gutters>
             <v-col cols="10">
               <h2>
-                <strong style="color: #001d6e">เข้าร่วม BeTask</strong>
+                <strong style="color: #001d6e">เข้าสู่ระบบ BeTask</strong>
               </h2>
               <p><strong>ลงชื่อเข้าใช้บัญชีของคุณ</strong></p>
             </v-col>

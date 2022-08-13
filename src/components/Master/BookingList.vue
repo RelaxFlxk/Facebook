@@ -3673,6 +3673,15 @@ export default {
     })
   },
   methods: {
+    pushMsgConfirm (bookNo) {
+      axios
+        .post(
+          this.DNS_IP + '/Booking/pushMsgConfirm/' + bookNo
+        )
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
+    },
     async checkLimit () {
       this.checkLimitBooking.ID = 'NO'
       this.checkLimitBooking.countBooking = 1
@@ -5472,7 +5481,7 @@ export default {
       this.getSelectText = text
       this.getSelectCount = count || 0
       this.dataItemSelect = []
-      this.dataItemTimesChange = []
+      // this.dataItemTimesChange = []
       this.columnsSelected = []
       console.log('text', text)
       // if (count > 0) {
@@ -7268,24 +7277,25 @@ export default {
               if (this.getSelectText) {
                 this.getSelect(this.getSelectText, this.getSelectCount)
               }
-              let pushText = {
-                'to': item.lineUserId,
-                'messages': [
-                  {
-                    'type': 'text',
-                    'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
-                          \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}`
-                  }
-                ]
-              }
-              axios
-                .post(
-                  this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
-                  pushText
-                )
-                .catch(error => {
-                  console.log('error function addData : ', error)
-                })
+              this.pushMsgConfirm(item.bookNo)
+              // let pushText = {
+              //   'to': item.lineUserId,
+              //   'messages': [
+              //     {
+              //       'type': 'text',
+              //       'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
+              //             \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}`
+              //     }
+              //   ]
+              // }
+              // axios
+              //   .post(
+              //     this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
+              //     pushText
+              //   )
+              //   .catch(error => {
+              //     console.log('error function addData : ', error)
+              //   })
             } else {
               if (this.statusSearch === 'no') {
                 await this.getBookingList()
@@ -7567,7 +7577,10 @@ export default {
       })
     },
     async onChangeChkSubmit (item, changeStatus, checkCountTime) {
-      let countTime = checkCountTime.data[0].countChangeTime || 0
+      let countTime = 0
+      if (checkCountTime) {
+        countTime = checkCountTime.data[0].countChangeTime || 0
+      }
       let dueOld = this.dueDateOld + this.dueDateTimeOld
       let dueNew = this.formChange.date + this.formChange.time.value
       if (dueOld === dueNew) {
@@ -7613,24 +7626,25 @@ export default {
                   if (this.getSelectText) {
                     this.getSelect(this.getSelectText, this.getSelectCount)
                   }
-                  let pushText = {
-                    'to': item.lineUserId,
-                    'messages': [
-                      {
-                        'type': 'text',
-                        'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
-                          \nวันเดือนปี ${this.format_dateFUllTime(this.formChange.date + ' ' + this.formChange.time.value)}`
-                      }
-                    ]
-                  }
-                  axios
-                    .post(
-                      this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
-                      pushText
-                    )
-                    .catch(error => {
-                      console.log('error function addData : ', error)
-                    })
+                  this.pushMsgConfirm(item.bookNo)
+                  // let pushText = {
+                  //   'to': item.lineUserId,
+                  //   'messages': [
+                  //     {
+                  //       'type': 'text',
+                  //       'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
+                  //         \nวันเดือนปี ${this.format_dateFUllTime(this.formChange.date + ' ' + this.formChange.time.value)}`
+                  //     }
+                  //   ]
+                  // }
+                  // axios
+                  //   .post(
+                  //     this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
+                  //     pushText
+                  //   )
+                  //   .catch(error => {
+                  //     console.log('error function addData : ', error)
+                  //   })
                 } else {
                   if (this.statusSearch === 'no') {
                     await this.getBookingList()

@@ -44,7 +44,7 @@
               @change="chkBranchName()"
               hide-details
               label="ประเภทบริการ"
-              prepend-inner-icon="mdi-car-connected"
+              prepend-inner-icon="mdi-format-list-bulleted"
               class="ma-2"
             >
             </v-select>
@@ -1591,6 +1591,7 @@ export default {
             '&masBranchID=' + this.masBranchID +
             '&shopId=' +
             this.shopId + '&checkOnsite=is null'
+          // '&stepId=is null'
         )
         .then(async response => {
           this.dataReady = true
@@ -1827,7 +1828,7 @@ export default {
                 this.dialog = false
                 this.$swal('เรียบร้อย', 'แก้ไขสถานะ เรียบร้อย', 'success')
                 this.getStepFlow()
-                this.getLayout()
+                // this.getLayout()
                 await this.getJobData()
                 this.setTimeJob()
               // console.log('allJob', this.allJob)
@@ -1892,7 +1893,7 @@ export default {
           .then(async response => {
             this.$swal('เรียบร้อย', 'อัพเดท สถานะรถ เรียบร้อย', 'success')
             this.getStepFlow()
-            this.getLayout()
+            // this.getLayout()
             await this.getJobData()
             console.log('shopId:', this.shopId)
             console.log('form:', this.formUpdateCar)
@@ -1960,7 +1961,7 @@ export default {
             await this.pushmessagePrice(this.formDelete.jobNo)
             this.$swal('เรียบร้อย', 'ลบข้อมูล เรียบร้อย', 'success')
             await this.getStepFlow()
-            await this.getLayout()
+            // await this.getLayout()
             await this.getJobData()
             this.setTimeJob()
             this.dialogDelete = false
@@ -2124,7 +2125,7 @@ export default {
                 })
             }
             this.getStepFlow()
-            this.getLayout()
+            // this.getLayout()
             await this.getJobData()
             this.setTimeJob()
             this.dialogEdit = false
@@ -2197,7 +2198,7 @@ export default {
             await axios.post(this.DNS_IP + '/TimeEmp_Log_Update/get', itemsJob).then(async (response) => {
               await this.$swal('เรียบร้อย', 'อัพเดทเวลาสำเร็จ', 'success')
               await this.getStepFlow()
-              await this.getLayout()
+              // await this.getLayout()
               await this.getJobData()
             }).catch((error) => {
               console.log('error function addData : ', error)

@@ -243,7 +243,7 @@
                 :rules="[rules.required]"
               ></v-select>
             </v-col>
-            <v-col class="pa-2 pb-0 pt-0" cols="12" v-if="statusBook === 'wait'">
+            <v-col class="pa-2 pb-0 pt-0" cols="12" v-if="statusBook === 'confirm'">
               <v-select
                 v-model="empSelectJob"
                 :items="empSelectStepAdd"
@@ -258,7 +258,7 @@
             </v-form>
             <div class="text-center">
               <v-btn
-                v-if="statusBook === 'wait'"
+                v-if="statusBook === 'confirm'"
                 color="primary"
                 title
                 @click.stop="addDataJob()"
@@ -1595,9 +1595,9 @@ export default {
                           if (dataBooking.data.status === false) {
                             console.log(dataBooking)
                           } else {
-                            if (dataBooking.data[0].lineUserId) {
-                              this.sendMessageConfirm(dataBooking.data[0])
-                            }
+                            // if (dataBooking.data[0].lineUserId) {
+                            //   this.sendMessageConfirm(dataBooking.data[0])
+                            // }
                             this.getjob(dataBooking.data[0])
                             this.dialogJob = true
                           }

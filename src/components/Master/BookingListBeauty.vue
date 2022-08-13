@@ -4768,33 +4768,45 @@ export default {
     // await this.beforeCreate()
   },
   methods: {
+    pushMsgConfirm (bookNo) {
+      axios
+        .post(
+          this.DNS_IP + '/Booking/pushMsgConfirm/' + bookNo
+        )
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
+    },
     gotoPicture (Linkitem) {
       window.open(Linkitem, '_blank')
     },
     SetallowedDatesChange (flowId) {
-      this.dataFlowSelectAdd.forEach((v, k) => {
-        console.log('v', v)
-        if (v.allData.flowId === flowId) {
-          // console.log('Value', v.dateDayoffValue)
-          v.allData.dateDayCustom = v.allData.dateDayCustom || ''
-          v.allData.dateDayoffValue = v.allData.dateDayoffValue || ''
-          if (v.allData.dateDayoffValue !== '') {
-            console.log('if')
-            this.dateDayoff = JSON.parse(v.allData.dateDayoffValue)
-          } else {
-            console.log('else')
-            this.dateDayoff = []
+      let dataFlow = this.dataFlowSelectAdd.filter(el => { return el.value === flowId })
+      if (dataFlow.length > 0) {
+        dataFlow.forEach((v, k) => {
+          console.log('v', v)
+          if (v.allData.flowId === flowId) {
+            // console.log('Value', v.dateDayoffValue)
+            v.allData.dateDayCustom = v.allData.dateDayCustom || ''
+            v.allData.dateDayoffValue = v.allData.dateDayoffValue || ''
+            if (v.allData.dateDayoffValue !== '') {
+              console.log('if')
+              this.dateDayoff = JSON.parse(v.allData.dateDayoffValue)
+            } else {
+              console.log('else')
+              this.dateDayoff = []
+            }
+            if (v.dateDayCustom !== '') {
+              this.dateDayCustom = JSON.parse(v.allData.dateDayCustom)
+            } else {
+              this.dateDayCustom = []
+            }
           }
-          if (v.dateDayCustom !== '') {
-            this.dateDayCustom = JSON.parse(v.allData.dateDayCustom)
-          } else {
-            this.dateDayCustom = []
-          }
-        } else {
-          this.dateDayoff = []
-          this.dateDayCustom = []
-        }
-      })
+        })
+      } else {
+        this.dateDayoff = []
+        this.dateDayCustom = []
+      }
     },
     allowedDatesChange (val) {
       // if (this.dateDaylimit) {
@@ -4819,10 +4831,10 @@ export default {
       // }
     },
     SetallowedDatesEdit () {
-      this.dataFlowSelectEdit.forEach((v, k) => {
-        console.log('v', v)
-        if (v.allData.flowId === this.formEdit.flowId) {
-          // console.log('Value', v.dateDayoffValue)
+      console.log('this.dataFlowSelectEdit', this.dataFlowSelectEdit)
+      let dataFlow = this.dataFlowSelectEdit.filter(el => { return el.value === this.formEdit.flowId })
+      if (dataFlow.length > 0) {
+        dataFlow.forEach((v, k) => {
           v.allData.dateDayCustom = v.allData.dateDayCustom || ''
           v.allData.dateDayoffValue = v.allData.dateDayoffValue || ''
           if (v.allData.dateDayoffValue !== '') {
@@ -4837,11 +4849,11 @@ export default {
           } else {
             this.dateDayCustom = []
           }
-        } else {
-          this.dateDayoff = []
-          this.dateDayCustom = []
-        }
-      })
+        })
+      } else {
+        this.dateDayoff = []
+        this.dateDayCustom = []
+      }
     },
     allowedDatesEdit (val) {
       // if (this.dateDaylimit) {
@@ -5024,46 +5036,32 @@ export default {
       return LimitBooking
     },
     SetallowedDates () {
-      this.dataFlowSelectAdd.forEach((v, k) => {
-        console.log('v', v)
-        if (v.allData.flowId === this.formAdd.flowId) {
-          // console.log('Value', v.dateDayoffValue)
-          v.allData.dateDayCustom = v.allData.dateDayCustom || ''
-          v.allData.dateDayoffValue = v.allData.dateDayoffValue || ''
-          if (v.allData.dateDayoffValue !== '') {
-            // console.log('if')
-            this.dateDayoff = JSON.parse(v.allData.dateDayoffValue)
-          } else {
-            // console.log('else')
-            this.dateDayoff = []
+      let dataFlow = this.dataFlowSelectAdd.filter(el => { return el.value === this.formAdd.flowId })
+      if (dataFlow.length > 0) {
+        dataFlow.forEach((v, k) => {
+          console.log('v', v)
+          if (v.allData.flowId === this.formAdd.flowId) {
+            // console.log('Value', v.dateDayoffValue)
+            v.allData.dateDayCustom = v.allData.dateDayCustom || ''
+            v.allData.dateDayoffValue = v.allData.dateDayoffValue || ''
+            if (v.allData.dateDayoffValue !== '') {
+              // console.log('if')
+              this.dateDayoff = JSON.parse(v.allData.dateDayoffValue)
+            } else {
+              // console.log('else')
+              this.dateDayoff = []
+            }
+            if (v.dateDayCustom !== '') {
+              this.dateDayCustom = JSON.parse(v.allData.dateDayCustom)
+            } else {
+              this.dateDayCustom = []
+            }
           }
-          if (v.dateDayCustom !== '') {
-            this.dateDayCustom = JSON.parse(v.allData.dateDayCustom)
-          } else {
-            this.dateDayCustom = []
-          }
-        }
-      })
-      // this.branch.forEach((v, k) => {
-      //   console.log('v', v)
-      //   if (v.allData.masBranchID === this.formAdd.masBranchID) {
-      //     // console.log('Value', v.dateDayoffValue)
-      //     v.allData.dateDayCustom = v.allData.dateDayCustom || ''
-      //     v.allData.dateDayoffValue = v.allData.dateDayoffValue || ''
-      //     if (v.allData.dateDayoffValue !== '') {
-      //       // console.log('if')
-      //       this.dateDayoff = JSON.parse(v.allData.dateDayoffValue)
-      //     } else {
-      //       // console.log('else')
-      //       this.dateDayoff = []
-      //     }
-      //     if (v.dateDayCustom !== '') {
-      //       this.dateDayCustom = JSON.parse(v.allData.dateDayCustom)
-      //     } else {
-      //       this.dateDayCustom = []
-      //     }
-      //   }
-      // })
+        })
+      } else {
+        this.dateDayoff = []
+        this.dateDayCustom = []
+      }
     },
     onCopySuccess () {
       this.$swal('เรียบร้อย', 'คัดลอกสำเร็จ', 'success')
@@ -5838,7 +5836,7 @@ export default {
       this.dueDateOld = this.momenDate_1(dt.dueDate)
       this.dueDateTimeOld = this.momenTime(dt.dueDate)
 
-      this.SetallowedDatesEdit()
+      // this.SetallowedDatesEdit()
       this.dateEdit = moment(moment(dt.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
       this.timeavailable = []
       // let dtTime = await this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
@@ -5988,6 +5986,7 @@ export default {
         })
       console.log('this.BookingDataItemEdit', this.BookingDataItemEdit)
       this.dialogEditData = true
+      this.SetallowedDatesEdit()
     },
     editDataSelect () {
       this.validate('EDIT')
@@ -6284,8 +6283,14 @@ export default {
       if (dtTime.length > 0) {
         // let dtTime = this.branch.filter(item => { return item.value === this.formAdd.masBranchID })
         // console.log('test', dtTime)
-        this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+        // this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
         // console.log('timevailable', this.timeavailable)
+        if (dtTime.map(item => item.allData.setTime) === null) {
+          this.timeavailable = []
+          // this.$swal('แจ้งเตือน', 'เนื่องจากยังไม่ได้ตั้งค่าเวลา', 'info')
+        } else {
+          this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+        }
       }
     },
     checkTimeEdit () {
@@ -6294,8 +6299,14 @@ export default {
       if (dtTime.length > 0) {
         // let dtTime = this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
         // console.log('test', dtTime)
-        this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+        // this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
         // console.log('timevailable', this.timeavailable)
+        if (dtTime.map(item => item.allData.setTime) === null) {
+          this.timeavailable = []
+          // this.$swal('แจ้งเตือน', 'เนื่องจากยังไม่ได้ตั้งค่าเวลา', 'info')
+        } else {
+          this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+        }
       }
     },
     checkTimeFlow (dt) {
@@ -6304,7 +6315,12 @@ export default {
       let dtTime = this.DataFlowName.filter(item => { return item.value === dt.flowId })
       if (dtTime.length > 0) {
         // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
-        this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+        if (dtTime.map(item => item.allData.setTime) === null) {
+          this.timeavailable = []
+          // this.$swal('แจ้งเตือน', 'เนื่องจากยังไม่ได้ตั้งค่าเวลา', 'info')
+        } else {
+          this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+        }
         // console.log('timevailable', this.timeavailable)
       }
     },
@@ -7253,7 +7269,7 @@ export default {
       this.getSelectText = text
       this.getSelectCount = count || 0
       this.dataItemSelect = []
-      this.dataItemTimesChange = []
+      // this.dataItemTimesChange = []
       this.columnsSelected = []
       console.log('text', text)
       // if (count > 0) {
@@ -7518,32 +7534,11 @@ export default {
       try {
         this.dataItemTimesChange = []
         this.dataRemoveExport = []
-        // console.log('this.dataItem', this.dataItem.filter(el => { return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable }))
         if (text === 'all') {
           this.dataItemTimesChange = this.dataItem
           this.dataRemoveExport = this.dataItemTimesChange.filter(el => { return el.statusBt === 'cancel' })
           this.BookingDataListTimechange = this.BookingDataList
         } else {
-          // if (moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM') === this.dateStart) {
-          //   console.log('month old')
-          //   this.dataItemTimesChange = this.dataItem.filter(el => {
-          //     let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-          //     return dueDate === this.timeTable
-          //   // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-          //   }).sort((a, b) => {
-          //     if (a.timeDuetext < b.timeDuetext) return -1
-          //     return a.timeDuetext > b.timeDuetext ? 1 : 0
-          //   })
-          //   this.BookingDataListTimechange = this.BookingDataList
-          // }
-          // } else {
-          //   var data = this.dataItemCheck.filter(el => {
-          //     let dueDate = moment(moment(el.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
-          //     return dueDate === this.timeTable
-          //   // return new Date(el.dueDate).toISOString().substr(0, 10) === this.timeTable
-          //   })
-          //   console.log('data', data)
-          //   if (data.length === 0) {
           if (this.masBranchID) {
             this.masBranchID = this.masBranchID
           } else {
@@ -7570,7 +7565,7 @@ export default {
             '&masBranchID=' +
             this.masBranchID +
             '&dueDate=' +
-            this.dateStart + '&checkOnsite=is null'
+            this.timeTable + '&checkOnsite=is null'
             } else {
               urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
@@ -7578,7 +7573,7 @@ export default {
             '&masBranchID=' +
             this.masBranchID +
             '&dueDate=' +
-            this.dateStart + '&checkOnsite=is null&flowId=' + this.flowSelect
+            this.timeTable + '&checkOnsite=is null&flowId=' + this.flowSelect
             }
             await axios
               .get(
@@ -7630,24 +7625,12 @@ export default {
                         s.statusBtText = 'รายการนัดหมายใหม่'
                         break
                     }
-                    // let dataBookingData = []
-                    // await axios
-                    //   .get(
-                    //     this.DNS_IP + `/BookingData/getView?bookNo=${d.bookNo}`
-                    //   )
-                    //   .then(async responses => {
-                    //     dataBookingData = responses.data
-                    //   })
                     s.cusName = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'ชื่อ')
                     s.cusReg = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'เลขทะเบียน')
                     s.tel = this.getDataFromFieldName(this.BookingDataListTimechange[d.bookNo], 'เบอร์โทร')
                     s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
                     s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
                     s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
-                    // var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
-                    // if (chkTime.length === 0) {
-                    //   dataItemTimes.push(s)
-                    // }
                     dataItems.push(s)
                   }
                 }
@@ -8718,7 +8701,16 @@ export default {
       } else {
         this.statusConfirmJob = false
       }
-      console.log('this.statusConfirmJob', this.statusConfirmJob)
+      // console.log('this.statusConfirmJob', this.statusConfirmJob)
+      let checkStep = await axios.get(this.DNS_IP + '/flowStep/get?flowId=' + dt.flowId)
+      console.log('checkStep', checkStep)
+      if (checkStep.data.status === false) {
+        this.endDate = this.momenDate_1(new Date())
+        this.endTime = this.momenTime(new Date())
+        this.statusShowDateConfiremjob = false
+      } else {
+        this.statusShowDateConfiremjob = true
+      }
       if (this.statusConfirmJob) {
         this.jobCheckPackage = false
         console.log('dt', dt)
@@ -9219,39 +9211,7 @@ export default {
                 if (this.getSelectText) {
                   this.getSelect(this.getSelectText, this.getSelectCount)
                 }
-                let pushText = {}
-                if (this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) }).length > 0) {
-                  pushText = {
-                    'to': item.lineUserId,
-                    'messages': [
-                      {
-                        'type': 'text',
-                        'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}
-                              \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}
-                              \n${this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) })[0].allData.remarkConfirm || ''}`
-                      }
-                    ]
-                  }
-                } else {
-                  pushText = {
-                    'to': item.lineUserId,
-                    'messages': [
-                      {
-                        'type': 'text',
-                        'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}
-                              \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}`
-                      }
-                    ]
-                  }
-                }
-                axios
-                  .post(
-                    this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
-                    pushText
-                  )
-                  .catch(error => {
-                    console.log('error function addData : ', error)
-                  })
+                this.pushMsgConfirm(item.bookNo)
               } else {
                 if (this.statusSearch === 'no') {
                   await this.getBookingList()
@@ -9509,7 +9469,10 @@ export default {
       })
     },
     async onChangeChkSubmit (item, changeStatus, checkCountTime) {
-      let countTime = checkCountTime.data[0].countChangeTime || 0
+      let countTime = 0
+      if (checkCountTime) {
+        countTime = checkCountTime.data[0].countChangeTime || 0
+      }
       let dueOld = this.dueDateOld + this.dueDateTimeOld
       let dueNew = this.formChange.date + this.formChange.time.value
       console.log('dueNew', dueNew)
@@ -9559,25 +9522,7 @@ export default {
                   if (this.getSelectText) {
                     this.getSelect(this.getSelectText, this.getSelectCount)
                   }
-                  let pushText = {
-                    'to': item.lineUserId,
-                    'messages': [
-                      {
-                        'type': 'text',
-                        'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}
-                    \nวันเดือนปี ${this.format_dateFUllTime(this.formChange.date + ' ' + this.formChange.time.value)}
-                    \n${this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) })[0].allData.remarkConfirm || ''}`
-                      }
-                    ]
-                  }
-                  axios
-                    .post(
-                      this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
-                      pushText
-                    )
-                    .catch(error => {
-                      console.log('error function addData : ', error)
-                    })
+                  this.pushMsgConfirm(item.bookNo)
                 } else {
                   if (this.statusSearch === 'no') {
                     await this.getBookingList()
@@ -9826,9 +9771,17 @@ export default {
       console.log('booking', booking)
       console.log('bookingData', bookingData)
       this.timeavailable = []
-      let dtTime = this.branch.filter(item => { return item.value === booking.data[0].masBranchID })
+      let dtTime = this.dataFlowSelectAdd.filter(item => { return item.value === booking.data[0].flowId })
+      if (dtTime.length > 0) {
+        if (dtTime.map(item => item.allData.setTime) === null) {
+          this.timeavailable = []
+        } else {
+          this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+        }
+      }
+      // let dtTime = this.branch.filter(item => { return item.value === booking.data[0].masBranchID })
       // console.log('test', dtTime)
-      this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+      // this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
       this.dialogBookingAgain = true
     },
     addBookingAgain () {
@@ -9874,28 +9827,10 @@ export default {
             .then(async response => {
               await this.confirmChkAdd(response.data)
               let booking = await axios.get(this.DNS_IP + '/booking_view/get?shopId=' + this.session.data.shopId + '&bookNo=' + response.data.bookNo + '&checkOnsite=is null')
-              let bookingData = await axios.get(this.DNS_IP + '/BookingData/get?shopId=' + this.session.data.shopId + '&bookNo=' + response.data.bookNo)
-              let cusName = this.getDataFromFieldName(bookingData.data, 'ชื่อ')
+              // let bookingData = await axios.get(this.DNS_IP + '/BookingData/get?shopId=' + this.session.data.shopId + '&bookNo=' + response.data.bookNo)
+              // let cusName = this.getDataFromFieldName(bookingData.data, 'ชื่อ')
               if (booking.data[0].lineUserId) {
-                let pushText = {
-                  'to': booking.data[0].lineUserId,
-                  'messages': [
-                    {
-                      'type': 'text',
-                      'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${(cusName.length > 0) ? cusName[0].fieldValue : ''}
-                          \nวันเดือนปี ${this.format_dateFUllTime(booking.data[0].dueDate)}
-                          \n${this.DataFlowName.filter(el => { return el.value === parseInt(booking.data[0].flowId) })[0].allData.remarkConfirm || ''}`
-                    }
-                  ]
-                }
-                axios
-                  .post(
-                    this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
-                    pushText
-                  )
-                  .catch(error => {
-                    console.log('error function addData : ', error)
-                  })
+                this.pushMsgConfirm(response.data.bookNo)
               }
               this.date = ''
               this.time = ''

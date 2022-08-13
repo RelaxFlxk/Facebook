@@ -69,7 +69,7 @@
                           v-bind:options="options2" />
                     </v-col>
                   </v-row>
-                  <v-divider></v-divider>
+                  <!-- <v-divider></v-divider>
                   <v-row>
                     <v-col cols="3">
                       <v-text-field
@@ -141,9 +141,7 @@
                       </v-btn>
                     </v-col>
                     <v-col cols="7">
-                      <!-- <h4 class="text-center">ต้องการตั้ง Limit การจอง</h4> -->
                       <v-row align="center" class="ma-5">
-                        <!-- <p class="pb-3">ตั้ง Limit การนัดหมาย</p> -->
                         <v-checkbox
                           @click="chekshowTime()"
                           false-value="False"
@@ -153,40 +151,12 @@
                           hide-details
                           class="shrink ml-6 mr-0 mt-0 mb-2"
                         ></v-checkbox>
-
-                        <!-- <v-text-field class="mr-5" v-model="formAdd.limitBookingCheck" outlined readonly label="ต้องการตั้ง Limit การจองหรือไม่"></v-text-field> -->
                          </v-row>
                       <v-data-table
                         :headers="columnsAddTime"
                         :items="dataItemAddTime"
                         :items-per-page="10"
                       >
-                        <!-- <template v-slot:[`item.actions1`]="{ item, index }">
-                            <v-btn
-                              v-show="index !== 0"
-                              color="173053"
-                              fab
-                              x-small
-                              outlined
-                              @click="actionUp(item, index)"
-                            >
-                              <v-icon color="#173053">
-                                mdi-chevron-up
-                              </v-icon>
-                            </v-btn>
-                            <v-btn
-                              color="173053"
-                              fab
-                              x-small
-                              v-show="index < (dataItemAddTime.length -1)"
-                              outlined
-                              @click="actionDown(item, index)"
-                            >
-                              <v-icon color="#173053">
-                                mdi-chevron-down
-                              </v-icon>
-                            </v-btn>
-                          </template> -->
                            <template v-slot:[`item.actions2`]="{ item, index }">
                               <v-btn
                                 color="question"
@@ -210,9 +180,9 @@
                       </v-data-table>
                     </v-col>
 
-                  </v-row>
+                  </v-row> -->
                   </v-card>
-                  <v-row>
+                  <!-- <v-row>
                     <v-col cols="12">
                       <v-card class="pa-3" min-height="200">
                         <strong >วันหยุดทั่วไปของบริษัท</strong>
@@ -227,8 +197,8 @@
                       ></v-select>
                       </v-card>
                     </v-col>
-                  </v-row>
-                  <v-row>
+                  </v-row> -->
+                  <!-- <v-row>
                     <v-col cols="12">
                       <v-card class="pa-6">
                         <v-row>
@@ -253,7 +223,7 @@
                         ></v-date-picker>
                       </v-card>
                     </v-col>
-                  </v-row>
+                  </v-row> -->
                   </v-form>
                 </v-container>
               </v-card-text>
@@ -341,7 +311,7 @@
                           v-bind:options="options2" />
                     </v-col>
                   </v-row>
-                  <v-divider></v-divider>
+                  <!-- <v-divider></v-divider>
                   <v-row>
                     <v-col cols="3">
                       <v-text-field
@@ -402,9 +372,7 @@
                       </v-btn>
                     </v-col>
                     <v-col cols="7">
-                      <!-- <h4 class="text-center">ต้องการตั้ง Limit การจอง</h4> -->
                       <v-row align="center" class="ma-5">
-                        <!-- <p class="pb-3">ตั้ง Limit การนัดหมาย</p> -->
                         <v-checkbox
                           @click="chekshowTime()"
                           false-value="False"
@@ -414,40 +382,12 @@
                           hide-details
                           class="shrink ml-6 mr-0 mt-0 mb-2"
                         ></v-checkbox>
-
-                        <!-- <v-text-field class="mr-5" v-model="formAdd.limitBookingCheck" outlined readonly label="ต้องการตั้ง Limit การจองหรือไม่"></v-text-field> -->
                          </v-row>
                       <v-data-table
                         :headers="columnsAddTime"
                         :items="dataItemAddTime"
                         :items-per-page="10"
                       >
-                        <!-- <template v-slot:[`item.actions1`]="{ item, index }">
-                            <v-btn
-                              v-show="index !== 0"
-                              color="173053"
-                              fab
-                              x-small
-                              outlined
-                              @click="actionUp(item, index)"
-                            >
-                              <v-icon color="#173053">
-                                mdi-chevron-up
-                              </v-icon>
-                            </v-btn>
-                            <v-btn
-                              color="173053"
-                              fab
-                              x-small
-                              v-show="index < (dataItemAddTime.length -1)"
-                              outlined
-                              @click="actionDown(item, index)"
-                            >
-                              <v-icon color="#173053">
-                                mdi-chevron-down
-                              </v-icon>
-                            </v-btn>
-                          </template> -->
                            <template v-slot:[`item.actions2`]="{ item, index }">
                               <v-btn
                                 color="question"
@@ -471,9 +411,9 @@
                       </v-data-table>
                     </v-col>
 
-                  </v-row>
+                  </v-row> -->
                   </v-card>
-                  <v-row>
+                  <!-- <v-row>
                     <v-col cols="12">
                       <v-card class="pa-3" min-height="200">
                         <strong >วันหยุดทั่วไปของบริษัท</strong>
@@ -515,7 +455,7 @@
                         ></v-date-picker>
                       </v-card>
                     </v-col>
-                  </v-row>
+                  </v-row> -->
                   </v-form>
                 </v-container>
               </v-card-text>

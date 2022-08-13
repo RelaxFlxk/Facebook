@@ -236,6 +236,7 @@
               <v-btn
                 color="warning"
                 fab
+                v-if="dataItem[0].statusBt !== 'cancel'"
                 id="v-step-2"
                 small
                 @click.stop="setDataChang(dataItem[0])"
@@ -364,6 +365,7 @@
                 </template>
                 <v-date-picker
                   v-model="formChange.date"
+                  :allowed-dates="allowedDatesChange"
                   @input="menuDateChange = false"
                   :min="
                     new Date(
@@ -426,7 +428,7 @@
         <br />
       </v-card>
     </v-dialog>
-    <v-dialog v-model="dialogConfirm" max-width="70%">
+    <v-dialog v-model="dialogConfirm" max-width="90%">
             <v-card class="text-center">
               <v-card-title>
                 ยืนยันรายการนี้
@@ -466,7 +468,7 @@
               </v-card-text>
             </v-card>
           </v-dialog>
-    <v-dialog v-model="dialogRemove" max-width="70%">
+    <v-dialog v-model="dialogRemove" max-width="90%">
       <v-card class="text-center">
         <v-card-title>
           ยกเลิกรายการนี้
@@ -834,13 +836,81 @@ export default {
         cancelButtonColor: '#b3b1ab',
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
-      }
+      },
+      dueDateOld: '',
+      dueDateTimeOld: '',
+      dataFlow: [],
+      flowIDLimit: '',
+      dateDayoff: [],
+      dateDayCustom: []
     }
   },
   async mounted () {
     await this.beforeCreate()
   },
   methods: {
+    async getDataFlowAll () {
+      this.dataFlow = await this.getDataFromAPI('/flow/get', 'flowId', 'flowName', '')
+    },
+    SetallowedDatesChange (flowId) {
+      let dataFlow = this.dataFlow.filter(el => { return el.value === flowId })
+      if (dataFlow.length > 0) {
+        this.dataFlow.forEach((v, k) => {
+          console.log('v', v)
+          if (v.allData.flowId === flowId) {
+          // console.log('Value', v.dateDayoffValue)
+            v.allData.dateDayCustom = v.allData.dateDayCustom || ''
+            v.allData.dateDayoffValue = v.allData.dateDayoffValue || ''
+            if (v.allData.dateDayoffValue !== '') {
+              console.log('if')
+              this.dateDayoff = JSON.parse(v.allData.dateDayoffValue)
+            } else {
+              console.log('else')
+              this.dateDayoff = []
+            }
+            if (v.dateDayCustom !== '') {
+              this.dateDayCustom = JSON.parse(v.allData.dateDayCustom)
+            } else {
+              this.dateDayCustom = []
+            }
+          }
+        })
+      } else {
+        this.dateDayoff = []
+        this.dateDayCustom = []
+      }
+    },
+    allowedDatesChange (val) {
+      // if (this.dateDaylimit) {
+      if (this.dataFlow.filter(el => el.value === this.flowIDLimit).length > 0) {
+        if (this.dataFlow.filter(el => el.value === this.flowIDLimit)[0].allData.typeDayCustom === 'on') {
+          return val === this.dateDayCustom.filter(el => el === val)[0]
+        } else {
+          if (
+            this.dateDayoff.filter(el => {
+              return el === new Date(val).getDay()
+            }).length === 0 &&
+          this.dateDayCustom.filter(el => {
+            return el === val
+          }).length === 0
+          ) {
+            return val
+          }
+        }
+      } else {
+        return val
+      }
+      // }
+    },
+    pushMsgConfirm (bookNo) {
+      axios
+        .post(
+          this.DNS_IP + '/Booking/pushMsgConfirm/' + bookNo
+        )
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
+    },
     validate (Action) {
       switch (Action) {
         case 'UPDATE':
@@ -1367,6 +1437,7 @@ export default {
           this.$session.set('data', JSON.parse(localStorage.getItem('sessionData')))
           await this.chkBookingNo()
           await this.getDataBranch()
+          await this.getDataFlowAll()
         } else {
           this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
         }
@@ -1378,6 +1449,7 @@ export default {
             localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
             await this.chkBookingNo()
             await this.getDataBranch()
+            await this.getDataFlowAll()
           } else {
             this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
           }
@@ -1802,11 +1874,20 @@ export default {
       await this.getEmpSelect(item)
       this.dialogConfirm = true
     },
-    onConfirm (item) {
+    async onConfirm (item) {
       if (this.dataItem[0].checkOnsite === 'True') {
 
       } else {
+        let dtint = '0'
+        if (this.dataFlow.filter(el => { return el.value === item.flowId }).length > 0) {
+          let dts = JSON.parse(this.dataFlow.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
+          dtint = parseInt(dts.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
+        } else {
+          dtint = '0'
+        }
         var dt = {
+          pageStatus: this.dataItem[0].statusBt,
+          limitBookingCount: dtint,
           bookNo: item.bookNo,
           contactDate: this.format_date(new Date()),
           status: 'confirm',
@@ -1826,39 +1907,7 @@ export default {
             if (DTitem !== 'user-skip') {
               await this.chkBookingNo()
               // this.getTimesChange('update')
-              let pushText = {}
-              if (this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) }).length > 0) {
-                pushText = {
-                  'to': item.lineUserId,
-                  'messages': [
-                    {
-                      'type': 'text',
-                      'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
-                              \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}
-                              \n${this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) })[0].allData.remarkConfirm || ''}`
-                    }
-                  ]
-                }
-              } else {
-                pushText = {
-                  'to': item.lineUserId,
-                  'messages': [
-                    {
-                      'type': 'text',
-                      'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
-                              \nวันเดือนปี ${this.format_dateFUllTime(item.dueDate)}`
-                    }
-                  ]
-                }
-              }
-              axios
-                .post(
-                  this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
-                  pushText
-                )
-                .catch(error => {
-                  console.log('error function addData : ', error)
-                })
+              this.pushMsgConfirm(item.bookNo)
             } else {
               await this.chkBookingNo()
             // this.getTimesChange('update')
@@ -1873,10 +1922,30 @@ export default {
     },
     async setDataRemove (item) {
       this.bookNoRemove = item
+      this.dueDateOld = this.momenDate_1(item.dueDate)
+      this.dueDateTimeOld = this.momenTime(item.dueDate)
       await this.getEmpSelect(item)
       this.dialogRemove = true
     },
-    cancelChk () {
+    async cancelChk () {
+      let chkStatLimit = this.dataFlow.filter(el => { return el.value === this.bookNoRemove.flowId })
+      if (chkStatLimit.length > 0) {
+        if (chkStatLimit[0].allData.limitBookingCheck === 'True') {
+          let chkStatus = await this.updateLimitBookingCancel(this.bookNoRemove, this.dueDateOld, this.dueDateTimeOld)
+          console.log('chkStatus', chkStatus)
+          if (chkStatus.status) {
+            this.onCancelChkSubmit()
+          } else {
+            this.onCancelChkSubmit()
+          }
+        } else {
+          this.onCancelChkSubmit()
+        }
+      } else {
+        this.onCancelChkSubmit()
+      }
+    },
+    onCancelChkSubmit () {
       var dt = {
         bookNo: this.bookNoRemove.bookNo,
         contactDate: this.format_date(new Date()),
@@ -1901,6 +1970,20 @@ export default {
         .catch(error => {
           console.log('error function addData : ', error)
         })
+    },
+    async updateLimitBookingCancel (item, dueDateOld, dueDateTimeOld) {
+      let result = []
+      let dt = {
+        flowId: item.flowId,
+        dateSelect: dueDateOld,
+        timeSelect: dueDateTimeOld,
+        shopId: item.shopId,
+        userId: item.userId
+      }
+      await axios.post(this.DNS_IP + '/Booking/updateLimitBookingCancel', dt).then(async response => {
+        result = response.data
+      })
+      return result
     },
     async updateRemark (item) {
       var dt = {}
@@ -1952,11 +2035,15 @@ export default {
           }
         })
     },
-    setDataChang (item) {
+    async setDataChang (item) {
       console.log('setDataChang', item)
+      this.flowIDLimit = item.flowId
+      this.SetallowedDatesChange(item.flowId)
       this.dataChange = item
       this.formChange.date = this.momenDate_1(item.dueDate)
       this.timeavailable = []
+      this.dueDateOld = this.momenDate_1(item.dueDate)
+      this.dueDateTimeOld = this.momenTime(item.dueDate)
       let dtTime = this.branch.filter(item => { return item.value === this.masBranchID })
       // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
       this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
@@ -1974,6 +2061,43 @@ export default {
     },
     async changeChk (item) {
       console.log('item', item)
+      let checkCountTime = await axios.get(this.DNS_IP + '/booking_view/get?bookNo=' + item.bookNo)
+      let chkStatLimit = this.dataFlow.filter(el => { return el.value === item.flowId })
+      console.log('chkStatLimit', chkStatLimit)
+      console.log('this.DataFlowName', this.DataFlowName)
+      if (chkStatLimit.length > 0) {
+        if (chkStatLimit[0].allData.limitBookingCheck === 'True') {
+          let dueOld = this.dueDateOld + this.dueDateTimeOld
+          let dueNew = this.formChange.date + this.formChange.time.value
+          let limitBookingCount = this.timeavailable.filter(el => { return el.value === this.formChange.time.value })
+          console.log('limitBookingCount', limitBookingCount)
+          let limitBookingCounts = 0
+          if (limitBookingCount.length > 0) {
+            limitBookingCounts = parseInt(limitBookingCount[0].limitBooking)
+          } else {
+            limitBookingCounts = 0
+          }
+          if (dueOld !== dueNew) {
+            let chkStatus = await this.updateLimitBookingChange(item, this.dueDateOld, this.dueDateTimeOld, this.formChange.date, this.formChange.time.value, limitBookingCounts)
+            console.log('chkStatus', chkStatus)
+            if (chkStatus.status) {
+              this.onChangeChkSubmit(item, checkCountTime)
+            } else {
+              this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
+              this.dataChangeReady = true
+            }
+          } else {
+            this.onChangeChkSubmit(item, checkCountTime)
+          }
+        } else {
+          this.onChangeChkSubmit(item, checkCountTime)
+        }
+      } else {
+        this.onChangeChkSubmit(item, checkCountTime)
+      }
+    },
+    async onChangeChkSubmit (item, checkCountTime) {
+      console.log('item', item)
       console.log('formChange', this.formChange)
       this.$swal({
         title: 'ต้องการ เปลี่ยนเวลานัดหมาย ใช่หรือไม่?',
@@ -1984,7 +2108,12 @@ export default {
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
       }).then(async result => {
+        let countTime = 0
+        if (checkCountTime) {
+          countTime = checkCountTime.data[0].countChangeTime || 0
+        }
         var dtChange = {
+          countChangeTime: countTime,
           changeDueDate: 'change',
           dueDate: this.formChange.date + ' ' + this.formChange.time.value,
           timeText: this.formChange.time.text,
@@ -2016,26 +2145,8 @@ export default {
                 if (item.statusBt === 'confirm') {
                   if (item.userId !== 'user-skip') {
                     await this.chkBookingNo()
+                    this.pushMsgConfirm(item.bookNo)
                     // this.getTimesChange('update')
-                    let pushText = {
-                      'to': item.lineUserId,
-                      'messages': [
-                        {
-                          'type': 'text',
-                          'text': ` ✍️ ยืนยันเวลานัดหมาย\n ✅ ชื่อ : ${item.cusName}\n ✅ เลขทะเบียน : ${item.cusReg}
-                          \nวันเดือนปี ${this.format_dateFUllTime(this.formChange.date + ' ' + this.formChange.time.value)}
-                          \n${this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) })[0].allData.remarkConfirm || ''}`
-                        }
-                      ]
-                    }
-                    axios
-                      .post(
-                        this.DNS_IP + '/line/pushmessage?shopId=' + this.$session.getAll().data.shopId,
-                        pushText
-                      )
-                      .catch(error => {
-                        console.log('error function addData : ', error)
-                      })
                   } else {
                     await this.chkBookingNo()
                     // this.getTimesChange('update')
@@ -2050,6 +2161,26 @@ export default {
               })
           })
       })
+    },
+    async updateLimitBookingChange (item, dueDateOld, dueDateTimeOld, dueDateNew, dueDateTimeNew, limitBookingCount) {
+      let result = []
+      let dt = {
+        dueDateOld: dueDateOld,
+        dueDateTimeOld: dueDateTimeOld,
+        dueDateNew: dueDateNew,
+        dueDateTimeNew: dueDateTimeNew,
+        flowId: item.flowId,
+        masBranchID: item.masBranchID,
+        dateSelect: dueDateNew,
+        timeSelect: dueDateTimeNew,
+        shopId: item.shopId,
+        userId: item.userId,
+        limitBookingCount: limitBookingCount
+      }
+      await axios.post(this.DNS_IP + '/Booking/updateLimitBookingChangeTime', dt).then(async response => {
+        result = response.data
+      })
+      return result
     },
     async getBookingList (dt) {
       // Clear Data ทุกครั้ง
