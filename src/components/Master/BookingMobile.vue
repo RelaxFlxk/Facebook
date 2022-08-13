@@ -2044,17 +2044,20 @@ export default {
       this.timeavailable = []
       this.dueDateOld = this.momenDate_1(item.dueDate)
       this.dueDateTimeOld = this.momenTime(item.dueDate)
-      let dtTime = this.branch.filter(item => { return item.value === this.masBranchID })
+      let dtTime = this.dataFlow.filter(el => { return el.value === item.flowId })
+      // let dtTime = this.branch.filter(item => { return item.value === this.masBranchID })
       // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
-      this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
-      if (this.timeavailable.filter(el => { return el.text === item.timeText }).length > 0) {
-        if (item.timeText) {
-          this.formChange.time = { text: item.timeText, value: this.momenTime(item.dueDate) }
+      if (dtTime.length > 0) {
+        this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+        if (this.timeavailable.filter(el => { return el.text === item.timeText }).length > 0) {
+          if (item.timeText) {
+            this.formChange.time = { text: item.timeText, value: this.momenTime(item.dueDate) }
+          } else {
+            this.formChange.time = this.momenTime(item.dueDate)
+          }
         } else {
           this.formChange.time = this.momenTime(item.dueDate)
         }
-      } else {
-        this.formChange.time = this.momenTime(item.dueDate)
       }
       this.dialogChange = true
       console.log(this.formChange)
