@@ -7751,9 +7751,13 @@ export default {
         if (this.branch.length > 0) {
           this.masBranchID = this.branch[0].value
         } else {
-          this.masBranchID = ''
           await this.getDataBranch()
-          this.masBranchID = this.branch[0].value
+          if (this.branch.length > 0) {
+            this.masBranchID = this.branch[0].value
+          } else {
+            this.masBranchID = ''
+            this.$swal('ผิดพลาด', 'กรุณาตรวจสอบสาขาของท่าน เนื่องจากระบบตรวจหาสาขาไม่พบ', 'error')
+          }
           // this.getBookingList()
         }
       }
