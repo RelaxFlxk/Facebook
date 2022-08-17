@@ -73,6 +73,24 @@
                   :search="searchAll2"
                   :items-per-page="10"
                 >
+                  <template v-slot:[`item.tagData`]="{ item }">
+                    <v-col cols="12" class="pt-0"  v-if="item.tagData.length > 0">
+                        <v-chip-group
+                          active-class="primary--text"
+                          column
+                        >
+                          <v-chip
+                            text-color="white" color="cyan"
+                            v-for="(item , index) in item.tagDataShow" :key="index"
+                          >
+                            <v-avatar left>
+                              <v-icon>mdi-tag-multiple</v-icon>
+                            </v-avatar>
+                            {{ item.text }}
+                          </v-chip>
+                        </v-chip-group>
+                      </v-col>
+                  </template>
                   <template v-slot:[`item.totalPoint`]="{ item }">
                     {{ formatNumber(item.totalPoint) }}
                   </template>
@@ -197,6 +215,7 @@ export default {
       columns: [
         { text: 'รูปโปรไฟล์', value: 'picture' },
         { text: 'ชื่อลูกค้า', value: 'name', align: 'left' },
+        { text: 'Tag', value: 'tagData', align: 'center' },
         { text: 'วันที่สร้าง', value: 'CREATE_DATE', align: 'center' },
         { text: 'วันที่อัพเดท', value: 'LAST_DATE', align: 'center' }
         // { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
@@ -235,7 +254,8 @@ export default {
         ]
       ],
       // End Export Config
-      Company: []
+      Company: [],
+      tagItem: []
     }
   },
   beforeCreate () {
@@ -247,9 +267,35 @@ export default {
     // this.getGetToken(this.DNS_IP)
     this.dataReady = false
     // Get Data
+    await this.getTagData()
     this.getDataList()
   },
   methods: {
+    async getTagData () {
+      this.tagItem = await this.getDataFromAPI('/Mas_Tag/get', 'tagId', 'tagName', '')
+    },
+    async getDataFromAPI (url, fieldId, fieldName, param) {
+      let result = []
+      await axios
+        .get(this.DNS_IP + `${url}?shopId=${this.session.data.shopId}${param}`)
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              let s = {}
+              s.text = d[fieldName]
+              s.value = d[fieldId]
+              s.allData = d
+              result.push(s)
+              // console.log('this.DataFlowName', this.DataFlowName)
+            }
+          } else {
+            result = []
+          }
+        })
+      return result
+    },
     async getDataList () {
       this.dataReady = false
       // Clear Data ทุกครั้ง
@@ -263,21 +309,36 @@ export default {
           this.DNS_IP +
             this.path +
             'get?RECORD_STATUS=N&shopId=' +
-            this.session.data.shopId,
-          {
-            headers: {
-              'Application-Key': this.$session.getAll().ApplicationKey
-            }
-          }
+            this.session.data.shopId
         )
         .then(async response => {
-          // var dateObj = new Date(response.data.CREATE_DATE)
-          // var momentObj = moment(dateObj)
-          // response.data.CREATE_DATE = momentObj.format('YYYY-MM-DD')
           if (response.data.length > 0) {
-            console.log('getData', response.data)
             this.dataReady = true
-            this.dataItem = response.data
+            let rs = response.data
+            for (let i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              let s = {}
+              s.picture = d.picture
+              s.name = d.name
+              s.CREATE_DATE = d.CREATE_DATE
+              s.LAST_DATE = d.LAST_DATE
+              s.tagData = JSON.parse(d.tagData) || []
+              if (s.tagData.length > 0) {
+                s.tagDataShow = []
+                let memberDataTag = s.tagData
+                for (let a = 0; a < memberDataTag.length; a++) {
+                  let d = memberDataTag[a]
+                  let x = {}
+                  let checkTagItem = this.tagItem.filter(el => { return el.value === d })
+                  if (checkTagItem.length > 0) {
+                    x.text = checkTagItem[0].text
+                    x.value = checkTagItem[0].value
+                    s.tagDataShow.push(x)
+                  }
+                }
+              }
+              this.dataItem.push(s)
+            }
           } else {
             // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
             this.dataReady = true
@@ -287,7 +348,7 @@ export default {
         // eslint-disable-next-line handle-callback-err
         .catch(error => {
           console.log(error)
-          this.$router.push('/system/Errorpage?returnLink=' + this.returnLink)
+          // this.$router.push('/system/Errorpage?returnLink=' + this.returnLink)
           this.dataReady = true
         })
     },

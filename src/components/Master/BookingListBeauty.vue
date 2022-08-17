@@ -101,7 +101,7 @@
                       @click="getSelect('cancel',countCancel)"
                     >
                     <div style="display: flex;justify-content: center;">
-                      <div class="text-center mr-4"> 
+                      <div class="text-center mr-4">
                         <v-avatar
                           size="70"
                           class="pa-3"
@@ -161,7 +161,7 @@
                       @click="getSelect('confirmJob',countJob)"
                     >
                     <div style="display: flex;justify-content:center;">
-                      <div class="text-center mr-4"> 
+                      <div class="text-center mr-4">
                         <v-avatar
                           color="#E5B5D8"
                           size="70"
@@ -2517,7 +2517,7 @@
                               dark
                               x-small
                               color="teal"
-                              @click="getTagData(), dialogTag = true, tagData = item.tagData, bookNo = item.bookNo"
+                              @click="getTagData(), dialogTag = true, tagData = item.memberDataTag, bookNo = item.bookNo, memberId = item.memberId"
                             >
                               <v-icon dark>
                                 mdi-tag-plus
@@ -2526,7 +2526,7 @@
                           </v-col>
                         </v-row>
                       </v-col>
-                      <v-col cols="12" class="pt-0"  v-if="item.tagData.length > 0">
+                      <v-col cols="12" class="pt-0"  v-if="item.memberDataTag.length > 0">
                         <v-chip-group
                           active-class="primary--text"
                           column
@@ -4821,7 +4821,8 @@ export default {
         limitBooking: 0
       },
       dataEdit: '',
-      statusShowDateConfiremjob: true
+      statusShowDateConfiremjob: true,
+      memberId: ''
     }
   },
   beforeCreate () {
@@ -4996,7 +4997,12 @@ export default {
         LimitBooking.forEach((item) => {
           let dt = JSON.parse(this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.setTime) || []
           // let dt = JSON.parse(this.branchData.filter(item => { return item.masBranchID === this.formAdd.masBranchID })[0].setTime) || []
-          let dtint = parseInt(dt.filter(item => item.value === this.time.value)[0].limitBooking || '0')
+          let dtint = '0'
+          if (dt.filter(item => item.value === this.time.value).length > 0) {
+            dtint = parseInt(dt.filter(item => item.value === this.time.value)[0].limitBooking || '0')
+          } else {
+            dtint = '0'
+          }
           console.log('test', dtint)
           // console.log('test', item.flowId === this.formAdd.flowId && this.momenDate_1(item.bookingDate) === this.date && item.bookingTime === this.time.value)
           // if (item.masBranchID === this.formAdd.masBranchID && this.momenDate_1(item.bookingDate) === this.date && item.bookingTime === this.time.value) {
@@ -5077,7 +5083,12 @@ export default {
     async setLimitBooking (dateitem) {
       this.time = ''
       this.timeavailable = []
-      this.limitBookingCheck = this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.limitBookingCheck || 'False'
+      this.limitBookingCheck = 'False'
+      if (this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) }).length > 0) {
+        this.limitBookingCheck = this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.limitBookingCheck || 'False'
+      } else {
+        this.limitBookingCheck = 'False'
+      }
       if (this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.limitBookingCheck || 'False') {
         let TimeData = []
         let currentDate = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTime) || []
@@ -5117,7 +5128,11 @@ export default {
         // this.timeavailable = JSON.parse(this.flowItemLimit.filter(item => { return item.flowId === this.formAdd.flowId })[0].setTime) || []
 
         // LimitBookingBy masBranch
-        this.timeavailable = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTime) || []
+        if (this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) }).length > 0) {
+          this.timeavailable = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTime) || []
+        } else {
+          this.timeavailable = []
+        }
       }
     },
     async getLimitBooking () {
@@ -5448,7 +5463,7 @@ export default {
       await axios
         .post(
           // eslint-disable-next-line quotes
-          this.DNS_IP + "/Booking/edit/" + this.bookNo,
+          this.DNS_IP + "/member/edit/" + this.memberId,
           dt
         )
         .then(async response => {
@@ -5563,7 +5578,11 @@ export default {
       // console.log(event)
     },
     setFlowAdd () {
-      this.checkDepositAdd = this.DataFlowName.filter(el => { return el.value === this.formAdd.flowId })[0].allData.checkDeposit || 'False'
+      if (this.DataFlowName.filter(el => { return el.value === this.formAdd.flowId }).length > 0) {
+        this.checkDepositAdd = this.DataFlowName.filter(el => { return el.value === this.formAdd.flowId })[0].allData.checkDeposit || 'False'
+      } else {
+        this.checkDepositAdd = 'False'
+      }
     },
     async getBookingFieldText () {
       if (JSON.parse(localStorage.getItem('sessionData')) === null) {
@@ -5671,6 +5690,7 @@ export default {
                   s.remark = d.remark || ''
                   s.masBranchID = d.masBranchID
                   s.limitBookingCheck = d.limitBookingCheck
+                  s.memberId = d.memberId
                   s.countHourLimit = d.countHourLimit
                   s.empSelect = d.empSelect
                   s.empFull_NameTH = d.empFull_NameTH || ''
@@ -5702,12 +5722,12 @@ export default {
                   s.dateReturn = d.dateReturn || ''
                   s.packageId = d.packageId || ''
                   s.tokenPackage = d.tokenPackage || ''
-                  s.tagData = JSON.parse(d.tagData) || []
-                  if (s.tagData.length > 0) {
+                  s.memberDataTag = JSON.parse(d.memberDataTag) || []
+                  if (s.memberDataTag.length > 0) {
                     s.tagDataShow = []
-                    let tagData = s.tagData
-                    for (let i = 0; i < tagData.length; i++) {
-                      let d = tagData[i]
+                    let memberDataTag = s.memberDataTag
+                    for (let i = 0; i < memberDataTag.length; i++) {
+                      let d = memberDataTag[i]
                       let x = {}
                       let checkTagItem = this.tagItem.filter(el => { return el.value === d })
                       if (checkTagItem.length > 0) {
@@ -7936,6 +7956,7 @@ export default {
                 s.remark = d.remark || ''
                 s.masBranchID = d.masBranchID
                 s.limitBookingCheck = d.limitBookingCheck
+                s.memberId = d.memberId
                 s.countHourLimit = d.countHourLimit
                 s.empSelect = d.empSelect
                 s.empFull_NameTH = d.empFull_NameTH || ''
@@ -7965,12 +7986,12 @@ export default {
                 s.dateReturn = d.dateReturn || ''
                 s.packageId = d.packageId || ''
                 s.tokenPackage = d.tokenPackage || ''
-                s.tagData = JSON.parse(d.tagData) || []
-                if (s.tagData.length > 0) {
+                s.memberDataTag = JSON.parse(d.memberDataTag) || []
+                if (s.memberDataTag.length > 0) {
                   s.tagDataShow = []
-                  let tagData = s.tagData
-                  for (let i = 0; i < tagData.length; i++) {
-                    let d = tagData[i]
+                  let memberDataTag = s.memberDataTag
+                  for (let i = 0; i < memberDataTag.length; i++) {
+                    let d = memberDataTag[i]
                     let x = {}
                     let checkTagItem = this.tagItem.filter(el => { return el.value === d })
                     if (checkTagItem.length > 0) {
@@ -8093,6 +8114,7 @@ export default {
                 s.remark = d.remark || ''
                 s.masBranchID = d.masBranchID
                 s.limitBookingCheck = d.limitBookingCheck
+                s.memberId = d.memberId
                 s.countHourLimit = d.countHourLimit
                 s.empSelect = d.empSelect
                 s.empFull_NameTH = d.empFull_NameTH || ''
@@ -8122,12 +8144,12 @@ export default {
                 s.dateReturn = d.dateReturn || ''
                 s.packageId = d.packageId || ''
                 s.tokenPackage = d.tokenPackage || ''
-                s.tagData = JSON.parse(d.tagData) || []
-                if (s.tagData.length > 0) {
+                s.memberDataTag = JSON.parse(d.memberDataTag) || []
+                if (s.memberDataTag.length > 0) {
                   s.tagDataShow = []
-                  let tagData = s.tagData
-                  for (let i = 0; i < tagData.length; i++) {
-                    let d = tagData[i]
+                  let memberDataTag = s.memberDataTag
+                  for (let i = 0; i < memberDataTag.length; i++) {
+                    let d = memberDataTag[i]
                     let x = {}
                     let checkTagItem = this.tagItem.filter(el => { return el.value === d })
                     if (checkTagItem.length > 0) {
@@ -9269,11 +9291,17 @@ export default {
     onConfirm (item) {
       if (this.$session.id() !== undefined) {
         console.log('item', item)
+        console.log('DataFlowName', this.DataFlowName.filter(el => { return el.value === item.flowId }))
         this.dataConfirmReady = false
         let dtint = '0'
         if (this.DataFlowName.filter(el => { return el.value === item.flowId }).length > 0) {
           let dts = JSON.parse(this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
-          dtint = parseInt(dts.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
+          console.log(dts.filter(el => el.value === item.timeDuetext))
+          if (dts.filter(el => el.value === item.timeDuetext).length > 0) {
+            dtint = parseInt(dts.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
+          } else {
+            dtint = '0'
+          }
         } else {
           dtint = '0'
         }
@@ -9394,6 +9422,7 @@ export default {
     },
     cancelChk () {
       this.validate('REMOVE')
+      console.log('this.bookNoRemove', this.bookNoRemove)
       setTimeout(() => this.onCancelChk(), 500)
     },
     async updateLimitBookingCancel (item, dueDateOld, dueDateTimeOld) {
@@ -9462,6 +9491,7 @@ export default {
         .post(this.DNS_IP + '/booking_transaction/add', dt)
         .then(async response => {
           await this.updateRemark(this.bookNoRemove)
+          this.pushMsglineCancel(this.bookNoRemove)
           this.$swal('เรียบร้อย', 'ยกเลิกเรียบร้อย', 'success')
           console.log('addDataGlobal', response)
           if (this.statusSearch === 'no') {
@@ -9483,6 +9513,19 @@ export default {
           console.log('error function addData : ', error)
           this.dataCancelReady = true
         })
+    },
+    pushMsglineCancel (item) {
+      let lineUserId = item.lineUserId || ''
+      if (lineUserId !== '') {
+        var dt = {
+          lineUserId: lineUserId,
+          shopId: this.$session.getAll().data.shopId,
+          tell: this.$session.getAll().data.contactTel
+        }
+        axios
+          .post(this.DNS_IP + '/Booking/pushMsgCancelBook', dt)
+          .then(async response => {})
+      }
     },
     async changeChk (item, changeStatus) {
       this.dataChangeReady = false
