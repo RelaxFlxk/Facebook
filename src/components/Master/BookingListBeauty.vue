@@ -57,7 +57,7 @@
                 <div>
                   <v-col cols="12" class="pt-0 mb-5" style="border-right: 4px solid #25318C;">
                     <v-card
-                      style="padding: 30px;
+                      style="padding: 18px;
                               color:black;
                               border-top-right-radius: 20px;
                               border-top-left-radius: 20px;
@@ -68,11 +68,11 @@
                       prominent
                       @click="getSelect('wait',countWaiting)"
                     >
-                    <div style="display: flex;justify-content: space-around;">
+                    <div style="display: flex;justify-content: center;">
                       <div class="text-center">
                         <v-avatar
                           size="70"
-                          class="pa-3"
+                          class="pa-3 mr-4"
                           color="#FEAE34"
                         >
                           <v-icon dark size="30" class="iconify" data-icon="ps:warning">
@@ -80,7 +80,7 @@
                           </v-icon>
                         </v-avatar>
                       </div>
-                      <div>
+                      <div style="margin: auto 0;">
                         <strong>{{dataTypeProcess1}}</strong>
                         <div>จำนวน : {{countWaiting}}</div>
                       </div>
@@ -89,7 +89,7 @@
                   </v-col>
                   <v-col cols="12" style="border-right: 4px solid #25318C;">
                     <v-card
-                    style="padding: 30px;
+                    style="padding: 18px;
                               border-top-right-radius: 20px;
                               border-top-left-radius: 20px;
                               border-bottom-left-radius: 20px;
@@ -100,8 +100,8 @@
                       prominent
                       @click="getSelect('cancel',countCancel)"
                     >
-                    <div style="display: flex;justify-content: space-around;">
-                      <div class="text-center mr-4">
+                    <div style="display: flex;justify-content: center;">
+                      <div class="text-center mr-4"> 
                         <v-avatar
                           size="70"
                           class="pa-3"
@@ -112,7 +112,7 @@
                           </v-icon>
                         </v-avatar>
                       </div>
-                      <div>
+                      <div style="margin: auto 0;">
                         <strong>{{dataTypeProcess3}}</strong>
                          <div>จำนวน : {{countCancel}}</div>
                       </div>
@@ -125,14 +125,14 @@
                 <v-row>
                   <v-col cols="4" >
                     <v-card
-                      style="padding: 30px"
+                      style="padding: 18px"
                       :color="(getSelectText === 'confirm') ? '#C9F2DC' : 'white'"
                       dense
                       icon="mdi-email-check"
                       prominent
                       @click="getSelect('confirm',countConfirm)"
                     >
-                    <div style="display: flex;justify-content: space-around;">
+                    <div style="display: flex;justify-content: center;">
                       <div class="text-center mr-4">
                         <v-avatar
                           size="70"
@@ -144,7 +144,7 @@
                           </v-icon>
                         </v-avatar>
                       </div>
-                      <div>
+                      <div style="margin: auto 0;">
                        <strong>{{dataTypeProcess2}}</strong>
                         <div>จำนวน : {{countConfirm}}</div>
                       </div>
@@ -153,15 +153,15 @@
                   </v-col>
                   <v-col cols="4">
                     <v-card
-                      style="padding: 30px"
+                      style="padding: 18px"
                       :color="(getSelectText === 'confirmJob') ? '#F9E8F5' : 'white'"
                       dense
                       icon="mdi-account-check"
                       prominent
                       @click="getSelect('confirmJob',countJob)"
                     >
-                    <div style="display: flex;justify-content: space-around;">
-                      <div class="text-center mr-4">
+                    <div style="display: flex;justify-content:center;">
+                      <div class="text-center mr-4"> 
                         <v-avatar
                           color="#E5B5D8"
                           size="70"
@@ -172,22 +172,22 @@
                           </v-icon>
                         </v-avatar>
                       </div>
-                      <div>
+                      <div style="margin: auto 0;">
                         <strong>{{dataTypeProcess4}}</strong>
-                         <div>จำนวน : {{countJob}}</div>
+                         <div style="text-align: left;">จำนวน : {{countJob}}</div>
                       </div>
                     </div>
                     </v-card>
                   </v-col>
                   <v-col cols="4">
                     <v-card
-                      style="padding: 30px"
+                      style="padding: 18px"
                       :color="(getSelectText === 'confirmSum') ? '#D7E8F9' : 'white'"
                       dense
                       icon="mdi-expand-all"
                       @click="getSelect('confirmSum',(countConfirm + countJob))"
                     >
-                    <div style="display: flex;justify-content: space-around;">
+                    <div style="display: flex;justify-content: center;">
                       <div class="text-center mr-4">
                         <v-avatar
                           color="#76ABE5"
@@ -198,16 +198,16 @@
                           </v-icon>
                         </v-avatar>
                       </div>
-                      <div>
+                      <div style="margin: auto 0;">
                         <strong>รวมผู้เข้ารับบริการ</strong>
-                        <div>รวม : {{countConfirm + countJob}}</div>
+                        <div style="text-align: left;">รวม : {{countConfirm + countJob}}</div>
                       </div>
                     </div>
                     </v-card>
                   </v-col>
                   <v-col cols="12" class="pb-4">
                     <v-card
-                      style="padding:30px;color:black !important;margin-top:20px;border-radius: 20px !important;"
+                      style="padding:18px;color:black !important;margin-top:20px;border-radius: 20px !important;"
                       color="white"
                       @click="getSelect('all',countAll)"
                     >
@@ -314,7 +314,7 @@
           </v-col>
         </v-row>
         <div class="pa-4 mb-4">
-          <h3 style="margin-bottom: 35px;color: #1C3879;font-weight: bolder;">ตรวจสอบรายชื่อลูกค้านัดหมายรายเดือน</h3>
+          <h3 style="margin-bottom: 15px;color: #1C3879;font-weight: bolder;">ตรวจสอบรายชื่อลูกค้านัดหมายรายเดือน</h3>
           <v-row>
             <v-col cols="4">
               <v-card class="pa-2">
