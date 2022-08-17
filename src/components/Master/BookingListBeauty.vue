@@ -2,7 +2,7 @@
   <div>
     <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
     <v-main>
-      <div class="col-md-12 ml-sm-auto col-lg-12 px-4">
+      <div class="col-md-12 ml-sm-auto col-lg-12 px-8">
         <v-row class="no-gutters">
           <v-col cols="12" md="6" lg="6" class="text-left">
             <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
@@ -50,88 +50,177 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="12" md="8" lg="8" class="text-left">
+          <v-col cols="12" class="text-left">
             <template  v-if="changeBackgroundColor">
-              <v-row>
-              <v-col cols="5" class="text-center pb-0">
-                <v-row>
-                  <v-col cols="12" class="pb-0 mt-6">
-                    <v-alert
-                      :color="'orange ' + ((getSelectText === 'wait') ? '' : 'lighten-4')"
-                      :dark="((getSelectText === 'wait') ? true : false)"
+            <v-row class="test">
+              <v-col cols="3" class="text-center" align="left">
+                <div>
+                  <v-col cols="12" class="pt-0 mb-5" style="border-right: 4px solid #25318C;">
+                    <v-card
+                      style="padding: 30px;
+                              color:black;
+                              border-top-right-radius: 20px;
+                              border-top-left-radius: 20px;
+                              border-bottom-left-radius: 20px;
+                              border-bottom-right-radius: 20px;"
+                      :color="(getSelectText === 'wait') ? '#F9DBB2' : 'white'"
                       dense
-                      icon="mdi-bell-alert-outline"
                       prominent
                       @click="getSelect('wait',countWaiting)"
                     >
+                    <div style="display: flex;justify-content: space-around;">
+                      <div class="text-center">
+                        <v-avatar
+                          size="70"
+                          class="pa-3"
+                          color="#FEAE34"
+                        >
+                          <v-icon dark size="30" class="iconify" data-icon="ps:warning">
+                            mdi-alarm
+                          </v-icon>
+                        </v-avatar>
+                      </div>
                       <div>
                         <strong>{{dataTypeProcess1}}</strong>
+                        <div>จำนวน : {{countWaiting}}</div>
                       </div>
-                      <div>จำนวน : {{countWaiting}}</div>
-                    </v-alert>
+                    </div>
+                    </v-card>
                   </v-col>
-                  <v-col cols="12" class="pt-0">
-                    <v-alert
-                      :color="'red ' + ((getSelectText === 'cancel') ? '' : 'lighten-4')"
-                      :dark="((getSelectText === 'cancel') ? true : false)"
+                  <v-col cols="12" style="border-right: 4px solid #25318C;">
+                    <v-card
+                    style="padding: 30px;
+                              border-top-right-radius: 20px;
+                              border-top-left-radius: 20px;
+                              border-bottom-left-radius: 20px;
+                              border-bottom-right-radius: 20px;"
+                      :color="(getSelectText === 'cancel') ? '#F9CACA' : 'white'"
                       dense
                       icon="mdi-calendar-remove"
                       prominent
                       @click="getSelect('cancel',countCancel)"
                     >
+                    <div style="display: flex;justify-content: space-around;">
+                      <div class="text-center mr-4">
+                        <v-avatar
+                          size="70"
+                          class="pa-3"
+                          color="#B72929"
+                        >
+                          <v-icon dark size="40" class="iconify" data-icon="carbon:rule-cancelled">
+                            mdi-alarm
+                          </v-icon>
+                        </v-avatar>
+                      </div>
                       <div>
                         <strong>{{dataTypeProcess3}}</strong>
+                         <div>จำนวน : {{countCancel}}</div>
                       </div>
-                      <div>จำนวน : {{countCancel}}</div>
-                    </v-alert>
+                    </div>
+                    </v-card>
                   </v-col>
-                </v-row>
+                </div>
               </v-col>
-              <v-col cols="7" class="text-center pb-0 ma-auto">
+              <v-col cols="9" class="text-center">
                 <v-row>
-                  <v-col cols="6" class="pb-0 pr-1 pl-0">
-                    <v-alert
-                      :color="'green ' + ((getSelectText === 'confirm') ? '' : 'lighten-4')"
-                      :dark="((getSelectText === 'confirm') ? true : false)"
+                  <v-col cols="4" >
+                    <v-card
+                      style="padding: 30px"
+                      :color="(getSelectText === 'confirm') ? '#C9F2DC' : 'white'"
                       dense
                       icon="mdi-email-check"
                       prominent
                       @click="getSelect('confirm',countConfirm)"
                     >
-                      <div>
-                        <strong>{{dataTypeProcess2}}</strong>
+                    <div style="display: flex;justify-content: space-around;">
+                      <div class="text-center mr-4">
+                        <v-avatar
+                          size="70"
+                          color="#97DDBB"
+                          style="padding:13px"
+                        >
+                          <v-icon dark size="40" class="iconify" data-icon="quill:mail-subbed">
+                            mdi-alarm
+                          </v-icon>
+                        </v-avatar>
                       </div>
-                      <div>จำนวน : {{countConfirm}}</div>
-                    </v-alert>
+                      <div>
+                       <strong>{{dataTypeProcess2}}</strong>
+                        <div>จำนวน : {{countConfirm}}</div>
+                      </div>
+                    </div>
+                    </v-card>
                   </v-col>
-                  <v-col cols="6" class="pb-0 pl-1 pr-0">
-                    <v-alert
-                      :color="'blue ' + ((getSelectText === 'confirmJob') ? '' : 'lighten-4')"
-                      :dark="((getSelectText === 'confirmJob') ? true : false)"
+                  <v-col cols="4">
+                    <v-card
+                      style="padding: 30px"
+                      :color="(getSelectText === 'confirmJob') ? '#F9E8F5' : 'white'"
                       dense
                       icon="mdi-account-check"
                       prominent
                       @click="getSelect('confirmJob',countJob)"
                     >
+                    <div style="display: flex;justify-content: space-around;">
+                      <div class="text-center mr-4">
+                        <v-avatar
+                          color="#E5B5D8"
+                          size="70"
+                          class="pa-3"
+                        >
+                          <v-icon dark size="40" class="iconify" data-icon="bi:people">
+                            mdi-alarm
+                          </v-icon>
+                        </v-avatar>
+                      </div>
                       <div>
                         <strong>{{dataTypeProcess4}}</strong>
+                         <div>จำนวน : {{countJob}}</div>
                       </div>
-                      <div>จำนวน : {{countJob}}</div>
-                    </v-alert>
+                    </div>
+                    </v-card>
                   </v-col>
-                  <v-col cols="12" class="pt-0 pl-0 pr-0">
-                    <v-alert
-                      :color="'teal ' + ((getSelectText === 'confirmSum') ? '' : 'lighten-4')"
-                      :dark="((getSelectText === 'confirmSum') ? true : false)"
+                  <v-col cols="4">
+                    <v-card
+                      style="padding: 30px"
+                      :color="(getSelectText === 'confirmSum') ? '#D7E8F9' : 'white'"
                       dense
                       icon="mdi-expand-all"
                       @click="getSelect('confirmSum',(countConfirm + countJob))"
                     >
-                      <div>
-                        <strong>รวม</strong>  : {{countConfirm + countJob}}
+                    <div style="display: flex;justify-content: space-around;">
+                      <div class="text-center mr-4">
+                        <v-avatar
+                          color="#76ABE5"
+                          size="70"
+                          class="pa-3"
+                        >
+                          <v-icon dark size="40" class="iconify" data-icon="bi:folder-plus">
+                          </v-icon>
+                        </v-avatar>
                       </div>
-                      <!-- <div>จำนวน : {{countConfirm + countJob}}</div> -->
-                    </v-alert>
+                      <div>
+                        <strong>รวมผู้เข้ารับบริการ</strong>
+                        <div>รวม : {{countConfirm + countJob}}</div>
+                      </div>
+                    </div>
+                    </v-card>
+                  </v-col>
+                  <v-col cols="12" class="pb-4">
+                    <v-card
+                      style="padding:30px;color:black !important;margin-top:20px;border-radius: 20px !important;"
+                      color="white"
+                      @click="getSelect('all',countAll)"
+                    >
+                     <v-avatar
+                          class="mr-8 pa-3"
+                          color="#76ABE5"
+                          size="70"
+                        >
+                          <v-icon dark size="40" class="iconify" data-icon="healthicons:chart-bar-outline">
+                          </v-icon>
+                        </v-avatar>
+                      ทั้งหมด จำนวน : {{countAll}}
+                    </v-card>
                   </v-col>
                 </v-row>
               </v-col>
@@ -200,7 +289,7 @@
                 </v-alert>
               </v-col>
             </v-row> -->
-            <v-row>
+            <!-- <v-row>
               <v-col cols="12" class="text-center pb-0  pt-0">
                 <v-btn
                   color="blue-grey"
@@ -220,11 +309,16 @@
                   </v-icon>
                 </v-btn>
               </v-col>
-            </v-row>
+            </v-row> -->
             </template>
           </v-col>
-          <v-col cols="12" md="4" lg="4" class="pl-5 v-margit_button">
-            <v-menu
+        </v-row>
+        <div class="pa-4 mb-4">
+          <h3 style="margin-bottom: 35px;color: #1C3879;font-weight: bolder;">ตรวจสอบรายชื่อลูกค้านัดหมายรายเดือน</h3>
+          <v-row>
+            <v-col cols="4">
+              <v-card class="pa-2">
+                  <v-menu
               ref="menu"
               v-model="menuStart"
               transition="scale-transition"
@@ -233,10 +327,11 @@
               min-width="auto"
             >
               <template v-slot:activator="{ on, attrs }">
-                <v-text-field
+                 <v-text-field
+                  hide-details
                   v-model="dateStart"
+                  prepend-inner-icon="mdi-calendar"
                   label="เลือก เดือน/ปี"
-                  prepend-icon="mdi-calendar"
                   readonly
                   outlined
                   dense
@@ -252,36 +347,38 @@
                 scrollable
               >
               </v-date-picker>
-            </v-menu>
-            <v-select
+              </v-menu>
+              </v-card>
+            </v-col>
+            <v-col cols="4">
+              <v-card class="pa-2">
+                 <v-select
               v-model="masBranchID"
+              hide-details
               :items="branch"
               label="สาขา"
               outlined
               dense
               required
               @change="dataReady = false,getBookingList()"
-            ></v-select>
-            <v-select
+              ></v-select>
+              </v-card>
+            </v-col>
+            <v-col cols="4">
+              <v-card class="pa-2">
+                <v-select
               v-model="flowSelect"
+              hide-details
               :items="DataFlowName"
               label="ประเภทบริการ"
               outlined
               dense
               @change="dataReady = false,getBookingList()"
             ></v-select>
-            <v-btn
-              elevation="4"
-              block
-              dark
-              rounded
-              :color="changeBackgroundColor ? 'red' : 'green'"
-              @click="changeBackgroundColor = !changeBackgroundColor"
-            >
-              {{changeBackgroundColor ? 'ซ่อน' : 'แสดง'}}
-            </v-btn>
-          </v-col>
-        </v-row>
+              </v-card>
+            </v-col>
+          </v-row>
+          </div>
         <v-row>
           <!-- EXPORT -->
           <v-dialog v-model="dialogExport" persistent max-width="70%">
@@ -3848,6 +3945,7 @@
                     <v-col cols="12" class="text-center">
                       <v-img
                         aspect-ratio="6"
+                        height="500"
                         contain
                         @click="gotoPicture(pictureUrlPreviewDeposit)"
                         :src="pictureUrlPreviewDeposit"
@@ -10094,5 +10192,8 @@ body {
 .InputData{
   margin: 0px !important;
   padding: 0px !important;
+}
+.v-card--link:focus::before {
+  opacity: 0;
 }
 </style>
