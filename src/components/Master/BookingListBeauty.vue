@@ -219,7 +219,7 @@
                           <v-icon dark size="40" class="iconify" data-icon="healthicons:chart-bar-outline">
                           </v-icon>
                         </v-avatar>
-                      ทั้งหมด จำนวน : {{countAll}}
+                      รวมรายการนัดหมายทั้งหมด : {{countAll}}
                     </v-card>
                   </v-col>
                 </v-row>
