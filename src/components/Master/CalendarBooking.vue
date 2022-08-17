@@ -45,7 +45,7 @@
               @change="getBookingList()"
               hide-details
               label="ประเภทบริการ"
-              prepend-inner-icon="mdi-car-connected"
+              prepend-inner-icon="mdi-format-list-bulleted"
               class="ma-2"
             >
             </v-select>

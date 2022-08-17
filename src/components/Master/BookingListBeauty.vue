@@ -4622,7 +4622,7 @@ export default {
         {
           text: 'รายชื่อลูกค้านัดหมาย',
           disabled: false,
-          href: '/Master/BookingList'
+          href: '/Master/BookingListBeauty'
         }
       ],
       branch: [],
