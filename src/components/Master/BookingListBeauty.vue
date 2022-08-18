@@ -9915,6 +9915,7 @@ export default {
       this.bookingData = bookingData.data
       console.log('booking', booking)
       console.log('bookingData', bookingData)
+      this.remark = booking.data[0].remark
       this.timeavailable = []
       let dtTime = this.dataFlowSelectAdd.filter(item => { return item.value === booking.data[0].flowId })
       if (dtTime.length > 0) {
@@ -9994,6 +9995,9 @@ export default {
               this.dialogBookingAgain = false
               this.dialogJob = false
             })
+        }).catch(error => {
+          this.loadingBookingAgain = false
+          console.log('Booking add again : ', error)
         })
       } else {
         this.loadingBookingAgain = false
