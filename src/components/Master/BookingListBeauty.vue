@@ -9519,6 +9519,8 @@ export default {
       if (lineUserId !== '') {
         var dt = {
           lineUserId: lineUserId,
+          dueDate: item.dueDateText,
+          flowName: item.flowName,
           shopId: this.$session.getAll().data.shopId,
           tell: this.$session.getAll().data.contactTel
         }
