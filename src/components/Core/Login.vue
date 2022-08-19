@@ -466,6 +466,8 @@ export default {
           this.$router.push('/Onsite/JobList')
         } else if (dataitem.USER_ROLE === 'board') {
           this.$router.push('/Master/BoardControlEmp')
+        } else if (dataitem.USER_ROLE === 'booking' && dataitem.shopId !== 'U9084920b3005bd1dcb57af1ae6bdba32') {
+          this.$router.push('/Master/BookingListBeauty')
         } else {
           // this.$router.push('/Dashbord/ReportBooking')
           this.$router.push('/Master/BookingField')

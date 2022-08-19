@@ -40,7 +40,7 @@
           </v-menu>
         </v-col>
       </v-row>
-      <v-row justify="center">
+      <v-row justify="center" v-if="$session.getAll().data.USER_ROLE !== 'booking'">
         <v-col
           class="pt-0"
           cols="auto"

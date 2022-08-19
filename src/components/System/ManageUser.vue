@@ -353,6 +353,7 @@ export default {
       USER_ROLEitem: [
         // { text: 'Admin', value: 'admin' },
         // { text: 'User', value: 'user' },
+        { text: 'นัดหมาย', value: 'booking' },
         { text: 'Onsite', value: 'onsite' },
         { text: 'Board', value: 'board' }
       ],

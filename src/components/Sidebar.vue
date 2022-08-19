@@ -281,6 +281,7 @@
             text
             tile
             dark
+            v-if="session.data.USER_ROLE === 'admin'"
             class="nav-button-dark"
             @click.prevent="$router.push('/LoyaltyPresent')">
             <v-icon color="white">mdi-gift-open</v-icon>&nbsp;&nbsp;Be-Loyalty
@@ -289,6 +290,7 @@
         <v-btn block
             text
             tile
+            v-if="session.data.USER_ROLE === 'admin'"
             dark
             class="nav-button-dark"
             @click.prevent="chkPlan(), dialogCash = true">
@@ -693,6 +695,8 @@ export default {
       this.onsite()
     } else if (this.session.data.USER_ROLE === 'board') {
       this.board()
+    } else if (this.session.data.USER_ROLE === 'booking') {
+      this.bookingChk()
     } else {
       this.adminChk()
     }
@@ -809,6 +813,13 @@ export default {
     // code block
       }
       console.log('textValue', textValue[0].type)
+    },
+    bookingChk () {
+      // this.$router.push('/Onsite/JobList')
+      this.booking = [
+        // { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingLink', type: 'booking' },
+        { title: 'รายชื่อลูกค้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingListBeauty', type: 'booking' }
+      ]
     },
     onsite () {
       // this.$router.push('/Onsite/JobList')
