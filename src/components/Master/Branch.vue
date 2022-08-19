@@ -986,15 +986,20 @@ export default {
         this.dataItemAddTime = []
       } else {
         let setTime = JSON.parse(item.setTime)
-        if (setTime[0].limitBooking === undefined) {
-          console.log('dasdas')
-          for (let i = 0; i < setTime.length; i++) {
-            let d = setTime[i]
-            d.limitBooking = ''
-            this.dataItemAddTime.push(d)
+        if (setTime.length > 0) {
+          console.log('setTime', setTime)
+          if (setTime[0].limitBooking === undefined) {
+            console.log('dasdas')
+            for (let i = 0; i < setTime.length; i++) {
+              let d = setTime[i]
+              d.limitBooking = ''
+              this.dataItemAddTime.push(d)
+            }
+          } else {
+            this.dataItemAddTime = setTime
           }
         } else {
-          this.dataItemAddTime = setTime
+          this.dataItemAddTime = []
         }
       }
       console.log('testget', this.formUpdate)
@@ -1012,59 +1017,50 @@ export default {
       }
     },
     async addData () {
-      //
-      //
-      // สำหรับ เพิ่มข้อมูล
-      // ต้องระบุ Create / Last User ว่าใครเป็นคนสร้าง
-      //
-      if (this.dataItemAddTime.length > 0) {
-        this.formAdd.CREATE_USER = this.$session.getAll().data.userName
-        this.formAdd.LAST_USER = this.$session.getAll().data.userName
-        if (this.formAdd.countCus) {
-          this.formAdd.countCus = this.formAdd.countCus
-        } else {
-          this.formAdd.countCus = 0
+      this.formAdd.CREATE_USER = this.$session.getAll().data.userName
+      this.formAdd.LAST_USER = this.$session.getAll().data.userName
+      if (this.formAdd.countCus) {
+        this.formAdd.countCus = this.formAdd.countCus
+      } else {
+        this.formAdd.countCus = 0
+      }
+
+      // console.log('form', JSON.stringify(this.formAdd))
+      // console.log('this.dataItemAddTime', this.dataItemAddTime)
+
+      this.formAdd.dateDayoffText = JSON.stringify(this.formAdditem.dateDayoffText)
+      let dd = []
+      this.itemDateStop.forEach((v, k) => {
+        // console.log('test', this.formUpdate.dateDayoffText.filter(item => item === v))
+        if (this.formAdditem.dateDayoffText.filter(item => item === v).length > 0) {
+          dd.push(k)
         }
-
-        // console.log('form', JSON.stringify(this.formAdd))
-        // console.log('this.dataItemAddTime', this.dataItemAddTime)
-
-        this.formAdd.dateDayoffText = JSON.stringify(this.formAdditem.dateDayoffText)
-        let dd = []
-        this.itemDateStop.forEach((v, k) => {
-          // console.log('test', this.formUpdate.dateDayoffText.filter(item => item === v))
-          if (this.formAdditem.dateDayoffText.filter(item => item === v).length > 0) {
-            dd.push(k)
-          }
-        })
-        this.formAdd.typeDayCustom = this.formAdditem.typeDayCustom === '' ? 'off' : this.formAdditem.typeDayCustom
-        this.formAdd.dateDayoffValue = JSON.stringify(dd)
-        this.formAdd.dateDayCustom = JSON.stringify(this.formAdditem.dateDayCustom)
-        console.log('this.formAdd', this.formAdd)
-        this.formAdd.masBranchCode = this.code + this.generateCodeGlobal()
-        this.formAdd.setTime = JSON.stringify(this.dataItemAddTime)
-        delete this.formAdd['time']
-        delete this.formAdd['limitBooking']
-        this.dataReady = false
-        console.log('this.formAdd', this.formAdd)
-        if (this.formAdd.masBranchName === '') {
-          this.$swal('ผิดพลาด', 'กรอกชื่อ สาขา', 'error')
-        } else if (this.formAdd.masBranchCode === '') {
-          this.$swal('ผิดพลาด', 'กรุณาเลือก สาขา', 'error')
-        } else if (this.formAdd.limitBookingCheck === 'True') {
-          if (this.dataItemAddTime.filter(el => { return el.limitBooking === '' }).length === 0) {
-            this.dataReady = false
-            this.submitAdd()
-          } else {
-            this.dataReady = true
-            this.$swal('ผิดพลาด', 'กรุณาเลือก ใส่จำนวน Limit Booking ให้ครบ เนื่องจากท่านได้เลือกที่จะ ตั้ง Limit การจอง', 'error')
-          }
-        } else {
+      })
+      this.formAdd.typeDayCustom = this.formAdditem.typeDayCustom === '' ? 'off' : this.formAdditem.typeDayCustom
+      this.formAdd.dateDayoffValue = JSON.stringify(dd)
+      this.formAdd.dateDayCustom = JSON.stringify(this.formAdditem.dateDayCustom)
+      console.log('this.formAdd', this.formAdd)
+      this.formAdd.masBranchCode = this.code + this.generateCodeGlobal()
+      this.formAdd.setTime = JSON.stringify(this.dataItemAddTime)
+      delete this.formAdd['time']
+      delete this.formAdd['limitBooking']
+      this.dataReady = false
+      console.log('this.formAdd', this.formAdd)
+      if (this.formAdd.masBranchName === '') {
+        this.$swal('ผิดพลาด', 'กรอกชื่อ สาขา', 'error')
+      } else if (this.formAdd.masBranchCode === '') {
+        this.$swal('ผิดพลาด', 'กรุณาเลือก สาขา', 'error')
+      } else if (this.formAdd.limitBookingCheck === 'True') {
+        if (this.dataItemAddTime.filter(el => { return el.limitBooking === '' }).length === 0) {
           this.dataReady = false
           this.submitAdd()
+        } else {
+          this.dataReady = true
+          this.$swal('ผิดพลาด', 'กรุณาเลือก ใส่จำนวน Limit Booking ให้ครบ เนื่องจากท่านได้เลือกที่จะ ตั้ง Limit การจอง', 'error')
         }
       } else {
-        this.$swal('ผิดพลาด', 'กรุณาตั้งเวลาที่จะให้ในสาขานี้', 'error')
+        this.dataReady = false
+        this.submitAdd()
       }
     },
     async submitAdd () {
