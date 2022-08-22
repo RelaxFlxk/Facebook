@@ -606,21 +606,21 @@
           <!-- end add -->
 
           <!-- edit -->
-          <v-dialog v-model="dialogEdit" persistent max-width="30%">
+          <v-dialog v-model="dialogEdit" persistent max-width="40%">
             <v-card>
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
                 <v-card-text>
                   <v-container>
-                    <v-col class="text-right">
-                      <v-col class="text-right">
+                    <!-- <v-col> -->
+                      <!-- <div class="text-right" style="position: absolute;right:33px;top:22px"> -->
                         <!-- <v-icon
                           small
                           color="#173053"
                           @click="(dialogEdit = false), clearData()"
                           >mdi-close</v-icon
                         > -->
+                        <div>
                         <v-btn
-                          class="mx-2 mr-n10 mt-n10"
                           fab
                           small
                           dark
@@ -632,8 +632,9 @@
                             mdi-close
                           </v-icon>
                         </v-btn>
-                      </v-col>
-                    </v-col>
+                        </div>
+                      <!-- </div>
+                    </v-col> -->
                     <v-row justify="center">
                       <!-- <v-col cols="5" class="text-center"  style="margin: auto 0;">
                         <v-col>
@@ -674,7 +675,7 @@
                         </v-col>
                         <v-col cols="12" class="pb-0 pt-0">
                           <v-row>
-                            <v-col>
+                            <v-col align-self="center">
                             <v-checkbox
                             label="แจ้งยอดค่าชำระ"
                             false-value="False"
@@ -682,7 +683,7 @@
                             v-model="formUpdate.checkPayment"
                           ></v-checkbox>
                           </v-col>
-                          <v-col>
+                          <v-col align-self="center" style="color:red">
                             <v-checkbox
                             label="Onsite"
                             false-value="False"
@@ -690,7 +691,7 @@
                             v-model="formUpdate.checkOnsite"
                           ></v-checkbox>
                           </v-col>
-                          <v-col>
+                          <v-col align-self="center">
                             <v-checkbox
                             label="เงินมัดจำ"
                             false-value="False"
@@ -2896,5 +2897,8 @@ export default {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #173053;
+}
+.mat-checkbox-background {
+    border-radius: 50% !important;
 }
 </style>
