@@ -358,5 +358,12 @@ table tr:last-child td:last-child {
     border-bottom: 2px solid #555 !important;
     color: #000 !important;
 }
-
+.v-label{
+  margin-bottom: 0;
+  /* color:#1B437C !important; */
+  font-weight: bold;
+}
+.v-text-field{
+  border-radius:10px;
+}
 </style>

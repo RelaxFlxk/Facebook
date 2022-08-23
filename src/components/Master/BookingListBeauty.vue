@@ -68,23 +68,23 @@
                       prominent
                       @click="getSelect('wait',countWaiting)"
                     >
-                    <div style="display: flex;justify-content: center;">
-                      <div class="text-center">
-                        <v-avatar
-                          size="70"
-                          class="pa-3 mr-4"
-                          color="#FEAE34"
-                        >
-                          <v-icon dark size="30" class="iconify" data-icon="ps:warning">
-                            mdi-alarm
-                          </v-icon>
-                        </v-avatar>
+                      <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
+                        <div class="text-center">
+                          <v-avatar
+                            size="70"
+                            class="pa-3"
+                            color="#FEAE34"
+                          >
+                            <v-icon dark size="30" class="iconify" data-icon="ps:warning">
+                              mdi-alarm
+                            </v-icon>
+                          </v-avatar>
+                        </div>
+                        <div style="margin: auto 0;">
+                          <strong>{{dataTypeProcess1}}</strong>
+                          <div>จำนวน : {{countWaiting}}</div>
+                        </div>
                       </div>
-                      <div style="margin: auto 0;">
-                        <strong>{{dataTypeProcess1}}</strong>
-                        <div>จำนวน : {{countWaiting}}</div>
-                      </div>
-                    </div>
                     </v-card>
                   </v-col>
                   <v-col cols="12" style="border-right: 4px solid #25318C;">
@@ -100,8 +100,8 @@
                       prominent
                       @click="getSelect('cancel',countCancel)"
                     >
-                    <div style="display: flex;justify-content: center;">
-                      <div class="text-center mr-4">
+                    <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
+                      <div class="text-center">
                         <v-avatar
                           size="70"
                           class="pa-3"
@@ -132,8 +132,8 @@
                       prominent
                       @click="getSelect('confirm',countConfirm)"
                     >
-                    <div style="display: flex;justify-content: center;">
-                      <div class="text-center mr-4">
+                    <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
+                      <div class="text-center">
                         <v-avatar
                           size="70"
                           color="#97DDBB"
@@ -160,8 +160,8 @@
                       prominent
                       @click="getSelect('confirmJob',countJob)"
                     >
-                    <div style="display: flex;justify-content:center;">
-                      <div class="text-center mr-4">
+                    <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
+                      <div class="text-center">
                         <v-avatar
                           color="#E5B5D8"
                           size="70"
@@ -187,8 +187,8 @@
                       icon="mdi-expand-all"
                       @click="getSelect('confirmSum',(countConfirm + countJob))"
                     >
-                    <div style="display: flex;justify-content: center;">
-                      <div class="text-center mr-4">
+                    <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
+                      <div class="text-center">
                         <v-avatar
                           color="#76ABE5"
                           size="70"

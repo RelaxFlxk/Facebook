@@ -405,22 +405,24 @@
                             :rules="[rules.required]"
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="12" class="pb-0 pt-0">
-                          <v-row>
-                            <v-col>
+                        <v-col cols="12" class="pb-0 pt-0 mb-4">
+                          <v-row class="mb-3">
+                            <v-col class='d-flex justify-center'>
                               <v-checkbox
                               label="แจ้งยอดค่าชำระ"
                               false-value="False"
                               true-value="True"
                               v-model="formAdd.checkPayment"
+                              hide-details
                               ></v-checkbox>
                             </v-col>
-                            <v-col>
+                            <v-col >
                               <v-checkbox
                                 label="Onsite"
                                 false-value="False"
                                 true-value="True"
                                 v-model="formAdd.checkOnsite"
+                                hide-details
                               ></v-checkbox>
                             </v-col>
                             <v-col>
@@ -430,6 +432,7 @@
                                 true-value="True"
                                 v-model="formAdd.checkDeposit"
                                 @change="formAdd.amountDeposit = 0"
+                                hide-details
                               ></v-checkbox>
                             </v-col>
                           </v-row>
@@ -606,20 +609,12 @@
           <!-- end add -->
 
           <!-- edit -->
-          <v-dialog v-model="dialogEdit" persistent max-width="40%">
+          <v-dialog v-model="dialogEdit" persistent max-width="50%">
             <v-card>
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
                 <v-card-text>
                   <v-container>
-                    <!-- <v-col> -->
-                      <!-- <div class="text-right" style="position: absolute;right:33px;top:22px"> -->
-                        <!-- <v-icon
-                          small
-                          color="#173053"
-                          @click="(dialogEdit = false), clearData()"
-                          >mdi-close</v-icon
-                        > -->
-                        <div>
+                        <div style="text-align: end;">
                         <v-btn
                           fab
                           small
@@ -633,9 +628,7 @@
                           </v-icon>
                         </v-btn>
                         </div>
-                      <!-- </div>
-                    </v-col> -->
-                    <v-row justify="center">
+                    <v-row justify="left">
                       <!-- <v-col cols="5" class="text-center"  style="margin: auto 0;">
                         <v-col>
                           <v-img
@@ -646,7 +639,7 @@
                       </v-col> -->
 
                       <v-col cols="12" class="v-margit_text_add mt-1">
-                        <v-col class="text-center">
+                        <v-col class="text-left">
                           <!-- <v-img
                             id="v_text_edits"
                             :src="require('@/assets/GroupEditTitle.svg')"
@@ -659,7 +652,6 @@
                             v-model="formUpdate.flowName"
                             label="ชื่อขั้นตอน (ภาษาไทย)"
                             outlined
-                            dense
                             required
                             :rules="[rules.required]"
                           ></v-text-field>
@@ -668,33 +660,41 @@
                             v-model="formUpdate.flowNameEn"
                             label="ชื่อขั้นตอน (ภาษาอังกฤษ)"
                             outlined
-                            dense
                             required
                             :rules="[rules.required]"
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="12" class="pb-0 pt-0">
+                        <v-col cols="12" class="pb-0 pt-0 mb-2">
                           <v-row>
-                            <v-col align-self="center">
+                            <v-col style="display: flex;justify-content: center;">
                             <v-checkbox
                             label="แจ้งยอดค่าชำระ"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
                             false-value="False"
+                            color="#1B437C"
                             true-value="True"
                             v-model="formUpdate.checkPayment"
                           ></v-checkbox>
                           </v-col>
-                          <v-col align-self="center" style="color:red">
+                          <v-col style="display: flex;justify-content: center;">
                             <v-checkbox
                             label="Onsite"
                             false-value="False"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            color="#1B437C"
                             true-value="True"
                             v-model="formUpdate.checkOnsite"
                           ></v-checkbox>
                           </v-col>
-                          <v-col align-self="center">
+                          <v-col style="display: flex;justify-content: center;">
                             <v-checkbox
                             label="เงินมัดจำ"
                             false-value="False"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            color="#1B437C"
                             true-value="True"
                             v-model="formUpdate.checkDeposit"
                             @change="formUpdate.amountDeposit = 0"
@@ -864,6 +864,7 @@
                               dark
                               elevation="2"
                               x-large
+                              block
                               color="#173053"
                               :disabled="!validUpdate"
                               @click="editData()"
@@ -2898,7 +2899,9 @@ export default {
 ::-webkit-scrollbar-thumb:hover {
   background: #173053;
 }
-.mat-checkbox-background {
-    border-radius: 50% !important;
-}
+/* .v-label{
+  margin-bottom: 0;
+  color:#1B437C !important;
+  font-weight: bold;
+} */
 </style>
