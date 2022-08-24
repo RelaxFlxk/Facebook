@@ -174,9 +174,23 @@
             </v-row>
             <v-col cols='12' class="pb-0 pt-0 mt-0" v-if="dataItem[0].checkOnsite !== 'True'">
               <v-radio-group v-model="radiosRemark" row>
-                <!-- <template v-slot:label>
-                  <div>Your favourite <strong>search engine</strong></div>
-                </template> -->
+                <v-radio value="ซ่อมปกติ">
+                  <template v-slot:label>
+                    <div class="mt-3"><strong class="primary--text">{{dataTypeJob1}}</strong></div>
+                  </template>
+                </v-radio>
+                <v-radio value="ExtraJob">
+                  <template v-slot:label>
+                    <div class="mt-3"><strong class="error--text">{{dataTypeJob2}}</strong></div>
+                  </template>
+                </v-radio>
+                <v-radio value="FastTrack">
+                  <template v-slot:label>
+                    <div class="mt-3"><strong class="orange--text">{{dataTypeJob3}}</strong></div>
+                  </template>
+                </v-radio>
+              </v-radio-group>
+              <!-- <v-radio-group v-model="radiosRemark" row>
                 <v-radio value="ซ่อมปกติ">
                   <template v-slot:label>
                     <div class="mt-3"><strong class="primary--text">ซ่อมปกติ</strong></div>
@@ -192,7 +206,7 @@
                     <div class="mt-3"><strong class="orange--text">Fast Track</strong></div>
                   </template>
                 </v-radio>
-              </v-radio-group>
+              </v-radio-group> -->
             </v-col>
             <div class="text-center">
               <v-btn
@@ -217,7 +231,9 @@
                 small
                 @click.stop="confirmChk(dataItem[0])"
               >
-                <v-icon dark> mdi-phone-check </v-icon>
+                <!-- <v-icon dark> mdi-phone-check </v-icon> -->
+                <v-icon dark size="40" class="iconify" data-icon="quill:mail-subbed">
+                          </v-icon>
               </v-btn>
               <v-btn
                 color="success"
@@ -231,7 +247,9 @@
                 small
                 @click.stop="confirmChkOnsite(dataItem[0])"
               >
-                <v-icon dark> mdi-phone-check </v-icon>
+                <!-- <v-icon dark> mdi-phone-check </v-icon> -->
+                <v-icon dark size="40" class="iconify" data-icon="quill:mail-subbed">
+                          </v-icon>
               </v-btn>
               <v-btn
                 color="warning"
@@ -254,7 +272,9 @@
                 small
                 @click.stop="setDataRemove(dataItem[0])"
               >
-                <v-icon dark> mdi-phone-cancel </v-icon>
+                <!-- <v-icon dark> mdi-phone-cancel </v-icon> -->
+                <v-icon dark size="40" class="iconify" data-icon="carbon:rule-cancelled">
+                          </v-icon>
               </v-btn>
               <v-btn
                 color="error"
@@ -267,7 +287,9 @@
                 small
                 @click.stop="setDataRemove(dataItem[0])"
               >
-                <v-icon dark> mdi-phone-cancel </v-icon>
+                <!-- <v-icon dark> mdi-phone-cancel </v-icon> -->
+                <v-icon dark size="40" class="iconify" data-icon="carbon:rule-cancelled">
+                          </v-icon>
               </v-btn>
             </div>
           </v-container>
@@ -842,13 +864,29 @@ export default {
       dataFlow: [],
       flowIDLimit: '',
       dateDayoff: [],
-      dateDayCustom: []
+      dateDayCustom: [],
+      countBooking: 0,
+      dataTypeJob1: '',
+      dataTypeJob2: '',
+      dataTypeJob3: ''
     }
   },
   async mounted () {
     await this.beforeCreate()
+    console.log('this.$session.getAll()', this.$session.getAll())
   },
   methods: {
+    async getCheckCountBook () {
+      // await axios.get(this.DNS_IP + '/booking_view/getCheckPack?statusBt=wait and confirm&shopId=' + this.$session.getAll().data.shopId + '&dueDate=' + this.format_dateNoDay(new Date())).then(response => {
+      await axios.get(this.DNS_IP + '/booking_view/getCheckPack?statusBt=wait and confirm&shopId=' + this.$session.getAll().data.shopId + '&dueDateLastMonth=T').then(response => {
+        let rs = response.data
+        if (rs.status !== false) {
+          this.countBooking = response.data.countJob
+        } else {
+          this.countBooking = 0
+        }
+      })
+    },
     async getDataFlowAll () {
       this.dataFlow = await this.getDataFromAPI('/flow/get', 'flowId', 'flowName', '')
     },
@@ -1875,49 +1913,109 @@ export default {
       this.dialogConfirm = true
     },
     async onConfirm (item) {
-      if (this.dataItem[0].checkOnsite === 'True') {
-
+      await this.getCheckCountBook()
+      console.log('countBooking', this.countBooking)
+      let statusPackage = 'close'
+      let countWarning = parseInt(this.$session.getAll().data.warning) || 0
+      let countClose = parseInt(this.$session.getAll().data.close) || 0
+      console.log('countBooking', countClose)
+      if (this.countBooking > countClose) {
+        statusPackage = 'close'
+        // this.$swal('ผิดพลาด', 'กรุณาอัพเกรด แพ็กเก็ตของท่าน เพื่อให้การนัดหมายสำเร็จ', 'error')
+        this.$swal({
+          title: 'ผิดพลาด',
+          type: 'error',
+          text: 'กรุณาอัพเกรด แพ็กเก็ตของท่าน เพื่อให้การนัดหมายสำเร็จ',
+          showCancelButton: true,
+          showConfirmButton: true,
+          confirmButtonText: 'อัพเกรดแพ็กเก็ต',
+          cancelButtonText: `ตกลง`
+        }).then((result) => {
+          console.log(result)
+          /* Read more about isConfirmed, isDenied below */
+          if (result) {
+            this.$router.push('/Core/BillingPlan')
+          } else {
+            this.dialogConfirm = false
+          }
+        })
+          .catch((error) => {
+            this.dialogConfirm = false
+            console.log(error)
+          })
       } else {
-        let dtint = '0'
-        if (this.dataFlow.filter(el => { return el.value === item.flowId }).length > 0) {
-          let dts = JSON.parse(this.dataFlow.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
-          dtint = parseInt(dts.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
-        } else {
-          dtint = '0'
-        }
-        var dt = {
-          pageStatus: this.dataItem[0].statusBt,
-          limitBookingCount: dtint,
-          bookNo: item.bookNo,
-          contactDate: this.format_date(new Date()),
-          status: 'confirm',
-          statusUse: 'use',
-          shopId: this.$session.getAll().data.shopId,
-          CREATE_USER: this.$session.getAll().data.userName,
-          LAST_USER: this.$session.getAll().data.userName
-        }
-        axios
-          .post(this.DNS_IP + '/booking_transaction/add', dt)
-          .then(async response => {
-            await this.updateRemark(item)
-            this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-            let DTitem = item.userId
-            console.log('DTITEM', DTitem)
-            this.dialogConfirm = false
-            if (DTitem !== 'user-skip') {
-              await this.chkBookingNo()
-              // this.getTimesChange('update')
-              this.pushMsgConfirm(item.bookNo)
+        if (this.countBooking >= countWarning) {
+          // this.$swal('เตือน', 'แพ็กเก็ตที่ท่านได้ซื้อไว้ใกล้จะเต็มแล้วกรุณาอัพเกรดเพื่อให้การนัดหมายของท่านสำเร็จ', 'info')
+          this.$swal({
+            title: 'แจ้งเตือน',
+            type: 'info',
+            text: 'แพ็กเก็ตที่ท่านได้ซื้อไว้ใกล้จะเต็มแล้วกรุณาอัพเกรดเพื่อให้การนัดหมายของท่านสำเร็จ',
+            showCancelButton: true,
+            showConfirmButton: true,
+            confirmButtonText: 'อัพเกรดแพ็กเก็ต',
+            cancelButtonText: `ตกลง`
+          }).then((result) => {
+            console.log(result)
+            /* Read more about isConfirmed, isDenied below */
+            if (result) {
+              this.$router.push('/Core/BillingPlan')
             } else {
-              await this.chkBookingNo()
-            // this.getTimesChange('update')
+              statusPackage = 'open'
             }
-            this.dialogConfirm = false
-            console.log('addDataGlobal', response)
           })
-          .catch(error => {
-            console.log('error function addData : ', error)
-          })
+            .catch((error) => {
+              statusPackage = 'open'
+              console.log(error)
+            })
+        } else {
+          statusPackage = 'open'
+        }
+      }
+      if (statusPackage === 'open') {
+        if (this.dataItem[0].checkOnsite === 'True') {
+
+        } else {
+          let dtint = '0'
+          if (this.dataFlow.filter(el => { return el.value === item.flowId }).length > 0) {
+            let dts = JSON.parse(this.dataFlow.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
+            dtint = parseInt(dts.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
+          } else {
+            dtint = '0'
+          }
+          var dt = {
+            pageStatus: this.dataItem[0].statusBt,
+            limitBookingCount: dtint,
+            bookNo: item.bookNo,
+            contactDate: this.format_date(new Date()),
+            status: 'confirm',
+            statusUse: 'use',
+            shopId: this.$session.getAll().data.shopId,
+            CREATE_USER: this.$session.getAll().data.userName,
+            LAST_USER: this.$session.getAll().data.userName
+          }
+          axios
+            .post(this.DNS_IP + '/booking_transaction/add', dt)
+            .then(async response => {
+              await this.updateRemark(item)
+              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              let DTitem = item.userId
+              console.log('DTITEM', DTitem)
+              this.dialogConfirm = false
+              if (DTitem !== 'user-skip') {
+                await this.chkBookingNo()
+                // this.getTimesChange('update')
+                this.pushMsgConfirm(item.bookNo)
+              } else {
+                await this.chkBookingNo()
+                // this.getTimesChange('update')
+              }
+              this.dialogConfirm = false
+              console.log('addDataGlobal', response)
+            })
+            .catch(error => {
+              console.log('error function addData : ', error)
+            })
+        }
       }
     },
     async setDataRemove (item) {
@@ -2036,7 +2134,6 @@ export default {
         })
     },
     async setDataChang (item) {
-      console.log('setDataChang', item)
       this.flowIDLimit = item.flowId
       this.SetallowedDatesChange(item.flowId)
       this.dataChange = item
@@ -2255,7 +2352,11 @@ export default {
                 let rs2 = response1.data
                 if (rs2.length > 0) {
                   let bookingData = []
+                  console.log('BookingField', rs2[0])
                   bookingData = JSON.parse(rs2[0].flowfieldName)
+                  this.dataTypeJob1 = rs2[0].typeJob1
+                  this.dataTypeJob2 = rs2[0].typeJob2
+                  this.dataTypeJob3 = rs2[0].typeJob3
                   for (let i = 0; i < bookingData.length; i++) {
                     let d = bookingData[i]
                     itemIncustomField.push(d.fieldId)
@@ -2302,7 +2403,11 @@ export default {
                 let rs2 = response1.data
                 if (rs2.length > 0) {
                   let bookingData = []
+                  console.log('BookingField', rs2[0])
                   bookingData = JSON.parse(rs2[0].flowfieldName)
+                  this.dataTypeJob1 = rs2[0].typeJob1
+                  this.dataTypeJob2 = rs2[0].typeJob2
+                  this.dataTypeJob3 = rs2[0].typeJob3
                   for (let i = 0; i < bookingData.length; i++) {
                     let d = bookingData[i]
                     itemIncustomField.push(d.fieldId)
