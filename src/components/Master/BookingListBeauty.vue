@@ -16,8 +16,8 @@
                 style="z-index:8;margin-right: 5px;"
                 @click="getDataDefault(), searchOther = '', showColorSearch = false, statusSearch = 'no'"
               >
-                <v-icon left>mdi-refresh-circle</v-icon>
-                Refresh
+                <v-icon color="white" left>mdi-refresh-circle</v-icon>
+                รีเฟรชข้อมูล
                 <template v-if="loadingRefresh">
                   <span class="custom-loader">
                     <v-icon light>mdi-cached</v-icon>
@@ -31,8 +31,8 @@
                 depressed
                 @click="addDataSet()"
               >
-                <v-icon left>mdi-text-box-plus</v-icon>
-                เพิ่ม
+                <v-icon color="white" left >mdi-text-box-plus</v-icon>
+                เพิ่มรายการนัดหมาย
               </v-btn>
               <!-- <v-btn
                 color="teal"
