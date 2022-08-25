@@ -4,48 +4,16 @@
       <v-card-text>
         <div class="text-center">
           <div class="lds-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-          <h2>กรุณารอสักครู่</h2>
+          <!-- <h2>กรุณารอสักครู่</h2> -->
         </div>
-        <!-- <div class="text-center">
-          <v-progress-circular
-            :size="50"
-            color="primary"
-            indeterminate
-          ></v-progress-circular>
-
-          <v-progress-circular
-            :width="3"
-            color="red"
-            indeterminate
-          ></v-progress-circular>
-
-          <v-progress-circular
-            :size="70"
-            :width="7"
-            color="purple"
-            indeterminate
-          ></v-progress-circular>
-
-          <v-progress-circular
-            :width="3"
-            color="green"
-            indeterminate
-          ></v-progress-circular>
-
-          <v-progress-circular
-            :size="50"
-            color="amber"
-            indeterminate
-          ></v-progress-circular>
-        </div> -->
       </v-card-text>
     </v-card>
-    <v-card flat v-if="dataReady">
+    <v-card flat v-if="dataReady" >
       <v-toolbar color="#173053" dark extended flat>
         <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
       </v-toolbar>
 
-      <v-card class="mx-auto" max-width="700" style="margin-top: -64px;">
+      <v-card class="mx-auto" max-width="700" elevation="0"  style="margin-top: -64px;">
         <v-toolbar flat>
           <v-toolbar-title class="#173053--text">
             {{ dataItem[0].cusName }}
@@ -110,8 +78,20 @@
                       outlined
                       dense
                       readonly
+                      v-if="item.fieldName === 'เบอร์โทร'"
+                      @click="dial(item.phone)"
+                      prepend-inner-icon="mdi-phone"
                     ></v-text-field>
-                    <v-icon class="pa-3 pb-10 pt-0" v-if="item.fieldName === 'เบอร์โทร'" large color="#64DD17" @click="dial(item.phone)">call</v-icon>
+                    <v-text-field
+                      v-model="item.fieldValue"
+                      :label="item.fieldName"
+                      class="pa-2 pb-0 pt-0"
+                      outlined
+                      dense
+                      readonly
+                      v-else
+                    ></v-text-field>
+                    <!-- <v-icon class="pa-3 pb-10 pt-0" v-if="item.fieldName === 'เบอร์โทร'" large color="#64DD17" @click="dial(item.phone)">call</v-icon> -->
                   </v-row>
                 </template>
                 <template
@@ -140,12 +120,33 @@
                       <v-text-field
                         v-model="item.fieldValue"
                         :label="item.fieldName"
+                        class="pa-2 pb-0 pt-0"
+                        outlined
+                        dense
+                        readonly
+                        v-if="item.fieldName === 'เบอร์โทร'"
+                        @click="dial(item.phone)"
+                        prepend-inner-icon="mdi-phone"
+                      ></v-text-field>
+                      <v-text-field
+                        v-model="item.fieldValue"
+                        :label="item.fieldName"
+                        class="pa-2 pb-0 pt-0"
+                        outlined
+                        dense
+                        readonly
+                        v-else
+                      ></v-text-field>
+                      <!-- <v-text-field
+                        v-model="item.fieldValue"
+                        :label="item.fieldName"
                         outlined
                         readonly
                         class="pa-2 pb-0 pt-0"
                         dense
-                      ></v-text-field>
-                      <v-icon class="pa-3 pb-10 pt-0" v-if="item.fieldName === 'เบอร์โทร'" large color="#64DD17" @click="dial(item.phone)">call</v-icon>
+                        :prepend-inner-icon="item.fieldName === 'เบอร์โทร' ? 'mdi-map-marker' : ''"
+                      ></v-text-field> -->
+                      <!-- <v-icon class="pa-3 pb-10 pt-0" v-if="item.fieldName === 'เบอร์โทร'" large color="#64DD17" @click="dial(item.phone)">call</v-icon> -->
                     </v-row>
                   </template>
                 </template>
@@ -155,12 +156,33 @@
                         <v-text-field
                           v-model="item.fieldValue"
                           :label="item.fieldName"
+                          class="pa-2 pb-0 pt-0"
+                          outlined
+                          dense
+                          readonly
+                          v-if="item.fieldName === 'เบอร์โทร'"
+                          @click="dial(item.phone)"
+                          prepend-inner-icon="mdi-phone"
+                        ></v-text-field>
+                        <v-text-field
+                          v-model="item.fieldValue"
+                          :label="item.fieldName"
+                          class="pa-2 pb-0 pt-0"
+                          outlined
+                          dense
+                          readonly
+                          v-else
+                        ></v-text-field>
+                        <!-- <v-text-field
+                          v-model="item.fieldValue"
+                          :label="item.fieldName"
                           dense
                           readonly
                           class="pa-2 pb-0 pt-0"
                           outlined
-                        ></v-text-field>
-                        <v-icon class="pa-3 pb-10 pt-0" v-if="item.fieldName === 'เบอร์โทร'" large color="#64DD17" @click="dial(item.phone)">call</v-icon>
+                          :prepend-inner-icon="item.fieldName === 'เบอร์โทร' ? 'mdi-map-marker' : ''"
+                        ></v-text-field> -->
+                        <!-- <v-icon class="pa-3 pb-10 pt-0" v-if="item.fieldName === 'เบอร์โทร'" large color="#64DD17" @click="dial(item.phone)">call</v-icon> -->
                       </v-row>
                     </template>
                   </template>
@@ -225,75 +247,66 @@
               </v-btn>
               <v-btn
                 color="success"
-                fab
                 id="v-step-2"
                 v-if="
                   dataItem[0].statusBt !== 'confirmJob' &&
                     dataItem[0].statusBt !== 'confirm' && dataItem[0].checkOnsite !== 'True'
                 "
                 :disabled="dataItem[0].chkConfirm"
-                small
                 @click.stop="confirmChk(dataItem[0])"
               >
                 <!-- <v-icon dark> mdi-phone-check </v-icon> -->
-                <v-icon dark size="40" class="iconify" data-icon="quill:mail-subbed">
-                          </v-icon>
+                <v-icon dark size="30" class="iconify" data-icon="quill:mail-subbed"></v-icon>
+                ยืนยัน
               </v-btn>
               <v-btn
                 color="success"
-                fab
                 id="v-step-2"
                 v-if="
                   dataItem[0].statusBt !== 'confirmJob' &&
                     dataItem[0].statusBt !== 'confirm' && dataItem[0].checkOnsite === 'True'
                 "
                 :disabled="dataItem[0].chkConfirm"
-                small
                 @click.stop="confirmChkOnsite(dataItem[0])"
               >
                 <!-- <v-icon dark> mdi-phone-check </v-icon> -->
-                <v-icon dark size="40" class="iconify" data-icon="quill:mail-subbed">
-                          </v-icon>
+                <v-icon dark size="30" class="iconify" data-icon="quill:mail-subbed"></v-icon>
+                ยืนยัน
               </v-btn>
               <v-btn
                 color="warning"
-                fab
                 v-if="dataItem[0].statusBt !== 'cancel'"
                 id="v-step-2"
-                small
                 @click.stop="setDataChang(dataItem[0])"
               >
                 <v-icon> mdi-calendar-clock </v-icon>
+                เลื่อนนัด
               </v-btn>
               <v-btn
                 color="error"
-                fab
                 id="v-step-2"
                 v-if="
                   dataItem[0].statusBt !== 'cancel' &&
                     dataItem[0].statusBt !== 'confirmJob' && dataItem[0].statusBt !== 'confirm'  && dataItem[0].checkOnsite === 'True'
                 "
-                small
                 @click.stop="setDataRemove(dataItem[0])"
               >
                 <!-- <v-icon dark> mdi-phone-cancel </v-icon> -->
-                <v-icon dark size="40" class="iconify" data-icon="carbon:rule-cancelled">
-                          </v-icon>
+                <v-icon dark size="30" class="iconify" data-icon="carbon:rule-cancelled"></v-icon>
+                ยกเลิกนัด
               </v-btn>
               <v-btn
                 color="error"
-                fab
                 id="v-step-2"
                 v-if="
                   dataItem[0].statusBt !== 'cancel' &&
                     dataItem[0].statusBt !== 'confirmJob' && dataItem[0].checkOnsite !== 'True'
                 "
-                small
                 @click.stop="setDataRemove(dataItem[0])"
               >
                 <!-- <v-icon dark> mdi-phone-cancel </v-icon> -->
-                <v-icon dark size="40" class="iconify" data-icon="carbon:rule-cancelled">
-                          </v-icon>
+                <v-icon dark size="30" class="iconify" data-icon="carbon:rule-cancelled"></v-icon>
+                ยกเลิกนัด
               </v-btn>
             </div>
           </v-container>
@@ -714,7 +727,7 @@
           </v-card-text>
           <div class="text-center" v-if="!dataConfirmReady">
             <div class="lds-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-            <h2>กรุณารอสักครู่</h2>
+            <!-- <h2>กรุณารอสักครู่</h2> -->
           </div>
         </v-card>
       </v-form>
@@ -1409,24 +1422,6 @@ export default {
           }).then((response) => {})
         })
     },
-    // async getShowMap () {
-    //   await axios
-    //     .get(
-    //       this.DNS_IP + '/BookingField/get?shopId=' + this.$route.query.shopId
-    //     )
-    //     .then(async response1 => {
-    //       let rs = response1.data
-    //       if (rs.status !== false) {
-    //         if (rs[0].showMap === null || rs[0].showMap === '') {
-    //           this.showMap = 'ไม่แสดง'
-    //         } else {
-    //           this.showMap = rs[0].showMap
-    //         }
-    //       } else {
-    //         this.showMap = 'ไม่แสดง'
-    //       }
-    //     })
-    // },
     gotoMap () {
       window.location.href = 'https://www.google.com/maps/dir/?api=1&travelmode=driving&layer=traffic&destination=' + this.center.lat + ',' + this.center.lng
     },
