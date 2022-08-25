@@ -1,8 +1,12 @@
 <template>
   <div>
-    <v-card flat v-if="!dataReady">
+    <v-card flat v-if="!dataReady" class="centered">
       <v-card-text>
         <div class="text-center">
+          <div class="lds-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+          <h2>กรุณารอสักครู่</h2>
+        </div>
+        <!-- <div class="text-center">
           <v-progress-circular
             :size="50"
             color="primary"
@@ -33,7 +37,7 @@
             color="amber"
             indeterminate
           ></v-progress-circular>
-        </div>
+        </div> -->
       </v-card-text>
     </v-card>
     <v-card flat v-if="dataReady">
@@ -173,7 +177,7 @@
               ></v-text-field>
             </v-row>
             <v-col cols='12' class="pb-0 pt-0 mt-0" v-if="dataItem[0].checkOnsite !== 'True'">
-              <v-radio-group v-model="radiosRemark" row>
+              <v-radio-group v-model="radiosRemark">
                 <v-radio value="ซ่อมปกติ">
                   <template v-slot:label>
                     <div class="mt-3"><strong class="primary--text">{{dataTypeJob1}}</strong></div>
@@ -708,38 +712,10 @@
             </div>
             </v-container>
           </v-card-text>
-            <div class="text-center" v-if="!dataConfirmReady">
-              <v-progress-circular
-                :size="50"
-                color="primary"
-                indeterminate
-              ></v-progress-circular>
-
-              <v-progress-circular
-                :width="3"
-                color="red"
-                indeterminate
-              ></v-progress-circular>
-
-              <v-progress-circular
-                :size="70"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-
-              <v-progress-circular
-                :width="3"
-                color="green"
-                indeterminate
-              ></v-progress-circular>
-
-              <v-progress-circular
-                :size="50"
-                color="amber"
-                indeterminate
-              ></v-progress-circular>
-              </div>
+          <div class="text-center" v-if="!dataConfirmReady">
+            <div class="lds-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+            <h2>กรุณารอสักครู่</h2>
+          </div>
         </v-card>
       </v-form>
       </v-dialog>
@@ -1913,110 +1889,108 @@ export default {
       this.dialogConfirm = true
     },
     async onConfirm (item) {
-      await this.getCheckCountBook()
-      console.log('countBooking', this.countBooking)
-      let statusPackage = 'close'
-      let countWarning = parseInt(this.$session.getAll().data.warning) || 0
-      let countClose = parseInt(this.$session.getAll().data.close) || 0
-      console.log('countBooking', countClose)
-      if (this.countBooking > countClose) {
-        statusPackage = 'close'
-        // this.$swal('ผิดพลาด', 'กรุณาอัพเกรด แพ็กเก็ตของท่าน เพื่อให้การนัดหมายสำเร็จ', 'error')
-        this.$swal({
-          title: 'ผิดพลาด',
-          type: 'error',
-          text: 'กรุณาอัพเกรด แพ็กเก็ตของท่าน เพื่อให้การนัดหมายสำเร็จ',
-          showCancelButton: true,
-          showConfirmButton: true,
-          confirmButtonText: 'อัพเกรดแพ็กเก็ต',
-          cancelButtonText: `ตกลง`
-        }).then((result) => {
-          console.log(result)
-          /* Read more about isConfirmed, isDenied below */
-          if (result) {
-            this.$router.push('/Core/BillingPlan')
-          } else {
-            this.dialogConfirm = false
-          }
-        })
-          .catch((error) => {
-            this.dialogConfirm = false
-            console.log(error)
-          })
-      } else {
-        if (this.countBooking >= countWarning) {
-          // this.$swal('เตือน', 'แพ็กเก็ตที่ท่านได้ซื้อไว้ใกล้จะเต็มแล้วกรุณาอัพเกรดเพื่อให้การนัดหมายของท่านสำเร็จ', 'info')
-          this.$swal({
-            title: 'แจ้งเตือน',
-            type: 'info',
-            text: 'แพ็กเก็ตที่ท่านได้ซื้อไว้ใกล้จะเต็มแล้วกรุณาอัพเกรดเพื่อให้การนัดหมายของท่านสำเร็จ',
-            showCancelButton: true,
-            showConfirmButton: true,
-            confirmButtonText: 'อัพเกรดแพ็กเก็ต',
-            cancelButtonText: `ตกลง`
-          }).then((result) => {
-            console.log(result)
-            /* Read more about isConfirmed, isDenied below */
-            if (result) {
-              this.$router.push('/Core/BillingPlan')
-            } else {
-              statusPackage = 'open'
-            }
-          })
-            .catch((error) => {
-              statusPackage = 'open'
-              console.log(error)
-            })
-        } else {
-          statusPackage = 'open'
-        }
-      }
-      if (statusPackage === 'open') {
-        if (this.dataItem[0].checkOnsite === 'True') {
+      // await this.getCheckCountBook()
+      // console.log('countBooking', this.countBooking)
+      // let statusPackage = 'close'
+      // let countWarning = parseInt(this.$session.getAll().data.warning) || 0
+      // let countClose = parseInt(this.$session.getAll().data.close) || 0
+      // console.log('countBooking', countClose)
+      // if (this.countBooking > countClose) {
+      //   statusPackage = 'close'
+      //   this.$swal({
+      //     title: 'ผิดพลาด',
+      //     type: 'error',
+      //     text: 'กรุณาอัพเกรด แพ็กเก็ตของท่าน เพื่อให้การนัดหมายสำเร็จ',
+      //     showCancelButton: true,
+      //     showConfirmButton: true,
+      //     confirmButtonText: 'อัพเกรดแพ็กเก็ต',
+      //     cancelButtonText: `ตกลง`
+      //   }).then((result) => {
+      //     console.log(result)
+      //     /* Read more about isConfirmed, isDenied below */
+      //     if (result) {
+      //       this.$router.push('/Core/BillingPlan')
+      //     } else {
+      //       this.dialogConfirm = false
+      //     }
+      //   })
+      //     .catch((error) => {
+      //       this.dialogConfirm = false
+      //       console.log(error)
+      //     })
+      // } else {
+      // //   if (this.countBooking >= countWarning) {
+      //     this.$swal({
+      //       title: 'แจ้งเตือน',
+      //       type: 'info',
+      //       text: 'แพ็กเก็ตที่ท่านได้ซื้อไว้ใกล้จะเต็มแล้วกรุณาอัพเกรดเพื่อให้การนัดหมายของท่านสำเร็จ',
+      //       showCancelButton: true,
+      //       showConfirmButton: true,
+      //       confirmButtonText: 'อัพเกรดแพ็กเก็ต',
+      //       cancelButtonText: `ตกลง`
+      //     }).then((result) => {
+      //       console.log(result)
+      //       /* Read more about isConfirmed, isDenied below */
+      //       if (result) {
+      //         this.$router.push('/Core/BillingPlan')
+      //       } else {
+      //         statusPackage = 'open'
+      //       }
+      //     })
+      //       .catch((error) => {
+      //         statusPackage = 'open'
+      //         console.log(error)
+      //       })
+      //   } else {
+      //     statusPackage = 'open'
+      //   }
+      // }
+      // if (statusPackage === 'open') {
+      if (this.dataItem[0].checkOnsite === 'True') {
 
+      } else {
+        let dtint = '0'
+        if (this.dataFlow.filter(el => { return el.value === item.flowId }).length > 0) {
+          let dts = JSON.parse(this.dataFlow.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
+          dtint = parseInt(dts.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
         } else {
-          let dtint = '0'
-          if (this.dataFlow.filter(el => { return el.value === item.flowId }).length > 0) {
-            let dts = JSON.parse(this.dataFlow.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
-            dtint = parseInt(dts.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
-          } else {
-            dtint = '0'
-          }
-          var dt = {
-            pageStatus: this.dataItem[0].statusBt,
-            limitBookingCount: dtint,
-            bookNo: item.bookNo,
-            contactDate: this.format_date(new Date()),
-            status: 'confirm',
-            statusUse: 'use',
-            shopId: this.$session.getAll().data.shopId,
-            CREATE_USER: this.$session.getAll().data.userName,
-            LAST_USER: this.$session.getAll().data.userName
-          }
-          axios
-            .post(this.DNS_IP + '/booking_transaction/add', dt)
-            .then(async response => {
-              await this.updateRemark(item)
-              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-              let DTitem = item.userId
-              console.log('DTITEM', DTitem)
-              this.dialogConfirm = false
-              if (DTitem !== 'user-skip') {
-                await this.chkBookingNo()
-                // this.getTimesChange('update')
-                this.pushMsgConfirm(item.bookNo)
-              } else {
-                await this.chkBookingNo()
-                // this.getTimesChange('update')
-              }
-              this.dialogConfirm = false
-              console.log('addDataGlobal', response)
-            })
-            .catch(error => {
-              console.log('error function addData : ', error)
-            })
+          dtint = '0'
         }
+        var dt = {
+          pageStatus: this.dataItem[0].statusBt,
+          limitBookingCount: dtint,
+          bookNo: item.bookNo,
+          contactDate: this.format_date(new Date()),
+          status: 'confirm',
+          statusUse: 'use',
+          shopId: this.$session.getAll().data.shopId,
+          CREATE_USER: this.$session.getAll().data.userName,
+          LAST_USER: this.$session.getAll().data.userName
+        }
+        axios
+          .post(this.DNS_IP + '/booking_transaction/add', dt)
+          .then(async response => {
+            await this.updateRemark(item)
+            this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+            let DTitem = item.userId
+            console.log('DTITEM', DTitem)
+            this.dialogConfirm = false
+            if (DTitem !== 'user-skip') {
+              await this.chkBookingNo()
+              // this.getTimesChange('update')
+              this.pushMsgConfirm(item.bookNo)
+            } else {
+              await this.chkBookingNo()
+              // this.getTimesChange('update')
+            }
+            this.dialogConfirm = false
+            console.log('addDataGlobal', response)
+          })
+          .catch(error => {
+            console.log('error function addData : ', error)
+          })
       }
+      // }
     },
     async setDataRemove (item) {
       this.bookNoRemove = item
@@ -2471,6 +2445,80 @@ export default {
 }
 </script>
 <style scoped>
+.centered {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  /* bring your own prefixes */
+  transform: translate(-50%, -50%);
+}
+.lds-grid {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-grid div {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #173053;
+  animation: lds-grid 1.2s linear infinite;
+}
+.lds-grid div:nth-child(1) {
+  top: 8px;
+  left: 8px;
+  animation-delay: 0s;
+}
+.lds-grid div:nth-child(2) {
+  top: 8px;
+  left: 32px;
+  animation-delay: -0.4s;
+}
+.lds-grid div:nth-child(3) {
+  top: 8px;
+  left: 56px;
+  animation-delay: -0.8s;
+}
+.lds-grid div:nth-child(4) {
+  top: 32px;
+  left: 8px;
+  animation-delay: -0.4s;
+}
+.lds-grid div:nth-child(5) {
+  top: 32px;
+  left: 32px;
+  animation-delay: -0.8s;
+}
+.lds-grid div:nth-child(6) {
+  top: 32px;
+  left: 56px;
+  animation-delay: -1.2s;
+}
+.lds-grid div:nth-child(7) {
+  top: 56px;
+  left: 8px;
+  animation-delay: -0.8s;
+}
+.lds-grid div:nth-child(8) {
+  top: 56px;
+  left: 32px;
+  animation-delay: -1.2s;
+}
+.lds-grid div:nth-child(9) {
+  top: 56px;
+  left: 56px;
+  animation-delay: -1.6s;
+}
+@keyframes lds-grid {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
 .theme--light.v-divider {
     border-color: rgba(243, 5, 25, 0.904) !important;
 }
