@@ -1725,7 +1725,8 @@ export default {
                     if (responses.data) {
                       this.BookingDataItem.push({
                         fieldName: 'วันที่นัดหมาย',
-                        fieldValue: this.format_dateFUllTime(s.dueDate)
+                        fieldValue: d.dueDateText
+                        // fieldValue: this.format_dateFUllTime(s.dueDate)
                       })
                       for (var i = 0; i < responses.data.length; i++) {
                         var t = responses.data[i]

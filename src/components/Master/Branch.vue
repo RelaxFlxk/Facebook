@@ -1111,61 +1111,61 @@ export default {
         })
     },
     async editData () {
-      if (this.dataItemAddTime.length > 0) {
-        // this.formUpdateItem.countCus = this.formUpdate.countCus
-        this.formUpdateItem.masBranchName = this.formUpdate.masBranchName
-        this.formUpdateItem.masBranchNameEn = this.formUpdate.masBranchNameEn
-        this.formUpdateItem.setTime = JSON.stringify(this.dataItemAddTime)
-        this.formUpdateItem.dateDayoffText = JSON.stringify(this.formUpdate.dateDayoffText)
-        this.formUpdateItem.typeDayCustom = this.formUpdate.typeDayCustom
-        let dd = []
-        this.itemDateStop.forEach((v, k) => {
-          // console.log('test', this.formUpdate.dateDayoffText.filter(item => item === v))
-          if (this.formUpdate.dateDayoffText.filter(item => item === v).length > 0) {
-            dd.push(k)
-          }
-        })
-        this.formUpdateItem.dateDayoffValue = JSON.stringify(dd)
-        this.formUpdateItem.dateDayCustom = JSON.stringify(this.formUpdate.dateDayCustom)
-        // Config User ทำรายการล่าสุด
-        this.formUpdateItem.LAST_USER = this.$session.getAll().data.userName
-        if (this.formUpdate.countCus) {
-          this.formUpdateItem.countCus = this.formUpdate.countCus
-        } else {
-          this.formUpdateItem.countCus = 0
+      // if (this.dataItemAddTime.length > 0) {
+      // this.formUpdateItem.countCus = this.formUpdate.countCus
+      this.formUpdateItem.masBranchName = this.formUpdate.masBranchName
+      this.formUpdateItem.masBranchNameEn = this.formUpdate.masBranchNameEn
+      this.formUpdateItem.setTime = JSON.stringify(this.dataItemAddTime)
+      this.formUpdateItem.dateDayoffText = JSON.stringify(this.formUpdate.dateDayoffText)
+      this.formUpdateItem.typeDayCustom = this.formUpdate.typeDayCustom
+      let dd = []
+      this.itemDateStop.forEach((v, k) => {
+        // console.log('test', this.formUpdate.dateDayoffText.filter(item => item === v))
+        if (this.formUpdate.dateDayoffText.filter(item => item === v).length > 0) {
+          dd.push(k)
         }
-        if (this.formUpdate.countFastTrack) {
-          this.formUpdateItem.countFastTrack = this.formUpdate.countFastTrack
-        } else {
-          this.formUpdateItem.countFastTrack = 0
-        }
-        this.formUpdateItem.limitBookingCheck = this.formUpdate.limitBookingCheck
-        // End Config User ทำรายการล่าสุด
-        console.log('this.formUpdateItem', this.formUpdateItem)
+      })
+      this.formUpdateItem.dateDayoffValue = JSON.stringify(dd)
+      this.formUpdateItem.dateDayCustom = JSON.stringify(this.formUpdate.dateDayCustom)
+      // Config User ทำรายการล่าสุด
+      this.formUpdateItem.LAST_USER = this.$session.getAll().data.userName
+      if (this.formUpdate.countCus) {
+        this.formUpdateItem.countCus = this.formUpdate.countCus
+      } else {
+        this.formUpdateItem.countCus = 0
+      }
+      if (this.formUpdate.countFastTrack) {
+        this.formUpdateItem.countFastTrack = this.formUpdate.countFastTrack
+      } else {
+        this.formUpdateItem.countFastTrack = 0
+      }
+      this.formUpdateItem.limitBookingCheck = this.formUpdate.limitBookingCheck
+      // End Config User ทำรายการล่าสุด
+      console.log('this.formUpdateItem', this.formUpdateItem)
 
-        // Debug
-        console.log('EDIT PK : ', this.PK)
-        console.log('formUpdateItem', JSON.stringify(this.formUpdateItem))
-        // End Debug
-        // สำหรับ แก้ไขข้อมูล
-        // ต้องระบุ  Last User ว่าใครเป็นคนแก้ไขล่าสุด
-        //
+      // Debug
+      console.log('EDIT PK : ', this.PK)
+      console.log('formUpdateItem', JSON.stringify(this.formUpdateItem))
+      // End Debug
+      // สำหรับ แก้ไขข้อมูล
+      // ต้องระบุ  Last User ว่าใครเป็นคนแก้ไขล่าสุด
+      //
 
-        if (this.formUpdateItem.limitBookingCheck === 'True') {
-          if (this.dataItemAddTime.filter(el => { return el.limitBooking === '' }).length === 0) {
-            this.dataReady = false
-            this.submitEdit(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
-          } else {
-            this.dataReady = true
-            this.$swal('ผิดพลาด', 'กรุณาเลือก ใส่จำนวน Limit Booking ให้ครบ เนื่องจากท่านได้เลือกที่จะ ตั้ง Limit การจอง', 'error')
-          }
-        } else {
+      if (this.formUpdateItem.limitBookingCheck === 'True') {
+        if (this.dataItemAddTime.filter(el => { return el.limitBooking === '' }).length === 0) {
           this.dataReady = false
           this.submitEdit(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
+        } else {
+          this.dataReady = true
+          this.$swal('ผิดพลาด', 'กรุณาเลือก ใส่จำนวน Limit Booking ให้ครบ เนื่องจากท่านได้เลือกที่จะ ตั้ง Limit การจอง', 'error')
         }
       } else {
-        this.$swal('ผิดพลาด', 'กรุณาตั้งเวลาที่จะให้ในสาขานี้', 'error')
+        this.dataReady = false
+        this.submitEdit(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
       }
+      // } else {
+      //   this.$swal('ผิดพลาด', 'กรุณาตั้งเวลาที่จะให้ในสาขานี้', 'error')
+      // }
     },
     async submitEdit (DNS_IP, PATH, ID, DT) {
       // this.editDataGlobal(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
