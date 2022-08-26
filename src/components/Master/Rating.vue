@@ -10,46 +10,46 @@
         </v-row>
         <v-row>
           <v-dialog
-      v-model="dialog"
-      persistent
-      max-width="600"
-    >
-      <v-card class="p-3">
-        <v-timeline>
-          <v-timeline-item
-            v-for="(item , index) in timelineitem" :key="index"
-            :color="codeColor[index]"
-            small
+            v-model="dialog"
+            persistent
+            max-width="600"
           >
-            <template v-slot:opposite>
-              <span>{{format_dateNotime(item.DTLAST_DATE)}}</span>
-            </template>
-            <v-card  class="elevation-2 p-2" :style="'border-top: 8px solid ' + codeColor[index]+ ';'">
-              <v-card-title class="text-h6" style="color:#173053;">
-              </v-card-title>
-              <v-card-text>
-                <p class="font-weight-black" style="margin-bottom: 0px;color:#000000;">ขั้นตอน {{item.stepTitle}}</p>
-                <!-- <p style="margin-bottom: 0px; color:#173053;">ขั้นตอน {{item.stepTitle}}</p> -->
-                <p v-if="item.stepTitle !== 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;"> เวลาที่รับงาน {{momenTime(item.DTLAST_DATE)}}</p>
-                <p v-if="item.stepTitle !== 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;"> ผู้รับผิดชอบ {{item.empStep}}</p>
-                <p v-if="item.stepTitle !== 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;">เวลาการทำงาน {{item.Counttime}} นาที</p>
-                <p v-if="item.stepTitle === 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;">สรุปค่าใช้จ่าย {{item.totalPrice}} บาท</p>
-                <!-- <p style="margin-bottom: 0px;">วันที่เปลี่ยน {{format_dateNotime(item.DTLAST_DATE)}}</p> -->
-              </v-card-text>
+            <v-card class="p-3">
+              <v-timeline>
+                <v-timeline-item
+                  v-for="(item , index) in timelineitem" :key="index"
+                  :color="codeColor[index]"
+                  small
+                >
+                  <template v-slot:opposite>
+                    <span>{{format_dateNotime(item.DTLAST_DATE)}}</span>
+                  </template>
+                  <v-card  class="elevation-2 p-2" :style="'border-top: 8px solid ' + codeColor[index]+ ';'">
+                    <v-card-title class="text-h6" style="color:#173053;">
+                    </v-card-title>
+                    <v-card-text>
+                      <p class="font-weight-black" style="margin-bottom: 0px;color:#000000;">ขั้นตอน {{item.stepTitle}}</p>
+                      <!-- <p style="margin-bottom: 0px; color:#173053;">ขั้นตอน {{item.stepTitle}}</p> -->
+                      <p v-if="item.stepTitle !== 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;"> เวลาที่รับงาน {{momenTime(item.DTLAST_DATE)}}</p>
+                      <p v-if="item.stepTitle !== 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;"> ผู้รับผิดชอบ {{item.empStep}}</p>
+                      <p v-if="item.stepTitle !== 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;">เวลาการทำงาน {{item.Counttime}} นาที</p>
+                      <p v-if="item.stepTitle === 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;">สรุปค่าใช้จ่าย {{item.totalPrice}} บาท</p>
+                      <!-- <p style="margin-bottom: 0px;">วันที่เปลี่ยน {{format_dateNotime(item.DTLAST_DATE)}}</p> -->
+                    </v-card-text>
+                  </v-card>
+                </v-timeline-item>
+              </v-timeline>
+              <br>
+              <div class="text-center">
+                <v-btn
+                  small class="ma-2" color="#173053" dark
+                  @click="dialog = false"
+                >
+                  Close
+                </v-btn>
+              </div>
             </v-card>
-          </v-timeline-item>
-        </v-timeline>
-        <br>
-        <div class="text-center">
-          <v-btn
-            small class="ma-2" color="#173053" dark
-            @click="dialog = false"
-          >
-            Close
-          </v-btn>
-        </div>
-      </v-card>
-    </v-dialog>
+          </v-dialog>
         </v-row>
         <v-row>
           <v-col cols="12">
@@ -92,15 +92,56 @@
                 fab
                 small
                 dark
+                @click="getBookingData(item)"
+              >
+                <v-icon > mdi-account-details </v-icon>
+              </v-btn>
+              <v-btn
+                color="#173053"
+                fab
+                small
+                dark
                 @click="getJobitem(item) , dialog=true"
               >
-                <v-icon > mdi-account-convert </v-icon>
+                <v-icon > mdi-timeline-clock </v-icon>
               </v-btn>
             </template>
             </v-data-table>
           </v-card>
           </v-col>
         </v-row>
+        <v-dialog
+            v-model="dialogBooking"
+            persistent
+            max-width="600"
+          >
+            <v-card class="p-3">
+              <v-card-title>รายละเอียดนัดหมาย</v-card-title>
+                  <v-card-text class="text-start">
+                    <v-container>
+                      <h6 class="font-weight-bold">วันที่นัดหมาย : {{format_dateThai(booking.dueDate)}}</h6>
+                      <h6 class="font-weight-bold">ประเภทบริการ : {{booking.flowName}}</h6>
+                      <h6 class="font-weight-bold">สาขา : {{booking.masBranchName}}</h6>
+                      <v-row v-for="(item , index3) in bookingData" :key="index3">
+                        <v-col v-if="item.fieldValue !== ''" col="6" class="pb-0"><strong>{{item.fieldName}} : </strong> {{item.fieldValue}}</v-col>
+                      </v-row>
+                      <v-row>
+                        <h6 class="font-weight-bold" v-if="booking.remark">หมายเหตุเพิ่มเติม : {{booking.remark}}</h6>
+                      </v-row>
+                    </v-container>
+                  </v-card-text>
+              <br>
+              <div class="text-center">
+                <v-btn
+                  block
+                  small class="ma-2" color="error" dark
+                  @click="dialogBooking = false"
+                >
+                  ตกลง
+                </v-btn>
+              </div>
+            </v-card>
+          </v-dialog>
         </div>
     </v-main>
   </div>
@@ -130,6 +171,7 @@ export default {
         }
       ],
       dialog: false,
+      dialogBooking: false,
       session: this.$session.getAll(),
       shopId: this.$session.getAll().data.shopId,
       search: '',
@@ -155,7 +197,9 @@ export default {
         'rgb(255,212,91)',
         'rgb(238,108,77)',
         'rgb(41,50,65)'
-      ]
+      ],
+      booking: [],
+      bookingData: []
     }
   },
   async mounted () {
@@ -187,7 +231,41 @@ export default {
           console.log('error function addData : ', error)
         })
     },
+    async getBookingData (item) {
+      this.booking = []
+      this.bookingData = []
+      let urlApi = this.DNS_IP +
+            '/booking_view/get?shopId=' +
+            this.session.data.shopId +
+            '&jobNo=' +
+            item.refId
+      await axios
+        .get(urlApi)
+        .then(async response => {
+          console.log('getBookingData', response.data)
+          if (response.data.status === false) {
+            this.booking = []
+            this.bookingData = []
+            this.dialogBooking = false
+            this.$swal('ผิดพลาด', 'ไม่มีข้อมูลนัดหมาย', 'error')
+          } else {
+            this.booking = response.data[0]
+            await axios
+              .get(`${this.DNS_IP}/BookingData/get?shopId=${this.session.data.shopId}&jobNo=${item.refId}`)
+              .then(async responses => {
+                console.log('BookingData', responses.data)
+                if (responses.data.status === false) {
+                  this.bookingData = []
+                } else {
+                  this.bookingData = responses.data
+                }
+              })
+            this.dialogBooking = true
+          }
+        })
+    },
     async getJobitem (item) {
+      console.log('getJobitem', item)
       this.timelineitem = []
       await axios
         .get(this.DNS_IP + '/job_logCloseJob/' + item.refId).then((response) => {
