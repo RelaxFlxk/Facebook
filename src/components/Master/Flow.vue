@@ -14,7 +14,7 @@
               @click="(dialogAdd = true), validate('ADD'), (desserts = []), getCustomField()"
             >
               <v-icon left>mdi-text-box-plus</v-icon>
-              Add
+              เพิ่มประเภทบริการ
             </v-btn>
           </v-col>
         </v-row>
@@ -689,7 +689,7 @@
                           </v-icon>
                         </v-btn>
                         </div>
-                    <v-row justify="left">
+                    <v-row>
                       <!-- <v-col cols="5" class="text-center"  style="margin: auto 0;">
                         <v-col>
                           <v-img
@@ -817,7 +817,7 @@
                             </v-expansion-panel-header>
                             <v-expansion-panel-content>
                               <v-col cols="12">
-                              <v-row style="height: 50px" justify="center">
+                              <v-row style="height: 50px">
                                 <v-btn
                                   color="primary"
                                   dark
@@ -832,7 +832,7 @@
                                   เพิ่ม ช่องกรอกข้อมูล
                                 </v-btn>
                               </v-row>
-                              <v-row justify="center">
+                              <v-row>
                                 <v-data-table
                                   dense
                                   :headers="headers"
@@ -920,7 +920,7 @@
                           </v-expansion-panel>
                         </v-expansion-panels>
                         <v-col id="margin">
-                          <v-row justify="center">
+                          <v-row>
                             <v-btn
                               dark
                               elevation="2"
@@ -1167,8 +1167,10 @@
         <!-- dialog limitbookint -->
         <v-dialog v-model="dialoglimitbooking" max-width="70%" persistent >
           <v-card min-width="400px" min-height="500px" class="pa-1 " color="#F4F4F4">
+            <!-- <v-card-title>asdasdasdas</v-card-title> -->
             <v-container>
-            <div style="text-align: end;">
+            <div style="display: flex;justify-content: space-between;" class="ml-5">
+              <h2 class="font-weight-bold" style="color:#173053;">ตั้งค่าวันหยุด / ตั้งจัดการเวลา</h2>
             <v-btn
               fab
               small
@@ -1190,7 +1192,7 @@
                     v-model="valid_update"
                     lazy-validation
                   >
-                  <v-row >
+                  <v-row style="justify-content: space-between;">
                   <v-col cols="4">
                     <v-row>
                       <v-col cols="12">
@@ -1259,9 +1261,9 @@
             </v-row>
 
         <div class="text-center px-5 mb-5">
-          <v-sheet class="pa-3">
+          <v-sheet class="pa-0">
           <v-row class="mt-3">
-            <v-col cols="6" style="text-align: start;">
+            <v-col cols="6"  class="pt-0" style="text-align: start;">
             <v-btn
             small
             class="mb-n3"
@@ -1272,7 +1274,7 @@
                 <v-icon class="mr-2" small dark> mdi-clock-time-eight</v-icon>เพิ่มเวลาอัตโนมัติ
               </v-btn>
           </v-col>
-          <v-col cols="6" style="text-align: end;">
+          <v-col cols="6" class="pt-0" style="text-align: end;">
              <v-btn
              small
              class="mb-n3"
@@ -1283,7 +1285,7 @@
                 <v-icon class="mr-2" small dark>mdi-plus-box</v-icon>เพิ่มเวลานัดหมาย
               </v-btn>
           </v-col>
-          <v-col cols="12" class="mb-6"  style="text-align: center;">
+          <v-col cols="12" class="mb-0"  style="text-align: center;">
           <v-data-table
           disable-pagination
           hide-default-footer
@@ -1855,12 +1857,12 @@ export default {
       // End Form Config ADD EDIT
       // Data Table Config
       columns: [
-        { text: 'ID', value: 'flowId' },
-        { text: 'Name', value: 'flowName' },
+        // { text: 'ID', value: 'flowId' },
+        { text: 'ชื่อบริการ', value: 'flowName' },
         // { text: 'Field', value: 'flowfieldName' },
         { text: 'วันที่สร้าง', value: 'CREATE_DATE' },
         { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
-        { text: 'Action', value: 'action', sortable: false, align: 'center' }
+        { text: 'จัดการประเภทบริการ', value: 'action', sortable: false, align: 'center' }
       ],
       dataItem: [],
       validAdd: true,
@@ -2123,14 +2125,12 @@ export default {
       this.formUpdateLimitbooking.dateDayoffValue = JSON.stringify(dd)
     },
     allowedDates (val) {
-      console.log('val', val)
       // this.getMonth(this.pickerDate)
       if (this.formUpdateLimitbooking.dateDayoffValue !== null && this.formUpdateLimitbooking.dateDayoffValue.length > 0) {
         if (JSON.parse(this.formUpdateLimitbooking.dateDayoffValue).filter(el => { return el === new Date(val).getDay() }).length === 0) {
           return val
         }
       } else {
-        // console.log('val', val)
         return val
       }
     },
