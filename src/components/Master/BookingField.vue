@@ -1,6 +1,6 @@
 <template>
   <div>
-    <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
+    <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
     <v-main>
       <v-row>
         <v-col cols="6" class="text-left">

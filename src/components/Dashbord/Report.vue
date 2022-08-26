@@ -1,6 +1,6 @@
 <template >
   <div >
-    <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
+    <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
     <v-main>
       <div class="col-md-12 ml-sm-auto col-lg-12 px-4">
         <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
