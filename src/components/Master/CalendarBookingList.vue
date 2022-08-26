@@ -398,12 +398,12 @@ export default {
     // await this.getBookingData()
   },
   methods: {
-    async getDataReturn (text, date) {
+    async getDataReturn (text, date, branch, flow) {
       console.log('getDataReturn')
       this.getCustomFieldStart()
       await this.getDataFlow(text)
       await this.getDataBranch()
-      await this.getBookingList(text, date)
+      await this.getBookingList(text, date, branch, flow)
       this.$refs.calendar.checkChange()
     },
     prev () {

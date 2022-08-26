@@ -2508,22 +2508,24 @@
                           <v-col col="auto" class="text-ceter" v-if="item.userId === 'user-skip' || item.userId === '' || item.userId === null">
                              {{ item.cusName }}
                           </v-col>
-                          <v-col col="auto" class="text-ceter" v-else>
-                            <a @click.stop="openHistory(item)" style="cursor:hand"><u>{{ item.cusName }}</u></a>
-                          </v-col>
-                          <v-col col="auto" class="text-left">
-                            <v-btn
-                              fab
-                              dark
-                              x-small
-                              color="teal"
-                              @click="getTagData(), dialogTag = true, tagData = item.memberDataTag, bookNo = item.bookNo, memberId = item.memberId"
-                            >
-                              <v-icon dark>
-                                mdi-tag-plus
-                              </v-icon>
-                            </v-btn>
-                          </v-col>
+                          <template v-else>
+                            <v-col col="auto" class="text-ceter">
+                              <a @click.stop="openHistory(item)" style="cursor:hand"><u>{{ item.cusName }}</u></a>
+                            </v-col>
+                            <v-col col="auto" class="text-left">
+                              <v-btn
+                                fab
+                                dark
+                                x-small
+                                color="teal"
+                                @click="getTagData(), dialogTag = true, tagData = item.memberDataTag, bookNo = item.bookNo, memberId = item.memberId"
+                              >
+                                <v-icon dark>
+                                  mdi-tag-plus
+                                </v-icon>
+                              </v-btn>
+                            </v-col>
+                          </template>
                         </v-row>
                       </v-col>
                       <v-col cols="12" class="pt-0"  v-if="item.memberDataTag.length > 0">
@@ -6401,7 +6403,7 @@ export default {
       if (this.$session.id() !== undefined) {
         console.log('getDataCalendaBooking')
         try {
-          await this.$refs.CalendarBooking.getDataReturn('&checkOnsite=is null', this.dateStart)
+          await this.$refs.CalendarBooking.getDataReturn('&checkOnsite=is null', this.dateStart, this.masBranchID, this.flowSelect)
         } catch (e) { console.log(e) }
       // this.$refs.CalendarBooking.getDataFlow()
       // this.$refs.CalendarBooking.getDataBranch()
