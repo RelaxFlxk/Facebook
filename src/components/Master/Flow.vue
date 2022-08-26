@@ -1166,7 +1166,7 @@
 
         <!-- dialog limitbookint -->
         <v-dialog v-model="dialoglimitbooking" max-width="70%" persistent >
-          <v-card min-width="400px" min-height="500px" class="pa-1 pl-5" color="#F4F4F4">
+          <v-card min-width="400px" min-height="500px" class="pa-1 " color="#F4F4F4">
             <v-container>
             <div style="text-align: end;">
             <v-btn
@@ -1190,7 +1190,7 @@
                     v-model="valid_update"
                     lazy-validation
                   >
-                  <v-row>
+                  <v-row >
                   <v-col cols="4">
                     <v-row>
                       <v-col cols="12">
@@ -1242,7 +1242,7 @@
                       vertical
                     ></v-divider>
       <v-col cols="7">
-      <v-card class="pa-3 mb-5">
+      <v-card class="pa-3 mb-5" min-height="675px">
         <h4 class="font-weight-bold mt-2">จัดการเวลานัดหมาย</h4>
           <v-row align="center" class="ma-0">
               <v-checkbox
@@ -1260,7 +1260,6 @@
 
         <div class="text-center px-5 mb-5">
           <v-sheet class="pa-3">
-            <strong class=" font-weight-bold text-center">เพิ่ม / แก้ไข เวลานัดหมาย</strong>
           <v-row class="mt-3">
             <v-col cols="6" style="text-align: start;">
             <v-btn
@@ -1285,7 +1284,15 @@
               </v-btn>
           </v-col>
           <v-col cols="12" class="mb-6"  style="text-align: center;">
-          <v-data-table disable-pagination hide-default-footer :headers="columnsAddTime" :items="dataItemAddTime" :search="search" class="elevation-1"  min-height="300px">
+          <v-data-table
+          disable-pagination
+          hide-default-footer
+          :headers="columnsAddTime"
+          :items="dataItemAddTime"
+          :search="search"
+          disable-sort
+          class="elevation-1"
+          min-height="300px">
           <!-- <template v-slot:top>
             <v-toolbar color="white"> -->
               <!-- <div class="text-left">
@@ -1470,19 +1477,9 @@
                 </v-container>
               </v-card-text>
                 <div class="text-center">
-                  <!-- <v-btn
-                  elevation="2"
-                  x-large
-                  color="blue darken-1"
-                  text
-                  @click="dialoglimitbooking = false, clearLimit()"
-                >
-                  <v-icon left> mdi-cancel</v-icon>
-                  ปิด
-                </v-btn> -->
                   <v-btn
-                  width="70%"
-                  class="ma-6"
+                  width="100%"
+                  class="ma-0 mb-2"
                   elevation="2"
                   large
                   dark
@@ -1643,7 +1640,7 @@ export default {
       columnsAddTime: [
         { text: 'แสดงเวลา', value: 'text' },
         { text: 'เวลา', value: 'value' },
-        { text: 'จำนวนนัดหมาย', value: 'limitBooking', align: 'center', width: '100px' },
+        { text: 'จำนวนนัดหมาย', value: 'limitBooking', align: 'center', width: '200px' },
         // { text: 'เรียงตำแหน่ง', value: 'actions1', align: 'center' },
         { text: 'จัดการเวลา', value: 'actions2', align: 'center', width: '100px' }
       ],
