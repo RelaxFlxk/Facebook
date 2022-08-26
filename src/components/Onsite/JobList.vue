@@ -1,6 +1,6 @@
 <template>
   <div>
-    <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
+    <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
     <v-main>
       <div class="px-lg-4" style="overflow-x: hidden;">
         <v-row class="no-gutters">

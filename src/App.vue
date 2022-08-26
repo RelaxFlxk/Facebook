@@ -1,12 +1,17 @@
 <template>
  <v-app>
+   <Sidebar v-if="$router.currentRoute.name !== 'Login' "/>
    <router-view/>
   </v-app>
 </template>
 
 <script>
+import Sidebar from './components/Sidebar.vue'
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    Sidebar
+  }
 }
 </script>
 

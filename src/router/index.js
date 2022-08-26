@@ -16,6 +16,7 @@ export default new Router({
   mode: 'history',
   routes: [{
     path: '*',
+    name: 'Login',
     component: Core.Login
   },
   {
