@@ -189,7 +189,7 @@ table tr:last-child td:last-child {
 .v-input--selection-controls__input>.v-icon {
   color: var(--nav-bg) ;
 }
-.v-picker {
+/* .v-picker {
   background-color: var(--date-picker-footer) !important;
 }
 .v-date-picker-header {
@@ -203,7 +203,7 @@ table tr:last-child td:last-child {
 }
 .v-date-picker-table > table > tbody {
   background-color: var(--date-picker-table-body);
-}
+} */
 
 .v-list-group__header {
   background-color: var(--nav-bg) !important;
@@ -267,9 +267,9 @@ table tr:last-child td:last-child {
 .btn {
   color: var(--btn-general-color);
 }
-.v-date-picker-table .v-btn {
+/* .v-date-picker-table .v-btn {
    color: #eeeeee !important;
-}
+} */
 .nav-button {
   color: var(--nav-text);
   background-color: var(--nav-bg);

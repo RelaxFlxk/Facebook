@@ -20,29 +20,35 @@
         </v-row>
         <v-row>
           <!-- step -->
-          <v-dialog v-model="dialogStep" persistent max-width="70%">
+          <v-dialog v-model="dialogStep" persistent max-width="40%">
             <v-card>
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
                 <v-card-text>
                   <v-container>
-                    <v-col class="text-right">
-                      <v-icon
-                        small
-                        color="#173053"
-                        @click="(dialogStep = false), clearData()"
-                        >mdi-close</v-icon
-                      >
-                    </v-col>
-                    <v-row class="mb-6" justify="center">
+                    <div style="text-align: end;">
+                        <v-btn
+                          fab
+                          small
+                          dark
+                          color="#F3F3F3"
+                          @click="(dialogStep = false), clearData()"
+                        >
+                          <v-icon dark
+                          color="#FE4A01 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                    </div>
+                    <!-- <v-row class="mb-6" justify="center">
                       <v-col md="auto">
                         <v-img
                         :src="require('@/assets/FlowStep.svg')"
                       ></v-img>
                       </v-col>
-                    </v-row>
+                    </v-row> -->
                     <v-row justify="center">
                       <v-col md="auto">
-                        <h1 style="font-size:10vw;" class="underline-06">{{ formUpdate.flowName }}</h1>
+                        <h2 class="font-weight-bold" style="color:#173053;">{{ formUpdate.flowName }}</h2>
                       </v-col>
                       <!-- ADD steptitle-->
                       <v-dialog
@@ -126,7 +132,7 @@
                       <v-dialog
                         v-model="dialogEditStep"
                         persistent
-                        max-width="50%"
+                        max-width="30%"
                       >
                         <v-card>
                           <v-form
@@ -136,13 +142,20 @@
                           >
                             <v-card-text>
                               <v-container>
-                                <v-col class="text-right">
-                                  <v-icon
-                                    color="#173053"
-                                    @click="dialogEditStep = false"
-                                    >mdi-close</v-icon
-                                  >
-                                </v-col>
+                                <div style="text-align: end;">
+                                    <v-btn
+                                      fab
+                                      small
+                                      dark
+                                      color="#F3F3F3"
+                                      @click="dialogEditStep = false"
+                                    >
+                                      <v-icon dark
+                                      color="#FE4A01 ">
+                                        mdi-close
+                                      </v-icon>
+                                    </v-btn>
+                                </div>
                                 <v-row justify="center">
                                   <v-col
                                     cols="12"
@@ -158,36 +171,26 @@
                                         ></v-img>
                                       </v-col>
                                     </center>
-                                    <center>
-                                      <v-col>
-                                        <v-img
-                                          id="v_text_edits"
-                                          :src="
-                                            require('@/assets/GroupEditTitle.svg')
-                                          "
-                                        ></v-img>
-                                      </v-col>
-                                    </center>
                                     <v-col cols="12">
-                                      <v-row style="height: 55px">
-                                        <v-subheader id="subtext"
-                                          >ขั้นตอนบริการ</v-subheader
-                                        >
+                                      <v-row >
+                                        <h3 class="font-weight-bold" style="color:#173053;">ขั้นตอนบริการ</h3>
                                       </v-row>
-                                      <v-row style="height: 70px">
+                                      <v-row >
                                         <v-text-field
                                           v-model="formUpdateStep.stepTitle"
                                           dense
+                                          outlined
                                           required
                                         ></v-text-field>
                                       </v-row>
                                     </v-col>
-                                    <v-col id="margin">
+                                    <v-col >
                                       <v-row justify="center">
                                         <v-btn
                                           dark
                                           elevation="2"
                                           x-large
+                                          block
                                           color="#173053"
                                           @click="editStepTitle()"
                                         >
@@ -342,11 +345,26 @@
           <!-- end  -->
 
           <!-- add  -->
-          <v-dialog v-model="dialogAdd" persistent max-width="30%">
+          <v-dialog v-model="dialogAdd" persistent max-width="50%">
             <v-card>
               <v-form ref="form_add" v-model="validAdd" lazy-validation>
                 <v-card-text>
                   <v-container>
+                    <div class="text-end">
+                        <v-btn
+                        class="mx-2"
+                        fab
+                        small
+                        dark
+                        color="white"
+                        style="color:red;font-size:20px;"
+                        @click="dialogReConfirm = false, paymentImge = null"
+                        >
+                        X
+                        </v-btn>
+                    </div>
+                        <h3 class="text-center" style="color:#1B437C;font-weight: bold;">แนบหลักฐานการโอนเงิน</h3>
+                        <br>
                     <v-col class="text-right">
                       <!-- <v-icon
                         background-color="#F3F3F3"
@@ -379,20 +397,19 @@
                         </v-col>
                       </v-col> -->
 
-                      <v-col cols="12" class="v-margit_text_add mt-1">
-                        <v-col class="text-center">
+                      <v-col cols="10" class="v-margit_text_add mt-1">
+                        <v-col class="text-left py-0">
                           <!-- <v-img
-                            class="v_text_add"
-                            :src="require('@/assets/Grouptitle.svg')"
+                            id="v_text_edits"
+                            :src="require('@/assets/GroupEditTitle.svg')"
                           ></v-img> -->
-                          <h2 class="font-weight-bold" style="color:#173053;">เพิ่มข้อมูล</h2>
+                          <h2 class="font-weight-bold"  style="color:#173053;">เพิ่มข้อมูล</h2>
                         </v-col>
                         <v-col cols="12" class="pb-0">
                           <v-text-field
                             v-model="formAdd.flowName"
                             label="ชื่อขั้นตอน (ภาษาไทย)"
                             outlined
-                            dense
                             required
                             :rules="[rules.required]"
                           ></v-text-field>
@@ -400,16 +417,17 @@
                             v-model="formAdd.flowNameEn"
                             label="ชื่อขั้นตอน (ภาษาอังกฤษ)"
                             outlined
-                            dense
                             required
                             :rules="[rules.required]"
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="12" class="pb-0 pt-0 mb-4">
+                        <!-- <v-col cols="12" class="pb-0 pt-0 mb-4">
                           <v-row class="mb-3">
                             <v-col class='d-flex justify-center'>
                               <v-checkbox
                               label="แจ้งยอดค่าชำระ"
+                              :on-icon="'mdi-check-circle'"
+                              :off-icon="'mdi-checkbox-blank-circle-outline'"
                               false-value="False"
                               true-value="True"
                               v-model="formAdd.checkPayment"
@@ -419,6 +437,8 @@
                             <v-col >
                               <v-checkbox
                                 label="Onsite"
+                              :on-icon="'mdi-check-circle'"
+                              :off-icon="'mdi-checkbox-blank-circle-outline'"
                                 false-value="False"
                                 true-value="True"
                                 v-model="formAdd.checkOnsite"
@@ -428,6 +448,8 @@
                             <v-col>
                               <v-checkbox
                                 label="เงินมัดจำ"
+                                :on-icon="'mdi-check-circle'"
+                                :off-icon="'mdi-checkbox-blank-circle-outline'"
                                 false-value="False"
                                 true-value="True"
                                 v-model="formAdd.checkDeposit"
@@ -435,6 +457,44 @@
                                 hide-details
                               ></v-checkbox>
                             </v-col>
+                          </v-row>
+                        </v-col> -->
+                          <v-col cols="12" class="pb-0 pt-0 mb-2">
+                          <v-row>
+                            <v-col style="display: flex;justify-content: center;">
+                            <v-checkbox
+                            label="แจ้งยอดค่าชำระ"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            false-value="False"
+                            color="#1B437C"
+                            true-value="True"
+                            v-model="formAdd.checkPayment"
+                          ></v-checkbox>
+                          </v-col>
+                          <v-col style="display: flex;justify-content: center;">
+                            <v-checkbox
+                            label="Onsite"
+                            false-value="False"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            color="#1B437C"
+                            true-value="True"
+                            v-model="formAdd.checkOnsite"
+                          ></v-checkbox>
+                          </v-col>
+                          <v-col style="display: flex;justify-content: center;">
+                            <v-checkbox
+                            label="เงินมัดจำ"
+                            false-value="False"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            color="#1B437C"
+                            true-value="True"
+                            v-model="formAdd.checkDeposit"
+                            @change="formAdd.amountDeposit = 0"
+                          ></v-checkbox>
+                          </v-col>
                           </v-row>
                         </v-col>
                         <v-col cols="12" class="pb-0 pt-0">
@@ -591,6 +651,7 @@
                             dark
                             elevation="2"
                             large
+                            block
                             color="#173053"
                             :disabled="!validAdd"
                             @click="addData()"
@@ -884,30 +945,46 @@
           <!-- end  -->
 
           <!-- delete -->
-          <v-dialog v-model="dialogDelete" max-width="355px">
+          <v-dialog v-model="dialogDelete" max-width="45%">
             <v-card>
-              <br />
-              <v-row class="mb-6" justify="center">
+              <v-container>
+                    <div style="text-align: end;">
+                        <v-btn
+                          fab
+                          small
+                          dark
+                          color="#F3F3F3"
+                          @click="dialogDelete = false"
+                        >
+                          <v-icon dark
+                          color="#FE4A01 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                    </div>
+              </v-container>
+              <!-- <v-row class="mb-6" justify="center">
                 <v-col md="auto">
                   <v-img
                     :src="require('@/assets/GroupDelete.png')"
-                    class="a"
-                    style="width:55.05px;height:63px"
+
                   ></v-img>
                 </v-col>
-              </v-row>
-              <v-col class="text-center">
+              </v-row> -->
+              <!-- <v-col class="text-center">
                 <span class="headline">ลบข้อมูลนี้</span>
-              </v-col>
-              <v-card-text>
+              </v-col> -->
+              <v-card-text class="pa-0 px-4">
                 <v-container>
                   <v-row>
                     <v-col cols="12">
-                      <v-row style="height: 35px">
-                        <v-subheader id="subtext">รหัส Filed</v-subheader>
+                      <v-row>
+                        <h3 class="font-weight-bold" style="color:#173053;">ชื่อประเภทบริการ</h3>
                       </v-row>
-                      <v-row style="height: 70px">
+                      <v-row >
                         <v-text-field
+                        dense
+                          outlined
                           v-model="formUpdate.flowName"
                           readonly
                         ></v-text-field>
@@ -917,26 +994,16 @@
                 </v-container>
               </v-card-text>
               <v-col class="text-center">
-                <v-spacer></v-spacer>
                 <v-btn
                   dark
                   elevation="2"
-                  x-large
+                  block
+                  large
                   color="#FD8087"
                   @click="deleteData()"
                 >
                   <v-icon left>mdi-checkbox-marked-circle</v-icon>
                   ลบ
-                </v-btn>
-                <v-btn
-                  dark
-                  elevation="2"
-                  x-large
-                  color="#1B437C"
-                  @click="dialogDelete = false"
-                >
-                  <v-icon left> mdi-cancel</v-icon>
-                  ยกเลิก
                 </v-btn>
               </v-col>
             </v-card>
@@ -944,21 +1011,27 @@
           <!-- end delete -->
 
           <!-- set condition -->
-          <v-dialog v-model="dialogCondition" max-width="80%" persistent>
+          <v-dialog v-model="dialogCondition" max-width="40%" persistent>
             <v-card>
-              <br />
-              <!-- <v-row class="mb-6" justify="center">
-                <v-col md="auto">
-                  <v-img
-                    :src="require('@/assets/GroupDelete.png')"
-                    class="a"
-                    style="width:55.05px;height:63px"
-                  ></v-img>
-                </v-col>
-              </v-row> -->
+              <v-container>
+                <div style="text-align: end;">
+                        <v-btn
+                          fab
+                          small
+                          dark
+                          color="#F3F3F3"
+                          @click="dialogCondition = false, clearCondition()"
+                        >
+                          <v-icon dark
+                          color="#FE4A01 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                    </div>
               <v-col class="text-center">
-                <span class="headline">เงื่อนไขการให้บริการ</span>
+                <h2 class="font-weight-bold" style="color:#173053;">เงื่อนไขการให้บริการ</h2>
               </v-col>
+              </v-container>
               <v-card-text v-if="dataConditionReady">
                 <v-container>
                   <v-row>
@@ -1043,23 +1116,14 @@
                 <v-btn
                   class="text-white"
                   elevation="2"
-                  x-large
+                  block
+                  large
                   :disabled="!validCondition"
                   color="#1B437C"
                   @click="addDataCondition()"
                 >
                   <v-icon left>mdi-checkbox-marked-circle</v-icon>
                   บันทึกข้อมูล
-                </v-btn>
-                <v-btn
-                  dark
-                  elevation="2"
-                  x-large
-                  color="error"
-                  @click="dialogCondition = false, clearCondition()"
-                >
-                  <v-icon left> mdi-cancel</v-icon>
-                  ยกเลิก
                 </v-btn>
               </v-col>
               <v-card-text v-if="!dataConditionReady">
@@ -1101,11 +1165,24 @@
           <!-- end condition -->
 
         <!-- dialog limitbookint -->
-        <v-dialog v-model="dialoglimitbooking" persistent>
-          <v-card min-width="400px" min-height="500px" class="pa-5">
-            <v-card-title>
-                <span class="headline">เพิ่ม / แก้ไขเวลา</span>
-              </v-card-title>
+        <v-dialog v-model="dialoglimitbooking" max-width="70%" persistent >
+          <v-card min-width="400px" min-height="500px" class="pa-1 pl-5" color="#F4F4F4">
+            <v-container>
+            <div style="text-align: end;">
+            <v-btn
+              fab
+              small
+              dark
+              color="#F3F3F3"
+              @click="dialoglimitbooking = false, clearLimit()"
+            >
+              <v-icon dark
+              color="#FE4A01 ">
+                mdi-close
+              </v-icon>
+            </v-btn>
+            </div>
+            </v-container>
               <v-card-text>
                 <v-container>
                   <v-form
@@ -1113,7 +1190,168 @@
                     v-model="valid_update"
                     lazy-validation
                   >
-                  <v-card class="pa-5 mb-5">
+                  <v-row>
+                  <v-col cols="4">
+                    <v-row>
+                      <v-col cols="12">
+                        <v-card class="pa-3" >
+                          <!-- <strong class="font-weight-bold">วันหยุดทั่วไปของบริษัท</strong> -->
+                          <h4 class="font-weight-bold">วันหยุดทั่วไปของบริษัท</h4>
+                          <v-select
+                          class="mt-3"
+                          v-model="formUpdateLimitbooking.dateDayoffText"
+                          :items="itemDateStop"
+                          small-chips
+                          dense
+                          label="เลือกวันหยุด"
+                          multiple
+                          outlined
+                          @change="changedateDayoff()"
+                        ></v-select>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12">
+                        <v-card class="pa-6">
+                              <!-- <strong class="font-weight-bold">วันหยุดประจำปีของบริษัท </strong> -->
+                              <h4 class="font-weight-bold mt-n2 ml-n2">วันหยุดประจำปีของบริษัท</h4>
+                              <v-select
+                              class="ma-0 mt-5"
+                                v-model="formUpdateLimitbooking.typeDayCustom"
+                                :item-text="typeDayCustomitem.text"
+                                :items="typeDayCustomitem"
+                                label="ประเภทของวันหยุด"
+                                dense
+                                outlined
+                              ></v-select>
+                              <v-date-picker
+                                v-model="formUpdateLimitbooking.dateDayCustom"
+                                :allowed-dates="allowedDates"
+                                multiple
+                                elevation="1"
+                                full-width
+                                class="mt-0"
+                              ></v-date-picker>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                    </v-col>
+                    <v-divider
+                    class="mx-4"
+                      vertical
+                    ></v-divider>
+      <v-col cols="7">
+      <v-card class="pa-3 mb-5">
+        <h4 class="font-weight-bold mt-2">จัดการเวลานัดหมาย</h4>
+          <v-row align="center" class="ma-0">
+              <v-checkbox
+                @click="chekshowTime()"
+                false-value="False"
+                true-value="True"
+                :on-icon="'mdi-check-circle'"
+                :off-icon="'mdi-checkbox-blank-circle-outline'"
+                label="ต้องการใช้งานการจำกัดคิวนัดหมาย"
+                v-model="formUpdateLimitbooking.limitBookingCheck"
+                hide-details
+                class="shrink ml-6 mr-0 mt-0 mb-2"
+              ></v-checkbox>
+            </v-row>
+
+        <div class="text-center px-5 mb-5">
+          <v-sheet class="pa-3">
+            <strong class=" font-weight-bold text-center">เพิ่ม / แก้ไข เวลานัดหมาย</strong>
+          <v-row class="mt-3">
+            <v-col cols="6" style="text-align: start;">
+            <v-btn
+            small
+            class="mb-n3"
+                color="teal"
+                dark
+                @click="presetTime()"
+              >
+                <v-icon class="mr-2" small dark> mdi-clock-time-eight</v-icon>เพิ่มเวลาอัตโนมัติ
+              </v-btn>
+          </v-col>
+          <v-col cols="6" style="text-align: end;">
+             <v-btn
+             small
+             class="mb-n3"
+              style="text-align: end;"
+                color="#173053"
+                dark
+                @click="addNewNew">
+                <v-icon class="mr-2" small dark>mdi-plus-box</v-icon>เพิ่มเวลานัดหมาย
+              </v-btn>
+          </v-col>
+          <v-col cols="12" class="mb-6"  style="text-align: center;">
+          <v-data-table disable-pagination hide-default-footer :headers="columnsAddTime" :items="dataItemAddTime" :search="search" class="elevation-1"  min-height="300px">
+          <!-- <template v-slot:top>
+            <v-toolbar color="white"> -->
+              <!-- <div class="text-left">
+              <v-btn
+                  color="teal"
+                  elevation="2"
+                  rounded
+                  small
+                  dark
+                  @click="presetTime()"
+                >
+                  แบบร่าง เวลา
+                </v-btn>
+              </div>
+              <div class="text-right">
+
+                <v-btn
+                  small
+                  color="primary"
+                  class="ml-2 white--text"
+                  @click="addNewNew">
+                  <v-icon dark>mdi-plus</v-icon>เพิ่มเวลานัดหมาย
+                </v-btn>
+              </div> -->
+            <!-- </v-toolbar>
+          </template> -->
+          <template v-slot:[`item.text`]="{ item }">
+            <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.text" :counter="50" maxlength="50" :hide-details="true" dense single-line :autofocus="true" v-if="item.id === editedItemNew.id"></v-text-field>
+            <span v-else>{{item.text}}</span>
+          </template>
+          <template v-slot:[`item.value`]="{ item }">
+            <v-text-field class="pa-0 ma-0" placeholder="HH:mm" filled v-model="editedItemNew.value" v-mask="'##:##'" :hide-details="true" dense single-line v-if="item.id === editedItemNew.id" ></v-text-field>
+            <span v-else>{{item.value}}</span>
+          </template>
+          <template v-slot:[`item.limitBooking`]="{ item }">
+            <div v-if="item.id === editedItemNew.id" >
+              <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" dense single-line v-if="formUpdateLimitbooking.limitBookingCheck === 'True'" ></v-text-field>
+              <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" disabled dense single-line v-else></v-text-field>
+            </div>
+            <span v-else>{{item.limitBooking}}</span>
+          </template>
+          <template v-slot:[`item.actions2`]="{ item }">
+            <div class="pa-0 ma-0" v-if="item.id === editedItemNew.id">
+              <v-icon color="red" class="mr-3" @click="closeNew">
+                mdi-window-close
+              </v-icon>
+              <v-icon color="green"  @click="saveNew">
+                mdi-content-save
+              </v-icon>
+            </div>
+            <div v-else>
+              <v-icon color="green" class="mr-3" @click="editItemNew(item)">
+                mdi-pencil
+              </v-icon>
+              <v-icon color="red" @click="deleteItemNew(item)">
+                mdi-delete
+              </v-icon>
+            </div>
+          </template>
+        </v-data-table>
+          </v-col>
+          </v-row>
+            </v-sheet>
+          </div>
+    </v-card>
+                      <!-- <v-card class="pa-5 mb-5">
                     <v-row>
                     <v-col cols="3">
                       <v-text-field
@@ -1185,9 +1423,7 @@
                       </v-btn>
                     </v-col>
                     <v-col cols="7">
-                      <!-- <h4 class="text-center">ต้องการตั้ง Limit การจอง</h4> -->
                       <v-row align="center" class="ma-5">
-                        <!-- <p class="pb-3">ตั้ง Limit การนัดหมาย</p> -->
                         <v-checkbox
                           @click="chekshowTime()"
                           false-value="False"
@@ -1227,58 +1463,14 @@
                       </v-data-table>
                     </v-col>
                   </v-row>
-                  </v-card>
-                   <v-row>
-                    <v-col cols="12">
-                      <v-card class="pa-3" >
-                        <strong >วันหยุดทั่วไปของบริษัท</strong>
-                        <v-select
-                        class="mt-8"
-                        v-model="formUpdateLimitbooking.dateDayoffText"
-                        :items="itemDateStop"
-                        small-chips
-                        dense
-                        label="เลือกวันหยุด"
-                        multiple
-                        outlined
-                        @change="changedateDayoff()"
-                      ></v-select>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col cols="12">
-                      <v-card class="pa-6">
-                        <v-row>
-                          <v-col cols="6">
-                            <strong>วันหยุดประจำปีของบริษัท </strong>
-                          </v-col>
-                          <v-col cols="6">
-                            <v-select
-                              v-model="formUpdateLimitbooking.typeDayCustom"
-                              :item-text="typeDayCustomitem.text"
-                              :items="typeDayCustomitem"
-                              label="ประเภทของวันหยุด"
-                              dense
-                              outlined
-                            ></v-select>
-                          </v-col>
-                        </v-row>
-                        <v-date-picker
-                          v-model="formUpdateLimitbooking.dateDayCustom"
-                          :allowed-dates="allowedDates"
-                          multiple
-                          full-width
-                          class="mt-4"
-                        ></v-date-picker>
-                      </v-card>
+                      </v-card> -->
                     </v-col>
                   </v-row>
                   </v-form>
                 </v-container>
               </v-card-text>
-                <div class="text-right">
-                  <v-btn
+                <div class="text-center">
+                  <!-- <v-btn
                   elevation="2"
                   x-large
                   color="blue darken-1"
@@ -1287,17 +1479,19 @@
                 >
                   <v-icon left> mdi-cancel</v-icon>
                   ปิด
-                </v-btn>
+                </v-btn> -->
                   <v-btn
+                  width="70%"
+                  class="ma-6"
                   elevation="2"
-                  x-large
-                  color="success"
-                  text
-                 :disabled="!valid_update"
+                  large
+                  dark
+                  color="#173053"
+                  :disabled="!valid_update"
                   @click="EditlimitBooking()"
                 >
                   <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                  แก้ไข
+                  บันทึก
                 </v-btn>
                 </div>
           </v-card>
@@ -1449,9 +1643,9 @@ export default {
       columnsAddTime: [
         { text: 'แสดงเวลา', value: 'text' },
         { text: 'เวลา', value: 'value' },
-        { text: 'Limit Booking', value: 'limitBooking', align: 'center' },
+        { text: 'จำนวนนัดหมาย', value: 'limitBooking', align: 'center', width: '100px' },
         // { text: 'เรียงตำแหน่ง', value: 'actions1', align: 'center' },
-        { text: 'จัดการเวลา', value: 'actions2', align: 'center' }
+        { text: 'จัดการเวลา', value: 'actions2', align: 'center', width: '100px' }
       ],
       flowId: '',
       dataCondition: [],
@@ -1676,7 +1870,45 @@ export default {
       validUpdate: true,
       validCondition: true,
       editedIndex: -1,
-      checkOnsite: ''
+      checkOnsite: '',
+      search: '',
+      headersNew: [
+        {
+          text: 'Dessert (100g serving)',
+          value: 'name',
+          sortable: false
+        },
+        {
+          text: 'Calories',
+          value: 'calories',
+          sortable: false
+        },
+        { text: 'Action', value: 'actions', sortable: false, align: 'center' }
+      ],
+      dessertsNew: [{
+        id: 1,
+        name: 'Frozen Yogurt',
+        calories: 120
+      },
+      {
+        id: 2,
+        name: 'Ice cream sandwich',
+        calories: 200
+      }
+      ],
+      editedIndexNew: -1,
+      editedItemNew: {
+        id: 0,
+        text: '',
+        value: '',
+        limitBooking: 0
+      },
+      defaultItemNew: {
+        id: 0,
+        text: '',
+        value: '',
+        limitBooking: 0
+      }
       // End Data Table Config
     }
   },
@@ -1688,18 +1920,55 @@ export default {
     await this.getBookingField()
   },
   methods: {
+    editItemNew (item) {
+      console.log('item', item)
+      console.log('this.dataItemAddTime', this.dataItemAddTime)
+      this.editedIndexNew = this.dataItemAddTime.indexOf(item)
+      this.editedItemNew = Object.assign({}, item)
+    },
+
+    deleteItemNew  (item) {
+      const index = this.dataItemAddTime.indexOf(item)
+      this.dataItemAddTime.splice(index, 1)
+    },
+
+    closeNew  () {
+      setTimeout(() => {
+        this.editedItemNew = Object.assign({}, this.defaultItemNew)
+        this.editedIndexNew = -1
+      }, 300)
+    },
+    addNewNew  () {
+      const addObj = Object.assign({}, this.defaultItemNew)
+      addObj.id = this.dataItemAddTime.length + 1
+      this.dataItemAddTime.unshift(addObj)
+      this.editItemNew(addObj)
+    },
+    saveNew  () {
+      if (this.editedIndexNew > -1) {
+        Object.assign(this.dataItemAddTime[this.editedIndexNew], this.editedItemNew)
+      }
+      this.dataItemAddTime.sort(function (a, b) {
+        return a.value.localeCompare(b.value)
+      })
+      this.closeNew()
+    },
     presetTime () {
-      this.dataItemAddTime = [{'value': '08:00', 'text': '08:00', 'limitBooking': ''}, {'value': '08:30', 'text': '08:30', 'limitBooking': ''}, {'value': '09:00', 'text': '09:00', 'limitBooking': ''}, {'value': '09:30', 'text': '09:30', 'limitBooking': ''}, {'value': '10:00', 'text': '10:00', 'limitBooking': ''}, {'value': '10:30', 'text': '10:30', 'limitBooking': ''}, {'value': '11:00', 'text': '11:00', 'limitBooking': ''}, {'value': '11:30', 'text': '11:30', 'limitBooking': ''}, {'value': '12:00', 'text': '12:00', 'limitBooking': ''}, {'value': '12:30', 'text': '12:30', 'limitBooking': ''}, {'value': '13:00', 'text': '13:00', 'limitBooking': ''}, {'value': '13:30', 'text': '13:30', 'limitBooking': ''}, {'value': '14:00', 'text': '14:00', 'limitBooking': ''}, {'value': '14:30', 'text': '14:30', 'limitBooking': ''}, {'value': '15:00', 'text': '15:00', 'limitBooking': ''}, {'value': '15:30', 'text': '15:30', 'limitBooking': ''}, {'value': '16:00', 'text': '16:00', 'limitBooking': ''}, {'value': '16:30', 'text': '16:30', 'limitBooking': ''}, {'value': '17:00', 'text': '17:00', 'limitBooking': ''}]
+      this.dataItemAddTime = [{'id': 1, 'value': '08:00', 'text': '08:00', 'limitBooking': ''}, {'id': 2, 'value': '08:30', 'text': '08:30', 'limitBooking': ''}, {'id': 3, 'value': '09:00', 'text': '09:00', 'limitBooking': ''}, {'id': 4, 'value': '09:30', 'text': '09:30', 'limitBooking': ''}, {'id': 5, 'value': '10:00', 'text': '10:00', 'limitBooking': ''}, {'id': 6, 'value': '10:30', 'text': '10:30', 'limitBooking': ''}, {'id': 7, 'value': '11:00', 'text': '11:00', 'limitBooking': ''}, {'id': 8, 'value': '11:30', 'text': '11:30', 'limitBooking': ''}, {'id': 9, 'value': '12:00', 'text': '12:00', 'limitBooking': ''}, {'id': 10, 'value': '12:30', 'text': '12:30', 'limitBooking': ''}, {'id': 11, 'value': '13:00', 'text': '13:00', 'limitBooking': ''}, {'id': 12, 'value': '13:30', 'text': '13:30', 'limitBooking': ''}, {'id': 13, 'value': '14:00', 'text': '14:00', 'limitBooking': ''}, {'id': 14, 'value': '14:30', 'text': '14:30', 'limitBooking': ''}, {'id': 15, 'value': '15:00', 'text': '15:00', 'limitBooking': ''}, {'id': 16, 'value': '15:30', 'text': '15:30', 'limitBooking': ''}, {'id': 17, 'value': '16:00', 'text': '16:00', 'limitBooking': ''}, {'id': 18, 'value': '16:30', 'text': '16:30', 'limitBooking': ''}, {'id': 19, 'value': '17:00', 'text': '17:00', 'limitBooking': ''}]
     },
     EditlimitBooking () {
-      if (this.formUpdateLimitbooking.limitBookingCheck === 'True') {
-        if (this.dataItemAddTime.filter(el => { return el.limitBooking === '' }).length === 0) {
-          this.EditlimitBookingSubmit()
+      if (this.dataItemAddTime.filter(el => { return el.value === '' }).length === 0) {
+        if (this.formUpdateLimitbooking.limitBookingCheck === 'True') {
+          if (this.dataItemAddTime.filter(el => { return el.limitBooking === '' }).length === 0) {
+            this.EditlimitBookingSubmit()
+          } else {
+            this.$swal('ผิดพลาด', 'กรุณาเลือก ใส่จำนวน Limit Booking ให้ครบ เนื่องจาก เปิดใช้งาน Limit การจอง', 'error')
+          }
         } else {
-          this.$swal('ผิดพลาด', 'กรุณาเลือก ใส่จำนวน Limit Booking ให้ครบ เนื่องจากท่านได้เลือกที่จะ ตั้ง Limit การจอง', 'error')
+          this.EditlimitBookingSubmit()
         }
       } else {
-        this.EditlimitBookingSubmit()
+        this.$swal('ผิดพลาด', 'กรุณาเลือก กรอกเวลาให้ครบ', 'error')
       }
     },
     async EditlimitBookingSubmit () {
@@ -1781,6 +2050,8 @@ export default {
               this.dataItemAddTime = []
             } else {
               let setTime = JSON.parse(rs[0].setTime)
+              setTime.map((v, k) => { v.id = k + 1 })
+              console.log('settime222222222', setTime)
               if (setTime[0].limitBooking === undefined) {
                 // console.log('dasdas')
                 for (let i = 0; i < setTime.length; i++) {
