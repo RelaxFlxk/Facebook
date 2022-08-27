@@ -2516,6 +2516,7 @@
                               <v-btn
                                 fab
                                 dark
+                                v-if="item.memberId !== ''"
                                 x-small
                                 color="teal"
                                 @click="getTagData(), dialogTag = true, tagData = item.memberDataTag, bookNo = item.bookNo, memberId = item.memberId"
@@ -5696,7 +5697,7 @@ export default {
                   s.remark = d.remark || ''
                   s.masBranchID = d.masBranchID
                   s.limitBookingCheck = d.limitBookingCheck
-                  s.memberId = d.memberId
+                  s.memberId = d.memberId || ''
                   s.countHourLimit = d.countHourLimit
                   s.empSelect = d.empSelect
                   s.empFull_NameTH = d.empFull_NameTH || ''
@@ -8020,7 +8021,7 @@ export default {
                 s.remark = d.remark || ''
                 s.masBranchID = d.masBranchID
                 s.limitBookingCheck = d.limitBookingCheck
-                s.memberId = d.memberId
+                s.memberId = d.memberId || ''
                 s.countHourLimit = d.countHourLimit
                 s.empSelect = d.empSelect
                 s.empFull_NameTH = d.empFull_NameTH || ''
@@ -8178,7 +8179,7 @@ export default {
                 s.remark = d.remark || ''
                 s.masBranchID = d.masBranchID
                 s.limitBookingCheck = d.limitBookingCheck
-                s.memberId = d.memberId
+                s.memberId = d.memberId || ''
                 s.countHourLimit = d.countHourLimit
                 s.empSelect = d.empSelect
                 s.empFull_NameTH = d.empFull_NameTH || ''
