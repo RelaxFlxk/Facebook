@@ -2,10 +2,7 @@
   <div>
     <v-card flat v-if="!dataReady" class="centered">
       <v-card-text>
-        <div class="text-center">
-          <div class="lds-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-          <!-- <h2>กรุณารอสักครู่</h2> -->
-        </div>
+        <waitingAlert></waitingAlert>
       </v-card-text>
     </v-card>
     <v-card flat v-if="dataReady" >
@@ -726,8 +723,7 @@
             </v-container>
           </v-card-text>
           <div class="text-center" v-if="!dataConfirmReady">
-            <div class="lds-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-            <!-- <h2>กรุณารอสักครู่</h2> -->
+            <waitingAlert></waitingAlert>
           </div>
         </v-card>
       </v-form>
@@ -740,10 +736,12 @@ import axios from 'axios' // api
 import moment from 'moment-timezone'
 import BookingQueue from './BookingQueueMobile.vue'
 import VuetifyMoney from '../VuetifyMoney.vue'
+import waitingAlert from '../waitingAlert.vue'
 export default {
   components: {
     BookingQueue,
-    VuetifyMoney
+    VuetifyMoney,
+    waitingAlert
   },
   name: 'BookingList',
   data () {

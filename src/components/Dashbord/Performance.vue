@@ -1,6 +1,6 @@
 <template>
   <div>
-    <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin>
+    <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
     <v-main>
       <div class="col-md-12 ml-sm-auto col-lg-12 px-4">
         <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
@@ -66,7 +66,7 @@
 </template>
 <script>
 import axios from 'axios' // api
-import adminLeftMenu from '../Sidebar.vue' // เมนู
+// import adminLeftMenu from '../Sidebar.vue' // เมนู
 import JsonExcel from 'vue-json-excel' // https://www.npmjs.com/package/vue-json-excel
 import XLSX from 'xlsx' // import xlsx
 import readXlsxFile from 'read-excel-file'
@@ -77,7 +77,7 @@ import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import { PivotTable, Pivot } from '@click2buy/vue-pivot-table'
 export default {
   components: {
-    'left-menu-admin': adminLeftMenu,
+    // 'left-menu-admin': adminLeftMenu,
     downloadExcel: JsonExcel,
     XLSX,
     readXlsxFile,

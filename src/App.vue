@@ -1,6 +1,6 @@
 <template>
  <v-app>
-   <Sidebar v-if="$router.currentRoute.name !== 'Login' "/>
+   <Sidebar v-if="$router.currentRoute.name !== 'Login' && $router.currentRoute.name !== 'BookingMobile' && $router.currentRoute.name !== 'BookingMobileConfirmJob'"/>
    <router-view/>
   </v-app>
 </template>
