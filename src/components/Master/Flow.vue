@@ -358,20 +358,14 @@
                         dark
                         color="white"
                         style="color:red;font-size:20px;"
-                        @click="dialogReConfirm = false, paymentImge = null"
+                        @click="(dialogAdd = false), clearData()"
                         >
                         X
                         </v-btn>
                     </div>
-                        <h3 class="text-center" style="color:#1B437C;font-weight: bold;">แนบหลักฐานการโอนเงิน</h3>
-                        <br>
+                        <!-- <h3 class="text-center" style="color:#1B437C;font-weight: bold;">แนบหลักฐานการโอนเงิน</h3> -->
+                        <!-- <br>
                     <v-col class="text-right">
-                      <!-- <v-icon
-                        background-color="#F3F3F3"
-                        color="#FE4A01 "
-                        @click="(dialogAdd = false), clearData()"
-                        >mdi-close</v-icon
-                      > -->
                         <v-btn
                           class="mx-2 mr-n5 mt-n5"
                           fab
@@ -385,7 +379,7 @@
                             mdi-close
                           </v-icon>
                         </v-btn>
-                    </v-col>
+                    </v-col> -->
                     <v-row justify="center">
                       <!-- <v-col cols="5" class="text-center">
                         <v-col class="text-center" style="margin: auto 0;">
@@ -403,19 +397,19 @@
                             id="v_text_edits"
                             :src="require('@/assets/GroupEditTitle.svg')"
                           ></v-img> -->
-                          <h2 class="font-weight-bold"  style="color:#173053;">เพิ่มข้อมูล</h2>
+                          <h2 class="font-weight-bold"  style="color:#173053;">เพิ่มข้อมูล บริการ</h2>
                         </v-col>
                         <v-col cols="12" class="pb-0">
                           <v-text-field
                             v-model="formAdd.flowName"
-                            label="ชื่อขั้นตอน (ภาษาไทย)"
+                            label="ชื่อบริการ (ภาษาไทย)"
                             outlined
                             required
                             :rules="[rules.required]"
                           ></v-text-field>
                           <v-text-field
                             v-model="formAdd.flowNameEn"
-                            label="ชื่อขั้นตอน (ภาษาอังกฤษ)"
+                            label="ชื่อบริการ (ภาษาอังกฤษ)"
                             outlined
                             required
                             :rules="[rules.required]"
