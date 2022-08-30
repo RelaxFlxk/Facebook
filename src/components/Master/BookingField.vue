@@ -724,6 +724,7 @@
                       elevation="5"
                       color="#1B437C"
                       dark
+                      block
                       @click="addBooking()"
                       >บันทึกข้อมูล</v-btn
                     >

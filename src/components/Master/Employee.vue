@@ -3,13 +3,14 @@
     <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
     <v-main>
       <div class="col-md-12 ml-sm-auto col-lg-12 px-4">
-        <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
         <v-row>
-          <!-- Dialog export / import -->
-          <v-col cols="12" class="text-right">
+          <v-col cols="4" class="text-left">
+            <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
+          </v-col>
+          <v-col cols="8" class="v-margit_button text-right">
             <v-btn color="primary" depressed @click="dialogAdd = true, validate('ADD')">
               <v-icon left>mdi-text-box-plus</v-icon>
-              เพิ่ม
+              เพิ่มรายชื่อพนักงาน
             </v-btn>
             <v-btn color="primary" @click="exportData()">
               <v-icon left>mdi-download</v-icon>
@@ -20,7 +21,9 @@
               Manage Data By Excel.xls
             </v-btn>
           </v-col>
-
+        </v-row>
+        <v-row>
+          <!-- Dialog export / import -->
           <!-- Import -->
           <v-dialog v-model="dialogImport" persistent max-width="80%">
             <v-card>

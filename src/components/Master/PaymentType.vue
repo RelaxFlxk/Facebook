@@ -3,17 +3,18 @@
     <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
     <v-main>
       <div class="col-md-12 ml-sm-auto col-lg-12 px-4">
-        <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
         <v-row>
-
-          <!-- Dialog export / import -->
-          <v-col cols="12" class="text-right">
+          <v-col cols="6" class="text-left">
+            <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
+          </v-col>
+          <v-col cols="6" class="v-margit_button text-right">
             <v-btn color="primary" depressed @click="dialogAdd = true, validate('ADD')">
               <v-icon left>mdi-text-box-plus</v-icon>
-              เพิ่ม
+              เพิ่มช่องทางการชำระเงิน
             </v-btn>
           </v-col>
-
+        </v-row>
+        <v-row>
           <!-- ADD -->
           <v-dialog v-model="dialogAdd" persistent max-width="30%">
             <v-card>

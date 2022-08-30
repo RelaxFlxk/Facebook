@@ -3,12 +3,14 @@
     <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
     <v-main>
       <div class="pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4">
-        <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
         <v-row>
-          <v-col cols="12" class="text-right">
+          <v-col cols="6" class="text-left">
+            <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
+          </v-col>
+          <v-col cols="6" class="v-margit_button text-right">
             <v-btn color="primary" depressed @click="dialogAdd = true">
               <v-icon left>mdi-text-box-plus</v-icon>
-              เพิ่มข้อมูล
+              เพิ่มการแจ้งเตือน
             </v-btn>
           </v-col>
         </v-row>
