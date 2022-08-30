@@ -14,7 +14,23 @@
             persistent
             max-width="600"
           >
-            <v-card class="p-3">
+            <v-card class="pa-3">
+              <v-container>
+                <div style="text-align: end;">
+                        <v-btn
+                          fab
+                          small
+                          dark
+                          color="#F3F3F3"
+                          @click="dialog = false"
+                        >
+                          <v-icon dark
+                          color="#FE4A01 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                        </div>
+              </v-container>
               <v-timeline>
                 <v-timeline-item
                   v-for="(item , index) in timelineitem" :key="index"
@@ -40,14 +56,6 @@
                 </v-timeline-item>
               </v-timeline>
               <br>
-              <div class="text-center">
-                <v-btn
-                  small class="ma-2" color="#173053" dark
-                  @click="dialog = false"
-                >
-                  Close
-                </v-btn>
-              </div>
             </v-card>
           </v-dialog>
         </v-row>
@@ -113,33 +121,46 @@
         <v-dialog
             v-model="dialogBooking"
             persistent
-            max-width="600"
+            width="25%"
           >
-            <v-card class="p-3">
-              <v-card-title>รายละเอียดนัดหมาย</v-card-title>
-                  <v-card-text class="text-start">
+            <v-card class="pa-1">
+              <v-container>
+                <div style="text-align: end;">
+                        <v-btn
+                          fab
+                          small
+                          dark
+                          color="#F3F3F3"
+                          @click="dialogBooking = false"
+                        >
+                          <v-icon dark
+                          color="#FE4A01 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                        </div>
+              </v-container>
+              <v-col class="text-center pa-0 px-3">
+                <!-- <v-img
+                  id="v_text_edits"
+                  :src="require('@/assets/GroupEditTitle.svg')"
+                ></v-img> -->
+                <h2 class="font-weight-bold" style="color:#173053;">รายละเอียดนัดหมาย</h2>
+              </v-col>
+                  <v-card-text class="text-center">
                     <v-container>
-                      <h6 class="font-weight-bold">วันที่นัดหมาย : {{format_dateThai(booking.dueDate)}}</h6>
-                      <h6 class="font-weight-bold">ประเภทบริการ : {{booking.flowName}}</h6>
-                      <h6 class="font-weight-bold">สาขา : {{booking.masBranchName}}</h6>
+                      <h6 class="font-weight-bold" style="color:#000000;">วันที่นัดหมาย : {{format_dateThai(booking.dueDate)}}</h6>
+                      <h6 class="font-weight-bold" style="color:#000000;">ประเภทบริการ : {{booking.flowName}}</h6>
+                      <h6 class="font-weight-bold" style="color:#000000;">สาขา : {{booking.masBranchName}}</h6>
                       <v-row v-for="(item , index3) in bookingData" :key="index3">
-                        <v-col v-if="item.fieldValue !== ''" col="6" class="pb-0"><strong>{{item.fieldName}} : </strong> {{item.fieldValue}}</v-col>
+                        <v-col v-if="item.fieldValue !== ''" col="6" class="pb-0" style="color:#000000;"><strong style="color:#000000;">{{item.fieldName}} : </strong> {{item.fieldValue}}</v-col>
                       </v-row>
                       <v-row>
-                        <h6 class="font-weight-bold" v-if="booking.remark">หมายเหตุเพิ่มเติม : {{booking.remark}}</h6>
+                        <h6 class="font-weight-bold" v-if="booking.remark" style="color:#000000;">หมายเหตุเพิ่มเติม : {{booking.remark}}</h6>
                       </v-row>
                     </v-container>
                   </v-card-text>
               <br>
-              <div class="text-center">
-                <v-btn
-                  block
-                  small class="ma-2" color="error" dark
-                  @click="dialogBooking = false"
-                >
-                  ตกลง
-                </v-btn>
-              </div>
             </v-card>
           </v-dialog>
         </div>

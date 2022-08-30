@@ -7,19 +7,32 @@
         <v-row>
 
           <!-- Dialog export / import -->
-          <v-col cols="12">
+          <v-col cols="12" class="text-right">
             <v-btn color="primary" depressed @click="dialogAdd = true, validate('ADD')">
               <v-icon left>mdi-text-box-plus</v-icon>
-              Add
+              เพิ่ม
             </v-btn>
           </v-col>
 
           <!-- ADD -->
           <v-dialog v-model="dialogAdd" persistent max-width="30%">
             <v-card>
-              <v-col class="text-right">
-                    <v-icon small color="#173053" @click="(dialogAdd = false), clearData()">mdi-close</v-icon>
-                  </v-col>
+            <v-container>
+                <div style="text-align: end;">
+                        <v-btn
+                          fab
+                          small
+                          dark
+                          color="#F3F3F3"
+                          @click="(dialogAdd = false), clearData()"
+                        >
+                          <v-icon dark
+                          color="#FE4A01 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                        </div>
+              </v-container>
               <center>
               <v-col>
                 <v-img id="v_img_addpay" :src="require('@/assets/Groupadd.png')" max-width="330"></v-img>
@@ -50,7 +63,7 @@
                         :rules="[rules.resizeImag]"
                         accept="image/png, image/jpeg, image/bmp"
                         prepend-icon="mdi-camera"
-                        label="Image"
+                        label="อัพโหลดรูป"
                         @change="selectImgAdd"
                         v-model="filesAdd"
                       ></v-file-input>
@@ -58,12 +71,9 @@
                   </v-row>
                   <v-row>
                     <v-container fluid>
-                      <v-col>
-                      <v-row style="height: 35px">
-                      <v-subheader>ประเภทการชำระเงิน</v-subheader>
-                      </v-row>
-                      </v-col>
                       <v-textarea
+                        outlined
+                        label="ประเภทการชำระเงิน"
                          rows="3" row-height="25"
                          :rules="[rules.required]"
                         v-model="formAdd.payTypeName"
@@ -78,24 +88,14 @@
                   <v-col class="text-center">
                 <v-btn
                   elevation="2"
-                  x-large
+                  block
                   dark
                   :disabled="!validAdd"
                   color="#1B437C"
                   @click="addData()"
                 >
                   <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                  เพิ่ม
-                </v-btn>
-                <v-btn
-                  elevation="2"
-                  x-large
-                  dark
-                  color="red"
-                  @click="(dialogAdd = false), clearData()"
-                >
-                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                  ปิด
+                  บันทึก
                 </v-btn>
                   </v-col>
                 </center>
@@ -106,9 +106,22 @@
           <!-- edit -->
           <v-dialog v-model="dialogEdit" persistent max-width="30%">
             <v-card>
-              <v-col class="text-right">
-                    <v-icon small color="#173053" @click="(dialogEdit = false), clearData()">mdi-close</v-icon>
-                  </v-col>
+            <v-container>
+                <div style="text-align: end;">
+                        <v-btn
+                          fab
+                          small
+                          dark
+                          color="#F3F3F3"
+                          @click="(dialogEdit = false), clearData()"
+                        >
+                          <v-icon dark
+                          color="#FE4A01 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                        </div>
+              </v-container>
               <center>
               <v-col>
                 <v-img id="v_img_addpay" :src="require('@/assets/payment.png')" max-width="330"></v-img>
@@ -116,9 +129,11 @@
               </center>
               <center>
                 <v-col>
+                  <!-- <v-img class="v_text_add" :src="require('@/assets/Grouptitle.svg')"></v-img> -->
                   <h4 style="font-size:7vw;" class="underline-06">แก้ไข ช่องทางการชำระเงิน</h4>
                 </v-col>
               </center>
+              <v-form ref="form_add" v-model="validAdd" lazy-validation>
               <v-card-text>
                 <v-container>
                   <v-row justify="center">
@@ -128,10 +143,10 @@
                         contain
                         :src="formUpdate.pictureUrlPreview"
                       ></v-img>
-                      <!-- <v-avatar size="100px"><img alt="Avatar" :src="formAdd.pictureUrl"></v-avatar> -->
+                      <!-- <v-avatar size="100px"><img alt="Avatar" :src="formUpdate.pictureUrl"></v-avatar> -->
                       <br />
                       <v-file-input
-                        required
+                         required
                         counter
                         show-size
                         :rules="[rules.resizeImag]"
@@ -145,31 +160,31 @@
                   </v-row>
                   <v-row>
                     <v-container fluid>
-                      <v-col>
-                      <v-row style="height: 35px">
-                      <v-subheader>ประเภทการชำระเงิน</v-subheader>
-                      </v-row>
-                      </v-col>
                       <v-textarea
+                        outlined
+                        label="ประเภทการชำระเงิน"
                          rows="3" row-height="25"
+                         :rules="[rules.required]"
                         v-model="formUpdate.payTypeName"
                       ></v-textarea>
                     </v-container>
                   </v-row>
                 </v-container>
               </v-card-text>
+              </v-form>
 
                 <center>
                   <v-col class="text-center">
                 <v-btn
                   elevation="2"
-                  x-large
+                  block
                   dark
+                  :disabled="!validAdd"
                   color="#1B437C"
-                   @click="editData()"
+                  @click="editData()"
                 >
                   <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                  แก้ไข
+                  บันทึก
                 </v-btn>
                   </v-col>
                 </center>
@@ -690,5 +705,23 @@ export default {
 #v-img-cash {
   height: 60px;
   width: 60px;
+}
+/* width */
+::-webkit-scrollbar {
+  width: 2px;
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #173053;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #173053;
 }
 </style>

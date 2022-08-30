@@ -10,7 +10,7 @@
           <v-col cols="6" class="v-margit_button text-right">
             <v-btn color="primary" depressed @click="dialogAdd = true, validate('ADD'), validate('ADDOPTION') ,checkbox ='false'">
               <v-icon left>mdi-text-box-plus</v-icon>
-              Add
+              เพิ่มข้อมูล
             </v-btn>
           </v-col>
         </v-row>

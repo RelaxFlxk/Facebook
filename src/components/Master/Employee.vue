@@ -6,7 +6,7 @@
         <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
         <v-row>
           <!-- Dialog export / import -->
-          <v-col cols="12">
+          <v-col cols="12" class="text-right">
             <v-btn color="primary" depressed @click="dialogAdd = true, validate('ADD')">
               <v-icon left>mdi-text-box-plus</v-icon>
               เพิ่ม
@@ -94,12 +94,32 @@
           <!-- end Import -->
 
           <!-- ADD -->
-          <v-dialog v-model="dialogAdd" persistent max-width="80%">
-            <v-card>
-              <v-card-title>
-                <span class="headline">เพิ่มข้อมูล</span>
-              </v-card-title>
-              <v-card-text>
+          <v-dialog v-model="dialogAdd" persistent max-width="35%">
+            <v-card class="pa-1">
+              <v-container>
+                      <div style="text-align: end;" >
+                        <v-btn
+                          fab
+                          small
+                          dark
+                          color="#F3F3F3"
+                          @click="dialogAdd = false,clearData()"
+                        >
+                          <v-icon dark
+                          color="#FE4A01 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                    </div>
+              </v-container>
+               <v-col class="text-left pa-0 pl-5 mb-n2" >
+                <!-- <v-img
+                  id="v_text_edits"
+                  :src="require('@/assets/GroupEditTitle.svg')"
+                ></v-img> -->
+                <h2 class="font-weight-bold" style="color:#173053;">เพิ่มข้อมูล</h2>
+              </v-col>
+              <v-card-text class="pa-0 px-2">
                 <v-container>
                    <v-form
                     ref="form_add"
@@ -128,8 +148,10 @@
                     </v-col>
                   </v-row>
                   <v-row>
-                      <v-col cols="4">
+                      <v-col cols="12" class="pa-0">
                       <v-select
+                      dense
+                      outlined
                         label="คำนำหน้า*"
                         :items="itemsTitle"
                         v-model="formAdd.empTitle_NameTH"
@@ -139,8 +161,10 @@
                         required
                       ></v-select>
                     </v-col>
-                    <v-col cols="4">
+                    <v-col cols="12" class="pa-0">
                       <v-text-field
+                      dense
+                      outlined
                         label="ชื่อ*"
                         v-model="formAdd.empFirst_NameTH"
                         :rules="nameRules"
@@ -149,8 +173,10 @@
                         required
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="4">
+                    <v-col cols="12" class="pa-0">
                       <v-text-field
+                      dense
+                      outlined
                         label="นามสกุล*"
                         v-model="formAdd.empLast_NameTH"
                         :rules="nameRules"
@@ -161,8 +187,10 @@
                     </v-col>
                   </v-row>
                   <v-row>
-                    <v-col cols="4">
+                    <v-col cols="12" class="pa-0">
                       <v-select
+                      dense
+                      outlined
                         v-model="formAdd.privacyPage"
                         :items="privacyPageSelect"
                         menu-props="auto"
@@ -179,24 +207,14 @@
                 <v-spacer></v-spacer>
                 <v-btn
                   elevation="2"
-                  x-large
-                  color="dark darken-1"
-                  text
-                  @click="dialogAdd = false,clearData()"
-                >
-                  <v-icon left> mdi-cancel</v-icon>
-                  ปิด
-                </v-btn>
-                <v-btn
-                  elevation="2"
-                  x-large
-                  color="success"
-                  text
+                  block
+                  dark
+                  color="#173053"
                   :disabled="!valid_add"
                   @click="addData()"
                 >
                   <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                  เพิ่ม
+                  บันทึก
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -204,14 +222,34 @@
           <!-- end add -->
 
           <!-- edit -->
-          <v-dialog v-model="dialogEdit" persistent max-width="80%">
-            <v-card>
-              <v-card-title>
-                <span class="headline">แก้ไขข้อมูล</span>
-              </v-card-title>
-              <v-card-text>
+          <v-dialog v-model="dialogEdit" persistent max-width="35%">
+            <v-card class="pa-1">
+              <v-container>
+                      <div style="text-align: end;" >
+                        <v-btn
+                          fab
+                          small
+                          dark
+                          color="#F3F3F3"
+                          @click="dialogEdit = false, dataReady = true"
+                        >
+                          <v-icon dark
+                          color="#FE4A01 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                    </div>
+              </v-container>
+               <v-col class="text-left pa-0 pl-5 mb-n2" >
+                <!-- <v-img
+                  id="v_text_edits"
+                  :src="require('@/assets/GroupEditTitle.svg')"
+                ></v-img> -->
+                <h2 class="font-weight-bold" style="color:#173053;">แก้ไขข้อมูล</h2>
+              </v-col>
+              <v-card-text class="pa-0 px-2">
                 <v-container>
-                  <v-form
+                   <v-form
                     ref="form_update"
                     v-model="valid_update"
                     lazy-validation
@@ -238,8 +276,10 @@
                     </v-col>
                   </v-row>
                   <v-row>
-                      <v-col cols="4">
+                      <v-col cols="12" class="pa-0">
                       <v-select
+                      dense
+                      outlined
                         label="คำนำหน้า*"
                         :items="itemsTitle"
                         v-model="formUpdate.empTitle_NameTH"
@@ -249,8 +289,10 @@
                         required
                       ></v-select>
                     </v-col>
-                    <v-col cols="4">
+                    <v-col cols="12" class="pa-0">
                       <v-text-field
+                      dense
+                      outlined
                         label="ชื่อ*"
                         v-model="formUpdate.empFirst_NameTH"
                         :rules="nameRules"
@@ -259,8 +301,10 @@
                         required
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="4">
+                    <v-col cols="12" class="pa-0">
                       <v-text-field
+                      dense
+                      outlined
                         label="นามสกุล*"
                         v-model="formUpdate.empLast_NameTH"
                         :rules="nameRules"
@@ -271,8 +315,10 @@
                     </v-col>
                   </v-row>
                   <v-row>
-                    <v-col cols="4">
+                    <v-col cols="12" class="pa-0">
                       <v-select
+                      dense
+                      outlined
                         v-model="formUpdate.privacyPage"
                         :items="privacyPageSelect"
                         menu-props="auto"
@@ -289,24 +335,14 @@
                 <v-spacer></v-spacer>
                 <v-btn
                   elevation="2"
-                  x-large
-                  color="blue darken-1"
-                  text
-                  @click="dialogEdit = false, dataReady = true"
-                >
-                  <v-icon left> mdi-cancel</v-icon>
-                  ปิด
-                </v-btn>
-                <v-btn
-                  elevation="2"
-                  x-large
-                  color="success"
-                  text
-                  :disabled="!valid_update"
+                  block
+                  dark
+                  color="#173053"
+                  :disabled="!valid_add"
                   @click="editData()"
                 >
                   <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                  แก้ไข
+                  บันทึก
                 </v-btn>
               </v-card-actions>
             </v-card>

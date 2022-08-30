@@ -5,7 +5,7 @@
       <div class="pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4">
         <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
         <v-row>
-          <v-col cols="12">
+          <v-col cols="12" class="text-right">
             <v-btn color="primary" depressed @click="dialogAdd = true">
               <v-icon left>mdi-text-box-plus</v-icon>
               เพิ่มข้อมูล
@@ -16,13 +16,31 @@
           <v-dialog
           v-model="dialogAdd"
           persistent
-          max-width="600"
+          width="35%"
         >
-          <v-card class="pa-10" min-height="700">
-            <div class="text-center">
-              <h3>เลือกบริการที่จะรับการแจ้งเตือน</h3>
-            </div>
-            <v-row class="pa-16">
+          <v-card class="pa-3" min-height="700" style="overflow-x: hidden;">
+            <div style="text-align: end;">
+                        <v-btn
+                          fab
+                          small
+                          dark
+                          color="#F3F3F3"
+                          @click="dialogAdd = false"
+                        >
+                          <v-icon dark
+                          color="#FE4A01 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                    </div>
+            <v-col class="text-left py-0">
+                          <!-- <v-img
+                            id="v_text_edits"
+                            :src="require('@/assets/GroupEditTitle.svg')"
+                          ></v-img> -->
+                          <h2 class="font-weight-bold"  style="color:#173053;">เลือกบริการที่จะรับการแจ้งเตือน</h2>
+                        </v-col>
+            <v-row class="pa-6">
               <v-col class="pa-0" cols="12">
                 <!-- <p>{{itemBranch}}</p> -->
                 <v-select
@@ -38,24 +56,30 @@
               </v-col>
               <v-col class="pa-0" cols="12" md='12'>
                 <v-container fluid>
-                  <h4 class="text-center font-weight-black mb-5">ประเภทบริการ</h4>
+                  <h4 class="text-center font-weight-black mb-5" style="color:#173053;">ประเภทบริการ</h4>
                    <v-row v-for="(item , index) in flowData" :key="index" class="mb-1"  style="border-style: groove;">
                     <v-col cols="12" class="text-center">
-                      <p class="pa-0 ma-0 mt-4 font-weight-black" >{{item.text}}</p>
+                      <p class="pa-0 ma-0 mt-4 font-weight-black" style="color:#173053;" >{{item.text}}</p>
                     </v-col>
                     <v-col class="pa-0 ps-4 ma-0" cols="12">
                       <v-checkbox class="pa-0 ma-0"
+                        :on-icon="'mdi-check-circle'"
+                        :off-icon="'mdi-checkbox-blank-circle-outline'"
                         v-model="item.checkBooking"
                         label="นัดหมายเข้ารับบริการ"
                       ></v-checkbox>
                       <v-checkbox class="pa-0 ma-0"
+                        :on-icon="'mdi-check-circle'"
+                        :off-icon="'mdi-checkbox-blank-circle-outline'"
                         v-model="item.checkJob"
                         label="กระดานการทำงาน"
                       ></v-checkbox>
-                      <v-checkbox class="pa-0 ma-0"
+                      <!-- <v-checkbox class="pa-0 ma-0"
+                        :on-icon="'mdi-check-circle'"
+                        :off-icon="'mdi-checkbox-blank-circle-outline'"
                         v-model="item.checkEpmtime"
                         label="การบันทึกเวลาพนักงาน"
-                      ></v-checkbox>
+                      ></v-checkbox> -->
                     </v-col>
                    </v-row>
                 </v-container>
@@ -72,16 +96,10 @@
             </v-row>
             <div class="text-center">
               <v-btn
-                small class="ma-2" color="#173053" dark
+                block class="ma-2" color="#173053" dark
                 @click="AddData()"
               >
                 บันทึก
-              </v-btn>
-              <v-btn
-                small class="ma-2" color="#173053" outlined dark
-                @click="dialogAdd = false"
-              >
-                Close
               </v-btn>
             </div>
           </v-card>
@@ -89,19 +107,36 @@
           <v-dialog
           v-model="dialog"
           persistent
-          max-width="600"
+          width="35%"
         >
-          <v-card class="pa-10" min-height="700">
-            <div class="text-center">
-              <h3>เลือกบริการที่จะรับการแจ้งเตือน</h3>
-            </div>
-            <v-row class="pa-16">
+          <v-card class="pa-3" min-height="700" style="overflow-x: hidden;">
+            <div style="text-align: end;">
+                        <v-btn
+                          fab
+                          small
+                          dark
+                          color="#F3F3F3"
+                          @click="dialog = false"
+                        >
+                          <v-icon dark
+                          color="#FE4A01 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                    </div>
+            <v-col class="text-left py-0">
+                          <!-- <v-img
+                            id="v_text_edits"
+                            :src="require('@/assets/GroupEditTitle.svg')"
+                          ></v-img> -->
+                          <h2 class="font-weight-bold"  style="color:#173053;">เลือกบริการที่จะรับการแจ้งเตือน</h2>
+                        </v-col>
+            <v-row class="pa-6">
               <v-col class="pa-0" cols="12">
                 <!-- <p>{{itemBranch}}</p> -->
                 <v-select
                   v-model="itemBranchEdit"
                   :items="BranchItem"
-                  :menu-props="{ maxHeight: '400' }"
                   label="เลือกสาขาที่ต้องการรับการแจ้งเตือน"
                   dense
                   outlined
@@ -112,45 +147,50 @@
               </v-col>
               <v-col class="pa-0" cols="12" md='12'>
                 <v-container fluid>
-                  <h4 class="text-center font-weight-black mb-5">ประเภทบริการ</h4>
-                   <v-row v-for="(item , index) in itemSelectEdit" :key="index" class="mb-1" style="border-style: groove;">
+                  <h4 class="text-center font-weight-black mb-5" style="color:#173053;">ประเภทบริการ</h4>
+                   <v-row v-for="(item , index) in itemSelectEdit" :key="index" class="mb-1"  style="border-style: groove;">
                     <v-col cols="12" class="text-center">
-                      <p class="pa-0 ma-0 mt-4 font-weight-black">{{item.text}}</p>
+                      <p class="pa-0 ma-0 mt-4 font-weight-black" style="color:#173053;" >{{item.text}}</p>
                     </v-col>
                     <v-col class="pa-0 ps-4 ma-0" cols="12">
                       <v-checkbox class="pa-0 ma-0"
+                        :on-icon="'mdi-check-circle'"
+                        :off-icon="'mdi-checkbox-blank-circle-outline'"
                         v-model="item.checkBooking"
                         label="นัดหมายเข้ารับบริการ"
                       ></v-checkbox>
-                    </v-col>
-                    <v-col class="pa-0 ps-4 ma-0" cols="12">
                       <v-checkbox class="pa-0 ma-0"
+                        :on-icon="'mdi-check-circle'"
+                        :off-icon="'mdi-checkbox-blank-circle-outline'"
                         v-model="item.checkJob"
                         label="กระดานการทำงาน"
                       ></v-checkbox>
-                    </v-col>
-                    <v-col class="pa-0 ps-4 ma-0" cols="12">
-                      <v-checkbox class="pa-0 ma-0"
+                      <!-- <v-checkbox class="pa-0 ma-0"
+                        :on-icon="'mdi-check-circle'"
+                        :off-icon="'mdi-checkbox-blank-circle-outline'"
                         v-model="item.checkEpmtime"
                         label="การบันทึกเวลาพนักงาน"
-                      ></v-checkbox>
+                      ></v-checkbox> -->
                     </v-col>
                    </v-row>
                 </v-container>
               </v-col>
+              <!-- <v-col class="pa-0" cols="6" md='6'>
+                <v-container fluid>
+                    <p class="text-center">การBooking</p>
+                    <v-checkbox
+                    v-model="BookingSend"
+                    label="Booking"
+                  ></v-checkbox>
+                </v-container>
+              </v-col> -->
             </v-row>
             <div class="text-center">
               <v-btn
-                small class="ma-2" color="#173053" dark
+                block class="ma-2" color="#173053" dark
                 @click="editData()"
               >
                 แก้ไขข้อมูล
-              </v-btn>
-              <v-btn
-                small class="ma-2" color="#173053" outlined dark
-                @click="dialog = false"
-              >
-                Close
               </v-btn>
             </div>
           </v-card>
@@ -443,9 +483,25 @@ export default {
     },
     setEdit (item) {
       console.log('item', item)
+      // console.log('this.BranchItem', this.BranchItem)
       this.itemBranchEdit = []
+      this.itemSelectEdit = []
       this.idEdit = item.id
-      this.itemSelectEdit = JSON.parse(item.flowData)
+      this.flowData.forEach((v, k) => {
+        if (JSON.parse(item.flowData).filter((a) => a.value === v.value).length > 0) {
+          this.itemSelectEdit.push(JSON.parse(item.flowData).filter((a) => a.value === v.value)[0])
+        } else {
+          this.itemSelectEdit.push({'text': v.text, 'value': v.value})
+        }
+      })
+      // console.log('itemSelectEdit', this.itemSelectEdit)
+      // this.BranchItem.forEach((v, k) => {
+      //   if (JSON.parse(item.masBranchID).filter((a) => a.value === v.value).length > 0) {
+      //     this.itemSelectEdit.push(JSON.parse(item.flowData).filter((a) => a.value === v.value)[0])
+      //   } else {
+      //     this.itemSelectEdit.push({'text': v.text, 'value': v.value})
+      //   }
+      // })
       JSON.parse(item.masBranchID).forEach((v, k) => {
         this.itemBranchEdit.push(v.masBranchID)
       })
@@ -516,5 +572,23 @@ export default {
   color: #173053;
   font-size: 30px !important;
   font-weight: bold;
+}
+/* width */
+::-webkit-scrollbar {
+  width: 2px;
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #173053;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #173053;
 }
 </style>

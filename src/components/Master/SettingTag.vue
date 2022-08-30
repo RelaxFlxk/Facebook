@@ -5,7 +5,7 @@
       <div class="pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4">
         <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
         <v-row>
-          <v-col cols="12">
+          <v-col cols="12 text-right">
             <v-btn color="primary" depressed @click="dialogAdd = true">
               <v-icon left>mdi-text-box-plus</v-icon>
               เพิ่มข้อมูล
@@ -16,15 +16,29 @@
           <v-dialog
           v-model="dialogAdd"
           persistent
-          max-width="600"
+          width="40%"
         >
-          <v-card class="pa-10" min-height="400">
+          <v-card class="pa-3" style="overflow-x: hidden;">
+            <div class="text-end">
+                        <v-btn
+                        fab
+                        small
+                        dark
+                        color="white"
+                        style="color:red;font-size:20px;"
+                        @click="dialogAdd = false , formAdd.tagName = ''"
+                        >
+                        X
+                        </v-btn>
+                    </div>
             <div class="text-center">
               <v-chip
                   class="ma-2 pa-6"
                   color="cyan"
                   label
                   text-color="white"
+                  small
+                  dense
                 >
                   <v-icon class="mr-2" left>
                     mdi-tag-plus
@@ -37,6 +51,7 @@
                 <!-- <p>{{itemBranch}}</p> -->
                 <v-text-field
                   v-model="formAdd.tagName"
+                  dense
                   label="กรอกข้อมูล Tag"
                   outlined
                 ></v-text-field>
@@ -53,16 +68,13 @@
             </v-row>
             <div class="text-center">
               <v-btn
-                small class="ma-2" color="#173053" dark
+                class="ma-2"
+                color="#173053"
+                block
+                dark
                 @click="AddData()"
               >
                 บันทึก
-              </v-btn>
-              <v-btn
-                small class="ma-2" color="#173053" outlined dark
-                @click="dialogAdd = false , formAdd.tagName = ''"
-              >
-                Close
               </v-btn>
             </div>
           </v-card>
@@ -70,14 +82,28 @@
           <v-dialog
           v-model="dialog"
           persistent
-          max-width="600"
+          width="40%"
         >
-          <v-card class="pa-10" min-height="400">
+          <v-card class="pa-3" style="overflow-x: hidden;">
+            <div class="text-end">
+                        <v-btn
+                        fab
+                        small
+                        dark
+                        color="white"
+                        style="color:red;font-size:20px;"
+                        @click="dialog = false"
+                        >
+                        X
+                        </v-btn>
+                    </div>
             <div class="text-center">
               <v-chip
                   class="ma-2 pa-6"
                   color="cyan"
                   label
+                  small
+                  dense
                   text-color="white"
                 >
                   <v-icon class="mr-2" left>
@@ -90,6 +116,7 @@
               <v-col class="pa-0" cols="12">
                 <!-- <p>{{itemBranch}}</p> -->
                 <v-text-field
+                dense
                   v-model="formUpdate.tagName"
                   label="กรอกข้อมูล Tag"
                   outlined
@@ -107,16 +134,10 @@
             </v-row>
             <div class="text-center">
               <v-btn
-                small class="ma-2" color="#173053" dark
+                class="ma-2" color="#173053" dense dark block
                 @click="editData()"
               >
                 บันทึก
-              </v-btn>
-              <v-btn
-                small class="ma-2" color="#173053" outlined dark
-                @click="dialog = false"
-              >
-                Close
               </v-btn>
             </div>
           </v-card>
@@ -144,6 +165,7 @@
                   class="ma-2 pa-6"
                   color="cyan"
                   label
+                  dense
                   text-color="white"
                 >
                   <v-icon left>

@@ -12,14 +12,25 @@
           <!-- edit -->
           <v-dialog ref="dialogEdit" v-model="dialogEdit" persistent max-width="50%">
             <v-card class="text-center">
+              <v-container>
+                <div style="text-align: end;">
+                        <v-btn
+                          fab
+                          small
+                          dark
+                          color="#F3F3F3"
+                          @click="dialogEdit = false"
+                        >
+                          <v-icon dark
+                          color="#FE4A01 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                        </div>
+              </v-container>
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
                 <v-card-text>
                   <v-container>
-                    <v-col class="text-right">
-                      <v-btn small color="#E0E0E0" @click="dialogEdit = false">
-                        <v-icon color="#173053">mdi-close</v-icon>
-                      </v-btn>
-                    </v-col>
                     <v-row justify="center">
                       <v-col md="auto">
                         <h1 style="font-size:10vw;" class="underline-06">แก้ไขข้อมูลร้านค้า</h1>
@@ -174,12 +185,12 @@
                 </v-card-text>
               </v-form>
               <v-card-actions>
-                <v-col id="margin">
+                <v-col id="margin" class="mt-3">
                   <v-row justify="center">
                     <v-btn
                       elevation="2"
                       dark
-                      x-large
+                      block
                       color="#173053"
                       :disabled="!validUpdate"
                       @click="editData()"
@@ -419,9 +430,7 @@ export default {
     },
     selectImgCoverUpdate () {
       if (this.filesUpdateImgCover) {
-        this.formUpdate.pictureCoverUrlPreview = URL.createObjectURL(
-          this.filesUpdateImgCover
-        )
+        this.formUpdate.pictureCoverUrlPreview = URL.createObjectURL(this.filesUpdateImgCover)
       } else {
         this.formUpdate.pictureCoverUrlPreview = ''
       }
@@ -630,4 +639,23 @@ export default {
   }
 }
 </script>
-<style scope></style>
+<style scope>
+/* width */
+::-webkit-scrollbar {
+  width: 2px;
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #173053;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #173053;
+}
+</style>

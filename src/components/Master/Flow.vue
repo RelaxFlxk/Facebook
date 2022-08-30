@@ -380,7 +380,7 @@
                           </v-icon>
                         </v-btn>
                     </v-col> -->
-                    <v-row justify="center">
+                    <v-row >
                       <!-- <v-col cols="5" class="text-center">
                         <v-col class="text-center" style="margin: auto 0;">
                           <v-img
@@ -391,7 +391,7 @@
                         </v-col>
                       </v-col> -->
 
-                      <v-col cols="10" class="v-margit_text_add mt-1">
+                      <v-col cols="12" class="v-margit_text_add mt-1">
                         <v-col class="text-left py-0">
                           <!-- <v-img
                             id="v_text_edits"
@@ -453,9 +453,32 @@
                             </v-col>
                           </v-row>
                         </v-col> -->
-                          <v-col cols="12" class="pb-0 pt-0 mb-2">
+                          <v-col cols="12" class="pa-0 ma-0">
                           <v-row>
-                            <v-col style="display: flex;justify-content: center;">
+                          <!-- <v-col style="display: flex;justify-content: center;">
+                            <v-checkbox
+                            label="Onsite"
+                            false-value="False"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            color="#1B437C"
+                            true-value="True"
+                            v-model="formAdd.checkOnsite"
+                          ></v-checkbox>
+                          </v-col> -->
+                          <v-col style="display: flex;justify-content: center;">
+                            <v-checkbox
+                            label="เงินมัดจำ"
+                            false-value="False"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            color="#1B437C"
+                            true-value="True"
+                            v-model="formAdd.checkDeposit"
+                            @change="formAdd.amountDeposit = 0"
+                          ></v-checkbox>
+                          </v-col>
+                          <v-col style="display: flex;justify-content: center;">
                             <v-checkbox
                             label="แจ้งยอดค่าชำระ"
                             :on-icon="'mdi-check-circle'"
@@ -468,25 +491,13 @@
                           </v-col>
                           <v-col style="display: flex;justify-content: center;">
                             <v-checkbox
-                            label="Onsite"
+                            label="ป้องกันการจองซ้ำ / วัน"
                             false-value="False"
                             :on-icon="'mdi-check-circle'"
                             :off-icon="'mdi-checkbox-blank-circle-outline'"
                             color="#1B437C"
                             true-value="True"
-                            v-model="formAdd.checkOnsite"
-                          ></v-checkbox>
-                          </v-col>
-                          <v-col style="display: flex;justify-content: center;">
-                            <v-checkbox
-                            label="เงินมัดจำ"
-                            false-value="False"
-                            :on-icon="'mdi-check-circle'"
-                            :off-icon="'mdi-checkbox-blank-circle-outline'"
-                            color="#1B437C"
-                            true-value="True"
-                            v-model="formAdd.checkDeposit"
-                            @change="formAdd.amountDeposit = 0"
+                            v-model="formAdd.repeatBooking"
                           ></v-checkbox>
                           </v-col>
                           </v-row>
@@ -719,9 +730,32 @@
                             :rules="[rules.required]"
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="12" class="pb-0 pt-0 mb-2">
+                        <v-col cols="12" class="pa-0 ma-0" >
                           <v-row>
-                            <v-col style="display: flex;justify-content: center;">
+                          <!-- <v-col style="display: flex;justify-content: center;">
+                            <v-checkbox
+                            label="Onsite"
+                            false-value="False"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            color="#1B437C"
+                            true-value="True"
+                            v-model="formUpdate.checkOnsite"
+                          ></v-checkbox>
+                          </v-col> -->
+                          <v-col style="display: flex;justify-content: center;">
+                            <v-checkbox
+                            label="เงินมัดจำ"
+                            false-value="False"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            color="#1B437C"
+                            true-value="True"
+                            v-model="formUpdate.checkDeposit"
+                            @change="formUpdate.amountDeposit = 0"
+                          ></v-checkbox>
+                          </v-col>
+                           <v-col style="display: flex;justify-content: center;">
                             <v-checkbox
                             label="แจ้งยอดค่าชำระ"
                             :on-icon="'mdi-check-circle'"
@@ -734,25 +768,13 @@
                           </v-col>
                           <v-col style="display: flex;justify-content: center;">
                             <v-checkbox
-                            label="Onsite"
+                            label="ป้องกันการจองซ้ำ / วัน"
                             false-value="False"
                             :on-icon="'mdi-check-circle'"
                             :off-icon="'mdi-checkbox-blank-circle-outline'"
                             color="#1B437C"
                             true-value="True"
-                            v-model="formUpdate.checkOnsite"
-                          ></v-checkbox>
-                          </v-col>
-                          <v-col style="display: flex;justify-content: center;">
-                            <v-checkbox
-                            label="เงินมัดจำ"
-                            false-value="False"
-                            :on-icon="'mdi-check-circle'"
-                            :off-icon="'mdi-checkbox-blank-circle-outline'"
-                            color="#1B437C"
-                            true-value="True"
-                            v-model="formUpdate.checkDeposit"
-                            @change="formUpdate.amountDeposit = 0"
+                            v-model="formUpdate.repeatBooking"
                           ></v-checkbox>
                           </v-col>
                           </v-row>
@@ -1731,6 +1753,7 @@ export default {
         checkPayment: 'True',
         checkOnsite: 'False',
         checkDeposit: 'False',
+        repeatBooking: 'False',
         depositTime: 'NO',
         promptPayID: null,
         promptPayName: null,
@@ -1771,6 +1794,7 @@ export default {
         checkPayment: 'True',
         checkOnsite: 'False',
         checkDeposit: 'False',
+        repeatBooking: 'False',
         depositTime: '',
         amountDeposit: 0,
         promptPayID: null,
@@ -2616,6 +2640,7 @@ export default {
       this.dataReady = false
       this.PK = item.flowCode
       this.formUpdate.checkOnsite = item.checkOnsite || 'False'
+      this.formUpdate.repeatBooking = item.repeatBooking || 'False'
       console.log('item: ', item)
       this.checkOnsite = item.checkOnsite || 'False'
       this.formUpdate.flowName = item.flowName

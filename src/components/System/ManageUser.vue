@@ -26,42 +26,41 @@
           </v-col>
         </v-row>
       </div>
-      <v-dialog v-model="dialogAdd" persistent max-width="70%">
-        <v-card class="text-center">
+      <v-dialog v-model="dialogAdd" persistent max-width="35%">
+        <v-card class="text-center" style="overflow-x: hidden;">
+          <v-container>
+                <div style="text-align: end;">
+                        <v-btn
+                          fab
+                          small
+                          dark
+                          color="#F3F3F3"
+                          @click="(dialogAdd = false), clearDataAdd()"
+                        >
+                          <v-icon dark
+                          color="#FE4A01 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                        </div>
+              </v-container>
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-card-text>
+              <v-col class="text-left pa-0 px-4 mb-3">
+                <!-- <v-img
+                  id="v_text_edits"
+                  :src="require('@/assets/GroupEditTitle.svg')"
+                ></v-img> -->
+                <h2 class="font-weight-bold" style="color:#173053;">เพิ่มข้อมูล</h2>
+              </v-col>
               <v-container>
-                <v-col class="text-right pa-0">
-                  <v-btn
-                    small
-                    color="#E0E0E0"
-                    @click="(dialogAdd = false), clearDataAdd()"
-                  >
-                    <v-icon color="#173053">mdi-close</v-icon>
-                  </v-btn>
-                </v-col>
                 <v-row justify="center">
-                  <v-col cols="5" class="text-center" style="margin: auto 0">
-                    <v-col class="text-center">
-                      <v-img
-                        class="v-margit_img_reward"
-                        :src="require('@/assets/AddBookingList.svg')"
-                        max-width="470.37"
-                        max-height="247"
-                      ></v-img>
-                    </v-col>
-                  </v-col>
-
-                  <v-col cols="6" class="v-margit_text_add mt-0 pa-0">
-                    <v-col class="text-center pa-3 ml-2">
-                      <v-img
-                        class="v_text_add"
-                        :src="require('@/assets/Grouptitle.svg')"
-                      ></v-img>
-                    </v-col>
+                  <v-col cols="12" class="v-margit_text_add mt-0 pa-3">
                     <v-row>
-                    <v-col cols="6" class="pb-0 pt-0">
+                    <v-col cols="12" class="pb-0 pt-0">
                       <v-text-field
+                      dense
+                      outlined
                         clearable
                         v-model="name"
                         label="ชื่อ-นามสกุล"
@@ -70,8 +69,10 @@
                         :disabled="empSelectAdd === '' || empSelectAdd === null ? false : true"
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="6" class="pb-0 pt-0">
+                    <v-col cols="12" class="pb-0 pt-0">
                       <v-select
+                      outlined
+                      dense
                         required
                         :rules="name === '' || name === null ? nameRules : [true]"
                         :disabled="name === '' || name === null ? false : true"
@@ -89,6 +90,7 @@
                     <v-row v-if="empSelectAdd || '' !== ''">
                       <v-col cols="12" class="pb-0 pt-0">
                         <v-select
+                        outlined
                           v-model="USER_ROLE"
                           :items="USER_ROLEitem"
                           label="สิทธิการใช้งาน"
@@ -101,12 +103,16 @@
                     <v-row>
                     <v-col cols="12" class="pt-0">
                       <v-text-field
+                      outlined
+                      dense
                         v-model="email"
                         :rules="emailRules"
                         label=" Email (Username)"
                         required
                       ></v-text-field>
                       <v-text-field
+                      outlined
+                      dense
                         v-model="password"
                         :rules="passRules"
                         label="password"
@@ -120,8 +126,9 @@
                   <v-btn
                     class="mt-3"
                     elevation="2"
-                    large
-                    color="success"
+                    block
+                    color="#173053"
+                    dark
                     :disabled="!valid"
                     @click="addData()"
                   >
@@ -134,17 +141,39 @@
           </v-form>
         </v-card>
       </v-dialog>
-      <v-dialog v-model="dialogEdit" persistent max-width="80%">
+      <v-dialog v-model="dialogEdit" persistent max-width="35%">
             <v-card>
-              <v-card-title>
-                <span class="headline">แก้ไขข้อมูล</span>
-              </v-card-title>
+              <v-container>
+                <div style="text-align: end;">
+                        <v-btn
+                          fab
+                          small
+                          dark
+                          color="#F3F3F3"
+                          @click="dialogEdit = false"
+                        >
+                          <v-icon dark
+                          color="#FE4A01 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                        </div>
+              </v-container>
+              <v-col class="text-left pa-0 px-4 mb-3">
+                <!-- <v-img
+                  id="v_text_edits"
+                  :src="require('@/assets/GroupEditTitle.svg')"
+                ></v-img> -->
+                <h2 class="font-weight-bold" style="color:#173053;">แก้ไขข้อมูล</h2>
+              </v-col>
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="6" class="pb-0 pt-0">
+                    <v-col cols="12" class="pa-0 px-3">
                       <v-text-field
+                        outlined
+                        dense
                         clearable
                         v-model="formUpdate.userFirst_NameTH"
                         label="ชื่อ-นามสกุล"
@@ -153,8 +182,10 @@
                         :disabled="empSelectEdit === '' || empSelectEdit === null ? false : true"
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="6" class="pb-0 pt-0" v-if="formUpdate.USER_ROLE !== 'admin'">
+                    <v-col cols="12" class="pa-0 px-3" v-if="formUpdate.USER_ROLE !== 'admin'">
                       <v-select
+                      outlined
+                        dense
                         required
                         :rules="formUpdate.userFirst_NameTH === '' || formUpdate.userFirst_NameTH === null ? nameRules : [true]"
                         :disabled="formUpdate.userFirst_NameTH === '' || formUpdate.userFirst_NameTH === null ? false : true"
@@ -170,8 +201,10 @@
                     </v-col>
                     </v-row>
                   <v-row>
-                      <v-col cols="4">
+                      <v-col cols="12" class="pa-0 px-3">
                       <v-text-field
+                      outlined
+                        dense
                         label="Username"
                         v-model="formUpdate.userName"
                         required
@@ -179,16 +212,20 @@
                         disabled
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="4">
+                    <v-col cols="12" class="pa-0 px-3">
                       <v-text-field
+                      outlined
+                        dense
                         label="Password"
                         v-model="formUpdate.userPassword"
                         required
                         :rules="passRules"
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="4" v-if="empSelectEdit || '' !== ''">
+                    <v-col cols="12" class="pa-0 px-3" v-if="empSelectEdit || '' !== ''">
                         <v-select
+                        outlined
+                        dense
                           v-model="USER_ROLE"
                           :items="USER_ROLEitem"
                           label="สิทธิการใช้งาน"
@@ -204,24 +241,14 @@
                 <v-spacer></v-spacer>
                 <v-btn
                   elevation="2"
-                  x-large
-                  color="blue darken-1"
-                  text
-                  @click="dialogEdit = false"
-                >
-                  <v-icon left> mdi-cancel</v-icon>
-                  ปิด
-                </v-btn>
-                <v-btn
-                  elevation="2"
-                  x-large
-                  color="success"
-                  text
+                  dark
+                  block
+                  color="#173053"
                   :disabled="!validUpdate"
                   @click="editData()"
                 >
                   <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                  แก้ไข
+                  บันทึก
                 </v-btn>
               </v-card-actions>
             </v-card>

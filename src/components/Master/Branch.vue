@@ -6,7 +6,7 @@
         <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
         <v-row>
 
-          <v-col cols="12">
+          <v-col cols="12" class="text-right">
             <v-btn color="primary" depressed @click="dialogAdd = true, validate('ADD'), dataItemAddTime = []">
               <v-icon left>mdi-text-box-plus</v-icon>
               เพิ่ม
@@ -14,11 +14,33 @@
           </v-col>
 
           <!-- ADD -->
-          <v-dialog v-model="dialogAdd" persistent max-width="80%">
+          <v-dialog v-model="dialogAdd" persistent max-width="35%">
             <v-card>
-              <v-card-title>
-                <span class="headline">เพิ่มข้อมูล</span>
-              </v-card-title>
+              <v-container>
+                <div style="text-align: end;">
+                        <v-btn
+                          fab
+                          small
+                          dark
+                          color="#F3F3F3"
+                          @click="dialogAdd = false,clearData()"
+                        >
+                          <v-icon dark
+                          color="#FE4A01 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                        </div>
+              </v-container>
+              <v-col cols="12" class="pa-0 ma-0 mt-n5">
+                        <v-col class="text-left">
+                          <!-- <v-img
+                            id="v_text_edits"
+                            :src="require('@/assets/GroupEditTitle.svg')"
+                          ></v-img> -->
+                          <h2 class="font-weight-bold" style="color:#173053;">เพิ่มข้อมูล</h2>
+                        </v-col>
+              </v-col>
               <v-card-text>
                 <v-container>
                   <v-form
@@ -26,10 +48,10 @@
                     v-model="valid_add"
                     lazy-validation
                   >
-                  <v-card class="pa-5 mb-5">
                     <v-row>
-                    <v-col cols="6">
+                    <v-col cols="12" class="pa-0">
                       <v-text-field
+                      dense
                         label="ชื่อสาขา (ภาษาไทย)"
                         v-model="formAdd.masBranchName"
                         :rules="nameRules"
@@ -39,8 +61,9 @@
 
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="6">
+                    <v-col cols="12" class="pa-0">
                       <v-text-field
+                      dense
                         label="ชื่อสาขา (ภาษาอังกฤษ)"
                         v-model="formAdd.masBranchNameEn"
                         :rules="nameRules"
@@ -50,8 +73,9 @@
 
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="6">
+                    <v-col cols="12" class="pa-0">
                       <VuetifyMoney
+                      dense
                           label="จำนวนคนเข้าใช้บริการ / วัน"
                           v-model="formAdd.countCus"
                           placeholder="จำนวนคนเข้าใช้บริการ / วัน"
@@ -59,8 +83,9 @@
                           outlined
                           v-bind:options="options2" />
                     </v-col>
-                    <v-col cols="6">
+                    <v-col cols="12" class="pa-0">
                       <VuetifyMoney
+                      dense
                           label="จำนวนที่รับงานด่วน / วัน"
                           v-model="formAdd.countFastTrack"
                           placeholder="จำนวนที่รับงานด่วน / วัน"
@@ -181,7 +206,6 @@
                     </v-col>
 
                   </v-row> -->
-                  </v-card>
                   <!-- <v-row>
                     <v-col cols="12">
                       <v-card class="pa-3" min-height="200">
@@ -231,24 +255,14 @@
                 <v-spacer></v-spacer>
                 <v-btn
                   elevation="2"
-                  x-large
-                  color="dark darken-1"
-                  text
-                  @click="dialogAdd = false,clearData()"
-                >
-                  <v-icon left> mdi-cancel</v-icon>
-                  ปิด
-                </v-btn>
-                <v-btn
-                  elevation="2"
-                  x-large
-                  color="success"
-                  text
+                  block
+                  color="#173053"
+                  dark
                   :disabled="!valid_add"
                   @click="addData()"
                 >
                   <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                  เพิ่ม
+                  บันทึก
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -256,22 +270,44 @@
           <!-- end add -->
 
           <!-- edit -->
-          <v-dialog v-model="dialogEdit" persistent max-width="80%">
+          <v-dialog v-model="dialogEdit" persistent max-width="35%">
             <v-card>
-              <v-card-title>
-                <span class="headline">แก้ไขข้อมูล</span>
-              </v-card-title>
+              <v-container>
+                <div style="text-align: end;">
+                        <v-btn
+                          fab
+                          small
+                          dark
+                          color="#F3F3F3"
+                          @click="dialogEdit = false, dataReady = true"
+                        >
+                          <v-icon dark
+                          color="#FE4A01 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                        </div>
+              </v-container>
+              <v-col cols="12" class="pa-0 ma-0 mt-n5">
+                        <v-col class="text-left">
+                          <!-- <v-img
+                            id="v_text_edits"
+                            :src="require('@/assets/GroupEditTitle.svg')"
+                          ></v-img> -->
+                          <h2 class="font-weight-bold" style="color:#173053;">แก้ไขข้อมูล</h2>
+                        </v-col>
+              </v-col>
               <v-card-text>
                 <v-container>
-                   <v-form
-                     ref="form_update"
-                    v-model="valid_update"
+                  <v-form
+                    ref="form_add"
+                    v-model="valid_add"
                     lazy-validation
                   >
-                  <v-card class="pa-5 mb-5">
                     <v-row>
-                    <v-col cols="6">
+                    <v-col cols="12" class="pa-0">
                       <v-text-field
+                      dense
                         label="ชื่อสาขา (ภาษาไทย)"
                         v-model="formUpdate.masBranchName"
                         :rules="nameRules"
@@ -281,8 +317,9 @@
 
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="6">
+                    <v-col cols="12" class="pa-0">
                       <v-text-field
+                      dense
                         label="ชื่อสาขา (ภาษาอังกฤษ)"
                         v-model="formUpdate.masBranchNameEn"
                         :rules="nameRules"
@@ -292,8 +329,9 @@
 
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="6">
+                    <v-col cols="12" class="pa-0">
                       <VuetifyMoney
+                      dense
                           label="จำนวนคนเข้าใช้บริการ / วัน"
                           v-model="formUpdate.countCus"
                           placeholder="จำนวนคนเข้าใช้บริการ / วัน"
@@ -301,8 +339,9 @@
                           outlined
                           v-bind:options="options2" />
                     </v-col>
-                    <v-col cols="6">
+                    <v-col cols="12" class="pa-0">
                       <VuetifyMoney
+                      dense
                           label="จำนวนที่รับงานด่วน / วัน"
                           v-model="formUpdate.countFastTrack"
                           placeholder="จำนวนที่รับงานด่วน / วัน"
@@ -344,6 +383,17 @@
                         item-value="text"
                         outlined
                       ></v-select>
+                      <v-btn
+                        block
+                        color="teal"
+                        elevation="2"
+                        rounded
+                        small
+                        dark
+                        @click="presetTime()"
+                      >
+                        แบบร่าง เวลา
+                      </v-btn>
                     </v-col>
                     <v-col cols="2">
                       <v-btn
@@ -377,7 +427,7 @@
                           @click="chekshowTime()"
                           false-value="False"
                           true-value="True"
-                          v-model="formUpdate.limitBookingCheck"
+                          v-model="formAdd.limitBookingCheck"
                           label="ตั้ง Limit การนัดหมาย"
                           hide-details
                           class="shrink ml-6 mr-0 mt-0 mb-2"
@@ -412,14 +462,13 @@
                     </v-col>
 
                   </v-row> -->
-                  </v-card>
                   <!-- <v-row>
                     <v-col cols="12">
                       <v-card class="pa-3" min-height="200">
                         <strong >วันหยุดทั่วไปของบริษัท</strong>
                         <v-select
                         class="mt-5"
-                        v-model="formUpdate.dateDayoffText"
+                        v-model="formAdditem.dateDayoffText"
                         :items="itemDateStop"
                         chips
                         label="เลือกวันหยุด"
@@ -428,8 +477,8 @@
                       ></v-select>
                       </v-card>
                     </v-col>
-                  </v-row>
-                  <v-row>
+                  </v-row> -->
+                  <!-- <v-row>
                     <v-col cols="12">
                       <v-card class="pa-6">
                         <v-row>
@@ -438,7 +487,7 @@
                           </v-col>
                           <v-col cols="6">
                             <v-select
-                              v-model="formUpdate.typeDayCustom"
+                              v-model="formAdditem.typeDayCustom"
                               :item-text="typeDayCustomitem.text"
                               :items="typeDayCustomitem"
                               label="ประเภทของวันหยุด"
@@ -447,8 +496,7 @@
                           </v-col>
                         </v-row>
                         <v-date-picker
-                          v-model="formUpdate.dateDayCustom"
-                          :allowed-dates="allowedDates"
+                        v-model="formAdditem.dateDayCustom"
                           multiple
                           full-width
                           class="mt-4"
@@ -463,24 +511,14 @@
                 <v-spacer></v-spacer>
                 <v-btn
                   elevation="2"
-                  x-large
-                  color="blue darken-1"
-                  text
-                  @click="dialogEdit = false, dataReady = true"
-                >
-                  <v-icon left> mdi-cancel</v-icon>
-                  ปิด
-                </v-btn>
-                <v-btn
-                  elevation="2"
-                  x-large
-                  color="success"
-                  text
-                 :disabled="!valid_update"
+                  block
+                  color="#173053"
+                  dark
+                  :disabled="!valid_update"
                   @click="editData()"
                 >
                   <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                  แก้ไข
+                  บันทึก
                 </v-btn>
               </v-card-actions>
             </v-card>
