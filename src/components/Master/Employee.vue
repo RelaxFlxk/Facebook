@@ -341,7 +341,7 @@
                   block
                   dark
                   color="#173053"
-                  :disabled="!valid_add"
+                  :disabled="!valid_update"
                   @click="editData()"
                 >
                   <v-icon left>mdi-checkbox-marked-circle</v-icon>
