@@ -199,12 +199,12 @@
                         menu-props="auto"
                         :rules="nameRules"
                         label="เลือกหน้าที่จะแสดง"
+                        @change="validate('ADD')"
                         prepend-icon="mdi-map"
                       ></v-select>
                     </v-col>
-                    <v-col cols="12" class="pa-0">
+                    <v-col cols="12" class="pa-0" v-if="formAdd.privacyPage === 'bookingform'">
                       <v-select
-                        v-if="formAdd.privacyPage === 'bookingform'"
                         dense
                         outlined
                         v-model="formAdd.masBranchID"
