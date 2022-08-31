@@ -192,14 +192,26 @@
                   <v-row>
                     <v-col cols="12" class="pa-0">
                       <v-select
-                      dense
-                      outlined
+                        dense
+                        outlined
                         v-model="formAdd.privacyPage"
                         :items="privacyPageSelect"
                         menu-props="auto"
                         :rules="nameRules"
                         label="เลือกหน้าที่จะแสดง"
                         prepend-icon="mdi-map"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12" class="pa-0">
+                      <v-select
+                        v-if="formAdd.privacyPage === 'bookingform'"
+                        dense
+                        outlined
+                        v-model="formAdd.masBranchID"
+                        :item-text="branch.text"
+                        :items="branch"
+                        :rules="nameRules"
+                        label="สาขา"
                       ></v-select>
                     </v-col>
                   </v-row>
@@ -330,6 +342,18 @@
                         prepend-icon="mdi-map"
                       ></v-select>
                     </v-col>
+                      <v-col cols="12" class="pa-0">
+                      <v-select
+                        v-if="formUpdate.privacyPage === 'bookingform'"
+                        dense
+                        outlined
+                        v-model="formUpdate.masBranchID"
+                        :item-text="branch.text"
+                        :items="branch"
+                        :rules="nameRules"
+                        label="สาขา"
+                      ></v-select>
+                    </v-col>
                   </v-row>
                    </v-form>
                 </v-container>
@@ -421,7 +445,174 @@
             </v-card>
           </v-dialog>
           <!-- end delete -->
+        <!-- dialog limitbookint -->
+        <v-dialog v-model="dialoglimitbooking" max-width="45%" persistent >
+          <v-card min-width="400px" min-height="500px" class="pa-1 " color="#F4F4F4">
+            <!-- <v-card-title>asdasdasdas</v-card-title> -->
+            <v-container>
+            <div style="display: flex;justify-content: space-between;" class="ml-5">
+              <h2 class="font-weight-bold" style="color:#173053;">ตั้งค่าเวลา</h2>
+            <v-btn
+              fab
+              small
+              dark
+              color="#F3F3F3"
+              @click="dialoglimitbooking = false, clearLimit()"
+            >
+              <v-icon dark
+              color="#FE4A01 ">
+                mdi-close
+              </v-icon>
+            </v-btn>
+            </div>
+            </v-container>
+              <v-card-text>
+                <v-container>
+                  <v-form
+                     ref="form_update"
+                    v-model="valid_update"
+                    lazy-validation
+                  >
+                  <v-row style="justify-content: space-between;">
+      <v-col cols="12">
+      <v-card class="pa-3 mb-5" min-height="675px">
+        <h4 class="font-weight-bold mt-2">จัดการเวลานัดหมาย</h4>
+          <v-row align="center" class="ma-0">
+              <v-checkbox
+                @click="chekshowTime()"
+                false-value="False"
+                true-value="True"
+                :on-icon="'mdi-check-circle'"
+                :off-icon="'mdi-checkbox-blank-circle-outline'"
+                label="ต้องการใช้งานการจำกัดคิวนัดหมาย"
+                v-model="formUpdateLimitbooking.limitBookingCheck"
+                hide-details
+                class="shrink ml-6 mr-0 mt-0 mb-2"
+              ></v-checkbox>
+            </v-row>
 
+        <div class="text-center px-5 mb-5">
+          <v-sheet class="pa-0">
+          <v-row class="mt-3">
+            <v-col cols="6"  class="pt-0" style="text-align: start;">
+            <v-btn
+            small
+            class="mb-n3"
+                color="teal"
+                dark
+                @click="presetTime()"
+              >
+                <v-icon class="mr-2" small dark> mdi-clock-time-eight</v-icon>เพิ่มเวลาอัตโนมัติ
+              </v-btn>
+          </v-col>
+          <v-col cols="6" class="pt-0" style="text-align: end;">
+             <v-btn
+             small
+             class="mb-n3"
+              style="text-align: end;"
+                color="#173053"
+                dark
+                @click="addNewNew">
+                <v-icon class="mr-2" small dark>mdi-plus-box</v-icon>เพิ่มเวลานัดหมาย
+              </v-btn>
+          </v-col>
+          <v-col cols="12" class="mb-0"  style="text-align: center;">
+          <v-data-table
+          disable-pagination
+          hide-default-footer
+          :headers="columnsAddTime"
+          :items="dataItemAddTime"
+          :search="search"
+          disable-sort
+          class="elevation-1"
+          min-height="300px">
+          <!-- <template v-slot:top>
+            <v-toolbar color="white"> -->
+              <!-- <div class="text-left">
+              <v-btn
+                  color="teal"
+                  elevation="2"
+                  rounded
+                  small
+                  dark
+                  @click="presetTime()"
+                >
+                  แบบร่าง เวลา
+                </v-btn>
+              </div>
+              <div class="text-right">
+
+                <v-btn
+                  small
+                  color="primary"
+                  class="ml-2 white--text"
+                  @click="addNewNew">
+                  <v-icon dark>mdi-plus</v-icon>เพิ่มเวลานัดหมาย
+                </v-btn>
+              </div> -->
+            <!-- </v-toolbar>
+          </template> -->
+          <template v-slot:[`item.text`]="{ item }">
+            <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.text" :counter="50" maxlength="50" :hide-details="true" dense single-line :autofocus="true" v-if="item.id === editedItemNew.id"></v-text-field>
+            <span v-else>{{item.text}}</span>
+          </template>
+          <template v-slot:[`item.value`]="{ item }">
+            <v-text-field class="pa-0 ma-0" placeholder="HH:mm" filled v-model="editedItemNew.value" v-mask="'##:##'" :hide-details="true" dense single-line v-if="item.id === editedItemNew.id" ></v-text-field>
+            <span v-else>{{item.value}}</span>
+          </template>
+          <template v-slot:[`item.limitBooking`]="{ item }">
+            <div v-if="item.id === editedItemNew.id" >
+              <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" dense single-line v-if="formUpdateLimitbooking.limitBookingCheck === 'True'" ></v-text-field>
+              <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" disabled dense single-line v-else></v-text-field>
+            </div>
+            <span v-else>{{item.limitBooking}}</span>
+          </template>
+          <template v-slot:[`item.actions2`]="{ item }">
+            <div class="pa-0 ma-0" v-if="item.id === editedItemNew.id">
+              <v-icon color="red" class="mr-3" @click="closeNew">
+                mdi-window-close
+              </v-icon>
+              <v-icon color="green"  @click="saveNew">
+                mdi-content-save
+              </v-icon>
+            </div>
+            <div v-else>
+              <v-icon color="green" class="mr-3" @click="editItemNew(item)">
+                mdi-pencil
+              </v-icon>
+              <v-icon color="red" @click="deleteItemNew(item)">
+                mdi-delete
+              </v-icon>
+            </div>
+          </template>
+        </v-data-table>
+          </v-col>
+          </v-row>
+            </v-sheet>
+          </div>
+    </v-card>
+                    </v-col>
+                  </v-row>
+                  </v-form>
+                </v-container>
+              </v-card-text>
+                <div class="text-center">
+                  <v-btn
+                  width="100%"
+                  class="ma-0 mb-2"
+                  elevation="2"
+                  large
+                  dark
+                  color="#173053"
+                  :disabled="!valid_update"
+                  @click="EditlimitBooking()"
+                >
+                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                  บันทึก
+                </v-btn>
+                </div>
+          </v-card>
+        </v-dialog>
           <!-- data table -->
           <v-col cols="12">
             <v-card elevation="7" v-if="dataReady">
@@ -444,6 +635,7 @@
                    <template v-slot:[`item.privacyPage`]="{ item }">
                      <p v-if="item.privacyPage === 'booking'">หน้านัดหมาย</p>
                      <p v-if="item.privacyPage === 'board'">หน้ากระดานการทำงาน</p>
+                     <p v-if="item.privacyPage === 'bookingform'">หน้ากระดานการทำงาน</p>
                      <p v-if="item.privacyPage === 'all'">ทั้งหมด</p>
                    </template>
                    <template v-slot:[`item.CREATE_DATE`]="{ item }">
@@ -453,6 +645,17 @@
                       {{ format_date(item.LAST_DATE) }}
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
+                    <v-btn
+                      v-if="item.privacyPage === 'bookingform'"
+                      color="purple"
+                      fab
+                      small
+                      @click="
+                          (dialoglimitbooking = true),getlimitbooking(item)
+                      "
+                    >
+                      <v-icon color="#FFFFFF"> mdi-calendar-clock </v-icon>
+                    </v-btn>
                     <v-btn
                       color="blue"
                       fab
@@ -540,6 +743,7 @@ export default {
       dialogEdit: false,
       dialogDelete: false,
       dialogImport: false,
+      dialoglimitbooking: false,
       // END Dialog Config ADD EDIT DELETE
       panel: [0],
       panel1: [1],
@@ -555,7 +759,9 @@ export default {
         privacyPage: '',
         empImge: '',
         pictureUrlPreview: '',
-        shopId: this.$session.getAll().data.shopId
+        shopId: this.$session.getAll().data.shopId,
+        setTime: [],
+        masBranchID: ''
       },
       formUpdate: {
         empCode: '',
@@ -564,7 +770,9 @@ export default {
         empLast_NameTH: '',
         empImge: '',
         pictureUrlPreview: '',
-        privacyPage: ''
+        privacyPage: '',
+        setTime: [],
+        masBranchID: ''
       },
       formUpdateItem: {
         empCode: '',
@@ -572,11 +780,22 @@ export default {
         empFirst_NameTH: '',
         empLast_NameTH: '',
         privacyPage: '',
-        empImge: ''
+        empImge: '',
+        setTime: [],
+        masBranchID: ''
+      },
+      formUpdateLimitbooking: {
+        empId: null,
+        time: '',
+        setTime: '',
+        limitBooking: 0,
+        limitBookingCheck: 'Fales',
+        shopId: this.$session.getAll().data.shopId
       },
       privacyPageSelect: [
         { text: 'หน้านัดหมาย', value: 'booking' },
         { text: 'หน้ากระดานการทำงาน', value: 'board' },
+        { text: 'หน้านัดหมายของลูกค้า', value: 'bookingform' },
         { text: 'ทั้งหมด', value: 'all' }
       ],
       nameRules: [
@@ -616,17 +835,227 @@ export default {
         ]
       ],
       filesUpdate: null,
-      filesAdd: null
+      filesAdd: null,
+      dataItemAddTime: [],
+      columnsAddTime: [
+        { text: 'แสดงเวลา', value: 'text' },
+        { text: 'เวลา', value: 'value' },
+        { text: 'จำนวนนัดหมาย', value: 'limitBooking', align: 'center', width: '200px' },
+        // { text: 'เรียงตำแหน่ง', value: 'actions1', align: 'center' },
+        { text: 'จัดการเวลา', value: 'actions2', align: 'center', width: '100px' }
+      ],
+      search: '',
+      editedIndexNew: -1,
+      editedItemNew: {
+        id: 0,
+        text: '',
+        value: '',
+        limitBooking: 0
+      },
+      defaultItemNew: {
+        id: 0,
+        text: '',
+        value: '',
+        limitBooking: 0
+      },
+      BookingFieldshowtime: null,
+      branch: []
       // End Export Config
     }
   },
   async mounted () {
+    await this.getDataBranch()
+    await this.getBookingField()
     // this.getGetToken(this.DNS_IP)
     this.dataReady = false
     // Get Data
     this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
   },
   methods: {
+    editItemNew (item) {
+      console.log('item', item)
+      console.log('this.dataItemAddTime', this.dataItemAddTime)
+      this.editedIndexNew = this.dataItemAddTime.indexOf(item)
+      this.editedItemNew = Object.assign({}, item)
+    },
+
+    deleteItemNew  (item) {
+      const index = this.dataItemAddTime.indexOf(item)
+      this.dataItemAddTime.splice(index, 1)
+    },
+
+    closeNew  () {
+      setTimeout(() => {
+        this.editedItemNew = Object.assign({}, this.defaultItemNew)
+        this.editedIndexNew = -1
+      }, 300)
+    },
+    addNewNew  () {
+      const addObj = Object.assign({}, this.defaultItemNew)
+      addObj.id = this.dataItemAddTime.length + 1
+      this.dataItemAddTime.unshift(addObj)
+      this.editItemNew(addObj)
+    },
+    saveNew  () {
+      if (this.editedIndexNew > -1) {
+        Object.assign(this.dataItemAddTime[this.editedIndexNew], this.editedItemNew)
+      }
+      this.dataItemAddTime.sort(function (a, b) {
+        return a.value.localeCompare(b.value)
+      })
+      this.closeNew()
+    },
+    presetTime () {
+      this.dataItemAddTime = [{'id': 1, 'value': '08:00', 'text': '08:00', 'limitBooking': ''}, {'id': 2, 'value': '08:30', 'text': '08:30', 'limitBooking': ''}, {'id': 3, 'value': '09:00', 'text': '09:00', 'limitBooking': ''}, {'id': 4, 'value': '09:30', 'text': '09:30', 'limitBooking': ''}, {'id': 5, 'value': '10:00', 'text': '10:00', 'limitBooking': ''}, {'id': 6, 'value': '10:30', 'text': '10:30', 'limitBooking': ''}, {'id': 7, 'value': '11:00', 'text': '11:00', 'limitBooking': ''}, {'id': 8, 'value': '11:30', 'text': '11:30', 'limitBooking': ''}, {'id': 9, 'value': '12:00', 'text': '12:00', 'limitBooking': ''}, {'id': 10, 'value': '12:30', 'text': '12:30', 'limitBooking': ''}, {'id': 11, 'value': '13:00', 'text': '13:00', 'limitBooking': ''}, {'id': 12, 'value': '13:30', 'text': '13:30', 'limitBooking': ''}, {'id': 13, 'value': '14:00', 'text': '14:00', 'limitBooking': ''}, {'id': 14, 'value': '14:30', 'text': '14:30', 'limitBooking': ''}, {'id': 15, 'value': '15:00', 'text': '15:00', 'limitBooking': ''}, {'id': 16, 'value': '15:30', 'text': '15:30', 'limitBooking': ''}, {'id': 17, 'value': '16:00', 'text': '16:00', 'limitBooking': ''}, {'id': 18, 'value': '16:30', 'text': '16:30', 'limitBooking': ''}, {'id': 19, 'value': '17:00', 'text': '17:00', 'limitBooking': ''}]
+    },
+    async getDataBranch () {
+      this.branch = []
+      this.branchData = []
+      await axios.get(this.DNS_IP + '/master_branch/get?shopId=' + this.shopId).then(response => {
+        let rs = response.data
+        console.log('rs', rs)
+        if (rs.length > 0) {
+          for (var i = 0; i < rs.length; i++) {
+            let d = rs[i]
+            let s = {}
+            s.text = d.masBranchName
+            s.value = d.masBranchID
+            this.branch.push(s)
+            // console.log('dtdtdtdt', this.branch)
+          }
+        }
+      })
+      // console.log('branchData', this.branchData)
+    },
+    async getlimitbooking (item) {
+      this.formUpdateLimitbooking.empId = item.empId
+      // console.log('this.formUpdateLimitbooking.empId', this.formUpdateLimitbooking.empId)
+      let dt = []
+      await axios
+        .get(this.DNS_IP + '/empSelect/get?empId=' + item.empId)
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            dt = rs
+            console.log('rs', rs)
+            this.formUpdateLimitbooking.limitBookingCheck = rs[0].limitBookingCheck || 'Fales'
+            if (rs[0].setTime === null || rs[0].setTime === '') {
+              this.dataItemAddTime = []
+            } else {
+              let setTime = JSON.parse(rs[0].setTime)
+              setTime.map((v, k) => { v.id = k + 1 })
+              console.log('settime222222222', setTime)
+              if (setTime[0].limitBooking === undefined) {
+                // console.log('dasdas')
+                for (let i = 0; i < setTime.length; i++) {
+                  let d = setTime[i]
+                  d.limitBooking = ''
+                  this.dataItemAddTime.push(d)
+                }
+              } else {
+                this.dataItemAddTime = setTime
+              }
+            }
+            console.log('testgetgetlimitbooking', this.formUpdateLimitbooking)
+          }
+        })
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
+      console.log('dt', dt)
+      await this.chekshowTime('open', dt[0])
+    },
+    EditlimitBooking () {
+      if (this.dataItemAddTime.filter(el => { return el.value === '' }).length === 0) {
+        if (this.formUpdateLimitbooking.limitBookingCheck === 'True') {
+          if (this.dataItemAddTime.filter(el => { return el.limitBooking === '' }).length === 0) {
+            this.EditlimitBookingSubmit()
+          } else {
+            this.$swal('ผิดพลาด', 'กรุณาเลือก ใส่จำนวน Limit Booking ให้ครบ เนื่องจาก เปิดใช้งาน Limit การจอง', 'error')
+          }
+        } else {
+          this.EditlimitBookingSubmit()
+        }
+      } else {
+        this.$swal('ผิดพลาด', 'กรุณาเลือก กรอกเวลาให้ครบ', 'error')
+      }
+    },
+    async EditlimitBookingSubmit () {
+      console.log('Editdata', this.formUpdateLimitbooking)
+      console.log('dataitem', this.dataItemAddTime)
+      let Dataitem = {
+        'limitBookingCheck': this.formUpdateLimitbooking.limitBookingCheck,
+        'setTime': JSON.stringify(this.dataItemAddTime)
+      }
+      console.log('Dataitem', Dataitem)
+      this.$swal({
+        title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async (result) => {
+          await axios
+            .post(this.DNS_IP + '/empSelect/edit/' + this.formUpdateLimitbooking.empId, Dataitem)
+            .then(async (response) => {
+              this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
+              this.dialoglimitbooking = false
+              await this.clearLimit()
+            })
+            .catch(error => {
+              console.log('error function addData : ', error)
+            })
+        })
+    },
+    async getBookingField () {
+      await axios
+        .get(this.DNS_IP + '/BookingField/get?shopId=' + this.shopId)
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            this.BookingFieldshowtime = rs[0].showTime
+            console.log('this.BookingFieldshowtime', this.BookingFieldshowtime)
+          }
+        })
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
+    },
+    chekshowTime (open, item) {
+      if (open) {
+        if (this.BookingFieldshowtime === 'แสดง') {
+        } else {
+          console.log('this.formUpdate.limitBookingCheck', this.formUpdateLimitbooking.limitBookingCheck)
+          if (item.limitBookingCheck === 'True') {
+            this.$swal('ปิด LimitBooking ', 'กรุณาเปิดการแสดงเวลานัดหมายเพื่อเปิด LimitBooking', 'error').then(() => {
+              this.formUpdateLimitbooking.limitBookingCheck = 'False'
+            })
+          } else {
+            console.log('else')
+            this.formUpdateLimitbooking.limitBookingCheck = 'False'
+          }
+        }
+      } else {
+        if (this.BookingFieldshowtime === 'แสดง') {
+        } else {
+          this.$swal('ร้านของคุณไม่สามารถเปิด LimitBooking ได้', 'กรุณาเปิดการแสดงเวลานัดหมาย', 'error').then(() => {
+            this.formUpdateLimitbooking.limitBookingCheck = 'False'
+          })
+        }
+      }
+    },
+    async clearLimit () {
+      this.timeText = ''
+      this.formUpdateLimitbooking.setTime = ''
+      this.formUpdateLimitbooking.limitBookingCheck = ''
+      this.formUpdateLimitbooking.limitBooking = ''
+      this.formUpdateLimitbooking.flowId = []
+      this.typeTimeAdd = 'add'
+      this.indexTimeAdd = 0
+    },
     selectImgAdd () {
       if (this.filesAdd) {
         this.formAdd.pictureUrlPreview = URL.createObjectURL(
@@ -680,10 +1109,16 @@ export default {
       if (item.empImge !== null) {
         this.formUpdate.pictureUrlPreview = item.empImge
       }
+      if (item.setTime === null || []) {
+        this.dataItemAddTime = []
+      } else {
+        this.dataItemAddTime = JSON.parse(item.setTime)
+      }
       // delete this.formUpdate[FIELD_PK_NAME]
       delete this.formUpdate['LAST_DATE']
       delete this.formUpdate['CREATE_DATE']
       delete this.formUpdate['RECORD_STATUS']
+      console.log('this.formUpdate', this.formUpdate)
     },
     async addData () {
       //
