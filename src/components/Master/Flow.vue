@@ -363,40 +363,9 @@
                         X
                         </v-btn>
                     </div>
-                        <!-- <h3 class="text-center" style="color:#1B437C;font-weight: bold;">แนบหลักฐานการโอนเงิน</h3> -->
-                        <!-- <br>
-                    <v-col class="text-right">
-                        <v-btn
-                          class="mx-2 mr-n5 mt-n5"
-                          fab
-                          small
-                          dark
-                          color="#F3F3F3"
-                          @click="(dialogAdd = false), clearData()"
-                        >
-                          <v-icon dark
-                          color="#FE4A01 ">
-                            mdi-close
-                          </v-icon>
-                        </v-btn>
-                    </v-col> -->
                     <v-row >
-                      <!-- <v-col cols="5" class="text-center">
-                        <v-col class="text-center" style="margin: auto 0;">
-                          <v-img
-                            class="v-margit_img_reward"
-                            :src="require('@/assets/stepflowAdd.jpg')"
-                            max-width="330"
-                          ></v-img>
-                        </v-col>
-                      </v-col> -->
-
                       <v-col cols="12" class="v-margit_text_add mt-1">
                         <v-col class="text-left py-0">
-                          <!-- <v-img
-                            id="v_text_edits"
-                            :src="require('@/assets/GroupEditTitle.svg')"
-                          ></v-img> -->
                           <h2 class="font-weight-bold"  style="color:#173053;">เพิ่มข้อมูล บริการ</h2>
                         </v-col>
                         <v-col cols="12" class="pb-0">
@@ -415,58 +384,33 @@
                             :rules="[rules.required]"
                           ></v-text-field>
                         </v-col>
-                        <!-- <v-col cols="12" class="pb-0 pt-0 mb-4">
-                          <v-row class="mb-3">
-                            <v-col class='d-flex justify-center'>
+                          <v-col cols="12" class="pt-0 pb-0">
+                          <v-row>
+                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: left;">
                               <v-checkbox
-                              label="แจ้งยอดค่าชำระ"
-                              :on-icon="'mdi-check-circle'"
-                              :off-icon="'mdi-checkbox-blank-circle-outline'"
-                              false-value="False"
-                              true-value="True"
-                              v-model="formAdd.checkPayment"
-                              hide-details
-                              ></v-checkbox>
-                            </v-col>
-                            <v-col >
-                              <v-checkbox
-                                label="Onsite"
-                              :on-icon="'mdi-check-circle'"
-                              :off-icon="'mdi-checkbox-blank-circle-outline'"
+                                label="จำกัดเวลาตามช่าง"
                                 false-value="False"
-                                true-value="True"
-                                v-model="formAdd.checkOnsite"
-                                hide-details
-                              ></v-checkbox>
-                            </v-col>
-                            <v-col>
-                              <v-checkbox
-                                label="เงินมัดจำ"
                                 :on-icon="'mdi-check-circle'"
                                 :off-icon="'mdi-checkbox-blank-circle-outline'"
-                                false-value="False"
+                                color="#1B437C"
                                 true-value="True"
-                                v-model="formAdd.checkDeposit"
-                                @change="formAdd.amountDeposit = 0"
-                                hide-details
+                                v-model="formAdd.timeSlotStatus"
+                                @change="formAdd.timeSlot = 1"
                               ></v-checkbox>
                             </v-col>
                           </v-row>
-                        </v-col> -->
-                          <v-col cols="12" class="pa-0 ma-0">
+                          <v-row v-if="formAdd.timeSlotStatus === 'True'">
+                            <v-col class="pt-0 pb-0">
+                              <v-select
+                                v-model="formAdd.timeSlot"
+                                :items="[{text: '1', value: 1},{text: '2', value: 2},{text: '3', value: 3}]"
+                                label="จำนวน Slot งาน"
+                                outlined
+                              ></v-select>
+                            </v-col>
+                          </v-row>
                           <v-row>
-                          <!-- <v-col style="display: flex;justify-content: center;">
-                            <v-checkbox
-                            label="Onsite"
-                            false-value="False"
-                            :on-icon="'mdi-check-circle'"
-                            :off-icon="'mdi-checkbox-blank-circle-outline'"
-                            color="#1B437C"
-                            true-value="True"
-                            v-model="formAdd.checkOnsite"
-                          ></v-checkbox>
-                          </v-col> -->
-                          <v-col style="display: flex;justify-content: center;">
+                          <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;">
                             <v-checkbox
                             label="เงินมัดจำ"
                             false-value="False"
@@ -478,7 +422,7 @@
                             @change="formAdd.amountDeposit = 0"
                           ></v-checkbox>
                           </v-col>
-                          <v-col style="display: flex;justify-content: center;">
+                          <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;">
                             <v-checkbox
                             label="แจ้งยอดค่าชำระ"
                             :on-icon="'mdi-check-circle'"
@@ -489,7 +433,7 @@
                             v-model="formAdd.checkPayment"
                           ></v-checkbox>
                           </v-col>
-                          <v-col style="display: flex;justify-content: center;">
+                          <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;">
                             <v-checkbox
                             label="ป้องกันการจองซ้ำ / วัน"
                             false-value="False"
@@ -548,108 +492,6 @@
                             label="หมายเหตุการยืนยันนัดหมาย"
                           ></v-textarea>
                         </v-col>
-                        <!-- <v-col cols="12">
-                          <v-row justify="center">
-                            <v-btn
-                              color="primary"
-                              dark
-                              x-small
-                              @click="
-                                (dialogAddField = true),
-                                  (editedItem.fieldName = ''),
-                                  (editedItem.fieldId = '')
-                              "
-                              class="mb-2"
-                            >
-                              เพิ่ม ช่องกรอกข้อมูล
-                            </v-btn>
-                          </v-row>
-                          <v-row justify="center">
-                            <v-data-table
-                              dense
-                              :headers="headers"
-                              :items="desserts"
-                              hide-default-footer
-                              class="elevation-1 custom_table_class"
-                            >
-                              <template v-slot:[`item.actions`]="{ item }">
-                                <v-icon
-                                  small
-                                  color="#7F87A7"
-                                  @click="deleteItem(item)"
-                                >
-                                  mdi-delete
-                                </v-icon>
-                              </template>
-                              <template v-slot:[`item.showCard`]="{ item }">
-                                <v-checkbox
-                                  false-value="False"
-                                  true-value="True"
-                                  v-model="item.showCard"
-                                ></v-checkbox>
-                              </template>
-                            </v-data-table>
-                            <v-dialog
-                              v-model="dialogAddField"
-                              max-width="450px"
-                            >
-                              <v-card>
-                                <v-card-text>
-                                  <v-container>
-                                    <v-row>
-                                      <v-col cols="12">
-                                        <center>
-                                          <v-col>
-                                            <v-img
-                                              id="v-img-fieldName"
-                                              :src="
-                                                require('@/assets/maintenance.png')
-                                              "
-                                            ></v-img>
-                                          </v-col>
-                                        </center>
-                                        <v-row style="height: 35px">
-                                          <v-subheader id="subtext"
-                                            >ช่องกรอกข้อมูล</v-subheader
-                                          >
-                                        </v-row>
-                                        <br />
-                                        <v-row style="height: 50px">
-                                          <v-select
-                                            outlined
-                                            v-model="editedItem.fieldName"
-                                            :items="editedItemSelete"
-                                            item-text="text"
-                                            dense
-                                            return-object
-                                          ></v-select>
-                                        </v-row>
-                                      </v-col>
-                                    </v-row>
-                                  </v-container>
-                                </v-card-text>
-
-                                <v-card-actions>
-                                  <v-spacer></v-spacer>
-                                  <v-btn
-                                    dark
-                                    color="#173053"
-                                    @click="dialogAddField = false"
-                                  >
-                                    ยกเลิก
-                                  </v-btn>
-                                  <v-btn
-                                    dark
-                                    color="#173053"
-                                    @click="save(editedItem)"
-                                  >
-                                    บันทึกข้อมูล
-                                  </v-btn>
-                                </v-card-actions>
-                              </v-card>
-                            </v-dialog>
-                          </v-row>
-                        </v-col> -->
                         <br />
                         <div class="text-center">
                           <v-btn
@@ -695,21 +537,8 @@
                         </v-btn>
                         </div>
                     <v-row>
-                      <!-- <v-col cols="5" class="text-center"  style="margin: auto 0;">
-                        <v-col>
-                          <v-img
-                            id="v-img-cars"
-                            :src="require('@/assets/cars.png')"
-                          ></v-img>
-                        </v-col>
-                      </v-col> -->
-
                       <v-col cols="12" class="v-margit_text_add mt-1">
                         <v-col class="text-left">
-                          <!-- <v-img
-                            id="v_text_edits"
-                            :src="require('@/assets/GroupEditTitle.svg')"
-                          ></v-img> -->
                           <h2 class="font-weight-bold" style="color:#173053;">แก้ไขข้อมูล</h2>
                         </v-col>
                         <v-col cols="12" class="pb-0">
@@ -730,19 +559,32 @@
                             :rules="[rules.required]"
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="12" class="pa-0 ma-0" >
+                        <v-col cols="12" class="pt-0 pb-0" >
                           <v-row>
-                          <!-- <v-col style="display: flex;justify-content: center;">
-                            <v-checkbox
-                            label="Onsite"
-                            false-value="False"
-                            :on-icon="'mdi-check-circle'"
-                            :off-icon="'mdi-checkbox-blank-circle-outline'"
-                            color="#1B437C"
-                            true-value="True"
-                            v-model="formUpdate.checkOnsite"
-                          ></v-checkbox>
-                          </v-col> -->
+                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: left;">
+                              <v-checkbox
+                                label="จำกัดเวลาตามช่าง"
+                                false-value="False"
+                                :on-icon="'mdi-check-circle'"
+                                :off-icon="'mdi-checkbox-blank-circle-outline'"
+                                color="#1B437C"
+                                true-value="True"
+                                v-model="formUpdate.timeSlotStatus"
+                                @change="formUpdate.timeSlot = 1"
+                              ></v-checkbox>
+                            </v-col>
+                          </v-row>
+                          <v-row v-if="formUpdate.timeSlotStatus === 'True'">
+                            <v-col class="pt-0 pb-0">
+                              <v-select
+                                v-model="formUpdate.timeSlot"
+                                :items="[{text: '1', value: 1},{text: '2', value: 2},{text: '3', value: 3}]"
+                                label="จำนวน Slot งาน"
+                                outlined
+                              ></v-select>
+                            </v-col>
+                          </v-row>
+                          <v-row>
                           <v-col style="display: flex;justify-content: center;">
                             <v-checkbox
                             label="เงินมัดจำ"
@@ -1537,6 +1379,31 @@
                     {{ format_dateFUllTime(item.LAST_DATE) }}
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
+                    <template v-if="item.timeSlotStatus === 'True'">
+                      <v-btn
+                      color="question"
+                      fab
+                      dark
+                      small
+                      @click.stop="
+                        (dialogEdit = true),
+                          getDataById(item),
+                          validate('UPDATE')
+                      "
+                    >
+                      <v-icon> mdi-tools </v-icon>
+                    </v-btn>
+                    <v-btn
+                      color="red"
+                      dark
+                      fab
+                      small
+                      @click.stop="(dialogDelete = true), getDataById(item)"
+                    >
+                      <v-icon> mdi-delete </v-icon>
+                    </v-btn>
+                    </template>
+                    <template v-else>
                     <v-btn
                       color="purple"
                       fab
@@ -1591,6 +1458,7 @@
                     >
                       <v-icon> mdi-delete </v-icon>
                     </v-btn>
+                    </template>
                   </template>
                 </v-data-table>
               </v-card-text>
@@ -1759,7 +1627,9 @@ export default {
         promptPayName: null,
         amountDeposit: 0,
         shopId: this.$session.getAll().data.shopId,
-        remarkConfirm: ''
+        remarkConfirm: '',
+        timeSlotStatus: 'False',
+        timeSlot: 1
       },
       formAddStep: {
         stepId: '',
@@ -1800,7 +1670,9 @@ export default {
         promptPayID: null,
         promptPayName: null,
         shopId: '',
-        remarkConfirm: ''
+        remarkConfirm: '',
+        timeSlotStatus: 'False',
+        timeSlot: 1
       },
       formUpdateItemFlow: {
         fieldId: '',
@@ -2650,6 +2522,10 @@ export default {
       this.formUpdate.amountDeposit = item.amountDeposit || 0
       this.formUpdate.checkPayment = item.checkPayment || 'True'
       this.formUpdate.checkDeposit = item.checkDeposit || 'False'
+
+      this.formUpdate.timeSlot = item.timeSlot || 1
+      this.formUpdate.timeSlotStatus = item.timeSlotStatus || 'False'
+
       this.formUpdate.promptPayID = item.promptPayID || ''
       this.formUpdate.promptPayName = item.promptPayName || ''
       this.formUpdate.remarkConfirm = item.remarkConfirm || ''
@@ -2663,47 +2539,6 @@ export default {
       // this.getStepTitle(this.formUpdateStep.stepTitle)
       this.dataReady = true
       console.log(this.formUpdate)
-      // await axios
-      //   .get(
-      //     // eslint-disable-next-line quotes
-      //     this.DNS_IP +
-      //       this.path +
-      //       'getCode?' +
-      //       'flowCode=' +
-      //       item.flowCode +
-      //       '&shopId=' +
-      //       this.shopId,
-      //     {
-      //       headers: {
-      //         'Application-Key': this.$session.getAll().ApplicationKey
-      //       }
-      //     }
-      //   )
-      //   .then(async response => {
-      //     console.log('get flowCode : ', response.data[0].flowfieldName)
-      //     this.dataReady = true
-      //     if (response.data) {
-      //       // Object.assign(this.formUpdate, response.data)
-      //       this.formUpdate.flowName = response.data[0].flowName
-      //       this.formUpdate.flowId = response.data[0].flowId
-      //       this.formUpdate.flowCode = response.data[0].flowCode
-      //       this.formUpdate.checkPayment = response.data[0].checkPayment || 'True'
-      //       this.shopId = this.$session.getAll().data.shopId
-      //       this.fieldType = this.formUpdate.fieldType
-      //       // this.desserts = JSON.parse(response.data[0].flowfieldName)
-      //       await this.getField(JSON.parse(response.data[0].flowfieldName))
-      //       // this.getDataCompany()
-      //       this.getCustomField('edit', JSON.parse(response.data[0].flowfieldName))
-      //       // this.getStepTitle(this.formUpdateStep.stepTitle)
-      //       this.dataReady = true
-      //       console.log(this.formUpdate)
-      //     }
-      //   })
-      //   // eslint-disable-next-line handle-callback-err
-      //   .catch(error => {
-      //     this.dataReady = true
-      //     console.log('error function getDataById : ', error)
-      //   })
     },
     async addData () {
       this.dataReady = false
@@ -3117,6 +2952,26 @@ export default {
         if (this.formAdd[key]) {
           if (key === 'depositTime') {
             this.formAdd[key] = 'NO'
+          } else if (key === 'flowfieldName') {
+            this.formAdd[key] = []
+          } else if (key === 'checkPayment') {
+            this.formAdd[key] = 'True'
+          } else if (key === 'checkOnsite') {
+            this.formAdd[key] = 'False'
+          } else if (key === 'checkDeposit') {
+            this.formAdd[key] = 'False'
+          } else if (key === 'repeatBooking') {
+            this.formAdd[key] = 'False'
+          } else if (key === 'amountDeposit') {
+            this.formAdd[key] = 0
+          } else if (key === 'promptPayID') {
+            this.formAdd[key] = null
+          } else if (key === 'promptPayName') {
+            this.formAdd[key] = null
+          } else if (key === 'timeSlotStatus') {
+            this.formAdd[key] = 'False'
+          } else if (key === 'shopId') {
+            this.formAdd[key] = this.$session.getAll().data.shopId
           } else {
             this.formAdd[key] = ''
           }
@@ -3126,7 +2981,27 @@ export default {
       // eslint-disable-next-line no-redeclare
       for (var key in this.formUpdate) {
         if (this.formUpdate[key]) {
-          this.formUpdate[key] = ''
+          if (key === 'flowfieldName') {
+            this.formUpdate[key] = []
+          } else if (key === 'checkPayment') {
+            this.formUpdate[key] = 'True'
+          } else if (key === 'checkOnsite') {
+            this.formUpdate[key] = 'False'
+          } else if (key === 'checkDeposit') {
+            this.formUpdate[key] = 'False'
+          } else if (key === 'repeatBooking') {
+            this.formUpdate[key] = 'False'
+          } else if (key === 'amountDeposit') {
+            this.formUpdate[key] = 0
+          } else if (key === 'promptPayID') {
+            this.formUpdate[key] = null
+          } else if (key === 'promptPayName') {
+            this.formUpdate[key] = null
+          } else if (key === 'timeSlotStatus') {
+            this.formUpdate[key] = 'False'
+          } else {
+            this.formUpdate[key] = ''
+          }
         }
       }
     }
