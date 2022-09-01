@@ -575,7 +575,7 @@
                             </v-col>
                           </v-row> -->
                           <v-row v-if="formUpdate.timeSlotStatus === 'True'">
-                            <v-col class="pt-0 pb-0">
+                            <v-col class="pb-0">
                               <v-select
                                 v-model="formUpdate.timeSlot"
                                 :items="[{text: '1', value: 1},{text: '2', value: 2},{text: '3', value: 3}]"
