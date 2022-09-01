@@ -22,7 +22,7 @@
               </template>
               <v-date-picker
                 v-model="today"
-                @input="(menuDate = false), getBookingList()"
+                @input="(menuDate = false), getBookingList(), dataReturnReady = true"
               ></v-date-picker>
             </v-menu>
           </v-col>
@@ -33,7 +33,7 @@
               dense
               outlined
               filled
-              @change="getBookingList()"
+              @change="getBookingList(), dataReturnReady = true"
               hide-details
               label="ประเภทบริการ"
               prepend-inner-icon="mdi-format-list-bulleted"
@@ -45,7 +45,7 @@
             <v-select
               :items="DataBranchName"
               v-model="masBranchName"
-              @change="getBookingList()"
+              @change="getBookingList(), dataReturnReady = true"
               dense
               outlined
               filled
@@ -118,10 +118,10 @@
                         </v-btn>
                       </template>
                       <v-list>
-                        <v-list-item class="vlistitem" @click="type = 'week', getBookingList()">
+                        <v-list-item class="vlistitem" @click="type = 'week', getBookingList(), dataReturnReady = true">
                           <v-list-item-title>Week</v-list-item-title>
                         </v-list-item>
-                        <v-list-item class="vlistitem" @click="type = 'month', getBookingList()">
+                        <v-list-item class="vlistitem" @click="type = 'month', getBookingList(), dataReturnReady = true">
                           <v-list-item-title>Month</v-list-item-title>
                         </v-list-item>
                       </v-list>
@@ -382,7 +382,8 @@ export default {
       monthData: null,
       bookingData: [],
       editedItemSeleteField: [],
-      paramUse: ''
+      paramUse: '',
+      dataReturnReady: false
     }
   },
   beforeCreate () {
@@ -398,13 +399,21 @@ export default {
     // await this.getBookingData()
   },
   methods: {
+    setdataReturnReady () {
+      if (this.dataReturnReady === true) {
+        this.dataReturnReady = false
+      }
+    },
     async getDataReturn (text, date, branch, flow) {
-      console.log('getDataReturn')
+      // console.log('getDataReturn')
       this.getCustomFieldStart()
       await this.getDataFlow(text)
       await this.getDataBranch()
       await this.getBookingList(text, date, branch, flow)
       this.$refs.calendar.checkChange()
+      if (this.dataReturnReady === false) {
+        this.dataReturnReady = false
+      }
     },
     prev () {
       this.$refs.calendar.prev()
@@ -509,9 +518,13 @@ export default {
       const month = String(dateSplit[1])
       this.countCus = this.masBranchName.countCus
       let bookingDate = ''
-      if (dateMonth !== undefined) {
-        bookingDate = '&dueDate=' + dateMonth
-        this.today = dateMonth + '-01'
+      if (this.dataReturnReady === false) {
+        if (dateMonth !== undefined) {
+          bookingDate = '&dueDate=' + dateMonth
+          this.today = dateMonth + '-01'
+        } else {
+          bookingDate = '&dueDate=' + year + '-' + month
+        }
       } else {
         bookingDate = '&dueDate=' + year + '-' + month
       }
