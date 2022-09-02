@@ -2547,10 +2547,7 @@ export default {
       this.formAdd.LAST_USER = this.session.data.userName
       this.formAdd.flowCode = this.generateCodeGlobal()
       this.formAdd.flowfieldName = JSON.stringify(this.desserts)
-      this.formAdd.shopId = this.shopId
-      console.log('flowfieldName', this.formAdd.flowfieldName)
-      console.log('shopId', this.shopId)
-      console.log('forAdd', this.formAdd)
+      this.formAdd.shopId = this.$session.getAll().data.shopId
       this.$swal({
         title: 'ต้องการ เพิ่มข้อมูล ใช่หรือไม่?',
         type: 'question',
@@ -2565,7 +2562,6 @@ export default {
           this.formAdd.LAST_USER = this.session.data.userName
           this.formAdd.flowCode = this.generateCodeGlobal()
           this.formAdd.flowfieldName = JSON.stringify(this.desserts)
-          this.formAdd.shopId = this.shopId
           console.log('flowfieldName', this.formAdd.flowfieldName)
           console.log('shopId', this.shopId)
           console.log('forAdd', this.formAdd)
@@ -2970,6 +2966,8 @@ export default {
             this.formAdd[key] = null
           } else if (key === 'timeSlotStatus') {
             this.formAdd[key] = 'False'
+          } else if (key === 'timeSlot') {
+            this.formAdd[key] = 1
           } else if (key === 'shopId') {
             this.formAdd[key] = this.$session.getAll().data.shopId
           } else {
