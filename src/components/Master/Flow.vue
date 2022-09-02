@@ -385,7 +385,7 @@
                           ></v-text-field>
                         </v-col>
                           <v-col cols="12" class="pt-0 pb-0">
-                          <v-row>
+                          <!-- <v-row>
                             <v-col class="pt-0 pb-0" style="display: flex;justify-content: left;">
                               <v-checkbox
                                 label="จำกัดเวลาตามช่าง"
@@ -398,9 +398,9 @@
                                 @change="formAdd.timeSlot = 1"
                               ></v-checkbox>
                             </v-col>
-                          </v-row>
+                          </v-row> -->
                           <v-row v-if="formAdd.timeSlotStatus === 'True'">
-                            <v-col class="pt-0 pb-0">
+                            <v-col class="pb-0">
                               <v-select
                                 v-model="formAdd.timeSlot"
                                 :items="[{text: '1', value: 1},{text: '2', value: 2},{text: '3', value: 3}]"
@@ -560,7 +560,7 @@
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12" class="pt-0 pb-0" >
-                          <v-row>
+                          <!-- <v-row>
                             <v-col class="pt-0 pb-0" style="display: flex;justify-content: left;">
                               <v-checkbox
                                 label="จำกัดเวลาตามช่าง"
@@ -573,9 +573,9 @@
                                 @change="formUpdate.timeSlot = 1"
                               ></v-checkbox>
                             </v-col>
-                          </v-row>
+                          </v-row> -->
                           <v-row v-if="formUpdate.timeSlotStatus === 'True'">
-                            <v-col class="pt-0 pb-0">
+                            <v-col class="pb-0">
                               <v-select
                                 v-model="formUpdate.timeSlot"
                                 :items="[{text: '1', value: 1},{text: '2', value: 2},{text: '3', value: 3}]"
@@ -1379,7 +1379,7 @@
                     {{ format_dateFUllTime(item.LAST_DATE) }}
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
-                    <template v-if="item.timeSlotStatus === 'True'">
+                    <template v-if="$session.getAll().data.timeSlotStatus === 'True'">
                       <v-btn
                       color="question"
                       fab
@@ -1628,7 +1628,7 @@ export default {
         amountDeposit: 0,
         shopId: this.$session.getAll().data.shopId,
         remarkConfirm: '',
-        timeSlotStatus: 'False',
+        timeSlotStatus: this.$session.getAll().data.timeSlotStatus || 'False',
         timeSlot: 1
       },
       formAddStep: {
@@ -2524,7 +2524,7 @@ export default {
       this.formUpdate.checkDeposit = item.checkDeposit || 'False'
 
       this.formUpdate.timeSlot = item.timeSlot || 1
-      this.formUpdate.timeSlotStatus = item.timeSlotStatus || 'False'
+      this.formUpdate.timeSlotStatus = this.$session.getAll().data.timeSlotStatus || 'False'
 
       this.formUpdate.promptPayID = item.promptPayID || ''
       this.formUpdate.promptPayName = item.promptPayName || ''
@@ -2547,10 +2547,7 @@ export default {
       this.formAdd.LAST_USER = this.session.data.userName
       this.formAdd.flowCode = this.generateCodeGlobal()
       this.formAdd.flowfieldName = JSON.stringify(this.desserts)
-      this.formAdd.shopId = this.shopId
-      console.log('flowfieldName', this.formAdd.flowfieldName)
-      console.log('shopId', this.shopId)
-      console.log('forAdd', this.formAdd)
+      this.formAdd.shopId = this.$session.getAll().data.shopId
       this.$swal({
         title: 'ต้องการ เพิ่มข้อมูล ใช่หรือไม่?',
         type: 'question',
@@ -2565,7 +2562,6 @@ export default {
           this.formAdd.LAST_USER = this.session.data.userName
           this.formAdd.flowCode = this.generateCodeGlobal()
           this.formAdd.flowfieldName = JSON.stringify(this.desserts)
-          this.formAdd.shopId = this.shopId
           console.log('flowfieldName', this.formAdd.flowfieldName)
           console.log('shopId', this.shopId)
           console.log('forAdd', this.formAdd)
@@ -2970,6 +2966,8 @@ export default {
             this.formAdd[key] = null
           } else if (key === 'timeSlotStatus') {
             this.formAdd[key] = 'False'
+          } else if (key === 'timeSlot') {
+            this.formAdd[key] = 1
           } else if (key === 'shopId') {
             this.formAdd[key] = this.$session.getAll().data.shopId
           } else {

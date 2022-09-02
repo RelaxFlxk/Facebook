@@ -137,7 +137,7 @@
                       </v-col>
                     </v-row>
                     <v-row>
-                      <v-col>
+                      <v-col cols="6">
                         <v-select
                           v-model="formUpdate.category"
                           :items="category"
@@ -147,6 +147,21 @@
                           required
                           :rules="[rules.required]"
                         ></v-select>
+                      </v-col>
+                      <v-col>
+                        <v-row>
+                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: left;">
+                              <v-checkbox
+                                label="จำกัดเวลาตามช่าง"
+                                false-value="False"
+                                :on-icon="'mdi-check-circle'"
+                                :off-icon="'mdi-checkbox-blank-circle-outline'"
+                                color="#1B437C"
+                                true-value="True"
+                                v-model="formUpdate.timeSlotStatus"
+                              ></v-checkbox>
+                            </v-col>
+                          </v-row>
                       </v-col>
                     </v-row>
                      <v-row>
@@ -159,26 +174,29 @@
                       </v-col>
                     </v-row>
 
-                    <v-row>
-                      <v-col cols="6" class="pb-2 pt-0">
+                    <v-row justify="center">
+                      <v-col cols="6" class="pb-2 pt-0 text-center">
                         <v-subheader>สีพื้นหลัง</v-subheader>
                         <v-color-picker
                           dot-size="25"
                           v-model="formUpdate.primaryColor"
                           mode="hexa"
-                          show-swatches
-                          swatches-max-height="100"
                         ></v-color-picker>
                       </v-col>
-                      <v-col cols="6" class="pb-2 pt-0">
+                      <v-col cols="6" class="pb-2 pt-0 text-center">
                         <v-subheader>สีปุ่ม</v-subheader>
                         <v-color-picker
                           dot-size="25"
                           v-model="formUpdate.secondaryColor"
                           mode="hexa"
+                        ></v-color-picker>
+                        <!-- <v-color-picker
+                          dot-size="25"
+                          v-model="formUpdate.secondaryColor"
+                          mode="hexa"
                           show-swatches
                           swatches-max-height="100"
-                        ></v-color-picker>
+                        ></v-color-picker> -->
                       </v-col>
                     </v-row>
                   </v-container>
@@ -322,7 +340,8 @@ export default {
         primaryColor: '',
         secondaryColor: '',
         darkMode: false,
-        category: ''
+        category: '',
+        timeSlotStatus: ''
       },
       filesShop: null,
       category: [
@@ -462,6 +481,7 @@ export default {
       //
       //
       // Get ID /main.js
+      this.formUpdate.timeSlotStatus = item.timeSlotStatus || 'False'
       this.dataReady = false
       await this.getDataByIdGlobal(
         this.DNS_IP,
@@ -557,6 +577,7 @@ export default {
             primaryColor: this.formUpdate.primaryColor,
             secondaryColor: this.formUpdate.secondaryColor,
             category: this.formUpdate.category,
+            timeSlotStatus: this.formUpdate.timeSlotStatus,
             darkMode: darkMode,
             bookingthankText: bookingthankText
           }
@@ -588,8 +609,13 @@ export default {
               }
               this.updateBetaskDB(ds, this.$session.getAll().data.shopId)
               console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
-
-              this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
+              this.$swal('เรียบร้อย', 'กรุณา เข้าสู่ระบบอีกครั้ง', 'success')
+                .then(async result => {
+                  this.$router.push('/Core/Login')
+                }).catch(error => {
+                  this.$router.push('/Core/Login')
+                  console.log('error function editDataGlobal : ', error)
+                })
               // Close Dialog
               this.dialogEdit = false
 

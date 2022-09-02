@@ -6429,6 +6429,7 @@ export default {
       }
       this.getBookingField()
       this.checkTime()
+      this.$refs.CalendarBooking.setdataReturnReady()
     },
     async getDataDefault () {
       this.loadingRefresh = true
