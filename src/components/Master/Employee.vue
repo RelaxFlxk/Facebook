@@ -446,12 +446,12 @@
           </v-dialog>
           <!-- end delete -->
         <!-- dialog limitbookint -->
-        <v-dialog v-model="dialoglimitbooking" max-width="45%" persistent >
+        <v-dialog v-model="dialoglimitbooking" max-width="70%" persistent >
           <v-card min-width="400px" min-height="500px" class="pa-1 " color="#F4F4F4">
             <!-- <v-card-title>asdasdasdas</v-card-title> -->
             <v-container>
             <div style="display: flex;justify-content: space-between;" class="ml-5">
-              <h2 class="font-weight-bold" style="color:#173053;">ตั้งค่าเวลา</h2>
+              <h2 class="font-weight-bold" style="color:#173053;">ตั้งค่าวันหยุด / ตั้งจัดการเวลา</h2>
             <v-btn
               fab
               small
@@ -474,7 +474,57 @@
                     lazy-validation
                   >
                   <v-row style="justify-content: space-between;">
-      <v-col cols="12">
+                  <v-col cols="4">
+                    <v-row>
+                      <v-col cols="12">
+                        <v-card class="pa-3" >
+                          <!-- <strong class="font-weight-bold">วันหยุดทั่วไปของบริษัท</strong> -->
+                          <h4 class="font-weight-bold">วันหยุดทั่วไปของบริษัท</h4>
+                          <v-select
+                          class="mt-3"
+                          v-model="formUpdateLimitbooking.dateDayoffText"
+                          :items="itemDateStop"
+                          small-chips
+                          dense
+                          label="เลือกวันหยุด"
+                          multiple
+                          outlined
+                          @change="changedateDayoff()"
+                        ></v-select>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12">
+                        <v-card class="pa-6">
+                              <!-- <strong class="font-weight-bold">วันหยุดประจำปีของบริษัท </strong> -->
+                              <h4 class="font-weight-bold mt-n2 ml-n2">วันหยุดประจำปีของบริษัท</h4>
+                              <v-select
+                              class="ma-0 mt-5"
+                                v-model="formUpdateLimitbooking.typeDayCustom"
+                                :item-text="typeDayCustomitem.text"
+                                :items="typeDayCustomitem"
+                                label="ประเภทของวันหยุด"
+                                dense
+                                outlined
+                              ></v-select>
+                              <v-date-picker
+                                v-model="formUpdateLimitbooking.dateDayCustom"
+                                :allowed-dates="allowedDates"
+                                multiple
+                                elevation="1"
+                                full-width
+                                class="mt-0"
+                              ></v-date-picker>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                    </v-col>
+                    <v-divider
+                    class="mx-4"
+                      vertical
+                    ></v-divider>
+      <v-col cols="7">
       <v-card class="pa-3 mb-5" min-height="675px">
         <h4 class="font-weight-bold mt-2">จัดการเวลานัดหมาย</h4>
           <v-row align="center" class="ma-0">
@@ -482,6 +532,7 @@
                 @click="chekshowTime()"
                 false-value="False"
                 true-value="True"
+                readonly
                 :on-icon="'mdi-check-circle'"
                 :off-icon="'mdi-checkbox-blank-circle-outline'"
                 label="ต้องการใช้งานการจำกัดคิวนัดหมาย"
@@ -562,8 +613,9 @@
           </template>
           <template v-slot:[`item.limitBooking`]="{ item }">
             <div v-if="item.id === editedItemNew.id" >
-              <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" dense single-line v-if="formUpdateLimitbooking.limitBookingCheck === 'True'" ></v-text-field>
-              <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" disabled dense single-line v-else></v-text-field>
+              <!-- <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" dense single-line v-if="formUpdateLimitbooking.limitBookingCheck === 'True'" ></v-text-field>
+              <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" disabled dense single-line v-else></v-text-field> -->
+              <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" disabled dense single-line></v-text-field>
             </div>
             <span v-else>{{item.limitBooking}}</span>
           </template>
@@ -591,6 +643,119 @@
             </v-sheet>
           </div>
     </v-card>
+                      <!-- <v-card class="pa-5 mb-5">
+                    <v-row>
+                    <v-col cols="3">
+                      <v-text-field
+                        label="แสดงเวลา"
+                        v-model="timeText"
+                        :counter="50"
+                        maxlength="50"
+                        outlined
+
+                      ></v-text-field>
+                      <v-text-field
+                          v-model="formUpdateLimitbooking.time"
+                           v-mask="'##:##'"
+                           label="ตั้งค่าเวลาที่ต้องการ"
+                           placeholder="HH:mm"
+                           outlined
+                      ></v-text-field>
+                      <VuetifyMoney
+                          label="Limit Booking"
+                          v-model="formUpdateLimitbooking.limitBooking"
+                          placeholder="Limit Booking"
+                          required
+                          outlined
+                          v-bind:options="options2" />
+                      <v-select
+                        v-if="dataItemAddTime.length > 0"
+                        :items="dataItemAddTime"
+                        label="ตัวอย่างการแสดงเวลา"
+                        item-text="text"
+                        item-value="text"
+                        outlined
+                      ></v-select>
+                      <v-btn
+                        block
+                        color="teal"
+                        elevation="2"
+                        rounded
+                        small
+                        dark
+                        @click="presetTime()"
+                      >
+                        แบบร่าง เวลา
+                      </v-btn>
+                    </v-col>
+                    <v-col cols="2">
+                      <v-btn
+                        class="mx-2"
+                        fab
+                        dark
+                        v-if="typeTimeAdd === 'add'"
+                        color="indigo"
+                        @click="addDataTimeAdd()"
+                      >
+                        <v-icon dark>
+                          mdi-plus
+                        </v-icon>
+                      </v-btn>
+                      <v-btn
+                        class="mx-2"
+                        fab
+                        dark
+                        v-if="typeTimeAdd === 'update'"
+                        color="question"
+                        @click="UpdateDataTimeAdd()"
+                      >
+                        <v-icon dark>
+                          mdi-tools
+                        </v-icon>
+                      </v-btn>
+                    </v-col>
+                    <v-col cols="7">
+                      <v-row align="center" class="ma-5">
+                        <v-checkbox
+                          @click="chekshowTime()"
+                          false-value="False"
+                          true-value="True"
+                          label="ตั้ง Limit การนัดหมาย"
+                          v-model="formUpdateLimitbooking.limitBookingCheck"
+                          hide-details
+                          class="shrink ml-6 mr-0 mt-0 mb-2"
+                        ></v-checkbox>
+                         </v-row>
+                      <v-data-table
+                        :headers="columnsAddTime"
+                        :items="dataItemAddTime"
+                        disable-pagination
+                        hide-default-footer
+                      >
+                        <template v-slot:[`item.actions2`]="{ item, index }">
+                          <v-btn
+                            color="question"
+                            fab
+                            dark
+                            x-small
+                            @click.stop="getUpdateAdd(item, 'update', index)"
+                          >
+                            <v-icon color="#FFFFFF"> mdi-tools </v-icon>
+                          </v-btn>
+                          <v-btn
+                            color="red"
+                            dark
+                            fab
+                            x-small
+                            @click.stop="getUpdateAdd(item, 'delete', index)"
+                          >
+                            <v-icon> mdi-delete </v-icon>
+                          </v-btn>
+                        </template>
+                      </v-data-table>
+                    </v-col>
+                  </v-row>
+                      </v-card> -->
                     </v-col>
                   </v-row>
                   </v-form>
@@ -635,7 +800,7 @@
                    <template v-slot:[`item.privacyPage`]="{ item }">
                      <p v-if="item.privacyPage === 'booking'">หน้านัดหมาย</p>
                      <p v-if="item.privacyPage === 'board'">หน้ากระดานการทำงาน</p>
-                     <p v-if="item.privacyPage === 'bookingform'">หน้ากระดานการทำงาน</p>
+                     <p v-if="item.privacyPage === 'bookingform'">หน้านัดหมายของลูกค้า</p>
                      <p v-if="item.privacyPage === 'all'">ทั้งหมด</p>
                    </template>
                    <template v-slot:[`item.CREATE_DATE`]="{ item }">
@@ -788,10 +953,26 @@ export default {
         empId: null,
         time: '',
         setTime: '',
-        limitBooking: 0,
-        limitBookingCheck: 'Fales',
-        shopId: this.$session.getAll().data.shopId
+        limitBooking: 1,
+        limitBookingCheck: 'True',
+        shopId: this.$session.getAll().data.shopId,
+        dateDayoffText: [],
+        dateDayoffValue: [],
+        dateDayCustom: [],
+        typeDayCustom: ''
       },
+      typeDayCustomitem: [
+        {
+          text: 'วันที่เปิด',
+          value: 'on'
+        },
+        {
+          text: 'วันที่ปิด',
+          value: 'off'
+        }
+      ],
+      itemDateStop: ['วันอาทิตย์', 'วันจันทร์', 'วันอังคาร', 'วันพุธ', 'วันพฤหัสบดี', 'วันศุกร์', 'วันเสาร์'],
+      itemDateStopValue: [0, 1, 2, 3, 4, 5, 6],
       privacyPageSelect: [
         { text: 'หน้านัดหมาย', value: 'booking' },
         { text: 'หน้ากระดานการทำงาน', value: 'board' },
@@ -850,13 +1031,13 @@ export default {
         id: 0,
         text: '',
         value: '',
-        limitBooking: 0
+        limitBooking: 1
       },
       defaultItemNew: {
         id: 0,
         text: '',
         value: '',
-        limitBooking: 0
+        limitBooking: 1
       },
       BookingFieldshowtime: null,
       branch: []
@@ -906,7 +1087,7 @@ export default {
       this.closeNew()
     },
     presetTime () {
-      this.dataItemAddTime = [{'id': 1, 'value': '08:00', 'text': '08:00', 'limitBooking': ''}, {'id': 2, 'value': '08:30', 'text': '08:30', 'limitBooking': ''}, {'id': 3, 'value': '09:00', 'text': '09:00', 'limitBooking': ''}, {'id': 4, 'value': '09:30', 'text': '09:30', 'limitBooking': ''}, {'id': 5, 'value': '10:00', 'text': '10:00', 'limitBooking': ''}, {'id': 6, 'value': '10:30', 'text': '10:30', 'limitBooking': ''}, {'id': 7, 'value': '11:00', 'text': '11:00', 'limitBooking': ''}, {'id': 8, 'value': '11:30', 'text': '11:30', 'limitBooking': ''}, {'id': 9, 'value': '12:00', 'text': '12:00', 'limitBooking': ''}, {'id': 10, 'value': '12:30', 'text': '12:30', 'limitBooking': ''}, {'id': 11, 'value': '13:00', 'text': '13:00', 'limitBooking': ''}, {'id': 12, 'value': '13:30', 'text': '13:30', 'limitBooking': ''}, {'id': 13, 'value': '14:00', 'text': '14:00', 'limitBooking': ''}, {'id': 14, 'value': '14:30', 'text': '14:30', 'limitBooking': ''}, {'id': 15, 'value': '15:00', 'text': '15:00', 'limitBooking': ''}, {'id': 16, 'value': '15:30', 'text': '15:30', 'limitBooking': ''}, {'id': 17, 'value': '16:00', 'text': '16:00', 'limitBooking': ''}, {'id': 18, 'value': '16:30', 'text': '16:30', 'limitBooking': ''}, {'id': 19, 'value': '17:00', 'text': '17:00', 'limitBooking': ''}]
+      this.dataItemAddTime = [{'id': 1, 'value': '08:00', 'text': '08:00', 'limitBooking': '1'}, {'id': 2, 'value': '08:30', 'text': '08:30', 'limitBooking': '1'}, {'id': 3, 'value': '09:00', 'text': '09:00', 'limitBooking': '1'}, {'id': 4, 'value': '09:30', 'text': '09:30', 'limitBooking': '1'}, {'id': 5, 'value': '10:00', 'text': '10:00', 'limitBooking': '1'}, {'id': 6, 'value': '10:30', 'text': '10:30', 'limitBooking': '1'}, {'id': 7, 'value': '11:00', 'text': '11:00', 'limitBooking': '1'}, {'id': 8, 'value': '11:30', 'text': '11:30', 'limitBooking': '1'}, {'id': 9, 'value': '12:00', 'text': '12:00', 'limitBooking': '1'}, {'id': 10, 'value': '12:30', 'text': '12:30', 'limitBooking': '1'}, {'id': 11, 'value': '13:00', 'text': '13:00', 'limitBooking': '1'}, {'id': 12, 'value': '13:30', 'text': '13:30', 'limitBooking': '1'}, {'id': 13, 'value': '14:00', 'text': '14:00', 'limitBooking': '1'}, {'id': 14, 'value': '14:30', 'text': '14:30', 'limitBooking': '1'}, {'id': 15, 'value': '15:00', 'text': '15:00', 'limitBooking': '1'}, {'id': 16, 'value': '15:30', 'text': '15:30', 'limitBooking': '1'}, {'id': 17, 'value': '16:00', 'text': '16:00', 'limitBooking': '1'}, {'id': 18, 'value': '16:30', 'text': '16:30', 'limitBooking': '1'}, {'id': 19, 'value': '17:00', 'text': '17:00', 'limitBooking': '1'}]
     },
     async getDataBranch () {
       this.branch = []
@@ -927,6 +1108,26 @@ export default {
       })
       // console.log('branchData', this.branchData)
     },
+    changedateDayoff () {
+      let dd = []
+      this.itemDateStop.forEach((v, k) => {
+        // console.log('test', this.formUpdate.dateDayoffText.filter(item => item === v))
+        if (this.formUpdateLimitbooking.dateDayoffText.filter(item => item === v).length > 0) {
+          dd.push(k)
+        }
+      })
+      this.formUpdateLimitbooking.dateDayoffValue = JSON.stringify(dd)
+    },
+    allowedDates (val) {
+      // this.getMonth(this.pickerDate)
+      if (this.formUpdateLimitbooking.dateDayoffValue !== null && this.formUpdateLimitbooking.dateDayoffValue.length > 0) {
+        if (JSON.parse(this.formUpdateLimitbooking.dateDayoffValue).filter(el => { return el === new Date(val).getDay() }).length === 0) {
+          return val
+        }
+      } else {
+        return val
+      }
+    },
     async getlimitbooking (item) {
       this.formUpdateLimitbooking.empId = item.empId
       // console.log('this.formUpdateLimitbooking.empId', this.formUpdateLimitbooking.empId)
@@ -938,7 +1139,20 @@ export default {
           if (rs.length > 0) {
             dt = rs
             console.log('rs', rs)
-            this.formUpdateLimitbooking.limitBookingCheck = rs[0].limitBookingCheck || 'Fales'
+            this.formUpdateLimitbooking.limitBookingCheck = rs[0].limitBookingCheck === 'False' ? 'True' : 'True' || 'True'
+            if (rs[0].dateDayoffText === null || rs[0].dateDayoffText === '') {
+              this.formUpdateLimitbooking.dateDayoffText = []
+            } else {
+              this.formUpdateLimitbooking.dateDayoffText = JSON.parse(rs[0].dateDayoffText)
+            }
+            if (rs[0].dateDayCustom === null || rs[0].dateDayCustom === '') {
+              this.formUpdateLimitbooking.dateDayCustom = []
+            } else {
+              this.formUpdateLimitbooking.dateDayCustom = JSON.parse(rs[0].dateDayCustom)
+            }
+            this.formUpdateLimitbooking.typeDayCustom = rs[0].typeDayCustom
+            this.formUpdateLimitbooking.dateDayoffValue = rs[0].dateDayoffValue
+            // console.log('this.formUpdateLimitbooking.setTime', rs[0].setTime)
             if (rs[0].setTime === null || rs[0].setTime === '') {
               this.dataItemAddTime = []
             } else {
@@ -983,9 +1197,20 @@ export default {
     async EditlimitBookingSubmit () {
       console.log('Editdata', this.formUpdateLimitbooking)
       console.log('dataitem', this.dataItemAddTime)
+      let dd = []
+      this.itemDateStop.forEach((v, k) => {
+        // console.log('test', this.formUpdate.dateDayoffText.filter(item => item === v))
+        if (this.formUpdateLimitbooking.dateDayoffText.filter(item => item === v).length > 0) {
+          dd.push(k)
+        }
+      })
       let Dataitem = {
         'limitBookingCheck': this.formUpdateLimitbooking.limitBookingCheck,
-        'setTime': JSON.stringify(this.dataItemAddTime)
+        'setTime': JSON.stringify(this.dataItemAddTime),
+        'dateDayoffText': JSON.stringify(this.formUpdateLimitbooking.dateDayoffText),
+        'dateDayoffValue': JSON.stringify(dd),
+        'dateDayCustom': JSON.stringify(this.formUpdateLimitbooking.dateDayCustom),
+        'typeDayCustom': this.formUpdateLimitbooking.typeDayCustom
       }
       console.log('Dataitem', Dataitem)
       this.$swal({
