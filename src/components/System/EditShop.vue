@@ -343,6 +343,7 @@ export default {
         category: '',
         timeSlotStatus: ''
       },
+      timeSlotStatusOld: '',
       filesShop: null,
       category: [
         { text: 'ธุรกิจรถยนต์', value: 'ธุรกิจรถยนต์' },
@@ -482,6 +483,7 @@ export default {
       //
       // Get ID /main.js
       this.formUpdate.timeSlotStatus = item.timeSlotStatus || 'False'
+      this.timeSlotStatusOld = item.timeSlotStatus || 'False'
       this.dataReady = false
       await this.getDataByIdGlobal(
         this.DNS_IP,
@@ -609,13 +611,17 @@ export default {
               }
               this.updateBetaskDB(ds, this.$session.getAll().data.shopId)
               console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
-              this.$swal('เรียบร้อย', 'กรุณา เข้าสู่ระบบอีกครั้ง', 'success')
-                .then(async result => {
-                  this.$router.push('/Core/Login')
-                }).catch(error => {
-                  this.$router.push('/Core/Login')
-                  console.log('error function editDataGlobal : ', error)
-                })
+              if (this.timeSlotStatusOld === this.formUpdate.timeSlotStatus) {
+                this.$swal('เรียบร้อย', 'บันทึกสำเร็จ', 'success')
+              } else {
+                this.$swal('เรียบร้อย', 'กรุณา เข้าสู่ระบบอีกครั้ง', 'success')
+                  .then(async result => {
+                    this.$router.push('/Core/Login')
+                  }).catch(error => {
+                    this.$router.push('/Core/Login')
+                    console.log('error function editDataGlobal : ', error)
+                  })
+              }
               // Close Dialog
               this.dialogEdit = false
 
