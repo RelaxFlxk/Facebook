@@ -613,6 +613,42 @@
                                     :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                   ></v-text-field>
                                 </v-col>
+                                <v-col cols="12" class="InputData" v-if="item.fieldType == 'dateTime'">
+                                  <v-menu
+                                    v-model="menuAdd1"
+                                    :close-on-content-click="false"
+                                    :return-value.sync="date"
+                                    :rules="[rules.required]"
+                                    transition="scale-transition"
+                                    offset-y
+                                    required
+                                    min-width="auto"
+                                    ref="menuAdd1"
+                                  >
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-text-field
+                                        v-model="item.fieldValue"
+                                        readonly
+                                        :label="item.fieldName"
+                                        outlined
+                                        dense
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        required
+                                        prepend-inner-icon="mdi-calendar"
+                                        :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                      >
+                                      </v-text-field>
+                                    </template>
+                                    <v-date-picker
+                                      v-model="item.fieldValue"
+                                      no-title
+                                      scrollable
+                                      @input="(menuAdd1 = false), $refs.menuAdd1.save(item.fieldValue)"
+                                    >
+                                    </v-date-picker>
+                                  </v-menu>
+                                </v-col>
                                 <v-col cols="12" class="InputData" v-if="item.fieldType == 'Autocompletes'">
                                   <v-autocomplete
                                     v-model="item.fieldValue"
@@ -727,6 +763,42 @@
                                       :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                     ></v-text-field>
                                   </v-col>
+                                  <v-col cols="12" class="InputData" v-if="item.fieldType == 'dateTime'">
+                                  <v-menu
+                                    v-model="menuAdd2"
+                                    :close-on-content-click="false"
+                                    :return-value.sync="date"
+                                    :rules="[rules.required]"
+                                    transition="scale-transition"
+                                    offset-y
+                                    required
+                                    min-width="auto"
+                                    ref="menuAdd2"
+                                  >
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-text-field
+                                        v-model="item.fieldValue"
+                                        readonly
+                                        :label="item.fieldName"
+                                        outlined
+                                        dense
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        required
+                                        prepend-inner-icon="mdi-calendar"
+                                        :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                      >
+                                      </v-text-field>
+                                    </template>
+                                    <v-date-picker
+                                      v-model="item.fieldValue"
+                                      no-title
+                                      scrollable
+                                      @input="(menuAdd2 = false), $refs.menuAdd2.save(item.fieldValue)"
+                                    >
+                                    </v-date-picker>
+                                  </v-menu>
+                                </v-col>
                                   <v-col cols="12" class="InputData" v-if="item.fieldType == 'Autocompletes'">
                                     <v-autocomplete
                                       v-model="item.fieldValue"
@@ -819,6 +891,42 @@
                                         outlined
                                       ></v-text-field>
                                     </v-col>
+                                     <v-col cols="12" class="InputData" v-if="item.fieldType == 'dateTime'">
+                                      <v-menu
+                                        v-model="menuAdd3"
+                                        :close-on-content-click="false"
+                                        :return-value.sync="date"
+                                        :rules="[rules.required]"
+                                        transition="scale-transition"
+                                        offset-y
+                                        required
+                                        min-width="auto"
+                                        ref="menuAdd3"
+                                      >
+                                        <template v-slot:activator="{ on, attrs }">
+                                          <v-text-field
+                                            v-model="item.fieldValue"
+                                            readonly
+                                            :label="item.fieldName"
+                                            outlined
+                                            dense
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            required
+                                            prepend-inner-icon="mdi-calendar"
+                                            :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                          >
+                                          </v-text-field>
+                                        </template>
+                                        <v-date-picker
+                                          v-model="item.fieldValue"
+                                          no-title
+                                          scrollable
+                                          @input="(menuAdd3 = false), $refs.menuAdd3.save(item.fieldValue)"
+                                        >
+                                        </v-date-picker>
+                                      </v-menu>
+                                    </v-col>
                                     <v-col
                                       cols="12"
                                       class="InputData"
@@ -894,7 +1002,7 @@
                                   <v-text-field
                                     v-model="date"
                                     readonly
-                                    label="วันที่"
+                                    label="วันที่นัดหมาย"
                                     outlined
                                     dense
                                     v-bind="attrs"
@@ -1908,7 +2016,7 @@
                         <template v-slot:activator="{ on, attrs }">
                           <v-text-field
                             v-model="formChange.date"
-                            label="วันที่"
+                            label="วันที่นัดหมาย"
                             prepend-icon="mdi-calendar"
                             readonly
                             outlined
@@ -3340,6 +3448,42 @@
                                     :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                   ></v-text-field>
                                 </v-col>
+                                <v-col cols="12" class="InputData" v-if="item.fieldType == 'dateTime'">
+                                      <v-menu
+                                        v-model="menuEdit1"
+                                        :close-on-content-click="false"
+                                        :return-value.sync="date"
+                                        :rules="[rules.required]"
+                                        transition="scale-transition"
+                                        offset-y
+                                        required
+                                        min-width="auto"
+                                        ref="menuEdit1"
+                                      >
+                                        <template v-slot:activator="{ on, attrs }">
+                                          <v-text-field
+                                            v-model="item.fieldValue"
+                                            readonly
+                                            :label="item.fieldName"
+                                            outlined
+                                            dense
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            required
+                                            prepend-inner-icon="mdi-calendar"
+                                            :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                          >
+                                          </v-text-field>
+                                        </template>
+                                        <v-date-picker
+                                          v-model="item.fieldValue"
+                                          no-title
+                                          scrollable
+                                          @input="(menuEdit1 = false), $refs.menuEdit1.save(item.fieldValue)"
+                                        >
+                                        </v-date-picker>
+                                      </v-menu>
+                                    </v-col>
                                 <v-col cols="12" class="InputData" v-if="item.fieldType == 'Autocompletes'">
                                   <v-autocomplete
                                     v-model="item.fieldValue"
@@ -3454,6 +3598,42 @@
                                       :rules="item.requiredField === 'True' ? [rules.required] : [true]"
                                     ></v-text-field>
                                   </v-col>
+                                  <v-col cols="12" class="InputData" v-if="item.fieldType == 'dateTime'">
+                                      <v-menu
+                                        v-model="menuEdit2"
+                                        :close-on-content-click="false"
+                                        :return-value.sync="date"
+                                        :rules="[rules.required]"
+                                        transition="scale-transition"
+                                        offset-y
+                                        required
+                                        min-width="auto"
+                                        ref="menuEdit2"
+                                      >
+                                        <template v-slot:activator="{ on, attrs }">
+                                          <v-text-field
+                                            v-model="item.fieldValue"
+                                            readonly
+                                            :label="item.fieldName"
+                                            outlined
+                                            dense
+                                            prepend-inner-icon="mdi-calendar"
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            required
+                                            :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                          >
+                                          </v-text-field>
+                                        </template>
+                                        <v-date-picker
+                                          v-model="item.fieldValue"
+                                          no-title
+                                          scrollable
+                                          @input="(menuEdit2 = false), $refs.menuEdit2.save(item.fieldValue)"
+                                        >
+                                        </v-date-picker>
+                                      </v-menu>
+                                    </v-col>
                                   <v-col cols="12" class="InputData" v-if="item.fieldType == 'Autocompletes'">
                                     <v-autocomplete
                                       v-model="item.fieldValue"
@@ -3546,6 +3726,42 @@
                                         outlined
                                       ></v-text-field>
                                     </v-col>
+                                    <v-col cols="12" class="InputData" v-if="item.fieldType == 'dateTime'">
+                                      <v-menu
+                                        v-model="menuEdit3"
+                                        :close-on-content-click="false"
+                                        :return-value.sync="date"
+                                        :rules="[rules.required]"
+                                        transition="scale-transition"
+                                        offset-y
+                                        required
+                                        min-width="auto"
+                                        ref="menuEdit3"
+                                      >
+                                        <template v-slot:activator="{ on, attrs }">
+                                          <v-text-field
+                                            v-model="item.fieldValue"
+                                            readonly
+                                            :label="item.fieldName"
+                                            outlined
+                                            dense
+                                            prepend-inner-icon="mdi-calendar"
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            required
+                                            :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                          >
+                                          </v-text-field>
+                                        </template>
+                                        <v-date-picker
+                                          v-model="item.fieldValue"
+                                          no-title
+                                          scrollable
+                                          @input="(menuEdit3 = false), $refs.menuEdit3.save(item.fieldValue)"
+                                        >
+                                        </v-date-picker>
+                                      </v-menu>
+                                    </v-col>
                                     <v-col
                                       cols="12"
                                       class="InputData"
@@ -3616,7 +3832,7 @@
                                 <template v-slot:activator="{ on, attrs }">
                                   <v-text-field
                                     v-model="dateEdit"
-                                    label="วันที่"
+                                    label="วันที่นัดหมาย"
                                     prepend-icon="mdi-calendar"
                                     readonly
                                     v-bind="attrs"
@@ -4276,7 +4492,7 @@
                         <template v-slot:activator="{ on, attrs }">
                           <v-text-field
                             v-model="date"
-                            label="วันที่"
+                            label="วันที่นัดหมาย"
                             prepend-icon="mdi-calendar"
                             readonly
                             outlined
@@ -4456,6 +4672,12 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      menuAdd1: false,
+      menuAdd2: false,
+      menuAdd3: false,
+      menuEdit1: false,
+      menuEdit2: false,
+      menuEdit3: false,
       srcUpload: '',
       dialogShowFileUpload: false,
       pickerDate: null,
