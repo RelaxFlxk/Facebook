@@ -704,12 +704,6 @@
                        </template>
                     </v-text-field>
                   </template>
-                  <!-- <div class="text-center">
-                  <v-progress-circular
-                    indeterminate
-                    color="primary"
-                  ></v-progress-circular>
-                  </div> -->
                   <v-date-picker
                    readonly
                     v-model="date"

@@ -1274,36 +1274,7 @@
               <v-card-text  v-if="!dataEditJobReady">
                 <v-container>
                   <div class="text-center">
-                    <v-progress-circular
-                      :size="50"
-                      color="primary"
-                      indeterminate
-                    ></v-progress-circular>
-
-                    <v-progress-circular
-                      :width="3"
-                      color="red"
-                      indeterminate
-                    ></v-progress-circular>
-
-                    <v-progress-circular
-                      :size="70"
-                      :width="7"
-                      color="purple"
-                      indeterminate
-                    ></v-progress-circular>
-
-                    <v-progress-circular
-                      :width="3"
-                      color="green"
-                      indeterminate
-                    ></v-progress-circular>
-
-                    <v-progress-circular
-                      :size="50"
-                      color="amber"
-                      indeterminate
-                    ></v-progress-circular>
+                    <waitingAlert></waitingAlert>
                     </div>
                 </v-container>
               </v-card-text>
@@ -1623,36 +1594,7 @@
                   </v-container>
                 </v-card-text>
                 <div class="text-center" v-if="!dataChangeReady">
-                  <v-progress-circular
-                    :size="50"
-                    color="primary"
-                    indeterminate
-                  ></v-progress-circular>
-
-                  <v-progress-circular
-                    :width="3"
-                    color="red"
-                    indeterminate
-                  ></v-progress-circular>
-
-                  <v-progress-circular
-                    :size="70"
-                    :width="7"
-                    color="purple"
-                    indeterminate
-                  ></v-progress-circular>
-
-                  <v-progress-circular
-                    :width="3"
-                    color="green"
-                    indeterminate
-                  ></v-progress-circular>
-
-                  <v-progress-circular
-                    :size="50"
-                    color="amber"
-                    indeterminate
-                  ></v-progress-circular>
+                  <waitingAlert></waitingAlert>
                   </div>
                 <br />
               </v-form>
@@ -1730,36 +1672,7 @@
                 </div>
               </v-card-text>
               <div class="text-center" v-if="!dataCancelReady">
-                  <v-progress-circular
-                    :size="50"
-                    color="primary"
-                    indeterminate
-                  ></v-progress-circular>
-
-                  <v-progress-circular
-                    :width="3"
-                    color="red"
-                    indeterminate
-                  ></v-progress-circular>
-
-                  <v-progress-circular
-                    :size="70"
-                    :width="7"
-                    color="purple"
-                    indeterminate
-                  ></v-progress-circular>
-
-                  <v-progress-circular
-                    :width="3"
-                    color="green"
-                    indeterminate
-                  ></v-progress-circular>
-
-                  <v-progress-circular
-                    :size="50"
-                    color="amber"
-                    indeterminate
-                  ></v-progress-circular>
+                  <waitingAlert></waitingAlert>
                   </div>
               </v-container>
               </v-form>
@@ -2260,10 +2173,7 @@
               </v-card-text>
             </v-card>
             <div v-if="!dataReady" class="text-center">
-              <v-progress-circular
-                indeterminate
-                color="primary"
-              ></v-progress-circular>
+              <waitingAlert></waitingAlert>
             </div>
           </v-col>
           <!-- end data table -->
@@ -2499,36 +2409,7 @@
                 </v-container>
               </v-card-text>
                <div class="text-center" v-if="!dataConfirmReady">
-                  <v-progress-circular
-                    :size="50"
-                    color="primary"
-                    indeterminate
-                  ></v-progress-circular>
-
-                  <v-progress-circular
-                    :width="3"
-                    color="red"
-                    indeterminate
-                  ></v-progress-circular>
-
-                  <v-progress-circular
-                    :size="70"
-                    :width="7"
-                    color="purple"
-                    indeterminate
-                  ></v-progress-circular>
-
-                  <v-progress-circular
-                    :width="3"
-                    color="green"
-                    indeterminate
-                  ></v-progress-circular>
-
-                  <v-progress-circular
-                    :size="50"
-                    color="amber"
-                    indeterminate
-                  ></v-progress-circular>
+                  <waitingAlert></waitingAlert>
                   </div>
             </v-card>
           </v-form>
@@ -2996,36 +2877,7 @@
                         </v-col>
                         </v-form>
                         <div class="text-center" v-if="!dataEditReady">
-                            <v-progress-circular
-                              :size="50"
-                              color="primary"
-                              indeterminate
-                            ></v-progress-circular>
-
-                            <v-progress-circular
-                              :width="3"
-                              color="red"
-                              indeterminate
-                            ></v-progress-circular>
-
-                            <v-progress-circular
-                              :size="70"
-                              :width="7"
-                              color="purple"
-                              indeterminate
-                            ></v-progress-circular>
-
-                            <v-progress-circular
-                              :width="3"
-                              color="green"
-                              indeterminate
-                            ></v-progress-circular>
-
-                            <v-progress-circular
-                              :size="50"
-                              color="amber"
-                              indeterminate
-                            ></v-progress-circular>
+                            <waitingAlert></waitingAlert>
                             </div>
                       </v-col>
                     </v-row>
@@ -3059,36 +2911,7 @@
                 </v-btn>
               </v-card-actions>
               <div class="text-center" v-if="!dataReadyAdd">
-                <v-progress-circular
-                  :size="50"
-                  color="primary"
-                  indeterminate
-                ></v-progress-circular>
-
-                <v-progress-circular
-                  :width="3"
-                  color="red"
-                  indeterminate
-                ></v-progress-circular>
-
-                <v-progress-circular
-                  :size="70"
-                  :width="7"
-                  color="purple"
-                  indeterminate
-                ></v-progress-circular>
-
-                <v-progress-circular
-                  :width="3"
-                  color="green"
-                  indeterminate
-                ></v-progress-circular>
-
-                <v-progress-circular
-                  :size="50"
-                  color="amber"
-                  indeterminate
-                ></v-progress-circular>
+                <waitingAlert></waitingAlert>
               </div>
             </v-card>
           </v-dialog>
@@ -3344,6 +3167,7 @@ body {
 }
 </style>
 <script>
+import waitingAlert from '../waitingAlert.vue'
 import axios from 'axios' // api
 import draggable from 'vuedraggable'
 import adminLeftMenu from '../Sidebar.vue' // เมนู
@@ -3363,6 +3187,7 @@ import CalendarBooking from './CalendarBookingList.vue'
 export default {
   name: 'BookingList',
   components: {
+    waitingAlert,
     draggable,
     'left-menu-admin': adminLeftMenu,
     DateRangePicker,

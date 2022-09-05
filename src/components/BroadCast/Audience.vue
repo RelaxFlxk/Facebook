@@ -1274,10 +1274,7 @@
               </v-card-text>
             </v-card>
             <div v-if="!dataReady" class="text-center">
-              <v-progress-circular
-                indeterminate
-                color="primary"
-              ></v-progress-circular>
+              <waitingAlert></waitingAlert>
             </div>
           </v-col>
         </v-row>
@@ -1286,6 +1283,7 @@
   </div>
 </template>
 <script>
+import waitingAlert from '../waitingAlert.vue'
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
 import axios from 'axios' // api
@@ -1296,7 +1294,8 @@ export default {
   components: {
     'left-menu-admin': adminLeftMenu,
     VuetifyMoney,
-    DateRangePicker
+    DateRangePicker,
+    waitingAlert
   },
   data () {
     return {

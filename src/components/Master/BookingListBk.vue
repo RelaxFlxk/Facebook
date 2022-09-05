@@ -1475,10 +1475,7 @@
               </v-card-text>
             </v-card>
             <div v-if="!dataReady" class="text-center">
-              <v-progress-circular
-                indeterminate
-                color="primary"
-              ></v-progress-circular>
+              <waitingAlert></waitingAlert>
             </div>
           </v-col>
           <!-- end data table -->
@@ -1535,6 +1532,7 @@ body {
 }
 </style>
 <script>
+import waitingAlert from '../waitingAlert.vue'
 import axios from 'axios' // api
 import draggable from 'vuedraggable'
 import adminLeftMenu from '../Sidebar.vue' // เมนู
@@ -1552,6 +1550,7 @@ import moment from 'moment-timezone'
 export default {
   name: 'BookingList',
   components: {
+    waitingAlert,
     draggable,
     'left-menu-admin': adminLeftMenu,
     DateRangePicker,

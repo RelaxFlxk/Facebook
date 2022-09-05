@@ -400,36 +400,7 @@
         </v-card-text>
         <v-card-text v-if="!dataReadyGet">
           <div class="text-center">
-              <v-progress-circular
-                :size="50"
-                color="primary"
-                indeterminate
-              ></v-progress-circular>
-
-              <v-progress-circular
-                :width="3"
-                color="red"
-                indeterminate
-              ></v-progress-circular>
-
-              <v-progress-circular
-                :size="70"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-
-              <v-progress-circular
-                :width="3"
-                color="green"
-                indeterminate
-              ></v-progress-circular>
-
-              <v-progress-circular
-                :size="50"
-                color="amber"
-                indeterminate
-              ></v-progress-circular>
+              <waitingAlert></waitingAlert>
             </div>
         </v-card-text>
       </v-card>
@@ -499,36 +470,7 @@
               </v-col>
             </v-row>
             <div class="text-center" v-if="!dataReady">
-              <v-progress-circular
-                :size="50"
-                color="primary"
-                indeterminate
-              ></v-progress-circular>
-
-              <v-progress-circular
-                :width="3"
-                color="red"
-                indeterminate
-              ></v-progress-circular>
-
-              <v-progress-circular
-                :size="70"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-
-              <v-progress-circular
-                :width="3"
-                color="green"
-                indeterminate
-              ></v-progress-circular>
-
-              <v-progress-circular
-                :size="50"
-                color="amber"
-                indeterminate
-              ></v-progress-circular>
+              <waitingAlert></waitingAlert>
             </div>
           </v-container>
         </v-card-text>
@@ -594,36 +536,7 @@
           </v-btn>
         </v-card-actions>
         <div class="text-center" v-if="!dataReadyCancel">
-          <v-progress-circular
-            :size="50"
-            color="primary"
-            indeterminate
-          ></v-progress-circular>
-
-          <v-progress-circular
-            :width="3"
-            color="red"
-            indeterminate
-          ></v-progress-circular>
-
-          <v-progress-circular
-            :size="70"
-            :width="7"
-            color="purple"
-            indeterminate
-          ></v-progress-circular>
-
-          <v-progress-circular
-            :width="3"
-            color="green"
-            indeterminate
-          ></v-progress-circular>
-
-          <v-progress-circular
-            :size="50"
-            color="amber"
-            indeterminate
-          ></v-progress-circular>
+          <waitingAlert></waitingAlert>
         </div>
       </v-card>
     </v-dialog>
@@ -633,7 +546,11 @@
 <script>
 import axios from 'axios' // api
 import moment from 'moment-timezone'
+import waitingAlert from './waitingAlert.vue'
 export default {
+  components: {
+    waitingAlert
+  },
   data () {
     return {
       title: 'Be-Linked',

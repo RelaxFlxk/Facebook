@@ -743,10 +743,7 @@
               </v-card-text>
             </v-card>
             <div v-if="!dataReady" class="text-center">
-              <v-progress-circular
-                indeterminate
-                color="primary"
-              ></v-progress-circular>
+              <waitingAlert></waitingAlert>
             </div>
           </v-col>
           <!-- end data table -->
@@ -756,6 +753,7 @@
   </div>
 </template>
 <script>
+import waitingAlert from '../waitingAlert.vue'
 import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
@@ -766,6 +764,7 @@ import VuetifyMoney from '../VuetifyMoney.vue'
 
 export default {
   components: {
+    waitingAlert,
     'left-menu-admin': adminLeftMenu,
     VuetifyMoney
     // downloadExcel: JsonExcel,

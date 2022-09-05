@@ -492,12 +492,6 @@
                       </v-col>
                     </v-row>
                      </v-container>
-                    <!-- <div v-if="!dataReady" class="text-center">
-                      <v-progress-circular
-                        indeterminate
-                        color="primary"
-                      ></v-progress-circular>
-                    </div> -->
                   </v-card>
                 </v-col>
               </v-row>
@@ -706,12 +700,6 @@
                 </v-data-table>
               </v-card-text>
             </v-card>
-            <!-- <div v-if="!dataReady" class="text-center">
-              <v-progress-circular
-                indeterminate
-                color="primary"
-              ></v-progress-circular>
-            </div> -->
           </v-col>
           </v-row>
           <!-- end data table -->

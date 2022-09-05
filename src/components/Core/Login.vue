@@ -185,17 +185,19 @@
       </v-card>
     </v-dialog>
     <div v-if="!dataReady" class="text-center">
-      <v-progress-circular indeterminate color="primary"></v-progress-circular>
+      <waitingAlert></waitingAlert>
     </div>
   </div>
 </template>
 <script>
+import waitingAlert from '../waitingAlert.vue'
 import axios from 'axios'
 import VuetifyLogo from '../logo'
 import NavbarRegister from './NavbarRegister'
 import VueRecaptcha from 'vue-recaptcha'
 export default {
   components: {
+    waitingAlert,
     VuetifyLogo,
     NavbarRegister,
     'vue-recaptcha': VueRecaptcha

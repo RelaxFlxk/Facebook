@@ -3,36 +3,7 @@
     <v-card flat v-if="!dataReady">
       <v-card-text>
         <div class="text-center">
-          <v-progress-circular
-            :size="50"
-            color="primary"
-            indeterminate
-          ></v-progress-circular>
-
-          <v-progress-circular
-            :width="3"
-            color="red"
-            indeterminate
-          ></v-progress-circular>
-
-          <v-progress-circular
-            :size="70"
-            :width="7"
-            color="purple"
-            indeterminate
-          ></v-progress-circular>
-
-          <v-progress-circular
-            :width="3"
-            color="green"
-            indeterminate
-          ></v-progress-circular>
-
-          <v-progress-circular
-            :size="50"
-            color="amber"
-            indeterminate
-          ></v-progress-circular>
+          <waitingAlert></waitingAlert>
         </div>
       </v-card-text>
     </v-card>
@@ -454,6 +425,7 @@
   </div>
 </template>
 <script>
+import waitingAlert from '../waitingAlert.vue'
 import QrcodeVue from 'qrcode.vue'
 import axios from 'axios' // api
 import moment from 'moment-timezone'
@@ -461,6 +433,7 @@ import BookingQueue from './BookingQueueMobile.vue'
 import VuetifyMoney from '../VuetifyMoney.vue'
 export default {
   components: {
+    waitingAlert,
     BookingQueue,
     VuetifyMoney,
     QrcodeVue

@@ -332,10 +332,7 @@
               </v-card-text>
             </v-card>
             <div v-if="!dataReady" class="text-center">
-              <v-progress-circular
-                indeterminate
-                color="primary"
-              ></v-progress-circular>
+              <waitingAlert></waitingAlert>
             </div>
           </v-col>
           <!-- end data table -->
@@ -345,6 +342,7 @@
   </div>
 </template>
 <script>
+import waitingAlert from '../waitingAlert.vue'
 import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import JsonExcel from 'vue-json-excel' // https://www.npmjs.com/package/vue-json-excel
@@ -354,6 +352,7 @@ import readXlsxFile from 'read-excel-file'
 
 export default {
   components: {
+    waitingAlert,
     'left-menu-admin': adminLeftMenu,
     downloadExcel: JsonExcel,
     XLSX,

@@ -986,36 +986,7 @@
               </v-col>
               <v-card-text v-if="!dataConditionReady">
                 <div class="text-center">
-                  <v-progress-circular
-                    :size="50"
-                    color="primary"
-                    indeterminate
-                  ></v-progress-circular>
-
-                  <v-progress-circular
-                    :width="3"
-                    color="red"
-                    indeterminate
-                  ></v-progress-circular>
-
-                  <v-progress-circular
-                    :size="70"
-                    :width="7"
-                    color="purple"
-                    indeterminate
-                  ></v-progress-circular>
-
-                  <v-progress-circular
-                    :width="3"
-                    color="green"
-                    indeterminate
-                  ></v-progress-circular>
-
-                  <v-progress-circular
-                    :size="50"
-                    color="amber"
-                    indeterminate
-                  ></v-progress-circular>
+                  <waitingAlert></waitingAlert>
                   </div>
               </v-card-text>
             </v-card>
@@ -1464,10 +1435,7 @@
               </v-card-text>
             </v-card>
             <div v-if="!dataReady" class="text-center">
-              <v-progress-circular
-                indeterminate
-                color="primary"
-              ></v-progress-circular>
+              <waitingAlert></waitingAlert>
             </div>
           </v-col>
           <!-- end data table -->
@@ -1477,12 +1445,14 @@
   </div>
 </template>
 <script>
+import waitingAlert from '../waitingAlert.vue'
 import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
 
 export default {
   components: {
+    waitingAlert,
     'left-menu-admin': adminLeftMenu,
     VuetifyMoney
   },
