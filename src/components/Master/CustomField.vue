@@ -412,7 +412,7 @@
                       <v-row style="height: 50px" v-if="formUpdate.fieldType === 'optionField'">
                         <v-select
                         v-model="formUpdate.optionFieldType"
-                        :items="selectEditOptionField"
+                        :items="selectOptionField"
                         @change="chkfieldType()"
                         small-chips
                         dense
