@@ -73,6 +73,12 @@
                       <v-checkbox class="pa-0 ma-0"
                         :on-icon="'mdi-check-circle'"
                         :off-icon="'mdi-checkbox-blank-circle-outline'"
+                        v-model="item.checkOnsite"
+                        label="แจ้งเตือนพนักงาน Onsite"
+                      ></v-checkbox>
+                      <v-checkbox class="pa-0 ma-0"
+                        :on-icon="'mdi-check-circle'"
+                        :off-icon="'mdi-checkbox-blank-circle-outline'"
                         v-model="item.checkJob"
                         label="กระดานการทำงาน"
                       ></v-checkbox>
@@ -160,6 +166,12 @@
                         :off-icon="'mdi-checkbox-blank-circle-outline'"
                         v-model="item.checkBooking"
                         label="นัดหมายเข้ารับบริการ"
+                      ></v-checkbox>
+                      <v-checkbox class="pa-0 ma-0"
+                        :on-icon="'mdi-check-circle'"
+                        :off-icon="'mdi-checkbox-blank-circle-outline'"
+                        v-model="item.checkOnsite"
+                        label="สำหรับพนักงาน Onsite"
                       ></v-checkbox>
                       <v-checkbox class="pa-0 ma-0"
                         :on-icon="'mdi-check-circle'"
