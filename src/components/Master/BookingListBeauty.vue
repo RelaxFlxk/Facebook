@@ -6706,14 +6706,6 @@ export default {
               // console.log('convertTextField', convertTextField)
               serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
             })
-            // console.log('fieldflow', fieldflow)
-            // let convertTextField = ''
-            // if (serviceDetail !== '' && fieldflow.filter(el => { return el.fieldType === 'Selects' || el.fieldType === 'Autocompletes' || el.fieldType === 'Radio' }).length > 0) {
-            //   let textField = ''
-            //   textField = JSON.parse(fieldflow.filter(el => { return el.fieldType === 'Selects' || el.fieldType === 'Autocompletes' || el.fieldType === 'Radio' })[0].optionField)
-            //   convertTextField = textField.filter(el => { return el.value === serviceDetail })
-            //   console.log('convertTextField', convertTextField)
-            // }
             serviceDetail = serviceDetail.trim() || t.flowName
             console.log('serviceDetail', serviceDetail)
 
@@ -6732,6 +6724,7 @@ export default {
             s.carModel = this.getDataFromFieldName(this.BookingDataListTimechange[t.bookNo], 'รุ่นรถ')
             s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
             s.tel = t.tel
+            s.dataFiled = this.BookingDataListTimechange[t.bookNo] || []
             dataExport.push(s)
           }
         }
@@ -6749,6 +6742,7 @@ export default {
       s.tel = ''
       s.empFull_NameTH = ''
       s.carModel = ''
+      s.dataFiled = []
       dataExport.push(s)
       runNo = 0
       var datause2 = this.dataItemTime.sort((a, b) => {
@@ -6814,29 +6808,38 @@ export default {
             s.extraJob = t.extraJob ? 'Extra Job' : ''
             s.carModel = this.getDataFromFieldName(this.BookingDataListTimechange[t.bookNo], 'รุ่นรถ')
             s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
+            s.dataFiled = this.BookingDataListTimechange[t.bookNo] || []
             dataExport.push(s)
           }
         }
       }
       this.dataexport = dataExport
       this.onExport()
-      console.log('dataEport', JSON.stringify(dataExport))
+      // console.log('dataEport', JSON.stringify(dataExport))
     },
     onExport () {
       var dataexport = []
       for (var i = 0; i < this.dataexport.length; i++) {
         var a = this.dataexport[i]
-        dataexport.push({
+        let data2 = {}
+        for (let g = 0; g < a.dataFiled.length; g++) {
+          let t = a.dataFiled[g]
+          let fieldNames = ''
+          let fieldValues = ''
+          fieldNames = t.fieldName
+          fieldValues = t.fieldValue
+          data2[fieldNames] = fieldValues
+          // dataOb.push({fieldNames: fieldValues})
+        }
+        let data1 = {
           'ประเภท': a.type,
           'ลำดับ': a.runNo,
           'วันที่': a.dateBooking,
           'เวลา': a.title,
-          'ชื่อลูกค้า': a.cusName,
-          // 'รุ่นรถ': a.carModel,
-          // 'ทะเบียน': a.cusReg,
-          'รายการซ่อม': a.flowName,
-          'เบอร์โทร': a.tel,
+          // 'ชื่อลูกค้า': a.cusName,
+          'รายการบริการ': a.flowName,
           'หมายเหตุ': a.extraJob,
+          'หมายเหตุยกเลิก': a.remarkRemove,
           'เวลาติดตาม': '',
           'เหตุผล': '',
           'ตรง': '',
@@ -6844,8 +6847,11 @@ export default {
           'เปิดJob': '',
           'พนักงานรับนัดหมาย': a.empFull_NameTH,
           'หมายเหตุเพิ่มเติม': a.remark
-        })
+        }
+        let dataSum = Object.assign({}, data1, data2)
+        dataexport.push(dataSum)
       }
+      // console.log('dataexport', dataexport)
       const dataWS = XLSX.utils.json_to_sheet(dataexport)
       const wb = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(wb, dataWS)
@@ -6920,6 +6926,7 @@ export default {
             s.tel = t.tel
             s.carModel = this.getDataFromFieldName(this.BookingDataListTimechange[t.bookNo], 'รุ่นรถ')
             s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
+            s.dataFiled = this.BookingDataListTimechange[t.bookNo] || []
             dataExport.push(s)
           }
         }
@@ -6937,6 +6944,7 @@ export default {
       s.remark = ''
       s.empFull_NameTH = ''
       s.carModel = ''
+      s.dataFiled = []
       dataExport.push(s)
       runNo = 0
       var datause2 = this.dataItemTime.sort((a, b) => {
@@ -7003,6 +7011,7 @@ export default {
             s.extraJob = t.extraJob ? 'Extra Job' : ''
             s.carModel = this.getDataFromFieldName(this.BookingDataListTimechange[t.bookNo], 'รุ่นรถ')
             s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
+            s.dataFiled = this.BookingDataListTimechange[t.bookNo] || []
             dataExport.push(s)
           }
         }
@@ -7015,16 +7024,43 @@ export default {
       var dataexport = []
       for (var i = 0; i < this.dataexportRemove.length; i++) {
         var a = this.dataexportRemove[i]
-        dataexport.push({
+        // dataexport.push({
+        //   'ประเภท': a.type,
+        //   'ลำดับ': a.runNo,
+        //   'วันที่': a.dateBooking,
+        //   'เวลา': a.title,
+        //   'ชื่อลูกค้า': a.cusName,
+        //   // 'รุ่นรถ': a.carModel,
+        //   // 'ทะเบียน': a.cusReg,
+        //   'รายการบริการ': a.flowName,
+        //   'เบอร์โทร': a.tel,
+        //   'หมายเหตุ': a.extraJob,
+        //   'หมายเหตุยกเลิก': a.remarkRemove,
+        //   'เวลาติดตาม': '',
+        //   'เหตุผล': '',
+        //   'ตรง': '',
+        //   'ไม่ตรง': '',
+        //   'เปิดJob': '',
+        //   'พนักงานรับนัดหมาย': a.empFull_NameTH,
+        //   'หมายเหตุเพิ่มเติม': a.remark
+        // })
+        let data2 = {}
+        for (let g = 0; g < a.dataFiled.length; g++) {
+          let t = a.dataFiled[g]
+          let fieldNames = ''
+          let fieldValues = ''
+          fieldNames = t.fieldName
+          fieldValues = t.fieldValue
+          data2[fieldNames] = fieldValues
+          // dataOb.push({fieldNames: fieldValues})
+        }
+        let data1 = {
           'ประเภท': a.type,
           'ลำดับ': a.runNo,
           'วันที่': a.dateBooking,
           'เวลา': a.title,
-          'ชื่อลูกค้า': a.cusName,
-          // 'รุ่นรถ': a.carModel,
-          // 'ทะเบียน': a.cusReg,
-          'รายการซ่อม': a.flowName,
-          'เบอร์โทร': a.tel,
+          // 'ชื่อลูกค้า': a.cusName,
+          'รายการบริการ': a.flowName,
           'หมายเหตุ': a.extraJob,
           'หมายเหตุยกเลิก': a.remarkRemove,
           'เวลาติดตาม': '',
@@ -7034,7 +7070,9 @@ export default {
           'เปิดJob': '',
           'พนักงานรับนัดหมาย': a.empFull_NameTH,
           'หมายเหตุเพิ่มเติม': a.remark
-        })
+        }
+        let dataSum = Object.assign({}, data1, data2)
+        dataexport.push(dataSum)
       }
       const dataWS = XLSX.utils.json_to_sheet(dataexport)
       const wb = XLSX.utils.book_new()
