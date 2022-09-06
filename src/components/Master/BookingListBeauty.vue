@@ -12,6 +12,21 @@
               <v-btn
                 :loading="loadingRefresh"
                 :disabled="loadingRefresh"
+                :color="showOnsite === 'ไม่แสดง' ? 'teal' : 'error'"
+                style="z-index:8;margin-right: 5px;"
+                @click="checkShowDataOnsite(showOnsite)"
+              >
+                <v-icon color="white" left>{{showOnsite === 'ไม่แสดง' ? 'mdi-eye-check' : 'mdi-eye-remove'}}</v-icon>
+                {{showOnsite}} Onsite
+                <template v-if="loadingRefresh">
+                  <span class="custom-loader">
+                    <v-icon light>mdi-cached</v-icon>
+                  </span>
+                </template>
+              </v-btn>
+              <v-btn
+                :loading="loadingRefresh"
+                :disabled="loadingRefresh"
                 color="warning"
                 style="z-index:8;margin-right: 5px;"
                 @click="getDataDefault(), searchOther = '', showColorSearch = false, statusSearch = 'no'"
@@ -4491,6 +4506,8 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      showOnsite: 'ไม่แสดง',
+      selectOnsite: '',
       menuAdd1: false,
       menuAdd2: false,
       menuAdd3: false,
@@ -4912,6 +4929,15 @@ export default {
     // await this.beforeCreate()
   },
   methods: {
+    checkShowDataOnsite (text) {
+      if (text === 'ไม่แสดง') {
+        this.showOnsite = 'แสดง'
+        this.selectOnsite = '&checkOnsite=is null'
+      } else {
+        this.showOnsite = 'ไม่แสดง'
+        this.selectOnsite = '&checkOnsite=is null'
+      }
+    },
     pushMsgConfirm (bookNo) {
       axios
         .post(
