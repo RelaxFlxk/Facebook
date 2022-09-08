@@ -10,13 +10,14 @@
           <v-col cols="12" md="6" lg="6" class="v-margit_button text-right">
             <v-btn-toggle>
               <v-btn
+                class="text-white"
                 :loading="loadingRefresh"
                 :disabled="loadingRefresh"
-                :color="showOnsite === 'ไม่แสดง' ? 'teal' : 'error'"
+                :color="showOnsite === 'ไม่แสดง' ? 'error' : 'teal'"
                 style="z-index:8;margin-right: 5px;"
                 @click="checkShowDataOnsite(showOnsite)"
               >
-                <v-icon color="white" left>{{showOnsite === 'ไม่แสดง' ? 'mdi-eye-check' : 'mdi-eye-remove'}}</v-icon>
+                <v-icon color="white" left>{{showOnsite === 'ไม่แสดง' ? 'mdi-eye-remove' : 'mdi-eye-check'}}</v-icon>
                 {{showOnsite}} Onsite
                 <template v-if="loadingRefresh">
                   <span class="custom-loader">
@@ -2725,12 +2726,22 @@
                           <v-icon dark> mdi-skip-backward </v-icon>
                         </v-btn>
                     </VueCustomTooltip>
-                    <VueCustomTooltip label="รับเข้าบริการ" position="is-top"  v-if="item.statusBt === 'confirm'">
+                    <VueCustomTooltip label="รับเข้าบริการ" position="is-top"  v-if="item.statusBt === 'confirm' && showOnsite === 'แสดง'">
                         <v-btn
                           color="primary"
                           fab
                           small
                           @click.stop="(dialogEdit = true), getBookingDataJob(item, 'qrcode')"
+                        >
+                          <v-icon dark> mdi-account-plus </v-icon>
+                        </v-btn>
+                    </VueCustomTooltip>
+                    <VueCustomTooltip label="มอบหมายงาน" position="is-top"  v-if="item.statusBt === 'confirm' && showOnsite === 'ไม่แสดง'">
+                        <v-btn
+                          color="primary"
+                          fab
+                          small
+                          @click.stop="getBookingDataJob(item, 'qrcode'), getEmpSelectAddJob(), (dialogOnsite = true)"
                         >
                           <v-icon dark> mdi-account-plus </v-icon>
                         </v-btn>
@@ -4432,6 +4443,646 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+        <v-dialog v-model="dialogOnsite" persistent max-width="70%">
+            <v-card class="text-center">
+              <v-row>
+                <v-col class="pb-0 pt-0" cols="12" v-if="dataPackage.filter(el => { return el.balanceAmount > 0 }).length > 0 && dataPackageDefault === false">
+                  <v-card class="pl-1">
+                    <v-subheader>ลูกค้ามี {{dataPackage.filter(el => { return el.balanceAmount > 0 }).length}} แพ็คเกจ</v-subheader>
+                    <v-subheader v-show="StatusPackage.packageName">ลูกค้าได้ทำการเลือกแพ็คเกจ {{StatusPackage.packageName}}</v-subheader>
+                    <v-slide-group
+                      v-model="modelPackageIndexConfirmJob"
+                      center-active
+                      show-arrows
+                      >
+                      <v-slide-item v-for="(item, index) in dataPackage.filter(el => { return el.balanceAmount > 0 })" :key="index">
+                          <v-card
+                          class="ma-2 p-1"
+                          width="340"
+                          height="100"
+                          color="#FFFFFF"
+                          elevation="6"
+                          :style="item.packageId === packageId && item.token === tokenPackage ? 'border: 1px solid green;' : 'border: 1px solid white;'"
+                          >
+                          <v-row>
+                            <v-col cols="4" class="pr-1">
+                              <v-img
+                            contain
+                            max-height="80"
+                            max-width="200"
+                            :src="item.packageImg"
+                          ></v-img>
+                            </v-col>
+                            <v-col cols="8" class="pb-6" >
+                              <v-row class="font16 headline1">
+                                  <v-col class="pl-0 pt-2 pb-0">{{item.packageName}}</v-col>
+                                  <v-btn class="mr-4 mt-3" v-if="item.packageId !== packageId && item.token !== tokenPackage" color="green" outlined rounded x-small @click="UpdatePackage(item.packageId,'ตกลง',item.packageName, item, item.token), jobCheckPackage = true">ตกลง</v-btn>
+                                  <v-btn class="mr-4 mt-3" v-if="item.packageId === packageId && item.token !== tokenPackage" color="green" outlined rounded x-small @click="UpdatePackage(item.packageId,'ตกลง',item.packageName, item, item.token), jobCheckPackage = true">ตกลง</v-btn>
+                                  <v-btn class="mr-4 mt-3" v-if="item.packageId === packageId && item.token === tokenPackage" color="red" outlined rounded x-small @click="UpdatePackage(item.packageId,'ยกเลิก',item.packageName, item, item.token), jobCheckPackage = false">ยกเลิก</v-btn>
+                              </v-row>
+                              <v-row class="font14 headline1">
+                                  <v-col class="pl-0 pt-0 pb-0">จำนวนการใช้  {{item.balanceAmount}} / {{item.amount}} </v-col>
+                              </v-row>
+                              <v-row class="font14 headline1">
+                                  <v-col class="pl-0 pt-0 pb-0">
+                                    <VueCustomTooltip label="สามารถใช้ได้" position="is-top" v-if="dateTimestamp <= item.expirePackage">
+                                      <v-icon
+                                        large
+                                        color="teal darken-2"
+                                      >
+                                        mdi-clock-check
+                                      </v-icon>
+                                    </VueCustomTooltip>
+                                    <VueCustomTooltip label="หมดอายุแล้ว" position="is-top" v-if="dateTimestamp > item.expirePackage">
+                                      <v-icon
+                                        large
+                                        color="red darken-2"
+                                      >
+                                        mdi-clock-alert
+                                      </v-icon>
+                                    </VueCustomTooltip>
+                                    >> วันหมดอายุ  {{new Date(item.expirePackage * 1000).toLocaleString().substr(0,9)}}
+                                  </v-col>
+                              </v-row>
+                            </v-col>
+                          </v-row>
+                          </v-card>
+                      </v-slide-item>
+                  </v-slide-group>
+                  </v-card>
+                  <br>
+                </v-col>
+                <v-col class="pb-0 pt-0" cols="12" v-if="dataPackage.filter(el => { return el.balanceAmount > 0 }).length > 0 && dataPackageDefault === true">
+                  <v-card class="pl-1">
+                    <v-subheader>ลูกค้ามี {{dataPackage.filter(el => { return el.balanceAmount > 0 }).length}} แพ็คเกจ</v-subheader>
+                    <v-subheader v-show="StatusPackage.packageName">ลูกค้าได้ทำการเลือกแพ็คเกจ {{StatusPackage.packageName}}</v-subheader>
+                    <v-slide-group
+                      v-model="modelPackageIndexConfirmJob"
+                      center-active
+                      show-arrows
+                      >
+                      <v-slide-item v-for="(item, index) in dataPackage.filter(el => { return el.balanceAmount > 0 })" :key="index">
+                          <v-card
+                          class="ma-2 p-1"
+                          width="340"
+                          height="100"
+                          color="#FFFFFF"
+                          elevation="6"
+                          :style="item.packageId === packageId && item.token === tokenPackage ? 'border: 1px solid green;' : 'border: 1px solid white;'"
+                          >
+                          <v-row>
+                            <v-col cols="4" class="pr-1">
+                              <v-img
+                            contain
+                            max-height="80"
+                            max-width="200"
+                            :src="item.packageImg"
+                          ></v-img>
+                            </v-col>
+                            <v-col cols="8" class="pb-6" >
+                              <v-row class="font16 headline1">
+                                  <v-col class="pl-0 pt-2 pb-0">{{item.packageName}}</v-col>
+                                  <!-- <v-btn class="mr-4 mt-3" v-if="item.packageId !== packageId" color="green" outlined rounded x-small @click="UpdatePackage(item.packageId,'ตกลง',item.packageName, item)">ตกลง</v-btn>
+                                  <v-btn class="mr-4 mt-3" v-if="item.packageId === packageId" color="red" outlined rounded x-small @click="UpdatePackage(item.packageId,'ยกเลิก',item.packageName, item)">ยกเลิก</v-btn> -->
+                              </v-row>
+                              <v-row class="font14 headline1">
+                                  <v-col class="pl-0 pt-0 pb-0">จำนวนการใช้  {{item.balanceAmount}} / {{item.amount}} </v-col>
+                              </v-row>
+                              <v-row class="font14 headline1">
+                                  <v-col class="pl-0 pt-0 pb-0">
+                                    <VueCustomTooltip label="สามารถใช้ได้" position="is-top" v-if="dateTimestamp <= item.expirePackage">
+                                      <v-icon
+                                        large
+                                        color="teal darken-2"
+                                      >
+                                        mdi-clock-check
+                                      </v-icon>
+                                    </VueCustomTooltip>
+                                    <VueCustomTooltip label="หมดอายุแล้ว" position="is-top" v-if="dateTimestamp > item.expirePackage">
+                                      <v-icon
+                                        large
+                                        color="red darken-2"
+                                      >
+                                        mdi-clock-alert
+                                      </v-icon>
+                                    </VueCustomTooltip>
+                                    >> วันหมดอายุ  {{new Date(item.expirePackage * 1000).toLocaleString().substr(0,9)}}
+                                  </v-col>
+                              </v-row>
+                            </v-col>
+                          </v-row>
+                          </v-card>
+                      </v-slide-item>
+                  </v-slide-group>
+                  </v-card>
+                  <br>
+                </v-col>
+              </v-row>
+              <v-card-title>มอบหมายงานให้พนักงาน Onsite</v-card-title>
+              <v-card-text  v-if="dataEditJobReady">
+                <!-- {{BookingDataItem}} -->
+                <v-container>
+                  <v-col
+                    v-for="(item, indexitem) in BookingDataItem"
+                    :key="indexitem"
+                    cols="12"
+                    class="pa-0"
+                  >
+                    <v-text-field
+                      :label="item.fieldName"
+                      :value="item.fieldValue"
+                      class="pa-0"
+                      outlined
+                      dense
+                      readonly
+                    ></v-text-field>
+                    <!-- {{item.fieldName}} : {{item.fieldValue}} -->
+                  </v-col>
+                  <v-form ref="form_update" v-model="validUpdate" lazy-validation>
+                  <div v-for="(p, index) in flowfieldNameitem" :key="index">
+                    <div class="pa-0" v-if="p.conditionField === ''">
+                      <div>
+                        <div v-if="p.fieldType == 'text'">
+                          <br />
+                          <v-text-field
+                            v-model="p.fieldValue"
+                            :label="p.fieldName"
+                            dense
+                            :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                            outlined
+                          ></v-text-field>
+                        </div>
+                        <div v-if="p.fieldType == 'number'">
+                          <br />
+                          <!-- <p>{{p.fieldName}}</p> -->
+                          <v-text-field
+                            v-model="p.fieldValue"
+                            :label="p.fieldName"
+                            dense
+                            :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                            outlined
+                          ></v-text-field>
+                        </div>
+                        <v-row>
+                          <v-col
+                            cols="12"
+                            v-if="p.fieldType == 'Autocompletes'"
+                            style="padding-top: 0px;padding-bottom: 0px;"
+                          >
+                          <br />
+                            <v-autocomplete
+                              v-model="p.fieldValue"
+                              :items="JSON.parse(p.optionField)"
+                              dense
+                              filled
+                              :label="p.fieldName"
+                              :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                            ></v-autocomplete>
+                          </v-col>
+                          <v-col
+                            cols="12"
+                            v-if="p.fieldType == 'Selects'"
+                            style="padding-top: 0px;padding-bottom: 0px;"
+                          >
+                          <br />
+                            <div>
+                              <v-select
+                                v-model="p.fieldValue"
+                                :items="JSON.parse(p.optionField)"
+                                menu-props="auto"
+                                :label="p.fieldName"
+                                hide-details
+                                outlined
+                                dense
+                                :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                              ></v-select>
+                            </div>
+                          </v-col>
+                        </v-row>
+                        <div v-if="p.fieldType == 'Radio'" style="padding:0px;">
+                            <br />
+                            <v-container fluid style="padding:0px;">
+                              <v-radio-group
+                                row
+                                v-model="p.fieldValue"
+                                style="margin:0px;"
+                                :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                              >
+                              <template v-slot:label> </template>
+                              <div
+                                v-for="radios in JSON.parse(
+                                  p.optionField
+                                )"
+                                :key="radios.toISOString"
+                                class="text-center"
+                              >
+                                <v-radio
+                                  :label="radios.text"
+                                  dense
+                                  :value="radios.value"
+                                ></v-radio>
+                              </div>
+                            </v-radio-group>
+                          </v-container>
+                        </div>
+                      </div>
+                    </div>
+                    <div  v-if="p.conditionField !== '' && flowfieldNameitem.filter(row => {return (row.fieldId === parseInt(p.conditionField));}).length > 0">
+                      <div v-if="p.conditionValue === flowfieldNameitem.filter(row => {return (row.fieldId === parseInt(p.conditionField));})[0].fieldValue">
+                        <div
+                          cols="12"
+                          v-if="p.fieldType == 'Autocompletes'"
+                        >
+                          <v-autocomplete
+                            v-model="p.fieldValue"
+                            :items="JSON.parse(p.optionField)"
+                            dense
+                            filled
+                            :label="p.fieldName"
+                            :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                          ></v-autocomplete>
+                        </div>
+                          <div v-if="p.fieldType == 'Selects'">
+                            <v-select
+                              v-model="p.fieldValue"
+                              :items="JSON.parse(p.optionField)"
+                              menu-props="auto"
+                              :label="p.fieldName"
+                              dense
+                              hide-details
+                              outlined
+                              :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                            ></v-select>
+                          </div>
+                          <div v-if="p.fieldType === 'Radio'" style="padding:0px;">
+                            <br />
+                            <v-container fluid style="padding:0px;">
+                              <v-radio-group
+                                row
+                                v-model="p.fieldValue"
+                                style="margin:0px;"
+                                :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                              >
+                                <template v-slot:label> </template>
+                                <div
+                                  v-for="radios in JSON.parse(
+                                    p.optionField
+                                  )"
+                                  :key="radios.toISOString"
+                                  class="text-center"
+                                >
+                                  <v-radio
+                                    :label="radios.text"
+                                    dense
+                                    :value="radios.value"
+                                  ></v-radio>
+                                </div>
+                              </v-radio-group>
+                            </v-container>
+                          </div>
+                      </div>
+                    </div>
+                    <div  v-if="p.conditionField === 'flow' ">
+                      <div v-if="parseInt(p.conditionValue) === parseInt(formAdd.flowId) ">
+                        <div v-if="p.fieldType == 'text'">
+                          <br />
+                          <v-text-field
+                            v-model="p.fieldValue"
+                            :label="p.fieldName"
+                            dense
+                            :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                            outlined
+                          ></v-text-field>
+                        </div>
+                        <div v-if="p.fieldType == 'number'">
+                          <br />
+                          <v-text-field
+                            v-model="p.fieldValue"
+                            :label="p.fieldName"
+                            dense
+                            :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                            outlined
+                          ></v-text-field>
+                        </div>
+                        <div
+                          cols="12"
+                          v-if="p.fieldType == 'Autocompletes'"
+                        >
+                          <v-autocomplete
+                            v-model="p.fieldValue"
+                            :items="JSON.parse(p.optionField)"
+                            dense
+                            filled
+                            :label="p.fieldName"
+                            :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                          ></v-autocomplete>
+                        </div>
+                          <div v-if="p.fieldType == 'Selects'">
+                            <v-select
+                              v-model="p.fieldValue"
+                              :items="JSON.parse(p.optionField)"
+                              menu-props="auto"
+                              :label="p.fieldName"
+                              dense
+                              :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                              hide-details
+                              outlined
+                            ></v-select>
+                          </div>
+                          <div v-if="p.fieldType === 'Radio'" style="padding:0px;">
+                            <br />
+                            <v-container fluid style="padding:0px;">
+                              <v-radio-group
+                                row
+                                v-model="p.fieldValue"
+                                style="margin:0px;"
+                                :rules="p.requiredField === 'True' ? [rules.required] : [true]"
+                              >
+                                <template v-slot:label> </template>
+                                <div
+                                  v-for="radios in JSON.parse(
+                                    p.optionField
+                                  )"
+                                  :key="radios.toISOString"
+                                  class="text-center"
+                                >
+                                  <v-radio
+                                    :label="radios.text"
+                                    dense
+                                    :value="radios.value"
+                                  ></v-radio>
+                                </div>
+                              </v-radio-group>
+                            </v-container>
+                          </div>
+                      </div>
+                    </div>
+                  </div>
+                  <br>
+                  <v-row>
+                    <v-col cols="12" sm="6" md="6" lg="6" class="pb-0">
+                      <v-text-field
+                        readonly
+                        v-model="dueDateText"
+                        outlined
+                        dense
+                        label="วันที่นัดหมายลูกค้า"
+                        prepend-inner-icon="mdi-calendar-multiple-check"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="6" lg="6">
+                      <v-select
+                        v-model="empSelectJob"
+                        :items="empSelectStepAdd"
+                        label="พนักงาน Onsite"
+                        menu-props="auto"
+                        outlined
+                        required
+                        :rules="[rules.required]"
+                        dense
+                        @change="checkEmpJob()"
+                      ></v-select>
+                    </v-col>
+                  </v-row>
+                  <v-row v-if="empSelectJob !== ''">
+                    <v-col cols="12" class="pb-0 pt-0">
+                      <v-sheet height="64">
+                      <v-toolbar dense>
+                        <v-btn
+                          fab
+                          text
+                          small
+                          color="grey darken-2"
+                          @click="prev()"
+                        >
+                          <v-icon small>
+                            mdi-chevron-left
+                          </v-icon>
+                        </v-btn>
+                        <v-btn
+                          fab
+                          text
+                          small
+                          color="grey darken-2"
+                          @click="next()"
+                        >
+                          <v-icon small>
+                            mdi-chevron-right
+                          </v-icon>
+                        </v-btn>
+                        <!-- <v-toolbar-title v-if="$refs.calendaronsite">{{
+                          $refs.calendaronsite.title
+                        }}</v-toolbar-title> -->
+                        <v-toolbar-title>{{
+                          monthNamesThai[parseInt(today.split("-")[1])] + ' ' + today.split("-")[0]
+                        }}</v-toolbar-title>
+                      </v-toolbar>
+                    </v-sheet>
+                    </v-col>
+                  </v-row>
+                  <v-row v-if="empSelectJob !== '' && checkEventInfo.length > 0">
+                    <v-col cols="12" class="pb-0 pt-0">
+                      <v-sheet>
+                      <v-calendar
+                        ref="calendaronsite"
+                        :now="today"
+                        v-model="today"
+                        locale="th-TH"
+                        color="primary"
+                        type="month"
+                      >
+                        <!-- <template v-slot:day-label="{ day }">
+                          <span style="font-size:26px !important;">{{day}}</span>
+                        </template> -->
+                        <template v-slot:day="{ date }">
+                          <div v-if="eventInfo[date]">
+                            <v-row>
+                              <v-col class="text-center mb-1 mt-0">
+                                <v-badge
+                                  avatar
+                                  bordered
+                                  overlap
+                                  color="orange darken-1"
+                                  v-if="eventInfo[date].sortNo1 > 0"
+                                  class="mr-1"
+                                  style="cursor: pointer"
+                                  @click.native="openCalendaList(date, 'sortNo1')"
+                                >
+                                  <template v-slot:badge>
+                                    <v-avatar class="mb-1" color="orange darken-1">
+                                      {{eventInfo[date].sortNo1}}
+                                    </v-avatar>
+                                  </template>
+
+                                  <v-avatar size="40" color="orange darken-3">
+                                    <v-icon dark>
+                                        mdi-water-plus
+                                    </v-icon>
+                                  </v-avatar>
+                                </v-badge>
+                                <v-badge
+                                  avatar
+                                  bordered
+                                  overlap
+                                  color="blue darken-1"
+                                  v-if="eventInfo[date].sortNo2 > 0"
+                                  class="mr-1"
+                                  style="cursor: pointer"
+                                  @click.native="openCalendaList(date, 'sortNo2')"
+                                >
+                                  <template v-slot:badge>
+                                    <v-avatar class="mb-1" color="blue darken-1">
+                                      {{eventInfo[date].sortNo2}}
+                                    </v-avatar>
+                                  </template>
+
+                                  <v-avatar size="40" color="blue darken-3">
+                                    <v-icon dark>
+                                        mdi-water-check
+                                    </v-icon>
+                                  </v-avatar>
+                                </v-badge>
+                              </v-col>
+                            </v-row>
+                          </div>
+                        </template>
+                      </v-calendar>
+                      </v-sheet>
+                    </v-col>
+                  </v-row>
+                  <v-row v-if="empSelectJob !== '' && checkEventInfo.length === 0">
+                    <v-col cols="12" class="pb-0 pt-0">
+                      <v-sheet>
+                      <v-calendar
+                        ref="calendaronsite"
+                        :now="today"
+                        v-model="today"
+                        locale="th-TH"
+                        color="primary"
+                        type="month"
+                      ></v-calendar>
+                      </v-sheet>
+                    </v-col>
+                    <v-col cols="12">
+                    <v-alert
+                      text
+                      type="success"
+                    >
+                      เดือน <strong>{{monthNamesThai[parseInt(today.split("-")[1])]}}</strong> พนักงานท่านนี้ <strong>ว่างงาน</strong>
+                    </v-alert>
+                    </v-col>
+                  </v-row>
+                  </v-form>
+                  <br>
+                  <template v-if="BookingDataItem.length > 0">
+                  <div class="text-center" v-if="BookingDataItem[0].addressLatLong === null">
+                    <v-alert
+                        dense
+                        outlined
+                        type="error"
+                      >
+                      <v-row align="center">
+                        <v-col class="grow">
+                          เนื่องจาก นัดหมายนี้ยังไม่มี แผนที่ กรุณานำ QR code หรือ ส่งลิงค์ ให้ลูกค้ากรอกด้วย !!
+                        </v-col>
+                        <v-col class="shrink">
+                          <v-btn
+                            tile
+                            color="success"
+                            @click="getQrCOde(BookingDataItem[0])"
+                          >
+                            <v-icon left>
+                              mdi-qrcode-scan
+                            </v-icon>
+                            เปิด QR Code
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+                      </v-alert>
+                  </div>
+                  <div class="text-center">
+                    <v-btn
+                      elevation="2"
+                      v-if="BookingDataItem[0].addressLatLong !== null"
+                      small
+                      dark
+                      color="#173053"
+                      @click="addEmpJob()"
+                    >
+                      <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                      มอบหมายงาน
+                    </v-btn>
+                    <v-btn small color="red" dark @click="dialogOnsite = false, getDataDefault(), searchOther = '', showColorSearch = false, statusSearch = 'no', empSelectJob = ''">
+                      <v-icon color="#173053">mdi-close</v-icon> ยกเลิก
+                    </v-btn>
+                  </div>
+                  </template>
+                </v-container>
+              </v-card-text>
+              <v-card-text  v-if="!dataEditJobReady">
+                <v-container>
+                  <div class="text-center">
+                    <waitingAlert></waitingAlert>
+                    </div>
+                </v-container>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
+          <v-dialog v-model="dialogQrCode" persistent :max-width="dialogwidth">
+            <v-card
+              style="background: linear-gradient(180deg, #FFFFFF 0%, #E1F3FF 100%);">
+                <v-container >
+                  <v-row >
+                    <v-col cols="12">
+                      <div class=" text-center">
+                      <br/>
+                        <br>
+                        <h2 style="font-weight: 900; color:#FFA000">QR Code และ Link สำหรับ รับที่อยู่ลูกค้า !</h2>
+                        <qrcode-vue :value="value" :size="size" level="H" :foreground="foreground" />
+                        <v-row align-content="center">
+                        <v-col cols="12"  class="pb-0">
+                          <v-text-field
+                            v-model="Redirect"
+                            style="background-color:#050C42;"
+                            solo
+                            disabled
+                            id="myInput"
+                            dense
+                          >
+                          </v-text-field>
+                        </v-col>
+                      </v-row>
+                      <v-row justify="center" no-gutters>
+                        <v-col cols="6" class="text-center">
+                          <v-btn
+                            color="#1B437C"
+                            small
+                            fab
+                            dark
+                            @click="FunCopy()"
+                          >
+                            <v-icon>mdi-content-copy</v-icon>
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+                    </div>
+                  </v-col>
+                </v-row>
+                </v-container>
+                <v-row >
+                  <v-col cols="12">
+                      <v-container class="text-center" >
+                        <v-btn small class="ma-2" color="error" @click="dialogQrCode = false" dark >
+                            ปิดหน้านี้
+                            <v-icon dark right>
+                                mdi-minus-circle
+                            </v-icon>
+                        </v-btn>
+                      </v-container>
+                  </v-col>
+                </v-row>
+              </v-card>
+          </v-dialog>
       </div>
     </v-main>
   </div>
@@ -4514,6 +5165,13 @@ export default {
       menuEdit1: false,
       menuEdit2: false,
       menuEdit3: false,
+
+      dialogOnsite: false,
+      eventInfo: [],
+      checkEventInfo: [],
+      dialogQrCode: false,
+      dueDateText: '',
+
       srcUpload: '',
       dialogShowFileUpload: false,
       pickerDate: null,
@@ -4884,7 +5542,8 @@ export default {
       dataEdit: '',
       statusShowDateConfiremjob: true,
       memberId: '',
-      flowIdOldEdit: ''
+      flowIdOldEdit: '',
+      Redirect: 'https://liff.line.me/1656581804-7KRQyqo5/BookingAddress?shopId=' + this.$session.getAll().data.shopId
     }
   },
   beforeCreate () {
@@ -4903,6 +5562,7 @@ export default {
     }
   },
   async mounted () {
+    this.checkShowDataOnsite('ไม่แสดง')
     if (this.$route.query.bookNo) {
       // this.beforeCreateScan()
       await this.getDataBranch()
@@ -4929,13 +5589,363 @@ export default {
     // await this.beforeCreate()
   },
   methods: {
-    checkShowDataOnsite (text) {
+    FunCopy (text) {
+      var copyText = document.getElementById('myInput')
+      copyText.select()
+      copyText.setSelectionRange(0, 99999)
+      navigator.clipboard.writeText(copyText.value + '&bookNo=' + this.bookNo)
+    },
+    getQrCOde (item) {
+      this.bookNo = item.bookNo
+      this.value = this.Redirect + '&bookNo=' + this.bookNo
+      this.dialogQrCode = true
+    },
+    async prev () {
+      this.$refs.calendaronsite.prev()
+      // this.getBookingList()
+      await this.checkEmpJobCalenda()
+    },
+    async next () {
+      this.$refs.calendaronsite.next()
+      // this.getBookingList()
+      await this.checkEmpJobCalenda()
+    },
+    async checkEmpJob () {
+      this.today = this.dateStart + '-15'
+      const dateSplit = this.today.split('-')
+      const year = String(dateSplit[0])
+      const month = String(dateSplit[1])
+      var flowId = ''
+      if (this.flowId !== '') {
+        flowId = this.flowId
+      } else {
+        flowId = this.BookingDataItem[0].flowId
+      }
+      this.eventInfo = []
+      await axios
+        .get(
+          this.DNS_IP + '/booking_view/getCountNotimeJob?shopId=' + this.session.data.shopId + '&empStep=' + this.empSelectJob + '&flowId=' + flowId + '&dueDate=' + year + '-' + month + '&checkOnsite=True'
+        )
+        .then(async responses => {
+          if (responses.data.status === false) {
+            this.eventInfo = []
+            this.checkEventInfo = []
+          } else {
+            for (var x = 0; x < responses.data.length; x++) {
+              var d = responses.data[x]
+              // var s = {}
+              let dueDate = d.start
+              // s.start = d.start
+              // s.name = d.name.toString()
+              // s.color = 'blue'
+              // this.events.push(s)
+              if (typeof this.eventInfo[dueDate] === 'undefined') {
+                this.eventInfo[dueDate] = {'sortNo1': 0, 'sortNo2': 0, 'sortNo3': 0}
+              }
+              if (d.sortNo === 1) {
+                this.eventInfo[dueDate].sortNo1++
+              } else if (d.sortNo === 2) {
+                this.eventInfo[dueDate].sortNo2++
+              } else if (d.sortNo === 3) {
+                this.eventInfo[dueDate].sortNo3++
+              }
+            }
+            this.checkEventInfo = responses.data
+            console.log('this.eventInfo', this.eventInfo)
+            console.log('this.checkEventInfo', this.checkEventInfo)
+          }
+        })
+      // this.$refs.calendaronsite.checkChange()
+      //   }
+      // })
+    },
+    async checkEmpJobCalenda () {
+      console.log('this.today', this.today)
+      // this.dataEmpOnsite = []
+      // this.today = moment(moment(new Date()), 'YYYY-MM-DD').format('YYYY-MM-DD')
+      const dateSplit = this.today.split('-')
+      const year = String(dateSplit[0])
+      const month = String(dateSplit[1])
+      var flowId = ''
+      if (this.flowId !== '') {
+        flowId = this.flowId
+      } else {
+        flowId = this.BookingDataItem[0].flowId
+      }
+      this.eventInfo = []
+      await axios
+        .get(
+          this.DNS_IP + '/booking_view/getCountNotimeJob?shopId=' + this.session.data.shopId + '&empStep=' + this.empSelectJob + '&flowId=' + flowId + '&dueDate=' + year + '-' + month + '&checkOnsite=True'
+        )
+        .then(async responses => {
+          if (responses.data.status === false) {
+            this.eventInfo = []
+            this.checkEventInfo = []
+          } else {
+            for (var x = 0; x < responses.data.length; x++) {
+              var d = responses.data[x]
+              // var s = {}
+              let dueDate = d.start
+              // s.start = d.start
+              // s.name = d.name.toString()
+              // s.color = 'blue'
+              // this.events.push(s)
+              if (typeof this.eventInfo[dueDate] === 'undefined') {
+                this.eventInfo[dueDate] = {'sortNo1': 0, 'sortNo2': 0, 'sortNo3': 0}
+              }
+              if (d.sortNo === 1) {
+                this.eventInfo[dueDate].sortNo1++
+              } else if (d.sortNo === 2) {
+                this.eventInfo[dueDate].sortNo2++
+              } else if (d.sortNo === 3) {
+                this.eventInfo[dueDate].sortNo3++
+              }
+            }
+            this.checkEventInfo = responses.data
+            console.log('this.eventInfo', this.eventInfo)
+            console.log('this.checkEventInfo', this.checkEventInfo)
+          }
+        })
+      // this.$refs.calendaronsite.checkChange()
+    },
+    addEmpJob () {
+      this.validate('UPDATE')
+      setTimeout(() => this.addEmpJobSubmit(), 500)
+    },
+    async addEmpJobSubmit () {
+      console.log('this.BookingDataItem[0]', this.BookingDataItem[0])
+      if (this.$session.id() !== undefined) {
+        if (this.validUpdate === true) {
+          this.dataEditJobReady = false
+          let checkJobno = ''
+          await axios.get(this.DNS_IP + '/booking_view/get?bookNo=' + this.BookingDataItem[0].bookNo)
+            .then(async response => {
+              let rs = response.data
+              console.log('checkJobNoInBooking', rs)
+              if (rs.status === false) {
+                checkJobno = 'ไม่มีข้อมูล'
+              } else {
+                checkJobno = rs[0].jobNo || ''
+              }
+            })
+          if (checkJobno === '') {
+            let Add = []
+            let fielditem = this.flowfieldNameitem
+            console.log('fielditem', fielditem)
+            for (var i = 0; i < this.BookingDataItem.length; i++) {
+              var d = this.BookingDataItem[i]
+              let update = {}
+              let addData = false
+              var dataField = this.editedItemSeleteField.filter(el => { return parseInt(el.fieldId) === parseInt(d.fieldId) })
+              if (dataField[0].conditionField === '' || dataField[0].conditionField === null) {
+                addData = true
+              } else {
+                if (fielditem.filter(row => { return row.fieldId === parseInt(d.conditionField) }).length > 0) {
+                  console.log('this', fielditem)
+                  if (d.conditionValue === fielditem.filter(row => { return row.fieldId === parseInt(d.conditionField) })[0].fieldValue) {
+                    addData = true
+                  } else if (d.conditionField === 'flow') {
+                    addData = true
+                  }
+                } else if (d.conditionField === 'flow') {
+                  addData = true
+                }
+              }
+              if (addData) {
+                if (d.fieldValue !== '') {
+                  update.masBranchID = this.BookingDataItem[0].masBranchID || ''
+                  update.CREATE_USER = d.userName
+                  update.LAST_USER = d.userName
+                  update.packageId = d.packageId
+                  update.checkCar = ''
+                  // update.userId = d.userId
+                  update.endDate = this.endDate
+                  update.endTime = this.endTime.value
+                  update.fieldId = d.fieldId
+                  update.fieldName = d.fieldName
+                  update.fieldType = dataField[0].fieldType || ''
+                  update.fieldValue = d.fieldValue
+                  update.flowId = d.flowId
+                  update.empSelect = this.empSelectJob
+                  update.empStep = this.empSelectJob
+                  update.conditionField = dataField[0].conditionField || ''
+                  update.conditionValue = dataField[0].conditionValue || ''
+                  update.optionField = dataField[0].optionField || ''
+                  update.shopId = dataField[0].shopId || ''
+                  update.showCard = dataField[0].showCard || ''
+                  Add.push(update)
+                }
+              }
+            }
+            for (var x = 0; x < fielditem.length; x++) {
+              var t = fielditem[x]
+              if (Add.filter(row => { return row.fieldId === t.fieldId }).length === 0) {
+                let update = {}
+                let dataField = this.editedItemSeleteField.filter(el => { return parseInt(el.fieldId) === parseInt(t.fieldId) })
+                update.masBranchID = this.BookingDataItem[0].masBranchID || ''
+                update.CREATE_USER = Add[0].CREATE_USER
+                update.LAST_USER = Add[0].CREATE_USER
+                update.packageId = Add[0].packageId
+                update.checkCar = ''
+                // update.userId = Add[0].userId
+                update.endDate = this.endDate
+                update.endTime = this.endTime.value
+                update.fieldId = t.fieldId
+                update.fieldName = t.fieldName
+                update.fieldType = dataField[0].fieldType || ''
+                update.fieldValue = t.fieldValue
+                update.flowId = d.flowId
+                update.empSelect = this.empSelectJob
+                update.empStep = this.empSelectJob
+                update.conditionField = dataField[0].conditionField || ''
+                update.conditionValue = dataField[0].conditionValue || ''
+                update.optionField = dataField[0].optionField || ''
+                update.shopId = dataField[0].shopId || ''
+                update.showCard = dataField[0].showCard || ''
+                Add.push(update)
+              }
+            }
+            this.swalConfig.title = 'ต้องการนำรายการนี้ เข้าตารางใช่หรือไม่?'
+            this.$swal(this.swalConfig)
+              .then(async result => {
+                this.dataEditJobReady = false
+                await axios
+                  .post(this.DNS_IP + '/job/add', Add)
+                  .then(async response => {
+                    this.endDate = ''
+                    this.endTime = ''
+                    this.empSelectJob = ''
+                    this.statusShowDateConfiremjob = true
+                    if (response.data.status) {
+                      var dt = {
+                        bookNo: this.BookingDataItem[0].bookNo,
+                        statusJob: 'job',
+                        jobNo: response.data.jobNo
+                      }
+                      await axios
+                        .post(this.DNS_IP + '/Booking/editStatus/' + this.BookingDataItem[0].bookNo, dt)
+                        .then(async response1 => {
+                          var dtt = {
+                            bookNo: this.BookingDataItem[0].bookNo,
+                            contactDate: this.format_date(new Date()),
+                            status: 'confirmJob',
+                            statusUse: 'use',
+                            shopId: this.$session.getAll().data.shopId,
+                            CREATE_USER: this.session.data.userName,
+                            LAST_USER: this.session.data.userName,
+                            packageId: this.packageId,
+                            tokenPackage: this.tokenPackage
+                          }
+                          axios
+                            .post(this.DNS_IP + '/booking_transaction/add', dtt)
+                            .then(async response => {
+                              this.lineNotifyGroupOnsite(this.BookingDataItem[0].bookNo)
+                              if (this.jobCheckPackage) {
+                                console.log('usePackage')
+                                await this.usePackage()
+                              }
+                              this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
+                              if (this.statusSearch === 'no') {
+                                await this.getBookingList()
+                              } else {
+                                await this.searchAny()
+                              }
+                              this.dialogOnsite = false
+                              this.dataEditJobReady = true
+                              var dataJob = this.dataItem.filter(el => { return el.bookNo === this.dataQrcode.bookNo })
+                              this.getjob(dataJob[0])
+                              this.dialogJob = true
+                            })
+                        })
+                    } else {
+                      this.$swal('ผิดพลาด', 'กรุณาทำรายการใหม่', 'error')
+                      this.dialogOnsite = false
+                      if (this.statusSearch === 'no') {
+                        await this.getBookingList()
+                      } else {
+                        await this.searchAny()
+                      }
+                      // this.getTimesChange('update')
+                      if (this.getSelectText) {
+                        this.getSelect(this.getSelectText, this.getSelectCount)
+                      }
+                    }
+                  })
+              }).catch(error => {
+                setTimeout(() => this.addEmpJobSubmit(), 3000)
+                console.log('error function updateJobNo : ', error)
+              })
+          } else {
+            this.$swal('ผิดพลาด', 'รายการนี้ได้นำเข้ากระดานการทำงานแล้ว', 'error').then(async response => {
+              this.dialogOnsite = false
+              if (this.statusSearch === 'no') {
+                await this.getBookingList()
+              } else {
+                await this.searchAny()
+              }
+              if (this.getSelectText) {
+                this.getSelect(this.getSelectText, this.getSelectCount)
+              }
+            }).catch(error => {
+              console.log('error function addData : ', error)
+              this.dialogOnsite = false
+              if (this.statusSearch === 'no') {
+                this.getBookingList()
+              } else {
+                this.searchAny()
+              }
+              if (this.getSelectText) {
+                this.getSelect(this.getSelectText, this.getSelectCount)
+              }
+            })
+          }
+        }
+      } else {
+        this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
+        clearInterval(this.setTimerCalendar)
+        this.setTimerCalendar = null
+        this.$router.push('/Core/Login')
+      }
+    },
+    async lineNotifyGroupOnsite (bookNo) {
+      await axios
+        .post(this.DNS_IP + '/Booking/LineNotifyGroupOnsite/' + bookNo)
+        .then(async response => {
+          if (this.lineUserId !== '') {
+            var dt = {
+              updateStatusSend: 'false'
+            }
+            await axios
+              .post(this.DNS_IP + '/BookingOnsite/pushEmpCustomer/' + bookNo, dt)
+              .then(async response1 => {})
+          }
+        })
+    },
+    async checkShowDataOnsite (text) {
+      this.dataReady = false
       if (text === 'ไม่แสดง') {
         this.showOnsite = 'แสดง'
         this.selectOnsite = '&checkOnsite=is null'
       } else {
         this.showOnsite = 'ไม่แสดง'
-        this.selectOnsite = '&checkOnsite=is null'
+        this.selectOnsite = '&checkOnsite=True'
+      }
+      if (this.$route.query.bookNo) {
+        // this.beforeCreateScan()
+        await this.getDataBranch()
+        await this.getEmpSelectAdd()
+        await this.getBookingFieldText()
+        this.getCustomFieldStart()
+        this.getDataFlow()
+        await this.scanQrcode()
+        // this.getBookingList()
+      } else {
+        await this.getDataBranch()
+        await this.getEmpSelectAdd()
+        await this.getBookingFieldText()
+        this.getCustomFieldStart()
+        this.getDataFlow()
+        this.getBookingList()
       }
     },
     pushMsgConfirm (bookNo) {
@@ -5732,7 +6742,7 @@ export default {
             '/booking_view/getSearch?shopId=' +
             this.session.data.shopId +
             '&fieldValue=' +
-            this.searchOther + '&checkOnsite=is null'
+            this.searchOther + this.selectOnsite
           )
           .then(async response => {
           // console.log('getData', response.data)
@@ -6471,7 +7481,7 @@ export default {
       if (this.$session.id() !== undefined) {
         console.log('getDataCalendaBooking')
         try {
-          await this.$refs.CalendarBooking.getDataReturn('&checkOnsite=is null', this.dateStart, this.masBranchID, this.flowSelect)
+          await this.$refs.CalendarBooking.getDataReturn(this.selectOnsite, this.dateStart, this.masBranchID, this.flowSelect)
         } catch (e) { console.log(e) }
       // this.$refs.CalendarBooking.getDataFlow()
       // this.$refs.CalendarBooking.getDataBranch()
@@ -6592,7 +7602,7 @@ export default {
             '&masBranchID=' +
             branch +
             '&dueDate=' +
-            dateSelect + '&checkOnsite=is null&flowId=' + flowId + '&fastTrack=True'
+            dateSelect + '&flowId=' + flowId + '&fastTrack=True' + this.selectOnsite
         )
         .then(async response => {
           console.log('response.data[0].countFastTrack', response.data[0].countFastTrack)
@@ -6672,7 +7682,7 @@ export default {
       }
     },
     exportExcelMazda () {
-      const url = `${window.location.origin}/mazda/report?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&timeTable=${this.timeTable}&checkOnsite=is null`
+      const url = `${window.location.origin}/mazda/report?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&timeTable=${this.timeTable}${this.selectOnsite}`
       window.open(url, '_blank').focus()
     },
     exportExcel () {
@@ -7432,7 +8442,7 @@ export default {
       let result = []
       let resultOption = []
       await axios
-        .get(this.DNS_IP + `/flow/get?shopId=${this.session.data.shopId}&checkOnsite=is null`)
+        .get(this.DNS_IP + `/flow/get?shopId=${this.session.data.shopId}${this.selectOnsite}`)
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
@@ -7485,7 +8495,7 @@ export default {
             this.session.data.shopId +
             '&masBranchID=' +
             this.masBranchIDExport +
-            '&dateRange=' + new Date(this.dateRange.startDate).toISOString().substr(0, 10) + '/' + new Date(this.dateRange.endDate).toISOString().substr(0, 10) + '&checkOnsite=is null'
+            '&dateRange=' + new Date(this.dateRange.startDate).toISOString().substr(0, 10) + '/' + new Date(this.dateRange.endDate).toISOString().substr(0, 10) + this.selectOnsite
         )
         .then(async response => {
           console.log('getData', response.data)
@@ -7854,7 +8864,7 @@ export default {
             '&masBranchID=' +
             this.masBranchID +
             '&dueDate=' +
-            this.timeTable + '&checkOnsite=is null'
+            this.timeTable + this.selectOnsite
             } else {
               urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
@@ -7862,7 +8872,7 @@ export default {
             '&masBranchID=' +
             this.masBranchID +
             '&dueDate=' +
-            this.timeTable + '&checkOnsite=is null&flowId=' + this.flowSelect
+            this.timeTable + '&flowId=' + this.flowSelect + this.selectOnsite
             }
             await axios
               .get(
@@ -8086,7 +9096,7 @@ export default {
             '&masBranchID=' +
             this.masBranchID +
             '&dueDate=' +
-            this.dateStart + '&checkOnsite=is null'
+            this.dateStart + this.selectOnsite
       } else {
         urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
@@ -8094,7 +9104,7 @@ export default {
             '&masBranchID=' +
             this.masBranchID +
             '&dueDate=' +
-            this.dateStart + '&checkOnsite=is null&flowId=' + this.flowSelect
+            this.dateStart + '&flowId=' + this.flowSelect + this.selectOnsite
       }
       await axios
         .get(urlApi)
@@ -8245,14 +9255,14 @@ export default {
             this.session.data.shopId +
             '&masBranchID=' +
             this.masBranchID +
-            '&statusBt=null&checkOnsite=is null'
+            '&statusBt=null' + this.selectOnsite
       } else {
         urlApiwait = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.session.data.shopId +
             '&masBranchID=' +
             this.masBranchID +
-            '&statusBt=null&checkOnsite=is null&flowId=' + this.flowSelect
+            '&statusBt=null&flowId=' + this.flowSelect + this.selectOnsite
       }
       await axios
         .get(urlApiwait)
@@ -8988,6 +9998,7 @@ export default {
         })
     },
     async getBookingDataJob (dt, text) {
+      this.dueDateText = dt.dueDateText
       let dateCurrent = this.momenDate_1(new Date())
       let dueDate = this.momenDate_1(dt.dueDate)
       console.log(dateCurrent, dueDate)
@@ -9006,7 +10017,7 @@ export default {
       } else {
         this.statusShowDateConfiremjob = true
       }
-      if (this.statusConfirmJob) {
+      if (this.statusConfirmJob && this.showOnsite === 'แสดง') {
         this.jobCheckPackage = false
         console.log('dt', dt)
         this.dateTimestamp = moment().unix()
@@ -9023,7 +10034,7 @@ export default {
         if (this.dataPackage.length > 0) {
           console.log('dataPackage', this.dataPackage.filter(el => { return el.packageId === dt.packageId }))
           if (this.dataPackage.filter(el => { return el.packageId === dt.packageId }).length > 0) {
-            var dataPack = this.dataPackage.filter(el => { return el.packageId === dt.packageId })
+            let dataPack = this.dataPackage.filter(el => { return el.packageId === dt.packageId })
             this.dataPackageDefault = true
             // this.packageId = dataPack[0].value
             this.UpdatePackage(dataPack[0].value, 'ตกลง', dataPack[0].text, dataPack[0], dt.tokenPackage)
@@ -9064,10 +10075,113 @@ export default {
                         console.log('BookingDataSelect', rs)
                         console.log('customField', rs1)
                         let sortrs = rs1.sort((a, b) => a.sortNoField - b.sortNoField)
-                        for (var i = 0; i < sortrs.length; i++) {
-                          var d = sortrs[i]
+                        for (let i = 0; i < sortrs.length; i++) {
+                          let d = sortrs[i]
                           // var s = {}
                           var dataBD = rs.filter(el => { return parseInt(el.fieldId) === parseInt(d.fieldId) })
+                          if (dataBD.length > 0) {
+                            if (dt.flowId === dataBD[0].flowId) {
+                              d.bookNo = dataBD[0].bookNo
+                              d.bookingFieldId = rs2[0].bookingFieldId
+                              d.bookingDataId = dataBD[0].bookingDataId
+                              d.flowId = dataBD[0].flowId
+                              d.masBranchID = dataBD[0].masBranchID
+                              // d.dueDate = dt.dueDate
+                              // d.conditionField = d.conditionField
+                              // d.fieldId = d.fieldId
+                              // d.fieldType = d.fieldType
+                              d.fieldValue = dataBD[0].fieldValue
+                              d.packageId = dataBD[0].packageId
+                              // d.fieldName = d.fieldName
+                              // d.conditionField = d.conditionField
+                              // d.conditionValue = d.conditionValue
+                              // d.requiredField = d.requiredField
+                              // d.optionField = d.optionField
+                              // d.userId = d.userId
+                              if (rs[0].userId === 'user-skip') {
+                                d.userId = ''
+                              } else {
+                                d.userId = rs[0].userId
+                              }
+                              d.shopId = this.session.data.shopId
+                              d.userName = this.$session.getAll().data.userName
+                              this.BookingDataItem.push(d)
+                            }
+                          }
+                        }
+                        if (text === 'qrcode') {
+                          this.dataQrcode = dt
+                        }
+                        // await this.getBookingField()
+                        await this.getflowfield(dt)
+                      }
+                    })
+                })
+            }
+          })
+      }
+      if (this.showOnsite === 'ไม่แสดง') {
+        this.jobCheckPackage = false
+        console.log('dt', dt)
+        this.dateTimestamp = moment().unix()
+        this.remark = dt.remark
+        this.userId = dt.userId
+        this.lineUserId = dt.lineUserId
+        console.log(this.userId, this.lineUserId)
+        if (dt.packageId !== '') {
+          this.dataPackageDefault = true
+        } else {
+          this.dataPackageDefault = false
+        }
+        await this.getPackage(dt)
+        if (this.dataPackage.length > 0) {
+          console.log('dataPackage', this.dataPackage.filter(el => { return el.packageId === dt.packageId }))
+          if (this.dataPackage.filter(el => { return el.packageId === dt.packageId }).length > 0) {
+            let dataPack = this.dataPackage.filter(el => { return el.packageId === dt.packageId })
+            this.dataPackageDefault = true
+            // this.packageId = dataPack[0].value
+            this.UpdatePackage(dataPack[0].value, 'ตกลง', dataPack[0].text, dataPack[0], dt.tokenPackage)
+          } else {
+            this.UpdatePackage('', 'ยกเลิก', '', '', '')
+            this.dataPackageDefault = false
+          }
+        }
+        this.checkTimeFlow(dt)
+        this.BookingDataItem = []
+        let itemIncustomField = []
+        // this.statusConfirmJob = false
+        this.dueDate = dt.dueDate
+
+        await axios
+          .get(
+            this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+          )
+          .then(async response1 => {
+            let rs2 = response1.data
+            console.log('BookingField', rs2)
+            if (rs2.length > 0) {
+              let bookingData = []
+              bookingData = JSON.parse(rs2[0].flowfieldName)
+              for (let i = 0; i < bookingData.length; i++) {
+                let d = bookingData[i]
+                itemIncustomField.push(d.fieldId)
+              }
+              await axios
+                .get(this.DNS_IP + '/customField/fieldId?fieldId=' + itemIncustomField)
+                .then(async responses => {
+                  let rs1 = responses.data
+                  await axios
+                    .get(this.DNS_IP + '/BookingDataSelect/get?bookNo=' + dt.bookNo)
+                    .then(async response => {
+                      let rs = response.data
+                      if (rs.length > 0) {
+                        console.log('BookingDataSelect', rs)
+                        console.log('customField', rs1)
+                        let sortrs = rs1.sort((a, b) => a.sortNoField - b.sortNoField)
+                        for (let i = 0; i < sortrs.length; i++) {
+                          let d = sortrs[i]
+                          // var s = {}
+                          let dataBD = rs.filter(el => { return parseInt(el.fieldId) === parseInt(d.fieldId) })
                           if (dataBD.length > 0) {
                             if (dt.flowId === dataBD[0].flowId) {
                               d.bookNo = dataBD[0].bookNo
@@ -9419,6 +10533,23 @@ export default {
               this.empSelectStep.push(s)
             }
             this.empSelect = this.empSelectStep[0].value
+          }
+        })
+    },
+    async getEmpSelectAddJob () {
+      this.empSelectStepAdd = []
+      await axios
+        .get(this.DNS_IP + '/empSelect/getUse?empIdUser=isNotNull&shopId=' + this.$session.getAll().data.shopId)
+        .then(async response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              var s = {}
+              s.text = d.empFull_NameTH
+              s.value = d.empId
+              this.empSelectStepAdd.push(s)
+            }
           }
         })
     },
@@ -10104,7 +11235,7 @@ export default {
       // await this.getBookingField()
       console.log(this.userId)
       console.log(this.bookNo)
-      let booking = await axios.get(this.DNS_IP + '/booking_view/get?shopId=' + this.session.data.shopId + '&bookNo=' + this.bookNo + '&checkOnsite=is null')
+      let booking = await axios.get(this.DNS_IP + '/booking_view/get?shopId=' + this.session.data.shopId + '&bookNo=' + this.bookNo + this.selectOnsite)
       let bookingData = await axios.get(this.DNS_IP + '/BookingData/get?shopId=' + this.session.data.shopId + '&bookNo=' + booking.data[0].bookNo)
       // console.log('this.fieldNameItem', this.fieldNameItem)
       this.booking = booking.data
@@ -10168,7 +11299,7 @@ export default {
             .post(this.DNS_IP + '/Booking/add', Add)
             .then(async response => {
               await this.confirmChkAdd(response.data)
-              let booking = await axios.get(this.DNS_IP + '/booking_view/get?shopId=' + this.session.data.shopId + '&bookNo=' + response.data.bookNo + '&checkOnsite=is null')
+              let booking = await axios.get(this.DNS_IP + '/booking_view/get?shopId=' + this.session.data.shopId + '&bookNo=' + response.data.bookNo + this.selectOnsite)
               // let bookingData = await axios.get(this.DNS_IP + '/BookingData/get?shopId=' + this.session.data.shopId + '&bookNo=' + response.data.bookNo)
               // let cusName = this.getDataFromFieldName(bookingData.data, 'ชื่อ')
               if (booking.data[0].lineUserId) {
