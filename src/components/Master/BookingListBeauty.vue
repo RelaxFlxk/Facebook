@@ -2811,6 +2811,17 @@
                           <v-icon> mdi-qrcode-scan </v-icon>
                         </v-btn>
                     </VueCustomTooltip>
+                    <VueCustomTooltip label="เปลี่ยนพนักงาน Onsite" position="is-top" bottom v-if="item.statusBt === 'confirmJob' && showOnsite === 'ไม่แสดง'">
+                        <v-btn
+                          color="info"
+                          dark
+                          fab
+                          small
+                          @click.stop="(dialogChangeOnsite = true), getChangeOnsite(item)"
+                        >
+                          <v-icon> mdi-account-reactivate </v-icon>
+                        </v-btn>
+                    </VueCustomTooltip>
                     <!-- <VueCustomTooltip label="จบงาน" position="is-top" bottom v-if="item.statusBt === 'confirmJob' && item.jobNo !== ''">
                         <v-btn
                           color="#84C650"
@@ -5083,6 +5094,263 @@
                 </v-row>
               </v-card>
           </v-dialog>
+          <v-dialog v-model="dialogChangeOnsite" persistent :max-width="dialogwidth">
+            <v-card
+              style="background: linear-gradient(180deg, #FFFFFF 0%, #E1F3FF 100%);">
+                <v-container >
+                  <v-row >
+                    <v-col cols="12" v-if="sortNo === 1">
+                      <div class=" text-center">
+                      <br/>
+                        <br>
+                        <h2 style="font-weight: 900; color:#FFA000">เปลี่ยนพนักงาน Onsite!</h2>
+                        <v-row>
+                          <v-col cols="12">
+                            <v-select
+                              v-model="empSelectJob"
+                              :items="empSelectStepAdd"
+                              label="พนักงาน Onsite"
+                              menu-props="auto"
+                              outlined
+                              required
+                              :rules="[rules.required]"
+                              dense
+                              @change="checkEmpJob()"
+                            ></v-select>
+                          </v-col>
+                        </v-row>
+                        <v-row v-if="empSelectJob !== ''">
+                          <v-col cols="12" class="pb-0 pt-0">
+                            <v-sheet height="64">
+                            <v-toolbar dense>
+                              <v-btn
+                                fab
+                                text
+                                small
+                                color="grey darken-2"
+                                @click="prev()"
+                              >
+                                <v-icon small>
+                                  mdi-chevron-left
+                                </v-icon>
+                              </v-btn>
+                              <v-btn
+                                fab
+                                text
+                                small
+                                color="grey darken-2"
+                                @click="next()"
+                              >
+                                <v-icon small>
+                                  mdi-chevron-right
+                                </v-icon>
+                              </v-btn>
+                              <!-- <v-toolbar-title v-if="$refs.calendaronsite">{{
+                                $refs.calendaronsite.title
+                              }}</v-toolbar-title> -->
+                              <v-toolbar-title>{{
+                                monthNamesThai[parseInt(today.split("-")[1])] + ' ' + today.split("-")[0]
+                              }}</v-toolbar-title>
+                            </v-toolbar>
+                          </v-sheet>
+                          </v-col>
+                        </v-row>
+                        <v-row v-if="empSelectJob !== '' && checkEventInfo.length > 0">
+                          <v-col cols="12" class="pb-0 pt-0">
+                            <v-sheet>
+                            <v-calendar
+                              ref="calendaronsite"
+                              :now="today"
+                              v-model="today"
+                              locale="th-TH"
+                              color="primary"
+                              type="month"
+                            >
+                              <!-- <template v-slot:day-label="{ day }">
+                                <span style="font-size:26px !important;">{{day}}</span>
+                              </template> -->
+                              <template v-slot:day="{ date }">
+                                <div v-if="eventInfo[date]">
+                                  <v-row>
+                                    <v-col class="text-center mb-1 mt-0">
+                                      <v-badge
+                                        avatar
+                                        bordered
+                                        overlap
+                                        color="orange darken-1"
+                                        v-if="eventInfo[date].sortNo1 > 0"
+                                        class="mr-1"
+                                        style="cursor: pointer"
+                                        @click.native="openCalendaList(date, 'sortNo1')"
+                                      >
+                                        <template v-slot:badge>
+                                          <v-avatar class="mb-1" color="orange darken-1">
+                                            {{eventInfo[date].sortNo1}}
+                                          </v-avatar>
+                                        </template>
+
+                                        <v-avatar size="40" color="orange darken-3">
+                                          <v-icon dark>
+                                              mdi-water-plus
+                                          </v-icon>
+                                        </v-avatar>
+                                      </v-badge>
+                                      <v-badge
+                                        avatar
+                                        bordered
+                                        overlap
+                                        color="blue darken-1"
+                                        v-if="eventInfo[date].sortNo2 > 0"
+                                        class="mr-1"
+                                        style="cursor: pointer"
+                                        @click.native="openCalendaList(date, 'sortNo2')"
+                                      >
+                                        <template v-slot:badge>
+                                          <v-avatar class="mb-1" color="blue darken-1">
+                                            {{eventInfo[date].sortNo2}}
+                                          </v-avatar>
+                                        </template>
+
+                                        <v-avatar size="40" color="blue darken-3">
+                                          <v-icon dark>
+                                              mdi-water-check
+                                          </v-icon>
+                                        </v-avatar>
+                                      </v-badge>
+                                    </v-col>
+                                  </v-row>
+                                </div>
+                              </template>
+                            </v-calendar>
+                            </v-sheet>
+                          </v-col>
+                        </v-row>
+                        <v-row v-if="empSelectJob !== '' && checkEventInfo.length === 0">
+                          <v-col cols="12" class="pb-0 pt-0">
+                            <v-sheet>
+                            <v-calendar
+                              ref="calendaronsite"
+                              :now="today"
+                              v-model="today"
+                              locale="th-TH"
+                              color="primary"
+                              type="month"
+                            ></v-calendar>
+                            </v-sheet>
+                          </v-col>
+                          <v-col cols="12">
+                          <v-alert
+                            text
+                            type="success"
+                          >
+                            เดือน <strong>{{monthNamesThai[parseInt(today.split("-")[1])]}}</strong> พนักงานท่านนี้ <strong>ว่างงาน</strong>
+                          </v-alert>
+                          </v-col>
+                        </v-row>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" v-if="sortNo !== 1">
+                      <div class=" text-center">
+                        <v-alert
+                          outlined
+                          type="error"
+                        >
+                          รายการนี้ได้เริ่มงานไปแล้ว !!
+                        </v-alert>
+                      </div>
+                  </v-col>
+                </v-row>
+                </v-container>
+                <v-row >
+                  <v-col cols="12" class="text-center">
+                    <v-btn small class="ma-2" v-if="sortNo === 1" color="primary" @click="jobChangeOnsite()" dark>
+                            เปลี่ยนพนักงาน
+                        <v-icon dark right>
+                        mdi-checkbox-marked-circle
+                        </v-icon>
+                        </v-btn>
+                        <v-btn small class="ma-2" color="error" @click="dialogChangeOnsite = false, getDataDefault(), searchOther = '', showColorSearch = false, statusSearch = 'no', empSelectJob = ''" dark >
+                            ปิด
+                            <v-icon dark right>
+                                mdi-minus-circle
+                            </v-icon>
+                        </v-btn>
+                  </v-col>
+                </v-row>
+              </v-card>
+          </v-dialog>
+           <v-dialog v-model="dialogCalenda" width="600">
+            <v-card>
+              <v-card-title class="text-h6 grey lighten-2">
+                รายชื่อลูกค้านัดหมาย
+              </v-card-title>
+              <br />
+              <template v-for="(sumItems, index1) in dataSummary">
+                <!-- {{sumItems}} -->
+                <v-row v-bind:key="'sum'+index1" no-gutters>
+                <template v-for="(items, index2) in sumItems">
+                  <v-col cols="auto" v-bind:key="'sum'+index1+index2">
+                    <v-chip
+                      class="ma-2"
+                      :color="index1 + ' darken-2'"
+                      text-color="white"
+                    >
+                      <v-avatar
+                        left
+                        :class="index1 + ' darken-4'"
+                      >
+                        {{items.length}}
+                      </v-avatar>
+                      {{index2}}
+                    </v-chip>
+                  </v-col>
+                </template>
+                </v-row>
+              </template>
+              <v-card-text
+                v-for="(items, index) in dataCalendar"
+                :key="index"
+              >
+                <v-card elevation="2">
+                  <v-list-item :style="((items.bgcolor) ? 'background-color:' + items.bgcolor + ' !important' : '') ">
+                    <v-list-item-content>
+                      <v-row style="color:#fff;">
+                        <v-col cols="3">
+                          <!-- <h3>{{items.timeDue}}</h3><br> -->
+                          <h3>{{items.timeDue}}</h3><br>
+                          <v-icon dark class="mr-1" v-if="items.sortNo === 1">
+                              mdi-water-plus
+                          </v-icon>
+                          <v-icon dark class="mr-1" v-else-if="items.sortNo === 2">
+                              mdi-water-check
+                          </v-icon>
+                          <v-icon dark class="mr-1" v-else>
+                              mdi-clock-outline
+                          </v-icon>
+                        </v-col>
+                        <v-col cols="9">
+                          <v-row>
+                            <v-col cols="8"><h4>คุณ {{ items.name }}</h4></v-col>
+                            <v-col cols="4" class="text-right">{{items.licenseNo}}</v-col>
+                          </v-row>
+                          โทร {{ items.tel }}
+                        </v-col>
+                      </v-row>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-card>
+              </v-card-text>
+
+              <v-divider></v-divider>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" text @click="dialogCalenda = false">
+                  ยืนยัน
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
       </div>
     </v-main>
   </div>
@@ -5166,11 +5434,19 @@ export default {
       menuEdit2: false,
       menuEdit3: false,
 
+      monthNamesThai: ['', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'],
       dialogOnsite: false,
+      dialogChangeOnsite: false,
       eventInfo: [],
       checkEventInfo: [],
       dialogQrCode: false,
       dueDateText: '',
+      sortNo: '',
+      dataCalendar: [],
+      dataSummary: [],
+      today: '',
+      events: [],
+      dialogCalenda: false,
 
       srcUpload: '',
       dialogShowFileUpload: false,
@@ -5589,6 +5865,127 @@ export default {
     // await this.beforeCreate()
   },
   methods: {
+    clearOnsiteChange () {
+      this.getDataDefault()
+      this.searchOther = ''
+      this.showColorSearch = false
+      this.statusSearch = 'no'
+      this.empSelectJob = ''
+    },
+    async openCalendaList (date, text) {
+      this.dataSummary = []
+      this.dataCalendar = []
+      let dataJobData = []
+      if (text === 'sortNo1') {
+        // let jobNo = this.checkEventInfo.filter(el => { return el.start === date && el.sortNo === 2 })[0].jobNo
+        await axios
+          .get(
+          // eslint-disable-next-line quotes
+            this.DNS_IP +
+            '/job/get?shopId=' +
+            this.session.data.shopId +
+            '&empStepId=' + this.empSelectJob + '&dueDate=' + date + '&sortNo=1' + '&checkOnsite=True'
+          )
+          .then(async response => {
+            if (response.data.status === false) {
+              dataJobData = []
+            } else {
+              // dataJobData = response.data
+              response.data.forEach((row) => {
+                if (typeof (dataJobData[row.jobNo]) === 'undefined') {
+                  dataJobData[row.jobNo] = []
+                }
+                dataJobData[row.jobNo].push(row)
+              })
+              console.log('dataJobData', dataJobData)
+              console.log('checkEventInfo', this.checkEventInfo.filter(el => { return el.start === date && el.sortNo === 1 }))
+              for (let i = 0; i < this.checkEventInfo.filter(el => { return el.start === date && el.sortNo === 1 }).length; i++) {
+                var d = this.checkEventInfo.filter(el => { return el.start === date && el.sortNo === 1 })[i]
+                d.name = dataJobData[d.jobNo].filter((row) => { return row.fieldName === 'ชื่อ' })
+                d.licenseNo = dataJobData[d.jobNo].filter((row) => { return row.fieldName === 'เลขทะเบียน' })
+                d.tel = dataJobData[d.jobNo].filter((row) => { return row.fieldName === 'เบอร์โทร' })
+                d.carModel = dataJobData[d.jobNo].filter((row) => { return row.fieldName === 'รุ่นรถ' })
+                d.name = (d.name.length > 0) ? d.name[0].fieldValue : ''
+                d.licenseNo = (d.licenseNo.length > 0) ? d.licenseNo[0].fieldValue : ''
+                d.tel = (d.tel.length > 0) ? d.tel[0].fieldValue : ''
+                d.carModel = (d.carModel.length > 0) ? d.carModel[0].fieldValue : ''
+                d.timeDue = dataJobData[d.jobNo][0].timeDue
+                d.dueDate = dataJobData[d.jobNo][0].dueDate
+                d.bgcolor = 'orange'
+                this.dataCalendar.push(d)
+              }
+
+              this.dataCalendar.sort((a, b) => {
+                let keyA = new Date(a.dueDate)
+                let keyB = new Date(b.dueDate)
+                if (keyA < keyB) return -1
+                if (keyA > keyB) return 1
+                return 0
+              })
+              console.log('this.dataCalendar', this.dataCalendar)
+              this.dataSummary = this.dataCalendar.reduce((r, a) => {
+                r[a.bgcolor] = r[a.bgcolor] || {}
+                r[a.bgcolor][a.timeDue] = r[a.bgcolor][a.timeDue] || []
+                r[a.bgcolor][a.timeDue].push(a)
+                return r
+              }, Object.create(null))
+              console.log('this.dataSummary', this.dataSummary)
+            }
+          })
+        this.dialogCalenda = true
+      } else {
+        await axios
+          .get(
+          // eslint-disable-next-line quotes
+            this.DNS_IP +
+            '/job/get?shopId=' +
+            this.session.data.shopId +
+            '&empStepId=' + this.empSelectJob + '&dueDate=' + date + '&sortNo=2' + '&checkOnsite=True'
+          )
+          .then(async response => {
+            if (response.data.status === false) {
+              dataJobData = []
+            } else {
+              // dataJobData = response.data
+              response.data.forEach((row) => {
+                if (typeof (dataJobData[row.jobNo]) === 'undefined') {
+                  dataJobData[row.jobNo] = []
+                }
+                dataJobData[row.jobNo].push(row)
+              })
+              console.log('dataJobData', dataJobData)
+              console.log('checkEventInfo', this.checkEventInfo.filter(el => { return el.start === date && el.sortNo === 2 }))
+              for (let i = 0; i < this.checkEventInfo.filter(el => { return el.start === date && el.sortNo === 2 }).length; i++) {
+                var d = this.checkEventInfo.filter(el => { return el.start === date && el.sortNo === 2 })[i]
+                d.name = dataJobData[d.jobNo].filter((row) => { return row.fieldName === 'ชื่อ' })[0].fieldValue
+                d.licenseNo = dataJobData[d.jobNo].filter((row) => { return row.fieldName === 'เลขทะเบียน' })[0].fieldValue
+                d.tel = dataJobData[d.jobNo].filter((row) => { return row.fieldName === 'เบอร์โทร' })[0].fieldValue
+                d.timeDue = dataJobData[d.jobNo][0].timeDue
+                d.dueDate = dataJobData[d.jobNo][0].dueDate
+                d.bgcolor = 'blue'
+                this.dataCalendar.push(d)
+              }
+
+              this.dataCalendar.sort((a, b) => {
+                let keyA = new Date(a.dueDate)
+                let keyB = new Date(b.dueDate)
+                if (keyA < keyB) return -1
+                if (keyA > keyB) return 1
+                return 0
+              })
+              console.log('this.dataCalendar', this.dataCalendar)
+              this.dataSummary = this.dataCalendar.reduce((r, a) => {
+                r[a.bgcolor] = r[a.bgcolor] || {}
+                r[a.bgcolor][a.timeDue] = r[a.bgcolor][a.timeDue] || []
+                r[a.bgcolor][a.timeDue].push(a)
+                return r
+              }, Object.create(null))
+              console.log('this.dataSummary', this.dataSummary)
+            }
+          })
+        this.dialogCalenda = true
+      }
+    },
     FunCopy (text) {
       var copyText = document.getElementById('myInput')
       copyText.select()
@@ -5860,6 +6257,7 @@ export default {
                     } else {
                       this.$swal('ผิดพลาด', 'กรุณาทำรายการใหม่', 'error')
                       this.dialogOnsite = false
+                      this.clearOnsiteChange()
                       if (this.statusSearch === 'no') {
                         await this.getBookingList()
                       } else {
@@ -5878,6 +6276,7 @@ export default {
           } else {
             this.$swal('ผิดพลาด', 'รายการนี้ได้นำเข้ากระดานการทำงานแล้ว', 'error').then(async response => {
               this.dialogOnsite = false
+              this.clearOnsiteChange()
               if (this.statusSearch === 'no') {
                 await this.getBookingList()
               } else {
@@ -5889,6 +6288,7 @@ export default {
             }).catch(error => {
               console.log('error function addData : ', error)
               this.dialogOnsite = false
+              this.clearOnsiteChange()
               if (this.statusSearch === 'no') {
                 this.getBookingList()
               } else {
@@ -5918,6 +6318,56 @@ export default {
             await axios
               .post(this.DNS_IP + '/BookingOnsite/pushEmpCustomer/' + bookNo, dt)
               .then(async response1 => {})
+          }
+        })
+    },
+    async jobChangeOnsite () {
+      console.log('this.jobitem', this.jobitem)
+      this.swalConfig.title = 'ต้องการ เปลี่ยนพนักงาน ใช่หรือไม่?'
+      this.$swal(this.swalConfig)
+        .then(async () => {
+          if (this.$session.id() !== undefined) {
+            var updateJob = {
+              empStep: this.empSelectJob,
+              LAST_USER: this.$session.getAll().data.userName
+            }
+            await axios
+              .post(this.DNS_IP + '/job/updateJobNo/' + this.jobitem[0].jobNo, updateJob)
+              .then(async response => {
+                this.$swal('เรียบร้อย', 'เปลี่ยนพนักงาน เรียบร้อย', 'success')
+                if (parseInt(this.jobitem[0].empStepId) !== this.empSelectJob) {
+                  if (this.jobitem[0].lineUserId !== '') {
+                    var dt = {
+                      updateStatusSend: 'false',
+                      oldEmpName: this.jobitem[0].empStep
+                    }
+                    await axios
+                      .post(this.DNS_IP + '/BookingOnsite/pushEmpCustomer/' + this.jobitem[0].bookNo, dt)
+                      .then(async response1 => {})
+                  }
+                  var dtNoti = {
+                    oldEmpName: this.jobitem[0].empStep
+                  }
+                  await axios
+                    .post(this.DNS_IP + '/Booking/LineNotifyGroupOnsite/' + this.jobitem[0].bookNo, dtNoti)
+                    .then(async response1 => {})
+                }
+                if (this.statusSearch === 'no') {
+                  await this.getBookingList()
+                } else {
+                  await this.searchAny()
+                }
+                this.dialogChangeOnsite = false
+                // this.getTimesChange('update')
+                if (this.getSelectText) {
+                  this.getSelect(this.getSelectText, this.getSelectCount)
+                }
+              })
+          } else {
+            this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
+            clearInterval(this.setTimerCalendar)
+            this.setTimerCalendar = null
+            this.$router.push('/Core/Login')
           }
         })
     },
@@ -11063,6 +11513,29 @@ export default {
         .post(this.DNS_IP + '/LimitBookingDate/manage', dt)
         .then(async response => {
         })
+    },
+    async getChangeOnsite (item) {
+      await this.getEmpSelectAddJob()
+      this.jobitem = []
+      console.log(item)
+      console.log(this.empSelectStepAdd)
+      if (item.jobNo !== '') {
+        await axios.get(this.DNS_IP + '/job/getJobNo?jobNo=' + item.jobNo).then((response) => {
+          let rs = response.data
+          console.log('getJobNo', rs)
+          if (rs.status === false) {
+          } else {
+            this.jobitem = rs
+            this.sortNo = rs[0].sortNo
+            this.empSelectJob = parseInt(rs[0].empStepId)
+            this.flowId = rs[0].flowId
+            console.log('this.flowId', this.flowId)
+            if (this.sortNo === 1) {
+              this.checkEmpJob()
+            }
+          }
+        })
+      }
     },
     async getjob (item) {
       console.log(item)
