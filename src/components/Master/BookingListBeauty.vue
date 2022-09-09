@@ -8323,16 +8323,16 @@ export default {
           'วันที่': a.dateBooking,
           'เวลา': a.title,
           // 'ชื่อลูกค้า': a.cusName,
-          'รายการบริการ': a.flowName,
-          'หมายเหตุ': a.extraJob,
-          'หมายเหตุยกเลิก': a.remarkRemove,
-          'เวลาติดตาม': '',
-          'เหตุผล': '',
-          'ตรง': '',
-          'ไม่ตรง': '',
-          'เปิดJob': '',
-          'พนักงานรับนัดหมาย': a.empFull_NameTH,
-          'หมายเหตุเพิ่มเติม': a.remark
+          'รายการบริการ': a.flowName
+          // 'หมายเหตุ': a.extraJob,
+          // 'หมายเหตุยกเลิก': a.remarkRemove,
+          // 'เวลาติดตาม': '',
+          // 'เหตุผล': '',
+          // 'ตรง': '',
+          // 'ไม่ตรง': '',
+          // 'เปิดJob': '',
+          // 'พนักงานรับนัดหมาย': a.empFull_NameTH,
+          // 'หมายเหตุเพิ่มเติม': a.remark
         }
         let dataSum = Object.assign({}, data1, data2)
         dataexport.push(dataSum)
@@ -8546,16 +8546,16 @@ export default {
           'วันที่': a.dateBooking,
           'เวลา': a.title,
           // 'ชื่อลูกค้า': a.cusName,
-          'รายการบริการ': a.flowName,
-          'หมายเหตุ': a.extraJob,
-          'หมายเหตุยกเลิก': a.remarkRemove,
-          'เวลาติดตาม': '',
-          'เหตุผล': '',
-          'ตรง': '',
-          'ไม่ตรง': '',
-          'เปิดJob': '',
-          'พนักงานรับนัดหมาย': a.empFull_NameTH,
-          'หมายเหตุเพิ่มเติม': a.remark
+          'รายการบริการ': a.flowName
+          // 'หมายเหตุ': a.extraJob,
+          // 'หมายเหตุยกเลิก': a.remarkRemove,
+          // 'เวลาติดตาม': '',
+          // 'เหตุผล': '',
+          // 'ตรง': '',
+          // 'ไม่ตรง': '',
+          // 'เปิดJob': '',
+          // 'พนักงานรับนัดหมาย': a.empFull_NameTH,
+          // 'หมายเหตุเพิ่มเติม': a.remark
         }
         let dataSum = Object.assign({}, data1, data2)
         dataexport.push(dataSum)
