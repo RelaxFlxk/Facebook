@@ -5839,23 +5839,23 @@ export default {
   },
   async mounted () {
     this.checkShowDataOnsite('ไม่แสดง')
-    if (this.$route.query.bookNo) {
-      // this.beforeCreateScan()
-      await this.getDataBranch()
-      await this.getEmpSelectAdd()
-      await this.getBookingFieldText()
-      this.getCustomFieldStart()
-      this.getDataFlow()
-      await this.scanQrcode()
-      // this.getBookingList()
-    } else {
-      await this.getDataBranch()
-      await this.getEmpSelectAdd()
-      await this.getBookingFieldText()
-      this.getCustomFieldStart()
-      this.getDataFlow()
-      this.getBookingList()
-    }
+    // if (this.$route.query.bookNo) {
+    //   // this.beforeCreateScan()
+    //   await this.getDataBranch()
+    //   await this.getEmpSelectAdd()
+    //   await this.getBookingFieldText()
+    //   this.getCustomFieldStart()
+    //   this.getDataFlow()
+    //   await this.scanQrcode()
+    //   // this.getBookingList()
+    // } else {
+    //   await this.getDataBranch()
+    //   await this.getEmpSelectAdd()
+    //   await this.getBookingFieldText()
+    //   this.getCustomFieldStart()
+    //   this.getDataFlow()
+    //   this.getBookingList()
+    // }
     // this.dataReady = false
     // console.log('localStorage', localStorage.getItem('typeData'))
     this.$root.$on('closeSetTimeGetCalenda', () => {
