@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
-    <v-main>
+    <v-main transition="scroll-y-reverse-transition">
       <div class="col-md-12 ml-sm-auto col-lg-12 px-8">
         <v-row class="no-gutters">
           <v-col cols="12" md="6" lg="6" class="text-left">
@@ -40,16 +40,6 @@
                   </span>
                 </template>
               </v-btn>
-              <v-btn
-                color="primary"
-                style="z-index:8;margin-right: 5px;"
-                id="v-step-0"
-                depressed
-                @click="addDataSet()"
-              >
-                <v-icon color="white" left >mdi-text-box-plus</v-icon>
-                เพิ่มรายการนัดหมาย
-              </v-btn>
               <!-- <v-btn
                 color="teal"
                 style="z-index:8;"
@@ -65,7 +55,7 @@
             <!-- </v-overlay> -->
           </v-col>
         </v-row>
-        <v-row>
+        <v-row style="margin-bottom: 10px;">
           <v-col cols="12" class="text-left">
             <template  v-if="changeBackgroundColor">
             <v-row class="test">
@@ -330,7 +320,19 @@
           </v-col>
         </v-row>
         <div class="pa-4 mb-4">
-          <h3 style="margin-bottom: 15px;color: #1C3879;font-weight: bolder;">ตรวจสอบรายชื่อลูกค้านัดหมายรายเดือน</h3>
+          <div style="display: flex;justify-content: space-between;margin-bottom:15px;">
+            <h3 style="margin-bottom: 15px;color: black;font-weight: bolder;">ตรวจสอบรายการนัดหมาย</h3>
+            <v-btn
+                  color="#00aaff"
+                  style="margin-right: 0px;border-radius: 15px;color: white"
+                  width="250px"
+                  x-large
+                  @click="addDataSet()"
+                >
+                  เพิ่มรายการนัดหมาย
+                  <v-icon color="white" class="ml-4" >mdi-text-box-plus</v-icon>
+            </v-btn>
+          </div>
           <v-row>
             <v-col cols="4">
               <v-card class="pa-2">
@@ -2274,7 +2276,7 @@
           </v-dialog>
           <!-- data table -->
           <v-col cols="12" >
-            <BookingQueue :branchParent="branch" :masBranchIDParent="masBranchID" :drawerParent="drawer" :menu1Parent="menu1" :timeTableParent="timeTable" :rulesParent="rules" :masterTimeParent="masterTime" :dataItemTimesChangeParent="dataItemTimesChange" :getTimesChangeParent="getTimesChange" :exportExcelParent="exportExcel" :exportExcelMazdaParent="exportExcelMazda" :dataRemoveExportParent="dataRemoveExport" :exportExcelRemoveParent="exportExcelRemove" :toggleParent="toggle" @updateTimeTable="updateTimeTablefromChild"></BookingQueue>
+            <BookingQueue :branchParent="branch" :masBranchIDParent="masBranchID" :drawerParent="drawer" :menu1Parent="menu1" :timeTableParent="timeTable" :rulesParent="rules" :masterTimeParent="masterTime" :dataItemTimesChangeParent="dataItemTimesChange" :getTimesChangeParent="getTimesChange" :exportExcelParent="exportExcel" :exportExcelMazdaParent="exportExcelMazda" :dataRemoveExportParent="dataRemoveExport" :exportExcelRemoveParent="exportExcelRemove" :toggleParent="toggle" @updateTimeTable="updateTimeTablefromChild"></BookingQueue>  
             <v-card elevation="7" v-if="dataReady">
               <v-card-text>
               <v-row>
@@ -2560,7 +2562,7 @@
                           </template>
                         </v-row>
                       </v-col>
-                      <v-col cols="12" class="pt-0"  v-if="item.memberDataTag.length > 0">
+                      <!-- <v-col cols="12" class="pt-0"  v-if="item.memberDataTag.length > 0">
                         <v-chip-group
                           active-class="primary--text"
                           column
@@ -2575,7 +2577,7 @@
                             {{ item.text }}
                           </v-chip>
                         </v-chip-group>
-                      </v-col>
+                      </v-col> -->
                     </v-row>
                   </template>
                   <template v-slot:[`item.remarkReturn`]="{ item }">
@@ -2613,7 +2615,7 @@
                       color="grey darken-1"
                       @click="dialogDeposit = true, bookNo = item.bookNo"
                     >
-                      อัพเดทสถานะเงินมัดจำ
+                      มัดจำ
                     </v-chip>
                     <v-row v-if="item.depositStatus === 'True'">
                       <!-- <v-col col="auto">
@@ -2632,7 +2634,7 @@
                           color="green darken-1"
                           @click="dialogDeposit = true, bookNo = item.bookNo, statusDeposit = true, pictureUrlPreviewDeposit = item.depositImge || ''"
                         >
-                          แก้ไขสถานะเงินมัดจำ
+                          มัดจำ
                         </v-chip>
                       </v-col>
                     </v-row>
@@ -2694,9 +2696,121 @@
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
                     <!-- confirm -->
-                    <VueCustomTooltip label="ดูแผนที่" position="is-top" v-if="item.addressLatLong !== null">
+                    <v-menu rounded="xl" offset-y transition="slide-y-transition">
+                      <template v-slot:activator="{ attrs, on }">
+                          <v-btn
+                            style="background-color: #E8F9FD;border-radius: 10px;font-weight: bold;"
+                            class="black--text pa-5"
+                            v-bind="attrs"
+                            v-on="on"
+                          >
+                            จัดการนัดหมาย
+                            <v-icon color="#73777B" class="ml-2"> mdi-chevron-down </v-icon>
+                          </v-btn>
+                        </template>
+                        <v-list class="menu">
+                          <!-- <v-list-item>
+                            <v-list-item-title>ดูแผนที่ <v-icon dark> mdi-map-marker-radius-outline </v-icon></v-list-item-title>
+                            <v-list-item-title>กลับไปสถานะก่อนหน้า <v-icon dark> mdi-map-marker-radius-outline </v-icon></v-list-item-title>
+                            <v-list-item-title>รับเข้าบริการ <v-icon dark> mdi-map-marker-radius-outline </v-icon></v-list-item-title>
+                            <v-list-item-title>มอบหมายงาน <v-icon dark> mdi-map-marker-radius-outline </v-icon></v-list-item-title>
+                            <v-list-item-title>Copy Link (ผูกลูกค้า) <v-icon dark> mdi-map-marker-radius-outline </v-icon></v-list-item-title>
+                            <v-list-item-title>ยืนยันนัดหมาย <v-icon dark> mdi-map-marker-radius-outline </v-icon></v-list-item-title>
+                            <v-list-item-title>เปลี่ยนเวลานัดหมาย <v-icon dark> mdi-map-marker-radius-outline </v-icon></v-list-item-title>
+                            <v-list-item-title>ยกเลิกนัดหมาย <v-icon dark> mdi-map-marker-radius-outline </v-icon></v-list-item-title>
+                            <v-list-item-title>QR Code สำหรับให้ลูกค้า <v-icon dark> mdi-map-marker-radius-outline </v-icon></v-list-item-title>
+                            <v-list-item-title>เปลี่ยนพนักงาน Onsite <v-icon dark> mdi-map-marker-radius-outline </v-icon></v-list-item-title>
+                            <v-list-item-title>ลบรายการนี้ <v-icon dark> mdi-map-marker-radius-outline </v-icon></v-list-item-title>
+                          </v-list-item> -->
+                          <v-hover v-slot:default="{ hover }">
+                          <v-list-item  @click.stop="(dialogEdit = true), getBookingDataJob(item, 'qrcode')" v-if="item.statusBt === 'confirm' && showOnsite === 'แสดง'">
+                            <template><v-expand-transition>
+                                        <v-overlay
+                                            color="green"
+                                          absolute
+                                          :opacity=".2"
+                                          :value="hover"
+                                        >
+                                        </v-overlay>
+                                    </v-expand-transition>
+                              <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-account-plus </v-icon> รับเข้าบริการ </v-list-item-title>
+                            </template>
+                          </v-list-item>
+                          </v-hover>
+                          <v-hover v-slot:default="{ hover }">
+                          <v-list-item  style="background-color: lightgreen" @click.stop="confirmChk(item)" v-if="item.statusBt !== 'confirmJob' && item.statusBt !== 'confirm'">
+                            <template><v-expand-transition>
+                                        <v-overlay
+                                            color="green"
+                                          absolute
+                                          :opacity=".2"
+                                          :value="hover"
+                                        >
+                                        </v-overlay>
+                                    </v-expand-transition>
+                              <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-phone-check </v-icon> ยืนยันนัดหมาย </v-list-item-title>
+                            </template>
+                          </v-list-item>
+                          </v-hover>
+                          <v-list-item @click.stop="setDataChang(item)" v-if="item.statusBt !== 'confirmJob'">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-calendar-clock </v-icon> เปลี่ยนเวลานัดหมาย {{item.countChangeTime}} ครั้ง</v-list-item-title>
+                          </v-list-item>
+                          <v-list-item  @click.stop="setShowMap(item)" v-if="item.addressLatLong !== null">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-map-marker-radius-outline </v-icon> ดูแผนที่ </v-list-item-title>
+                          </v-list-item>
+                          <v-list-item @click.stop="setDataEdit(item)">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-tools </v-icon> แก้ไขข้อมูล </v-list-item-title>
+                          </v-list-item>
+                          <v-list-item @click.stop="updateStatusBookingTransaction(item)" v-if="item.statusBt === 'confirm'">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-skip-backward </v-icon> กลับไปสถานะก่อนหน้า </v-list-item-title>
+                          </v-list-item>
+                          <v-list-item @click.stop="getBookingDataJob(item, 'qrcode'), getEmpSelectAddJob(), (dialogOnsite = true)" v-if="item.statusBt === 'confirm' && showOnsite === 'ไม่แสดง'">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-account-plus </v-icon> มอบหมายงาน </v-list-item-title>
+                          </v-list-item>
+                          <v-list-item v-clipboard:success="onCopySuccess" v-clipboard:copy="'https://liff.line.me/1656581804-7KRQyqo5/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId" v-if="item.statusBt === 'confirm' && (item.userId === 'user-skip' || item.userId === '' || item.userId === null)">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-content-copy </v-icon> Copy Link (ผูกลูกค้า) </v-list-item-title>
+                          </v-list-item>
+                          <v-hover v-slot:default="{ hover }">
+                          <v-list-item v-if="item.statusBt !== 'cancel' && item.statusBt !== 'confirmJob'" :disabled="item.chkCancel" @click.stop="setDataRemove(item)">
+                            <template><v-expand-transition>
+                                        <v-overlay
+                                            color="red"
+                                          absolute
+                                          :opacity=".2"
+                                          :value="hover"
+                                        >
+                                        </v-overlay>
+                                    </v-expand-transition>
+                              <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-phone-cancel </v-icon> ยกเลิกนัดหมาย </v-list-item-title>
+                            </template>
+                          </v-list-item>
+                          </v-hover>
+                          <v-list-item v-if="item.statusBt === 'confirmJob'" @click.stop="(dialogJob = true), getjob(item)">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-qrcode-scan </v-icon> QR Code สำหรับให้ลูกค้า </v-list-item-title>
+                          </v-list-item>
+                          <v-list-item v-if="item.statusBt === 'confirmJob' && showOnsite === 'ไม่แสดง'">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-account-reactivate </v-icon> เปลี่ยนพนักงาน On site </v-list-item-title>
+                          </v-list-item>
+                          <v-hover v-slot:default="{ hover }">
+                          <v-list-item v-if="item.statusBt === 'cancel'" @click.stop="(dialogDelete = true), getDataById(item)">
+                            <template><v-expand-transition>
+                                        <v-overlay
+                                            color="red"
+                                          absolute
+                                          :opacity=".2"
+                                          :value="hover"
+                                        >
+                                        </v-overlay>
+                                    </v-expand-transition>
+                              <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-delete </v-icon> ลบรายการนี้ </v-list-item-title>
+                            </template>
+                          </v-list-item>
+                          </v-hover>
+                        </v-list>
+                    </v-menu>
+                    <!-- <VueCustomTooltip label="ดูแผนที่" position="is-top" v-if="item.addressLatLong !== null"> -->
                     <!-- <VueCustomTooltip label="ดูแผนที่" :position="filteredSelect.length === 1 ? 'is-top' : 'is-bottom'" v-if="item.addressLatLong !== null"> -->
-                      <v-btn
+                      <!-- <v-btn
                           color="blue-grey darken-1"
                           fab
                           small
@@ -2843,7 +2957,7 @@
                         >
                           <v-icon> mdi-account-reactivate </v-icon>
                         </v-btn>
-                    </VueCustomTooltip>
+                    </VueCustomTooltip> -->
                     <!-- <VueCustomTooltip label="จบงาน" position="is-top" bottom v-if="item.statusBt === 'confirmJob' && item.jobNo !== ''">
                         <v-btn
                           color="#84C650"
@@ -2855,7 +2969,7 @@
                           <v-icon>  mdi-cash-usd-outline </v-icon>
                         </v-btn>
                     </VueCustomTooltip> -->
-                    <VueCustomTooltip label="ลบรายการนี้" position="is-top" bottom v-if="item.statusBt === 'cancel'">
+                    <!-- <VueCustomTooltip label="ลบรายการนี้" position="is-top" bottom v-if="item.statusBt === 'cancel'">
                         <v-btn
                           color="red"
                           dark
@@ -2865,7 +2979,7 @@
                         >
                           <v-icon> mdi-delete </v-icon>
                         </v-btn>
-                    </VueCustomTooltip>
+                    </VueCustomTooltip> -->
                     <!-- <v-tooltip bottom v-if="item.addressLatLong !== null">
                       <template v-slot:activator="{ on, attrs }">
                         <v-btn
@@ -9158,12 +9272,12 @@ export default {
         //       { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
         //     ]
         //   }
-        this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+        this.columnsSelected = [
           // { text: 'Booking Id', value: 'bookNo' },
+          { text: 'ชื่อลูกค้า', value: 'cusName' },
           { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
           // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-          { text: 'ชื่อบริการ', value: 'flowNameShow' },
-          { text: 'ชื่อลูกค้า', value: 'cusName' },
+          { text: 'บริการ', value: 'flowNameShow' },
           { text: 'เบอร์โทร', value: 'tel' },
           { text: 'เงินมัดจำ', value: 'action4', sortable: false, align: 'center' },
           { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
@@ -9171,7 +9285,8 @@ export default {
           { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
           { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
           { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' },
-          { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center' }
+          { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center' },
+          { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
         ]
       } else {
         var dataSelect = []
@@ -9224,34 +9339,36 @@ export default {
         }
         // console.log('dataSelect', this.dataItemSelect)
         if (text === 'cancel') {
-          this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+          this.columnsSelected = [
             // { text: 'Booking Id', value: 'bookNo' },
+            { text: 'ชื่อลูกค้า', value: 'cusName' },
             { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'ชื่อบริการ', value: 'flowNameShow' },
-            { text: 'ชื่อลูกค้า', value: 'cusName' },
+            { text: 'บริการ', value: 'flowNameShow' },
             { text: 'เบอร์โทร', value: 'tel' },
             { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
             { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
-            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
+            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' },
+            { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
             // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
             // { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
             // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
           ]
         } else if (text === 'confirm') {
-          this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+          this.columnsSelected = [
             // { text: 'Booking Id', value: 'bookNo' },
+            { text: 'ชื่อลูกค้า', value: 'cusName', width: '200' },
             { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'ชื่อบริการ', value: 'flowNameShow' },
-            { text: 'ชื่อลูกค้า', value: 'cusName' },
+            { text: 'บริการ', value: 'flowNameShow' },
             { text: 'เบอร์โทร', value: 'tel' },
             { text: 'เงินมัดจำ', value: 'action4', sortable: false, align: 'center' },
-            { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+            // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
             { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-            { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
+            // { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
             { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
-            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
+            { text: 'หมายเหตุ', value: 'remark', align: 'center' },
+            { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
           ]
           // this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
           //   // { text: 'Booking Id', value: 'bookNo' },
@@ -9290,17 +9407,18 @@ export default {
           //     { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
           //     { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
           // }
-          this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+          this.columnsSelected = [
             // { text: 'Booking Id', value: 'bookNo' },
+            { text: 'ชื่อลูกค้า', value: 'cusName' },
             { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'ชื่อบริการ', value: 'flowNameShow' },
-            { text: 'ชื่อลูกค้า', value: 'cusName' },
+            { text: 'บริการ', value: 'flowNameShow' },
             { text: 'เบอร์โทร', value: 'tel' },
             { text: 'เงินมัดจำ', value: 'action4', sortable: false, align: 'center' },
-            { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+            // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
             { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
+            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' },
+            { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }]
           // this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
           //   // { text: 'Booking Id', value: 'bookNo' },
           //   { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
@@ -9312,28 +9430,30 @@ export default {
           //   { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
           //   { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
         } else if (text === 'confirmJob') {
-          this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+          this.columnsSelected = [
             // { text: 'Booking Id', value: 'bookNo' },
+            { text: 'ชื่อลูกค้า', value: 'cusName' },
             { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'ชื่อบริการ', value: 'flowNameShow' },
-            { text: 'ชื่อลูกค้า', value: 'cusName' },
+            { text: 'บริการ', value: 'flowNameShow' },
             { text: 'เบอร์โทร', value: 'tel' },
             { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
             { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
             { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' },
-            { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center' }]
+            { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center' },
+            { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }]
         } else {
-          this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+          this.columnsSelected = [
             // { text: 'Booking Id', value: 'bookNo' },
+            { text: 'ชื่อลูกค้า', value: 'cusName' },
             { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'ชื่อบริการ', value: 'flowNameShow' },
-            { text: 'ชื่อลูกค้า', value: 'cusName' },
+            { text: 'บริการ', value: 'flowNameShow' },
             { text: 'เบอร์โทร', value: 'tel' },
             { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
             { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
+            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' },
+            { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }]
         }
       }
       // }
@@ -12095,7 +12215,7 @@ export default {
 }
 button {
   padding: .5em 1em;
-  border-radius: 3em;
+  /* border-radius: 3em; */
   font-size: 1.1em;
 }
 /* before the element is shown, start off the screen to the right */
@@ -12114,5 +12234,15 @@ body {
 }
 .v-card--link:focus::before {
   opacity: 0;
+}
+.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled) {
+  background-color: white !important;
+}
+.v-list-item__title{
+  color: #73777B !important;
+  /* font-family: KittithadaBold;
+  font-size: 22px !important; */
+  font-family: 'Kanit', sans-serif;
+  font-weight: 400;
 }
 </style>
