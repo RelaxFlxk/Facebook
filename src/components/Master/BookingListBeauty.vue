@@ -2720,10 +2720,32 @@
                         <v-btn
                           color="indigo"
                           fab
+                          dark
                           small
                           @click.stop="updateStatusBookingTransaction(item)"
                         >
                           <v-icon dark> mdi-skip-backward </v-icon>
+                        </v-btn>
+                    </VueCustomTooltip>
+                    <VueCustomTooltip label="คัดลอก Link" position="is-top"  v-if="item.statusBt === 'wait' && item.depositCheckStatus === 'True'">
+                        <v-btn
+                          color="teal"
+                          fab
+                          dark
+                          small
+                          @click.stop="dialogShowDeposit = true, depositLink = 'https://betask-linked.web.app/Thank?shopId=' + $session.getAll().data.shopId + '&redirectBy=BookingForm&flowId=' + item.flowId + '&bookNo=' + item.bookNo"
+                        >
+                          <v-icon dark> mdi-link-variant</v-icon>
+                        </v-btn>
+                    </VueCustomTooltip>
+                    <VueCustomTooltip label="คืนเงินมัดจำ" position="is-top"  v-if="item.statusBt === 'confirm' && item.depositImge !== '' && item.depositCheckStatus === 'True'">
+                        <v-btn
+                          color="primary"
+                          fab
+                          small
+                          @click.stop="(dialogEdit = true), getBookingDataJob(item, 'qrcode')"
+                        >
+                          <v-icon dark> mdi-cash-refund </v-icon>
                         </v-btn>
                     </VueCustomTooltip>
                     <VueCustomTooltip label="รับเข้าบริการ" position="is-top"  v-if="item.statusBt === 'confirm' && showOnsite === 'แสดง'">
@@ -5351,6 +5373,38 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
+          <v-dialog v-model="dialogShowDeposit" persistent :max-width="dialogwidth">
+            <v-card>
+              <v-card-title class="text-h5">
+                คัดลอก Link มัดจำ
+              </v-card-title>
+              <v-card-text>
+                 <v-row align-content="center">
+                  <v-col cols="12"  class="pb-0">
+                    <v-text-field
+                      v-model="depositLink"
+                      style="background-color:#050C42;"
+                      solo
+                      disabled
+                      id="myInputDeposit"
+                      dense
+                    >
+                    </v-text-field>
+                  </v-col>
+                </v-row>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="green darken-1"
+                  text
+                  @click="FunCopyDeposit(), dialogShowDeposit = false"
+                >
+                  คัดลอก
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
       </div>
     </v-main>
   </div>
@@ -5819,7 +5873,9 @@ export default {
       statusShowDateConfiremjob: true,
       memberId: '',
       flowIdOldEdit: '',
-      Redirect: 'https://liff.line.me/1656581804-7KRQyqo5/BookingAddress?shopId=' + this.$session.getAll().data.shopId
+      Redirect: 'https://liff.line.me/1656581804-7KRQyqo5/BookingAddress?shopId=' + this.$session.getAll().data.shopId,
+      dialogShowDeposit: false,
+      depositLink: ''
     }
   },
   beforeCreate () {
@@ -5865,6 +5921,12 @@ export default {
     // await this.beforeCreate()
   },
   methods: {
+    FunCopyDeposit () {
+      let copyText = document.getElementById('myInputDeposit')
+      copyText.select()
+      copyText.setSelectionRange(0, 99999)
+      navigator.clipboard.writeText(copyText.value)
+    },
     clearOnsiteChange () {
       this.getDataDefault()
       this.searchOther = ''
@@ -10082,6 +10144,7 @@ export default {
             extraJob = 'False'
             break
         }
+        let flowIdData = this.formAdd.flowId
         let rs = this.fieldNameItem
         let Add = []
         let fielditem = this.fieldNameItem
@@ -10105,7 +10168,7 @@ export default {
               this.formAdd.depositImge = this.pictureUrlPreviewDeposit
             }
           } else {
-            this.formAdd.depositStatus = 'False'
+            this.formAdd.depositStatus = 'True'
             this.formAdd.depositImge = ''
           }
         }
@@ -10229,6 +10292,8 @@ export default {
                   this.clearDataAdd()
                   this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
                 }
+                this.dialogShowDeposit = true
+                this.depositLink = 'https://betask-linked.web.app/Thank?shopId=' + this.$session.getAll().data.shopId + '&redirectBy=BookingForm&flowId=' + flowIdData + '&bookNo=' + response.data.bookNo
               } else {
                 await this.confirmChkAdd(response.data)
               }
