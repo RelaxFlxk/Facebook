@@ -403,7 +403,7 @@
                             <v-col class="pb-0">
                               <v-select
                                 v-model="formAdd.timeSlot"
-                                :items="[{text: '1', value: 1},{text: '2', value: 2},{text: '3', value: 3}]"
+                                :items="[{text: '1', value: 1},{text: '2', value: 2},{text: '3', value: 3},{text: '4', value: 4},{text: '5', value: 5}]"
                                 label="จำนวน Slot งาน"
                                 outlined
                               ></v-select>
@@ -578,7 +578,7 @@
                             <v-col class="pb-0">
                               <v-select
                                 v-model="formUpdate.timeSlot"
-                                :items="[{text: '1', value: 1},{text: '2', value: 2},{text: '3', value: 3}]"
+                                :items="[{text: '1', value: 1},{text: '2', value: 2},{text: '3', value: 3},{text: '4', value: 4},{text: '5', value: 5}]"
                                 label="จำนวน Slot งาน"
                                 outlined
                               ></v-select>

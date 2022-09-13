@@ -225,6 +225,11 @@ export default new Router({
     component: Master.BookingMobile
   },
   {
+    path: '/BookingMobileEmp',
+    name: 'BookingMobileEmp',
+    component: Master.BookingMobileEmp
+  },
+  {
     path: '/BookingMobileConfirmJob',
     name: 'BookingMobileConfirmJob',
     component: Master.BookingMobileConfirmJob
