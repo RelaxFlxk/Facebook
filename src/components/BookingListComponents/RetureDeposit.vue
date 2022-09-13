@@ -99,19 +99,48 @@ import axios from 'axios' // api
 export default {
   data () {
     return {
-      loadingDeposit: true,
+      loadingDeposit: false,
       statusDeposit: false,
       dialogDeposit: false,
       pictureUrlDeposit: null,
       pictureUrlPreviewDeposit: null,
       filesDeposit: null,
       valid_deposit: true,
-      bookNo: ''
+      bookNo: '',
+      rules: {
+        numberRules: value =>
+          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
+          'กรุณากรอกตัวเลข 0 ถึง 9',
+        counterTel: value => value.length <= 10 || 'Max 10 characters',
+        IDcardRules: value =>
+          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999999) ||
+          'กรุณากรอกตัวเลข 0 ถึง 9',
+        required: value => !!value || 'กรุณากรอก.',
+        resizeImag: value =>
+          !value ||
+          value.size < 2000000 ||
+          'Avatar size should be less than 2 MB!',
+        counterIDcard: value => value.length <= 13 || 'Max 13 characters',
+        email: value => {
+          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+          return pattern.test(value) || 'Invalid e-mail.'
+        }
+      }
     }
   },
+  async mounted () {
+  },
   methods: {
-    setData () {
-
+    setData (item) {
+      console.log('setData', item)
+      if (item.depositReturnImge !== '') {
+        this.statusDeposit = true
+      } else {
+        this.statusDeposit = false
+      }
+      this.pictureUrlPreviewDeposit = item.depositReturnImge
+      this.bookNo = item.bookNo
+      this.dialogDeposit = true
     },
     gotoPicture (Linkitem) {
       window.open(Linkitem, '_blank')
@@ -124,7 +153,7 @@ export default {
         let params = new FormData()
         params.append('file', this.filesDeposit)
         await axios
-          .post(this.DNS_IP + `/file/upload/deposit`, params)
+          .post(this.DNS_IP + `/file/upload/depositReturn`, params)
           .then(function (response) {
             _this.pictureUrlDeposit = response.data
             console.log('url Pic', response.data)
@@ -133,8 +162,7 @@ export default {
         this.pictureUrlDeposit = this.pictureUrlPreviewDeposit
       }
       let dt = {
-        depositStatus: 'True',
-        depositImge: this.pictureUrlDeposit,
+        depositReturnImge: this.pictureUrlDeposit,
         LAST_USER: this.$session.getAll().data.userName
       }
       await axios
@@ -156,7 +184,7 @@ export default {
       this.loadingDeposit = true
       console.log('bookNo', this.bookNo)
       let dt = {
-        depositStatus: 'False',
+        depositReturnImge: 'is null',
         LAST_USER: this.$session.getAll().data.userName
       }
       await axios
