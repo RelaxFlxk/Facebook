@@ -1992,6 +1992,7 @@ export default {
       this.dueDateTimeOld = this.momenTime(item.dueDate)
       await this.getEmpSelect(item)
       this.dialogRemove = true
+      console.log('this.bookNoRemove', this.bookNoRemove)
     },
     async cancelChk () {
       let chkStatLimit = this.dataFlow.filter(el => { return el.value === this.bookNoRemove.flowId })
@@ -2012,30 +2013,50 @@ export default {
       }
     },
     onCancelChkSubmit () {
-      var dt = {
-        bookNo: this.bookNoRemove.bookNo,
-        contactDate: this.format_date(new Date()),
-        status: 'cancel',
-        statusUse: 'use',
-        shopId: this.$session.getAll().data.shopId,
-        CREATE_USER: this.$session.getAll().data.userName,
-        LAST_USER: this.$session.getAll().data.userName,
-        remarkRemove: this.remarkRemove
+      if (this.remarkRemove === '') {
+        this.$swal('ผิดพลาด', 'กรุณากรอกหมายเหตุ', 'error')
+      } else {
+        var dt = {
+          bookNo: this.bookNoRemove.bookNo,
+          contactDate: this.format_date(new Date()),
+          status: 'cancel',
+          statusUse: 'use',
+          shopId: this.$session.getAll().data.shopId,
+          CREATE_USER: this.$session.getAll().data.userName,
+          LAST_USER: this.$session.getAll().data.userName,
+          remarkRemove: this.remarkRemove
+        }
+        axios
+          .post(this.DNS_IP + '/booking_transaction/add', dt)
+          .then(async response => {
+            await this.updateRemark(this.bookNoRemove)
+            this.pushMsglineCancel(this.bookNoRemove)
+            this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+            console.log('addDataGlobal', response)
+            this.dialogRemove = false
+            await this.chkBookingNo()
+            // this.getTimesChange('update')
+            this.dialogRemove = false
+          })
+          .catch(error => {
+            console.log('error function addData : ', error)
+          })
       }
-      axios
-        .post(this.DNS_IP + '/booking_transaction/add', dt)
-        .then(async response => {
-          await this.updateRemark(this.bookNoRemove)
-          this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-          console.log('addDataGlobal', response)
-          this.dialogRemove = false
-          await this.chkBookingNo()
-          // this.getTimesChange('update')
-          this.dialogRemove = false
-        })
-        .catch(error => {
-          console.log('error function addData : ', error)
-        })
+    },
+    pushMsglineCancel (item) {
+      let lineUserId = item.lineUserId || ''
+      if (lineUserId !== '') {
+        var dt = {
+          lineUserId: lineUserId,
+          dueDate: item.dueDate,
+          flowName: item.flowName,
+          shopId: this.$session.getAll().data.shopId,
+          tell: this.$session.getAll().data.contactTel
+        }
+        axios
+          .post(this.DNS_IP + '/Booking/pushMsgCancelBook', dt)
+          .then(async response => {})
+      }
     },
     async updateLimitBookingCancel (item, dueDateOld, dueDateTimeOld) {
       let result = []
