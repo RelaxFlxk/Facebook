@@ -2225,16 +2225,16 @@ export default {
                 })
             })
         } else {
-          let dtint = '0'
-          if (this.dataFlow.filter(el => { return el.value === item.flowId }).length > 0) {
-            let dts = JSON.parse(this.dataFlow.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
-            dtint = parseInt(dts.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
-          } else {
-            dtint = '0'
-          }
+          // let dtint = '0'
+          // if (this.dataFlow.filter(el => { return el.value === item.flowId }).length > 0) {
+          //   let dts = JSON.parse(this.dataFlow.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
+          //   dtint = parseInt(dts.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
+          // } else {
+          //   dtint = '0'
+          // }
           let dt = {
             pageStatus: this.dataItem[0].statusBt,
-            limitBookingCount: dtint,
+            // limitBookingCount: dtint,
             bookNo: item.bookNo,
             contactDate: this.format_date(new Date()),
             status: 'confirm',
