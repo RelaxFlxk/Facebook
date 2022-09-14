@@ -5547,7 +5547,7 @@ import waitingAlert from '../waitingAlert.vue'
 import RetureDeposit from '../BookingListComponents/RetureDeposit.vue'
 
 export default {
-  name: 'BookingList',
+  name: 'BookingListBeauty',
   components: {
     draggable,
     'left-menu-admin': adminLeftMenu,
@@ -6015,6 +6015,9 @@ export default {
   },
   async mounted () {
     this.checkShowDataOnsite('ไม่แสดง')
+    this.$root.$on('dataReturn', (item) => {
+      this.dataReturn(item)
+    })
     // if (this.$route.query.bookNo) {
     //   // this.beforeCreateScan()
     //   await this.getDataBranch()
@@ -6040,9 +6043,24 @@ export default {
     })
     // await this.beforeCreate()
   },
+  beforeDestroy () {
+    this.$root.$off('dataReturn')
+  },
   methods: {
     async setDataReture (item) {
       this.$refs.RetureDeposit.setData(item)
+    },
+    async dataReturn (item) {
+      console.log('dataReturn', item)
+      if (this.statusSearch === 'no') {
+        await this.getBookingList()
+      } else {
+        await this.searchAny()
+      }
+      // this.getTimesChange('update')
+      if (this.getSelectText) {
+        this.getSelect(this.getSelectText, this.getSelectCount)
+      }
     },
     FunCopyDeposit () {
       let copyText = document.getElementById('myInputDeposit')
