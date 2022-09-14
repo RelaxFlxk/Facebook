@@ -28,6 +28,7 @@ import BookingListBeauty from './BookingListBeauty'
 import SettingTag from './SettingTag'
 import Showbooking from './Showbooking'
 import BookingMobileConfirmJob from './BookingMobileConfirmJob'
+import BookingMobileEmp from './BookingMobileEmp'
 export default {
   CustomField,
   Flow,
@@ -58,5 +59,6 @@ export default {
   BookingListBeauty,
   SettingTag,
   Showbooking,
-  BookingMobileConfirmJob
+  BookingMobileConfirmJob,
+  BookingMobileEmp
 }

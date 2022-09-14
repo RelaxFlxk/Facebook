@@ -346,14 +346,25 @@ export default {
                 this.$route.query.shopId
             )
           } else {
-            this.$router.push(
-              '/BookingMobile?' +
+            if (dataitem.timeSlotStatus === 'True') {
+              this.$router.push(
+                '/BookingMobileEmp?' +
                 this.queryData +
                 '=' +
                 this.bookNo +
                 '&shopId=' +
                 this.$route.query.shopId
-            )
+              )
+            } else {
+              this.$router.push(
+                '/BookingMobile?' +
+                this.queryData +
+                '=' +
+                this.bookNo +
+                '&shopId=' +
+                this.$route.query.shopId
+              )
+            }
           }
         } else {
           this.$swal({
