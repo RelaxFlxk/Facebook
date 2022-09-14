@@ -710,7 +710,6 @@
                       :headers="FieldSelect"
                       :items="Fielditem"
                       rounded="xl"
-                      class="elevation-10"
                     >
                       <template v-slot:[`item.showitem`]="{ item }">
                         <v-simple-checkbox

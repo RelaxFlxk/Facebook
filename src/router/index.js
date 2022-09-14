@@ -215,6 +215,11 @@ export default new Router({
     component: Master.SettingTag
   },
   {
+    path: '/Master/NoticeManagement',
+    name: 'NoticeManagement',
+    component: Master.NoticeManagement
+  },
+  {
     path: '/UpdateNotify',
     name: 'UpdateNotify',
     component: Master.UpdateNotify
