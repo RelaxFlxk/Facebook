@@ -162,6 +162,7 @@ export default {
         this.pictureUrlDeposit = this.pictureUrlPreviewDeposit
       }
       let dt = {
+        depositStatus: 'False',
         depositReturnImge: this.pictureUrlDeposit,
         LAST_USER: this.$session.getAll().data.userName
       }
@@ -184,6 +185,7 @@ export default {
       this.loadingDeposit = true
       console.log('bookNo', this.bookNo)
       let dt = {
+        depositStatus: 'True',
         depositReturnImge: 'is null',
         LAST_USER: this.$session.getAll().data.userName
       }

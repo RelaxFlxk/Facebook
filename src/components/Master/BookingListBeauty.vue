@@ -2276,7 +2276,7 @@
           </v-dialog>
           <!-- data table -->
           <v-col cols="12" >
-            <BookingQueue :branchParent="branch" :masBranchIDParent="masBranchID" :drawerParent="drawer" :menu1Parent="menu1" :timeTableParent="timeTable" :rulesParent="rules" :masterTimeParent="masterTime" :dataItemTimesChangeParent="dataItemTimesChange" :getTimesChangeParent="getTimesChange" :exportExcelParent="exportExcel" :exportExcelMazdaParent="exportExcelMazda" :dataRemoveExportParent="dataRemoveExport" :exportExcelRemoveParent="exportExcelRemove" :toggleParent="toggle" @updateTimeTable="updateTimeTablefromChild"></BookingQueue>  
+            <BookingQueue :branchParent="branch" :masBranchIDParent="masBranchID" :drawerParent="drawer" :menu1Parent="menu1" :timeTableParent="timeTable" :rulesParent="rules" :masterTimeParent="masterTime" :dataItemTimesChangeParent="dataItemTimesChange" :getTimesChangeParent="getTimesChange" :exportExcelParent="exportExcel" :exportExcelMazdaParent="exportExcelMazda" :dataRemoveExportParent="dataRemoveExport" :exportExcelRemoveParent="exportExcelRemove" :toggleParent="toggle" @updateTimeTable="updateTimeTablefromChild"></BookingQueue>
             <v-card elevation="7" v-if="dataReady">
               <v-card-text>
               <v-row>
@@ -2760,6 +2760,9 @@
                           </v-list-item>
                           <v-list-item @click.stop="setDataEdit(item)">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-tools </v-icon> แก้ไขข้อมูล </v-list-item-title>
+                          </v-list-item>
+                          <v-list-item @click.stop="setDataReture(item)">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-tools </v-icon> คืนเงินมัดจำ </v-list-item-title>
                           </v-list-item>
                           <v-list-item @click.stop="updateStatusBookingTransaction(item)" v-if="item.statusBt === 'confirm'">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-skip-backward </v-icon> กลับไปสถานะก่อนหน้า </v-list-item-title>
@@ -5519,6 +5522,7 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
+          <RetureDeposit ref="RetureDeposit"></RetureDeposit>
       </div>
     </v-main>
   </div>
@@ -5540,6 +5544,7 @@ import moment from 'moment-timezone'
 import BookingQueue from './BookingQueue.vue'
 import CalendarBooking from './CalendarBookingList.vue'
 import waitingAlert from '../waitingAlert.vue'
+import RetureDeposit from '../BookingListComponents/RetureDeposit.vue'
 
 export default {
   name: 'BookingList',
@@ -5555,7 +5560,8 @@ export default {
     PivotTable,
     BookingQueue,
     CalendarBooking,
-    waitingAlert
+    waitingAlert,
+    RetureDeposit
   },
   computed: {
     filteredSelect () {
@@ -6035,6 +6041,9 @@ export default {
     // await this.beforeCreate()
   },
   methods: {
+    async setDataReture (item) {
+      this.$refs.RetureDeposit.setData(item)
+    },
     FunCopyDeposit () {
       let copyText = document.getElementById('myInputDeposit')
       copyText.select()
@@ -7421,6 +7430,7 @@ export default {
                   s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
                   s.depositStatus = d.depositStatus || 'False'
                   s.depositImge = d.depositImge || ''
+                  s.depositReturnImge = d.depositReturnImge || ''
                   s.lineUserId = d.lineUserId
                   s.memberPicture = d.memberPicture
                   s.timeDueHtext = d.timeDueH + ':00'
@@ -9790,6 +9800,7 @@ export default {
                 s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
                 s.depositStatus = d.depositStatus || 'False'
                 s.depositImge = d.depositImge || ''
+                s.depositReturnImge = d.depositReturnImge || ''
                 s.lineUserId = d.lineUserId
                 s.memberPicture = d.memberPicture
                 s.timeDueHtext = d.timeDueH + ':00'
@@ -9948,6 +9959,7 @@ export default {
                 s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
                 s.depositStatus = d.depositStatus || 'False'
                 s.depositImge = d.depositImge || ''
+                s.depositReturnImge = d.depositReturnImge || ''
                 s.lineUserId = d.lineUserId
                 s.memberPicture = d.memberPicture
                 s.timeDueHtext = d.timeDueH + ':00'
