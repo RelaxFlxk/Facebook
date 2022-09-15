@@ -34,6 +34,9 @@ import BookingMobileEmp from './BookingMobileEmp'
 import NoticeManagement from './NoticeManagement'
 export default {
   CustomField,
+  CallLog,
+  ServiceType,
+  NoticeManagement,
   Flow,
   FlowStep,
   RegisterAdd,
