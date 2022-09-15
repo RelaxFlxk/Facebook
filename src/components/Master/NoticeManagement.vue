@@ -10,7 +10,7 @@
           <v-col cols="6" class="v-margit_button text-right">
             <v-btn color="primary" depressed @click="dialogSendNotic = true">
               <v-icon left>mdi-text-box-plus</v-icon>
-              เพิ่ม NoticeManagement
+              ตั้งค่าการแจ้งเตือน
             </v-btn>
           </v-col>
         </v-row>
@@ -48,7 +48,6 @@
                 label="เลือกประเภทบริการ"
                 outlined
                 append-icon="mdi-map"
-                @change="setTime()"
                 :rules="required"
               ></v-select>
             </v-col>
@@ -98,7 +97,6 @@
             </v-col>
             <v-col cols="6" class="pa-1 mt-n4">
               <v-select
-              v-if="formSendNotify.flowId !== ''"
                 dense
                 v-model="formSendNotify.afterTime"
                 :items="timeavailable"
@@ -328,7 +326,7 @@ export default {
       },
       menu: false,
       dataItem: null,
-      timeavailable: [],
+      timeavailable: [{'id': 1, 'value': '08:00', 'text': '08:00', 'limitBooking': ''}, {'id': 2, 'value': '08:30', 'text': '08:30', 'limitBooking': ''}, {'id': 3, 'value': '09:00', 'text': '09:00', 'limitBooking': ''}, {'id': 4, 'value': '09:30', 'text': '09:30', 'limitBooking': ''}, {'id': 5, 'value': '10:00', 'text': '10:00', 'limitBooking': ''}, {'id': 6, 'value': '10:30', 'text': '10:30', 'limitBooking': ''}, {'id': 7, 'value': '11:00', 'text': '11:00', 'limitBooking': ''}, {'id': 8, 'value': '11:30', 'text': '11:30', 'limitBooking': ''}, {'id': 9, 'value': '12:00', 'text': '12:00', 'limitBooking': ''}, {'id': 10, 'value': '12:30', 'text': '12:30', 'limitBooking': ''}, {'id': 11, 'value': '13:00', 'text': '13:00', 'limitBooking': ''}, {'id': 12, 'value': '13:30', 'text': '13:30', 'limitBooking': ''}, {'id': 13, 'value': '14:00', 'text': '14:00', 'limitBooking': ''}, {'id': 14, 'value': '14:30', 'text': '14:30', 'limitBooking': ''}, {'id': 15, 'value': '15:00', 'text': '15:00', 'limitBooking': ''}, {'id': 16, 'value': '15:30', 'text': '15:30', 'limitBooking': ''}, {'id': 17, 'value': '16:00', 'text': '16:00', 'limitBooking': ''}, {'id': 18, 'value': '16:30', 'text': '16:30', 'limitBooking': ''}, {'id': 19, 'value': '17:00', 'text': '17:00', 'limitBooking': ''}],
       DataFlowName: [],
       DataFlowNameAll: [],
       memberData: [],
@@ -383,6 +381,11 @@ export default {
             this.DataFlowName.push(s)
             this.DataFlowNameAll.push(d)
           }
+          let s = {}
+          s.text = 'ทั้งหมด'
+          s.textEng = 'All'
+          s.value = 'All'
+          this.DataFlowName.push(s)
           console.log('this.DataFlowNameAll', this.DataFlowNameAll)
         } else {
           this.DataFlowName = []
@@ -395,11 +398,18 @@ export default {
     },
     async getMemberList () {
       console.log('test', this.formSendNotify)
+      let Url = ''
+      if (this.formSendNotify.flowId === 'All') {
+        Url = this.DNS_IP + '/notice/NoticMember?targetDate=' + this.formSendNotify.targetDate +
+      '&afterTime=' + this.formSendNotify.afterTime + '&shopId=' + this.shopId + '&confirmOnly=' + this.formSendNotify.confirmOnly
+      } else {
+        Url = this.DNS_IP + '/notice/NoticMember?targetDate=' + this.formSendNotify.targetDate +
+      '&afterTime=' + this.formSendNotify.afterTime + '&flowId=' +
+      this.formSendNotify.flowId + '&shopId=' + this.shopId + '&confirmOnly=' + this.formSendNotify.confirmOnly
+      }
       this.memberData = []
       if (this.formSendNotify.targetDate !== '' && this.formSendNotify.afterTime !== '' && this.formSendNotify.flowId !== '' && this.formSendNotify.confirmOnly !== '') {
-        await axios.get(this.DNS_IP + '/notice/NoticMember?targetDate=' + this.formSendNotify.targetDate +
-      '&afterTime=' + this.formSendNotify.afterTime + '&flowId=' +
-      this.formSendNotify.flowId + '&shopId=' + this.shopId + '&confirmOnly=' + this.formSendNotify.confirmOnly)
+        await axios.get(Url)
           .then(response => {
             let rs = response.data
             console.log('getMemberList', rs)
@@ -491,6 +501,7 @@ export default {
         })
     },
     async clearData () {
+      this.reset()
       this.dialogSendNotic = false
       this.memberData = []
       this.formSendNotify.flowId = ''
