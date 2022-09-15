@@ -3,13 +3,13 @@
     <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
     <v-main transition="scroll-y-reverse-transition">
       <div class="col-md-12 ml-sm-auto col-lg-12 px-8">
-        <!-- <v-row class="no-gutters"> -->
-          <!-- <v-col cols="12" md="6" lg="6" class="text-left">
+        <v-row class="no-gutters">
+          <v-col cols="6" md="6" lg="6" class="text-left">
             <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
-          </v-col> -->
-          <v-col cols="12" md="6" lg="6" class="v-margit_button text-right">
+          </v-col>
+          <v-col cols="6" md="6" lg="6" class="v-margit_button text-right pr-0">
             <v-btn-toggle>
-              <!-- <v-btn
+              <v-btn
                 class="text-white"
                 :loading="loadingRefresh"
                 :disabled="loadingRefresh"
@@ -29,7 +29,7 @@
                 :loading="loadingRefresh"
                 :disabled="loadingRefresh"
                 color="warning"
-                style="border-radius: 20px !important;margin-right: 5px;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
+                style="border-radius: 20px !important;margin-right: 0px;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
                 @click="getDataDefault(), searchOther = '', showColorSearch = false, statusSearch = 'no'"
               >
                 <v-icon color="white" left>mdi-refresh-circle</v-icon>
@@ -39,7 +39,7 @@
                     <v-icon light>mdi-cached</v-icon>
                   </span>
                 </template>
-              </v-btn> -->
+              </v-btn>
               <!-- <v-btn
                 color="teal"
                 style="z-index:8;"
@@ -54,7 +54,7 @@
             </v-btn-toggle>
             <!-- </v-overlay> -->
           </v-col>
-        <!-- </v-row> -->
+        </v-row>
         <v-row style="margin-bottom: 10px;">
           <v-col cols="12" class="text-left">
             <template  v-if="changeBackgroundColor">
@@ -2756,7 +2756,7 @@
                             </template>
                             <span>เพิ่มป้ายกำกับ3</span>
                           </v-tooltip>
-                            <v-menu offset-x open-on-hover :close-on-content-click="false">
+                            <v-menu rounded="xl" offset-x open-on-hover :close-on-content-click="false">
                               <template v-slot:activator="{ on, attrs }">
                                 <div style="margin: auto;text-decoration: underline;text-decoration-thickness: 2px;" v-bind="attrs" v-on="on">
                                   See more + {{item.tagDataShow.length - 2}}
@@ -9440,11 +9440,11 @@ export default {
           { text: 'ชื่อลูกค้า', value: 'cusName' },
           { text: 'วันที่/เวลา', value: 'dueDate' },
           // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-          { text: 'บริการ', value: 'flowNameShow' },
-          { text: 'เบอร์โทร', value: 'tel' },
+          { text: 'บริการ', value: 'flowNameShow', sortable: false },
+          { text: 'เบอร์โทร', value: 'tel', sortable: false },
           { text: 'เงินมัดจำ', value: 'action40', sortable: false, align: 'center' },
-          { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
-          { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+          // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+          // { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
           { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
           { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
           { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' },
