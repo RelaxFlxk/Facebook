@@ -5759,11 +5759,11 @@ export default {
       menuEdit3: false,
 
       items: [
-      { title: 'Click Me' },
-      { title: 'Click Me' },
-      { title: 'Click Me' },
-      { title: 'Click Me 2' },
-    ],
+        { title: 'Click Me' },
+        { title: 'Click Me' },
+        { title: 'Click Me' },
+        { title: 'Click Me 2' }
+      ],
 
       monthNamesThai: ['', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'],
       dialogOnsite: false,
@@ -9571,7 +9571,7 @@ export default {
           //     { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
           //     { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
           // }
-          
+
           // this.columnsSelected = [
           //   // { text: 'Booking Id', value: 'bookNo' },
           //   { text: 'ชื่อลูกค้า', value: 'cusName' },
@@ -9595,7 +9595,7 @@ export default {
             { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '160' },
             { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center', sortable: false },
             { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
-          
+
           console.log('waitja1', this.columnsSelected)
           console.log('waitja2', this.filteredSelect)
           // this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
