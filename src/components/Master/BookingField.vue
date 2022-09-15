@@ -710,7 +710,6 @@
                       :headers="FieldSelect"
                       :items="Fielditem"
                       rounded="xl"
-                      class="elevation-10"
                     >
                       <template v-slot:[`item.showitem`]="{ item }">
                         <v-simple-checkbox
@@ -837,7 +836,7 @@ export default {
       itemdetell: [],
       Redirect:
         'https://liff.line.me/1656581804-7KRQyqo5/Booking?shopId=' +
-        this.$session.getAll().data.shopId,
+        this.$session.getAll().data.shopId + '&timeSlotStatus=' + this.$session.getAll().data.timeSlotStatus,
       session: this.$session.getAll(),
       shopId: this.$session.getAll().data.shopId,
       IdUpdate: '',
@@ -998,8 +997,14 @@ export default {
       }
     },
     FunCopy (text) {
+      this.$session.getAll().data.timeSlotStatus = this.$session.getAll().data.timeSlotStatus || 'False'
       if (text === 'line') {
-        let copyText = 'https://liff.line.me/1656581804-32mk7OgE?shopId=' + this.$session.getAll().data.shopId
+        let copyText = ''
+        if (this.$session.getAll().data.timeSlotStatus === 'True') {
+          copyText = 'https://liff.line.me/1656581804-b09WBwkP?shopId=' + this.$session.getAll().data.shopId
+        } else {
+          copyText = 'https://liff.line.me/1656581804-32mk7OgE?shopId=' + this.$session.getAll().data.shopId
+        }
         navigator.clipboard.writeText(copyText + '&source=' + text)
       } else {
         let copyText = document.getElementById('myInput')
