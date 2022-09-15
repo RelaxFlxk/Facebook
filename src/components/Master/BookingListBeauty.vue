@@ -1,20 +1,20 @@
 <template>
   <div>
     <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
-    <v-main>
+    <v-main transition="scroll-y-reverse-transition">
       <div class="col-md-12 ml-sm-auto col-lg-12 px-8">
         <v-row class="no-gutters">
-          <v-col cols="12" md="6" lg="6" class="text-left">
+          <v-col cols="6" md="6" lg="6" class="text-left">
             <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
           </v-col>
-          <v-col cols="12" md="6" lg="6" class="v-margit_button text-right">
+          <v-col cols="6" md="6" lg="6" class="v-margit_button text-right pr-0">
             <v-btn-toggle>
               <v-btn
                 class="text-white"
                 :loading="loadingRefresh"
                 :disabled="loadingRefresh"
                 :color="showOnsite === 'ไม่แสดง' ? 'error' : 'teal'"
-                style="z-index:8;margin-right: 5px;"
+                style="border-radius: 20px !important;margin-right: 10px;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
                 @click="checkShowDataOnsite(showOnsite)"
               >
                 <v-icon color="white" left>{{showOnsite === 'ไม่แสดง' ? 'mdi-eye-remove' : 'mdi-eye-check'}}</v-icon>
@@ -29,7 +29,7 @@
                 :loading="loadingRefresh"
                 :disabled="loadingRefresh"
                 color="warning"
-                style="z-index:8;margin-right: 5px;"
+                style="border-radius: 20px !important;margin-right: 0px;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
                 @click="getDataDefault(), searchOther = '', showColorSearch = false, statusSearch = 'no'"
               >
                 <v-icon color="white" left>mdi-refresh-circle</v-icon>
@@ -39,16 +39,6 @@
                     <v-icon light>mdi-cached</v-icon>
                   </span>
                 </template>
-              </v-btn>
-              <v-btn
-                color="primary"
-                style="z-index:8;margin-right: 5px;"
-                id="v-step-0"
-                depressed
-                @click="addDataSet()"
-              >
-                <v-icon color="white" left >mdi-text-box-plus</v-icon>
-                เพิ่มรายการนัดหมาย
               </v-btn>
               <!-- <v-btn
                 color="teal"
@@ -65,7 +55,7 @@
             <!-- </v-overlay> -->
           </v-col>
         </v-row>
-        <v-row>
+        <v-row style="margin-bottom: 10px;">
           <v-col cols="12" class="text-left">
             <template  v-if="changeBackgroundColor">
             <v-row class="test">
@@ -330,10 +320,21 @@
           </v-col>
         </v-row>
         <div class="pa-4 mb-4">
-          <h3 style="margin-bottom: 15px;color: #1C3879;font-weight: bolder;">ตรวจสอบรายชื่อลูกค้านัดหมายรายเดือน</h3>
+          <div style="display: flex;justify-content: space-between;margin-bottom:15px;">
+            <h3 style="margin-bottom: 15px;color: black;font-weight: bolder;">ตรวจสอบรายการนัดหมาย</h3>
+            <v-btn
+                  class="bottomAdd"
+                  style="margin-right: 0px;border-radius: 15px;color: white;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
+                  width="250px"
+                  x-large
+                  @click="addDataSet()"
+                >
+                  เพิ่มรายการนัดหมาย
+                  <v-icon color="white" class="ml-4" >mdi-plus-circle</v-icon>
+            </v-btn>
+          </div>
           <v-row>
-            <v-col cols="4">
-              <v-card class="pa-2">
+            <v-col cols="2" class="pl-0">
                   <v-menu
               ref="menu"
               v-model="menuStart"
@@ -346,14 +347,19 @@
                  <v-text-field
                   hide-details
                   v-model="dateStart"
-                  prepend-inner-icon="mdi-calendar"
-                  label="เลือก เดือน/ปี"
+                  style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;"
+                  label="เดือน/ปี"
                   readonly
                   outlined
                   dense
                   v-bind="attrs"
                   v-on="on"
-                ></v-text-field>
+                >
+                <template #prepend-inner>
+                <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                  mdi-calendar
+                </v-icon>
+              </template></v-text-field>
               </template>
               <v-date-picker
                 @input="menuStart = false,dataReady = false,getBookingList()"
@@ -364,12 +370,11 @@
               >
               </v-date-picker>
               </v-menu>
-              </v-card>
             </v-col>
-            <v-col cols="4">
-              <v-card class="pa-2">
+            <v-col cols="2" class="pl-0">
                  <v-select
               v-model="masBranchID"
+              style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;"
               hide-details
               :items="branch"
               label="สาขา"
@@ -377,12 +382,15 @@
               dense
               required
               @change="dataReady = false,getBookingList()"
-              ></v-select>
-              </v-card>
+              ><template #prepend-inner>
+                <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                  mdi-map-marker-outline
+                </v-icon>
+              </template></v-select>
             </v-col>
-            <v-col cols="4">
-              <v-card class="pa-2">
+            <v-col cols="2" class="pl-0">
                 <v-select
+                style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;"
               v-model="flowSelect"
               hide-details
               :items="DataFlowName"
@@ -390,8 +398,29 @@
               outlined
               dense
               @change="dataReady = false,getBookingList()"
-            ></v-select>
-              </v-card>
+            >
+            <template #prepend-inner>
+                <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                  mdi-note-text-outline
+                </v-icon>
+              </template></v-select>
+            </v-col>
+            <v-col cols="2"></v-col>
+            <v-col cols="4" class="pr-0 pt-3">
+                <v-text-field
+                  class="textserch"
+                  style="border-radius: 40px !important;"
+                  label="ค้นหาชื่อ และ เบอร์โทรศัพท์"
+                  v-model="searchAll2"
+                  outlined
+                  hide-details
+                  dense
+                ><template #prepend-inner>
+                <v-icon style="margin-top: 0px;">
+                  mdi-magnify
+                </v-icon>
+                 </template>
+                </v-text-field>
             </v-col>
           </v-row>
           </div>
@@ -2275,10 +2304,10 @@
           <!-- data table -->
           <v-col cols="12" >
             <BookingQueue :branchParent="branch" :masBranchIDParent="masBranchID" :drawerParent="drawer" :menu1Parent="menu1" :timeTableParent="timeTable" :rulesParent="rules" :masterTimeParent="masterTime" :dataItemTimesChangeParent="dataItemTimesChange" :getTimesChangeParent="getTimesChange" :exportExcelParent="exportExcel" :exportExcelMazdaParent="exportExcelMazda" :dataRemoveExportParent="dataRemoveExport" :exportExcelRemoveParent="exportExcelRemove" :toggleParent="toggle" @updateTimeTable="updateTimeTablefromChild"></BookingQueue>
-            <v-card elevation="7" v-if="dataReady">
+            <v-card elevation="3" v-if="dataReady">
               <v-card-text>
               <v-row>
-                <v-col col="auto">
+                <!-- <v-col col="auto">
                   <v-btn
                   v-if="dataItem.length > 0"
                   color="blue-grey"
@@ -2302,8 +2331,8 @@
                 >
                   ตรวจสอบคิวจองรายเดือน
                 </v-btn>
-                </v-col>
-                <v-col class="text-right" col="auto">
+                </v-col> -->
+                <!-- <v-col class="text-right" col="auto">
                   <v-text-field
                     dense
                     v-model="searchOther"
@@ -2313,20 +2342,20 @@
                     @click:append="searchAny(), showColorSearch = true, statusSearch = 'yes', dataReady = false"
                     outlined
                   ></v-text-field>
-                </v-col>
+                </v-col> -->
                 <v-col class="text-right" cols="auto"></v-col>
               </v-row>
               </v-card-text>
               <v-card-title>
-                <v-text-field
+                <!-- <v-text-field
                   v-model="searchAll2"
-                  append-icon="mdi-magnify"
-                  label="ค้นหา"
+                  prepend-icon="mdi-magnify"
+                  label="ค้นหาชื่อ และ เบอร์โทรศัพท์"
                   single-line
                   dense
                   hide-details
-                ></v-text-field>
-                <v-menu
+                ></v-text-field> -->
+                <!-- <v-menu
                   v-model="menuDateSearch"
                   :close-on-content-click="false"
                   :nudge-right="40"
@@ -2369,7 +2398,7 @@
                     </v-btn>
                   </template>
                   <span>เคลียร์ ค้นหาจากวันที่นัดหมาย</span>
-                </v-tooltip>
+                </v-tooltip> -->
                 <!-- <v-icon color="#64DD17" small @click="filters=''">call</v-icon> -->
               </v-card-title>
               <v-card-text>
@@ -2528,10 +2557,13 @@
                   </template>
                   <template v-slot:[`item.LAST_DATE`]="{ item }">
                     {{ format_dateNotime(item.LAST_DATE) }}
-                  </template>
-                  <template v-slot:[`item.dueDate`]="{ item }">
-                    {{ (item.dueDate) }}
                   </template> -->
+                  <template v-slot:[`item.dueDate`]="{ item }">
+                    <div>
+                      <div>{{ item.dueDate.split(' ')[0].split('-').join('/') }}</div>
+                      <div>{{item.dueDate.split(' ')[1]}} น.</div>
+                    </div>
+                  </template>
                   <template v-slot:[`item.cusName`]="{ item }">
                     <v-row>
                       <v-col cols="12">
@@ -2543,7 +2575,7 @@
                             <v-col col="auto" class="text-ceter">
                               <a @click.stop="openHistory(item)" style="cursor:hand"><u>{{ item.cusName }}</u></a>
                             </v-col>
-                            <v-col col="auto" class="text-left">
+                            <!-- <v-col col="auto" class="text-left">
                               <v-btn
                                 fab
                                 dark
@@ -2556,11 +2588,11 @@
                                   mdi-tag-plus
                                 </v-icon>
                               </v-btn>
-                            </v-col>
+                            </v-col> -->
                           </template>
                         </v-row>
                       </v-col>
-                      <v-col cols="12" class="pt-0"  v-if="item.memberDataTag.length > 0">
+                      <!-- <v-col cols="12" class="pt-0"  v-if="item.memberDataTag.length > 0">
                         <v-chip-group
                           active-class="primary--text"
                           column
@@ -2575,7 +2607,7 @@
                             {{ item.text }}
                           </v-chip>
                         </v-chip-group>
-                      </v-col>
+                      </v-col> -->
                     </v-row>
                   </template>
                   <template v-slot:[`item.remarkReturn`]="{ item }">
@@ -2604,7 +2636,7 @@
                       เพิ่มหมายเหตุ
                     </v-btn>
                   </template>
-                  <template v-slot:[`item.action4`]="{ item }">
+                  <template v-slot:[`item.action40`]="{ item }">
                     <template v-if="item.depositCheckStatus === 'True'">
                     <v-chip
                       filter
@@ -2613,7 +2645,9 @@
                       color="grey darken-1"
                       @click="dialogDeposit = true, bookNo = item.bookNo"
                     >
-                      อัพเดทสถานะเงินมัดจำ
+                    <v-icon class="iconify mr-1" color="#FFAB2D">mdi-script-text-outline</v-icon>
+                    <!-- <v-icon class="iconify mr-1" size="70px" color="#FFAB2D" data-icon="flat-color-icons:money-transfer"></v-icon> -->
+                      มัดจำ
                     </v-chip>
                     <v-row v-if="item.depositStatus === 'True'">
                       <!-- <v-col col="auto">
@@ -2632,11 +2666,148 @@
                           color="green darken-1"
                           @click="dialogDeposit = true, bookNo = item.bookNo, statusDeposit = true, pictureUrlPreviewDeposit = item.depositImge || ''"
                         >
-                          แก้ไขสถานะเงินมัดจำ
+                        <!-- <v-icon class="iconify mr-1" size="70px" color="#FFAB2D" data-icon="flat-color-icons:money-transfer"></v-icon> -->
+                        <v-icon class="iconify mr-1" color="#FFAB2D">mdi-script-text-outline</v-icon>
+                          มัดจำ
                         </v-chip>
                       </v-col>
                     </v-row>
                     </template>
+                  </template>
+                  <template v-slot:[`item.action5`]="{ item }">
+                    <div>
+                      <v-row v-if="item.memberDataTag.length === 0 " style="justify-content: flex-end;">
+                        <div v-if="item.memberId !== ''" style="color:grey;">ไม่มีมีป้ายกำกับ</div>
+                        <v-tooltip bottom >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                  class="ml-1"
+                                  fab
+                                  v-bind="attrs"
+                                  v-on="on"
+                                  dark
+                                  icon
+                                  v-if="item.memberId !== ''"
+                                  x-small
+                                  color="teal"
+                                  @click="getTagData(), dialogTag = true, tagData = item.memberDataTag, bookNo = item.bookNo, memberId = item.memberId"
+                                >
+                                  <v-icon dark>
+                                    mdi-tag-plus
+                                  </v-icon>
+                              </v-btn>
+                            </template>
+                            <span>เพิ่มป้ายกำกับ1</span>
+                          </v-tooltip>
+                      </v-row>
+                      <v-row  style="display: flex;justify-content: center;padding-top: 0px;" align="center" v-if="item.memberDataTag.length > 0 ">
+                          <div v-if="item.tagDataShow.length === 1" style="font-weight: 600;font-size: 16px;color: #2BC155;">
+                            {{item.tagDataShow[0].text}} 11
+                          </div>
+                          <div v-if="item.tagDataShow.length === 2" style="font-weight: 600;font-size: 16px;color: #2BC155;display: flex;justify-content: center;">
+                            <div class="mr-2">{{item.tagDataShow[0].text}}</div>
+                            <div>{{item.tagDataShow[1].text}}</div>
+                          </div>
+                          <div v-if="item.tagDataShow.length > 2" style="font-weight: 600;font-size: 16px;color: #2BC155;display: flex;justify-content: center;margin-bottom: 5px;">
+                            <div class="mr-3">{{item.tagDataShow[0].text}}</div>
+                            <div class="mr-2">{{item.tagDataShow[1].text}}</div>
+                          </div>
+                          <v-tooltip bottom v-if="item.tagDataShow.length === 1 || item.tagDataShow.length === 2">
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                  class="ml-1"
+                                  fab
+                                  v-bind="attrs"
+                                  v-on="on"
+                                  dark
+                                  icon
+                                  v-if="item.memberId !== ''"
+                                  x-small
+                                  color="teal"
+                                  @click="getTagData(), dialogTag = true, tagData = item.memberDataTag, bookNo = item.bookNo, memberId = item.memberId"
+                                >
+                                  <v-icon dark>
+                                    mdi-tag-plus
+                                  </v-icon>
+                              </v-btn>
+                            </template>
+                            <span>เพิ่มป้ายกำกับ2</span>
+                          </v-tooltip>
+                      </v-row>
+                      <div v-if="item.memberDataTag.length > 2" class="ma-2" style="margin-top: 2 !important;color: grey;font-size: 13px;display:flex">
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                  class="ml-1"
+                                  fab
+                                  v-bind="attrs"
+                                  v-on="on"
+                                  dark
+                                  icon
+                                  v-if="item.memberId !== ''"
+                                  x-small
+                                  color="teal"
+                                  @click="getTagData(), dialogTag = true, tagData = item.memberDataTag, bookNo = item.bookNo, memberId = item.memberId"
+                                >
+                                  <v-icon dark>
+                                    mdi-tag-plus
+                                  </v-icon>
+                              </v-btn>
+                            </template>
+                            <span>เพิ่มป้ายกำกับ3</span>
+                          </v-tooltip>
+                            <v-menu rounded="xl" offset-x open-on-hover :close-on-content-click="false">
+                              <template v-slot:activator="{ on, attrs }">
+                                <div style="margin: auto;text-decoration: underline;text-decoration-thickness: 2px;" v-bind="attrs" v-on="on">
+                                  See more + {{item.tagDataShow.length - 2}}
+                                </div>
+                              </template>
+                              <v-list>
+                                <v-list-item
+                                  v-for="(item2, index) in item.tagDataShow"
+                                  :key="index"
+                                >
+                                  <v-list-item-title>
+                                    <v-icon color="teal" class="mr-2">
+                                      mdi-tag-plus
+                                    </v-icon>{{ item2.text }}</v-list-item-title>
+                                </v-list-item>
+                              </v-list>
+                            </v-menu>
+                      </div>
+                      <!-- <v-row  v-if="item.memberDataTag.length > 0 && item.memberDataTag.length > 2">
+                          <v-col cols="6" v-for="(item , index) in item.tagDataShow" :key="index" class="pa-0" style="font-weight: 600;font-size: 16px;color: #2BC155;">
+                            <div v-if="index === 0 || index === 1">
+                              {{ item.text }}
+                            </div>
+                          </v-col>
+                          {{item.memberDataTag.length - 2}}
+                         <v-btn
+                                fab
+                                dark
+                                v-if="item.memberId !== ''"
+                                x-small
+                                color="teal"
+                                @click="getTagData(), dialogTag = true, tagData = item.memberDataTag, bookNo = item.bookNo, memberId = item.memberId"
+                              >
+                                <v-icon dark>
+                                  mdi-tag-plus
+                                </v-icon>
+                              </v-btn>
+                      </v-row> -->
+                      <!-- <v-col>
+                        <v-chip
+                          filter
+                          dark
+                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
+                          :color="(item.remarkConfirm2) ? 'green darken-2' : 'grey darken-1'"
+                          v-model="item.remarkConfirm2"
+                          @click.stop="item.remarkConfirm2=!item.remarkConfirm2;confirmRemark(item, 'inDay')"
+                        >
+                          30 นาที
+                        </v-chip>
+                      </v-col> -->
+                    </div>
                   </template>
                   <template v-slot:[`item.action2`]="{ item }">
                     <v-row>
@@ -2694,9 +2865,108 @@
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
                     <!-- confirm -->
-                    <VueCustomTooltip label="ดูแผนที่" position="is-top" v-if="item.addressLatLong !== null">
+                    <v-menu rounded="xl" offset-y transition="slide-y-transition">
+                      <template v-slot:activator="{ attrs, on }">
+                          <v-btn
+                            style="background-color: #E8F9FD;border-radius: 10px;font-weight: bold;"
+                            class="black--text pa-5"
+                            v-bind="attrs"
+                            v-on="on"
+                          >
+                            จัดการนัดหมาย
+                            <v-icon color="#73777B" class="ml-2"> mdi-chevron-down </v-icon>
+                          </v-btn>
+                        </template>
+                        <v-list class="menu">
+                          <v-hover v-slot:default="{ hover }">
+                          <v-list-item  @click.stop="(dialogEdit = true), getBookingDataJob(item, 'qrcode')" v-if="item.statusBt === 'confirm' && showOnsite === 'แสดง'">
+                            <template><v-expand-transition>
+                                        <v-overlay
+                                            color="green"
+                                          absolute
+                                          :opacity=".2"
+                                          :value="hover"
+                                        >
+                                        </v-overlay>
+                                    </v-expand-transition>
+                              <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-account-plus </v-icon> รับเข้าบริการ </v-list-item-title>
+                            </template>
+                          </v-list-item>
+                          </v-hover>
+                          <v-hover v-slot:default="{ hover }">
+                          <v-list-item  style="background-color: lightgreen" @click.stop="confirmChk(item)" v-if="item.statusBt !== 'confirmJob' && item.statusBt !== 'confirm'">
+                            <template><v-expand-transition>
+                                        <v-overlay
+                                            color="green"
+                                          absolute
+                                          :opacity=".2"
+                                          :value="hover"
+                                        >
+                                        </v-overlay>
+                                    </v-expand-transition>
+                              <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-phone-check </v-icon> ยืนยันนัดหมาย </v-list-item-title>
+                            </template>
+                          </v-list-item>
+                          </v-hover>
+                          <v-list-item @click.stop="setDataChang(item)" v-if="item.statusBt !== 'confirmJob'">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-calendar-clock </v-icon> เปลี่ยนเวลานัดหมาย {{item.countChangeTime}} ครั้ง</v-list-item-title>
+                          </v-list-item>
+                          <v-list-item  @click.stop="setShowMap(item)" v-if="item.addressLatLong !== null">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-map-marker-radius-outline </v-icon> ดูแผนที่ </v-list-item-title>
+                          </v-list-item>
+                          <v-list-item @click.stop="setDataEdit(item)">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-tools </v-icon> แก้ไขข้อมูล </v-list-item-title>
+                          </v-list-item>
+                          <v-list-item @click.stop="updateStatusBookingTransaction(item)" v-if="item.statusBt === 'confirm'">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-skip-backward </v-icon> กลับไปสถานะก่อนหน้า </v-list-item-title>
+                          </v-list-item>
+                          <v-list-item @click.stop="getBookingDataJob(item, 'qrcode'), getEmpSelectAddJob(), (dialogOnsite = true)" v-if="item.statusBt === 'confirm' && showOnsite === 'ไม่แสดง'">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-account-plus </v-icon> มอบหมายงาน </v-list-item-title>
+                          </v-list-item>
+                          <v-list-item v-clipboard:success="onCopySuccess" v-clipboard:copy="'https://liff.line.me/1656581804-7KRQyqo5/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId" v-if="item.statusBt === 'confirm' && (item.userId === 'user-skip' || item.userId === '' || item.userId === null)">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-content-copy </v-icon> Copy Link (ผูกลูกค้า) </v-list-item-title>
+                          </v-list-item>
+                          <v-hover v-slot:default="{ hover }">
+                          <v-list-item v-if="item.statusBt !== 'cancel' && item.statusBt !== 'confirmJob'" :disabled="item.chkCancel" @click.stop="setDataRemove(item)">
+                            <template><v-expand-transition>
+                                        <v-overlay
+                                            color="red"
+                                          absolute
+                                          :opacity=".2"
+                                          :value="hover"
+                                        >
+                                        </v-overlay>
+                                    </v-expand-transition>
+                              <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-phone-cancel </v-icon> ยกเลิกนัดหมาย </v-list-item-title>
+                            </template>
+                          </v-list-item>
+                          </v-hover>
+                          <v-list-item v-if="item.statusBt === 'confirmJob'" @click.stop="(dialogJob = true), getjob(item)">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-qrcode-scan </v-icon> QR Code สำหรับให้ลูกค้า </v-list-item-title>
+                          </v-list-item>
+                          <v-list-item v-if="item.statusBt === 'confirmJob' && showOnsite === 'ไม่แสดง'">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-account-reactivate </v-icon> เปลี่ยนพนักงาน On site </v-list-item-title>
+                          </v-list-item>
+                          <v-hover v-slot:default="{ hover }">
+                          <v-list-item v-if="item.statusBt === 'cancel'" @click.stop="(dialogDelete = true), getDataById(item)">
+                            <template><v-expand-transition>
+                                        <v-overlay
+                                            color="red"
+                                          absolute
+                                          :opacity=".2"
+                                          :value="hover"
+                                        >
+                                        </v-overlay>
+                                    </v-expand-transition>
+                              <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-delete </v-icon> ลบรายการนี้ </v-list-item-title>
+                            </template>
+                          </v-list-item>
+                          </v-hover>
+                        </v-list>
+                    </v-menu>
+                    <!-- <VueCustomTooltip label="ดูแผนที่" position="is-top" v-if="item.addressLatLong !== null"> -->
                     <!-- <VueCustomTooltip label="ดูแผนที่" :position="filteredSelect.length === 1 ? 'is-top' : 'is-bottom'" v-if="item.addressLatLong !== null"> -->
-                      <v-btn
+                      <!-- <v-btn
                           color="blue-grey darken-1"
                           fab
                           small
@@ -2720,10 +2990,32 @@
                         <v-btn
                           color="indigo"
                           fab
+                          dark
                           small
                           @click.stop="updateStatusBookingTransaction(item)"
                         >
                           <v-icon dark> mdi-skip-backward </v-icon>
+                        </v-btn>
+                    </VueCustomTooltip>
+                    <VueCustomTooltip label="คัดลอก Link" position="is-top"  v-if="item.statusBt === 'wait' && item.depositCheckStatus === 'True'">
+                        <v-btn
+                          color="teal"
+                          fab
+                          dark
+                          small
+                          @click.stop="dialogShowDeposit = true, depositLink = 'https://betask-linked.web.app/Thank?shopId=' + $session.getAll().data.shopId + '&redirectBy=BookingForm&flowId=' + item.flowId + '&bookNo=' + item.bookNo"
+                        >
+                          <v-icon dark> mdi-link-variant</v-icon>
+                        </v-btn>
+                    </VueCustomTooltip>
+                    <VueCustomTooltip label="คืนเงินมัดจำ" position="is-top"  v-if="item.statusBt === 'confirm' && item.depositImge !== '' && item.depositCheckStatus === 'True'">
+                        <v-btn
+                          color="primary"
+                          fab
+                          small
+                          @click.stop="(dialogEdit = true), getBookingDataJob(item, 'qrcode')"
+                        >
+                          <v-icon dark> mdi-cash-refund </v-icon>
                         </v-btn>
                     </VueCustomTooltip>
                     <VueCustomTooltip label="รับเข้าบริการ" position="is-top"  v-if="item.statusBt === 'confirm' && showOnsite === 'แสดง'">
@@ -2821,7 +3113,7 @@
                         >
                           <v-icon> mdi-account-reactivate </v-icon>
                         </v-btn>
-                    </VueCustomTooltip>
+                    </VueCustomTooltip> -->
                     <!-- <VueCustomTooltip label="จบงาน" position="is-top" bottom v-if="item.statusBt === 'confirmJob' && item.jobNo !== ''">
                         <v-btn
                           color="#84C650"
@@ -2833,7 +3125,7 @@
                           <v-icon>  mdi-cash-usd-outline </v-icon>
                         </v-btn>
                     </VueCustomTooltip> -->
-                    <VueCustomTooltip label="ลบรายการนี้" position="is-top" bottom v-if="item.statusBt === 'cancel'">
+                    <!-- <VueCustomTooltip label="ลบรายการนี้" position="is-top" bottom v-if="item.statusBt === 'cancel'">
                         <v-btn
                           color="red"
                           dark
@@ -2843,7 +3135,7 @@
                         >
                           <v-icon> mdi-delete </v-icon>
                         </v-btn>
-                    </VueCustomTooltip>
+                    </VueCustomTooltip> -->
                     <!-- <v-tooltip bottom v-if="item.addressLatLong !== null">
                       <template v-slot:activator="{ on, attrs }">
                         <v-btn
@@ -5351,6 +5643,38 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
+          <v-dialog v-model="dialogShowDeposit" persistent :max-width="dialogwidth">
+            <v-card>
+              <v-card-title class="text-h5">
+                คัดลอก Link มัดจำ
+              </v-card-title>
+              <v-card-text>
+                 <v-row align-content="center">
+                  <v-col cols="12"  class="pb-0">
+                    <v-text-field
+                      v-model="depositLink"
+                      style="background-color:#050C42;"
+                      solo
+                      disabled
+                      id="myInputDeposit"
+                      dense
+                    >
+                    </v-text-field>
+                  </v-col>
+                </v-row>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="green darken-1"
+                  text
+                  @click="FunCopyDeposit(), dialogShowDeposit = false"
+                >
+                  คัดลอก
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
       </div>
     </v-main>
   </div>
@@ -5433,6 +5757,13 @@ export default {
       menuEdit1: false,
       menuEdit2: false,
       menuEdit3: false,
+
+      items: [
+        { title: 'Click Me' },
+        { title: 'Click Me' },
+        { title: 'Click Me' },
+        { title: 'Click Me 2' }
+      ],
 
       monthNamesThai: ['', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'],
       dialogOnsite: false,
@@ -5819,7 +6150,9 @@ export default {
       statusShowDateConfiremjob: true,
       memberId: '',
       flowIdOldEdit: '',
-      Redirect: 'https://liff.line.me/1656581804-7KRQyqo5/BookingAddress?shopId=' + this.$session.getAll().data.shopId
+      Redirect: 'https://liff.line.me/1656581804-7KRQyqo5/BookingAddress?shopId=' + this.$session.getAll().data.shopId,
+      dialogShowDeposit: false,
+      depositLink: ''
     }
   },
   beforeCreate () {
@@ -5839,23 +6172,23 @@ export default {
   },
   async mounted () {
     this.checkShowDataOnsite('ไม่แสดง')
-    if (this.$route.query.bookNo) {
-      // this.beforeCreateScan()
-      await this.getDataBranch()
-      await this.getEmpSelectAdd()
-      await this.getBookingFieldText()
-      this.getCustomFieldStart()
-      this.getDataFlow()
-      await this.scanQrcode()
-      // this.getBookingList()
-    } else {
-      await this.getDataBranch()
-      await this.getEmpSelectAdd()
-      await this.getBookingFieldText()
-      this.getCustomFieldStart()
-      this.getDataFlow()
-      this.getBookingList()
-    }
+    // if (this.$route.query.bookNo) {
+    //   // this.beforeCreateScan()
+    //   await this.getDataBranch()
+    //   await this.getEmpSelectAdd()
+    //   await this.getBookingFieldText()
+    //   this.getCustomFieldStart()
+    //   this.getDataFlow()
+    //   await this.scanQrcode()
+    //   // this.getBookingList()
+    // } else {
+    //   await this.getDataBranch()
+    //   await this.getEmpSelectAdd()
+    //   await this.getBookingFieldText()
+    //   this.getCustomFieldStart()
+    //   this.getDataFlow()
+    //   this.getBookingList()
+    // }
     // this.dataReady = false
     // console.log('localStorage', localStorage.getItem('typeData'))
     this.$root.$on('closeSetTimeGetCalenda', () => {
@@ -5865,6 +6198,12 @@ export default {
     // await this.beforeCreate()
   },
   methods: {
+    FunCopyDeposit () {
+      let copyText = document.getElementById('myInputDeposit')
+      copyText.select()
+      copyText.setSelectionRange(0, 99999)
+      navigator.clipboard.writeText(copyText.value)
+    },
     clearOnsiteChange () {
       this.getDataDefault()
       this.searchOther = ''
@@ -9096,20 +9435,21 @@ export default {
         //       { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
         //     ]
         //   }
-        this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+        this.columnsSelected = [
           // { text: 'Booking Id', value: 'bookNo' },
-          { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-          // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-          { text: 'ชื่อบริการ', value: 'flowNameShow' },
           { text: 'ชื่อลูกค้า', value: 'cusName' },
-          { text: 'เบอร์โทร', value: 'tel' },
-          { text: 'เงินมัดจำ', value: 'action4', sortable: false, align: 'center' },
-          { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
-          { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+          { text: 'วันที่/เวลา', value: 'dueDate' },
+          // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+          { text: 'บริการ', value: 'flowNameShow', sortable: false },
+          { text: 'เบอร์โทร', value: 'tel', sortable: false },
+          { text: 'เงินมัดจำ', value: 'action40', sortable: false, align: 'center' },
+          // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+          // { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
           { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
           { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
           { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' },
-          { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center' }
+          { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center' },
+          { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
         ]
       } else {
         var dataSelect = []
@@ -9162,34 +9502,37 @@ export default {
         }
         // console.log('dataSelect', this.dataItemSelect)
         if (text === 'cancel') {
-          this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+          this.columnsSelected = [
             // { text: 'Booking Id', value: 'bookNo' },
-            { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+            { text: 'ชื่อลูกค้า', value: 'cusName', width: '150' },
+            { text: 'วันที่/เวลา', value: 'dueDate' },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'ชื่อบริการ', value: 'flowNameShow' },
-            { text: 'ชื่อลูกค้า', value: 'cusName' },
+            { text: 'บริการ', value: 'flowNameShow' },
             { text: 'เบอร์โทร', value: 'tel' },
             { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
             { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
-            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
+            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' },
+            { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
             // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
             // { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
             // { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
           ]
         } else if (text === 'confirm') {
-          this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+          this.columnsSelected = [
             // { text: 'Booking Id', value: 'bookNo' },
-            { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+            { text: 'ชื่อลูกค้า', value: 'cusName', width: '120', sortable: false },
+            { text: 'วันที่/เวลา', value: 'dueDate' },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'ชื่อบริการ', value: 'flowNameShow' },
-            { text: 'ชื่อลูกค้า', value: 'cusName' },
-            { text: 'เบอร์โทร', value: 'tel' },
-            { text: 'เงินมัดจำ', value: 'action4', sortable: false, align: 'center' },
-            { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+            { text: 'บริการ', value: 'flowNameShow', sortable: false },
+            { text: 'เบอร์โทร', value: 'tel', sortable: false },
+            { text: 'เงินมัดจำ', value: 'action40', sortable: false, align: 'center' },
+            { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '160' },
+            // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
             { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-            { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
-            { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
-            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }
+            // { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
+            { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center', sortable: false },
+            { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '120' },
+            { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '120' }
           ]
           // this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
           //   // { text: 'Booking Id', value: 'bookNo' },
@@ -9228,17 +9571,33 @@ export default {
           //     { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
           //     { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
           // }
-          this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+
+          // this.columnsSelected = [
+          //   // { text: 'Booking Id', value: 'bookNo' },
+          //   { text: 'ชื่อลูกค้า', value: 'cusName' },
+          //   { text: 'วันที่/เวลา', value: 'dueDate', width: '150' },
+          //   // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+          //   { text: 'บริการ', value: 'flowNameShow' },
+          //   { text: 'เบอร์โทร', value: 'tel' },
+          //   { text: 'เงินมัดจำ', value: 'action40', align: 'center' },
+          //   // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+          //   { text: 'ป้ายชื่อกำกับ', value: 'action5', align: 'center' },
+          //   { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' },
+          //   { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }]
+          this.columnsSelected = [
             // { text: 'Booking Id', value: 'bookNo' },
-            { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+            { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
+            { text: 'วันที่/เวลา', value: 'dueDate', width: '150' },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'ชื่อบริการ', value: 'flowNameShow' },
-            { text: 'ชื่อลูกค้า', value: 'cusName' },
-            { text: 'เบอร์โทร', value: 'tel' },
-            { text: 'เงินมัดจำ', value: 'action4', sortable: false, align: 'center' },
-            { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
-            { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
+            { text: 'บริการ', value: 'flowNameShow' },
+            { text: 'เบอร์โทร', value: 'tel', sortable: false },
+            { text: 'เงินมัดจำ', value: 'action40', align: 'center' },
+            { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '160' },
+            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center', sortable: false },
+            { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
+
+          console.log('waitja1', this.columnsSelected)
+          console.log('waitja2', this.filteredSelect)
           // this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
           //   // { text: 'Booking Id', value: 'bookNo' },
           //   { text: 'วันและเวลานัดหมาย', value: 'dueDateText' },
@@ -9250,28 +9609,30 @@ export default {
           //   { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
           //   { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
         } else if (text === 'confirmJob') {
-          this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
+          this.columnsSelected = [
             // { text: 'Booking Id', value: 'bookNo' },
-            { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+            { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
+            { text: 'วันที่/เวลา', value: 'dueDate' },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'ชื่อบริการ', value: 'flowNameShow' },
-            { text: 'ชื่อลูกค้า', value: 'cusName' },
+            { text: 'บริการ', value: 'flowNameShow', sortable: false },
+            { text: 'เบอร์โทร', value: 'tel', sortable: false },
+            { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+            { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center', sortable: false },
+            { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center', sortable: false },
+            { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
+        } else {
+          this.columnsSelected = [
+            // { text: 'Booking Id', value: 'bookNo' },
+            { text: 'ชื่อลูกค้า', value: 'cusName', width: '150' },
+            { text: 'วันที่/เวลา', value: 'dueDate' },
+            // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+            { text: 'บริการ', value: 'flowNameShow' },
             { text: 'เบอร์โทร', value: 'tel' },
             { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
             { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
             { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' },
-            { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center' }]
-        } else {
-          this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
-            // { text: 'Booking Id', value: 'bookNo' },
-            { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'ชื่อบริการ', value: 'flowNameShow' },
-            { text: 'ชื่อลูกค้า', value: 'cusName' },
-            { text: 'เบอร์โทร', value: 'tel' },
-            { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
-            { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
+            { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }]
         }
       }
       // }
@@ -10082,6 +10443,7 @@ export default {
             extraJob = 'False'
             break
         }
+        let flowIdData = this.formAdd.flowId
         let rs = this.fieldNameItem
         let Add = []
         let fielditem = this.fieldNameItem
@@ -10105,7 +10467,7 @@ export default {
               this.formAdd.depositImge = this.pictureUrlPreviewDeposit
             }
           } else {
-            this.formAdd.depositStatus = 'False'
+            this.formAdd.depositStatus = 'True'
             this.formAdd.depositImge = ''
           }
         }
@@ -10229,6 +10591,8 @@ export default {
                   this.clearDataAdd()
                   this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
                 }
+                this.dialogShowDeposit = true
+                this.depositLink = 'https://betask-linked.web.app/Thank?shopId=' + this.$session.getAll().data.shopId + '&redirectBy=BookingForm&flowId=' + flowIdData + '&bookNo=' + response.data.bookNo
               } else {
                 await this.confirmChkAdd(response.data)
               }
@@ -12030,7 +12394,7 @@ export default {
 }
 button {
   padding: .5em 1em;
-  border-radius: 3em;
+  /* border-radius: 3em; */
   font-size: 1.1em;
 }
 /* before the element is shown, start off the screen to the right */
@@ -12049,5 +12413,18 @@ body {
 }
 .v-card--link:focus::before {
   opacity: 0;
+}
+.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled) {
+  background-color: white !important;
+}
+.v-list-item__title{
+  color: #73777B !important;
+  /* font-family: KittithadaBold;
+  font-size: 22px !important; */
+  font-family: 'Kanit', sans-serif;
+  font-weight: 400;
+}
+.bottomAdd {
+  background: linear-gradient(3.82deg, #1093FF 0.25%, #66BAFF 99.75%);
 }
 </style>

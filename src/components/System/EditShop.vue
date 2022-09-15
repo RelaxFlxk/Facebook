@@ -613,6 +613,18 @@ export default {
               if (this.timeSlotStatusOld === this.formUpdate.timeSlotStatus) {
                 this.$swal('เรียบร้อย', 'บันทึกสำเร็จ', 'success')
               } else {
+                let dt = {
+                  shopId: this.$session.getAll().data.shopId,
+                  timeSlotStatus: this.formUpdate.timeSlotStatus,
+                  LAST_USER: this.$session.getAll().data.userName
+                }
+                axios
+                  .post(
+                    // eslint-disable-next-line quotes
+                    this.DNS_IP + "/flow/editTimeSlotStatusByshopId",
+                    dt
+                  )
+                  .then(async response => {})
                 this.$swal('เรียบร้อย', 'กรุณา เข้าสู่ระบบอีกครั้ง', 'success')
                   .then(async result => {
                     this.$router.push('/Core/Login')

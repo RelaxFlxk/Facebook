@@ -121,7 +121,7 @@ Vue.mixin({
       if (value) {
         // moment.tz.add('Asia/Bangkok|ICT|-70|0|')
         // return moment(new Date(value)).zone('UTC+7').format('YYYY-MM-DD HH:mm:ss')
-        return moment(moment(new Date(value)), 'DD/MM/YYYY HH:mm:ss').format('DD/MM/YYYY HH:mm:ss')
+        return moment(moment(new Date(value)), 'DD/MM/YYYY HH:mm').format('DD/MM/YYYY HH:mm')
       }
     },
     format_dateNotime (value) {

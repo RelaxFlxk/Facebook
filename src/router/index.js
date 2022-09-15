@@ -216,6 +216,11 @@ export default new Router({
     component: Master.SettingTag
   },
   {
+    path: '/Master/NoticeManagement',
+    name: 'NoticeManagement',
+    component: Master.NoticeManagement
+  },
+  {
     path: '/UpdateNotify',
     name: 'UpdateNotify',
     component: Master.UpdateNotify
@@ -224,6 +229,11 @@ export default new Router({
     path: '/BookingMobile',
     name: 'BookingMobile',
     component: Master.BookingMobile
+  },
+  {
+    path: '/BookingMobileEmp',
+    name: 'BookingMobileEmp',
+    component: Master.BookingMobileEmp
   },
   {
     path: '/BookingMobileConfirmJob',

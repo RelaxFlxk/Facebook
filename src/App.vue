@@ -1,6 +1,6 @@
 <template>
  <v-app>
-   <Sidebar v-if="$router.currentRoute.name !== 'Login' && $router.currentRoute.name !== 'BookingMobile' && $router.currentRoute.name !== 'BookingMobileConfirmJob'"/>
+   <Sidebar v-if="$router.currentRoute.name !== 'Login' && $router.currentRoute.name !== 'BookingMobile' && $router.currentRoute.name !== 'BookingMobileConfirmJob' && $router.currentRoute.name !== 'BookingMobileEmp'"/>
    <router-view/>
   </v-app>
 </template>
@@ -241,34 +241,47 @@ table tr:last-child td:last-child {
 .v-breadcrumbs {
   font-weight: bold;
 }
-.v-data-table-header {
+/* .v-data-table-header {
   background-color: var(--table-head-bg) !important;
 }
 .theme--light.v-data-table>.v-data-table__wrapper>table>thead>tr>th {
-  color: var(--table-head-text)!important;
+  color: white!important;
+  font-size: 12px !important;
+} */
+.v-data-table-header {
+    border-bottom: 3px solid #E9ECFF;
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 27px;
+}
+.theme--light.v-data-table>.v-data-table__wrapper>table>thead>tr>th {
+  font-size: 15px !important;
+  color: black!important;
 }
 .v-data-table>.v-data-table__wrapper>table>tbody>tr>td {
-  padding: 0px 5px 0px 15px;
+  padding: 15px 15px 15px 15px;
 }
-.v-data-table>.v-data-table__wrapper>table>tbody>tr:nth-child(even) {background: var(--table-body-row-even)}
+/* .v-data-table>.v-data-table__wrapper>table>tbody>tr:nth-child(even) {background: var(--table-body-row-even)}
 .v-data-table>.v-data-table__wrapper>table>tbody>tr:nth-child(odd) {background: var(--table-body-row-odd)}
 .table_detail_2>.v-data-table__wrapper>table>tbody>tr:nth-child(even) {background: #eeeeee}
-.table_detail_2>.v-data-table__wrapper>table>tbody>tr:nth-child(odd) {background: #ffffff}
-.v-data-table>.v-data-table__wrapper>table>tbody>tr>td {
+.table_detail_2>.v-data-table__wrapper>table>tbody>tr:nth-child(odd) {background: #ffffff} */
+/* .v-data-table>.v-data-table__wrapper>table>tbody>tr>td {
   color: var(--table-body-text) !important;
-}
+} */
 .custom_table_class thead th:first-child {
   border-radius: 10px 0 0 0;
 }
 .custom_table_class thead th:last-child {
   border-radius: 0 10px 0 0;
 }
-.theme--light.v-data-table .v-data-table-header th.sortable.active, .theme--light.v-data-table .v-data-table-header th.sortable.active .v-data-table-header__icon, .theme--light.v-data-table .v-data-table-header th.sortable:hover {
+/* .theme--light.v-data-table .v-data-table-header th.sortable.active, .theme--light.v-data-table .v-data-table-header th.sortable.active .v-data-table-header__icon, .theme--light.v-data-table .v-data-table-header th.sortable:hover {
   color: var(--table-head-text) !important;
-}
-.theme--light.v-data-table .v-data-table-header th.sortable .v-data-table-header__icon {
+} */
+/* .theme--light.v-data-table .v-data-table-header th.sortable .v-data-table-header__icon {
   color: var(--table-head-text) !important;
-}
+} */
 .btn {
   color: var(--btn-general-color);
 }

@@ -30,6 +30,7 @@ import Showbooking from './Showbooking'
 import BookingMobileConfirmJob from './BookingMobileConfirmJob'
 import CallLog from './CallLog'
 import ServiceType from './ServiceType'
+import BookingMobileEmp from './BookingMobileEmp'
 export default {
   CustomField,
   Flow,
@@ -62,5 +63,6 @@ export default {
   Showbooking,
   BookingMobileConfirmJob,
   CallLog,
-  ServiceType
+  ServiceType,
+  BookingMobileEmp
 }
