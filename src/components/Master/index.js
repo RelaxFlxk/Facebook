@@ -28,6 +28,8 @@ import BookingListBeauty from './BookingListBeauty'
 import SettingTag from './SettingTag'
 import Showbooking from './Showbooking'
 import BookingMobileConfirmJob from './BookingMobileConfirmJob'
+import CallLog from './CallLog'
+import ServiceType from './ServiceType'
 import BookingMobileEmp from './BookingMobileEmp'
 import NoticeManagement from './NoticeManagement'
 export default {
@@ -61,6 +63,5 @@ export default {
   SettingTag,
   Showbooking,
   BookingMobileConfirmJob,
-  BookingMobileEmp,
-  NoticeManagement
+  BookingMobileEmp
 }

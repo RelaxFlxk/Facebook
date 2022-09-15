@@ -97,8 +97,11 @@
 <script>
 import axios from 'axios' // api
 export default {
+  components: {
+  },
   data () {
     return {
+      BookingDataList: [],
       loadingDeposit: false,
       statusDeposit: false,
       dialogDeposit: false,
@@ -147,7 +150,6 @@ export default {
     },
     async editStatusDeposit () {
       this.loadingDeposit = true
-      console.log('bookNo', this.bookNo)
       if (this.filesDeposit) {
         const _this = this
         let params = new FormData()
@@ -162,6 +164,7 @@ export default {
         this.pictureUrlDeposit = this.pictureUrlPreviewDeposit
       }
       let dt = {
+        depositStatus: 'False',
         depositReturnImge: this.pictureUrlDeposit,
         LAST_USER: this.$session.getAll().data.userName
       }
@@ -173,6 +176,8 @@ export default {
         )
         .then(async response => {
           this.$swal('เรียบร้อย', 'อัพเดทหลักฐานเงินมัดจำเรียบร้อย', 'success')
+          this.pushMsgCustomer(this.bookNo)
+          this.$root.$emit('dataReturn', this.bookNo)
           this.dialogDeposit = false
           this.pictureUrlDeposit = null
           this.filesDeposit = null
@@ -184,6 +189,7 @@ export default {
       this.loadingDeposit = true
       console.log('bookNo', this.bookNo)
       let dt = {
+        depositStatus: 'True',
         depositReturnImge: 'is null',
         LAST_USER: this.$session.getAll().data.userName
       }
@@ -201,6 +207,15 @@ export default {
           this.dialogDeposit = false
           this.statusDeposit = false
           this.pictureUrlPreviewDeposit = null
+        })
+    },
+    pushMsgCustomer (bookNo) {
+      axios
+        .post(
+          this.DNS_IP + '/Booking/pushMsgCustomerReturnDeposit/' + bookNo
+        )
+        .catch(error => {
+          console.log('error function addData : ', error)
         })
     },
     selectImgDeposit () {
