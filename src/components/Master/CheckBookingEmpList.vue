@@ -60,7 +60,8 @@ export default {
           text: 'วันที่นัดหมาย',
           value: 'dueDate',
           sortable: true,
-          align: 'left'
+          align: 'left',
+          width: '120px'
         },
         { text: 'ชื่อลูกค้า', value: 'cusName', sortable: true, align: 'left' },
         { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
