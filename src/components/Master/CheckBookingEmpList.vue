@@ -9,10 +9,10 @@
       <v-card-text>
         <v-container>
             <v-row>
-            <v-col cols="8" class="text-left pt-6">
-                <h5 class="font-weight-bold" style="color:#173053;">
+            <v-col cols="12" class="text-left pt-6">
+                <h6 class="font-weight-bold" style="color:#173053;">
                 รายการที่ยังไม่ได้ยืนยัน
-                </h5>
+                </h6>
             </v-col>
             <v-col cols="12" class="pb-0">
                 <v-data-table
@@ -102,9 +102,13 @@ export default {
       location.reload()
     },
     getDataFromFieldName (data, key) {
-      return data.filter(function (el) {
-        return el.fieldName === key
-      })
+      if (data !== undefined) {
+        return data.filter(function (el) {
+          return el.fieldName === key
+        })
+      } else {
+        return []
+      }
     },
     async getCheckWait () {
       this.dataReady = false

@@ -1172,6 +1172,9 @@ export default {
               this.desserts = []
             }
             this.dialogDataWait = true
+          } else {
+            this.desserts = []
+            await this.$swal('ผิดพลาด', 'ไม่พบข้อมูล', 'error')
           }
         })
     },
@@ -1938,9 +1941,13 @@ export default {
       // console.log(JSON.stringify(this.$session.getAll().data))
     },
     getDataFromFieldName (data, key) {
-      return data.filter(function (el) {
-        return el.fieldName === key
-      })
+      if (data !== undefined) {
+        return data.filter(function (el) {
+          return el.fieldName === key
+        })
+      } else {
+        return []
+      }
     },
     updateTimeTablefromChild (timeTable) {
       this.timeTable = timeTable

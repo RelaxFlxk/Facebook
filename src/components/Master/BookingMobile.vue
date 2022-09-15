@@ -1465,9 +1465,13 @@ export default {
       // console.log(JSON.stringify(this.$session.getAll().data))
     },
     getDataFromFieldName (data, key) {
-      return data.filter(function (el) {
-        return el.fieldName === key
-      })
+      if (data !== undefined) {
+        return data.filter(function (el) {
+          return el.fieldName === key
+        })
+      } else {
+        return []
+      }
     },
     updateTimeTablefromChild (timeTable) {
       this.timeTable = timeTable
