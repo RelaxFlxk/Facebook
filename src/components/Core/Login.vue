@@ -328,10 +328,7 @@ export default {
       console.log(c)
     },
     async checkbookNo (dataitem) {
-      if (
-        this.$route.query.bookNo !== undefined &&
-        this.$route.query.type !== 'job'
-      ) {
+      if (this.$route.query.bookNo !== undefined && this.$route.query.type !== 'job') {
         if (dataitem.shopId === this.$route.query.shopId) {
           this.bookNo = this.$route.query.bookNo
           this.queryData = 'bookNo'
@@ -385,10 +382,7 @@ export default {
               this.$router.push('/Core/Login')
             })
         }
-      } else if (
-        this.$route.query.jobNo !== undefined &&
-        this.$route.query.type !== 'job'
-      ) {
+      } else if (this.$route.query.jobNo !== undefined && this.$route.query.type !== 'job') {
         console.log('job')
         console.log(
           'dataitem.shopId',
@@ -444,10 +438,7 @@ export default {
               })
           }
         }
-      } else if (
-        this.$route.query.bookNo !== undefined &&
-        this.$route.query.type === 'job'
-      ) {
+      } else if (this.$route.query.bookNo !== undefined && this.$route.query.type === 'job') {
         if (dataitem.category === 'ธุรกิจรถยนต์') {
           this.$router.push(
             '/Master/BookingList?bookNo=' +
@@ -467,13 +458,34 @@ export default {
               this.$route.query.type
           )
         }
-      } else if (
-        this.$route.query.dateEvent !== undefined &&
-        this.$route.query.type === 'printInvoice'
-      ) {
+      } else if (this.$route.query.dateEvent !== undefined && this.$route.query.type === 'printInvoice') {
         this.$router.push(
           '/PrintPdf/PrintInvoice?dateEvent=' + this.$route.query.dateEvent
         )
+      } else if (this.$route.query.type === 'CheckListBookingEmp') {
+        if (dataitem.shopId === this.$route.query.shopId) {
+          this.$router.push(
+            '/CheckBookingEmpList?shopId=' + this.$route.query.shopId
+          )
+        } else {
+          this.$swal({
+            title: 'UserName ของท่านไม่สามารถใช้กับร้านค้านี้ได้',
+            type: 'info',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#b3b1ab',
+            confirmButtonText: 'ใช่',
+            cancelButtonText: 'ไม่'
+          })
+            .then(async () => {
+              this.dataReady = true
+              this.$router.push('/Core/Login')
+              // await _this.getTokenCheck()
+            })
+            .catch(async () => {
+              this.$router.push('/Core/Login')
+            })
+        }
       } else {
         if (dataitem.USER_ROLE === 'onsite') {
           this.$router.push('/Onsite/JobList')
