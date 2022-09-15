@@ -17,7 +17,7 @@
                                 <div style="text-align: end;">
                                     <v-btn
                                     class="button5"
-                                    @click="dialogHistoryCall = false, param = true, clearDataUpdate(), clearDataAdd(), getEmpSelectAdd()"
+                                    @click="reset(), dialogHistoryCall = false, param = true, clearDataUpdate(), clearDataAdd(), getEmpSelectAdd(), tab = 'tab-1'"
                                     >
                                     <v-icon large color="#F1F1F1 ">
                                         mdi-close
@@ -43,7 +43,7 @@
                                     style="text-di"
                                 >
                                 <v-tabs-slider color="#ffffff00"></v-tabs-slider>
-                                    <v-tab @click="getDateTime(), getEmpSelectAdd()" href='#tab-1'><h3>บันทึกการโทร</h3></v-tab>
+                                    <v-tab @click="reset(), getDateTime(), getEmpSelectAdd()" href='#tab-1'><h3>บันทึกการโทร</h3></v-tab>
                                     <v-tab @click="getEmpSelectAdd()" href='#tab-2'><h3>ประวัติการโทร</h3></v-tab>
                                     <v-tab-item transition="fade-transition" value='tab-1'>
                                         <v-container fluid>
@@ -194,7 +194,7 @@
                                                     </v-card>
                                                     <v-row class="mx-auto" v-if="!param">
                                                         <v-col class="text-center">
-                                                             <v-btn x-large color="#14AE5C" style="width: 681px; height: 67px;" @click="editData(), param = true"><h2>แก้ไข</h2></v-btn>
+                                                             <v-btn x-large color="#14AE5C" style="width: 681px; height: 67px;" @click="editData()"><h2>แก้ไข</h2></v-btn>
                                                         </v-col>
                                                     </v-row>
                                                     </v-form>
@@ -222,7 +222,7 @@
                                                     >
                                                     <v-icon dark> mdi-pencil-box-outline </v-icon>
                                                     </v-btn>
-                                                    <!-- <v-btn
+                                                    <v-btn
                                                     color="red"
                                                     dark
                                                     fab
@@ -230,7 +230,7 @@
                                                     @click.stop="(dialogDelete = true), getDataById(item)"
                                                     >
                                                     <v-icon> mdi-delete </v-icon>
-                                                    </v-btn> -->
+                                                    </v-btn>
                                                 </template>
                                                 </v-data-table>
                                             </v-col>
@@ -390,6 +390,9 @@ export default {
           break
       }
     },
+    reset () {
+      this.$refs.form_add.reset()
+    },
     async getDataById (item) {
       this.dataReady = false
       this.getDataByIdGlobal(this.DNS_IP, this.path, 'id', item.id)
@@ -489,10 +492,10 @@ export default {
               .then(async response => {
                 // console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
                 this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
-                this.clearDataUpdate()
                 await this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
                 this.tab = 'tab-2'
                 this.param = true
+                this.clearDataUpdate()
               })
               .catch(error => {
                 this.dataReady = true
