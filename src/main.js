@@ -79,7 +79,7 @@ Vue.mixin({
       IPPotocalENV_ProductionBetask: 'https://customer-core.betaskthai.com',
       IPPotocalENV_ProductionLoyalty: 'https://api-beloyalty.betaskthai.com',
       // IPPotocalENV_Developer: 'https://hw.api-belinked.betaskthai.com',
-      IPPotocalENV_Developer: 'http://localhost:5004',
+      IPPotocalENV_Developer: 'http://localhost:5001',
       // IPPotocalENV_Developer: 'http://localhost:5001',
       IPPotocalENV_DeveloperBetask: 'http://localhost:5006',
       IPPotocalENV_DeveloperLoyalty: 'http://localhost:5001',
@@ -460,7 +460,7 @@ Vue.mixin({
     async deleteDataGlobal (DNS_IP, PATH, ID, shopId) {
       this.$swal({
         title: 'ต้องการ ลบข้อมูล ใช่หรือไม่?',
-        type: 'question',
+        type: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#fa0202',
         cancelButtonColor: '#b3b1ab',
@@ -499,7 +499,7 @@ Vue.mixin({
         })
         .catch((error) => {
           this.dataReady = true
-          this.$swal('ผิดพลาด', 'ผิดพลาด -2', 'error')
+          //   this.$swal('ผิดพลาด', 'ผิดพลาด -2', 'error')
           console.log('error function deleteDataGlobal : ', error)
         })
     },

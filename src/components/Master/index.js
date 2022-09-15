@@ -28,6 +28,8 @@ import BookingListBeauty from './BookingListBeauty'
 import SettingTag from './SettingTag'
 import Showbooking from './Showbooking'
 import BookingMobileConfirmJob from './BookingMobileConfirmJob'
+import CallLog from './CallLog'
+import ServiceType from './ServiceType'
 export default {
   CustomField,
   Flow,
@@ -58,5 +60,7 @@ export default {
   BookingListBeauty,
   SettingTag,
   Showbooking,
-  BookingMobileConfirmJob
+  BookingMobileConfirmJob,
+  CallLog,
+  ServiceType
 }

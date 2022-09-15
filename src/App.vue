@@ -371,4 +371,30 @@ table tr:last-child td:last-child {
 .v-text-field{
   border-radius:10px;
 }
+::-webkit-scrollbar {
+width: 2px;
+height: 2px;
+}
+::-webkit-scrollbar-button {
+width: 2px;
+}
+::-webkit-scrollbar-track {
+box-shadow: inset 0 0 5px grey;
+border-radius: 10px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+background: #173053;
+border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+background: #173053;
+}
+/* .v-label{
+margin-bottom: 0;
+color:#1B437C !important;
+font-weight: bold;
+} */
 </style>
