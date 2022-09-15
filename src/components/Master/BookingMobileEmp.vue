@@ -246,23 +246,6 @@
                   </template>
                 </v-radio>
               </v-radio-group>
-              <!-- <v-radio-group v-model="radiosRemark" row>
-                <v-radio value="ซ่อมปกติ">
-                  <template v-slot:label>
-                    <div class="mt-3"><strong class="primary--text">ซ่อมปกติ</strong></div>
-                  </template>
-                </v-radio>
-                <v-radio value="ExtraJob">
-                  <template v-slot:label>
-                    <div class="mt-3"><strong class="error--text">Extra Job</strong></div>
-                  </template>
-                </v-radio>
-                <v-radio value="FastTrack">
-                  <template v-slot:label>
-                    <div class="mt-3"><strong class="orange--text">Fast Track</strong></div>
-                  </template>
-                </v-radio>
-              </v-radio-group> -->
             </v-col>
             <div class="text-center">
               <v-btn
@@ -277,6 +260,7 @@
               </v-btn>
               <v-btn
                 color="success"
+                small
                 id="v-step-2"
                 v-if="
                   dataItem[0].statusBt !== 'confirmJob' &&
@@ -292,6 +276,7 @@
               <v-btn
                 color="success"
                 id="v-step-2"
+                small
                 v-if="
                   dataItem[0].statusBt !== 'confirmJob' &&
                     dataItem[0].statusBt !== 'confirm' && dataItem[0].checkOnsite === 'True'
@@ -307,6 +292,7 @@
                 color="warning"
                 v-if="dataItem[0].statusBt !== 'cancel'"
                 id="v-step-2"
+                small
                 @click.stop="setDataChang(dataItem[0])"
               >
                 <v-icon> mdi-calendar-clock </v-icon>
@@ -315,6 +301,7 @@
               <v-btn
                 color="error"
                 id="v-step-2"
+                small
                 v-if="
                   dataItem[0].statusBt !== 'cancel' &&
                     dataItem[0].statusBt !== 'confirmJob' && dataItem[0].statusBt !== 'confirm'  && dataItem[0].checkOnsite === 'True'
@@ -328,6 +315,7 @@
               <v-btn
                 color="error"
                 id="v-step-2"
+                small
                 v-if="
                   dataItem[0].statusBt !== 'cancel' &&
                     dataItem[0].statusBt !== 'confirmJob' && dataItem[0].checkOnsite !== 'True'
