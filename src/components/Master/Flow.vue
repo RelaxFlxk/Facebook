@@ -403,7 +403,7 @@
                             <v-col class="pb-0">
                               <v-select
                                 v-model="formAdd.timeSlot"
-                                :items="[{text: '1', value: 1},{text: '2', value: 2},{text: '3', value: 3},{text: '4', value: 4},{text: '5', value: 5}]"
+                                :items="[{text: '1', value: 1},{text: '2', value: 2},{text: '3', value: 3},{text: '4', value: 4},{text: '5', value: 5},{text: '6', value: 6},{text: '7', value: 7},{text: '8', value: 8},{text: '9', value: 9},{text: '10', value: 10}]"
                                 label="จำนวน Slot งาน"
                                 outlined
                               ></v-select>
@@ -578,7 +578,7 @@
                             <v-col class="pb-0">
                               <v-select
                                 v-model="formUpdate.timeSlot"
-                                :items="[{text: '1', value: 1},{text: '2', value: 2},{text: '3', value: 3},{text: '4', value: 4},{text: '5', value: 5}]"
+                                :items="[{text: '1', value: 1},{text: '2', value: 2},{text: '3', value: 3},{text: '4', value: 4},{text: '5', value: 5},{text: '6', value: 6},{text: '7', value: 7},{text: '8', value: 8},{text: '9', value: 9},{text: '10', value: 10}]"
                                 label="จำนวน Slot งาน"
                                 outlined
                               ></v-select>
@@ -1641,7 +1641,7 @@ export default {
         promptPayName: null,
         shopId: '',
         remarkConfirm: '',
-        timeSlotStatus: 'False',
+        timeSlotStatus: this.$session.getAll().data.timeSlotStatus || 'False',
         timeSlot: 1
       },
       formUpdateItemFlow: {
@@ -2869,7 +2869,6 @@ export default {
         })
     },
     async editStepTitle () {
-      // console.log('this.formUpdateStep', this.formUpdateStep)
       this.$swal({
         title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',
         type: 'question',
@@ -2935,7 +2934,7 @@ export default {
           } else if (key === 'promptPayName') {
             this.formAdd[key] = null
           } else if (key === 'timeSlotStatus') {
-            this.formAdd[key] = 'False'
+            this.formAdd[key] = this.$session.getAll().data.timeSlotStatus || 'False'
           } else if (key === 'timeSlot') {
             this.formAdd[key] = 1
           } else if (key === 'shopId') {
@@ -2966,7 +2965,9 @@ export default {
           } else if (key === 'promptPayName') {
             this.formUpdate[key] = null
           } else if (key === 'timeSlotStatus') {
-            this.formUpdate[key] = 'False'
+            this.formUpdate[key] = this.$session.getAll().data.timeSlotStatus || 'False'
+          } else if (key === 'timeSlot') {
+            this.formUpdate[key] = 1
           } else {
             this.formUpdate[key] = ''
           }
