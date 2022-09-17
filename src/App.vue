@@ -238,8 +238,15 @@ table tr:last-child td:last-child {
 .v-expansion-panel--active>.v-expansion-panel-header {
   min-height: 48px;
 }
+.new-background-color{
+  background-color: #f2f7ff;
+  min-height: 100vh;
+}
 .v-breadcrumbs {
   font-weight: bold;
+}
+.v-data-table__wrapper{
+  min-height: 400px !important;
 }
 /* .v-data-table-header {
   background-color: var(--table-head-bg) !important;

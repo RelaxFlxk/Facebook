@@ -2,12 +2,12 @@
   <div>
     <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
     <v-main transition="scroll-y-reverse-transition">
-      <div class="col-md-12 ml-sm-auto col-lg-12 px-8">
+      <div class="new-background-color col-md-12 ml-sm-auto col-lg-12 px-8">
         <v-row class="no-gutters">
           <v-col cols="6" md="6" lg="6" class="text-left">
             <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
           </v-col>
-          <v-col cols="6" md="6" lg="6" class="v-margit_button text-right pr-0">
+          <v-col cols="6" md="6" lg="6" class="v-margit_button text-right pr-0" style="background-color: #f2f7ff;">
             <v-btn-toggle>
               <v-btn
                 class="text-white"
@@ -59,7 +59,7 @@
           <v-col cols="12" class="text-left">
             <template  v-if="changeBackgroundColor">
             <v-row class="test">
-              <v-col cols="3" class="text-center" align="left">
+              <!-- <v-col cols="3" class="text-center" align="left">
                 <div>
                   <v-col cols="12" class="pt-0 mb-5" style="border-right: 4px solid #25318C;">
                     <v-card
@@ -71,6 +71,7 @@
                               border-bottom-right-radius: 20px;"
                       :color="(getSelectText === 'wait') ? '#F9DBB2' : 'white'"
                       dense
+                      elevation="0"
                       prominent
                       @click="getSelect('wait',countWaiting)"
                     >
@@ -102,6 +103,7 @@
                               border-bottom-right-radius: 20px;"
                       :color="(getSelectText === 'cancel') ? '#F9CACA' : 'white'"
                       dense
+                      elevation="0"
                       icon="mdi-calendar-remove"
                       prominent
                       @click="getSelect('cancel',countCancel)"
@@ -126,16 +128,45 @@
                     </v-card>
                   </v-col>
                 </div>
-              </v-col>
-              <v-col cols="9" class="text-center">
-                <v-row>
-                  <v-col cols="4" >
+              </v-col> -->
+              <v-col cols="12" class="text-center">
+                <div style="display: flex;justify-content: space-between;">
+                  <div cols="2" class="pt-0">
                     <v-card
-                      style="padding: 18px"
+                      style="padding: 10px; width: 230px;"
+                      :color="(getSelectText === 'wait') ? '#F9DBB2' : 'white'"
+                      dense
+                      elevation="0"
+                      prominent
+                      @click="getSelect('wait',countWaiting)"
+                    >
+                      <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
+                        <div class="text-center">
+                          <v-avatar
+                            size="70"
+                            class="pa-3"
+                            color="#FEAE34"
+                          >
+                            <v-icon dark size="30" class="iconify" data-icon="ps:warning">
+                              mdi-alarm
+                            </v-icon>
+                          </v-avatar>
+                        </div>
+                        <div style="margin: auto 0;">
+                          <strong>{{dataTypeProcess1}}</strong>
+                          <div>จำนวน : {{countWaiting}}</div>
+                        </div>
+                      </div>
+                    </v-card>
+                  </div>
+                  <div cols="2" >
+                    <v-card
+                      style="padding: 10px; width: 230px;"
                       :color="(getSelectText === 'confirm') ? '#C9F2DC' : 'white'"
                       dense
                       icon="mdi-email-check"
                       prominent
+                      elevation="0"
                       @click="getSelect('confirm',countConfirm)"
                     >
                     <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
@@ -156,14 +187,15 @@
                       </div>
                     </div>
                     </v-card>
-                  </v-col>
-                  <v-col cols="4">
+                  </div>
+                  <div cols="2">
                     <v-card
-                      style="padding: 18px"
+                      style="padding: 10px; width: 230px;"
                       :color="(getSelectText === 'confirmJob') ? '#F9E8F5' : 'white'"
                       dense
                       icon="mdi-account-check"
                       prominent
+                      elevation="0"
                       @click="getSelect('confirmJob',countJob)"
                     >
                     <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
@@ -184,12 +216,13 @@
                       </div>
                     </div>
                     </v-card>
-                  </v-col>
-                  <v-col cols="4">
+                  </div>
+                  <div cols="2">
                     <v-card
-                      style="padding: 18px"
+                      style="padding: 10px; width: 230px;"
                       :color="(getSelectText === 'confirmSum') ? '#D7E8F9' : 'white'"
                       dense
+                      elevation="0"
                       icon="mdi-expand-all"
                       @click="getSelect('confirmSum',(countConfirm + countJob))"
                     >
@@ -210,8 +243,37 @@
                       </div>
                     </div>
                     </v-card>
-                  </v-col>
-                  <v-col cols="12" class="pb-4">
+                  </div>
+                  <div cols="2">
+                    <v-card
+                    style="padding: 10px; width: 230px;"
+                      :color="(getSelectText === 'cancel') ? '#F9CACA' : 'white'"
+                      dense
+                      elevation="0"
+                      icon="mdi-calendar-remove"
+                      prominent
+                      @click="getSelect('cancel',countCancel)"
+                    >
+                    <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
+                      <div class="text-center">
+                        <v-avatar
+                          size="70"
+                          class="pa-3"
+                          color="#B72929"
+                        >
+                          <v-icon dark size="40" class="iconify" data-icon="carbon:rule-cancelled">
+                            mdi-alarm
+                          </v-icon>
+                        </v-avatar>
+                      </div>
+                      <div style="margin: auto 0;">
+                        <strong>{{dataTypeProcess3}}</strong>
+                         <div>จำนวน : {{countCancel}}</div>
+                      </div>
+                    </div>
+                    </v-card>
+                  </div>
+                  <!-- <v-col cols="12" class="pb-4">
                     <v-card
                       style="padding:18px;color:black !important;margin-top:20px;border-radius: 20px !important;"
                       color="white"
@@ -227,8 +289,8 @@
                         </v-avatar>
                       รวมรายการนัดหมายทั้งหมด : {{countAll}}
                     </v-card>
-                  </v-col>
-                </v-row>
+                  </v-col> -->
+                </div>
               </v-col>
             </v-row>
             <!-- <v-row>
@@ -346,6 +408,7 @@
               <template v-slot:activator="{ on, attrs }">
                  <v-text-field
                   hide-details
+                  background-color="white"
                   v-model="dateStart"
                   style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;"
                   label="เดือน/ปี"
@@ -374,6 +437,7 @@
             <v-col cols="2" class="pl-0">
                  <v-select
               v-model="masBranchID"
+              background-color="white"
               style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;"
               hide-details
               :items="branch"
@@ -393,6 +457,7 @@
                 style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;"
               v-model="flowSelect"
               hide-details
+              background-color="white"
               :items="DataFlowName"
               label="ประเภทบริการ"
               outlined
@@ -409,6 +474,7 @@
             <v-col cols="4" class="pr-0 pt-3">
                 <v-text-field
                   class="textserch"
+                  background-color="white"
                   style="border-radius: 40px !important;"
                   label="ค้นหาชื่อ และ เบอร์โทรศัพท์"
                   v-model="searchAll2"
@@ -2304,10 +2370,10 @@
           <!-- data table -->
           <v-col cols="12" >
             <BookingQueue :branchParent="branch" :masBranchIDParent="masBranchID" :drawerParent="drawer" :menu1Parent="menu1" :timeTableParent="timeTable" :rulesParent="rules" :masterTimeParent="masterTime" :dataItemTimesChangeParent="dataItemTimesChange" :getTimesChangeParent="getTimesChange" :exportExcelParent="exportExcel" :exportExcelMazdaParent="exportExcelMazda" :dataRemoveExportParent="dataRemoveExport" :exportExcelRemoveParent="exportExcelRemove" :toggleParent="toggle" @updateTimeTable="updateTimeTablefromChild"></BookingQueue>
-            <v-card elevation="3" v-if="dataReady">
+            <v-card elevation="0" v-if="dataReady">
               <v-card-text>
               <v-row>
-                <!-- <v-col col="auto">
+                <v-col col="auto">
                   <v-btn
                   v-if="dataItem.length > 0"
                   color="blue-grey"
@@ -2331,7 +2397,7 @@
                 >
                   ตรวจสอบคิวจองรายเดือน
                 </v-btn>
-                </v-col> -->
+                </v-col>
                 <!-- <v-col class="text-right" col="auto">
                   <v-text-field
                     dense
@@ -2550,7 +2616,8 @@
                   :items="filteredSelect"
                   v-if="selectedStatus"
                   :search="searchAll2"
-                  :items-per-page="10"
+                  min-height="400px"
+                  :items-per-page="30"
                 >
                   <!-- <template v-slot:[`item.CREATE_DATE`]="{ item }">
                     {{ format_dateNotime(item.CREATE_DATE) }}
@@ -2624,7 +2691,44 @@
                     </v-btn>
                   </template>
                   <template v-slot:[`item.remark`]="{ item }">
-                    <a v-if="item.remark !== ''" @click.stop="openRemark(item)" style="cursor:hand"><u>{{ item.remark }}</u></a>
+                    <!-- <v-menu rounded="xl" offset-x open-on-hover :close-on-content-click="false">
+                              <template v-slot:activator="{ on, attrs }">
+                                <div style="margin: auto;text-decoration: underline;text-decoration-thickness: 2px;" v-bind="attrs" v-on="on">
+                                  See more + {{item.tagDataShow.length - 2}}
+                                </div>
+                              </template>
+                              <v-list>
+                                <v-list-item
+                                  v-for="(item2, index) in item.tagDataShow"
+                                  :key="index"
+                                >
+                                  <v-list-item-title>
+                                    <v-icon color="teal">
+                                      mdi-tag-plus
+                                    </v-icon>{{ item2.text }}</v-list-item-title>
+                                </v-list-item>
+                              </v-list>
+                            </v-menu> -->
+                    <a v-if="item.remark !== ''" @click.stop="openRemark(item)" style="cursor:hand">
+                      <u style="margin-right: 10px">{{ item.remark.slice(0, 48) }}</u>
+                    </a>
+                    <div v-if="item.remark.length >= 50">
+                    <v-menu nudge-left="80"  rounded="xl" top open-on-hover :close-on-content-click="false">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn rounded outlined x-small v-bind="attrs" v-on="on" style="color: #1363DF;font-weight: bold;">
+                          อ่านเพิ่มเติม<v-icon color="#1363DF" style="font-size: 20px;margin-left: 5px;text-decoration: none;">mdi-arrow-right</v-icon>
+                        </v-btn>
+                       </template>
+                       <v-card max-width="300">
+                       <v-list>
+                                <v-list-item width="200px">
+                                  <v-list-item-content width="200px">
+                                    {{ item.remark }}</v-list-item-content>
+                                </v-list-item>
+                        </v-list>
+                        </v-card>
+                    </v-menu>
+                    </div>
                     <v-btn
                       color="teal"
                       small
@@ -2699,10 +2803,13 @@
                             </template>
                             <span>เพิ่มป้ายกำกับ1</span>
                           </v-tooltip>
+                          <div  v-if="item.memberId == ''" style="margin: auto;color: grey;">
+                            ไม่มีป้ายกำกับ
+                          </div>
                       </v-row>
                       <v-row  style="display: flex;justify-content: center;padding-top: 0px;" align="center" v-if="item.memberDataTag.length > 0 ">
                           <div v-if="item.tagDataShow.length === 1" style="font-weight: 600;font-size: 16px;color: #2BC155;">
-                            {{item.tagDataShow[0].text}} 11
+                            {{item.tagDataShow[0].text}}
                           </div>
                           <div v-if="item.tagDataShow.length === 2" style="font-weight: 600;font-size: 16px;color: #2BC155;display: flex;justify-content: center;">
                             <div class="mr-2">{{item.tagDataShow[0].text}}</div>
@@ -2712,7 +2819,8 @@
                             <div class="mr-3">{{item.tagDataShow[0].text}}</div>
                             <div class="mr-2">{{item.tagDataShow[1].text}}</div>
                           </div>
-                          <v-tooltip bottom v-if="item.tagDataShow.length === 1 || item.tagDataShow.length === 2">
+                          <div v-if="item.tagDataShow.length === 1 || item.tagDataShow.length === 2">
+                            <v-tooltip bottom >
                             <template v-slot:activator="{ on, attrs }">
                               <v-btn
                                   class="ml-1"
@@ -2733,8 +2841,8 @@
                             </template>
                             <span>เพิ่มป้ายกำกับ2</span>
                           </v-tooltip>
-                      </v-row>
-                      <div v-if="item.memberDataTag.length > 2" class="ma-2" style="margin-top: 2 !important;color: grey;font-size: 13px;display:flex">
+                          </div>
+                          <div v-if="item.tagDataShow.length > 2" class="ma-0" style="margin-top: 2 !important;color: grey;font-size: 13px;display:flex">
                         <v-tooltip bottom>
                             <template v-slot:activator="{ on, attrs }">
                               <v-btn
@@ -2768,13 +2876,15 @@
                                   :key="index"
                                 >
                                   <v-list-item-title>
-                                    <v-icon color="teal" class="mr-2">
+                                    <v-icon color="teal">
                                       mdi-tag-plus
                                     </v-icon>{{ item2.text }}</v-list-item-title>
                                 </v-list-item>
                               </v-list>
                             </v-menu>
-                      </div>
+                        </div>
+                      </v-row>
+
                       <!-- <v-row  v-if="item.memberDataTag.length > 0 && item.memberDataTag.length > 2">
                           <v-col cols="6" v-for="(item , index) in item.tagDataShow" :key="index" class="pa-0" style="font-weight: 600;font-size: 16px;color: #2BC155;">
                             <div v-if="index === 0 || index === 1">
@@ -2841,7 +2951,6 @@
                     <v-row>
                       <v-col>
                         <v-chip
-                          filter
                           dark
                           :color="(item.fastTrack) ? 'green darken-2' : 'grey darken-1'"
                           v-model="item.fastTrack"
@@ -2852,7 +2961,6 @@
                       </v-col>
                       <v-col>
                         <v-chip
-                          filter
                           dark
                           :color="(item.extraJob) ? 'green darken-2' : 'grey darken-1'"
                           v-model="item.extraJob"
@@ -2868,8 +2976,9 @@
                     <v-menu rounded="xl" offset-y transition="slide-y-transition">
                       <template v-slot:activator="{ attrs, on }">
                           <v-btn
-                            style="background-color: #E8F9FD;border-radius: 10px;font-weight: bold;"
+                            style="background-color: #E0F4FF;border-radius: 10px;font-weight: bold;"
                             class="black--text pa-5"
+                            elevation="0"
                             v-bind="attrs"
                             v-on="on"
                           >
@@ -9437,8 +9546,8 @@ export default {
         //   }
         this.columnsSelected = [
           // { text: 'Booking Id', value: 'bookNo' },
-          { text: 'ชื่อลูกค้า', value: 'cusName' },
-          { text: 'วันที่/เวลา', value: 'dueDate' },
+          { text: 'ชื่อลูกค้า', value: 'cusName', sortable: false },
+          { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
           // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
           { text: 'บริการ', value: 'flowNameShow', sortable: false },
           { text: 'เบอร์โทร', value: 'tel', sortable: false },
@@ -9446,9 +9555,9 @@ export default {
           // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
           // { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
           { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
-          { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
-          { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' },
-          { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center' },
+          { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center', sortable: false },
+          { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center', sortable: false },
+          // { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center' },
           { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
         ]
       } else {
@@ -9505,13 +9614,13 @@ export default {
           this.columnsSelected = [
             // { text: 'Booking Id', value: 'bookNo' },
             { text: 'ชื่อลูกค้า', value: 'cusName', width: '150' },
-            { text: 'วันที่/เวลา', value: 'dueDate' },
+            { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
             { text: 'บริการ', value: 'flowNameShow' },
             { text: 'เบอร์โทร', value: 'tel' },
             { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
             { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
-            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' },
+            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center', width: '120' },
             { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
             // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
             // { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
@@ -9521,17 +9630,17 @@ export default {
           this.columnsSelected = [
             // { text: 'Booking Id', value: 'bookNo' },
             { text: 'ชื่อลูกค้า', value: 'cusName', width: '120', sortable: false },
-            { text: 'วันที่/เวลา', value: 'dueDate' },
+            { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
             { text: 'บริการ', value: 'flowNameShow', sortable: false },
             { text: 'เบอร์โทร', value: 'tel', sortable: false },
             { text: 'เงินมัดจำ', value: 'action40', sortable: false, align: 'center' },
-            { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '160' },
+            { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '150' },
             // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
             { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
             // { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
             { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center', sortable: false },
-            { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '120' },
+            { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '160' },
             { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '120' }
           ]
           // this.columnsSelected = [{ text: 'จัดการ', value: 'action', sortable: false, align: 'center' },
@@ -9587,13 +9696,13 @@ export default {
           this.columnsSelected = [
             // { text: 'Booking Id', value: 'bookNo' },
             { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
-            { text: 'วันที่/เวลา', value: 'dueDate', width: '150' },
+            { text: 'วันที่/เวลา', value: 'dueDate', width: '150', sortable: false },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'บริการ', value: 'flowNameShow' },
-            { text: 'เบอร์โทร', value: 'tel', sortable: false },
-            { text: 'เงินมัดจำ', value: 'action40', align: 'center' },
+            { text: 'บริการ', value: 'flowNameShow', width: '120' },
+            { text: 'เบอร์โทร', value: 'tel', sortable: false, width: '120' },
+            { text: 'เงินมัดจำ', value: 'action40', align: 'center', width: '120' },
             { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '160' },
-            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center', sortable: false },
+            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center', sortable: false, width: '150' },
             { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
 
           console.log('waitja1', this.columnsSelected)
@@ -9612,26 +9721,26 @@ export default {
           this.columnsSelected = [
             // { text: 'Booking Id', value: 'bookNo' },
             { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
-            { text: 'วันที่/เวลา', value: 'dueDate' },
+            { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
             { text: 'บริการ', value: 'flowNameShow', sortable: false },
             { text: 'เบอร์โทร', value: 'tel', sortable: false },
             { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
             { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center', sortable: false },
-            { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center', sortable: false },
+            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center', sortable: false, width: '120' },
+            // { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center', sortable: false },
             { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
         } else {
           this.columnsSelected = [
             // { text: 'Booking Id', value: 'bookNo' },
-            { text: 'ชื่อลูกค้า', value: 'cusName', width: '150' },
-            { text: 'วันที่/เวลา', value: 'dueDate' },
+            { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
+            { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'บริการ', value: 'flowNameShow' },
-            { text: 'เบอร์โทร', value: 'tel' },
-            { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+            { text: 'บริการ', value: 'flowNameShow', sortable: false },
+            { text: 'เบอร์โทร', value: 'tel', sortable: false },
+            { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center', width: '120' },
             { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' },
+            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center', width: '170' },
             { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }]
         }
       }
@@ -12426,5 +12535,8 @@ body {
 }
 .bottomAdd {
   background: linear-gradient(3.82deg, #1093FF 0.25%, #66BAFF 99.75%);
+}
+.v-data-table__wrapper{
+  min-height: 400px !important;
 }
 </style>
