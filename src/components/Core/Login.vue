@@ -122,10 +122,15 @@
             <v-row class="mb-6" justify="center">
               <v-col md="auto">
                 <v-img
-                  :src="require('@/assets/forgotPassword.svg')"
+                  src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FforgotPassword.svg?alt=media&token=18d74e00-5b29-4d54-983e-f4ae5587510a"
                   class="a"
                   style="width: 103px; height: 103px"
                 ></v-img>
+                <!-- <v-img
+                  :src="require('@/assets/forgotPassword.svg')"
+                  class="a"
+                  style="width: 103px; height: 103px"
+                ></v-img> -->
               </v-col>
             </v-row>
           </v-card-text>
