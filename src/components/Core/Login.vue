@@ -106,7 +106,7 @@
                 คุณได้ลงทะเบียนแล้วหรือยัง?
                 <a
                   style="cursor: pointer; text-decoration: underline"
-                  href="https://betask-linked.web.app/register"
+                  href="https://belinked.betaskthai.com/register"
                   >ลงทะเบียน!</a
                 >
               </h6>
