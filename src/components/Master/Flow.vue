@@ -20,7 +20,7 @@
         </v-row>
         <v-row>
           <!-- step -->
-          <v-dialog v-model="dialogStep" persistent max-width="40%">
+          <v-dialog v-model="dialogStep" persistent max-width="50%">
             <v-card>
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
                 <v-card-text>
@@ -54,19 +54,25 @@
                       <v-dialog
                         v-model="dialogAddStepTitle"
                         persistent
-                        max-width="25%"
+                        max-width="30%"
                       >
-                        <v-card>
+                        <v-card min-height="500px">
                           <v-card-text>
                             <v-container>
-                              <v-col class="text-right">
-                                <v-icon
-                                  small
-                                  color="#173053"
-                                  @click="dialogAddStepTitle = false"
-                                  >mdi-close</v-icon
-                                >
-                              </v-col>
+                              <div style="text-align: end;">
+                                  <v-btn
+                                    fab
+                                    small
+                                    dark
+                                    color="#F3F3F3"
+                                    @click="dialogAddStepTitle = false"
+                                  >
+                                    <v-icon dark
+                                    color="#FE4A01 ">
+                                      mdi-close
+                                    </v-icon>
+                                  </v-btn>
+                              </div>
                               <v-row justify="center">
                                 <v-col cols="12" class="v-margit_text_add mt-1">
                                   <center>
@@ -79,7 +85,7 @@
                                       ></v-img>
                                     </v-col>
                                   </center>
-                                  <center>
+                                  <!-- <center>
                                     <v-col>
                                       <v-img
                                         class="v_text_add"
@@ -88,37 +94,54 @@
                                         "
                                       ></v-img>
                                     </v-col>
-                                  </center>
+                                  </center> -->
                                   <v-col cols="12">
                                     <v-row style="height: 35px">
-                                      <v-subheader id="subtext"
-                                        >หัวข้อ</v-subheader
-                                      >
+                                      <v-col cols="12">
+                                      <v-row >
+                                        <h3 class="font-weight-bold" style="color:#173053;">ขั้นตอนบริการ</h3>
+                                      </v-row>
+                                      <v-row >
+                                        <v-text-field
+                                          v-model="formAddStep.stepTitle"
+                                          dense
+                                          outlined
+                                          required
+                                          label="ชื่อขั้นตอน"
+                                        ></v-text-field>
+                                        <v-text-field
+                                          v-model="formAddStep.finishTime"
+                                          dense
+                                          v-mask="'##:##'"
+                                          placeholder="HH:mm"
+                                          outlined
+                                          required
+                                          label="เวลาที่คาดว่าจะเสร็จ"
+                                        ></v-text-field>
+                                        <v-btn
+                                          dark
+                                          elevation="2"
+                                          x-large
+                                          block
+                                          color="#173053"
+                                          @click="addDataStep()"
+                                        >
+                                          <v-icon left
+                                            >mdi-checkbox-marked-circle</v-icon
+                                          >
+                                          เพิ่ม
+                                        </v-btn>
+                                      </v-row>
+                                    </v-col>
                                     </v-row>
-                                    <v-row class="mt-5">
+                                    <!-- <v-row class="mt-5">
                                       <v-text-field
                                         v-model="formAddStep.stepTitle"
                                         placeholder="หัวข้อ"
                                         dense
                                         required
                                       ></v-text-field>
-                                    </v-row>
-                                  </v-col>
-                                  <v-col id="margin">
-                                    <v-row justify="center">
-                                      <v-btn
-                                        dark
-                                        elevation="2"
-                                        x-large
-                                        color="#173053"
-                                        @click="addDataStep()"
-                                      >
-                                        <v-icon left
-                                          >mdi-checkbox-marked-circle</v-icon
-                                        >
-                                        เพิ่ม
-                                      </v-btn>
-                                    </v-row>
+                                    </v-row> -->
                                   </v-col>
                                 </v-col>
                               </v-row>
@@ -133,8 +156,7 @@
                         v-model="dialogEditStep"
                         persistent
                         max-width="30%"
-                      >
-                        <v-card>
+                       > <v-card>
                           <v-form
                             ref="form_update"
                             v-model="validUpdate"
@@ -181,6 +203,16 @@
                                           dense
                                           outlined
                                           required
+                                          label="ชื่อขั้นตอน"
+                                        ></v-text-field>
+                                        <v-text-field
+                                          v-model="formUpdateStep.finishTime"
+                                          dense
+                                          v-mask="'##:##'"
+                                          placeholder="HH:mm"
+                                          outlined
+                                          required
+                                          label="เวลาที่คาดว่าจะเสร็จ"
                                         ></v-text-field>
                                       </v-row>
                                     </v-col>
@@ -244,6 +276,9 @@
                                   mdi-chevron-down
                                 </v-icon>
                               </v-btn>
+                            </template>
+                            <template v-slot:[`item.finishTime`]="{ item }" >
+                              <div v-if="item.finishTime !== null && item.finishTime !== ''"> {{item.finishTime + '  ชม.'}}</div>
                             </template>
                             <template v-slot:[`item.sendCard`]="{ item }" v-if="checkOnsite !== 'True'">
                               <v-checkbox
@@ -1606,6 +1641,7 @@ export default {
         flowId: '',
         stepTitle: '',
         sortNo: '',
+        finishTime: '',
         CREATE_USER: '',
         LAST_USER: '',
         shopId: '',
@@ -1616,6 +1652,7 @@ export default {
         flowId: '',
         stepTitle: '',
         sortNo: '',
+        finishTime: '',
         LAST_USER: '',
         shopId: '',
         sendCard: ''
@@ -1674,6 +1711,7 @@ export default {
         { text: 'AC', value: 'sendCard' },
         { text: 'ID', value: 'stepId' },
         { text: 'Title', value: 'stepTitle', align: 'center' },
+        { text: 'เวลาที่คาดว่าจะเสร็จ', value: 'finishTime', align: 'center' },
         { text: ' ', value: 'actions2', sortable: false, align: 'center' },
         { text: 'Action', value: 'action', sortable: false, align: 'center' }
       ],
@@ -2475,6 +2513,7 @@ export default {
       this.formUpdateStep.stepId = item.stepId
       this.formUpdateStep.flowId = item.flowId
       this.formUpdateStep.stepTitle = item.stepTitle
+      this.formUpdateStep.finishTime = item.finishTime
     },
     async getDataById (item) {
       this.editedItemSelete = []
@@ -2602,6 +2641,8 @@ export default {
               this.dialogAddStepTitle = false
               this.dataReady = true
               this.getStepFlow(this.formAddStep)
+              this.formAddStep.stepTitle = ''
+              this.formAddStep.finishTime = ''
 
               // Load Data
               await this.getDataGlobal(
@@ -2881,9 +2922,10 @@ export default {
       })
         .then(async result => {
           this.formUpdateStep.LAST_USER = this.session.data.userName
-          var ID = this.formUpdateStep.stepId
-          var dt = {
+          let ID = this.formUpdateStep.stepId
+          let dt = {
             stepTitle: this.formUpdateStep.stepTitle,
+            finishTime: this.formUpdateStep.finishTime,
             LAST_USER: this.formUpdateStep.LAST_USER
           }
           await axios

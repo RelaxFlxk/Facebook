@@ -693,6 +693,7 @@ export default {
       this.corporate = [
         { title: 'สาขา', icon: 'mdi-home-group', to: '/Master/Branch', type: 'corporate' },
         { title: 'พนักงาน', icon: 'mdi-account-multiple', to: '/Master/Employee', type: 'corporate' },
+        { title: 'ประเภทบริการ', icon: 'mdi-atom-variant', to: '/Master/ServiceType', type: 'corporate' },
         { title: 'ช่องทางการชำระเงิน', icon: 'mdi-credit-card-outline', to: '/Master/PaymentType', type: 'corporate' },
         { title: 'จัดการบริษัท', icon: 'mdi-home-city', to: '/System/EditShop', type: 'corporate' },
         { title: 'สมัครและจัดการยูเซอร์', icon: 'mdi-account-circle', to: '/System/ManageUser', type: 'corporate' },
@@ -704,7 +705,7 @@ export default {
       ]
       this.settings = [
         // { title: 'จัดการข้อมูลนัดหมาย', icon: 'mdi-book-cog-outline', to: '/Master/BookingField', type: 'settings' },
-        { title: 'NoticeManagement', icon: 'mdi-transit-connection-variant', to: '/Master/NoticeManagement', type: 'settings' },
+        { title: 'ตั้งค่าการแจ้งเตือน', icon: 'mdi-bell-ring', to: '/Master/NoticeManagement', type: 'settings' },
         { title: 'เพิ่ม/ลบ สถานะการบริการ', icon: 'mdi-transit-connection-variant', to: '/Master/Flow', type: 'settings' },
         { title: 'จัดโครงสร้างกระดาน', icon: 'dashboard', to: '/Master/WorkShop', type: 'settings' },
         { title: 'จัดการ ช่องกรอกข้อมูล', icon: 'mdi-account-edit', to: '/Master/CustomField', type: 'settings' },
