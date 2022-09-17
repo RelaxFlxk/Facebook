@@ -6,8 +6,13 @@
         <v-img
           contain
           width="60%"
-          :src="require('@/assets/Mascot-Betask.png')"
+          src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FMascot-Betask.png?alt=media&token=fa5315ab-476e-4c8d-bca1-04bf8846b5f2"
         ></v-img>
+        <!-- <v-img
+          contain
+          width="60%"
+          :src="require('@/assets/Mascot-Betask.png')"
+        ></v-img> -->
       </v-col>
       <v-col>
         <v-container
