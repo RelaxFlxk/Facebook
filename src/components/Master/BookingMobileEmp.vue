@@ -1096,6 +1096,7 @@ export default {
                 }
                 s.flowName = d.flowName
                 s.dueDate = d.dueDate || ''
+                s.dueDateDay = d.dueDateDay
                 if (d.timeText === null || d.timeText === '') {
                   d.timeText = d.timeDue
                 }
@@ -2030,6 +2031,7 @@ export default {
                   s.flowId = d.flowId
                   s.flowName = d.flowName
                   s.dueDate = d.dueDate
+                  s.dueDateDay = d.dueDateDay
                   s.userId = d.userId
                   s.chkConfirm = false
                   s.chkCancel = false
@@ -2165,6 +2167,7 @@ export default {
                 s.flowId = d.flowId
                 s.flowName = d.flowName
                 s.dueDate = d.dueDate
+                s.dueDateDay = d.dueDateDay
                 s.userId = d.userId
                 s.timeText = d.timeText
                 s.chkConfirm = false
@@ -2376,17 +2379,23 @@ export default {
     async confirmChk (item) {
       this.checkStatusBooking = item.statusBt
       this.SetallowedDatesChange(this.bookingEmpFlow)
-      this.formChange.date = this.momenDate_1(item.dueDate)
-      await this.setLimitBooking(this.momenDate_1(item.dueDate))
+      this.formChange.date = item.dueDateDay
+      await this.setLimitBooking(item.dueDateDay)
+      // this.formChange.date = this.momenDate_1(item.dueDate)
+      // await this.setLimitBooking(this.momenDate_1(item.dueDate))
       console.log('confirmChk', item)
       this.dataConfirm = item
       await this.getEmpSelect(item)
-      if (this.timeavailable.filter(el => { return el.value === this.momenTime(item.dueDate) }).length > 0) {
-        this.formChange.time = this.momenTime(item.dueDate)
+      if (this.timeavailable.filter(el => { return el.value === item.timeDuetext }).length > 0) {
+        this.formChange.time = item.timeDuetext
+      // if (this.timeavailable.filter(el => { return el.value === this.momenTime(item.dueDate) }).length > 0) {
+      //   this.formChange.time = this.momenTime(item.dueDate)
       } else {
         this.formChange.time = ''
       }
       this.dialogConfirm = true
+      console.log('formChange', this.formChange)
+      console.log('formChange', this.formChange)
     },
     async onConfirm (item) {
       if (this.dataItem[0].checkOnsite === 'True') {
@@ -2518,59 +2527,62 @@ export default {
     },
     async setDataRemove (item) {
       this.bookNoRemove = item
-      this.dueDateOld = this.momenDate_1(item.dueDate)
-      this.dueDateTimeOld = this.momenTime(item.dueDate)
+      this.dueDateOld = item.dueDateDay
+      this.dueDateTimeOld = item.timeDuetext
+      // this.dueDateOld = this.momenDate_1(item.dueDate)
+      // this.dueDateTimeOld = this.momenTime(item.dueDate)
       await this.getEmpSelect(item)
       this.dialogRemove = true
+      console.log(this.dueDateOld, this.dueDateTimeOld)
     },
     async cancelChk () {
-      let chkStatLimit = this.dataEmpAll.filter(el => { return el.value === this.bookingEmpFlow })
-      if (chkStatLimit.length > 0) {
-        if (chkStatLimit[0].limitBookingCheck === 'True') {
-          let chkStatus = await this.updateLimitBookingCancel(this.bookNoRemove, this.dueDateOld, this.dueDateTimeOld)
-          console.log('chkStatus', chkStatus)
-          if (chkStatus.status) {
-            this.onCancelChkSubmit()
+      if (this.remarkRemove === '') {
+        this.$swal('ผิดพลาด', 'กรุณากรอกหมายเหตุ', 'error')
+      } else {
+        let chkStatLimit = this.dataEmpAll.filter(el => { return el.value === this.bookingEmpFlow })
+        if (chkStatLimit.length > 0) {
+          if (chkStatLimit[0].limitBookingCheck === 'True') {
+            let chkStatus = await this.updateLimitBookingCancel(this.bookNoRemove, this.dueDateOld, this.dueDateTimeOld)
+            console.log('chkStatus', chkStatus)
+            if (chkStatus.status) {
+              this.onCancelChkSubmit()
+            } else {
+              this.onCancelChkSubmit()
+            }
           } else {
             this.onCancelChkSubmit()
           }
         } else {
           this.onCancelChkSubmit()
         }
-      } else {
-        this.onCancelChkSubmit()
       }
     },
     onCancelChkSubmit () {
-      if (this.remarkRemove === '') {
-        this.$swal('ผิดพลาด', 'กรุณากรอกหมายเหตุ', 'error')
-      } else {
-        var dt = {
-          bookNo: this.bookNoRemove.bookNo,
-          contactDate: this.format_date(new Date()),
-          status: 'cancel',
-          statusUse: 'use',
-          shopId: this.$session.getAll().data.shopId,
-          CREATE_USER: this.$session.getAll().data.userName,
-          LAST_USER: this.$session.getAll().data.userName,
-          remarkRemove: this.remarkRemove
-        }
-        axios
-          .post(this.DNS_IP + '/booking_transaction/add', dt)
-          .then(async response => {
-            await this.updateRemark(this.bookNoRemove)
-            this.pushMsglineCancel(this.bookNoRemove)
-            this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-            console.log('addDataGlobal', response)
-            this.dialogRemove = false
-            await this.chkBookingNo()
-            // this.getTimesChange('update')
-            this.dialogRemove = false
-          })
-          .catch(error => {
-            console.log('error function addData : ', error)
-          })
+      var dt = {
+        bookNo: this.bookNoRemove.bookNo,
+        contactDate: this.format_date(new Date()),
+        status: 'cancel',
+        statusUse: 'use',
+        shopId: this.$session.getAll().data.shopId,
+        CREATE_USER: this.$session.getAll().data.userName,
+        LAST_USER: this.$session.getAll().data.userName,
+        remarkRemove: this.remarkRemove
       }
+      axios
+        .post(this.DNS_IP + '/booking_transaction/add', dt)
+        .then(async response => {
+          await this.updateRemark(this.bookNoRemove)
+          this.pushMsglineCancel(this.bookNoRemove)
+          this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+          console.log('addDataGlobal', response)
+          this.dialogRemove = false
+          await this.chkBookingNo()
+          // this.getTimesChange('update')
+          this.dialogRemove = false
+        })
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
     },
     pushMsglineCancel (item) {
       let lineUserId = item.lineUserId || ''
@@ -2658,18 +2670,24 @@ export default {
       this.flowIDLimit = item.flowId
       this.SetallowedDatesChange(this.bookingEmpFlow)
       this.dataChange = item
-      this.formChange.date = this.momenDate_1(item.dueDate)
-      await this.setLimitBooking(this.momenDate_1(item.dueDate))
-      this.dueDateOld = this.momenDate_1(item.dueDate)
-      this.dueDateTimeOld = this.momenTime(item.dueDate)
+      this.formChange.date = item.dueDateDay
+      await this.setLimitBooking(item.dueDateDay)
+      this.dueDateOld = item.dueDateDay
+      this.dueDateTimeOld = item.timeDuetext
+      // this.formChange.date = this.momenDate_1(item.dueDate)
+      // await this.setLimitBooking(this.momenDate_1(item.dueDate))
+      // this.dueDateOld = this.momenDate_1(item.dueDate)
+      // this.dueDateTimeOld = this.momenTime(item.dueDate)
       this.dialogChange = true
       this.bookingEmpFlowOld = this.bookingEmpFlow
-      if (this.timeavailable.filter(el => { return el.value === this.momenTime(item.dueDate) }).length > 0) {
-        this.formChange.time = this.momenTime(item.dueDate)
+      if (this.timeavailable.filter(el => { return el.value === item.timeDuetext }).length > 0) {
+        this.formChange.time = item.timeDuetext
+      // if (this.timeavailable.filter(el => { return el.value === this.momenTime(item.dueDate) }).length > 0) {
+      //   this.formChange.time = this.momenTime(item.dueDate)
       } else {
         this.formChange.time = ''
       }
-      console.log(this.formChange)
+      console.log('this.formChange', this.formChange)
     },
     async changeChk (item) {
       let checkCountTime = await axios.get(this.DNS_IP + '/booking_view/get?bookNo=' + item.bookNo)
@@ -2814,6 +2832,7 @@ export default {
               s.flowId = d.flowId
               s.flowName = d.flowName
               s.dueDate = d.dueDate
+              s.dueDateDay = d.dueDateDay
               s.userId = d.userId
               s.chkConfirm = false
               s.chkCancel = false
