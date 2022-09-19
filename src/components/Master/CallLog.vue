@@ -353,7 +353,7 @@
                               >
                                 <v-icon dark> mdi-pencil-box-outline </v-icon>
                               </v-btn>
-                              <v-btn
+                              <!-- <v-btn
                                 color="red"
                                 dark
                                 fab
@@ -363,7 +363,7 @@
                                 "
                               >
                                 <v-icon> mdi-delete </v-icon>
-                              </v-btn>
+                              </v-btn> -->
                             </template>
                           </v-data-table>
                         </v-col>
