@@ -43,7 +43,7 @@ html, body {
   margin:0;
   padding:0;
   height: 100%;
-  overflow-x: hidden;
+  overflow-x: hidden !important;
   }
 :root {
   --nav-bg: #1B437C;
@@ -238,8 +238,15 @@ table tr:last-child td:last-child {
 .v-expansion-panel--active>.v-expansion-panel-header {
   min-height: 48px;
 }
+.new-background-color{
+  background-color: #f2f7ff;
+  min-height: 100vh;
+}
 .v-breadcrumbs {
   font-weight: bold;
+}
+.v-data-table__wrapper{
+  min-height: 300px !important;
 }
 /* .v-data-table-header {
   background-color: var(--table-head-bg) !important;
@@ -384,30 +391,4 @@ table tr:last-child td:last-child {
 .v-text-field{
   border-radius:10px;
 }
-::-webkit-scrollbar {
-width: 2px;
-height: 2px;
-}
-::-webkit-scrollbar-button {
-width: 2px;
-}
-::-webkit-scrollbar-track {
-box-shadow: inset 0 0 5px grey;
-border-radius: 10px;
-}
-/* Handle */
-::-webkit-scrollbar-thumb {
-background: #173053;
-border-radius: 10px;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-background: #173053;
-}
-/* .v-label{
-margin-bottom: 0;
-color:#1B437C !important;
-font-weight: bold;
-} */
 </style>
