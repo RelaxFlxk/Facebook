@@ -43,7 +43,7 @@ html, body {
   margin:0;
   padding:0;
   height: 100%;
-  overflow-x: hidden;
+  overflow-x: hidden !important;
   }
 :root {
   --nav-bg: #1B437C;
@@ -246,7 +246,7 @@ table tr:last-child td:last-child {
   font-weight: bold;
 }
 .v-data-table__wrapper{
-  min-height: 400px !important;
+  min-height: 300px !important;
 }
 /* .v-data-table-header {
   background-color: var(--table-head-bg) !important;

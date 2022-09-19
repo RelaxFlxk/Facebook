@@ -2,13 +2,43 @@
   <div>
     <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
     <v-main transition="scroll-y-reverse-transition">
-      <div class="new-background-color col-md-12 ml-sm-auto col-lg-12 px-8">
+      <div class="new-background-color col-md-12 ml-sm-auto col-lg-12">
         <v-row class="no-gutters">
           <v-col cols="6" md="6" lg="6" class="text-left">
             <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
           </v-col>
-          <v-col cols="6" md="6" lg="6" class="v-margit_button text-right pr-0" style="background-color: #f2f7ff;">
-            <v-btn-toggle>
+          <v-col style="text-align: end;" v-if="resCol === 'xs'">
+            <v-btn
+                class="text-white mb-2"
+                :color="showOnsite === 'ไม่แสดง' ? 'error' : 'teal'"
+                style="border-radius: 20px !important;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
+                @click="checkShowDataOnsite(showOnsite)"
+              >
+                <v-icon color="white" left>{{showOnsite === 'ไม่แสดง' ? 'mdi-eye-remove' : 'mdi-eye-check'}}</v-icon>
+                {{showOnsite}} Onsite
+                <!-- <template v-if="loadingRefresh">
+                  <span class="custom-loader">
+                    <v-icon light>mdi-cached</v-icon>
+                  </span>
+                </template> -->
+              </v-btn>
+              <v-btn
+                :disabled="loadingRefresh"
+                color="warning"
+                style="border-radius: 20px !important;margin-right: 0px;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
+                @click="getDataDefault(), searchOther = '', showColorSearch = false, statusSearch = 'no'"
+              >
+                <v-icon color="white" left>mdi-refresh-circle</v-icon>
+                รีเฟรชข้อมูล
+                <template v-if="loadingRefresh">
+                  <span class="custom-loader">
+                    <v-icon light>mdi-cached</v-icon>
+                  </span>
+                </template>
+              </v-btn>
+          </v-col>
+          <v-col cols="6" md="6" lg="6" class="v-margit_button text-right pr-0" style="background-color: #f2f7ff;" v-if="resCol === 'md' || resCol === 'lg' || resCol === 'xl' || resCol === 'sm'">
+            <v-btn-toggle style="background-color: #f2f7ff;">
               <v-btn
                 class="text-white"
                 :loading="loadingRefresh"
@@ -55,7 +85,159 @@
             <!-- </v-overlay> -->
           </v-col>
         </v-row>
-        <v-row style="margin-bottom: 10px;">
+        <v-row v-if="resCol === 'xs'" style="margin-bottom: 10px;">
+          <v-col cols="12" class="text-left">
+            <template  v-if="changeBackgroundColor">
+            <v-row class="test px-2">
+              <v-row style="justify-content: space-around;">
+                  <v-col cols="6" style="display: flex;justify-content: center;">
+                    <v-card
+                      style="padding: 10px; width: 230px;"
+                      :color="(getSelectText === 'wait') ? '#F9DBB2' : 'white'"
+                      dense
+                      elevation="0"
+                      prominent
+                      @click="getSelect('wait',countWaiting)"
+                    >
+                      <div>
+                        <div class="text-center">
+                          <v-avatar
+                            size="70"
+                            class="pa-3"
+                            color="#FEAE34"
+                          >
+                            <v-icon dark size="30" class="iconify" data-icon="ps:warning">
+                              mdi-alarm
+                            </v-icon>
+                          </v-avatar>
+                        </div>
+                        <div style="margin: auto 0;text-align: center;">
+                          <strong>{{dataTypeProcess1}}</strong>
+                          <div>จำนวน : {{countWaiting}}</div>
+                        </div>
+                      </div>
+                    </v-card>
+                  </v-col>
+                  <v-col cols="6" style="display: flex;justify-content: center;">
+                    <v-card
+                      style="padding: 10px; width: 230px;"
+                      :color="(getSelectText === 'confirm') ? '#C9F2DC' : 'white'"
+                      dense
+                      icon="mdi-email-check"
+                      prominent
+                      elevation="0"
+                      @click="getSelect('confirm',countConfirm)"
+                    >
+                    <div>
+                      <div class="text-center">
+                        <v-avatar
+                          size="70"
+                          color="#97DDBB"
+                          style="padding:13px"
+                        >
+                          <v-icon dark size="40" class="iconify" data-icon="quill:mail-subbed">
+                            mdi-alarm
+                          </v-icon>
+                        </v-avatar>
+                      </div>
+                      <div style="margin: auto 0;text-align: center;">
+                       <strong>{{dataTypeProcess2}}</strong>
+                        <div>จำนวน : {{countConfirm}}</div>
+                      </div>
+                    </div>
+                    </v-card>
+                  </v-col>
+                  <v-col cols="6" style="display: flex;justify-content: center;">
+                    <v-card
+                      style="padding: 10px; width: 230px;"
+                      :color="(getSelectText === 'confirmJob') ? '#F9E8F5' : 'white'"
+                      dense
+                      icon="mdi-account-check"
+                      prominent
+                      elevation="0"
+                      @click="getSelect('confirmJob',countJob)"
+                    >
+                    <div>
+                      <div class="text-center">
+                        <v-avatar
+                          color="#E5B5D8"
+                          size="70"
+                          class="pa-3"
+                        >
+                          <v-icon dark size="40" class="iconify" data-icon="bi:people">
+                            mdi-alarm
+                          </v-icon>
+                        </v-avatar>
+                      </div>
+                      <div style="margin: auto 0;text-align: center;">
+                        <strong>{{dataTypeProcess4}}</strong>
+                         <div style="text-align: center;">จำนวน : {{countJob}}</div>
+                      </div>
+                    </div>
+                    </v-card>
+                  </v-col>
+                  <v-col cols="6" style="display: flex;justify-content: center;">
+                    <v-card
+                      style="padding: 10px; width: 230px;"
+                      :color="(getSelectText === 'confirmSum') ? '#D7E8F9' : 'white'"
+                      dense
+                      elevation="0"
+                      icon="mdi-expand-all"
+                      @click="getSelect('confirmSum',(countConfirm + countJob))"
+                    >
+                    <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
+                      <div class="text-center">
+                        <v-avatar
+                          color="#76ABE5"
+                          size="70"
+                          class="pa-3"
+                        >
+                          <v-icon dark size="40" class="iconify" data-icon="bi:folder-plus">
+                          </v-icon>
+                        </v-avatar>
+                      </div>
+                      <div style="margin: auto 0;text-align: center;">
+                        <strong>รวมผู้เข้ารับบริการ</strong>
+                        <div style="text-align: center;">รวม : {{countConfirm + countJob}}</div>
+                      </div>
+                    </div>
+                    </v-card>
+                  </v-col>
+                  <v-col cols="6" style="display: flex;justify-content: center;">
+                    <v-card
+                    style="padding: 10px; width: 230px;"
+                      :color="(getSelectText === 'cancel') ? '#F9CACA' : 'white'"
+                      dense
+                      elevation="0"
+                      icon="mdi-calendar-remove"
+                      prominent
+                      @click="getSelect('cancel',countCancel)"
+                    >
+                    <div>
+                      <div class="text-center">
+                        <v-avatar
+                          size="70"
+                          class="pa-3"
+                          color="#B72929"
+                        >
+                          <v-icon dark size="40" class="iconify" data-icon="carbon:rule-cancelled">
+                            mdi-alarm
+                          </v-icon>
+                        </v-avatar>
+                      </div>
+                      <div style="margin: auto 0;text-align: center;">
+                        <strong>{{dataTypeProcess3}}</strong>
+                         <div>จำนวน : {{countCancel}}</div>
+                      </div>
+                    </div>
+                    </v-card>
+                  </v-col>
+              </v-row>
+            </v-row>
+            </template>
+          </v-col>
+        </v-row>
+        <v-row style="margin-bottom: 29px;" v-if="resCol !== 'xs'">
           <v-col cols="12" class="text-left">
             <template  v-if="changeBackgroundColor">
             <v-row class="test">
@@ -129,9 +311,9 @@
                   </v-col>
                 </div>
               </v-col> -->
-              <v-col cols="12" class="text-center">
-                <div style="display: flex;justify-content: space-between;">
-                  <div cols="2" class="pt-0">
+              <!-- <div v-if="">test</div> -->
+              <v-row style="justify-content: space-around;">
+                  <v-col :cols="resCol === 'md' ? '4': 'auto'" style="display: flex;justify-content: center;">
                     <v-card
                       style="padding: 10px; width: 230px;"
                       :color="(getSelectText === 'wait') ? '#F9DBB2' : 'white'"
@@ -158,8 +340,8 @@
                         </div>
                       </div>
                     </v-card>
-                  </div>
-                  <div cols="2" >
+                  </v-col>
+                  <v-col :cols="resCol === 'md' ? '4': 'auto'" style="display: flex;justify-content: center;">
                     <v-card
                       style="padding: 10px; width: 230px;"
                       :color="(getSelectText === 'confirm') ? '#C9F2DC' : 'white'"
@@ -187,8 +369,8 @@
                       </div>
                     </div>
                     </v-card>
-                  </div>
-                  <div cols="2">
+                  </v-col>
+                  <v-col :cols="resCol === 'md' ? '4': 'auto'" style="display: flex;justify-content: center;">
                     <v-card
                       style="padding: 10px; width: 230px;"
                       :color="(getSelectText === 'confirmJob') ? '#F9E8F5' : 'white'"
@@ -216,8 +398,8 @@
                       </div>
                     </div>
                     </v-card>
-                  </div>
-                  <div cols="2">
+                  </v-col>
+                  <v-col :cols="resCol === 'md' ? '4': 'auto'" style="display: flex;justify-content: center;">
                     <v-card
                       style="padding: 10px; width: 230px;"
                       :color="(getSelectText === 'confirmSum') ? '#D7E8F9' : 'white'"
@@ -243,8 +425,8 @@
                       </div>
                     </div>
                     </v-card>
-                  </div>
-                  <div cols="2">
+                  </v-col>
+                  <v-col :cols="resCol === 'md' ? '4': 'auto'" style="display: flex;justify-content: center;">
                     <v-card
                     style="padding: 10px; width: 230px;"
                       :color="(getSelectText === 'cancel') ? '#F9CACA' : 'white'"
@@ -272,26 +454,8 @@
                       </div>
                     </div>
                     </v-card>
-                  </div>
-                  <!-- <v-col cols="12" class="pb-4">
-                    <v-card
-                      style="padding:18px;color:black !important;margin-top:20px;border-radius: 20px !important;"
-                      color="white"
-                      @click="getSelect('all',countAll)"
-                    >
-                     <v-avatar
-                          class="mr-8 pa-3"
-                          color="#76ABE5"
-                          size="70"
-                        >
-                          <v-icon dark size="40" class="iconify" data-icon="healthicons:chart-bar-outline">
-                          </v-icon>
-                        </v-avatar>
-                      รวมรายการนัดหมายทั้งหมด : {{countAll}}
-                    </v-card>
-                  </v-col> -->
-                </div>
-              </v-col>
+                  </v-col>
+              </v-row>
             </v-row>
             <!-- <v-row>
               <v-col cols="6" class="text-center pb-0">
@@ -381,10 +545,97 @@
             </template>
           </v-col>
         </v-row>
-        <div class="pa-4 mb-4">
-          <div style="display: flex;justify-content: space-between;margin-bottom:15px;">
-            <h3 style="margin-bottom: 15px;color: black;font-weight: bolder;">ตรวจสอบรายการนัดหมาย</h3>
+        <v-divider v-if="resCol === 'xs'"></v-divider>
+        <div class="pa-2 mb-4" v-if="resCol === 'xs'">
+          <div style="text-align: end;margin-bottom: 10px;">
             <v-btn
+                  class="bottomAdd"
+                  style="margin-right: 0px;border-radius: 15px;color: white;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
+                  @click="addDataSet()"
+                >
+                  เพิ่มรายการนัดหมาย
+                  <v-icon color="white" class="ml-4" >mdi-plus-circle</v-icon>
+            </v-btn>
+          </div>
+          <div>
+             <v-menu
+              ref="menu"
+              v-model="menuStart"
+              transition="scale-transition"
+              offset-y
+              max-width="290px"
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                 <v-text-field
+                  hide-details
+                  background-color="white"
+                  v-model="dateStart"
+                  style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
+                  label="เดือน/ปี"
+                  readonly
+                  outlined
+                  dense
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                <template #prepend-inner>
+                <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                  mdi-calendar
+                </v-icon>
+              </template></v-text-field>
+              </template>
+              <v-date-picker
+                @input="menuStart = false,dataReady = false,getBookingList()"
+                v-model="dateStart"
+                type="month"
+                no-title
+                scrollable
+              >
+              </v-date-picker>
+              </v-menu>
+               <v-select
+              v-model="masBranchID"
+              background-color="white"
+              style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
+              hide-details
+              :items="branch"
+              label="สาขา"
+              outlined
+              dense
+              required
+              @change="dataReady = false,getBookingList()"
+              ><template #prepend-inner>
+                <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                  mdi-map-marker-outline
+                </v-icon>
+              </template></v-select>
+              <v-select
+                style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
+              v-model="flowSelect"
+              hide-details
+              background-color="white"
+              :items="DataFlowName"
+              label="ประเภทบริการ"
+              outlined
+              dense
+              @change="dataReady = false,getBookingList()"
+            >
+            <template #prepend-inner>
+                <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                  mdi-note-text-outline
+                </v-icon>
+              </template></v-select>
+          </div>
+        </div>
+        <v-divider v-if="resCol !== 'xs'"></v-divider>
+        <div class="pl-5 pb-5 pr-5 pt-0 mb-4" v-if="resCol !== 'xs'">
+          <v-row style="display: flex;justify-content: space-between;margin-bottom:15px;margin-top:2px;">
+            <v-col cols="auto" class="pl-0">
+              <h3 style="margin-bottom: 15px;color: black;font-weight: bolder;">ตรวจสอบรายการนัดหมาย</h3>
+            </v-col>
+            <v-col cols="auto" style="text-align: end;" class="px-0 pb-0">
+              <v-btn
                   class="bottomAdd"
                   style="margin-right: 0px;border-radius: 15px;color: white;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
                   width="250px"
@@ -394,9 +645,10 @@
                   เพิ่มรายการนัดหมาย
                   <v-icon color="white" class="ml-4" >mdi-plus-circle</v-icon>
             </v-btn>
-          </div>
+            </v-col>
+          </v-row>
           <v-row>
-            <v-col cols="2" class="pl-0">
+            <v-col :cols="resCol === 'sm' ? '3' : '2'" class="pl-0">
                   <v-menu
               ref="menu"
               v-model="menuStart"
@@ -434,7 +686,7 @@
               </v-date-picker>
               </v-menu>
             </v-col>
-            <v-col cols="2" class="pl-0">
+            <v-col :cols="resCol === 'sm' ? '3' : '2'" class="pl-0">
                  <v-select
               v-model="masBranchID"
               background-color="white"
@@ -452,7 +704,7 @@
                 </v-icon>
               </template></v-select>
             </v-col>
-            <v-col cols="2" class="pl-0">
+            <v-col :cols="resCol === 'sm' ? '3' : '2'" class="pl-0">
                 <v-select
                 style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;"
               v-model="flowSelect"
@@ -470,8 +722,8 @@
                 </v-icon>
               </template></v-select>
             </v-col>
-            <v-col cols="2"></v-col>
-            <v-col cols="4" class="pr-0 pt-3">
+            <v-col v-if="resCol !== 'sm'" cols="2" ></v-col>
+            <v-col :cols="resCol === 'sm' ? '3' : '4'" class="pr-0 pl-0 pt-3">
                 <v-text-field
                   class="textserch"
                   background-color="white"
@@ -5834,14 +6086,23 @@ export default {
         // })
       })
     },
-    dialogwidth () {
+    resCol () {
       switch (this.$vuetify.breakpoint.name) {
-        case 'xs': return '70%'
-        case 'sm': return '60%'
-        case 'md': return '50%'
-        case 'lg': return '50%'
-        case 'xl': return '50%'
+        case 'xs':
+          return 'xs'
+        case 'sm':
+          return 'sm'
+        case 'md':
+          return 'md'
+        case 'lg':
+          return 'lg'
+        case 'xl':
+          return 'xl'
       }
+      console.log(
+        'this.$vuetify.breakpoint.name',
+        this.$vuetify.breakpoint.name
+      )
     }
   },
   watch: {
@@ -9556,7 +9817,7 @@ export default {
           // { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
           { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
           { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center', sortable: false },
-          { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center', sortable: false },
+          { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false },
           // { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center' },
           { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
         ]
@@ -9620,7 +9881,7 @@ export default {
             { text: 'เบอร์โทร', value: 'tel' },
             { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
             { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
-            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center', width: '120' },
+            { text: 'หมายเหตุ', value: 'remark', align: 'center', width: '120' },
             { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
             // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
             // { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
@@ -9698,11 +9959,11 @@ export default {
             { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
             { text: 'วันที่/เวลา', value: 'dueDate', width: '150', sortable: false },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'บริการ', value: 'flowNameShow', width: '120' },
+            { text: 'บริการ', value: 'flowNameShow', width: '120', sortable: false },
             { text: 'เบอร์โทร', value: 'tel', sortable: false, width: '120' },
-            { text: 'เงินมัดจำ', value: 'action40', align: 'center', width: '120' },
+            { text: 'เงินมัดจำ', value: 'action40', align: 'center', width: '120', sortable: false },
             { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '160' },
-            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center', sortable: false, width: '150' },
+            { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '150' },
             { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
 
           console.log('waitja1', this.columnsSelected)
@@ -9727,7 +9988,7 @@ export default {
             { text: 'เบอร์โทร', value: 'tel', sortable: false },
             { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
             { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center', sortable: false, width: '120' },
+            { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '120' },
             // { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center', sortable: false },
             { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
         } else {
@@ -9740,7 +10001,7 @@ export default {
             { text: 'เบอร์โทร', value: 'tel', sortable: false },
             { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center', width: '120' },
             { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-            { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center', width: '170' },
+            { text: 'หมายเหตุ', value: 'remark', align: 'center', width: '170' },
             { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }]
         }
       }
