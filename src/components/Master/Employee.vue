@@ -1392,6 +1392,9 @@ export default {
           } else {
             this.formAdd.empImge = ''
           }
+          if (this.formAdd.privacyPage !== 'bookingform') {
+            delete this.formAdd['masBranchID']
+          }
           delete this.formAdd['pictureUrlPreview']
           await axios
             .post(
@@ -1479,6 +1482,9 @@ export default {
               })
           } else {
             this.formUpdateItem.empImge = this.formUpdate.pictureUrlPreview
+          }
+          if (this.formUpdate.privacyPage !== 'bookingform') {
+            delete this.formUpdateItem['masBranchID']
           }
           await axios
             .post(
