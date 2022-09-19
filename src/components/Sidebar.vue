@@ -17,10 +17,12 @@
       <v-list>
         <v-list-item>
           <v-col>
-        <v-img :src="require('@/assets/LogoBetask.svg')" max-width="70px"></v-img>
+        <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FLogoBetask.svg?alt=media&token=d781ca7b-811f-45b0-a80c-caf0f60c3f41" max-width="70px"></v-img>
+        <!-- <v-img :src="require('@/assets/LogoBetask.svg')" max-width="70px"></v-img> -->
           </v-col>
           <v-col>
-        <v-img class="ml-1 mr-9" :src="require('@/assets/GroupBetask.svg')" max-width="80px"></v-img>
+        <v-img class="ml-1 mr-9" src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FGroupBetask.svg?alt=media&token=805907c9-d721-402a-9cec-1d5ed7ae31d5" max-width="80px"></v-img>
+        <!-- <v-img class="ml-1 mr-9" :src="require('@/assets/GroupBetask.svg')" max-width="80px"></v-img> -->
           </v-col>
         </v-list-item>
       </v-list>

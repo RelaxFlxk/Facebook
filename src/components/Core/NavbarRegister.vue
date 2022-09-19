@@ -6,11 +6,16 @@
     >
       <!-- <v-app-bar-nav-icon><v-img :width="widthScreen > 375 ? '100%' : '60%'" :src="require('@/assets/Logo_betask copy.png')" /></v-app-bar-nav-icon> -->
 
-      <v-toolbar-title
-        ><v-img
+      <v-toolbar-title>
+        <v-img
           :width="widthScreen >= 855 ? '100%' : '70%'"
-          :src="require('@/assets/Logo_betask copy.png')"
-      /></v-toolbar-title>
+          src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FLogo_betask.png?alt=media&token=eb39c44d-f4e2-4356-afdf-d9cd354ce005"
+      />
+        <!-- <v-img
+          :width="widthScreen >= 855 ? '100%' : '70%'"
+          :src="require('@/assets/Logo_betask.png')"
+      /> -->
+      </v-toolbar-title>
 
       <ul v-if="widthScreen >= 855">
         <li><a href="https://betaskthai.com/">หน้าหลัก</a></li>

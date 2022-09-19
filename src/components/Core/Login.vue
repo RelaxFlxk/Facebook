@@ -6,8 +6,13 @@
         <v-img
           contain
           width="60%"
-          :src="require('@/assets/Mascot-Betask.png')"
+          src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FMascot-Betask.png?alt=media&token=fa5315ab-476e-4c8d-bca1-04bf8846b5f2"
         ></v-img>
+        <!-- <v-img
+          contain
+          width="60%"
+          :src="require('@/assets/Mascot-Betask.png')"
+        ></v-img> -->
       </v-col>
       <v-col>
         <v-container
@@ -101,7 +106,7 @@
                 คุณได้ลงทะเบียนแล้วหรือยัง?
                 <a
                   style="cursor: pointer; text-decoration: underline"
-                  href="https://betask-linked.web.app/register"
+                  href="https://belinked.betaskthai.com/register"
                   >ลงทะเบียน!</a
                 >
               </h6>
@@ -117,10 +122,15 @@
             <v-row class="mb-6" justify="center">
               <v-col md="auto">
                 <v-img
-                  :src="require('@/assets/forgotPassword.svg')"
+                  src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FforgotPassword.svg?alt=media&token=18d74e00-5b29-4d54-983e-f4ae5587510a"
                   class="a"
                   style="width: 103px; height: 103px"
                 ></v-img>
+                <!-- <v-img
+                  :src="require('@/assets/forgotPassword.svg')"
+                  class="a"
+                  style="width: 103px; height: 103px"
+                ></v-img> -->
               </v-col>
             </v-row>
           </v-card-text>
@@ -328,10 +338,7 @@ export default {
       console.log(c)
     },
     async checkbookNo (dataitem) {
-      if (
-        this.$route.query.bookNo !== undefined &&
-        this.$route.query.type !== 'job'
-      ) {
+      if (this.$route.query.bookNo !== undefined && this.$route.query.type !== 'job') {
         if (dataitem.shopId === this.$route.query.shopId) {
           this.bookNo = this.$route.query.bookNo
           this.queryData = 'bookNo'
@@ -385,10 +392,7 @@ export default {
               this.$router.push('/Core/Login')
             })
         }
-      } else if (
-        this.$route.query.jobNo !== undefined &&
-        this.$route.query.type !== 'job'
-      ) {
+      } else if (this.$route.query.jobNo !== undefined && this.$route.query.type !== 'job') {
         console.log('job')
         console.log(
           'dataitem.shopId',
@@ -444,10 +448,7 @@ export default {
               })
           }
         }
-      } else if (
-        this.$route.query.bookNo !== undefined &&
-        this.$route.query.type === 'job'
-      ) {
+      } else if (this.$route.query.bookNo !== undefined && this.$route.query.type === 'job') {
         if (dataitem.category === 'ธุรกิจรถยนต์') {
           this.$router.push(
             '/Master/BookingList?bookNo=' +
@@ -467,13 +468,34 @@ export default {
               this.$route.query.type
           )
         }
-      } else if (
-        this.$route.query.dateEvent !== undefined &&
-        this.$route.query.type === 'printInvoice'
-      ) {
+      } else if (this.$route.query.dateEvent !== undefined && this.$route.query.type === 'printInvoice') {
         this.$router.push(
           '/PrintPdf/PrintInvoice?dateEvent=' + this.$route.query.dateEvent
         )
+      } else if (this.$route.query.type === 'CheckListBookingEmp') {
+        if (dataitem.shopId === this.$route.query.shopId) {
+          this.$router.push(
+            '/CheckBookingEmpList?shopId=' + this.$route.query.shopId
+          )
+        } else {
+          this.$swal({
+            title: 'UserName ของท่านไม่สามารถใช้กับร้านค้านี้ได้',
+            type: 'info',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#b3b1ab',
+            confirmButtonText: 'ใช่',
+            cancelButtonText: 'ไม่'
+          })
+            .then(async () => {
+              this.dataReady = true
+              this.$router.push('/Core/Login')
+              // await _this.getTokenCheck()
+            })
+            .catch(async () => {
+              this.$router.push('/Core/Login')
+            })
+        }
       } else {
         if (dataitem.USER_ROLE === 'onsite') {
           this.$router.push('/Onsite/JobList')

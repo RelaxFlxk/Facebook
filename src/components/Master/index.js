@@ -32,6 +32,7 @@ import CallLog from './CallLog'
 import ServiceType from './ServiceType'
 import BookingMobileEmp from './BookingMobileEmp'
 import NoticeManagement from './NoticeManagement'
+import CheckBookingEmpList from './CheckBookingEmpList'
 export default {
   CustomField,
   CallLog,
@@ -66,5 +67,6 @@ export default {
   SettingTag,
   Showbooking,
   BookingMobileConfirmJob,
-  BookingMobileEmp
+  BookingMobileEmp,
+  CheckBookingEmpList
 }
