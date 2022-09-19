@@ -334,6 +334,11 @@ export default new Router({
     path: '/Master/ServiceType',
     name: 'ServiceType',
     component: Master.ServiceType
+  },
+  {
+    path: '/System/NotificationService',
+    name: 'NotificationService',
+    component: System.NotificationService
   }
   ]
 })

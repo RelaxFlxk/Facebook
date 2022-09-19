@@ -6,7 +6,7 @@
                     <v-btn dark>บันทึการโทร</v-btn>
                 </v-col>
             </v-row>
-            <v-dialog v-model="dialogHistoryCall"  max-width="39%"  persistent style="background: #FFFFFF;box-shadow: 0px 1px 28px rgba(0, 0, 0, 0.12);border-radius: 14px; height:900px">
+            <v-dialog v-model="dialogHistoryCall"  max-width="35%"  persistent style="background: #FFFFFF;box-shadow: 0px 1px 28px rgba(0, 0, 0, 0.12);border-radius: 14px; height:900px">
                 <v-card height="900px">
                     <v-container>
                         <v-row style="padding-left: 5%; padding-right: 0.5%; padding-top: 2%;">
@@ -403,6 +403,7 @@ export default {
         .get(this.DNS_IP + '/empSelect/getUse?privacyPage=booking&shopId=' + this.$session.getAll().data.shopId)
         .then(async response => {
           let rs = response.data
+          console.log(rs)
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
