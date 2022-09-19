@@ -16,7 +16,7 @@
             show-size
             accept="image/png, image/jpeg, image/bmp"
             prepend-icon="mdi-camera"
-            label="รูปหลักฐานการมัดจำ"
+            label="รูปหลักฐานการคืนมัดจำ"
             @change="selectImgDeposit"
             v-model="filesDeposit"
           ></v-file-input>
@@ -87,7 +87,7 @@
             :disabled="loadingDeposit"
           >
             <v-icon left>mdi-checkbox-marked-circle</v-icon>
-            ยกเลิกสถานะเงินมัดจำ
+            ยกเลิกสถานะคืนเงินมัดจำ
           </v-btn>
         </v-card-actions>
       </v-card>

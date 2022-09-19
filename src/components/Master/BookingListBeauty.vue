@@ -3234,7 +3234,7 @@
                             v-bind="attrs"
                             v-on="on"
                           >
-                            จัดการนัดหมาย
+                            เมนูจัดการนัดหมาย
                             <v-icon color="#73777B" class="ml-2"> mdi-chevron-down </v-icon>
                           </v-btn>
                         </template>
@@ -3250,7 +3250,7 @@
                                         >
                                         </v-overlay>
                                     </v-expand-transition>
-                              <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-account-plus </v-icon> รับเข้าบริการ </v-list-item-title>
+                              <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="bi:people"></v-icon> รับเข้าบริการ </v-list-item-title>
                             </template>
                           </v-list-item>
                           </v-hover>
@@ -3265,18 +3265,24 @@
                                         >
                                         </v-overlay>
                                     </v-expand-transition>
-                              <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-phone-check </v-icon> ยืนยันนัดหมาย </v-list-item-title>
+                              <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="quill:mail-subbed"></v-icon> ยืนยันนัดหมาย </v-list-item-title>
                             </template>
                           </v-list-item>
                           </v-hover>
                           <v-list-item @click.stop="setDataChang(item)" v-if="item.statusBt !== 'confirmJob'">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-calendar-clock </v-icon> เปลี่ยนเวลานัดหมาย {{item.countChangeTime}} ครั้ง</v-list-item-title>
                           </v-list-item>
+                          <v-list-item @click.stop="setDataReture(item)" v-if="item.statusBt !== 'confirmJob' && item.depositStatus === 'True' && item.depositImge != ''">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="uil:money-withdrawal"></v-icon> คืนเงินมัดจำ </v-list-item-title>
+                          </v-list-item>
                           <v-list-item  @click.stop="setShowMap(item)" v-if="item.addressLatLong !== null">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-map-marker-radius-outline </v-icon> ดูแผนที่ </v-list-item-title>
                           </v-list-item>
                           <v-list-item @click.stop="setDataEdit(item)">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-tools </v-icon> แก้ไขข้อมูล </v-list-item-title>
+                          </v-list-item>
+                          <v-list-item @click.stop="setDataCallLog(item)">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="eva:phone-call-fill">  </v-icon> ประวัติการโทร </v-list-item-title>
                           </v-list-item>
                           <v-list-item @click.stop="updateStatusBookingTransaction(item)" v-if="item.statusBt === 'confirm'">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-skip-backward </v-icon> กลับไปสถานะก่อนหน้า </v-list-item-title>
@@ -3298,7 +3304,7 @@
                                         >
                                         </v-overlay>
                                     </v-expand-transition>
-                              <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-phone-cancel </v-icon> ยกเลิกนัดหมาย </v-list-item-title>
+                              <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="carbon:rule-cancelled"></v-icon> ยกเลิกนัดหมาย </v-list-item-title>
                             </template>
                           </v-list-item>
                           </v-hover>
@@ -6036,6 +6042,8 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
+          <RetureDeposit ref="RetureDeposit"></RetureDeposit>
+          <CallLog ref="CallLog"></CallLog>
       </div>
     </v-main>
   </div>
@@ -6057,9 +6065,11 @@ import moment from 'moment-timezone'
 import BookingQueue from './BookingQueue.vue'
 import CalendarBooking from './CalendarBookingList.vue'
 import waitingAlert from '../waitingAlert.vue'
+import RetureDeposit from '../BookingListComponents/RetureDeposit.vue'
+import CallLog from './CallLog.vue'
 
 export default {
-  name: 'BookingList',
+  name: 'BookingListBeauty',
   components: {
     draggable,
     'left-menu-admin': adminLeftMenu,
@@ -6072,7 +6082,9 @@ export default {
     PivotTable,
     BookingQueue,
     CalendarBooking,
-    waitingAlert
+    waitingAlert,
+    RetureDeposit,
+    CallLog
   },
   computed: {
     filteredSelect () {
@@ -6085,6 +6097,15 @@ export default {
         //   return this.filters[f].length < 1 || d[f].toString().toLowerCase().includes(this.filters[f].toLowerCase())
         // })
       })
+    },
+    dialogwidth () {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return '70%'
+        case 'sm': return '60%'
+        case 'md': return '50%'
+        case 'lg': return '50%'
+        case 'xl': return '50%'
+      }
     },
     resCol () {
       switch (this.$vuetify.breakpoint.name) {
@@ -6542,6 +6563,9 @@ export default {
   },
   async mounted () {
     this.checkShowDataOnsite('ไม่แสดง')
+    this.$root.$on('dataReturn', (item) => {
+      this.dataReturn(item)
+    })
     // if (this.$route.query.bookNo) {
     //   // this.beforeCreateScan()
     //   await this.getDataBranch()
@@ -6567,7 +6591,28 @@ export default {
     })
     // await this.beforeCreate()
   },
+  beforeDestroy () {
+    this.$root.$off('dataReturn')
+  },
   methods: {
+    async setDataCallLog (item) {
+      this.$refs.CallLog.setData(item)
+    },
+    async setDataReture (item) {
+      this.$refs.RetureDeposit.setData(item)
+    },
+    async dataReturn (item) {
+      console.log('dataReturn', item)
+      if (this.statusSearch === 'no') {
+        await this.getBookingList()
+      } else {
+        await this.searchAny()
+      }
+      // this.getTimesChange('update')
+      if (this.getSelectText) {
+        this.getSelect(this.getSelectText, this.getSelectCount)
+      }
+    },
     FunCopyDeposit () {
       let copyText = document.getElementById('myInputDeposit')
       copyText.select()
