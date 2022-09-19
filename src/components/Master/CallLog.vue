@@ -3,15 +3,13 @@
     <v-main>
       <v-dialog
         v-model="dialogHistoryCall"
-        max-width="70%"
+        max-width="60%"
         persistent
         style="background: #FFFFFF;box-shadow: 0px 1px 28px rgba(0, 0, 0, 0.12);border-radius: 14px; height:900px"
       >
         <v-card height="900px">
           <v-container>
-            <v-row
-              style="padding-left: 5%; padding-right: 0.5%; padding-top: 2%;"
-            >
+            <v-row style="padding-left: 2%;padding-top: 2%;">
               <v-col cols="6" class="text-left">
                 <h1>บันทึกการโทร</h1>
               </v-col>
@@ -35,10 +33,13 @@
                 </div>
               </v-col>
             </v-row>
-            <v-row style="padding-left: 5%">
-              <v-col cols="12">
+            <v-row>
+              <v-col cols="12" class="text-left">
                 <v-row>
-                  <span style=" padding-right: 1%; color: #69D1FD">*</span>
+                  <span
+                    style="padding-left: 3%; padding-right: 1%; color: #69D1FD"
+                    >*</span
+                  >
                   <h4 style="color : #161616">
                     กรุณากรอกข้อมูลเพื่อเก็บประวัติการโทร
                   </h4>
@@ -47,32 +48,19 @@
             </v-row>
             <v-row style="padding-top: 2%;">
               <v-col>
-                <v-tabs
-                  v-model="tab"
-                  fixed-tabs
-                  centered
-                  color="primary"
-                  style="text-di"
-                >
+                <v-tabs v-model="tab" fixed-tabs centered color="primary">
                   <v-tabs-slider color="#ffffff00"></v-tabs-slider>
-                  <v-tab
-                    @click="reset(), getDateTime()"
-                    href="#tab-1"
+                  <v-tab @click="reset(), getDateTime()" href="#tab-1"
                     ><h3>บันทึกการโทร</h3></v-tab
                   >
-                  <v-tab href="#tab-2"
-                    ><h3>ประวัติการโทร</h3></v-tab
-                  >
+                  <v-tab href="#tab-2"><h3>ประวัติการโทร</h3></v-tab>
                   <v-tab-item transition="fade-transition" value="tab-1">
                     <v-container fluid>
                       <v-row v-if="param">
                         <v-col>
-                          <v-form
-                            ref="form_add"
-                            lazy-validation
-                          >
+                          <v-form ref="form_add" lazy-validation>
                             <v-card
-                              style="width: 681px;height: 542px;background: #FFFFFF;box-shadow: 1.5px 2.6px 10px rgba(119, 119, 119, 0.1);"
+                              style="width: 67%;height: 542px;background: #FFFFFF;box-shadow: 1.5px 2.6px 10px rgba(119, 119, 119, 0.1);"
                               class="mx-auto"
                             >
                               <v-container>
@@ -85,13 +73,45 @@
                                     >
                                   </v-col>
                                   <v-col cols="8">
-                                    <v-text-field
+                                    <v-menu
+                                      ref="menu1"
+                                      v-model="menu1"
+                                      :close-on-content-click="false"
+                                      :return-value.sync="date"
+                                      transition="scale-transition"
+                                      offset-y
+                                      min-width="auto"
+                                    >
+                                      <template
+                                        v-slot:activator="{ on, attrs }"
+                                      >
+                                        <v-text-field
+                                          v-model="callDate"
+                                          placeholder="2022-08-26"
+                                          readonly
+                                          outlined
+                                          v-bind="attrs"
+                                          v-on="on"
+                                          :rules="[
+                                            v => !!v || 'กรุณากรอกข้อมูล'
+                                          ]"
+                                        ></v-text-field>
+                                      </template>
+                                      <v-date-picker
+                                        :min="nowDate"
+                                        v-model="callDate"
+                                        @input="menu1 = false"
+                                        no-title
+                                        scrollable
+                                      ></v-date-picker>
+                                    </v-menu>
+                                    <!-- <v-text-field
                                       v-model="callDate"
                                       placeholder="2022/03/20"
                                       outlined
                                       v-mask="'####-##-##'"
                                       :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
-                                    ></v-text-field>
+                                    ></v-text-field> -->
                                   </v-col>
                                 </v-row>
                                 <v-row
@@ -148,19 +168,20 @@
                                       outlined
                                       name="input-7-4"
                                       v-model="formAdd.remark"
-                                      placeholder="ห่างไกลแต่ไม่ห่างกันด้วยแอพเพื่อการสื่อสารแบบครบวงจรของเราที่ใช้งานได้ฟรี* ครบครันด้วยฟีเจอร์ส่งข้อความตัวอักษร ข้อความเสียง วิดีโอคอล ..."
+                                      placeholder="หมายเหตุ"
                                       :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
                                     ></v-textarea>
                                   </v-col>
                                 </v-row>
                               </v-container>
                             </v-card>
+                            <br />
                             <v-row class="mx-auto">
                               <v-col class="text-center">
                                 <v-btn
                                   x-large
                                   color="#14AE5C"
-                                  style="width: 681px; height: 67px;"
+                                  style="width: 70%; height: 67px;"
                                   @click="validate(), addData()"
                                   ><h2>บันทึก</h2></v-btn
                                 >
@@ -171,12 +192,9 @@
                       </v-row>
                       <v-row v-if="!param">
                         <v-col>
-                          <v-form
-                            ref="form_update"
-                            lazy-validation
-                          >
+                          <v-form ref="form_update" lazy-validation>
                             <v-card
-                              style="width: 681px;height: 542px;background: #FFFFFF;box-shadow: 1.5px 2.6px 10px rgba(119, 119, 119, 0.1);"
+                              style="width: 67%;height: 542px;background: #FFFFFF;box-shadow: 1.5px 2.6px 10px rgba(119, 119, 119, 0.1);"
                               class="mx-auto"
                             >
                               <!-- {{formUpdate}} -->
@@ -190,13 +208,45 @@
                                     >
                                   </v-col>
                                   <v-col cols="8">
-                                    <v-text-field
+                                    <v-menu
+                                      ref="menu2"
+                                      v-model="menu2"
+                                      :close-on-content-click="false"
+                                      :return-value.sync="date"
+                                      transition="scale-transition"
+                                      offset-y
+                                      min-width="auto"
+                                    >
+                                      <template
+                                        v-slot:activator="{ on, attrs }"
+                                      >
+                                        <v-text-field
+                                          v-model="formUpdate.callDate"
+                                          placeholder="2022-08-26"
+                                          readonly
+                                          outlined
+                                          v-bind="attrs"
+                                          v-on="on"
+                                          :rules="[
+                                            v => !!v || 'กรุณากรอกข้อมูล'
+                                          ]"
+                                        ></v-text-field>
+                                      </template>
+                                      <v-date-picker
+                                        :min="nowDate"
+                                        v-model="formUpdate.callDate"
+                                        @input="menu2 = false"
+                                        no-title
+                                        scrollable
+                                      ></v-date-picker>
+                                    </v-menu>
+                                    <!-- <v-text-field
                                       v-model="formUpdate.callDate"
                                       placeholder="callDate"
                                       outlined
                                       v-mask="'####-##-##'"
                                       :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
-                                    ></v-text-field>
+                                    ></v-text-field> -->
                                   </v-col>
                                 </v-row>
                                 <v-row
@@ -253,19 +303,20 @@
                                       outlined
                                       name="input-7-4"
                                       v-model="formUpdate.remark"
-                                      placeholder="ห่างไกลแต่ไม่ห่างกันด้วยแอพเพื่อการสื่อสารแบบครบวงจรของเราที่ใช้งานได้ฟรี* ครบครันด้วยฟีเจอร์ส่งข้อความตัวอักษร ข้อความเสียง วิดีโอคอล ..."
+                                      placeholder="หมายเหตุ"
                                       :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
                                     ></v-textarea>
                                   </v-col>
                                 </v-row>
                               </v-container>
                             </v-card>
+                            <br />
                             <v-row class="mx-auto" v-if="!param">
                               <v-col class="text-center">
                                 <v-btn
                                   x-large
                                   color="#14AE5C"
-                                  style="width: 681px; height: 67px;"
+                                  style="width: 70%; height: 67px;"
                                   @click="editData()"
                                   ><h2>แก้ไข</h2></v-btn
                                 >
@@ -308,7 +359,7 @@
                                 fab
                                 small
                                 @click.stop="
-                                  (dialogDelete = true), getDataById(item)
+                                  ;(dialogDelete = true), getDataById(item)
                                 "
                               >
                                 <v-icon> mdi-delete </v-icon>
@@ -401,6 +452,7 @@ export default {
       returnLink: '/Master/CallLog',
       session: this.$session.getAll(),
       date: new Date().toISOString().substr(0, 10),
+      nowDate: new Date().toISOString().slice(0, 10),
       menu1: false,
       menu2: false,
       formAdd: {
@@ -452,8 +504,7 @@ export default {
     }
   },
   // eslint-disable-next-line space-before-function-paren
-  async mounted() {
-  },
+  async mounted() {},
   methods: {
     setData (item) {
       console.log('bookNo', item.bookNo)
@@ -514,9 +565,11 @@ export default {
               this.empSelectStepAdd.push(s)
             }
             if (this.$session.getAll().data.userId) {
-              if (this.empSelectStepAdd.filter(el => {
-                return el.value === this.$session.getAll().data.userId
-              }).length === 0) {
+              if (
+                this.empSelectStepAdd.filter(el => {
+                  return el.value === this.$session.getAll().data.userId
+                }).length === 0
+              ) {
                 this.formAdd.empSelect = ''
               } else {
                 this.formAdd.empSelect = this.empSelectStepAdd.filter(el => {
