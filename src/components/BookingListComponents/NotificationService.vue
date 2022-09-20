@@ -36,6 +36,7 @@
                     class="mx-auto"
                   >
                     <v-container>
+                      <!-- {{ formAdd.serviceListId }} -->
                       <v-row>
                         <v-col
                           cols="6"
@@ -57,7 +58,7 @@
                         x-large
                         color="#14AE5C"
                         style="width: 70%; height: 67px;"
-                        @click="validate(), addData(), clear()"
+                        @click="validate(), addData()"
                         ><h2>บันทึก</h2></v-btn
                       >
                     </v-col>
@@ -85,7 +86,7 @@ export default {
       path: '/BookingService/',
       session: this.$session.getAll(),
       formAdd: {
-        bookingNo: '',
+        bookNo: '',
         serviceListId: [],
         shopId: this.$session.getAll().data.shopId,
         CREATE_USER: this.$session.getAll().data.userName,
@@ -101,9 +102,12 @@ export default {
     // this.getServiceType()
   },
   methods: {
-    setData (item) {
+    async setData (item) {
+      console.log('bookNo', item.bookNo)
+      this.formAdd.bookNo = item.bookNo
+      this.getData()
       this.getServiceType()
-      this.formAdd.bookingNo = item.bookNo
+
       this.dialogHistoryCall = true
     },
     validate (Action) {
@@ -128,8 +132,29 @@ export default {
     reset () {
       this.$refs.form_add.reset()
     },
+    getData () {
+      axios
+        .get(
+          this.DNS_IP +
+            this.path +
+            'get?shopId=' +
+            this.$session.getAll().data.shopId +
+            '&bookNo=' +
+            this.formAdd.bookNo
+        )
+        .then(res => {
+          let rs = res.data
+          console.log(rs)
+          let arr = []
+          rs.map(el => {
+            arr.push(el.serviceListId)
+          })
+          this.formAdd.serviceListId = [...new Set(arr)]
+          console.log('this.formAdd.serviceListId', this.formAdd.serviceListId)
+        })
+    },
     addData () {
-      console.log(this.formAdd)
+      console.log('formAdd', this.formAdd)
       this.$swal({
         title: 'ต้องการ เพิ่มข้อมูล ใช่หรือไม่?',
         type: 'question',
@@ -149,6 +174,8 @@ export default {
           .then(async response => {
             console.log('addDataGlobal DNS_IP + PATH + "add"', response)
             this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+            this.clear()
+            // this.getData()
           })
           .catch(error => {
             console.log('error function addDataGlobal : ', error)
