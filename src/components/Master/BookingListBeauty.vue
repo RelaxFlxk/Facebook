@@ -3845,44 +3845,25 @@
           <!-- <v-dialog v-model="dialogAdd" persistent max-width="70%"> -->
             <v-card class="text-center">
                 <v-card-text>
-                    <v-col class="text-right pa-0">
-                      <v-btn
-                        small
-                        color="#E0E0E0"
-                        @click="(dialogEditData = false, this.dataEditReady = true)"
-                      >
-                        <v-icon color="#173053">mdi-close</v-icon>
-                      </v-btn>
+                  <v-row style="padding-left: 2%;padding-top: 2%;">
+                    <v-col cols="6" class="text-left">
+                      <h3><strong>แก้ไขข้อมูล</strong></h3>
                     </v-col>
+                    <v-col cols="6">
+                      <div style="text-align: end;">
+                        <v-btn
+                          class="closeBt"
+                          @click="(dialogEditData = false, this.dataEditReady = true)"
+                        >
+                          <v-icon large color="#F1F1F1 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
                     <v-row justify="center">
-                      <!-- <v-col
-                        cols="6"
-                      > -->
-                      <!-- <v-col
-                        cols="8"
-                        class="text-center d-none d-sm-flex"
-                        style="margin: auto 0;"
-                      > -->
-                        <!-- <v-col class="text-center">
-                          <CalendarBooking ref="CalendarBooking"></CalendarBooking> -->
-                          <!-- <v-img
-                            class="v-margit_img_reward"
-                            :src="require('@/assets/AddBookingList.svg')"
-                            max-width="470.37"
-                            max-height="247"
-                          ></v-img> -->
-                        <!-- </v-col> -->
-                      <!-- </v-col> -->
-
                       <v-col cols="12">
-                      <!-- <v-col cols="12" sm="6" md="6" lg="6" class="v-margit_text_add mt-0 pa-0"> -->
-                        <v-col class="text-center pa-3 ml-2">
-                          <h3 style="font-size:10vw;" class="underline-06">แก้ไขข้อมูล</h3>
-                          <!-- <v-img
-                            class="v_text_add"
-                            :src="require('@/assets/Grouptitle.svg')"
-                          ></v-img> -->
-                        </v-col>
                         <v-col class="pb-0 pt-0" cols="12" v-if="dataPackage.filter(el => { return el.balanceAmount > 0 && el.packageId === packageId && el.token === tokenPackage }).length > 0 && dataPackageDefault === true">
                         <v-card class="pl-1">
                           <!-- <v-subheader>ลูกค้ามี {{dataPackage.filter(el => { return el.balanceAmount > 0 && el.packageId === packageId && el.token === tokenPackage }).length}} แพ็คเกจ</v-subheader> -->
@@ -12747,6 +12728,20 @@ export default {
 </script>
 
 <style scoped>
+.closeBt {
+  background-color: #dadada !important;
+  border: none;
+  /* padding: 20px !important; */
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 1px 2px;
+  cursor: pointer;
+  height: 60% !important;
+  width: 36px !important;
+  border-radius: 50%;
+}
 .videoWrapper {
   position: relative;
   padding-bottom: 56.25%;
