@@ -3284,6 +3284,9 @@
                           <v-list-item @click.stop="setDataCallLog(item)">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="eva:phone-call-fill">  </v-icon> ประวัติการโทร </v-list-item-title>
                           </v-list-item>
+                          <v-list-item @click.stop="setDataServiceList(item)">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="cil:list-rich">  </v-icon> สรุปรายการ </v-list-item-title>
+                          </v-list-item>
                           <v-list-item @click.stop="updateStatusBookingTransaction(item)" v-if="item.statusBt === 'confirm'">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-skip-backward </v-icon> กลับไปสถานะก่อนหน้า </v-list-item-title>
                           </v-list-item>
@@ -6044,6 +6047,7 @@
           </v-dialog>
           <RetureDeposit ref="RetureDeposit"></RetureDeposit>
           <CallLog ref="CallLog"></CallLog>
+          <NotificationService ref="NotificationService"></NotificationService>
       </div>
     </v-main>
   </div>
@@ -6066,7 +6070,8 @@ import BookingQueue from './BookingQueue.vue'
 import CalendarBooking from './CalendarBookingList.vue'
 import waitingAlert from '../waitingAlert.vue'
 import RetureDeposit from '../BookingListComponents/RetureDeposit.vue'
-import CallLog from './CallLog.vue'
+import CallLog from '../BookingListComponents/CallLog.vue'
+import NotificationService from '../BookingListComponents/NotificationService.vue'
 
 export default {
   name: 'BookingListBeauty',
@@ -6084,7 +6089,8 @@ export default {
     CalendarBooking,
     waitingAlert,
     RetureDeposit,
-    CallLog
+    CallLog,
+    NotificationService
   },
   computed: {
     filteredSelect () {
@@ -6595,6 +6601,9 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
+    async setDataServiceList (item) {
+      this.$refs.NotificationService.setData(item)
+    },
     async setDataCallLog (item) {
       this.$refs.CallLog.setData(item)
     },

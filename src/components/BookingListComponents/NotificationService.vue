@@ -1,16 +1,6 @@
 <template>
   <div class="example">
     <v-main>
-      <v-row>
-        <v-col
-          cols="12"
-          class="text-right"
-          style="margin-top: 10px; magin-right: 9px"
-          @click="dialogHistoryCall = true"
-        >
-          <v-btn dark>ยืนยันการเข้ารับบริการ</v-btn>
-        </v-col>
-      </v-row>
       <v-dialog
         v-model="dialogHistoryCall"
         max-width="40%"
@@ -90,20 +80,16 @@ export default {
     VuetifyLogo,
     moment
   },
-  beforeCreate () {
-    this.$liff.init({ liffId: this.$liff_id_login }, function (data) {})
-  },
   data () {
     return {
       path: '/BookingService/',
-      returnLink: '/System/NotificationService',
       session: this.$session.getAll(),
       formAdd: {
-        bookingNo: 'BK598132041662359939813',
+        bookingNo: '',
         serviceListId: [],
         shopId: this.$session.getAll().data.shopId,
-        CREATE_USER: '',
-        LAST_USER: ''
+        CREATE_USER: this.$session.getAll().data.userName,
+        LAST_USER: this.$session.getAll().data.userName
       },
       valid_add: true,
       serviceType: [],
@@ -112,9 +98,14 @@ export default {
   },
   // eslint-disable-next-line space-before-function-paren
   async mounted() {
-    this.getServiceType()
+    // this.getServiceType()
   },
   methods: {
+    setData (item) {
+      this.getServiceType()
+      this.formAdd.bookingNo = item.bookNo
+      this.dialogHistoryCall = true
+    },
     validate (Action) {
       switch (Action) {
         case 'ADD':
@@ -138,6 +129,7 @@ export default {
       this.$refs.form_add.reset()
     },
     addData () {
+      console.log(this.formAdd)
       this.$swal({
         title: 'ต้องการ เพิ่มข้อมูล ใช่หรือไม่?',
         type: 'question',
@@ -147,19 +139,12 @@ export default {
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
       }).then(async result => {
-        this.formAdd.CREATE_USER = this.session.data.userName
-        this.formAdd.LAST_USER = this.session.data.userName
         console.log(this.formAdd)
         await axios
           .post(
             // eslint-disable-next-line quotes
             this.DNS_IP + this.path + 'add',
-            this.formAdd,
-            {
-              headers: {
-                'Application-Key': this.$session.getAll().ApplicationKey
-              }
-            }
+            this.formAdd
           )
           .then(async response => {
             console.log('addDataGlobal DNS_IP + PATH + "add"', response)
@@ -167,7 +152,6 @@ export default {
           })
           .catch(error => {
             console.log('error function addDataGlobal : ', error)
-            this.$router.push('/system/Errorpage?returnLink=' + this.returnLink)
             this.dataReady = true
           })
       })
@@ -193,11 +177,11 @@ export default {
         })
     },
     clear () {
-      this.bookingNo = 'BK598132041662359939813'
-      this.serviceListId = []
-      this.shopId = this.$session.getAll().data.shopId
-      this.CREATE_USER = ''
-      this.LAST_USER = ''
+      this.formAdd.bookingNo = ''
+      this.formAdd.serviceListId = []
+      this.formAdd.shopId = this.$session.getAll().data.shopId
+      this.formAdd.CREATE_USER = this.$session.getAll().data.userName
+      this.formAdd.LAST_USER = this.$session.getAll().data.userName
     }
   }
 }
@@ -299,7 +283,7 @@ export default {
       returnLink: '/System/NotificationService',
       session: this.$session.getAll(),
       formAdd: {
-        bookNo: 'BK598132041662359939813',
+        bookNo: '',
         serviceListId: [],
         shopId: this.$session.getAll().data.shopId,
         CREATE_USER: '',
