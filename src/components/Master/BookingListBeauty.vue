@@ -6066,7 +6066,7 @@ import BookingQueue from './BookingQueue.vue'
 import CalendarBooking from './CalendarBookingList.vue'
 import waitingAlert from '../waitingAlert.vue'
 import RetureDeposit from '../BookingListComponents/RetureDeposit.vue'
-import CallLog from './CallLog.vue'
+import CallLog from '../BookingListComponents/CallLog.vue'
 
 export default {
   name: 'BookingListBeauty',

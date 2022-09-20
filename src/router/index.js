@@ -9,7 +9,6 @@ import Payment from '@/components/Payment'
 import PrintPdf from '@/components/PrintPdf'
 import Onsite from '@/components/Onsite'
 import Mazda from '@/components/Mazda'
-// import CallLog from '@/components/CallLog'
 
 Vue.use(Router)
 
@@ -331,19 +330,9 @@ export default new Router({
     component: Mazda.Report
   },
   {
-    path: '/Master/CallLog',
-    name: 'CallLog',
-    component: Master.CallLog
-  },
-  {
     path: '/Master/ServiceType',
     name: 'ServiceType',
     component: Master.ServiceType
-  },
-  {
-    path: '/System/NotificationService',
-    name: 'NotificationService',
-    component: System.NotificationService
   }
   ]
 })

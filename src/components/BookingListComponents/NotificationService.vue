@@ -1,16 +1,6 @@
 <template>
   <div class="example">
     <v-main>
-      <v-row>
-        <v-col
-          cols="12"
-          class="text-right"
-          style="margin-top: 10px; magin-right: 9px"
-          @click="dialogHistoryCall = true"
-        >
-          <v-btn dark>ยืนยันการเข้ารับบริการ</v-btn>
-        </v-col>
-      </v-row>
       <v-dialog
         v-model="dialogHistoryCall"
         max-width="35%"
@@ -99,9 +89,6 @@ export default {
   components: {
     VuetifyLogo,
     moment
-  },
-  beforeCreate () {
-    this.$liff.init({ liffId: this.$liff_id_login }, function (data) {})
   },
   data () {
     return {
