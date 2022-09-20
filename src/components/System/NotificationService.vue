@@ -13,7 +13,7 @@
       </v-row>
       <v-dialog
         v-model="dialogHistoryCall"
-        max-width="35%"
+        max-width="40%"
         persistent
         style="background: #FFFFFF;box-shadow: 0px 1px 28px rgba(0, 0, 0, 0.12);border-radius: 14px; height:900px"
       >
@@ -22,10 +22,10 @@
             <v-row
               style="padding-left: 5%; padding-right: 0.5%; padding-top: 2%;"
             >
-              <v-col cols="6" class="text-left">
-                <h1>ยืนยันการเข้ารับบริการ</h1>
+              <v-col cols="10" class="text-left">
+                <h1>สรุปการเข้ารับบริการ</h1>
               </v-col>
-              <v-col cols="6">
+              <v-col cols="2">
                 <div style="text-align: end;">
                   <v-btn
                     class="button5"
@@ -38,21 +38,11 @@
                 </div>
               </v-col>
             </v-row>
-            <!-- <v-row style="padding-left: 5%">
-              <v-col cols="12">
-                <v-row>
-                  <span style=" padding-right: 1%; color: #69D1FD">*</span>
-                  <h4 style="color : #161616">
-                    กรุณากรอกข้อมูลเพื่อเก็บประวัติการโทร
-                  </h4>
-                </v-row>
-              </v-col>
-            </v-row> -->
             <v-row style="padding-top: 2%;">
               <v-col>
                 <v-form ref="form_add" v-model="valid_add" lazy-validation>
                   <v-card
-                    style="margin-bottom: 4%; width: 681px;height: 542px;background: #FFFFFF;box-shadow: 1.5px 2.6px 10px rgba(119, 119, 119, 0.1);"
+                    style="margin-bottom: 4%; width: 67%;height: 542px;background: #FFFFFF;box-shadow: 1.5px 2.6px 10px rgba(119, 119, 119, 0.1);"
                     class="mx-auto"
                   >
                     <v-container>
@@ -76,7 +66,7 @@
                       <v-btn
                         x-large
                         color="#14AE5C"
-                        style="width: 681px; height: 67px;"
+                        style="width: 70%; height: 67px;"
                         @click="validate(), addData(), clear()"
                         ><h2>บันทึก</h2></v-btn
                       >
