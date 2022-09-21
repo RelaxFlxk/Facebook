@@ -1587,6 +1587,12 @@ export default {
           } else {
             this.formAdd.empImge = ''
           }
+          if (this.formAdd.privacyPage !== 'bookingform') {
+            delete this.formAdd['masBranchID']
+            delete this.formAdd['flowId']
+          } else {
+            this.formAdd.flowId = JSON.stringify(this.formAdd.flowId)
+          }
           delete this.formAdd['pictureUrlPreview']
           await axios
             .post(
@@ -1679,7 +1685,12 @@ export default {
           } else {
             this.formUpdateItem.empImge = this.formUpdate.pictureUrlPreview
           }
-          this.formUpdateItem.flowId = JSON.stringify(this.formUpdate.flowId)
+          if (this.formUpdate.privacyPage !== 'bookingform') {
+            delete this.formUpdateItem['masBranchID']
+            delete this.formUpdateItem['flowId']
+          } else {
+            this.formUpdateItem.flowId = JSON.stringify(this.formUpdate.flowId)
+          }
           await axios
             .post(
               // eslint-disable-next-line quotes
