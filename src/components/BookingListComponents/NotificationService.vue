@@ -5,21 +5,21 @@
         v-model="dialogHistoryCall"
         max-width="40%"
         persistent
-        style="background: #FFFFFF;box-shadow: 0px 1px 28px rgba(0, 0, 0, 0.12);border-radius: 14px; height:900px"
+        style="background: #FFFFFF;box-shadow: 0px 1px 28px rgba(0, 0, 0, 0.12);border-radius: 14px;"
       >
-        <v-card height="900px">
+        <v-card>
           <v-container>
             <v-row
               style="padding-left: 5%; padding-right: 0.5%; padding-top: 2%;"
             >
               <v-col cols="10" class="text-left">
-                <h1>สรุปการเข้ารับบริการ</h1>
+                <h3><strong>สรุปการเข้ารับบริการ</strong></h3>
               </v-col>
               <v-col cols="2">
                 <div style="text-align: end;">
                   <v-btn
                     class="button5"
-                    @click=";(dialogHistoryCall = false), clear()"
+                    @click="(dialogHistoryCall = false), clear()"
                   >
                     <v-icon large color="#F1F1F1 ">
                       mdi-close
@@ -28,11 +28,11 @@
                 </div>
               </v-col>
             </v-row>
-            <v-row style="padding-top: 2%;">
+            <v-row>
               <v-col>
                 <v-form ref="form_add" v-model="valid_add" lazy-validation>
                   <v-card
-                    style="margin-bottom: 4%; width: 67%;height: 542px;background: #FFFFFF;box-shadow: 1.5px 2.6px 10px rgba(119, 119, 119, 0.1);"
+                    style="margin-bottom: 4%;background: #FFFFFF;box-shadow: 1.5px 2.6px 10px rgba(119, 119, 119, 0.1);"
                     class="mx-auto"
                   >
                     <v-container>
@@ -52,14 +52,15 @@
                       </v-row>
                     </v-container>
                   </v-card>
-                  <v-row class="mx-auto">
+                  <v-row>
                     <v-col class="text-center">
                       <v-btn
-                        x-large
+                        large
+                        block
+                        dark
                         color="#14AE5C"
-                        style="width: 70%; height: 67px;"
                         @click="validate(), addData()"
-                        ><h2>บันทึก</h2></v-btn
+                        ><strong>บันทึก</strong></v-btn
                       >
                     </v-col>
                   </v-row>
@@ -105,9 +106,8 @@ export default {
     async setData (item) {
       console.log('bookNo', item.bookNo)
       this.formAdd.bookNo = item.bookNo
+      await this.getServiceType()
       this.getData()
-      this.getServiceType()
-
       this.dialogHistoryCall = true
     },
     validate (Action) {
@@ -145,12 +145,15 @@ export default {
         .then(res => {
           let rs = res.data
           console.log(rs)
-          let arr = []
-          rs.map(el => {
-            arr.push(el.serviceListId)
-          })
-          this.formAdd.serviceListId = [...new Set(arr)]
-          console.log('this.formAdd.serviceListId', this.formAdd.serviceListId)
+          if (rs.status === false) {
+            this.formAdd.serviceListId = []
+          } else {
+            let arr = []
+            rs.map(el => {
+              arr.push(el.serviceListId)
+            })
+            this.formAdd.serviceListId = [...new Set(arr)]
+          }
         })
     },
     addData () {
@@ -175,17 +178,19 @@ export default {
             console.log('addDataGlobal DNS_IP + PATH + "add"', response)
             this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
             this.clear()
+            this.dialogHistoryCall = false
             // this.getData()
           })
           .catch(error => {
             console.log('error function addDataGlobal : ', error)
+            this.$swal('ผิดพลาด', 'กรุณาทำรายการอีกครั้ง', 'success')
             this.dataReady = true
           })
       })
     },
-    getServiceType () {
+    async getServiceType () {
       this.serviceType = []
-      axios
+      await axios
         .get(
           this.DNS_IP +
             '/serviceList/get?shopId=' +

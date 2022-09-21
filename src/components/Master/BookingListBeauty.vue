@@ -1442,7 +1442,6 @@
                                 hide-details
                                 @change="dataDepositAdd === 'มี' ? panelDeposit = [0] : panelDeposit = []"
                               ></v-checkbox>
-                              <!-- <v-text-field v-model="dataDepositAdd" dense outlined readonly label="มีมัดจำหรือไม่"></v-text-field> -->
                             </v-col>
                             <v-col cols="12" class="pt-0" v-if="dataDepositAdd === 'มี'">
                               <v-expansion-panels
@@ -1529,13 +1528,29 @@
           <!-- end add -->
 
           <!-- delete -->
-          <v-dialog v-model="dialogDelete" persistent max-width="70%">
+          <v-dialog v-model="dialogDelete" persistent max-width="400px">
             <v-card>
-              <v-card-title>
-                <span class="headline">ลบข้อมูลนี้</span>
-              </v-card-title>
               <v-card-text>
                 <v-container>
+                  <v-row>
+                    <v-col cols="6" class="text-left pt-10">
+                      <h3><strong>ลบข้อมูลนี้</strong></h3>
+                    </v-col>
+                    <v-col cols="6" class="pt-10">
+                      <div style="text-align: end;">
+                        <v-btn
+                          class="closeBt"
+                          fab
+                          small
+                          @click="dialogDelete = false"
+                        >
+                          <v-icon large color="#F1F1F1 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
                   <v-row>
                     <v-col cols="12">
                       <v-text-field
@@ -1546,31 +1561,23 @@
                       ></v-text-field>
                     </v-col>
                   </v-row>
+                  <v-row>
+                    <v-col cols="12" class="pt-0">
+                      <v-btn
+                        elevation="2"
+                        large
+                        block
+                        dark
+                        color="#173053"
+                        @click="deleteData()"
+                      >
+                        <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                        ลบ
+                      </v-btn>
+                    </v-col>
+                  </v-row>
                 </v-container>
               </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn
-                  elevation="2"
-                  x-large
-                  dark
-                  color="dark darken-1"
-                  @click="dialogDelete = false"
-                >
-                  <v-icon left> mdi-cancel</v-icon>
-                  ปิด
-                </v-btn>
-                <v-btn
-                  elevation="2"
-                  x-large
-                  dark
-                  color="red darken-1"
-                  @click="deleteData()"
-                >
-                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                  ลบ
-                </v-btn>
-              </v-card-actions>
             </v-card>
           </v-dialog>
           <!-- end delete -->
@@ -1578,7 +1585,27 @@
           <!-- edit -->
           <v-dialog v-model="dialogEdit" persistent :max-width="dialogwidth">
             <v-card class="text-center">
-              <v-card-title>นำเข้ากระดานการทำงาน</v-card-title>
+              <v-card-text>
+                <v-row>
+                    <v-col cols="6" class="text-left pt-10">
+                      <h3><strong>นำเข้ากระดานการทำงาน</strong></h3>
+                    </v-col>
+                    <v-col cols="6" class="pt-10">
+                      <div style="text-align: end;">
+                        <v-btn
+                          class="closeBt"
+                          fab
+                          small
+                          @click="dialogEdit = false, getDataDefault(), searchOther = '', showColorSearch = false, statusSearch = 'no'"
+                        >
+                          <v-icon large color="#F1F1F1 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
+              </v-card-text>
               <v-card-text  v-if="dataEditJobReady && statusConfirmJob">
                 <v-container>
                   <v-col class="pb-0 pt-0" cols="12" v-if="dataPackage.filter(el => { return el.balanceAmount > 0 }).length > 0 && dataPackageDefault === false">
@@ -2065,7 +2092,8 @@
                   <div class="text-center">
                     <v-btn
                       elevation="2"
-                      small
+                      large
+                      block
                       dark
                       color="#173053"
                       @click="addDataJob()"
@@ -2073,20 +2101,12 @@
                       <v-icon left>mdi-checkbox-marked-circle</v-icon>
                       นำเข้าตารางงาน
                     </v-btn>
-                    <v-btn small color="red" dark @click="dialogEdit = false, getDataDefault(), searchOther = '', showColorSearch = false, statusSearch = 'no'">
-                      <v-icon color="#173053">mdi-close</v-icon> ยกเลิก
-                    </v-btn>
                   </div>
                 </v-container>
               </v-card-text>
               <v-card-text  v-if="dataEditJobReady && !statusConfirmJob">
                 <strong><h2>เนื่องจากวันที่นัดหมาย {{format_dateNotime(dueDate)}} ไม่ตรงกับวันที่ปัจจุบัน</h2></strong>
                 <strong style="color: red;"><h3>กรุณาตรวจสอบข้อมูล หรือ เปลี่ยนเวลานัดหมายใหม่</h3></strong>
-                <div class="text-center">
-                  <v-btn small color="red" dark @click="dialogEdit = false, getDataDefault(), searchOther = '', showColorSearch = false, statusSearch = 'no'">
-                    <v-icon color="#173053">mdi-close</v-icon> ปิดหน้าต่าง
-                  </v-btn>
-                </div>
               </v-card-text>
               <v-card-text  v-if="!dataEditJobReady">
                 <v-container>
@@ -2259,10 +2279,28 @@
 
           <v-dialog v-model="dialogChange" persistent :max-width="dialogwidth">
             <v-card class="text-center">
-              <v-card-title>เปลี่ยนเวลานัดหมาย</v-card-title>
               <v-form ref="form_change" v-model="validChange" lazy-validation>
                 <v-card-text v-if="dataChangeReady">
                   <v-container>
+                     <v-row>
+                    <v-col cols="6" class="text-left pt-10">
+                      <h3><strong>เปลี่ยนเวลานัดหมาย</strong></h3>
+                    </v-col>
+                    <v-col cols="6" class="pt-10">
+                      <div style="text-align: end;">
+                        <v-btn
+                          class="closeBt"
+                          fab
+                          small
+                          @click="dialogChange = false"
+                        >
+                          <v-icon large color="#F1F1F1 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
                     <v-row>
                       <v-col cols= "12">
                         <v-textarea
@@ -2274,63 +2312,6 @@
                         ></v-textarea>
                       </v-col>
                   </v-row>
-                   <!-- <v-row v-if="limitBookingCheck === 'True'">
-                    <v-col cols="12" md="6" lg="6">
-                      <h4 class="text-center">ต้องการใช้ Limit การจองหรือไม่</h4>
-                      <v-row align="center">
-                        <v-checkbox
-                          false-value="False"
-                          true-value="True"
-                          v-model="limitBookingSelect"
-                          hide-details
-                          class="shrink ml-6 mr-0 mt-3 mb-6"
-                        ></v-checkbox>
-                        <v-text-field class="mt-3" dense outlined :value="limitBookingSelect === 'True' ? 'ต้องการ' : 'ไม่ต้องการ'" readonly label="Limit การจอง"></v-text-field>
-                         </v-row>
-                    </v-col>
-                    <v-col cols="12" md="6" lg="6" v-if="limitBookingSelect === 'True'">
-                      <v-select
-                        v-model="selectCountBookingLimit"
-                        :items="[1,2,3,4,5,6,7,8]"
-                        label="จำนวนชั่วโมง Limit"
-                        outlined
-                        dense
-                        class="mt-10"
-                        @change="setCountTime(dataChange)"
-                      ></v-select>
-                    </v-col>
-                   </v-row>
-                   <h4 v-if="limitBookingSelect === 'True'" class="text-center">ตารางนี้แสดงผลลัพธ์เมื่อท่านเลือกจำนวนชั่วโมง / Limit ที่ตั้งไว้</h4>
-                   <v-row v-if="limitBookingSelect === 'True' && dataLimitBookingDate.length > 0">
-                    <v-col cols="12">
-                      <v-data-table
-                        :headers="headersLimitBookingDate"
-                        :items="dataLimitBookingDate"
-                        :items-per-page="10"
-                        dense
-                        class="elevation-1"
-                      >
-                        <template v-slot:[`item.countBookingLimit`]="{ item }">
-                          <v-chip
-                            class="ma-2 white--text"
-                            :color="item.color"
-                          >
-                            <strong>{{item.countBookingLimit}}</strong>
-                          </v-chip>
-                        </template>
-                      </v-data-table>
-                    </v-col>
-                   </v-row>
-                   <v-row v-if="limitBookingSelect === 'True' && dataLimitBookingDate.length === 0">
-                      <v-col cols="12" class="text-center">
-                      <v-alert
-                        type="success"
-                      >
-                        <strong>ท่านสามารถนัดหมายในวันที่ : {{formChange.date}} ได้ทุกเวลา</strong>
-                      </v-alert>
-                      </v-col>
-                    </v-row> -->
-                   <v-divider></v-divider>
                   <v-row>
                     <v-col cols="12" md="6" lg="6">
                       <v-menu
@@ -2387,37 +2368,32 @@
                           ></v-select>
                     </v-col>
                   </v-row>
-                  <div class="text-center">
-                    <v-btn
-                      elevation="10"
+                  <v-row>
+                    <v-col v-if="checkSelectText !== 'cancel'">
+                      <v-btn
+                      elevation="2"
                       color="green darken-1"
-                      v-if="checkSelectText !== 'cancel'"
                       dark
-                      small
+                      large
+                      block
                       :disabled="!validChange"
                       @click="changeChk(dataChange, 'confirm')"
                       >เปลี่ยนวันเวลานัดหมาย (ยืนยัน)</v-btn
                     >
-                    <v-btn
-                      elevation="10"
+                    </v-col>
+                    <v-col v-if="checkSelectText !== 'confirm'">
+                      <v-btn
+                      elevation="2"
                       color="#173053"
                       dark
-                      v-if="checkSelectText !== 'confirm'"
-                      small
+                      large
+                      block
                       :disabled="!validChange"
                       @click="changeChk(dataChange, 'change')"
                       >เปลี่ยนวันเวลานัดหมาย</v-btn
                     >
-                    <v-btn
-                      elevation="10"
-                      color="#173053"
-                      outlined
-                      style="background-color:#FFFFFF"
-                      small
-                      @click="dialogChange = false"
-                      >ยกเลิก</v-btn
-                    >
-                  </div>
+                    </v-col>
+                  </v-row>
                   </v-container>
                 </v-card-text>
                 <div class="text-center" v-if="!dataChangeReady">
@@ -2450,12 +2426,28 @@
 
           <v-dialog v-model="dialogRemove" :max-width="dialogwidth">
             <v-card class="text-center">
-              <v-card-title>
-                ยกเลิกรายการนี้
-              </v-card-title>
               <v-form ref="form_remove" v-model="validRemove" lazy-validation>
                 <v-container>
               <v-card-text v-if="dataCancelReady">
+                <v-row>
+                    <v-col cols="6" class="text-left pt-10">
+                      <h3><strong>ยกเลิกรายการนี้</strong></h3>
+                    </v-col>
+                    <v-col cols="6" class="pt-10">
+                      <div style="text-align: end;">
+                        <v-btn
+                          class="closeBt"
+                          fab
+                          small
+                          @click="dialogRemove = false"
+                        >
+                          <v-icon large color="#F1F1F1 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
                 <v-row>
                   <v-col cols= "12">
                   <v-textarea
@@ -2464,10 +2456,11 @@
                     label="หมายเหตุในการยกเลิก"
                     auto-grow
                     required
+                    dense
                     :rules="[rules.required]"
                   ></v-textarea>
                   </v-col>
-                  <v-col cols= "12">
+                  <v-col cols= "12" class="pt-0">
                   <v-select
                     v-model="empSelect"
                     :items="empSelectStep"
@@ -2480,21 +2473,13 @@
                 </v-row>
                 <div class="text-center">
                   <v-btn
-                    elevation="10"
+                    elevation="2"
                     color="#173053"
                     dark
-                    small
+                    large
+                    block
                     @click="cancelChk()"
                     >ยกเลิกรายการนี้</v-btn
-                  >
-                  <v-btn
-                    elevation="10"
-                    color="#173053"
-                    outlined
-                    style="background-color:#FFFFFF"
-                    small
-                    @click="dialogRemove = false"
-                    >ยกเลิก</v-btn
                   >
                 </div>
               </v-card-text>
@@ -2579,12 +2564,27 @@
           </v-dialog>
           <v-dialog v-model="dialogRemark" :max-width="dialogwidth">
             <v-card class="text-center">
-              <v-card-title>
-                หมายเหตุเพิ่มเติม
-              </v-card-title>
-              <!-- <v-form ref="form_remove" v-model="validRemove" lazy-validation> -->
                 <v-container>
               <v-card-text>
+                <v-row>
+                    <v-col cols="6" class="text-left pt-10">
+                      <h3><strong>หมายเหตุเพิ่มเติม</strong></h3>
+                    </v-col>
+                    <v-col cols="6" class="pt-10">
+                      <div style="text-align: end;">
+                        <v-btn
+                          class="closeBt"
+                          fab
+                          small
+                          @click="dialogRemark = false"
+                        >
+                          <v-icon large color="#F1F1F1 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
                 <v-row>
                   <v-col cols= "12">
                   <v-textarea
@@ -2600,18 +2600,10 @@
                     elevation="10"
                     color="#173053"
                     dark
-                    small
+                    large
+                    block
                     @click="onSaveRemark()"
                     >หมายเหตุเพิ่มเติม</v-btn
-                  >
-                  <v-btn
-                    elevation="10"
-                    color="#173053"
-                    outlined
-                    style="background-color:#FFFFFF"
-                    small
-                    @click="dialogRemark = false"
-                    >ยกเลิก</v-btn
                   >
                 </div>
               </v-card-text>
@@ -3136,39 +3128,6 @@
                             </v-menu>
                         </div>
                       </v-row>
-
-                      <!-- <v-row  v-if="item.memberDataTag.length > 0 && item.memberDataTag.length > 2">
-                          <v-col cols="6" v-for="(item , index) in item.tagDataShow" :key="index" class="pa-0" style="font-weight: 600;font-size: 16px;color: #2BC155;">
-                            <div v-if="index === 0 || index === 1">
-                              {{ item.text }}
-                            </div>
-                          </v-col>
-                          {{item.memberDataTag.length - 2}}
-                         <v-btn
-                                fab
-                                dark
-                                v-if="item.memberId !== ''"
-                                x-small
-                                color="teal"
-                                @click="getTagData(), dialogTag = true, tagData = item.memberDataTag, bookNo = item.bookNo, memberId = item.memberId"
-                              >
-                                <v-icon dark>
-                                  mdi-tag-plus
-                                </v-icon>
-                              </v-btn>
-                      </v-row> -->
-                      <!-- <v-col>
-                        <v-chip
-                          filter
-                          dark
-                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
-                          :color="(item.remarkConfirm2) ? 'green darken-2' : 'grey darken-1'"
-                          v-model="item.remarkConfirm2"
-                          @click.stop="item.remarkConfirm2=!item.remarkConfirm2;confirmRemark(item, 'inDay')"
-                        >
-                          30 นาที
-                        </v-chip>
-                      </v-col> -->
                     </div>
                   </template>
                   <template v-slot:[`item.action2`]="{ item }">
@@ -3185,18 +3144,6 @@
                           1 วัน
                         </v-chip>
                       </v-col>
-                      <!-- <v-col>
-                        <v-chip
-                          filter
-                          dark
-                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
-                          :color="(item.remarkConfirm2) ? 'green darken-2' : 'grey darken-1'"
-                          v-model="item.remarkConfirm2"
-                          @click.stop="item.remarkConfirm2=!item.remarkConfirm2;confirmRemark(item, 'inDay')"
-                        >
-                          30 นาที
-                        </v-chip>
-                      </v-col> -->
                     </v-row>
                   </template>
                   <template v-slot:[`item.action3`]="{ item }">
@@ -3293,8 +3240,11 @@
                           <v-list-item @click.stop="getBookingDataJob(item, 'qrcode'), getEmpSelectAddJob(), (dialogOnsite = true)" v-if="item.statusBt === 'confirm' && showOnsite === 'ไม่แสดง'">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-account-plus </v-icon> มอบหมายงาน </v-list-item-title>
                           </v-list-item>
+                          <v-list-item v-clipboard:success="onCopySuccess" v-clipboard:copy="'https://betask-linked.web.app/Thank?shopId=' + item.shopId + '&redirectBy=BookingForm&flowId=' + item.flowId + '&bookNo=' + item.bookNo" v-if="item.statusBt === 'wait' && item.depositStatus === 'True' && item.depositImge == ''">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-content-copy </v-icon> คัดลอกลิงค์ มัดจำ </v-list-item-title>
+                          </v-list-item>
                           <v-list-item v-clipboard:success="onCopySuccess" v-clipboard:copy="'https://liff.line.me/1656581804-7KRQyqo5/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId" v-if="item.statusBt === 'confirm' && (item.userId === 'user-skip' || item.userId === '' || item.userId === null)">
-                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-content-copy </v-icon> Copy Link (ผูกลูกค้า) </v-list-item-title>
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-content-copy </v-icon> คัดลอกลิงค์ (ผูกลูกค้า) </v-list-item-title>
                           </v-list-item>
                           <v-hover v-slot:default="{ hover }">
                           <v-list-item v-if="item.statusBt !== 'cancel' && item.statusBt !== 'confirmJob'" :disabled="item.chkCancel" @click.stop="setDataRemove(item)">
@@ -3334,314 +3284,6 @@
                           </v-hover>
                         </v-list>
                     </v-menu>
-                    <!-- <VueCustomTooltip label="ดูแผนที่" position="is-top" v-if="item.addressLatLong !== null"> -->
-                    <!-- <VueCustomTooltip label="ดูแผนที่" :position="filteredSelect.length === 1 ? 'is-top' : 'is-bottom'" v-if="item.addressLatLong !== null"> -->
-                      <!-- <v-btn
-                          color="blue-grey darken-1"
-                          fab
-                          small
-                          dark
-                          @click.stop="setShowMap(item)"
-                        >
-                          <v-icon dark> mdi-map-marker-radius-outline </v-icon>
-                        </v-btn>
-                    </VueCustomTooltip>
-                    <VueCustomTooltip label="แก้ไขข้อมูล" position="is-top">
-                        <v-btn
-                          color="yellow"
-                          fab
-                          small
-                          @click.stop="setDataEdit(item)"
-                        >
-                          <v-icon dark> mdi-tools </v-icon>
-                        </v-btn>
-                    </VueCustomTooltip>
-                    <VueCustomTooltip label="กลับไปสถานะก่อนหน้า" position="is-top"  v-if="item.statusBt === 'confirm'">
-                        <v-btn
-                          color="indigo"
-                          fab
-                          dark
-                          small
-                          @click.stop="updateStatusBookingTransaction(item)"
-                        >
-                          <v-icon dark> mdi-skip-backward </v-icon>
-                        </v-btn>
-                    </VueCustomTooltip>
-                    <VueCustomTooltip label="คัดลอก Link" position="is-top"  v-if="item.statusBt === 'wait' && item.depositCheckStatus === 'True'">
-                        <v-btn
-                          color="teal"
-                          fab
-                          dark
-                          small
-                          @click.stop="dialogShowDeposit = true, depositLink = 'https://betask-linked.web.app/Thank?shopId=' + $session.getAll().data.shopId + '&redirectBy=BookingForm&flowId=' + item.flowId + '&bookNo=' + item.bookNo"
-                        >
-                          <v-icon dark> mdi-link-variant</v-icon>
-                        </v-btn>
-                    </VueCustomTooltip>
-                    <VueCustomTooltip label="คืนเงินมัดจำ" position="is-top"  v-if="item.statusBt === 'confirm' && item.depositImge !== '' && item.depositCheckStatus === 'True'">
-                        <v-btn
-                          color="primary"
-                          fab
-                          small
-                          @click.stop="(dialogEdit = true), getBookingDataJob(item, 'qrcode')"
-                        >
-                          <v-icon dark> mdi-cash-refund </v-icon>
-                        </v-btn>
-                    </VueCustomTooltip>
-                    <VueCustomTooltip label="รับเข้าบริการ" position="is-top"  v-if="item.statusBt === 'confirm' && showOnsite === 'แสดง'">
-                        <v-btn
-                          color="primary"
-                          fab
-                          small
-                          @click.stop="(dialogEdit = true), getBookingDataJob(item, 'qrcode')"
-                        >
-                          <v-icon dark> mdi-account-plus </v-icon>
-                        </v-btn>
-                    </VueCustomTooltip>
-                    <VueCustomTooltip label="มอบหมายงาน" position="is-top"  v-if="item.statusBt === 'confirm' && showOnsite === 'ไม่แสดง'">
-                        <v-btn
-                          color="primary"
-                          fab
-                          small
-                          @click.stop="getBookingDataJob(item, 'qrcode'), getEmpSelectAddJob(), (dialogOnsite = true)"
-                        >
-                          <v-icon dark> mdi-account-plus </v-icon>
-                        </v-btn>
-                    </VueCustomTooltip>
-                    <VueCustomTooltip label="Copy Link (ผูกลูกค้า)" position="is-top"  v-if="item.statusBt === 'confirm' && (item.userId === 'user-skip' || item.userId === '' || item.userId === null)">
-                        <v-btn
-                          color="cyan"
-                          fab
-                          small
-                          v-clipboard:success="onCopySuccess"
-                          v-clipboard:copy="'https://liff.line.me/1656581804-7KRQyqo5/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId"
-                        >
-                          <v-icon dark> mdi-content-copy </v-icon>
-                        </v-btn>
-                    </VueCustomTooltip>
-                    <VueCustomTooltip label="ยืนยันนัดหมาย" position="is-top" v-if="item.statusBt !== 'confirmJob' && item.statusBt !== 'confirm'">
-                        <v-btn
-                          color="success"
-                          fab
-                          :disabled="item.chkConfirm"
-                          small
-                          @click.stop="confirmChk(item)"
-                        >
-                          <v-icon dark> mdi-phone-check </v-icon>
-                        </v-btn>
-                    </VueCustomTooltip>
-                    <VueCustomTooltip label="เปลี่ยนเวลานัดหมาย" position="is-top" v-if="item.statusBt !== 'confirmJob'">
-                        <v-badge
-                          avatar
-                          bordered
-                          overlap
-                          :content="item.countChangeTime"
-                          :value="item.countChangeTime"
-                          color="warning"
-                          class="mr-1"
-                          style="cursor: pointer"
-                        >
-                          <v-btn
-                            color="warning"
-                            fab
-                            small
-                            @click.stop="setDataChang(item)"
-                          >
-                            <v-icon> mdi-calendar-clock </v-icon>
-                          </v-btn>
-                        </v-badge>
-                    </VueCustomTooltip>
-                    <VueCustomTooltip label="ยกเลิกนัดหมาย" position="is-top" v-if="item.statusBt !== 'cancel' && item.statusBt !== 'confirmJob'">
-                        <v-btn
-                          color="error"
-                          fab
-                          small
-                          :disabled="item.chkCancel"
-                          @click.stop="setDataRemove(item)"
-                        >
-                          <v-icon dark> mdi-phone-cancel </v-icon>
-                        </v-btn>
-                    </VueCustomTooltip>
-                    <VueCustomTooltip label="QR Code สำหรับให้ลูกค้า" position="is-top" bottom v-if="item.statusBt === 'confirmJob'">
-                        <v-btn
-                          color="info"
-                          dark
-                          fab
-                          small
-                          @click.stop="(dialogJob = true), getjob(item)"
-                        >
-                          <v-icon> mdi-qrcode-scan </v-icon>
-                        </v-btn>
-                    </VueCustomTooltip>
-                    <VueCustomTooltip label="เปลี่ยนพนักงาน Onsite" position="is-top" bottom v-if="item.statusBt === 'confirmJob' && showOnsite === 'ไม่แสดง'">
-                        <v-btn
-                          color="info"
-                          dark
-                          fab
-                          small
-                          @click.stop="(dialogChangeOnsite = true), getChangeOnsite(item)"
-                        >
-                          <v-icon> mdi-account-reactivate </v-icon>
-                        </v-btn>
-                    </VueCustomTooltip> -->
-                    <!-- <VueCustomTooltip label="จบงาน" position="is-top" bottom v-if="item.statusBt === 'confirmJob' && item.jobNo !== ''">
-                        <v-btn
-                          color="#84C650"
-                          dark
-                          fab
-                          small
-                          @click.stop="(dialogCloseJob = true), getjob(item)"
-                        >
-                          <v-icon>  mdi-cash-usd-outline </v-icon>
-                        </v-btn>
-                    </VueCustomTooltip> -->
-                    <!-- <VueCustomTooltip label="ลบรายการนี้" position="is-top" bottom v-if="item.statusBt === 'cancel'">
-                        <v-btn
-                          color="red"
-                          dark
-                          fab
-                          small
-                          @click.stop="(dialogDelete = true), getDataById(item)"
-                        >
-                          <v-icon> mdi-delete </v-icon>
-                        </v-btn>
-                    </VueCustomTooltip> -->
-                    <!-- <v-tooltip bottom v-if="item.addressLatLong !== null">
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                          color="blue-grey darken-1"
-                          fab
-                          small
-                          dark
-                          @click.stop="setShowMap(item)"
-                          v-bind="attrs"
-                          v-on="on"
-                        >
-                          <v-icon dark> mdi-map-marker-radius-outline </v-icon>
-                        </v-btn>
-                      </template>
-                      <span>ดูแผนที่</span>
-                    </v-tooltip>
-                    <v-tooltip bottom>
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                          color="yellow"
-                          fab
-                          small
-                          @click.stop="setDataEdit(item)"
-                          v-bind="attrs"
-                          v-on="on"
-                        >
-                          <v-icon dark> mdi-tools </v-icon>
-                        </v-btn>
-                      </template>
-                      <span>แก้ไขข้อมูล</span>
-                    </v-tooltip>
-                    <v-tooltip bottom v-if="item.statusBt === 'confirm'">
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                          color="primary"
-                          fab
-                          small
-                          @click.stop="(dialogEdit = true), getBookingDataJob(item, 'qrcode')"
-                          v-bind="attrs"
-                          v-on="on"
-                        >
-                          <v-icon dark> mdi-account-plus </v-icon>
-                        </v-btn>
-                      </template>
-                      <span>รับรถเข้าศูนย์</span>
-                    </v-tooltip>
-                    <v-tooltip bottom v-if="item.statusBt !== 'confirmJob' && item.statusBt !== 'confirm'">
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                          color="success"
-                          fab
-                          :disabled="item.chkConfirm"
-                          small
-                          @click.stop="confirmChk(item)"
-                          v-bind="attrs"
-                          v-on="on"
-                        >
-                          <v-icon dark> mdi-phone-check </v-icon>
-                        </v-btn>
-                      </template>
-                      <span>ยืนยันนัดหมาย</span>
-                    </v-tooltip>
-                    <v-tooltip bottom v-if="item.statusBt !== 'confirmJob'">
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-badge
-                          avatar
-                          bordered
-                          overlap
-                          :content="item.countChangeTime"
-                          :value="item.countChangeTime"
-                          color="warning"
-                          class="mr-1"
-                          style="cursor: pointer"
-                        >
-                          <v-btn
-                            color="warning"
-                            fab
-                            small
-                            @click.stop="setDataChang(item)"
-                            v-bind="attrs"
-                            v-on="on"
-                          >
-                            <v-icon> mdi-calendar-clock </v-icon>
-                          </v-btn>
-                        </v-badge>
-                      </template>
-                      <span>เปลี่ยนเวลานัดหมาย</span>
-                    </v-tooltip>
-                    <v-tooltip bottom v-if="item.statusBt !== 'cancel' && item.statusBt !== 'confirmJob'">
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                          color="error"
-                          fab
-                          small
-                          :disabled="item.chkCancel"
-                          @click.stop="setDataRemove(item)"
-                          v-bind="attrs"
-                          v-on="on"
-                        >
-                          <v-icon dark> mdi-phone-cancel </v-icon>
-                        </v-btn>
-                      </template>
-                      <span>ยกเลิกนัดหมาย</span>
-                    </v-tooltip>
-                    <v-tooltip bottom v-if="item.statusBt === 'confirmJob'">
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                          color="info"
-                          dark
-                          fab
-                          small
-                          @click.stop="(dialogJob = true), getjob(item)"
-                          v-bind="attrs"
-                          v-on="on"
-                        >
-                          <v-icon> mdi-qrcode-scan </v-icon>
-                        </v-btn>
-                      </template>
-                      <span>QR Code สำหรับให้ลูกค้า</span>
-                    </v-tooltip>
-                    <v-tooltip bottom v-if="item.statusBt === 'cancel'">
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                          color="red"
-                          dark
-                          fab
-                          small
-                          @click.stop="(dialogDelete = true), getDataById(item)"
-                          v-bind="attrs"
-                          v-on="on"
-                        >
-                          <v-icon> mdi-delete </v-icon>
-                        </v-btn>
-                      </template>
-                      <span>ลบรายการนี้</span>
-                    </v-tooltip> -->
                   </template>
                 </v-data-table>
               </v-card-text>
@@ -3654,11 +3296,27 @@
         </v-row>
         <v-dialog v-model="dialogMap" :max-width="dialogwidth">
            <v-card class="text-center">
-          <v-card-title>
-            แสดงแผนที่
-          </v-card-title>
           <v-card-text>
               <v-container>
+                <v-row>
+                    <v-col cols="6" class="text-left pt-10">
+                      <h3><strong>แสดงแผนที่</strong></h3>
+                    </v-col>
+                    <v-col cols="6" class="pt-10">
+                      <div style="text-align: end;">
+                        <v-btn
+                          class="closeBt"
+                          fab
+                          small
+                          @click="dialogMap = false"
+                        >
+                          <v-icon large color="#F1F1F1 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
                 <v-row>
                   <v-col cols= "12" class="pb-0">
                     <v-text-field
@@ -3696,29 +3354,33 @@
                     </v-card>
                   </v-col>
                 </v-row>
-                <hr>
-                <div class="text-center">
-                  <v-btn
-                    elevation="10"
-                    color="#173053"
-                    outlined
-                    style="background-color:#FFFFFF"
-                    small
-                    @click="dialogMap = false"
-                    >ปิด</v-btn
-                  >
-                </div>
               </v-container>
           </v-card-text>
            </v-card>
         </v-dialog>
         <v-dialog v-model="dialogConfirm" :max-width="dialogwidth">
             <v-card class="text-center">
-              <v-card-title>
-                ยืนยันรายการนี้
-              </v-card-title>
               <v-card-text v-if="dataConfirmReady">
                 <v-container>
+                  <v-row>
+                    <v-col cols="6" class="text-left pt-10">
+                      <h3><strong>ยืนยันรายการนี้</strong></h3>
+                    </v-col>
+                    <v-col cols="6" class="pt-10">
+                      <div style="text-align: end;">
+                        <v-btn
+                          class="closeBt"
+                          fab
+                          small
+                          @click="dialogConfirm = false"
+                        >
+                          <v-icon large color="#F1F1F1 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
                 <v-row>
                   <v-col class="pb-0 pt-0" cols="12" v-if="dataPackage.filter(el => { return el.balanceAmount > 0 }).length > 0">
                     <v-card class="pl-1">
@@ -3817,21 +3479,13 @@
                 </v-row>
                 <div class="text-center">
                   <v-btn
-                    elevation="10"
+                    elevation="2"
                     color="#173053"
                     dark
-                    small
+                    block
+                    large
                     @click="onConfirm(dataConfirm)"
                     >ยืนยันรายการนี้</v-btn
-                  >
-                  <v-btn
-                    elevation="10"
-                    color="#173053"
-                    outlined
-                    style="background-color:#FFFFFF"
-                    small
-                    @click="dialogConfirm = false"
-                    >ยกเลิก</v-btn
                   >
                 </div>
                 </v-container>
@@ -3845,44 +3499,27 @@
           <!-- <v-dialog v-model="dialogAdd" persistent max-width="70%"> -->
             <v-card class="text-center">
                 <v-card-text>
-                    <v-col class="text-right pa-0">
-                      <v-btn
-                        small
-                        color="#E0E0E0"
-                        @click="(dialogEditData = false, this.dataEditReady = true)"
-                      >
-                        <v-icon color="#173053">mdi-close</v-icon>
-                      </v-btn>
+                  <v-row>
+                    <v-col cols="6" class="text-left pt-10">
+                      <h3><strong>แก้ไขข้อมูล</strong></h3>
                     </v-col>
+                    <v-col cols="6" class="pt-10">
+                      <div style="text-align: end;">
+                        <v-btn
+                          class="closeBt"
+                          fab
+                          small
+                          @click="(dialogEditData = false, this.dataEditReady = true)"
+                        >
+                          <v-icon large color="#F1F1F1 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
                     <v-row justify="center">
-                      <!-- <v-col
-                        cols="6"
-                      > -->
-                      <!-- <v-col
-                        cols="8"
-                        class="text-center d-none d-sm-flex"
-                        style="margin: auto 0;"
-                      > -->
-                        <!-- <v-col class="text-center">
-                          <CalendarBooking ref="CalendarBooking"></CalendarBooking> -->
-                          <!-- <v-img
-                            class="v-margit_img_reward"
-                            :src="require('@/assets/AddBookingList.svg')"
-                            max-width="470.37"
-                            max-height="247"
-                          ></v-img> -->
-                        <!-- </v-col> -->
-                      <!-- </v-col> -->
-
                       <v-col cols="12">
-                      <!-- <v-col cols="12" sm="6" md="6" lg="6" class="v-margit_text_add mt-0 pa-0"> -->
-                        <v-col class="text-center pa-3 ml-2">
-                          <h3 style="font-size:10vw;" class="underline-06">แก้ไขข้อมูล</h3>
-                          <!-- <v-img
-                            class="v_text_add"
-                            :src="require('@/assets/Grouptitle.svg')"
-                          ></v-img> -->
-                        </v-col>
                         <v-col class="pb-0 pt-0" cols="12" v-if="dataPackage.filter(el => { return el.balanceAmount > 0 && el.packageId === packageId && el.token === tokenPackage }).length > 0 && dataPackageDefault === true">
                         <v-card class="pl-1">
                           <!-- <v-subheader>ลูกค้ามี {{dataPackage.filter(el => { return el.balanceAmount > 0 && el.packageId === packageId && el.token === tokenPackage }).length}} แพ็คเกจ</v-subheader> -->
@@ -4498,6 +4135,7 @@
                               elevation="2"
                               large
                               color="#173053"
+                              block
                               class="text-white"
                               :loading="loadingEdit"
                               :disabled="loadingEdit"
@@ -4511,7 +4149,7 @@
                               <v-icon left>mdi-checkbox-marked-circle</v-icon>
                               แก้ไขข้อมูล
                             </v-btn>
-                            <v-btn
+                            <!-- <v-btn
                               elevation="2"
                               large
                               color="red"
@@ -4520,7 +4158,7 @@
                             >
                               <v-icon left>mdi-close</v-icon>
                               ปิด
-                            </v-btn>
+                            </v-btn> -->
                           </div>
                         </v-col>
                         </v-form>
@@ -4586,11 +4224,29 @@
           </v-dialog>
           <v-dialog v-model="dialogTag" persistent max-width="40%">
             <v-card>
-              <v-card-title>
-                <span class="headline">อัพเดท Tag</span>
-              </v-card-title>
               <v-card-text>
                 <v-container>
+                  <v-row>
+                    <v-col cols="6" class="text-left pt-10">
+                      <h3><strong>อัพเดท Tag</strong></h3>
+                    </v-col>
+                    <v-col cols="6" class="pt-10">
+                      <div style="text-align: end;">
+                        <v-btn
+                          class="closeBt"
+                          fab
+                          small
+                          @click="dialogTag = false"
+                        >
+                          <v-icon large color="#F1F1F1 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12">
                   <v-autocomplete
                     v-model="tagData"
                     :items="tagItem"
@@ -4601,54 +4257,67 @@
                     label="รายการ Tag"
                     multiple
                   ></v-autocomplete>
+                  </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="6">
+                      <v-btn
+                        elevation="2"
+                        large
+                        block
+                        color="wait"
+                        text
+                        @click="editTagData()"
+                        :loading="loadingTag"
+                        :disabled="loadingTag"
+                      >
+                        <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                        อัพเดท
+                      </v-btn>
+                    </v-col>
+                    <v-col cols="6">
+                      <v-btn
+                        elevation="2"
+                        large
+                        block
+                        color="success"
+                        text
+                        @click="dialogAddTag = true"
+                        :loading="loadingTag"
+                        :disabled="loadingTag"
+                      >
+                        <v-icon left>mdi-tag-plus</v-icon>
+                        เพิ่ม Tag
+                      </v-btn>
+                    </v-col>
+                  </v-row>
                 </v-container>
               </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn
-                  elevation="2"
-                  x-large
-                  color="red darken-1"
-                  text
-                  @click="dialogTag = false"
-                  :loading="loadingTag"
-                  :disabled="loadingTag"
-                >
-                  <v-icon left> mdi-cancel</v-icon>
-                  ปิด
-                </v-btn>
-                <v-btn
-                  elevation="2"
-                  x-large
-                  color="wait"
-                  text
-                  @click="editTagData()"
-                  :loading="loadingTag"
-                  :disabled="loadingTag"
-                >
-                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                  อัพเดท
-                </v-btn>
-                <v-btn
-                  elevation="2"
-                  x-large
-                  color="success"
-                  text
-                  @click="dialogAddTag = true"
-                  :loading="loadingTag"
-                  :disabled="loadingTag"
-                >
-                  <v-icon left>mdi-tag-plus</v-icon>
-                  เพิ่ม Tag
-                </v-btn>
-              </v-card-actions>
             </v-card>
           </v-dialog>
           <v-dialog v-model="dialogDeposit" persistent max-width="80%">
             <v-card>
-              <v-card-title>
-                <span class="headline">อัพเดทหลักฐานเงินมัดจำ</span>
-              </v-card-title>
+              <v-container>
+                <v-row style="padding-left: 2%;padding-top: 2%;">
+                  <v-col cols="6" class="text-left">
+                    <h3><strong>อัพเดทหลักฐานเงินมัดจำ</strong></h3>
+                  </v-col>
+                  <v-col cols="6">
+                    <div style="text-align: end;">
+                      <v-btn
+                        class="closeBt"
+                        fab
+                        small
+                        @click="dialogDeposit = false, pictureUrlPreviewDeposit = null"
+                      >
+                        <v-icon large color="#F1F1F1 ">
+                          mdi-close
+                        </v-icon>
+                      </v-btn>
+                    </div>
+                  </v-col>
+                </v-row>
+              </v-container>
               <v-card-text v-if="pictureUrlPreviewDeposit === ''">
                 <v-alert
                     dense
@@ -4704,7 +4373,7 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn
+                <!-- <v-btn
                   elevation="2"
                   x-large
                   color="red darken-1"
@@ -4715,7 +4384,7 @@
                 >
                   <v-icon left> mdi-cancel</v-icon>
                   ปิด
-                </v-btn>
+                </v-btn> -->
                 <v-btn
                   elevation="2"
                   x-large
@@ -4746,31 +4415,46 @@
           </v-dialog>
           <v-dialog v-model="dialogAddTag"
           persistent
-          max-width="30%"
+          max-width="40%"
         >
           <v-card>
-            <v-card-title>
-                <span class="headline">เพิ่ม Tag</span>
-              </v-card-title>
               <v-card-text>
                 <v-container>
+                  <v-row>
+                    <v-col cols="6" class="text-left pt-10">
+                      <h3><strong>เพิ่ม Tag</strong></h3>
+                    </v-col>
+                    <v-col cols="6" class="pt-10">
+                      <div style="text-align: end;">
+                        <v-btn
+                          class="closeBt"
+                          fab
+                          small
+                          @click="dialogAddTag = false , tagName = ''"
+                        >
+                          <v-icon large color="#F1F1F1 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12">
                   <v-text-field
                     v-model="tagName"
                     label="กรอกข้อมูล Tag"
                     outlined
+                    dense
                   ></v-text-field>
+                  </v-col>
+                  </v-row>
                   <div class="text-center">
                     <v-btn
-                      small class="ma-2" color="#173053" dark
+                      large block color="#173053" dark
                       @click="AddDataTag()"
                     >
                       บันทึก
-                    </v-btn>
-                    <v-btn
-                      small class="ma-2" color="#173053" outlined dark
-                      @click="dialogAddTag = false , tagName = ''"
-                    >
-                      ปิด
                     </v-btn>
                   </div>
                 </v-container>
@@ -4780,10 +4464,29 @@
         <v-dialog v-model="dialogHistory" scrollable persistent max-width="50%">
             <v-card>
               <v-card-title>
-                <span class="headline">ประวัติเข้ารับบริการ</span>
+                <span class="headline"></span>
               </v-card-title>
               <v-card-text>
                 <v-container>
+                  <v-row>
+                    <v-col cols="6" class="text-left pt-10">
+                      <h3><strong>ประวัติเข้ารับบริการ</strong></h3>
+                    </v-col>
+                    <v-col cols="6" class="pt-10">
+                      <div style="text-align: end;">
+                        <v-btn
+                          class="closeBt"
+                          fab
+                          small
+                          @click="dialogHistory = false"
+                        >
+                          <v-icon large color="#F1F1F1 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
                    <v-row >
                     <v-col class="main" col="12" md="12" sm="12" >
                       <v-card class="p-3 " min-height="70vh" rounded>
@@ -4867,19 +4570,6 @@
                   </v-row>
                 </v-container>
               </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn
-                  elevation="2"
-                  x-large
-                  color="red darken-1"
-                  text
-                  @click="dialogHistory = false"
-                >
-                  <v-icon left> mdi-cancel</v-icon>
-                  ปิด
-                </v-btn>
-              </v-card-actions>
             </v-card>
           </v-dialog>
           <!-- DIALOG ค่าใช้จ่าย -->
@@ -4986,10 +4676,28 @@
         <!-- end add -->
         <v-dialog v-model="dialogBookingAgain" persistent :max-width="dialogwidth">
             <v-card class="text-center">
-              <v-card-title>นัดหมายอีกครั้ง</v-card-title>
               <v-form ref="form_bookingAgain" v-model="validBookingAgain" lazy-validation>
                 <v-card-text>
                   <v-container>
+                    <v-row>
+                    <v-col cols="6" class="text-left pt-10">
+                      <h3><strong>นัดหมายอีกครั้ง</strong></h3>
+                    </v-col>
+                    <v-col cols="6" class="pt-10">
+                      <div style="text-align: end;">
+                        <v-btn
+                          class="closeBt"
+                          fab
+                          small
+                          @click="dialogBookingAgain = false"
+                        >
+                          <v-icon large color="#F1F1F1 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
                     <v-row>
                        <v-col class="pa-0" cols= "12" v-for="(item, index) in bookingData" :key="index">
                         <h6 class="text-center" v-if="item.fieldValue !== ''"><strong>{{item.fieldName}} : </strong> {{item.fieldValue}}</h6>
@@ -5066,22 +4774,12 @@
                       elevation="10"
                       color="green darken-1"
                       dark
-                      small
+                      large
+                      block
                       :loading="loadingBookingAgain"
                       :disabled="loadingBookingAgain"
                       @click="addBookingAgain()"
                       >ยืนยันนัดหมาย</v-btn
-                    >
-                    <v-btn
-                      elevation="10"
-                      color="#173053"
-                      outlined
-                      style="background-color:#FFFFFF"
-                      small
-                      :loading="loadingBookingAgain"
-                      :disabled="loadingBookingAgain"
-                      @click="dialogBookingAgain = false"
-                      >ยกเลิก</v-btn
                     >
                   </div>
                   </v-container>
@@ -6015,10 +5713,12 @@
           </v-dialog>
           <v-dialog v-model="dialogShowDeposit" persistent :max-width="dialogwidth">
             <v-card>
-              <v-card-title class="text-h5">
-                คัดลอก Link มัดจำ
-              </v-card-title>
               <v-card-text>
+                <v-row>
+                    <v-col cols="12" class="text-left pt-10">
+                      <h3><strong>คัดลอกลิงค์ มัดจำ</strong></h3>
+                    </v-col>
+                  </v-row>
                  <v-row align-content="center">
                   <v-col cols="12"  class="pb-0">
                     <v-text-field
@@ -6032,17 +5732,19 @@
                     </v-text-field>
                   </v-col>
                 </v-row>
+                 <v-row>
+                    <v-col cols="12">
+                      <v-btn
+                        color="#73777B"
+                        large
+                        block
+                        @click="FunCopyDeposit(), dialogShowDeposit = false"
+                      >
+                        คัดลอก
+                      </v-btn>
+                    </v-col>
+                 </v-row>
               </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn
-                  color="green darken-1"
-                  text
-                  @click="FunCopyDeposit(), dialogShowDeposit = false"
-                >
-                  คัดลอก
-                </v-btn>
-              </v-card-actions>
             </v-card>
           </v-dialog>
           <RetureDeposit ref="RetureDeposit"></RetureDeposit>
@@ -7875,8 +7577,8 @@ export default {
       // console.log(event)
     },
     setFlowAdd () {
-      if (this.DataFlowName.filter(el => { return el.value === this.formAdd.flowId }).length > 0) {
-        this.checkDepositAdd = this.DataFlowName.filter(el => { return el.value === this.formAdd.flowId })[0].allData.checkDeposit || 'False'
+      if (this.dataFlowSelectAdd.filter(el => { return el.value === this.formAdd.flowId }).length > 0) {
+        this.checkDepositAdd = this.dataFlowSelectAdd.filter(el => { return el.value === this.formAdd.flowId })[0].allData.checkDeposit || 'False'
       } else {
         this.checkDepositAdd = 'False'
       }
@@ -8008,6 +7710,7 @@ export default {
                   s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
                   s.depositStatus = d.depositStatus || 'False'
                   s.depositImge = d.depositImge || ''
+                  s.depositReturnImge = d.depositReturnImge || ''
                   s.lineUserId = d.lineUserId
                   s.memberPicture = d.memberPicture
                   s.timeDueHtext = d.timeDueH + ':00'
@@ -8719,6 +8422,7 @@ export default {
       }
       this.getBookingField()
       this.checkTime()
+      this.setFlowAdd()
       this.$refs.CalendarBooking.setdataReturnReady()
     },
     async getDataDefault () {
@@ -10393,6 +10097,7 @@ export default {
                 s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
                 s.depositStatus = d.depositStatus || 'False'
                 s.depositImge = d.depositImge || ''
+                s.depositReturnImge = d.depositReturnImge || ''
                 s.lineUserId = d.lineUserId
                 s.memberPicture = d.memberPicture
                 s.timeDueHtext = d.timeDueH + ':00'
@@ -10551,6 +10256,7 @@ export default {
                 s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
                 s.depositStatus = d.depositStatus || 'False'
                 s.depositImge = d.depositImge || ''
+                s.depositReturnImge = d.depositReturnImge || ''
                 s.lineUserId = d.lineUserId
                 s.memberPicture = d.memberPicture
                 s.timeDueHtext = d.timeDueH + ':00'
@@ -12747,6 +12453,20 @@ export default {
 </script>
 
 <style scoped>
+.closeBt {
+  background-color: #dadada !important;
+  border: none;
+  /* padding: 20px !important; */
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 1px 2px;
+  cursor: pointer;
+  /* height: 60% !important;
+  width: 36px !important;
+  border-radius: 50%; */
+}
 .videoWrapper {
   position: relative;
   padding-bottom: 56.25%;

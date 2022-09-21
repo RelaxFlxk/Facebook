@@ -3,15 +3,15 @@
     <v-main>
       <v-dialog
         v-model="dialogHistoryCall"
-        max-width="60%"
+        max-width="700px"
         persistent
-        style="background: #FFFFFF;box-shadow: 0px 1px 28px rgba(0, 0, 0, 0.12);border-radius: 14px; height:900px"
+        style="background: #FFFFFF;box-shadow: 0px 1px 28px rgba(0, 0, 0, 0.12);border-radius: 14px;"
       >
-        <v-card height="900px">
+        <v-card height="770px">
           <v-container>
             <v-row style="padding-left: 2%;padding-top: 2%;">
               <v-col cols="6" class="text-left">
-                <h1>บันทึกการโทร</h1>
+                <h3><strong>บันทึกการโทร</strong></h3>
               </v-col>
               <v-col cols="6">
                 <div style="text-align: end;">
@@ -40,9 +40,9 @@
                     style="padding-left: 3%; padding-right: 1%; color: #69D1FD"
                     >*</span
                   >
-                  <h4 style="color : #161616">
+                  <h5 style="color : #161616">
                     กรุณากรอกข้อมูลเพื่อเก็บประวัติการโทร
-                  </h4>
+                  </h5>
                 </v-row>
               </v-col>
             </v-row>
@@ -55,12 +55,12 @@
                   >
                   <v-tab href="#tab-2"><h3>ประวัติการโทร</h3></v-tab>
                   <v-tab-item transition="fade-transition" value="tab-1">
-                    <v-container fluid>
+                    <v-container>
                       <v-row v-if="param">
                         <v-col>
                           <v-form ref="form_add" lazy-validation>
                             <v-card
-                              style="width: 67%;height: 542px;background: #FFFFFF;box-shadow: 1.5px 2.6px 10px rgba(119, 119, 119, 0.1);"
+                              style="height: 470px;background: #FFFFFF;box-shadow: 1.5px 2.6px 10px rgba(119, 119, 119, 0.1);"
                               class="mx-auto"
                             >
                               <v-container>
@@ -156,7 +156,7 @@
                                   </v-col>
                                 </v-row>
                                 <v-row
-                                  style="padding: 10px 15px 0px 15px; height: 85px;"
+                                  style="padding: 10px 15px 0px 15px;"
                                 >
                                   <v-col cols="12" style="padding: 0px 15px">
                                     <v-subheader class="subheader"
@@ -176,14 +176,15 @@
                               </v-container>
                             </v-card>
                             <br />
-                            <v-row class="mx-auto">
+                            <v-row>
                               <v-col class="text-center">
                                 <v-btn
-                                  x-large
+                                  large
                                   color="#14AE5C"
-                                  style="width: 70%; height: 67px;"
+                                  block
+                                  dark
                                   @click="validate(), addData()"
-                                  ><h2>บันทึก</h2></v-btn
+                                  ><strong>บันทึก</strong></v-btn
                                 >
                               </v-col>
                             </v-row>
@@ -194,7 +195,7 @@
                         <v-col>
                           <v-form ref="form_update" lazy-validation>
                             <v-card
-                              style="width: 67%;height: 542px;background: #FFFFFF;box-shadow: 1.5px 2.6px 10px rgba(119, 119, 119, 0.1);"
+                              style="height: 470px;background: #FFFFFF;box-shadow: 1.5px 2.6px 10px rgba(119, 119, 119, 0.1);"
                               class="mx-auto"
                             >
                               <!-- {{formUpdate}} -->
@@ -311,14 +312,15 @@
                               </v-container>
                             </v-card>
                             <br />
-                            <v-row class="mx-auto" v-if="!param">
+                            <v-row v-if="!param">
                               <v-col class="text-center">
                                 <v-btn
-                                  x-large
+                                  large
+                                  block
+                                  dark
                                   color="#14AE5C"
-                                  style="width: 70%; height: 67px;"
                                   @click="editData()"
-                                  ><h2>แก้ไข</h2></v-btn
+                                  ><strong>แก้ไข</strong></v-btn
                                 >
                               </v-col>
                             </v-row>
@@ -328,7 +330,7 @@
                     </v-container>
                   </v-tab-item>
                   <v-tab-item value="tab-2" transition="fade-transition">
-                    <v-container fluid>
+                    <v-container>
                       <v-row>
                         <v-col>
                           <v-data-table
