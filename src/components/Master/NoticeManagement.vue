@@ -21,22 +21,27 @@
         >
           <v-card class="pa-3" min-height="600" style="overflow-x: hidden;">
             <v-form ref="form" v-model="valid" lazy-validation>
-              <div style="text-align: end;">
-                <v-btn
-                  fab
-                  small
-                  dark
-                  color="#F3F3F3"
-                  @click="reset"
-                >
-                  <v-icon dark
-                  color="#FE4A01 ">
-                    mdi-close
-                  </v-icon>
-                </v-btn>
-            </div>
+            <v-row>
+                <v-col cols="10" class="text-left pt-10">
+                <h3><strong>ตั้งค่าการแจ้งเตือน</strong></h3>
+                </v-col>
+                <v-col cols="2" class="pt-10">
+                <div style="text-align: end;">
+                    <v-btn
+                    class="mx-2"
+                    fab
+                    small
+                    dark
+                    color="white"
+                    :style="styleCloseBt"
+                    @click="reset"
+                    >
+                    X
+                    </v-btn>
+                </div>
+                </v-col>
+            </v-row>
             <v-col class="text-left py-0">
-              <h2 class="font-weight-bold"  style="color:#000000;">ตั้งค่าการแจ้งเตือน</h2>
               <p class="font-weight-medium"  style="color:#000000;"><v-icon class="mr-1" color="#69D1FD" style="font-size: 10px">mdi-checkbox-blank-circle</v-icon>สร้างกลุ่มเป้าหมาย</p>
             </v-col>
             <v-row class="pa-3 ma-0">
@@ -180,7 +185,7 @@
                 </v-row>
               </v-card>
             </v-col>
-            <v-col class="text-left py- mt-3">
+            <v-col class="text-left py- mt-3 pb-0">
               <p class="font-weight-medium"  style="color:#000000;"><v-icon class="mr-1" color="#69D1FD" style="font-size: 10px">mdi-checkbox-blank-circle</v-icon>ข้อความ</p>
                 <v-textarea
                     v-model="formSendNotify.message"
@@ -192,18 +197,19 @@
                     :rules="required"
                   ></v-textarea>
             </v-col>
-            <div class="text-ceer">
+            <v-col cols="12" class="pt-0">
               <v-btn
                 block
                 class="ma-2 ml-n1"
                 color="#14AE5C"
                 dark
+                large
                 :readonly="!valid"
                 @click="validate"
               >
                 ส่งข้อความ
               </v-btn>
-            </div>
+            </v-col>
             </v-form>
           </v-card>
         </v-dialog>

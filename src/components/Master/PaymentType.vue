@@ -18,36 +18,29 @@
           <!-- ADD -->
           <v-dialog v-model="dialogAdd" persistent max-width="30%">
             <v-card>
-            <v-container>
-                <div style="text-align: end;">
-                        <v-btn
-                          fab
-                          small
-                          dark
-                          color="#F3F3F3"
-                          @click="(dialogAdd = false), clearData()"
-                        >
-                          <v-icon dark
-                          color="#FE4A01 ">
-                            mdi-close
-                          </v-icon>
-                        </v-btn>
-                        </div>
-              </v-container>
-              <center>
-              <v-col>
-                <v-img id="v_img_addpay" :src="require('@/assets/Groupadd.png')" max-width="330"></v-img>
-              </v-col>
-              </center>
-              <center>
-                <v-col>
-                  <!-- <v-img class="v_text_add" :src="require('@/assets/Grouptitle.svg')"></v-img> -->
-                  <h4 style="font-size:7vw;" class="underline-06">เพิ่ม ช่องทางการชำระเงิน</h4>
-                </v-col>
-              </center>
               <v-form ref="form_add" v-model="validAdd" lazy-validation>
               <v-card-text>
                 <v-container>
+                  <v-row>
+                    <v-col cols="8" class="text-left pt-10">
+                    <h3><strong>เพิ่มช่องทางการชำระเงิน</strong></h3>
+                    </v-col>
+                    <v-col cols="4" class="pt-10">
+                    <div style="text-align: end;">
+                        <v-btn
+                        class="mx-2"
+                        fab
+                        small
+                        dark
+                        color="white"
+                        :style="styleCloseBt"
+                        @click="(dialogAdd = false), clearData()"
+                        >
+                        X
+                        </v-btn>
+                    </div>
+                    </v-col>
+                </v-row>
                   <v-row justify="center">
                     <v-col cols="12" class="text-center">
                       <v-img
@@ -86,11 +79,12 @@
               </v-form>
 
                 <center>
-                  <v-col class="text-center">
+                  <v-col class="text-center pt-0">
                 <v-btn
                   elevation="2"
                   block
                   dark
+                  large
                   :disabled="!validAdd"
                   color="#1B437C"
                   @click="addData()"
@@ -107,36 +101,29 @@
           <!-- edit -->
           <v-dialog v-model="dialogEdit" persistent max-width="30%">
             <v-card>
-            <v-container>
-                <div style="text-align: end;">
-                        <v-btn
-                          fab
-                          small
-                          dark
-                          color="#F3F3F3"
-                          @click="(dialogEdit = false), clearData()"
-                        >
-                          <v-icon dark
-                          color="#FE4A01 ">
-                            mdi-close
-                          </v-icon>
-                        </v-btn>
-                        </div>
-              </v-container>
-              <center>
-              <v-col>
-                <v-img id="v_img_addpay" :src="require('@/assets/payment.png')" max-width="330"></v-img>
-              </v-col>
-              </center>
-              <center>
-                <v-col>
-                  <!-- <v-img class="v_text_add" :src="require('@/assets/Grouptitle.svg')"></v-img> -->
-                  <h4 style="font-size:7vw;" class="underline-06">แก้ไข ช่องทางการชำระเงิน</h4>
-                </v-col>
-              </center>
               <v-form ref="form_add" v-model="validAdd" lazy-validation>
               <v-card-text>
                 <v-container>
+                  <v-row>
+                    <v-col cols="10" class="text-left pt-10">
+                    <h3><strong>แก้ไขช่องทางการชำระเงิน</strong></h3>
+                    </v-col>
+                    <v-col cols="2" class="pt-10">
+                    <div style="text-align: end;">
+                        <v-btn
+                        class="mx-2"
+                        fab
+                        small
+                        dark
+                        color="white"
+                        :style="styleCloseBt"
+                        @click="(dialogEdit = false), clearData()"
+                        >
+                        X
+                        </v-btn>
+                    </div>
+                    </v-col>
+                </v-row>
                   <v-row justify="center">
                     <v-col cols="12" class="text-center">
                       <v-img
@@ -175,10 +162,11 @@
               </v-form>
 
                 <center>
-                  <v-col class="text-center">
+                  <v-col class="text-center pt-0">
                 <v-btn
                   elevation="2"
                   block
+                  large
                   dark
                   :disabled="!validAdd"
                   color="#1B437C"
@@ -196,17 +184,28 @@
           <!-- delete -->
           <v-dialog v-model="dialogDelete" max-width="450px">
             <v-card>
-              <br>
-              <center>
-              <v-col>
-                <v-img id="v-img-cash" :src="require('@/assets/cash.png')"></v-img>
-              </v-col>
-              </center>
-              <v-col class="text-center">
-                <span class="headline">ลบข้อมูลนี้</span>
-              </v-col>
               <v-card-text>
                 <v-container>
+                  <v-row>
+                    <v-col cols="10" class="text-left pt-10">
+                    <h3><strong>ลบข้อมูลนี้</strong></h3>
+                    </v-col>
+                    <v-col cols="2" class="pt-10">
+                    <div style="text-align: end;">
+                        <v-btn
+                        class="mx-2"
+                        fab
+                        small
+                        dark
+                        color="white"
+                        :style="styleCloseBt"
+                        @click="dialogDelete = false"
+                        >
+                        X
+                        </v-btn>
+                    </div>
+                    </v-col>
+                </v-row>
                   <v-row>
                     <v-col cols="12">
                       <v-row style="height: 35px">
@@ -232,22 +231,13 @@
                 <v-btn
                   dark
                   elevation="2"
-                  x-large
-                  color="#FD8087"
+                  large
+                  block
+                  color="#1B437C"
                   @click="deleteData()"
                 >
                   <v-icon left>mdi-checkbox-marked-circle</v-icon>
                   ลบ
-                </v-btn>
-                <v-btn
-                  dark
-                  elevation="2"
-                  x-large
-                  color="#1B437C"
-                  @click="dialogDelete = false"
-                >
-                  <v-icon left> mdi-cancel</v-icon>
-                  ยกเลิก
                 </v-btn>
               </v-col>
             </v-card>

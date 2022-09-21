@@ -25,31 +25,27 @@
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
                 <v-card-text>
                   <v-container>
-                    <div style="text-align: end;">
-                        <v-btn
+                    <v-row>
+                      <v-col cols="10" class="text-left pt-10">
+                      <h3><strong>{{ formUpdate.flowName }}</strong></h3>
+                      </v-col>
+                      <v-col cols="2" class="pt-10">
+                      <div style="text-align: end;">
+                          <v-btn
+                          class="mx-2"
                           fab
                           small
                           dark
-                          color="#F3F3F3"
+                          color="white"
+                          :style="styleCloseBt"
                           @click="(dialogStep = false), clearData()"
-                        >
-                          <v-icon dark
-                          color="#FE4A01 ">
-                            mdi-close
-                          </v-icon>
-                        </v-btn>
-                    </div>
-                    <!-- <v-row class="mb-6" justify="center">
-                      <v-col md="auto">
-                        <v-img
-                        :src="require('@/assets/FlowStep.svg')"
-                      ></v-img>
+                          >
+                          X
+                          </v-btn>
+                      </div>
                       </v-col>
-                    </v-row> -->
+                  </v-row>
                     <v-row justify="center">
-                      <v-col md="auto">
-                        <h2 class="font-weight-bold" style="color:#173053;">{{ formUpdate.flowName }}</h2>
-                      </v-col>
                       <!-- ADD steptitle-->
                       <v-dialog
                         v-model="dialogAddStepTitle"
@@ -385,24 +381,28 @@
               <v-form ref="form_add" v-model="validAdd" lazy-validation>
                 <v-card-text>
                   <v-container>
-                    <div class="text-end">
-                        <v-btn
-                        class="mx-2"
-                        fab
-                        small
-                        dark
-                        color="white"
-                        style="color:red;font-size:20px;"
-                        @click="(dialogAdd = false), clearData()"
-                        >
-                        X
-                        </v-btn>
-                    </div>
+                    <v-row>
+                      <v-col cols="10" class="text-left pt-10">
+                      <h3><strong>เพิ่มข้อมูลบริการ</strong></h3>
+                      </v-col>
+                      <v-col cols="2" class="pt-10">
+                      <div style="text-align: end;">
+                          <v-btn
+                          class="mx-2"
+                          fab
+                          small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
+                          @click="(dialogAdd = false), clearData()"
+                          >
+                          X
+                          </v-btn>
+                      </div>
+                      </v-col>
+                  </v-row>
                     <v-row >
                       <v-col cols="12" class="v-margit_text_add mt-1">
-                        <v-col class="text-left py-0">
-                          <h2 class="font-weight-bold"  style="color:#173053;">เพิ่มข้อมูล บริการ</h2>
-                        </v-col>
                         <v-col cols="12" class="pb-0">
                           <v-text-field
                             v-model="formAdd.flowName"
@@ -557,25 +557,28 @@
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
                 <v-card-text>
                   <v-container>
-                        <div style="text-align: end;">
-                        <v-btn
+                    <v-row>
+                      <v-col cols="10" class="text-left pt-10">
+                      <h3><strong>แก้ไขข้อมูล</strong></h3>
+                      </v-col>
+                      <v-col cols="2" class="pt-10">
+                      <div style="text-align: end;">
+                          <v-btn
+                          class="mx-2"
                           fab
                           small
                           dark
-                          color="#F3F3F3"
+                          color="white"
+                          :style="styleCloseBt"
                           @click="(dialogEdit = false), clearData()"
-                        >
-                          <v-icon dark
-                          color="#FE4A01 ">
-                            mdi-close
-                          </v-icon>
-                        </v-btn>
-                        </div>
+                          >
+                          X
+                          </v-btn>
+                      </div>
+                      </v-col>
+                  </v-row>
                     <v-row>
                       <v-col cols="12" class="v-margit_text_add mt-1">
-                        <v-col class="text-left">
-                          <h2 class="font-weight-bold" style="color:#173053;">แก้ไขข้อมูล</h2>
-                        </v-col>
                         <v-col cols="12" class="pb-0">
                           <v-text-field
                             class="pa-0"
@@ -817,7 +820,7 @@
                             <v-btn
                               dark
                               elevation="2"
-                              x-large
+                              large
                               block
                               color="#173053"
                               :disabled="!validUpdate"
@@ -840,44 +843,35 @@
           <!-- delete -->
           <v-dialog v-model="dialogDelete" max-width="45%">
             <v-card>
-              <v-container>
-                    <div style="text-align: end;">
-                        <v-btn
-                          fab
-                          small
-                          dark
-                          color="#F3F3F3"
-                          @click="dialogDelete = false"
-                        >
-                          <v-icon dark
-                          color="#FE4A01 ">
-                            mdi-close
-                          </v-icon>
-                        </v-btn>
-                    </div>
-              </v-container>
-              <!-- <v-row class="mb-6" justify="center">
-                <v-col md="auto">
-                  <v-img
-                    :src="require('@/assets/GroupDelete.png')"
-
-                  ></v-img>
-                </v-col>
-              </v-row> -->
-              <!-- <v-col class="text-center">
-                <span class="headline">ลบข้อมูลนี้</span>
-              </v-col> -->
               <v-card-text class="pa-0 px-4">
                 <v-container>
                   <v-row>
+                      <v-col cols="10" class="text-left pt-10">
+                      <h3><strong>ลบรายการนี้</strong></h3>
+                      </v-col>
+                      <v-col cols="2" class="pt-10">
+                      <div style="text-align: end;">
+                          <v-btn
+                          class="mx-2"
+                          fab
+                          small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
+                          @click="dialogDelete = false"
+                          >
+                          X
+                          </v-btn>
+                      </div>
+                      </v-col>
+                  </v-row>
+                  <v-row>
                     <v-col cols="12">
-                      <v-row>
-                        <h3 class="font-weight-bold" style="color:#173053;">ชื่อประเภทบริการ</h3>
-                      </v-row>
                       <v-row >
                         <v-text-field
-                        dense
+                          dense
                           outlined
+                          label="ชื่อประเภทบริการ"
                           v-model="formUpdate.flowName"
                           readonly
                         ></v-text-field>
@@ -892,7 +886,7 @@
                   elevation="2"
                   block
                   large
-                  color="#FD8087"
+                  color="#173053"
                   @click="deleteData()"
                 >
                   <v-icon left>mdi-checkbox-marked-circle</v-icon>
@@ -904,29 +898,30 @@
           <!-- end delete -->
 
           <!-- set condition -->
-          <v-dialog v-model="dialogCondition" max-width="40%" persistent>
+          <v-dialog v-model="dialogCondition" max-width="60%" persistent>
             <v-card>
-              <v-container>
-                <div style="text-align: end;">
-                        <v-btn
+              <v-card-text v-if="dataConditionReady">
+                <v-container>
+                  <v-row>
+                      <v-col cols="10" class="text-left pt-10">
+                      <h3><strong>เงื่อนไขการให้บริการ</strong></h3>
+                      </v-col>
+                      <v-col cols="2" class="pt-10">
+                      <div style="text-align: end;">
+                          <v-btn
+                          class="mx-2"
                           fab
                           small
                           dark
-                          color="#F3F3F3"
+                          color="white"
+                          :style="styleCloseBt"
                           @click="dialogCondition = false, clearCondition()"
-                        >
-                          <v-icon dark
-                          color="#FE4A01 ">
-                            mdi-close
-                          </v-icon>
-                        </v-btn>
-                    </div>
-              <v-col class="text-center">
-                <h2 class="font-weight-bold" style="color:#173053;">เงื่อนไขการให้บริการ</h2>
-              </v-col>
-              </v-container>
-              <v-card-text v-if="dataConditionReady">
-                <v-container>
+                          >
+                          X
+                          </v-btn>
+                      </div>
+                      </v-col>
+                  </v-row>
                   <v-row>
                     <v-col cols="6" class="pb-0">
                       <v-row>
@@ -1031,26 +1026,28 @@
         <!-- dialog limitbookint -->
         <v-dialog v-model="dialoglimitbooking" max-width="70%" persistent >
           <v-card min-width="400px" min-height="500px" class="pa-1 " color="#F4F4F4">
-            <!-- <v-card-title>asdasdasdas</v-card-title> -->
-            <v-container>
-            <div style="display: flex;justify-content: space-between;" class="ml-5">
-              <h2 class="font-weight-bold" style="color:#173053;">ตั้งค่าวันหยุด / ตั้งจัดการเวลา</h2>
-            <v-btn
-              fab
-              small
-              dark
-              color="#F3F3F3"
-              @click="dialoglimitbooking = false, clearLimit()"
-            >
-              <v-icon dark
-              color="#FE4A01 ">
-                mdi-close
-              </v-icon>
-            </v-btn>
-            </div>
-            </v-container>
               <v-card-text>
                 <v-container>
+                  <v-row>
+                      <v-col cols="10" class="text-left pt-10">
+                      <h3><strong>ตั้งค่าวันหยุด / ตั้งจัดการเวลา</strong></h3>
+                      </v-col>
+                      <v-col cols="2" class="pt-10">
+                      <div style="text-align: end;">
+                          <v-btn
+                          class="mx-2"
+                          fab
+                          small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
+                          @click="dialoglimitbooking = false, clearLimit()"
+                          >
+                          X
+                          </v-btn>
+                      </div>
+                      </v-col>
+                  </v-row>
                   <v-form
                      ref="form_update"
                     v-model="valid_update"

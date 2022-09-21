@@ -312,11 +312,28 @@
     </v-card>
     <v-dialog v-model="dialogMap" max-width="90%">
            <v-card class="text-center">
-          <v-card-title>
-            แสดงแผนที่
-          </v-card-title>
           <v-card-text>
               <v-container>
+                <v-row>
+              <v-col cols="10" class="text-left pt-10">
+              <h3><strong>แสดงแผนที่</strong></h3>
+              </v-col>
+              <v-col cols="2" class="pt-10">
+              <div style="text-align: end;">
+                  <v-btn
+                  class="mx-2"
+                  fab
+                  small
+                  dark
+                  color="white"
+                  :style="styleCloseBt"
+                  @click="dialogMap = false"
+                  >
+                  X
+                  </v-btn>
+              </div>
+              </v-col>
+          </v-row>
                 <v-row>
                   <v-col cols= "12" class="pb-0">
                     <v-text-field
@@ -355,26 +372,33 @@
                     </v-card>
                   </v-col>
                 </v-row>
-                <hr>
-                <div class="text-center">
-                  <v-btn
-                    elevation="10"
-                    color="#173053"
-                    outlined
-                    style="background-color:#FFFFFF"
-                    small
-                    @click="dialogMap = false"
-                    >ปิด</v-btn
-                  >
-                </div>
               </v-container>
           </v-card-text>
            </v-card>
         </v-dialog>
     <v-dialog v-model="dialogChange" persistent max-width="90%">
       <v-card class="text-center">
-        <v-card-title>เปลี่ยนเวลานัดหมาย</v-card-title>
         <v-card-text>
+          <v-row>
+              <v-col cols="10" class="text-left pt-10">
+              <h3><strong>เปลี่ยนเวลานัดหมาย</strong></h3>
+              </v-col>
+              <v-col cols="2" class="pt-10">
+              <div style="text-align: end;">
+                  <v-btn
+                  class="mx-2"
+                  fab
+                  small
+                  dark
+                  color="white"
+                  :style="styleCloseBt"
+                  @click="dialogChange = false"
+                  >
+                  X
+                  </v-btn>
+              </div>
+              </v-col>
+          </v-row>
           <v-row>
             <v-col cols="12" class="pt-0 pb-0">
               <v-menu
@@ -441,23 +465,13 @@
           </v-row>
           <div class="text-center">
             <v-btn
-              elevation="10"
+              elevation="2"
               color="#173053"
               dark
-              small
+              large
+              block
               @click="changeChk(dataChange)"
               >เปลี่ยนเวลานัดหมาย</v-btn
-            >
-          </div>
-          <div class="text-center">
-            <v-btn
-              elevation="10"
-              color="#173053"
-              outlined
-              style="background-color:#FFFFFF"
-              small
-              @click="dialogChange = false"
-              >ยกเลิก</v-btn
             >
           </div>
         </v-card-text>
@@ -466,11 +480,28 @@
     </v-dialog>
     <v-dialog v-model="dialogConfirm" max-width="90%">
             <v-card class="text-center">
-              <v-card-title>
-                ยืนยันรายการนี้
-              </v-card-title>
               <v-card-text>
                 <v-container>
+                  <v-row>
+              <v-col cols="10" class="text-left pt-10">
+              <h3><strong>ยืนยันรายการนี้</strong></h3>
+              </v-col>
+              <v-col cols="2" class="pt-10">
+              <div style="text-align: end;">
+                  <v-btn
+                  class="mx-2"
+                  fab
+                  small
+                  dark
+                  color="white"
+                  :style="styleCloseBt"
+                  @click="dialogConfirm = false"
+                  >
+                  X
+                  </v-btn>
+              </div>
+              </v-col>
+          </v-row>
                 <v-row>
                   <v-select
                     v-model="empSelect"
@@ -480,37 +511,44 @@
                     outlined
                     dense
                   ></v-select>
-                </v-row>
-                <div class="text-center">
                   <v-btn
-                    elevation="10"
+                    elevation="2"
                     color="#173053"
                     dark
-                    small
+                    large
+                    block
                     @click="onConfirm(dataConfirm)"
                     >ยืนยันรายการนี้</v-btn
                   >
-                  <v-btn
-                    elevation="10"
-                    color="#173053"
-                    outlined
-                    style="background-color:#FFFFFF"
-                    small
-                    @click="dialogConfirm = false"
-                    >ยกเลิก</v-btn
-                  >
-                </div>
+                </v-row>
                 </v-container>
               </v-card-text>
             </v-card>
           </v-dialog>
     <v-dialog v-model="dialogRemove" max-width="90%">
       <v-card class="text-center">
-        <v-card-title>
-          ยกเลิกรายการนี้
-        </v-card-title>
         <v-card-text>
           <v-container>
+            <v-row>
+              <v-col cols="10" class="text-left pt-10">
+              <h3><strong>ยกเลิกรายการนี้</strong></h3>
+              </v-col>
+              <v-col cols="2" class="pt-10">
+              <div style="text-align: end;">
+                  <v-btn
+                  class="mx-2"
+                  fab
+                  small
+                  dark
+                  color="white"
+                  :style="styleCloseBt"
+                  @click="dialogRemove = false"
+                  >
+                  X
+                  </v-btn>
+              </div>
+              </v-col>
+          </v-row>
           <v-row>
             <v-textarea
               v-model="remarkRemove"
@@ -528,26 +566,16 @@
               outlined
               dense
             ></v-select>
-          </v-row>
-          <div class="text-center">
             <v-btn
-              elevation="10"
+              elevation="2"
               color="#173053"
               dark
-              small
+              large
+              block
               @click="cancelChk()"
               >ยกเลิกรายการนี้</v-btn
             >
-            <v-btn
-              elevation="10"
-              color="#173053"
-              outlined
-              style="background-color:#FFFFFF"
-              small
-              @click="dialogRemove = false"
-              >ยกเลิก</v-btn
-            >
-          </div>
+          </v-row>
           </v-container>
         </v-card-text>
       </v-card>
@@ -555,13 +583,28 @@
     <v-dialog v-model="dialogConfirmOnsite" max-width="90%">
       <v-form ref="form_update" v-model="validUpdate" lazy-validation>
         <v-card class="text-center">
-          <v-container>
-            <v-card-title>
-              ยืนยันรายการนี้
-            </v-card-title>
-          </v-container>
           <v-card-text v-if="dataConfirmReady">
             <v-container>
+            <v-row>
+              <v-col cols="10" class="text-left pt-10">
+              <h3><strong>ยืนยันรายการนี้</strong></h3>
+              </v-col>
+              <v-col cols="2" class="pt-10">
+              <div style="text-align: end;">
+                  <v-btn
+                  class="mx-2"
+                  fab
+                  small
+                  dark
+                  color="white"
+                  :style="styleCloseBt"
+                  @click="dialogConfirmOnsite = false"
+                  >
+                  X
+                  </v-btn>
+              </div>
+              </v-col>
+          </v-row>
             <v-row>
               <v-col
                 v-for="(item, indexitem) in BookingDataItem"
@@ -700,26 +743,18 @@
                 auto-grow
               ></v-textarea>
               </v-col>
+              <v-col cols="12">
+                <v-btn
+                  elevation="2"
+                  color="#173053"
+                  dark
+                  large
+                  block
+                  @click="addDataJob(dataConfirm)"
+                  >ยืนยันรายการนี้</v-btn
+                >
+              </v-col>
             </v-row>
-            <div class="text-center">
-              <v-btn
-                elevation="10"
-                color="#173053"
-                dark
-                small
-                @click="addDataJob(dataConfirm)"
-                >ยืนยันรายการนี้</v-btn
-              >
-              <v-btn
-                elevation="10"
-                color="#173053"
-                outlined
-                style="background-color:#FFFFFF"
-                small
-                @click="dialogConfirmOnsite = false"
-                >ยกเลิก</v-btn
-              >
-            </div>
             </v-container>
           </v-card-text>
           <div class="text-center" v-if="!dataConfirmReady">

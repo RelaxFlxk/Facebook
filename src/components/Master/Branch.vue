@@ -18,40 +18,35 @@
           <!-- ADD -->
           <v-dialog v-model="dialogAdd" persistent max-width="35%">
             <v-card>
-              <v-container>
-                <div style="text-align: end;">
-                        <v-btn
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                      <v-col cols="8" class="text-left pt-10">
+                      <h3><strong>เพิ่มสาขา</strong></h3>
+                      </v-col>
+                      <v-col cols="4" class="pt-10">
+                      <div style="text-align: end;">
+                          <v-btn
+                          class="mx-2"
                           fab
                           small
                           dark
-                          color="#F3F3F3"
+                          color="white"
+                          :style="styleCloseBt"
                           @click="dialogAdd = false,clearData()"
-                        >
-                          <v-icon dark
-                          color="#FE4A01 ">
-                            mdi-close
-                          </v-icon>
-                        </v-btn>
-                        </div>
-              </v-container>
-              <v-col cols="12" class="pa-0 ma-0 mt-n5">
-                        <v-col class="text-left">
-                          <!-- <v-img
-                            id="v_text_edits"
-                            :src="require('@/assets/GroupEditTitle.svg')"
-                          ></v-img> -->
-                          <h2 class="font-weight-bold" style="color:#173053;">เพิ่มข้อมูล</h2>
-                        </v-col>
-              </v-col>
-              <v-card-text>
-                <v-container>
+                          >
+                          X
+                          </v-btn>
+                      </div>
+                      </v-col>
+                  </v-row>
                   <v-form
                     ref="form_add"
                     v-model="valid_add"
                     lazy-validation
                   >
                     <v-row>
-                    <v-col cols="12" class="pa-0">
+                    <v-col cols="12" class="pb-0">
                       <v-text-field
                       dense
                         label="ชื่อสาขา (ภาษาไทย)"
@@ -63,7 +58,7 @@
 
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" class="pa-0">
+                    <v-col cols="12" class="pb-0">
                       <v-text-field
                       dense
                         label="ชื่อสาขา (ภาษาอังกฤษ)"
@@ -75,7 +70,7 @@
 
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" class="pa-0">
+                    <v-col cols="12" class="pb-0">
                       <VuetifyMoney
                       dense
                           label="จำนวนคนเข้าใช้บริการ / วัน"
@@ -85,7 +80,7 @@
                           outlined
                           v-bind:options="options2" />
                     </v-col>
-                    <v-col cols="12" class="pa-0">
+                    <v-col cols="12" class="pb-0">
                       <VuetifyMoney
                       dense
                           label="จำนวนที่รับงานด่วน / วัน"
@@ -94,6 +89,20 @@
                           required
                           outlined
                           v-bind:options="options2" />
+                    </v-col>
+                    <v-col>
+                      <v-btn
+                        elevation="2"
+                        block
+                        large
+                        color="#173053"
+                        dark
+                        :disabled="!valid_add"
+                        @click="addData()"
+                      >
+                        <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                        บันทึก
+                      </v-btn>
                     </v-col>
                   </v-row>
                   <!-- <v-divider></v-divider>
@@ -253,20 +262,6 @@
                   </v-form>
                 </v-container>
               </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn
-                  elevation="2"
-                  block
-                  color="#173053"
-                  dark
-                  :disabled="!valid_add"
-                  @click="addData()"
-                >
-                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                  บันทึก
-                </v-btn>
-              </v-card-actions>
             </v-card>
           </v-dialog>
           <!-- end add -->
@@ -274,31 +269,6 @@
           <!-- edit -->
           <v-dialog v-model="dialogEdit" persistent max-width="35%">
             <v-card>
-              <v-container>
-                <div style="text-align: end;">
-                        <v-btn
-                          fab
-                          small
-                          dark
-                          color="#F3F3F3"
-                          @click="dialogEdit = false, dataReady = true"
-                        >
-                          <v-icon dark
-                          color="#FE4A01 ">
-                            mdi-close
-                          </v-icon>
-                        </v-btn>
-                        </div>
-              </v-container>
-              <v-col cols="12" class="pa-0 ma-0 mt-n5">
-                        <v-col class="text-left">
-                          <!-- <v-img
-                            id="v_text_edits"
-                            :src="require('@/assets/GroupEditTitle.svg')"
-                          ></v-img> -->
-                          <h2 class="font-weight-bold" style="color:#173053;">แก้ไขข้อมูล</h2>
-                        </v-col>
-              </v-col>
               <v-card-text>
                 <v-container>
                   <v-form
@@ -307,7 +277,27 @@
                     lazy-validation
                   >
                     <v-row>
-                    <v-col cols="12" class="pa-0">
+                      <v-col cols="8" class="text-left pt-10">
+                      <h3><strong>แก้ไขข้อมูล</strong></h3>
+                      </v-col>
+                      <v-col cols="4" class="pt-10">
+                      <div style="text-align: end;">
+                          <v-btn
+                          class="mx-2"
+                          fab
+                          small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
+                          @click="dialogEdit = false, dataReady = true"
+                          >
+                          X
+                          </v-btn>
+                      </div>
+                      </v-col>
+                  </v-row>
+                    <v-row>
+                    <v-col cols="12" class="pb-0">
                       <v-text-field
                       dense
                         label="ชื่อสาขา (ภาษาไทย)"
@@ -319,7 +309,7 @@
 
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" class="pa-0">
+                    <v-col cols="12" class="pb-0">
                       <v-text-field
                       dense
                         label="ชื่อสาขา (ภาษาอังกฤษ)"
@@ -331,7 +321,7 @@
 
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" class="pa-0">
+                    <v-col cols="12" class="pb-0">
                       <VuetifyMoney
                       dense
                           label="จำนวนคนเข้าใช้บริการ / วัน"
@@ -341,7 +331,7 @@
                           outlined
                           v-bind:options="options2" />
                     </v-col>
-                    <v-col cols="12" class="pa-0">
+                    <v-col cols="12" class="pb-0">
                       <VuetifyMoney
                       dense
                           label="จำนวนที่รับงานด่วน / วัน"
@@ -350,6 +340,20 @@
                           required
                           outlined
                           v-bind:options="options2" />
+                    </v-col>
+                    <v-col>
+                      <v-btn
+                        elevation="2"
+                        block
+                        color="#173053"
+                        dark
+                        large
+                        :disabled="!valid_update"
+                        @click="editData()"
+                      >
+                        <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                        บันทึก
+                      </v-btn>
                     </v-col>
                   </v-row>
                   <!-- <v-divider></v-divider>
@@ -509,66 +513,59 @@
                   </v-form>
                 </v-container>
               </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn
-                  elevation="2"
-                  block
-                  color="#173053"
-                  dark
-                  :disabled="!valid_update"
-                  @click="editData()"
-                >
-                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                  บันทึก
-                </v-btn>
-              </v-card-actions>
             </v-card>
           </v-dialog>
           <!-- end edit -->
 
           <!-- delete -->
-          <v-dialog v-model="dialogDelete" persistent max-width="80%">
+          <v-dialog v-model="dialogDelete" persistent max-width="500px">
             <v-card>
-              <v-card-title>
-                <span class="headline">ลบข้อมูลนี้</span>
-              </v-card-title>
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="6">
+                      <v-col cols="8" class="text-left pt-10">
+                      <h3><strong>ลบข้อมูลนี้</strong></h3>
+                      </v-col>
+                      <v-col cols="4" class="pt-10">
+                      <div style="text-align: end;">
+                          <v-btn
+                          class="mx-2"
+                          fab
+                          small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
+                          @click="dialogDelete = false, dataReady = true"
+                          >
+                          X
+                          </v-btn>
+                      </div>
+                      </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12" class="pb-0">
                       <v-text-field
                         label="สาขา"
                         v-model="formUpdate.masBranchName"
                         readonly
                       ></v-text-field>
                     </v-col>
+                    <v-col cols="12">
+                      <v-btn
+                        elevation="2"
+                        large
+                        color="#173053"
+                        block
+                        dark
+                        @click="deleteData()"
+                      >
+                        <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                        ลบ
+                      </v-btn>
+                    </v-col>
                   </v-row>
                 </v-container>
               </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn
-                  elevation="2"
-                  x-large
-                  color="dark darken-1"
-                  text
-                  @click="dialogDelete = false, dataReady = true"
-                >
-                  <v-icon left> mdi-cancel</v-icon>
-                  ปิด
-                </v-btn>
-                <v-btn
-                  elevation="2"
-                  x-large
-                  color="red darken-1"
-                  text
-                  @click="deleteData()"
-                >
-                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                  ลบ
-                </v-btn>
-              </v-card-actions>
             </v-card>
           </v-dialog>
           <!-- end delete -->

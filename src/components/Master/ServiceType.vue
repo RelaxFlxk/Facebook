@@ -1,332 +1,285 @@
 <template>
-    <div>
-      <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
-      <v-main>
-        <div class="col-md-12 ml-sm-auto col-lg-12 px-4">
-          <v-row>
-            <v-col cols="6" class="text-left">
-              <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
-            </v-col>
-            <v-col cols="6" class="v-margit_button text-right">
-              <v-btn color="primary" depressed @click="dialogAdd = true, validate('ADD')">
-                <v-icon left>mdi-text-box-plus</v-icon>
-                เพิ่มประเภทบริการ
-              </v-btn>
-            </v-col>
-          </v-row>
-          <v-row>
-            <!-- ADD -->
-            <v-dialog v-model="dialogAdd" persistent max-width="35%">
-              <v-card>
+  <div>
+    <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
+    <v-main>
+      <div class="col-md-12 ml-sm-auto col-lg-12 px-4">
+        <v-row>
+          <v-col cols="6" class="text-left">
+            <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
+          </v-col>
+          <v-col cols="6" class="v-margit_button text-right">
+            <v-btn
+              color="primary"
+              depressed
+              @click="(dialogAdd = true), validate('ADD')"
+            >
+              <v-icon left>mdi-text-box-plus</v-icon>
+              เพิ่มรายการบริการ
+            </v-btn>
+          </v-col>
+        </v-row>
+        <v-row>
+          <!-- ADD -->
+          <v-dialog v-model="dialogAdd" persistent max-width="35%">
+            <v-card>
+              <v-card-text>
                 <v-container>
-                  <div style="text-align: end;">
-                          <v-btn
-                            fab
-                            small
-                            dark
-                            color="#F3F3F3"
-                            @click="dialogAdd = false,clearData()"
-                          >
-                            <v-icon dark
-                            color="#FE4A01 ">
-                              mdi-close
-                            </v-icon>
-                          </v-btn>
-                          </div>
-                </v-container>
-                <v-col cols="12" class="pa-0 ma-0 mt-n5">
-                          <v-col class="text-left">
-                            <h2 class="font-weight-bold" style="color:#173053;">เพิ่มข้อมูล</h2>
-                          </v-col>
-                </v-col>
-                <v-card-text>
-                  <v-container>
-                    <v-form
-                      ref="form_add"
-                      v-model="valid_add"
-                      lazy-validation
-                    >
-                      <v-row>
-                      <v-col cols="12" class="pa-0">
+                  <v-form ref="form_add" v-model="valid_add" lazy-validation>
+                    <v-row>
+                    <v-col cols="8" class="text-left pt-10">
+                    <h3><strong>เพิ่มรายการบริการ</strong></h3>
+                    </v-col>
+                    <v-col cols="4" class="pt-10">
+                    <div style="text-align: end;">
+                        <v-btn
+                        class="mx-2"
+                        fab
+                        small
+                        dark
+                        color="white"
+                        :style="styleCloseBt"
+                        @click="(dialogAdd = false), clearData()"
+                        >
+                        X
+                        </v-btn>
+                    </div>
+                    </v-col>
+                </v-row>
+                    <v-row>
+                      <v-col cols="12" class="pb-0">
                         <v-text-field
-                        dense
-                          label="ชื่อประเภทบริการ"
+                          dense
+                          label="ชื่อรายการ"
                           v-model="formAdd.serviceName"
                           :rules="nameRules"
                           outlined
-
                         ></v-text-field>
                       </v-col>
+                      <v-col cols="12" class="pb-0">
+                        <VuetifyMoney
+                          v-model="formAdd.servicePice"
+                          placeholder="ค่าใช้จ่าย"
+                          dense
+                          label="ค่าใช้จ่าย"
+                          required
+                          outlined
+                          :rules="nameRules"
+                          v-bind:options="options2"
+                        />
+                      </v-col>
                     </v-row>
-                    </v-form>
-                  </v-container>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    elevation="2"
-                    block
-                    color="#173053"
-                    dark
-                    :disabled="!valid_add"
-                    @click="addData()"
-                  >
-                    <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                    บันทึก
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-            <!-- end add -->
+                  </v-form>
+                </v-container>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  elevation="2"
+                  block
+                  color="#173053"
+                  dark
+                  large
+                  :disabled="!valid_add"
+                  @click="addData()"
+                >
+                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                  บันทึก
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <!-- end add -->
 
-            <!-- edit -->
-            <v-dialog v-model="dialogEdit" persistent max-width="35%">
-              <v-card>
+          <!-- edit -->
+          <v-dialog v-model="dialogEdit" persistent max-width="35%">
+            <v-card>
+              <v-card-text>
                 <v-container>
-                  <div style="text-align: end;">
+                  <v-form ref="form_update" v-model="valid_update" lazy-validation>
+                    <v-row>
+                      <v-col cols="8" class="text-left pt-10">
+                      <h3><strong>แก้ไขข้อมูล</strong></h3>
+                      </v-col>
+                      <v-col cols="4" class="pt-10">
+                        <div style="text-align: end;">
                           <v-btn
+                            class="mx-2"
                             fab
                             small
                             dark
-                            color="#F3F3F3"
-                            @click="dialogEdit = false, dataReady = true"
-                          >
-                            <v-icon dark
-                            color="#FE4A01 ">
-                              mdi-close
-                            </v-icon>
+                            color="white"
+                            :style="styleCloseBt"
+                            @click="(dialogEdit = false), (dataReady = true)"
+                            >
+                            X
                           </v-btn>
-                          </div>
-                </v-container>
-                <v-col cols="12" class="pa-0 ma-0 mt-n5">
-                          <v-col class="text-left">
-                            <h2 class="font-weight-bold" style="color:#173053;">แก้ไขข้อมูล</h2>
-                          </v-col>
-                </v-col>
-                <v-card-text>
-                  <v-container>
-                    <v-form
-                      ref="form_add"
-                      v-model="valid_add"
-                      lazy-validation
-                    >
-                      <v-row>
-                      <v-col cols="12" class="pa-0">
+                        </div>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12" class="pb-0">
                         <v-text-field
-                        dense
-                          label="ชื่อประเภทบริการ"
+                          dense
+                          label="ชื่อรายการ"
                           v-model="formUpdate.serviceName"
                           :rules="nameRules"
                           outlined
                         ></v-text-field>
                       </v-col>
-                    </v-row>
-                    </v-form>
-                  </v-container>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    elevation="2"
-                    block
-                    color="#173053"
-                    dark
-                    :disabled="!valid_update"
-                    @click="editData()"
-                  >
-                    <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                    บันทึก
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-            <!-- end edit -->
-
-            <!-- delete -->
-            <!-- <v-dialog v-model="dialogDelete" persistent max-width="80%">
-              <v-card>
-                <v-card-title>
-                  <span class="headline">ลบข้อมูลนี้</span>
-                </v-card-title>
-                <v-card-text>
-                  <v-container>
-                    <v-row>
-                      <v-col cols="6">
-                        <v-text-field
-                          label="ประเภทบริการ"
-                          v-model="formUpdate.serviceName"
-                          readonly
-                        ></v-text-field>
+                      <v-col cols="12" class="pb-0">
+                        <VuetifyMoney
+                          v-model="formUpdate.servicePice"
+                          placeholder="ค่าใช้จ่าย"
+                          dense
+                          label="ค่าใช้จ่าย"
+                          required
+                          outlined
+                          :rules="nameRules"
+                          v-bind:options="options2"
+                        />
                       </v-col>
                     </v-row>
-                  </v-container>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    elevation="2"
-                    x-large
-                    color="dark darken-1"
-                    text
-                    @click="dialogDelete = false, dataReady = true"
-                  >
-                    <v-icon left> mdi-cancel</v-icon>
-                    ปิด
-                  </v-btn>
-                  <v-btn
-                    elevation="2"
-                    x-large
-                    color="red darken-1"
-                    text
-                    @click="deleteData()"
-                  >
-                    <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                    ลบ
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog> -->
-
-            <v-dialog v-model="dialogDelete" persistent max-width="35%">
-              <v-card>
-                <v-container>
-                  <div style="text-align: end;">
-                          <v-btn
-                            fab
-                            small
-                            dark
-                            color="#F3F3F3"
-                            @click="dialogDelete = false, dataReady = true"
-                          >
-                            <v-icon dark
-                            color="#FE4A01 ">
-                              mdi-close
-                            </v-icon>
-                          </v-btn>
-                          </div>
+                  </v-form>
                 </v-container>
-                <v-col cols="12" class="pa-0 ma-0 mt-n5">
-                          <v-col class="text-left">
-                            <h2 class="font-weight-bold" style="color:#173053;">ลบข้อมูลนี้</h2>
-                          </v-col>
-                </v-col>
-                <v-card-text>
-                  <v-container>
-                      <v-row>
-                      <v-col cols="12" class="pa-0">
-                        <v-text-field
-                            dense
-                            label="ชื่อประเภทบริการ"
-                            v-model="formUpdate.serviceName"
-                            outlined
-                            readonly
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-card-text>
-                <v-card-actions>
-                    <v-row class="mx-auto">
-                        <v-col class="text-center">
-                            <v-btn
-                            elevation="2"
-                            x-large
-                            text
-                            dark
-                            style="background-color: #6683d3!important;"
-                            @click="deleteData()"
-                        >
-                            <!-- <v-icon left> mdi-cancel</v-icon> -->
-                            ยืนยัน
-                            </v-btn>
-                            <v-btn
-                                elevation="2"
-                                x-large
-                                text
-                                dark
-                                style="background-color: #d36666!important;"
-                                @click="dialogDelete = false, dataReady = true"
-                            >
-                                <!-- <v-icon left>mdi-checkbox-marked-circle</v-icon> -->
-                                ยกเลิก
-                            </v-btn>
-                        </v-col>
-                    </v-row>
-                  <!-- <v-spacer></v-spacer>
-                  <v-btn
-                    elevation="2"
-                    block
-                    color="#FE4A01"
-                    dark
-                    :disabled="!valid_update"
-                    @click="deleteData()"
-                  > -->
-                    <!-- <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                    ลบ
-                  </v-btn> -->
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-            <!-- end delete -->
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  elevation="2"
+                  block
+                  color="#173053"
+                  dark
+                  large
+                  :disabled="!valid_update"
+                  @click="editData()"
+                >
+                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                  บันทึก
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <!-- end edit -->
 
-            <!-- data table -->
-           <v-col cols="12">
-              <v-card elevation="7" v-if="dataReady">
-                <v-card-title>
-                  <v-text-field
-                    v-model="searchAll2"
-                    append-icon="mdi-magnify"
-                    label="Search"
-                    single-line
-                    hide-details
-                  ></v-text-field>
-                </v-card-title>
-                <v-card-text>
-                  <v-data-table
-                    :headers="columns"
-                    :items="dataItem"
-                    :search="searchAll2"
-                    :items-per-page="10"
-                  >
-                     <template v-slot:[`item.CREATE_DATE`]="{ item }">
-                        {{ format_date(item.CREATE_DATE) }}
-                    </template>
-                     <template v-slot:[`item.LAST_DATE`]="{ item }">
-                        {{ format_date(item.LAST_DATE) }}
-                    </template>
-                    <template v-slot:[`item.action`]="{ item }">
-                      <v-btn
-                        color="question"
-                        fab
-                        dark
-                        small
-                        @click.stop="(dialogEdit = true), getDataById(item), validate('UPDATE')"
-                      >
-                        <v-icon dark> mdi-tools </v-icon>
-                      </v-btn>
-                      <v-btn
-                        color="red"
-                        dark
+          <v-dialog v-model="dialogDelete" persistent max-width="35%">
+            <v-card>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="8" class="text-left pt-10">
+                    <h3><strong>ลบข้อมูลนี้</strong></h3>
+                    </v-col>
+                    <v-col cols="4" class="pt-10">
+                    <div style="text-align: end;">
+                        <v-btn
+                        class="mx-2"
                         fab
                         small
-                        @click.stop="(dialogDelete = true), getDataById(item)"
+                        dark
+                        color="white"
+                        :style="styleCloseBt"
+                        @click="(dialogDelete = false), (dataReady = true)"
+                        >
+                        X
+                        </v-btn>
+                    </div>
+                    </v-col>
+                </v-row>
+                  <v-row>
+                    <v-col cols="12" class="pb-0">
+                      <v-text-field
+                        dense
+                        label="ชื่อรายการ"
+                        v-model="formUpdate.serviceName"
+                        outlined
+                        readonly
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pb-0">
+                      <v-btn
+                        elevation="2"
+                        large
+                        color="#173053"
+                        dark
+                        block
+                        @click="deleteData()"
                       >
-                        <v-icon> mdi-delete </v-icon>
+                        <!-- <v-icon left> mdi-cancel</v-icon> -->
+                        ลบ
                       </v-btn>
-                    </template>
-                  </v-data-table>
-                </v-card-text>
-              </v-card>
-              <div v-if="!dataReady" class="text-center">
-                <waitingAlert></waitingAlert>
-              </div>
-            </v-col>
-            <!-- end data table -->
-          </v-row>
-        </div>
-      </v-main>
-    </div>
-  </template>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
+          <!-- end delete -->
+
+          <!-- data table -->
+          <v-col cols="12">
+            <v-card elevation="7" v-if="dataReady">
+              <v-card-title>
+                <v-text-field
+                  v-model="searchAll2"
+                  append-icon="mdi-magnify"
+                  label="Search"
+                  single-line
+                  hide-details
+                ></v-text-field>
+              </v-card-title>
+              <v-card-text>
+                <v-data-table
+                  :headers="columns"
+                  :items="dataItem"
+                  :search="searchAll2"
+                  :items-per-page="10"
+                >
+                  <template v-slot:[`item.CREATE_DATE`]="{ item }">
+                    {{ format_date(item.CREATE_DATE) }}
+                  </template>
+                  <template v-slot:[`item.servicePice`]="{ item }">
+                    {{ item.servicePice ? item.servicePice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '0' }}
+                  </template>
+                  <template v-slot:[`item.LAST_DATE`]="{ item }">
+                    {{ format_date(item.LAST_DATE) }}
+                  </template>
+                  <template v-slot:[`item.action`]="{ item }">
+                    <v-btn
+                      color="question"
+                      fab
+                      dark
+                      small
+                      @click.stop="
+                        (dialogEdit = true),
+                          getDataById(item),
+                          validate('UPDATE')
+                      "
+                    >
+                      <v-icon dark> mdi-tools </v-icon>
+                    </v-btn>
+                    <v-btn
+                      color="red"
+                      dark
+                      fab
+                      small
+                      @click.stop="(dialogDelete = true), getDataById(item)"
+                    >
+                      <v-icon> mdi-delete </v-icon>
+                    </v-btn>
+                  </template>
+                </v-data-table>
+              </v-card-text>
+            </v-card>
+            <div v-if="!dataReady" class="text-center">
+              <waitingAlert></waitingAlert>
+            </div>
+          </v-col>
+          <!-- end data table -->
+        </v-row>
+      </div>
+    </v-main>
+  </div>
+</template>
 <script>
 import waitingAlert from '../waitingAlert.vue'
 import axios from 'axios' // api
@@ -350,6 +303,13 @@ export default {
   },
   data () {
     return {
+      options2: {
+        locale: 'en-US',
+        prefix: '',
+        suffix: '',
+        length: 9,
+        precision: 0
+      },
       picker: null,
       date2: null,
       activePicker: 'MONTH',
@@ -386,6 +346,7 @@ export default {
       searchAll2: '',
       formAdd: {
         serviceName: '',
+        servicePice: 0,
         shopId: this.$session.getAll().data.shopId,
         CREATE_USER: '',
         LAST_USER: ''
@@ -393,18 +354,20 @@ export default {
       formUpdate: {
         id: '',
         serviceName: '',
+        servicePice: 0,
         shopId: this.$session.getAll().data.shopId,
         CREATE_USER: '',
         LAST_USER: ''
       },
       nameRules: [
-        (v) => !!v || 'Name is required',
-        (v) => v.length <= 50 || 'Name must be less than 50 characters'
+        v => !!v || 'กรุณากรอก'
+        // v => v.length <= 50 || 'Name must be less than 50 characters'
       ],
       // End Form Config ADD EDIT
       // Data Table Config
       columns: [
-        { text: 'ชื่อประเภทบริการ', value: 'serviceName' },
+        { text: 'ชื่อรายการ', value: 'serviceName' },
+        { text: 'ค่าใช้จ่าย', value: 'servicePice' },
         { text: 'วันที่สร้าง', value: 'CREATE_DATE' },
         { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
         { text: '', value: 'action', sortable: false, align: 'center' }
@@ -416,7 +379,11 @@ export default {
     // this.getGetToken(this.DNS_IP)
     this.dataReady = false
     // Get Data
-    this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
+    this.getDataGlobal(
+      this.DNS_IP,
+      this.path,
+      this.$session.getAll().data.shopId
+    )
     this.getBookingField()
   },
   methods: {
@@ -440,14 +407,11 @@ export default {
       }
     },
     async getDataById (item) {
-      //
-      //
-      // สำหรับ เรียกข้อมูล ใส่ form Update / Delete1
-      //
-      //
-      // Get ID /main.js
       this.dataReady = false
-      this.getDataByIdGlobal(this.DNS_IP, this.path, 'id', item.id)
+      await this.getDataByIdGlobal(this.DNS_IP, this.path, 'id', item.id)
+      if (this.formUpdate.servicePice === '' || this.formUpdate.servicePice === null) {
+        this.formUpdate.servicePice = 0
+      }
     },
     async addData () {
       this.formAdd.CREATE_USER = this.$session.getAll().data.userName
@@ -472,13 +436,11 @@ export default {
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
       })
-        .then(async (result) => {
+        .then(async result => {
+          this.formAdd.servicePice = this.formAdd.servicePice || null
           await axios
-            .post(
-              this.DNS_IP + this.path + 'add',
-              this.formAdd
-            )
-            .then(async (response) => {
+            .post(this.DNS_IP + this.path + 'add', this.formAdd)
+            .then(async response => {
               // Debug response
               console.log('addDataGlobal DNS_IP + PATH + "add"', response)
 
@@ -488,15 +450,19 @@ export default {
 
               // Load Data
               await this.clearData()
-              await this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
+              await this.getDataGlobal(
+                this.DNS_IP,
+                this.path,
+                this.$session.getAll().data.shopId
+              )
             })
             // eslint-disable-next-line handle-callback-err
-            .catch((error) => {
+            .catch(error => {
               console.log('error function addDataGlobal : ', error)
               this.dataReady = true
             })
         })
-        .catch((error) => {
+        .catch(error => {
           console.log('error function addData : ', error)
           this.dataReady = true
         })
@@ -513,15 +479,17 @@ export default {
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
       })
-        .then(async (result) => {
+        .then(async result => {
           var ID = this.formUpdate.id
+          // this.formUpdate.servicePice = this.formUpdate.servicePice || null
           delete this.formUpdate['id']
           await axios
             .post(
               // eslint-disable-next-line quotes
-              this.DNS_IP + this.path + "edit/" + ID, this.formUpdate
+              this.DNS_IP + this.path + "edit/" + ID,
+              this.formUpdate
             )
-            .then(async (response) => {
+            .then(async response => {
               // Debug response
               console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
 
@@ -530,15 +498,19 @@ export default {
               this.dialogEdit = false
               await this.clearData()
               // Load Data
-              await this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
+              await this.getDataGlobal(
+                this.DNS_IP,
+                this.path,
+                this.$session.getAll().data.shopId
+              )
             })
-          // eslint-disable-next-line handle-callback-err
-            .catch((error) => {
+            // eslint-disable-next-line handle-callback-err
+            .catch(error => {
               this.dataReady = true
               console.log('error function editDataGlobal : ', error)
             })
         })
-        .catch((error) => {
+        .catch(error => {
           this.dataReady = true
           console.log('error function editDataGlobal : ', error)
         })
@@ -561,7 +533,12 @@ export default {
         cancelButtonText: 'ไม่'
       })
       this.dataReady = false
-      this.deleteDataGlobal(this.DNS_IP, this.path, this.PK, this.$session.getAll().data.shopId)
+      this.deleteDataGlobal(
+        this.DNS_IP,
+        this.path,
+        this.PK,
+        this.$session.getAll().data.shopId
+      )
     },
     async clearData () {
       this.dataReady = true
@@ -573,9 +550,9 @@ export default {
   }
 }
 </script>
-  <style scope>
-    .v-dialog {
-    overflow-y: hidden !important;
-    overflow-x: hidden !important;
+<style scope>
+.v-dialog {
+  overflow-y: hidden !important;
+  overflow-x: hidden !important;
 }
-  </style>
+</style>

@@ -695,7 +695,7 @@ export default {
       this.corporate = [
         { title: 'สาขา', icon: 'mdi-home-group', to: '/Master/Branch', type: 'corporate' },
         { title: 'พนักงาน', icon: 'mdi-account-multiple', to: '/Master/Employee', type: 'corporate' },
-        { title: 'ประเภทบริการ', icon: 'mdi-atom-variant', to: '/Master/ServiceType', type: 'corporate' },
+        { title: 'รายการบริการ', icon: 'mdi-atom-variant', to: '/Master/ServiceType', type: 'corporate' },
         { title: 'ช่องทางการชำระเงิน', icon: 'mdi-credit-card-outline', to: '/Master/PaymentType', type: 'corporate' },
         { title: 'จัดการบริษัท', icon: 'mdi-home-city', to: '/System/EditShop', type: 'corporate' },
         { title: 'สมัครและจัดการยูเซอร์', icon: 'mdi-account-circle', to: '/System/ManageUser', type: 'corporate' },

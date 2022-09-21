@@ -12,30 +12,29 @@
           <!-- edit -->
           <v-dialog ref="dialogEdit" v-model="dialogEdit" persistent max-width="50%">
             <v-card class="text-center">
-              <v-container>
-                <div style="text-align: end;">
-                        <v-btn
-                          fab
-                          small
-                          dark
-                          color="#F3F3F3"
-                          @click="dialogEdit = false"
-                        >
-                          <v-icon dark
-                          color="#FE4A01 ">
-                            mdi-close
-                          </v-icon>
-                        </v-btn>
-                        </div>
-              </v-container>
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
                 <v-card-text>
                   <v-container>
-                    <v-row justify="center">
-                      <v-col md="auto">
-                        <h1 style="font-size:10vw;" class="underline-06">แก้ไขข้อมูลร้านค้า</h1>
-                      </v-col>
-                    </v-row>
+                    <v-row>
+                    <v-col cols="10" class="text-left pt-10">
+                    <h3><strong>แก้ไขข้อมูลร้านค้า</strong></h3>
+                    </v-col>
+                    <v-col cols="2" class="pt-10">
+                    <div style="text-align: end;">
+                        <v-btn
+                        class="mx-2"
+                        fab
+                        small
+                        dark
+                        color="white"
+                        :style="styleCloseBt"
+                         @click="dialogEdit = false"
+                        >
+                        X
+                        </v-btn>
+                    </div>
+                    </v-col>
+                </v-row>
                     <v-row justify="center">
                           <v-col cols="6 " class="text-center">
                             <v-avatar
@@ -209,6 +208,7 @@
                       elevation="2"
                       dark
                       block
+                      large
                       color="#173053"
                       :disabled="!validUpdate"
                       @click="editData()"

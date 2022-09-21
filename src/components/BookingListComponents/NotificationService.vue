@@ -199,13 +199,17 @@ export default {
         )
         .then(res => {
           let rs = res.data
-          rs.map(el => {
-            var s = {}
-            s.text = el.serviceName
-            s.values = el.id
-            this.serviceType.push(s)
-          })
-          console.log('serviceType', this.serviceType)
+          if (rs.status === false) {
+            this.serviceType = []
+          } else {
+            rs.map(el => {
+              var s = {}
+              s.servicePice = el.servicePice || ''
+              s.text = s.servicePice === '' ? el.serviceName : el.serviceName + ' : ' + s.servicePice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' บาท'
+              s.values = el.id
+              this.serviceType.push(s)
+            })
+          }
         })
     },
     clear () {

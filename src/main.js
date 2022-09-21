@@ -94,8 +94,8 @@ Vue.mixin({
       export_data: [],
       searchAll: '',
       dataReady: true,
-      monthNamesThai: ['', 'ม.ค', 'ก.พ', 'มี.ค', 'เม.ย', 'พ.ค', 'มิ.ย', 'ก.ค', 'ส.ค', 'ก.ย', 'ต.ค', 'พ.ย', 'ธ.ค']
-
+      monthNamesThai: ['', 'ม.ค', 'ก.พ', 'มี.ค', 'เม.ย', 'พ.ค', 'มิ.ย', 'ก.ค', 'ส.ค', 'ก.ย', 'ต.ค', 'พ.ย', 'ธ.ค'],
+      styleCloseBt: 'color:red;font-size:20px;'
     }
   },
   async mounted () {

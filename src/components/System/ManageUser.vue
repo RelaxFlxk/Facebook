@@ -28,32 +28,29 @@
       </div>
       <v-dialog v-model="dialogAdd" persistent max-width="35%">
         <v-card class="text-center" style="overflow-x: hidden;">
-          <v-container>
-                <div style="text-align: end;">
-                        <v-btn
-                          fab
-                          small
-                          dark
-                          color="#F3F3F3"
-                          @click="(dialogAdd = false), clearDataAdd()"
-                        >
-                          <v-icon dark
-                          color="#FE4A01 ">
-                            mdi-close
-                          </v-icon>
-                        </v-btn>
-                        </div>
-              </v-container>
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-card-text>
-              <v-col class="text-left pa-0 px-4 mb-3">
-                <!-- <v-img
-                  id="v_text_edits"
-                  :src="require('@/assets/GroupEditTitle.svg')"
-                ></v-img> -->
-                <h2 class="font-weight-bold" style="color:#173053;">เพิ่มข้อมูล</h2>
-              </v-col>
               <v-container>
+                <v-row>
+                    <v-col cols="10" class="text-left pt-10">
+                    <h3><strong>เพิ่มรหัสผู้ใช้งาน</strong></h3>
+                    </v-col>
+                    <v-col cols="2" class="pt-10">
+                    <div style="text-align: end;">
+                        <v-btn
+                        class="mx-2"
+                        fab
+                        small
+                        dark
+                        color="white"
+                        :style="styleCloseBt"
+                         @click="(dialogAdd = false), clearDataAdd()"
+                        >
+                        X
+                        </v-btn>
+                    </div>
+                    </v-col>
+                </v-row>
                 <v-row justify="center">
                   <v-col cols="12" class="v-margit_text_add mt-0 pa-3">
                     <v-row>
@@ -129,6 +126,7 @@
                     block
                     color="#173053"
                     dark
+                    large
                     :disabled="!valid"
                     @click="addData()"
                   >
@@ -143,32 +141,29 @@
       </v-dialog>
       <v-dialog v-model="dialogEdit" persistent max-width="35%">
             <v-card>
-              <v-container>
-                <div style="text-align: end;">
-                        <v-btn
-                          fab
-                          small
-                          dark
-                          color="#F3F3F3"
-                          @click="dialogEdit = false"
-                        >
-                          <v-icon dark
-                          color="#FE4A01 ">
-                            mdi-close
-                          </v-icon>
-                        </v-btn>
-                        </div>
-              </v-container>
-              <v-col class="text-left pa-0 px-4 mb-3">
-                <!-- <v-img
-                  id="v_text_edits"
-                  :src="require('@/assets/GroupEditTitle.svg')"
-                ></v-img> -->
-                <h2 class="font-weight-bold" style="color:#173053;">แก้ไขข้อมูล</h2>
-              </v-col>
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
               <v-card-text>
                 <v-container>
+                  <v-row>
+                    <v-col cols="10" class="text-left pt-10">
+                    <h3><strong>แก้ไขข้อมูล</strong></h3>
+                    </v-col>
+                    <v-col cols="2" class="pt-10">
+                    <div style="text-align: end;">
+                        <v-btn
+                        class="mx-2"
+                        fab
+                        small
+                        dark
+                        color="white"
+                        :style="styleCloseBt"
+                        @click="dialogEdit = false"
+                        >
+                        X
+                        </v-btn>
+                    </div>
+                    </v-col>
+                </v-row>
                   <v-row>
                     <v-col cols="12" class="pa-0 px-3">
                       <v-text-field
@@ -243,6 +238,7 @@
                   elevation="2"
                   dark
                   block
+                  large
                   color="#173053"
                   :disabled="!validUpdate"
                   @click="editData()"

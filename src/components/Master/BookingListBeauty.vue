@@ -857,7 +857,7 @@
             <v-card class="text-center">
               <v-form ref="form_add" v-model="validAdd" lazy-validation>
                 <v-card-text>
-                    <v-col class="text-right pa-0">
+                    <!-- <v-col class="text-right pa-0">
                       <v-btn
                         small
                         color="#E0E0E0"
@@ -865,24 +865,44 @@
                       >
                         <v-icon color="#173053">mdi-close</v-icon>
                       </v-btn>
-                    </v-col>
+                    </v-col> -->
                     <v-row justify="center">
                       <v-col
-                        cols="9"
+                        cols="8"
                       >
                         <v-col class="text-center">
                           <CalendarBooking ref="CalendarBooking"></CalendarBooking>
                         </v-col>
                       </v-col>
 
-                      <v-col cols="3">
+                      <v-col cols="4">
                       <!-- <v-col cols="12" sm="6" md="6" lg="6" class="v-margit_text_add mt-0 pa-0"> -->
-                        <v-col class="text-center pa-3 ml-2">
+                        <v-row>
+                          <v-col cols="8" class="text-left pt-10">
+                            <h3><strong>เพิ่มรายการนัดหมาย</strong></h3>
+                          </v-col>
+                          <v-col cols="4" class="pt-10">
+                            <div style="text-align: end;">
+                              <v-btn
+                                class="mx-2"
+                                fab
+                                small
+                                dark
+                                color="white"
+                                :style="styleCloseBt"
+                                @click="(dialogAdd = false), clearDataAdd()"
+                                >
+                                X
+                              </v-btn>
+                            </div>
+                          </v-col>
+                        </v-row>
+                        <!-- <v-col class="text-center pa-3 ml-2">
                           <v-img
                             class="v_text_add"
                             :src="require('@/assets/Grouptitle.svg')"
                           ></v-img>
-                        </v-col>
+                        </v-col> -->
                         <v-col cols="12">
                           <v-select
                             v-model="formAdd.flowId"
@@ -1348,8 +1368,7 @@
                             </div>
                           </template>
                           <v-row>
-                            <div v-if="formAdd.flowId">
-                            <v-col class="pb-0">
+                            <v-col class="pb-0 pt-0" v-if="formAdd.flowId">
                               <v-menu
                                 ref="menu"
                                 v-model="menuDate"
@@ -1394,8 +1413,7 @@
                                 </v-date-picker>
                               </v-menu>
                             </v-col>
-                            </div>
-                            <v-col class="pb-0" v-if="timeavailable.length > 0 && date !== ''">
+                            <v-col class="pb-0 pt-0" v-if="timeavailable.length > 0 && date !== ''">
                               <v-select
                               v-model="time"
                               :items="timeavailable"
@@ -1412,7 +1430,7 @@
                             </v-col>
                           </v-row>
                           <v-row>
-                            <v-col class="pt-0">
+                            <v-col class="pt-0 pb-0">
                               <v-radio-group v-model="formAdd.radiosRemark" row required :rules ="[rules.required]">
                                 <v-radio value="ซ่อมปกติ">
                                   <template v-slot:label>
@@ -1435,7 +1453,7 @@
                           <v-row v-if="checkDepositAdd === 'True'">
                             <v-col cols="12" class="pt-0">
                               <v-checkbox
-                                :label="`มีมัดจำหรือไม่ : ${dataDepositAdd.toString()}`"
+                                :label="`มีหลักฐานมัดจำหรือไม่ : ${dataDepositAdd.toString()}`"
                                 false-value="ไม่มี"
                                 true-value="มี"
                                 v-model="dataDepositAdd"
@@ -1474,9 +1492,19 @@
                                 </v-expansion-panel>
                               </v-expansion-panels>
                             </v-col>
+                            <v-col cols="12" class="pt-0 pb-0">
+                              <VuetifyMoney
+                                v-model="formAdd.depositPrice"
+                                placeholder="จำนวนเงินมัดจำ"
+                                dense
+                                label="จำนวนเงินมัดจำ"
+                                outlined
+                                v-bind:options="options2"
+                              />
+                            </v-col>
                           </v-row>
                           <v-row>
-                            <v-col class="pt-0">
+                            <v-col class="pt-0 pb-0">
                               <v-select
                                 v-model="empSelectAdd"
                                 :items="empSelectStepAdd"
@@ -1539,14 +1567,14 @@
                     <v-col cols="6" class="pt-10">
                       <div style="text-align: end;">
                         <v-btn
-                          class="closeBt"
+                          class="mx-2"
                           fab
                           small
-                          @click="dialogDelete = false"
-                        >
-                          <v-icon large color="#F1F1F1 ">
-                            mdi-close
-                          </v-icon>
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
+                          @click="dialogDelete = false">
+                          X
                         </v-btn>
                       </div>
                     </v-col>
@@ -1593,14 +1621,15 @@
                     <v-col cols="6" class="pt-10">
                       <div style="text-align: end;">
                         <v-btn
-                          class="closeBt"
+                          class="mx-2"
                           fab
                           small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
                           @click="dialogEdit = false, getDataDefault(), searchOther = '', showColorSearch = false, statusSearch = 'no'"
-                        >
-                          <v-icon large color="#F1F1F1 ">
-                            mdi-close
-                          </v-icon>
+                          >
+                          X
                         </v-btn>
                       </div>
                     </v-col>
@@ -2289,14 +2318,15 @@
                     <v-col cols="6" class="pt-10">
                       <div style="text-align: end;">
                         <v-btn
-                          class="closeBt"
+                          class="mx-2"
                           fab
                           small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
                           @click="dialogChange = false"
-                        >
-                          <v-icon large color="#F1F1F1 ">
-                            mdi-close
-                          </v-icon>
+                          >
+                          X
                         </v-btn>
                       </div>
                     </v-col>
@@ -2436,14 +2466,15 @@
                     <v-col cols="6" class="pt-10">
                       <div style="text-align: end;">
                         <v-btn
-                          class="closeBt"
+                          class="mx-2"
                           fab
                           small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
                           @click="dialogRemove = false"
-                        >
-                          <v-icon large color="#F1F1F1 ">
-                            mdi-close
-                          </v-icon>
+                          >
+                          X
                         </v-btn>
                       </div>
                     </v-col>
@@ -2573,14 +2604,15 @@
                     <v-col cols="6" class="pt-10">
                       <div style="text-align: end;">
                         <v-btn
-                          class="closeBt"
+                          class="mx-2"
                           fab
                           small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
                           @click="dialogRemark = false"
-                        >
-                          <v-icon large color="#F1F1F1 ">
-                            mdi-close
-                          </v-icon>
+                          >
+                          X
                         </v-btn>
                       </div>
                     </v-col>
@@ -3240,7 +3272,7 @@
                           <v-list-item @click.stop="getBookingDataJob(item, 'qrcode'), getEmpSelectAddJob(), (dialogOnsite = true)" v-if="item.statusBt === 'confirm' && showOnsite === 'ไม่แสดง'">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-account-plus </v-icon> มอบหมายงาน </v-list-item-title>
                           </v-list-item>
-                          <v-list-item v-clipboard:success="onCopySuccess" v-clipboard:copy="'https://betask-linked.web.app/Thank?shopId=' + item.shopId + '&redirectBy=BookingForm&flowId=' + item.flowId + '&bookNo=' + item.bookNo" v-if="item.statusBt === 'wait' && item.depositStatus === 'True' && item.depositImge == ''">
+                          <v-list-item @click.stop="setDataCopyLink(item)" v-if="item.statusBt === 'wait' && item.depositStatus === 'True'">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-content-copy </v-icon> คัดลอกลิงค์ มัดจำ </v-list-item-title>
                           </v-list-item>
                           <v-list-item v-clipboard:success="onCopySuccess" v-clipboard:copy="'https://liff.line.me/1656581804-7KRQyqo5/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId" v-if="item.statusBt === 'confirm' && (item.userId === 'user-skip' || item.userId === '' || item.userId === null)">
@@ -3305,14 +3337,15 @@
                     <v-col cols="6" class="pt-10">
                       <div style="text-align: end;">
                         <v-btn
-                          class="closeBt"
+                          class="mx-2"
                           fab
                           small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
                           @click="dialogMap = false"
-                        >
-                          <v-icon large color="#F1F1F1 ">
-                            mdi-close
-                          </v-icon>
+                          >
+                          X
                         </v-btn>
                       </div>
                     </v-col>
@@ -3369,14 +3402,15 @@
                     <v-col cols="6" class="pt-10">
                       <div style="text-align: end;">
                         <v-btn
-                          class="closeBt"
+                          class="mx-2"
                           fab
                           small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
                           @click="dialogConfirm = false"
-                        >
-                          <v-icon large color="#F1F1F1 ">
-                            mdi-close
-                          </v-icon>
+                          >
+                          X
                         </v-btn>
                       </div>
                     </v-col>
@@ -3506,14 +3540,15 @@
                     <v-col cols="6" class="pt-10">
                       <div style="text-align: end;">
                         <v-btn
-                          class="closeBt"
+                          class="mx-2"
                           fab
                           small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
                           @click="(dialogEditData = false, this.dataEditReady = true)"
-                        >
-                          <v-icon large color="#F1F1F1 ">
-                            mdi-close
-                          </v-icon>
+                          >
+                          X
                         </v-btn>
                       </div>
                     </v-col>
@@ -4233,14 +4268,15 @@
                     <v-col cols="6" class="pt-10">
                       <div style="text-align: end;">
                         <v-btn
-                          class="closeBt"
+                          class="mx-2"
                           fab
                           small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
                           @click="dialogTag = false"
-                        >
-                          <v-icon large color="#F1F1F1 ">
-                            mdi-close
-                          </v-icon>
+                          >
+                          X
                         </v-btn>
                       </div>
                     </v-col>
@@ -4305,14 +4341,15 @@
                   <v-col cols="6">
                     <div style="text-align: end;">
                       <v-btn
-                        class="closeBt"
+                        class="mx-2"
                         fab
                         small
+                        dark
+                        color="white"
+                        :style="styleCloseBt"
                         @click="dialogDeposit = false, pictureUrlPreviewDeposit = null"
-                      >
-                        <v-icon large color="#F1F1F1 ">
-                          mdi-close
-                        </v-icon>
+                        >
+                        X
                       </v-btn>
                     </div>
                   </v-col>
@@ -4427,14 +4464,15 @@
                     <v-col cols="6" class="pt-10">
                       <div style="text-align: end;">
                         <v-btn
-                          class="closeBt"
+                          class="mx-2"
                           fab
                           small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
                           @click="dialogAddTag = false , tagName = ''"
-                        >
-                          <v-icon large color="#F1F1F1 ">
-                            mdi-close
-                          </v-icon>
+                          >
+                          X
                         </v-btn>
                       </div>
                     </v-col>
@@ -4475,14 +4513,15 @@
                     <v-col cols="6" class="pt-10">
                       <div style="text-align: end;">
                         <v-btn
-                          class="closeBt"
+                          class="mx-2"
                           fab
                           small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
                           @click="dialogHistory = false"
-                        >
-                          <v-icon large color="#F1F1F1 ">
-                            mdi-close
-                          </v-icon>
+                          >
+                          X
                         </v-btn>
                       </div>
                     </v-col>
@@ -4686,14 +4725,15 @@
                     <v-col cols="6" class="pt-10">
                       <div style="text-align: end;">
                         <v-btn
-                          class="closeBt"
+                          class="mx-2"
                           fab
                           small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
                           @click="dialogBookingAgain = false"
-                        >
-                          <v-icon large color="#F1F1F1 ">
-                            mdi-close
-                          </v-icon>
+                          >
+                          X
                         </v-btn>
                       </div>
                     </v-col>
@@ -5714,16 +5754,40 @@
           <v-dialog v-model="dialogShowDeposit" persistent :max-width="dialogwidth">
             <v-card>
               <v-card-text>
-                <v-row>
-                    <v-col cols="12" class="text-left pt-10">
+                  <v-row>
+                    <v-col cols="6" class="text-left pt-10">
                       <h3><strong>คัดลอกลิงค์ มัดจำ</strong></h3>
+                    </v-col>
+                    <v-col cols="6" class="pt-10">
+                      <div style="text-align: end;">
+                        <v-btn
+                          class="mx-2"
+                          fab
+                          small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
+                          @click="dialogShowDeposit = false"
+                          >
+                          X
+                        </v-btn>
+                      </div>
                     </v-col>
                   </v-row>
                  <v-row align-content="center">
                   <v-col cols="12"  class="pb-0">
+                    <v-textarea
+                        v-model="datailLinkDeposit"
+                        outlined
+                        label="ข้อความ"
+                        rows="4"
+                        row-height="6"
+                        dense
+                      ></v-textarea>
                     <v-text-field
+                      v-show="dialogShowDeposit === false"
                       v-model="depositLink"
-                      style="background-color:#050C42;"
+                      label="ลิงค์ มัดจำ"
                       solo
                       disabled
                       id="myInputDeposit"
@@ -5731,14 +5795,25 @@
                     >
                     </v-text-field>
                   </v-col>
+                  <v-col cols="12" class="pb-0" v-if="statusdepositPrice">
+                    <VuetifyMoney
+                      v-model="depositPrice"
+                      placeholder="ค่าใช้จ่าย"
+                      dense
+                      label="ค่าใช้จ่าย"
+                      outlined
+                      v-bind:options="options2"
+                    />
+                  </v-col>
                 </v-row>
                  <v-row>
                     <v-col cols="12">
                       <v-btn
-                        color="#73777B"
+                        color="#1B437C"
                         large
                         block
-                        @click="FunCopyDeposit(), dialogShowDeposit = false"
+                        dark
+                        @click="FunCopyDeposit()"
                       >
                         คัดลอก
                       </v-btn>
@@ -6087,7 +6162,8 @@ export default {
         radiosRemark: '',
         depositStatus: '',
         depositImge: '',
-        pictureUrlPreviewDeposit: ''
+        pictureUrlPreviewDeposit: '',
+        depositPrice: 0
       },
       formEdit: {
         bookingId: null,
@@ -6251,7 +6327,10 @@ export default {
       flowIdOldEdit: '',
       Redirect: 'https://liff.line.me/1656581804-7KRQyqo5/BookingAddress?shopId=' + this.$session.getAll().data.shopId,
       dialogShowDeposit: false,
-      depositLink: ''
+      depositLink: '',
+      datailLinkDeposit: '',
+      depositPrice: 0,
+      statusdepositPrice: false
     }
   },
   beforeCreate () {
@@ -6312,6 +6391,14 @@ export default {
     async setDataReture (item) {
       this.$refs.RetureDeposit.setData(item)
     },
+    setDataCopyLink (item) {
+      this.statusdepositPrice = true
+      this.depositPrice = item.depositPrice || 0
+      this.bookNo = item.bookNo
+      this.datailLinkDeposit = item.remarkDepositLinked
+      this.depositLink = 'https://betask-linked.web.app/Thank?shopId=' + item.shopId + '&redirectBy=BookingForm&flowId=' + item.flowId + '&bookNo=' + item.bookNo
+      this.dialogShowDeposit = true
+    },
     async dataReturn (item) {
       console.log('dataReturn', item)
       if (this.statusSearch === 'no') {
@@ -6324,11 +6411,53 @@ export default {
         this.getSelect(this.getSelectText, this.getSelectCount)
       }
     },
-    FunCopyDeposit () {
-      let copyText = document.getElementById('myInputDeposit')
-      copyText.select()
-      copyText.setSelectionRange(0, 99999)
-      navigator.clipboard.writeText(copyText.value)
+    async FunCopyDeposit () {
+      let textBookNo = ''
+      let depositPrice = ''
+      let textLink = ''
+      let textDepositPrice = ''
+      let dt = {}
+      if (this.statusdepositPrice === true) {
+        dt = {
+          remarkDepositLinked: this.datailLinkDeposit,
+          depositPrice: this.depositPrice || '',
+          LAST_USER: this.$session.getAll().data.userName
+        }
+      } else {
+        dt = {
+          remarkDepositLinked: this.datailLinkDeposit,
+          LAST_USER: this.$session.getAll().data.userName
+        }
+      }
+      await axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + "/Booking/edit/" + this.bookNo,
+          dt
+        )
+        .then(async response => {})
+      await axios
+        // .post(this.DNS_IP + '/Booking/setDetailsCopyLinkAddData/' + 'BK025446181660716002544')
+        .post(this.DNS_IP + '/Booking/setDetailsCopyLinkAddData/' + this.bookNo)
+        .then(response => {
+          console.log('response.data', response.data)
+          textBookNo = response.data.message
+          depositPrice = response.data.depositPrice || '0'
+        })
+      console.log('depositPrice', depositPrice)
+      if (depositPrice === '0') {
+        textLink = 'กรุณากดเพื่อผูกบัญชี : ' + this.depositLink
+      } else {
+        textLink = 'กรุณากดเพื่อโอนเงินมัดจำ : ' + this.depositLink
+        textDepositPrice = `\nจำนวนเงินมัดจำ : ` + depositPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+      }
+      console.log('textBookNo', textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink)
+      let copyText = textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink
+      // let copyText = document.getElementById('myInputDeposit')
+      // copyText.select()
+      // copyText.setSelectionRange(0, 99999)
+      navigator.clipboard.writeText(copyText)
+      this.dialogShowDeposit = false
     },
     clearOnsiteChange () {
       this.getDataDefault()
@@ -7711,6 +7840,8 @@ export default {
                   s.depositStatus = d.depositStatus || 'False'
                   s.depositImge = d.depositImge || ''
                   s.depositReturnImge = d.depositReturnImge || ''
+                  s.depositPrice = d.depositPrice || ''
+                  s.remarkDepositLinked = d.remarkDepositLinked || ''
                   s.lineUserId = d.lineUserId
                   s.memberPicture = d.memberPicture
                   s.timeDueHtext = d.timeDueH + ':00'
@@ -8410,6 +8541,8 @@ export default {
       }
     },
     async addDataSet () {
+      this.statusdepositPrice = false
+      this.datailLinkDeposit = ''
       this.remark = ''
       let _this = this
       this.setTimerCalendar = setInterval(function () { _this.getDataCalendaBooking() }, 20000)
@@ -10098,6 +10231,8 @@ export default {
                 s.depositStatus = d.depositStatus || 'False'
                 s.depositImge = d.depositImge || ''
                 s.depositReturnImge = d.depositReturnImge || ''
+                s.depositPrice = d.depositPrice || ''
+                s.remarkDepositLinked = d.remarkDepositLinked || ''
                 s.lineUserId = d.lineUserId
                 s.memberPicture = d.memberPicture
                 s.timeDueHtext = d.timeDueH + ':00'
@@ -10257,6 +10392,8 @@ export default {
                 s.depositStatus = d.depositStatus || 'False'
                 s.depositImge = d.depositImge || ''
                 s.depositReturnImge = d.depositReturnImge || ''
+                s.depositPrice = d.depositPrice || ''
+                s.remarkDepositLinked = d.remarkDepositLinked || ''
                 s.lineUserId = d.lineUserId
                 s.memberPicture = d.memberPicture
                 s.timeDueHtext = d.timeDueH + ':00'
@@ -10580,8 +10717,12 @@ export default {
         if (this.checkDepositAdd === 'False') {
           this.formAdd.depositStatus = ''
           this.formAdd.depositImge = ''
+          this.formAdd.depositPrice = ''
         } else {
           if (this.dataDepositAdd === 'มี') {
+            if (this.formAdd.depositPrice === null) {
+              this.formAdd.depositPrice = ''
+            }
             this.formAdd.depositStatus = 'True'
             if (this.filesDepositAdd) {
               const _this = this
@@ -10597,6 +10738,9 @@ export default {
               this.formAdd.depositImge = this.pictureUrlPreviewDeposit
             }
           } else {
+            if (this.formAdd.depositPrice === null) {
+              this.formAdd.depositPrice = ''
+            }
             this.formAdd.depositStatus = 'True'
             this.formAdd.depositImge = ''
           }
@@ -10636,6 +10780,7 @@ export default {
             update.limitBookingId = this.checkLimitBooking.ID
             update.limitBookingCount = this.checkLimitBooking.countBooking
             update.getLimitBooking = this.checkLimitBooking.limitBooking
+            update.depositPrice = this.formAdd.depositPrice
             Add.push(update)
           } else {
             if (fielditem.filter(row => { return row.fieldId === parseInt(d.conditionField) }).length > 0) {
@@ -10664,6 +10809,7 @@ export default {
                 update.limitBookingId = this.checkLimitBooking.ID
                 update.limitBookingCount = this.checkLimitBooking.countBooking
                 update.getLimitBooking = this.checkLimitBooking.limitBooking
+                update.depositPrice = this.formAdd.depositPrice
                 Add.push(update)
               }
             } else if (d.conditionField === 'flow') {
@@ -10692,6 +10838,7 @@ export default {
                 update.limitBookingId = this.checkLimitBooking.ID
                 update.limitBookingCount = this.checkLimitBooking.countBooking
                 update.getLimitBooking = this.checkLimitBooking.limitBooking
+                update.depositPrice = this.formAdd.depositPrice
                 Add.push(update)
               }
             }
@@ -10722,6 +10869,7 @@ export default {
                   this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
                 }
                 this.dialogShowDeposit = true
+                this.bookNo = response.data.bookNo
                 this.depositLink = 'https://betask-linked.web.app/Thank?shopId=' + this.$session.getAll().data.shopId + '&redirectBy=BookingForm&flowId=' + flowIdData + '&bookNo=' + response.data.bookNo
               } else {
                 await this.confirmChkAdd(response.data)
@@ -12453,20 +12601,6 @@ export default {
 </script>
 
 <style scoped>
-.closeBt {
-  background-color: #dadada !important;
-  border: none;
-  /* padding: 20px !important; */
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 1px 2px;
-  cursor: pointer;
-  /* height: 60% !important;
-  width: 36px !important;
-  border-radius: 50%; */
-}
 .videoWrapper {
   position: relative;
   padding-bottom: 56.25%;

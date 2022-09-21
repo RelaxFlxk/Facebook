@@ -18,30 +18,29 @@
           <v-dialog
           v-model="dialogAdd"
           persistent
-          width="35%"
+          width="45%"
         >
           <v-card class="pa-3" min-height="700" style="overflow-x: hidden;">
-            <div style="text-align: end;">
-                        <v-btn
-                          fab
-                          small
-                          dark
-                          color="#F3F3F3"
-                          @click="dialogAdd = false"
-                        >
-                          <v-icon dark
-                          color="#FE4A01 ">
-                            mdi-close
-                          </v-icon>
-                        </v-btn>
-                    </div>
-            <v-col class="text-left py-0">
-                          <!-- <v-img
-                            id="v_text_edits"
-                            :src="require('@/assets/GroupEditTitle.svg')"
-                          ></v-img> -->
-                          <h2 class="font-weight-bold"  style="color:#173053;">เลือกบริการที่จะรับการแจ้งเตือน</h2>
-                        </v-col>
+            <v-row>
+              <v-col cols="10" class="text-left pt-10">
+              <h3><strong>เลือกบริการที่จะรับการแจ้งเตือน</strong></h3>
+              </v-col>
+              <v-col cols="2" class="pt-10">
+              <div style="text-align: end;">
+                  <v-btn
+                  class="mx-2"
+                  fab
+                  small
+                  dark
+                  color="white"
+                  :style="styleCloseBt"
+                  @click="dialogAdd = false"
+                  >
+                  X
+                  </v-btn>
+              </div>
+              </v-col>
+          </v-row>
             <v-row class="pa-6">
               <v-col class="pa-0" cols="12">
                 <!-- <p>{{itemBranch}}</p> -->
@@ -104,7 +103,7 @@
             </v-row>
             <div class="text-center">
               <v-btn
-                block class="ma-2" color="#173053" dark
+                block class="ma-2" color="#173053" dark large
                 @click="AddData()"
               >
                 บันทึก
@@ -118,27 +117,26 @@
           width="35%"
         >
           <v-card class="pa-3" min-height="700" style="overflow-x: hidden;">
-            <div style="text-align: end;">
-                        <v-btn
-                          fab
-                          small
-                          dark
-                          color="#F3F3F3"
-                          @click="dialog = false"
-                        >
-                          <v-icon dark
-                          color="#FE4A01 ">
-                            mdi-close
-                          </v-icon>
-                        </v-btn>
-                    </div>
-            <v-col class="text-left py-0">
-                          <!-- <v-img
-                            id="v_text_edits"
-                            :src="require('@/assets/GroupEditTitle.svg')"
-                          ></v-img> -->
-                          <h2 class="font-weight-bold"  style="color:#173053;">เลือกบริการที่จะรับการแจ้งเตือน</h2>
-                        </v-col>
+            <v-row>
+              <v-col cols="10" class="text-left pt-10">
+              <h3><strong>เลือกบริการที่จะรับการแจ้งเตือน</strong></h3>
+              </v-col>
+              <v-col cols="2" class="pt-10">
+              <div style="text-align: end;">
+                  <v-btn
+                  class="mx-2"
+                  fab
+                  small
+                  dark
+                  color="white"
+                  :style="styleCloseBt"
+                  @click="dialog = false"
+                  >
+                  X
+                  </v-btn>
+              </div>
+              </v-col>
+          </v-row>
             <v-row class="pa-6">
               <v-col class="pa-0" cols="12">
                 <!-- <p>{{itemBranch}}</p> -->
@@ -201,7 +199,7 @@
             </v-row>
             <div class="text-center">
               <v-btn
-                block class="ma-2" color="#173053" dark
+                block class="ma-2" color="#173053" dark large
                 @click="editData()"
               >
                 แก้ไขข้อมูล
