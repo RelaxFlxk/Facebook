@@ -57,7 +57,7 @@
                       </v-col>
                       <v-col cols="12" class="pb-0">
                         <VuetifyMoney
-                          v-model="formAdd.servicePice"
+                          v-model="formAdd.servicePrice"
                           placeholder="ค่าใช้จ่าย"
                           dense
                           label="ค่าใช้จ่าย"
@@ -128,7 +128,7 @@
                       </v-col>
                       <v-col cols="12" class="pb-0">
                         <VuetifyMoney
-                          v-model="formUpdate.servicePice"
+                          v-model="formUpdate.servicePrice"
                           placeholder="ค่าใช้จ่าย"
                           dense
                           label="ค่าใช้จ่าย"
@@ -237,8 +237,8 @@
                   <template v-slot:[`item.CREATE_DATE`]="{ item }">
                     {{ format_date(item.CREATE_DATE) }}
                   </template>
-                  <template v-slot:[`item.servicePice`]="{ item }">
-                    {{ item.servicePice ? item.servicePice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '0' }}
+                  <template v-slot:[`item.servicePrice`]="{ item }">
+                    {{ item.servicePrice ? item.servicePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '0' }}
                   </template>
                   <template v-slot:[`item.LAST_DATE`]="{ item }">
                     {{ format_date(item.LAST_DATE) }}
@@ -346,7 +346,7 @@ export default {
       searchAll2: '',
       formAdd: {
         serviceName: '',
-        servicePice: 0,
+        servicePrice: 0,
         shopId: this.$session.getAll().data.shopId,
         CREATE_USER: '',
         LAST_USER: ''
@@ -354,7 +354,7 @@ export default {
       formUpdate: {
         id: '',
         serviceName: '',
-        servicePice: 0,
+        servicePrice: 0,
         shopId: this.$session.getAll().data.shopId,
         CREATE_USER: '',
         LAST_USER: ''
@@ -367,7 +367,7 @@ export default {
       // Data Table Config
       columns: [
         { text: 'ชื่อรายการ', value: 'serviceName' },
-        { text: 'ค่าใช้จ่าย', value: 'servicePice' },
+        { text: 'ค่าใช้จ่าย', value: 'servicePrice' },
         { text: 'วันที่สร้าง', value: 'CREATE_DATE' },
         { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
         { text: '', value: 'action', sortable: false, align: 'center' }
@@ -409,8 +409,8 @@ export default {
     async getDataById (item) {
       this.dataReady = false
       await this.getDataByIdGlobal(this.DNS_IP, this.path, 'id', item.id)
-      if (this.formUpdate.servicePice === '' || this.formUpdate.servicePice === null) {
-        this.formUpdate.servicePice = 0
+      if (this.formUpdate.servicePrice === '' || this.formUpdate.servicePrice === null) {
+        this.formUpdate.servicePrice = 0
       }
     },
     async addData () {
@@ -437,7 +437,7 @@ export default {
         cancelButtonText: 'ไม่'
       })
         .then(async result => {
-          this.formAdd.servicePice = this.formAdd.servicePice || null
+          this.formAdd.servicePrice = this.formAdd.servicePrice || null
           await axios
             .post(this.DNS_IP + this.path + 'add', this.formAdd)
             .then(async response => {
@@ -481,7 +481,7 @@ export default {
       })
         .then(async result => {
           var ID = this.formUpdate.id
-          // this.formUpdate.servicePice = this.formUpdate.servicePice || null
+          // this.formUpdate.servicePrice = this.formUpdate.servicePrice || null
           delete this.formUpdate['id']
           await axios
             .post(

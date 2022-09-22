@@ -204,8 +204,8 @@ export default {
           } else {
             rs.map(el => {
               var s = {}
-              s.servicePice = el.servicePice || ''
-              s.text = s.servicePice === '' ? el.serviceName : el.serviceName + ' : ' + s.servicePice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' บาท'
+              s.servicePrice = el.servicePrice || ''
+              s.text = s.servicePrice === '' ? el.serviceName : el.serviceName + ' : ' + s.servicePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' บาท'
               s.values = el.id
               this.serviceType.push(s)
             })
