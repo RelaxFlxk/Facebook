@@ -11,7 +11,7 @@
             <v-btn
               color="primary"
               depressed
-              @click=";(dialogAdd = true), validate('ADD')"
+              @click=";(dialogAdd = true)"
             >
               <v-icon left>mdi-text-box-plus</v-icon>
               เพิ่มรายชื่อพนักงาน
@@ -119,7 +119,7 @@
                             dark
                             color="white"
                             :style="styleCloseBt"
-                            @click=";(dialogAdd = false), clearData()"
+                            @click="(dialogAdd = false), clearData()"
                           >
                             X
                           </v-btn>
@@ -215,28 +215,18 @@
                           label="สาขา"
                         ></v-select>
                       </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col cols="12" class="pa-0">
-                        {{ flowIdAdd }}
+                      <v-col cols="12" class="pa-0" v-if="formAdd.privacyPage === 'bookingform'">
                         <v-autocomplete
-                          v-if="formAdd.privacyPage === 'bookingform'"
-                          v-model="flowIdAdd"
+                          v-model="formAdd.flowId"
                           :items="flow"
+                          :rules="nameRules"
+                          required
                           clearable
+                          label="ประเภทบริการ"
                           dense
                           outlined
                           multiple
                         ></v-autocomplete>
-                        <!-- <v-combobox
-                          v-if="formAdd.privacyPage === 'bookingform'"
-                          v-model="flowIdAdd"
-                          :items="flow"
-                          label="หน้าที่พนักงาน"
-                          outlined
-                          dense
-                          multiple
-                        ></v-combobox> -->
                       </v-col>
                     </v-row>
                   </v-form>
@@ -250,7 +240,6 @@
                   dark
                   large
                   color="#173053"
-                  :disabled="!valid_add"
                   @click="addData()"
                 >
                   <v-icon left>mdi-checkbox-marked-circle</v-icon>
@@ -364,9 +353,8 @@
                           prepend-icon="mdi-map"
                         ></v-select>
                       </v-col>
-                      <v-col cols="12" class="pa-0">
+                      <v-col cols="12" class="pa-0"  v-if="formUpdate.privacyPage === 'bookingform'">
                         <v-select
-                          v-if="formUpdate.privacyPage === 'bookingform'"
                           dense
                           outlined
                           v-model="formUpdate.masBranchID"
@@ -376,27 +364,16 @@
                           label="สาขา"
                         ></v-select>
                       </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col cols="12" class="pa-0">
-                        <!-- {{ formUpdate.flowId }} -->
-                        <!-- <v-combobox
-                          v-if="formUpdate.privacyPage === 'bookingform'"
-                          v-model="formUpdate.flowId"
-                          :items="flow"
-                          label="หน้าที่พนักงาน"
-                          outlined
-                          dense
-                          multiple
-                        ></v-combobox> -->
+                      <v-col cols="12" class="pa-0" v-if="formUpdate.privacyPage === 'bookingform'">
                         <v-autocomplete
-                          v-if="formUpdate.privacyPage === 'bookingform'"
                           v-model="formUpdate.flowId"
                           :items="flow"
+                          label="ประเภทบริการ"
                           clearable
                           dense
                           outlined
                           multiple
+                          :rules="nameRules"
                         ></v-autocomplete>
                       </v-col>
                     </v-row>
@@ -1059,8 +1036,7 @@ export default {
         privacyPage: '',
         setTime: [],
         masBranchID: '',
-        flowId: [],
-        flowName: []
+        flowId: []
       },
       formUpdateItem: {
         empCode: '',
@@ -1071,8 +1047,7 @@ export default {
         empImge: '',
         setTime: [],
         masBranchID: '',
-        flowId: [],
-        flowName: []
+        flowId: []
       },
       formUpdateLimitbooking: {
         empId: null,
@@ -1184,7 +1159,7 @@ export default {
       branch: [],
       flow: [],
       value: '',
-      flowIdAdd: ''
+      flowIdAdd: []
       // End Export Config
     }
   },
@@ -1584,9 +1559,6 @@ export default {
       this.formAdd.CREATE_USER = this.$session.getAll().data.userName
       this.formAdd.LAST_USER = this.$session.getAll().data.userName
       this.formAdd.shopId = this.$session.getAll().data.shopId
-      this.formAdd.flowId = JSON.stringify(this.flowIdAdd)
-      //   this.formAdd.flowId = JSON.parse(this.flowIdAdd)
-      console.log(this.formAdd.flowId)
 
       // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
       //
@@ -1597,84 +1569,84 @@ export default {
 
       console.log('form', JSON.stringify(this.formAdd))
 
-      this.dataReady = false
-      this.submitAdd(this.DNS_IP, this.path, this.formAdd)
+      this.validate('ADD')
+      setTimeout(() => this.submitAdd(this.DNS_IP, this.path, this.formAdd), 500)
     },
     async submitAdd (DNS_IP, PATH, ID, DT) {
-      this.dataReady = false
-
-      this.$swal({
-        title: 'ต้องการ เพิ่มข้อมูล ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      })
-        .then(async result => {
-          if (this.filesAdd) {
-            const _this = this
-            let params = new FormData()
-            params.append('file', this.filesAdd)
+      if (this.valid_add === true) {
+        this.dataReady = false
+        this.$swal({
+          title: 'ต้องการ เพิ่มข้อมูล ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        })
+          .then(async result => {
+            if (this.filesAdd) {
+              const _this = this
+              let params = new FormData()
+              params.append('file', this.filesAdd)
+              await axios
+                .post(this.DNS_IP + `/file/upload/employee`, params)
+                .then(function (response) {
+                  _this.formAdd.empImge = response.data
+                  console.log('url Pic', response.data)
+                })
+            } else {
+              this.formAdd.empImge = ''
+            }
+            if (this.formAdd.privacyPage !== 'bookingform') {
+              delete this.formAdd['masBranchID']
+              delete this.formAdd['flowId']
+            } else {
+              this.formAdd.flowId = JSON.stringify(this.formAdd.flowId)
+            }
+            delete this.formAdd['pictureUrlPreview']
             await axios
-              .post(this.DNS_IP + `/file/upload/employee`, params)
-              .then(function (response) {
-                _this.formAdd.empImge = response.data
-                console.log('url Pic', response.data)
-              })
-          } else {
-            this.formAdd.empImge = ''
-          }
-          if (this.formAdd.privacyPage !== 'bookingform') {
-            delete this.formAdd['masBranchID']
-            delete this.formAdd['flowId']
-          } else {
-            this.formAdd.flowId = JSON.stringify(this.formAdd.flowId)
-          }
-          delete this.formAdd['pictureUrlPreview']
-          await axios
-            .post(
+              .post(
               // eslint-disable-next-line quotes
-              DNS_IP + PATH + 'add',
-              this.formAdd,
-              {
-                headers: {
-                  'Application-Key': this.$session.getAll().ApplicationKey
+                DNS_IP + PATH + 'add',
+                this.formAdd,
+                {
+                  headers: {
+                    'Application-Key': this.$session.getAll().ApplicationKey
+                  }
                 }
-              }
-            )
-            .then(async response => {
-              // Debug response
-              console.log('addDataGlobal DNS_IP + PATH + "add"', response)
-
-              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-              // Close Dialog
-              this.dialogAdd = false
-
-              // Load Data
-              await this.clearData()
-              await this.getDataGlobal(
-                this.DNS_IP,
-                this.path,
-                this.$session.getAll().data.shopId
               )
-            })
+              .then(async response => {
+              // Debug response
+                console.log('addDataGlobal DNS_IP + PATH + "add"', response)
+
+                this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+                // Close Dialog
+                this.dialogAdd = false
+
+                // Load Data
+                await this.clearData()
+                await this.getDataGlobal(
+                  this.DNS_IP,
+                  this.path,
+                  this.$session.getAll().data.shopId
+                )
+              })
             // eslint-disable-next-line handle-callback-err
-            .catch(error => {
-              console.log('error function addDataGlobal : ', error)
-              this.dataReady = true
-            })
-        })
-        .catch(error => {
-          console.log('error function addData : ', error)
-          this.dataReady = true
-        })
+              .catch(error => {
+                console.log('error function addDataGlobal : ', error)
+                this.dataReady = true
+              })
+          })
+          .catch(error => {
+            console.log('error function addData : ', error)
+            this.dataReady = true
+          })
+      }
     },
     async editData () {
       // Config User ทำรายการล่าสุด
       this.formUpdateItem.LAST_USER = this.$session.getAll().data.userName
-      this.formUpdateItem.flowId = JSON.stringtify(this.formUpdate.flowId)
       // End Config User ทำรายการล่าสุด
 
       for (var key in this.formUpdateItem) {
@@ -1684,11 +1656,6 @@ export default {
           }
         }
       }
-      // console.log('this.formUpdateItem', this.formUpdateItem)
-
-      // Debug
-      console.log('EDIT PK : ', this.PK)
-      console.log('formUpdateItem', JSON.stringify(this.formUpdateItem))
       // End Debug
       // สำหรับ แก้ไขข้อมูล
       // ต้องระบุ  Last User ว่าใครเป็นคนแก้ไขล่าสุด
@@ -1744,7 +1711,7 @@ export default {
               this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
               // Close Dialog
               this.dialogEdit = false
-              this.filesUpdate = ''
+              this.filesUpdate = null
               // Load Data
               await this.getDataGlobal(
                 DNS_IP,
@@ -2021,7 +1988,7 @@ export default {
       this.formAdd.pictureUrlPreview = ''
       this.formAdd.shopId = this.$session.getAll().data.shopId
       this.formAdd.masBranchID = ''
-      this.formAdd.flowId = ''
+      this.formAdd.flowId = []
       this.flowIdAdd = ''
       this.formUpdate.empCode = ''
       this.formUpdate.empTitle_NameTH = ''
