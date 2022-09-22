@@ -6396,7 +6396,7 @@ export default {
       this.depositPrice = item.depositPrice || 0
       this.bookNo = item.bookNo
       this.datailLinkDeposit = item.remarkDepositLinked
-      this.depositLink = 'https://betask-linked.web.app/Thank?shopId=' + item.shopId + '&redirectBy=BookingForm&flowId=' + item.flowId + '&bookNo=' + item.bookNo
+      this.depositLink = 'https://betask-linked.web.app/Thank?shopId=' + item.shopId + '&redirectBy=BookingAdmin&flowId=' + item.flowId + '&bookNo=' + item.bookNo
       this.dialogShowDeposit = true
     },
     async dataReturn (item) {
@@ -10870,7 +10870,7 @@ export default {
                 }
                 this.dialogShowDeposit = true
                 this.bookNo = response.data.bookNo
-                this.depositLink = 'https://betask-linked.web.app/Thank?shopId=' + this.$session.getAll().data.shopId + '&redirectBy=BookingForm&flowId=' + flowIdData + '&bookNo=' + response.data.bookNo
+                this.depositLink = 'https://betask-linked.web.app/Thank?shopId=' + this.$session.getAll().data.shopId + '&redirectBy=BookingAdmin&flowId=' + flowIdData + '&bookNo=' + response.data.bookNo
               } else {
                 await this.confirmChkAdd(response.data)
               }
