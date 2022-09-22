@@ -105,53 +105,49 @@
             <v-card class="pa-1">
               <v-card-text class="pa-0 px-2">
                 <v-container>
-                   <v-form
-                    ref="form_add"
-                    v-model="valid_add"
-                    lazy-validation
-                  >
-                  <v-row>
-                    <v-col cols="8" class="text-left pt-10">
-                    <h3><strong>เพิ่มรายชื่อพนักงาน</strong></h3>
-                    </v-col>
-                    <v-col cols="4" class="pt-10">
-                    <div style="text-align: end;">
-                        <v-btn
-                        class="mx-2"
-                        fab
-                        small
-                        dark
-                        color="white"
-                        :style="styleCloseBt"
-                        @click="dialogAdd = false,clearData()"
-                        >
-                        X
-                        </v-btn>
-                    </div>
-                    </v-col>
-                </v-row>
-                  <v-row justify="center">
-                    <v-col cols="12" class="text-center">
-                      <v-img
-                        aspect-ratio="6"
-                        contain
-                        :src="formAdd.pictureUrlPreview"
-                      ></v-img>
-                      <!-- <v-avatar size="100px"><img alt="Avatar" :src="formAdd.pictureUrl"></v-avatar> -->
-                      <br />
-                      <v-file-input
-                        required
-                        counter
-                        show-size
-                        accept="image/png, image/jpeg, image/bmp"
-                        prepend-icon="mdi-camera"
-                        label="รูปพนักงาน (ถ้ามี)"
-                        @change="selectImgAdd"
-                        v-model="filesAdd"
-                      ></v-file-input>
-                    </v-col>
-                  </v-row>
-                  <v-row>
+                  <v-form ref="form_add" v-model="valid_add" lazy-validation>
+                    <v-row>
+                      <v-col cols="8" class="text-left pt-10">
+                        <h3><strong>เพิ่มรายชื่อพนักงาน</strong></h3>
+                      </v-col>
+                      <v-col cols="4" class="pt-10">
+                        <div style="text-align: end;">
+                          <v-btn
+                            class="mx-2"
+                            fab
+                            small
+                            dark
+                            color="white"
+                            :style="styleCloseBt"
+                            @click=";(dialogAdd = false), clearData()"
+                          >
+                            X
+                          </v-btn>
+                        </div>
+                      </v-col>
+                    </v-row>
+                    <v-row justify="center">
+                      <v-col cols="12" class="text-center">
+                        <v-img
+                          aspect-ratio="6"
+                          contain
+                          :src="formAdd.pictureUrlPreview"
+                        ></v-img>
+                        <!-- <v-avatar size="100px"><img alt="Avatar" :src="formAdd.pictureUrl"></v-avatar> -->
+                        <br />
+                        <v-file-input
+                          required
+                          counter
+                          show-size
+                          accept="image/png, image/jpeg, image/bmp"
+                          prepend-icon="mdi-camera"
+                          label="รูปพนักงาน (ถ้ามี)"
+                          @change="selectImgAdd"
+                          v-model="filesAdd"
+                        ></v-file-input>
+                      </v-col>
+                    </v-row>
+                    <v-row>
                       <v-col cols="12" class="pa-0">
                         <v-select
                           dense
@@ -220,6 +216,29 @@
                         ></v-select>
                       </v-col>
                     </v-row>
+                    <v-row>
+                      <v-col cols="12" class="pa-0">
+                        {{ flowIdAdd }}
+                        <v-autocomplete
+                          v-if="formAdd.privacyPage === 'bookingform'"
+                          v-model="flowIdAdd"
+                          :items="flow"
+                          clearable
+                          dense
+                          outlined
+                          multiple
+                        ></v-autocomplete>
+                        <!-- <v-combobox
+                          v-if="formAdd.privacyPage === 'bookingform'"
+                          v-model="flowIdAdd"
+                          :items="flow"
+                          label="หน้าที่พนักงาน"
+                          outlined
+                          dense
+                          multiple
+                        ></v-combobox> -->
+                      </v-col>
+                    </v-row>
                   </v-form>
                 </v-container>
               </v-card-text>
@@ -252,48 +271,48 @@
                     v-model="valid_update"
                     lazy-validation
                   >
-                  <v-row>
-                    <v-col cols="8" class="text-left pt-10">
-                    <h3><strong>แก้ไขข้อมูล</strong></h3>
-                    </v-col>
-                    <v-col cols="4" class="pt-10">
-                    <div style="text-align: end;">
-                        <v-btn
-                        class="mx-2"
-                        fab
-                        small
-                        dark
-                        color="white"
-                        :style="styleCloseBt"
-                        @click="dialogEdit = false, dataReady = true"
-                        >
-                        X
-                        </v-btn>
-                    </div>
-                    </v-col>
-                </v-row>
-                  <v-row justify="center">
-                    <v-col cols="12" class="text-center">
-                      <v-img
-                        aspect-ratio="6"
-                        contain
-                        :src="formUpdate.pictureUrlPreview"
-                      ></v-img>
-                      <!-- <v-avatar size="100px"><img alt="Avatar" :src="formAdd.pictureUrl"></v-avatar> -->
-                      <br />
-                      <v-file-input
-                        required
-                        counter
-                        show-size
-                        accept="image/png, image/jpeg, image/bmp"
-                        prepend-icon="mdi-camera"
-                        label="รูปพนักงาน (ถ้ามี)"
-                        @change="selectImgUpdate"
-                        v-model="filesUpdate"
-                      ></v-file-input>
-                    </v-col>
-                  </v-row>
-                  <v-row>
+                    <v-row>
+                      <v-col cols="8" class="text-left pt-10">
+                        <h3><strong>แก้ไขข้อมูล</strong></h3>
+                      </v-col>
+                      <v-col cols="4" class="pt-10">
+                        <div style="text-align: end;">
+                          <v-btn
+                            class="mx-2"
+                            fab
+                            small
+                            dark
+                            color="white"
+                            :style="styleCloseBt"
+                            @click=";(dialogEdit = false), (dataReady = true)"
+                          >
+                            X
+                          </v-btn>
+                        </div>
+                      </v-col>
+                    </v-row>
+                    <v-row justify="center">
+                      <v-col cols="12" class="text-center">
+                        <v-img
+                          aspect-ratio="6"
+                          contain
+                          :src="formUpdate.pictureUrlPreview"
+                        ></v-img>
+                        <!-- <v-avatar size="100px"><img alt="Avatar" :src="formAdd.pictureUrl"></v-avatar> -->
+                        <br />
+                        <v-file-input
+                          required
+                          counter
+                          show-size
+                          accept="image/png, image/jpeg, image/bmp"
+                          prepend-icon="mdi-camera"
+                          label="รูปพนักงาน (ถ้ามี)"
+                          @change="selectImgUpdate"
+                          v-model="filesUpdate"
+                        ></v-file-input>
+                      </v-col>
+                    </v-row>
+                    <v-row>
                       <v-col cols="12" class="pa-0">
                         <v-select
                           dense
@@ -361,15 +380,24 @@
                     <v-row>
                       <v-col cols="12" class="pa-0">
                         <!-- {{ formUpdate.flowId }} -->
-                        <v-combobox
+                        <!-- <v-combobox
                           v-if="formUpdate.privacyPage === 'bookingform'"
                           v-model="formUpdate.flowId"
                           :items="flow"
-                          label="ประเภทบริการ"
+                          label="หน้าที่พนักงาน"
                           outlined
                           dense
                           multiple
-                        ></v-combobox>
+                        ></v-combobox> -->
+                        <v-autocomplete
+                          v-if="formUpdate.privacyPage === 'bookingform'"
+                          v-model="formUpdate.flowId"
+                          :items="flow"
+                          clearable
+                          dense
+                          outlined
+                          multiple
+                        ></v-autocomplete>
                       </v-col>
                     </v-row>
                   </v-form>
@@ -401,29 +429,34 @@
                 <v-container>
                   <v-row>
                     <v-col cols="8" class="text-left pt-10">
-                    <h3><strong>ลบข้อมูลนี้</strong></h3>
+                      <h3><strong>ลบข้อมูลนี้</strong></h3>
                     </v-col>
                     <v-col cols="4" class="pt-10">
-                    <div style="text-align: end;">
+                      <div style="text-align: end;">
                         <v-btn
-                        class="mx-2"
-                        fab
-                        small
-                        dark
-                        color="white"
-                        :style="styleCloseBt"
-                        @click="dialogDelete = false, dataReady = true"
+                          class="mx-2"
+                          fab
+                          small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
+                          @click=";(dialogDelete = false), (dataReady = true)"
                         >
-                        X
+                          X
                         </v-btn>
-                    </div>
+                      </div>
                     </v-col>
-                </v-row>
+                  </v-row>
                   <v-row>
-                      <v-col cols="12" class="pb-0">
+                    <v-col cols="12" class="pb-0">
                       <v-text-field
                         label="ชื่อพนักงาน"
-                        :value="formUpdate.empTitle_NameTH + formUpdate.empFirst_NameTH + ' ' + formUpdate.empLast_NameTH"
+                        :value="
+                          formUpdate.empTitle_NameTH +
+                            formUpdate.empFirst_NameTH +
+                            ' ' +
+                            formUpdate.empLast_NameTH
+                        "
                       ></v-text-field>
                     </v-col>
                   </v-row>
@@ -1013,7 +1046,8 @@ export default {
         pictureUrlPreview: '',
         shopId: this.$session.getAll().data.shopId,
         setTime: [],
-        masBranchID: ''
+        masBranchID: '',
+        flowId: []
       },
       formUpdate: {
         empCode: '',
@@ -1149,7 +1183,8 @@ export default {
       BookingFieldshowtime: null,
       branch: [],
       flow: [],
-      value: ''
+      value: '',
+      flowIdAdd: ''
       // End Export Config
     }
   },
@@ -1529,9 +1564,10 @@ export default {
       }
 
       if (item.flowId) {
-        console.log('item', item)
+        console.log('item', typeof JSON.parse(item.flowId))
+        console.log('item', JSON.parse(item.flowId))
         this.formUpdate.flowId = JSON.parse(item.flowId)
-        console.log('typeof', JSON.parse(item.flowId))
+        console.log('typeof', typeof item.flowId)
       }
       // delete this.formUpdate[FIELD_PK_NAME]
       delete this.formUpdate['LAST_DATE']
@@ -1548,6 +1584,9 @@ export default {
       this.formAdd.CREATE_USER = this.$session.getAll().data.userName
       this.formAdd.LAST_USER = this.$session.getAll().data.userName
       this.formAdd.shopId = this.$session.getAll().data.shopId
+      this.formAdd.flowId = JSON.stringify(this.flowIdAdd)
+      //   this.formAdd.flowId = JSON.parse(this.flowIdAdd)
+      console.log(this.formAdd.flowId)
 
       // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
       //
@@ -1635,6 +1674,7 @@ export default {
     async editData () {
       // Config User ทำรายการล่าสุด
       this.formUpdateItem.LAST_USER = this.$session.getAll().data.userName
+      this.formUpdateItem.flowId = JSON.stringtify(this.formUpdate.flowId)
       // End Config User ทำรายการล่าสุด
 
       for (var key in this.formUpdateItem) {
@@ -1967,14 +2007,6 @@ export default {
           console.log('result', this.flow)
         })
     },
-    // filterItem (value) {
-    //   console.log(value)
-    //   this.Update.flowId = []
-    //   value.forEach((element, key) => {
-    //     console.log('el', element.text)
-    //     this.Update.flowId.push(element.flowId)
-    //   })
-    // },
     remove (item) {
       const index = this.formUpdate.flowId.indexOf(item.text)
       if (index >= 0) this.formUpdate.flowId.splice(index, 1)
@@ -1988,6 +2020,9 @@ export default {
       this.formAdd.empImge = ''
       this.formAdd.pictureUrlPreview = ''
       this.formAdd.shopId = this.$session.getAll().data.shopId
+      this.formAdd.masBranchID = ''
+      this.formAdd.flowId = ''
+      this.flowIdAdd = ''
       this.formUpdate.empCode = ''
       this.formUpdate.empTitle_NameTH = ''
       this.formUpdate.empFirst_NameTH = ''
