@@ -20,7 +20,7 @@
         </v-row>
         <v-row>
           <!-- step -->
-          <v-dialog v-model="dialogStep" persistent max-width="50%">
+          <v-dialog v-model="dialogStep" persistent max-width="70%">
             <v-card>
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
                 <v-card-text>
@@ -284,6 +284,15 @@
                               ></v-checkbox>
                             </template>
                             <template v-slot:[`item.action`]="{ item }" v-if="checkOnsite !== 'True'">
+                              <v-btn
+                              color="info"
+                              fab
+                              dark
+                              x-small
+                              @click="FunCopy(item)"
+                            >
+                              <v-icon> mdi-qrcode-scan </v-icon>
+                            </v-btn>
                               <v-btn
                                 color="question"
                                 fab
@@ -1814,6 +1823,15 @@ export default {
     await this.getBookingField()
   },
   methods: {
+    async FunCopy (item) {
+      let copyText = 'https://liff.line.me/1656581804-7KRQyqo5/stampStep?shopId=' + item.shopId + '&stepId=' + item.stepId + '&flowId=' + item.flowId
+      // let copyText = document.getElementById('myInputDeposit')
+      // copyText.select()
+      // copyText.setSelectionRange(0, 99999)
+      navigator.clipboard.writeText(copyText)
+      this.$swal('เรียบร้อย', 'คัดลอกเพิ่อสร้าง QR Code สำเร็จ', 'success')
+      this.dialogShowDeposit = false
+    },
     editItemNew (item) {
       console.log('item', item)
       console.log('this.dataItemAddTime', this.dataItemAddTime)
