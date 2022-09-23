@@ -1779,6 +1779,8 @@ export default {
     },
     async onUpdate () {
       this.formUpdate.stepId = this.formUpdate.stepTitle.stepId
+      this.formUpdate.flowId = this.flowId
+      this.formUpdate.shopId = this.shopId
       console.log('formUpdate', this.formUpdate)
       // console.log('allJob', this.allJob)
       // console.log('empSeleteStep', this.empSeleteStep)
@@ -1798,7 +1800,6 @@ export default {
             this.formUpdate.LAST_USER = this.session.data.userName
             var ID = this.formUpdate.jobId
             var flowId = this.flowId
-            delete this.formUpdate['flowId']
             delete this.formUpdate['flowName']
             delete this.formUpdate['sortNo']
             delete this.formUpdate['CREATE_USER']
@@ -1905,6 +1906,7 @@ export default {
       await axios
         .post(this.DNS_IP + '/job/pushClosejob/' + jobNo, updateStatusSend)
         .then(console.log(jobNo))
+        .catch((error) => console.log('error', error))
     },
     closeJob () {
       console.log('this.productExchangeRateId', this.productExchangeRateId)
