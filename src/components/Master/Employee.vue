@@ -388,7 +388,6 @@
                   dark
                   large
                   color="#173053"
-                  :disabled="!valid_update"
                   @click="editData()"
                 >
                   <v-icon left>mdi-checkbox-marked-circle</v-icon>
@@ -922,7 +921,6 @@
                       @click.stop="
                         ;(dialogEdit = true),
                           getDataById(item),
-                          validate('UPDATE'),
                           getDataFlow()
                       "
                     >
@@ -1024,7 +1022,7 @@ export default {
         shopId: this.$session.getAll().data.shopId,
         setTime: [],
         masBranchID: '',
-        flowId: []
+        flowId: ''
       },
       formUpdate: {
         empCode: '',
@@ -1036,7 +1034,7 @@ export default {
         privacyPage: '',
         setTime: [],
         masBranchID: '',
-        flowId: []
+        flowId: ''
       },
       formUpdateItem: {
         empCode: '',
@@ -1047,7 +1045,7 @@ export default {
         empImge: '',
         setTime: [],
         masBranchID: '',
-        flowId: []
+        flowId: ''
       },
       formUpdateLimitbooking: {
         empId: null,
@@ -1537,12 +1535,11 @@ export default {
       } else {
         this.dataItemAddTime = JSON.parse(item.setTime)
       }
-
-      if (item.flowId) {
-        console.log('item', typeof JSON.parse(item.flowId))
-        console.log('item', JSON.parse(item.flowId))
+      let flowId = item.flowId || ''
+      if (flowId !== '') {
         this.formUpdate.flowId = JSON.parse(item.flowId)
-        console.log('typeof', typeof item.flowId)
+      } else {
+        this.formUpdate.flowId = ''
       }
       // delete this.formUpdate[FIELD_PK_NAME]
       delete this.formUpdate['LAST_DATE']
@@ -1656,79 +1653,75 @@ export default {
           }
         }
       }
-      // End Debug
-      // สำหรับ แก้ไขข้อมูล
-      // ต้องระบุ  Last User ว่าใครเป็นคนแก้ไขล่าสุด
-      //
-      // this.dataReady = false
-      // this.editDataGlobal(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
-      this.dataReady = false
-      this.submitEdit(this.DNS_IP, this.path)
+      this.validate('UPDATE')
+      setTimeout(() => this.submitEdit(this.DNS_IP, this.path), 500)
     },
     async submitEdit (DNS_IP, PATH) {
+      if (this.valid_update === true) {
       // this.editDataGlobal(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
-      this.dataReady = false
+        this.dataReady = false
 
-      this.$swal({
-        title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      })
-        .then(async result => {
-          if (this.filesUpdate) {
-            const _this = this
-            let params = new FormData()
-            params.append('file', this.filesUpdate)
+        this.$swal({
+          title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        })
+          .then(async result => {
+            if (this.filesUpdate) {
+              const _this = this
+              let params = new FormData()
+              params.append('file', this.filesUpdate)
+              await axios
+                .post(this.DNS_IP + `/file/upload/employee`, params)
+                .then(function (response) {
+                  _this.formUpdateItem.empImge = response.data
+                  console.log('url Pic', response.data)
+                })
+            } else {
+              this.formUpdateItem.empImge = this.formUpdate.pictureUrlPreview
+            }
+            if (this.formUpdate.privacyPage !== 'bookingform') {
+              delete this.formUpdateItem['masBranchID']
+              delete this.formUpdateItem['flowId']
+            } else {
+              this.formUpdateItem.flowId = JSON.stringify(this.formUpdate.flowId)
+            }
             await axios
-              .post(this.DNS_IP + `/file/upload/employee`, params)
-              .then(function (response) {
-                _this.formUpdateItem.empImge = response.data
-                console.log('url Pic', response.data)
-              })
-          } else {
-            this.formUpdateItem.empImge = this.formUpdate.pictureUrlPreview
-          }
-          if (this.formUpdate.privacyPage !== 'bookingform') {
-            delete this.formUpdateItem['masBranchID']
-            delete this.formUpdateItem['flowId']
-          } else {
-            this.formUpdateItem.flowId = JSON.stringify(this.formUpdate.flowId)
-          }
-          await axios
-            .post(
+              .post(
               // eslint-disable-next-line quotes
-              DNS_IP + PATH + 'edit/' + this.PK,
-              this.formUpdateItem
-            )
-            .then(async response => {
-              // Debug response
-              console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
-
-              this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
-              // Close Dialog
-              this.dialogEdit = false
-              this.filesUpdate = null
-              // Load Data
-              await this.getDataGlobal(
-                DNS_IP,
-                PATH,
-                this.$session.getAll().data.shopId
+                DNS_IP + PATH + 'edit/' + this.PK,
+                this.formUpdateItem
               )
-            })
+              .then(async response => {
+              // Debug response
+                console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
+
+                this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
+                // Close Dialog
+                this.dialogEdit = false
+                this.filesUpdate = null
+                // Load Data
+                await this.getDataGlobal(
+                  DNS_IP,
+                  PATH,
+                  this.$session.getAll().data.shopId
+                )
+              })
             // eslint-disable-next-line handle-callback-err
-            .catch(error => {
-              this.dataReady = true
-              console.log('error function editDataGlobal : ', error)
-            })
-        })
-        .catch(error => {
-          this.dataReady = true
-          console.log('error function editDataGlobal : ', error)
-        })
+              .catch(error => {
+                this.dataReady = true
+                console.log('error function editDataGlobal : ', error)
+              })
+          })
+          .catch(error => {
+            this.dataReady = true
+            console.log('error function editDataGlobal : ', error)
+          })
+      }
     },
     async deleteData () {
       console.log('DELETE PK : ', this.PK)

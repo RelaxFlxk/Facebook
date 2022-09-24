@@ -503,7 +503,18 @@
               </v-col>
           </v-row>
           <v-row>
-            <v-col  cols="12" class="pb-0">
+            <v-col cols="12" class="pb-0">
+                    <v-select
+                      v-model="flowSelect"
+                      :items="dataFlow"
+                      label="เลือกประเภทบริการ"
+                      menu-props="auto"
+                      outlined
+                      dense
+                      @change="getEmp(masBranchID), empSelect=''"
+                    ></v-select>
+                    </v-col>
+            <v-col  cols="12" class="pt-0 pb-0">
                 <v-select
                   v-model="bookingEmpFlow"
                   :items="dataEmp"
@@ -554,7 +565,7 @@
                 ></v-date-picker>
               </v-menu>
             </v-col>
-            <v-col cols="12" class="pt-0 pb-0" v-if="formChange.date != ''">
+            <v-col cols="12" class="pt-0" v-if="formChange.date != ''">
                 <v-select
                   v-model="formChange.time"
                   :items="timeavailable"
@@ -610,7 +621,18 @@
                     </v-col>
                 </v-row>
                   <v-row v-if="checkStatusBooking === 'cancel'">
-                    <v-col  cols="12" class="pb-0">
+                    <v-col cols="12" class="pt-0 pb-0">
+                    <v-select
+                      v-model="flowSelect"
+                      :items="dataFlow"
+                      label="เลือกประเภทบริการ"
+                      menu-props="auto"
+                      outlined
+                      dense
+                      @change="getEmp(masBranchID), empSelect=''"
+                    ></v-select>
+                    </v-col>
+                    <v-col  cols="12" class="pt-0 pb-0">
                         <v-select
                           v-model="bookingEmpFlow"
                           :items="dataEmp"
@@ -1085,7 +1107,8 @@ export default {
       empDetails: '',
       checkStatusBooking: '',
       paymentImge: '',
-      bookNo: ''
+      bookNo: '',
+      flowSelect: ''
     }
   },
   async mounted () {
@@ -1232,20 +1255,32 @@ export default {
         if (rs.length > 0) {
           for (var i = 0; i < rs.length; i++) {
             let d = rs[i]
-            let s = {}
-            s.text = d.empFull_NameTH
-            s.textEng = d.empFull_NameTH
-            s.value = d.empId
-            d.text = d.empFull_NameTH
-            d.textEng = d.empFull_NameTH
-            d.value = d.empId
-            this.dataEmp.push(s)
-            this.dataEmpAll.push(d)
-            let limit = {}
-            limit.empId = d.empId
-            limit.limitBookingCheck = d.limitBookingCheck || 'False'
-            limit.setTime = d.setTime || '[]'
-            this.EmpItemLimit.push(limit)
+            if (d.flowId !== null && d.flowId !== '') {
+              let checkFlowId = JSON.parse(d.flowId)
+              if (checkFlowId.filter((a) => parseInt(a) === this.flowSelect).length > 0) {
+                let s = {}
+                s.text = d.empFull_NameTH
+                s.textEng = d.empFull_NameTH
+                s.value = d.empId
+                d.text = d.empFull_NameTH
+                d.textEng = d.empFull_NameTH
+                d.value = d.empId
+                this.dataEmp.push(s)
+                this.dataEmpAll.push(d)
+                let limit = {}
+                limit.empId = d.empId
+                limit.limitBookingCheck = d.limitBookingCheck || 'False'
+                limit.setTime = d.setTime || '[]'
+                this.EmpItemLimit.push(limit)
+              }
+            }
+          }
+          if (this.dataEmp.length === 0) {
+            this.$swal(
+              'ไม่มีช่างสำหรับประเภทบริการนี้',
+              'กรุณาเลือกประเภทบริการอื่นๆ',
+              'info'
+            )
           }
           console.log('EmpItemLimit', this.EmpItemLimit)
         } else {
@@ -2270,6 +2305,7 @@ export default {
                     // }
                   })
                 this.flowIdSelect = dataBookingData[0].flowId
+                this.flowSelect = dataBookingData[0].flowId
                 s.masBranchID = dataBookingData[0].masBranchID
                 this.masBranchID = dataBookingData[0].masBranchID
                 this.bookingEmpFlow = d.bookingEmpFlow
@@ -2432,7 +2468,7 @@ export default {
       }
       this.dialogConfirm = true
       console.log('formChange', this.formChange)
-      console.log('formChange', this.formChange)
+      console.log('flowSelect', this.flowSelect)
     },
     async onConfirm (item) {
       if (this.dataItem[0].checkOnsite === 'True') {

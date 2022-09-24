@@ -475,9 +475,9 @@ export default {
           }
         })
     },
-    async getBookingData () {
+    async getBookingData (today) {
       this.bookingData = []
-      const dateSplit = this.today.split('-')
+      const dateSplit = today.split('-')
       const year = String(dateSplit[0])
       const month = String(dateSplit[1])
       let url = `${this.DNS_IP}/BookingData/get?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchName=${this.masBranchName.text}`
@@ -496,7 +496,6 @@ export default {
     },
     async getBookingList (param, dateMonth) {
       console.log('getBookingList')
-      await this.getBookingData()
       if (param !== undefined) {
         this.paramUse = param
       } else {
@@ -528,6 +527,7 @@ export default {
       } else {
         bookingDate = '&dueDate=' + year + '-' + month
       }
+      await this.getBookingData(bookingDate)
       if (this.type === 'month') {
         let url = ''
         if (this.flowId === 'allFlow') {

@@ -90,6 +90,11 @@ export default new Router({
     component: Master.BookingListBeauty
   },
   {
+    path: '/Master/BookingListBeautyEmp',
+    name: 'BookingListBeautyEmp',
+    component: Master.BookingListBeautyEmp
+  },
+  {
     path: '/Master/Rating',
     name: 'Rating',
     component: Master.Rating
