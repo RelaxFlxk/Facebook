@@ -283,13 +283,13 @@
                                 v-model="item.sendCard"
                               ></v-checkbox>
                             </template>
-                            <template v-slot:[`item.action`]="{ item }" v-if="checkOnsite !== 'True'">
+                            <template v-slot:[`item.action`]="{ item, index }" v-if="checkOnsite !== 'True'">
                               <v-btn
                               color="info"
                               fab
                               dark
                               x-small
-                              @click="FunCopy(item)"
+                              @click="FunCopy(item, index+1)"
                             >
                               <v-icon> mdi-qrcode-scan </v-icon>
                             </v-btn>
@@ -1823,8 +1823,8 @@ export default {
     await this.getBookingField()
   },
   methods: {
-    async FunCopy (item) {
-      let copyText = 'https://liff.line.me/1656581804-7KRQyqo5/stampStep?shopId=' + item.shopId + '&stepId=' + item.stepId + '&flowId=' + item.flowId
+    async FunCopy (item, no) {
+      let copyText = 'https://liff.line.me/1656581804-7KRQyqo5/stampStep?shopId=' + item.shopId + '&stepNo=' + no
       // let copyText = document.getElementById('myInputDeposit')
       // copyText.select()
       // copyText.setSelectionRange(0, 99999)
