@@ -3234,7 +3234,7 @@
                           </v-list-item>
                           </v-hover>
                           <v-hover v-slot:default="{ hover }">
-                          <v-list-item  style="background-color: lightgreen" @click.stop="confirmChk(item)" v-if="item.statusBt !== 'confirmJob' && item.statusBt !== 'confirm'">
+                          <v-list-item  style="background-color: lightgreen" @click.stop="confirmChk(item)" v-if="item.statusBt !== 'confirmJob' && item.statusBt !== 'confirm' && item.statusBt !== 'cancel'">
                             <template><v-expand-transition>
                                         <v-overlay
                                             color="green"
@@ -3248,7 +3248,7 @@
                             </template>
                           </v-list-item>
                           </v-hover>
-                          <v-list-item @click.stop="setDataChang(item)" v-if="item.statusBt !== 'confirmJob'">
+                          <v-list-item @click.stop="setDataChang(item)" v-if="item.statusBt !== 'confirmJob' && item.statusBt !== 'cancel'">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-calendar-clock </v-icon> เปลี่ยนเวลานัดหมาย {{item.countChangeTime}} ครั้ง</v-list-item-title>
                           </v-list-item>
                           <v-list-item @click.stop="setDataReture(item)" v-if="item.statusBt !== 'confirmJob' && item.depositStatus === 'True' && item.depositImge != ''">

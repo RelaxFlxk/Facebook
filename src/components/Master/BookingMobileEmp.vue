@@ -2770,7 +2770,7 @@ export default {
       if (chkStatLimit.length > 0) {
         if (chkStatLimit[0].limitBookingCheck === 'True') {
           let limitBookingCounts = 0
-          let chkStatus = await this.updateLimitBookingChange(item, this.dueDateOld, this.dueDateTimeOld, this.formChange.date, this.formChange.time.value || this.formChange.time, limitBookingCounts, this.bookingEmpFlowOld)
+          let chkStatus = await this.updateLimitBookingChange(item, this.dueDateOld, this.dueDateTimeOld, this.formChange.date, this.formChange.time.value || this.formChange.time, limitBookingCounts, this.bookingEmpFlowOld, this.flowSelect)
           console.log('chkStatus', chkStatus)
           if (chkStatus.status) {
             this.onChangeChkSubmit(item, checkCountTime)
@@ -2852,7 +2852,7 @@ export default {
         })
       // })
     },
-    async updateLimitBookingChange (item, dueDateOld, dueDateTimeOld, dueDateNew, dueDateTimeNew, limitBookingCount, bookingEmpFlowOld) {
+    async updateLimitBookingChange (item, dueDateOld, dueDateTimeOld, dueDateNew, dueDateTimeNew, limitBookingCount, bookingEmpFlowOld, flowIdNew) {
       let result = []
       let dt = {
         dueDateOld: dueDateOld,
@@ -2860,6 +2860,7 @@ export default {
         dueDateNew: dueDateNew,
         dueDateTimeNew: dueDateTimeNew,
         flowId: item.flowId,
+        flowIdNew: flowIdNew,
         masBranchID: item.masBranchID,
         dateSelect: dueDateNew,
         timeSelect: dueDateTimeNew,
