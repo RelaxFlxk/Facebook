@@ -1485,6 +1485,18 @@ export default {
           console.log('error function addData : ', error)
         })
     },
+    pushMsgConfirmChangeTime (bookNo) {
+      let dt = {
+        dueDateOld: this.dueDateOld + ' ' + this.dueDateTimeOld
+      }
+      axios
+        .post(
+          this.DNS_IP + '/Booking/pushMsgConfirmChamgeTime/' + bookNo, dt
+        )
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
+    },
     validate (Action) {
       switch (Action) {
         case 'UPDATE':
@@ -2835,7 +2847,7 @@ export default {
               if (item.statusBt === 'confirm') {
                 if (item.userId !== 'user-skip') {
                   await this.chkBookingNo()
-                  this.pushMsgConfirm(item.bookNo)
+                  this.pushMsgConfirmChangeTime(item.bookNo)
                   // this.getTimesChange('update')
                 } else {
                   await this.chkBookingNo()

@@ -6817,6 +6817,18 @@ export default {
           console.log('error function addData : ', error)
         })
     },
+    pushMsgConfirmChangeTime (bookNo) {
+      let dt = {
+        dueDateOld: this.dueDateOld + ' ' + this.dueDateTimeOld
+      }
+      axios
+        .post(
+          this.DNS_IP + '/Booking/pushMsgConfirmChamgeTime/' + bookNo, dt
+        )
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
+    },
     gotoPicture (Linkitem) {
       window.open(Linkitem, '_blank')
     },
@@ -12173,7 +12185,7 @@ export default {
                   if (this.getSelectText) {
                     this.getSelect(this.getSelectText, this.getSelectCount)
                   }
-                  this.pushMsgConfirm(item.bookNo)
+                  this.this.pushMsgConfirmChangeTime(item.bookNo)(item.bookNo)
                 } else {
                   if (this.statusSearch === 'no') {
                     await this.getBookingList()
