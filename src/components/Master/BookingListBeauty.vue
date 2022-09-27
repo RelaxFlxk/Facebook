@@ -6392,6 +6392,7 @@ export default {
       this.$refs.RetureDeposit.setData(item)
     },
     setDataCopyLink (item) {
+      console.log('filteredSelect', this.filteredSelect)
       this.statusdepositPrice = true
       this.depositPrice = item.depositPrice || 0
       this.bookNo = item.bookNo
@@ -6458,6 +6459,20 @@ export default {
       // copyText.setSelectionRange(0, 99999)
       navigator.clipboard.writeText(copyText)
       this.dialogShowDeposit = false
+      this.updateBookingListByDeposit()
+    },
+    async updateBookingListByDeposit () {
+      let urlApi = this.DNS_IP + '/booking_view/get?shopId=' + this.session.data.shopId + '&bookNo=' + this.bookNo
+      await axios
+        .get(urlApi)
+        .then(async response => {
+          console.log('updateBookingListByDeposit', response.data.length)
+          if (response.data.length > 0) {
+            let objIndex = this.filteredSelect.findIndex(obj => obj.bookNo === this.bookNo)
+            this.filteredSelect[objIndex].remarkDepositLinked = response.data[0].remarkDepositLinked
+            this.filteredSelect[objIndex].depositPrice = response.data[0].depositPrice
+          }
+        })
     },
     clearOnsiteChange () {
       this.getDataDefault()
