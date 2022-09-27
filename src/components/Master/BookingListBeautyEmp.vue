@@ -6002,7 +6002,7 @@ export default {
       flowIDLimit: '',
       dateDayoff: [],
       dateDayCustom: [],
-      dateDaylimit: null,
+      dateDaylimit: [],
       flowItemLimit: [],
       checkLimitBooking: {
         ID: '',
