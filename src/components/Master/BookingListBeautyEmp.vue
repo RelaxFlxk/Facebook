@@ -12199,7 +12199,7 @@ export default {
                   if (this.getSelectText) {
                     this.getSelect(this.getSelectText, this.getSelectCount)
                   }
-                  this.pushMsgConfirmChangeTime(item.bookNo)(item.bookNo)
+                  this.pushMsgConfirmChangeTime(item.bookNo)
                 } else {
                   if (this.statusSearch === 'no') {
                     await this.getBookingList()
