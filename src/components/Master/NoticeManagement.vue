@@ -55,7 +55,18 @@
                 append-icon="mdi-bell-circle-outline"
                 :rules="required"
               ></v-select>
-            </v-col>
+              </v-col>
+              <v-col cols="6" class="pa-1" v-if="formSendNotify.NoticeType === 'setdate'">
+              <v-select
+                v-model="formSendNotify.setTime"
+                dense
+                :items="timeSenditem"
+                label="ตั้งเวลาแจ้งเตือน"
+                outlined
+                append-icon="mdi-clock"
+                :rules="required"
+              ></v-select>
+              </v-col>
             </v-row>
             <v-col class="text-left py-0">
               <p class="font-weight-medium"  style="color:#000000;"><v-icon class="mr-1" color="#69D1FD" style="font-size: 10px">mdi-checkbox-blank-circle</v-icon>สร้างกลุ่มเป้าหมาย</p>
@@ -273,7 +284,7 @@
                     dark
                     color="white"
                     :style="styleCloseBt"
-                    @click="dialogSendNoticEdit = false"
+                    @click="dialogSendNoticEdit = false, clearDataEdit()"
                     >
                     X
                     </v-btn>
@@ -295,6 +306,17 @@
                 :rules="required"
               ></v-select>
             </v-col>
+            <v-col cols="6" class="pa-1" v-if="formSendNotifyEdit.NoticeType === 'setdate'">
+              <v-select
+                v-model="formSendNotifyEdit.setTime"
+                dense
+                :items="timeSenditem"
+                label="ตั้งเวลาแจ้งเตือน"
+                outlined
+                append-icon="mdi-clock"
+                :rules="required"
+              ></v-select>
+              </v-col>
             </v-row>
             <v-col class="text-left py-0">
               <p class="font-weight-medium"  style="color:#000000;"><v-icon class="mr-1" color="#69D1FD" style="font-size: 10px">mdi-checkbox-blank-circle</v-icon>สร้างกลุ่มเป้าหมาย</p>
@@ -570,6 +592,7 @@ export default {
         { text: 'วันที่ส่งข้อความ', value: 'sendDate' },
         { text: 'วันที่นัดหมาย', value: 'targetDate' },
         { text: 'ตั้งแต่เวลา', value: 'afterTime' },
+        { text: 'เวลาที่ส่งข้อความ', value: 'setTimeText' },
         { text: 'ประเภทการแจ้งเตือน', value: 'NoticeType' },
         { text: 'จำนวนข้อความ', value: 'memberCnt' },
         { text: 'ผู้ส่งข้อความ', value: 'empFull' },
@@ -607,6 +630,7 @@ export default {
         flowId: '',
         targetDate: '',
         setDate: '',
+        setTime: '',
         afterTime: '',
         confirmOnly: '',
         memberCnt: '',
@@ -621,6 +645,7 @@ export default {
       formSendNotifyEdit: {
         id: '',
         noticeNo: '',
+        setTime: '',
         flowId: '',
         setDate: '',
         afterTime: '',
@@ -667,6 +692,23 @@ export default {
       ],
       dataItem: null,
       timeavailable: [{'id': 1, 'value': '08:00', 'text': '08:00', 'limitBooking': ''}, {'id': 2, 'value': '08:30', 'text': '08:30', 'limitBooking': ''}, {'id': 3, 'value': '09:00', 'text': '09:00', 'limitBooking': ''}, {'id': 4, 'value': '09:30', 'text': '09:30', 'limitBooking': ''}, {'id': 5, 'value': '10:00', 'text': '10:00', 'limitBooking': ''}, {'id': 6, 'value': '10:30', 'text': '10:30', 'limitBooking': ''}, {'id': 7, 'value': '11:00', 'text': '11:00', 'limitBooking': ''}, {'id': 8, 'value': '11:30', 'text': '11:30', 'limitBooking': ''}, {'id': 9, 'value': '12:00', 'text': '12:00', 'limitBooking': ''}, {'id': 10, 'value': '12:30', 'text': '12:30', 'limitBooking': ''}, {'id': 11, 'value': '13:00', 'text': '13:00', 'limitBooking': ''}, {'id': 12, 'value': '13:30', 'text': '13:30', 'limitBooking': ''}, {'id': 13, 'value': '14:00', 'text': '14:00', 'limitBooking': ''}, {'id': 14, 'value': '14:30', 'text': '14:30', 'limitBooking': ''}, {'id': 15, 'value': '15:00', 'text': '15:00', 'limitBooking': ''}, {'id': 16, 'value': '15:30', 'text': '15:30', 'limitBooking': ''}, {'id': 17, 'value': '16:00', 'text': '16:00', 'limitBooking': ''}, {'id': 18, 'value': '16:30', 'text': '16:30', 'limitBooking': ''}, {'id': 19, 'value': '17:00', 'text': '17:00', 'limitBooking': ''}],
+      timeSenditem: [{'id': 1, 'value': '8', 'text': '08:00', 'limitBooking': ''},
+        {'id': 2, 'value': '9', 'text': '09:00'},
+        {'id': 3, 'value': '10', 'text': '10:00'},
+        {'id': 4, 'value': '11', 'text': '11:00'},
+        {'id': 5, 'value': '12', 'text': '12:00'},
+        {'id': 6, 'value': '13', 'text': '13:00'},
+        {'id': 7, 'value': '14', 'text': '14:00'},
+        {'id': 8, 'value': '15', 'text': '15:00'},
+        {'id': 9, 'value': '16', 'text': '16:00'},
+        {'id': 10, 'value': '17', 'text': '17:00'},
+        {'id': 11, 'value': '18', 'text': '18:00'},
+        {'id': 12, 'value': '19', 'text': '19:00'},
+        {'id': 13, 'value': '20', 'text': '20:00'},
+        {'id': 14, 'value': '21', 'text': '21:00'},
+        {'id': 15, 'value': '22', 'text': '22:00'},
+        {'id': 16, 'value': '23', 'text': '23:00'},
+        {'id': 17, 'value': '24', 'text': '24:00'}],
       DataFlowName: [],
       DataFlowNameAll: [],
       memberData: [],
@@ -714,6 +756,12 @@ export default {
                 s.empFull = d.empFull
                 s.empId = d.empSelect
                 s.message = d.message
+                s.setTime = d.setTime
+                if (d.setTime !== null && d.setTime !== '') {
+                  s.setTimeText = this.timeSenditem.filter((v) => v.value === d.setTime.toString())[0].text + ' น.'
+                } else {
+                  s.setTimeText = ''
+                }
               } else {
                 s.flowId = d.flowId
                 s.id = d.id
@@ -728,6 +776,12 @@ export default {
                 s.empFull = d.empFull
                 s.empId = d.empSelect
                 s.message = d.message
+                s.setTime = d.setTime
+                if (d.setTime !== null && d.setTime !== '') {
+                  s.setTimeText = this.timeSenditem.filter((v) => v.value === d.setTime.toString())[0].text + ' น.'
+                } else {
+                  s.setTimeText = ''
+                }
               }
               this.dataItem.push(s)
             }
@@ -843,6 +897,12 @@ export default {
       this.formSendNotifyEdit.setDate = this.setdateItem.filter((v) => v.text === item.targetDate)[0].value
       this.formSendNotifyEdit.confirmOnly = item.confirmOnly
       this.formSendNotifyEdit.message = item.message
+      if (item.setTime !== null && item.setTime !== '') {
+        this.formSendNotifyEdit.setTime = item.setTime.toString()
+      } else {
+        this.formSendNotifyEdit.setTime = ''
+      }
+      console.log('this.formSend', this.formSendNotifyEdit)
     },
     async updateNotice () {
       this.formSendNotifyEdit.shopId = this.shopId
@@ -928,6 +988,18 @@ export default {
         .catch((error) => {
           console.log('error function addData : ', error)
         })
+    },
+    async clearDataEdit () {
+      this.formSendNotifyEdit.id = ''
+      this.formSendNotifyEdit.noticeNo = ''
+      this.formSendNotifyEdit.NoticeType = ''
+      this.formSendNotifyEdit.flowId = ''
+      this.formSendNotifyEdit.afterTime = ''
+      this.formSendNotifyEdit.empSelect = ''
+      this.formSendNotifyEdit.setDate = ''
+      this.formSendNotifyEdit.confirmOnly = ''
+      this.formSendNotifyEdit.message = ''
+      this.formSendNotifyEdit.setTime = ''
     },
     async clearData () {
       this.reset()
