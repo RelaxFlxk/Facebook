@@ -6443,7 +6443,7 @@ export default {
         .then(response => {
           console.log('response.data', response.data)
           textBookNo = response.data.message
-          depositPrice = response.data.depositPrice || '0'
+          depositPrice = response.data.depositPrice || 0
         })
       console.log('depositPrice', depositPrice)
       if (depositPrice === '0') {
@@ -6468,9 +6468,9 @@ export default {
         .then(async response => {
           console.log('updateBookingListByDeposit', response.data.length)
           if (response.data.length > 0) {
-            let objIndex = this.filteredSelect.findIndex(obj => obj.bookNo === this.bookNo)
-            this.filteredSelect[objIndex].remarkDepositLinked = response.data[0].remarkDepositLinked
-            this.filteredSelect[objIndex].depositPrice = response.data[0].depositPrice
+            let objIndex = this.dataItem.findIndex(obj => obj.bookNo === this.bookNo)
+            this.dataItem[objIndex].remarkDepositLinked = response.data[0].remarkDepositLinked || ''
+            this.dataItem[objIndex].depositPrice = response.data[0].depositPrice || 0
           }
         })
     },
@@ -10897,6 +10897,7 @@ export default {
                 }
                 this.dialogShowDeposit = true
                 this.bookNo = response.data.bookNo
+                this.depositPrice = this.formAdd.depositPrice
                 this.depositLink = 'https://betask-linked.web.app/Thank?shopId=' + this.$session.getAll().data.shopId + '&redirectBy=BookingAdmin&flowId=' + flowIdData + '&bookNo=' + response.data.bookNo
               } else {
                 await this.confirmChkAdd(response.data)
