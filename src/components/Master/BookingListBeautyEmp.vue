@@ -2980,7 +2980,7 @@
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-account-plus </v-icon> มอบหมายงาน </v-list-item-title>
                           </v-list-item>
                           <v-list-item @click.stop="setDataCopyLink(item)" v-if="item.statusBt === 'wait' && item.depositStatus === 'True'">
-                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-content-copy </v-icon> คัดลอกลิงค์ มัดจำ </v-list-item-title>
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="bx:link"></v-icon> ข้อความสำหรับสรุปคำสั่งซื้อ </v-list-item-title>
                           </v-list-item>
                           <v-list-item v-clipboard:success="onCopySuccess" v-clipboard:copy="'https://liff.line.me/1656581804-7KRQyqo5/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId" v-if="item.statusBt === 'confirm' && (item.userId === 'user-skip' || item.userId === '' || item.userId === null)">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-content-copy </v-icon> คัดลอกลิงค์ (ผูกลูกค้า) </v-list-item-title>
@@ -3002,6 +3002,9 @@
                           </v-hover>
                           <v-list-item v-if="item.statusBt === 'confirmJob'" @click.stop="(dialogJob = true), getjob(item)">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-qrcode-scan </v-icon> QR Code สำหรับให้ลูกค้า </v-list-item-title>
+                          </v-list-item>
+                          <v-list-item v-if="item.statusBt === 'confirmJob'" @click.stop="(dialogJob = true), getjob(item)">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="uil:bill"></v-icon> ปิดงานนี้ </v-list-item-title>
                           </v-list-item>
                           <v-list-item v-if="item.statusBt === 'confirmJob' && showOnsite === 'ไม่แสดง'">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-account-reactivate </v-icon> เปลี่ยนพนักงาน On site </v-list-item-title>
@@ -5453,7 +5456,7 @@
               <v-card-text>
                   <v-row>
                     <v-col cols="6" class="text-left pt-10">
-                      <h3><strong>คัดลอกลิงค์ มัดจำ</strong></h3>
+                      <h3><strong>ข้อความสำหรับสรุปคำสั่งซื้อ</strong></h3>
                     </v-col>
                     <v-col cols="6" class="pt-10">
                       <div style="text-align: end;">
