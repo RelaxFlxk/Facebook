@@ -42,6 +42,22 @@
                 </v-col>
             </v-row>
             <v-col class="text-left py-0">
+              <p class="font-weight-medium"  style="color:#000000;"><v-icon class="mr-1" color="#69D1FD" style="font-size: 10px">mdi-checkbox-blank-circle</v-icon>ประเภทการแจ้งเตือน</p>
+            </v-col>
+            <v-row class="pa-3 ma-0">
+              <v-col cols="6" class="pa-1">
+              <v-select
+                v-model="formSendNotify.NoticeType"
+                dense
+                :items="NoticeType"
+                label="ประเภทการแจ้งเตือน"
+                outlined
+                append-icon="mdi-bell-circle-outline"
+                :rules="required"
+              ></v-select>
+            </v-col>
+            </v-row>
+            <v-col class="text-left py-0">
               <p class="font-weight-medium"  style="color:#000000;"><v-icon class="mr-1" color="#69D1FD" style="font-size: 10px">mdi-checkbox-blank-circle</v-icon>สร้างกลุ่มเป้าหมาย</p>
             </v-col>
             <v-row class="pa-3 ma-0">
@@ -68,7 +84,7 @@
                 :rules="required"
               ></v-select>
             </v-col>
-            <v-col cols="6" class="pa-1 mt-n4">
+            <v-col cols="6" class="pa-1 mt-n4" v-if="formSendNotify.NoticeType === 'fixdate'">
               <v-menu
                 v-model="menu"
                 :close-on-content-click="false"
@@ -99,6 +115,17 @@
                   @input="menu = false"
                 ></v-date-picker>
               </v-menu>
+            </v-col>
+            <v-col cols="6" class="pa-1 mt-n4" v-if="formSendNotify.NoticeType === 'setdate'">
+              <v-select
+                v-model="formSendNotify.setDate"
+                dense
+                :items="setdateItem"
+                label="วันที่นัดหมาย"
+                outlined
+                append-icon="mdi-calendar"
+                :rules="required"
+              ></v-select>
             </v-col>
             <v-col cols="6" class="pa-1 mt-n4">
               <v-select
@@ -134,7 +161,7 @@
                 ></v-radio>
               </v-radio-group>
             </v-col>
-            <v-col class="py-0">
+            <v-col class="py-0" v-if="formSendNotify.NoticeType === 'fixdate'">
                 <v-row>
                   <v-col cols="6" >
                     <p class="font-weight-medium text-left mt-1"  style="color:#000000;">
@@ -197,7 +224,7 @@
                     :rules="required"
                   ></v-textarea>
             </v-col>
-            <v-col cols="12" class="pt-0">
+            <v-col cols="12" class="pt-0" v-if="formSendNotify.NoticeType === 'fixdate'">
               <v-btn
                 block
                 class="ma-2 ml-n1"
@@ -208,6 +235,245 @@
                 @click="validate"
               >
                 ส่งข้อความ
+              </v-btn>
+            </v-col>
+            <v-col cols="12" class="pt-0" v-else>
+              <v-btn
+                block
+                class="ma-2 ml-n1"
+                color="#14AE5C"
+                dark
+                large
+                :readonly="!valid"
+                @click="validate"
+              >
+                บันทึกการแจ้งเตือน
+              </v-btn>
+            </v-col>
+            </v-form>
+          </v-card>
+        </v-dialog>
+        <v-dialog
+          v-model="dialogSendNoticEdit"
+          persistent
+          width="40%"
+        >
+          <v-card class="pa-3" min-height="600" style="overflow-x: hidden;">
+            <v-form ref="form" v-model="valid" lazy-validation>
+            <v-row>
+                <v-col cols="10" class="text-left pt-10">
+                <h3><strong>ตั้งค่าการแจ้งเตือน</strong></h3>
+                </v-col>
+                <v-col cols="2" class="pt-10">
+                <div style="text-align: end;">
+                    <v-btn
+                    class="mx-2"
+                    fab
+                    small
+                    dark
+                    color="white"
+                    :style="styleCloseBt"
+                    @click="dialogSendNoticEdit = false"
+                    >
+                    X
+                    </v-btn>
+                </div>
+                </v-col>
+            </v-row>
+            <v-col class="text-left py-0">
+              <p class="font-weight-medium"  style="color:#000000;"><v-icon class="mr-1" color="#69D1FD" style="font-size: 10px">mdi-checkbox-blank-circle</v-icon>ประเภทการแจ้งเตือน</p>
+            </v-col>
+            <v-row class="pa-3 ma-0">
+              <v-col cols="6" class="pa-1">
+              <v-select
+                v-model="formSendNotifyEdit.NoticeType"
+                dense
+                :items="NoticeTypeEdit"
+                label="ประเภทการแจ้งเตือน"
+                outlined
+                append-icon="mdi-bell-circle-outline"
+                :rules="required"
+              ></v-select>
+            </v-col>
+            </v-row>
+            <v-col class="text-left py-0">
+              <p class="font-weight-medium"  style="color:#000000;"><v-icon class="mr-1" color="#69D1FD" style="font-size: 10px">mdi-checkbox-blank-circle</v-icon>สร้างกลุ่มเป้าหมาย</p>
+            </v-col>
+            <v-row class="pa-3 ma-0">
+              <v-col cols="6" class="pa-1">
+              <v-select
+                v-model="formSendNotifyEdit.flowId"
+                dense
+                :items="DataFlowName"
+                label="เลือกประเภทบริการ"
+                outlined
+                append-icon="mdi-map"
+                :rules="required"
+              ></v-select>
+            </v-col>
+            <v-col cols="6" class="pa-1">
+              <v-select
+                v-if="session.data.empId === null"
+                v-model="formSendNotifyEdit.empSelect"
+                dense
+                :items="dataEmp"
+                label="เลือกพนักงาน"
+                outlined
+                append-icon="mdi-account-arrow-right"
+                :rules="required"
+              ></v-select>
+            </v-col>
+            <v-col cols="6" class="pa-1 mt-n4" v-if="formSendNotifyEdit.NoticeType === 'fixdate'">
+              <v-menu
+                v-model="menu"
+                :close-on-content-click="false"
+                :nudge-right="40"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="formSendNotifyEdit.targetDate"
+                    label="วันที่นัดหมาย"
+                    append-icon="mdi-calendar"
+                    color-icon
+                    outlined
+                    dense
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                    :rules="required"
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="formSendNotifyEdit.targetDate"
+                  no-title
+                  scrollable
+                  :rules="required"
+                  @input="menu = false"
+                ></v-date-picker>
+              </v-menu>
+            </v-col>
+            <v-col cols="6" class="pa-1 mt-n4" v-if="formSendNotifyEdit.NoticeType === 'setdate'">
+              <v-select
+                v-model="formSendNotifyEdit.setDate"
+                dense
+                :items="setdateItem"
+                label="วันที่นัดหมาย"
+                outlined
+                append-icon="mdi-calendar"
+                :rules="required"
+              ></v-select>
+            </v-col>
+            <v-col cols="6" class="pa-1 mt-n4">
+              <v-select
+                dense
+                v-model="formSendNotifyEdit.afterTime"
+                :items="timeavailable"
+                label="ตั่งแต่เวลา"
+                outlined
+                :rules="required"
+              ></v-select>
+            </v-col>
+            </v-row>
+            <v-col class="text-left py-0">
+              <p class="font-weight-medium"  style="color:#000000;"><v-icon class="mr-1" color="#69D1FD" style="font-size: 10px">mdi-checkbox-blank-circle</v-icon>ตั้งค่ากลุ่มแจ้งเตือน</p>
+              <v-radio-group
+                v-model="formSendNotifyEdit.confirmOnly"
+                row
+                :rules="required"
+              >
+                <v-radio
+                  label="ลูกค้าที่ยังไม่ได้เข้ารับบริการ"
+                  value="confirm"
+                  :on-icon="'mdi-checkbox-marked'"
+                  :off-icon="'mdi-checkbox-blank-outline'"
+                  color="#1B437C"
+                ></v-radio>
+                <v-radio
+                  label="ลูกค้าที่เข้ารับบริการแล้ว"
+                  value="confirmJob"
+                  :on-icon="'mdi-checkbox-marked'"
+                  :off-icon="'mdi-checkbox-blank-outline'"
+                  color="#1B437C"
+                ></v-radio>
+              </v-radio-group>
+            </v-col>
+            <v-col class="py-0" v-if="formSendNotifyEdit.NoticeType === 'fixdate'">
+                <v-row>
+                  <v-col cols="6" >
+                    <p class="font-weight-medium text-left mt-1"  style="color:#000000;">
+                    <v-icon class="mr-1" color="#69D1FD" style="font-size: 10px">mdi-checkbox-blank-circle</v-icon>
+                    ตรวจสอบรายชื่อลูกค้า
+                    <v-btn
+                    class="mx-2"
+                    fab
+                    small
+                    dark
+                    color="#14AE5C"
+                    @click="getMemberList()"
+                  >
+                    <v-icon dark>
+                      mdi-file-search
+                    </v-icon>
+                  </v-btn>
+                    </p>
+                  </v-col>
+                  <v-col cols="6" >
+                    <p class="font-weight-medium text-right mt-3"  style="color:#000000;">
+                    {{'จำนวนลูกค้า  ' +  memberData.length + '  คน'}}
+                    </p>
+                  </v-col>
+                </v-row>
+              <v-card class="scroll pa-3 pl-6" height="155px">
+                <v-row>
+                  <v-col cols="4" class="mt-1" v-for="(item,index) in memberData" :key="index">
+                    <v-sheet class="pa-1">
+                      <v-row >
+                        <v-col cols="4" class="pa-1">
+                          <v-avatar>
+                            <img
+                               v-if="item.memberPicture"
+                              :src="item.memberPicture"
+                            >
+                            <v-icon dark v-else>
+                              mdi-account-circle
+                            </v-icon>
+                          </v-avatar>
+                        </v-col>
+                        <v-col cols="8" class="pa-1 mt-3">
+                          <p>{{item.memberName}}</p>
+                        </v-col>
+                      </v-row>
+                    </v-sheet>
+                  </v-col>
+                </v-row>
+              </v-card>
+            </v-col>
+            <v-col class="text-left py- mt-3 pb-0">
+              <p class="font-weight-medium"  style="color:#000000;"><v-icon class="mr-1" color="#69D1FD" style="font-size: 10px">mdi-checkbox-blank-circle</v-icon>ข้อความ</p>
+                <v-textarea
+                    v-model="formSendNotifyEdit.message"
+                    outlined
+                    name="input-7-4"
+                    label="ข้อความ"
+                    rows="4"
+                    row-height="6"
+                    :rules="required"
+                  ></v-textarea>
+            </v-col>
+            <v-col cols="12" class="pt-0" >
+              <v-btn
+                block
+                class="ma-2 ml-n1"
+                color="#14AE5C"
+                dark
+                large
+                :readonly="!valid"
+                @click="updateNotice()"
+              >
+                บันทึกการแจ้งเตือน
               </v-btn>
             </v-col>
             </v-form>
@@ -233,10 +499,28 @@
                   :items-per-page="10"
                 >
                    <template v-slot:[`item.sendDate`]="{ item }">
-                      {{ format_date(item.sendDate) }}
+                      {{ item.sendDate }}
                   </template>
                    <template v-slot:[`item.targetDate`]="{ item }">
-                      {{ momenDate_1(item.targetDate) }}
+                      {{ item.targetDate }}
+                  </template>
+                  <template v-slot:[`item.action`]="{ item }">
+                    <v-btn
+                      v-if="item.NoticeType === 'ส่งข้อความซ้ำ'"
+                      color="blue"
+                      fab
+                      small
+                      @click="EditNotice(item), dialogSendNoticEdit = true"
+                    >
+                      <v-icon color="#FFFFFF"> mdi-tools </v-icon>
+                    </v-btn>
+                    <v-btn
+                      color="red"
+                      fab
+                      small
+                    >
+                      <v-icon color="#FFFFFF"> mdi-delete </v-icon>
+                    </v-btn>
                   </template>
                 </v-data-table>
               </v-card-text>
@@ -251,8 +535,7 @@
 import waitingAlert from '../waitingAlert.vue'
 import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
-
-// import moment from 'moment' // แปลง date
+// import moment from 'moment'
 
 export default {
   components: {
@@ -282,12 +565,15 @@ export default {
         }
       ],
       dialogSendNotic: false,
+      dialogSendNoticEdit: false,
       headers: [
         { text: 'วันที่ส่งข้อความ', value: 'sendDate' },
         { text: 'วันที่นัดหมาย', value: 'targetDate' },
-        { text: 'เวลา', value: 'afterTime' },
+        { text: 'ตั้งแต่เวลา', value: 'afterTime' },
+        { text: 'ประเภทการแจ้งเตือน', value: 'NoticeType' },
         { text: 'จำนวนข้อความ', value: 'memberCnt' },
-        { text: 'ผู้ส่งข้อความ', value: 'empFull' }
+        { text: 'ผู้ส่งข้อความ', value: 'empFull' },
+        { text: 'Action', value: 'action', sortable: false, align: 'center' }
 
       ],
       session: this.$session.getAll(),
@@ -320,6 +606,7 @@ export default {
       formSendNotify: {
         flowId: '',
         targetDate: '',
+        setDate: '',
         afterTime: '',
         confirmOnly: '',
         memberCnt: '',
@@ -328,9 +615,56 @@ export default {
         shopId: '',
         empSelect: '',
         CREATE_USER: '',
-        LAST_USER: ''
+        LAST_USER: '',
+        NoticeType: ''
+      },
+      formSendNotifyEdit: {
+        id: '',
+        noticeNo: '',
+        flowId: '',
+        setDate: '',
+        afterTime: '',
+        confirmOnly: '',
+        memberCnt: '',
+        memberList: null,
+        message: '',
+        shopId: '',
+        empSelect: '',
+        CREATE_USER: '',
+        LAST_USER: '',
+        NoticeType: ''
       },
       menu: false,
+      NoticeType: [
+        {
+          'text': 'ส่งครั้งเดียว',
+          'value': 'fixdate'
+        },
+        {
+          'text': 'ส่งซ้ำ',
+          'value': 'setdate'
+        }
+      ],
+      NoticeTypeEdit: [
+        {
+          'text': 'ส่งซ้ำ',
+          'value': 'setdate'
+        }
+      ],
+      setdateItem: [
+        {
+          'text': 'ย้อนหลัง 1 วัน',
+          'value': 'yesterday'
+        },
+        {
+          'text': 'ตามวันที่นัดหมาย',
+          'value': 'today'
+        },
+        {
+          'text': 'ล่วงหน้า 1 วัน',
+          'value': 'tomorrow'
+        }
+      ],
       dataItem: null,
       timeavailable: [{'id': 1, 'value': '08:00', 'text': '08:00', 'limitBooking': ''}, {'id': 2, 'value': '08:30', 'text': '08:30', 'limitBooking': ''}, {'id': 3, 'value': '09:00', 'text': '09:00', 'limitBooking': ''}, {'id': 4, 'value': '09:30', 'text': '09:30', 'limitBooking': ''}, {'id': 5, 'value': '10:00', 'text': '10:00', 'limitBooking': ''}, {'id': 6, 'value': '10:30', 'text': '10:30', 'limitBooking': ''}, {'id': 7, 'value': '11:00', 'text': '11:00', 'limitBooking': ''}, {'id': 8, 'value': '11:30', 'text': '11:30', 'limitBooking': ''}, {'id': 9, 'value': '12:00', 'text': '12:00', 'limitBooking': ''}, {'id': 10, 'value': '12:30', 'text': '12:30', 'limitBooking': ''}, {'id': 11, 'value': '13:00', 'text': '13:00', 'limitBooking': ''}, {'id': 12, 'value': '13:30', 'text': '13:30', 'limitBooking': ''}, {'id': 13, 'value': '14:00', 'text': '14:00', 'limitBooking': ''}, {'id': 14, 'value': '14:30', 'text': '14:30', 'limitBooking': ''}, {'id': 15, 'value': '15:00', 'text': '15:00', 'limitBooking': ''}, {'id': 16, 'value': '15:30', 'text': '15:30', 'limitBooking': ''}, {'id': 17, 'value': '16:00', 'text': '16:00', 'limitBooking': ''}, {'id': 18, 'value': '16:30', 'text': '16:30', 'limitBooking': ''}, {'id': 19, 'value': '17:00', 'text': '17:00', 'limitBooking': ''}],
       DataFlowName: [],
@@ -362,7 +696,42 @@ export default {
           let rs = response.data
           console.log('this.rs', rs)
           if (rs.length > 0) {
-            this.dataItem = rs
+            // this.dataItem = rs
+            for (let i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              let s = {}
+              if (d.NoticeType === 'fixdate') {
+                s.flowId = d.flowId
+                s.id = d.id
+                s.confirmOnly = d.confirmOnly
+                s.noticeNo = d.noticeNo
+                s.sendDate = this.format_date(d.sendDate)
+                s.targetDate = this.momenDate_1(d.targetDate)
+                s.afterTime = d.afterTime
+                s.NoticeType = 'ส่งข้อความครั้งเดียว'
+                s.NoticeTypeitem = d.NoticeType
+                s.memberCnt = d.memberCnt
+                s.empFull = d.empFull
+                s.empId = d.empSelect
+                s.message = d.message
+              } else {
+                s.flowId = d.flowId
+                s.id = d.id
+                s.confirmOnly = d.confirmOnly
+                s.noticeNo = d.noticeNo
+                s.sendDate = 'ตามเงือนไขที่ระบุ'
+                s.targetDate = this.setdateItem.filter((v) => v.value === d.setDate)[0].text
+                s.afterTime = d.afterTime
+                s.NoticeType = 'ส่งข้อความซ้ำ'
+                s.NoticeTypeitem = d.NoticeType
+                s.memberCnt = 'ไม่ระบุ'
+                s.empFull = d.empFull
+                s.empId = d.empSelect
+                s.message = d.message
+              }
+              this.dataItem.push(s)
+            }
+            console.log('this.dataItem', this.dataItem)
           } else {
             this.dataItem = []
           }
@@ -404,6 +773,7 @@ export default {
     },
     async getMemberList () {
       console.log('test', this.formSendNotify)
+      this.memberData = []
       let Url = ''
       if (this.formSendNotify.flowId === 'All') {
         Url = this.DNS_IP + '/notice/NoticMember?targetDate=' + this.formSendNotify.targetDate +
@@ -413,7 +783,6 @@ export default {
       '&afterTime=' + this.formSendNotify.afterTime + '&flowId=' +
       this.formSendNotify.flowId + '&shopId=' + this.shopId + '&confirmOnly=' + this.formSendNotify.confirmOnly
       }
-      this.memberData = []
       if (this.formSendNotify.targetDate !== '' && this.formSendNotify.afterTime !== '' && this.formSendNotify.flowId !== '' && this.formSendNotify.confirmOnly !== '') {
         await axios.get(Url)
           .then(response => {
@@ -464,10 +833,56 @@ export default {
       })
       console.log('dataEmp', this.dataEmp)
     },
+    async EditNotice (item) {
+      this.formSendNotifyEdit.id = item.id
+      this.formSendNotifyEdit.noticeNo = item.noticeNo
+      this.formSendNotifyEdit.NoticeType = item.NoticeTypeitem
+      this.formSendNotifyEdit.flowId = parseInt(item.flowId)
+      this.formSendNotifyEdit.afterTime = item.afterTime
+      this.formSendNotifyEdit.empSelect = item.empId
+      this.formSendNotifyEdit.setDate = this.setdateItem.filter((v) => v.text === item.targetDate)[0].value
+      this.formSendNotifyEdit.confirmOnly = item.confirmOnly
+      this.formSendNotifyEdit.message = item.message
+    },
+    async updateNotice () {
+      this.formSendNotifyEdit.shopId = this.shopId
+      if (this.memberData.length > 0) {
+        this.formSendNotifyEdit.memberList = JSON.stringify(this.memberData.map((item) => { return item.lineUserId }))
+        this.formSendNotifyEdit.memberCnt = this.memberData.length
+      } else {
+        this.formSendNotifyEdit.memberList = ''
+        this.formSendNotifyEdit.memberCnt = 0
+      }
+      if (this.session.data.empId !== null) {
+        this.formSendNotifyEdit.empSelect = this.session.data.empId
+      } else {
+        this.formSendNotifyEdit.empSelect = this.formSendNotifyEdit.empSelect
+      }
+      this.formSendNotifyEdit.CREATE_USER = this.$session.getAll().data.userName
+      this.formSendNotifyEdit.LAST_USER = this.$session.getAll().data.userName
+      console.log('this.formSendNotifyEdit', this.formSendNotifyEdit)
+      await axios
+        .post(this.DNS_IP + '/notice/edit/' + this.formSendNotifyEdit.id, this.formSendNotifyEdit)
+        .then(async (response) => {
+          console.log('response', response)
+          this.$swal('บันทึกข้อมูลเรียบร้อย', ' ', 'success')
+          this.dialogSendNoticEdit = false
+          await this.getMethod()
+        })
+        // eslint-disable-next-line handle-callback-err
+        .catch((error) => {
+          console.log('error function addData : ', error)
+        })
+    },
     async addNotice () {
       this.formSendNotify.shopId = this.shopId
-      this.formSendNotify.memberList = JSON.stringify(this.memberData.map((item) => { return item.lineUserId }))
-      this.formSendNotify.memberCnt = this.memberData.length
+      if (this.memberData.length > 0) {
+        this.formSendNotify.memberList = JSON.stringify(this.memberData.map((item) => { return item.lineUserId }))
+        this.formSendNotify.memberCnt = this.memberData.length
+      } else {
+        this.formSendNotify.memberList = ''
+        this.formSendNotify.memberCnt = 0
+      }
       if (this.session.data.empId !== null) {
         this.formSendNotify.empSelect = this.session.data.empId
       } else {
@@ -482,10 +897,18 @@ export default {
           .then(async (response) => {
             console.log('response', response)
             let noticeNo = response.data.noticeNo
-            if (noticeNo) {
-              await this.sendMulticast(noticeNo)
-              await this.clearData()
-              await this.getMethod()
+            if (this.formSendNotify.NoticeType === 'fixdate') {
+              if (noticeNo) {
+                await this.sendMulticast(noticeNo)
+                await this.clearData()
+                await this.getMethod()
+              }
+            } else {
+              if (noticeNo) {
+                this.$swal('บันทึกข้อมูลเรียบร้อย', ' ', 'success')
+                await this.clearData()
+                await this.getMethod()
+              }
             }
           })
         // eslint-disable-next-line handle-callback-err
@@ -518,6 +941,8 @@ export default {
       this.formSendNotify.memberList = ''
       this.formSendNotify.message = ''
       this.formSendNotify.empSelect = ''
+      this.formSendNotify.NoticeType = ''
+      this.formSendNotify.setDate = ''
       this.formSendNotify.CREATE_USER = ''
       this.formSendNotify.LAST_USER = ''
     },
