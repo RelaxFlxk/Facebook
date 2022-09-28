@@ -759,7 +759,7 @@ v-data-table-header {
   background-color: #ffffff !important;
 }
 .v-dialog {
-  overflow-y: hidden !important;
+  /* overflow-y: hidden !important; */
   overflow-x: hidden !important;
 }
 .v-application a {

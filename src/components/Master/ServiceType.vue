@@ -552,7 +552,7 @@ export default {
 </script>
 <style scope>
 .v-dialog {
-  overflow-y: hidden !important;
+  /* overflow-y: hidden !important; */
   overflow-x: hidden !important;
 }
 </style>
