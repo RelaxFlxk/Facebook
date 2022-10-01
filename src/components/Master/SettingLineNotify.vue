@@ -8,7 +8,7 @@
             <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
           </v-col>
           <v-col cols="6" class="v-margit_button text-right">
-            <v-btn color="primary" depressed @click="dialogAdd = true">
+            <v-btn color="primary" depressed @click="dialogAdd = true , all()">
               <v-icon left>mdi-text-box-plus</v-icon>
               เพิ่มการแจ้งเตือน
             </v-btn>
@@ -20,10 +20,10 @@
           persistent
           width="45%"
         >
-          <v-card class="pa-3" min-height="700" style="overflow-x: hidden;">
+          <v-card class="pa-3" min-height="400" style="overflow-x: hidden;">
             <v-row>
               <v-col cols="10" class="text-left pt-10">
-              <h3><strong>เลือกบริการที่จะรับการแจ้งเตือน</strong></h3>
+              <h3 class="ml-7"><strong>เลือกบริการที่จะรับการแจ้งเตือน</strong></h3>
               </v-col>
               <v-col cols="2" class="pt-10">
               <div style="text-align: end;">
@@ -56,6 +56,64 @@
                 ></v-select>
               </v-col>
               <v-col class="pa-0" cols="12" md='12'>
+                <h3 class="text-center font-weight-black mb-5" style="color:#173053;">ประเภทบริการ</h3>
+                <div class="text-right mb-5">
+                  <v-btn v-if="panel.length !== flowData.length" dark color="#14AE5C" @click="all"> แสดงทั้งหมด
+                  <v-icon>mdi-chevron-down</v-icon>
+                  </v-btn>
+                  <v-btn v-if="panel.length === flowData.length" dark color="error" @click="none"> ปิด
+                  <v-icon>mdi-chevron-up</v-icon>
+                  </v-btn>
+                </div>
+                <v-expansion-panels  v-model="panel" multiple>
+                  <v-expansion-panel
+                    v-for="(item , index) in flowData" :key="index"
+                  >
+                    <v-expansion-panel-header expand-icon="mdi-menu-down">
+                      <h6 class="font-weight-medium"  style="color:#000000;">
+                        <v-icon class="mr-1" color="#14AE5C" style="font-size: 20px">
+                          mdi-checkbox-blank-circle
+                          </v-icon>
+                          {{item.text}}
+                      </h6>
+                      <!-- <template v-slot:actions>
+                        <v-icon color="error">
+                          mdi-chevron-down-box
+                        </v-icon>
+                      </template> -->
+                    </v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                     <v-row>
+                      <v-col>
+                        <v-checkbox class="pa-0 ma-0"
+                        :on-icon="'mdi-check-circle'"
+                        :off-icon="'mdi-checkbox-blank-circle-outline'"
+                        v-model="item.checkBooking"
+                        label="นัดหมายเข้ารับบริการ"
+                      ></v-checkbox>
+                      </v-col>
+                      <v-col >
+                        <v-checkbox class="pa-0 ma-0"
+                        :on-icon="'mdi-check-circle'"
+                        :off-icon="'mdi-checkbox-blank-circle-outline'"
+                        v-model="item.checkOnsite"
+                        label="แจ้งเตือนพนักงาน Onsite"
+                      ></v-checkbox>
+                      </v-col>
+                      <v-col>
+                        <v-checkbox class="pa-0 ma-0"
+                        :on-icon="'mdi-check-circle'"
+                        :off-icon="'mdi-checkbox-blank-circle-outline'"
+                        v-model="item.checkJob"
+                        label="กระดานการทำงาน"
+                      ></v-checkbox>
+                      </v-col>
+                     </v-row>
+                    </v-expansion-panel-content>
+                  </v-expansion-panel>
+                </v-expansion-panels>
+              </v-col>
+              <!-- <v-col class="pa-0" cols="12" md='12'>
                 <v-container fluid>
                   <h4 class="text-center font-weight-black mb-5" style="color:#173053;">ประเภทบริการ</h4>
                    <v-row v-for="(item , index) in flowData" :key="index" class="mb-1"  style="border-style: groove;">
@@ -81,16 +139,16 @@
                         v-model="item.checkJob"
                         label="กระดานการทำงาน"
                       ></v-checkbox>
-                      <!-- <v-checkbox class="pa-0 ma-0"
+                      <v-checkbox class="pa-0 ma-0"
                         :on-icon="'mdi-check-circle'"
                         :off-icon="'mdi-checkbox-blank-circle-outline'"
                         v-model="item.checkEpmtime"
                         label="การบันทึกเวลาพนักงาน"
-                      ></v-checkbox> -->
+                      ></v-checkbox>
                     </v-col>
                    </v-row>
                 </v-container>
-              </v-col>
+              </v-col> -->
               <!-- <v-col class="pa-0" cols="6" md='6'>
                 <v-container fluid>
                     <p class="text-center">การBooking</p>
@@ -101,9 +159,9 @@
                 </v-container>
               </v-col> -->
             </v-row>
-            <div class="text-center">
+            <div class="mr-4">
               <v-btn
-                block class="ma-2" color="#173053" dark large
+                block class="ma-2" color="#14AE5C" dark large
                 @click="AddData()"
               >
                 บันทึก
@@ -114,12 +172,12 @@
           <v-dialog
           v-model="dialog"
           persistent
-          width="35%"
+          width="45%"
         >
-          <v-card class="pa-3" min-height="700" style="overflow-x: hidden;">
+          <v-card class="pa-3" min-height="400" style="overflow-x: hidden;">
             <v-row>
               <v-col cols="10" class="text-left pt-10">
-              <h3><strong>เลือกบริการที่จะรับการแจ้งเตือน</strong></h3>
+              <h3 class="ml-7"><strong>เลือกบริการที่จะรับการแจ้งเตือน</strong></h3>
               </v-col>
               <v-col cols="2" class="pt-10">
               <div style="text-align: end;">
@@ -152,6 +210,64 @@
                 ></v-select>
               </v-col>
               <v-col class="pa-0" cols="12" md='12'>
+                <h3 class="text-center font-weight-black mb-5" style="color:#173053;">ประเภทบริการ</h3>
+                <div class="text-right mb-5">
+                  <v-btn v-if="panelEdit.length !== itemSelectEdit.length" dark color="#14AE5C" @click="allEdit"> แสดงทั้งหมด
+                  <v-icon>mdi-chevron-down</v-icon>
+                  </v-btn>
+                  <v-btn v-if="panelEdit.length === itemSelectEdit.length" dark color="error" @click="noneEdit"> ปิด
+                  <v-icon>mdi-chevron-up</v-icon>
+                  </v-btn>
+                </div>
+                <v-expansion-panels  v-model="panelEdit" multiple>
+                  <v-expansion-panel
+                    v-for="(item , index) in itemSelectEdit" :key="index"
+                  >
+                    <v-expansion-panel-header expand-icon="mdi-menu-down">
+                      <h6 class="font-weight-medium"  style="color:#000000;">
+                        <v-icon class="mr-1" color="#14AE5C" style="font-size: 20px">
+                          mdi-checkbox-blank-circle
+                        </v-icon>
+                          {{item.text}}
+                      </h6>
+                      <!-- <template v-slot:actions>
+                        <v-icon color="error">
+                          mdi-chevron-down-box
+                        </v-icon>
+                      </template> -->
+                    </v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                     <v-row>
+                      <v-col>
+                        <v-checkbox class="pa-0 ma-0"
+                        :on-icon="'mdi-check-circle'"
+                        :off-icon="'mdi-checkbox-blank-circle-outline'"
+                        v-model="item.checkBooking"
+                        label="นัดหมายเข้ารับบริการ"
+                      ></v-checkbox>
+                      </v-col>
+                      <v-col >
+                        <v-checkbox class="pa-0 ma-0"
+                        :on-icon="'mdi-check-circle'"
+                        :off-icon="'mdi-checkbox-blank-circle-outline'"
+                        v-model="item.checkOnsite"
+                        label="แจ้งเตือนพนักงาน Onsite"
+                      ></v-checkbox>
+                      </v-col>
+                      <v-col>
+                        <v-checkbox class="pa-0 ma-0"
+                        :on-icon="'mdi-check-circle'"
+                        :off-icon="'mdi-checkbox-blank-circle-outline'"
+                        v-model="item.checkJob"
+                        label="กระดานการทำงาน"
+                      ></v-checkbox>
+                      </v-col>
+                     </v-row>
+                    </v-expansion-panel-content>
+                  </v-expansion-panel>
+                </v-expansion-panels>
+              </v-col>
+              <!-- <v-col class="pa-0" cols="12" md='12'>
                 <v-container fluid>
                   <h4 class="text-center font-weight-black mb-5" style="color:#173053;">ประเภทบริการ</h4>
                    <v-row v-for="(item , index) in itemSelectEdit" :key="index" class="mb-1"  style="border-style: groove;">
@@ -177,16 +293,16 @@
                         v-model="item.checkJob"
                         label="กระดานการทำงาน"
                       ></v-checkbox>
-                      <!-- <v-checkbox class="pa-0 ma-0"
+                      <v-checkbox class="pa-0 ma-0"
                         :on-icon="'mdi-check-circle'"
                         :off-icon="'mdi-checkbox-blank-circle-outline'"
                         v-model="item.checkEpmtime"
                         label="การบันทึกเวลาพนักงาน"
-                      ></v-checkbox> -->
+                      ></v-checkbox>
                     </v-col>
                    </v-row>
                 </v-container>
-              </v-col>
+              </v-col> -->
               <!-- <v-col class="pa-0" cols="6" md='6'>
                 <v-container fluid>
                     <p class="text-center">การBooking</p>
@@ -197,9 +313,9 @@
                 </v-container>
               </v-col> -->
             </v-row>
-            <div class="text-center">
+            <div class="mr-4">
               <v-btn
-                block class="ma-2" color="#173053" dark large
+                block class="ma-2" color="#14AE5C" dark large
                 @click="editData()"
               >
                 แก้ไขข้อมูล
@@ -319,7 +435,9 @@ export default {
       BookingSendEdit: false,
       idEdit: '',
       notifyId: '',
-      flowData: []
+      flowData: [],
+      panel: [],
+      panelEdit: []
     }
   },
   async mounted () {
@@ -328,6 +446,20 @@ export default {
     this.getFLow()
   },
   methods: {
+    all () {
+      this.panel = this.flowData.map((k, i) => i)
+    },
+    // Reset the panel
+    none () {
+      this.panel = []
+    },
+    allEdit () {
+      this.panelEdit = this.itemSelectEdit.map((k, i) => i)
+    },
+    // Reset the panel
+    noneEdit () {
+      this.panelEdit = []
+    },
     async getLineGroup () {
       this.LineGroupitem = []
       await axios
@@ -369,6 +501,7 @@ export default {
         }).catch((error) => {
           console.log('error function addData : ', error)
         })
+      console.log('this.flowData', this.flowData)
     },
     async getDataBranch () {
       this.BranchItem = []
@@ -493,7 +626,7 @@ export default {
               '&scope=notify&state=LQpoVxRXet0KHIKLNl5lyIySzAgIM5bIPVgKq74nvKd' +
               '&redirect_uri=https://betask-linked-admin.web.app/UpdateNotify?shopId=' + item.shopId + 'notifyId' + item.notifyId
     },
-    setEdit (item) {
+    async setEdit (item) {
       console.log('item', item)
       // console.log('this.BranchItem', this.BranchItem)
       this.itemBranchEdit = []
@@ -522,6 +655,8 @@ export default {
       } else {
         this.BookingSendEdit = false
       }
+      console.log('itemSelectEdit', this.itemSelectEdit)
+      await this.allEdit()
     },
     async editData () {
       console.log('this.itemSelectEdit', this.itemSelectEdit)
