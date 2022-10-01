@@ -2903,7 +2903,7 @@
                   </template> -->
                   <template v-slot:[`item.dueDate`]="{ item }">
                     <div>
-                      <div>{{ item.dueDate.split(' ')[0].split('-').join('/') }}</div>
+                      <div>{{ item.dueDate.split(' ')[0].split('-')[2] + '/' + item.dueDate.split(' ')[0].split('-')[1] + '/' + item.dueDate.split(' ')[0].split('-')[0] }}</div>
                       <div>{{item.dueDate.split(' ')[1]}} น.</div>
                     </div>
                   </template>
