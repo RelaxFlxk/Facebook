@@ -2920,7 +2920,7 @@
                             v-bind="attrs"
                             v-on="on"
                           >
-                            เมนูจัดการนัดหมาย
+                            เมนูจัดการ
                             <v-icon color="#73777B" class="ml-2"> mdi-chevron-down </v-icon>
                           </v-btn>
                         </template>
@@ -7359,14 +7359,21 @@ export default {
               r[filter] = r[filter] || {}
               r[filter][bookNo] = r[filter][bookNo] || []
               r[filter][bookNo].push(BookingData.filter(item => item.bookNo === a.bookNo))
-              this.phonenumItem.push(filter)
+              if (this.phonenumItem.filter(el => { return el === filter }).length === 0) {
+                this.phonenumItem.push(filter)
+              }
             }
             return r
           }, Object.create(null))
-
-          console.log(this.defaultData)
-          this.phonenum = ''
-          this.dialogHistory = true
+          console.log(this.phonenumItem)
+          if (this.phonenumItem.length === 1) {
+            this.phonenum = this.phonenumItem[0]
+            this.SelectDataHistory()
+            this.dialogHistory = true
+          } else {
+            this.phonenum = ''
+            this.dialogHistory = true
+          }
         } else if (BookingData.status === false) {
           this.$swal('ไม่พบประวัติการเข้ารับบริการ', 'กรูณาตรวจสอบข้อมูล', 'info')
           this.dialogHistory = false
@@ -7659,6 +7666,7 @@ export default {
                   }
                   s.shopId = d.shopId
                   s.bookingEmpFlow = d.bookingEmpFlow
+                  s.bookingEmpFlowName = d.bookingEmpFlowName
                   s.dueDateDay = d.dueDateDay
                   s.remark = d.remark || ''
                   s.masBranchID = d.masBranchID
@@ -9795,7 +9803,7 @@ export default {
               }
               serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
             })
-            serviceDetail = serviceDetail.trim() || t.flowName
+            serviceDetail = serviceDetail.trim() ? t.flowName + ' : ' + serviceDetail.trim() : t.flowName
             t.flowNameShow = serviceDetail
             this.dataItemSelect.push(t)
           }
@@ -9894,7 +9902,8 @@ export default {
                 serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
               })
             }
-            serviceDetail = serviceDetail.trim() || t.flowName
+            // serviceDetail = serviceDetail.trim() || t.flowName
+            serviceDetail = serviceDetail.trim() ? t.flowName + ' : ' + serviceDetail.trim() : t.flowName
             t.flowNameShow = serviceDetail
             this.dataItemSelect.push(t)
           }
@@ -9908,7 +9917,7 @@ export default {
             { text: 'ชื่อลูกค้า', value: 'cusName', width: '150' },
             { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'บริการ', value: 'flowNameShow' },
+            { text: 'บริการ', value: 'flowNameShow', width: '150' },
             { text: 'เบอร์โทร', value: 'tel' },
             { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
             { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
@@ -9924,7 +9933,7 @@ export default {
             { text: 'ชื่อลูกค้า', value: 'cusName', width: '120', sortable: false },
             { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'บริการ', value: 'flowNameShow', sortable: false },
+            { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
             { text: 'เบอร์โทร', value: 'tel', sortable: false },
             { text: 'เงินมัดจำ', value: 'action40', sortable: false, align: 'center' },
             { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '150' },
@@ -9990,7 +9999,7 @@ export default {
             { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
             { text: 'วันที่/เวลา', value: 'dueDate', width: '150', sortable: false },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'บริการ', value: 'flowNameShow', width: '120', sortable: false },
+            { text: 'บริการ', value: 'flowNameShow', width: '150', sortable: false },
             { text: 'เบอร์โทร', value: 'tel', sortable: false, width: '120' },
             { text: 'เงินมัดจำ', value: 'action40', align: 'center', width: '120', sortable: false },
             { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '160' },
@@ -10015,7 +10024,7 @@ export default {
             { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
             { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'บริการ', value: 'flowNameShow', sortable: false },
+            { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
             { text: 'เบอร์โทร', value: 'tel', sortable: false },
             { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
             { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
@@ -10028,7 +10037,7 @@ export default {
             { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
             { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'บริการ', value: 'flowNameShow', sortable: false },
+            { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
             { text: 'เบอร์โทร', value: 'tel', sortable: false },
             { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center', width: '120' },
             { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
@@ -10099,6 +10108,7 @@ export default {
                     s.bookNo = d.bookNo
                     s.flowId = d.flowId
                     s.flowName = d.flowName
+                    s.bookingEmpFlowName = d.bookingEmpFlowName
                     s.dueDate = d.dueDate
                     s.dueDateTimeStamp = d.dueDateTimeStamp
                     s.remarkRemove = d.remarkRemove
@@ -10347,6 +10357,7 @@ export default {
                 }
                 s.shopId = d.shopId
                 s.bookingEmpFlow = d.bookingEmpFlow
+                s.bookingEmpFlowName = d.bookingEmpFlowName
                 s.dueDateDay = d.dueDateDay
                 s.remark = d.remark || ''
                 s.masBranchID = d.masBranchID
@@ -10510,6 +10521,7 @@ export default {
                 }
                 s.shopId = d.shopId
                 s.bookingEmpFlow = d.bookingEmpFlow
+                s.bookingEmpFlowName = d.bookingEmpFlowName
                 s.dueDateDay = d.dueDateDay
                 s.remark = d.remark || ''
                 s.masBranchID = d.masBranchID

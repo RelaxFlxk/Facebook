@@ -585,6 +585,9 @@
                       <v-col v-if="items.cusName" cols="12" class="pt-0 pb-0">
                         คุณ {{ items.cusName }}
                       </v-col>
+                      <v-col v-if="items.tel" cols="12" class="pt-0 pb-0">
+                        โทร {{ items.tel }}
+                      </v-col>
                       <v-col v-if="items.cusReg" cols="12" class="pt-0 pb-0">
                         ทะเบียน {{ items.cusReg }}
                       </v-col>

@@ -219,7 +219,7 @@
             <div class="text-center">
               <v-dialog v-model="dialog" width="600">
                 <v-card>
-                  <v-card-title class="text-h6 grey lighten-2">
+                  <v-card-title class="grey lighten-2">
                     รายชื่อลูกค้านัดหมาย
                   </v-card-title>
                   <br />
@@ -273,7 +273,8 @@
                               {{ items.serviceDetail }}<br>
                               โทร {{ items.tel }}<br>
                               <template v-if="items.carModel !== ''">รุ่นรถ {{ items.carModel }}<br></template>
-                              {{ format_date(items.contactDateBt) }}
+                              {{ items.bookingEmpFlowName === '' ? '' : 'พนักงาน ' + items.bookingEmpFlowName }}<br>
+                              {{ format_dateFUllTime(items.contactDateBt) }}
                             </v-col>
                           </v-row>
                           <!-- <v-list-item-subtitle>

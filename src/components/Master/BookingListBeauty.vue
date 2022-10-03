@@ -3213,7 +3213,7 @@
                             v-bind="attrs"
                             v-on="on"
                           >
-                            เมนูจัดการนัดหมาย
+                            เมนูจัดการ
                             <v-icon color="#73777B" class="ml-2"> mdi-chevron-down </v-icon>
                           </v-btn>
                         </template>
@@ -9685,7 +9685,8 @@ export default {
               }
               serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
             })
-            serviceDetail = serviceDetail.trim() || t.flowName
+            // serviceDetail = serviceDetail.trim() || t.flowName
+            serviceDetail = serviceDetail.trim() ? t.flowName + ' : ' + serviceDetail.trim() : t.flowName
             t.flowNameShow = serviceDetail
             this.dataItemSelect.push(t)
           }
@@ -9784,7 +9785,8 @@ export default {
                 serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
               })
             }
-            serviceDetail = serviceDetail.trim() || t.flowName
+            // serviceDetail = serviceDetail.trim() || t.flowName
+            serviceDetail = serviceDetail.trim() ? t.flowName + ' : ' + serviceDetail.trim() : t.flowName
             t.flowNameShow = serviceDetail
             this.dataItemSelect.push(t)
           }
@@ -9814,7 +9816,7 @@ export default {
             { text: 'ชื่อลูกค้า', value: 'cusName', width: '120', sortable: false },
             { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'บริการ', value: 'flowNameShow', sortable: false },
+            { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
             { text: 'เบอร์โทร', value: 'tel', sortable: false },
             { text: 'เงินมัดจำ', value: 'action40', sortable: false, align: 'center' },
             { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '150' },
@@ -9880,7 +9882,7 @@ export default {
             { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
             { text: 'วันที่/เวลา', value: 'dueDate', width: '150', sortable: false },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'บริการ', value: 'flowNameShow', width: '120', sortable: false },
+            { text: 'บริการ', value: 'flowNameShow', width: '150', sortable: false },
             { text: 'เบอร์โทร', value: 'tel', sortable: false, width: '120' },
             { text: 'เงินมัดจำ', value: 'action40', align: 'center', width: '120', sortable: false },
             { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '160' },
@@ -9905,7 +9907,7 @@ export default {
             { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
             { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'บริการ', value: 'flowNameShow', sortable: false },
+            { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
             { text: 'เบอร์โทร', value: 'tel', sortable: false },
             { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
             { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
@@ -9918,7 +9920,7 @@ export default {
             { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
             { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
             // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'บริการ', value: 'flowNameShow', sortable: false },
+            { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
             { text: 'เบอร์โทร', value: 'tel', sortable: false },
             { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center', width: '120' },
             { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
