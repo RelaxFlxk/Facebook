@@ -1511,7 +1511,7 @@ export default {
         time: '',
         setTime: '',
         limitBooking: 0,
-        limitBookingCheck: 'Fales',
+        limitBookingCheck: 'False',
         shopId: this.$session.getAll().data.shopId,
         dateDayoffText: [],
         dateDayoffValue: [],
@@ -1944,7 +1944,7 @@ export default {
           if (rs.length > 0) {
             dt = rs
             console.log('rs', rs)
-            this.formUpdateLimitbooking.limitBookingCheck = rs[0].limitBookingCheck || 'Fales'
+            this.formUpdateLimitbooking.limitBookingCheck = rs[0].limitBookingCheck || 'False'
             if (rs[0].dateDayoffText === null || rs[0].dateDayoffText === '') {
               this.formUpdateLimitbooking.dateDayoffText = []
             } else {

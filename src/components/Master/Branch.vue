@@ -723,7 +723,7 @@ export default {
         time: '',
         setTime: '',
         limitBooking: 0,
-        limitBookingCheck: 'Fales',
+        limitBookingCheck: 'False',
         shopId: this.$session.getAll().data.shopId,
         dateDayoffText: [],
         dateDayoffValue: [],
@@ -737,7 +737,7 @@ export default {
         masBranchName: '',
         masBranchNameEn: '',
         setTime: '',
-        limitBookingCheck: 'Fales',
+        limitBookingCheck: 'False',
         time: '',
         dateDayoffText: [],
         dateDayoffValue: [],
@@ -748,7 +748,7 @@ export default {
         countCus: 0,
         countFastTrack: 0,
         setTime: '',
-        limitBookingCheck: 'Fales',
+        limitBookingCheck: 'False',
         masBranchName: '',
         masBranchNameEn: '',
         dateDayoffText: [],
@@ -1016,7 +1016,7 @@ export default {
         this.formUpdate.countCus = 0
       }
       this.formUpdate.typeDayCustom = item.typeDayCustom
-      this.formUpdate.limitBookingCheck = item.limitBookingCheck || 'Fales'
+      this.formUpdate.limitBookingCheck = item.limitBookingCheck || 'False'
       console.log('this.formUpdate.setTime', item.setTime)
       if (item.setTime === null || item.setTime === '') {
         this.dataItemAddTime = []

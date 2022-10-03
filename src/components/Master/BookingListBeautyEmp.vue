@@ -5994,7 +5994,7 @@ export default {
       dialogBookingAgain: false,
       loadingBookingAgain: false,
       limitBookingCheck: 'False',
-      limitBookingSelect: 'Fales',
+      limitBookingSelect: 'False',
       limitCountBranch: 0,
       limitCountBranchOld: 0,
       countBookingLimit: 0,

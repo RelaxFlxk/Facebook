@@ -1046,16 +1046,16 @@ export default {
                 this.showMap = rs[0].showMap
               }
               if (rs[0].showUpload1 === null || rs[0].showUpload1 === '') {
-                this.showUpload1 = 'Flase'
+                this.showUpload1 = 'False'
               } else {
                 this.showUpload1 = rs[0].showUpload1
               }
               if (rs[0].showUpload2 === null || rs[0].showUpload2 === '') {
-                this.showUpload2 = 'Flase'
+                this.showUpload2 = 'False'
               } else {
                 this.showUpload2 = rs[0].showUpload2
               }
-              this.showLimitBooking = rs[0].showLimitBooking || 'Fales'
+              this.showLimitBooking = rs[0].showLimitBooking || 'False'
               bookingData = JSON.parse(rs[0].flowfieldName)
               for (let i = 0; i < bookingData.length; i++) {
                 let d = bookingData[i]
