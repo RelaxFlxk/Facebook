@@ -518,17 +518,21 @@ export default {
       const month = String(dateSplit[1])
       this.countCus = this.masBranchName.countCus
       let bookingDate = ''
+      let bookingDataDate = ''
       if (this.dataReturnReady === false) {
         if (dateMonth !== undefined) {
           bookingDate = '&dueDate=' + dateMonth
+          bookingDataDate = dateMonth
           this.today = dateMonth + '-01'
         } else {
           bookingDate = '&dueDate=' + year + '-' + month
+          bookingDataDate = year + '-' + month
         }
       } else {
         bookingDate = '&dueDate=' + year + '-' + month
+        bookingDataDate = year + '-' + month
       }
-      await this.getBookingData(bookingDate)
+      await this.getBookingData(bookingDataDate)
       if (this.type === 'month') {
         let url = ''
         if (this.flowId === 'allFlow') {

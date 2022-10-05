@@ -16,10 +16,8 @@
   "dependencies": {
     "@adamdehaven/vue-custom-tooltip": "^1.4.4",
     "@chenfengyuan/vue-qrcode": "^1.0.2",
-    "@click2buy/vue-pivot-table": "^1.1.6",
     "@sentry/tracing": "^6.16.1",
     "@sentry/vue": "^6.16.1",
-    "@syncfusion/ej2-vue-pivotview": "^17.3.14",
     "axios": "^0.21.0",
     "bootstrap": "^4.5.3",
     "c3": "^0.7.20",
@@ -113,7 +111,7 @@
     "vue-style-loader": "^3.0.1",
     "vue-template-compiler": "^2.5.2",
     "webpack": "^3.6.0",
-    "webpack-bundle-analyzer": "^2.9.0",
+    "webpack-bundle-analyzer": "^2.13.1",
     "webpack-dev-server": "^2.9.7",
     "webpack-merge": "^4.1.0"
   },

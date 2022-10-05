@@ -3121,7 +3121,7 @@ import DateRangePicker from 'vue2-daterange-picker'
 // you need to import the CSS manually
 import QrcodeVue from 'qrcode.vue'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
-import { PivotTable } from '@click2buy/vue-pivot-table'
+// import { PivotTable } from '@click2buy/vue-pivot-table'
 import moment from 'moment-timezone'
 import BookingQueue from './BookingQueue.vue'
 import CalendarBooking from './CalendarBookingList.vue'
@@ -3138,7 +3138,7 @@ export default {
     readXlsxFile,
     VuetifyMoney,
     QrcodeVue,
-    PivotTable,
+    // PivotTable,
     BookingQueue,
     CalendarBooking
   },
@@ -4325,7 +4325,7 @@ export default {
       if (this.$session.id() !== undefined) {
         console.log('getDataCalendaBooking')
         try {
-          await this.$refs.CalendarBooking.getDataReturn('&checkOnsite=is null', this.dateStart)
+          await this.$refs.CalendarBooking.getDataReturn('&checkOnsite=is null', this.dateStart, this.masBranchID, this.flowSelect)
         } catch (e) { console.log(e) }
       // this.$refs.CalendarBooking.getDataFlow()
       // this.$refs.CalendarBooking.getDataBranch()

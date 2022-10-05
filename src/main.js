@@ -9,10 +9,10 @@ import Swal from 'sweetalert2'
 import VueSession from 'vue-session'
 import VueMask from 'v-mask'
 import 'bootstrap/dist/css/bootstrap.css'
-import vueXlsxTable from 'vue-xlsx-table'
+// import vueXlsxTable from 'vue-xlsx-table'
 import axios from 'axios' // api
 import moment from 'moment-timezone' // แปลง date
-import { PivotViewPlugin } from '@syncfusion/ej2-vue-pivotview'
+// import { PivotViewPlugin } from '@syncfusion/ej2-vue-pivotview'
 import * as Sentry from '@sentry/vue'
 import { Integrations } from '@sentry/tracing'
 import * as VueGoogleMaps from 'vue2-google-maps'
@@ -52,14 +52,14 @@ Sentry.init({
   tracesSampleRate: 1.0
 })
 
-Vue.use(PivotViewPlugin)
+// Vue.use(PivotViewPlugin)
 
 Vue.config.productionTip = false
 Vue.use(Swal)
 Vue.use(VueSweetAlert)
 Vue.use(VueSession)
 Vue.use(VueMask)
-Vue.use(vueXlsxTable, {rABS: false})
+// Vue.use(vueXlsxTable, {rABS: false})
 
 Vue.prototype.$omise_public_key = 'pkey_test_5pyxhrcj5hv0pb3azgd'
 Vue.prototype.$liff_id_login = '1654154168-E3mxd54W'
