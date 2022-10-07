@@ -3056,7 +3056,7 @@
                   </template>
                   <template v-slot:[`item.action5`]="{ item }">
                     <div>
-                      <v-row v-if="item.memberDataTag.length === 0 " style="justify-content: flex-end;">
+                      <v-row v-if="item.memberDataTag.length === 0 " style="justify-content: flex-end;margin: auto;">
                         <div v-if="item.memberId !== ''" style="color:grey;">ไม่มีมีป้ายกำกับ</div>
                         <v-tooltip bottom >
                             <template v-slot:activator="{ on, attrs }">
