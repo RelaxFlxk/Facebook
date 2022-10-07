@@ -7845,6 +7845,7 @@ export default {
                     s.dueDateText = this.format_dateNotime(d.dueDate) + ' ' + d.timeText
                   }
                   s.shopId = d.shopId
+                  s.dueDateDay = d.dueDateDay
                   s.remark = d.remark || ''
                   s.masBranchID = d.masBranchID
                   s.limitBookingCheck = d.limitBookingCheck
@@ -8114,11 +8115,11 @@ export default {
       this.formEdit.flowId = dt.flowId
       this.flowIdOldEdit = dt.flowId
       this.empSelectEdit = parseInt(dt.empSelect)
-      this.dueDateOld = this.momenDate_1(dt.dueDate)
-      this.dueDateTimeOld = this.momenTime(dt.dueDate)
+      this.dueDateOld = dt.dueDateDay
+      this.dueDateTimeOld = dt.timeDuetext
 
       // this.SetallowedDatesEdit()
-      this.dateEdit = moment(moment(dt.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+      this.dateEdit = dt.dueDateDay
       console.log('dataFlowSelectEdit', this.dataFlowSelectEdit)
       this.timeavailable = []
       // let dtTime = await this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
@@ -9361,6 +9362,7 @@ export default {
                   s.flowName = d.flowName
                   s.dueDate = d.dueDate
                   s.shopId = d.shopId
+                  s.dueDateDay = d.dueDateDay
                   s.remark = d.remark || ''
                   s.masBranchID = d.masBranchID
                   s.empSelect = d.empSelect
@@ -10238,6 +10240,7 @@ export default {
                   s.dueDateText = this.format_dateNotime(d.dueDate) + ' ' + d.timeText
                 }
                 s.shopId = d.shopId
+                s.dueDateDay = d.dueDateDay
                 s.remark = d.remark || ''
                 s.masBranchID = d.masBranchID
                 s.limitBookingCheck = d.limitBookingCheck
@@ -10399,6 +10402,7 @@ export default {
                   s.dueDateText = this.format_dateNotime(d.dueDate) + ' ' + d.timeText
                 }
                 s.shopId = d.shopId
+                s.dueDateDay = d.dueDateDay
                 s.remark = d.remark || ''
                 s.masBranchID = d.masBranchID
                 s.limitBookingCheck = d.limitBookingCheck
@@ -11842,8 +11846,8 @@ export default {
     },
     async setDataRemove (item) {
       this.bookNoRemove = item
-      this.dueDateOld = this.momenDate_1(item.dueDate)
-      this.dueDateTimeOld = this.momenTime(item.dueDate)
+      this.dueDateOld = item.dueDateDay
+      this.dueDateTimeOld = item.timeDuetext
       await this.getEmpSelect(item)
       this.dialogRemove = true
     },
@@ -12494,25 +12498,25 @@ export default {
       this.limitBookingCheck = item.limitBookingCheck || 'False'
       item.countHourLimit = item.countHourLimit || 0
       this.countBookingLimit = 0
-      this.dueDateOld = this.momenDate_1(item.dueDate)
-      this.dueDateTimeOld = this.momenTime(item.dueDate)
+      this.dueDateOld = item.dueDateDay
+      this.dueDateTimeOld = item.timeDuetext
       this.masBranchIDLimit = item.masBranchID
       this.flowIDLimit = item.flowId
       this.checkSelectText = item.statusBt
       this.checkTimeFlow(item)
       this.dataChange = item
       this.remark = item.remark
-      this.formChange.date = this.momenDate_1(item.dueDate)
+      this.formChange.date = item.dueDateDay
       console.log('this.timeavailable', this.timeavailable)
       if (this.timeavailable.length > 0) {
         if (this.timeavailable.filter(el => { return el.text === item.timeText }).length > 0) {
           if (item.timeText) {
-            this.formChange.time = { text: item.timeText, value: this.momenTime(item.dueDate) }
+            this.formChange.time = { text: item.timeText, value: item.timeDuetext }
           } else {
-            this.formChange.time = { text: this.momenTime(item.dueDate), value: this.momenTime(item.dueDate) }
+            this.formChange.time = { text: item.timeDuetext, value: item.timeDuetext }
           }
         } else {
-          this.formChange.time = { text: this.momenTime(item.dueDate), value: this.momenTime(item.dueDate) }
+          this.formChange.time = { text: item.timeDuetext, value: item.timeDuetext }
         }
       } else {
         this.formChange.time = ''
@@ -12526,7 +12530,7 @@ export default {
           this.limitCountBranchOld = []
         } else {
           // let setTimeOld = JSON.parse(this.branch.filter(el => { return el.value === parseInt(item.masBranchID) })[0].allData.setTime)
-          let indexOld = setTimeOld.findIndex((element) => element.value === this.momenTime(item.dueDate))
+          let indexOld = setTimeOld.findIndex((element) => element.value === item.timeDuetext)
           limitCountBranchOld = setTimeOld.slice(indexOld, indexOld + item.countHourLimit)
           this.limitCountBranchOld = limitCountBranchOld
         }

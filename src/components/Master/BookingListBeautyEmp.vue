@@ -7941,11 +7941,12 @@ export default {
       this.formEdit.flowId = dt.flowId
       this.flowIdOldEdit = dt.flowId
       this.empSelectEdit = parseInt(dt.empSelect)
-      this.dueDateOld = this.momenDate_1(dt.dueDate)
-      this.dueDateTimeOld = this.momenTime(dt.dueDate)
+
+      this.dueDateOld = dt.dueDateDay
+      this.dueDateTimeOld = dt.timeDuetext
 
       // this.SetallowedDatesEdit()
-      this.dateEdit = moment(moment(dt.dueDate, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
+      this.dateEdit = dt.dueDateDay
       console.log('dataFlowSelectEdit', this.dataFlowSelectEdit)
       // this.timeavailable = []
       // // let dtTime = await this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
@@ -11978,8 +11979,8 @@ export default {
     },
     async setDataRemove (item) {
       this.bookNoRemove = item
-      this.dueDateOld = this.momenDate_1(item.dueDate)
-      this.dueDateTimeOld = this.momenTime(item.dueDate)
+      this.dueDateOld = item.dueDateDay
+      this.dueDateTimeOld = item.timeDuetext
       await this.getEmpSelect(item)
       this.getEmpChange(item)
       this.dialogRemove = true
@@ -12618,22 +12619,22 @@ export default {
       this.limitBookingCheck = item.limitBookingCheck || 'False'
       item.countHourLimit = item.countHourLimit || 0
       this.countBookingLimit = 0
-      this.dueDateOld = this.momenDate_1(item.dueDate)
-      this.dueDateTimeOld = this.momenTime(item.dueDate)
+      this.dueDateOld = item.dueDateDay
+      this.dueDateTimeOld = item.timeDuetext
       this.masBranchIDLimit = item.masBranchID
       this.flowIDLimit = item.flowId
       this.checkSelectText = item.statusBt
       await this.checkTimeFlow(item.dueDateDay, item)
       this.dataChange = item
       this.remark = item.remark
-      this.formChange.date = this.momenDate_1(item.dueDate)
+      this.formChange.date = item.dueDateDay
       console.log('this.timeavailable', this.timeavailable)
       if (this.timeavailable.length > 0) {
         if (this.timeavailable.filter(el => { return el.text === item.timeText }).length > 0) {
           if (item.timeText) {
-            this.formChange.time = { text: item.timeText, value: this.momenTime(item.dueDate) }
+            this.formChange.time = { text: item.timeText, value: item.timeDuetext }
           } else {
-            this.formChange.time = { text: this.momenTime(item.dueDate), value: this.momenTime(item.dueDate) }
+            this.formChange.time = { text: item.timeDuetext, value: item.timeDuetext }
           }
         } else {
           this.formChange.time = ''
