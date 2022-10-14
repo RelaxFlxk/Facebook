@@ -85,62 +85,69 @@
           <v-col cols="6">
             <v-sheet min-height="650px">
               <h3 class="text-left ml-4 mb-10 font-weight-bold">ลิ้งค์สำหรับลูกค้า</h3>
-              <div class="ml-10" v-for="(item,i) in linkItem" :key="i">
+              <div class="ml-10" >
                 <!-- <h6 v-if="item.type === 'customer'">{{item.title}}</h6> -->
-                <v-row>
-                  <v-col cols="12" v-if="item.type === 'customer'">
+                <v-row v-for="(item1,i) in linkItem" :key="i">
+                  <v-col cols="12" class="pa-0" v-if="item1.type === 'customer'">
                     <v-text-field
                     class=""
                     solo
-                    v-model="item.title"
+                    v-model="item1.title"
                     readonly
                     >
                     <template v-slot:append-outer>
-                        <!-- <v-icon left>
-                          mdi-content-copy
-                        </v-icon> -->
-                        <v-btn
+                      <v-tooltip top>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn
                           class="mx-2 mt-n4 ml-n1"
                           dark
                           fab
+                          v-bind="attrs"
+                          v-on="on"
                           color="#2BC155"
-                          @click="coppyLink(item.text),Alerts = true"
+                          @click="coppyLink(item1.text),Alerts = true"
                         >
                           <v-icon dark>
                             mdi-content-copy
                           </v-icon>
                         </v-btn>
+                        </template>
+                        <span>Coppy Link / สร้าง QR CODE</span>
+                      </v-tooltip>
                     </template>
                     </v-text-field>
                   </v-col>
                 </v-row>
               </div>
-              <h3 class="text-left ml-4 mb-16 mt-5 font-weight-bold">ลิ้งค์สำหรับ Admin</h3>
-              <div class="ml-10" v-for="(item,i) in linkItem" :key="i" >
-                <!-- <h6 v-if="item.type === 'admin'">{{item.title}}</h6> -->
-                <v-row>
-                  <v-col cols="12" v-if="item.type === 'admin'">
+              <h3 class="text-left ml-4 mb-10 mt-5 font-weight-bold">ลิ้งค์สำหรับ Admin</h3>
+              <div class="ml-10" >
+                <v-row v-for="(item2,y) in linkItem" :key="y" >
+                  <v-col cols="12" class="pa-0" v-if="item2.type === 'admin'">
                     <v-text-field
                     class=""
                     solo
-                    v-model="item.title"
+                    v-model="item2.title"
                     readonly
                     >
                     <template v-slot:append-outer>
-                        <!-- <v-icon left>
-                          mdi-content-copy
-                        </v-icon> -->
-                        <v-btn
+                     <v-tooltip top>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn
                           class="mx-2 mt-n4 ml-n1"
                           dark
                           fab
+                          v-bind="attrs"
+                          v-on="on"
                           color="#2BC155"
-                          @click="coppyLink(item.text),Alerts = true"
+                          @click="coppyLink(item2.text),Alerts = true"
                         >
                           <v-icon dark>
                             mdi-content-copy
                           </v-icon>
                         </v-btn>
+                        </template>
+                        <span>Coppy Link / สร้าง QR CODE</span>
+                      </v-tooltip>
                     </template>
                     </v-text-field>
                   </v-col>
