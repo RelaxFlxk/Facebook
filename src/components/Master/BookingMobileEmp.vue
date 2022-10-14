@@ -2515,7 +2515,7 @@ export default {
               //   dtint = '0'
               // }
               let dt = {
-                pageStatus: this.dataItem[0].statusBt,
+                // pageStatus: this.dataItem[0].statusBt,
                 // limitBookingCount: dtint,
                 bookNo: item.bookNo,
                 contactDate: this.format_date(new Date()),

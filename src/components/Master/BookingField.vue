@@ -317,10 +317,13 @@
                       style="width:29px;height:29px"
                     ></v-img>
                     <h3 class="text-center" style="color:#FFFFFF;">
-                      ลิ้งสำหรับลูกค้า
+                      ลิ้งค์สำหรับลูกค้า
                     </h3>
+                    <h6 class="text-center" style="color:#FFFFFF;">
+                      สามารถกดปุ่มตามประเภท social media เพื่อคัดลอกลิ้งค์นัดหมาย
+                    </h6>
                     <v-card-text>
-                      <v-row align-content="center">
+                      <v-row align-content="center" v-show="!hindRedirect">
                         <v-col cols="12"  class="pb-0">
                           <v-text-field
                             v-model="Redirect"
@@ -810,6 +813,7 @@ export default {
   },
   data () {
     return {
+      hindRedirect: true,
       showUpload1: 'False',
       showUpload2: 'False',
       textUpload1: '',

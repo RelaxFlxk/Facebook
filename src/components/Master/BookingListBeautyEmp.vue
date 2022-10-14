@@ -2501,6 +2501,20 @@
                 >
                   ตรวจสอบคิวจองรายเดือน
                 </v-btn>
+                <v-btn
+                  color="blue-grey"
+                  class="ma-2 white--text"
+                  @click="dialogShowEmpReport = true, dataShowEmpReport = [], dateStartShowEmpReport = ''"
+                  small
+                >
+                  ตรวจสอบคิวช่างรายวัน
+                  <v-icon
+                    right
+                    dark
+                  >
+                    mdi-book-account-outline
+                  </v-icon>
+                </v-btn>
                 </v-col>
                 <v-col class="text-right" cols="auto"></v-col>
               </v-row>
@@ -2942,6 +2956,21 @@
                           </v-hover>
                           <v-hover v-slot:default="{ hover }">
                           <v-list-item  style="background-color: lightgreen" @click.stop="confirmChk(item)" v-if="item.statusBt !== 'confirmJob' && item.statusBt !== 'confirm' && item.statusBt !== 'cancel'">
+                            <template><v-expand-transition>
+                                        <v-overlay
+                                            color="green"
+                                          absolute
+                                          :opacity=".2"
+                                          :value="hover"
+                                        >
+                                        </v-overlay>
+                                    </v-expand-transition>
+                              <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="quill:mail-subbed"></v-icon> ยืนยันนัดหมาย </v-list-item-title>
+                            </template>
+                          </v-list-item>
+                          </v-hover>
+                          <v-hover v-slot:default="{ hover }">
+                          <v-list-item  style="background-color: lightgreen" @click.stop="confirmChkCancel(item)" v-if="item.statusBt === 'cancel'">
                             <template><v-expand-transition>
                                         <v-overlay
                                             color="green"
@@ -5522,6 +5551,309 @@
               </v-card-text>
             </v-card>
           </v-dialog>
+          <v-dialog v-model="dialogShowEmpReport" persistent max-width="80%">
+            <v-card>
+              <v-card-text>
+                  <v-row>
+                    <v-col cols="6" class="text-left pt-10">
+                      <h3><strong>รายการนัดหมายตามช่าง</strong></h3>
+                    </v-col>
+                    <v-col cols="6" class="pt-10">
+                      <div style="text-align: end;">
+                        <v-btn
+                          class="mx-2"
+                          fab
+                          small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
+                          @click="dialogShowEmpReport = false"
+                          >
+                          X
+                        </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="6">
+                       <v-menu
+                        ref="menu"
+                        v-model="menuShowEmpReport"
+                        transition="scale-transition"
+                        offset-y
+                        max-width="290px"
+                        min-width="auto"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            hide-details
+                            background-color="white"
+                            v-model="dateStartShowEmpReport"
+                            style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
+                            label="วัน/เดือน/ปี นัดหมาย"
+                            readonly
+                            outlined
+                            dense
+                            v-bind="attrs"
+                            v-on="on"
+                          >
+                          <template #prepend-inner>
+                          <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                            mdi-calendar
+                          </v-icon>
+                        </template></v-text-field>
+                        </template>
+                        <v-date-picker
+                          @input="menuShowEmpReport = false,getBookingShowEmpList()"
+                          v-model="dateStartShowEmpReport"
+                          no-title
+                          scrollable
+                        >
+                        </v-date-picker>
+                        </v-menu>
+                    </v-col>
+                    <v-col cols="6" v-if="dataShowEmpReport.length > 0">
+                      <v-btn
+                        color="teal"
+                        dark
+                        style="border-radius: 20px !important;margin-right: 0px;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
+                        @click="exportShowEmpReport()"
+                      >
+                        <v-icon color="white" left>mdi-microsoft-excel</v-icon>
+                        ส่งออกเป็น Excel
+                      </v-btn>
+                    </v-col>
+                    <!-- <v-col cols="6" v-if="dataEmpShowEmpReport.length > 0">
+                      <v-select
+                        v-model="searchEmpShowEmpReport"
+                        background-color="white"
+                        style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
+                        hide-details
+                        :items="dataEmpShowEmpReport"
+                        label="พนักงาน"
+                        outlined
+                        dense
+                        required
+                        ><template #prepend-inner>
+                          <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                            mdi-map-marker-outline
+                          </v-icon>
+                        </template></v-select>
+                    </v-col> -->
+                    <v-col cols="12">
+                      <v-data-table
+                        :search="searchEmpShowEmpReport"
+                        :headers="headersShowEmpReport"
+                        :items="dataShowEmpReport"
+                        item-key="bookNo"
+                        sort-by="dueDate"
+                        group-by="bookingEmpFlowName"
+                        class="elevation-1"
+                        show-group-by
+                        hide-default-footer
+                      >
+                        <!-- <template v-slot:[`item.statusBt`]="{ item }">
+                          <v-chip
+                            filter
+                            dark
+                            v-if="item.statusBt === 'confirm'"
+                            color="#97DDBB"
+                          >
+                            {{dataTypeProcess2}}
+                          </v-chip>
+                          <v-chip
+                            filter
+                            dark
+                            v-if="item.statusBt === 'confirmJob'"
+                            color="#E5B5D8"
+                          >
+                            {{dataTypeProcess4}}
+                          </v-chip>
+                          <v-chip
+                            filter
+                            dark
+                            v-if="item.statusBt === 'wait'"
+                            color="#97DDBB"
+                          >
+                            {{dataTypeProcess1}}
+                          </v-chip>
+                        </template> -->
+                        <template v-slot:group="{ items }">
+                          <tr @click="toggleShowEmpList(items[0].bookingEmpFlowName)" style="background-color:#CFD8DC;">
+                            <td  class="text-xs-right"><strong>{{ items[0].bookingEmpFlowName }}</strong></td>
+                            <td class="text-xs-right"></td>
+                            <td class="text-xs-right"></td>
+                            <td class="text-xs-right"></td>
+                            <td class="text-xs-right"></td>
+                          </tr>
+                          <tr v-for="(item) in items" :key="item.bookNo" v-show="!item.hide">
+                            <td  v-for="(header, index) in headersShowEmpReport"
+                              :key="index">
+                              <p v-if="header.value !== 'statusBt'">{{ item[header.value] }}</p>
+                              <template v-else>
+                                <v-chip
+                                  filter
+                                  dark
+                                  v-if="item['statusBt'] === 'confirm'"
+                                  color="#97DDBB"
+                                >
+                                  {{dataTypeProcess2}}
+                                </v-chip>
+                                <v-chip
+                                  filter
+                                  dark
+                                  v-if="item['statusBt'] === 'confirmJob'"
+                                  color="#E5B5D8"
+                                >
+                                  {{dataTypeProcess4}}
+                                </v-chip>
+                                <v-chip
+                                  filter
+                                  dark
+                                  v-if="item['statusBt'] === 'wait'"
+                                  color="#FEAE34"
+                                >
+                                  {{dataTypeProcess1}}
+                                </v-chip>
+                              </template>
+                            </td>
+                          </tr>
+                        </template>
+                      </v-data-table>
+                    </v-col>
+                  </v-row>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
+          <v-dialog v-model="dialogConfirmCancel" max-width="90%">
+            <v-card class="text-center">
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="10" class="text-left pt-10">
+                    <h3><strong>ยืนยันรายการนี้</strong></h3>
+                    </v-col>
+                    <v-col cols="2" class="pt-10">
+                      <div style="text-align: end;">
+                          <v-btn
+                            class="mx-2"
+                            fab
+                            small
+                            dark
+                            color="white"
+                            :style="styleCloseBt"
+                            @click="dialogConfirmCancel = false"
+                            >
+                            X
+                          </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12" class="pt-0 pb-0">
+                    <v-select
+                      v-model="flowSelectCancel"
+                      :items="dataFlowCancel"
+                      label="เลือกประเภทบริการ"
+                      menu-props="auto"
+                      outlined
+                      dense
+                    ></v-select>
+                    </v-col>
+                    <v-col  cols="12" class="pt-0 pb-0">
+                        <v-select
+                          v-model="bookingEmpFlowCancel"
+                          :items="dataEmpCancel"
+                          label="พนักงานช่าง"
+                          menu-props="auto"
+                          outlined
+                          required
+                          :rules="[rules.required]"
+                          dense
+                          @change="checkTimeCancel(),SetallowedDatesChangeCancel(bookingEmpFlowCancel), formChangeDateCancel = ''"
+                        ></v-select>
+                      </v-col>
+                    <v-col cols="12" class="pt-0 pb-0">
+                      <v-menu
+                        v-model="menuDateChangeCancel"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="auto"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            v-model="formChangeDateCancel"
+                            label="วันที่"
+                            prepend-icon="mdi-calendar"
+                            readonly
+                            outlined
+                            dense
+                            v-bind="attrs"
+                            v-on="on"
+                            required
+                            :rules="[rules.required]"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker
+                          v-model="formChangeDateCancel"
+                          :allowed-dates="allowedDatesChangeCancel"
+                          @change="setLimitBookingCancel(formChangeDateCancel)"
+                          @input="menuDateChangeCancel = false"
+                          :min="
+                            new Date(
+                              Date.now() - new Date().getTimezoneOffset() * 60000
+                            )
+                              .toISOString()
+                              .substr(0, 10)
+                          "
+                        ></v-date-picker>
+                      </v-menu>
+                    </v-col>
+                    <v-col cols="12" class="pt-0 pb-0" v-if="formChangeDateCancel != ''">
+                        <v-select
+                          v-model="formChangeTimeCancel"
+                          :items="timeavailableCancel"
+                          label="เวลา"
+                          item-text="text"
+                          item-value="text"
+                          persistent-hint
+                          return-object
+                          outlined
+                          dense
+                          required
+                          :rules ="[rules.required]"
+                        ></v-select>
+                    </v-col>
+                  </v-row>
+                <v-row>
+                  <v-col cols="12" class="pt-0 pb-0">
+                  <v-select
+                    v-model="empSelectCancel"
+                    :items="empSelectStep"
+                    label="พนักงานที่รับนัดหมาย"
+                    menu-props="auto"
+                    outlined
+                    dense
+                  ></v-select>
+                  </v-col>
+                </v-row>
+                <div class="text-center">
+                  <v-btn
+                    elevation="2"
+                    color="#173053"
+                    dark
+                    large
+                    block
+                    @click="onConfirmCancel(dataConfirmCancel)"
+                    >ยืนยันรายการนี้</v-btn
+                  >
+                </div>
+                </v-container>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
           <RetureDeposit ref="RetureDeposit"></RetureDeposit>
           <CallLog ref="CallLog"></CallLog>
           <NotificationService ref="NotificationService"></NotificationService>
@@ -5613,6 +5945,43 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      // confirm (Cancel)
+      flowSelectCancel: '',
+      dataFlowCancel: [],
+      bookingEmpFlowCancel: '',
+      dataEmpCancel: [],
+      menuDateChangeCancel: false,
+      formChangeDateCancel: '',
+      formChangeTimeCancel: '',
+      timeavailableCancel: [],
+      empSelectCancel: '',
+      dataConfirmCancel: [],
+      EmpItemLimitCancel: [],
+      //
+      dialogConfirmCancel: false,
+      searchEmpShowEmpReport: null,
+      dataShowEmpReport: [],
+      dataEmpShowEmpReport: [],
+      BookingDataListShowEmpReport: [],
+      headersShowEmpReport: [
+        {
+          text: 'สถานะ',
+          groupable: false,
+          value: 'statusBt'
+        },
+        // {
+        //   text: 'ชื่อพนักงาน',
+        //   // align: 'start',
+        //   value: 'bookingEmpFlowName'
+        // },
+        { text: 'ชื่อลูกค้า', value: 'cusName', sortable: false, groupable: false },
+        { text: 'วันที่/เวลา', value: 'dueDate', sortable: false, groupable: false },
+        { text: 'บริการ', value: 'flowName', sortable: false, groupable: false },
+        { text: 'เบอร์โทร', value: 'tel', sortable: false, groupable: false }
+      ],
+      dialogShowEmpReport: false,
+      menuShowEmpReport: false,
+      dateStartShowEmpReport: '',
       showOnsite: 'ไม่แสดง',
       selectOnsite: '',
       menuAdd1: false,
@@ -5628,7 +5997,6 @@ export default {
         { title: 'Click Me' },
         { title: 'Click Me 2' }
       ],
-
       monthNamesThai: ['', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'],
       dialogOnsite: false,
       dialogChangeOnsite: false,
@@ -6056,6 +6424,442 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
+    async getDataFlowAllCancel () {
+      this.dataFlowCancel = await this.getDataFromAPI('/flow/get', 'flowId', 'flowName', '')
+    },
+    async confirmChkCancel (item) {
+      this.dataConfirmCancel = item
+      this.bookingEmpFlowCancel = item.bookingEmpFlow
+      this.flowSelectCancel = item.flowId
+      this.flowIDLimit = item.flowId
+      this.empSelectCancel = ''
+      this.formChangeDateCancel = item.dueDateDay
+
+      await this.getDataFlowAllCancel()
+      await this.getEmpCancel(item.masBranchID)
+      this.SetallowedDatesChangeCancel(item.bookingEmpFlow)
+      await this.setLimitBookingCancel(item.dueDateDay)
+      await this.getEmpSelect(item)
+      console.log('this.timeavailableCancel.filter(el => { return el.value === item.timeDuetext })', this.timeavailableCancel.filter(el => { return el.value === item.timeDuetext }))
+      if (this.timeavailableCancel.filter(el => { return el.value === item.timeDuetext }).length > 0) {
+        this.formChangeTimeCancel = item.timeDuetext
+      // if (this.timeavailable.filter(el => { return el.value === this.momenTime(item.dueDate) }).length > 0) {
+      //   this.formChange.time = this.momenTime(item.dueDate)
+      } else {
+        this.formChangeTimeCancel = ''
+      }
+      this.dialogConfirmCancel = true
+    },
+    checkTimeCancel () {
+      this.timeavailableCancel = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime) || []
+      console.log('timevailable', this.timeavailableCancel)
+    },
+    SetallowedDatesChangeCancel (bookingEmpFlow) {
+      this.dataEmpCancel.forEach((v, k) => {
+        if (v.empId === bookingEmpFlow) {
+          v.dateDayCustom = v.dateDayCustom || ''
+          v.dateDayoffValue = v.dateDayoffValue || ''
+          if (v.dateDayoffValue !== '') {
+            // console.log('if')
+            this.dateDayoff = JSON.parse(v.dateDayoffValue)
+          } else {
+            // console.log('else')
+            this.dateDayoff = []
+          }
+          if (v.dateDayCustom !== '') {
+            this.dateDayCustom = JSON.parse(v.dateDayCustom)
+          } else {
+            this.dateDayCustom = []
+          }
+        }
+      })
+    },
+    allowedDatesChangeCancel (val) {
+      // if (this.dateDaylimit) {
+      if (this.dataFlowCancel.filter(el => el.value === this.flowIDLimit).length > 0) {
+        if (this.dataFlowCancel.filter(el => el.value === this.flowIDLimit)[0].allData.typeDayCustom === 'on') {
+          return val === this.dateDayCustom.filter(el => el === val)[0]
+        } else {
+          if (
+            this.dateDayoff.filter(el => {
+              return el === new Date(val).getDay()
+            }).length === 0 &&
+          this.dateDayCustom.filter(el => {
+            return el === val
+          }).length === 0
+          ) {
+            return val
+          }
+        }
+      } else {
+        return val
+      }
+      // }
+    },
+    async getLimitBookingCancel (dateitem) {
+      let LimitBooking = axios.get(this.DNS_IP + '/LimitBookingDateEmp/get?shopId=' + this.$session.getAll().data.shopId + '&empId=' + this.bookingEmpFlowCancel + '&bookingDate=' + dateitem).then(async (response) => {
+        let rs = response.data
+        return rs
+      })
+      return LimitBooking
+    },
+    async setLimitBookingCancel (dateitem) {
+      // this.time = ''
+      this.timeavailableCancel = []
+      // this.showTable = []
+      this.limitBookingCheck = this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].limitBookingCheck || 'False'
+      if (this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].limitBookingCheck || 'False') {
+        this.timeavailableCancel = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime) || []
+        let slotByflow = this.dataFlowCancel.filter((v) => v.value === this.dataConfirmCancel.flowId)[0].allData.timeSlot
+        if (this.timeavailableCancel.length >= slotByflow) {
+          let LimitBooking = await this.getLimitBookingCancel(dateitem)
+          console.log('LimitBooking', LimitBooking)
+          // เซ็ต Status ให้แต่ละช่วงเวลา
+          if (LimitBooking.status !== false) {
+            if (LimitBooking.length > 0) {
+              this.timeavailableCancel.forEach((v, k) => {
+                if (LimitBooking.filter((a) => a.bookingTime === v.value).length > 0) {
+                  v.status = false
+                } else {
+                  v.status = true
+                }
+                // this.showTable.push(v)
+              })
+              // console.log('this.timeavailable 1', this.timeavailable)
+              // For ค่าใส่ ตัวแปร array
+              let Newtimeavailable = []
+              for (let i = 0; i < this.timeavailableCancel.length; i++) {
+                let d = this.timeavailableCancel[i]
+                let slotCheck = null
+                if (d.status === false) {
+                  // console.log('!!!!!!', LimitBooking.filter((a) => a.bookingTime === d.value)[0].timeSlot)
+                  slotCheck = LimitBooking.filter((a) => a.bookingTime === d.value)[0].timeSlot
+                } else {
+                  slotCheck = slotByflow
+                }
+                let num = i + (slotCheck - 1)
+                let checkitem = this.timeavailableCancel.filter((item, key) => (key >= i && key <= num))
+                console.log('checkitem', checkitem)
+                if (checkitem.length === slotCheck) {
+                  Newtimeavailable.push(checkitem)
+                } else {
+                }
+              }
+              // console.log('this.timeavailable 2', this.timeavailable)
+              // ตัดเวลาที่ตรงเงื่อนไขออก
+              Newtimeavailable.forEach((v, k) => {
+                if (v.filter((v) => v.status === false).length > 0) {
+                  v.forEach((t, y) => {
+                    if (this.timeavailableCancel.filter((a, b) => a.value === t.value).length > 0) {
+                      this.timeavailableCancel.splice(this.timeavailableCancel.findIndex((a, b) => a.value === t.value), 1)
+                    }
+                  })
+                }
+              })
+              // console.log('this.timeavailable 3', this.timeavailable)
+
+              // เช็คตัดเวลาเพิ่มเติมในกรณีที่ flow ที่เลือกไม่ตรงกับ flowที่เก็บ limiiไว้
+              let timeCheck = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime) || []
+              if (LimitBooking.length > 0) {
+                LimitBooking.forEach((v, k) => {
+                  if (v.flowId !== this.dataConfirmCancel.flowId) {
+                    console.log('flow === flow')
+                    let key = timeCheck.findIndex((t, b) => t.value === v.bookingTime)
+                    for (let i = 0; i < v.timeSlot; i++) {
+                      let num = key + i
+                      timeCheck.forEach((x, y) => {
+                        if (y === num) {
+                          if (this.timeavailableCancel.filter((item) => item.value === x.value).length > 0) {
+                            this.timeavailableCancel.splice(this.timeavailableCancel.findIndex((item) => item.value === x.value), 1)
+                          }
+                        }
+                      })
+                    }
+                  }
+                })
+              }
+
+              // ตัดเวลาในกรณีที่เป็นวันปัจจุบัน เพื่อตัดเวลาที่ผ่านมาแล้วออก
+              if (moment(dateitem).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')) {
+                this.timeavailableCancel = this.timeavailableCancel.filter(item => moment().format(item.value) > moment().format('HH:mm'))
+              } else {
+              }
+              if (this.timeavailableCancel.length === 0) {
+                this.$swal(
+                  'วันนี้ไม่มีคิวว่างแล้ว',
+                  'กรุณาเลือกวันที่ใหม่อีกครั้ง',
+                  'error'
+                )
+                this.date = ''
+              }
+            }
+          } else {
+            this.timeavailableCancel = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime) || []
+            if (moment(dateitem).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')) {
+              this.timeavailableCancel = this.timeavailableCancel.filter(item => moment().format(item.value) > moment().format('HH:mm'))
+            } else {
+            }
+            console.log('this.timeavailableCancel ELSE', this.timeavailableCancel)
+          }
+        } else {
+          this.timeavailableCancel = []
+          this.$swal(
+            'คิวเต็ม',
+            'ช่างคนนี้คิวเต็มแล้ว',
+            'error'
+          ).then(() => { this.date = '' }).catch(() => { this.date = '' })
+        }
+      } else {
+        console.log('this.timeavailable ELSEEEEE', this.timeavailableCancel)
+        // LimitBookingBy Flow
+        this.timeavailableCancel = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime) || []
+      }
+      // await this.chekSlotTime()
+    },
+    async getEmpCancel (masBranchID) {
+      this.dataEmpCancel = []
+      await axios.get(this.DNS_IP + '/empSelect/get?privacyPage=bookingform&masBranchID=' + masBranchID).then(response => {
+        let rs = response.data
+        if (rs.length > 0) {
+          for (var i = 0; i < rs.length; i++) {
+            let d = rs[i]
+            if (d.flowId !== null && d.flowId !== '') {
+              let checkFlowId = JSON.parse(d.flowId)
+              if (checkFlowId.filter((a) => parseInt(a) === this.flowSelectCancel).length > 0) {
+                let s = {}
+                s.text = d.empFull_NameTH
+                s.textEng = d.empFull_NameTH
+                s.value = d.empId
+                s.limitBookingCheck = d.limitBookingCheck
+                d.text = d.empFull_NameTH
+                d.textEng = d.empFull_NameTH
+                d.value = d.empId
+                this.dataEmpCancel.push(s)
+                let limit = {}
+                limit.empId = d.empId
+                limit.limitBookingCheck = d.limitBookingCheck || 'False'
+                limit.setTime = d.setTime || '[]'
+                this.EmpItemLimitCancel.push(limit)
+              }
+            }
+          }
+          if (this.dataEmpCancel.length === 0) {
+            this.$swal(
+              'ไม่มีช่างสำหรับประเภทบริการนี้',
+              'กรุณาเลือกประเภทบริการอื่นๆ',
+              'info'
+            )
+          }
+          console.log('EmpItemLimitCancel', this.EmpItemLimitCancel)
+        } else {
+          this.dataEmpCancel = []
+        }
+      })
+      console.log('dataEmpCancel', this.dataEmpCancel)
+    },
+    async onConfirmCancel (item) {
+      let chkStatLimit = this.dataEmpCancel.filter(el => { return el.value === this.bookingEmpFlowCancel })
+      console.log('chkStatLimit', chkStatLimit)
+      let timeChange = ''
+      let timeChangeText = ''
+      if (typeof this.formChangeTimeCancel === 'string') {
+        timeChange = this.formChangeTimeCancel
+        timeChangeText = this.formChangeTimeCancel
+      } else {
+        timeChange = this.formChangeTimeCancel.value
+        timeChangeText = this.formChangeTimeCancel.text
+      }
+      if (chkStatLimit.length > 0) {
+        if (chkStatLimit[0].limitBookingCheck === 'True') {
+          this.insertLimitBooking(item, this.formChangeDateCancel, timeChange, this.bookingEmpFlowCancel)
+        }
+      }
+      var dtChange = {
+        bookingEmpFlow: this.bookingEmpFlowCancel,
+        // countChangeTime: countTime,
+        changeDueDate: 'change',
+        dueDate: this.formChangeDateCancel + ' ' + timeChange,
+        timeText: timeChangeText,
+        LAST_USER: this.$session.getAll().data.userName
+      }
+      await axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + "/BookingData/edit/" + item.bookNo,
+          dtChange
+        )
+        .then(async response => {
+          let dt = {
+            // pageStatus: 'cancel',
+            // limitBookingCount: dtint,
+            bookNo: item.bookNo,
+            contactDate: this.format_date(new Date()),
+            status: 'confirm',
+            statusUse: 'use',
+            shopId: this.$session.getAll().data.shopId,
+            CREATE_USER: this.$session.getAll().data.userName,
+            LAST_USER: this.$session.getAll().data.userName
+          }
+          axios
+            .post(this.DNS_IP + '/booking_transaction/add', dt)
+            .then(async response => {
+              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              let DTitem = item.userId
+              console.log('DTITEM', DTitem)
+              this.dialogConfirmCancel = false
+              if (DTitem !== 'user-skip') {
+                if (this.statusSearch === 'no') {
+                  await this.getBookingList()
+                } else {
+                  await this.searchAny()
+                }
+                // this.getTimesChange('update')
+                if (this.getSelectText) {
+                  this.getSelect(this.getSelectText, this.getSelectCount)
+                }
+                this.pushMsgConfirm(item.bookNo)
+              } else {
+                if (this.statusSearch === 'no') {
+                  await this.getBookingList()
+                } else {
+                  await this.searchAny()
+                }
+                // this.getTimesChange('update')
+                if (this.getSelectText) {
+                  this.getSelect(this.getSelectText, this.getSelectCount)
+                }
+              }
+              this.dialogConfirmCancel = false
+            })
+            .catch(error => {
+              console.log('error function addData : ', error)
+            })
+        })
+    },
+    async insertLimitBooking (item, dueDateNew, dueDateTimeNew, bookingEmpFlow) {
+      let result = []
+      let dt = {
+        dueDateNew: dueDateNew,
+        dueDateTimeNew: dueDateTimeNew,
+        flowId: item.flowId,
+        masBranchID: item.masBranchID,
+        shopId: item.shopId,
+        userId: item.userId,
+        bookingEmpFlow: bookingEmpFlow,
+        LAST_USER: this.$session.getAll().data.userName
+      }
+      await axios.post(this.DNS_IP + '/Booking/insertLimitBooking', dt).then(async response => {
+        result = response.data
+      })
+      return result
+    },
+    exportShowEmpReport () {
+      let dataexport = []
+      for (let i = 0; i < this.dataShowEmpReport.length; i++) {
+        let a = this.dataShowEmpReport[i]
+        if (a.statusBt === 'wait') {
+          a.statusBtShow = this.dataTypeProcess1
+        } else if (a.statusBt === 'confirm') {
+          a.statusBtShow = this.dataTypeProcess2
+        } else if (a.statusBt === 'confirmJob') {
+          a.statusBtShow = this.dataTypeProcess4
+        }
+        let data1 = {
+          'สถานะ': a.statusBtShow,
+          'บริการ': a.flowName,
+          'ชื่อลูกค้า': a.cusName,
+          'เบอร์โทร': a.tel,
+          'วันที่': a.dueDate,
+          'ชื่อพนักงาน': a.bookingEmpFlowName
+        }
+        dataexport.push(data1)
+      }
+
+      const wb = XLSX.utils.book_new()
+      let datause2 = dataexport.sort((a, b) => {
+        if (a.วันที่ < b.วันที่) return -1
+        return a.วันที่ > b.วันที่ ? 1 : 0
+      })
+      console.log(datause2)
+      console.log(this.dataEmpShowEmpReport)
+      for (let i = 0; i < this.dataEmpShowEmpReport.length; i++) {
+        let d = this.dataEmpShowEmpReport[i]
+        if (datause2.filter(el => { return el.ชื่อพนักงาน === d.value }).length > 0) {
+          console.log(datause2.filter(el => { return el.ชื่อพนักงาน === d.value }))
+          let sheetNm = ''
+          if (d.value.length > 30) {
+            sheetNm = d.value.substring(0, 29)
+          } else {
+            sheetNm = d.value
+          }
+          XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(datause2.filter(el => { return el.ชื่อพนักงาน === d.value })), sheetNm)
+        }
+      }
+      // console.log('dataexport', dataexport)
+      XLSX.writeFile(wb, 'export_' + this.format_dateNotime(this.dateStartShowEmpReport) + '.xlsx')
+    },
+    toggleShowEmpList (bookingEmpFlowName) {
+      this.dataShowEmpReport.forEach(dessert => {
+        if (dessert.bookingEmpFlowName === bookingEmpFlowName) {
+          dessert.hide = !dessert.hide
+        }
+      })
+    },
+    async getBookingShowEmpList () {
+      this.dataShowEmpReport = []
+      this.dataEmpShowEmpReport = []
+      this.BookingDataListShowEmpReport = []
+      if (this.dateStartShowEmpReport) {
+        await this.getBookingDataListShowEmpReport(this.dateStartShowEmpReport)
+        let urlApi = ''
+        // if (this.flowSelect === 'AllFlow') {
+        urlApi = this.DNS_IP +
+            '/booking_view/get?shopId=' +
+            this.session.data.shopId +
+            // '&masBranchID=' +
+            // this.masBranchID +
+            '&dueDate=' + this.dateStartShowEmpReport
+        // } else {
+        //   urlApi = this.DNS_IP +
+        //       '/booking_view/get?shopId=' +
+        //       this.session.data.shopId +
+        //       '&masBranchID=' +
+        //       this.masBranchID +
+        //       '&dueDate=' + this.dateStartShowEmpReport
+        //       // '&flowId=' + this.flowSelect + this.selectOnsite
+        // }
+        await axios
+          .get(urlApi)
+          .then(async response => {
+            console.log('getData', response.data.length)
+            if (response.data.length > 0) {
+              for (let i = 0; i < response.data.length; i++) {
+                let d = response.data[i]
+                d.statusBt = d.statusBt || 'wait'
+                if (d.statusBt !== 'cancel') {
+                  if (this.dataEmpShowEmpReport.filter(el => { return el.value === d.bookingEmpFlowName }).length === 0) {
+                    let s = {}
+                    s.text = d.bookingEmpFlowName
+                    s.value = d.bookingEmpFlowName
+                    this.dataEmpShowEmpReport.push(s)
+                  }
+                  d.hide = false
+                  d.cusName = this.getDataFromFieldName(this.BookingDataListShowEmpReport[d.bookNo], 'ชื่อ')
+                  d.cusReg = this.getDataFromFieldName(this.BookingDataListShowEmpReport[d.bookNo], 'เลขทะเบียน')
+                  d.tel = this.getDataFromFieldName(this.BookingDataListShowEmpReport[d.bookNo], 'เบอร์โทร')
+                  d.cusName = (d.cusName.length > 0) ? d.cusName[0].fieldValue : ''
+                  d.cusReg = (d.cusReg.length > 0) ? d.cusReg[0].fieldValue : ''
+                  d.tel = (d.tel.length > 0) ? d.tel[0].fieldValue : ''
+                  this.dataShowEmpReport.push(d)
+                }
+              }
+            } else {
+              this.dataShowEmpReport = []
+              this.dataEmpShowEmpReport = []
+            }
+          })
+      }
+    },
     setEmpAdd () {
       if (this.formAdd.masBranchID !== null && this.formAdd.flowId !== null) {
         this.getEmpAdd(this.formAdd.masBranchID)
@@ -10225,6 +11029,29 @@ export default {
           }
         })
       console.log(this.BookingDataListTimechange)
+    },
+    async getBookingDataListShowEmpReport (dateStart) {
+      console.log('dateStart', dateStart)
+      this.BookingDataListShowEmpReport = []
+      let url = ''
+      url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&dueDate=${dateStart}`
+      await axios
+        .get(url)
+        .then(async response => {
+          if (response.data.status !== false) {
+            response.data.forEach((row) => {
+              if (typeof (this.BookingDataListShowEmpReport[row.bookNo]) === 'undefined') {
+                this.BookingDataListShowEmpReport[row.bookNo] = []
+              }
+              this.BookingDataListShowEmpReport[row.bookNo].push(row)
+            })
+          }
+        }).catch(error => {
+          // this.dataEditReady = true
+          setTimeout(() => this.getBookingDataListShowEmpReport(dateStart), 3000)
+          console.log('catch getBookingDataListShowEmpReport : ', error)
+        })
+      console.log('this.BookingDataListShowEmpReport', this.BookingDataListShowEmpReport)
     },
     async getBookingDataList (dateStart, searchOther) {
       console.log('dateStart', dateStart)
