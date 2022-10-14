@@ -220,6 +220,11 @@ export default new Router({
     component: Master.SettingTag
   },
   {
+    path: '/Master/ManageLink',
+    name: 'ManageLink',
+    component: Master.ManageLink
+  },
+  {
     path: '/Master/NoticeManagement',
     name: 'NoticeManagement',
     component: Master.NoticeManagement

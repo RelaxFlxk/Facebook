@@ -33,6 +33,8 @@ import BookingMobileEmp from './BookingMobileEmp'
 import NoticeManagement from './NoticeManagement'
 import CheckBookingEmpList from './CheckBookingEmpList'
 import BookingListBeautyEmp from './BookingListBeautyEmp'
+import ManageLink from './ManageLink'
+
 export default {
   CustomField,
   ServiceType,
@@ -68,5 +70,6 @@ export default {
   BookingMobileConfirmJob,
   BookingMobileEmp,
   CheckBookingEmpList,
-  BookingListBeautyEmp
+  BookingListBeautyEmp,
+  ManageLink
 }
