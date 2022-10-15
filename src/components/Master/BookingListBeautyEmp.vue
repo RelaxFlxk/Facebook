@@ -6632,6 +6632,7 @@ export default {
                 // s.textEng = d.empFull_NameTH
                 // s.value = d.empId
                 // s.limitBookingCheck = d.limitBookingCheck
+                d.limitBookingCheck = d.limitBookingCheck || 'False'
                 d.text = d.empFull_NameTH
                 d.textEng = d.empFull_NameTH
                 d.value = d.empId
