@@ -6437,7 +6437,7 @@ export default {
 
       await this.getDataFlowAllCancel()
       await this.getEmpCancel(item.masBranchID)
-      this.SetallowedDatesChangeCancel(item.bookingEmpFlow)
+      await this.SetallowedDatesChangeCancel(item.bookingEmpFlow)
       await this.setLimitBookingCancel(item.dueDateDay)
       await this.getEmpSelect(item)
       console.log('this.timeavailableCancel.filter(el => { return el.value === item.timeDuetext })', this.timeavailableCancel.filter(el => { return el.value === item.timeDuetext }))
@@ -6455,6 +6455,7 @@ export default {
       console.log('timevailable', this.timeavailableCancel)
     },
     SetallowedDatesChangeCancel (bookingEmpFlow) {
+      console.log('this.dataEmpCancel', this.dataEmpCancel)
       this.dataEmpCancel.forEach((v, k) => {
         if (v.empId === bookingEmpFlow) {
           v.dateDayCustom = v.dateDayCustom || ''
@@ -6626,15 +6627,15 @@ export default {
             if (d.flowId !== null && d.flowId !== '') {
               let checkFlowId = JSON.parse(d.flowId)
               if (checkFlowId.filter((a) => parseInt(a) === this.flowSelectCancel).length > 0) {
-                let s = {}
-                s.text = d.empFull_NameTH
-                s.textEng = d.empFull_NameTH
-                s.value = d.empId
-                s.limitBookingCheck = d.limitBookingCheck
+                // let s = {}
+                // s.text = d.empFull_NameTH
+                // s.textEng = d.empFull_NameTH
+                // s.value = d.empId
+                // s.limitBookingCheck = d.limitBookingCheck
                 d.text = d.empFull_NameTH
                 d.textEng = d.empFull_NameTH
                 d.value = d.empId
-                this.dataEmpCancel.push(s)
+                this.dataEmpCancel.push(d)
                 let limit = {}
                 limit.empId = d.empId
                 limit.limitBookingCheck = d.limitBookingCheck || 'False'
