@@ -132,6 +132,8 @@
                         dense
                         value = 'text'
                         :rules="[rules.required]"
+                        attach
+            :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-row>
 
@@ -145,6 +147,8 @@
                         small-chips
                         dense
                         :rules="[rules.required]"
+                        attach
+            :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-row>
                     </v-col>
@@ -257,6 +261,8 @@
                         return-object
                         @change="formAdd.conditionValue = ''"
                         :rules="[rules.required]"
+                        attach
+            :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-row>
                       <!-- END -->
@@ -271,6 +277,8 @@
                         dense
                         required
                         :rules="[rules.required]"
+                        attach
+            :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-row>
                       <v-row style="height: 50px" v-if="checkbox === 'true' && formAdd.conditionField &&
@@ -403,6 +411,8 @@
                         @change="chkUpdateoptionFieldType()"
                         dense
                         :rules="[rules.required]"
+                        attach
+            :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-row>
 
@@ -417,6 +427,8 @@
                         small-chips
                         dense
                         :rules="[rules.required]"
+                        attach
+            :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-row>
                     </v-col>
@@ -530,6 +542,8 @@
                         return-object
                         @change="formUpdate.conditionValue = '', formUpdateConditionField = formUpdate.conditionField"
                         :rules="[rules.required]"
+                        attach
+            :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-row>
                       <!-- END -->
@@ -544,6 +558,8 @@
                         dense
                         required
                         :rules="[rules.required]"
+                        attach
+            :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-row>
                       <v-row style="height: 50px" v-if="checkbox === 'true' && formUpdateConditionField &&
@@ -683,6 +699,8 @@
                         v-model="item.optionField"
                         :items="item.optionField"
                         dense
+                        attach
+            :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                   </template>
                    <template v-slot:[`item.CREATE_DATE`]="{ item }">

@@ -54,6 +54,8 @@
                 outlined
                 append-icon="mdi-bell-circle-outline"
                 :rules="required"
+                attach
+            :menu-props="{ bottom: true, offsetY: true }"
               ></v-select>
               </v-col>
               <v-col cols="6" class="pa-1" v-if="formSendNotify.NoticeType === 'setdate'">
@@ -65,6 +67,8 @@
                 outlined
                 append-icon="mdi-clock"
                 :rules="required"
+                attach
+            :menu-props="{ bottom: true, offsetY: true }"
               ></v-select>
               </v-col>
             </v-row>
@@ -81,6 +85,8 @@
                 outlined
                 append-icon="mdi-map"
                 :rules="required"
+                attach
+            :menu-props="{ bottom: true, offsetY: true }"
               ></v-select>
             </v-col>
             <v-col cols="6" class="pa-1">
@@ -93,6 +99,8 @@
                 outlined
                 append-icon="mdi-account-arrow-right"
                 :rules="required"
+                attach
+            :menu-props="{ bottom: true, offsetY: true }"
               ></v-select>
             </v-col>
             <v-col cols="6" class="pa-1 mt-n4" v-if="formSendNotify.NoticeType === 'fixdate'">
@@ -136,6 +144,8 @@
                 outlined
                 append-icon="mdi-calendar"
                 :rules="required"
+                attach
+            :menu-props="{ bottom: true, offsetY: true }"
               ></v-select>
             </v-col>
             <v-col cols="6" class="pa-1 mt-n4">
@@ -146,6 +156,8 @@
                 label="ตั่งแต่เวลา"
                 outlined
                 :rules="required"
+                attach
+            :menu-props="{ bottom: true, offsetY: true }"
               ></v-select>
             </v-col>
             </v-row>
@@ -304,6 +316,8 @@
                 outlined
                 append-icon="mdi-bell-circle-outline"
                 :rules="required"
+                attach
+            :menu-props="{ bottom: true, offsetY: true }"
               ></v-select>
             </v-col>
             <v-col cols="6" class="pa-1" v-if="formSendNotifyEdit.NoticeType === 'setdate'">
@@ -315,6 +329,8 @@
                 outlined
                 append-icon="mdi-clock"
                 :rules="required"
+                attach
+            :menu-props="{ bottom: true, offsetY: true }"
               ></v-select>
               </v-col>
             </v-row>
@@ -331,6 +347,8 @@
                 outlined
                 append-icon="mdi-map"
                 :rules="required"
+                attach
+            :menu-props="{ bottom: true, offsetY: true }"
               ></v-select>
             </v-col>
             <v-col cols="6" class="pa-1">
@@ -343,6 +361,8 @@
                 outlined
                 append-icon="mdi-account-arrow-right"
                 :rules="required"
+                attach
+            :menu-props="{ bottom: true, offsetY: true }"
               ></v-select>
             </v-col>
             <v-col cols="6" class="pa-1 mt-n4" v-if="formSendNotifyEdit.NoticeType === 'fixdate'">
@@ -386,6 +406,8 @@
                 outlined
                 append-icon="mdi-calendar"
                 :rules="required"
+                attach
+            :menu-props="{ bottom: true, offsetY: true }"
               ></v-select>
             </v-col>
             <v-col cols="6" class="pa-1 mt-n4">
@@ -396,6 +418,8 @@
                 label="ตั่งแต่เวลา"
                 outlined
                 :rules="required"
+                attach
+            :menu-props="{ bottom: true, offsetY: true }"
               ></v-select>
             </v-col>
             </v-row>

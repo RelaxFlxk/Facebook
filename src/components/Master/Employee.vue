@@ -159,6 +159,8 @@
                           :counter="50"
                           maxlength="50"
                           required
+                          attach
+        :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-col>
                       <v-col cols="12" class="pa-0">
@@ -198,6 +200,7 @@
                           label="เลือกหน้าที่จะแสดง"
                           @change="validate('ADD')"
                           prepend-icon="mdi-map"
+                          attach
                         ></v-select>
                       </v-col>
                       <v-col
@@ -213,6 +216,8 @@
                           :items="branch"
                           :rules="nameRules"
                           label="สาขา"
+                          attach
+        :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-col>
                       <v-col cols="12" class="pa-0" v-if="formAdd.privacyPage === 'bookingform'">
@@ -313,6 +318,8 @@
                           :counter="50"
                           maxlength="50"
                           required
+                          attach
+        :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-col>
                       <v-col cols="12" class="pa-0">
@@ -351,6 +358,7 @@
                           :rules="nameRules"
                           label="เลือกหน้าที่จะแสดง"
                           prepend-icon="mdi-map"
+                          attach
                         ></v-select>
                       </v-col>
                       <v-col cols="12" class="pa-0"  v-if="formUpdate.privacyPage === 'bookingform'">
@@ -362,6 +370,8 @@
                           :items="branch"
                           :rules="nameRules"
                           label="สาขา"
+                          attach
+        :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-col>
                       <v-col cols="12" class="pa-0" v-if="formUpdate.privacyPage === 'bookingform'">
@@ -509,6 +519,8 @@
                                 label="เลือกวันหยุด"
                                 multiple
                                 outlined
+                                attach
+        :menu-props="{ bottom: true, offsetY: true }"
                                 @change="changedateDayoff()"
                               ></v-select>
                             </v-card>
@@ -529,6 +541,8 @@
                                 label="ประเภทของวันหยุด"
                                 dense
                                 outlined
+                                attach
+        :menu-props="{ bottom: true, offsetY: true }"
                               ></v-select>
                               <v-date-picker
                                 v-model="formUpdateLimitbooking.dateDayCustom"

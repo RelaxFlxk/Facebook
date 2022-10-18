@@ -145,6 +145,8 @@
                           dense
                           required
                           :rules="[rules.required]"
+                          attach
+        :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-col>
                       <v-col>

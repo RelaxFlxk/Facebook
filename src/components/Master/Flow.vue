@@ -450,6 +450,8 @@
                                 :items="[{text: '1', value: 1},{text: '2', value: 2},{text: '3', value: 3},{text: '4', value: 4},{text: '5', value: 5},{text: '6', value: 6},{text: '7', value: 7},{text: '8', value: 8},{text: '9', value: 9},{text: '10', value: 10}]"
                                 label="จำนวน Slot งาน"
                                 outlined
+                                attach
+            :menu-props="{ bottom: true, offsetY: true }"
                               ></v-select>
                             </v-col>
                           </v-row>
@@ -498,6 +500,8 @@
                             label="ชำระเงินมัดจำภายในกี่นาที"
                             outlined
                             dense
+                            attach
+            :menu-props="{ bottom: true, offsetY: true }"
                           ></v-select>
                           <v-text-field
                           v-if="formAdd.checkDeposit === 'True'"
@@ -628,6 +632,8 @@
                                 :items="[{text: '1', value: 1},{text: '2', value: 2},{text: '3', value: 3},{text: '4', value: 4},{text: '5', value: 5},{text: '6', value: 6},{text: '7', value: 7},{text: '8', value: 8},{text: '9', value: 9},{text: '10', value: 10}]"
                                 label="จำนวน Slot งาน"
                                 outlined
+                                attach
+            :menu-props="{ bottom: true, offsetY: true }"
                               ></v-select>
                             </v-col>
                           </v-row>
@@ -676,6 +682,8 @@
                             label="ชำระเงินมัดจำภายในกี่นาที"
                             outlined
                             dense
+                            attach
+            :menu-props="{ bottom: true, offsetY: true }"
                           ></v-select>
                           <v-text-field
                           v-if="formUpdate.checkDeposit === 'True'"
@@ -793,6 +801,8 @@
                                                 item-text="text"
                                                 dense
                                                 return-object
+                                                attach
+            :menu-props="{ bottom: true, offsetY: true }"
                                               ></v-select>
                                             </v-row>
                                           </v-col>
@@ -941,6 +951,8 @@
                         outlined
                         dense
                         @change="fixCountCondition()"
+                        attach
+            :menu-props="{ bottom: true, offsetY: true }"
                       ></v-select>
                       </v-row>
                     </v-col>
@@ -1078,6 +1090,8 @@
                           label="เลือกวันหยุด"
                           multiple
                           outlined
+                          attach
+            :menu-props="{ bottom: true, offsetY: true }"
                           @change="changedateDayoff()"
                         ></v-select>
                         </v-card>
@@ -1096,6 +1110,8 @@
                                 label="ประเภทของวันหยุด"
                                 dense
                                 outlined
+                                attach
+            :menu-props="{ bottom: true, offsetY: true }"
                               ></v-select>
                               <v-date-picker
                                 v-model="formUpdateLimitbooking.dateDayCustom"
