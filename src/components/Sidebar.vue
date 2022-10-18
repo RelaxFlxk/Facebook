@@ -278,7 +278,7 @@
         </v-list-item>
       </v-list-group>
       <template v-slot:append>
-        <v-divider class="ma-0"></v-divider>
+        <!-- <v-divider class="ma-0"></v-divider>
         <v-btn block
             text
             tile
@@ -287,7 +287,7 @@
             class="nav-button-dark"
             @click.prevent="$router.push('/LoyaltyPresent')">
             <v-icon color="white">mdi-gift-open</v-icon>&nbsp;&nbsp;Be-Loyalty
-          </v-btn>
+          </v-btn> -->
         <v-divider class="ma-0"></v-divider>
         <v-btn block
             text
@@ -668,14 +668,16 @@ export default {
       } else {
         if (this.$session.getAll().data.timeSlotStatus === 'True') {
           this.booking = [
-          // { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingLink', type: 'booking' },
+            { title: 'จัดการลิ้งค์', icon: 'mdi-link-variant', to: '/Master/ManageLink', type: 'booking' },
+            // { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingLink', type: 'booking' },
             { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingField', type: 'booking' },
             { title: 'รายชื่อลูกค้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingListBeautyEmp', type: 'booking' },
             { title: 'ปฏิทินนัดหมาย', icon: 'mdi-calendar-search', to: '/Master/CalendarBooking', type: 'booking' }
           ]
         } else {
           this.booking = [
-          // { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingLink', type: 'booking' },
+            { title: 'จัดการลิ้งค์', icon: 'mdi-link-variant', to: '/Master/ManageLink', type: 'booking' },
+            // { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingLink', type: 'booking' },
             { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingField', type: 'booking' },
             { title: 'รายชื่อลูกค้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingListBeauty', type: 'booking' },
             { title: 'ปฏิทินนัดหมาย', icon: 'mdi-calendar-search', to: '/Master/CalendarBooking', type: 'booking' }
@@ -707,7 +709,6 @@ export default {
       ]
       this.settings = [
         // { title: 'จัดการข้อมูลนัดหมาย', icon: 'mdi-book-cog-outline', to: '/Master/BookingField', type: 'settings' },
-        { title: 'จัดการลิ้งค์', icon: 'mdi-link-variant', to: '/Master/ManageLink', type: 'settings' },
         { title: 'ตั้งค่าการแจ้งเตือน', icon: 'mdi-bell-ring', to: '/Master/NoticeManagement', type: 'settings' },
         { title: 'เพิ่ม/ลบ สถานะการบริการ', icon: 'mdi-transit-connection-variant', to: '/Master/Flow', type: 'settings' },
         { title: 'จัดโครงสร้างกระดาน', icon: 'dashboard', to: '/Master/WorkShop', type: 'settings' },
