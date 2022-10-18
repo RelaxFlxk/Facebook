@@ -8439,7 +8439,7 @@ export default {
           .get(
           // eslint-disable-next-line quotes
             this.DNS_IP +
-            '/booking_view/getSearch?shopId=' +
+            '/booking_view/getSearchNew?shopId=' +
             this.session.data.shopId +
             '&fieldValue=' +
             this.searchOther + this.selectOnsite
