@@ -78,7 +78,7 @@
                       text
                       small
                       color="grey darken-2"
-                      @click="prev()"
+                      @click="prev(), dataReturnReady = true"
                     >
                       <v-icon small>
                         mdi-chevron-left
@@ -89,7 +89,7 @@
                       text
                       small
                       color="grey darken-2"
-                      @click="next()"
+                      @click="next(), dataReturnReady = true"
                     >
                       <v-icon small>
                         mdi-chevron-right
