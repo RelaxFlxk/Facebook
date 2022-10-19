@@ -1016,6 +1016,13 @@ export default {
         copyText.setSelectionRange(0, 99999)
         navigator.clipboard.writeText(copyText.value + '&source=' + text)
       }
+      this.$swal({
+        title: 'Copy successfully',
+        text: 'คัดลอกลิ้งสำเร็จ',
+        type: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      })
     },
     async getBookingField () {
       let itemIncustomField = []

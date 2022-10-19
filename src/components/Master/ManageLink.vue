@@ -44,21 +44,14 @@
                 </div> -->
                 </v-card>
                 <!-- <h6>ระบุ URL ที่ต้องการสร้างคิวอาร์โค๊ด</h6> -->
-                <v-alert
-                v-if="Alerts"
-                dense
-                text
-                type="success"
-              >
-                Coppy <strong>Link</strong> of success
-              </v-alert>
                 <v-row>
                   <v-col cols="12" v-if="qrValue !== '' && qrValue !== null">
                     <v-text-field
                     v-model="qrValue"
-                    solo
                     label="URL"
-                    append-icon="mdi-paperclip"
+                    outlined
+                    prepend-inner-icon="mdi-paperclip"
+                    disabled
                     >
                     </v-text-field>
                   </v-col>
@@ -105,7 +98,7 @@
                           v-bind="attrs"
                           v-on="on"
                           color="#2BC155"
-                          @click="coppyLink(item1.text),Alerts = true"
+                          @click="coppyLink(item1.text)"
                         >
                           <v-icon dark>
                             mdi-content-copy
@@ -139,7 +132,7 @@
                           v-bind="attrs"
                           v-on="on"
                           color="#2BC155"
-                          @click="coppyLink(item2.text),Alerts = true"
+                          @click="coppyLink(item2.text)"
                         >
                           <v-icon dark>
                             mdi-content-copy
@@ -169,7 +162,6 @@ import QrcodeVue from 'qrcode.vue'
 
 import Vue from 'vue'
 import VueHtml2Canvas from 'vue-html2canvas'
-
 Vue.use(VueHtml2Canvas)
 
 export default {
@@ -249,10 +241,19 @@ export default {
     },
     async coppyLink (item) {
       console.log('item', item)
+      // this.$swal.fire('Any fool can use a computer')
+      // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+      this.$swal({
+        title: 'Copy successfully',
+        text: 'คัดลอกลิ้งสำเร็จ',
+        type: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      })
       await navigator.clipboard.writeText(item)
-      setTimeout(() => {
-        this.Alerts = false
-      }, 4000)
+      // setTimeout(() => {
+      //   this.Alerts = false
+      // }, 4000)
       await this.genQrCode(item)
     },
     async setLinkItem () {
