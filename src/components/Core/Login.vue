@@ -33,6 +33,7 @@
                 <v-text-field
                   label="อีเมล"
                   outlined
+                  autofocus
                   v-model="form.userName"
                   @keyup.enter="onSubmit()"
                 ></v-text-field>
@@ -502,7 +503,11 @@ export default {
         } else if (dataitem.USER_ROLE === 'board') {
           this.$router.push('/Master/BoardControlEmp')
         } else if (dataitem.USER_ROLE === 'booking' && dataitem.shopId !== 'U9084920b3005bd1dcb57af1ae6bdba32') {
-          this.$router.push('/Master/BookingListBeauty')
+          if (dataitem.timeSlotStatus === 'True') {
+            this.$router.push('/Master/BookingListBeautyEmp')
+          } else {
+            this.$router.push('/Master/BookingListBeauty')
+          }
         } else {
           // this.$router.push('/Dashbord/ReportBooking')
           this.$router.push('/Master/BookingField')
