@@ -246,6 +246,7 @@
                             dense
                             :headers="columnsStep"
                             :items="stepItemSelete"
+                            disable-pagination
                             hide-default-footer
                           >
                             <template v-slot:[`item.actions2`]="{ item, index }" v-if="checkOnsite !== 'True'">

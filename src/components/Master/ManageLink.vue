@@ -262,32 +262,32 @@ export default {
         let itemLink = [
           {
             'text': 'https://liff.line.me/1656581804-7KRQyqo5/CalendarBookingEmp?shopId=' + this.shopId,
-            'title': 'ลิ้งค์สำหรับดูคิวช่วงเวลาว่างตามตารางปฏิทิน',
+            'title': 'ตรวจสอบคิวว่างก่อนนัดหมาย',
             'type': 'customer'
           },
           {
             'text': 'https://liff.line.me/1656581804-7KRQyqo5/PaymentUpload?shopId=' + this.shopId,
-            'title': 'ลิ้งค์สำหรับอัพโหลดสลิปมัดจำ (อัพโหลดสลิปมัดจำย้อนหลัง)',
+            'title': 'อัพโหลดสลิปมัดจำ ( ย้อนหลัง )',
             'type': 'customer'
           },
           {
             'text': 'https://betask-linked-admin.web.app/CheckBookingEmpList?shopId=' + this.shopId,
-            'title': 'ลิ้งค์สำหรับตรวจสอบรายการที่ยังไม่ได้ยืนยันการนัดหมาย',
+            'title': 'ตรวจสอบรายการนัดหมาย ( มือถือ / แทปเล็ต )',
             'type': 'admin'
           },
           {
             'text': 'https://liff.line.me/1656581804-7KRQyqo5/CheckBookingLatest?shopId=' + this.shopId,
-            'title': 'ลิ้งค์สำหรับลูกค้าตรวจสอบคิวก่อนเข้ารับบริการ',
+            'title': 'ตรวจสอบรายการนัดหมาย',
             'type': 'customer'
           },
           // {
           //   'text': 'https://liff.line.me/1656581804-7KRQyqo5/CheckBookingNext?shopId=' + this.shopId,
-          //   'title': 'ลิ้งค์สำหรับลูกค้านัดหมาย',
+          //   'title': 'ลูกค้านัดหมาย',
           //   'type': 'customer'
           // },
           {
             'text': 'https://liff.line.me/1656581804-7KRQyqo5/stampFirstStep?shopId=' + this.shopId,
-            'title': 'ลิ้งค์สำหรับลูกค้าตรวจสอบและเข้ารับบริการ',
+            'title': 'ลูกค้าตรวจสอบและเข้ารับบริการ',
             'type': 'customer'
           }
         ]
@@ -296,27 +296,27 @@ export default {
         let itemLink = [
           {
             'text': 'https://liff.line.me/1656581804-7KRQyqo5/CalendarBooking?shopId=' + this.shopId,
-            'title': 'ลิ้งค์สำหรับดูคิวช่วงเวลาว่างตามตารางปฏิทิน',
+            'title': 'ตรวจสอบคิวว่างก่อนนัดหมาย',
             'type': 'customer'
           },
           {
             'text': 'https://liff.line.me/1656581804-7KRQyqo5/PaymentUpload?shopId=' + this.shopId,
-            'title': 'ลิ้งค์สำหรับอัพโหลดสลิปมัดจำ (อัพโหลดสลิปมัดจำย้อนหลัง)',
+            'title': 'อัพโหลดสลิปมัดจำ ( ย้อนหลัง )',
             'type': 'customer'
           },
           {
             'text': 'https://liff.line.me/1656581804-7KRQyqo5/CheckBookingLatest?shopId=' + this.shopId,
-            'title': 'ลิ้งค์สำหรับลูกค้าตรวจสอบคิวก่อนเข้ารับบริการ ',
+            'title': 'ตรวจสอบรายการนัดหมาย ',
             'type': 'customer'
           },
           // {
           //   'text': 'https://liff.line.me/1656581804-7KRQyqo5/CheckBookingNext?shopId=' + this.shopId,
-          //   'title': 'ลิ้งค์สำหรับลูกค้าตรวจสอบและเข้ารับบริการ',
+          //   'title': 'ลูกค้าตรวจสอบและเข้ารับบริการ',
           //   'type': 'customer'
           // },
           {
             'text': 'https://liff.line.me/1656581804-7KRQyqo5/stampFirstStep?shopId=' + this.shopId,
-            'title': 'ลิ้งค์สำหรับลูกค้าตรวจสอบและเข้ารับบริการ',
+            'title': 'ลูกค้าตรวจสอบและเข้ารับบริการ',
             'type': 'customer'
           }
         ]

@@ -698,7 +698,7 @@
                       ></v-checkbox>
                       <v-text-field v-model="showTime" readonly label="แสดงเวลาการจองหรือไม่"></v-text-field>
                     </v-row>
-                    <v-row align="center">
+                    <!-- <v-row align="center">
                       <v-checkbox
                         false-value="False"
                         true-value="True"
@@ -707,7 +707,7 @@
                         class="shrink ml-6 mr-0 mt-0 mb-6"
                       ></v-checkbox>
                       <v-text-field :value="showLimitBooking === 'True' ? 'แสดง' : 'ไม่แสดง'" readonly label="แสดงชั่วโมงของงานหรือไม่"></v-text-field>
-                    </v-row>
+                    </v-row> -->
                     <v-data-table
                       v-model="itemdetell"
                       :headers="FieldSelect"
