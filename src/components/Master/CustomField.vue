@@ -766,6 +766,56 @@
           </v-col>
           <!-- end data table -->
         </v-row>
+        <v-dialog v-model="dialogwarn" max-width="30%" persistent >
+        <v-card class="pa-3" style="overflow-x: hidden">
+          <div style="text-align: end;">
+              <v-btn
+                fab
+                x-small
+                dark
+                color="#F3F3F3"
+                @click="dialogwarn = false"
+              >
+                <v-icon dark
+                color="#FE4A01 ">
+                  mdi-close
+                </v-icon>
+              </v-btn>
+          </div>
+          <div class="text-center mb-6">
+            <h4 class="font-weight-medium">
+              <v-icon x-large color="orange darken-2" >mdi-alert-box-outline</v-icon>
+              รายการที่จำเป็นเมื่อเพิ่มช่องกรอกข้อมูล</h4>
+          </div>
+          <div class="text-left ma-0 ml-3" v-for="(item , index) in warnText" :key="index">
+            <h6 class="font-weight-medium">{{(index + 1) + '. ' + item.text}}
+              <v-btn
+                class="mx-2"
+                dark
+                small
+                color="primary"
+                @click="getDialogEdit()"
+              >
+              ตั่งค่า
+                <v-icon dark class="ml-1">
+                  mdi-cog-transfer
+                </v-icon>
+              </v-btn>
+            </h6>
+          </div>
+          <div  style="text-align: end;">
+              <v-checkbox
+                class="ml-6"
+                v-model="checkboxwarn"
+                label="ไม่ต้องแสดงอีก"
+                true-value="True"
+                false-value="False"
+                @click="updateWarn()"
+              ></v-checkbox>
+          </div>
+        </v-card>
+      </v-dialog>
+      <BookingField v-show="showEdit" ref="dialogBookingField"></BookingField>
         </div>
     </v-main>
   </div>
@@ -775,6 +825,7 @@ import waitingAlert from '../waitingAlert.vue'
 import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
+import BookingField from '../Master/BookingField.vue'
 // import JsonExcel from 'vue-json-excel' // https://www.npmjs.com/package/vue-json-excel
 // import XLSX from 'xlsx' // import xlsx
 // import readXlsxFile from 'read-excel-file'
@@ -784,7 +835,8 @@ export default {
   components: {
     waitingAlert,
     'left-menu-admin': adminLeftMenu,
-    VuetifyMoney
+    VuetifyMoney,
+    BookingField
     // downloadExcel: JsonExcel,
     // XLSX,
     // readXlsxFile
@@ -794,6 +846,10 @@ export default {
   },
   data () {
     return {
+      showEdit: false,
+      dialogwarn: false,
+      checkboxwarn: false,
+      warnText: [],
       PK: '',
       path: '/customField/', // Path Model
       // Menu Config
@@ -995,6 +1051,50 @@ export default {
     this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
   },
   methods: {
+    getDialogEdit () {
+      this.$refs.dialogBookingField.editDataByBookingField('test')
+    },
+    async updateWarn () {
+      let dataitem = {
+        'warningCustomfield': this.checkboxwarn
+      }
+      await axios
+        .post(this.DNS_IP + '/system_user/edit/' + this.session.data.userId, dataitem)
+        .then(async (response) => {
+          console.log('response : ', response)
+        })
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
+    },
+    gotosetting (item) {
+      this.$router.push(item)
+      console.log(item)
+    },
+    async warningFlow () {
+      let checkData = null
+      await axios
+        .get(this.DNS_IP + '/system_user/getID?userId=' + this.session.data.userId)
+        .then(async (response) => {
+          checkData = response
+          console.log('response : ', checkData.data.warningCustomfield)
+        })
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
+      if (checkData.data.warningCustomfield === 'True') {
+
+      } else {
+        this.dialogwarn = true
+        let text = [
+          {
+            'text': 'เลือกข้อมูลที่ต้องการแสดงในหน้านัดหมาย',
+            'buttonLink': '/Master/BookingField'
+          }
+        ]
+        this.warnText = text
+      }
+    },
     async getDataFlow () {
       this.DataFlowName = []
       console.log('DataFlowName', this.DataFlowName)
@@ -1386,12 +1486,13 @@ export default {
             )
             .then(async (response) => {
               console.log('addDataGlobal DNS_IP + PATH + "add"', response)
-              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
               this.dialogAdd = false
 
               // Load Data
               await this.clearData()
               await this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
+              await this.warningFlow()
             })
           // eslint-disable-next-line handle-callback-err
             .catch((error) => {

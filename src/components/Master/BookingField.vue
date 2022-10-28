@@ -785,6 +785,55 @@
           ></v-progress-circular>
         </v-overlay>
       </v-container>
+      <v-dialog v-model="dialogchekField" max-width="35%">
+        <v-card min-height="50%" class="pa-3">
+                  <v-col cols="12" class="text-center">
+                    <h4 class="text-center">โปรดเลือกข้อมูลที่ต้องการแสดงในหน้านัดหมาย</h4>
+                    <!-- <v-row align="center">
+                      <v-checkbox
+                        false-value="ไม่แสดง"
+                        true-value="แสดง"
+                        v-model="showTime"
+                        hide-details
+                        class="shrink ml-6 mr-0 mt-0 mb-6"
+                      ></v-checkbox>
+                      <v-text-field v-model="showTime" readonly label="แสดงเวลาการจองหรือไม่"></v-text-field>
+                    </v-row> -->
+                    <!-- <v-row align="center">
+                      <v-checkbox
+                        false-value="False"
+                        true-value="True"
+                        v-model="showLimitBooking"
+                        hide-details
+                        class="shrink ml-6 mr-0 mt-0 mb-6"
+                      ></v-checkbox>
+                      <v-text-field :value="showLimitBooking === 'True' ? 'แสดง' : 'ไม่แสดง'" readonly label="แสดงชั่วโมงของงานหรือไม่"></v-text-field>
+                    </v-row> -->
+                    <v-data-table
+                      v-model="itemdetell"
+                      :headers="FieldSelect"
+                      :items="Fielditem"
+                      rounded="xl"
+                    >
+                      <template v-slot:[`item.showitem`]="{ item }">
+                        <v-simple-checkbox
+                          v-model="item.showitem"
+                        ></v-simple-checkbox>
+                      </template>
+                    </v-data-table>
+                  </v-col>
+                  <v-col cols="12" class="text-center">
+                    <v-btn
+                      elevation="5"
+                      color="#1B437C"
+                      dark
+                      block
+                      @click="addBooking()"
+                      >บันทึกข้อมูล</v-btn
+                    >
+                  </v-col>
+                </v-card>
+      </v-dialog>
     </v-main>
   </div>
 </template>
@@ -813,6 +862,8 @@ export default {
   },
   data () {
     return {
+      editBycustomField: 'False',
+      dialogchekField: false,
       hindRedirect: true,
       showUpload1: 'False',
       showUpload2: 'False',
@@ -922,6 +973,13 @@ export default {
     await this.getBookingField()
   },
   methods: {
+    async editDataByBookingField (item) {
+      console.log('item1111111111111111111111111111', item)
+      this.editBycustomField = 'True'
+      await this.getBookingField()
+      this.dialogchekField = true
+      // this.getDataById()
+    },
     getDialogEdit () {
       this.$refs.dialogEdit.editDataByBookingField(this.shop)
     },
@@ -1212,6 +1270,9 @@ export default {
 
           this.$swal('บันทึกข้อมูลเรียบร้อย', ' ', 'success')
           await this.getBookingField()
+          if (this.editBycustomField === 'True') {
+            this.dialogchekField = false
+          }
           this.dataReady = false
           console.log(`addDataGlobal DNS_IP + ${url}`, response)
         })

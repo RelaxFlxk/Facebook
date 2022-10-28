@@ -1,7 +1,5 @@
-<template>
-  <div>
-    <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
-    <v-main>
+<template >
+    <v-main style="overflow-x: auto">
       <div class="stepLayout">
         <v-col cols="12" sm="8">
             <h3 style="color:#1B437C">แก้ไขกระดานทำงาน</h3>
@@ -33,32 +31,30 @@
         </v-col>
       </v-row>
       </div>
-        <div class="workLayout">
-          <v-row class="rowstep">
+        <div class="workLayout ma-3">
+          <v-row class="rowstep" >
               <draggable  v-model="stepData" group="workshop">
               <div  v-for="(element , step) in stepData" :key="step">
                    <v-card
-                    class="mb-12"
-                    width="220"
+                    class="pa-1 pl-3 mb-5"
+                    width="180"
+                    height="30px"
                    >
-                     <v-toolbar
-
-                    >
                     <p style="color:#1B437C">{{element.stepTitle}}</p>
-                    </v-toolbar>
                     </v-card>
               </div>
             </draggable>
             <div  v-for="(element , i ) in Layout" :key="i">
-                <v-col cols="12" class="Layoutcolum">
+                <v-col cols="12" class="Layoutcolum pa-3">
                 <draggable v-model="Layout[i].workData" group="workshop" @change="UpdateworkShop ()">
                   <div  v-for="(element , workData) in Layout[i].workData" :key="workData">
                     <v-card
-                    class="pa-3 mb-12"
-                    width="220"
+                    class="pa-1 pl-2 mb-5"
+                    width="180"
+                    height="30px"
                     :color="codeColor[i]"
                    >
-                    <strong dark style="color:#FFFFFF">{{element.stepTitle}}</strong>
+                    <strong dark class="mb-n5" style="color:#FFFFFF">{{element.stepTitle}}</strong>
                     </v-card>
                   </div>
                 </draggable>
@@ -81,7 +77,6 @@
             </v-row>
         </div>
     </v-main>
-  </div>
 </template>
 
 <script>
@@ -426,6 +421,25 @@ export default {
 
 </script>
 <style scope>
+/* width */
+::-webkit-scrollbar {
+  width: 2px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #173053;
+  border-radius: 0px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #173053;
+}
 .main{
   margin-top: 1rem;
   background-color: #E1F3FF;
@@ -436,7 +450,7 @@ export default {
   margin-top: 2px;
   margin-left: 5px;
   min-height: 600px !important;
-  width: 250px !important;
+  width: 200px !important;
   border-color: #ffffff ;
   background-color: #f0eeee ;
   display:flex;

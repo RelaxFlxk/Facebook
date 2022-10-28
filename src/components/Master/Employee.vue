@@ -1094,7 +1094,7 @@ export default {
       ],
       itemDateStopValue: [0, 1, 2, 3, 4, 5, 6],
       privacyPageSelect: [
-        { text: 'หน้านัดหมาย', value: 'booking' },
+        { text: 'รายชื่อลูกค้านัดหมาย', value: 'booking' },
         { text: 'หน้ากระดานการทำงาน', value: 'board' },
         { text: 'หน้านัดหมายของลูกค้า', value: 'bookingform' },
         { text: 'ทั้งหมด', value: 'all' }

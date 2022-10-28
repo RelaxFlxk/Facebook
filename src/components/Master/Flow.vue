@@ -8,6 +8,13 @@
             <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
           </v-col>
           <v-col cols="6" class="v-margit_button text-right">
+            <!-- <v-btn
+              color="primary"
+              depressed
+              @click="dialogwarn = true"
+            >
+              <v-icon color="orange darken-2" large left>mdi-alert-box-outline</v-icon>
+            </v-btn> -->
             <v-btn
               color="primary"
               depressed
@@ -1499,6 +1506,56 @@
           <!-- end data table -->
         </v-row>
       </div>
+      <v-dialog v-model="dialogwarn" max-width="30%" persistent >
+        <v-card class="pa-3" style="overflow-x: hidden">
+          <div style="text-align: end;">
+              <v-btn
+                fab
+                x-small
+                dark
+                color="#F3F3F3"
+                @click="dialogwarn = false"
+              >
+                <v-icon dark
+                color="#FE4A01 ">
+                  mdi-close
+                </v-icon>
+              </v-btn>
+          </div>
+          <div class="text-center mb-6">
+            <h4 class="font-weight-medium">
+              <v-icon x-large color="orange darken-2" >mdi-alert-box-outline</v-icon>
+              รายการที่จำเป็นเมื่อเพิ่มประเภทบริการ</h4>
+          </div>
+          <div class="text-left ma-0 ml-3" v-for="(item , index) in warnText" :key="index">
+            <h6 class="font-weight-medium">{{(index + 1) + '. ' + item.text}}
+              <v-btn
+              v-if="item.buttonLink !== 'False'"
+                class="mx-2"
+                dark
+                small
+                color="primary"
+                @click="gotosetting(item.buttonLink)"
+              >
+              ตั่งค่า
+                <v-icon dark class="ml-1">
+                  mdi-cog-transfer
+                </v-icon>
+              </v-btn>
+            </h6>
+          </div>
+          <div  style="text-align: end;">
+              <v-checkbox
+                class="ml-6"
+                v-model="checkboxwarn"
+                label="ไม่ต้องแสดงอีก"
+                true-value="True"
+                false-value="False"
+                @click="updateWarn()"
+              ></v-checkbox>
+          </div>
+        </v-card>
+      </v-dialog>
     </v-main>
   </div>
 </template>
@@ -1521,6 +1578,9 @@ export default {
   },
   data () {
     return {
+      dialogwarn: false,
+      checkboxwarn: false,
+      warnText: [],
       valid_update: true,
       BookingFieldshowtime: null,
       formUpdateLimitbooking: {
@@ -1840,6 +1900,71 @@ export default {
     await this.getBookingField()
   },
   methods: {
+    async updateWarn () {
+      let dataitem = {
+        'warningFlow': this.checkboxwarn
+      }
+      await axios
+        .post(this.DNS_IP + '/system_user/edit/' + this.session.data.userId, dataitem)
+        .then(async (response) => {
+          console.log('response : ', response)
+        })
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
+    },
+    gotosetting (item) {
+      if (item !== 'False') {
+        this.$router.push(item)
+      }
+      console.log(item)
+    },
+    async warningFlow () {
+      let checkData = null
+      await axios
+        .get(this.DNS_IP + '/system_user/getID?userId=' + this.session.data.userId)
+        .then(async (response) => {
+          checkData = response
+          console.log('response : ', checkData.data.warningFlow)
+        })
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
+      if (checkData.data.warningFlow === 'True') {
+
+      } else {
+        this.dialogwarn = true
+        if (this.session.data.timeSlotStatus === 'True') {
+          let text = [
+            {
+              'text': 'เลือกพนักงานที่รับผิดชอบประเภทบริการนี้',
+              'buttonLink': '/Master/Employee'
+            },
+            {
+              'text': 'ตั้งค่าการแจ้งเตือน Line Notify',
+              'buttonLink': '/Master/SettingLineNotify'
+            }
+          ]
+          this.warnText = text
+        } else {
+          let text = [
+            {
+              'text': 'ตั้งค่าวันหยุดบริษัท',
+              'buttonLink': 'False'
+            },
+            {
+              'text': 'ตั้งค่า เวลาการนัดหมายเข้ารับบริการ',
+              'buttonLink': 'False'
+            },
+            {
+              'text': 'ตั้งค่าการแจ้งเตือน Line Notify',
+              'buttonLink': '/Master/SettingLineNotify'
+            }
+          ]
+          this.warnText = text
+        }
+      }
+    },
     async FunCopy (item, no) {
       let copyText = 'https://liff.line.me/1656581804-7KRQyqo5/stampStep?shopId=' + item.shopId + '&stepNo=' + no
       // let copyText = document.getElementById('myInputDeposit')
@@ -2624,8 +2749,9 @@ export default {
                 this.path,
                 this.session.data.shopId
               )
-              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-              this.clearData()
+              // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              await this.clearData()
+              await this.warningFlow()
             })
             // eslint-disable-next-line handle-callback-err
             .catch(error => {
