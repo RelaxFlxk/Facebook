@@ -27,7 +27,7 @@
         </v-row>
         <v-row>
           <!-- step -->
-          <v-dialog v-model="dialogStep" persistent max-width="70%">
+          <v-dialog v-model="dialogStep" persistent :max-width="checkOnsite === 'True' ? '50%' : '70%'">
             <v-card>
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
                 <v-card-text>
@@ -251,7 +251,7 @@
                           <v-data-table
                             class="elevation-1 custom_table_class"
                             dense
-                            :headers="columnsStep"
+                            :headers="checkOnsite === 'True' ? columnsStepOnsite : columnsStep"
                             :items="stepItemSelete"
                             disable-pagination
                             hide-default-footer
@@ -284,11 +284,12 @@
                             <template v-slot:[`item.finishTime`]="{ item }" >
                               <div v-if="item.finishTime !== null && item.finishTime !== ''"> {{item.finishTime + '  ชม.'}}</div>
                             </template>
-                            <template v-slot:[`item.sendCard`]="{ item }" v-if="checkOnsite !== 'True'">
+                            <template v-slot:[`item.sendCard`]="{ item }">
                               <v-checkbox
                                 false-value="False"
                                 true-value="True"
                                 v-model="item.sendCard"
+                                :readonly="checkOnsite === 'True' ? true : false"
                               ></v-checkbox>
                             </template>
                             <template v-slot:[`item.action`]="{ item, index }" v-if="checkOnsite !== 'True'">
@@ -499,6 +500,19 @@
                           ></v-checkbox>
                           </v-col>
                           </v-row>
+                          <v-row>
+                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;">
+                              <v-checkbox
+                                label="Onsite (เมื่อเปิดรายการนี้ หน้านัดหมายจะมีการเก็บที่อยู่ลูกค้า)"
+                                false-value="False"
+                                :on-icon="'mdi-check-circle'"
+                                :off-icon="'mdi-checkbox-blank-circle-outline'"
+                                color="#1B437C"
+                                true-value="True"
+                                v-model="formAdd.checkOnsite"
+                              ></v-checkbox>
+                            </v-col>
+                          </v-row>
                         </v-col>
                         <v-col cols="12" class="pb-0 pt-0">
                           <v-select
@@ -680,6 +694,19 @@
                             v-model="formUpdate.repeatBooking"
                           ></v-checkbox>
                           </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;">
+                              <v-checkbox
+                                label="Onsite (เมื่อเปิดรายการนี้ หน้านัดหมายจะมีการเก็บที่อยู่ลูกค้า)"
+                                false-value="False"
+                                :on-icon="'mdi-check-circle'"
+                                :off-icon="'mdi-checkbox-blank-circle-outline'"
+                                color="#1B437C"
+                                true-value="True"
+                                v-model="formUpdate.checkOnsite"
+                              ></v-checkbox>
+                            </v-col>
                           </v-row>
                         </v-col>
                         <v-col cols="12" class="pb-0 pt-0">
@@ -1797,6 +1824,11 @@ export default {
         { text: 'เวลาที่คาดว่าจะเสร็จ', value: 'finishTime', align: 'center' },
         { text: ' ', value: 'actions2', sortable: false, align: 'center' },
         { text: 'Action', value: 'action', sortable: false, align: 'center' }
+      ],
+      columnsStepOnsite: [
+        { text: 'AC', value: 'sendCard' },
+        { text: 'ID', value: 'stepId' },
+        { text: 'Title', value: 'stepTitle', align: 'center' }
       ],
       sendCard: false,
       headers: [

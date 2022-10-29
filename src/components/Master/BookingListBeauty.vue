@@ -12,7 +12,7 @@
                 class="text-white mb-2"
                 :color="showOnsite === 'ไม่แสดง' ? 'error' : 'teal'"
                 style="border-radius: 20px !important;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
-                @click="checkShowDataOnsite(showOnsite)"
+                @click="checkShowDataOnsiteSet(showOnsite)"
               >
                 <v-icon color="white" left>{{showOnsite === 'ไม่แสดง' ? 'mdi-eye-remove' : 'mdi-eye-check'}}</v-icon>
                 {{showOnsite}} Onsite
@@ -45,7 +45,7 @@
                 :disabled="loadingRefresh"
                 :color="showOnsite === 'ไม่แสดง' ? 'error' : 'teal'"
                 style="border-radius: 20px !important;margin-right: 10px;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
-                @click="checkShowDataOnsite(showOnsite)"
+                @click="checkShowDataOnsiteSet(showOnsite)"
               >
                 <v-icon color="white" left>{{showOnsite === 'ไม่แสดง' ? 'mdi-eye-remove' : 'mdi-eye-check'}}</v-icon>
                 {{showOnsite}} Onsite
@@ -4168,6 +4168,59 @@
                               ></v-select>
                             </v-col>
                           </v-row>
+                          <v-row>
+                            <v-col class="pb-0 pt-0" cols="12">
+                                <v-text-field
+                                v-model="address"
+                                label="ชื่อของที่อยู่"
+                                outlined
+                                required
+                                dense
+                                :rules="[rules.required]"
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="12">
+                              <v-card>
+                                <!-- <GmapAutocomplete>
+                                  <template v-slot:input="slotProps">
+                                      <v-text-field
+                                        outlined
+                                        prepend-inner-icon="place"
+                                        placeholder="Location Of Event"
+                                        ref="input"
+                                        v-on:listeners="slotProps.listeners"
+                                        v-on:attrs="slotProps.attrs">
+                                      </v-text-field>
+                                  </template>
+                                </GmapAutocomplete> -->
+                                <v-card-text>
+                                  <v-row>
+                                    <v-col class="pb-0" cols="12">
+                                      <h6>ค้นหาที่อยู่ลูกค้า :</h6>
+                                    </v-col>
+                                    <v-col class="mr-16" cols="12">
+                                      <GmapAutocomplete id="autocompleteMap" @place_changed="updatePlace" />
+                                    </v-col>
+                                  </v-row>
+                                </v-card-text>
+                                <hr>
+                                <!-- <gmap-autocomplete @place_changed="updatePlace"/> -->
+                                <v-card-text>
+                                <GmapMap
+                                  v-if="center !== null"
+                                  :center="center"
+                                  @click='updateCoordinates'
+                                  :zoom="15"
+                                  style="width: 100%; height: 200px"
+                                  :options="{ disableDefaultUI: true, fullscreenControl: true, zoomControl: true }"
+                                >
+                                  <GmapMarker :position="center" :draggable="true" @drag="updateCoordinates" />
+                                </GmapMap>
+                                </v-card-text>
+                              </v-card>
+                              <br>
+                            </v-col>
+                          </v-row>
                           <div class="text-center">
                             <v-btn
                               elevation="2"
@@ -4859,6 +4912,28 @@
         </v-dialog>
         <v-dialog v-model="dialogOnsite" persistent max-width="70%">
             <v-card class="text-center">
+              <v-card-text>
+              <v-row>
+                <v-col cols="6" class="text-left pt-10">
+                  <h3><strong>มอบหมายงานให้พนักงาน Onsite</strong></h3>
+                </v-col>
+                <v-col cols="6" class="pt-10">
+                  <div style="text-align: end;">
+                    <v-btn
+                      class="mx-2"
+                      fab
+                      small
+                      dark
+                      color="white"
+                      :style="styleCloseBt"
+                      @click="dialogOnsite = false"
+                      >
+                      X
+                    </v-btn>
+                  </div>
+                </v-col>
+              </v-row>
+              </v-card-text>
               <v-row>
                 <v-col class="pb-0 pt-0" cols="12" v-if="dataPackage.filter(el => { return el.balanceAmount > 0 }).length > 0 && dataPackageDefault === false">
                   <v-card class="pl-1">
@@ -4992,7 +5067,7 @@
                   <br>
                 </v-col>
               </v-row>
-              <v-card-title>มอบหมายงานให้พนักงาน Onsite</v-card-title>
+              <!-- <v-card-title>มอบหมายงานให้พนักงาน Onsite</v-card-title> -->
               <v-card-text  v-if="dataEditJobReady">
                 <!-- {{BookingDataItem}} -->
                 <v-container>
@@ -5416,6 +5491,17 @@
                   </div>
                   <div class="text-center">
                     <v-btn
+                      elevation="10"
+                      color="green darken-1"
+                      dark
+                      large
+                      block
+                      @click="addEmpJob()"
+                      >ยืนยันนัดหมาย</v-btn
+                    >
+                  </div>
+                  <!-- <div class="text-center">
+                    <v-btn
                       elevation="2"
                       v-if="BookingDataItem[0].addressLatLong !== null"
                       small
@@ -5429,7 +5515,7 @@
                     <v-btn small color="red" dark @click="dialogOnsite = false, getDataDefault(), searchOther = '', showColorSearch = false, statusSearch = 'no', empSelectJob = ''">
                       <v-icon color="#173053">mdi-close</v-icon> ยกเลิก
                     </v-btn>
-                  </div>
+                  </div> -->
                   </template>
                 </v-container>
               </v-card-text>
@@ -6385,6 +6471,19 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
+    updatePlace (place) {
+      // console.log(place)
+      this.center = {
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng()
+      }
+    },
+    updateCoordinates (location) {
+      this.center = {
+        lat: location.latLng.lat(),
+        lng: location.latLng.lng()
+      }
+    },
     async setDataServiceList (item) {
       this.$refs.NotificationService.setData(item)
     },
@@ -6983,14 +7082,47 @@ export default {
           }
         })
     },
-    async checkShowDataOnsite (text) {
+    async getShowOnsite () {
+      let LimitBooking = axios.get(this.DNS_IP + '/system_user/auth?userName=' + this.$session.getAll().data.userName).then(async (response) => {
+        let rs = response.data[0].showOnsite
+        return rs
+      })
+      // .catch(error => {
+      //   console.log('error function addData : ', error)
+      //   return 'ไม่แสดง'
+      // })
+      return LimitBooking || 'ไม่แสดง'
+    },
+    async updateShowOnsite (text) {
+      await axios.post(this.DNS_IP + '/system_user/edit/' + this.$session.getAll().data.userId, { showOnsite: text }).then(async (response) => {
+      })
+    },
+    async checkShowDataOnsiteSet (text) {
+      if (text === 'ไม่แสดง') {
+        // this.showOnsite = 'แสดง'
+        // this.selectOnsite = '&checkOnsite=is null'
+        await this.updateShowOnsite('ไม่แสดง')
+        this.checkShowDataOnsite()
+      } else {
+        // this.showOnsite = 'ไม่แสดง'
+        // this.selectOnsite = '&checkOnsite=True'
+        await this.updateShowOnsite('แสดง')
+        this.checkShowDataOnsite()
+      }
+    },
+    async checkShowDataOnsite () {
       this.dataReady = false
+      let text = await this.getShowOnsite()
+      // this.$session.data.flash.set('showOnsite', this.showOnsite)
+      console.log('checkShowDataOnsite', text)
       if (text === 'ไม่แสดง') {
         this.showOnsite = 'แสดง'
         this.selectOnsite = '&checkOnsite=is null'
+        // this.updateShowOnsite('ไม่แสดง')
       } else {
         this.showOnsite = 'ไม่แสดง'
         this.selectOnsite = '&checkOnsite=True'
+        // this.updateShowOnsite('แสดง')
       }
       if (this.$route.query.bookNo) {
         // this.beforeCreateScan()
@@ -8118,6 +8250,9 @@ export default {
       this.dueDateOld = dt.dueDateDay
       this.dueDateTimeOld = dt.timeDuetext
 
+      this.address = dt.address
+      this.center = JSON.parse(dt.addressLatLong) || null
+
       // this.SetallowedDatesEdit()
       this.dateEdit = dt.dueDateDay
       console.log('dataFlowSelectEdit', this.dataFlowSelectEdit)
@@ -8460,6 +8595,8 @@ export default {
             update.LAST_USER = this.$session.getAll().data.userName
             update.empSelect = this.empSelectEdit
             update.shopId = this.session.data.shopId
+            update.address = this.address
+            update.addressLatLong = JSON.stringify(this.center)
             Add.push(update)
           } else {
             if (
@@ -8487,6 +8624,8 @@ export default {
                 update.LAST_USER = this.$session.getAll().data.userName
                 update.empSelect = this.empSelectEdit
                 update.shopId = this.session.data.shopId
+                update.address = this.address
+                update.addressLatLong = JSON.stringify(this.center)
                 Add.push(update)
               }
             } else if (d.conditionField === 'flow') {
@@ -8505,6 +8644,8 @@ export default {
                 update.LAST_USER = this.$session.getAll().data.userName
                 update.empSelect = this.empSelectEdit
                 update.shopId = this.session.data.shopId
+                update.address = this.address
+                update.addressLatLong = JSON.stringify(this.center)
                 Add.push(update)
               }
             }
@@ -12638,6 +12779,18 @@ export default {
 </script>
 
 <style scoped>
+#autocompleteMap {
+  border: 1px solid rgba(0, 60, 255, 0.329);
+  background: #fff;
+  font-size: 18px;
+  height: 35px;
+  /* left: 40%; */
+  padding: 0 10px;
+  /* position: absolute; */
+  top: 0;
+  width: 90%;
+  z-index: 1;
+}
 .videoWrapper {
   position: relative;
   padding-bottom: 56.25%;
