@@ -3275,7 +3275,8 @@
                           <v-list-item @click.stop="setDataCopyLink(item)" v-if="item.statusBt === 'wait' && item.depositStatus === 'True'">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="bx:link"></v-icon> ข้อความสำหรับสรุปคำสั่งซื้อ </v-list-item-title>
                           </v-list-item>
-                          <v-list-item v-clipboard:success="onCopySuccess" v-clipboard:copy="'https://liff.line.me/1656581804-7KRQyqo5/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId" v-if="item.statusBt === 'confirm' && (item.userId === 'user-skip' || item.userId === '' || item.userId === null)">
+                          <v-list-item v-clipboard:success="onCopySuccess" v-clipboard:copy="'https://liff.line.me/1656581804-7KRQyqo5/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId" v-if="item.statusBt === 'confirm' && (item.lineUserId === '' || item.lineUserId === null)">
+                          <!-- <v-list-item v-clipboard:success="onCopySuccess" v-clipboard:copy="'https://liff.line.me/1656581804-7KRQyqo5/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId" v-if="item.statusBt === 'confirm' && (item.userId === 'user-skip' || item.userId === '' || item.userId === null)"> -->
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-content-copy </v-icon> คัดลอกลิงค์ (ผูกลูกค้า) </v-list-item-title>
                           </v-list-item>
                           <v-hover v-slot:default="{ hover }">
