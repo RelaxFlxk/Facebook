@@ -500,7 +500,7 @@
                           ></v-checkbox>
                           </v-col>
                           </v-row>
-                          <v-row>
+                          <v-row v-if="$session.getAll().data.timeSlotStatus !== 'True'">
                             <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;">
                               <v-checkbox
                                 label="Onsite (เมื่อเปิดรายการนี้ หน้านัดหมายจะมีการเก็บที่อยู่ลูกค้า)"
@@ -695,7 +695,7 @@
                           ></v-checkbox>
                           </v-col>
                           </v-row>
-                          <v-row>
+                          <v-row v-if="$session.getAll().data.timeSlotStatus !== 'True'">
                             <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;">
                               <v-checkbox
                                 label="Onsite (เมื่อเปิดรายการนี้ หน้านัดหมายจะมีการเก็บที่อยู่ลูกค้า)"
