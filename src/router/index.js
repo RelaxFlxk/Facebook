@@ -120,6 +120,11 @@ export default new Router({
     component: Master.CalendarBooking
   },
   {
+    path: '/Master/TableCheckQueue',
+    name: 'TableCheckQueue',
+    component: Master.TableCheckQueue
+  },
+  {
     path: '/System/User',
     name: 'User',
     component: System.User

@@ -34,6 +34,7 @@ import NoticeManagement from './NoticeManagement'
 import CheckBookingEmpList from './CheckBookingEmpList'
 import BookingListBeautyEmp from './BookingListBeautyEmp'
 import ManageLink from './ManageLink'
+import TableCheckQueue from './TableCheckQueue'
 
 export default {
   CustomField,
@@ -71,5 +72,6 @@ export default {
   BookingMobileEmp,
   CheckBookingEmpList,
   BookingListBeautyEmp,
-  ManageLink
+  ManageLink,
+  TableCheckQueue
 }
