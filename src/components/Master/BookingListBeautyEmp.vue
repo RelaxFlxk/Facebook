@@ -6520,66 +6520,38 @@ export default {
           if (LimitBooking.status !== false) {
             if (LimitBooking.length > 0) {
               this.timeavailableCancel.forEach((v, k) => {
-                if (LimitBooking.filter((a) => a.bookingTime === v.value).length > 0) {
-                  v.status = false
-                } else {
+                if (typeof v.status === 'undefined') {
                   v.status = true
                 }
-                // this.showTable.push(v)
-              })
-              // console.log('this.timeavailable 1', this.timeavailable)
-              // For ค่าใส่ ตัวแปร array
-              let Newtimeavailable = []
-              for (let i = 0; i < this.timeavailableCancel.length; i++) {
-                let d = this.timeavailableCancel[i]
-                let slotCheck = null
-                if (d.status === false) {
-                  // console.log('!!!!!!', LimitBooking.filter((a) => a.bookingTime === d.value)[0].timeSlot)
-                  slotCheck = LimitBooking.filter((a) => a.bookingTime === d.value)[0].timeSlot
-                } else {
-                  slotCheck = slotByflow
-                }
-                let num = i + (slotCheck - 1)
-                let checkitem = this.timeavailableCancel.filter((item, key) => (key >= i && key <= num))
-                console.log('checkitem', checkitem)
-                if (checkitem.length === slotCheck) {
-                  Newtimeavailable.push(checkitem)
-                } else {
-                }
-              }
-              // console.log('this.timeavailable 2', this.timeavailable)
-              // ตัดเวลาที่ตรงเงื่อนไขออก
-              Newtimeavailable.forEach((v, k) => {
-                if (v.filter((v) => v.status === false).length > 0) {
-                  v.forEach((t, y) => {
-                    if (this.timeavailableCancel.filter((a, b) => a.value === t.value).length > 0) {
-                      this.timeavailableCancel.splice(this.timeavailableCancel.findIndex((a, b) => a.value === t.value), 1)
-                    }
-                  })
-                }
-              })
-              // console.log('this.timeavailable 3', this.timeavailable)
-
-              // เช็คตัดเวลาเพิ่มเติมในกรณีที่ flow ที่เลือกไม่ตรงกับ flowที่เก็บ limiiไว้
-              let timeCheck = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime) || []
-              if (LimitBooking.length > 0) {
-                LimitBooking.forEach((v, k) => {
-                  if (v.flowId !== this.dataConfirmCancel.flowId) {
-                    console.log('flow === flow')
-                    let key = timeCheck.findIndex((t, b) => t.value === v.bookingTime)
-                    for (let i = 0; i < v.timeSlot; i++) {
-                      let num = key + i
-                      timeCheck.forEach((x, y) => {
-                        if (y === num) {
-                          if (this.timeavailableCancel.filter((item) => item.value === x.value).length > 0) {
-                            this.timeavailableCancel.splice(this.timeavailableCancel.findIndex((item) => item.value === x.value), 1)
-                          }
-                        }
-                      })
+                let bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value)
+                if (bookingTarget.length > 0) {
+                  v.status = false
+                  for (let bT = 0; bT < bookingTarget[0].timeSlot; bT++) {
+                    if (this.timeavailableCancel[k + bT] !== undefined) {
+                      this.timeavailableCancel[k + bT].status = false
                     }
                   }
-                })
+                }
+              // this.showTable.push(v)
+              })
+              console.log('this.timeavailableCancel 1', this.timeavailableCancel)
+              // For ค่าใส่ ตัวแปร array
+              let Newtimeavailable = []
+              let slotCheck = slotByflow
+              for (let i = 0; i < this.timeavailableCancel.length; i++) {
+                let num = i + (slotCheck - 1)
+                let checkitem = this.timeavailableCancel.filter((item, key) => (key >= i && key <= num))
+                console.log('checkitem', checkitem, slotCheck)
+                Newtimeavailable.push(checkitem)
               }
+              console.log('Newtimeavailable', Newtimeavailable)
+              this.timeavailableCancel = []
+              Newtimeavailable.forEach((v, k) => {
+                if (v.filter((v) => v.status === false).length <= 0) {
+                  this.timeavailableCancel.push(v[0])
+                }
+              })
+              console.log('this.timeavailableCancel 3', this.timeavailableCancel)
 
               // ตัดเวลาในกรณีที่เป็นวันปัจจุบัน เพื่อตัดเวลาที่ผ่านมาแล้วออก
               if (moment(dateitem).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')) {
@@ -7803,11 +7775,8 @@ export default {
       console.log('setLimitBooking', dateitem)
       this.limitBookingCheck = this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].limitBookingCheck || 'False'
       if (this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].limitBookingCheck || 'False') {
-        console.log('slotByflow')
         this.timeavailable = JSON.parse(this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTime) || []
-        console.log('timeavailable', this.timeavailable)
         let slotByflow = this.DataFlowName.filter((v) => v.value === this.formAdd.flowId)[0].allData.timeSlot
-        console.log('slotByflow', slotByflow)
         if (this.timeavailable.length >= slotByflow) {
           let LimitBooking = await this.getLimitBooking()
           console.log('LimitBooking', LimitBooking)
@@ -7815,67 +7784,38 @@ export default {
           if (LimitBooking.status !== false) {
             if (LimitBooking.length > 0) {
               this.timeavailable.forEach((v, k) => {
-                if (LimitBooking.filter((a) => a.bookingTime === v.value).length > 0) {
-                  v.status = false
-                } else {
+                if (typeof v.status === 'undefined') {
                   v.status = true
                 }
-                // this.showTable.push(v)
-              })
-              // console.log('this.timeavailable 1', this.timeavailable)
-              // For ค่าใส่ ตัวแปร array
-              let Newtimeavailable = []
-              for (let i = 0; i < this.timeavailable.length; i++) {
-                let d = this.timeavailable[i]
-                let slotCheck = null
-                if (d.status === false) {
-                  // console.log('!!!!!!', LimitBooking.filter((a) => a.bookingTime === d.value)[0].timeSlot)
-                  slotCheck = LimitBooking.filter((a) => a.bookingTime === d.value)[0].timeSlot
-                } else {
-                  slotCheck = slotByflow
-                }
-                let num = i + (slotCheck - 1)
-                let checkitem = this.timeavailable.filter((item, key) => (key >= i && key <= num))
-                console.log('checkitem', checkitem)
-                if (checkitem.length === slotCheck) {
-                  Newtimeavailable.push(checkitem)
-                } else {
-                }
-              }
-              // console.log('this.timeavailable 2', this.timeavailable)
-              // ตัดเวลาที่ตรงเงื่อนไขออก
-              Newtimeavailable.forEach((v, k) => {
-                if (v.filter((v) => v.status === false).length > 0) {
-                  v.forEach((t, y) => {
-                    console.log('thessssssssssssssss', this.timeavailable.findIndex((a, b) => a.value === t.value))
-                    if (this.timeavailable.filter((a, b) => a.value === t.value).length > 0) {
-                      this.timeavailable.splice(this.timeavailable.findIndex((a, b) => a.value === t.value), 1)
-                    }
-                  })
-                }
-              })
-              // console.log('this.timeavailable 3', this.timeavailable)
-
-              // เช็คตัดเวลาเพิ่มเติมในกรณีที่ flow ที่เลือกไม่ตรงกับ flowที่เก็บ limiiไว้
-              let timeCheck = JSON.parse(this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTime) || []
-              if (LimitBooking.length > 0) {
-                LimitBooking.forEach((v, k) => {
-                  if (v.flowId !== this.formAdd.flowId) {
-                    console.log('flow === flow')
-                    let key = timeCheck.findIndex((t, b) => t.value === v.bookingTime)
-                    for (let i = 0; i < v.timeSlot; i++) {
-                      let num = key + i
-                      timeCheck.forEach((x, y) => {
-                        if (y === num) {
-                          if (this.timeavailable.filter((item) => item.value === x.value).length > 0) {
-                            this.timeavailable.splice(this.timeavailable.findIndex((item) => item.value === x.value), 1)
-                          }
-                        }
-                      })
+                let bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value)
+                if (bookingTarget.length > 0) {
+                  v.status = false
+                  for (let bT = 0; bT < bookingTarget[0].timeSlot; bT++) {
+                    if (this.timeavailable[k + bT] !== undefined) {
+                      this.timeavailable[k + bT].status = false
                     }
                   }
-                })
+                }
+              // this.showTable.push(v)
+              })
+              console.log('this.timeavailable 1', this.timeavailable)
+              // For ค่าใส่ ตัวแปร array
+              let Newtimeavailable = []
+              let slotCheck = slotByflow
+              for (let i = 0; i < this.timeavailable.length; i++) {
+                let num = i + (slotCheck - 1)
+                let checkitem = this.timeavailable.filter((item, key) => (key >= i && key <= num))
+                console.log('checkitem', checkitem, slotCheck)
+                Newtimeavailable.push(checkitem)
               }
+              console.log('Newtimeavailable', Newtimeavailable)
+              this.timeavailable = []
+              Newtimeavailable.forEach((v, k) => {
+                if (v.filter((v) => v.status === false).length <= 0) {
+                  this.timeavailable.push(v[0])
+                }
+              })
+              console.log('this.timeavailable 3', this.timeavailable)
 
               // ตัดเวลาในกรณีที่เป็นวันปัจจุบัน เพื่อตัดเวลาที่ผ่านมาแล้วออก
               if (moment(dateitem).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')) {
