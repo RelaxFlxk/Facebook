@@ -10173,15 +10173,24 @@ export default {
         this.statusConfirmJob = false
       }
       if (this.statusConfirmJob) {
-        let checkStep = await axios.get(this.DNS_IP + '/flowStep/get?flowId=' + item.flowId)
-        console.log('checkStep', checkStep)
-        if (checkStep.data.status === false) {
-          this.endDate = this.momenDate_1(new Date())
-          this.endTime = this.momenTime(new Date())
-          this.statusShowDateConfiremjob = false
-        } else {
-          this.statusShowDateConfiremjob = true
-        }
+        // let checkStep = await axios.get(this.DNS_IP + '/flowStep/get?flowId=' + item.flowId)
+        // console.log('checkStep', checkStep)
+        // if (checkStep.data.status === false) {
+        //   this.endDate = this.momenDate_1(new Date())
+        //   this.endTime = this.momenTime(new Date())
+        //   this.statusShowDateConfiremjob = false
+        // } else {
+        //   if (this.$session.getAll().data.timeSlotStatus === 'True') {
+        //     this.endDate = this.momenDate_1(new Date())
+        //     this.endTime = this.momenTime(new Date())
+        //     this.statusShowDateConfiremjob = false
+        //   } else {
+        //     this.statusShowDateConfiremjob = true
+        //   }
+        // }
+        this.endDate = this.momenDate_1(new Date())
+        this.endTime = this.momenTime(new Date())
+        this.statusShowDateConfiremjob = false
         this.dataQrcode = item
         this.dataReady = false
         this.selectedStatus = true
@@ -12032,15 +12041,18 @@ export default {
         this.statusConfirmJob = false
       }
       // console.log('this.statusConfirmJob', this.statusConfirmJob)
-      let checkStep = await axios.get(this.DNS_IP + '/flowStep/get?flowId=' + dt.flowId)
-      console.log('checkStep', checkStep)
-      if (checkStep.data.status === false) {
-        this.endDate = this.momenDate_1(new Date())
-        this.endTime = this.momenTime(new Date())
-        this.statusShowDateConfiremjob = false
-      } else {
-        this.statusShowDateConfiremjob = true
-      }
+      // let checkStep = await axios.get(this.DNS_IP + '/flowStep/get?flowId=' + dt.flowId)
+      // console.log('checkStep', checkStep)
+      // if (checkStep.data.status === false) {
+      //   this.endDate = this.momenDate_1(new Date())
+      //   this.endTime = this.momenTime(new Date())
+      //   this.statusShowDateConfiremjob = false
+      // } else {
+      //   this.statusShowDateConfiremjob = true
+      // }
+      this.endDate = this.momenDate_1(new Date())
+      this.endTime = this.momenTime(new Date())
+      this.statusShowDateConfiremjob = false
       if (this.statusConfirmJob && this.showOnsite === 'แสดง') {
         this.jobCheckPackage = false
         console.log('dt', dt)
