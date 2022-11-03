@@ -6380,7 +6380,10 @@ export default {
         ID: '',
         countBooking: null,
         limitCheck: null,
-        limitBooking: 0
+        limitBooking: 0,
+        timeSelect: [],
+        timeBooking: [],
+        slotByflow: ''
       },
       dataEdit: '',
       statusShowDateConfiremjob: true,
@@ -7718,27 +7721,74 @@ export default {
         this.checkLimitBooking.countBooking = 1
         console.log('1257')
       } else {
+        // console.log('1259', LimitBooking)
+        // LimitBooking.forEach((item) => {
+        //   let dt = JSON.parse(this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.setTime) || []
+        //   // let dt = JSON.parse(this.branchData.filter(item => { return item.masBranchID === this.formAdd.masBranchID })[0].setTime) || []
+        //   let dtint = '0'
+        //   if (dt.filter(item => item.value === this.time.value).length > 0) {
+        //     dtint = parseInt(dt.filter(item => item.value === this.time.value)[0].limitBooking || '0')
+        //   } else {
+        //     dtint = '0'
+        //   }
+        //   console.log('test', dtint)
+        //   // console.log('test', item.flowId === this.formAdd.flowId && this.momenDate_1(item.bookingDate) === this.date && item.bookingTime === this.time.value)
+        //   // if (item.masBranchID === this.formAdd.masBranchID && this.momenDate_1(item.bookingDate) === this.date && item.bookingTime === this.time.value) {
+        //   if (item.flowId === this.formAdd.flowId && this.momenDate_1(item.bookingDate) === this.date && item.bookingTime === this.time.value) {
+        //     this.checkLimitBooking.ID = item.id
+        //     console.log('1266')
+        //     this.checkLimitBooking.countBooking = parseInt(item.countBooking) + 1
+        //     this.checkLimitBooking.limitCheck = parseInt(item.countBooking) >= dtint ? 'false' : 'true'
+        //     this.checkLimitBooking.limitBooking = dtint
+        //     // console.log('item.masBranchID', item)
+        //   }
+        // })
+
         console.log('1259', LimitBooking)
-        LimitBooking.forEach((item) => {
-          let dt = JSON.parse(this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.setTime) || []
-          // let dt = JSON.parse(this.branchData.filter(item => { return item.masBranchID === this.formAdd.masBranchID })[0].setTime) || []
-          let dtint = '0'
-          if (dt.filter(item => item.value === this.time.value).length > 0) {
-            dtint = parseInt(dt.filter(item => item.value === this.time.value)[0].limitBooking || '0')
-          } else {
-            dtint = '0'
+        let allBookingTime = []
+        let dt = JSON.parse(this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTime) || []
+        LimitBooking.forEach((item, key) => {
+          // let dtint = parseInt(dt.filter(item => item.value === this.time.value)[0].limitBooking)
+          // console.log('test', dtint)
+          // if (item.empId === this.formAdd.empId && this.momenDate_1(item.bookingDate) === this.date && item.bookingTime === this.time.value) {
+          //   this.checkLimitBooking.ID = item.id
+          //   console.log('1266')
+          //   this.checkLimitBooking.countBooking = parseInt(item.countBooking) + 1
+          //   this.checkLimitBooking.limitCheck = parseInt(item.countBooking) >= dtint ? 'false' : 'true'
+          //   this.checkLimitBooking.limitBooking = dtint
+          //   // console.log('item.masBranchID', item)
+          // }
+          if (dt.filter((i, k) => i.value === item.bookingTime).length > 0) {
+            let index = dt.findIndex((i, k) => i.value === item.bookingTime)
+            let slot = item.timeSlot
+            let num = index + (slot - 1)
+            // console.log('value', value, 'index', index, 'slot', slot, num)
+            allBookingTime.push(dt.filter((i, k) => (k >= index && k <= num)))
           }
-          console.log('test', dtint)
-          // console.log('test', item.flowId === this.formAdd.flowId && this.momenDate_1(item.bookingDate) === this.date && item.bookingTime === this.time.value)
-          // if (item.masBranchID === this.formAdd.masBranchID && this.momenDate_1(item.bookingDate) === this.date && item.bookingTime === this.time.value) {
-          if (item.flowId === this.formAdd.flowId && this.momenDate_1(item.bookingDate) === this.date && item.bookingTime === this.time.value) {
-            this.checkLimitBooking.ID = item.id
-            console.log('1266')
-            this.checkLimitBooking.countBooking = parseInt(item.countBooking) + 1
-            this.checkLimitBooking.limitCheck = parseInt(item.countBooking) >= dtint ? 'false' : 'true'
-            this.checkLimitBooking.limitBooking = dtint
-            // console.log('item.masBranchID', item)
-          }
+        })
+        console.log('timeSlot', this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId }))
+        let checkTimeSlot = []
+        let index = dt.findIndex((i, k) => i.value === this.time.value)
+        let slot = this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.timeSlot
+        let num = index + (slot - 1)
+        checkTimeSlot = dt.filter((i, k) => (k >= index && k <= num))
+        // console.log('allBookingTime', allBookingTime)
+        // console.log('chedkTimeSlot', checkTimeSlot)
+        this.checkLimitBooking.limitCheck = 'true'
+        this.checkLimitBooking.limitBooking = 1
+        this.checkLimitBooking.timeSelect = checkTimeSlot
+        this.checkLimitBooking.timeBooking = dt
+        this.checkLimitBooking.slotByflow = slot
+        checkTimeSlot.forEach((item, key) => {
+          allBookingTime.forEach((item2, key2) => {
+            // console.log('filter', item2.filter((i, n) => i.value === item.value))
+            if (item2.filter((i, n) => i.value === item.value).length > 0) {
+              this.checkLimitBooking.limitCheck = 'false'
+              console.log('เวลาซ้ำกัน')
+            } else {
+              console.log('เวลาไม่ซ้ำกัน')
+            }
+          })
         })
       }
       console.log('this.checkLimitBooking', this.checkLimitBooking)
@@ -11716,6 +11766,9 @@ export default {
             update.limitBookingId = this.checkLimitBooking.ID
             update.limitBookingCount = this.checkLimitBooking.countBooking
             update.getLimitBooking = this.checkLimitBooking.limitBooking
+            update.timeBooking = this.checkLimitBooking.timeBooking
+            update.timeAll = this.checkLimitBooking.timeSelect
+            update.slotByflow = this.checkLimitBooking.slotByflow
             update.depositPrice = this.formAdd.depositPrice
             update.empId = this.formAdd.bookingEmpFlow
             Add.push(update)
@@ -11746,6 +11799,9 @@ export default {
                 update.limitBookingId = this.checkLimitBooking.ID
                 update.limitBookingCount = this.checkLimitBooking.countBooking
                 update.getLimitBooking = this.checkLimitBooking.limitBooking
+                update.timeBooking = this.checkLimitBooking.timeBooking
+                update.timeAll = this.checkLimitBooking.timeSelect
+                update.slotByflow = this.checkLimitBooking.slotByflow
                 update.depositPrice = this.formAdd.depositPrice
                 update.empId = this.formAdd.bookingEmpFlow
                 Add.push(update)
@@ -11776,6 +11832,9 @@ export default {
                 update.limitBookingId = this.checkLimitBooking.ID
                 update.limitBookingCount = this.checkLimitBooking.countBooking
                 update.getLimitBooking = this.checkLimitBooking.limitBooking
+                update.timeBooking = this.checkLimitBooking.timeBooking
+                update.timeAll = this.checkLimitBooking.timeSelect
+                update.slotByflow = this.checkLimitBooking.slotByflow
                 update.depositPrice = this.formAdd.depositPrice
                 update.empId = this.formAdd.bookingEmpFlow
                 Add.push(update)
