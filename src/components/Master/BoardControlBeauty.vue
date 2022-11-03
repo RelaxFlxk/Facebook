@@ -1447,7 +1447,9 @@ export default {
       this.DataFlowName = []
       console.log('DataFlowName', this.DataFlowName)
       axios
-        .get(this.DNS_IP + '/flow/get?shopId=' + this.shopId + '&checkOnsite=is null')
+        .get(this.DNS_IP + '/flow/get?shopId=' + this.shopId
+        // + '&checkOnsite=is null'
+        )
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
@@ -1590,7 +1592,8 @@ export default {
             this.flowId +
             '&masBranchID=' + this.masBranchID +
             '&shopId=' +
-            this.shopId + '&checkOnsite=is null'
+            this.shopId
+            //  + '&checkOnsite=is null'
           // '&stepId=is null'
         )
         .then(async response => {
