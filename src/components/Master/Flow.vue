@@ -27,7 +27,8 @@
         </v-row>
         <v-row>
           <!-- step -->
-          <v-dialog v-model="dialogStep" persistent :max-width="checkOnsite === 'True' ? '50%' : '70%'">
+          <v-dialog v-model="dialogStep" persistent max-width="70%">
+          <!-- <v-dialog v-model="dialogStep" persistent :max-width="checkOnsite === 'True' ? '50%' : '70%'"> -->
             <v-card>
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
                 <v-card-text>
@@ -251,12 +252,21 @@
                           <v-data-table
                             class="elevation-1 custom_table_class"
                             dense
-                            :headers="checkOnsite === 'True' ? columnsStepOnsite : columnsStep"
+                            :headers="columnsStep"
                             :items="stepItemSelete"
                             disable-pagination
                             hide-default-footer
                           >
-                            <template v-slot:[`item.actions2`]="{ item, index }" v-if="checkOnsite !== 'True'">
+                          <!-- <v-data-table
+                            class="elevation-1 custom_table_class"
+                            dense
+                            :headers="checkOnsite === 'True' ? columnsStepOnsite : columnsStep"
+                            :items="stepItemSelete"
+                            disable-pagination
+                            hide-default-footer
+                          > -->
+                            <template v-slot:[`item.actions2`]="{ item, index }">
+                            <!-- <template v-slot:[`item.actions2`]="{ item, index }" v-if="checkOnsite !== 'True'"> -->
                               <v-btn
                                 v-show="index !== 0"
                                 color="173053"
@@ -289,10 +299,16 @@
                                 false-value="False"
                                 true-value="True"
                                 v-model="item.sendCard"
-                                :readonly="checkOnsite === 'True' ? true : false"
                               ></v-checkbox>
+                              <!-- <v-checkbox
+                                false-value="False"
+                                true-value="True"
+                                v-model="item.sendCard"
+                                :readonly="checkOnsite === 'True' ? true : false"
+                              ></v-checkbox> -->
                             </template>
-                            <template v-slot:[`item.action`]="{ item, index }" v-if="checkOnsite !== 'True'">
+                            <template v-slot:[`item.action`]="{ item, index }">
+                            <!-- <template v-slot:[`item.action`]="{ item, index }" v-if="checkOnsite !== 'True'"> -->
                               <v-btn
                               color="info"
                               fab
@@ -361,7 +377,8 @@
                             </v-card>
                           </v-dialog>
                           <!-- END delete step -->
-                          <v-col cols="12" v-if="checkOnsite !== 'True'" class="v-margit_button text-center">
+                          <v-col cols="12" class="v-margit_button text-center">
+                          <!-- <v-col cols="12" v-if="checkOnsite !== 'True'" class="v-margit_button text-center"> -->
                             <v-btn
                               color="#1B437C"
                               depressed
