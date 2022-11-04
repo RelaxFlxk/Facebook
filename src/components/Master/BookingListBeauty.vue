@@ -3300,7 +3300,7 @@
                           <v-list-item v-if="item.statusBt === 'confirmJob'" @click.stop="(dialogJob = true), getjob(item)">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="uil:bill"></v-icon> ปิดงานนี้ </v-list-item-title>
                           </v-list-item>
-                          <v-list-item v-if="item.statusBt === 'confirmJob' && showOnsite === 'ไม่แสดง'">
+                          <v-list-item v-if="item.statusBt === 'confirmJob' && showOnsite === 'ไม่แสดง'" @click="getjobChangeOnsite(item), dialogChangeOnsite = true">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-account-reactivate </v-icon> เปลี่ยนพนักงาน On site </v-list-item-title>
                           </v-list-item>
                           <v-hover v-slot:default="{ hover }">
@@ -6420,7 +6420,8 @@ export default {
       depositLink: '',
       datailLinkDeposit: '',
       depositPrice: 0,
-      statusdepositPrice: false
+      statusdepositPrice: false,
+      dataEmpOnsite: []
     }
   },
   beforeCreate () {
@@ -6472,6 +6473,30 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
+    async getjobChangeOnsite (item) {
+      this.dataEmpOnsite = item
+      await this.getEmpSelectAddJob()
+      this.jobitem = []
+      console.log(item)
+      console.log(this.empSelectStepAdd)
+      if (item.jobNo !== '') {
+        await axios.get(this.DNS_IP + '/job/getJobNo?jobNo=' + item.jobNo).then((response) => {
+          let rs = response.data
+          console.log('getJobNo', rs)
+          if (rs.status === false) {
+          } else {
+            this.jobitem = rs
+            this.sortNo = rs[0].sortNo
+            this.empSelectJob = parseInt(rs[0].empStepId)
+            this.flowId = rs[0].flowId
+            console.log('this.flowId', this.flowId)
+            if (this.sortNo === 1) {
+              this.checkEmpJob()
+            }
+          }
+        })
+      }
+    },
     updatePlace (place) {
       // console.log(place)
       this.center = {
@@ -6724,18 +6749,19 @@ export default {
       const dateSplit = this.today.split('-')
       const year = String(dateSplit[0])
       const month = String(dateSplit[1])
-      var flowId = ''
-      if (this.flowId !== '') {
-        flowId = this.flowId
-      } else {
-        flowId = this.BookingDataItem[0].flowId
-      }
+      var flowId = this.dataEmpOnsite.flowId
+      // if (this.flowId !== '') {
+      //   flowId = this.flowId
+      // } else {
+      //   flowId = this.dataEmpOnsite.flowId
+      // }
       this.eventInfo = []
       await axios
         .get(
           this.DNS_IP + '/booking_view/getCountNotimeJob?shopId=' + this.session.data.shopId + '&empStep=' + this.empSelectJob + '&flowId=' + flowId + '&dueDate=' + year + '-' + month + '&checkOnsite=True'
         )
         .then(async responses => {
+          console.log('this.responses', responses.data)
           if (responses.data.status === false) {
             this.eventInfo = []
             this.checkEventInfo = []
@@ -6775,12 +6801,12 @@ export default {
       const dateSplit = this.today.split('-')
       const year = String(dateSplit[0])
       const month = String(dateSplit[1])
-      var flowId = ''
-      if (this.flowId !== '') {
-        flowId = this.flowId
-      } else {
-        flowId = this.BookingDataItem[0].flowId
-      }
+      var flowId = this.dataEmpOnsite.flowId
+      // if (this.flowId !== '') {
+      //   flowId = this.flowId
+      // } else {
+      //   flowId = this.dataEmpOnsite.flowId
+      // }
       this.eventInfo = []
       await axios
         .get(
@@ -7053,14 +7079,14 @@ export default {
                       updateStatusSend: 'false',
                       oldEmpName: this.jobitem[0].empStep
                     }
-                    await axios
+                    axios
                       .post(this.DNS_IP + '/BookingOnsite/pushEmpCustomer/' + this.jobitem[0].bookNo, dt)
                       .then(async response1 => {})
                   }
                   var dtNoti = {
                     oldEmpName: this.jobitem[0].empStep
                   }
-                  await axios
+                  axios
                     .post(this.DNS_IP + '/Booking/LineNotifyGroupOnsite/' + this.jobitem[0].bookNo, dtNoti)
                     .then(async response1 => {})
                 }
@@ -11269,6 +11295,7 @@ export default {
         })
     },
     async getBookingDataJob (dt, text) {
+      this.dataEmpOnsite = dt
       this.dueDateText = dt.dueDateText
       let dateCurrent = this.momenDate_1(new Date())
       let dueDate = this.momenDate_1(dt.dueDate)
