@@ -2179,7 +2179,7 @@ export default {
     },
     async setDataChang (item) {
       this.flowIDLimit = item.flowId
-      this.SetallowedDatesChange(item.flowId)
+      // this.SetallowedDatesChange(item.flowId)
       this.dataChange = item
       this.formChange.date = item.dueDateDay
       // this.formChange.date = this.momenDate_1(item.dueDate)
@@ -2210,6 +2210,7 @@ export default {
         }
       }
       this.dialogChange = true
+      this.SetallowedDatesChange(item.flowId)
       console.log(this.formChange)
     },
     async changeChk (item) {
