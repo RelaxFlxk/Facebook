@@ -165,6 +165,19 @@
                           </v-row>
                       </v-col>
                     </v-row>
+                    <v-row>
+                      <v-col class="pt-0 pb-0" style="display: flex;justify-content: left;">
+                        <v-checkbox
+                          label="เปิดใช้ QR Payment (กรณี บัญชีนิติบุคคล)"
+                          false-value="False"
+                          :on-icon="'mdi-check-circle'"
+                          :off-icon="'mdi-checkbox-blank-circle-outline'"
+                          color="#1B437C"
+                          true-value="True"
+                          v-model="formUpdate.showQrPayments"
+                        ></v-checkbox>
+                        </v-col>
+                      </v-row>
                      <v-row>
                       <v-col cols="12" class="pb-0">
                           <v-textarea
@@ -342,7 +355,8 @@ export default {
         secondaryColor: '',
         darkMode: false,
         category: '',
-        timeSlotStatus: ''
+        timeSlotStatus: '',
+        showQrPayments: 'False'
       },
       timeSlotStatusOld: '',
       filesShop: null,
@@ -509,6 +523,9 @@ export default {
       } else {
         console.log('bookingthankText', this.formUpdate.bookingthankText)
       }
+      if (this.formUpdate.showQrPayments === null || this.formUpdate.showQrPayments === '') {
+        this.formUpdate.showQrPayments = 'False'
+      }
       // this.formUpdate.primaryColor = item.primaryColor
       // this.formUpdate.secondaryColor = item.secondaryColor
       // if (this.formUpdate.ZIP_CD.length >= 5) {
@@ -581,6 +598,7 @@ export default {
             secondaryColor: this.formUpdate.secondaryColor,
             category: this.formUpdate.category,
             timeSlotStatus: this.formUpdate.timeSlotStatus,
+            showQrPayments: this.formUpdate.showQrPayments,
             darkMode: darkMode,
             bookingthankText: bookingthankText
           }
