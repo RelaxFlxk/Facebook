@@ -1121,7 +1121,7 @@ export default {
     async getJobLog () {
       console.log('shopId', this.shopId)
       console.log('this.selectFlow', this.selectFlow)
-      await axios.get(this.DNS_IP_Loyalty + '/job_log/get?shopId=' + this.shopId + '&flowId=' + this.selectFlow)
+      await axios.get(this.DNS_IP + '/job_log/get?shopId=' + this.shopId + '&flowId=' + this.selectFlow)
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
@@ -1135,7 +1135,7 @@ export default {
     async getFlowStep () {
       console.log('shopId', this.shopId)
       console.log('this.selectFlow', this.selectFlow)
-      await axios.get(this.DNS_IP_Loyalty + '/flowStep/get?shopId=' + this.shopId + '&flowId=' + this.selectFlow)
+      await axios.get(this.DNS_IP + '/flowStep/get?shopId=' + this.shopId + '&flowId=' + this.selectFlow)
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
