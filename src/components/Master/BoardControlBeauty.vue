@@ -2,6 +2,12 @@
   <div>
     <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
     <v-main>
+      <v-overlay :value="overlay">
+      <v-progress-circular
+        indeterminate
+        size="64"
+      ></v-progress-circular>
+    </v-overlay>
       <div class="pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4">
         <!-- <v-col class="ma-2" id="text-Board">กระดานทำงาน</v-col> -->
         <v-row>
@@ -136,6 +142,12 @@
         <!-- เปลี่ยนสถานะ step-->
         <v-row justify="center">
           <v-dialog v-model="dialog" max-width="500px">
+            <v-overlay :value="overlayUpdateStep">
+              <v-progress-circular
+                indeterminate
+                size="64"
+              ></v-progress-circular>
+            </v-overlay>
             <v-card>
               <v-col class="text-right">
                 <v-icon color="#173053" @click=";(dialog = false), clearData(), setTimeJob()"
@@ -197,6 +209,12 @@
         <!-- DIALOG แก้ไขข้อมูล ใน card -->
 
         <v-dialog v-model="dialogEdit" persistent max-width="80%">
+          <v-overlay :value="overlayEdit">
+            <v-progress-circular
+              indeterminate
+              size="64"
+            ></v-progress-circular>
+          </v-overlay>
           <v-card>
             <v-form ref="form_edit" lazy-validation>
               <v-card-text>
@@ -1196,6 +1214,9 @@ export default {
   },
   data () {
     return {
+      overlay: false,
+      overlayUpdateStep: false,
+      overlayEdit: false,
       timelineitem: [],
       Layout: [],
       layout: 'grid',
@@ -1800,6 +1821,7 @@ export default {
           cancelButtonText: 'ไม่'
         })
           .then(async result => {
+            this.overlayUpdateStep = true
             this.formUpdate.LAST_USER = this.session.data.userName
             var ID = this.formUpdate.jobId
             var flowId = this.flowId
@@ -1830,6 +1852,7 @@ export default {
                 await this.pushmessage(this.formUpdate.jobId)
                 await this.NotifyEmpTime(this.formUpdate.jobNo)
                 this.dialog = false
+                this.overlayUpdateStep = false
                 this.$swal('เรียบร้อย', 'แก้ไขสถานะ เรียบร้อย', 'success')
                 this.getStepFlow()
                 // this.getLayout()
@@ -1842,6 +1865,7 @@ export default {
             // eslint-disable-next-line handle-callback-err
               .catch(error => {
                 this.dataReady = true
+                this.overlayUpdateStep = false
                 console.log('error function editDataGlobal : ', error)
               })
           })
@@ -2066,6 +2090,7 @@ export default {
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
       }).then(async result => {
+        this.overlayEdit = true
         // var ID = this.formUpdate.jobId
         let rs = this.JobDataItem.filter(row => {
           return row.jobId === this.formUpdate.jobId
@@ -2134,6 +2159,7 @@ export default {
             await this.getJobData()
             this.setTimeJob()
             this.dialogEdit = false
+            this.overlayEdit = false
             console.log('shopId:', this.shopId)
             console.log('form:', this.formEditData)
           })

@@ -137,6 +137,9 @@ h4 {
 .nav-text {
   color: var(--nav-text) !important;
 }
+.v-card--link:focus::before {
+opacity: 0;
+}
 /* table tr:first-child th:first-child {
   border-top-left-radius: 10px;
 }
