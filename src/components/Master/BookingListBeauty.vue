@@ -10956,6 +10956,13 @@ export default {
         } else {
           limitBookingCheck = 'False'
         }
+        let storeFront = this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })
+        let storeFrontCheck = ''
+        if (storeFront.length > 0) {
+          storeFrontCheck = storeFront[0].allData.storeFrontCheck || 'False'
+        } else {
+          storeFrontCheck = 'False'
+        }
         for (let i = 0; i < rs.length; i++) {
           let d = rs[i]
           let update = {}
@@ -10985,6 +10992,8 @@ export default {
             update.limitBookingCount = this.checkLimitBooking.countBooking
             update.getLimitBooking = this.checkLimitBooking.limitBooking
             update.depositPrice = this.formAdd.depositPrice
+            update.storeFrontCheck = storeFrontCheck
+            update.statusBookingForm = 'BookingForm'
             Add.push(update)
           } else {
             if (fielditem.filter(row => { return row.fieldId === parseInt(d.conditionField) }).length > 0) {
@@ -11014,6 +11023,8 @@ export default {
                 update.limitBookingCount = this.checkLimitBooking.countBooking
                 update.getLimitBooking = this.checkLimitBooking.limitBooking
                 update.depositPrice = this.formAdd.depositPrice
+                update.storeFrontCheck = storeFrontCheck
+                update.statusBookingForm = 'BookingForm'
                 Add.push(update)
               }
             } else if (d.conditionField === 'flow') {
@@ -11043,6 +11054,8 @@ export default {
                 update.limitBookingCount = this.checkLimitBooking.countBooking
                 update.getLimitBooking = this.checkLimitBooking.limitBooking
                 update.depositPrice = this.formAdd.depositPrice
+                update.storeFrontCheck = storeFrontCheck
+                update.statusBookingForm = 'BookingForm'
                 Add.push(update)
               }
             }

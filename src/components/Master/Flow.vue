@@ -18,7 +18,7 @@
             <v-btn
               color="primary"
               depressed
-              @click="(dialogAdd = true), validate('ADD'), (desserts = []), getCustomField()"
+              @click="(dialogAdd = true), validate('ADD'), (desserts = []), getCustomField(), formAdd.storeFrontCheck = 'False'"
             >
               <v-icon left>mdi-text-box-plus</v-icon>
               เพิ่มประเภทบริการ
@@ -482,7 +482,7 @@
                             </v-col>
                           </v-row>
                           <v-row>
-                          <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;">
+                          <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;" v-if="formAdd.storeFrontCheck === 'False'"  >
                             <v-checkbox
                             label="เงินมัดจำ"
                             false-value="False"
@@ -527,6 +527,7 @@
                               color="#1B437C"
                               true-value="True"
                               v-model="formAdd.storeFrontCheck"
+                              @change="checkStoreFrontAdd()"
                             ></v-checkbox>
                             </v-col>
                           </v-row>
@@ -690,7 +691,7 @@
                             </v-col>
                           </v-row>
                           <v-row>
-                          <v-col style="display: flex;justify-content: center;">
+                          <v-col style="display: flex;justify-content: center;" v-if="formUpdate.storeFrontCheck === 'False'">
                             <v-checkbox
                             label="เงินมัดจำ"
                             false-value="False"
@@ -735,6 +736,7 @@
                               color="#1B437C"
                               true-value="True"
                               v-model="formUpdate.storeFrontCheck"
+                              @change="checkStoreFrontUpdate()"
                             ></v-checkbox>
                             </v-col>
                           </v-row>
@@ -1979,6 +1981,16 @@ export default {
     await this.getBookingField()
   },
   methods: {
+    checkStoreFrontAdd () {
+      if (this.formAdd.storeFrontCheck === 'True') {
+        this.formAdd.checkDeposit = 'False'
+      }
+    },
+    checkStoreFrontUpdate () {
+      if (this.formUpdate.storeFrontCheck === 'True') {
+        this.formUpdate.checkDeposit = 'False'
+      }
+    },
     async updateWarn () {
       let dataitem = {
         'warningFlow': this.checkboxwarn
