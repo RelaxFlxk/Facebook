@@ -714,14 +714,6 @@
                   <!-- DIALOG ค่าใช้จ่าย -->
         <v-dialog v-model="dialogDelete" persistent max-width="400px">
           <v-card v-if="checkPayment === 'True'">
-            <center>
-              <v-col>
-                <v-img
-                  id="v-img-car"
-                  :src="require('@/assets/sendcar.png')"
-                ></v-img>
-              </v-col>
-            </center>
             <v-col class="text-center">
               <span class="headline">ค่าใช้จ่าย</span>
             </v-col>
@@ -885,10 +877,12 @@
 import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import moment from 'moment-timezone' // แปลง date
+import VuetifyMoney from '../VuetifyMoney.vue'
 export default {
   name: 'JobList',
   components: {
-    'left-menu-admin': adminLeftMenu
+    'left-menu-admin': adminLeftMenu,
+    VuetifyMoney
   },
   watch: {
     // whenever question changes, this function will run
@@ -916,6 +910,32 @@ export default {
   },
   data () {
     return {
+      options2: {
+        locale: 'en-US',
+        prefix: '',
+        suffix: '',
+        length: 9,
+        precision: 0
+      },
+      rules: {
+        numberRules: value =>
+          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
+          'กรุณากรอกตัวเลข 0 ถึง 9',
+        counterTel: value => value.length <= 10 || 'Max 10 characters',
+        IDcardRules: value =>
+          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999999) ||
+          'กรุณากรอกตัวเลข 0 ถึง 9',
+        required: value => !!value || 'กรุณากรอก.',
+        resizeImag: value =>
+          !value ||
+          value.size < 2000000 ||
+          'Avatar size should be less than 2 MB!',
+        counterIDcard: value => value.length <= 13 || 'Max 13 characters',
+        email: value => {
+          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+          return pattern.test(value) || 'Invalid e-mail.'
+        }
+      },
       date: new Date().toISOString().substr(0, 7),
       menu: false,
       modal: false,
@@ -1550,6 +1570,7 @@ export default {
       this.formDelete.LAST_USER = this.session.data.userName
       if (this.checkPayment === 'True') {
         this.dialogDelete = true
+        console.log('testIF')
       } else {
         this.closeJobSubmit('0')
       }
