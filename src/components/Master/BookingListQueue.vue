@@ -441,7 +441,7 @@ export default {
         })
       return result
     },
-    closeJobSubmit (item) {
+    async closeJobSubmit (item) {
       this.$swal({
         title: 'ให้บริการ เสร็จเรียบร้อยแล้ว ใช่หรือไม่?',
         type: 'question',
@@ -460,11 +460,26 @@ export default {
           CREATE_USER: this.$session.getAll().data.userName,
           LAST_USER: this.$session.getAll().data.userName
         }
-        axios
+        await axios
           .post(this.DNS_IP + '/booking_transaction/add', dtt)
           .then(async responses => {
             this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
-            this.searchBooking()
+            await this.searchBooking()
+            let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
+            if (bookSelect.length > 0) {
+              for (let i = 0; i < bookSelect.length; i++) {
+                let d = bookSelect[i]
+                let s = {}
+                s.lineUserId = d.lineUserId || ''
+                if (s.lineUserId !== '') {
+                  await axios
+                    .post(this.DNS_IP + '/Booking/pushMsgQueue/' + d.bookNo)
+                    .then(async responses => {}).catch(error => {
+                      console.log('error function pushMsgQueue : ', error)
+                    })
+                }
+              }
+            }
           })
       })
     },
