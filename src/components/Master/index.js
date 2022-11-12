@@ -35,6 +35,7 @@ import CheckBookingEmpList from './CheckBookingEmpList'
 import BookingListBeautyEmp from './BookingListBeautyEmp'
 import ManageLink from './ManageLink'
 import TableCheckQueue from './TableCheckQueue'
+import BookingListQueue from './BookingListQueue'
 
 export default {
   CustomField,
@@ -73,5 +74,6 @@ export default {
   CheckBookingEmpList,
   BookingListBeautyEmp,
   ManageLink,
-  TableCheckQueue
+  TableCheckQueue,
+  BookingListQueue
 }

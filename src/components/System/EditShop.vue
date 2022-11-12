@@ -633,10 +633,20 @@ export default {
               if (this.timeSlotStatusOld === this.formUpdate.timeSlotStatus) {
                 this.$swal('เรียบร้อย', 'บันทึกสำเร็จ', 'success')
               } else {
-                let dt = {
-                  shopId: this.$session.getAll().data.shopId,
-                  timeSlotStatus: this.formUpdate.timeSlotStatus,
-                  LAST_USER: this.$session.getAll().data.userName
+                let dt = {}
+                if (this.formUpdate.timeSlotStatus === 'True') {
+                  dt = {
+                    shopId: this.$session.getAll().data.shopId,
+                    timeSlotStatus: this.formUpdate.timeSlotStatus,
+                    storeFrontCheck: 'False',
+                    LAST_USER: this.$session.getAll().data.userName
+                  }
+                } else {
+                  dt = {
+                    shopId: this.$session.getAll().data.shopId,
+                    timeSlotStatus: this.formUpdate.timeSlotStatus,
+                    LAST_USER: this.$session.getAll().data.userName
+                  }
                 }
                 axios
                   .post(
