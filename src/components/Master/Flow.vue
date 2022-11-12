@@ -477,7 +477,7 @@
                                 label="จำนวน Slot งาน"
                                 outlined
                                 attach
-            :menu-props="{ bottom: true, offsetY: true }"
+                                :menu-props="{ bottom: true, offsetY: true }"
                               ></v-select>
                             </v-col>
                           </v-row>
@@ -516,6 +516,19 @@
                             v-model="formAdd.repeatBooking"
                           ></v-checkbox>
                           </v-col>
+                          </v-row>
+                          <v-row v-if="$session.getAll().data.timeSlotStatus !== 'True'">
+                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;">
+                              <v-checkbox
+                              label="เปิดรับคิวหน้าร้าน"
+                              false-value="False"
+                              :on-icon="'mdi-check-circle'"
+                              :off-icon="'mdi-checkbox-blank-circle-outline'"
+                              color="#1B437C"
+                              true-value="True"
+                              v-model="formAdd.storeFrontCheck"
+                            ></v-checkbox>
+                            </v-col>
                           </v-row>
                           <v-row v-if="$session.getAll().data.timeSlotStatus !== 'True'">
                             <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;">
@@ -711,6 +724,19 @@
                             v-model="formUpdate.repeatBooking"
                           ></v-checkbox>
                           </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;">
+                              <v-checkbox
+                              label="เปิดรับคิวหน้าร้าน"
+                              false-value="False"
+                              :on-icon="'mdi-check-circle'"
+                              :off-icon="'mdi-checkbox-blank-circle-outline'"
+                              color="#1B437C"
+                              true-value="True"
+                              v-model="formUpdate.storeFrontCheck"
+                            ></v-checkbox>
+                            </v-col>
                           </v-row>
                           <v-row v-if="$session.getAll().data.timeSlotStatus !== 'True'">
                             <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;">
@@ -1451,6 +1477,8 @@
                   :headers="columns"
                   :items="dataItem"
                   :search="searchAll2"
+                  disable-pagination
+                  hide-default-footer
                 >
                   <template v-slot:[`item.CREATE_DATE`]="{ item }">
                     {{ format_dateFUllTime(item.CREATE_DATE) }}
@@ -1754,6 +1782,7 @@ export default {
         checkOnsite: 'False',
         checkDeposit: 'False',
         repeatBooking: 'False',
+        storeFrontCheck: 'False',
         depositTime: 'NO',
         promptPayID: null,
         promptPayName: null,
@@ -1799,6 +1828,7 @@ export default {
         checkOnsite: 'False',
         checkDeposit: 'False',
         repeatBooking: 'False',
+        storeFrontCheck: 'False',
         depositTime: '',
         amountDeposit: 0,
         promptPayID: null,
@@ -2737,6 +2767,7 @@ export default {
       this.formUpdate.amountDeposit = item.amountDeposit || 0
       this.formUpdate.checkPayment = item.checkPayment || 'True'
       this.formUpdate.checkDeposit = item.checkDeposit || 'False'
+      this.formUpdate.storeFrontCheck = item.storeFrontCheck || 'False'
 
       this.formUpdate.timeSlot = item.timeSlot || 1
       this.formUpdate.timeSlotStatus = this.$session.getAll().data.timeSlotStatus || 'False'

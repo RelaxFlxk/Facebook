@@ -75,6 +75,11 @@ export default new Router({
     component: Master.BookingLink
   },
   {
+    path: '/Master/BookingListQueue',
+    name: 'BookingListQueue',
+    component: Master.BookingListQueue
+  },
+  {
     path: '/Master/BookingList',
     name: 'BookingList',
     component: Master.BookingList
