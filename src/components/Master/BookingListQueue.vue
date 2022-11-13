@@ -157,10 +157,19 @@
                 color="green"
                 small
                 dark
-                @click="setPrint(item)"
+                @click="setPrint(item, 'th')"
               >
                 <v-icon > mdi-printer </v-icon>
-                ปริ้น
+                ปริ้น (TH)
+              </v-btn>
+              <v-btn
+                color="teal"
+                small
+                dark
+                @click="setPrint(item, 'en')"
+              >
+                <v-icon > mdi-printer </v-icon>
+                ปริ้น (EN)
               </v-btn>
               <v-btn
               v-if="index === 0"
@@ -483,111 +492,221 @@ export default {
           })
       })
     },
-    setPrint (item) {
-      const docDefinition = {
-        pageSize: 'A4',
-        content: [
-          {
-            text: this.shopName,
-            style: 'header',
-            alignment: 'center'
-          },
-          {
-            text: '   ',
-            style: 'header',
-            widths: ['*']
-          },
-          {
-            columns: [
-              {
-                style: 'subheader',
-                text: 'วันที่'
-              },
-              {
-                style: 'subheader',
-                text: item.dueDateText.split(' ')[0],
-                alignment: 'right'
-              }
-            ]
-          },
-          {
-            text: '   ',
-            style: 'subheader',
-            widths: ['*']
-          },
-          {
-            columns: [
-              {
-                style: 'subheader',
-                text: 'รับคิวเวลา'
-              },
-              {
-                style: 'subheader',
-                text: item.timeText,
-                alignment: 'right'
-              }
-            ]
-          },
-          {
-            text: '   ',
-            style: 'subheader',
-            widths: ['*']
-          },
-          {
-            alignment: 'center',
-            style: 'tableExample',
-            table: {
-              heights: [70],
-              widths: ['*'],
-              body: [
-                [
-                  {
-                    text: [
-                      {text: 'หมายเลขคิวของคุณ\n', fontSize: 20, color: 'white'},
-                      {text: item.storeFrontQueue, fontSize: 150, color: 'white'}
-                    ],
-                    border: [false, false, false, false],
-                    fillColor: '#092C4C'
-                  }
-                ]
+    setPrint (item, language) {
+      let docDefinition = {}
+      if (language === 'th') {
+        docDefinition = {
+          pageSize: 'A4',
+          content: [
+            {
+              text: this.shopName,
+              style: 'header',
+              alignment: 'center'
+            },
+            {
+              text: '   ',
+              style: 'header',
+              widths: ['*']
+            },
+            {
+              columns: [
+                {
+                  style: 'subheader',
+                  text: 'วันที่'
+                },
+                {
+                  style: 'subheader',
+                  text: item.dueDateText.split(' ')[0],
+                  alignment: 'right'
+                }
               ]
+            },
+            {
+              text: '   ',
+              style: 'subheader',
+              widths: ['*']
+            },
+            {
+              columns: [
+                {
+                  style: 'subheader',
+                  text: 'รับคิวเวลา'
+                },
+                {
+                  style: 'subheader',
+                  text: item.timeText,
+                  alignment: 'right'
+                }
+              ]
+            },
+            {
+              text: '   ',
+              style: 'subheader',
+              widths: ['*']
+            },
+            {
+              alignment: 'center',
+              style: 'tableExample',
+              table: {
+                heights: [70],
+                widths: ['*'],
+                body: [
+                  [
+                    {
+                      text: [
+                        {text: 'หมายเลขคิวของคุณ\n', fontSize: 20, color: 'white'},
+                        {text: item.storeFrontQueue, fontSize: 150, color: 'white'}
+                      ],
+                      border: [false, false, false, false],
+                      fillColor: '#092C4C'
+                    }
+                  ]
+                ]
+              }
+            },
+            {
+              text: '   ',
+              style: 'subheader',
+              widths: ['*']
+            },
+            {
+              text: '*ทางบริษัทขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
+              fontSize: 15,
+              alignment: 'center'
+            }
+          ],
+          styles: {
+            header: {
+              fontSize: 28,
+              bold: true
+            },
+            subheader: {
+              fontSize: 25,
+              bold: true
+            },
+            quote: {
+              italics: true
+            },
+            small: {
+              fontSize: 8
+            },
+            defaultStyle: {
+              columnGap: 20
+            },
+            tableExample: {
+              margin: [0, 5, 0, 15]
             }
           },
-          {
-            text: '   ',
-            style: 'subheader',
-            widths: ['*']
-          },
-          {
-            text: '*ทางบริษัทขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
-            fontSize: 15,
-            alignment: 'center'
+          defaultStyle: { // 4. default style 'KANIT' font to test
+            font: 'Kanit'
           }
-        ],
-        styles: {
-          header: {
-            fontSize: 28,
-            bold: true
+        }
+      } else {
+        docDefinition = {
+          pageSize: 'A4',
+          content: [
+            {
+              text: this.shopName,
+              style: 'header',
+              alignment: 'center'
+            },
+            {
+              text: '   ',
+              style: 'header',
+              widths: ['*']
+            },
+            {
+              columns: [
+                {
+                  style: 'subheader',
+                  text: 'Date'
+                },
+                {
+                  style: 'subheader',
+                  text: item.dueDateText.split(' ')[0],
+                  alignment: 'right'
+                }
+              ]
+            },
+            {
+              text: '   ',
+              style: 'subheader',
+              widths: ['*']
+            },
+            {
+              columns: [
+                {
+                  style: 'subheader',
+                  text: 'Time'
+                },
+                {
+                  style: 'subheader',
+                  text: item.timeText,
+                  alignment: 'right'
+                }
+              ]
+            },
+            {
+              text: '   ',
+              style: 'subheader',
+              widths: ['*']
+            },
+            {
+              alignment: 'center',
+              style: 'tableExample',
+              table: {
+                heights: [70],
+                widths: ['*'],
+                body: [
+                  [
+                    {
+                      text: [
+                        {text: 'Number\n', fontSize: 30, color: 'white'},
+                        {text: item.storeFrontQueue, fontSize: 150, color: 'white'}
+                      ],
+                      border: [false, false, false, false],
+                      fillColor: '#092C4C'
+                    }
+                  ]
+                ]
+              }
+            },
+            {
+              text: '   ',
+              style: 'subheader',
+              widths: ['*']
+            },
+            {
+              text: '*The company reserves the right to skip the queue. In the event that the customer does not come.',
+              fontSize: 15,
+              alignment: 'center'
+            }
+          ],
+          styles: {
+            header: {
+              fontSize: 28,
+              bold: true
+            },
+            subheader: {
+              fontSize: 25,
+              bold: true
+            },
+            quote: {
+              italics: true
+            },
+            small: {
+              fontSize: 8
+            },
+            defaultStyle: {
+              columnGap: 20
+            },
+            tableExample: {
+              margin: [0, 5, 0, 15]
+            }
           },
-          subheader: {
-            fontSize: 25,
-            bold: true
-          },
-          quote: {
-            italics: true
-          },
-          small: {
-            fontSize: 8
-          },
-          defaultStyle: {
-            columnGap: 20
-          },
-          tableExample: {
-            margin: [0, 5, 0, 15]
+          defaultStyle: { // 4. default style 'KANIT' font to test
+            font: 'Kanit'
           }
-        },
-        defaultStyle: { // 4. default style 'KANIT' font to test
-          font: 'Kanit'
         }
       }
       pdfMake.vfs = pdfFonts.pdfMake.vfs // 2. set vfs pdf font
