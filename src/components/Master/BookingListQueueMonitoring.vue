@@ -3,20 +3,30 @@
     <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
     <v-main>
       <div class="pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4">
-        <v-row>
-          <v-col cols="6" class="text-left">
+        <!-- <v-row> -->
+          <!-- <v-col cols="6" class="text-left">
             <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
-          </v-col>
+          </v-col> -->
           <!-- <v-col cols="6" class="v-margit_button text-right">
             <v-btn color="primary" depressed @click="dialogAdd = true">
               <v-icon left>mdi-text-box-plus</v-icon>
               เพิ่มข้อมูล
             </v-btn>
           </v-col> -->
-        </v-row>
+        <!-- </v-row> -->
+        <v-row justify="center">
+            <v-col cols="auto">
+              <v-img @click="languageSelect = 0" src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2Fflag-TH.png?alt=media&token=e4bd7ffa-aed9-47e3-9240-4dcb9d8d284e" style="width:40px;height:40px;margin-bottom:13px;" />
+              <!-- <v-img @click="languageSelect = 0" :src="require('@/assets/flag-TH.png')" style="width:40px;height:40px;margin-bottom:13px;" /> -->
+            </v-col>
+            <v-col cols="auto">
+              <v-img @click="languageSelect = 1" src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2Fflag-USA.png?alt=media&token=04253ba5-ef71-45b9-b5f0-cab533124346" style="width:40px;height:40px;margin-bottom:13px;" />
+              <!-- <v-img @click="languageSelect = 1" :src="require('@/assets/flag-USA.png')" style="width:40px;height:40px;margin-bottom:13px;" /> -->
+            </v-col>
+          </v-row>
         <v-form ref="form_search" v-model="validSearch" lazy-validation>
           <v-row>
-            <v-col col="auto">
+            <v-col col="2">
               <v-select
                 v-model="masBranchID"
                 background-color="white"
@@ -35,7 +45,7 @@
                 </template>
               </v-select>
             </v-col>
-            <v-col col="auto">
+            <v-col col="2">
               <v-select
                 style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
                 v-model="flowSelect"
@@ -56,7 +66,7 @@
                 </template>
               </v-select>
             </v-col>
-            <v-col col="auto">
+            <v-col col="2">
               <v-menu
                 ref="menu"
                 v-model="menuStart"
@@ -95,7 +105,7 @@
                 </v-date-picker>
               </v-menu>
             </v-col>
-            <v-col col="auto" v-if="flowSelect !== ''">
+            <v-col col="2" v-if="flowSelect !== ''">
               <v-select
                 style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
                 v-model="time"
@@ -115,97 +125,81 @@
                 </template>
               </v-select>
             </v-col>
-          </v-row>
-          <v-row justify="center">
-            <v-col cols="3" class="pt-0">
+            <v-col col="2">
               <v-btn
                 color="warning"
                 block
                 style="border-radius: 20px !important;margin-right: 0px;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
-                @click="checkSearch()"
+                @click="clearTimeLoop(), checkSearch()"
               >
                 <v-icon color="white" left>mdi-clipboard-text-search</v-icon>
                 ค้นหา
               </v-btn>
             </v-col>
           </v-row>
+          <!-- <v-row justify="center">
+            <v-col cols="3" class="pt-0">
+              <v-btn
+                color="warning"
+                block
+                style="border-radius: 20px !important;margin-right: 0px;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
+                @click="clearTimeLoop(), checkSearch()"
+              >
+                <v-icon color="white" left>mdi-clipboard-text-search</v-icon>
+                ค้นหา
+              </v-btn>
+            </v-col>
+          </v-row> -->
         </v-form>
-        <v-row>
-          <v-col cols="12">
-            <v-card>
-            <v-card-title>
-              <v-text-field
-                v-model="search"
-                append-icon="mdi-magnify"
-                label="ค้นหา"
-                single-line
-                hide-details
-              ></v-text-field>
-            </v-card-title>
-            <v-data-table
-              :headers="headers"
-              :items="itemBooking"
-              :search="search"
-              disable-pagination
-              hide-default-footer
-            >
-            <template v-slot:[`item.dueDate`]="{ item }">
-              {{ format_dateFUllTime(item.dueDate) }}
-            </template>
-            <template v-slot:[`item.action`]="{ item, index }">
-              <v-btn
-                color="green"
-                small
-                dark
-                @click="setPrint(item, 'th')"
-              >
-                <v-icon > mdi-printer </v-icon>
-                ปริ้น (TH)
-              </v-btn>
-              <v-btn
-                color="teal"
-                small
-                dark
-                @click="setPrint(item, 'en')"
-              >
-                <v-icon > mdi-printer </v-icon>
-                ปริ้น (EN)
-              </v-btn>
-              <v-btn
-              v-if="index === 0"
-                color="red"
-                small
-                dark
-                @click="closeJobSubmit(item)"
-              >
-                <v-icon > mdi-check-circle </v-icon>
-                ปิดงานนี้
-              </v-btn>
-            </template>
-            </v-data-table>
-            <v-dialog v-model="dialogPrint" scrollable transition="dialog-bottom-transition" persistent max-width="100%">
-              <v-card class="text-center">
-                <v-card-text>
-                  <iframe id='pdfV' style="width:100%; height: 900px"></iframe>
-                </v-card-text>
-                <v-card-actions class="text-center">
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    color="error"
-                    class="button"
-                    dark
-                    large
-                    @click="dialogPrint = false"
-                  >
-                    ปิด
-                  </v-btn>
-                  <!-- </div> -->
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </v-card>
-          </v-col>
-        </v-row>
+        <template>
+          <v-row>
+            <v-col v-for="(items, id) in itemBookingUse" :key="id" cols="2">
+              <v-sheet class="pa-3 pt-5 mt-3" :style="'background-color:'+ DarkModeBackground +';border-radius: 0px 0px 0px 0px;'" >
+                <div class="" style="border-radius: 45px 45px 0px 0px;display:flex;justify-content: center;background-color:#FFFFFF;min-height: 180px;" v-if="items.statusBt === 'confirmJob'">
+                  <v-row style="margin:auto;">
+                  <v-col cols="12" class="text-center"><v-icon color="#28B446" x-large class="ma-0 mr-2" style="font-size:70px;">mdi-check-circle</v-icon></v-col>
+                  <v-col cols="12" class="text-center font-weight-bold"><h3 style="color:#28B446;">{{ languageSelect === 0 ? "กำลังเข้ารับบริการ" : "Receive service" }}</h3></v-col>
+                </v-row>
+                </div>
+                <div class="" style="border-radius: 45px 45px 0px 0px;display:flex;justify-content: center;background-color:#FFFFFF;min-height: 180px;" v-if="items.statusBt === 'confirm'">
+                  <v-row style="margin:auto;">
+                  <v-col cols="12" class="text-center"><v-icon x-large class="ma-0 mr-2" style="font-size:70px;">mdi-check-circle</v-icon></v-col>
+                  <v-col cols="12" class="text-center font-weight-bold"><h3>{{ languageSelect === 0 ? "กำลังรอคิว" : "Waiting in queue" }}</h3></v-col>
+                </v-row>
+              </div>
+              <!-- <div v-if="items.storeFrontQueue" class="pa-3" :style="'border-top: 4px dotted '+ DarkModeBackground + ';background-color:#FFFFFF;min-height: 180px;'"> -->
+                <!-- <h4 class="text-center font-weight-bold mt-5" style="color:#092C4C">{{ shop[0].shopName }}</h4> -->
+                <!-- <v-row>
+                  <v-col cols="6" >
+                    <div class="text-left ml-6 mt-3">
+                      <p class="font-weight-bold" style="color:#092C4C">{{ languageSelect === 0 ? "วันที่นัดหมาย" : "Date" }}</p>
+                      <p style="color:#092C4C" class="mt-n4 font-weight-bold">{{ languageSelect === 0 ? "เวลา" : "Time Of issu" }}</p>
+                    </div>
+                  </v-col>
+                  <v-col cols="6">
+                    <div class="text-right mr-6 mt-3">
+                      <p class="font-weight-bold"  style="color:#092C4C">{{format_dateNotime(items.dueDate)}}</p>
+                      <p style="color:#092C4C" class="mt-n4 font-weight-bold">{{momenTime(items.dueDate)}}{{ languageSelect === 0 ? "  น." : "" }}</p>
+                    </div>
+                  </v-col>
+                </v-row> -->
+              <!-- </div> -->
+              <v-sheet v-if="items.storeFrontQueue" class="pa-3" :style="'background-color:#FFFFFF;min-height: 180px;border-radius: 0px 0px 45px 45px;border-top: 4px dotted '+ DarkModeBackground + ';position:relative'">
+                <span :style="'background-color:'+ DarkModeBackground + ';padding: 14px 15px;border-radius: 50%;position: absolute;bottom: 176px;left: -12px;'"></span>
+                <span :style="'background-color:'+ DarkModeBackground + ';padding: 14px 15px;border-radius: 50%;position: absolute;top: -12px;right: -12px;'"></span>
+                <!-- <h5 style="color:#092C4C" class="text-center font-weight-bold mt-2">{{ languageSelect === 0 ? "หมายเลขคิวของคุณ" : "Your Number" }}</h5> -->
+                <p style="color:#092C4C;font-size: 80px;" class="text-center font-weight-black mt-n5 mb-n5">{{items.storeFrontQueue}}</p>
+                <!-- <div style="display:flex;justify-content: center;" v-if="beforQueue !== 0">
+                  <h5 style="color:#092C4C" class="text-center font-weight-bold mt-2">{{ languageSelect === 0 ? "มีคิวก่อนหน้าคุณ" : "At the front of the queue" }}</h5>
+                  <h5 style="color:#FFFFFF;background-color:#092C4C;min-height: 30px;width:30px;border-radius: 80px 80px 80px 80px;display: flex;justify-content: center;align-items: center;" class="text-center font-weight-black ml-2 mr-2 mt-2">{{beforQueue}}</h5>
+                  <h5 style="color:#092C4C" class="text-center font-weight-bold mt-2">{{ languageSelect === 0 ? "คิว" : "Queue" }}</h5>
+                </div> -->
+                <!-- <h5 style="color:#092C4C" class="text-center font-weight-bold mt-2">{{ languageSelect === 0 ? "ถึงคิวคุณแล้ว" : "You are in the queue" }}</h5> -->
+              </v-sheet>
+            </v-sheet>
+            </v-col>
+          </v-row>
+        </template>
         </div>
     </v-main>
   </div>
@@ -225,8 +219,12 @@ export default {
   },
   data () {
     return {
+      setTimerCalendar: null,
+      languageSelect: 0,
+      DarkModeBackground: '#FFFFFF',
       validSearch: true,
       itemBooking: [],
+      itemBookingUse: [],
       BookingDataList: [],
       menuStart: false,
       dialogPrint: false,
@@ -237,6 +235,7 @@ export default {
       DataFlowItem: [],
       flowSelect: '',
       dateStart: '',
+      shop: [],
       breadcrumbs: [
         {
           text: 'Home',
@@ -290,11 +289,13 @@ export default {
   },
   methods: {
     async getShop () {
+      this.shop = []
       await axios
         .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.shopId)
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
+            this.shop = rs
             this.shopName = rs[0].shopName
           } else {
             this.shopName = ''
@@ -317,6 +318,12 @@ export default {
       this.validate('SEARCH')
       setTimeout(() => this.searchBooking(), 500)
     },
+    clearTimeLoop () {
+      clearInterval(this.setTimerCalendar)
+      this.setTimerCalendar = null
+      let _this = this
+      this.setTimerCalendar = setInterval(function () { _this.searchBooking() }, 15000)
+    },
     async searchBooking () {
       if (this.validSearch === true) {
         this.itemBooking = []
@@ -329,7 +336,7 @@ export default {
             '&flowId=' +
             this.flowSelect +
             '&dueDate=' +
-            this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm'
+            this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
         await axios
           .get(urlApi)
           .then(async response => {
@@ -348,6 +355,9 @@ export default {
                   this.itemBooking.push(d)
                 }
               }
+              this.itemBookingUse = this.itemBooking
+            } else {
+              this.itemBookingUse = []
             }
           })
       }

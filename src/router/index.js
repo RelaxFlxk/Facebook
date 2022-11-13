@@ -80,6 +80,11 @@ export default new Router({
     component: Master.BookingListQueue
   },
   {
+    path: '/Master/BookingListQueueMonitoring',
+    name: 'BookingListQueueMonitoring',
+    component: Master.BookingListQueueMonitoring
+  },
+  {
     path: '/Master/BookingList',
     name: 'BookingList',
     component: Master.BookingList
