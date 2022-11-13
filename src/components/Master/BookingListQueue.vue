@@ -676,7 +676,12 @@ export default {
               widths: ['*']
             },
             {
-              text: '* The company reserves the right to skip the queue. In the event that the customer does not come.',
+              text: 'Note: Please be ready 5 minutes before the queue is coming.',
+              fontSize: 15,
+              alignment: 'center'
+            },
+            {
+              text: 'If after 15 minutes the queue will be cancelled.',
               fontSize: 15,
               alignment: 'center'
             }
