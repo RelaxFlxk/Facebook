@@ -54,6 +54,7 @@
         :to="item.to"
         router
         exact
+        @click="clearTimeAll()"
       >
         <v-list-item-icon>
           <v-icon v-text="item.icon" dense  color="white"></v-icon>
@@ -81,6 +82,7 @@
           router
           exact
           dense
+          @click="clearTimeAll()"
         >
           <v-list-item-icon>
             <v-icon v-text="item.icon" dense  color="white"></v-icon>
@@ -108,6 +110,7 @@
           router
           exact
           dense
+          @click="clearTimeAll()"
         >
           <v-list-item-icon>
             <v-icon v-text="item.icon" dense  color="white"></v-icon>
@@ -135,6 +138,7 @@
           router
           exact
           dense
+          @click="clearTimeAll()"
         >
           <v-list-item-icon>
             <v-icon v-text="item.icon" dense color="white"></v-icon>
@@ -162,6 +166,7 @@
           router
           exact
           dense
+          @click="clearTimeAll()"
         >
           <v-list-item-icon>
             <v-icon v-text="item.icon" dense  color="white"></v-icon>
@@ -189,6 +194,7 @@
           router
           exact
           dense
+          @click="clearTimeAll()"
         >
           <v-list-item-icon>
             <v-icon v-text="item.icon" dense color="white"></v-icon>
@@ -216,6 +222,7 @@
           router
           exact
           dense
+          @click="clearTimeAll()"
         >
           <v-list-item-icon>
             <v-icon v-text="item.icon" dense color="white"></v-icon>
@@ -243,6 +250,7 @@
               router
               exact
               dense
+              @click="clearTimeAll()"
             >
               <v-list-item-icon>
                 <v-icon v-text="item.icon" dense  color="white"></v-icon>
@@ -270,6 +278,7 @@
           router
           exact
           dense
+          @click="clearTimeAll()"
         >
           <v-list-item-icon>
             <v-icon v-text="item.icon" dense color="white"></v-icon>
@@ -609,6 +618,7 @@ export default {
     // this.$root.$refs.BoardControl.closeSetTime()
     this.$root.$emit('closeSetTime')
     this.$root.$emit('closeSetTimeGetCalenda')
+    this.$root.$emit('closeSetTimeBookingMonitor')
     this.items = []
     if (this.session.data.USER_ROLE === 'onsite') {
       this.onsite()
@@ -628,6 +638,12 @@ export default {
     }
   },
   methods: {
+    clearTimeAll () {
+      console.log('clear all')
+      this.$root.$emit('closeSetTime')
+      this.$root.$emit('closeSetTimeGetCalenda')
+      this.$root.$emit('closeSetTimeBookingMonitor')
+    },
     logout () {
       console.log(this.$session.getAll())
       // this.$session.destroy()
@@ -681,7 +697,8 @@ export default {
             { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingField', type: 'booking' },
             { title: 'รายชื่อลูกค้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingListBeauty', type: 'booking' },
             { title: 'ปฏิทินนัดหมาย', icon: 'mdi-calendar-search', to: '/Master/CalendarBooking', type: 'booking' },
-            { title: 'จัดการคิวหน้าร้าน', icon: 'mdi-notebook-edit', to: '/Master/BookingListQueue', type: 'booking' }
+            { title: 'จัดการคิวหน้าร้าน', icon: 'mdi-notebook-edit', to: '/Master/BookingListQueue', type: 'booking' },
+            { title: 'แสดงผลคิวหน้าร้าน', icon: 'mdi-monitor-eye', to: '/Master/BookingListQueueMonitoring', type: 'booking' }
           ]
         }
         this.Dashboard = [

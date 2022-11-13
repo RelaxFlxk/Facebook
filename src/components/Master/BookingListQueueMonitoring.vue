@@ -286,6 +286,13 @@ export default {
     await this.getDataBranch()
     this.setTime()
     this.getShop()
+    this.$root.$on('closeSetTimeBookingMonitor', () => {
+      // your code goes here
+      this.closeSetTimeBookingMonitor()
+    })
+  },
+  beforeDestroy () {
+    this.$root.$off('dataReturn')
   },
   methods: {
     async getShop () {
@@ -313,6 +320,10 @@ export default {
         default:
           break
       }
+    },
+    closeSetTimeBookingMonitor () {
+      clearInterval(this.setTimerCalendar)
+      this.setTimerCalendar = null
     },
     checkSearch () {
       this.validate('SEARCH')

@@ -152,7 +152,7 @@
             <template v-slot:[`item.dueDate`]="{ item }">
               {{ format_dateFUllTime(item.dueDate) }}
             </template>
-            <template v-slot:[`item.action`]="{ item, index }">
+            <template v-slot:[`item.action`]="{ item }">
               <v-btn
                 color="green"
                 small
@@ -172,7 +172,6 @@
                 ปริ้น (EN)
               </v-btn>
               <v-btn
-              v-if="index === 0"
                 color="red"
                 small
                 dark
