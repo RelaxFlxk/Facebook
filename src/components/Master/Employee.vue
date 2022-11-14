@@ -206,7 +206,6 @@
                       <v-col
                         cols="12"
                         class="pa-0"
-                        v-if="formAdd.privacyPage === 'bookingform'"
                       >
                         <v-select
                           dense
@@ -217,7 +216,7 @@
                           :rules="nameRules"
                           label="สาขา"
                           attach
-        :menu-props="{ bottom: true, offsetY: true }"
+                          :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-col>
                       <v-col cols="12" class="pa-0" v-if="formAdd.privacyPage === 'bookingform'">
@@ -361,7 +360,7 @@
                           attach
                         ></v-select>
                       </v-col>
-                      <v-col cols="12" class="pa-0"  v-if="formUpdate.privacyPage === 'bookingform'">
+                      <v-col cols="12" class="pa-0" >
                         <v-select
                           dense
                           outlined
@@ -371,7 +370,7 @@
                           :rules="nameRules"
                           label="สาขา"
                           attach
-        :menu-props="{ bottom: true, offsetY: true }"
+                          :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-col>
                       <v-col cols="12" class="pa-0" v-if="formUpdate.privacyPage === 'bookingform'">
@@ -1610,7 +1609,6 @@ export default {
               this.formAdd.empImge = ''
             }
             if (this.formAdd.privacyPage !== 'bookingform') {
-              delete this.formAdd['masBranchID']
               delete this.formAdd['flowId']
             } else {
               this.formAdd.flowId = JSON.stringify(this.formAdd.flowId)
@@ -1699,7 +1697,6 @@ export default {
               this.formUpdateItem.empImge = this.formUpdate.pictureUrlPreview
             }
             if (this.formUpdate.privacyPage !== 'bookingform') {
-              delete this.formUpdateItem['masBranchID']
               delete this.formUpdateItem['flowId']
             } else {
               this.formUpdateItem.flowId = JSON.stringify(this.formUpdate.flowId)

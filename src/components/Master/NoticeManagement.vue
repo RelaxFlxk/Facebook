@@ -564,6 +564,7 @@
                       color="red"
                       fab
                       small
+                      @click="DeleteNotice(item)"
                     >
                       <v-icon color="#FFFFFF"> mdi-delete </v-icon>
                     </v-btn>
@@ -1011,6 +1012,33 @@ export default {
         .catch((error) => {
           console.log('error function addData : ', error)
         })
+    },
+    async DeleteNotice (item) {
+      item.shopId = this.shopId
+      item.LAST_USER = this.$session.getAll().data.userName
+      console.log('item', item)
+      this.$swal({
+        title: 'ต้องการ ลบข้อมูล ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      }).then(async () => {
+        await axios
+          .post(this.DNS_IP + '/notice/delete/' + item.id, item)
+          .then(async response => {
+            this.$swal('ลบข้อมูลเรียบร้อย', ' ', 'success')
+            await this.getnotice()
+            await this.getDataFlow()
+            await this.getEmp()
+          })
+          // eslint-disable-next-line handle-callback-err
+          .catch(error => {
+            console.log('error function addData : ', error)
+          })
+      })
     },
     async clearDataEdit () {
       this.formSendNotifyEdit.id = ''
