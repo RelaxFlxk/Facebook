@@ -28,12 +28,13 @@
           <v-row>
             <v-col col="2">
               <v-select
+                :item-text="languageSelect === 0 ? 'text' : 'textEng'"
                 v-model="masBranchID"
                 background-color="white"
                 style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
                 hide-details
                 :items="branchItem"
-                label="สาขา"
+                :label="languageSelect === 0 ? 'สาขา' : 'Branch'"
                 outlined
                 dense
                 required
@@ -47,12 +48,13 @@
             </v-col>
             <v-col col="2">
               <v-select
+                :item-text="languageSelect === 0 ? 'text' : 'textEng'"
+                :label="languageSelect === 0 ? 'ประเภทบริการ' : 'Service'"
                 style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
                 v-model="flowSelect"
                 hide-details
                 background-color="white"
                 :items="DataFlowItem"
-                label="ประเภทบริการ"
                 outlined
                 dense
                 required
@@ -81,7 +83,7 @@
                     background-color="white"
                     v-model="dateStart"
                     style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
-                    label="วัน/เดือน/ปี"
+                    :label="languageSelect === 0 ? 'วัน/เดือน/ปี' : 'Date'"
                     readonly
                     outlined
                     dense
@@ -112,7 +114,7 @@
                 hide-details
                 background-color="white"
                 :items="timeavailable"
-                label="เวลา"
+                :label="languageSelect === 0 ? 'เวลา' : 'Time'"
                 outlined
                 dense
                 required
@@ -422,6 +424,7 @@ export default {
             for (var i = 0; i < rs.length; i++) {
               let d = rs[i]
               let s = {}
+              s.textEng = d.flowNameEn
               s.text = d.flowName
               s.value = d.flowId
               s.allData = d
@@ -444,12 +447,12 @@ export default {
       //   localStorage.setItem('BRANCH', JSON.stringify(temp))
       // }
       // this.branch = JSON.parse(localStorage.getItem('BRANCH'))
-      this.branchItem = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName', '')
+      this.branchItem = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName', '', 'masBranchNameEn')
       if (this.branchItem.length > 0) {
         this.masBranchID = this.branchItem[0].value
       }
     },
-    async getDataFromAPI (url, fieldId, fieldName, param) {
+    async getDataFromAPI (url, fieldId, fieldName, param, fieldNameEn) {
       let result = []
       await axios
         .get(this.DNS_IP + `${url}?shopId=${this.shopId}${param}`)
@@ -460,6 +463,9 @@ export default {
               let d = rs[i]
               let s = {}
               s.text = d[fieldName]
+              if (fieldNameEn) {
+                s.textEng = d[fieldNameEn]
+              }
               s.value = d[fieldId]
               s.allData = d
               result.push(s)
