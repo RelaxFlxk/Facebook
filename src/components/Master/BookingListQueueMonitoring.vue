@@ -155,8 +155,8 @@
         </v-form>
         <template>
           <v-row>
-            <v-col v-for="(items, id) in itemBookingUse" :key="id" cols="2">
-              <v-sheet class="pa-3 pt-5 mt-3" :style="'background-color:'+ DarkModeBackground +';border-radius: 0px 0px 0px 0px;'" >
+            <v-col v-for="(items, id) in itemBookingUse" :key="id" lg="3" xl="2" md="6" sm="6" xs="6">
+              <v-sheet class="pa-3 pt-5 mt-3" :style="'background-color:'+ DarkModeBackground +';border-radius: 0px 0px 0px 0px;border: 2px dotted #c8c8c8;'" >
                 <div class="" style="border-radius: 45px 45px 0px 0px;display:flex;justify-content: center;background-color:#FFFFFF;min-height: 180px;" v-if="items.statusBt === 'confirmJob'">
                   <v-row style="margin:auto;">
                   <v-col cols="12" class="text-center"><v-icon color="#28B446" x-large class="ma-0 mr-2" style="font-size:70px;">mdi-check-circle</v-icon></v-col>
