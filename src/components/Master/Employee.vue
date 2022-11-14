@@ -213,7 +213,7 @@
                           v-model="formAdd.masBranchID"
                           :item-text="branch.text"
                           :items="branch"
-                          :rules="nameRules"
+                          clearable
                           label="สาขา"
                           attach
                           :menu-props="{ bottom: true, offsetY: true }"
@@ -367,9 +367,9 @@
                           v-model="formUpdate.masBranchID"
                           :item-text="branch.text"
                           :items="branch"
-                          :rules="nameRules"
                           label="สาขา"
                           attach
+                          clearable
                           :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-col>
@@ -1569,6 +1569,8 @@ export default {
       this.formAdd.CREATE_USER = this.$session.getAll().data.userName
       this.formAdd.LAST_USER = this.$session.getAll().data.userName
       this.formAdd.shopId = this.$session.getAll().data.shopId
+      this.formAdd.masBranchID = this.formAdd.masBranchID || null
+      console.log('ว่าง', this.formAdd.masBranchID)
 
       // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
       //
@@ -1657,7 +1659,8 @@ export default {
       // Config User ทำรายการล่าสุด
       this.formUpdateItem.LAST_USER = this.$session.getAll().data.userName
       // End Config User ทำรายการล่าสุด
-
+      this.formUpdate.masBranchID = this.formUpdate.masBranchID || null
+      console.log('ว่าง', this.formUpdate.masBranchID)
       for (var key in this.formUpdateItem) {
         for (var key2 in this.formUpdate) {
           if (key === key2) {
