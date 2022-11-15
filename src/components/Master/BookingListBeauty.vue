@@ -4169,7 +4169,7 @@
                               ></v-select>
                             </v-col>
                           </v-row>
-                          <v-row>
+                          <v-row v-if="statusShowMap === 'True'">
                             <v-col class="pb-0 pt-0" cols="12">
                                 <v-text-field
                                 v-model="address"
@@ -6421,7 +6421,8 @@ export default {
       datailLinkDeposit: '',
       depositPrice: 0,
       statusdepositPrice: false,
-      dataEmpOnsite: []
+      dataEmpOnsite: [],
+      statusShowMap: ''
     }
   },
   beforeCreate () {
@@ -8288,6 +8289,7 @@ export default {
       let dtTime = this.dataFlowSelectEdit.filter(item => { return item.value === this.formEdit.flowId }) || []
       console.log('dtTime', dtTime)
       if (dtTime.length > 0) {
+        this.statusShowMap = dtTime[0].allData.checkOnsite || 'False'
         // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
         console.log('timeavailable', dtTime.map(item => item.allData.setTime))
         if (dtTime.map(item => item.allData.setTime)[0] === null || dtTime.map(item => item.allData.setTime)[0] === '') {
@@ -8305,6 +8307,8 @@ export default {
             this.timeEdit = { text: dt.dueDate.slice(-5), value: dt.dueDate.slice(-5) }
           }
         }
+      } else {
+        this.statusShowMap = 'False'
       }
       console.log('setDataEdit', dt)
       await this.getPackage(dt)

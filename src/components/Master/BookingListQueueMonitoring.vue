@@ -46,7 +46,7 @@
                 </template>
               </v-select>
             </v-col>
-            <v-col col="2">
+            <!-- <v-col col="2">
               <v-select
                 :item-text="languageSelect === 0 ? 'text' : 'textEng'"
                 :label="languageSelect === 0 ? 'ประเภทบริการ' : 'Service'"
@@ -67,7 +67,7 @@
                   </v-icon>
                 </template>
               </v-select>
-            </v-col>
+            </v-col> -->
             <v-col col="2">
               <v-menu
                 ref="menu"
@@ -107,7 +107,8 @@
                 </v-date-picker>
               </v-menu>
             </v-col>
-            <v-col col="2" v-if="flowSelect !== ''">
+            <v-col>
+            <!-- <v-col col="2" v-if="flowSelect !== ''"> -->
               <v-select
                 style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
                 v-model="time"
@@ -161,14 +162,15 @@
                   <v-row style="margin:auto;">
                   <v-col cols="12" class="text-center"><v-icon color="#28B446" x-large class="ma-0 mr-2" style="font-size:70px;">mdi-check-circle</v-icon></v-col>
                   <v-col cols="12" class="text-center font-weight-bold"><h3 style="color:#28B446;">{{ languageSelect === 0 ? "กำลังเข้ารับบริการ" : "Receive service" }}</h3></v-col>
-                  <v-col cols="12" class="text-center font-weight-bold" v-if="items.serviceTH !== ''"><h5>{{ languageSelect === 0 ? items.serviceTH : fieldNameEn.filter(el => { return el.textTH === items.serviceTH })[0].textEN || items.serviceTH }}</h5></v-col>
+                  <v-col cols="12" class="text-center font-weight-bold" v-if="items.flowName !== ''"><h5>{{ languageSelect === 0 ? items.flowName : items.flowNameEn }}</h5></v-col>
+                  <!-- <v-col cols="12" class="text-center font-weight-bold" v-if="items.serviceTH !== ''"><h5>{{ languageSelect === 0 ? items.serviceTH : fieldNameEn.filter(el => { return el.textTH === items.serviceTH })[0].textEN || items.serviceTH }}</h5></v-col> -->
                 </v-row>
                 </div>
                 <div class="" style="border-radius: 45px 45px 0px 0px;display:flex;justify-content: center;background-color:#FFFFFF;min-height: 180px;" v-else>
                   <v-row style="margin:auto;">
                   <v-col cols="12" class="text-center"><v-icon x-large class="ma-0 mr-2" style="font-size:70px;">mdi-check-circle</v-icon></v-col>
                   <v-col cols="12" class="text-center font-weight-bold"><h3>{{ languageSelect === 0 ? "กำลังรอคิว" : "Waiting in queue" }}</h3></v-col>
-                  <v-col cols="12" class="text-center font-weight-bold" v-if="items.serviceTH !== ''"><h5>{{ languageSelect === 0 ? items.serviceTH : fieldNameEn.filter(el => { return el.textTH === items.serviceTH })[0].textEN || items.serviceTH }}</h5></v-col>
+                  <v-col cols="12" class="text-center font-weight-bold" v-if="items.flowName !== ''"><h5>{{ languageSelect === 0 ? items.flowName : items.flowNameEn }}</h5></v-col>
                 </v-row>
               </div>
               <!-- <div v-if="items.storeFrontQueue" class="pa-3" :style="'border-top: 4px dotted '+ DarkModeBackground + ';background-color:#FFFFFF;min-height: 180px;'"> -->
@@ -273,7 +275,7 @@ export default {
       flowSelect: '',
       dateStart: '',
       shop: [],
-      fieldNameEn: [{textTH: 'นวดคอ บ่า ไหล่', textEN: 'Nack & Shoulder  Massage'}, {textTH: 'นวดตอกเส้น', textEN: 'TOK  SEN MASSAGE'}, {textTH: 'นวดหินร้อน', textEN: 'HOT STONE MASSAGE'}],
+      // fieldNameEn: [{textTH: 'นวดคอ บ่า ไหล่', textEN: 'Nack & Shoulder  Massage'}, {textTH: 'นวดตอกเส้น', textEN: 'TOK  SEN MASSAGE'}, {textTH: 'นวดหินร้อน', textEN: 'HOT STONE MASSAGE'}],
       breadcrumbs: [
         {
           text: 'Home',
@@ -384,8 +386,8 @@ export default {
             this.shopId +
             '&masBranchID=' +
             this.masBranchID +
-            '&flowId=' +
-            this.flowSelect +
+            // '&flowId=' +
+            // this.flowSelect +
             '&dueDate=' +
             this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
         await axios
@@ -401,11 +403,11 @@ export default {
               for (let i = 0; i < sortData.length; i++) {
                 let d = sortData[i]
                 if (this.BookingDataList[d.bookNo] !== undefined) {
-                  d.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
-                  d.serviceTH = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'บริการ')
+                  // d.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
+                  // d.serviceTH = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'บริการ')
                   // d.serviceEN = this.getDataFromFieldNameEn(this.BookingDataList[d.bookNo], 'Service')
-                  d.cusName = (d.cusName.length > 0) ? d.cusName[0].fieldValue : ''
-                  d.serviceTH = (d.serviceTH.length > 0) ? d.serviceTH[0].fieldValue : ''
+                  // d.cusName = (d.cusName.length > 0) ? d.cusName[0].fieldValue : ''
+                  // d.serviceTH = (d.serviceTH.length > 0) ? d.serviceTH[0].fieldValue : ''
                   // d.serviceEN = (d.serviceEN.length > 0) ? d.serviceEN[0].fieldValue : ''
                   this.itemBooking.push(d)
                 }
@@ -428,7 +430,8 @@ export default {
     },
     async getBookingDataList (dateStart) {
       this.BookingDataList = []
-      let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}&flowId=${this.flowSelect}`
+      let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
+      // let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}&flowId=${this.flowSelect}`
       await axios
         .get(url)
         .then(async response => {

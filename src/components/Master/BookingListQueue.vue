@@ -35,7 +35,7 @@
                 </template>
               </v-select>
             </v-col>
-            <v-col col="auto">
+            <!-- <v-col col="auto">
               <v-select
                 style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
                 v-model="flowSelect"
@@ -55,7 +55,7 @@
                   </v-icon>
                 </template>
               </v-select>
-            </v-col>
+            </v-col> -->
             <v-col col="auto">
               <v-menu
                 ref="menu"
@@ -95,7 +95,7 @@
                 </v-date-picker>
               </v-menu>
             </v-col>
-            <v-col col="auto" v-if="flowSelect !== ''">
+            <v-col col="auto">
               <v-select
                 style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
                 v-model="time"
@@ -257,6 +257,7 @@ export default {
       headers: [
         { text: 'คิว', value: 'storeFrontQueue' },
         { text: 'วันที่นัดหมาย', value: 'dueDate' },
+        { text: 'บริการ', value: 'flowName' },
         { text: 'ชื่อลูกค้า', value: 'cusName' },
         { text: 'จัดการข้อมูล', value: 'action', sortable: false, align: 'center' }
       ],
@@ -325,8 +326,8 @@ export default {
             this.shopId +
             '&masBranchID=' +
             this.masBranchID +
-            '&flowId=' +
-            this.flowSelect +
+            // '&flowId=' +
+            // this.flowSelect +
             '&dueDate=' +
             this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm'
         await axios
@@ -362,7 +363,8 @@ export default {
     },
     async getBookingDataList (dateStart) {
       this.BookingDataList = []
-      let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}&flowId=${this.flowSelect}`
+      let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
+      // let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}&flowId=${this.flowSelect}`
       await axios
         .get(url)
         .then(async response => {
