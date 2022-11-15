@@ -156,7 +156,7 @@
         <template>
           <v-row>
             <v-col v-for="(items, id) in itemBookingUse" :key="id" lg="3" xl="2" md="6" sm="6" xs="6">
-              <v-sheet class="pa-3 pt-5 mt-3" :style="'background-color:'+ DarkModeBackground +';border-radius: 0px 0px 0px 0px;border: 2px dotted #c8c8c8;'" >
+              <v-sheet class="pa-3 pt-5 mt-3" :style="'background-color:'+ DarkModeBackground +';min-height: 339px;border-radius: 0px 0px 0px 0px;border: 2px dotted #c8c8c8;'" >
                 <div class="" style="border-radius: 45px 45px 0px 0px;display:flex;justify-content: center;background-color:#FFFFFF;min-height: 180px;" v-if="items.statusBt === 'confirmJob'">
                   <v-row style="margin:auto;">
                   <v-col cols="12" class="text-center"><v-icon color="#28B446" x-large class="ma-0 mr-2" style="font-size:70px;">mdi-check-circle</v-icon></v-col>
@@ -188,11 +188,11 @@
                   </v-col>
                 </v-row> -->
               <!-- </div> -->
-              <v-sheet v-if="items.storeFrontQueue" class="pa-3" :style="'background-color:#FFFFFF;min-height: 180px;border-radius: 0px 0px 45px 45px;border-top: 4px dotted '+ DarkModeBackground + ';position:relative'">
-                <span :style="'background-color:'+ DarkModeBackground + ';padding: 14px 15px;border-radius: 50%;position: absolute;bottom: 176px;left: -12px;'"></span>
-                <span :style="'background-color:'+ DarkModeBackground + ';padding: 14px 15px;border-radius: 50%;position: absolute;top: -12px;right: -12px;'"></span>
+              <v-sheet v-if="items.storeFrontQueue" class="pa-1" :style="'background-color:#FFFFFF;min-height: 60px;border-radius: 0px 0px 45px 45px;border-top: 4px dotted '+ DarkModeBackground + ';position:relative'">
+                <!-- <span :style="'background-color:'+ DarkModeBackground + ';padding: 14px 15px;border-radius: 50%;position: absolute;bottom: 176px;left: -12px;'"></span>
+                <span :style="'background-color:'+ DarkModeBackground + ';padding: 14px 15px;border-radius: 50%;position: absolute;top: -12px;right: -12px;'"></span> -->
                 <!-- <h5 style="color:#092C4C" class="text-center font-weight-bold mt-2">{{ languageSelect === 0 ? "หมายเลขคิวของคุณ" : "Your Number" }}</h5> -->
-                <p style="color:#092C4C;font-size: 80px;" class="text-center font-weight-black mt-n5 mb-n5">{{items.storeFrontQueue}}</p>
+                <p :style="'color:#092C4C;font-size:' + Fontsize + 'px;'" class="text-center font-weight-black mt-n5 mb-n5">{{items.storeFrontQueue}}</p>
                 <!-- <div style="display:flex;justify-content: center;" v-if="beforQueue !== 0">
                   <h5 style="color:#092C4C" class="text-center font-weight-bold mt-2">{{ languageSelect === 0 ? "มีคิวก่อนหน้าคุณ" : "At the front of the queue" }}</h5>
                   <h5 style="color:#FFFFFF;background-color:#092C4C;min-height: 30px;width:30px;border-radius: 80px 80px 80px 80px;display: flex;justify-content: center;align-items: center;" class="text-center font-weight-black ml-2 mr-2 mt-2">{{beforQueue}}</h5>
@@ -221,8 +221,41 @@ export default {
     'left-menu-admin': adminLeftMenu,
     VuetifyMoney
   },
+  computed: {
+    colsWidth () {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return '55'
+        case 'sm': return '55'
+        case 'md': return '55'
+        case 'lg': return '60'
+        case 'xl': return '80'
+      }
+    },
+    colsWidth2 () {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return 'xs'
+        case 'sm': return 'sm'
+        case 'md': return 'md'
+        case 'lg': return 'lg'
+        case 'xl': return 'xl'
+      }
+    }
+  },
+  watch: {
+    // whenever question changes, this function will run
+    colsWidth (newQuestion, oldQuestion) {
+      // console.log('newnewnew', newQuestion, oldQuestion)
+      this.Fontsize = newQuestion
+    },
+    colsWidth2 (newQuestion, oldQuestion) {
+      // console.log('newnewnew', newQuestion, oldQuestion)
+      this.DiSize = newQuestion
+    }
+  },
   data () {
     return {
+      Fontsize: null,
+      DiSize: null,
       setTimerCalendar: null,
       languageSelect: 0,
       DarkModeBackground: '#FFFFFF',
@@ -287,6 +320,7 @@ export default {
     }
   },
   async mounted () {
+    this.Fontsize = this.colsWidth
     await this.getDataFlow()
     await this.getDataBranch()
     this.setTime()
@@ -300,6 +334,7 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
+
     async getShop () {
       this.shop = []
       await axios
