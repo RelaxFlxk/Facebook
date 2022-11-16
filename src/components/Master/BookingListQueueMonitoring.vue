@@ -14,16 +14,29 @@
             </v-btn>
           </v-col> -->
         <!-- </v-row> -->
-        <v-row justify="center">
-            <v-col cols="auto">
-              <v-img @click="languageSelect = 0" src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2Fflag-TH.png?alt=media&token=e4bd7ffa-aed9-47e3-9240-4dcb9d8d284e" style="width:40px;height:40px;margin-bottom:13px;" />
-              <!-- <v-img @click="languageSelect = 0" :src="require('@/assets/flag-TH.png')" style="width:40px;height:40px;margin-bottom:13px;" /> -->
-            </v-col>
-            <v-col cols="auto">
-              <v-img @click="languageSelect = 1" src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2Fflag-USA.png?alt=media&token=04253ba5-ef71-45b9-b5f0-cab533124346" style="width:40px;height:40px;margin-bottom:13px;" />
-              <!-- <v-img @click="languageSelect = 1" :src="require('@/assets/flag-USA.png')" style="width:40px;height:40px;margin-bottom:13px;" /> -->
-            </v-col>
-          </v-row>
+        <div style="display:flex;justify-content: center;" class="ma-3">
+            <v-chip
+              class="mr-1 font-weight-black"
+              :style="'background-color:' + (languageSelect === 0 ? '#173053' : 'rgb(103 103 103 / 18%)') + ';font-size:20px'"
+              dark
+              @click="languageSelect = 0"
+              >
+              <v-avatar left>
+                <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2Fflag-TH.png?alt=media&token=e4bd7ffa-aed9-47e3-9240-4dcb9d8d284e"></v-img>
+              </v-avatar>
+                TH
+            </v-chip>
+            <v-chip
+              class="ml-1 font-weight-black"
+              :style="'background-color:' + (languageSelect === 1 ? '#173053' : 'rgb(103 103 103 / 18%)') + ';font-size:20px'"
+              dark
+              @click="languageSelect = 1">
+              <v-avatar left>
+                <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2Fflag-USA1.png?alt=media&token=a83dd820-f576-457a-8d08-1009cea9d70b"></v-img>
+              </v-avatar>
+                EN
+            </v-chip>
+          </div>
         <v-form ref="form_search" v-model="validSearch" lazy-validation>
           <v-row>
             <v-col col="2">
