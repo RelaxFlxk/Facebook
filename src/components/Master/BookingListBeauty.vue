@@ -7408,34 +7408,43 @@ export default {
         let TimeData = []
         let currentDate = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTime) || []
         TimeData = currentDate
-        this.timeavailable = TimeData
+        this.timeavailable = TimeData.filter((item) => parseInt(item.limitBooking) > 0)
         console.log('TimeData', TimeData)
-        let LimitBooking = await this.getLimitBooking()
-        console.log('LimitBooking', LimitBooking)
-        if (LimitBooking.status !== false) {
-          if (LimitBooking.length > 0) {
-            LimitBooking.forEach((i, n) => {
-              this.timeavailable.forEach((v, k) => {
-                if (i.bookingTime === v.value) {
-                  if (i.countBooking >= parseInt(v.limitBooking)) {
-                    this.timeavailable.splice(k, 1)
+        if (this.timeavailable.length > 0) {
+          let LimitBooking = await this.getLimitBooking()
+          console.log('LimitBooking', LimitBooking)
+          if (LimitBooking.status !== false) {
+            if (LimitBooking.length > 0) {
+              LimitBooking.forEach((i, n) => {
+                this.timeavailable.forEach((v, k) => {
+                  if (i.bookingTime === v.value) {
+                    if (i.countBooking >= parseInt(v.limitBooking)) {
+                      this.timeavailable.splice(k, 1)
+                    }
                   }
-                }
+                })
               })
-            })
-            if (this.timeavailable.length === 0) {
-              this.$swal(
-                'คิวเต็มแล้ว',
-                'กรุณาเลือกวันที่ใหม่อีกครั้ง',
-                'error'
-              )
-              this.date = ''
+              if (this.timeavailable.length === 0) {
+                this.$swal(
+                  'คิวเต็มแล้ว',
+                  'กรุณาเลือกวันที่ใหม่อีกครั้ง',
+                  'error'
+                )
+                this.date = ''
+              }
             }
+            console.log('this.timeavailable IF', this.timeavailable)
+          } else {
+            this.timeavailable = TimeData.filter((item) => parseInt(item.limitBooking) > 0)
+            console.log('this.timeavailable ELSE', this.timeavailable)
           }
-          console.log('this.timeavailable IF', this.timeavailable)
         } else {
-          this.timeavailable = TimeData
-          console.log('this.timeavailable ELSE', this.timeavailable)
+          this.$swal(
+            'คิวเต็มแล้ว',
+            'กรุณาเลือกวันที่ใหม่อีกครั้ง',
+            'error'
+          )
+          this.date = ''
         }
       } else {
         console.log('this.timeavailable ELSEEEEE', this.timeavailable)
