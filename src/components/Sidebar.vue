@@ -791,9 +791,15 @@ export default {
       //     { title: 'กระดานการทำงาน', icon: 'mdi-clipboard-check-multiple-outline', to: '/Master/BoardControl', type: 'workflow' }
       //   ]
       // }
-      this.boardSide = [
-        { title: 'กระดานการทำงาน', icon: 'mdi-clipboard-check-multiple-outline', to: '/Master/BoardControl', type: 'workflow' }
-      ]
+      if (this.session.data.shopId === 'U9084920b3005bd1dcb57af1ae6bdba32' || this.session.data.shopId === 'Uc2e4a30c385816316eb1bfe25740cd4d') {
+        this.boardSide = [
+          { title: 'กระดานการทำงาน', icon: 'mdi-clipboard-check-multiple-outline', to: '/Master/BoardControl', type: 'workflow' }
+        ]
+      } else {
+        this.boardSide = [
+          { title: 'กระดานการทำงาน', icon: 'mdi-clipboard-check-multiple-outline', to: '/Master/BoardControlBeauty', type: 'workflow' }
+        ]
+      }
     },
     billingPlan (dt) {
       console.log('billingPlan', dt)
