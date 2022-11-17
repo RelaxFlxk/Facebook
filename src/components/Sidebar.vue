@@ -765,11 +765,15 @@ export default {
       console.log('textValue', textValue[0].type)
     },
     bookingChk () {
-      // this.$router.push('/Onsite/JobList')
-      this.booking = [
-        // { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingLink', type: 'booking' },
-        { title: 'รายชื่อลูกค้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingListBeauty', type: 'booking' }
-      ]
+      if (this.$session.getAll().data.timeSlotStatus === 'True') {
+        this.boardSide = [
+          { title: 'รายชื่อลูกค้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingListBeautyEmp', type: 'booking' }
+        ]
+      } else {
+        this.booking = [
+          { title: 'รายชื่อลูกค้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingListBeauty', type: 'booking' }
+        ]
+      }
     },
     onsite () {
       // this.$router.push('/Onsite/JobList')
@@ -778,10 +782,17 @@ export default {
       ]
     },
     board () {
-      console.log('testboard')
-      // this.$router.push('/Onsite/JobList')
+      // if (this.$session.getAll().data.timeSlotStatus === 'True') {
+      //   this.boardSide = [
+      //     { title: 'กระดานการทำงาน', icon: 'mdi-clipboard-check-multiple-outline', to: '/Master/BoardControlEmp', type: 'workflow' }
+      //   ]
+      // } else {
+      //   this.boardSide = [
+      //     { title: 'กระดานการทำงาน', icon: 'mdi-clipboard-check-multiple-outline', to: '/Master/BoardControl', type: 'workflow' }
+      //   ]
+      // }
       this.boardSide = [
-        { title: 'กระดานการทำงาน', icon: 'mdi-clipboard-check-multiple-outline', to: '/Master/BoardControlEmp', type: 'workflow' }
+        { title: 'กระดานการทำงาน', icon: 'mdi-clipboard-check-multiple-outline', to: '/Master/BoardControl', type: 'workflow' }
       ]
     },
     billingPlan (dt) {

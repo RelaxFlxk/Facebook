@@ -448,6 +448,7 @@
               outlined
               dense
               required
+              :disabled="statusBranchReadonly"
               @change="dataReady = false,getBookingList()"
               ><template #prepend-inner>
                 <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
@@ -541,6 +542,7 @@
               outlined
               dense
               required
+              :disabled="statusBranchReadonly"
               @change="dataReady = false,getBookingList()"
               ><template #prepend-inner>
                 <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
@@ -6395,6 +6397,7 @@ export default {
       datailLinkDeposit: '',
       depositPrice: 0,
       statusdepositPrice: false,
+      statusBranchReadonly: false,
       dataEmpAdd: [],
       dataEmpAllAdd: [],
       EmpItemLimitAdd: [],
@@ -10478,7 +10481,23 @@ export default {
       //   localStorage.setItem('BRANCH', JSON.stringify(temp))
       // }
       // this.branch = JSON.parse(localStorage.getItem('BRANCH'))
-      this.branch = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName', '')
+      let branchData = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName', '')
+      if (this.session.data.masBranchID === '' || this.session.data.masBranchID === null) {
+        this.branch = branchData
+      } else {
+        let checkData = branchData.filter(el => { return el.value === this.session.data.masBranchID })
+        if (checkData.length > 0) {
+          this.branch = checkData
+        } else {
+          await this.getDataBranch()
+          if (checkData.length > 0) {
+            this.branch = checkData
+          } else {
+            this.branch = []
+            this.$swal('ผิดพลาด', 'กรุณาตรวจสอบสาขาของท่าน เนื่องจากระบบตรวจหาสาขาไม่พบ', 'error')
+          }
+        }
+      }
     },
     getDataFromFieldName (data, key) {
       if (data !== undefined) {
@@ -11096,15 +11115,32 @@ export default {
       clearInterval(this.setTimerCalendar)
       this.setTimerCalendar = null
 
-      if (this.masBranchID) {
-        this.masBranchID = this.masBranchID
-      } else {
-        if (this.branch.length > 0) {
-          this.masBranchID = this.branch[0].value
+      if (this.session.data.masBranchID === '' || this.session.data.masBranchID === null) {
+        this.statusBranchReadonly = false
+        if (this.masBranchID) {
+          this.masBranchID = this.masBranchID
         } else {
-          await this.getDataBranch()
           if (this.branch.length > 0) {
             this.masBranchID = this.branch[0].value
+          } else {
+            await this.getDataBranch()
+            if (this.branch.length > 0) {
+              this.masBranchID = this.branch[0].value
+            } else {
+              this.masBranchID = ''
+              this.$swal('ผิดพลาด', 'กรุณาตรวจสอบสาขาของท่าน เนื่องจากระบบตรวจหาสาขาไม่พบ', 'error')
+            }
+            // this.getBookingList()
+          }
+        }
+      } else {
+        this.statusBranchReadonly = true
+        if (this.branch.filter(el => { return el.value === this.session.data.masBranchID }).length > 0) {
+          this.masBranchID = this.session.data.masBranchID
+        } else {
+          await this.getDataBranch()
+          if (this.branch.filter(el => { return el.value === this.session.data.masBranchID }).length > 0) {
+            this.masBranchID = this.session.data.masBranchID
           } else {
             this.masBranchID = ''
             this.$swal('ผิดพลาด', 'กรุณาตรวจสอบสาขาของท่าน เนื่องจากระบบตรวจหาสาขาไม่พบ', 'error')

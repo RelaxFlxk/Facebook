@@ -501,12 +501,20 @@ export default {
         if (dataitem.USER_ROLE === 'onsite') {
           this.$router.push('/Onsite/JobList')
         } else if (dataitem.USER_ROLE === 'board') {
-          this.$router.push('/Master/BoardControlEmp')
-        } else if (dataitem.USER_ROLE === 'booking' && dataitem.shopId !== 'U9084920b3005bd1dcb57af1ae6bdba32') {
-          if (dataitem.timeSlotStatus === 'True') {
-            this.$router.push('/Master/BookingListBeautyEmp')
+          if (dataitem.shopId === 'U9084920b3005bd1dcb57af1ae6bdba32' || dataitem.shopId === 'Uc2e4a30c385816316eb1bfe25740cd4d') {
+            this.$router.push('/Master/BoardControl')
           } else {
-            this.$router.push('/Master/BookingListBeauty')
+            this.$router.push('/Master/BoardControlBeauty')
+          }
+        } else if (dataitem.USER_ROLE === 'booking') {
+          if (dataitem.shopId === 'U9084920b3005bd1dcb57af1ae6bdba32' || dataitem.shopId === 'Uc2e4a30c385816316eb1bfe25740cd4d') {
+            this.$router.push('/Master/BookingList')
+          } else {
+            if (dataitem.timeSlotStatus === 'True') {
+              this.$router.push('/Master/BookingListBeautyEmp')
+            } else {
+              this.$router.push('/Master/BookingListBeauty')
+            }
           }
         } else {
           // this.$router.push('/Dashbord/ReportBooking')

@@ -1492,23 +1492,46 @@ export default {
       console.log('timevailable', this.timeavailable)
     },
     getDataBranch () {
+      let DataBranchName = []
+      let branchData = []
       this.DataBranchName = []
       this.branchData = []
       console.log('DataBranchName', this.DataBranchName)
       axios
         .get(this.DNS_IP + '/master_branch/get?shopId=' + this.shopId)
-        .then(response => {
+        .then(async response => {
           let rs = response.data
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
               d.text = d.masBranchName
               d.value = d.masBranchID
-              this.DataBranchName.push(d)
-              this.branchData.push(d)
+              DataBranchName.push(d)
+              branchData.push(d)
+            }
+            if (this.session.data.masBranchID === '' || this.session.data.masBranchID === null) {
+              this.DataBranchName = DataBranchName
+              this.branchData = branchData
+            } else {
+              let checkData = branchData.filter(el => { return el.value === this.session.data.masBranchID })
+              if (checkData.length > 0) {
+                this.DataBranchName = checkData
+                this.branchData = checkData
+              } else {
+                await this.getDataBranch()
+                if (checkData.length > 0) {
+                  this.DataBranchName = checkData
+                  this.branchData = checkData
+                } else {
+                  this.DataBranchName = []
+                  this.branchData = []
+                  this.$swal('ผิดพลาด', 'กรุณาตรวจสอบสาขาของท่าน เนื่องจากระบบตรวจหาสาขาไม่พบ', 'error')
+                }
+              }
             }
           } else {
             this.DataBranchName = []
+            this.branchData = []
           }
         })
     },
