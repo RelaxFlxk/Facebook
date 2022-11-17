@@ -9,7 +9,7 @@
           </v-col>
           <v-col cols="12" md="6" lg="6" class="text-right"> </v-col>
         </v-row>
-        <v-row v-if="sortNo === 1">
+        <v-row class="no-gutters" v-if="sortNo === 1">
           <v-col cols="12" md="6" lg="6" class="px-3 text-right">
             <!-- <v-select
               v-model="selectFlow"
