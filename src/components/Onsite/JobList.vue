@@ -2,7 +2,7 @@
   <div>
     <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
     <v-main>
-      <div class="px-lg-4 mb-16" style="overflow-x: hidden;">
+      <div class="px-lg-4 mb-16" style="overflow-x: hidden;min-height:400px;">
         <v-row class="no-gutters" v-if="sortNo === 1">
           <v-col cols="12" md="6" lg="6" class="text-left">
             <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
@@ -1155,6 +1155,7 @@ export default {
     async getFlowStep () {
       console.log('shopId', this.shopId)
       console.log('this.selectFlow', this.selectFlow)
+      this.itemStep = []
       await axios.get(this.DNS_IP + '/flowStep/get?shopId=' + this.shopId + '&flowId=' + this.selectFlow)
         .then(response => {
           let rs = response.data
