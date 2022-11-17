@@ -2191,7 +2191,7 @@ export default {
             this.formUpdateLimitbooking.typeDayCustom = rs[0].typeDayCustom
             this.formUpdateLimitbooking.dateDayoffValue = rs[0].dateDayoffValue
             // console.log('this.formUpdateLimitbooking.setTime', rs[0].setTime)
-            if (rs[0].setTime === null || rs[0].setTime === '') {
+            if (rs[0].setTime === null || rs[0].setTime === '' || rs[0].setTime === '[]') {
               this.dataItemAddTime = []
             } else {
               let setTime = JSON.parse(rs[0].setTime)

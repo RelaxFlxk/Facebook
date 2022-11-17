@@ -591,13 +591,14 @@ export default {
         BranchJSON.push(s)
       }
       let checkitemSelect = []
+      console.log('flowData', this.flowData)
       this.flowData.forEach(v => {
         if (v.checkBooking === true) {
           checkitemSelect.push(v.checkBooking)
         } else if (v.checkJob === true) {
           checkitemSelect.push(v.checkJob)
-        } else if (v.checkEpmtime === true) {
-          checkitemSelect.push(v.checkEpmtime)
+        } else if (v.checkOnsite === true) {
+          checkitemSelect.push(v.checkOnsite)
         }
       })
       let dataAdd = {}
@@ -628,7 +629,8 @@ export default {
           LAST_USER: this.$session.getAll().data.userName
         }
       }
-      if (this.BookingSend === false && checkitemSelect.length === 0) {
+      console.log('test', checkitemSelect)
+      if (checkitemSelect.length === 0) {
         this.$swal('ผิดพลาด', 'กรุณาเลือกรายการแจ้งเตือน', 'error')
       } else {
         if (BranchJSON.length > 0) {
@@ -758,11 +760,12 @@ export default {
           checkitemSelect.push(v.checkBooking)
         } else if (v.checkJob === true) {
           checkitemSelect.push(v.checkJob)
-        } else if (v.checkEpmtime === true) {
-          checkitemSelect.push(v.checkEpmtime)
+        } else if (v.checkOnsite === true) {
+          checkitemSelect.push(v.checkOnsite)
         }
       })
-      if (this.BookingSendEdit === false && checkitemSelect.length === 0) {
+      console.log('checkitemselect', checkitemSelect)
+      if (checkitemSelect.length === 0) {
         this.$swal('ผิดพลาด', 'กรุณาเลือกรายการแจ้งเตือน', 'error')
       } else {
         await axios

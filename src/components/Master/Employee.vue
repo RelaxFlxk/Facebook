@@ -256,7 +256,7 @@
 
           <!-- edit -->
           <v-dialog v-model="dialogEdit" persistent max-width="35%">
-            <v-card class="pa-1">
+            <v-card class="pa-1" >
               <v-card-text class="pa-0 px-2">
                 <v-container>
                   <v-form
@@ -318,7 +318,7 @@
                           maxlength="50"
                           required
                           attach
-        :menu-props="{ bottom: true, offsetY: true }"
+                          :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-col>
                       <v-col cols="12" class="pa-0">
@@ -368,7 +368,6 @@
                           :item-text="branch.text"
                           :items="branch"
                           label="สาขา"
-                          attach
                           clearable
                           :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
@@ -1000,7 +999,7 @@ export default {
         }
       ],
       // End Menu Config
-      itemsTitle: ['นาย', 'นาง', 'นางสาว', 'คุณ'],
+      itemsTitle: ['นาย', 'นาง', 'นางสาว', 'คุณ', ' '],
       dataReady: true,
       dateTime: '', // Generate DateTime
       date: this.momenDate_1(new Date()),
@@ -1309,8 +1308,7 @@ export default {
           if (rs.length > 0) {
             dt = rs
             console.log('rs', rs)
-            this.formUpdateLimitbooking.limitBookingCheck =
-              rs[0].limitBookingCheck === 'False' ? 'True' : 'True' || 'True'
+            this.formUpdateLimitbooking.limitBookingCheck = rs[0].limitBookingCheck === 'False' ? 'True' : 'True' || 'True'
             if (rs[0].dateDayoffText === null || rs[0].dateDayoffText === '') {
               this.formUpdateLimitbooking.dateDayoffText = []
             } else {
@@ -1327,17 +1325,15 @@ export default {
             }
             this.formUpdateLimitbooking.typeDayCustom = rs[0].typeDayCustom
             this.formUpdateLimitbooking.dateDayoffValue = rs[0].dateDayoffValue
-            // console.log('this.formUpdateLimitbooking.setTime', rs[0].setTime)
-            if (rs[0].setTime === null || rs[0].setTime === '') {
+            console.log('this.formUpdateLimitbooking.setTime', rs[0].setTime)
+            if (rs[0].setTime === null || rs[0].setTime === '' || rs[0].setTime === '[]') {
               this.dataItemAddTime = []
+              console.log('dataItemAddTime')
             } else {
               let setTime = JSON.parse(rs[0].setTime)
-              setTime.map((v, k) => {
-                v.id = k + 1
-              })
-              console.log('settime222222222', setTime)
+              setTime.map((v, k) => { v.id = k + 1 })
               if (setTime[0].limitBooking === undefined) {
-                // console.log('dasdas')
+                console.log('dasdas')
                 for (let i = 0; i < setTime.length; i++) {
                   let d = setTime[i]
                   d.limitBooking = ''
@@ -1345,6 +1341,7 @@ export default {
                 }
               } else {
                 this.dataItemAddTime = setTime
+                console.log('test')
               }
             }
             console.log('testgetgetlimitbooking', this.formUpdateLimitbooking)
@@ -1484,6 +1481,7 @@ export default {
       }
     },
     async clearLimit () {
+      this.dataItemAddTime = []
       this.timeText = ''
       this.formUpdateLimitbooking.setTime = ''
       this.formUpdateLimitbooking.limitBookingCheck = ''
