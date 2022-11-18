@@ -157,7 +157,7 @@
                         dark
                         color="white"
                         :style="styleCloseBt"
-                        @click="dialogEdit = false"
+                        @click="dialogEdit = false,getData(DNS_IP, path, session.data.shopId)"
                         >
                         X
                         </v-btn>
@@ -278,11 +278,16 @@
             <template v-slot:[`item.CREATE_DATE`]="{ item }">
               {{ format_dateFUllTime(item.CREATE_DATE) }}
             </template>
+            <template v-slot:[`item.userPassword`]="{ item }">
+              <p v-if="session.data.USER_ROLE === 'admin'">{{item.userPassword}}</p>
+              <p v-else>*********</p>
+            </template>
             <template v-slot:[`item.LAST_DATE`]="{ item }">
               {{ format_dateFUllTime(item.LAST_DATE) }}
             </template>
             <template v-slot:[`item.action`]="{ item }">
-               <v-btn
+              <template v-if="session.data.USER_ROLE === 'admin'">
+                <v-btn
                       v-if="item.USER_ROLE === 'user' || item.USER_ROLE === 'onsite'"
                       color="red"
                       dark
@@ -292,7 +297,19 @@
                     >
                       <v-icon> mdi-delete </v-icon>
                     </v-btn>
-              <v-btn
+               <v-btn
+                      color="blue"
+                      fab
+                      small
+                      dark
+                      @click.stop="(dialogEdit = true), setData(item)"
+                    >
+                      <v-icon> mdi-tools </v-icon>
+                    </v-btn>
+              </template>
+              <template v-if="session.data.USER_ROLE === 'user'">
+                    <v-btn
+                    v-if="session.data.userName === item.userName"
                       color="blue"
                       fab
                       small
@@ -301,6 +318,7 @@
                     >
                       <v-icon> mdi-tools </v-icon>
                     </v-btn>
+              </template>
             </template>
           </v-data-table>
         </v-card>
@@ -411,6 +429,7 @@ export default {
       // End Menu Config
       // Data Table Config
       columns: [
+        { text: 'ชื่อ', value: 'userFirst_NameTH' },
         { text: 'Username', value: 'userName' },
         { text: 'Password', value: 'userPassword' },
         { text: 'สิทธิใช้งาน', value: 'USER_ROLE' },
@@ -603,7 +622,7 @@ export default {
           })
       })
     },
-    async getDataById (item) {
+    async setData (item) {
       console.log('item', item)
       await this.getEmpSelectEdit()
       this.formUpdate = item
