@@ -11,7 +11,7 @@
               divider=">"
             ></v-breadcrumbs>
           </v-col>
-          <v-col cols="6" align="right">
+          <v-col cols="6" align="right" v-if="session.data.USER_ROLE === 'admin'">
             <v-btn
               class="mt-6 mr-10"
               color="primary"
@@ -97,6 +97,19 @@
                         ></v-select>
                       </v-col>
                     </v-row>
+                    <v-row v-if="name || '' !== ''">
+                      <v-col cols="12" class="pb-0 pt-0">
+                        <v-select
+                        outlined
+                          v-model="USER_ROLE"
+                          :items="USER_ROLEitemAdmin"
+                          label="สิทธิการใช้งาน"
+                          dense
+                          required
+                          :rules="emptyRules"
+                        ></v-select>
+                      </v-col>
+                    </v-row>
                     <v-row>
                     <v-col cols="12" class="pt-0">
                       <v-text-field
@@ -175,6 +188,7 @@
                         required
                         :rules="empSelectEdit === '' || empSelectEdit === null ? nameRules : [true]"
                         :disabled="empSelectEdit === '' || empSelectEdit === null ? false : true"
+                        @input="(formUpdate.userFirst_NameTH === '' || formUpdate.userFirst_NameTH === null) ? USER_ROLE = '' : ''"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" class="pa-0 px-3" v-if="formUpdate.USER_ROLE !== 'admin'">
@@ -192,6 +206,7 @@
                         item-value="value"
                         return-object
                         clearable
+                        @input="(empSelectEdit === '' || empSelectEdit === null) ? USER_ROLE = '' : ''"
                       ></v-select>
                     </v-col>
                     </v-row>
@@ -223,6 +238,17 @@
                         dense
                           v-model="USER_ROLE"
                           :items="USER_ROLEitem"
+                          label="สิทธิการใช้งาน"
+                          required
+                          :rules="emptyRules"
+                        ></v-select>
+                      </v-col>
+                    <v-col cols="12" class="pa-0 px-3" v-if="(formUpdate.userFirst_NameTH || '') !== '' && session.data.USER_ROLE === 'admin'">
+                        <v-select
+                        outlined
+                        dense
+                          v-model="USER_ROLE"
+                          :items="USER_ROLEitemAdmin"
                           label="สิทธิการใช้งาน"
                           required
                           :rules="emptyRules"
@@ -314,7 +340,7 @@
                       fab
                       small
                       dark
-                      @click.stop="(dialogEdit = true), getDataById(item)"
+                      @click.stop="(dialogEdit = true), setData(item)"
                     >
                       <v-icon> mdi-tools </v-icon>
                     </v-btn>
@@ -391,6 +417,10 @@ export default {
       lastName: '',
       password: '',
       USER_ROLE: '',
+      USER_ROLEitemAdmin: [
+        { text: 'Admin', value: 'admin' },
+        { text: 'User', value: 'user' }
+      ],
       USER_ROLEitem: [
         // { text: 'Admin', value: 'admin' },
         // { text: 'User', value: 'user' },
@@ -521,7 +551,7 @@ export default {
         console.log('false', this.session.data.shopId)
       } else {
         axios
-          .get(this.DNS_IP + '/system_user/get?userName=' + this.email + '&shopId=' + this.session.data.shopId)
+          .get(this.DNS_IP + '/system_user/get?userName=' + this.email)
           .then(response1 => {
             let data = []
             if (this.empSelectAdd === '' || this.empSelectAdd === null) {
@@ -530,7 +560,7 @@ export default {
                 'userName': this.email,
                 'userFirst_NameTH': this.name,
                 'userPassword': this.password,
-                'USER_ROLE': 'user',
+                'USER_ROLE': this.USER_ROLE,
                 'CREATE_USER': this.session.data.userName,
                 'LAST_USER': this.session.data.userName,
                 'shopId': this.session.data.shopId
@@ -627,9 +657,9 @@ export default {
       await this.getEmpSelectEdit()
       this.formUpdate = item
       this.USER_ROLE = item.USER_ROLE || ''
-      if (this.USER_ROLE === 'user' || this.USER_ROLE === 'admin') {
-        this.USER_ROLE = ''
-      }
+      // if (this.USER_ROLE === 'user' || this.USER_ROLE === 'admin') {
+      //   this.USER_ROLE = ''
+      // }
       if (item.empId === '' || item.empId === null) {
         this.formUpdate.userFirst_NameTH = item.userFirst_NameTH
         this.empSelectEdit = ''
@@ -641,7 +671,6 @@ export default {
       console.log('empSelectEdit', this.empSelectEdit)
     },
     editData () {
-      console.log('this.$refs.form_update.validate()', this.$refs.form_update.validate())
       this.$refs.form_update.validate()
       if (this.$refs.form_update.validate() === false) {
         console.log('false', this.session.data.shopId)
@@ -656,35 +685,73 @@ export default {
           cancelButtonText: 'ไม่'
         }).then(async result => {
           let data = []
-          if (this.formUpdate.USER_ROLE === 'admin') {
+          // if (this.formUpdate.USER_ROLE === 'admin') {
+          //   data = [{
+          //     'userName': this.formUpdate.userName,
+          //     'userFirst_NameTH': this.formUpdate.userFirst_NameTH,
+          //     'userPassword': this.formUpdate.userPassword,
+          //     'USER_ROLE': 'admin',
+          //     'empId': '',
+          //     'LAST_USER': this.session.data.userName
+          //   }]
+          // } else {
+          //   if (this.empSelectEdit === '' || this.empSelectEdit === null) {
+          //     data = [{
+          //       'userName': this.formUpdate.userName,
+          //       'userFirst_NameTH': this.formUpdate.userFirst_NameTH,
+          //       'userPassword': this.formUpdate.userPassword,
+          //       'USER_ROLE': 'user',
+          //       'empId': '',
+          //       'LAST_USER': this.session.data.userName
+          //     }]
+          //   } else {
+          //     data = [{
+          //       'userName': this.formUpdate.userName,
+          //       'userFirst_NameTH': this.formUpdate.userFirst_NameTH,
+          //       'userPassword': this.formUpdate.userPassword,
+          //       'USER_ROLE': this.USER_ROLE,
+          //       'LAST_USER': this.session.data.userName,
+          //       'empId': this.empSelectEdit.value
+          //     }]
+          //   }
+          // }
+          this.empSelectEdit = this.empSelectEdit || ''
+          if (this.session.data.USER_ROLE === 'user' && (this.empSelectEdit === '')) {
             data = [{
               'userName': this.formUpdate.userName,
               'userFirst_NameTH': this.formUpdate.userFirst_NameTH,
               'userPassword': this.formUpdate.userPassword,
-              'USER_ROLE': 'admin',
-              'empId': '',
-              'LAST_USER': this.session.data.userName
+              'USER_ROLE': 'user',
+              'LAST_USER': this.session.data.userName,
+              'empId': ''
             }]
-          } else {
-            if (this.empSelectEdit === '' || this.empSelectEdit === null) {
-              data = [{
-                'userName': this.formUpdate.userName,
-                'userFirst_NameTH': this.formUpdate.userFirst_NameTH,
-                'userPassword': this.formUpdate.userPassword,
-                'USER_ROLE': 'user',
-                'empId': '',
-                'LAST_USER': this.session.data.userName
-              }]
-            } else {
-              data = [{
-                'userName': this.formUpdate.userName,
-                'userFirst_NameTH': this.formUpdate.userFirst_NameTH,
-                'userPassword': this.formUpdate.userPassword,
-                'USER_ROLE': this.USER_ROLE,
-                'LAST_USER': this.session.data.userName,
-                'empId': this.empSelectEdit.value
-              }]
-            }
+          } else if ((this.session.data.USER_ROLE === 'user' && (this.empSelectEdit !== ''))) {
+            data = [{
+              'userName': this.formUpdate.userName,
+              'userFirst_NameTH': this.empSelectEdit.text,
+              'userPassword': this.formUpdate.userPassword,
+              'USER_ROLE': this.USER_ROLE,
+              'LAST_USER': this.session.data.userName,
+              'empId': this.empSelectEdit.value
+            }]
+          } else if ((this.session.data.USER_ROLE === 'admin' && (this.empSelectEdit !== ''))) {
+            data = [{
+              'userName': this.formUpdate.userName,
+              'userFirst_NameTH': this.empSelectEdit.text,
+              'userPassword': this.formUpdate.userPassword,
+              'USER_ROLE': this.USER_ROLE,
+              'LAST_USER': this.session.data.userName,
+              'empId': this.empSelectEdit.value
+            }]
+          } else if ((this.session.data.USER_ROLE === 'admin' && (this.empSelectEdit === ''))) {
+            data = [{
+              'userName': this.formUpdate.userName,
+              'userFirst_NameTH': this.formUpdate.userFirst_NameTH,
+              'userPassword': this.formUpdate.userPassword,
+              'USER_ROLE': this.USER_ROLE,
+              'LAST_USER': this.session.data.userName,
+              'empId': ''
+            }]
           }
           console.log('dd', data)
 

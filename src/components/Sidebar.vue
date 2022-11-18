@@ -121,34 +121,6 @@
 
     <v-list-group
       dense
-        :value="broadCastValue"
-        prepend-icon="mdi-graph-outline"
-        color="white"
-        no-action
-        v-if="broadCast.length > 0"
-      >
-      <template v-slot:activator>
-          <v-list-item-title class="menu-head text-wrap">เครื่องมือการตลาด</v-list-item-title>
-        </template>
-
-        <v-list-item
-          v-for="(item, i) in broadCast"
-          :key="i"
-          :to="item.to"
-          router
-          exact
-          dense
-          @click="clearTimeAll()"
-        >
-          <v-list-item-icon>
-            <v-icon v-text="item.icon" dense color="white"></v-icon>
-          </v-list-item-icon>
-          <v-list-item-title v-text="item.title" class="text-wrap" dense color="white"></v-list-item-title>
-        </v-list-item>
-      </v-list-group>
-
-    <v-list-group
-      dense
         :value="customerValue"
         prepend-icon="mdi-account-details"
         color="white"
@@ -174,6 +146,34 @@
           <v-list-item-title class="text-wrap" dense v-text="item.title"></v-list-item-title>
         </v-list-item>
     </v-list-group>
+
+    <v-list-group
+      dense
+        :value="broadCastValue"
+        prepend-icon="mdi-graph-outline"
+        color="white"
+        no-action
+        v-if="broadCast.length > 0"
+      >
+      <template v-slot:activator>
+          <v-list-item-title class="menu-head text-wrap">เครื่องมือการตลาด</v-list-item-title>
+        </template>
+
+        <v-list-item
+          v-for="(item, i) in broadCast"
+          :key="i"
+          :to="item.to"
+          router
+          exact
+          dense
+          @click="clearTimeAll()"
+        >
+          <v-list-item-icon>
+            <v-icon v-text="item.icon" dense color="white"></v-icon>
+          </v-list-item-icon>
+          <v-list-item-title v-text="item.title" class="text-wrap" dense color="white"></v-list-item-title>
+        </v-list-item>
+      </v-list-group>
 
     <v-list-group
       dense
@@ -712,28 +712,41 @@ export default {
           { title: 'กระดานการทำงาน', icon: 'mdi-clipboard-check-multiple-outline', to: '/Master/BoardControlBeauty', type: 'workflow' }
         ]
       }
-      this.corporate = [
-        { title: 'สาขา', icon: 'mdi-home-group', to: '/Master/Branch', type: 'corporate' },
-        { title: 'พนักงาน', icon: 'mdi-account-multiple', to: '/Master/Employee', type: 'corporate' },
-        { title: 'รายการบริการ', icon: 'mdi-atom-variant', to: '/Master/ServiceType', type: 'corporate' },
-        { title: 'ช่องทางการชำระเงิน', icon: 'mdi-credit-card-outline', to: '/Master/PaymentType', type: 'corporate' },
-        { title: 'จัดการบริษัท', icon: 'mdi-home-city', to: '/System/EditShop', type: 'corporate' },
-        { title: 'สมัครและจัดการยูเซอร์', icon: 'mdi-account-circle', to: '/System/ManageUser', type: 'corporate' },
-        { title: 'พิมพ์ใบเสร็จ', icon: 'mdi-printer-search', to: '/PrintPdf/PrintInvoice', type: 'corporate' }
-      ]
-      this.broadCast = [
-        { title: 'กลุ่มเป้าหมาย', icon: 'mdi-account-group', to: '/BroadCast/Audience', type: 'broadCast' },
-        { title: 'บรอดแคสต์', icon: 'mdi-bullhorn', to: '/BroadCast/BroadCast', type: 'broadCast' }
-      ]
-      this.settings = [
-        // { title: 'จัดการข้อมูลนัดหมาย', icon: 'mdi-book-cog-outline', to: '/Master/BookingField', type: 'settings' },
-        { title: 'ตั้งค่าการแจ้งเตือน', icon: 'mdi-bell-ring', to: '/Master/NoticeManagement', type: 'settings' },
-        { title: 'เพิ่ม/ลบ สถานะการบริการ', icon: 'mdi-transit-connection-variant', to: '/Master/Flow', type: 'settings' },
-        { title: 'จัดโครงสร้างกระดาน', icon: 'dashboard', to: '/Master/WorkShop', type: 'settings' },
-        { title: 'จัดการ ช่องกรอกข้อมูล', icon: 'mdi-account-edit', to: '/Master/CustomField', type: 'settings' },
-        { title: 'จัดการ Tag', icon: 'mdi-wrench', to: '/Master/SettingTag', type: 'settings' },
-        { title: 'จัดการ Notify', icon: 'mdi-bell-plus', to: '/Master/SettingLineNotify', type: 'settings' }
-      ]
+      if (this.$session.getAll().data.USER_ROLE === 'admin') {
+        this.corporate = [
+          { title: 'สาขา', icon: 'mdi-home-group', to: '/Master/Branch', type: 'corporate' },
+          { title: 'พนักงาน', icon: 'mdi-account-multiple', to: '/Master/Employee', type: 'corporate' },
+          { title: 'รายการบริการ', icon: 'mdi-atom-variant', to: '/Master/ServiceType', type: 'corporate' },
+          { title: 'ช่องทางการชำระเงิน', icon: 'mdi-credit-card-outline', to: '/Master/PaymentType', type: 'corporate' },
+          { title: 'จัดการบริษัท', icon: 'mdi-home-city', to: '/System/EditShop', type: 'corporate' },
+          { title: 'สมัครและจัดการยูเซอร์', icon: 'mdi-account-circle', to: '/System/ManageUser', type: 'corporate' },
+          { title: 'พิมพ์ใบเสร็จ', icon: 'mdi-printer-search', to: '/PrintPdf/PrintInvoice', type: 'corporate' }
+        ]
+        this.broadCast = [
+          { title: 'กลุ่มเป้าหมาย', icon: 'mdi-account-group', to: '/BroadCast/Audience', type: 'broadCast' },
+          { title: 'บรอดแคสต์', icon: 'mdi-bullhorn', to: '/BroadCast/BroadCast', type: 'broadCast' }
+        ]
+        this.settings = [
+          // { title: 'จัดการข้อมูลนัดหมาย', icon: 'mdi-book-cog-outline', to: '/Master/BookingField', type: 'settings' },
+          { title: 'ตั้งค่าการแจ้งเตือน', icon: 'mdi-bell-ring', to: '/Master/NoticeManagement', type: 'settings' },
+          { title: 'เพิ่ม/ลบ สถานะการบริการ', icon: 'mdi-transit-connection-variant', to: '/Master/Flow', type: 'settings' },
+          { title: 'จัดโครงสร้างกระดาน', icon: 'dashboard', to: '/Master/WorkShop', type: 'settings' },
+          { title: 'จัดการ ช่องกรอกข้อมูล', icon: 'mdi-account-edit', to: '/Master/CustomField', type: 'settings' },
+          { title: 'จัดการ Tag', icon: 'mdi-wrench', to: '/Master/SettingTag', type: 'settings' },
+          { title: 'จัดการ Notify', icon: 'mdi-bell-plus', to: '/Master/SettingLineNotify', type: 'settings' }
+        ]
+      }
+      if (this.$session.getAll().data.USER_ROLE === 'user') {
+        this.corporate = [
+          // { title: 'สาขา', icon: 'mdi-home-group', to: '/Master/Branch', type: 'corporate' },
+          // { title: 'พนักงาน', icon: 'mdi-account-multiple', to: '/Master/Employee', type: 'corporate' },
+          // { title: 'รายการบริการ', icon: 'mdi-atom-variant', to: '/Master/ServiceType', type: 'corporate' },
+          // { title: 'ช่องทางการชำระเงิน', icon: 'mdi-credit-card-outline', to: '/Master/PaymentType', type: 'corporate' },
+          // { title: 'จัดการบริษัท', icon: 'mdi-home-city', to: '/System/EditShop', type: 'corporate' },
+          { title: 'สมัครและจัดการยูเซอร์', icon: 'mdi-account-circle', to: '/System/ManageUser', type: 'corporate' }
+          // { title: 'พิมพ์ใบเสร็จ', icon: 'mdi-printer-search', to: '/PrintPdf/PrintInvoice', type: 'corporate' }
+        ]
+      }
       // this.master = [this.customer[0], this.booking[0], this.Dashboard[0], this.workflow[0], this.corporate[0], this.broadCast[0], this.settings[0]]
       this.master.push(...this.customer, ...this.booking, ...this.Dashboard, ...this.workflow, ...this.corporate, ...this.broadCast, ...this.settings)
       var textValue = this.master.filter(el => { return this.$route.fullPath === el.to })[0].type
