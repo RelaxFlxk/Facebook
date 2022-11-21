@@ -152,10 +152,15 @@ export default {
       this.loadingDeposit = true
       if (this.filesDeposit) {
         const _this = this
+        let configDepositUpload = {
+          headers: {
+            'bookNo': this.bookNo
+          }
+        }
         let params = new FormData()
         params.append('file', this.filesDeposit)
         await axios
-          .post(this.DNS_IP + `/file/upload/depositReturn`, params)
+          .post(this.DNS_IP + `/file/upload/depositReturn`, params, configDepositUpload)
           .then(function (response) {
             _this.pictureUrlDeposit = response.data
             console.log('url Pic', response.data)

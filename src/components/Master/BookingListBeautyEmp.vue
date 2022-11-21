@@ -7827,7 +7827,7 @@ export default {
       // this.showTable = []
       console.log('setLimitBooking', dateitem)
       this.limitBookingCheck = this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].limitBookingCheck || 'False'
-      if (this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].limitBookingCheck || 'False') {
+      if (this.limitBookingCheck === 'True') {
         this.timeavailable = JSON.parse(this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTime) || []
         let slotByflow = this.DataFlowName.filter((v) => v.value === this.formAdd.flowId)[0].allData.timeSlot
         if (this.timeavailable.length >= slotByflow) {
@@ -8263,10 +8263,15 @@ export default {
       console.log('bookNo', this.bookNo)
       if (this.filesDeposit) {
         const _this = this
+        let configDepositUpload = {
+          headers: {
+            'bookNo': this.bookNo
+          }
+        }
         let params = new FormData()
         params.append('file', this.filesDeposit)
         await axios
-          .post(this.DNS_IP + `/file/upload/deposit`, params)
+          .post(this.DNS_IP + `/file/upload/deposit`, params, configDepositUpload)
           .then(function (response) {
             _this.pictureUrlDeposit = response.data
             console.log('url Pic', response.data)
@@ -11749,9 +11754,14 @@ export default {
             if (this.filesDepositAdd) {
               const _this = this
               let params = new FormData()
+              let configDepositUpload = {
+                headers: {
+                  'bookNo': 'BK' + moment().unix()
+                }
+              }
               params.append('file', this.filesDepositAdd)
               await axios
-                .post(this.DNS_IP + `/file/upload/deposit`, params)
+                .post(this.DNS_IP + `/file/upload/deposit`, params, configDepositUpload)
                 .then(function (response) {
                   _this.formAdd.depositImge = response.data
                   console.log('url Pic', response.data)

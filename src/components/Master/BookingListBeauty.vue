@@ -7407,7 +7407,7 @@ export default {
       } else {
         this.limitBookingCheck = 'False'
       }
-      if (this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.limitBookingCheck || 'False') {
+      if (this.limitBookingCheck === 'True') {
         let TimeData = []
         let currentDate = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTime) || []
         TimeData = currentDate
@@ -7815,10 +7815,15 @@ export default {
       console.log('bookNo', this.bookNo)
       if (this.filesDeposit) {
         const _this = this
+        let configDepositUpload = {
+          headers: {
+            'bookNo': this.bookNo
+          }
+        }
         let params = new FormData()
         params.append('file', this.filesDeposit)
         await axios
-          .post(this.DNS_IP + `/file/upload/deposit`, params)
+          .post(this.DNS_IP + `/file/upload/deposit`, params, configDepositUpload)
           .then(function (response) {
             _this.pictureUrlDeposit = response.data
             console.log('url Pic', response.data)
@@ -10979,10 +10984,15 @@ export default {
             this.formAdd.depositStatus = 'True'
             if (this.filesDepositAdd) {
               const _this = this
+              let configDepositUpload = {
+                headers: {
+                  'bookNo': 'BK' + moment().unix()
+                }
+              }
               let params = new FormData()
               params.append('file', this.filesDepositAdd)
               await axios
-                .post(this.DNS_IP + `/file/upload/deposit`, params)
+                .post(this.DNS_IP + `/file/upload/deposit`, params, configDepositUpload)
                 .then(function (response) {
                   _this.formAdd.depositImge = response.data
                   console.log('url Pic', response.data)
