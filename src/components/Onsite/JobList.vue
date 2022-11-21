@@ -31,7 +31,7 @@
               outlined
               attach
               :menu-props="{ bottom: true, offsetY: true }"
-              @change="getDataJob(), getJobLog(), getFlowStep(),getCloseJob(date)"
+              @change="getByflow()"
             >
           <template v-slot:prepend-inner>
             <v-icon color="#24C74D">mdi-menu-swap</v-icon>
@@ -92,9 +92,9 @@
                 <p class="font-weight-bold mb-1 ml-2" style="font-size:20px" v-if="dataJob.filter((dt) => dt.jobNo === item.jobNo && dt.fieldName === 'ชื่อ').length > 0">
                   {{dataJob.filter((dt) => dt.jobNo === item.jobNo && dt.fieldName === 'ชื่อ')[0].fieldValue}}
                 </p>
-                <p class="font-weight-medium mb-1" style="font-size:14px" v-if="item.stepTitle !== null">
+                <p class="font-weight-medium mb-1" style="font-size:14px" v-if="item.flowName !== null">
                   <v-icon color="#F48686" class="mx-1">mdi-square-medium</v-icon>
-                  {{item.stepTitle}}
+                  {{item.flowName}}
                 </p>
                 <p class="font-weight-medium mb-1" style="font-size:14px" v-if="item.address !== null">
                   <v-icon color="#F48686" class="mx-1 mr-2">mdi-map-marker-radius</v-icon>
@@ -141,10 +141,13 @@
         <div class="pa-0 ma-0" v-if="sortNo === 2 && item.sortNo >= 2">
             <v-card  class="mx-6 pa-3 ma-2" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;">
             <p class="font-weight-bold">เปลี่ยนสถานะขั้นตอน</p>
+            <p class="font-weight-bold ml-4" style="font-size:19px">{{item.flowName}}</p>
             <v-select
                 class="ma-3"
                 v-model="selectStep"
-                :items="itemStep"
+                :items="itemStep.filter((v) => parseInt(v.flowId) === item.flowId)"
+                :item-text="itemStep.text"
+                :item-value="itemStep.value"
                 dense
                 outlined
                 background-color="rgba(29, 191, 115, 0.1)"
@@ -160,7 +163,7 @@
               <v-icon color="#24C74D">mdi-menu-swap</v-icon>
             </template>
             </v-select>
-            <v-row v-for="(itemStep , indexStep) in dataFlowStep" :key="indexStep">
+            <v-row v-for="(itemStep , indexStep) in dataFlowStep.filter((v) => parseInt(v.flowId) === item.flowId)" :key="indexStep">
               <v-col cols="4" class="text-right py-0 pr-0" style="display: flex;justify-content: flex-end;align-items: center;">
                 <p
                 class="font-weight-bold mb-1" style="font-size:14px"
@@ -179,7 +182,7 @@
                 >{{itemStep.stepTitle}}</p>
               </v-col>
             </v-row>
-            <v-row class="mt-5 mb-1 px-14">
+            <v-row class="mt-5 mb-1 px-3" v-if="item.lineUserId === '' || item.lineUserId === null">
             <v-col cols="6" class="text-center pa-1">
               <v-btn
                 color="#1DBF73"
@@ -190,6 +193,38 @@
               >โทร</v-btn>
             </v-col>
             <v-col cols="6" class="text-center pa-1">
+              <v-btn
+                color="#F38383"
+                rounded
+                dark
+                block
+                @click="setShowMap(item)"
+              >
+              แผนที่</v-btn>
+            </v-col>
+           </v-row>
+            <v-row class="mt-5 mb-1 px-3" v-else>
+            <v-col cols="4" class="text-center pa-1">
+              <v-btn
+                color="#1DBF73"
+                rounded
+                dark
+                block
+                @click="callCustomer(dataJob.filter(el => {return el.jobNo === item.jobNo;}))"
+              >โทร</v-btn>
+            </v-col>
+            <v-col cols="4" class="text-center pa-1">
+              <v-btn
+                color="#F38383"
+                rounded
+                dark
+                block
+                outlined
+                @click="dialogMessage = true, setMessage(item)"
+              >
+              ข้อความ</v-btn>
+            </v-col>
+            <v-col cols="4" class="text-center pa-1">
               <v-btn
                 color="#F38383"
                 rounded
@@ -292,9 +327,9 @@
                         </v-icon>
                       </v-btn>
                       </v-col>
-                    </v-row>
+                  </v-row>
                 </v-col>
-                <v-col cols="12" class="pb-0 pt-0 text-center mt-2" >
+                <v-col cols="12" class="pb-0 pt-0 text-center mt-2" v-if="item.dataBeforeAfter.length > 1" >
                   <v-btn
                     rounded
                     dark
@@ -315,15 +350,15 @@
               <v-row>
 
               </v-row>
-                <v-btn
-                      class="mt-4"
-                      elevation="2"
-                      rounded
-                      block
-                      color="#173053"
-                      dark
-                      @click="closeJobStart(item.sortNo, item.jobId, item)"
-                    >ปิดจบงาน</v-btn>
+              <v-btn
+                class="mt-4"
+                elevation="2"
+                rounded
+                block
+                color="#173053"
+                dark
+                @click="closeJobStart(item.sortNo, item.jobId, item)"
+              >ปิดจบงาน</v-btn>
 
             </div>
         </div>
@@ -345,8 +380,8 @@
                 style="font-size:20px">
                   {{dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo && dt.fieldName === 'ชื่อ')[0].fieldValue}}
                 </p>
-                <p class="font-weight-medium mb-1" v-if="CloseJob.stepTitle !== null" style="font-size:14px">
-                  <v-icon color="#F48686" class="mx-1">mdi-square-medium</v-icon>{{CloseJob.stepTitle}}
+                <p class="font-weight-medium mb-1" v-if="CloseJob.flowName !== null" style="font-size:14px">
+                  <v-icon color="#F48686" class="mx-1">mdi-square-medium</v-icon>{{CloseJob.flowName}}
                 </p>
                 <p class="font-weight-medium mb-1" style="font-size:14px" v-if="CloseJob.address !== null"><v-icon color="#F48686" class="mx-1 mr-2">mdi-map-marker-radius</v-icon>
                   {{CloseJob.address}}
@@ -835,6 +870,66 @@
           </v-card>
         </v-dialog>
         <!-- end add -->
+        <v-dialog v-model="dialogMessage" persistent :max-width="dialogwidth">
+          <v-card class="pa-1 px-3">
+            <div style="text-align: end;">
+                <v-btn
+                class="mx-2 mr-n1 mt-1"
+                fab
+                small
+                dark
+                color="white"
+                :style="styleCloseBt"
+                @click="(dialogMessage = false) , clearMessage()"
+                >
+                X
+                </v-btn>
+            </div>
+            <div class="mt-2">
+              <h3 class="text-center mb-6"><v-icon large color="#1DBF73" class="mr-2">mdi-android-messages</v-icon>ส่งข้อความ</h3>
+              <v-textarea
+              v-model="formMessage.Message"
+              outlined
+              name="input-7-4"
+              label="ข้อความ"
+              value=""
+            ></v-textarea>
+              <v-img
+                v-if="formMessage.Img !== ''"
+              class="pa-3 text-center"
+              contain
+                max-height="60%"
+                max-width="100%"
+                :src="formMessage.Img"
+              ></v-img>
+            <v-file-input
+               class="mt-6 mb-6"
+              required
+              counter
+              show-size
+              outlined
+              :rules="[rules.resizeImag]"
+              accept="image/png, image/jpeg, image/bmp"
+              prepend-icon="mdi-camera"
+              label="อัพโหลดรูปภาพ"
+              @change="selectImgCoverUpdate"
+              v-model="filesUpdateImgCover"
+            ></v-file-input>
+            </div>
+            <div class="text-center">
+              <v-btn
+                class="ma-2 mb-5"
+                elevation="2"
+                rounded
+                color="#F38383"
+                dark
+                @click="sendMessage()"
+              >ส่งข้อความ</v-btn>
+            </div>
+
+          </v-card>
+        </v-dialog>
+        <!-- END -->
           <v-footer padless fixed color="#FFFFFF">
           <v-sheet
               width="100%"
@@ -936,6 +1031,15 @@ export default {
           return pattern.test(value) || 'Invalid e-mail.'
         }
       },
+      formMessage: {
+        jobNo: '',
+        Message: '',
+        Img: '',
+        empId: '',
+        CREATE_USER: '',
+        LAST_USER: '',
+        shopId: ''
+      },
       date: new Date().toISOString().substr(0, 7),
       menu: false,
       modal: false,
@@ -973,6 +1077,7 @@ export default {
           href: '/Onsite/JobList'
         }
       ],
+      dialogMessage: false,
       dialogDetail: false,
       dialogDelete: false,
       checkPayment: null,
@@ -996,6 +1101,7 @@ export default {
       itemStep: [],
       dataCloseJob: [],
       dataCloseJobData: [],
+      filesUpdateImgCover: null,
       formDelete: {
         jobId: '',
         jobNo: '',
@@ -1029,6 +1135,98 @@ export default {
     momentThaiTextClose (item) {
       let dt = 'วัน' + moment(item).locale('th').format('dddd') + 'ที่ ' + moment(item).locale('th').format('LL')
       return dt
+    },
+    async getByflow () {
+      if (this.selectFlow === 'All') {
+        await this.getDataJob()
+        await this.getJobLog()
+        await this.getFlowStep()
+        await this.getCloseJob(this.date)
+      } else {
+        await this.getDataJob()
+        await this.getJobLog()
+        await this.getFlowStep()
+        await this.getCloseJob(this.date)
+      }
+    },
+    setMessage (item) {
+      this.formMessage.jobNo = item.jobNo
+      this.formMessage.empId = parseInt(this.session.data.empId)
+      this.formMessage.LAST_USER = this.session.data.userName
+      this.formMessage.CREATE_USER = this.session.data.userName
+      this.formMessage.shopId = this.shopId
+    },
+    clearMessage () {
+      this.formMessage.jobNo = ''
+      this.formMessage.empId = ''
+      this.formMessage.Img = ''
+      this.formMessage.Message = ''
+      this.formMessage.LAST_USER = ''
+      this.formMessage.CREATE_USER = ''
+      this.filesUpdateImgCover = null
+    },
+    async sendMessage () {
+      console.log('formMessage', this.formMessage)
+      if (this.formMessage.Message !== '' || this.formMessage.Img !== '') {
+        this.$swal({
+          title: 'คุณต้องการ ส่งข้อความ ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#F38383',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        }).then(async response => {
+          if (this.filesUpdateImgCover) {
+            const _this = this
+            let params = new FormData()
+            let configDepositUpload = {
+              headers: {
+                'jobNo': this.formMessage.jobNo
+              }
+            }
+            params.append('file', this.filesUpdateImgCover)
+            await axios
+              .post(this.DNS_IP + `/file/upload/MessageImg`, params, configDepositUpload)
+              .then(function (response) {
+                _this.formMessage.Img = response.data
+                console.log('url Pic', response.data)
+              })
+          } else {
+            this.formMessage.Img = this.filesUpdateImgCover
+          }
+          await axios.post(this.DNS_IP + '/PushMessage_LOG/add', this.formMessage)
+            .then(async (response) => {
+              console.log('response', response)
+              await this.pushMessage()
+              await this.clearMessage()
+              this.dialogMessage = false
+            }).catch(error => {
+              console.log('error function addData : ', error)
+            })
+        })
+      } else {
+        this.$swal('ผิดพลาด', 'โปรดระบุ ข้อความ หรือ รูปภาพ', 'error')
+      }
+    },
+    async pushMessage () {
+      await axios.post(this.DNS_IP + '/job/MessageRider/' + this.formMessage.jobNo, this.formMessage)
+        .then(response => {
+          console.log('response', response)
+        }).catch(error => {
+          console.log('error function addData : ', error)
+        })
+    },
+    selectImgCoverUpdate () {
+      console.log('filesUpdateImgCover', this.filesUpdateImgCover)
+      if (this.filesUpdateImgCover) {
+        this.formMessage.Img = URL.createObjectURL(
+          this.filesUpdateImgCover
+        )
+      } else {
+        this.formMessage.Img = ''
+      }
+      console.log('testttttttttt', this.formMessage.Img)
     },
     async beforeCreate () {
       if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
@@ -1103,7 +1301,7 @@ export default {
 
           } else {
             this.selectFlow = parseInt(response.data[0].flowId)
-            await this.getDataFlowStep()
+            // await this.getDataFlowStep()
             await this.checkEmpJob()
             await this.getJobData()
             if (response.data[0].sortNo >= 2) {
@@ -1141,7 +1339,13 @@ export default {
     async getJobLog () {
       console.log('shopId', this.shopId)
       console.log('this.selectFlow', this.selectFlow)
-      await axios.get(this.DNS_IP + '/job_log/get?shopId=' + this.shopId + '&flowId=' + this.selectFlow)
+      let params = null
+      if (this.selectFlow === 'All') {
+        params = this.DNS_IP + '/job_log/get?shopId=' + this.shopId + '&checkOnsite=True'
+      } else {
+        params = this.DNS_IP + '/job_log/get?shopId=' + this.shopId + '&flowId=' + this.selectFlow
+      }
+      await axios.get(params)
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
@@ -1156,7 +1360,13 @@ export default {
       console.log('shopId', this.shopId)
       console.log('this.selectFlow', this.selectFlow)
       this.itemStep = []
-      await axios.get(this.DNS_IP + '/flowStep/get?shopId=' + this.shopId + '&flowId=' + this.selectFlow)
+      let params = null
+      if (this.selectFlow === 'All') {
+        params = this.DNS_IP + '/flowStep/get?shopId=' + this.shopId + '&checkOnsite=True'
+      } else {
+        params = this.DNS_IP + '/flowStep/get?shopId=' + this.shopId + '&flowId=' + this.selectFlow
+      }
+      await axios.get(params)
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
@@ -1165,6 +1375,7 @@ export default {
               let s = {}
               s.text = item.stepTitle
               s.value = item.stepId
+              s.flowId = item.flowId
               this.itemStep.push(s)
             })
           }
@@ -1295,17 +1506,21 @@ export default {
       })
     },
     async deleteBeforeAfterAll (item) {
-      this.swalConfig.title = 'ต้องการ ลบรูปทั้งหมดในแถว ใช่หรือไม่?'
-      this.$swal(this.swalConfig).then(async () => {
-        let dajobBeforeAfter = {
-          LAST_USER: this.$session.getAll().data.userName
-        }
-        await axios
-          .post(this.DNS_IP + '/jobBeforeAfter/delete/' + item.id, dajobBeforeAfter)
-          .then(async responses => {
-            await this.checkEmpJob()
-          })
-      })
+      console.log('item', item)
+      let checkArray = this.itemJob.filter((dt) => dt.jobId === parseInt(item.jobId))[0].dataBeforeAfter
+      if (checkArray.length > 1) {
+        this.swalConfig.title = 'ต้องการ ลบรูปทั้งหมดในแถว ใช่หรือไม่?'
+        this.$swal(this.swalConfig).then(async () => {
+          let dajobBeforeAfter = {
+            LAST_USER: this.$session.getAll().data.userName
+          }
+          await axios
+            .post(this.DNS_IP + '/jobBeforeAfter/delete/' + item.id, dajobBeforeAfter)
+            .then(async responses => {
+              await this.checkEmpJob()
+            })
+        })
+      }
     },
     async checkSort () {
       this.sortNo = this.model + 1
@@ -1339,14 +1554,21 @@ export default {
         '&checkOnsite=True'
       )
     },
-    async getDataFlowStep () {
-      this.itemFlowStep = await this.getDataFromAPI(
-        '/flowStep/get',
-        'stepId',
-        'stepTitle',
-        '&flowId=' + this.selectFlow
-      )
-    },
+    // async getDataFlowStep () {
+    //   this.itemFlowStep = await this.getDataFromAPI(
+    //     '/flowStep/get',
+    //     'stepId',
+    //     'stepTitle',
+    //     '&flowId=' + this.selectFlow
+    //   )
+    //   console.log('!!!!!!!!', await this.getDataFromAPI(
+    //     '/flowStep/get',
+    //     'stepId',
+    //     'stepTitle',
+    //     'shopId',
+    //     '&flowId=' + this.selectFlow
+    //   ))
+    // },
     async getDataFromAPI (url, fieldId, fieldName, param) {
       let result = []
       await axios
@@ -1362,6 +1584,10 @@ export default {
               s.allData = d
               result.push(s)
             }
+            let all = {}
+            all.text = 'ทั้งหมด'
+            all.value = 'All'
+            result.push(all)
           } else {
             result = []
           }
@@ -1369,7 +1595,7 @@ export default {
       return result
     },
     async getDataJob () {
-      await this.getDataFlowStep()
+      // await this.getDataFlowStep()
       await this.checkEmpJob()
       await this.getJobData()
       if (this.itemJob.filter(el => { return el.sortNo >= 2 }).length > 0) {
@@ -1384,18 +1610,17 @@ export default {
     },
     async checkEmpJob () {
       this.itemJob = []
+      let params = null
+      if (this.selectFlow === 'All') {
+        params = this.DNS_IP + '/job/getList?shopId=' + this.$session.getAll().data.shopId + '&empStep=' + this.$session.getAll().data.empId + '&checkOnsite=True'
+      } else {
+        params = this.DNS_IP + '/job/getList?shopId=' + this.$session.getAll().data.shopId + '&empStep=' + this.$session.getAll().data.empId + '&flowId=' + this.selectFlow
+      }
       await axios
-        .get(
-          this.DNS_IP +
-            '/job/getList?shopId=' +
-            this.$session.getAll().data.shopId +
-            '&empStep=' +
-            this.$session.getAll().data.empId +
-            '&flowId=' +
-            this.selectFlow
-        )
+        .get(params)
         .then(async response => {
           let rs = response.data
+          console.log('rs!!!!!!!!!', rs)
           if (rs.status === false) {
             this.itemJob = []
           } else {
@@ -1432,31 +1657,35 @@ export default {
     },
     async getCloseJob (dateMonth) {
       this.dataCloseJob = []
+      let paramsCloseJob = null
+      if (this.selectFlow === 'All') {
+        paramsCloseJob = this.DNS_IP + '/job/getCloseJob?shopId=' + this.$session.getAll().data.shopId + '&empId=' + this.$session.getAll().data.empId + '&month=' + dateMonth + '&checkOnsite=True'
+      } else {
+        paramsCloseJob = this.DNS_IP + '/job/getCloseJob?shopId=' + this.$session.getAll().data.shopId + '&empId=' + this.$session.getAll().data.empId + '&flowId=' + this.selectFlow + '&month=' + dateMonth
+      }
       await axios
-        .get(
-          this.DNS_IP + '/job/getCloseJob?shopId=' + this.$session.getAll().data.shopId + '&empId=' + this.$session.getAll().data.empId + '&flowId=' + this.selectFlow + '&month=' + dateMonth)
+        .get(paramsCloseJob)
         .then(async response => {
           let rs = response.data
+          console.log('this.dataCloseJob', rs)
           if (rs.status === false) {
             this.dataCloseJob = []
           } else {
             this.dataCloseJob = rs
-            console.log('this.dataCloseJob', this.dataCloseJob)
           }
         })
       this.dataCloseJobData = []
+      let paramsCloseJobData = null
+      if (this.selectFlow === 'All') {
+        paramsCloseJobData = this.DNS_IP + '/job/getCloseJobData?shopId=' + this.$session.getAll().data.shopId + '&empStepId=' + this.$session.getAll().data.empId + '&checkOnsite=True'
+      } else {
+        paramsCloseJobData = this.DNS_IP + '/job/getCloseJobData?shopId=' + this.$session.getAll().data.shopId + '&empStepId=' + this.$session.getAll().data.empId + '&flowId=' + this.selectFlow
+      }
       await axios
-        .get(
-          this.DNS_IP +
-            '/job/getCloseJobData?shopId=' +
-            this.$session.getAll().data.shopId +
-            '&empStepId=' +
-            this.$session.getAll().data.empId +
-            '&flowId=' +
-            this.selectFlow
-        )
+        .get(paramsCloseJobData)
         .then(async response => {
           let rs = response.data
+          console.log('this.dataCloseJobData', rs)
           if (rs.status === false) {
             this.dataCloseJobData = []
           } else {
@@ -1467,16 +1696,15 @@ export default {
     },
     async getJobData () {
       this.dataJob = []
+      let params = null
+      if (this.selectFlow === 'All') {
+        params = this.DNS_IP + '/job/get?shopId=' + this.$session.getAll().data.shopId + '&empStepId=' + this.$session.getAll().data.empId
+      } else {
+        params = this.DNS_IP + '/job/get?shopId=' + this.$session.getAll().data.shopId + '&empStepId=' + this.$session.getAll().data.empId + '&flowId=' + this.selectFlow
+      }
+
       await axios
-        .get(
-          this.DNS_IP +
-            '/job/get?shopId=' +
-            this.$session.getAll().data.shopId +
-            '&empStepId=' +
-            this.$session.getAll().data.empId +
-            '&flowId=' +
-            this.selectFlow
-        )
+        .get(params)
         .then(async response => {
           let rs = response.data
           if (rs.status === false) {
@@ -1488,34 +1716,40 @@ export default {
         })
     },
     updateJobStart (sortNo, jobId, data) {
-      console.log('this.itemJob', this.itemJob)
-      if (
-        this.itemJob.filter(el => {
-          return el.sortNo === 2
-        }).length === 0
-      ) {
-        console.log('itemFlowStep', this.itemFlowStep)
+      if (this.itemJob.filter(el => { return el.sortNo === 2 }).length === 0) {
+        console.log('itemStep', this.itemStep)
+        // console.log('dataflowStep', this.dataFlowStep.filter((item) => item.sortNo === sortNo + 1)[0].stepId)
+        // formUpdate.stepId = this.selectStep
+        // formUpdate.flowId = this.selectFlow
+        // formUpdate.shopId = this.shopId
+        // formUpdate.jobId = item.jobId
+        // formUpdate.LAST_USER = this.session.data.userName
+        console.log('data', data)
         this.swalConfig.title = 'ต้องการ เริ่มงานนี้ ใช่หรือไม่?'
         this.$swal(this.swalConfig).then(async () => {
           if (this.$session.id() !== undefined) {
-            var dt = {}
-            var stepIdSelect = this.itemFlowStep.filter(el => {
-              return el.allData.sortNo === sortNo + 1
-            })[0].value
-            if (sortNo === 1) {
-              dt = {
-                stepId: stepIdSelect,
-                onsiteStartDate: moment(
-                  moment(new Date()),
-                  'YYYY-MM-DD HH:mm:ss'
-                ).format('YYYY-MM-DD HH:mm:ss'),
-                LAST_USER: this.$session.getAll().data.userName
-              }
-            }
-            console.log('updateJob', dt)
-            console.log(sortNo, jobId)
+            let formStart = {}
+            formStart.jobId = data.jobId
+            formStart.flowId = data.flowId
+            formStart.shopId = this.shopId
+            formStart.LAST_USER = this.session.data.userName
+            formStart.stepId = this.dataFlowStep.filter((item) => parseInt(item.flowId) === data.flowId && (item.sortNo === sortNo + 1))[0].stepId
+            // let dt = {}
+            // let stepIdSelect = this.dataFlowStep.filter((item) => item.sortNo === sortNo + 1)[0].stepId
+            // if (sortNo === 1) {
+            //   dt = {
+            //     stepId: stepIdSelect,
+            //     onsiteStartDate: moment(
+            //       moment(new Date()),
+            //       'YYYY-MM-DD HH:mm:ss'
+            //     ).format('YYYY-MM-DD HH:mm:ss'),
+            //     LAST_USER: this.$session.getAll().data.userName
+            //   }
+            // }
+            // console.log('updateJob', dt)
+            // console.log(sortNo, jobId)
             await axios
-              .post(this.DNS_IP + '/job/editAll/' + jobId, dt)
+              .post(this.DNS_IP + '/job/edit/' + formStart.jobId, formStart)
               .then(async response => {
                 console.log(response)
                 if (response.data.status) {
@@ -1530,8 +1764,11 @@ export default {
                       if (data.lineUserId) {
                         this.pushMessageCus(data.jobId)
                       }
-                      this.getDataJob()
-                      this.$swal('เรียบร้อย', 'รับงานนี้เรียบร้อย', 'success')
+                      await this.getDataJob()
+                      await this.getJobLog()
+                      await this.getFlowStep()
+                      await this.getCloseJob(this.date)
+                      await this.$swal('เรียบร้อย', 'รับงานนี้เรียบร้อย', 'success')
                     })
                 } else {
                   this.$swal(
@@ -1555,7 +1792,8 @@ export default {
       }
     },
     closeJobStart (sortNo, jobId, data) {
-      this.checkPayment = this.itemFlow.filter((item) => item.value === this.selectFlow)[0].allData.checkPayment
+      this.checkPayment = this.itemFlow.filter((item) => item.value === data.flowId)[0].allData.checkPayment
+      // console.log('data', data)
       console.log('itemFlow', this.itemFlow)
       console.log('checkpayment', this.checkPayment)
       // formDelete: {
