@@ -11869,23 +11869,23 @@ export default {
         }
         await axios.post(this.DNS_IP + '/job/updateJobNo/' + jobNo, statusSend)
         console.log('statusSend', 'false')
-        let updateStatusSend = {
-          updateStatusSend: 'false'
-        }
-        await axios
-          .post(
-            this.DNS_IP + '/job/NotifyQrcode/' + jobNo,
-            updateStatusSend
-          )
-          .then(
-            this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-            // this.clearData()
-            // this.$router.push('/Master/FlowStep')
-          )
-          .catch(error => {
-            console.log('error function addDataGlobal : ', error)
-          })
       }
+      let updateStatusSend = {
+        updateStatusSend: 'false'
+      }
+      await axios
+        .post(
+          this.DNS_IP + '/job/NotifyQrcode/' + jobNo,
+          updateStatusSend
+        )
+        .then(
+          this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+          // this.clearData()
+          // this.$router.push('/Master/FlowStep')
+        )
+        .catch(error => {
+          console.log('error function addDataGlobal : ', error)
+        })
       // this.clearData()
     },
     async getEmpSelect (item) {
