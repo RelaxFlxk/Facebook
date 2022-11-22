@@ -20,10 +20,10 @@
               <v-icon left>mdi-download</v-icon>
               Export Data
             </v-btn>
-            <v-btn color="primary" depressed @click="dialogImport = true">
+            <!-- <v-btn color="primary" depressed @click="dialogImport = true">
               <v-icon left>mdi-import</v-icon>
               Manage Data By Excel.xls
-            </v-btn>
+            </v-btn> -->
           </v-col>
         </v-row>
         <v-row>
@@ -187,6 +187,17 @@
                           required
                         ></v-text-field>
                       </v-col>
+                      <v-col cols="12" class="pa-0">
+                        <v-text-field
+                          dense
+                          outlined
+                          label="เบอร์โทร*"
+                          v-model="formAdd.phoneNumber"
+                          v-mask="'###-###-####'"
+                          :rules="nameRules"
+                          required
+                        ></v-text-field>
+                      </v-col>
                     </v-row>
                     <v-row>
                       <v-col cols="12" class="pa-0">
@@ -231,6 +242,16 @@
                           outlined
                           multiple
                         ></v-autocomplete>
+                      </v-col>
+                      <v-col cols="12" class="pa-0">
+                        <v-textarea
+                          v-model="formAdd.additionalInformation"
+                          auto-grow
+                          rows="2"
+                          label="ข้อมูลเพิ่มเติม"
+                          dense
+                          outlined
+                        ></v-textarea>
                       </v-col>
                     </v-row>
                   </v-form>
@@ -345,6 +366,17 @@
                           required
                         ></v-text-field>
                       </v-col>
+                      <v-col cols="12" class="pa-0">
+                        <v-text-field
+                          dense
+                          outlined
+                          label="เบอร์โทร*"
+                          v-model="formUpdate.phoneNumber"
+                          v-mask="'###-###-####'"
+                          :rules="nameRules"
+                          required
+                        ></v-text-field>
+                      </v-col>
                     </v-row>
                     <v-row>
                       <v-col cols="12" class="pa-0">
@@ -383,6 +415,16 @@
                           multiple
                           :rules="nameRules"
                         ></v-autocomplete>
+                      </v-col>
+                      <v-col cols="12" class="pa-0">
+                        <v-textarea
+                          v-model="formUpdate.additionalInformation"
+                          auto-grow
+                          rows="2"
+                          label="ข้อมูลเพิ่มเติม"
+                          dense
+                          outlined
+                        ></v-textarea>
                       </v-col>
                     </v-row>
                   </v-form>
@@ -1034,7 +1076,9 @@ export default {
         shopId: this.$session.getAll().data.shopId,
         setTime: [],
         masBranchID: '',
-        flowId: ''
+        flowId: '',
+        additionalInformation: '',
+        phoneNumber: ''
       },
       formUpdate: {
         empCode: '',
@@ -1046,7 +1090,9 @@ export default {
         privacyPage: '',
         setTime: [],
         masBranchID: '',
-        flowId: ''
+        flowId: '',
+        additionalInformation: '',
+        phoneNumber: ''
       },
       formUpdateItem: {
         empCode: '',
@@ -1057,7 +1103,9 @@ export default {
         empImge: '',
         setTime: [],
         masBranchID: '',
-        flowId: ''
+        flowId: '',
+        additionalInformation: '',
+        phoneNumber: ''
       },
       formUpdateLimitbooking: {
         empId: null,
@@ -1613,6 +1661,9 @@ export default {
             } else {
               this.formAdd.flowId = JSON.stringify(this.formAdd.flowId)
             }
+            if (this.formAdd.additionalInformation) {
+              this.formAdd.additionalInformation = (this.formAdd.additionalInformation || '').replace(/%/g, '%%').replace(/'/g, "\\'")
+            }
             delete this.formAdd['pictureUrlPreview']
             await axios
               .post(
@@ -1701,6 +1752,9 @@ export default {
               delete this.formUpdateItem['flowId']
             } else {
               this.formUpdateItem.flowId = JSON.stringify(this.formUpdate.flowId)
+            }
+            if (this.formUpdateItem.additionalInformation) {
+              this.formUpdateItem.additionalInformation = (this.formUpdateItem.additionalInformation || '').replace(/%/g, '%%').replace(/'/g, "\\'")
             }
             await axios
               .post(
