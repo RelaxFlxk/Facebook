@@ -4216,7 +4216,7 @@ export default {
             update.bookingDataId = d.bookingDataId
             update.bookingFieldId = d.bookingFieldId
             update.bookNo = d.bookNo
-            update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%')
+            update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%').replace(/'/g, "\\'")
             update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
             update.timeText = this.timeEdit.text
             update.flowId = this.formEdit.flowId
@@ -4243,7 +4243,7 @@ export default {
                 update.bookingDataId = d.bookingDataId
                 update.bookingFieldId = d.bookingFieldId
                 update.bookNo = d.bookNo
-                update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%')
+                update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%').replace(/'/g, "\\'")
                 update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
                 update.timeText = this.timeEdit.text
                 update.flowId = this.formEdit.flowId
@@ -4261,7 +4261,7 @@ export default {
                 update.bookingDataId = d.bookingDataId
                 update.bookingFieldId = d.bookingFieldId
                 update.bookNo = d.bookNo
-                update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%')
+                update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%').replace(/'/g, "\\'")
                 update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
                 update.timeText = this.timeEdit.text
                 update.flowId = this.formEdit.flowId
