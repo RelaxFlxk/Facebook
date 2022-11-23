@@ -58,7 +58,7 @@
         <v-col class="pt-0" cols="auto" v-if="dataRemoveExport.length > 0">
           <v-btn color="error" small @click="exportExcelRemove()" dark>
             <v-icon right dark>mdi-microsoft-excel</v-icon>
-            &nbsp;Export Cancel
+            &nbsp;Export รายการยกเลิก
           </v-btn>
         </v-col>
         <v-col
@@ -68,7 +68,7 @@
             dataItemTimesChange.filter(el => {
               return el.statusBt === 'confirmJob' || el.statusBt === 'confirm';
             }).length > 0
-            &&  $session.getAll().data.category === 'ธุรกิจรถยนต์'
+            &&  $session.getAll().data.category === 'ธุรกิจรถยนต์' &&  $session.getAll().data.shopId === 'U9084920b3005bd1dcb57af1ae6bdba32'
           "
         >
           <v-btn color="normal" small @click="exportExcelMazda()" dark>
