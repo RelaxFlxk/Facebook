@@ -1,5 +1,8 @@
 <template >
-    <v-main style="overflow-x: auto">
+    <v-main>
+      <v-dialog style="overflow-x: auto" v-model="dialogWorkShop">
+
+      </v-dialog>
       <div class="stepLayout">
         <v-col cols="12" sm="8">
             <h3 style="color:#1B437C">แก้ไขกระดานทำงาน</h3>
@@ -105,6 +108,7 @@ export default {
   data () {
     return {
       stepData: [],
+      dialogWorkShop: false,
       Layout: [],
       DataflowId: '',
       DataBranchID: '',
@@ -156,6 +160,10 @@ export default {
   methods: {
     showData () {
       // console.log('showcard', this.Layout)
+    },
+    async showDialog () {
+      console.log('item')
+      this.dialogWorkShop = true
     },
     async getStepFlow (flowId) {
       this.stepItemSelete = []
@@ -243,16 +251,26 @@ export default {
             console.log('workData', d.workData)
             console.log('this.stepItemSelete.filt', this.stepItemSelete)
             if (workData.length > 0) {
-              console.log('1')
-              for (let x = 0; x < workData.length; x++) {
-                let t = workData[x]
-                let s = {}
-                s.sortNo = t.sortNo
-                s.stepId = t.stepId
-                s.stepTitle = this.stepItemSelete.filter(el => { return el.stepId === t.stepId })[0].stepTitle
-                workDataUse.push(s)
-                console.log('2')
-              }
+              console.log('1', workData)
+              workData.forEach((item) => {
+                if (this.stepItemSelete.filter(el => { return el.stepId === item.stepId }).length > 0) {
+                  let s = {}
+                  s.sortNo = item.sortNo
+                  s.stepId = item.stepId
+                  s.stepTitle = this.stepItemSelete.filter(el => { return el.stepId === item.stepId })[0].stepTitle
+                  workDataUse.push(s)
+                }
+                console.log('workDataCheck', workDataUse)
+              })
+              // for (let x = 0; x < workData.length; x++) {
+              //   let t = workData[x]
+              //   let s = {}
+              //   s.sortNo = t.sortNo
+              //   s.stepId = t.stepId
+              //   s.stepTitle = this.stepItemSelete.filter(el => { return el.stepId === t.stepId })[0].stepTitle || ''
+              //   workDataUse.push(s)
+              //   console.log('2')
+              // }
             } else {
               workDataUse = []
             }

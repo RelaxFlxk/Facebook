@@ -82,10 +82,15 @@
           <v-card v-if="sortNo === 1 && item.sortNo === 1" class="mx-6 pa-3 ma-2" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;">
             <v-row class="pa-5">
               <v-col cols="3" md="3" sm="12"  class="pa-0 ma-0" style="display: flex;align-items: flex-start;justify-content: flex-end;padding-left: 11px !important;">
-                <v-avatar size="90">
+                <v-avatar size="90" v-if="item.memberPicture">
                 <img
                   :src="item.memberPicture"
                 >
+              </v-avatar>
+              <v-avatar size="90" color="#173053" v-else>
+                <v-icon dark x-large>
+                  mdi-account-circle
+                </v-icon>
               </v-avatar>
               </v-col>
               <v-col cols="9" md="9" sm="12" class="pa-0 ma-0 pl-2">
@@ -106,7 +111,7 @@
                 </p>
               </v-col>
             </v-row>
-            <p class="font-weight-bold mb-1 text-center" style="font-size:16px"><v-icon x-large color="#F48686" class="mx-1 mr-2 iconify" data-icon="ic:twotone-access-time"></v-icon>{{momentThaiText(item.dueDate)}}</p>
+            <p class="font-weight-bold mb-1 text-center" v-if="item.dueDate" style="font-size:16px"><v-icon x-large color="#F48686" class="mx-1 mr-2 iconify" data-icon="ic:twotone-access-time"></v-icon>{{momentThaiText(item.dueDate)}}</p>
            <v-row class="mt-2 mb-1 px-3">
             <v-col cols="4" class="text-center pa-1">
               <v-btn
@@ -1698,7 +1703,7 @@ export default {
       this.dataJob = []
       let params = null
       if (this.selectFlow === 'All') {
-        params = this.DNS_IP + '/job/get?shopId=' + this.$session.getAll().data.shopId + '&empStepId=' + this.$session.getAll().data.empId
+        params = this.DNS_IP + '/job/get?shopId=' + this.$session.getAll().data.shopId + '&empStepId=' + this.$session.getAll().data.empId + '&checkOnsite=True'
       } else {
         params = this.DNS_IP + '/job/get?shopId=' + this.$session.getAll().data.shopId + '&empStepId=' + this.$session.getAll().data.empId + '&flowId=' + this.selectFlow
       }
