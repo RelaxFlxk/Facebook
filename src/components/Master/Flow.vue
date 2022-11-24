@@ -517,8 +517,8 @@
                           ></v-checkbox>
                           </v-col>
                           </v-row>
-                          <v-row v-if="$session.getAll().data.timeSlotStatus !== 'True'">
-                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;">
+                          <v-row>
+                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;" v-if="$session.getAll().data.timeSlotStatus !== 'True'">
                               <v-checkbox
                               label="เปิดรับคิวหน้าร้าน"
                               false-value="False"
@@ -528,6 +528,17 @@
                               true-value="True"
                               v-model="formAdd.storeFrontCheck"
                               @change="checkStoreFrontAdd()"
+                            ></v-checkbox>
+                            </v-col>
+                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;">
+                              <v-checkbox
+                              label="นัดหมายภายในวัน"
+                              false-value="False"
+                              :on-icon="'mdi-check-circle'"
+                              :off-icon="'mdi-checkbox-blank-circle-outline'"
+                              color="#1B437C"
+                              true-value="True"
+                              v-model="formAdd.bookingNowCheck"
                             ></v-checkbox>
                             </v-col>
                           </v-row>
@@ -727,7 +738,7 @@
                           </v-col>
                           </v-row>
                           <v-row>
-                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;">
+                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;"  v-if="$session.getAll().data.timeSlotStatus !== 'True'">
                               <v-checkbox
                               label="เปิดรับคิวหน้าร้าน"
                               false-value="False"
@@ -737,6 +748,17 @@
                               true-value="True"
                               v-model="formUpdate.storeFrontCheck"
                               @change="checkStoreFrontUpdate()"
+                            ></v-checkbox>
+                            </v-col>
+                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;">
+                              <v-checkbox
+                              label="นัดหมายภายในวัน"
+                              false-value="False"
+                              :on-icon="'mdi-check-circle'"
+                              :off-icon="'mdi-checkbox-blank-circle-outline'"
+                              color="#1B437C"
+                              true-value="True"
+                              v-model="formUpdate.bookingNowCheck"
                             ></v-checkbox>
                             </v-col>
                           </v-row>
@@ -1498,7 +1520,7 @@
                       @click.stop="
                         (dialogEdit = true),
                           getDataById(item),
-                          validate('UPDATE')
+                          validate('UPDATE'),checkStoreFrontUpdate()
                       "
                     >
                       <v-icon> mdi-tools </v-icon>
@@ -1792,7 +1814,8 @@ export default {
         shopId: this.$session.getAll().data.shopId,
         remarkConfirm: '',
         timeSlotStatus: this.$session.getAll().data.timeSlotStatus || 'False',
-        timeSlot: 1
+        timeSlot: 1,
+        bookingNowCheck: 'False'
       },
       formAddStep: {
         stepId: '',
@@ -1838,7 +1861,8 @@ export default {
         shopId: '',
         remarkConfirm: '',
         timeSlotStatus: this.$session.getAll().data.timeSlotStatus || 'False',
-        timeSlot: 1
+        timeSlot: 1,
+        bookingNowCheck: 'False'
       },
       formUpdateItemFlow: {
         fieldId: '',
@@ -1987,8 +2011,12 @@ export default {
       }
     },
     checkStoreFrontUpdate () {
-      if (this.formUpdate.storeFrontCheck === 'True') {
-        this.formUpdate.checkDeposit = 'False'
+      if (this.$session.getAll().data.timeSlotStatus === 'True') {
+        this.formUpdate.storeFrontCheck = 'False'
+      } else {
+        if (this.formUpdate.storeFrontCheck === 'True') {
+          this.formUpdate.checkDeposit = 'False'
+        }
       }
     },
     async updateWarn () {
@@ -2607,7 +2635,6 @@ export default {
                 var chkDup = await data.filter(function (el) {
                   return el.fieldName === d.fieldName
                 })
-                console.log('chkDup', chkDup)
                 if (chkDup.length === 0) {
                   this.editedItemSelete.push(d)
                 }
@@ -2780,6 +2807,7 @@ export default {
       this.formUpdate.checkPayment = item.checkPayment || 'True'
       this.formUpdate.checkDeposit = item.checkDeposit || 'False'
       this.formUpdate.storeFrontCheck = item.storeFrontCheck || 'False'
+      this.formUpdate.bookingNowCheck = item.bookingNowCheck || 'False'
 
       this.formUpdate.timeSlot = item.timeSlot || 1
       this.formUpdate.timeSlotStatus = this.$session.getAll().data.timeSlotStatus || 'False'
@@ -3217,6 +3245,8 @@ export default {
             this.formAdd[key] = 'False'
           } else if (key === 'checkDeposit') {
             this.formAdd[key] = 'False'
+          } else if (key === 'bookingNowCheck') {
+            this.formAdd[key] = 'False'
           } else if (key === 'repeatBooking') {
             this.formAdd[key] = 'False'
           } else if (key === 'amountDeposit') {
@@ -3249,6 +3279,8 @@ export default {
           } else if (key === 'checkDeposit') {
             this.formUpdate[key] = 'False'
           } else if (key === 'repeatBooking') {
+            this.formUpdate[key] = 'False'
+          } else if (key === 'bookingNowCheck') {
             this.formUpdate[key] = 'False'
           } else if (key === 'amountDeposit') {
             this.formUpdate[key] = 0
