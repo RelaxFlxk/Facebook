@@ -1118,9 +1118,14 @@ export default {
     }
   },
   async mounted () {
-    this.beforeCreate()
+    await this.beforeCreate()
+    await this.setDefault()
   },
   methods: {
+    async setDefault () {
+      this.selectFlow = 'All'
+      await this.getByflow()
+    },
     refUploadBefore (index) {
       let fileUpload = document.getElementById(`uploadBefore${[index]}`)
       if (fileUpload != null) {
@@ -1631,30 +1636,32 @@ export default {
           } else {
             for (let i = 0; i < rs.length; i++) {
               let d = rs[i]
-              if (d.sortNo >= 2) {
-                await axios
-                  .get(
-                    this.DNS_IP + '/jobBeforeAfter/get?jobId=' + d.jobId
-                  )
-                  .then(async responses => {
-                    if (responses.data.status === false) {
-                      d.dataBeforeAfter = [{'beforeImage': null, 'afterImage': null, 'filesBefore': null, 'filesAfter': null}]
-                      let dajobBeforeAfter = {
-                        jobId: d.jobId,
-                        CREATE_USER: this.$session.getAll().data.userName,
-                        LAST_USER: this.$session.getAll().data.userName
+              if (d.userId !== null) {
+                if (d.sortNo >= 2) {
+                  await axios
+                    .get(
+                      this.DNS_IP + '/jobBeforeAfter/get?jobId=' + d.jobId
+                    )
+                    .then(async responses => {
+                      if (responses.data.status === false) {
+                        d.dataBeforeAfter = [{'beforeImage': null, 'afterImage': null, 'filesBefore': null, 'filesAfter': null}]
+                        let dajobBeforeAfter = {
+                          jobId: d.jobId,
+                          CREATE_USER: this.$session.getAll().data.userName,
+                          LAST_USER: this.$session.getAll().data.userName
+                        }
+                        await axios
+                          .post(this.DNS_IP + '/jobBeforeAfter/add', dajobBeforeAfter)
+                          .then(async responses => {
+                          })
+                      } else {
+                        d.dataBeforeAfter = responses.data
                       }
-                      await axios
-                        .post(this.DNS_IP + '/jobBeforeAfter/add', dajobBeforeAfter)
-                        .then(async responses => {
-                        })
-                    } else {
-                      d.dataBeforeAfter = responses.data
-                    }
-                  })
+                    })
+                }
+                d.dataShow = d.dueDateD + ' ' + this.monthNamesThai[parseInt(d.dueDateM)]
+                this.itemJob.push(d)
               }
-              d.dataShow = d.dueDateD + ' ' + this.monthNamesThai[parseInt(d.dueDateM)]
-              this.itemJob.push(d)
             }
             console.log('this.itemJob', this.itemJob)
           }
