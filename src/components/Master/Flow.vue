@@ -2921,6 +2921,7 @@ export default {
           this.formAdd.LAST_USER = this.session.data.userName
           this.formAdd.flowCode = this.generateCodeGlobal()
           this.formAdd.flowfieldName = JSON.stringify(this.desserts)
+          this.formAdd.amountDeposit = this.formAdd.amountDeposit || 0
           console.log('flowfieldName', this.formAdd.flowfieldName)
           console.log('shopId', this.shopId)
           console.log('forAdd', this.formAdd)
@@ -3035,6 +3036,7 @@ export default {
       })
         .then(async result => {
           this.formUpdate.LAST_USER = this.session.data.userName
+          this.formUpdate.amountDeposit = this.formUpdate.amountDeposit || 0
           this.formUpdate.flowfieldName = JSON.stringify(fieldId)
           var ID = this.formUpdate.flowId
           delete this.formUpdate['flowId']

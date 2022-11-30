@@ -3274,8 +3274,8 @@
                           <v-list-item @click.stop="getBookingDataJob(item, 'qrcode'), getEmpSelectAddJob(), (dialogOnsite = true)" v-if="item.statusBt === 'confirm' && showOnsite === 'ไม่แสดง'">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-account-plus </v-icon> มอบหมายงาน </v-list-item-title>
                           </v-list-item>
-                          <v-list-item @click.stop="setDataCopyLink(item)" v-if="item.statusBt === 'wait' && item.depositStatus === 'True'">
-                            <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="bx:link"></v-icon> ข้อความสำหรับสรุปคำสั่งซื้อ </v-list-item-title>
+                          <v-list-item @click.stop="setDataCopyLink(item)" v-if="item.statusBt === 'wait' && item.depositCheckStatus === 'True'">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="bx:link"></v-icon> เรียกเก็บค่าบริการเพื่อจอง </v-list-item-title>
                           </v-list-item>
                           <v-list-item v-clipboard:success="onCopySuccess" v-clipboard:copy="'https://liff.line.me/1656581804-7KRQyqo5/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId" v-if="item.statusBt === 'confirm' && (item.lineUserId === '' || item.lineUserId === null)">
                           <!-- <v-list-item v-clipboard:success="onCopySuccess" v-clipboard:copy="'https://liff.line.me/1656581804-7KRQyqo5/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId" v-if="item.statusBt === 'confirm' && (item.userId === 'user-skip' || item.userId === '' || item.userId === null)"> -->
@@ -5848,7 +5848,7 @@
               <v-card-text>
                   <v-row>
                     <v-col cols="6" class="text-left pt-10">
-                      <h3><strong>ข้อความสำหรับสรุปคำสั่งซื้อ</strong></h3>
+                      <h3><strong>เรียกเก็บค่าบริการเพื่อจอง</strong></h3>
                     </v-col>
                     <v-col cols="6" class="pt-10">
                       <div style="text-align: end;">
