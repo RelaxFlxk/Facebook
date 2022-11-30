@@ -530,17 +530,6 @@
                               @change="checkStoreFrontAdd()"
                             ></v-checkbox>
                             </v-col>
-                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;">
-                              <v-checkbox
-                              label="นัดหมายภายในวัน"
-                              false-value="False"
-                              :on-icon="'mdi-check-circle'"
-                              :off-icon="'mdi-checkbox-blank-circle-outline'"
-                              color="#1B437C"
-                              true-value="True"
-                              v-model="formAdd.bookingNowCheck"
-                            ></v-checkbox>
-                            </v-col>
                           </v-row>
                           <v-row v-if="$session.getAll().data.timeSlotStatus !== 'True'">
                             <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;">
@@ -553,6 +542,31 @@
                                 true-value="True"
                                 v-model="formAdd.checkOnsite"
                               ></v-checkbox>
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col cols="8" class="pt-0 pb-0" style="display: flex;justify-content: center;">
+                              <v-checkbox
+                              label="นัดหมายล่วงหน้า"
+                              false-value="False"
+                              :on-icon="'mdi-check-circle'"
+                              :off-icon="'mdi-checkbox-blank-circle-outline'"
+                              color="#1B437C"
+                              true-value="True"
+                              v-model="formAdd.bookingNowCheck"
+                            ></v-checkbox>
+                            <v-select
+                            v-if="formAdd.bookingNowCheck === 'True'"
+                              dense
+                              class="ma-3"
+                              :items="bookingNowCheckCount"
+                              v-model="formAdd.bookingNowCheckCount"
+                              label="จำนวนกี่วัน"
+                              outlined
+                              :rules="[rules.required]"
+                              attach
+                              :menu-props="{ bottom: true, offsetY: true }"
+                            ></v-select>
                             </v-col>
                           </v-row>
                         </v-col>
@@ -750,7 +764,7 @@
                               @change="checkStoreFrontUpdate()"
                             ></v-checkbox>
                             </v-col>
-                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;">
+                            <!-- <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;">
                               <v-checkbox
                               label="นัดหมายภายในวัน"
                               false-value="False"
@@ -760,7 +774,7 @@
                               true-value="True"
                               v-model="formUpdate.bookingNowCheck"
                             ></v-checkbox>
-                            </v-col>
+                            </v-col> -->
                           </v-row>
                           <v-row v-if="$session.getAll().data.timeSlotStatus !== 'True'">
                             <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;">
@@ -773,6 +787,31 @@
                                 true-value="True"
                                 v-model="formUpdate.checkOnsite"
                               ></v-checkbox>
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col cols="8" class="pt-0 pb-0" style="display: flex;justify-content: center;">
+                              <v-checkbox
+                              label="นัดหมายล่วงหน้า"
+                              false-value="False"
+                              :on-icon="'mdi-check-circle'"
+                              :off-icon="'mdi-checkbox-blank-circle-outline'"
+                              color="#1B437C"
+                              true-value="True"
+                              v-model="formUpdate.bookingNowCheck"
+                            ></v-checkbox>
+                            <v-select
+                              v-if="formUpdate.bookingNowCheck === 'True'"
+                              dense
+                              class="ma-3"
+                              :items="bookingNowCheckCount"
+                              v-model="formUpdate.bookingNowCheckCount"
+                              label="จำนวนกี่วัน"
+                              outlined
+                              :rules="[rules.required]"
+                              attach
+                              :menu-props="{ bottom: true, offsetY: true }"
+                            ></v-select>
                             </v-col>
                           </v-row>
                         </v-col>
@@ -1691,6 +1730,37 @@ export default {
         dateDayCustom: [],
         typeDayCustom: ''
       },
+      bookingNowCheckCount: [
+        {
+          text: '1 วัน',
+          value: 1
+        },
+        {
+          text: '2 วัน',
+          value: 2
+        },
+        {
+          text: '3 วัน',
+          value: 3
+        },
+        {
+          text: '4 วัน',
+          value: 4
+        },
+        {
+          text: '5 วัน',
+          value: 5
+        },
+        {
+          text: '6 วัน',
+          value: 6
+        },
+        {
+          text: '7 วัน',
+          value: 7
+        }
+
+      ],
       typeDayCustomitem: [
         {
           text: 'วันที่เปิด',
@@ -1815,7 +1885,8 @@ export default {
         remarkConfirm: '',
         timeSlotStatus: this.$session.getAll().data.timeSlotStatus || 'False',
         timeSlot: 1,
-        bookingNowCheck: 'False'
+        bookingNowCheck: 'False',
+        bookingNowCheckCount: 0
       },
       formAddStep: {
         stepId: '',
@@ -1862,7 +1933,8 @@ export default {
         remarkConfirm: '',
         timeSlotStatus: this.$session.getAll().data.timeSlotStatus || 'False',
         timeSlot: 1,
-        bookingNowCheck: 'False'
+        bookingNowCheck: 'False',
+        bookingNowCheckCount: 0
       },
       formUpdateItemFlow: {
         fieldId: '',
@@ -2808,7 +2880,7 @@ export default {
       this.formUpdate.checkDeposit = item.checkDeposit || 'False'
       this.formUpdate.storeFrontCheck = item.storeFrontCheck || 'False'
       this.formUpdate.bookingNowCheck = item.bookingNowCheck || 'False'
-
+      this.formUpdate.bookingNowCheckCount = item.bookingNowCheckCount || 0
       this.formUpdate.timeSlot = item.timeSlot || 1
       this.formUpdate.timeSlotStatus = this.$session.getAll().data.timeSlotStatus || 'False'
 
@@ -2834,6 +2906,7 @@ export default {
       this.formAdd.flowCode = this.generateCodeGlobal()
       this.formAdd.flowfieldName = JSON.stringify(this.desserts)
       this.formAdd.shopId = this.$session.getAll().data.shopId
+      console.log('test', this.formAdd)
       this.$swal({
         title: 'ต้องการ เพิ่มข้อมูล ใช่หรือไม่?',
         type: 'question',
@@ -2969,7 +3042,6 @@ export default {
           delete this.formUpdate['fieldName']
           delete this.formUpdate['fieldType']
           delete this.formUpdate['flowfieldId']
-
           await axios
             .post(
               // eslint-disable-next-line quotes
