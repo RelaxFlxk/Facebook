@@ -561,7 +561,7 @@
                               class="ma-3"
                               :items="bookingNowCheckCount"
                               v-model="formAdd.bookingNowCheckCount"
-                              label="จำนวนกี่วัน"
+                              label="จำนวนวัน"
                               outlined
                               :rules="[rules.required]"
                               attach
@@ -806,7 +806,7 @@
                               class="ma-3"
                               :items="bookingNowCheckCount"
                               v-model="formUpdate.bookingNowCheckCount"
-                              label="จำนวนกี่วัน"
+                              label="จำนวนวัน"
                               outlined
                               :rules="[rules.required]"
                               attach
