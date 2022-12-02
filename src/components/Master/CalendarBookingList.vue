@@ -901,6 +901,7 @@ export default {
           d.bgcolor = '#1565C0'
           d.bgcolorChip = 'blue'
         }
+        d.bookingEmpFlowName = d.bookingEmpFlowName || ''
         d.name = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'ชื่อ' })
         d.licenseNo = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เลขทะเบียน' })
         d.tel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เบอร์โทร' })
