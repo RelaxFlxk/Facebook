@@ -97,21 +97,35 @@
                 <p class="font-weight-bold mb-1 ml-2" style="font-size:20px" v-if="dataJob.filter((dt) => dt.jobNo === item.jobNo && dt.fieldName === 'ชื่อ').length > 0">
                   {{dataJob.filter((dt) => dt.jobNo === item.jobNo && dt.fieldName === 'ชื่อ')[0].fieldValue}}
                 </p>
-                <p class="font-weight-medium mb-1" style="font-size:14px" v-if="item.flowName !== null">
+                <div style="display: flex;align-items: flex-start;">
                   <v-icon color="#F48686" class="mx-1">mdi-square-medium</v-icon>
+                <p class="font-weight-medium mb-1" style="font-size:14px" v-if="item.flowName !== null">
+                  <!-- <v-icon color="#F48686" class="mx-1">mdi-square-medium</v-icon> -->
                   {{item.flowName}}
                 </p>
-                <p class="font-weight-medium mb-1" style="font-size:14px" v-if="item.address !== null">
+                </div>
+                <div style="display: flex;align-items: flex-start;">
                   <v-icon color="#F48686" class="mx-1 mr-2">mdi-map-marker-radius</v-icon>
+                  <p class="font-weight-medium mb-1" style="font-size:14px" v-if="item.address !== null">
+                  <!-- <v-icon color="#F48686" class="mx-1 mr-2">mdi-map-marker-radius</v-icon> -->
                   {{item.address}}
                 </p>
-                <p class="font-weight-bold mb-1" style="font-size:14px" v-if="dataJob.filter((dt) => dt.jobNo === item.jobNo && dt.fieldName === 'เบอร์โทร').length > 0">
+                </div>
+                <div style="display: flex;align-items: flex-start;">
                   <v-icon  color="#24C74D" class="mx-2 mr-2 mt-1 iconify" small data-icon="el:phone-alt"></v-icon>
+                  <p class="font-weight-bold mb-1" style="font-size:14px" v-if="dataJob.filter((dt) => dt.jobNo === item.jobNo && dt.fieldName === 'เบอร์โทร').length > 0">
+                  <!-- <v-icon  color="#24C74D" class="mx-2 mr-2 mt-1 iconify" small data-icon="el:phone-alt"></v-icon> -->
                 {{dataJob.filter((dt) => dt.jobNo === item.jobNo && dt.fieldName === 'เบอร์โทร')[0].fieldValue}}
                 </p>
+                </div>
               </v-col>
             </v-row>
-            <p class="font-weight-bold mb-1 text-center" v-if="item.dueDate" style="font-size:16px"><v-icon x-large color="#F48686" class="mx-1 mr-2 iconify" data-icon="ic:twotone-access-time"></v-icon>{{momentThaiText(item.dueDate)}}</p>
+            <div style="display: flex;align-items: center;justify-content: center;">
+              <v-icon x-large color="#F48686" class="iconify" data-icon="ic:twotone-access-time"></v-icon>
+              <p class="font-weight-bold text-center ma-0 ml-2" v-if="item.dueDate" style="font-size:16px">
+                <!-- <v-icon x-large color="#F48686" class="mx-1 mr-2 iconify" data-icon="ic:twotone-access-time"></v-icon> -->
+                {{momentThaiText(item.dueDate)}}</p>
+            </div>
            <v-row class="mt-2 mb-1 px-3">
             <v-col cols="4" class="text-center pa-1">
               <v-btn
@@ -374,34 +388,54 @@
           <v-card v-if="sortNo === 3" class="mx-6 pa-3 ma-2" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;">
             <v-row class="pa-5">
               <v-col cols="3" md="3" sm="12"  class="pa-0 ma-0" style="display: flex;align-items: flex-start;justify-content: flex-end;padding-left: 11px !important;">
-                <v-avatar size="90">
-                <img
-                  :src="CloseJob.memberPicture"
-                >
-              </v-avatar>
+                <v-avatar size="90" v-if="CloseJob.memberPicture">
+                  <img
+                    :src="CloseJob.memberPicture"
+                    onerror="this.onerror=null;this.src='https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2FLINE_ALBUM_220214_0.jpg?alt=media&token=6389daf9-9473-4b5d-8b19-2afb67d015e4';"
+                  >
+                </v-avatar>
+                <v-avatar size="90" color="#173053" v-else>
+                  <v-icon dark x-large>
+                    mdi-account-circle
+                  </v-icon>
+                </v-avatar>
               </v-col>
               <v-col cols="9" md="9" sm="12" class="pa-0 ma-0 pl-2">
                 <p class="font-weight-bold mb-1 ml-2" v-if="dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo && dt.fieldName === 'ชื่อ').length > 0"
                 style="font-size:20px">
                   {{dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo && dt.fieldName === 'ชื่อ')[0].fieldValue}}
                 </p>
-                <p class="font-weight-medium mb-1" v-if="CloseJob.flowName !== null" style="font-size:14px">
-                  <v-icon color="#F48686" class="mx-1">mdi-square-medium</v-icon>{{CloseJob.flowName}}
+                <div style="display: flex;align-items: flex-start;">
+                  <v-icon color="#F48686" class="mx-1">mdi-square-medium</v-icon>
+                  <p class="font-weight-medium mb-1" v-if="CloseJob.flowName !== null" style="font-size:14px">
+                  <!-- <v-icon color="#F48686" class="mx-1">mdi-square-medium</v-icon> -->
+                  {{CloseJob.flowName}}
                 </p>
-                <p class="font-weight-medium mb-1" style="font-size:14px" v-if="CloseJob.address !== null"><v-icon color="#F48686" class="mx-1 mr-2">mdi-map-marker-radius</v-icon>
+                </div>
+                <div style="display: flex;align-items: flex-start;">
+                  <v-icon color="#F48686" class="mx-1 mr-2">mdi-map-marker-radius</v-icon>
+                  <p class="font-weight-medium mb-1" style="font-size:14px" v-if="CloseJob.address !== null">
+                    <!-- <v-icon color="#F48686" class="mx-1 mr-2">mdi-map-marker-radius</v-icon> -->
                   {{CloseJob.address}}
                 </p>
-                <p class="font-weight-bold mb-1" v-if="dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo && dt.fieldName === 'เบอร์โทร').length > 0"
-                style="font-size:14px"><v-icon  color="#24C74D" class="mx-2 mr-2 mt-1 iconify" small data-icon="el:phone-alt">
-                </v-icon>{{dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo && dt.fieldName === 'เบอร์โทร')[0].fieldValue}}
-              </p>
+                </div>
+                <div style="display: flex;align-items: flex-start;">
+                  <v-icon  color="#24C74D" class="mx-2 mr-2 mt-1 iconify" small data-icon="el:phone-alt"></v-icon>
+                  <p class="font-weight-bold mb-1" v-if="dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo && dt.fieldName === 'เบอร์โทร').length > 0"
+                style="font-size:14px">
+                <!-- <v-icon  color="#24C74D" class="mx-2 mr-2 mt-1 iconify" small data-icon="el:phone-alt"></v-icon> -->
+                {{dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo && dt.fieldName === 'เบอร์โทร')[0].fieldValue}}
+                </p>
+                </div>
               </v-col>
             </v-row>
-            <p class="font-weight-bold mb-1 text-center" v-if="CloseJob.dueDate !== null & CloseJob.dueDate !== ''"
-            style="font-size:16px">
-            <v-icon x-large color="#F48686" class="mx-1 mr-2 iconify" data-icon="ic:twotone-access-time">
-            </v-icon>{{momentThaiTextClose(CloseJob.dueDate)}}
-          </p>
+            <div style="display: flex;align-items: center;justify-content: center;" class="mb-2">
+              <v-icon x-large color="#F48686" class="mx-1 mr-2 iconify" data-icon="ic:twotone-access-time"></v-icon>
+              <p class="font-weight-bold mb-1 text-center" v-if="CloseJob.dueDate !== null & CloseJob.dueDate !== ''"
+              style="font-size:16px">
+              {{momentThaiTextClose(CloseJob.dueDate)}}
+              </p>
+            </div>
             <v-row>
               <v-col cols="6">
                 <p class="font-weight-bold mb-1 text-center" v-if="CloseJob.dueDate !== null & CloseJob.dueDate !== ''" style="font-size:14px">{{'เวลาเริ่มงาน ' + momenTime(CloseJob.dueDate) + ' น.'}}</p>
