@@ -2401,7 +2401,7 @@
                     </v-col>
                   </v-row>
                   <v-row>
-                    <v-col v-if="checkSelectText !== 'cancel'">
+                    <v-col v-if="checkSelectText !== 'cancel' && checkSelectText !== 'confirmJob'">
                       <v-btn
                       elevation="2"
                       color="green darken-1"
@@ -3253,6 +3253,11 @@
                           <v-list-item @click.stop="setDataChang(item)" v-if="item.statusBt !== 'confirmJob' && item.statusBt !== 'cancel'">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-calendar-clock </v-icon> เปลี่ยนเวลานัดหมาย {{item.countChangeTime}} ครั้ง</v-list-item-title>
                           </v-list-item>
+                          <!-- คุณ Joy -->
+                          <v-list-item @click.stop="setDataChang(item)" v-if="item.statusBt === 'confirmJob' && (item.shopId === 'U9f316c85400fd716ea8c80d7cd5b61f8' || item.shopId === 'Ucb91b5fb61ff0c01e6d7d4c5f7962c57')">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-calendar-clock </v-icon> เปลี่ยนเวลานัดหมาย {{item.countChangeTime}} ครั้ง</v-list-item-title>
+                          </v-list-item>
+                          <!-- คุณ Joy -->
                           <v-list-item @click.stop="setDataReture(item)" v-if="item.statusBt !== 'confirmJob' && item.depositStatus === 'True' && item.depositImge != ''">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="uil:money-withdrawal"></v-icon> คืนเงินมัดจำ </v-list-item-title>
                           </v-list-item>
@@ -3302,6 +3307,9 @@
                           <v-list-item v-if="item.statusBt === 'confirmJob'" @click.stop="(dialogJob = true), getjob(item)">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="uil:bill"></v-icon> ปิดงานนี้ </v-list-item-title>
                           </v-list-item>
+                          <v-list-item v-if="item.statusBt === 'confirmJob'" @click.stop="getJobitem(item)">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="ic:twotone-work-history"></v-icon> ประวัติการทำงาน </v-list-item-title>
+                          </v-list-item>
                           <v-list-item v-if="item.statusBt === 'confirmJob' && showOnsite === 'ไม่แสดง'" @click="getjobChangeOnsite(item), dialogChangeOnsite = true">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-account-reactivate </v-icon> เปลี่ยนพนักงาน On site </v-list-item-title>
                           </v-list-item>
@@ -3332,6 +3340,75 @@
           </v-col>
           <!-- end data table -->
         </v-row>
+        <v-dialog
+          v-model="dialogHistoryJob"
+          persistent
+          max-width="600"
+        >
+          <v-card class="pa-3">
+            <!-- <v-container>
+              <div style="text-align: end;">
+                <v-btn
+                  fab
+                  small
+                  dark
+                  color="#F3F3F3"
+                  @click="dialogHistoryJob = false"
+                >
+                  <v-icon dark
+                  color="#FE4A01 ">
+                    mdi-close
+                  </v-icon>
+                </v-btn>
+              </div>
+            </v-container> -->
+            <v-row>
+              <v-col cols="6" class="text-left pt-10">
+                <h3><strong>{{customerNameJob}}</strong></h3>
+              </v-col>
+              <v-col cols="6" class="pt-10">
+                <div style="text-align: end;">
+                  <v-btn
+                    class="mx-2"
+                    fab
+                    small
+                    dark
+                    color="white"
+                    :style="styleCloseBt"
+                    @click="dialogHistoryJob = false"
+                    >
+                    X
+                  </v-btn>
+                </div>
+              </v-col>
+            </v-row>
+            <v-timeline v-if="timelineitem.length > 0">
+              <v-timeline-item
+                v-for="(item , index) in timelineitem" :key="index"
+                :color="codeColor[index]"
+                small
+              >
+                <template v-slot:opposite>
+                  <span>{{format_dateNotime(item.DTLAST_DATE)}}</span>
+                </template>
+                <v-card  class="elevation-2 p-2" :style="'border-top: 8px solid ' + codeColor[index]+ ';'">
+                  <v-card-title class="text-h6" style="color:#173053;">
+                  </v-card-title>
+                  <v-card-text>
+                    <p class="font-weight-black" style="margin-bottom: 0px;color:#000000;">ขั้นตอน {{item.stepTitle}}</p>
+                    <!-- <p style="margin-bottom: 0px; color:#173053;">ขั้นตอน {{item.stepTitle}}</p> -->
+                    <p v-if="item.stepTitle !== 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;"> เวลาที่รับงาน {{momenTime(item.DTLAST_DATE)}}</p>
+                    <p v-if="item.stepTitle !== 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;"> ผู้รับผิดชอบ {{item.empStep}}</p>
+                    <p v-if="item.stepTitle !== 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;">เวลาการทำงาน {{item.Counttime}} นาที</p>
+                    <p v-if="item.stepTitle === 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;">สรุปค่าใช้จ่าย {{item.totalPrice}} บาท</p>
+                    <!-- <p style="margin-bottom: 0px;">วันที่เปลี่ยน {{format_dateNotime(item.DTLAST_DATE)}}</p> -->
+                  </v-card-text>
+                </v-card>
+              </v-timeline-item>
+            </v-timeline>
+            <br>
+          </v-card>
+        </v-dialog>
         <v-dialog v-model="dialogMap" :max-width="dialogwidth">
            <v-card class="text-center">
           <v-card-text>
@@ -6015,6 +6092,23 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      customerNameJob: '',
+      dialogHistoryJob: false,
+      timelineitem: [],
+      codeColor: [
+        'rgb(142, 202, 230)',
+        'rgb(33, 158, 188)',
+        'rgb(2, 48, 71)',
+        'rgb(241, 91, 76)',
+        'rgb(255, 183, 3)',
+        'rgb(251, 133, 0)',
+        'rgb(61,90,128)',
+        'rgb(152,193,217)',
+        'rgb(224,251,252)',
+        'rgb(255,212,91)',
+        'rgb(238,108,77)',
+        'rgb(41,50,65)'
+      ],
       showOnsite: 'ไม่แสดง',
       selectOnsite: '',
       menuAdd1: false,
@@ -6477,6 +6571,53 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
+    async getJobitem (item) {
+      console.log('getJobitem', item)
+      this.customerNameJob = item.cusName
+      this.timelineitem = []
+      await axios
+        .get(this.DNS_IP + '/job_logCloseJob/' + item.jobNo).then((response) => {
+          let rs = response.data
+          console.log('rs', rs)
+          if (rs.length > 0) {
+            for (let i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              let s = {}
+              s.empStep = d.empStep
+              s.endDate = d.endDate
+              s.totalPrice = s.totalPrice
+              s.DTCREATE_DATE = d.CREATE_DATE
+              s.DTLAST_DATE = d.LAST_DATE
+              s.stepTitle = d.totalPrice === null ? d.stepTitle : 'ปิดจ๊อบ'
+              s.timediff = d.timediff
+              s.Counttime = this.convertHMS(this.jsTimeDiff(d.CREATE_DATE, d.LAST_DATE))
+              s.totalPrice = d.totalPrice
+              this.timelineitem.push(s)
+            }
+          }
+          this.dialogHistoryJob = true
+        }).catch((error) => {
+          console.log('error function addData : ', error)
+          this.dialogHistoryJob = true
+        })
+    },
+    convertHMS (value) {
+      const sec = parseInt(value, 10) // convert value to number if it's string
+      let hours = Math.floor(sec / 3600) // get hours
+      let minutes = Math.floor((sec - (hours * 3600)) / 60) // get minutes
+      let seconds = sec - (hours * 3600) - (minutes * 60) // get seconds
+      // add 0 if value < 10; Example: 2 => 02
+      if (hours < 10) { hours = '0' + hours }
+      if (minutes < 10) { minutes = '0' + minutes }
+      if (seconds < 10) { seconds = '0' + seconds }
+      return hours + ':' + minutes + ':' + seconds // Return is HH : MM : SS
+    },
+    jsTimeDiff (Time1, Time2) {
+      var oneday = 1000 * 60
+      var defDate = (new Date(Time2).getTime() - new Date(Time1).getTime()) / oneday
+      // console.log('def', Time1, Time2)
+      return defDate
+    },
     async getjobChangeOnsite (item) {
       this.dataEmpOnsite = item
       await this.getEmpSelectAddJob()
