@@ -294,10 +294,12 @@
                             <template v-slot:[`item.finishTime`]="{ item }" >
                               <div v-if="item.finishTime !== null && item.finishTime !== ''"> {{item.finishTime + '  ชม.'}}</div>
                             </template>
-                            <template v-slot:[`item.sendCard`]="{ item }">
+                            <template v-slot:[`item.sendCard`]="{ item }" class="text-center">
                               <v-checkbox
                                 false-value="False"
                                 true-value="True"
+                                :on-icon="'mdi-check-circle'"
+                                :off-icon="'mdi-checkbox-blank-circle-outline'"
                                 v-model="item.sendCard"
                               ></v-checkbox>
                               <!-- <v-checkbox
@@ -1963,8 +1965,8 @@ export default {
         remarkConfirm: ''
       },
       columnsStep: [
-        { text: 'AC', value: 'sendCard' },
-        { text: 'ID', value: 'stepId' },
+        { text: 'แจ้งเตือน', value: 'sendCard', align: 'center' },
+        // { text: 'ID', value: 'stepId' },
         { text: 'Title', value: 'stepTitle', align: 'center' },
         { text: 'เวลาที่คาดว่าจะเสร็จ', value: 'finishTime', align: 'center' },
         { text: ' ', value: 'actions2', sortable: false, align: 'center' },

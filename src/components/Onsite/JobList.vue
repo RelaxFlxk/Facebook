@@ -410,6 +410,17 @@
                 <p class="font-weight-bold mb-1 text-center" v-if="CloseJob.LAST_DATE !== null & CloseJob.LAST_DATE !== ''" style="font-size:14px">{{'เวลาจบงาน ' + momenTime(CloseJob.LAST_DATE) + ' น.'}}</p>
               </v-col>
             </v-row>
+            <v-row>
+              <v-col cols="12" class="text-center pa-1 mb-3">
+              <v-btn
+                color="#F38383"
+                rounded
+                dark
+                @click="dialogMessage = true, setMessage(CloseJob)"
+              >
+              ข้อความ</v-btn>
+            </v-col>
+            </v-row>
           </v-card>
         </div>
         <!-- <v-row class="fixed_scroll">
@@ -1160,11 +1171,13 @@ export default {
       }
     },
     setMessage (item) {
+      console.log('item', item)
       this.formMessage.jobNo = item.jobNo
       this.formMessage.empId = parseInt(this.session.data.empId)
       this.formMessage.LAST_USER = this.session.data.userName
       this.formMessage.CREATE_USER = this.session.data.userName
       this.formMessage.shopId = this.shopId
+      console.log('his.formMessage', this.formMessage)
     },
     clearMessage () {
       this.formMessage.jobNo = ''

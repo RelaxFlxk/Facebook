@@ -37,8 +37,10 @@ import ManageLink from './ManageLink'
 import TableCheckQueue from './TableCheckQueue'
 import BookingListQueue from './BookingListQueue'
 import BookingListQueueMonitoring from './BookingListQueueMonitoring'
+import WorkShopComponent from './WorkShopComponent'
 
 export default {
+  WorkShopComponent,
   CustomField,
   ServiceType,
   NoticeManagement,

@@ -1,6 +1,22 @@
 <template>
     <v-main>
-      <div class="stepLayout">
+      <v-dialog v-model="dialogWorkShop" persistent>
+        <v-card min-width="200px" class="pa-3" style="overflow-y: auto;background-color: #FFFFFF;">
+          <div style="text-align: end;">
+              <v-btn
+                fab
+                small
+                dark
+                color="#F3F3F3"
+                @click="CloseDialog(), dialogWorkShop = false"
+              >
+                <v-icon dark
+                color="#FE4A01 ">
+                  mdi-close
+                </v-icon>
+              </v-btn>
+          </div>
+          <div class="stepLayout">
         <v-col cols="12" sm="8">
             <h3 style="color:#1B437C">แก้ไขกระดานทำงาน</h3>
           </v-col>
@@ -76,6 +92,8 @@
             </v-col>
             </v-row>
         </div>
+        </v-card>
+      </v-dialog>
     </v-main>
 </template>
 
@@ -101,6 +119,16 @@ export default {
   },
   created () {
     // setInterval(this.getNowGlobal, 1000)
+  },
+  watch: {
+    // whenever question changes, this function will run
+    // dialogWorkShop (newQuestion, oldQuestion) {
+    //   console.log('dialogWorkShop', newQuestion, oldQuestion)
+    //   if (newQuestion === false) {
+    //     // this.getLayout()
+    //     this.$emit('getLayout')
+    //   }
+    // }
   },
   data () {
     return {
@@ -149,25 +177,26 @@ export default {
     }
   },
   async mounted () {
-    await this.getDataMasbranch()
-    await this.getStepFlow()
     // await this.redirectBybord()
   },
   methods: {
-    test (y, w) {
-      console.log('TrueCheck')
+    CloseDialog () {
+      this.$emit('confirmed')
     },
     async showDialog (flowId, masBranchID) {
+      await this.getDataMasbranch()
+      await this.getStepFlow()
       console.log('item', flowId, masBranchID)
-      if (flowId && masBranchID) {
-        this.DataBranchID = masBranchID
-        this.getDataFlow()
-        this.DataflowId = flowId
-        this.getLayout()
-      } else {
-        this.dialogWorkShop = false
-        console.log('ELSE')
-      }
+      // if (flowId && masBranchID) {
+      this.DataBranchID = masBranchID
+      await this.getDataFlow()
+      this.DataflowId = flowId
+      await this.getLayout()
+      this.dialogWorkShop = true
+      // } else {
+      //   this.dialogWorkShop = false
+      //   console.log('ELSE')
+      // }
       // this.dialogWorkShop = true
     },
     async getStepFlow (flowId) {

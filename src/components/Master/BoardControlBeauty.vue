@@ -23,6 +23,7 @@
               <span class="hidden-sm-and-down">รับรถใหม่</span>
             </v-btn> -->
             <v-btn
+            v-if="flowId !== '' && masBranchID !== ''"
               color="#1B437C"
               text
               @click="editLayout()"
@@ -98,7 +99,21 @@
           >
             นัดส่ง:
           </v-card-title> -->
-          <v-col cols="12" class="text-right" text color="#ABB1C7" v-if="allJob.length > 0">
+          <v-col cols="8">
+            <strong class="text-h6">นัดส่ง:</strong>
+            <v-chip color="#DE6467" text-color="white">
+              ภายใน 2 วัน
+            </v-chip>
+
+            <v-chip color="#FED966" text-color="white">
+              ภายใน 4 วัน
+            </v-chip>
+
+            <v-chip color="#4F93D0" text-color="white">
+              มากกว่า 4 วัน
+            </v-chip>
+          </v-col>
+          <v-col cols="4" class="text-right" text color="#ABB1C7" v-if="allJob.length > 0">
             <v-btn-toggle>
             <v-btn
               text
@@ -513,7 +528,7 @@
                 <v-card class="pa-0" style="background-color: #f0eeee;" >
                   <v-card id="cardTitle" class="mb-1" :style="'background-color:' + codeColor[work] + ';'">
                     <v-card-title class="ma-3" >
-                      <v-row class="pa-0" style="color: white;">
+                      <v-row class="pa-0" style="color: white;display: flex;">
                         <v-col cols="10" class="pa-1">
                           <v-tooltip
                             :color="codeColor[work]"
@@ -531,14 +546,14 @@
                               </template>
                               <span>{{item.stepTitle}}</span>
                             </v-tooltip>
-                          <strong class="ml-2 textLayout" v-if="item.stepTitle.length <= 18">{{ item.stepTitle }}</strong>
+                          <h2 class="ml-2 mt-3 textLayout" v-if="item.stepTitle.length <= 18">{{ item.stepTitle }}</h2>
                         </v-col>
                         <v-col cols="2" class="text-right pb-1 pt-1 pl-0 ">
-                          <strong class="pa-0 textLayout">{{
+                          <h2 class="pa-0 mt-3 textLayout">{{
                             allJob.filter(row => {
                               return row.stepId == item.stepId
                             }).length
-                          }}</strong>
+                          }}</h2>
                           <!-- <v-icon color="#ABB1C7">
                             mdi-dots-vertical
                           </v-icon> -->
@@ -1173,6 +1188,12 @@
           </div>
         </div> -->
       </div>
+      <!-- <v-dialog v-model="dialogWorkShop" max-width="70%">
+        <v-card min-width="200px" class="pa-2 pl-5 ma-0 pb-3 mt-n14" style="overflow-y: auto;"> -->
+          <WorkShopComponent @confirmed="getLayout" ref="EditWorkShop"></WorkShopComponent>
+        <!-- </v-card>
+      </v-dialog> -->
+      <!-- <WorkShop></WorkShop> -->
     </v-main>
   </div>
 </template>
@@ -1182,6 +1203,7 @@ import draggable from 'vuedraggable'
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
 import Menu from '../System/Menu.vue'
+import WorkShopComponent from './WorkShopComponent.vue'
 // import moment from 'moment' // แปลง date
 
 export default {
@@ -1190,7 +1212,8 @@ export default {
     draggable,
     'left-menu-admin': adminLeftMenu,
     VuetifyMoney,
-    Menu
+    Menu,
+    WorkShopComponent
   },
   computed: {
     colsWidth () {
@@ -1212,8 +1235,18 @@ export default {
       }
     }
   },
+  watch: {
+    // whenever question changes, this function will run
+    // dialogWorkShop (newQuestion, oldQuestion) {
+    //   console.log('dialogWorkShop', newQuestion, oldQuestion)
+    //   if (newQuestion === false) {
+    //     this.getLayout()
+    //   }
+    // }
+  },
   data () {
     return {
+      dialogWorkShop: false,
       overlay: false,
       overlayUpdateStep: false,
       overlayEdit: false,
@@ -1385,6 +1418,9 @@ export default {
     // await this.getLayoutDefault()
   },
   methods: {
+    confirmed () {
+      console.log('testtestsetsetsetset')
+    },
     refreshData () {
       this.searchOther = ''
       this.allJob = this.allJobSupport
@@ -1446,6 +1482,18 @@ export default {
     },
     async chkFlowName () {
       if (this.flowId !== '') {
+        switch (this.$vuetify.breakpoint.name) {
+          case 'xs': this.layout = 'list'
+            break
+          case 'sm': this.layout = 'list'
+            break
+          case 'md': this.layout = 'grid'
+            break
+          case 'lg': this.layout = 'grid'
+            break
+          case 'xl': this.layout = 'grid'
+            break
+        }
         this.closeSetTime()
         await this.getStepFlow()
         await this.getLayout()
@@ -1716,7 +1764,14 @@ export default {
       this.$router.push('/Master/RegisterAdd')
     },
     async editLayout () {
-      this.$router.push('/Master/WorkShop')
+      console.log('testt', this.flowId, this.masBranchID)
+      // if (this.flowId !== '' && this.masBranchID !== '') {
+      // this.dialogWorkShop = true
+      this.$refs.EditWorkShop.showDialog(this.flowId, this.masBranchID)
+      // }
+      //
+      // console.log('testt', this.flowId, this.masBranchID)
+      // this.$router.push('/Master/WorkShop')
     },
     itemCars (item) {
       this.item_newcars = item
@@ -2267,6 +2322,10 @@ export default {
 }
 </script>
 <style scoped>
+.EditWorkShop {
+  width: auto;
+  background-color: #FFFFFF;
+}
 .textLayout {
   font-size: 16px !important;
 }
@@ -2282,7 +2341,7 @@ export default {
   height: max-content;
 }
 .colum {
-  margin-top: 1rem;
+  margin-top: 2rem;
   width: 200px;
   background-color: #f0eeee;
   margin-left: 1.5px;
