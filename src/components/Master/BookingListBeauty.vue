@@ -10293,30 +10293,59 @@ export default {
           //   { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
           //   { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
         } else if (text === 'confirmJob') {
-          this.columnsSelected = [
-            // { text: 'Booking Id', value: 'bookNo' },
-            { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
-            { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
-            // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
-            { text: 'เบอร์โทร', value: 'tel', sortable: false },
-            { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
-            { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-            { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '120' },
-            // { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center', sortable: false },
-            { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
+          if (this.$session.getAll().data.shopId === 'U9f316c85400fd716ea8c80d7cd5b61f8') {
+            this.columnsSelected = [
+              // { text: 'Booking Id', value: 'bookNo' },
+              { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
+              { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
+              // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+              { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
+              { text: 'เบอร์โทร', value: 'tel', sortable: false },
+              // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+              { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '120' },
+              // { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center', sortable: false },
+              { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
+          } else {
+            this.columnsSelected = [
+              // { text: 'Booking Id', value: 'bookNo' },
+              { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
+              { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
+              // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+              { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
+              { text: 'เบอร์โทร', value: 'tel', sortable: false },
+              { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+              { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '120' },
+              // { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center', sortable: false },
+              { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
+          }
         } else {
-          this.columnsSelected = [
-            // { text: 'Booking Id', value: 'bookNo' },
-            { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
-            { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
-            // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
-            { text: 'เบอร์โทร', value: 'tel', sortable: false },
-            { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center', width: '120' },
-            { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-            { text: 'หมายเหตุ', value: 'remark', align: 'center', width: '170' },
-            { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }]
+          if (this.$session.getAll().data.shopId === 'U9f316c85400fd716ea8c80d7cd5b61f8') {
+            this.columnsSelected = [
+              // { text: 'Booking Id', value: 'bookNo' },
+              { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
+              { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
+              // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+              { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
+              { text: 'เบอร์โทร', value: 'tel', sortable: false },
+              // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center', width: '120' },
+              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+              { text: 'หมายเหตุ', value: 'remark', align: 'center', width: '170' },
+              { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }]
+          } else {
+            this.columnsSelected = [
+              // { text: 'Booking Id', value: 'bookNo' },
+              { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
+              { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
+              // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+              { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
+              { text: 'เบอร์โทร', value: 'tel', sortable: false },
+              { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center', width: '120' },
+              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+              { text: 'หมายเหตุ', value: 'remark', align: 'center', width: '170' },
+              { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }]
+          }
         }
       }
       // }
