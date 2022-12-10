@@ -1431,7 +1431,7 @@
                             ></v-select>
                             </v-col>
                           </v-row>
-                          <v-row>
+                          <v-row v-if="$session.getAll().data.shopId !== 'U9f316c85400fd716ea8c80d7cd5b61f8'">
                             <v-col class="pt-0 pb-0">
                               <v-radio-group v-model="formAdd.radiosRemark" row required :rules ="[rules.required]">
                                 <v-radio value="ซ่อมปกติ">
@@ -1527,6 +1527,47 @@
                               label="หมายเหตุเพิ่มเติม"
                               auto-grow
                             ></v-textarea>
+                            </v-col>
+                          </v-row>
+                          <v-row v-if="statusShowMap === 'True'">
+                            <v-col class="pb-0 pt-0" cols="12">
+                                <v-text-field
+                                v-model="address"
+                                label="ชื่อของที่อยู่"
+                                outlined
+                                required
+                                dense
+                                :rules="[rules.required]"
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="12">
+                              <v-card>
+                                <v-card-text>
+                                  <v-row>
+                                    <v-col class="pb-0" cols="12">
+                                      <h6>ค้นหาที่อยู่ลูกค้า :</h6>
+                                    </v-col>
+                                    <v-col class="mr-16" cols="12">
+                                      <GmapAutocomplete id="autocompleteMap" @place_changed="updatePlace" />
+                                    </v-col>
+                                  </v-row>
+                                </v-card-text>
+                                <hr>
+                                <!-- <gmap-autocomplete @place_changed="updatePlace"/> -->
+                                <v-card-text>
+                                <GmapMap
+                                  v-if="center !== null"
+                                  :center="center"
+                                  @click='updateCoordinates'
+                                  :zoom="15"
+                                  style="width: 100%; height: 200px"
+                                  :options="{ disableDefaultUI: true, fullscreenControl: true, zoomControl: true }"
+                                >
+                                  <GmapMarker :position="center" :draggable="true" @drag="updateCoordinates" />
+                                </GmapMap>
+                                </v-card-text>
+                              </v-card>
+                              <br>
                             </v-col>
                           </v-row>
                           <div class="text-center">
@@ -4215,7 +4256,7 @@
                             ></v-select>
                             </v-col>
                           </v-row>
-                          <v-row>
+                          <v-row v-if="$session.getAll().data.shopId !== 'U9f316c85400fd716ea8c80d7cd5b61f8'">
                             <v-col class="pt-0 pb-0">
                               <v-radio-group v-model="formEdit.radiosRemark" row  required :rules ="[rules.required]">
                                 <v-radio value="ซ่อมปกติ">
@@ -8056,8 +8097,10 @@ export default {
     setFlowAdd () {
       if (this.dataFlowSelectAdd.filter(el => { return el.value === this.formAdd.flowId }).length > 0) {
         this.checkDepositAdd = this.dataFlowSelectAdd.filter(el => { return el.value === this.formAdd.flowId })[0].allData.checkDeposit || 'False'
+        this.statusShowMap = this.dataFlowSelectAdd.filter(el => { return el.value === this.formAdd.flowId })[0].allData.checkOnsite || 'False'
       } else {
         this.checkDepositAdd = 'False'
+        this.statusShowMap = 'False'
       }
     },
     async getBookingFieldText () {
@@ -8784,7 +8827,7 @@ export default {
             update.LAST_USER = this.$session.getAll().data.userName
             update.empSelect = this.empSelectEdit
             update.shopId = this.session.data.shopId
-            update.address = this.address
+            update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
             update.addressLatLong = JSON.stringify(this.center)
             Add.push(update)
           } else {
@@ -8813,7 +8856,7 @@ export default {
                 update.LAST_USER = this.$session.getAll().data.userName
                 update.empSelect = this.empSelectEdit
                 update.shopId = this.session.data.shopId
-                update.address = this.address
+                update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
                 update.addressLatLong = JSON.stringify(this.center)
                 Add.push(update)
               }
@@ -8833,7 +8876,7 @@ export default {
                 update.LAST_USER = this.$session.getAll().data.userName
                 update.empSelect = this.empSelectEdit
                 update.shopId = this.session.data.shopId
-                update.address = this.address
+                update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
                 update.addressLatLong = JSON.stringify(this.center)
                 Add.push(update)
               }
@@ -10250,30 +10293,59 @@ export default {
           //   { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
           //   { text: 'หมายเหตุเพิ่มเติม', value: 'remark', align: 'center' }]
         } else if (text === 'confirmJob') {
-          this.columnsSelected = [
-            // { text: 'Booking Id', value: 'bookNo' },
-            { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
-            { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
-            // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
-            { text: 'เบอร์โทร', value: 'tel', sortable: false },
-            { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
-            { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-            { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '120' },
-            // { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center', sortable: false },
-            { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
+          if (this.$session.getAll().data.shopId === 'U9f316c85400fd716ea8c80d7cd5b61f8') {
+            this.columnsSelected = [
+              // { text: 'Booking Id', value: 'bookNo' },
+              { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
+              { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
+              // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+              { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
+              { text: 'เบอร์โทร', value: 'tel', sortable: false },
+              // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+              { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '120' },
+              // { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center', sortable: false },
+              { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
+          } else {
+            this.columnsSelected = [
+              // { text: 'Booking Id', value: 'bookNo' },
+              { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
+              { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
+              // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+              { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
+              { text: 'เบอร์โทร', value: 'tel', sortable: false },
+              { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+              { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '120' },
+              // { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center', sortable: false },
+              { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
+          }
         } else {
-          this.columnsSelected = [
-            // { text: 'Booking Id', value: 'bookNo' },
-            { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
-            { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
-            // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-            { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
-            { text: 'เบอร์โทร', value: 'tel', sortable: false },
-            { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center', width: '120' },
-            { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-            { text: 'หมายเหตุ', value: 'remark', align: 'center', width: '170' },
-            { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }]
+          if (this.$session.getAll().data.shopId === 'U9f316c85400fd716ea8c80d7cd5b61f8') {
+            this.columnsSelected = [
+              // { text: 'Booking Id', value: 'bookNo' },
+              { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
+              { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
+              // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+              { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
+              { text: 'เบอร์โทร', value: 'tel', sortable: false },
+              // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center', width: '120' },
+              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+              { text: 'หมายเหตุ', value: 'remark', align: 'center', width: '170' },
+              { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }]
+          } else {
+            this.columnsSelected = [
+              // { text: 'Booking Id', value: 'bookNo' },
+              { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
+              { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
+              // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+              { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
+              { text: 'เบอร์โทร', value: 'tel', sortable: false },
+              { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center', width: '120' },
+              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+              { text: 'หมายเหตุ', value: 'remark', align: 'center', width: '170' },
+              { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }]
+          }
         }
       }
       // }
@@ -11194,6 +11266,8 @@ export default {
             update.depositPrice = this.formAdd.depositPrice
             update.storeFrontCheck = storeFrontCheck
             update.statusBookingForm = 'BookingForm'
+            update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
+            update.addressLatLong = JSON.stringify(this.center)
             Add.push(update)
           } else {
             if (fielditem.filter(row => { return row.fieldId === parseInt(d.conditionField) }).length > 0) {
@@ -11225,6 +11299,8 @@ export default {
                 update.depositPrice = this.formAdd.depositPrice
                 update.storeFrontCheck = storeFrontCheck
                 update.statusBookingForm = 'BookingForm'
+                update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
+                update.addressLatLong = JSON.stringify(this.center)
                 Add.push(update)
               }
             } else if (d.conditionField === 'flow') {
@@ -11256,6 +11332,8 @@ export default {
                 update.depositPrice = this.formAdd.depositPrice
                 update.storeFrontCheck = storeFrontCheck
                 update.statusBookingForm = 'BookingForm'
+                update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
+                update.addressLatLong = JSON.stringify(this.center)
                 Add.push(update)
               }
             }
@@ -11428,6 +11506,8 @@ export default {
       this.dialogAdd = false
       this.dialogAddCon = false
       this.loadingAdd = false
+      this.address = ''
+      this.center = null
       this.dataReadyAdd = true
       clearInterval(this.setTimerCalendar)
       this.setTimerCalendar = null
