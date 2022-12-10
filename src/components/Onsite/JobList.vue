@@ -256,7 +256,8 @@
            </v-row>
              </v-card>
             <div class="mx-6 pa-3 ma-2">
-              <v-row>
+              <div v-if="shopId !== 'U9f316c85400fd716ea8c80d7cd5b61f8'">
+                <v-row>
                 <v-col cols="6" class="pb-0 text-center"><p class="font-weight-bold mb-0">Before</p></v-col>
                 <v-col cols="6" class="pb-0 text-center"><p class="font-weight-bold mb-0">After</p></v-col>
               </v-row>
@@ -364,11 +365,8 @@
                 <v-col cols="12" class="pt-0 text-center mt-2" v-if="indexBeforeAfter === (item.dataBeforeAfter.length - 1)">
                     <v-icon color="#173053 " class=""  dark x-large @click="addBeforeAfter(item.dataBeforeAfter, item)">mdi-table-plus</v-icon>
                 </v-col>
-
               </v-row>
-              <v-row>
-
-              </v-row>
+              </div>
               <v-btn
                 class="mt-4"
                 elevation="2"
@@ -1224,6 +1222,8 @@ export default {
     },
     async sendMessage () {
       console.log('formMessage', this.formMessage)
+      let replaceMessage = this.formMessage.Message || ''
+      this.formMessage.Message = replaceMessage.replace(/%/g, '%%').replace(/'/g, "\\'")
       if (this.formMessage.Message !== '' || this.formMessage.Img !== '') {
         this.$swal({
           title: 'คุณต้องการ ส่งข้อความ ใช่หรือไม่?',
@@ -1255,6 +1255,7 @@ export default {
           await axios.post(this.DNS_IP + '/PushMessage_LOG/add', this.formMessage)
             .then(async (response) => {
               console.log('response', response)
+              this.formMessage.Message = replaceMessage
               await this.pushMessage()
               await this.clearMessage()
               this.dialogMessage = false

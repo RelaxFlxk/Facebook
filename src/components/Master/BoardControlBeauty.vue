@@ -90,6 +90,34 @@
             </v-text-field>
           </v-col>
           </v-row>
+        <!-- <v-row class="pa-0 ma-0">
+          <v-col cols="4">
+            <v-menu
+              v-model="menuDatefilter"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="dateFilter"
+                  label="Picker without buttons"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  clearable
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="dateFilter"
+                @input="menuDatefilter = false"
+              ></v-date-picker>
+            </v-menu>
+          </v-col>
+        </v-row> -->
         <v-row>
           <!-- <v-col :cols="colsWidth" class="text-h6" color="#ABB1C7"> นัดส่ง:</v-col> -->
           <!-- <v-card-title
@@ -152,6 +180,35 @@
             </v-btn-toggle>
           </v-col>
         </v-row>
+        <v-col cols="4" class="pa-0 ma-0 mt-6 mb-n6" v-if="flowId !== '' && masBranchID !== ''">
+          <v-menu
+              v-model="menuDatefilter"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="dateFilter"
+                  label="เลือกวันที่นัดหมาย"
+                  prepend-inner-icon="mdi-calendar"
+                  readonly
+                  clearable
+                  outlined
+                  dense
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="dateFilter"
+                @input="menuDatefilter = false"
+                @change="getJobData()"
+              ></v-date-picker>
+            </v-menu>
+        </v-col>
         <v-divider></v-divider>
 
         <!-- เปลี่ยนสถานะ step-->
@@ -1204,7 +1261,7 @@ import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
 import Menu from '../System/Menu.vue'
 import WorkShopComponent from './WorkShopComponent.vue'
-// import moment from 'moment' // แปลง date
+import moment from 'moment' // แปลง date
 
 export default {
   name: 'hello',
@@ -1237,15 +1294,17 @@ export default {
   },
   watch: {
     // whenever question changes, this function will run
-    // dialogWorkShop (newQuestion, oldQuestion) {
-    //   console.log('dialogWorkShop', newQuestion, oldQuestion)
-    //   if (newQuestion === false) {
-    //     this.getLayout()
-    //   }
-    // }
+    dateFilter (newQuestion, oldQuestion) {
+      console.log('dateFilter', newQuestion, oldQuestion)
+      if (newQuestion === null) {
+        this.getJobData()
+      }
+    }
   },
   data () {
     return {
+      dateFilter: '',
+      menuDatefilter: false,
       dialogWorkShop: false,
       overlay: false,
       overlayUpdateStep: false,
@@ -1418,8 +1477,9 @@ export default {
     // await this.getLayoutDefault()
   },
   methods: {
-    confirmed () {
-      console.log('testtestsetsetsetset')
+    filterJob () {
+      let filterJob = this.allJob.filter((item) => item.dueDate === this.dateFilter)
+      this.allJob = filterJob
     },
     refreshData () {
       this.searchOther = ''
@@ -1692,7 +1752,7 @@ export default {
           this.dataReady = true
           var jobs = []
           // console.log('res', response.data.length)
-          // console.log('res', response.data)
+          console.log('res', response.data)
           // console.log('userId', this.formUpdate.userId === 'NULL')
           if (response.data.length > 0) {
             for (var i = 0; i < response.data.length; i++) {
@@ -1701,28 +1761,57 @@ export default {
               if (jobs.indexOf(d.jobId) === -1) {
                 jobs.push(d.jobId)
                 if (d.userId !== '') {
-                  var rss = response.data.filter(el => { return el.jobId === d.jobId })
-                  for (var x = 0; x < response.data.filter(el => { return el.jobId === d.jobId }).length; x++) {
-                    var s = rss[x]
-                    // jobs.push(element.jobId)
-                    JobDataItem.push(s)
+                  if (this.dateFilter === '' || this.dateFilter === null) {
+                    let rss = response.data.filter(el => { return el.jobId === d.jobId })
+                    for (let x = 0; x < response.data.filter(el => { return el.jobId === d.jobId }).length; x++) {
+                      let s = rss[x]
+                      // jobs.push(element.jobId)
+                      JobDataItem.push(s)
+                    }
+                    allJob.push({
+                      jobId: d.jobId,
+                      jobNo: d.jobNo,
+                      stepId: d.stepId,
+                      checkCar: d.checkCar,
+                      dueDate: moment(d.dueDate).format('YYYY-MM-DD'),
+                      totalDateDiff: d.totalDateDiff,
+                      endDate: d.endDate,
+                      endTime: d.endTime,
+                      checkPayment: d.checkPayment,
+                      empStepId: d.empStepId,
+                      empId: d.empId,
+                      lineUserId: d.lineUserId,
+                      userId: d.userId,
+                      packageId: d.packageId,
+                      statusTime: d.statusTime
+                    })
+                  } else {
+                    if (moment(d.dueDate).format('YYYY-MM-DD') === this.dateFilter) {
+                      let rss = response.data.filter(el => { return el.jobId === d.jobId })
+                      for (let x = 0; x < response.data.filter(el => { return el.jobId === d.jobId }).length; x++) {
+                        let s = rss[x]
+                        // jobs.push(element.jobId)
+                        JobDataItem.push(s)
+                      }
+                      allJob.push({
+                        jobId: d.jobId,
+                        jobNo: d.jobNo,
+                        stepId: d.stepId,
+                        checkCar: d.checkCar,
+                        dueDate: moment(d.dueDate).format('YYYY-MM-DD'),
+                        totalDateDiff: d.totalDateDiff,
+                        endDate: d.endDate,
+                        endTime: d.endTime,
+                        checkPayment: d.checkPayment,
+                        empStepId: d.empStepId,
+                        empId: d.empId,
+                        lineUserId: d.lineUserId,
+                        userId: d.userId,
+                        packageId: d.packageId,
+                        statusTime: d.statusTime
+                      })
+                    }
                   }
-                  allJob.push({
-                    jobId: d.jobId,
-                    jobNo: d.jobNo,
-                    stepId: d.stepId,
-                    checkCar: d.checkCar,
-                    totalDateDiff: d.totalDateDiff,
-                    endDate: d.endDate,
-                    endTime: d.endTime,
-                    checkPayment: d.checkPayment,
-                    empStepId: d.empStepId,
-                    empId: d.empId,
-                    lineUserId: d.lineUserId,
-                    userId: d.userId,
-                    packageId: d.packageId,
-                    statusTime: d.statusTime
-                  })
                 }
               }
             }
