@@ -313,7 +313,7 @@ export default {
           let rs = response.data
           if (rs.length > 0) {
             this.shopName = rs[0].shopName
-            shopImg = rs[0].shopImge || ''
+            shopImg = rs[0].imageBase64 || ''
           } else {
             this.shopName = ''
             this.shopImg = ''
@@ -546,10 +546,11 @@ export default {
               style: 'header',
               alignment: 'center'
             },
-            // {
-            //   image: 'snow',
-            //   width: 150
-            // },
+            {
+              image: 'mySuperImage',
+              width: 190,
+              alignment: 'center'
+            },
             // {
             //   text: '   ',
             //   style: 'header',
@@ -573,19 +574,19 @@ export default {
             //   style: 'subheader',
             //   widths: ['*']
             // },
-            {
-              columns: [
-                {
-                  style: 'subheader',
-                  text: 'รับคิวเวลา'
-                },
-                {
-                  style: 'subheader',
-                  text: item.timeText,
-                  alignment: 'right'
-                }
-              ]
-            },
+            // {
+            //   columns: [
+            //     {
+            //       style: 'subheader',
+            //       text: 'รับคิวเวลา'
+            //     },
+            //     {
+            //       style: 'subheader',
+            //       text: item.timeText,
+            //       alignment: 'right'
+            //     }
+            //   ]
+            // },
             {
               alignment: 'center',
               text: item.flowName,
@@ -593,24 +594,28 @@ export default {
               widths: ['*']
             },
             {
-              alignment: 'center',
-              style: 'tableExample',
-              table: {
-                heights: [50],
-                widths: ['*'],
-                body: [
-                  [
-                    {
-                      text: [
-                        {text: 'หมายเลขคิวของคุณ\n', fontSize: 20, color: 'black'},
-                        {text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-                      ],
-                      border: [false, false, false, false]
-                      // fillColor: '#092C4C'
-                    }
-                  ]
-                ]
-              }
+              text: [
+                {alignment: 'center', text: 'หมายเลขคิวของคุณ\n', fontSize: 20, color: 'black'},
+                {alignment: 'center', text: item.storeFrontQueue, fontSize: 120, color: 'black'}
+              ]
+              // alignment: 'center',
+              // style: 'tableExample',
+              // table: {
+              //   heights: [50],
+              //   widths: ['*'],
+              //   body: [
+              //     [
+              //       {
+              //         text: [
+              //           {text: 'หมายเลขคิวของคุณ\n', fontSize: 20, color: 'black'},
+              //           {text: item.storeFrontQueue, fontSize: 120, color: 'black'}
+              //         ],
+              //         border: [false, false, false, false]
+              //         // fillColor: '#092C4C'
+              //       }
+              //     ]
+              //   ]
+              // }
             },
             {
               text: 'QR Code สำหรับรับการแจ้งเตือน',
@@ -624,15 +629,15 @@ export default {
               widths: ['*']
             },
             {
-              text: '*ทางบริษัทขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
+              text: '*ทางโรงพยาบาลขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
               fontSize: 15,
               alignment: 'center'
             },
-            {
-              text: '   ',
-              fontSize: 25,
-              widths: ['*']
-            },
+            // {
+            //   text: '   ',
+            //   fontSize: 25,
+            //   widths: ['*']
+            // },
             {
               text: '................................................',
               style: 'subheader',
@@ -640,28 +645,28 @@ export default {
               alignment: 'center'
             }
           ],
-          // images: {
-          //   // mySuperImage: 'data:image/jpeg;base64,...content...',
+          images: {
+            mySuperImage: this.shopImg
 
-          //   // in browser is supported loading images via url (https or http protocol) (minimal version: 0.1.67)
-          //   snow: this.shopImg
+            // in browser is supported loading images via url (https or http protocol) (minimal version: 0.1.67)
+            // snow: this.shopImg
 
-          //   // is supported loading images via url with custom headers (minimal version: 0.2.5)
-          //   // strawberries: {
-          //   //   url: 'https://picsum.photos/id/1080/367/267',
-          //   //   headers: {
-          //   //     myheader: '123',
-          //   //     myotherheader: 'abc',
-          //   //   }
-          //   // }
-          // },
+            // is supported loading images via url with custom headers (minimal version: 0.2.5)
+            // strawberries: {
+            //   url: 'https://picsum.photos/id/1080/367/267',
+            //   headers: {
+            //     myheader: '123',
+            //     myotherheader: 'abc',
+            //   }
+            // }
+          },
           styles: {
             header: {
-              fontSize: 35,
+              fontSize: 30,
               bold: true
             },
             subheader: {
-              fontSize: 30,
+              fontSize: 29,
               bold: true
             },
             quote: {
@@ -690,6 +695,11 @@ export default {
               style: 'header',
               alignment: 'center'
             },
+            {
+              image: 'mySuperImage',
+              width: 190,
+              alignment: 'center'
+            },
             // {
             //   text: '   ',
             //   style: 'header',
@@ -713,19 +723,19 @@ export default {
             //   style: 'subheader',
             //   widths: ['*']
             // },
-            {
-              columns: [
-                {
-                  style: 'subheader',
-                  text: 'Time'
-                },
-                {
-                  style: 'subheader',
-                  text: item.timeText,
-                  alignment: 'right'
-                }
-              ]
-            },
+            // {
+            //   columns: [
+            //     {
+            //       style: 'subheader',
+            //       text: 'Time'
+            //     },
+            //     {
+            //       style: 'subheader',
+            //       text: item.timeText,
+            //       alignment: 'right'
+            //     }
+            //   ]
+            // },
             // {
             //   text: '   ',
             //   style: 'subheader',
@@ -738,24 +748,28 @@ export default {
               widths: ['*']
             },
             {
-              alignment: 'center',
-              style: 'tableExample',
-              table: {
-                heights: [50],
-                widths: ['*'],
-                body: [
-                  [
-                    {
-                      text: [
-                        {text: 'Number\n', fontSize: 20, color: 'black'},
-                        {text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-                      ],
-                      border: [false, false, false, false]
-                      // fillColor: '#092C4C'
-                    }
-                  ]
-                ]
-              }
+              text: [
+                {alignment: 'center', text: 'Number\n', fontSize: 20, color: 'black'},
+                {alignment: 'center', text: item.storeFrontQueue, fontSize: 120, color: 'black'}
+              ]
+              // alignment: 'center',
+              // style: 'tableExample',
+              // table: {
+              //   heights: [50],
+              //   widths: ['*'],
+              //   body: [
+              //     [
+              //       {
+              //         text: [
+              //           {text: 'Number\n', fontSize: 20, color: 'black'},
+              //           {text: item.storeFrontQueue, fontSize: 120, color: 'black'}
+              //         ],
+              //         border: [false, false, false, false]
+              //         // fillColor: '#092C4C'
+              //       }
+              //     ]
+              //   ]
+              // }
             },
             {
               text: 'QR Code for receiving notifications',
@@ -769,19 +783,9 @@ export default {
               widths: ['*']
             },
             {
-              text: 'Note: Please be ready 5 minutes before the queue is coming.',
+              text: "The hospital reserves the right to skip the queue. In case the customer doesn't come",
               fontSize: 15,
               alignment: 'center'
-            },
-            {
-              text: 'If after 15 minutes the queue will be cancelled.',
-              fontSize: 15,
-              alignment: 'center'
-            },
-            {
-              text: '   ',
-              fontSize: 10,
-              widths: ['*']
             },
             {
               text: '................................................',
@@ -790,13 +794,28 @@ export default {
               alignment: 'center'
             }
           ],
+          images: {
+            mySuperImage: this.shopImg
+
+            // in browser is supported loading images via url (https or http protocol) (minimal version: 0.1.67)
+            // snow: this.shopImg
+
+            // is supported loading images via url with custom headers (minimal version: 0.2.5)
+            // strawberries: {
+            //   url: 'https://picsum.photos/id/1080/367/267',
+            //   headers: {
+            //     myheader: '123',
+            //     myotherheader: 'abc',
+            //   }
+            // }
+          },
           styles: {
             header: {
-              fontSize: 35,
+              fontSize: 30,
               bold: true
             },
             subheader: {
-              fontSize: 30,
+              fontSize: 29,
               bold: true
             },
             quote: {
