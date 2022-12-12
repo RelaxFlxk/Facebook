@@ -2424,7 +2424,7 @@
                         ></v-date-picker>
                       </v-menu>
                     </v-col>
-                    <v-col  cols="12" md="6" lg="6">
+                    <v-col  cols="12" md="6" lg="6" v-if="timeavailable.length > 0">
                          <v-select
                             v-model="formChange.time"
                             :items="timeavailable"
@@ -8809,6 +8809,13 @@ export default {
             extraJob = 'False'
             break
         }
+        let storeFront = this.DataFlowName.filter(item => { return item.value === this.formEdit.flowId })
+        let storeFrontCheck = ''
+        if (storeFront.length > 0) {
+          storeFrontCheck = storeFront[0].allData.storeFrontCheck || 'False'
+        } else {
+          storeFrontCheck = 'False'
+        }
         for (let i = 0; i < rs.length; i++) {
           let d = rs[i]
           let update = {}
@@ -8829,6 +8836,9 @@ export default {
             update.shopId = this.session.data.shopId
             update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
             update.addressLatLong = JSON.stringify(this.center)
+            update.storeFrontCheck = storeFrontCheck
+            update.statusBookingForm = 'BookingForm'
+            update.timeSelect = this.timeEdit.value
             Add.push(update)
           } else {
             if (
@@ -8858,6 +8868,9 @@ export default {
                 update.shopId = this.session.data.shopId
                 update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
                 update.addressLatLong = JSON.stringify(this.center)
+                update.storeFrontCheck = storeFrontCheck
+                update.statusBookingForm = 'BookingForm'
+                update.timeSelect = this.timeEdit.value
                 Add.push(update)
               }
             } else if (d.conditionField === 'flow') {
@@ -8878,6 +8891,9 @@ export default {
                 update.shopId = this.session.data.shopId
                 update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
                 update.addressLatLong = JSON.stringify(this.center)
+                update.storeFrontCheck = storeFrontCheck
+                update.statusBookingForm = 'BookingForm'
+                update.timeSelect = this.timeEdit.value
                 Add.push(update)
               }
             }
@@ -11235,6 +11251,12 @@ export default {
         } else {
           storeFrontCheck = 'False'
         }
+        let timeValue = ''
+        if (this.time.value) {
+          timeValue = ' ' + this.time.value
+        } else {
+          timeValue = ''
+        }
         for (let i = 0; i < rs.length; i++) {
           let d = rs[i]
           let update = {}
@@ -11246,9 +11268,9 @@ export default {
             update.fieldId = d.fieldId
             update.fieldValue = d.fieldValue
             update.shopId = d.shopId
-            update.dueDate = this.date + ' ' + this.time.value
+            update.dueDate = this.date + ' ' + timeValue
             update.dateSelect = this.date
-            update.timeSelect = this.time.value
+            update.timeSelect = timeValue
             update.timeText = this.time.text
             update.userId = 'user-skip'
             update.pageName = 'BookingList'
@@ -11279,9 +11301,9 @@ export default {
                 update.fieldId = d.fieldId
                 update.fieldValue = d.fieldValue
                 update.shopId = d.shopId
-                update.dueDate = this.date + ' ' + this.time.value
+                update.dueDate = this.date + ' ' + timeValue
                 update.dateSelect = this.date
-                update.timeSelect = this.time.value
+                update.timeSelect = timeValue
                 update.timeText = this.time.text
                 update.sourceLink = 'direct'
                 update.userId = 'user-skip'
@@ -11312,9 +11334,9 @@ export default {
                 update.fieldId = d.fieldId
                 update.fieldValue = d.fieldValue
                 update.shopId = d.shopId
-                update.dueDate = this.date + ' ' + this.time.value
+                update.dueDate = this.date + ' ' + timeValue
                 update.dateSelect = this.date
-                update.timeSelect = this.time.value
+                update.timeSelect = timeValue
                 update.timeText = this.time.text
                 update.sourceLink = 'direct'
                 update.userId = 'user-skip'
@@ -12424,33 +12446,33 @@ export default {
     },
     async changeChk (item, changeStatus) {
       this.dataChangeReady = false
-      if (this.formChange.time !== '') {
-        if (item.statusBt === 'confirm') {
-          if (this.remark !== '') {
-            var dt = {
-              LAST_USER: this.session.data.userName,
-              remark: (this.remark || '').replace(/%/g, '%%')
-            }
-            await axios
-              .post(
-                // eslint-disable-next-line quotes
-                this.DNS_IP + "/Booking/edit/" + item.bookNo,
-                dt
-              )
-              .then(async response => {
-                this.onChangeChk(item, changeStatus)
-              })
-          } else {
-            this.$swal('ผิดพลาด', 'กรุณาใส่ หมายเหตุเพิ่มเติม', 'error')
-            this.dataChangeReady = true
+      // if (this.formChange.time !== '') {
+      if (item.statusBt === 'confirm') {
+        if (this.remark !== '') {
+          var dt = {
+            LAST_USER: this.session.data.userName,
+            remark: (this.remark || '').replace(/%/g, '%%')
           }
+          await axios
+            .post(
+              // eslint-disable-next-line quotes
+              this.DNS_IP + "/Booking/edit/" + item.bookNo,
+              dt
+            )
+            .then(async response => {
+              this.onChangeChk(item, changeStatus)
+            })
         } else {
-          this.onChangeChk(item, changeStatus)
+          this.$swal('ผิดพลาด', 'กรุณาใส่ หมายเหตุเพิ่มเติม', 'error')
+          this.dataChangeReady = true
         }
       } else {
-        this.dataChangeReady = true
-        this.$swal('ผิดพลาด', 'กรุณาเลือกเวลา', 'error')
+        this.onChangeChk(item, changeStatus)
       }
+      // } else {
+      //   this.dataChangeReady = true
+      //   this.$swal('ผิดพลาด', 'กรุณาเลือกเวลา', 'error')
+      // }
     },
     onChangeChk (item, changeStatus) {
       console.log('item', item)
@@ -12524,13 +12546,34 @@ export default {
       } else {
         countTime = countTime + 1
       }
+      let storeFront = this.DataFlowName.filter(item => { return item.value === this.flowIDLimit })
+      let storeFrontCheck = ''
+      if (storeFront.length > 0) {
+        storeFrontCheck = storeFront[0].allData.storeFrontCheck || 'False'
+      } else {
+        storeFrontCheck = 'False'
+      }
+      let timeValue = ''
+      let timeText = ''
+      if (this.formChange.time.value) {
+        timeValue = this.formChange.time.value
+        timeText = this.formChange.time.text
+      } else {
+        timeValue = ''
+        timeText = ''
+      }
       var dtChange = {
         countChangeTime: countTime,
         changeDueDate: 'change',
-        dueDate: this.formChange.date + ' ' + this.formChange.time.value,
-        timeText: this.formChange.time.text,
+        dueDate: this.formChange.date + ' ' + timeValue,
+        timeText: timeText,
         LAST_USER: this.session.data.userName,
-        countHourLimit: this.selectCountBookingLimit
+        countHourLimit: this.selectCountBookingLimit,
+        storeFrontCheck: storeFrontCheck,
+        statusBookingForm: 'BookingForm',
+        timeSelect: timeValue,
+        flowId: this.flowIDLimit,
+        bookNo: item.bookNo
       }
       await axios
         .post(
@@ -12547,7 +12590,7 @@ export default {
             shopId: this.$session.getAll().data.shopId,
             CREATE_USER: this.session.data.userName,
             LAST_USER: this.session.data.userName,
-            changDate: this.formChange.date + ' ' + this.formChange.time.value
+            changDate: this.formChange.date + ' ' + timeValue
           }
           await axios
             .post(this.DNS_IP + '/booking_transaction/add', dt)

@@ -28,6 +28,7 @@
                 dense
                 required
                 :rules ="[rules.required]"
+                @change="searchBooking()"
                 ><template #prepend-inner>
                   <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
                     mdi-map-marker-outline
@@ -87,7 +88,7 @@
                 </template></v-text-field>
                 </template>
                 <v-date-picker
-                  @input="menuStart = false"
+                  @input="menuStart = false, checkSearch()"
                   v-model="dateStart"
                   no-title
                   scrollable
@@ -95,7 +96,7 @@
                 </v-date-picker>
               </v-menu>
             </v-col>
-            <v-col col="auto">
+            <!-- <v-col col="auto">
               <v-select
                 style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
                 v-model="time"
@@ -114,9 +115,20 @@
                   </v-icon>
                 </template>
               </v-select>
+            </v-col> -->
+            <v-col cols="auto" class="pt-0">
+              <v-btn
+                color="warning"
+                block
+                class="mt-4"
+                style="border-radius: 20px !important;margin-right: 0px;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
+                @click="checkSearch()"
+              >
+                <v-icon color="white" left>mdi-clipboard-text-search</v-icon>
+              </v-btn>
             </v-col>
           </v-row>
-          <v-row justify="center">
+          <!-- <v-row justify="center">
             <v-col cols="3" class="pt-0">
               <v-btn
                 color="warning"
@@ -128,7 +140,7 @@
                 ค้นหา
               </v-btn>
             </v-col>
-          </v-row>
+          </v-row> -->
         </v-form>
         <v-row>
           <v-col cols="12">
@@ -172,13 +184,14 @@
                 ปริ้น (EN)
               </v-btn>
               <v-btn
+                v-if="item.statusBt === 'confirm'"
                 color="red"
                 small
                 dark
                 @click="closeJobSubmit(item)"
               >
                 <v-icon > mdi-check-circle </v-icon>
-                ปิดงานนี้
+                เรียกคิว
               </v-btn>
             </template>
             </v-data-table>
@@ -254,6 +267,7 @@ export default {
       shopId: this.$session.getAll().data.shopId,
       search: '',
       shopName: '',
+      shopImg: '',
       headers: [
         { text: 'คิว', value: 'storeFrontQueue' },
         { text: 'วันที่นัดหมาย', value: 'dueDate' },
@@ -283,22 +297,31 @@ export default {
     }
   },
   async mounted () {
+    this.dateStart = this.momenDate_1(new Date())
     await this.getDataFlow()
     await this.getDataBranch()
     this.setTime()
     this.getShop()
-    this.dateStart = this.momenDate_1(new Date())
+    this.checkSearch()
   },
   methods: {
     async getShop () {
+      let shopImg = ''
       await axios
         .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.shopId)
-        .then(response => {
+        .then(async response => {
           let rs = response.data
           if (rs.length > 0) {
             this.shopName = rs[0].shopName
+            shopImg = rs[0].shopImge || ''
           } else {
             this.shopName = ''
+            this.shopImg = ''
+            shopImg = ''
+          }
+          if (shopImg !== '') {
+            this.shopImg = shopImg
+            console.log('this.shopImg', this.shopImg)
           }
         })
     },
@@ -330,7 +353,9 @@ export default {
             // '&flowId=' +
             // this.flowSelect +
             '&dueDate=' +
-            this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm'
+            this.dateStart + '&storeFrontQueue=is not null'
+        // '&dueDate=' +
+        // this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm'
         await axios
           .get(urlApi)
           .then(async response => {
@@ -453,6 +478,7 @@ export default {
       return result
     },
     async closeJobSubmit (item) {
+      console.log('closeJobSubmit', item)
       this.$swal({
         title: 'ให้บริการ เสร็จเรียบร้อยแล้ว ใช่หรือไม่?',
         type: 'question',
@@ -462,6 +488,7 @@ export default {
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
       }).then(async response => {
+        await this.clearConfirmJob(item.dueDate)
         var dtt = {
           bookNo: item.bookNo,
           contactDate: this.format_date(new Date()),
@@ -494,6 +521,20 @@ export default {
           })
       })
     },
+    async clearConfirmJob (dueDateUse) {
+      var dtt = {
+        dueDate: dueDateUse,
+        shopId: this.$session.getAll().data.shopId
+      }
+      await axios
+        .post(this.DNS_IP + '/booking_transaction/changeQueue', dtt)
+        .then(async responses => {})
+    },
+    // async getBase64ImageFromURL (img) {
+    //   let image = await axios.get(img, {withCredentials: true, responseType: 'arraybuffer'})
+    //   let raw = Buffer.from(image.data).toString('base64')
+    //   this.shopImg = 'data:' + image.headers['content-type'] + ';base64,' + raw
+    // },
     setPrint (item, language) {
       let docDefinition = {}
       if (language === 'th') {
@@ -505,11 +546,15 @@ export default {
               style: 'header',
               alignment: 'center'
             },
-            {
-              text: '   ',
-              style: 'header',
-              widths: ['*']
-            },
+            // {
+            //   image: 'snow',
+            //   width: 150
+            // },
+            // {
+            //   text: '   ',
+            //   style: 'header',
+            //   widths: ['*']
+            // },
             {
               columns: [
                 {
@@ -523,11 +568,11 @@ export default {
                 }
               ]
             },
-            {
-              text: '   ',
-              style: 'subheader',
-              widths: ['*']
-            },
+            // {
+            //   text: '   ',
+            //   style: 'subheader',
+            //   widths: ['*']
+            // },
             {
               columns: [
                 {
@@ -542,36 +587,37 @@ export default {
               ]
             },
             {
-              text: '   ',
-              style: 'subheader',
+              alignment: 'center',
+              text: item.flowName,
+              fontSize: 30,
               widths: ['*']
             },
             {
               alignment: 'center',
               style: 'tableExample',
               table: {
-                heights: [70],
+                heights: [50],
                 widths: ['*'],
                 body: [
                   [
                     {
                       text: [
-                        {text: 'หมายเลขคิวของคุณ\n', fontSize: 20, color: 'white'},
-                        {text: item.storeFrontQueue, fontSize: 150, color: 'white'}
+                        {text: 'หมายเลขคิวของคุณ\n', fontSize: 20, color: 'black'},
+                        {text: item.storeFrontQueue, fontSize: 120, color: 'black'}
                       ],
-                      border: [false, false, false, false],
-                      fillColor: '#092C4C'
+                      border: [false, false, false, false]
+                      // fillColor: '#092C4C'
                     }
                   ]
                 ]
               }
             },
             {
-              text: 'QR Code สำหรับรับการแจ้งเติม',
+              text: 'QR Code สำหรับรับการแจ้งเตือน',
               fontSize: 15,
               alignment: 'center'
             },
-            { qr: 'https://liff.line.me/1657701179-XK7mR7KB/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '150', alignment: 'center' },
+            { qr: 'https://liff.line.me/1657701179-XK7mR7KB/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '200', alignment: 'center' },
             {
               text: '   ',
               style: 'subheader',
@@ -581,15 +627,41 @@ export default {
               text: '*ทางบริษัทขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
               fontSize: 15,
               alignment: 'center'
+            },
+            {
+              text: '   ',
+              fontSize: 25,
+              widths: ['*']
+            },
+            {
+              text: '................................................',
+              style: 'subheader',
+              widths: ['*'],
+              alignment: 'center'
             }
           ],
+          // images: {
+          //   // mySuperImage: 'data:image/jpeg;base64,...content...',
+
+          //   // in browser is supported loading images via url (https or http protocol) (minimal version: 0.1.67)
+          //   snow: this.shopImg
+
+          //   // is supported loading images via url with custom headers (minimal version: 0.2.5)
+          //   // strawberries: {
+          //   //   url: 'https://picsum.photos/id/1080/367/267',
+          //   //   headers: {
+          //   //     myheader: '123',
+          //   //     myotherheader: 'abc',
+          //   //   }
+          //   // }
+          // },
           styles: {
             header: {
-              fontSize: 28,
+              fontSize: 35,
               bold: true
             },
             subheader: {
-              fontSize: 25,
+              fontSize: 30,
               bold: true
             },
             quote: {
@@ -618,11 +690,11 @@ export default {
               style: 'header',
               alignment: 'center'
             },
-            {
-              text: '   ',
-              style: 'header',
-              widths: ['*']
-            },
+            // {
+            //   text: '   ',
+            //   style: 'header',
+            //   widths: ['*']
+            // },
             {
               columns: [
                 {
@@ -636,11 +708,11 @@ export default {
                 }
               ]
             },
-            {
-              text: '   ',
-              style: 'subheader',
-              widths: ['*']
-            },
+            // {
+            //   text: '   ',
+            //   style: 'subheader',
+            //   widths: ['*']
+            // },
             {
               columns: [
                 {
@@ -654,26 +726,32 @@ export default {
                 }
               ]
             },
+            // {
+            //   text: '   ',
+            //   style: 'subheader',
+            //   widths: ['*']
+            // },
             {
-              text: '   ',
-              style: 'subheader',
+              alignment: 'center',
+              text: item.flowNameEn,
+              fontSize: 30,
               widths: ['*']
             },
             {
               alignment: 'center',
               style: 'tableExample',
               table: {
-                heights: [70],
+                heights: [50],
                 widths: ['*'],
                 body: [
                   [
                     {
                       text: [
-                        {text: 'Number\n', fontSize: 30, color: 'white'},
-                        {text: item.storeFrontQueue, fontSize: 150, color: 'white'}
+                        {text: 'Number\n', fontSize: 20, color: 'black'},
+                        {text: item.storeFrontQueue, fontSize: 120, color: 'black'}
                       ],
-                      border: [false, false, false, false],
-                      fillColor: '#092C4C'
+                      border: [false, false, false, false]
+                      // fillColor: '#092C4C'
                     }
                   ]
                 ]
@@ -684,7 +762,7 @@ export default {
               fontSize: 15,
               alignment: 'center'
             },
-            { qr: 'https://liff.line.me/1657701179-XK7mR7KB/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '150', alignment: 'center' },
+            { qr: 'https://liff.line.me/1657701179-XK7mR7KB/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '200', alignment: 'center' },
             {
               text: '   ',
               style: 'subheader',
@@ -699,15 +777,26 @@ export default {
               text: 'If after 15 minutes the queue will be cancelled.',
               fontSize: 15,
               alignment: 'center'
+            },
+            {
+              text: '   ',
+              fontSize: 10,
+              widths: ['*']
+            },
+            {
+              text: '................................................',
+              style: 'subheader',
+              widths: ['*'],
+              alignment: 'center'
             }
           ],
           styles: {
             header: {
-              fontSize: 28,
+              fontSize: 35,
               bold: true
             },
             subheader: {
-              fontSize: 25,
+              fontSize: 30,
               bold: true
             },
             quote: {

@@ -52,6 +52,7 @@
                 dense
                 required
                 :rules ="[rules.required]"
+                @change="clearTimeLoop(), checkSearch()"
                 ><template #prepend-inner>
                   <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
                     mdi-map-marker-outline
@@ -112,7 +113,7 @@
                 </template></v-text-field>
                 </template>
                 <v-date-picker
-                  @input="menuStart = false"
+                  @input="menuStart = false, clearTimeLoop(), checkSearch()"
                   v-model="dateStart"
                   no-title
                   scrollable
@@ -120,8 +121,7 @@
                 </v-date-picker>
               </v-menu>
             </v-col>
-            <v-col>
-            <!-- <v-col col="2" v-if="flowSelect !== ''"> -->
+            <!-- <v-col>
               <v-select
                 style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
                 v-model="time"
@@ -140,8 +140,8 @@
                   </v-icon>
                 </template>
               </v-select>
-            </v-col>
-            <v-col col="2">
+            </v-col> -->
+            <!-- <v-col col="2">
               <v-btn
                 color="warning"
                 block
@@ -151,7 +151,7 @@
                 <v-icon color="white" left>mdi-clipboard-text-search</v-icon>
                 ค้นหา
               </v-btn>
-            </v-col>
+            </v-col> -->
           </v-row>
           <!-- <v-row justify="center">
             <v-col cols="3" class="pt-0">
@@ -344,6 +344,9 @@ export default {
       // your code goes here
       this.closeSetTimeBookingMonitor()
     })
+    this.dateStart = this.momenDate_1(new Date())
+    this.clearTimeLoop()
+    this.checkSearch()
   },
   beforeDestroy () {
     this.$root.$off('dataReturn')
@@ -402,7 +405,9 @@ export default {
             // '&flowId=' +
             // this.flowSelect +
             '&dueDate=' +
-            this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
+            this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
+        // '&dueDate=' +
+        // this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
         await axios
           .get(urlApi)
           .then(async response => {
