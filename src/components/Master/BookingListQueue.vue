@@ -287,6 +287,7 @@ export default {
     await this.getDataBranch()
     this.setTime()
     this.getShop()
+    this.dateStart = this.momenDate_1(new Date())
   },
   methods: {
     async getShop () {
@@ -566,6 +567,12 @@ export default {
               }
             },
             {
+              text: 'QR Code สำหรับรับการแจ้งเติม',
+              fontSize: 15,
+              alignment: 'center'
+            },
+            { qr: 'https://liff.line.me/1657701179-XK7mR7KB/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '150', alignment: 'center' },
+            {
               text: '   ',
               style: 'subheader',
               widths: ['*']
@@ -672,6 +679,12 @@ export default {
                 ]
               }
             },
+            {
+              text: 'QR Code for receiving notifications',
+              fontSize: 15,
+              alignment: 'center'
+            },
+            { qr: 'https://liff.line.me/1657701179-XK7mR7KB/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '150', alignment: 'center' },
             {
               text: '   ',
               style: 'subheader',
