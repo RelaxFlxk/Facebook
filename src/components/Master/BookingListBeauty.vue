@@ -2728,7 +2728,26 @@
                     outlined
                   ></v-text-field>
                 </v-col> -->
-                <v-col class="text-right" cols="auto"></v-col>
+                <v-col class="text-right" cols="auto">
+                  <template v-if="getSelectText === 'confirmJob'">
+                    <v-select
+                      v-model="filterCloseJobValue"
+                      background-color="white"
+                      style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
+                      hide-details
+                      :items="listFilterCloseJob"
+                      label="สถานะบริการ"
+                      outlined
+                      dense
+                      required
+                      @change="getSelect('confirmJob', countJob, filterCloseJobValue)">
+                      <template #prepend-inner>
+                        <v-icon class="mr-2 iconify" data-icon='eos-icons:cronjob' color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                        </v-icon>
+                      </template>
+                    </v-select>
+                  </template>
+                </v-col>
               </v-row>
               </v-card-text>
               <v-card-title>
@@ -2938,6 +2957,7 @@
                   min-height="400px"
                   :items-per-page="30"
                 >
+                  <!-- :item-class= "getColor" -->
                   <!-- <template v-slot:[`item.CREATE_DATE`]="{ item }">
                     {{ format_dateNotime(item.CREATE_DATE) }}
                   </template>
@@ -6560,7 +6580,9 @@ export default {
       statusdepositPrice: false,
       statusBranchReadonly: false,
       dataEmpOnsite: [],
-      statusShowMap: ''
+      statusShowMap: '',
+      listFilterCloseJob: ['ทั้งหมด', 'ยังไม่ปิดงาน', 'ปิดงาน'],
+      filterCloseJobValue: 'ทั้งหมด'
     }
   },
   beforeCreate () {
@@ -6612,6 +6634,11 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
+    // getColor (item) {
+    //   if (item.RECORD_STATUS_Job === 'D') {
+    //     return 'red darken-2 white--text'
+    //   }
+    // },
     async getJobitem (item) {
       console.log('getJobitem', item)
       this.customerNameJob = item.cusName
@@ -8245,6 +8272,7 @@ export default {
                   s.dateReturn = d.dateReturn || ''
                   s.packageId = d.packageId || ''
                   s.tokenPackage = d.tokenPackage || ''
+                  s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
                   s.memberDataTag = JSON.parse(d.memberDataTag) || []
                   if (s.memberDataTag.length > 0) {
                     s.tagDataShow = []
@@ -10050,7 +10078,7 @@ export default {
           //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
         })
     },
-    getSelect (text, count) {
+    getSelect (text, count, filterCloseJobValue) {
       this.selectedStatus = true
       this.getSelectText = text
       this.getSelectCount = count || 0
@@ -10154,8 +10182,29 @@ export default {
         var dataSelect = []
         if (text === 'confirmSum') {
           dataSelect = this.dataItem.filter(el => { return el.statusBt === 'confirm' || el.statusBt === 'confirmJob' })
+          this.countJob = this.dataItem.filter(el => { return el.statusBt === 'confirmJob' }).length
+          this.filterCloseJobValue = 'ทั้งหมด'
         } else {
-          dataSelect = this.dataItem.filter(el => { return el.statusBt === text })
+          if (text === 'confirmJob') {
+            if (filterCloseJobValue) {
+              if (filterCloseJobValue === 'ยังไม่ปิดงาน') {
+                dataSelect = this.dataItem.filter(el => { return el.statusBt === text && el.RECORD_STATUS_Job === 'N' })
+                this.countJob = dataSelect.length
+              } else if (filterCloseJobValue === 'ปิดงาน') {
+                dataSelect = this.dataItem.filter(el => { return el.statusBt === text && el.RECORD_STATUS_Job === 'D' })
+                this.countJob = dataSelect.length
+              } else {
+                dataSelect = this.dataItem.filter(el => { return el.statusBt === text })
+                this.countJob = dataSelect.length
+              }
+            } else {
+              dataSelect = this.dataItem.filter(el => { return el.statusBt === text })
+              this.countJob = dataSelect.length
+            }
+          } else {
+            this.filterCloseJobValue = 'ทั้งหมด'
+            dataSelect = this.dataItem.filter(el => { return el.statusBt === text })
+          }
         }
         // console.log('fieldflow', dataSelect)
         if (dataSelect.length > 0) {
@@ -10728,6 +10777,7 @@ export default {
                 s.dateReturn = d.dateReturn || ''
                 s.packageId = d.packageId || ''
                 s.tokenPackage = d.tokenPackage || ''
+                s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
                 s.memberDataTag = JSON.parse(d.memberDataTag) || []
                 if (s.memberDataTag.length > 0) {
                   s.tagDataShow = []
@@ -10890,6 +10940,7 @@ export default {
                 s.dateReturn = d.dateReturn || ''
                 s.packageId = d.packageId || ''
                 s.tokenPackage = d.tokenPackage || ''
+                s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
                 s.memberDataTag = JSON.parse(d.memberDataTag) || []
                 if (s.memberDataTag.length > 0) {
                   s.tagDataShow = []
