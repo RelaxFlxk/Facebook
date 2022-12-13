@@ -11252,10 +11252,13 @@ export default {
           storeFrontCheck = 'False'
         }
         let timeValue = ''
+        let timeTime = ''
         if (this.time.value) {
-          timeValue = ' ' + this.time.value
+          timeValue = this.time.value
+          timeTime = this.time.text
         } else {
           timeValue = ''
+          timeTime = ''
         }
         for (let i = 0; i < rs.length; i++) {
           let d = rs[i]
@@ -11271,7 +11274,7 @@ export default {
             update.dueDate = this.date + ' ' + timeValue
             update.dateSelect = this.date
             update.timeSelect = timeValue
-            update.timeText = this.time.text
+            update.timeText = timeTime
             update.userId = 'user-skip'
             update.pageName = 'BookingList'
             update.sourceLink = 'direct'
@@ -11304,7 +11307,7 @@ export default {
                 update.dueDate = this.date + ' ' + timeValue
                 update.dateSelect = this.date
                 update.timeSelect = timeValue
-                update.timeText = this.time.text
+                update.timeText = timeTime
                 update.sourceLink = 'direct'
                 update.userId = 'user-skip'
                 update.pageName = 'BookingList'
@@ -11337,7 +11340,7 @@ export default {
                 update.dueDate = this.date + ' ' + timeValue
                 update.dateSelect = this.date
                 update.timeSelect = timeValue
-                update.timeText = this.time.text
+                update.timeText = timeTime
                 update.sourceLink = 'direct'
                 update.userId = 'user-skip'
                 update.pageName = 'BookingList'
