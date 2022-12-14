@@ -229,6 +229,7 @@ import VuetifyMoney from '../VuetifyMoney.vue'
 import pdfMake from 'pdfmake'
 import pdfFonts from '../../assets/custom-fonts.js' // 1. import custom fonts
 // import moment from 'moment-timezone'
+import printJS from 'print-js'
 
 export default {
   components: {
@@ -849,10 +850,22 @@ export default {
         }
       }
       // pdfMake.createPdf(docDefinition).open({}, window)
+      // pdfMake.createPdf(docDefinition).print({}, window)
+
+      // pdfMake.createPdf(docDefinition).print()
+      // this.$scope.generatePdf = function () {
+      // create the window before the callback
+      // win.close()
+      // }
+
       pdfMake.createPdf(docDefinition).getDataUrl(function (outDoc) {
-        document.getElementById('pdfV').src = outDoc
+        // document.getElementById('pdfV').src = outDoc
+        let dataReplate = outDoc.replace('data:application/pdf;base64,', '')
+        printJS({printable: dataReplate, type: 'pdf', base64: true})
       })
-      this.dialogPrint = true
+      // var pdfFrame = window.frames['pdfV']
+      // pdfFrame.print()
+      // this.dialogPrint = true
     }
   }
 }
