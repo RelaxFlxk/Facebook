@@ -1907,7 +1907,11 @@ export default {
           .post(this.DNS_IP + '/job/editPrice/' + this.formDelete.jobId, this.formDelete)
           .then(async response => {
             await this.pushmessagePrice(this.formDelete.jobNo)
-            this.$swal('เรียบร้อย', 'ปิดจบงาน เรียบร้อย', 'success')
+            if (this.$session.getAll().data.shopId === 'U9f316c85400fd716ea8c80d7cd5b61f8') {
+              this.$swal('เรียบร้อย', 'ส่งผู้โดยสาร ถึงจุดหมาย เรียบร้อย', 'success')
+            } else {
+              this.$swal('เรียบร้อย', 'รายการนี้เสร็จเรียบร้อยแล้ว', 'success')
+            }
             await this.getDataJob()
             await this.getCloseJob(this.date)
             this.dialogDelete = false
