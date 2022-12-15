@@ -718,7 +718,7 @@
                             </v-col>
                           </v-row>
                           <v-row>
-                          <v-col style="display: flex;justify-content: center;" v-if="formUpdate.storeFrontCheck === 'False'">
+                          <v-col style="display: flex;justify-content: flex-start;" v-if="formUpdate.storeFrontCheck === 'False'">
                             <v-checkbox
                             label="เงินมัดจำ"
                             false-value="False"
@@ -730,7 +730,7 @@
                             @change="formUpdate.amountDeposit = 0"
                           ></v-checkbox>
                           </v-col>
-                           <v-col style="display: flex;justify-content: center;">
+                           <v-col style="display: flex;justify-content: flex-start;">
                             <v-checkbox
                             label="แจ้งยอดค่าชำระ"
                             :on-icon="'mdi-check-circle'"
@@ -741,7 +741,7 @@
                             v-model="formUpdate.checkPayment"
                           ></v-checkbox>
                           </v-col>
-                          <v-col style="display: flex;justify-content: center;">
+                          <v-col style="display: flex;justify-content: flex-start;">
                             <v-checkbox
                             label="ป้องกันการจองซ้ำ / วัน"
                             false-value="False"
@@ -754,7 +754,7 @@
                           </v-col>
                           </v-row>
                           <v-row>
-                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;"  v-if="$session.getAll().data.timeSlotStatus !== 'True'">
+                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;"  v-if="$session.getAll().data.timeSlotStatus !== 'True'">
                               <v-checkbox
                               label="เปิดรับคิวหน้าร้าน"
                               false-value="False"
@@ -779,7 +779,7 @@
                             </v-col> -->
                           </v-row>
                           <v-row v-if="$session.getAll().data.timeSlotStatus !== 'True'">
-                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;">
+                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;">
                               <v-checkbox
                                 label="Onsite (เมื่อเปิดรายการนี้ หน้านัดหมายจะมีการเก็บที่อยู่ลูกค้า)"
                                 false-value="False"
@@ -792,7 +792,7 @@
                             </v-col>
                           </v-row>
                           <v-row>
-                            <v-col cols="8" class="pt-0 pb-0" style="display: flex;justify-content: center;">
+                            <v-col cols="8" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;">
                               <v-checkbox
                               label="นัดหมายล่วงหน้า"
                               false-value="False"
