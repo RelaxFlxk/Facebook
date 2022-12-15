@@ -956,7 +956,6 @@
               counter
               show-size
               outlined
-              :rules="[rules.resizeImag]"
               accept="image/png, image/jpeg, image/bmp"
               prepend-icon="mdi-camera"
               label="อัพโหลดรูปภาพ"
@@ -1908,7 +1907,7 @@ export default {
           .post(this.DNS_IP + '/job/editPrice/' + this.formDelete.jobId, this.formDelete)
           .then(async response => {
             await this.pushmessagePrice(this.formDelete.jobNo)
-            this.$swal('เรียบร้อย', 'ลบข้อมูล เรียบร้อย', 'success')
+            this.$swal('เรียบร้อย', 'ปิดจบงาน เรียบร้อย', 'success')
             await this.getDataJob()
             await this.getCloseJob(this.date)
             this.dialogDelete = false
