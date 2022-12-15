@@ -229,6 +229,7 @@ import VuetifyMoney from '../VuetifyMoney.vue'
 import pdfMake from 'pdfmake'
 import pdfFonts from '../../assets/custom-fonts.js' // 1. import custom fonts
 // import moment from 'moment-timezone'
+import printJS from 'print-js'
 
 export default {
   components: {
@@ -270,9 +271,10 @@ export default {
       shopImg: '',
       headers: [
         { text: 'คิว', value: 'storeFrontQueue' },
-        { text: 'วันที่นัดหมาย', value: 'dueDate' },
+        // { text: 'วันที่นัดหมาย', value: 'dueDate' },
         { text: 'บริการ', value: 'flowName' },
         { text: 'ชื่อลูกค้า', value: 'cusName' },
+        { text: 'H.N.', value: 'hnNo' },
         { text: 'จัดการข้อมูล', value: 'action', sortable: false, align: 'center' }
       ],
       rules: {
@@ -353,7 +355,7 @@ export default {
             // '&flowId=' +
             // this.flowSelect +
             '&dueDate=' +
-            this.dateStart + '&storeFrontQueue=is not null'
+            this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm'
         // '&dueDate=' +
         // this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm'
         await axios
@@ -371,6 +373,8 @@ export default {
                 if (this.BookingDataList[d.bookNo] !== undefined) {
                   d.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
                   d.cusName = (d.cusName.length > 0) ? d.cusName[0].fieldValue : ''
+                  d.hnNo = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'H.N.')
+                  d.hnNo = (d.hnNo.length > 0) ? d.hnNo[0].fieldValue : ''
                   this.itemBooking.push(d)
                 }
               }
@@ -480,7 +484,7 @@ export default {
     async closeJobSubmit (item) {
       console.log('closeJobSubmit', item)
       this.$swal({
-        title: 'ให้บริการ เสร็จเรียบร้อยแล้ว ใช่หรือไม่?',
+        title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
         type: 'question',
         showCancelButton: true,
         confirmButtonColor: '#fa0202',
@@ -501,7 +505,7 @@ export default {
         await axios
           .post(this.DNS_IP + '/booking_transaction/add', dtt)
           .then(async responses => {
-            this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
+            this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
             await this.searchBooking()
             let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
             if (bookSelect.length > 0) {
@@ -556,19 +560,6 @@ export default {
             //   style: 'header',
             //   widths: ['*']
             // },
-            {
-              columns: [
-                {
-                  style: 'subheader',
-                  text: 'วันที่'
-                },
-                {
-                  style: 'subheader',
-                  text: item.dueDateText.split(' ')[0],
-                  alignment: 'right'
-                }
-              ]
-            },
             // {
             //   text: '   ',
             //   style: 'subheader',
@@ -622,7 +613,7 @@ export default {
               fontSize: 15,
               alignment: 'center'
             },
-            { qr: 'https://liff.line.me/1657701179-XK7mR7KB/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '200', alignment: 'center' },
+            { qr: 'https://liff.line.me/1656581804-7KRQyqo5/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '200', alignment: 'center' },
             {
               text: '   ',
               style: 'subheader',
@@ -638,6 +629,15 @@ export default {
             //   fontSize: 25,
             //   widths: ['*']
             // },
+            {
+              columns: [
+                {
+                  fontSize: 15,
+                  alignment: 'center',
+                  text: 'วันที่ ' + item.dueDateText.split(' ')[0]
+                }
+              ]
+            },
             {
               text: '................................................',
               style: 'subheader',
@@ -705,19 +705,6 @@ export default {
             //   style: 'header',
             //   widths: ['*']
             // },
-            {
-              columns: [
-                {
-                  style: 'subheader',
-                  text: 'Date'
-                },
-                {
-                  style: 'subheader',
-                  text: item.dueDateText.split(' ')[0],
-                  alignment: 'right'
-                }
-              ]
-            },
             // {
             //   text: '   ',
             //   style: 'subheader',
@@ -776,7 +763,7 @@ export default {
               fontSize: 15,
               alignment: 'center'
             },
-            { qr: 'https://liff.line.me/1657701179-XK7mR7KB/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '200', alignment: 'center' },
+            { qr: 'https://liff.line.me/1656581804-7KRQyqo5/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '200', alignment: 'center' },
             {
               text: '   ',
               style: 'subheader',
@@ -786,6 +773,15 @@ export default {
               text: "The hospital reserves the right to skip the queue. In case the customer doesn't come",
               fontSize: 15,
               alignment: 'center'
+            },
+            {
+              columns: [
+                {
+                  fontSize: 15,
+                  alignment: 'center',
+                  text: 'Date ' + item.dueDateText.split(' ')[0]
+                }
+              ]
             },
             {
               text: '................................................',
@@ -854,10 +850,22 @@ export default {
         }
       }
       // pdfMake.createPdf(docDefinition).open({}, window)
+      // pdfMake.createPdf(docDefinition).print({}, window)
+
+      // pdfMake.createPdf(docDefinition).print()
+      // this.$scope.generatePdf = function () {
+      // create the window before the callback
+      // win.close()
+      // }
+
       pdfMake.createPdf(docDefinition).getDataUrl(function (outDoc) {
-        document.getElementById('pdfV').src = outDoc
+        // document.getElementById('pdfV').src = outDoc
+        let dataReplate = outDoc.replace('data:application/pdf;base64,', '')
+        printJS({printable: dataReplate, type: 'pdf', base64: true})
       })
-      this.dialogPrint = true
+      // var pdfFrame = window.frames['pdfV']
+      // pdfFrame.print()
+      // this.dialogPrint = true
     }
   }
 }
