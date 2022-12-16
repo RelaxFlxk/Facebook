@@ -2239,6 +2239,15 @@
                             <br>
                             <div v-if="jobitem.length > 0 && userId === ''" class="avatar text-center">
                               <qrcode-vue :value="value" :size="size" level="H" :foreground="foreground" />
+                              <v-btn
+                                color="#1B437C"
+                                small
+                                dark
+                                @click="FunCopyQrcode(value)"
+                              >
+                                <v-icon left>mdi-content-copy</v-icon>
+                                คัดลอกลิงค์
+                              </v-btn>
                             </div>
                           </v-tab-item>
                         </v-tabs>
@@ -2250,6 +2259,16 @@
                         <br>
                         <h2 style="font-weight: 900; color:#FFA000">ติดตามสถานะ!</h2>
                         <qrcode-vue v-if="userId === ''" :value="value" :size="size" level="H" :foreground="foreground" />
+                        <v-btn
+                          v-if="userId === ''"
+                          color="#1B437C"
+                          small
+                          dark
+                          @click="FunCopyQrcode(value)"
+                        >
+                          <v-icon left>mdi-content-copy</v-icon>
+                          คัดลอกลิงค์
+                        </v-btn>
                         <template v-if="jobitem.length > 0">
                          <div v-if="userId !== ''" class="avatar text-center">
                             <v-avatar v-if="memberPicture !== ''" size="120" style="border:5px solid #FFFFFF;">
@@ -2266,6 +2285,16 @@
                         </template>
                          <div v-if="jobitem.length > 0" class="avatar text-center">
                            <qrcode-vue v-if="userId === 'user-skip' && jobitem[0].recordStatus === 'N'" :value="value" :size="size" level="H" :foreground="foreground" />
+                            <v-btn
+                              v-if="userId === 'user-skip' && jobitem[0].recordStatus === 'N'"
+                              color="#1B437C"
+                              small
+                              dark
+                              @click="FunCopyQrcode(value)"
+                            >
+                              <v-icon left>mdi-content-copy</v-icon>
+                              คัดลอกลิงค์
+                            </v-btn>
                         </div>
                     </div>
                   </v-col>
@@ -6634,6 +6663,19 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
+    FunCopyQrcode (text) {
+      // var copyText = document.getElementById('myInput')
+      // copyText.select()
+      // copyText.setSelectionRange(0, 99999)
+      navigator.clipboard.writeText(text)
+      this.$swal({
+        title: 'Copy successfully',
+        text: 'คัดลอกลิ้งสำเร็จ',
+        type: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      })
+    },
     // getColor (item) {
     //   if (item.RECORD_STATUS_Job === 'D') {
     //     return 'red darken-2 white--text'
