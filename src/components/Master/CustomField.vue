@@ -133,7 +133,7 @@
                         value = 'text'
                         :rules="[rules.required]"
                         attach
-            :menu-props="{ bottom: true, offsetY: true }"
+                        :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-row>
 
@@ -236,8 +236,20 @@
                         fluid
                       >
                       <v-checkbox
+                          v-if="formAdd.fieldType !== 'Arguments'"
                           v-model="formAdd.requiredField"
-                          :label="`บังคับกรอก: ${formAdd.requiredField.toString()}`"
+                          false-value="False"
+                          true-value="True"
+                          label="บังคับกรอก"
+                        ></v-checkbox>
+                      <v-checkbox
+                          v-else
+                          v-model="formAdd.requiredField"
+                          false-value="False"
+                          true-value="True"
+                          value="True"
+                          readonly
+                          label="บังคับกรอก"
                         ></v-checkbox>
                       <v-checkbox
                           label="เงื่อนไข ช่องกรอกข้อมูล"
@@ -515,9 +527,19 @@
                         class="px-0"
                       >
                       <v-checkbox
+                          v-if="formUpdate.fieldType !== 'Arguments'"
                           label="บังคับกรอก"
                           false-value="False"
                           true-value="True"
+                          v-model="formUpdate.requiredField"
+                        ></v-checkbox>
+                        <v-checkbox
+                          v-else
+                          label="บังคับกรอก"
+                          false-value="False"
+                          true-value="True"
+                          value="True"
+                          readonly
                           v-model="formUpdate.requiredField"
                         ></v-checkbox>
                        <v-checkbox
@@ -543,11 +565,11 @@
                         @change="formUpdate.conditionValue = '', formUpdateConditionField = formUpdate.conditionField"
                         :rules="[rules.required]"
                         attach
-            :menu-props="{ bottom: true, offsetY: true }"
+                        :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-row>
                       <!-- END -->
-                      <v-row style="height: 35px" v-if="checkbox === 'true' && formUpdate.conditionField">
+                      <v-row style="height: 35px" v-if="checkbox === 'true' && formUpdate.conditionField && formUpdateConditionField.fieldType !== 'Selects' ">
                       <v-subheader >Value:</v-subheader>
                       </v-row>
                       <v-row style="height: 50px" v-if="checkbox === 'true' && formUpdate.conditionField &&
@@ -559,7 +581,7 @@
                         required
                         :rules="[rules.required]"
                         attach
-            :menu-props="{ bottom: true, offsetY: true }"
+                        :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-row>
                       <v-row style="height: 50px" v-if="checkbox === 'true' && formUpdateConditionField &&
@@ -876,6 +898,7 @@ export default {
       selectTypeField: [
         { text: 'Text', value: 'text' },
         { text: 'Number', value: 'number' },
+        { text: 'Arguments', value: 'Arguments' },
         { text: 'Datetime', value: 'dateTime' },
         { text: 'optionField', value: 'optionField' }
       ],
@@ -1207,7 +1230,7 @@ export default {
       }
     },
     chkUpdateoptionFieldType () {
-      if (this.formUpdate.fieldType === 'text' || this.formUpdate.fieldType === 'number' || this.formUpdate.fieldType === 'dateTime') {
+      if (this.formUpdate.fieldType === 'text' || this.formUpdate.fieldType === 'number' || this.formUpdate.fieldType === 'dateTime' || this.formUpdate.fieldType === 'Arguments') {
         this.formUpdate.optionFieldType = ''
       } else {
         this.formUpdate.optionFieldType = this.formUpdate.optionFieldType
@@ -1220,12 +1243,12 @@ export default {
       }
     },
     chkfieldType () {
+      console.log('fieldType', this.formUpdate.fieldType)
       if (this.formUpdate.optionFieldType === 'text' || this.formUpdate.optionFieldType === 'number' || this.formUpdate.optionFieldType === 'dateTime') {
         this.formUpdate.fieldType = this.formUpdate.optionFieldType
       } else {
         this.formUpdate.fieldType = 'optionField'
       }
-      console.log('fieldType', this.formUpdate.fieldType)
     },
     deleteItem (item) {
       this.editedIndex = this.dataItemOption.indexOf(item)
@@ -1346,6 +1369,7 @@ export default {
     },
     async getDataById (item) {
       console.log('conditionField', item.conditionField)
+      console.log('item', item)
       this.dataItemOption = JSON.parse(item.optionField)
       this.formUpdate.fieldId = item.fieldId
       if (item.conditionField === '' || item.conditionField === null) {
@@ -1429,9 +1453,11 @@ export default {
           this.selectConditionField.push({text: 'ประเภทบริการ', value: 'flow', fieldType: 'flow', optionField: JSON.stringify(this.DataFlowName)})
           for (var i = 0; i < rs.length; i++) {
             var d = rs[i]
-            d.text = d.fieldName
-            d.value = d.fieldId
-            this.selectConditionField.push(d)
+            if (d.fieldType !== 'Arguments') {
+              d.text = d.fieldName
+              d.value = d.fieldId
+              this.selectConditionField.push(d)
+            }
           }
         }
       })
@@ -1508,6 +1534,7 @@ export default {
     async editData () {
       // this.editDataGlobal(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
       console.log('dataItemOption', JSON.stringify(this.dataItemOption))
+      console.log('formUpdate', this.formUpdate)
       this.dataReady = false
       this.$swal({
         title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',

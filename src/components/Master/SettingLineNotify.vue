@@ -32,7 +32,7 @@
                       dark
                       color="white"
                       :style="styleCloseBt"
-                      @click="dialogAdd = false"
+                      @click="dialogAdd = false,clearDataAdd()"
                     >
                       X
                     </v-btn>
@@ -82,6 +82,40 @@
                       <v-icon>mdi-chevron-up</v-icon>
                     </v-btn>
                   </div>
+                  <v-sheet class="pa-2 mb-2" elevation="1">
+                    <v-row class="pa-1 ma-0 mb-n4 ml-3">
+                          <v-col class="ma-0 pa-0">
+                            <v-checkbox
+                              class="pa-0 ma-0"
+                              :on-icon="'mdi-checkbox-marked'"
+                              :off-icon="'mdi-checkbox-blank-outline'"
+                              v-model="allBookingAdd"
+                              label="ทั้งหมด"
+                              @click="clickAllbutton('checkBooking','Add')"
+                            ></v-checkbox>
+                          </v-col>
+                          <v-col class="ma-0 pa-0">
+                            <v-checkbox
+                              class="pa-0 ma-0"
+                              :on-icon="'mdi-checkbox-marked'"
+                              :off-icon="'mdi-checkbox-blank-outline'"
+                              label="ทั้งหมด"
+                              v-model="allOnsiteAdd"
+                              @click="clickAllbutton('checkOnsite','Add')"
+                            ></v-checkbox>
+                          </v-col>
+                          <v-col class="ma-0 pa-0">
+                            <v-checkbox
+                              class="pa-0 ma-0"
+                              :on-icon="'mdi-checkbox-marked'"
+                              :off-icon="'mdi-checkbox-blank-outline'"
+                              label="ทั้งหมด"
+                              v-model="allJobAdd"
+                              @click="clickAllbutton('checkJob','Add')"
+                            ></v-checkbox>
+                          </v-col>
+                        </v-row>
+                  </v-sheet>
                   <v-expansion-panels v-model="panel" multiple>
                     <v-expansion-panel
                       v-for="(item, index) in flowData"
@@ -109,6 +143,7 @@
                               :off-icon="'mdi-checkbox-blank-circle-outline'"
                               v-model="item.checkBooking"
                               label="นัดหมายเข้ารับบริการ"
+                              @click="item.checkBooking === true ? selectAddAll('checkBooking',true) : selectAddAll('checkBooking',false)"
                             ></v-checkbox>
                           </v-col>
                           <v-col>
@@ -118,6 +153,7 @@
                               :off-icon="'mdi-checkbox-blank-circle-outline'"
                               v-model="item.checkOnsite"
                               label="แจ้งเตือนพนักงาน Onsite"
+                              @click="item.checkOnsite === true ? selectAddAll('checkOnsite',true) : selectAddAll('checkOnsite',false)"
                             ></v-checkbox>
                           </v-col>
                           <v-col>
@@ -127,6 +163,7 @@
                               :off-icon="'mdi-checkbox-blank-circle-outline'"
                               v-model="item.checkJob"
                               label="กระดานการทำงาน"
+                              @click="item.checkJob === true ? selectAddAll('checkJob',true) : selectAddAll('checkJob',false)"
                             ></v-checkbox>
                           </v-col>
                         </v-row>
@@ -261,6 +298,40 @@
                       <v-icon>mdi-chevron-up</v-icon>
                     </v-btn>
                   </div>
+                  <v-sheet class="pa-2 mb-2" elevation="1">
+                    <v-row class="pa-1 ma-0 mb-n4 ml-3">
+                          <v-col class="ma-0 pa-0">
+                            <v-checkbox
+                              class="pa-0 ma-0"
+                              :on-icon="'mdi-checkbox-marked'"
+                              :off-icon="'mdi-checkbox-blank-outline'"
+                              v-model="allBookingEdit"
+                              label="ทั้งหมด"
+                              @click="clickAllbutton('checkBooking','Edit')"
+                            ></v-checkbox>
+                          </v-col>
+                          <v-col class="ma-0 pa-0">
+                            <v-checkbox
+                              class="pa-0 ma-0"
+                              :on-icon="'mdi-checkbox-marked'"
+                              :off-icon="'mdi-checkbox-blank-outline'"
+                              label="ทั้งหมด"
+                              v-model="allOnsiteEdit"
+                              @click="clickAllbutton('checkOnsite','Edit')"
+                            ></v-checkbox>
+                          </v-col>
+                          <v-col class="ma-0 pa-0">
+                            <v-checkbox
+                              class="pa-0 ma-0"
+                              :on-icon="'mdi-checkbox-marked'"
+                              :off-icon="'mdi-checkbox-blank-outline'"
+                              label="ทั้งหมด"
+                              v-model="allJobEdit"
+                              @click="clickAllbutton('checkJob','Edit')"
+                            ></v-checkbox>
+                          </v-col>
+                        </v-row>
+                  </v-sheet>
                   <v-expansion-panels v-model="panelEdit" multiple>
                     <v-expansion-panel
                       v-for="(item, index) in itemSelectEdit"
@@ -288,6 +359,7 @@
                               :off-icon="'mdi-checkbox-blank-circle-outline'"
                               v-model="item.checkBooking"
                               label="นัดหมายเข้ารับบริการ"
+                              @click="item.checkBooking === true ? selectEditAll('checkBooking',true) : selectEditAll('checkBooking',false)"
                             ></v-checkbox>
                           </v-col>
                           <v-col>
@@ -297,6 +369,7 @@
                               :off-icon="'mdi-checkbox-blank-circle-outline'"
                               v-model="item.checkOnsite"
                               label="แจ้งเตือนพนักงาน Onsite"
+                              @click="item.checkOnsite === true ? selectEditAll('checkOnsite',true) : selectEditAll('checkOnsite',false)"
                             ></v-checkbox>
                           </v-col>
                           <v-col>
@@ -306,6 +379,7 @@
                               :off-icon="'mdi-checkbox-blank-circle-outline'"
                               v-model="item.checkJob"
                               label="กระดานการทำงาน"
+                              @click="item.checkJob === true ? selectEditAll('checkJob',true) : selectEditAll('checkJob',false)"
                             ></v-checkbox>
                           </v-col>
                         </v-row>
@@ -447,8 +521,35 @@ export default {
     'left-menu-admin': adminLeftMenu,
     VuetifyMoney
   },
+  watch: {
+    // whenever question changes, this function will run
+    // allBookingEdit (newQuestion, oldQuestion) {
+    //   console.log('allBookingEdit', newQuestion, oldQuestion, this.itemSelectEdit)
+    //   this.itemSelectEdit.forEach((item) => {
+    //     item.checkBooking = newQuestion
+    //   })
+    // },
+    // allOnsiteEdit (newQuestion, oldQuestion) {
+    //   console.log('allBookingEdit', newQuestion, oldQuestion, this.itemSelectEdit)
+    //   this.itemSelectEdit.forEach((item) => {
+    //     item.checkOnsite = newQuestion
+    //   })
+    // },
+    // allJobEdit (newQuestion, oldQuestion) {
+    //   console.log('allBookingEdit', newQuestion, oldQuestion, this.itemSelectEdit)
+    //   this.itemSelectEdit.forEach((item) => {
+    //     item.checkJob = newQuestion
+    //   })
+    // }
+  },
   data () {
     return {
+      allBookingAdd: false,
+      allJobAdd: false,
+      allOnsiteAdd: false,
+      allBookingEdit: false,
+      allJobEdit: false,
+      allOnsiteEdit: false,
       breadcrumbs: [
         {
           text: 'Home',
@@ -500,6 +601,114 @@ export default {
     this.getFLow()
   },
   methods: {
+    clickAllbutton (text, title) {
+      if (title === 'Edit') {
+        if (text === 'checkBooking') {
+          this.itemSelectEdit.forEach((item) => {
+            item.checkBooking = this.allBookingEdit
+          })
+        }
+        if (text === 'checkOnsite') {
+          this.itemSelectEdit.forEach((item) => {
+            item.checkOnsite = this.allOnsiteEdit
+          })
+        }
+        if (text === 'checkJob') {
+          this.itemSelectEdit.forEach((item) => {
+            item.checkJob = this.allJobEdit
+          })
+        }
+      }
+      if (title === 'Add') {
+        console.log('this.flowData', this.flowData)
+        if (text === 'checkBooking') {
+          this.flowData.forEach((item) => {
+            item.checkBooking = this.allBookingAdd
+          })
+        }
+        if (text === 'checkOnsite') {
+          this.flowData.forEach((item) => {
+            item.checkOnsite = this.allOnsiteAdd
+          })
+        }
+        if (text === 'checkJob') {
+          this.flowData.forEach((item) => {
+            item.checkJob = this.allJobAdd
+          })
+        }
+      }
+    },
+    selectAddAll (text, value) {
+      // console.log('test', this.itemSelectEdit)
+      if (text === 'checkBooking') {
+        if (value === true) {
+          if (this.flowData.filter((item) => item.checkBooking === true).length === this.flowData.length) {
+            this.allBookingAdd = value
+          }
+        } else {
+          this.allBookingAdd = value
+        }
+      }
+      if (text === 'checkOnsite') {
+        if (value === true) {
+          if (this.flowData.filter((item) => item.checkOnsite === true).length === this.flowData.length) {
+            this.allOnsiteAdd = value
+          }
+        } else {
+          this.allOnsiteAdd = value
+        }
+      }
+      if (text === 'checkJob') {
+        if (value === true) {
+          if (this.flowData.filter((item) => item.checkJob === true).length === this.flowData.length) {
+            this.allJobAdd = value
+          }
+        } else {
+          this.allJobAdd = value
+        }
+      }
+    },
+    selectEditAll (text, value) {
+      // console.log('test', this.itemSelectEdit)
+      if (text === 'checkBooking') {
+        if (value === true) {
+          if (this.itemSelectEdit.filter((item) => item.checkBooking === true).length === this.itemSelectEdit.length) {
+            this.allBookingEdit = value
+          }
+        } else {
+          this.allBookingEdit = value
+        }
+      }
+      if (text === 'checkOnsite') {
+        if (value === true) {
+          if (this.itemSelectEdit.filter((item) => item.checkOnsite === true).length === this.itemSelectEdit.length) {
+            this.allOnsiteEdit = value
+          }
+        } else {
+          this.allOnsiteEdit = value
+        }
+      }
+      if (text === 'checkJob') {
+        if (value === true) {
+          if (this.itemSelectEdit.filter((item) => item.checkJob === true).length === this.itemSelectEdit.length) {
+            this.allJobEdit = value
+          }
+        } else {
+          this.allJobEdit = value
+        }
+      }
+    },
+    clearDataAdd () {
+      this.flowData.forEach((item) => {
+        delete item.checkBooking
+        delete item.checkJob
+        delete item.checkOnsite
+        this.allBookingAdd = false
+        this.allJobAdd = false
+        this.allOnsiteAdd = false
+        this.itemBranch = []
+      })
+    },
     all () {
       this.panel = this.flowData.map((k, i) => i)
     },
@@ -711,6 +920,21 @@ export default {
           this.itemSelectEdit.push({ text: v.text, value: v.value })
         }
       })
+      if (this.itemSelectEdit.filter((item) => item.checkBooking === true).length === this.itemSelectEdit.length) {
+        this.allBookingEdit = true
+      } else {
+        this.allBookingEdit = false
+      }
+      if (this.itemSelectEdit.filter((item) => item.checkJob === true).length === this.itemSelectEdit.length) {
+        this.allJobEdit = true
+      } else {
+        this.allJobEdit = false
+      }
+      if (this.itemSelectEdit.filter((item) => item.checkOnsite === true).length === this.itemSelectEdit.length) {
+        this.allOnsiteEdit = true
+      } else {
+        this.allOnsiteEdit = false
+      }
       // console.log('itemSelectEdit', this.itemSelectEdit)
       // this.BranchItem.forEach((v, k) => {
       //   if (JSON.parse(item.masBranchID).filter((a) => a.value === v.value).length > 0) {
