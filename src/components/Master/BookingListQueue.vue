@@ -14,6 +14,14 @@
             </v-btn>
           </v-col> -->
         </v-row>
+        <v-card flat v-if="!overlay">
+          <v-card-text>
+            <div class="text-center">
+              <waitingAlert></waitingAlert>
+            </div>
+          </v-card-text>
+        </v-card>
+        <template v-else>
         <v-form ref="form_search" v-model="validSearch" lazy-validation>
           <v-row>
             <v-col col="auto">
@@ -169,7 +177,7 @@
                 color="green"
                 small
                 dark
-                @click="setPrint(item, 'th')"
+                @click="overlay = false, setPrint(item, 'th')"
               >
                 <v-icon > mdi-printer </v-icon>
                 ปริ้น (TH)
@@ -178,7 +186,7 @@
                 color="teal"
                 small
                 dark
-                @click="setPrint(item, 'en')"
+                @click="overlay = false, setPrint(item, 'en')"
               >
                 <v-icon > mdi-printer </v-icon>
                 ปริ้น (EN)
@@ -218,11 +226,13 @@
           </v-card>
           </v-col>
         </v-row>
+        </template>
         </div>
     </v-main>
   </div>
 </template>
 <script>
+import waitingAlert from '../waitingAlert.vue'
 import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
@@ -234,7 +244,8 @@ import printJS from 'print-js'
 export default {
   components: {
     'left-menu-admin': adminLeftMenu,
-    VuetifyMoney
+    VuetifyMoney,
+    waitingAlert
   },
   data () {
     return {
@@ -243,6 +254,7 @@ export default {
       BookingDataList: [],
       menuStart: false,
       dialogPrint: false,
+      overlay: true,
       time: '',
       timeavailable: [],
       branchItem: [],
@@ -863,6 +875,7 @@ export default {
         let dataReplate = outDoc.replace('data:application/pdf;base64,', '')
         printJS({printable: dataReplate, type: 'pdf', base64: true})
       })
+      this.overlay = true
       // var pdfFrame = window.frames['pdfV']
       // pdfFrame.print()
       // this.dialogPrint = true

@@ -74,7 +74,7 @@ export default {
   },
   methods: {
     gotoWebLoyalty () {
-      window.open('https://betask-loyalty-admin.web.app', '_blank')
+      window.open('https://betask-loyalty-app.web.app', '_blank')
       this.dialogError = false
       this.overlay = false
     },
@@ -111,7 +111,7 @@ export default {
               .then(async (response) => {
                 this.$swal('เรียบร้อย', 'สร้างร้าน เรียบร้อย', 'success')
                 this.overlay = false
-                window.location.href = `https://betask-loyalty-admin.web.app/core/login`
+                window.location.href = `https://betask-loyalty-app.web.app/core/login`
                 // this.$router.push('/Core/Login')
               })
             // eslint-disable-next-line handle-callback-err
