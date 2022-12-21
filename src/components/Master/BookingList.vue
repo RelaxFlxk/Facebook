@@ -1772,7 +1772,7 @@
                     append-icon="mdi-text-box-search"
                     label="ค้นหาทั้งหมด"
                     :color="showColorSearch ? 'green' : 'info'"
-                    @click:append="searchAny(), showColorSearch = true, statusSearch = 'yes', dataReady = false"
+                    @click:append="searchAny()"
                     outlined
                   ></v-text-field>
                 </v-col>
@@ -3753,6 +3753,9 @@ export default {
     },
     async searchAny () {
       if (this.searchOther.trim().length > 1) {
+        this.showColorSearch = true
+        this.statusSearch = 'yes'
+        this.dataReady = false
         // this.dataReady = false
         this.selectedStatus = true
         // this.getSelectText = ''
@@ -3918,10 +3921,16 @@ export default {
           .catch(error => {
             console.log(error)
             this.dataReady = true
-            setTimeout(() => this.searchAny(), 3000)
+            this.showColorSearch = false
+            this.statusSearch = 'no'
+            this.$swal('ผิดพลาด', 'กรุณาใส่ลองอีกครั้ง', 'error')
+            // setTimeout(() => this.searchAny(), 3000)
           //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
           })
       } else {
+        this.dataReady = true
+        this.showColorSearch = false
+        this.statusSearch = 'no'
         this.$swal('ผิดพลาด', 'กรุณาใส่คำค้นหาให้มากว่า 1 ตัวอักษร', 'error')
       }
     },

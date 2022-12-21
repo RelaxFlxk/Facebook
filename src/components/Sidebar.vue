@@ -287,7 +287,7 @@
         </v-list-item>
       </v-list-group>
       <template v-slot:append>
-        <!-- <v-divider class="ma-0"></v-divider>
+        <v-divider class="ma-0"></v-divider>
         <v-btn block
             text
             tile
@@ -296,7 +296,7 @@
             class="nav-button-dark"
             @click.prevent="$router.push('/LoyaltyPresent')">
             <v-icon color="white">mdi-gift-open</v-icon>&nbsp;&nbsp;Be-Loyalty
-          </v-btn> -->
+          </v-btn>
         <!-- <v-divider class="ma-0"></v-divider>
         <v-btn block
             text
@@ -668,14 +668,14 @@ export default {
           { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingField', type: 'booking' },
           // { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingLink', type: 'booking' },
           { title: 'รายชื่อลูกค้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingList', type: 'booking' },
-          { title: '(Onsite)รายชื่อลูกค้านัดหมาย', icon: 'mdi-car-shift-pattern', to: '/Master/BookingListOnsite', type: 'booking' },
+          // { title: '(Onsite)รายชื่อลูกค้านัดหมาย', icon: 'mdi-car-shift-pattern', to: '/Master/BookingListOnsite', type: 'booking' },
           { title: 'ปฏิทินนัดหมาย', icon: 'mdi-calendar-search', to: '/Master/CalendarBooking', type: 'booking' }
         ]
         this.Dashboard = [
           { title: 'นัดหมายเข้ารับบริการ', icon: 'mdi-clipboard-check-multiple-outline', to: '/Dashbord/ReportBooking', type: 'Dashboard' },
-          { title: 'งานในศูนย์', icon: 'mdi-cog-transfer', to: '/Dashbord/Report', type: 'Dashboard' },
-          { title: 'ReportFRT', icon: 'mdi-account-clock-outline', to: '/Dashbord/ReportFRT', type: 'Dashboard' },
-          { title: 'ReportEmp', icon: 'mdi-account-clock-outline', to: '/Dashbord/ReportEmpMain', type: 'Dashboard' }
+          { title: 'งานในศูนย์', icon: 'mdi-cog-transfer', to: '/Dashbord/Report', type: 'Dashboard' }
+          // { title: 'ReportFRT', icon: 'mdi-account-clock-outline', to: '/Dashbord/ReportFRT', type: 'Dashboard' },
+          // { title: 'ReportEmp', icon: 'mdi-account-clock-outline', to: '/Dashbord/ReportEmpMain', type: 'Dashboard' }
           // { title: 'Performance', icon: 'mdi-application-settings', to: '/Dashbord/Performance', type: 'Dashboard' }
         ]
         this.workflow = [

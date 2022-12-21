@@ -520,6 +520,18 @@
                           </v-col>
                           </v-row>
                           <v-row>
+                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="$session.getAll().data.timeSlotStatus === 'True'">
+                              <v-checkbox
+                              label="เปิดรับจองนอกเวลา"
+                              false-value="False"
+                              :on-icon="'mdi-check-circle'"
+                              :off-icon="'mdi-checkbox-blank-circle-outline'"
+                              color="#1B437C"
+                              true-value="True"
+                              v-model="formAdd.overTime"
+                              @change="checkStoreFrontAdd()"
+                            ></v-checkbox>
+                            </v-col>
                             <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="$session.getAll().data.timeSlotStatus !== 'True'">
                               <v-checkbox
                               label="เปิดรับคิวหน้าร้าน"
@@ -754,6 +766,18 @@
                           </v-col>
                           </v-row>
                           <v-row>
+                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="$session.getAll().data.timeSlotStatus === 'True'">
+                              <v-checkbox
+                              label="เปิดรับจองนอกเวลา"
+                              false-value="False"
+                              :on-icon="'mdi-check-circle'"
+                              :off-icon="'mdi-checkbox-blank-circle-outline'"
+                              color="#1B437C"
+                              true-value="True"
+                              v-model="formUpdate.overTime"
+                              @change="checkStoreFrontAdd()"
+                            ></v-checkbox>
+                            </v-col>
                             <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;"  v-if="$session.getAll().data.timeSlotStatus !== 'True'">
                               <v-checkbox
                               label="เปิดรับคิวหน้าร้าน"
@@ -1888,7 +1912,8 @@ export default {
         timeSlotStatus: this.$session.getAll().data.timeSlotStatus || 'False',
         timeSlot: 1,
         bookingNowCheck: 'False',
-        bookingNowCheckCount: 0
+        bookingNowCheckCount: 0,
+        overTime: 'True'
       },
       formAddStep: {
         stepId: '',
@@ -1936,7 +1961,8 @@ export default {
         timeSlotStatus: this.$session.getAll().data.timeSlotStatus || 'False',
         timeSlot: 1,
         bookingNowCheck: 'False',
-        bookingNowCheckCount: 0
+        bookingNowCheckCount: 0,
+        overTime: 'True'
       },
       formUpdateItemFlow: {
         fieldId: '',
@@ -2882,6 +2908,7 @@ export default {
       this.formUpdate.checkDeposit = item.checkDeposit || 'False'
       this.formUpdate.storeFrontCheck = item.storeFrontCheck || 'False'
       this.formUpdate.bookingNowCheck = item.bookingNowCheck || 'False'
+      this.formUpdate.overTime = item.overTime || 'True'
       this.formUpdate.bookingNowCheckCount = item.bookingNowCheckCount || 0
       this.formUpdate.timeSlot = item.timeSlot || 1
       this.formUpdate.timeSlotStatus = this.$session.getAll().data.timeSlotStatus || 'False'
@@ -3315,6 +3342,8 @@ export default {
             this.formAdd[key] = 'NO'
           } else if (key === 'flowfieldName') {
             this.formAdd[key] = []
+          } else if (key === 'overTime') {
+            this.formAdd[key] = 'True'
           } else if (key === 'checkPayment') {
             this.formAdd[key] = 'True'
           } else if (key === 'checkOnsite') {
@@ -3348,6 +3377,8 @@ export default {
         if (this.formUpdate[key]) {
           if (key === 'flowfieldName') {
             this.formUpdate[key] = []
+          } else if (key === 'overTime') {
+            this.formUpdate[key] = 'True'
           } else if (key === 'checkPayment') {
             this.formUpdate[key] = 'True'
           } else if (key === 'checkOnsite') {

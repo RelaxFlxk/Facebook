@@ -89,11 +89,11 @@ export default new Router({
     name: 'BookingList',
     component: Master.BookingList
   },
-  {
-    path: '/Master/BookingListOnsite',
-    name: 'BookingListOnsite',
-    component: Master.BookingListOnsite
-  },
+  // {
+  //   path: '/Master/BookingListOnsite',
+  //   name: 'BookingListOnsite',
+  //   component: Master.BookingListOnsite
+  // },
   {
     path: '/Master/BookingListBeauty',
     name: 'BookingListBeauty',
