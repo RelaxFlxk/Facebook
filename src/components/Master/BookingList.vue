@@ -3921,7 +3921,10 @@ export default {
           .catch(error => {
             console.log(error)
             this.dataReady = true
-            setTimeout(() => this.searchAny(), 3000)
+            this.showColorSearch = false
+            this.statusSearch = 'no'
+            this.$swal('ผิดพลาด', 'กรุณาใส่ลองอีกครั้ง', 'error')
+            // setTimeout(() => this.searchAny(), 3000)
           //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
           })
       } else {
