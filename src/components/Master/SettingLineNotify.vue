@@ -843,24 +843,35 @@ export default {
         this.$swal('ผิดพลาด', 'กรุณาเลือกรายการแจ้งเตือน', 'error')
       } else {
         if (BranchJSON.length > 0) {
-          console.log('dataAdd', dataAdd)
-          await axios
-            .post(this.DNS_IP + '/lineNotifySetUp/add', dataAdd)
-            .then(async response => {
-              this.$swal('บันทึกข้อมูลเรียบร้อย', ' ', 'success')
-              this.dialog = false
-              window.location.href =
+          this.$swal({
+            title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#b3b1ab',
+            confirmButtonText: 'ใช่',
+            cancelButtonText: 'ไม่'
+          })
+            .then(async (result) => {
+              await axios
+                .post(this.DNS_IP + '/lineNotifySetUp/add', dataAdd)
+                .then(async response => {
+                  this.$swal('บันทึกข้อมูลเรียบร้อย', ' ', 'success')
+                  this.dialog = false
+                  window.location.href =
                 'https://notify-bot.line.me/oauth/authorize?response_type=code&client_id=bH0O0FW2isiXycTQh9GoXp' +
                 '&scope=notify&state=LQpoVxRXet0KHIKLNl5lyIySzAgIM5bIPVgKq74nvKd' +
                 '&redirect_uri=https://betask-linked-admin.web.app/UpdateNotify?shopId=' +
                 this.shopId +
                 'notifyId' +
                 this.notifyId
+                })
+              // eslint-disable-next-line handle-callback-err
+                .catch(error => {
+                  console.log('error function addData : ', error)
+                })
             })
-            // eslint-disable-next-line handle-callback-err
-            .catch(error => {
-              console.log('error function addData : ', error)
-            })
+          console.log('dataAdd', dataAdd)
         } else {
           this.$swal('ผิดพลาด', 'กรุณาเลือกสาขา', 'error')
         }
@@ -905,17 +916,21 @@ export default {
     },
     async setEdit (item) {
       console.log('item', item)
+      console.log('this.flowData', this.flowData)
       // console.log('this.BranchItem', this.BranchItem)
       this.itemBranchEdit = []
       this.itemSelectEdit = []
       this.idEdit = item.id
       this.flowData.forEach((v, k) => {
-        if (
-          JSON.parse(item.flowData).filter(a => a.value === v.value).length > 0
-        ) {
-          this.itemSelectEdit.push(
-            JSON.parse(item.flowData).filter(a => a.value === v.value)[0]
-          )
+        if (JSON.parse(item.flowData).filter(a => a.value === v.value).length > 0) {
+          // this.itemSelectEdit.push(JSON.parse(item.flowData).filter(a => a.value === v.value)[0])
+          JSON.parse(item.flowData).forEach((itemJS) => {
+            if (itemJS.value === v.value) {
+              itemJS.text = v.text
+              this.itemSelectEdit.push(itemJS)
+            }
+            console.log('itemJS', itemJS)
+          })
         } else {
           this.itemSelectEdit.push({ text: v.text, value: v.value })
         }
@@ -992,12 +1007,26 @@ export default {
       if (checkitemSelect.length === 0) {
         this.$swal('ผิดพลาด', 'กรุณาเลือกรายการแจ้งเตือน', 'error')
       } else {
-        await axios
-          .post(this.DNS_IP + '/lineNotifySetUp/edit/' + this.idEdit, data)
-          .then(async response => {
-            this.$swal('แก้ไขเรียบร้อย', ' ', 'success')
-            await this.getLineGroup()
-            this.dialog = false
+        this.$swal({
+          title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        })
+          .then(async (result) => {
+            await axios
+              .post(this.DNS_IP + '/lineNotifySetUp/edit/' + this.idEdit, data)
+              .then(async response => {
+                this.$swal('แก้ไขเรียบร้อย', ' ', 'success')
+                await this.getLineGroup()
+                this.dialog = false
+              })
+              .catch(error => {
+                console.log('error function addData : ', error)
+              })
           })
       }
     }
