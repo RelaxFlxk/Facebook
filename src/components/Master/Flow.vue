@@ -3417,7 +3417,11 @@ export default {
           } else if (key === 'shopId') {
             this.formAdd[key] = this.$session.getAll().data.shopId
           } else {
-            this.formAdd[key] = ''
+            if (key === 'empTitleTh' || key === 'empTitleEng') {
+
+            } else {
+              this.formAdd[key] = ''
+            }
           }
         }
       }
