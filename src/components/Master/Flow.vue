@@ -532,6 +532,17 @@
                               @change="checkStoreFrontAdd()"
                             ></v-checkbox>
                             </v-col>
+                            <!-- <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="$session.getAll().data.timeSlotStatus === 'True'">
+                              <v-checkbox
+                              label="จองหลายช่วงเวลา"
+                              false-value="False"
+                              :on-icon="'mdi-check-circle'"
+                              :off-icon="'mdi-checkbox-blank-circle-outline'"
+                              color="#1B437C"
+                              true-value="True"
+                              v-model="formAdd.customerTimeSlot"
+                            ></v-checkbox>
+                            </v-col> -->
                             <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="$session.getAll().data.timeSlotStatus !== 'True'">
                               <v-checkbox
                               label="เปิดรับคิวหน้าร้าน"
@@ -766,7 +777,7 @@
                           </v-col>
                           </v-row>
                           <v-row>
-                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="$session.getAll().data.timeSlotStatus === 'True'">
+                            <v-col cols="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="$session.getAll().data.timeSlotStatus === 'True'">
                               <v-checkbox
                               label="เปิดรับจองนอกเวลา"
                               false-value="False"
@@ -775,9 +786,19 @@
                               color="#1B437C"
                               true-value="True"
                               v-model="formUpdate.overTime"
-                              @change="checkStoreFrontAdd()"
                             ></v-checkbox>
                             </v-col>
+                            <!-- <v-col cols="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="$session.getAll().data.timeSlotStatus === 'True'">
+                              <v-checkbox
+                              label="จองหลายช่วงเวลา"
+                              false-value="False"
+                              :on-icon="'mdi-check-circle'"
+                              :off-icon="'mdi-checkbox-blank-circle-outline'"
+                              color="#1B437C"
+                              true-value="True"
+                              v-model="formUpdate.customerTimeSlot"
+                            ></v-checkbox>
+                            </v-col> -->
                             <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;"  v-if="$session.getAll().data.timeSlotStatus !== 'True'">
                               <v-checkbox
                               label="เปิดรับคิวหน้าร้าน"
@@ -1913,7 +1934,8 @@ export default {
         timeSlot: 1,
         bookingNowCheck: 'False',
         bookingNowCheckCount: 0,
-        overTime: 'True'
+        overTime: 'True',
+        customerTimeSlot: 'False'
       },
       formAddStep: {
         stepId: '',
@@ -1962,7 +1984,8 @@ export default {
         timeSlot: 1,
         bookingNowCheck: 'False',
         bookingNowCheckCount: 0,
-        overTime: 'True'
+        overTime: 'True',
+        customerTimeSlot: 'False'
       },
       formUpdateItemFlow: {
         fieldId: '',
