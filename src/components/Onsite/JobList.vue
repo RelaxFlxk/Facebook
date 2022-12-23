@@ -187,7 +187,7 @@
                 <p
                 class="font-weight-bold mb-1" style="font-size:14px"
                 v-if="dataJobLog.filter((Ilog,inLog) => Ilog.jobNo === item.jobNo && Ilog.stepId === itemStep.stepId).length > 0"
-                >{{momenTime(dataJobLog.filter((Ilog,inLog) => Ilog.jobNo === item.jobNo && Ilog.stepId === itemStep.stepId)[0].CREATE_DATE) + ' น.'}}
+                >{{dataJobLog.filter((Ilog,inLog) => Ilog.jobNo === item.jobNo && Ilog.stepId === itemStep.stepId)[0].CREATE_DATE_TIME + ' น.'}}
               </p>
               </v-col>
               <v-col cols="2" class="text-center py-0 px-0" style="display: flex;justify-content: center;align-items: center;">
@@ -430,16 +430,18 @@
             <div style="display: flex;align-items: center;justify-content: center;" class="mb-2">
               <v-icon x-large color="#F48686" class="mx-1 mr-2 iconify" data-icon="ic:twotone-access-time"></v-icon>
               <p class="font-weight-bold mb-1 text-center" v-if="CloseJob.dueDate !== null & CloseJob.dueDate !== ''"
-              style="font-size:16px">
-              {{momentThaiTextClose(CloseJob.dueDate)}}
+              style="font-size:15px">
+              {{'วันที่นัดหมาย ' + momentThaiTextClose(CloseJob.dueDate)}}
               </p>
             </div>
             <v-row>
               <v-col cols="6">
-                <p class="font-weight-bold mb-1 text-center" v-if="CloseJob.dueDate !== null & CloseJob.dueDate !== ''" style="font-size:14px">{{'เวลาเริ่มงาน ' + momenTime(CloseJob.dueDate) + ' น.'}}</p>
+                <p class="font-weight-bold mb-1 text-center" v-if="dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo).length > 0" style="font-size:13px">{{'วันที่เริ่มงาน ' + dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo)[0].CREATE_DATE_DAY}}</p>
+                <p class="font-weight-bold mb-1 text-center" v-if="dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo).length > 0" style="font-size:13px">{{'เวลาเริ่มงาน ' + dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo)[0].CREATE_DATE_TIME + ' น.'}}</p>
               </v-col>
               <v-col cols="6">
-                <p class="font-weight-bold mb-1 text-center" v-if="CloseJob.LAST_DATE !== null & CloseJob.LAST_DATE !== ''" style="font-size:14px">{{'เวลาจบงาน ' + momenTime(CloseJob.LAST_DATE) + ' น.'}}</p>
+                <p class="font-weight-bold mb-1 text-center" v-if="dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo).length > 0" style="font-size:13px">{{'วันที่จบงาน ' + dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo)[0].LAST_DATE_DAY}}</p>
+                <p class="font-weight-bold mb-1 text-center" v-if="dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo).length > 0" style="font-size:13px">{{'เวลาจบงาน ' + dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo)[0].LAST_DATE_TIME + ' น.'}}</p>
               </v-col>
             </v-row>
             <v-row>
@@ -455,233 +457,7 @@
             </v-row>
           </v-card>
         </div>
-        <!-- <v-row class="fixed_scroll">
-          <v-col cols="12">
-            <v-tabs v-model="tab" background-color="blue lighten-5" grow>
-              <v-tabs-slider color="red"></v-tabs-slider>
 
-              <v-tab v-for="(item, indexitem) in itemFlowStep" @click="cheSort(item)" :key="indexitem">
-                {{ item.text }}
-              </v-tab>
-            </v-tabs>
-            <v-tabs-items v-model="tab" v-if="itemJob.length > 0">
-              <v-tab-item
-                v-for="(item, indexitem) in itemFlowStep"
-                :key="indexitem"
-                style="background-color:#eee"
-                class="pb-5"
-              >
-                <div
-                  v-for="(items, indexitems) in itemJob.filter(el => {
-                    return el.stepId === item.value;
-                  })"
-                  :key="indexitems"
-                >
-                  <v-card
-                    class="mx-2 mt-4 p-1"
-                    color="#FFFFFF"
-                    elevation="2"
-                    :style="items.jobNo === jobNo ? 'border: 1px solid red;' : 'border: 1px solid white;'">
-                  <v-row>
-                      <v-col class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
-                        <v-sheet
-                          rounded="xl"
-                          width="100"
-                          height="100"
-                          color="blue darken-1"
-                          class="text-center justify-center pt-4"
-                        >
-                          <span class="font-weight-bold white--text text-subtitle-2">{{items.dataShow}}</span><br>
-                          <v-icon dark>
-                            mdi-clock-outline
-                          </v-icon> <span class="font-weight-bold white--text">{{items.timeDue}}</span>
-                        </v-sheet>
-                      </v-col>
-                      <v-col cols="8" class="pl-3">
-                        <div v-for="(itemJobs, indexitemJob) in dataJob.filter(el => {return el.jobNo === items.jobNo;})" :key="indexitemJob">
-                          <span class="font-weight-bold">{{itemJobs.fieldName}} :</span>
-                          <span>{{itemJobs.fieldValue}}</span>
-                        </div>
-                        <div v-if="items.onsiteStartDateFomatTH">
-                          <span class="font-weight-bold">เริ่มงาน :</span>
-                          <span>{{items.onsiteStartDateFomatTH}}</span>
-                        </div>
-                        <div v-if="items.onsiteEndDateFomatTH">
-                          <span class="font-weight-bold">เสร็จงาน :</span>
-                          <span>{{items.onsiteEndDateFomatTH}}</span>
-                        </div>
-                      </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col class="m-2">
-                        <v-btn
-                          tile
-                          color="deep-orange white--text"
-                          @click="setShowMap(items)"
-                        >
-                          <v-icon left>
-                            mdi-map-marker-radius-outline
-                          </v-icon>
-                          แผนที่
-                        </v-btn>
-                        <v-btn
-                          tile
-                          color="yellow darken-3 white--text"
-                          @click="callCustomer(dataJob.filter(el => {return el.jobNo === items.jobNo;}))"
-                        >
-                          <v-icon left>
-                            mdi-phone-outline
-                          </v-icon>
-                          โทร
-                        </v-btn>
-                        <v-btn
-                          tile
-                          color="info"
-                          @click="detailsJob(items, dataJob.filter(el => {return el.jobNo === items.jobNo;}))"
-                        >
-                          <v-icon left>
-                            mdi-clipboard-text-outline
-                          </v-icon>
-                          รายละเอียด
-                        </v-btn>
-                      </v-col>
-                    </v-row>
-                    <v-card-actions>
-                        <v-btn
-                          v-if="items.sortNo === 1"
-                          block
-                          color="success"
-                          class="mr-3"
-                          @click="updateJobStart(items.sortNo, items.jobId, items)"
-                        >
-                          <v-icon left>
-                            mdi-account-check-outline
-                          </v-icon>
-                          เริ่มงาน
-                        </v-btn>
-                        <v-btn
-                          v-if="items.sortNo === 2"
-                          block
-                          color="success"
-                          @click="closeJobStart(items.sortNo, items.jobId, items)"
-                        >
-                          <v-icon left>
-                            mdi-water-check
-                          </v-icon>
-                          ปิดงาน
-                        </v-btn>
-                    </v-card-actions>
-
-                    <div v-if="sortNo === 2">
-                      <v-row>
-                        <v-col cols="6" class="pb-0 text-center"><v-subheader>Before</v-subheader></v-col>
-                        <v-col cols="6" class="pb-0 text-center"><v-subheader>After</v-subheader></v-col>
-                      </v-row>
-                      <v-row v-for="(itemBeforeAfter, indexBeforeAfter) in items.dataBeforeAfter" :key="indexBeforeAfter">
-                        <v-col cols="6" class="pb-0">
-                          <v-img
-                            aspect-ratio="2"
-                            contain
-                            min-height="150"
-                            :src="itemBeforeAfter.beforeImage"
-                          ></v-img>
-                            <v-row >
-                              <v-col cols="6" class="text-right">
-                                <v-file-input
-                                hide-input
-                                class="pt-0 ml-6"
-                                color="info"
-                                accept="image/*"
-                                @change="selectImgUpdate(itemBeforeAfter,'before')"
-                                v-model="itemBeforeAfter.filesBefore"
-                                prepend-icon="mdi-camera"
-                              ></v-file-input>
-                              </v-col>
-                              <v-col cols="6" class="text-left" v-if="itemBeforeAfter.beforeImage">
-                                <v-btn
-                                icon
-                                dark
-                                x-small
-                                color="red"
-                                @click="deleteBeforeAfter(itemBeforeAfter,'before')"
-                              >
-                                <v-icon dark>
-                                  mdi-delete-circle
-                                </v-icon>
-                              </v-btn>
-                              </v-col>
-                            </v-row>
-                        </v-col>
-                        <v-col cols="6" class="pb-0">
-                          <v-img
-                            aspect-ratio="2"
-                            contain
-                            min-height="150"
-                            :src="itemBeforeAfter.afterImage"
-                          ></v-img>
-                          <v-row >
-                              <v-col cols="6" class="text-right">
-                                <v-file-input
-                                hide-input
-                                class="pt-0 ml-6"
-                                color="info"
-                                accept="image/*"
-                                @change="selectImgUpdate(itemBeforeAfter,'after')"
-                                v-model="itemBeforeAfter.filesAfter"
-                                prepend-icon="mdi-camera"
-                              ></v-file-input>
-                              </v-col>
-                              <v-col cols="6" class="text-left" v-if="itemBeforeAfter.afterImage">
-                                <v-btn
-                                icon
-                                dark
-                                x-small
-                                color="red"
-                                 @click="deleteBeforeAfter(itemBeforeAfter,'after')"
-                              >
-                                <v-icon dark>
-                                  mdi-delete-circle
-                                </v-icon>
-                              </v-btn>
-                              </v-col>
-                            </v-row>
-                        </v-col>
-                        <v-col cols="12" class="pb-0 pt-0 text-center">
-                          <v-btn
-                            tile
-                            x-small
-                            color="error"
-                            @click="deleteBeforeAfterAll(itemBeforeAfter)"
-                          >
-                            <v-icon left>
-                              mdi-delete-circle
-                            </v-icon>
-                            ทั้งหมด
-                          </v-btn>
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col cols="12" class="pt-0 text-center">
-                          <v-btn
-                            class="ma-2"
-                            outlined
-                            small
-                            fab
-                            @click="addBeforeAfter(items.dataBeforeAfter, items)"
-                            color="indigo"
-                          >
-                            <v-icon>mdi-plus-circle-multiple</v-icon>
-                          </v-btn>
-                        </v-col>
-                      </v-row>
-                    </div>
-                  </v-card>
-                </div>
-              </v-tab-item>
-            </v-tabs-items>
-          </v-col>
-
-        </v-row> -->
         <v-dialog v-model="dialogMap" :max-width="dialogwidth">
             <v-card class="text-center">
               <v-card-title>
@@ -1408,7 +1184,7 @@ export default {
           if (rs.length > 0) {
             this.dataJobLog = rs
           }
-          console.log('rs', rs)
+          console.log('rs12121212', rs)
         }).catch(error => {
           console.log('error function addData : ', error)
         })
