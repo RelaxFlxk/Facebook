@@ -97,7 +97,7 @@
                       dense
                       elevation="0"
                       prominent
-                      @click="getSelect('wait',countWaiting)"
+                      @click="getSelect('wait',countWaiting, filterCloseJobValue)"
                     >
                       <div>
                         <div class="text-center">
@@ -126,7 +126,7 @@
                       icon="mdi-email-check"
                       prominent
                       elevation="0"
-                      @click="getSelect('confirm',countConfirm)"
+                      @click="getSelect('confirm',countConfirm, filterCloseJobValue)"
                     >
                     <div>
                       <div class="text-center">
@@ -155,7 +155,7 @@
                       icon="mdi-account-check"
                       prominent
                       elevation="0"
-                      @click="getSelect('confirmJob',countJob)"
+                      @click="getSelect('confirmJob',countJob, filterCloseJobValue)"
                     >
                     <div>
                       <div class="text-center">
@@ -183,7 +183,7 @@
                       dense
                       elevation="0"
                       icon="mdi-expand-all"
-                      @click="getSelect('confirmSum',(countConfirm + countJob))"
+                      @click="getSelect('confirmSum',(countConfirm + countJob, filterCloseJobValue))"
                     >
                     <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
                       <div class="text-center">
@@ -211,7 +211,7 @@
                       elevation="0"
                       icon="mdi-calendar-remove"
                       prominent
-                      @click="getSelect('cancel',countCancel)"
+                      @click="getSelect('cancel',countCancel, filterCloseJobValue)"
                     >
                     <div>
                       <div class="text-center">
@@ -320,7 +320,7 @@
                       dense
                       elevation="0"
                       prominent
-                      @click="getSelect('wait',countWaiting)"
+                      @click="getSelect('wait',countWaiting, filterCloseJobValue)"
                     >
                       <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
                         <div class="text-center">
@@ -349,7 +349,7 @@
                       icon="mdi-email-check"
                       prominent
                       elevation="0"
-                      @click="getSelect('confirm',countConfirm)"
+                      @click="getSelect('confirm',countConfirm, filterCloseJobValue)"
                     >
                     <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
                       <div class="text-center">
@@ -378,7 +378,7 @@
                       icon="mdi-account-check"
                       prominent
                       elevation="0"
-                      @click="getSelect('confirmJob',countJob)"
+                      @click="getSelect('confirmJob',countJob, filterCloseJobValue)"
                     >
                     <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
                       <div class="text-center">
@@ -406,7 +406,7 @@
                       dense
                       elevation="0"
                       icon="mdi-expand-all"
-                      @click="getSelect('confirmSum',(countConfirm + countJob))"
+                      @click="getSelect('confirmSum',(countConfirm + countJob), filterCloseJobValue)"
                     >
                     <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
                       <div class="text-center">
@@ -434,7 +434,7 @@
                       elevation="0"
                       icon="mdi-calendar-remove"
                       prominent
-                      @click="getSelect('cancel',countCancel)"
+                      @click="getSelect('cancel',countCancel, filterCloseJobValue)"
                     >
                     <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
                       <div class="text-center">
@@ -4856,7 +4856,23 @@
             <v-card-text>
               <v-container>
                 <v-row>
+                  <v-col class="pb-0"  cols="12"  v-if="dataCoin.length > 0">
+                    <v-subheader>แจกคะแนน Loyalty</v-subheader>
+                    <v-select
+                      v-model="productExchangeRateId"
+                      :items="dataCoin"
+                      dense
+                      outlined
+                      label="เลือกอัตราแลกเปลี่ยน *"
+                      clearable
+                      item-text="text"
+                      item-value="value"
+                      return-object
+                    >
+                    </v-select>
+                  </v-col>
                   <v-col cols="12" class="pb-0">
+                    <v-subheader>ค่าใช้จ่าย</v-subheader>
                     <VuetifyMoney
                       v-model="formCloseJob.totalPrice"
                       placeholder="ค่าใช้จ่ายทั้งหมด"
@@ -6611,7 +6627,11 @@ export default {
       dataEmpOnsite: [],
       statusShowMap: '',
       listFilterCloseJob: ['ทั้งหมด', 'ยังไม่ปิดงาน', 'ปิดงาน'],
-      filterCloseJobValue: 'ทั้งหมด'
+      filterCloseJobValue: 'ทั้งหมด',
+      dataGetJob: [],
+      dataCoin: [],
+      productExchangeRateId: '',
+      memberTel: ''
     }
   },
   beforeCreate () {
@@ -6792,7 +6812,7 @@ export default {
       }
       // this.getTimesChange('update')
       if (this.getSelectText) {
-        this.getSelect(this.getSelectText, this.getSelectCount)
+        this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
       }
     },
     async FunCopyDeposit () {
@@ -7258,7 +7278,7 @@ export default {
                       }
                       // this.getTimesChange('update')
                       if (this.getSelectText) {
-                        this.getSelect(this.getSelectText, this.getSelectCount)
+                        this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
                       }
                     }
                   })
@@ -7276,7 +7296,7 @@ export default {
                 await this.searchAny()
               }
               if (this.getSelectText) {
-                this.getSelect(this.getSelectText, this.getSelectCount)
+                this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
               }
             }).catch(error => {
               console.log('error function addData : ', error)
@@ -7288,7 +7308,7 @@ export default {
                 this.searchAny()
               }
               if (this.getSelectText) {
-                this.getSelect(this.getSelectText, this.getSelectCount)
+                this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
               }
             })
           }
@@ -7353,7 +7373,7 @@ export default {
                 this.dialogChangeOnsite = false
                 // this.getTimesChange('update')
                 if (this.getSelectText) {
-                  this.getSelect(this.getSelectText, this.getSelectCount)
+                  this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
                 }
               })
           } else {
@@ -7802,6 +7822,9 @@ export default {
           await axios
             .post(this.DNS_IP + '/job/editPrice/' + ID, ds)
             .then(async response => {
+              if (this.productExchangeRateId !== '' && parseInt(totalPrice) > 0 && this.lineUserId !== '') {
+                await this.useCoin(totalPrice)
+              }
               await this.pushmessagePrice(this.formCloseJob.jobNo)
               this.$swal('เรียบร้อย', 'ให้บริการ เสร็จเรียบร้อยแล้ว', 'success')
               if (this.statusSearch === 'no') {
@@ -7811,7 +7834,7 @@ export default {
               }
               // this.getTimesChange('update')
               if (this.getSelectText) {
-                this.getSelect(this.getSelectText, this.getSelectCount)
+                this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
               }
               this.dialogCloseJob = false
               this.dialogJob = false
@@ -7829,6 +7852,20 @@ export default {
         this.loadingCloseJob = false
         console.log('Close Job Error', error)
       })
+    },
+    async useCoin (totalPrice) {
+      let ds = {
+        exchangRateId: this.productExchangeRateId.value,
+        Amount: parseInt(totalPrice),
+        shopId: this.$session.getAll().data.shopId,
+        tel: this.memberTel,
+        refId: ''
+      }
+      console.log('ds', ds)
+      await axios
+        .post(this.DNS_IP_Loyalty + '/POSapi', ds)
+        .then(async response => {
+        })
     },
     async pushmessagePrice (jobNo) {
       let updateStatusSend = { updateStatusSend: 'false', checkPayment: this.checkPayment }
@@ -7932,7 +7969,7 @@ export default {
           }
           // this.getTimesChange('update')
           if (this.getSelectText) {
-            this.getSelect(this.getSelectText, this.getSelectCount)
+            this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
           }
           clearInterval(this.setTimerCalendar)
           this.setTimerCalendar = null
@@ -8057,7 +8094,7 @@ export default {
           }
           // this.getTimesChange('update')
           if (this.getSelectText) {
-            this.getSelect(this.getSelectText, this.getSelectCount)
+            this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
           }
         })
     },
@@ -8107,7 +8144,7 @@ export default {
           }
           // this.getTimesChange('update')
           if (this.getSelectText) {
-            this.getSelect(this.getSelectText, this.getSelectCount)
+            this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
           }
         })
     },
@@ -8139,7 +8176,7 @@ export default {
           }
           // this.getTimesChange('update')
           if (this.getSelectText) {
-            this.getSelect(this.getSelectText, this.getSelectCount)
+            this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
           }
         })
     },
@@ -8384,9 +8421,9 @@ export default {
               this.dataItemTime = []
               // await this.getTimesChange('update')
               if (this.getSelectText) {
-                this.getSelect(this.getSelectText, 0)
+                this.getSelect(this.getSelectText, 0, this.filterCloseJobValue)
               } else {
-                this.getSelect('wait', this.countWaiting)
+                this.getSelect('wait', this.countWaiting, this.filterCloseJobValue)
               }
               this.dataReady = true
             // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
@@ -8409,9 +8446,9 @@ export default {
               }
               // await this.getTimesChange('update')
               if (this.getSelectText) {
-                this.getSelect(this.getSelectText, 0)
+                this.getSelect(this.getSelectText, 0, this.filterCloseJobValue)
               } else {
-                this.getSelect('wait', this.countWaiting)
+                this.getSelect('wait', this.countWaiting, this.filterCloseJobValue)
               }
               // this.dataItemTime = dataItemTimes.sort((a, b) => {
               //   if (a.timeDueHtext < b.timeDueHtext) return -1
@@ -8475,7 +8512,7 @@ export default {
           }
           // this.getTimesChange('update')
           if (this.getSelectText) {
-            this.getSelect(this.getSelectText, this.getSelectCount)
+            this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
           }
         })
     },
@@ -8526,7 +8563,7 @@ export default {
             }
             // this.getTimesChange('update')
             if (this.getSelectText) {
-              this.getSelect(this.getSelectText, this.getSelectCount)
+              this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
             }
           })
       } else {
@@ -8988,7 +9025,7 @@ export default {
             // this.getTimesChange('update')
             this.formEdit.radiosRemark = ''
             if (this.getSelectText) {
-              this.getSelect(this.getSelectText, this.getSelectCount)
+              this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
             }
             // this.getDataCalendaBooking()
             this.dialogEditData = false
@@ -9056,7 +9093,7 @@ export default {
       this.getDataFlow()
       await this.getBookingList()
       // await this.getTimesChange('update')
-      this.getSelect(this.getSelectText, this.getSelectCount)
+      this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
       // this.getDataCalendaBooking()
       this.loadingRefresh = false
     },
@@ -9068,7 +9105,7 @@ export default {
       }
       // await this.getTimesChange('update')
       if (this.getSelectText) {
-        this.getSelect(this.getSelectText, this.getSelectCount)
+        this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
       }
     },
     checkTime () {
@@ -9210,7 +9247,7 @@ export default {
             }
             // this.getTimesChange('update')
             if (this.getSelectText) {
-              this.getSelect(this.getSelectText, this.getSelectCount)
+              this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
             }
             console.log('getSelectText', this.getSelectText, this.getSelectCount)
           })
@@ -10244,7 +10281,7 @@ export default {
               this.countJob = dataSelect.length
             }
           } else {
-            this.filterCloseJobValue = 'ทั้งหมด'
+            // this.filterCloseJobValue = filterCloseJobValue
             dataSelect = this.dataItem.filter(el => { return el.statusBt === text })
           }
         }
@@ -11060,9 +11097,9 @@ export default {
         this.dataItemTime = []
         // await this.getTimesChange('update')
         if (this.getSelectText) {
-          this.getSelect(this.getSelectText, 0)
+          this.getSelect(this.getSelectText, 0, this.filterCloseJobValue)
         } else {
-          this.getSelect('wait', this.countWaiting)
+          this.getSelect('wait', this.countWaiting, this.filterCloseJobValue)
         }
         this.dataReady = true
         // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
@@ -11086,9 +11123,9 @@ export default {
         console.log('dataItemTime', this.dataItemTime)
         // await this.getTimesChange('update')
         if (this.getSelectText) {
-          this.getSelect(this.getSelectText, 0)
+          this.getSelect(this.getSelectText, 0, this.filterCloseJobValue)
         } else {
-          this.getSelect('wait', this.countWaiting)
+          this.getSelect('wait', this.countWaiting, this.filterCloseJobValue)
         }
         this.dataReady = true
       }
@@ -11658,7 +11695,7 @@ export default {
         this.searchAny()
       }
       if (this.getSelectText) {
-        this.getSelect(this.getSelectText, this.getSelectCount)
+        this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
       }
       this.getDataCalendaBooking()
     },
@@ -11709,7 +11746,7 @@ export default {
               }
               // this.getTimesChange('update')
               if (this.getSelectText) {
-                this.getSelect(this.getSelectText, this.getSelectCount)
+                this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
               }
               this.getDataCalendaBooking()
               this.dialogDelete = false
@@ -12144,7 +12181,7 @@ export default {
                         }
                         // this.getTimesChange('update')
                         if (this.getSelectText) {
-                          this.getSelect(this.getSelectText, this.getSelectCount)
+                          this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
                         }
                       }
                     }).catch(error => {
@@ -12162,7 +12199,7 @@ export default {
                 }
                 // this.getTimesChange('update')
                 if (this.getSelectText) {
-                  this.getSelect(this.getSelectText, this.getSelectCount)
+                  this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
                 }
               }).catch(error => {
                 console.log('error function addData : ', error)
@@ -12174,7 +12211,7 @@ export default {
                 }
                 // this.getTimesChange('update')
                 if (this.getSelectText) {
-                  this.getSelect(this.getSelectText, this.getSelectCount)
+                  this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
                 }
               })
             }
@@ -12189,7 +12226,7 @@ export default {
             }
             // this.getTimesChange('update')
             if (this.getSelectText) {
-              this.getSelect(this.getSelectText, this.getSelectCount)
+              this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
             }
           }).catch(error => {
             console.log('error function addData : ', error)
@@ -12201,7 +12238,7 @@ export default {
             }
             // this.getTimesChange('update')
             if (this.getSelectText) {
-              this.getSelect(this.getSelectText, this.getSelectCount)
+              this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
             }
           })
         }
@@ -12373,7 +12410,7 @@ export default {
                 }
                 // this.getTimesChange('update')
                 if (this.getSelectText) {
-                  this.getSelect(this.getSelectText, this.getSelectCount)
+                  this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
                 }
                 this.pushMsgConfirm(item.bookNo)
               } else {
@@ -12384,7 +12421,7 @@ export default {
                 }
                 // this.getTimesChange('update')
                 if (this.getSelectText) {
-                  this.getSelect(this.getSelectText, this.getSelectCount)
+                  this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
                 }
               }
               this.dataConfirmReady = true
@@ -12535,7 +12572,7 @@ export default {
           }
           // this.getTimesChange('update')
           if (this.getSelectText) {
-            this.getSelect(this.getSelectText, this.getSelectCount)
+            this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
           }
           // this.getDataCalendaBooking()
           this.dataCancelReady = true
@@ -12724,7 +12761,7 @@ export default {
                   }
                   // this.getTimesChange('update')
                   if (this.getSelectText) {
-                    this.getSelect(this.getSelectText, this.getSelectCount)
+                    this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
                   }
                   this.pushMsgConfirmChangeTime(item.bookNo)
                 } else {
@@ -12735,7 +12772,7 @@ export default {
                   }
                   // this.getTimesChange('update')
                   if (this.getSelectText) {
-                    this.getSelect(this.getSelectText, this.getSelectCount)
+                    this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
                   }
                 }
               } else {
@@ -12746,7 +12783,7 @@ export default {
                 }
                 // this.getTimesChange('update')
                 if (this.getSelectText) {
-                  this.getSelect(this.getSelectText, this.getSelectCount)
+                  this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
                 }
               }
               this.$swal('เรียบร้อย', 'เปลี่ยนเวลานัดหมาย เรียบร้อย', 'success')
@@ -12843,8 +12880,17 @@ export default {
     async getjob (item) {
       console.log(item)
       this.bookNo = item.bookNo
+      this.dataGetJob = item
       this.jobitem = []
       if (item.jobNo !== '') {
+        this.getCoin(item)
+        // var lineUserId = ''
+        // if (item.lineUserId === null || item.lineUserId === '' || item.lineUserId === 'user-skip' || item.lineUserId === undefined) {
+        //   lineUserId = ''
+        // } else {
+        //   lineUserId = item.lineUserId
+        // }
+        // this.lineUserId = lineUserId
         let checkBookingMember = ''
         const result = await axios
           .get(
@@ -12902,6 +12948,40 @@ export default {
             // this.getUserId()
           }
         })
+      }
+    },
+    async getCoin (dt) {
+      if (dt.lineUserId !== '') {
+        await axios.get(this.DNS_IP_Loyalty + '/member/get?shopId=' + dt.shopId + '&lineUserId=' + dt.lineUserId)
+          .then(response => {
+            let rs = response.data
+            if (rs.status !== false) {
+              this.lineUserId = rs[0].lineUserId
+              this.memberTel = rs[0].tel
+            } else {
+              this.lineUserId = ''
+              this.memberTel = ''
+            }
+          })
+        if (this.lineUserId !== '') {
+          this.dataCoin = []
+          await axios.get(this.DNS_IP_Loyalty + '/productExchangeRate/get?shopId=' + dt.shopId + '&flowId=' + dt.flowId)
+            .then(response => {
+              console.log('productExchangeRate', response.data)
+              let rs = response.data
+              if (rs.status !== false) {
+                for (var i = 0; i < rs.length; i++) {
+                  let d = rs[i]
+                  d.text = d.name
+                  d.value = d.productExchangeRateId
+                  this.dataCoin.push(d)
+                // console.log('this.DataFlowName', this.DataFlowName)
+                }
+              } else {
+                this.dataCoin = []
+              }
+            })
+        }
       }
     },
     async jobConfirm () {
@@ -13085,15 +13165,15 @@ export default {
               this.time = ''
               this.booking = []
               this.bookingData = []
-              if (this.statusSearch === 'no') {
-                await this.getBookingList()
-              } else {
-                await this.searchAny()
-              }
+              // if (this.statusSearch === 'no') {
+              //   await this.getBookingList()
+              // } else {
+              //   await this.searchAny()
+              // }
               // this.getTimesChange('update')
-              if (this.getSelectText) {
-                this.getSelect(this.getSelectText, this.getSelectCount)
-              }
+              // if (this.getSelectText) {
+              //   this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
+              // }
               this.loadingBookingAgain = false
               this.dialogBookingAgain = false
               this.dialogJob = false

@@ -483,6 +483,28 @@
                               ></v-select>
                             </v-col>
                           </v-row>
+                          <v-row v-if="formAdd.timeSlotStatus === 'True'">
+                            <v-col class="pt-0 pb-0" clos='auto'>
+                              <v-text-field
+                                v-model="formAdd.empTitleTh"
+                                label="ชื่อผู้ทำงาน (ภาษาไทย)"
+                                outlined
+                                required
+                                dense
+                                :rules="[rules.required]"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col class="pt-0 pb-0" clos='auto'>
+                              <v-text-field
+                                  v-model="formAdd.empTitleEng"
+                                  label="ชื่อผู้ทำงาน (ภาษาอังกฤษ)"
+                                  outlined
+                                  required
+                                  dense
+                                  :rules="[rules.required]"
+                                ></v-text-field>
+                            </v-col>
+                          </v-row>
                           <v-row>
                           <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontCheck === 'False'"  >
                             <v-checkbox
@@ -738,6 +760,28 @@
                                 attach
                                 :menu-props="{ bottom: true, offsetY: true }"
                               ></v-select>
+                            </v-col>
+                          </v-row>
+                          <v-row v-if="formUpdate.timeSlotStatus === 'True'">
+                            <v-col class="pt-0 pb-0" clos='auto'>
+                              <v-text-field
+                                v-model="formUpdate.empTitleTh"
+                                label="ชื่อผู้ทำงาน (ภาษาไทย)"
+                                outlined
+                                required
+                                dense
+                                :rules="[rules.required]"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col class="pt-0 pb-0" clos='auto'>
+                              <v-text-field
+                                  v-model="formUpdate.empTitleEng"
+                                  label="ชื่อผู้ทำงาน (ภาษาไทย)"
+                                  outlined
+                                  required
+                                  dense
+                                  :rules="[rules.required]"
+                                ></v-text-field>
                             </v-col>
                           </v-row>
                           <v-row>
@@ -1935,7 +1979,9 @@ export default {
         bookingNowCheck: 'False',
         bookingNowCheckCount: 0,
         overTime: 'True',
-        customerTimeSlot: 'False'
+        customerTimeSlot: 'False',
+        empTitleTh: 'พนักงานช่าง',
+        empTitleEng: 'Employee'
       },
       formAddStep: {
         stepId: '',
@@ -1985,7 +2031,9 @@ export default {
         bookingNowCheck: 'False',
         bookingNowCheckCount: 0,
         overTime: 'True',
-        customerTimeSlot: 'False'
+        customerTimeSlot: 'False',
+        empTitleTh: 'พนักงานช่าง',
+        empTitleEng: 'Employee'
       },
       formUpdateItemFlow: {
         fieldId: '',
@@ -2935,6 +2983,8 @@ export default {
       this.formUpdate.bookingNowCheckCount = item.bookingNowCheckCount || 0
       this.formUpdate.timeSlot = item.timeSlot || 1
       this.formUpdate.timeSlotStatus = this.$session.getAll().data.timeSlotStatus || 'False'
+      this.formUpdate.empTitleTh = item.empTitleTh || 'พนักงานช่าง'
+      this.formUpdate.empTitleEng = item.empTitleEng || 'Employee'
 
       this.formUpdate.promptPayID = item.promptPayID || ''
       this.formUpdate.promptPayName = item.promptPayName || ''
@@ -3390,7 +3440,11 @@ export default {
           } else if (key === 'shopId') {
             this.formAdd[key] = this.$session.getAll().data.shopId
           } else {
-            this.formAdd[key] = ''
+            if (key === 'empTitleTh' || key === 'empTitleEng') {
+
+            } else {
+              this.formAdd[key] = ''
+            }
           }
         }
       }
