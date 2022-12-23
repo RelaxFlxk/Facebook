@@ -6124,6 +6124,7 @@ import waitingAlert from '../waitingAlert.vue'
 import RetureDeposit from '../BookingListComponents/RetureDeposit.vue'
 import CallLog from '../BookingListComponents/CallLog.vue'
 import NotificationService from '../BookingListComponents/NotificationService.vue'
+// import copy from 'copy-to-clipboard'
 
 export default {
   name: 'BookingListBeauty',
@@ -6845,24 +6846,42 @@ export default {
         .post(this.DNS_IP + '/Booking/setDetailsCopyLinkAddData/' + this.bookNo)
         .then(response => {
           console.log('response.data', response.data)
-          textBookNo = response.data.message
-          depositPrice = response.data.depositPrice || 0
+          if (response.data.status) {
+            textBookNo = response.data.message
+            depositPrice = response.data.depositPrice || 0
+            if (depositPrice === '0') {
+              textLink = 'กรุณากดเพื่อผูกบัญชี : ' + this.depositLink
+            } else {
+              textLink = 'กรุณากดเพื่อโอนเงินมัดจำ : ' + this.depositLink
+              textDepositPrice = `\nจำนวนเงินมัดจำ : ` + depositPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+            }
+            // console.log('textBookNo', textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink)
+            let copyText = textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink
+            // let copyText = document.getElementById('myInputDeposit')
+            // copyText.select()
+            // copyText.setSelectionRange(0, 99999)
+            // navigator.clipboard.write([
+            //     new ClipboardItem({
+            //         "text/html": Promise.resolve(copyText)
+            //     })
+            // ])
+            navigator.clipboard.writeText(copyText)
+              .then(() => {
+                this.$swal('สำเร็จ', 'คัดลอกลิ้งสำเร็จ', 'success')
+              }).catch(() => {
+                this.$swal('ผิดพลาด', 'กรุณาทำรายการใหม่', 'error')
+              })
+            // copy(copyText)
+            // copy('Text', {
+            //   debug: true,
+            //   message: copyText
+            // })
+            this.dialogShowDeposit = false
+            this.updateBookingListByDeposit()
+          } else {
+            this.$swal('ผิดพลาด', 'กรุณาทำรายการใหม่', 'error')
+          }
         })
-      console.log('depositPrice', depositPrice)
-      if (depositPrice === '0') {
-        textLink = 'กรุณากดเพื่อผูกบัญชี : ' + this.depositLink
-      } else {
-        textLink = 'กรุณากดเพื่อโอนเงินมัดจำ : ' + this.depositLink
-        textDepositPrice = `\nจำนวนเงินมัดจำ : ` + depositPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-      }
-      console.log('textBookNo', textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink)
-      let copyText = textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink
-      // let copyText = document.getElementById('myInputDeposit')
-      // copyText.select()
-      // copyText.setSelectionRange(0, 99999)
-      navigator.clipboard.writeText(copyText)
-      this.dialogShowDeposit = false
-      this.updateBookingListByDeposit()
     },
     async updateBookingListByDeposit () {
       let urlApi = this.DNS_IP + '/booking_view/get?shopId=' + this.session.data.shopId + '&bookNo=' + this.bookNo
