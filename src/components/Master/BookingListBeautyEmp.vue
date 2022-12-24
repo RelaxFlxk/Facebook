@@ -3013,7 +3013,7 @@
                           <v-list-item @click.stop="setDataCopyLink(item)" v-if="item.statusBt === 'wait' && item.depositCheckStatus === 'True'">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="bx:link"></v-icon> เรียกเก็บค่าบริการเพื่อจอง </v-list-item-title>
                           </v-list-item>
-                          <v-list-item v-clipboard:success="onCopySuccess" v-clipboard:copy="'https://liff.line.me/1656581804-7KRQyqo5/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId" v-if="item.statusBt === 'confirm' && (item.lineUserId === '' || item.lineUserId === null)">
+                          <v-list-item v-clipboard:success="onCopySuccess" v-clipboard:copy="'https://liff.line.me/' + dataLineConfig.liffMainID + '/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId" v-if="item.statusBt === 'confirm' && (item.lineUserId === '' || item.lineUserId === null)">
                           <!-- <v-list-item v-clipboard:success="onCopySuccess" v-clipboard:copy="'https://liff.line.me/1656581804-7KRQyqo5/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId" v-if="item.statusBt === 'confirm' && (item.userId === 'user-skip' || item.userId === '' || item.userId === null)"> -->
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-content-copy </v-icon> คัดลอกลิงค์ (ผูกลูกค้า) </v-list-item-title>
                           </v-list-item>
@@ -6103,7 +6103,7 @@ export default {
       skip: {
         userId: 'user-skip'
       },
-      pathToweb: 'https://liff.line.me/1656581804-7KRQyqo5/JobConfirm?jobId=',
+      pathToweb: '',
       changeBackgroundColor: true,
       countWaiting: 0,
       countConfirm: 0,
@@ -6392,7 +6392,7 @@ export default {
       statusShowDateConfiremjob: true,
       memberId: '',
       flowIdOldEdit: '',
-      Redirect: 'https://liff.line.me/1656581804-7KRQyqo5/BookingAddress?shopId=' + this.$session.getAll().data.shopId,
+      Redirect: '',
       dialogShowDeposit: false,
       depositLink: '',
       datailLinkDeposit: '',
@@ -6405,7 +6405,8 @@ export default {
       dataEmpChange: [],
       dataEmpAllChange: [],
       EmpItemLimitChange: [],
-      bookingEmpFlow: ''
+      bookingEmpFlow: '',
+      dataLineConfig: {}
     }
   },
   beforeCreate () {
@@ -6418,6 +6419,9 @@ export default {
     }
   },
   async mounted () {
+    this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
+    this.Redirect = 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/BookingAddress?shopId=' + this.$session.getAll().data.shopId
+    this.pathToweb = 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/JobConfirm?jobId='
     this.checkShowDataOnsite('ไม่แสดง')
     this.$root.$on('dataReturn', (item) => {
       this.dataReturn(item)
