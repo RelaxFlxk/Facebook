@@ -518,7 +518,7 @@ export default {
       this.createProfile = item.CREATE_DATE || ''
       if (lineUserId === '') {
         this.profileStatus = false
-        this.linkUpdateUserId = 'https://betask-linked-dev.web.app/UpdateLineUserID?shopId=' + item.shopId + '&memberId=' + item.memberId
+        this.linkUpdateUserId = 'https://betask-linked.web.app/UpdateLineUserID?shopId=' + item.shopId + '&memberId=' + item.memberId
       } else {
         await axios
           .get(this.DNS_IP + '/line/getProfileByUserId?shopId=' + this.session.data.shopId + '&userId=' + lineUserId)
@@ -527,7 +527,7 @@ export default {
             let rs = response.data
             if (rs.message) {
               this.profileStatus = false
-              this.linkUpdateUserId = 'https://betask-linked-dev.web.app/UpdateLineUserID?shopId=' + item.shopId + '&memberId=' + item.memberId
+              this.linkUpdateUserId = 'https://betask-linked.web.app/UpdateLineUserID?shopId=' + item.shopId + '&memberId=' + item.memberId
             } else {
               this.profileStatus = true
               this.dataProfile = rs
