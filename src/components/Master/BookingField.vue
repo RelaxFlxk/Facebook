@@ -899,9 +899,7 @@ export default {
       dataTypeProcess3: '',
       dataTypeProcess4: '',
       itemdetell: [],
-      Redirect:
-        'https://liff.line.me/1656581804-7KRQyqo5/Booking?shopId=' +
-        this.$session.getAll().data.shopId + '&timeSlotStatus=' + this.$session.getAll().data.timeSlotStatus,
+      Redirect: '',
       session: this.$session.getAll(),
       shopId: this.$session.getAll().data.shopId,
       IdUpdate: '',
@@ -982,6 +980,7 @@ export default {
   },
   async mounted () {
     this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
+    this.Redirect = 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/Booking?shopId=' + this.$session.getAll().data.shopId + '&timeSlotStatus=' + this.$session.getAll().data.timeSlotStatus
     await this.getShop()
     await this.getBookingField()
   },
