@@ -722,10 +722,11 @@ export default {
           { title: 'สมัครและจัดการยูเซอร์', icon: 'mdi-account-circle', to: '/System/ManageUser', type: 'corporate' },
           { title: 'พิมพ์ใบเสร็จ', icon: 'mdi-printer-search', to: '/PrintPdf/PrintInvoice', type: 'corporate' }
         ]
-        this.broadCast = [
-          { title: 'กลุ่มเป้าหมาย', icon: 'mdi-account-group', to: '/BroadCast/Audience', type: 'broadCast' },
-          { title: 'บรอดแคสต์', icon: 'mdi-bullhorn', to: '/BroadCast/BroadCast', type: 'broadCast' }
-        ]
+        this.broadCast = []
+        // this.broadCast = [
+        //   { title: 'กลุ่มเป้าหมาย', icon: 'mdi-account-group', to: '/BroadCast/Audience', type: 'broadCast' },
+        //   { title: 'บรอดแคสต์', icon: 'mdi-bullhorn', to: '/BroadCast/BroadCast', type: 'broadCast' }
+        // ]
         this.settings = [
           // { title: 'จัดการข้อมูลนัดหมาย', icon: 'mdi-book-cog-outline', to: '/Master/BookingField', type: 'settings' },
           { title: 'ตั้งค่าการแจ้งเตือน', icon: 'mdi-bell-ring', to: '/Master/NoticeManagement', type: 'settings' },
