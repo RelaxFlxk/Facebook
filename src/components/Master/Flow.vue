@@ -457,20 +457,6 @@
                           ></v-text-field>
                         </v-col>
                           <v-col cols="12" class="pt-0 pb-0">
-                          <!-- <v-row>
-                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: left;">
-                              <v-checkbox
-                                label="จำกัดเวลาตามช่าง"
-                                false-value="False"
-                                :on-icon="'mdi-check-circle'"
-                                :off-icon="'mdi-checkbox-blank-circle-outline'"
-                                color="#1B437C"
-                                true-value="True"
-                                v-model="formAdd.timeSlotStatus"
-                                @change="formAdd.timeSlot = 1"
-                              ></v-checkbox>
-                            </v-col>
-                          </v-row> -->
                           <v-row v-if="formAdd.timeSlotStatus === 'True'">
                             <v-col class="pb-0">
                               <v-select
@@ -554,7 +540,7 @@
                               @change="checkStoreFrontAdd()"
                             ></v-checkbox>
                             </v-col>
-                            <!-- <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="$session.getAll().data.timeSlotStatus === 'True'">
+                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="$session.getAll().data.timeSlotStatus === 'True'">
                               <v-checkbox
                               label="จองหลายช่วงเวลา"
                               false-value="False"
@@ -564,7 +550,7 @@
                               true-value="True"
                               v-model="formAdd.customerTimeSlot"
                             ></v-checkbox>
-                            </v-col> -->
+                            </v-col>
                             <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="$session.getAll().data.timeSlotStatus !== 'True'">
                               <v-checkbox
                               label="เปิดรับคิวหน้าร้าน"
@@ -736,20 +722,6 @@
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12" class="pt-0 pb-0" >
-                          <!-- <v-row>
-                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: left;">
-                              <v-checkbox
-                                label="จำกัดเวลาตามช่าง"
-                                false-value="False"
-                                :on-icon="'mdi-check-circle'"
-                                :off-icon="'mdi-checkbox-blank-circle-outline'"
-                                color="#1B437C"
-                                true-value="True"
-                                v-model="formUpdate.timeSlotStatus"
-                                @change="formUpdate.timeSlot = 1"
-                              ></v-checkbox>
-                            </v-col>
-                          </v-row> -->
                           <v-row v-if="formUpdate.timeSlotStatus === 'True'">
                             <v-col class="pb-0">
                               <v-select
@@ -832,7 +804,7 @@
                               v-model="formUpdate.overTime"
                             ></v-checkbox>
                             </v-col>
-                            <!-- <v-col cols="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="$session.getAll().data.timeSlotStatus === 'True'">
+                            <v-col cols="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="$session.getAll().data.timeSlotStatus === 'True'">
                               <v-checkbox
                               label="จองหลายช่วงเวลา"
                               false-value="False"
@@ -842,7 +814,7 @@
                               true-value="True"
                               v-model="formUpdate.customerTimeSlot"
                             ></v-checkbox>
-                            </v-col> -->
+                            </v-col>
                             <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;"  v-if="$session.getAll().data.timeSlotStatus !== 'True'">
                               <v-checkbox
                               label="เปิดรับคิวหน้าร้าน"
@@ -855,17 +827,6 @@
                               @change="checkStoreFrontUpdate()"
                             ></v-checkbox>
                             </v-col>
-                            <!-- <v-col class="pt-0 pb-0" style="display: flex;justify-content: center;">
-                              <v-checkbox
-                              label="นัดหมายภายในวัน"
-                              false-value="False"
-                              :on-icon="'mdi-check-circle'"
-                              :off-icon="'mdi-checkbox-blank-circle-outline'"
-                              color="#1B437C"
-                              true-value="True"
-                              v-model="formUpdate.bookingNowCheck"
-                            ></v-checkbox>
-                            </v-col> -->
                           </v-row>
                           <v-row v-if="$session.getAll().data.timeSlotStatus !== 'True'">
                             <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;">
@@ -2987,7 +2948,7 @@ export default {
       this.formUpdate.timeSlotStatus = this.$session.getAll().data.timeSlotStatus || 'False'
       this.formUpdate.empTitleTh = item.empTitleTh || 'พนักงานช่าง'
       this.formUpdate.empTitleEng = item.empTitleEng || 'Employee'
-
+      this.formUpdate.customerTimeSlot = item.customerTimeSlot || 'False'
       this.formUpdate.promptPayID = item.promptPayID || ''
       this.formUpdate.promptPayName = item.promptPayName || ''
       this.formUpdate.remarkConfirm = item.remarkConfirm || ''
