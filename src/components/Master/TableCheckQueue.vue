@@ -89,7 +89,8 @@ export default {
             // let value = this.timeEmp.filter((i, k) => i.value === item.bookingTime)[0].value
             if (this.timeEmp.filter((i, k) => i.value === item.bookingTime).length > 0) {
               let index = this.timeEmp.findIndex((i, k) => i.value === item.bookingTime)
-              let slot = item.timeSlot
+              // let slot = item.timeSlot
+              let slot = item.timeSlotCustomer || item.timeSlot
               let num = index + (slot - 1)
               console.log('item', item, 'index', index, 'slot', slot, num)
               console.log('this.timeEmp', this.timeEmp.filter((i, k) => (k >= index && k <= num)))
