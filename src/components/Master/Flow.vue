@@ -2164,11 +2164,13 @@ export default {
         text: '',
         value: '',
         limitBooking: 0
-      }
+      },
+      dataLineConfig: {}
       // End Data Table Config
     }
   },
   async mounted () {
+    this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
     this.dataReady = false
     // Get Data
     await this.getCustomField()
@@ -2256,7 +2258,7 @@ export default {
       }
     },
     async FunCopy (item, no) {
-      let copyText = 'https://liff.line.me/1656581804-7KRQyqo5/stampStep?shopId=' + item.shopId + '&stepNo=' + no
+      let copyText = 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/stampStep?shopId=' + item.shopId + '&stepNo=' + no
       // let copyText = document.getElementById('myInputDeposit')
       // copyText.select()
       // copyText.setSelectionRange(0, 99999)

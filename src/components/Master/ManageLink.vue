@@ -191,10 +191,12 @@ export default {
       value: '',
       size: 300,
       foreground: '#000000',
-      qrValue: null
+      qrValue: null,
+      dataLineConfig: {}
     }
   },
   async mounted () {
+    this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
     await this.getShop()
     await this.setLinkItem()
   },
@@ -261,12 +263,12 @@ export default {
       if (this.$session.getAll().data.timeSlotStatus === 'True') {
         let itemLink = [
           {
-            'text': 'https://liff.line.me/1656581804-7KRQyqo5/CalendarBookingEmp?shopId=' + this.shopId,
+            'text': 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/CalendarBookingEmp?shopId=' + this.shopId,
             'title': 'ตรวจสอบคิวว่างก่อนนัดหมาย',
             'type': 'customer'
           },
           {
-            'text': 'https://liff.line.me/1656581804-7KRQyqo5/PaymentUpload?shopId=' + this.shopId,
+            'text': 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/PaymentUpload?shopId=' + this.shopId,
             'title': 'อัพโหลดสลิปมัดจำ ( ย้อนหลัง )',
             'type': 'customer'
           },
@@ -276,17 +278,17 @@ export default {
             'type': 'admin'
           },
           {
-            'text': 'https://liff.line.me/1656581804-7KRQyqo5/CheckBookingLatest?shopId=' + this.shopId,
+            'text': 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/CheckBookingLatest?shopId=' + this.shopId,
             'title': 'ตรวจสอบรายการนัดหมาย',
             'type': 'customer'
           },
           // {
-          //   'text': 'https://liff.line.me/1656581804-7KRQyqo5/CheckBookingNext?shopId=' + this.shopId,
+          //   'text': 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/CheckBookingNext?shopId=' + this.shopId,
           //   'title': 'ลูกค้านัดหมาย',
           //   'type': 'customer'
           // },
           {
-            'text': 'https://liff.line.me/1656581804-7KRQyqo5/stampFirstStep?shopId=' + this.shopId,
+            'text': 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/stampFirstStep?shopId=' + this.shopId,
             'title': 'ลูกค้าตรวจสอบและเข้ารับบริการ',
             'type': 'customer'
           }
@@ -295,27 +297,27 @@ export default {
       } else {
         let itemLink = [
           {
-            'text': 'https://liff.line.me/1656581804-7KRQyqo5/CalendarBooking?shopId=' + this.shopId,
+            'text': 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/CalendarBooking?shopId=' + this.shopId,
             'title': 'ตรวจสอบคิวว่างก่อนนัดหมาย',
             'type': 'customer'
           },
           {
-            'text': 'https://liff.line.me/1656581804-7KRQyqo5/PaymentUpload?shopId=' + this.shopId,
+            'text': 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/PaymentUpload?shopId=' + this.shopId,
             'title': 'อัพโหลดสลิปมัดจำ ( ย้อนหลัง )',
             'type': 'customer'
           },
           {
-            'text': 'https://liff.line.me/1656581804-7KRQyqo5/CheckBookingLatest?shopId=' + this.shopId,
+            'text': 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/CheckBookingLatest?shopId=' + this.shopId,
             'title': 'ตรวจสอบรายการนัดหมาย ',
             'type': 'customer'
           },
           // {
-          //   'text': 'https://liff.line.me/1656581804-7KRQyqo5/CheckBookingNext?shopId=' + this.shopId,
+          //   'text': 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/CheckBookingNext?shopId=' + this.shopId,
           //   'title': 'ลูกค้าตรวจสอบและเข้ารับบริการ',
           //   'type': 'customer'
           // },
           {
-            'text': 'https://liff.line.me/1656581804-7KRQyqo5/stampFirstStep?shopId=' + this.shopId,
+            'text': 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/stampFirstStep?shopId=' + this.shopId,
             'title': 'ลูกค้าตรวจสอบและเข้ารับบริการ',
             'type': 'customer'
           }

@@ -107,17 +107,169 @@
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
                     <v-btn
+                      color="info"
+                      fab
+                      x-small
+                      dark
+                      @click.stop="setDataProfile(item)"
+                    >
+                      <v-icon class="iconify" data-icon="icomoon-free:profile"> </v-icon>
+                    </v-btn>
+                    <!-- <v-btn
                       color="question"
                       fab
                       x-small
                       @click.stop=";(dialogData = true), getDataById(item)"
                     >
                       <v-icon dark> mdi-account </v-icon>
-                    </v-btn>
+                    </v-btn> -->
                   </template>
                 </v-data-table>
               </v-card-text>
             </v-card>
+            <v-dialog v-model="dialogDataProfile" scrollable persistent max-width="50%">
+              <v-card>
+                <v-card-title>
+                  <span class="headline"></span>
+                </v-card-title>
+                <v-card-text v-if="profileStatus">
+                  <v-container>
+                    <v-row>
+                      <v-col cols="6" class="text-left pt-5">
+                        <h3><strong>รายละเอียดลูกค้า</strong></h3>
+                      </v-col>
+                      <v-col cols="6" class="pt-5">
+                        <div style="text-align: end;">
+                          <v-btn
+                            class="mx-2"
+                            fab
+                            small
+                            dark
+                            color="white"
+                            :style="styleCloseBt"
+                            @click="dialogDataProfile = false, getDataList()"
+                            >
+                            X
+                          </v-btn>
+                        </div>
+                      </v-col>
+                    </v-row>
+                    <v-row >
+                      <v-col class="main" col="12" md="12" sm="12" >
+                        <v-card class="p-3 " rounded>
+                          <div class="avatar text-center">
+                            <v-avatar size="120" style="border:5px solid #FFFFFF;">
+                            <v-img
+                              v-if="dataProfile.pictureUrl"
+                              :src="dataProfile.pictureUrl"
+                            ></v-img>
+                            <v-icon size="100" color="orange" v-else>
+                              mdi-tooltip-account
+                            </v-icon>
+                          </v-avatar>
+                          </div>
+                          <br>
+                          <v-card-text class="text-start"><h6 class="font-weight-bold">ชื่อลูกค้า : {{dataProfile.displayName}}</h6></v-card-text>
+                          <v-card-text class="text-start"><h6 class="font-weight-bold">วันที่สร้าง : {{createProfile}}</h6></v-card-text>
+                          <div class="text-center">
+                            <v-btn
+                              color="#1B437C"
+                              dark
+                              @click="openHistory(dataProfile)"
+                            >
+                              <v-icon left>mdi-content-copy</v-icon>
+                              ประวัติเข้ารับบริการ
+                            </v-btn>
+                          </div>
+                          <v-row v-if="phonenumItem.length > 0">
+                            <v-col class="main" col="12" md="12" sm="12" >
+                              <v-card class="p-3 " min-height="70vh" rounded>
+                                <v-select
+                                  v-model="phonenum"
+                                  :items="phonenumItem"
+                                  label="ค้นหาเบอร์โทร"
+                                  dense
+                                  solo
+                                  @change="SelectDataHistory"
+                                ></v-select>
+                                  <v-timeline
+                                  align-top
+                                  dense
+                                  v-if="phonenum.length > 0"
+                                  >
+                                    <v-timeline-item
+                                    v-for="(item , index) in HistoryData[0]" :key="index"
+                                    >
+                                      <template v-slot:icon>
+                                        <v-icon
+                                          small dark>
+                                          event</v-icon>
+                                        </template>
+                                      <div v-for="(item2 , index2) in item" :key="index2">
+                                        <v-card-text class="text-start"><h6 class="font-weight-bold">{{format_dateThai(item2[0].dueDate)}}</h6></v-card-text>
+                                        <v-card-text class="text-start"><h6 class="font-weight-bold">{{item2[0].flowName}}</h6></v-card-text>
+                                        <v-card-text class="text-start"><h6 class="font-weight-bold">{{item2[0].masBranchName}}</h6></v-card-text>
+                                        <div v-for="(item3 , index3) in item2" :key="index3">
+                                          <v-card-text class="text-start" v-if="item3.fieldValue !== ''"><strong>{{item3.fieldName}} : </strong> {{item3.fieldValue}}</v-card-text>
+                                        </div>
+                                        <v-card-text v-if="item2[0].statusUpload1 === 'True' || item2[0].statusUpload2 === 'True'">
+                                          <v-row>
+                                            <v-col cols="auto" v-if="item2[0].statusUpload1 === 'True'">
+                                              <v-btn
+                                                tile
+                                                color="#173053"
+                                                dark
+                                                small
+                                                @click="showFileUpload(item2[0], '1')"
+                                              >
+                                                <v-icon left>
+                                                  mdi-file-find
+                                                </v-icon>
+                                                Show File 1
+                                              </v-btn>
+                                            </v-col>
+                                            <v-col cols="auto" v-if="item2[0].statusUpload2 === 'True'">
+                                              <v-btn
+                                                tile
+                                                color="#173053"
+                                                dark
+                                                small
+                                                @click="showFileUpload(item2[0], '2')"
+                                              >
+                                                <v-icon left>
+                                                  mdi-file-find
+                                                </v-icon>
+                                                Show File 2
+                                              </v-btn>
+                                            </v-col>
+                                          </v-row>
+                                        </v-card-text>
+                                      </div>
+                                      </v-timeline-item>
+                                  </v-timeline>
+                              </v-card>
+                            </v-col>
+                          </v-row>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
+                <v-card-text v-else>
+                  <h5 class="font-weight-bold">ไม่สามารถเรียกข้อมูลลูกค้าได้</h5>
+                  <h6 class="font-weight-bold">กรุณากดปุ่ม คัดลอกลิงค์</h6>
+                  <v-btn
+                    color="#1B437C"
+                    small
+                    dark
+                    @click="FunCopyQrcode()"
+                  >
+                    <v-icon left>mdi-content-copy</v-icon>
+                    คัดลอกลิงค์
+                  </v-btn>
+                </v-card-text>
+              </v-card>
+            </v-dialog>
             <div v-if="!dataReady" class="text-center">
               <waitingAlert></waitingAlert>
             </div>
@@ -152,6 +304,15 @@ export default {
   },
   data () {
     return {
+      defaultData: [],
+      phonenumItem: [],
+      HistoryData: [],
+      phonenum: [],
+      dialogDataProfile: false,
+      profileStatus: false,
+      dataProfile: [],
+      createProfile: '',
+      linkUpdateUserId: '',
       PK: '',
       path: '/member/', // Path Model
       returnLink: '/system/ListMember',
@@ -211,14 +372,7 @@ export default {
       ],
       // End Form Config ADD EDIT
       // Data Table Config
-      columns: [
-        { text: 'รูปโปรไฟล์', value: 'picture' },
-        { text: 'ชื่อลูกค้า', value: 'name', align: 'left' },
-        { text: 'Tag', value: 'tagData', align: 'center' },
-        { text: 'วันที่สร้าง', value: 'CREATE_DATE', align: 'center' },
-        { text: 'วันที่อัพเดท', value: 'LAST_DATE', align: 'center' }
-        // { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
-      ],
+      columns: [],
       dataItem: [],
       // End Data Table Config
 
@@ -254,7 +408,8 @@ export default {
       ],
       // End Export Config
       Company: [],
-      tagItem: []
+      tagItem: [],
+      dataLineConfig: {}
     }
   },
   beforeCreate () {
@@ -264,12 +419,153 @@ export default {
   },
   async mounted () {
     // this.getGetToken(this.DNS_IP)
+    this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
+    if (this.dataLineConfig.checkConfig === false) {
+      this.columns = [
+        { text: 'รูปโปรไฟล์', value: 'picture' },
+        { text: 'ชื่อลูกค้า', value: 'name', align: 'left' },
+        { text: 'Tag', value: 'tagData', align: 'center' },
+        { text: 'วันที่สร้าง', value: 'CREATE_DATE', align: 'center' },
+        { text: 'วันที่อัพเดท', value: 'LAST_DATE', align: 'center' }
+      ]
+    } else {
+      this.columns = [
+        { text: 'รูปโปรไฟล์', value: 'picture' },
+        { text: 'ชื่อลูกค้า', value: 'name', align: 'left' },
+        { text: 'Tag', value: 'tagData', align: 'center' },
+        { text: 'วันที่สร้าง', value: 'CREATE_DATE', align: 'center' },
+        { text: 'วันที่อัพเดท', value: 'LAST_DATE', align: 'center' },
+        { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
+      ]
+    }
     this.dataReady = false
     // Get Data
     await this.getTagData()
     this.getDataList()
   },
   methods: {
+    async SelectDataHistory () {
+      this.HistoryData = []
+      this.HistoryData.push(this.defaultData[this.phonenum])
+      console.log('this.HistoryData', this.HistoryData)
+    },
+    async openHistory (item) {
+      console.log('openHistory', item)
+      const BookingData = await axios.get(this.DNS_IP + '/BookingData/get_history?shopId=' + this.$session.getAll().data.shopId + '&userId=' + item.userId)
+        .then(async (response) => {
+          return response.data
+        })
+        .catch((error) => {
+          console.log('error function addData : ', error)
+          return null
+        })
+      await this.ConvertHistoryData(BookingData)
+    },
+    async ConvertHistoryData (BookingData) {
+      this.HistoryData = []
+      this.phonenumItem = []
+      // console.log('BookingData', BookingData)
+      if (BookingData !== null) {
+        if (BookingData.length > 0) {
+          this.defaultData = BookingData.reduce((r, a) => {
+            let bookNo = a.bookNo
+            let filter = (a.fieldName === 'เบอร์โทร') ? a.fieldValue : null
+            if (filter !== null) {
+              r[filter] = r[filter] || {}
+              r[filter][bookNo] = r[filter][bookNo] || []
+              r[filter][bookNo].push(BookingData.filter(item => item.bookNo === a.bookNo))
+              this.phonenumItem.push(filter)
+            }
+            return r
+          }, Object.create(null))
+
+          console.log(this.defaultData)
+          this.phonenum = ''
+        } else if (BookingData.status === false) {
+          this.$swal('ไม่พบประวัติการเข้ารับบริการ', 'กรูณาตรวจสอบข้อมูล', 'info')
+        }
+      } else {
+        this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
+        }).catch((error) => {
+          console.log('error function addData : ', error)
+        })
+      }
+
+      // console.log('this.HistoryData', this.HistoryData)
+    },
+    FunCopyQrcode () {
+      // var copyText = document.getElementById('myInput')
+      // copyText.select()
+      // copyText.setSelectionRange(0, 99999)
+      navigator.clipboard.writeText(this.linkUpdateUserId)
+      this.$swal({
+        title: 'Copy successfully',
+        text: 'คัดลอกลิ้งสำเร็จ',
+        type: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      })
+      this.dialogDataProfile = false
+    },
+    async setDataProfile (item) {
+      this.HistoryData = []
+      this.phonenumItem = []
+      console.log('setDataProfile', item)
+      this.dataReady = false
+      this.profileStatus = false
+      this.dataProfile = []
+      let lineUserId = item.lineUserId || ''
+      this.createProfile = item.CREATE_DATE || ''
+      if (lineUserId === '') {
+        this.profileStatus = false
+        this.linkUpdateUserId = 'https://betask-linked.web.app/UpdateLineUserID?shopId=' + item.shopId + '&memberId=' + item.memberId
+      } else {
+        await axios
+          .get(this.DNS_IP + '/line/getProfileByUserId?shopId=' + this.session.data.shopId + '&userId=' + lineUserId)
+          .then(async response => {
+            console.log('getProfileByUserId', response)
+            let rs = response.data
+            if (rs.message) {
+              this.profileStatus = false
+              this.linkUpdateUserId = 'https://betask-linked.web.app/UpdateLineUserID?shopId=' + item.shopId + '&memberId=' + item.memberId
+            } else {
+              this.profileStatus = true
+              this.dataProfile = rs
+              if (item.name !== rs.displayName || item.picture !== rs.pictureUrl) {
+                const params = {
+                  name: rs.displayName,
+                  picture: rs.pictureUrl,
+                  LAST_USER: rs.userId
+                }
+                const result = await this.callBeTaskAPIActivity('post', '/member/editWebhook/' + item.memberId, params)
+                console.log('result', result.status)
+              }
+            }
+          })
+      }
+      this.dialogDataProfile = true
+      this.dataReady = true
+    },
+    async callBeTaskAPIActivity (method, url, params) {
+      let result = null
+      //   const token = this.$liff.getAccessToken() || '1234567890'
+      await axios({
+        method: method,
+        // headers: {
+        //   accessToken: token,
+        //   lineUserId: this.profile.userId,
+        //   activityId: this.formUpdate.activityId
+        // },
+        url: this.DNS_IP + url,
+        data: params
+      }).then((response) => {
+        result = response.data
+      }).catch((error) => {
+        console.log(error)
+        result = null
+      })
+      return result
+    },
     async getTagData () {
       this.tagItem = await this.getDataFromAPI('/Mas_Tag/get', 'tagId', 'tagName', '')
     },
@@ -336,6 +632,10 @@ export default {
                   }
                 }
               }
+              s.memberId = d.memberId
+              s.lineUserId = d.lineUserId
+              s.liffUserId = d.liffUserId
+              s.shopId = d.shopId
               this.dataItem.push(s)
             }
           } else {

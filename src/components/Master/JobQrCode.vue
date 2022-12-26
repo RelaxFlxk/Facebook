@@ -73,7 +73,7 @@ export default {
     return {
       PK: '',
       path: '/Job/',
-      pathToweb: 'https://liff.line.me/1656581804-7KRQyqo5/JobConfirm?jobId=',
+      pathToweb: '',
       userId: '',
       jobNo: this.$route.query.jobNo,
       skip: {
@@ -90,10 +90,13 @@ export default {
       session: this.$session.getAll(),
       value: '',
       size: 200,
-      foreground: '#173053'
+      foreground: '#173053',
+      dataLineConfig: {}
     }
   },
   async mounted () {
+    this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
+    this.pathToweb = 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/JobConfirm?jobId='
     await this.beforeCreate()
   },
   methods: {

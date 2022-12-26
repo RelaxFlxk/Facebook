@@ -451,7 +451,7 @@ export default {
       foreground: '#173053',
       value: '',
       size: 200,
-      pathToweb: 'https://liff.line.me/1656581804-7KRQyqo5/JobConfirm?jobId=',
+      pathToweb: '',
       tabSelectUser: null,
       jobitem: [],
       menu: false,
@@ -579,10 +579,13 @@ export default {
         cancelButtonColor: '#b3b1ab',
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
-      }
+      },
+      dataLineConfig: {}
     }
   },
   async mounted () {
+    this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
+    this.pathToweb = 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/JobConfirm?jobId='
     await this.beforeCreate()
   },
   methods: {

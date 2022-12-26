@@ -899,9 +899,7 @@ export default {
       dataTypeProcess3: '',
       dataTypeProcess4: '',
       itemdetell: [],
-      Redirect:
-        'https://liff.line.me/1656581804-7KRQyqo5/Booking?shopId=' +
-        this.$session.getAll().data.shopId + '&timeSlotStatus=' + this.$session.getAll().data.timeSlotStatus,
+      Redirect: '',
       session: this.$session.getAll(),
       shopId: this.$session.getAll().data.shopId,
       IdUpdate: '',
@@ -976,10 +974,13 @@ export default {
           const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
           return pattern.test(value) || 'Invalid e-mail.'
         }
-      }
+      },
+      dataLineConfig: []
     }
   },
   async mounted () {
+    this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
+    this.Redirect = 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/Booking?shopId=' + this.$session.getAll().data.shopId + '&timeSlotStatus=' + this.$session.getAll().data.timeSlotStatus
     await this.getShop()
     await this.getBookingField()
   },
@@ -1074,9 +1075,9 @@ export default {
       if (text === 'line') {
         let copyText = ''
         if (this.$session.getAll().data.timeSlotStatus === 'True') {
-          copyText = 'https://liff.line.me/1656581804-b09WBwkP?shopId=' + this.$session.getAll().data.shopId
+          copyText = 'https://liff.line.me/' + this.dataLineConfig.liffBookingFormEmpID + '?shopId=' + this.$session.getAll().data.shopId
         } else {
-          copyText = 'https://liff.line.me/1656581804-32mk7OgE?shopId=' + this.$session.getAll().data.shopId
+          copyText = 'https://liff.line.me/' + this.dataLineConfig.liffBookingFormID + '?shopId=' + this.$session.getAll().data.shopId
         }
         navigator.clipboard.writeText(copyText + '&source=' + text)
       } else {

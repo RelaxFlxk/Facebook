@@ -3372,7 +3372,7 @@
                           <v-list-item @click.stop="setDataCopyLink(item)" v-if="item.statusBt === 'wait' && item.depositCheckStatus === 'True'">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="bx:link"></v-icon> เรียกเก็บค่าบริการเพื่อจอง </v-list-item-title>
                           </v-list-item>
-                          <v-list-item v-clipboard:success="onCopySuccess" v-clipboard:copy="'https://liff.line.me/1656581804-7KRQyqo5/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId" v-if="item.statusBt === 'confirm' && (item.lineUserId === '' || item.lineUserId === null)">
+                          <v-list-item v-clipboard:success="onCopySuccess" v-clipboard:copy="'https://liff.line.me/' + dataLineConfig.liffMainID + '/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId" v-if="item.statusBt === 'confirm' && (item.lineUserId === '' || item.lineUserId === null)">
                           <!-- <v-list-item v-clipboard:success="onCopySuccess" v-clipboard:copy="'https://liff.line.me/1656581804-7KRQyqo5/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId" v-if="item.statusBt === 'confirm' && (item.userId === 'user-skip' || item.userId === '' || item.userId === null)"> -->
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-content-copy </v-icon> คัดลอกลิงค์ (ผูกลูกค้า) </v-list-item-title>
                           </v-list-item>
@@ -6124,6 +6124,7 @@ import waitingAlert from '../waitingAlert.vue'
 import RetureDeposit from '../BookingListComponents/RetureDeposit.vue'
 import CallLog from '../BookingListComponents/CallLog.vue'
 import NotificationService from '../BookingListComponents/NotificationService.vue'
+// import copy from 'copy-to-clipboard'
 
 export default {
   name: 'BookingListBeauty',
@@ -6333,7 +6334,7 @@ export default {
       skip: {
         userId: 'user-skip'
       },
-      pathToweb: 'https://liff.line.me/1656581804-7KRQyqo5/JobConfirm?jobId=',
+      pathToweb: '',
       changeBackgroundColor: true,
       countWaiting: 0,
       countConfirm: 0,
@@ -6617,7 +6618,7 @@ export default {
       statusShowDateConfiremjob: true,
       memberId: '',
       flowIdOldEdit: '',
-      Redirect: 'https://liff.line.me/1656581804-7KRQyqo5/BookingAddress?shopId=' + this.$session.getAll().data.shopId,
+      Redirect: '',
       dialogShowDeposit: false,
       depositLink: '',
       datailLinkDeposit: '',
@@ -6631,7 +6632,8 @@ export default {
       dataGetJob: [],
       dataCoin: [],
       productExchangeRateId: '',
-      memberTel: ''
+      memberTel: '',
+      dataLineConfig: {}
     }
   },
   beforeCreate () {
@@ -6650,6 +6652,9 @@ export default {
     }
   },
   async mounted () {
+    this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
+    this.Redirect = 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/BookingAddress?shopId=' + this.$session.getAll().data.shopId
+    this.pathToweb = 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/JobConfirm?jobId='
     this.checkShowDataOnsite('ไม่แสดง')
     this.$root.$on('dataReturn', (item) => {
       this.dataReturn(item)
@@ -6845,24 +6850,42 @@ export default {
         .post(this.DNS_IP + '/Booking/setDetailsCopyLinkAddData/' + this.bookNo)
         .then(response => {
           console.log('response.data', response.data)
-          textBookNo = response.data.message
-          depositPrice = response.data.depositPrice || 0
+          if (response.data.status) {
+            textBookNo = response.data.message
+            depositPrice = response.data.depositPrice || 0
+            if (depositPrice === '0') {
+              textLink = 'กรุณากดเพื่อผูกบัญชี : ' + this.depositLink
+            } else {
+              textLink = 'กรุณากดเพื่อโอนเงินมัดจำ : ' + this.depositLink
+              textDepositPrice = `\nจำนวนเงินมัดจำ : ` + depositPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+            }
+            // console.log('textBookNo', textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink)
+            let copyText = textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink
+            // let copyText = document.getElementById('myInputDeposit')
+            // copyText.select()
+            // copyText.setSelectionRange(0, 99999)
+            // navigator.clipboard.write([
+            //     new ClipboardItem({
+            //         "text/html": Promise.resolve(copyText)
+            //     })
+            // ])
+            navigator.clipboard.writeText(copyText)
+              .then(() => {
+                this.$swal('สำเร็จ', 'คัดลอกลิ้งสำเร็จ', 'success')
+              }).catch(() => {
+                this.$swal('ผิดพลาด', 'กรุณาทำรายการใหม่', 'error')
+              })
+            // copy(copyText)
+            // copy('Text', {
+            //   debug: true,
+            //   message: copyText
+            // })
+            this.dialogShowDeposit = false
+            this.updateBookingListByDeposit()
+          } else {
+            this.$swal('ผิดพลาด', 'กรุณาทำรายการใหม่', 'error')
+          }
         })
-      console.log('depositPrice', depositPrice)
-      if (depositPrice === '0') {
-        textLink = 'กรุณากดเพื่อผูกบัญชี : ' + this.depositLink
-      } else {
-        textLink = 'กรุณากดเพื่อโอนเงินมัดจำ : ' + this.depositLink
-        textDepositPrice = `\nจำนวนเงินมัดจำ : ` + depositPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-      }
-      console.log('textBookNo', textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink)
-      let copyText = textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink
-      // let copyText = document.getElementById('myInputDeposit')
-      // copyText.select()
-      // copyText.setSelectionRange(0, 99999)
-      navigator.clipboard.writeText(copyText)
-      this.dialogShowDeposit = false
-      this.updateBookingListByDeposit()
     },
     async updateBookingListByDeposit () {
       let urlApi = this.DNS_IP + '/booking_view/get?shopId=' + this.session.data.shopId + '&bookNo=' + this.bookNo

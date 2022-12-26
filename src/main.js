@@ -110,6 +110,33 @@ Vue.mixin({
     }
   },
   methods: {
+    async getDataLineConfig (shopId) {
+      let dataLineConfig = []
+      await axios.get(this.DNS_IP + '/lineconfig/get?shopId=' + shopId).then(response => {
+        let rs = response.data
+        console.log('getDataLineConfig shopId', shopId)
+        console.log('getDataLineConfig', rs)
+        if (rs.status === false) {
+          dataLineConfig = {
+            liffMainID: '1656581804-7KRQyqo5',
+            liffBookingFormID: '1656581804-32mk7OgE',
+            liffBookingFormEmpID: '1656581804-b09WBwkP',
+            checkConfig: false
+          }
+        } else {
+          dataLineConfig = rs[0]
+        }
+      }).catch((error) => {
+        console.log(error)
+        dataLineConfig = {
+          liffMainID: '1656581804-7KRQyqo5',
+          liffBookingFormID: '1656581804-32mk7OgE',
+          liffBookingFormEmpID: '1656581804-b09WBwkP',
+          checkConfig: false
+        }
+      })
+      return dataLineConfig
+    },
     format_date (value) {
       if (value) {
         // return moment(moment(value, 'YYYY-MM-DD HH:mm:ss').tz('Asia/Bangkok').toDate()).format('YYYY-MM-DD HH:mm')
