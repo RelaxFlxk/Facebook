@@ -147,7 +147,17 @@
                 ติดต่อเรา เพื่อต่ออายุ: 09xxxxxxx
               </v-col>
               <v-col cols="12">
-                แนบหลักฐานการโอนเงิน เมื่อชำระค่าบริการแล้ว
+                <v-btn
+                  elevation="2"
+                  x-large
+                  dark
+                  color="#1B437C"
+                  @click="gotoBilling(dataBilling)"
+                  :disabled="!validUpdate"
+                >
+                  <v-icon left  class="iconify" data-icon="medical-icon:billing"></v-icon>
+                  ชำระค่าบริการ
+                </v-btn>
               </v-col>
             </v-row>
           </v-card-text>
@@ -340,7 +350,8 @@ export default {
       hidePrivacy: true,
       validUpdate: true,
       recapchaToken: '',
-      recapStatus: false
+      recapStatus: false,
+      dataBilling: []
     }
   },
   // eslint-disable-next-line space-before-function-paren
@@ -350,6 +361,12 @@ export default {
     this.$session.clear()
   },
   methods: {
+    gotoBilling (item) {
+      this.$session.start()
+      this.$session.set('data', item)
+      localStorage.clear()
+      this.$router.push('/BillingPlan')
+    },
     validate (Action) {
       switch (Action) {
         case 'ADD':
@@ -585,6 +602,7 @@ export default {
                   localStorage.clear()
                   this.checkbookNo(response.data[0])
                 } else {
+                  this.dataBilling = response.data[0]
                   this.dataReady = true
                   this.dialogPaymentUpload = true
                 }

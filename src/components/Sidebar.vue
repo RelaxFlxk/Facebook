@@ -3,6 +3,26 @@
     <v-app-bar fixed app>
       <v-app-bar-nav-icon dark @click.stop="drawer = !drawer" />
         <!-- <v-toolbar-title v-text="title" /> -->
+        <template v-if="paymentStatus === ''">
+        <v-spacer></v-spacer>
+        <v-alert
+          class="mt-3"
+          dense
+          prominent
+          color="warning"
+          icon="mdi-alarm-multiple"
+          dark
+        >
+          <v-row align="center">
+            <v-col class="grow">
+              ท่านยังไม่ได้ชำระค่าบริการ
+            </v-col>
+            <v-col class="shrink" @click="gotoBilling()">
+              <v-btn small>ชำระค่าบริการ</v-btn>
+            </v-col>
+          </v-row>
+        </v-alert>
+      </template>
       <v-spacer></v-spacer>
       <v-avatar class="mr-3">
         <v-img :src="session.data.shopImge"></v-img>
@@ -601,7 +621,9 @@ export default {
       customerValue: false,
       bookingValue: false,
       broadCastValue: false,
-      DashboardValue: false
+      DashboardValue: false,
+      paymentStatus: '',
+      dateCheckBill: ''
     }
   },
   // beforeCreate () {
@@ -612,6 +634,15 @@ export default {
   // },
   computed: {},
   mounted () {
+    console.log('DD', parseInt(moment().format('DD')))
+    // this.dateCheckBill = '2023-01'
+    this.dateCheckBill = moment().format('YYYY-MM')
+    if (parseInt(moment().format('DD')) <= 7) {
+      this.chkPlan()
+    } else {
+      this.paymentStatus = 'fix'
+    }
+    // this.chkPlan()
     console.log('session', this.session)
     console.log('router', this.$route.fullPath)
     this.billingCustomerId = this.session.data.billingCustomerId || ''
@@ -638,6 +669,26 @@ export default {
     }
   },
   methods: {
+    gotoBilling () {
+      this.$router.push('/BillingPlan')
+    },
+    async chkPlan () {
+      await axios
+        .get(
+          this.DNS_IP +
+              '/system_shop_Payment/get?shopId=' +
+              this.$session.getAll().data.shopId +
+              '&paymentDate=' + this.dateCheckBill
+        )
+        .then(async (response) => {
+          let rs = response.data
+          if (rs.status === false) {
+            this.paymentStatus = ''
+          } else {
+            this.paymentStatus = rs[0].paymentStatus
+          }
+        })
+    },
     clearTimeAll () {
       console.log('clear all')
       this.$root.$emit('closeSetTime')
@@ -900,56 +951,56 @@ export default {
           }
         })
     },
-    async chkPlan () {
-      this.dataBilling = ''
-      this.billingCustomerId = ''
-      this.dataReadyGet = false
-      await axios
-        .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.$session.getAll().data.shopId)
-        .then(async response => {
-          let rs = response.data[0]
-          if (response.data.length > 0) {
-            this.$session.set('data', response.data[0])
-            this.billingCustomerId = rs.billingCustomerId
-            if (rs.billingPlan === 'free') {
-              this.dataBilling = rs.billingPlan
-            } else {
-              this.dataBilling = parseInt(rs.billingPlan)
-            }
-          }
-        })
-      this.dataPackage = []
-      await axios
-        .get(this.DNS_IP_Betask + '/packet/getSortNo?source=BeLinked')
-        .then(async (responses) => {
-          let rsPacket = responses.data
-          for (let i = 0; i < rsPacket.length; i++) {
-            var d = rsPacket[i]
-            var s = {}
-            s.id = d.id
-            if (d.sortNo === null || d.sortNo === '') {
-              s.sortNo = i + 1
-            } else {
-              s.sortNo = d.sortNo
-            }
-            s.name = d.name
-            s.description = JSON.parse(d.description)
-            s.warning = d.warning
-            s.close = d.close
-            s.source = d.source
-            s.pricePackage = d.pricePackage
-            s.rangeRePackage = d.rangeRePackage
-            this.dataPackage.push(s)
-          }
-          if (this.dataBilling === 'free') {
-            this.dataBilling = this.dataPackage.filter(el => { return el.pricePackage === '' || el.pricePackage === '0' })[0].id
-          }
-          // this.dataPackage = rsPacket
-        })
-      console.log('this.dataBilling', this.dataBilling)
-      console.log('this.dataPackage', this.dataPackage)
-      this.dataReadyGet = true
-    },
+    // async chkPlan () {
+    //   this.dataBilling = ''
+    //   this.billingCustomerId = ''
+    //   this.dataReadyGet = false
+    //   await axios
+    //     .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.$session.getAll().data.shopId)
+    //     .then(async response => {
+    //       let rs = response.data[0]
+    //       if (response.data.length > 0) {
+    //         this.$session.set('data', response.data[0])
+    //         this.billingCustomerId = rs.billingCustomerId
+    //         if (rs.billingPlan === 'free') {
+    //           this.dataBilling = rs.billingPlan
+    //         } else {
+    //           this.dataBilling = parseInt(rs.billingPlan)
+    //         }
+    //       }
+    //     })
+    //   this.dataPackage = []
+    //   await axios
+    //     .get(this.DNS_IP_Betask + '/packet/getSortNo?source=BeLinked')
+    //     .then(async (responses) => {
+    //       let rsPacket = responses.data
+    //       for (let i = 0; i < rsPacket.length; i++) {
+    //         var d = rsPacket[i]
+    //         var s = {}
+    //         s.id = d.id
+    //         if (d.sortNo === null || d.sortNo === '') {
+    //           s.sortNo = i + 1
+    //         } else {
+    //           s.sortNo = d.sortNo
+    //         }
+    //         s.name = d.name
+    //         s.description = JSON.parse(d.description)
+    //         s.warning = d.warning
+    //         s.close = d.close
+    //         s.source = d.source
+    //         s.pricePackage = d.pricePackage
+    //         s.rangeRePackage = d.rangeRePackage
+    //         this.dataPackage.push(s)
+    //       }
+    //       if (this.dataBilling === 'free') {
+    //         this.dataBilling = this.dataPackage.filter(el => { return el.pricePackage === '' || el.pricePackage === '0' })[0].id
+    //       }
+    //       // this.dataPackage = rsPacket
+    //     })
+    //   console.log('this.dataBilling', this.dataBilling)
+    //   console.log('this.dataPackage', this.dataPackage)
+    //   this.dataReadyGet = true
+    // },
     async chkSchedule () {
       this.chkDateSchedule = moment(moment(new Date(), 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
       this.snackbarSchedule = false

@@ -25,6 +25,11 @@ export default new Router({
     component: Core.LoginFailed
   },
   {
+    path: '/BillingPlan',
+    name: 'BillingPlan',
+    component: Core.BillingPlan
+  },
+  {
     path: '/Core/Login',
     name: 'Login',
     component: Core.Login
