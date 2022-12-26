@@ -116,6 +116,44 @@
         </v-container>
       </v-col>
     </v-row>
+    <v-dialog v-model="dialogPaymentUpload" persistent max-width="445">
+      <v-card>
+        <v-container>
+          <v-card-text>
+            <v-row>
+              <v-col cols="10" class="text-left pt-10">
+                <h3><strong>เนื่องจากร้านค้าของท่าน ค้างชำระค่าบริการรายเดือน</strong></h3>
+              </v-col>
+              <v-col cols="2" class="pt-10">
+                <div style="text-align: end;">
+                    <v-btn
+                    class="mx-2"
+                    fab
+                    small
+                    dark
+                    color="white"
+                    :style="styleCloseBt"
+                    @click="(dialogPaymentUpload = false)"
+                    >
+                    X
+                    </v-btn>
+                </div>
+              </v-col>
+            </v-row>
+          </v-card-text>
+          <v-card-text>
+            <v-row>
+              <v-col cols="12">
+                ติดต่อเรา เพื่อต่ออายุ: 09xxxxxxx
+              </v-col>
+              <v-col cols="12">
+                แนบหลักฐานการโอนเงิน เมื่อชำระค่าบริการแล้ว
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-container>
+      </v-card>
+    </v-dialog>
     <v-dialog v-model="dialog" persistent max-width="445">
       <v-card>
         <v-container>
@@ -239,6 +277,7 @@ export default {
   // },
   data () {
     return {
+      dialogPaymentUpload: false,
       session: this.$session.getAll(),
       cards: [
         {
@@ -540,10 +579,15 @@ export default {
             if (response.data.status !== false) {
               console.log('response.data[0]', response.data[0])
               if (response.data[0]) {
-                this.$session.start()
-                this.$session.set('data', response.data[0])
-                localStorage.clear()
-                this.checkbookNo(response.data[0])
+                if (response.data[0].shopActive === 'active') {
+                  this.$session.start()
+                  this.$session.set('data', response.data[0])
+                  localStorage.clear()
+                  this.checkbookNo(response.data[0])
+                } else {
+                  this.dataReady = true
+                  this.dialogPaymentUpload = true
+                }
               } else {
                 this.dataReady = true
                 this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง1', 'error')
