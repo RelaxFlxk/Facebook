@@ -168,6 +168,33 @@
               </div>
               </v-card>
             </v-col>
+            <v-col cols="auto" style="display: flex;justify-content: center;">
+              <v-card
+                style="padding: 10px; width: 230px;"
+                :color="(getSelectText === 'inactive') ? 'error lighten-4' : 'white'"
+                dense
+                elevation="0"
+                prominent
+                @click="getSelect('inactive'), getSelectText = 'inactive'"
+              >
+                <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
+                  <div class="text-center">
+                    <v-avatar
+                      size="70"
+                      class="pa-3"
+                      color="error"
+                    >
+                      <v-icon dark size="30" class="iconify" data-icon="mdi:cash-check">
+                      </v-icon>
+                    </v-avatar>
+                  </div>
+                  <div style="margin: auto 0;">
+                    <strong>Inactive</strong>
+                    <div>จำนวน : {{countInactive}}</div>
+                  </div>
+                </div>
+              </v-card>
+            </v-col>
           </v-row>
         </v-form>
         <v-row>
@@ -217,7 +244,7 @@
                 ชำระเรียบร้อย
               </v-btn>
               <v-btn
-                v-if="item.paymentStatus === 'confirm'"
+                v-if="item.paymentStatus === 'confirm' || item.paymentStatus === 'finish'"
                 color="orange"
                 small
                 dark
@@ -227,14 +254,24 @@
                 ลูกค้าชำระอีกครั้ง
               </v-btn>
               <v-btn
-                v-if="item.paymentStatus === 'wait'"
+                v-if="item.paymentStatus === 'wait' || item.paymentStatus === 'inactive'"
                 color="success"
                 small
                 dark
                 @click="changStatus(item, 'confirm')"
               >
                 <v-icon > mdi-check-circle </v-icon>
-                Confirm
+                Active
+              </v-btn>
+              <v-btn
+                v-if="item.paymentStatus === 'wait' || item.paymentStatus === 'noCash'"
+                color="error"
+                small
+                dark
+                @click="changStatus(item, 'inactive')"
+              >
+                <v-icon > mdi-check-circle </v-icon>
+                Inactive
               </v-btn>
             </template>
             <template v-slot:[`item.paymentImage`]="{ item }">
@@ -270,6 +307,7 @@ export default {
       countConfirm: 0,
       countNoCash: 0,
       countFinish: 0,
+      countInactive: 0,
       getSelectText: 'wait',
       validSearch: true,
       itemBooking: [],
@@ -353,6 +391,7 @@ export default {
       this.countConfirm = 0
       this.countNoCash = 0
       this.countFinish = 0
+      this.countInactive = 0
       this.itemBooking = []
       this.itemBookingUse = []
       let urlApi = this.DNS_IP + '/system_shop_Payment/get?paymentStatus=not null&paymentDate=' + this.dateStart
@@ -365,6 +404,9 @@ export default {
             for (let i = 0; i < rs.length; i++) {
               let d = rs[i]
               d.paymentStatus = d.paymentStatus || ''
+              if (d.shopActive === 'inactive') {
+                d.paymentStatus = 'inactive'
+              }
               this.itemBooking.push(d)
             }
             // this.itemBookingUse = this.itemBooking.filter(el => { return el.paymentStatus === this.getSelectText })
@@ -381,6 +423,9 @@ export default {
               let d = rs[i]
               d.paymentStatus = d.paymentStatus || 'noCash'
               if (d.paymentStatus === 'noCash') {
+                if (d.shopActive === 'inactive') {
+                  d.paymentStatus = 'inactive'
+                }
                 this.itemBooking.push(d)
               }
             }
@@ -396,6 +441,7 @@ export default {
       this.countFinish = this.itemBooking.filter(el => { return el.paymentStatus === 'finish' }).length
       this.countConfirm = this.itemBooking.filter(el => { return el.paymentStatus === 'confirm' }).length
       this.countNoCash = this.itemBooking.filter(el => { return el.paymentStatus === 'noCash' }).length
+      this.countInactive = this.itemBooking.filter(el => { return el.paymentStatus === 'inactive' }).length
       this.getSelect(this.getSelectText)
     },
     async changStatus (item, text) {
@@ -406,8 +452,32 @@ export default {
       }
       // }
       await axios.post(url, dt).then(async (response) => {
-        this.checkSearch()
+        if (text === 'inactive') {
+          await this.updateShopActive('inactive')
+          this.checkSearch()
+        } else if (text === 'confirm') {
+          if (item.shopActive === 'inactive') {
+            await this.updateShopActive('active')
+            this.checkSearch()
+          }
+        } else {
+          this.checkSearch()
+        }
       })
+    },
+    async updateShopActive (text) {
+      var ds = {
+        shopActive: text,
+        LAST_USER: this.$session.getAll().data.userName
+      }
+      await axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + "/sys_shop/edit/" + this.$session.getAll().data.shopId,
+          ds
+        )
+        .then(async (response) => {
+        })
     },
     getSelect (text) {
       this.getSelectText = text

@@ -209,8 +209,12 @@
                 </v-row>
                 <v-row v-if="paymentStatus === 'wait'">
                     <v-col cols="12" class="text-center">
-                        <h1>รายการชำระค่าบริการของท่าน</h1>
-                        <h2>อยู่ระหว่างการตรวจสอบ</h2>
+                      <h1>รายการชำระค่าบริการของท่าน</h1>
+                      <h2>ทางบริษัทได้ตรวจสอบสลิปของท่านไม่ถูกต้อง</h2>
+                      <h2>กรุณาอัพเดทสลิปอีกครั้ง</h2>
+                    </v-col>
+                    <v-col cols="12" class="text-center">
+                      <v-btn color="teal" dark large @click="setData(sysShopData)"><strong>ตรวจสอบอีกครั้ง</strong></v-btn>
                     </v-col>
                 </v-row>
                 <v-row v-if="paymentStatus === 'confirm'">
@@ -595,7 +599,8 @@ export default {
       countBooking: 0,
       closeFree: false,
       countDateEnd: 0,
-      paymentStatus: ''
+      paymentStatus: '',
+      sysShopData: []
     }
   },
   mounted () {
@@ -614,6 +619,7 @@ export default {
       })
     },
     async chkPlan () {
+      this.sysShopData = []
       this.dataBilling = ''
       this.billingCustomerId = ''
       this.dataReadyGet = false
@@ -630,6 +636,7 @@ export default {
             this.paymentStatus = ''
           } else {
             this.paymentStatus = rs[0].paymentStatus
+            this.sysShopData = rs[0]
           }
         })
       this.dataPackage = []
@@ -694,7 +701,7 @@ export default {
       await this.getCheckCountBook()
       console.log(parseInt(item.close), this.countBooking)
       if (this.countBooking > parseInt(item.close)) {
-        this.$swal('ผิดพลาด', 'เนื่องจากรายการนัดหมายของท่านเกินจำนวนของthis.$session.getAll().data.คเกจที่ท่านเลือก', 'error')
+        this.$swal('ผิดพลาด', 'เนื่องจากรายการนัดหมายของท่านเกินจำนวนของแพ็คเกจที่ท่านเลือก', 'error')
       } else {
         const date1 = new Date(this.dataPayment.endDate)
         const date2 = new Date()
@@ -863,8 +870,9 @@ export default {
     },
     setData (item) {
       console.log('setData', item)
-      this.paymentImge = item.img || null
+      this.paymentImge = item.paymentImage || null
       this.dialogReConfirm = true
+      this.idPayment = item.id
     },
     async updateReturn () {
       if (this.filesImg) {
@@ -872,7 +880,7 @@ export default {
         let params = new FormData()
         params.append('file', this.filesImg)
         await axios
-          .post(this.DNS_IP + `/file/upload/billing`, params)
+          .post(this.DNS_IP + `/file/upload/shopPayment`, params)
           .then(function (response) {
             _this.paymentImge = response.data
             console.log('url Pic', response.data)
@@ -882,33 +890,76 @@ export default {
       }
       var dt = {
         LAST_USER: this.$session.getAll().data.userName,
-        img: this.paymentImge,
-        statusPayment: 'wait'
+        paymentImage: this.paymentImge,
+        paymentStatus: 'confirm'
       }
       await axios
         .post(
           // eslint-disable-next-line quotes
-          this.DNS_IP + "/payment/edit/" + this.idPayment,
+          this.DNS_IP + "/system_shop_Payment/edit/" + this.idPayment,
           dt
         )
         .then(async response => {
-          let dtMgs = {
-            paymentImge: this.paymentImge,
-            paymentCode: this.dataPayment.paymentCode,
-            packetId: this.dataBilling,
-            shopName: this.$session.getAll().data.shopName,
-            contactTel: this.$session.getAll().data.contactTel,
-            type: 'Update'
-          }
-          await axios
-            .post(this.DNS_IP + '/SendMessage/pushMsgLineNotifyGroup', dtMgs)
-            .then(response => {
-            })
+          // let dtMgs = {
+          //   paymentImge: this.paymentImge,
+          //   paymentCode: this.dataPayment.paymentCode,
+          //   packetId: this.dataBilling,
+          //   shopName: this.$session.getAll().data.shopName,
+          //   contactTel: this.$session.getAll().data.contactTel,
+          //   type: 'Update'
+          // }
+          // await axios
+          //   .post(this.DNS_IP + '/SendMessage/pushMsgLineNotifyGroup', dtMgs)
+          //   .then(response => {
+          //   })
           this.$swal('เรียบร้อย', 'อัพสถานะเรียบร้อย', 'success')
           this.dialogReConfirm = false
           setTimeout(() => this.chkPlan(), 500)
         })
     },
+    // async updateReturn () {
+    //   if (this.filesImg) {
+    //     const _this = this
+    //     let params = new FormData()
+    //     params.append('file', this.filesImg)
+    //     await axios
+    //       .post(this.DNS_IP + `/file/upload/billing`, params)
+    //       .then(function (response) {
+    //         _this.paymentImge = response.data
+    //         console.log('url Pic', response.data)
+    //       })
+    //   } else {
+    //     this.paymentImge = this.filesImg
+    //   }
+    //   var dt = {
+    //     LAST_USER: this.$session.getAll().data.userName,
+    //     img: this.paymentImge,
+    //     statusPayment: 'wait'
+    //   }
+    //   await axios
+    //     .post(
+    //       // eslint-disable-next-line quotes
+    //       this.DNS_IP + "/payment/edit/" + this.idPayment,
+    //       dt
+    //     )
+    //     .then(async response => {
+    //       let dtMgs = {
+    //         paymentImge: this.paymentImge,
+    //         paymentCode: this.dataPayment.paymentCode,
+    //         packetId: this.dataBilling,
+    //         shopName: this.$session.getAll().data.shopName,
+    //         contactTel: this.$session.getAll().data.contactTel,
+    //         type: 'Update'
+    //       }
+    //       await axios
+    //         .post(this.DNS_IP + '/SendMessage/pushMsgLineNotifyGroup', dtMgs)
+    //         .then(response => {
+    //         })
+    //       this.$swal('เรียบร้อย', 'อัพสถานะเรียบร้อย', 'success')
+    //       this.dialogReConfirm = false
+    //       setTimeout(() => this.chkPlan(), 500)
+    //     })
+    // },
     async updatePlan (billingPlan) {
       this.dataReadyCancel = false
       var ds = {

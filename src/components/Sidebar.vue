@@ -3,25 +3,45 @@
     <v-app-bar fixed app>
       <v-app-bar-nav-icon dark @click.stop="drawer = !drawer" />
         <!-- <v-toolbar-title v-text="title" /> -->
-        <template v-if="paymentStatus === ''">
-        <v-spacer></v-spacer>
-        <v-alert
-          class="mt-3"
-          dense
-          prominent
-          color="warning"
-          icon="mdi-alarm-multiple"
-          dark
-        >
-          <v-row align="center">
-            <v-col class="grow">
-              ท่านยังไม่ได้ชำระค่าบริการ
-            </v-col>
-            <v-col class="shrink" @click="gotoBilling()">
-              <v-btn small>ชำระค่าบริการ</v-btn>
-            </v-col>
-          </v-row>
-        </v-alert>
+        <template v-if="paymentStatus === 'noCash'">
+          <v-spacer></v-spacer>
+          <v-alert
+            class="mt-3"
+            dense
+            prominent
+            color="warning"
+            icon="mdi-alarm-multiple"
+            dark
+          >
+            <v-row align="center">
+              <v-col class="grow">
+                ท่านยังไม่ได้ชำระค่าบริการ
+              </v-col>
+              <v-col class="shrink" @click="gotoBilling()">
+                <v-btn small>ชำระค่าบริการ</v-btn>
+              </v-col>
+            </v-row>
+          </v-alert>
+      </template>
+        <template v-if="paymentStatus === 'wait'">
+          <v-spacer></v-spacer>
+          <v-alert
+            class="mt-3"
+            dense
+            prominent
+            color="warning"
+            icon="mdi-cash-remove"
+            dark
+          >
+            <v-row align="center">
+              <v-col class="grow">
+                สลิปของท่านไม่ถูกต้อง
+              </v-col>
+              <v-col class="shrink" @click="gotoBilling()">
+                <v-btn small>อัพเดทสลิป</v-btn>
+              </v-col>
+            </v-row>
+          </v-alert>
       </template>
       <v-spacer></v-spacer>
       <v-avatar class="mr-3">
@@ -634,39 +654,43 @@ export default {
   // },
   computed: {},
   mounted () {
-    console.log('DD', parseInt(moment().format('DD')))
-    // this.dateCheckBill = '2023-01'
-    // this.dateCheckBill = moment().format('YYYY-MM')
-    // if (parseInt(moment().format('DD')) <= 7) {
-    //   this.chkPlan()
-    // } else {
-    //   this.paymentStatus = 'fix'
-    // }
-    // this.chkPlan()
-    this.paymentStatus = 'fix'
-    console.log('session', this.session)
-    console.log('router', this.$route.fullPath)
-    this.billingCustomerId = this.session.data.billingCustomerId || ''
-    // this.$root.$refs.BoardControl.closeSetTime()
-    this.$root.$emit('closeSetTime')
-    this.$root.$emit('closeSetTimeGetCalenda')
-    this.$root.$emit('closeSetTimeBookingMonitor')
-    this.items = []
-    if (this.session.data.USER_ROLE === 'onsite') {
-      this.onsite()
-    } else if (this.session.data.USER_ROLE === 'board') {
-      this.board()
-    } else if (this.session.data.USER_ROLE === 'booking') {
-      this.bookingChk()
+    if (this.$session.getAll().data.shopActive === 'inactive') {
+      this.$router.push('/Core/Login')
     } else {
-      this.adminChk()
-    }
-    this.$OmiseCard.configure({
-      publicKey: this.$omise_public_key
-    })
-    console.log('this.chkDateSchedule', this.chkDateSchedule)
-    if (this.chkDateSchedule === '' || this.chkDateSchedule !== moment(moment(new Date(), 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')) {
-      this.chkSchedule()
+      console.log('DD', parseInt(moment().format('DD')))
+      // this.dateCheckBill = '2023-01'
+      this.dateCheckBill = moment().format('YYYY-MM')
+      if (parseInt(moment().format('DD')) <= 7) {
+        this.chkPlan()
+      } else {
+        this.paymentStatus = 'fix'
+      }
+      // this.chkPlan()
+      // this.paymentStatus = 'fix'
+      console.log('session', this.session)
+      console.log('router', this.$route.fullPath)
+      this.billingCustomerId = this.session.data.billingCustomerId || ''
+      // this.$root.$refs.BoardControl.closeSetTime()
+      this.$root.$emit('closeSetTime')
+      this.$root.$emit('closeSetTimeGetCalenda')
+      this.$root.$emit('closeSetTimeBookingMonitor')
+      this.items = []
+      if (this.session.data.USER_ROLE === 'onsite') {
+        this.onsite()
+      } else if (this.session.data.USER_ROLE === 'board') {
+        this.board()
+      } else if (this.session.data.USER_ROLE === 'booking') {
+        this.bookingChk()
+      } else {
+        this.adminChk()
+      }
+      this.$OmiseCard.configure({
+        publicKey: this.$omise_public_key
+      })
+      console.log('this.chkDateSchedule', this.chkDateSchedule)
+      if (this.chkDateSchedule === '' || this.chkDateSchedule !== moment(moment(new Date(), 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')) {
+        this.chkSchedule()
+      }
     }
   },
   methods: {
@@ -684,7 +708,7 @@ export default {
         .then(async (response) => {
           let rs = response.data
           if (rs.status === false) {
-            this.paymentStatus = ''
+            this.paymentStatus = 'noCash'
           } else {
             this.paymentStatus = rs[0].paymentStatus
           }
