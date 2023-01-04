@@ -824,7 +824,7 @@ export default {
             let dt = {
               packetId: item.id,
               paymentImage: this.paymentImge,
-              paymentStatus: 'wait',
+              paymentStatus: 'confirm',
               paymentAmount: item.pricePackage,
               shopId: this.$session.getAll().data.shopId,
               CREATE_USER: this.$session.getAll().data.userName,

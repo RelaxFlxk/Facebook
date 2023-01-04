@@ -9,6 +9,7 @@ import Payment from '@/components/Payment'
 import PrintPdf from '@/components/PrintPdf'
 import Onsite from '@/components/Onsite'
 import Mazda from '@/components/Mazda'
+import ShopPayment from '@/components/ShopPayment'
 
 Vue.use(Router)
 
@@ -20,6 +21,11 @@ export default new Router({
     component: Core.Login
   },
   {
+    path: '/ShopList',
+    name: 'ShopList',
+    component: ShopPayment.ShopList
+  },
+  {
     path: '/Core/LoginFailed',
     name: 'LoginFailed',
     component: Core.LoginFailed
@@ -28,6 +34,11 @@ export default new Router({
     path: '/BillingPlan',
     name: 'BillingPlan',
     component: Core.BillingPlan
+  },
+  {
+    path: '/LoginAdmin',
+    name: 'LoginAdmin',
+    component: Core.LoginAdmin
   },
   {
     path: '/Core/Login',
