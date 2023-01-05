@@ -3397,7 +3397,7 @@
                             outlined
                             dense
                             required
-                            @change="checkTimeEdit(dataEdit.dueDateDay, dataEdit), setEmpEdit()"
+                            @change="setEmpEdit()"
                             :rules="[rules.required]"
                           ></v-select>
                           <v-select
@@ -3419,7 +3419,7 @@
                             dense
                             required
                             :rules="[rules.required]"
-                            @change="SetallowedDatesChange(formEdit.bookingEmpFlow)"
+                            @change="setEmpEdit()"
                           ></v-select>
                           <v-select
                             v-if="customerTimeSlot === 'True' && formEdit.bookingEmpFlow !== ''"
@@ -6893,13 +6893,15 @@ export default {
         this.getEmpAdd(this.formAdd.masBranchID)
       }
     },
-    setEmpEdit () {
+    async setEmpEdit () {
+      this.fromAddTimeCus = ''
       if (this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
         this.SetallowedDatesChange(this.formEdit.bookingEmpFlow)
         if (this.formEdit.masBranchID !== null && this.formEdit.flowId !== null) {
-          this.getEmpEdit(this.formEdit.masBranchID)
+          await this.getEmpEdit(this.formEdit.masBranchID)
           console.log('this.dataEdit', this.dataEdit)
-          this.checkCustomerTimeSlotEdit(this.dataEdit)
+          await this.checkCustomerTimeSlotEdit(this.dataEdit)
+          this.checkTimeEdit(this.dataEdit, {flowId: this.formEdit.flowId, bookingEmpFlow: this.formEdit.bookingEmpFlow})
         }
       }
     },
@@ -7048,6 +7050,10 @@ export default {
     async getEmpEdit (masBranchID) {
       this.dataEmpAdd = []
       this.dataEmpAllAdd = []
+      this.dataEmpChange = []
+      this.EmpItemLimitAdd = []
+      this.EmpItemLimitChange = []
+      this.dataEmpAllChange = []
       await axios.get(this.DNS_IP + '/empSelect/get?privacyPage=bookingform&masBranchID=' + masBranchID).then(response => {
         let rs = response.data
         if (rs.length > 0) {
@@ -7064,12 +7070,15 @@ export default {
                 d.textEng = d.empFull_NameTH
                 d.value = d.empId
                 this.dataEmpAdd.push(s)
+                this.dataEmpChange.push(s)
                 this.dataEmpAllAdd.push(d)
+                this.dataEmpAllChange.push(d)
                 let limit = {}
                 limit.empId = d.empId
                 limit.limitBookingCheck = d.limitBookingCheck || 'False'
                 limit.setTime = d.setTime || '[]'
                 this.EmpItemLimitAdd.push(limit)
+                this.EmpItemLimitChange.push(limit)
               }
             }
           }
@@ -7092,12 +7101,14 @@ export default {
     async getEmpChange (dt) {
       this.dataEmpChange = []
       this.dataEmpAllChange = []
+      this.EmpItemLimitChange = []
       await axios.get(this.DNS_IP + '/empSelect/get?privacyPage=bookingform&masBranchID=' + dt.masBranchID).then(response => {
         let rs = response.data
         if (rs.length > 0) {
           for (var i = 0; i < rs.length; i++) {
             let d = rs[i]
-            if (d.flowId !== null && d.flowId !== '') {
+            d.flowId = d.flowId || ''
+            if (d.flowId !== '') {
               let checkFlowId = JSON.parse(d.flowId)
               if (checkFlowId.filter((a) => parseInt(a) === dt.flowId).length > 0) {
                 let s = {}
@@ -8876,12 +8887,13 @@ export default {
       }
     },
     async setDataEdit (dt) {
+      this.customerTimeSlot = 'False'
       this.checkSelectText = dt.statusBt
       // this.dialogEditData = true
       await this.getBookingField()
-      if (dt.statusBt !== 'cancel' && dt.statusBt !== 'confirmJob') {
-        await this.getEmpChange(dt)
-      }
+      // if (dt.statusBt !== 'cancel' && dt.statusBt !== 'confirmJob') {
+      //   await this.getEmpEdit(dt.masBranchID)
+      // }
       // await this.getBookingData(dt, 'edit')
       console.log('setDataEdit', dt)
       this.dataEdit = dt
@@ -8899,6 +8911,11 @@ export default {
       // this.SetallowedDatesEdit()
       this.dateEdit = dt.dueDateDay
       console.log('dataFlowSelectEdit', this.dataFlowSelectEdit)
+      if (dt.statusBt !== 'cancel' && dt.statusBt !== 'confirmJob') {
+        this.setEmpEdit()
+      }
+      // await this.checkCustomerTimeSlotEdit(this.dataEdit)
+      // this.checkTimeEdit(this.dataEdit, {flowId: this.formEdit.flowId, bookingEmpFlow: this.formEdit.bookingEmpFlow})
       // this.timeavailable = []
       // // let dtTime = await this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
       // let dtTime = this.dataFlowSelectEdit.filter(item => { return item.value === this.formEdit.flowId }) || []
@@ -9484,6 +9501,7 @@ export default {
         console.log('checkTimeFlow', dt)
         // this.showTable = []
         let dtEmpItemLimitChange = this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })
+        console.log('dtEmpItemLimitChange', dtEmpItemLimitChange)
         this.limitBookingCheck = dtEmpItemLimitChange.length > 0 ? dtEmpItemLimitChange[0].limitBookingCheck || 'False' : 'False'
         if (this.limitBookingCheck === 'True') {
           this.timeavailable = JSON.parse(this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].setTime) || []
@@ -13277,6 +13295,7 @@ export default {
     },
     async updateLimitBookingChange (item, dueDateOld, dueDateTimeOld, dueDateNew, dueDateTimeNew, flowIdNew) {
       console.log('updateLimitBookingChange', item)
+      console.log('this.fromAddTimeCus', this.fromAddTimeCus)
       // console.log('TESTSTTETETSETSET', this.DataFlowName.filter((v) => v.value === flowIdNew)[0].allData)
       let result = []
       let timeSlotCustomer = ''
