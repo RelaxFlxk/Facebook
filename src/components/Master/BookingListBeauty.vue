@@ -3491,6 +3491,7 @@
                     <p v-if="item.stepTitle !== 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;"> ผู้รับผิดชอบ {{item.empStep}}</p>
                     <p v-if="item.stepTitle !== 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;">เวลาการทำงาน {{item.Counttime}} นาที</p>
                     <p v-if="item.stepTitle === 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;">สรุปค่าใช้จ่าย {{item.totalPrice}} บาท</p>
+                    <p class="font-weight-bold" style="margin-bottom: 0px;">ผู้อัปเดต {{item.LAST_USER_Name}}</p>
                     <!-- <p style="margin-bottom: 0px;">วันที่เปลี่ยน {{format_dateNotime(item.DTLAST_DATE)}}</p> -->
                   </v-card-text>
                 </v-card>
@@ -6725,6 +6726,7 @@ export default {
               s.DTLAST_DATE = d.LAST_DATE
               s.stepTitle = d.totalPrice === null ? d.stepTitle : 'ปิดจ๊อบ'
               s.timediff = d.timediff
+              s.LAST_USER_Name = d.LAST_USER_Name || d.LAST_USER
               s.Counttime = this.convertHMS(this.jsTimeDiff(d.CREATE_DATE, d.LAST_DATE))
               s.totalPrice = d.totalPrice
               this.timelineitem.push(s)
