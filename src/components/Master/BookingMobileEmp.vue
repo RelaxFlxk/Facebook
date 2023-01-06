@@ -524,13 +524,13 @@
                   required
                   :rules="[rules.required]"
                   dense
-                  @change="checkTime(),SetallowedDatesChange(bookingEmpFlow), formChange.date = ''"
+                  @change="checkTime(),SetallowedDatesChange(bookingEmpFlow), formChange.date = '',fromAddTimeCus = '', checkCustomerTimeSlot()"
                 ></v-select>
               </v-col>
               <v-col  cols="12" class="pt-0 pb-0">
                 {{fromAddTimeCus}}
                 <v-select
-                  v-if="customerTimeSlot === 'True' && bookingEmpFlow !== ''"
+                  v-if="customerTimeSlot === 'True' && bookingEmpFlow !== '' && timeSlotbyCustomer.length > 1"
                   v-model="fromAddTimeCus"
                   :items="timeSlotbyCustomer"
                   label="จำนวนชั่วโมง"
@@ -1162,6 +1162,7 @@ export default {
     checkCustomerTimeSlotStart (flowId) {
       console.log('flowId', flowId)
       // console.log('flowIdTTT', this.dataFlow)
+      this.timeSlotbyCustomer = []
       this.customerTimeSlot = this.dataFlow.filter((v) => v.value === flowId)[0].allData.customerTimeSlot
       // console.log('DataFlowNameall', this.customerTimeSlot, flowId)
       let allTime = []
@@ -1169,29 +1170,27 @@ export default {
         allTime = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.bookingEmpFlow })[0].setTime)
         allTime.forEach((item, key) => {
           let ss = {}
-          if (key > 0) {
-            let start = allTime.filter((i, k) => k === 0)[0].value
-            let end = item.value
-            // let genTime = this.calculateTime(start, end)
-            // let h = parseInt(genTime.split(':')[0])
-            // let m = parseInt(genTime.split(':')[1])
-            // if (h === 0 && m !== 0) {
-            //   ss.text = m + ' นาที'
-            // } else if (h !== 0 && m === 0) {
-            //   ss.text = h + ' ชม.'
-            // } else {
-            //   ss.text = h + ' ชม. ' + m + ' นาที'
-            // }
-            ss.text = this.calculateTime(start, end)
-            ss.value = key
-            console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
-            this.timeSlotbyCustomer.push(ss)
+          if (allTime.length === 1) {
+            // ss.text = item.value
+            // ss.value = key + 1
+            // this.timeSlotbyCustomer.push(ss)
+            this.fromAddTimeCus = key + 1
+          } else {
+            if (key > 0) {
+              let start = allTime.filter((i, k) => k === 0)[0].value
+              let end = item.value
+              ss.text = this.calculateTime(start, end)
+              ss.value = key
+              console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
+              this.timeSlotbyCustomer.push(ss)
+            }
           }
         })
       }
       console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
     },
     checkCustomerTimeSlot () {
+      this.timeSlotbyCustomer = []
       this.customerTimeSlot = this.dataFlow.filter((v) => v.value === this.flowSelect)[0].allData.customerTimeSlot
       console.log('DataFlowNameall', this.customerTimeSlot, this.flowSelect)
       let allTime = []
@@ -1199,23 +1198,20 @@ export default {
         allTime = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.bookingEmpFlow })[0].setTime)
         allTime.forEach((item, key) => {
           let ss = {}
-          if (key > 0) {
-            let start = allTime.filter((i, k) => k === 0)[0].value
-            let end = item.value
-            // let genTime = this.calculateTime(start, end)
-            // let h = parseInt(genTime.split(':')[0])
-            // let m = parseInt(genTime.split(':')[1])
-            // if (h === 0 && m !== 0) {
-            //   ss.text = m + ' นาที'
-            // } else if (h !== 0 && m === 0) {
-            //   ss.text = h + ' ชม.'
-            // } else {
-            //   ss.text = h + ' ชม. ' + m + ' นาที'
-            // }
-            ss.text = this.calculateTime(start, end)
-            ss.value = key
-            // console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
-            this.timeSlotbyCustomer.push(ss)
+          if (allTime.length === 1) {
+            // ss.text = item.value
+            // ss.value = key + 1
+            // this.timeSlotbyCustomer.push(ss)
+            this.fromAddTimeCus = key + 1
+          } else {
+            if (key > 0) {
+              let start = allTime.filter((i, k) => k === 0)[0].value
+              let end = item.value
+              ss.text = this.calculateTime(start, end)
+              ss.value = key
+              console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
+              this.timeSlotbyCustomer.push(ss)
+            }
           }
         })
       }
@@ -2937,6 +2933,8 @@ export default {
             .then(async response => {
               this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
               this.dialogChange = false
+              this.fromAddTimeCus = ''
+              this.customerTimeSlot = 'False'
               console.log('addDataGlobal', response)
               if (item.statusBt === 'confirm') {
                 if (item.userId !== 'user-skip') {
