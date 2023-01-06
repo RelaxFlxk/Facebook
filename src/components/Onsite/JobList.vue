@@ -1760,6 +1760,7 @@ export default {
             })
         })
         .catch(error => {
+          this.selectStep = ''
           console.log('error function editDataGlobal : ', error)
         })
     }
