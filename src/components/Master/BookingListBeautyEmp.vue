@@ -1255,7 +1255,7 @@
                                 </v-date-picker>
                               </v-menu>
                             </v-col>
-                            <v-col class="pb-0 pt-0" v-if="timeavailable.length > 0 && date !== ''">
+                            <v-col class="pb-0 pt-0" v-if="customerTimeSlot === 'False' ? timeavailable.length > 0 && date !== '' : fromAddTimeCus !== '' &&  date !== ''">
                               <v-select
                               v-model="time"
                               :items="timeavailable"
@@ -3397,7 +3397,7 @@
                             outlined
                             dense
                             required
-                            @change="setEmpEdit()"
+                            @change="formEdit.bookingEmpFlow = '', setEmpEdit()"
                             :rules="[rules.required]"
                           ></v-select>
                           <v-select
@@ -3408,7 +3408,7 @@
                             dense
                             required
                             :rules="[rules.required]"
-                            @change="setEmpEdit()"
+                            @change="formEdit.bookingEmpFlow = '', setEmpEdit()"
                           ></v-select>
                           <v-select
                             v-if="formEdit.masBranchID !== null && formEdit.flowId !== null && (flowIdOldEdit !== formEdit.flowId) && (getSelectText !== 'cancel') && (checkSelectText !== 'confirmJob')"
@@ -3857,7 +3857,7 @@
                             </div>
                           </template>
                           <v-row v-if="flowIdOldEdit !== formEdit.flowId && (getSelectText !== 'cancel') && (checkSelectText !== 'confirmJob')">
-                            <v-col class="pb-0">
+                            <v-col class="pb-0" v-if="customerTimeSlot === 'False' ? formEdit.bookingEmpFlow : fromAddTimeCus">
                               <v-menu
                                 v-model="menuDateEdit"
                                 :close-on-content-click="false"
@@ -3895,7 +3895,7 @@
                                 ></v-date-picker>
                               </v-menu>
                             </v-col>
-                            <v-col class="pb-0">
+                            <v-col class="pb-0" v-if="customerTimeSlot === 'False' ? timeavailable.length > 0 && dateEdit !== '' : fromAddTimeCus !== '' &&  dateEdit !== ''">
                             <v-select
                               v-model="timeEdit"
                               :items="timeavailable"
@@ -6958,6 +6958,10 @@ export default {
             }
           }
         })
+      }
+      if (this.date !== '') {
+        this.setLimitBooking(this.date)
+        this.time = ''
       }
       // console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
     },
