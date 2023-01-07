@@ -659,12 +659,12 @@ export default {
     } else {
       // console.log('DD', parseInt(moment().format('DD')))
       // this.dateCheckBill = '2023-01'
-      // this.dateCheckBill = moment().format('YYYY-MM')
-      // if (parseInt(moment().format('DD')) <= 7) {
-      //   this.chkPlan()
-      // } else {
-      //   this.paymentStatus = 'fix'
-      // }
+      this.dateCheckBill = moment().format('YYYY-MM')
+      if (parseInt(moment().format('DD')) <= 7) {
+        this.chkPlan()
+      } else {
+        this.paymentStatus = 'fix'
+      }
       // this.chkPlan()
       // this.paymentStatus = 'fix'
       console.log('session', this.session)

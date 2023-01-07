@@ -39,7 +39,7 @@
           <v-col cols="12">
             <div>
               <v-card-text v-if="dataReadyGet">
-                <v-row v-if="paymentStatus === ''">
+                <v-row v-if="paymentStatus === '' || paymentStatus === 'inactive'">
                   <v-col
                     :cols="resCol"
                     v-for="(item, index) in dataPackage"
@@ -217,7 +217,7 @@
                       <v-btn color="teal" dark large @click="setData(sysShopData)"><strong>ตรวจสอบอีกครั้ง</strong></v-btn>
                     </v-col>
                 </v-row>
-                <v-row v-if="paymentStatus === 'confirm'">
+                <v-row v-if="paymentStatus === 'confirm' || paymentStatus === 'finish'">
                     <v-col cols="12" class="text-center">
                         <h1>รายการชำระค่าบริการของท่าน</h1>
                         <h2>ชำระเงินแล้ว กรุณาทำรายการให้</h2>
@@ -840,22 +840,19 @@ export default {
             // }
             await axios.post(url, dt).then(async (response) => {
               if (response.status) {
-                // this.updatePlan(item.id)
-                // this.$swal('สำเร็จ', 'อัพโหลดสลิปสำเร็จ', 'success')
-                // let dtMgs = {
-                //   paymentImge: this.paymentImge,
-                //   paymentCode: response.data.paymentCode,
-                //   shopId: this.$session.getAll().data.shopId,
-                //   shopName: this.$session.getAll().data.shopName,
-                //   contactTel: this.$session.getAll().data.contactTel,
-                //   type: 'New'
-                // }
-                // await axios
-                //   .post(
-                //     this.DNS_IP + '/SendMessage/pushMsgLineNotifyGroup',
-                //     dtMgs
-                //   )
-                //   .then((response) => {})
+                this.updateShopActive('active')
+                this.$swal('สำเร็จ', 'อัพโหลดสลิปสำเร็จ', 'success')
+                let dtMgs = {
+                  NotifyImg: this.paymentImge,
+                  shopName: this.$session.getAll().data.shopName,
+                  contactTel: this.$session.getAll().data.contactTel,
+                  contactEmail: this.$session.getAll().data.contactEmail,
+                  statusNoti: 'New'
+                }
+                await axios
+                  .post(this.DNS_IP + '/line/notiAccount', dtMgs)
+                  .then(response => {
+                  })
               } else {
                 this.$swal('ผิดพลาด', 'กรุณาทำรายการอีกครั้ง', 'error')
               }
@@ -900,21 +897,34 @@ export default {
           dt
         )
         .then(async response => {
-          // let dtMgs = {
-          //   paymentImge: this.paymentImge,
-          //   paymentCode: this.dataPayment.paymentCode,
-          //   packetId: this.dataBilling,
-          //   shopName: this.$session.getAll().data.shopName,
-          //   contactTel: this.$session.getAll().data.contactTel,
-          //   type: 'Update'
-          // }
-          // await axios
-          //   .post(this.DNS_IP + '/SendMessage/pushMsgLineNotifyGroup', dtMgs)
-          //   .then(response => {
-          //   })
+          let dtMgs = {
+            NotifyImg: this.paymentImge,
+            shopName: this.$session.getAll().data.shopName,
+            contactTel: this.$session.getAll().data.contactTel,
+            contactEmail: this.$session.getAll().data.contactEmail,
+            statusNoti: 'Update'
+          }
+          await axios
+            .post(this.DNS_IP + '/line/notiAccount', dtMgs)
+            .then(response => {
+            })
           this.$swal('เรียบร้อย', 'อัพสถานะเรียบร้อย', 'success')
           this.dialogReConfirm = false
           setTimeout(() => this.chkPlan(), 500)
+        })
+    },
+    async updateShopActive (text) {
+      var ds = {
+        shopActive: text,
+        LAST_USER: this.$session.getAll().data.userName
+      }
+      await axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + "/sys_shop/edit/" + this.$session.getAll().data.shopId,
+          ds
+        )
+        .then(async (response) => {
         })
     },
     // async updateReturn () {
