@@ -184,7 +184,7 @@
                       class="pa-3"
                       color="error"
                     >
-                      <v-icon dark size="30" class="iconify" data-icon="mdi:cash-check">
+                      <v-icon dark size="30" class="iconify" data-icon="lucide:shield-close">
                       </v-icon>
                     </v-avatar>
                   </div>
@@ -270,7 +270,7 @@
                 dark
                 @click="changStatus(item, 'inactive')"
               >
-                <v-icon > mdi-check-circle </v-icon>
+                <v-icon > mdi-close-circle </v-icon>
                 Inactive
               </v-btn>
             </template>
