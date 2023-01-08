@@ -460,6 +460,8 @@ export default {
           if (item.shopActive === 'inactive') {
             await this.updateShopActive('active', item)
             this.checkSearch()
+          } else {
+            this.chkPayMent()
           }
         } else {
           this.checkSearch()

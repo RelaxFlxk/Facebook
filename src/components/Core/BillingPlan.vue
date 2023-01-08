@@ -305,6 +305,37 @@
                         v-model="filesImg"
                       ></v-file-input>
                     </v-col>
+                     <v-col cols="12" class="pt-1 pb-0">
+                      <v-text-field
+                        prepend-icon="mdi-account"
+                        v-model="billingCusName"
+                        label="ชื่อ-สกุล"
+                        outlined
+                        dense
+                        required
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pt-1 pb-0">
+                      <v-text-field
+                        prepend-icon="mdi-hail"
+                        v-model="billingTax"
+                        label="เลขประจำตัวผู้เสียภาษี"
+                        outlined
+                        dense
+                        required
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pt-1 pb-0">
+                      <v-textarea
+                        prepend-icon="mdi-map-marker"
+                        v-model="billingAddress"
+                        auto-grow
+                        rows="2"
+                        label="ที่อยู่"
+                        dense
+                        outlined
+                      ></v-textarea>
+                    </v-col>
                   </v-row>
                   <div class="text-center mt-5">
                     <v-btn
@@ -481,6 +512,37 @@
                         v-model="filesImg"
                       ></v-file-input>
                     </v-col>
+                    <v-col cols="12" class="pt-1 pb-0">
+                      <v-text-field
+                        prepend-icon="mdi-account"
+                        v-model="billingCusName"
+                        label="ชื่อ-สกุล"
+                        outlined
+                        dense
+                        required
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pt-1 pb-0">
+                      <v-text-field
+                        prepend-icon="mdi-hail"
+                        v-model="billingTax"
+                        label="เลขประจำตัวผู้เสียภาษี"
+                        outlined
+                        dense
+                        required
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pt-1 pb-0">
+                      <v-textarea
+                        prepend-icon="mdi-map-marker"
+                        v-model="billingAddress"
+                        auto-grow
+                        rows="2"
+                        label="ที่อยู่"
+                        dense
+                        outlined
+                      ></v-textarea>
+                    </v-col>
                   </v-row>
                   <div class="text-center mt-5">
                   <v-btn
@@ -542,6 +604,11 @@ export default {
   },
   data () {
     return {
+      billingCusName: '',
+      billingAddress: '',
+      billingTax: '',
+      paymentAmount: '',
+      paymentDateMonthYear: '',
       breadcrumbs: [
         {
           text: 'Home',
@@ -703,84 +770,100 @@ export default {
       if (this.countBooking > parseInt(item.close)) {
         this.$swal('ผิดพลาด', 'เนื่องจากรายการนัดหมายของท่านเกินจำนวนของแพ็คเกจที่ท่านเลือก', 'error')
       } else {
-        const date1 = new Date(this.dataPayment.endDate)
-        const date2 = new Date()
-        const diffTime = date1 - date2
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-        console.log(diffDays)
-        if (diffDays > 0) {
-          if (parseInt(this.dataPayment.packetClose) >= parseInt(item.close)) {
-            this.dialogQrcode = false
-            this.$swal({
-              title: 'ต้องการ อัพเดท ใช่หรือไม่?',
-              type: 'question',
-              showCancelButton: true,
-              confirmButtonColor: '#3085d6',
-              cancelButtonColor: '#b3b1ab',
-              confirmButtonText: 'ใช่',
-              cancelButtonText: 'ไม่'
-            })
-              .then(async (result) => {
-                if (this.idPayment !== '') {
-                  let dt = {
-                    LAST_USER: this.$session.getAll().data.userName,
-                    statusPayment: 'change',
-                    RECORD_STATUS: 'D'
-                  }
-                  await axios
-                    .post(
-                    // eslint-disable-next-line quotes
-                      this.DNS_IP + "/Payment_LOG/editPaymentId/" + this.idPayment,
-                      dt
-                    )
-                    .then(async response => {})
-                }
-                let url = ''
-                let dt = {}
-                url = this.DNS_IP + '/Payment_LOG/add'
-                dt = {
-                  paymentId: this.idPayment,
-                  packetId: item.id,
-                  img: this.dataPayment.img,
-                  statusPayment: 'confirm',
-                  shopId: this.$session.getAll().data.shopId,
-                  CREATE_USER: this.$session.getAll().data.userName,
-                  LAST_USER: this.$session.getAll().data.userName,
-                  endDate: this.format_date(this.dataPayment.endDate),
-                  startDate: this.format_date(this.dataPayment.startDate),
-                  paymentIdOld: this.dataPayment.packetId
-                }
-                await axios.post(url, dt).then(async (response) => {
-                  this.updatePlan(item.id)
-                  this.$swal('สำเร็จ', 'อัพเดทสำเร็จ', 'success')
-                  setTimeout(() => this.chkPlan(), 500)
-                })
-              })
-              .catch((error) => {
-                console.log('Update : ', error)
-              })
-          } else {
-            this.dataPlan = item
-            this.pricePackage = item.pricePackage || 0
-            const generatePayload = require('promptpay-qr')
-            // const mobileNumber = '1129900371744'
-            const promptpayID = '1529900508673'
-            // const IDCardNumber = '0-0000-00000-00-0'
-            const amount = parseFloat(item.pricePackage)
-            this.value = generatePayload(promptpayID, { amount })
-            this.dialogQrcode = true
-          }
-        } else {
-          this.dataPlan = item
-          this.pricePackage = item.pricePackage || 0
-          const generatePayload = require('promptpay-qr')
-          // const mobileNumber = '1129900371744'
-          const promptpayID = '1529900508673'
-          // const IDCardNumber = '0-0000-00000-00-0'
-          const amount = parseFloat(item.pricePackage)
-          this.value = generatePayload(promptpayID, { amount })
-          this.dialogQrcode = true
-        }
+        // const date1 = new Date(this.dataPayment.endDate)
+        // const date2 = new Date()
+        // const diffTime = date1 - date2
+        // const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+        // console.log(diffDays)
+        // if (diffDays > 0) {
+        //   if (parseInt(this.dataPayment.packetClose) >= parseInt(item.close)) {
+        //     this.dialogQrcode = false
+        //     this.$swal({
+        //       title: 'ต้องการ อัพเดท ใช่หรือไม่?',
+        //       type: 'question',
+        //       showCancelButton: true,
+        //       confirmButtonColor: '#3085d6',
+        //       cancelButtonColor: '#b3b1ab',
+        //       confirmButtonText: 'ใช่',
+        //       cancelButtonText: 'ไม่'
+        //     })
+        //       .then(async (result) => {
+        //         if (this.idPayment !== '') {
+        //           let dt = {
+        //             LAST_USER: this.$session.getAll().data.userName,
+        //             statusPayment: 'change',
+        //             RECORD_STATUS: 'D'
+        //           }
+        //           await axios
+        //             .post(
+        //             // eslint-disable-next-line quotes
+        //               this.DNS_IP + "/Payment_LOG/editPaymentId/" + this.idPayment,
+        //               dt
+        //             )
+        //             .then(async response => {})
+        //         }
+        //         let url = ''
+        //         let dt = {}
+        //         url = this.DNS_IP + '/Payment_LOG/add'
+        //         dt = {
+        //           paymentId: this.idPayment,
+        //           packetId: item.id,
+        //           img: this.dataPayment.img,
+        //           statusPayment: 'confirm',
+        //           shopId: this.$session.getAll().data.shopId,
+        //           CREATE_USER: this.$session.getAll().data.userName,
+        //           LAST_USER: this.$session.getAll().data.userName,
+        //           endDate: this.format_date(this.dataPayment.endDate),
+        //           startDate: this.format_date(this.dataPayment.startDate),
+        //           paymentIdOld: this.dataPayment.packetId
+        //         }
+        //         await axios.post(url, dt).then(async (response) => {
+        //           this.updatePlan(item.id)
+        //           this.$swal('สำเร็จ', 'อัพเดทสำเร็จ', 'success')
+        //           setTimeout(() => this.chkPlan(), 500)
+        //         })
+        //       })
+        //       .catch((error) => {
+        //         console.log('Update : ', error)
+        //       })
+        //   } else {
+        //     this.dataPlan = item
+        //     this.pricePackage = item.pricePackage || 0
+        //     const generatePayload = require('promptpay-qr')
+        //     // const mobileNumber = '1129900371744'
+        //     const promptpayID = '1529900508673'
+        //     // const IDCardNumber = '0-0000-00000-00-0'
+        //     const amount = parseFloat(item.pricePackage)
+        //     this.value = generatePayload(promptpayID, { amount })
+        //     this.dialogQrcode = true
+        //   }
+        // } else {
+        this.dataPlan = item
+        this.pricePackage = item.pricePackage || 0
+        this.paymentAmount = item.pricePackage
+        // this.paymentDateMonthYear = item.paymentDateMonthYear
+        await axios
+          .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.$session.getAll().data.shopId)
+          .then(async (response) => {
+            let rs = response.data
+            if (rs.status !== false) {
+              this.billingCusName = rs[0].billingCusName || ''
+              this.billingAddress = rs[0].billingAddress || ''
+              this.billingTax = rs[0].billingTax || ''
+            } else {
+              this.billingCusName = ''
+              this.billingAddress = ''
+              this.billingTax = ''
+            }
+          })
+        const generatePayload = require('promptpay-qr')
+        // const mobileNumber = '1129900371744'
+        const promptpayID = '1529900508673'
+        // const IDCardNumber = '0-0000-00000-00-0'
+        const amount = parseFloat(item.pricePackage)
+        this.value = generatePayload(promptpayID, { amount })
+        this.dialogQrcode = true
+        // }
         // }
       }
     },
@@ -803,119 +886,164 @@ export default {
       if (this.paymentImge === null || this.paymentImge === '') {
         this.$swal('ผิดพลาด', 'กรุณาอัพโหลดหลักฐานการโอนเงิน', 'error')
       } else {
-        this.$swal({
-          title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
-          type: 'question',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#b3b1ab',
-          confirmButtonText: 'ใช่',
-          cancelButtonText: 'ไม่'
-        })
-          .then(async (result) => {
-            if (this.filesImg) {
-              const _this = this
-              let params = new FormData()
-              params.append('file', this.filesImg)
-              await axios
-                .post(this.DNS_IP + `/file/upload/shopPayment`, params)
-                .then(function (response) {
-                  _this.paymentImge = response.data
-                  console.log('url Pic', response.data)
-                })
-            } else {
-              this.paymentImge = this.filesImg
-            }
-            // if (this.paymentImge) {
-            let url = this.DNS_IP + '/system_shop_Payment/add'
-            let dt = {
-              packetId: item.id,
-              paymentImage: this.paymentImge,
-              paymentStatus: 'confirm',
-              paymentAmount: item.pricePackage,
-              shopId: this.$session.getAll().data.shopId,
-              CREATE_USER: this.$session.getAll().data.userName,
-              LAST_USER: this.$session.getAll().data.userName
-            }
-            // }
-            await axios.post(url, dt).then(async (response) => {
-              if (response.status) {
-                this.updateShopActive('active')
-                this.$swal('สำเร็จ', 'อัพโหลดสลิปสำเร็จ', 'success')
-                let dtMgs = {
-                  NotifyImg: this.paymentImge,
-                  shopName: this.$session.getAll().data.shopName,
-                  contactTel: this.$session.getAll().data.contactTel,
-                  contactEmail: this.$session.getAll().data.contactEmail,
-                  statusNoti: 'New'
-                }
+        if (this.billingCusName !== '' && this.billingAddress !== '' && this.billingTax !== '') {
+          this.$swal({
+            title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#b3b1ab',
+            confirmButtonText: 'ใช่',
+            cancelButtonText: 'ไม่'
+          })
+            .then(async (result) => {
+              if (this.filesImg) {
+                const _this = this
+                let params = new FormData()
+                params.append('file', this.filesImg)
                 await axios
-                  .post(this.DNS_IP + '/line/notiAccount', dtMgs)
-                  .then(response => {
+                  .post(this.DNS_IP + `/file/upload/shopPayment`, params)
+                  .then(function (response) {
+                    _this.paymentImge = response.data
+                    console.log('url Pic', response.data)
                   })
               } else {
-                this.$swal('ผิดพลาด', 'กรุณาทำรายการอีกครั้ง', 'error')
+                this.paymentImge = null
               }
-              setTimeout(() => this.chkPlan(), 500)
-              this.dialogQrcode = false
+              if (this.paymentImge) {
+                let url = this.DNS_IP + '/system_shop_Payment/add'
+                let dt = {
+                  packetId: item.id,
+                  paymentImage: this.paymentImge,
+                  paymentStatus: 'confirm',
+                  paymentAmount: item.pricePackage,
+                  shopId: this.$session.getAll().data.shopId,
+                  CREATE_USER: this.$session.getAll().data.userName,
+                  LAST_USER: this.$session.getAll().data.userName
+                }
+                // }
+                await axios.post(url, dt).then(async (response) => {
+                  if (response.status) {
+                    this.updateShopActive('active')
+                    this.$swal('สำเร็จ', 'อัพโหลดสลิปสำเร็จ', 'success')
+                    let dtMgs = {
+                      shopId: this.$session.getAll().data.shopId,
+                      NotifyImg: this.paymentImge,
+                      shopName: this.$session.getAll().data.shopName,
+                      contactTel: this.$session.getAll().data.contactTel,
+                      contactEmail: this.$session.getAll().data.contactEmail,
+                      billingCusName: this.billingCusName,
+                      billingAddress: this.billingAddress,
+                      billingTax: this.billingTax,
+                      paymentAmount: this.paymentAmount,
+                      paymentDateMonthYear: moment().format('MM/YYYY'),
+                      statusNoti: 'New'
+                    }
+                    await axios
+                      .post(this.DNS_IP + '/line/notiAccount', dtMgs)
+                      .then(response => {
+                      })
+                  } else {
+                    this.$swal('ผิดพลาด', 'กรุณาทำรายการอีกครั้ง', 'error')
+                  }
+                  setTimeout(() => this.chkPlan(), 500)
+                  this.dialogQrcode = false
+                })
+              } else {
+                this.$swal('ผิดพลาด', 'กรุณาอัพเดทรูปภาพ', 'error')
+              }
             })
-          })
-          .catch((error) => {
-            console.log('Cencel : ', error)
-          })
+            .catch((error) => {
+              console.log('Cencel : ', error)
+            })
+        } else {
+          this.$swal('ผิดพลาด', 'กรุณากรอกข้อมูลให้ครบ', 'error')
+        }
       }
     },
-    setData (item) {
+    async setData (item) {
       console.log('setData', item)
       this.paymentImge = item.paymentImage || null
       this.dialogReConfirm = true
       this.idPayment = item.id
+      this.paymentAmount = item.paymentAmount
+      this.paymentDateMonthYear = item.paymentDateMonthYear
+      await axios
+        .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.$session.getAll().data.shopId)
+        .then(async (response) => {
+          let rs = response.data
+          if (rs.status !== false) {
+            this.billingCusName = rs[0].billingCusName || ''
+            this.billingAddress = rs[0].billingAddress || ''
+            this.billingTax = rs[0].billingTax || ''
+          } else {
+            this.billingCusName = ''
+            this.billingAddress = ''
+            this.billingTax = ''
+          }
+        })
     },
     async updateReturn () {
-      if (this.filesImg) {
-        const _this = this
-        let params = new FormData()
-        params.append('file', this.filesImg)
-        await axios
-          .post(this.DNS_IP + `/file/upload/shopPayment`, params)
-          .then(function (response) {
-            _this.paymentImge = response.data
-            console.log('url Pic', response.data)
-          })
-      } else {
-        this.paymentImge = this.filesImg
-      }
-      var dt = {
-        LAST_USER: this.$session.getAll().data.userName,
-        paymentImage: this.paymentImge,
-        paymentStatus: 'confirm'
-      }
-      await axios
-        .post(
-          // eslint-disable-next-line quotes
-          this.DNS_IP + "/system_shop_Payment/edit/" + this.idPayment,
-          dt
-        )
-        .then(async response => {
-          let dtMgs = {
-            NotifyImg: this.paymentImge,
-            shopName: this.$session.getAll().data.shopName,
-            contactTel: this.$session.getAll().data.contactTel,
-            contactEmail: this.$session.getAll().data.contactEmail,
-            statusNoti: 'Update'
+      if (this.billingCusName !== '' && this.billingAddress !== '' && this.billingTax !== '') {
+        if (this.filesImg) {
+          const _this = this
+          let params = new FormData()
+          params.append('file', this.filesImg)
+          await axios
+            .post(this.DNS_IP + `/file/upload/shopPayment`, params)
+            .then(function (response) {
+              _this.paymentImge = response.data
+              console.log('url Pic', response.data)
+            })
+        }
+        if (this.paymentImge) {
+          var dt = {
+            LAST_USER: this.$session.getAll().data.userName,
+            paymentImage: this.paymentImge,
+            paymentStatus: 'confirm'
           }
           await axios
-            .post(this.DNS_IP + '/line/notiAccount', dtMgs)
-            .then(response => {
+            .post(
+              // eslint-disable-next-line quotes
+              this.DNS_IP + "/system_shop_Payment/edit/" + this.idPayment,
+              dt
+            )
+            .then(async response => {
+              this.updateShopActive('active')
+              let dtMgs = {
+                shopId: this.$session.getAll().data.shopId,
+                NotifyImg: this.paymentImge,
+                shopName: this.$session.getAll().data.shopName,
+                contactTel: this.$session.getAll().data.contactTel,
+                contactEmail: this.$session.getAll().data.contactEmail,
+                billingCusName: this.billingCusName,
+                billingAddress: this.billingAddress,
+                billingTax: this.billingTax,
+                paymentAmount: this.paymentAmount,
+                paymentDateMonthYear: this.paymentDateMonthYear,
+                statusNoti: 'Update'
+              }
+              await axios
+                .post(this.DNS_IP + '/line/notiAccount', dtMgs)
+                .then(response => {
+                })
+              this.$swal('เรียบร้อย', 'อัพสถานะเรียบร้อย', 'success')
+              this.dialogReConfirm = false
+              setTimeout(() => this.chkPlan(), 500)
             })
-          this.$swal('เรียบร้อย', 'อัพสถานะเรียบร้อย', 'success')
-          this.dialogReConfirm = false
-          setTimeout(() => this.chkPlan(), 500)
-        })
+        } else {
+          this.$swal('ผิดพลาด', 'กรุณาอัพเดทรูปภาพ', 'error')
+        }
+      } else {
+        this.$swal('ผิดพลาด', 'กรุณากรอกข้อมูลให้ครบ', 'error')
+      }
     },
     async updateShopActive (text) {
       var ds = {
         shopActive: text,
+        billingCusName: this.billingCusName,
+        billingAddress: this.billingAddress,
+        billingTax: this.billingTax,
         LAST_USER: this.$session.getAll().data.userName
       }
       await axios

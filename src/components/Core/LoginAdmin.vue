@@ -224,7 +224,11 @@ export default {
             if (response.data[0]) {
               this.$session.start()
               this.$session.set('data', response.data[0])
-              this.$router.push('/ShopList')
+              if (this.$route.query.shopId !== undefined && this.$route.query.paymentDateMonthYear !== undefined) {
+                this.$router.push('/UpdateStatusPayment?shopId=' + this.$route.query.shopId + '&paymentDateMonthYear=' + this.$route.query.paymentDateMonthYear)
+              } else {
+                this.$router.push('/ShopList')
+              }
             } else {
               this.dataReady = true
               this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง1', 'error')

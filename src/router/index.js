@@ -26,6 +26,11 @@ export default new Router({
     component: ShopPayment.ShopList
   },
   {
+    path: '/UpdateStatusPayment',
+    name: 'UpdateStatusPayment',
+    component: ShopPayment.UpdateStatus
+  },
+  {
     path: '/Core/LoginFailed',
     name: 'LoginFailed',
     component: Core.LoginFailed
