@@ -48,6 +48,45 @@
 
         <v-divider></v-divider>
 
+        <template v-if="paymentStatus === 'noCash'">
+            <v-alert
+              class="mt-3"
+              dense
+              prominent
+              color="warning"
+              icon="mdi-alarm-multiple"
+              dark
+            >
+              <v-row align="center">
+                <v-col class="grow">
+                  ท่านยังไม่ได้ชำระค่าบริการ
+                </v-col>
+                <v-col class="shrink" @click="gotoBilling()">
+                  <v-btn small>ชำระค่าบริการ</v-btn>
+                </v-col>
+              </v-row>
+            </v-alert>
+        </template>
+          <template v-if="paymentStatus === 'wait'">
+            <v-alert
+              class="mt-3"
+              dense
+              prominent
+              color="warning"
+              icon="mdi-cash-remove"
+              dark
+            >
+              <v-row align="center">
+                <v-col class="grow">
+                  สลิปของท่านไม่ถูกต้อง
+                </v-col>
+                <v-col class="shrink" @click="gotoBilling()">
+                  <v-btn small>อัพเดทสลิป</v-btn>
+                </v-col>
+              </v-row>
+            </v-alert>
+        </template>
+
         <v-card-text style="height: 100%;">
           <v-container>
             <template v-if="BookingDataItemEdit">
@@ -1125,14 +1164,37 @@ export default {
       flowSelect: '',
       timeSlotbyCustomer: [],
       customerTimeSlot: 'False',
-      fromAddTimeCus: ''
+      fromAddTimeCus: '',
+      paymentStatus: '',
+      dateCheckBill: ''
     }
   },
   async mounted () {
+    this.dateCheckBill = moment().format('YYYY-MM')
     await this.beforeCreate()
     console.log('this.$session.getAll()', this.$session.getAll())
   },
   methods: {
+    async chkPlan () {
+      await axios
+        .get(
+          this.DNS_IP +
+              '/system_shop_Payment/get?shopId=' +
+              this.$session.getAll().data.shopId +
+              '&paymentDate=' + this.dateCheckBill
+        )
+        .then(async (response) => {
+          let rs = response.data
+          if (rs.status === false) {
+            this.paymentStatus = 'noCash'
+          } else {
+            this.paymentStatus = rs[0].paymentStatus
+          }
+        })
+    },
+    gotoBilling () {
+      this.$router.push('/BillingPlan')
+    },
     calculateTime (start, end) {
       let countTime = null
       // if (end > start) {
@@ -2087,6 +2149,7 @@ export default {
         if (JSON.parse(localStorage.getItem('sessionData')).shopId === this.$route.query.shopId) {
           this.$session.start()
           this.$session.set('data', JSON.parse(localStorage.getItem('sessionData')))
+          this.chkPlan()
           await this.chkBookingNo()
           await this.getDataBranch()
           await this.getDataFlowAll()
@@ -2099,6 +2162,7 @@ export default {
         } else {
           if (this.$session.getAll().data.shopId === this.$route.query.shopId) {
             localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
+            this.chkPlan()
             await this.chkBookingNo()
             await this.getDataBranch()
             await this.getDataFlowAll()

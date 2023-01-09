@@ -202,6 +202,22 @@
                 เรียกคิว
               </v-btn>
             </template>
+            <template v-slot:[`item.storeFrontQueue`]="{ item }">
+              <v-row>
+                <v-col cols="12">
+                  <v-row>
+                    <v-col col="auto" class="text-ceter" v-if="item.userId === 'user-skip' || item.userId === '' || item.userId === null || item.userId === 'data import'">
+                        {{ item.storeFrontQueue }}
+                    </v-col>
+                    <template v-else>
+                      <v-col col="auto" class="text-ceter">
+                        <a @click.stop="openHistory(item)" style="cursor:hand"><u>{{ item.storeFrontQueue }}</u></a>
+                      </v-col>
+                    </template>
+                  </v-row>
+                </v-col>
+              </v-row>
+            </template>
             </v-data-table>
             <v-dialog v-model="dialogPrint" scrollable transition="dialog-bottom-transition" persistent max-width="100%">
               <v-card class="text-center">
@@ -223,6 +239,67 @@
                 </v-card-actions>
               </v-card>
             </v-dialog>
+            <v-dialog v-model="dialogHistory" scrollable persistent :max-width="dialogwidth">
+            <v-card>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="6" class="text-left pt-10">
+                      <h3><strong>รายละเอียดนัดหมาย</strong></h3>
+                    </v-col>
+                    <v-col cols="6" class="pt-10">
+                      <div style="text-align: end;">
+                        <v-btn
+                          class="mx-2"
+                          fab
+                          small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
+                          @click="dialogHistory = false"
+                          >
+                          X
+                        </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
+                   <v-row >
+                    <v-col cols="12">
+                      <div class="avatar text-center">
+                        <v-avatar size="120" style="border:5px solid #FFFFFF;">
+                          <v-img
+                            v-if="pictureUrHistory"
+                            :src="pictureUrHistory"
+                          ></v-img>
+                          <v-icon size="100" color="orange" v-else>
+                            mdi-tooltip-account
+                          </v-icon>
+                        </v-avatar>
+                      </div>
+                      <br>
+                      <template v-if="HistoryData.length > 0">
+                        <h6 class="text-start font-weight-bold">{{format_dateThai(HistoryData[0].dueDate)}}</h6>
+                        <h6 class="text-start font-weight-bold">{{HistoryData[0].flowName}}</h6>
+                        <h6 class="text-start font-weight-bold">{{HistoryData[0].masBranchName}}</h6>
+                        <div v-for="(item3 , index3) in HistoryData" :key="index3">
+                          <p class="text-start" v-if="item3.fieldValue !== ''"><strong>{{item3.fieldName}} : </strong> {{item3.fieldValue}}</p>
+                        </div>
+                        <v-btn
+                          color="#1B437C"
+                          small
+                          dark
+                          @click="sendQonline(HistoryData[0])"
+                        >
+                          <v-icon left>mdi-send-check-outline</v-icon>
+                          ส่งคิวออนไลน์
+                        </v-btn>
+                      </template>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
           </v-card>
           </v-col>
         </v-row>
@@ -286,7 +363,7 @@ export default {
         // { text: 'วันที่นัดหมาย', value: 'dueDate' },
         { text: 'บริการ', value: 'flowName' },
         { text: 'ชื่อลูกค้า', value: 'cusName' },
-        { text: 'H.N.', value: 'hnNo' },
+        // { text: 'H.N.', value: 'hnNo' },
         { text: 'จัดการข้อมูล', value: 'action', sortable: false, align: 'center' }
       ],
       rules: {
@@ -308,7 +385,21 @@ export default {
           return pattern.test(value) || 'Invalid e-mail.'
         }
       },
-      dataLineConfig: {}
+      dataLineConfig: {},
+      HistoryData: [],
+      pictureUrHistory: '',
+      dialogHistory: false
+    }
+  },
+  computed: {
+    dialogwidth () {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return '70%'
+        case 'sm': return '60%'
+        case 'md': return '50%'
+        case 'lg': return '50%'
+        case 'xl': return '50%'
+      }
     }
   },
   async mounted () {
@@ -321,6 +412,38 @@ export default {
     this.checkSearch()
   },
   methods: {
+    async sendQonline (item) {
+      await axios
+        .post(this.DNS_IP + '/Booking/pushMsgQueue/' + item.bookNo)
+        .then(async responses => {
+          this.$swal({
+            title: 'Send successfully',
+            text: 'ส่งสำเร็จ',
+            type: 'success',
+            timer: 2000,
+            showConfirmButton: false
+          })
+        }).catch(error => {
+          console.log('error function pushMsgQueue : ', error)
+        })
+    },
+    async openHistory (item) {
+      console.log('item', item)
+      console.log('this.BookingDataList[item.bookNo]', this.BookingDataList[item.bookNo])
+      this.HistoryData = this.BookingDataList[item.bookNo]
+      this.pictureUrHistory = item.memberPicture
+      // axios.get(this.DNS_IP + '/BookingData/get_history?bookNo=' + item.bookNo)
+      //   .then(async (response) => {
+      //     let rs = response.data
+      //     if (rs.status !== false) {
+      //       this.HistoryData = response.data
+      this.dialogHistory = true
+      //     }
+      //   })
+      //   .catch((error) => {
+      //     console.log('error function addData : ', error)
+      //   })
+    },
     async getShop () {
       let shopImg = ''
       await axios
@@ -337,7 +460,6 @@ export default {
           }
           if (shopImg !== '') {
             this.shopImg = shopImg
-            console.log('this.shopImg', this.shopImg)
           }
         })
     },
@@ -566,7 +688,7 @@ export default {
             },
             {
               image: 'mySuperImage',
-              width: 190,
+              width: 150,
               alignment: 'center'
             },
             // {
@@ -630,11 +752,13 @@ export default {
             { qr: 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '200', alignment: 'center' },
             {
               text: '   ',
-              style: 'subheader',
+              fontSize: 15,
+              // style: 'subheader',
               widths: ['*']
             },
             {
-              text: '*ทางโรงพยาบาลขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
+              text: '*ทางบริษัทขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
+              // text: '*ทางโรงพยาบาลขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
               fontSize: 15,
               alignment: 'center'
             },
@@ -711,7 +835,7 @@ export default {
             },
             {
               image: 'mySuperImage',
-              width: 190,
+              width: 150,
               alignment: 'center'
             },
             // {
@@ -749,29 +873,35 @@ export default {
               widths: ['*']
             },
             {
-              text: [
-                {alignment: 'center', text: 'Number\n', fontSize: 20, color: 'black'},
-                {alignment: 'center', text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-              ]
-              // alignment: 'center',
-              // style: 'tableExample',
-              // table: {
-              //   heights: [50],
-              //   widths: ['*'],
-              //   body: [
-              //     [
-              //       {
-              //         text: [
-              //           {text: 'Number\n', fontSize: 20, color: 'black'},
-              //           {text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-              //         ],
-              //         border: [false, false, false, false]
-              //         // fillColor: '#092C4C'
-              //       }
-              //     ]
-              //   ]
-              // }
+              alignment: 'center', text: 'Number', fontSize: 20, color: 'black'
             },
+            {
+              alignment: 'center', text: item.storeFrontQueue, fontSize: 110, color: 'black'
+            },
+            // {
+            //   text: [
+            //     {alignment: 'center', text: 'Number\n', fontSize: 20, color: 'black'},
+            //     {alignment: 'center', text: item.storeFrontQueue, fontSize: 120, color: 'black'}
+            //   ]
+            //   // alignment: 'center',
+            //   // style: 'tableExample',
+            //   // table: {
+            //   //   heights: [50],
+            //   //   widths: ['*'],
+            //   //   body: [
+            //   //     [
+            //   //       {
+            //   //         text: [
+            //   //           {text: 'Number\n', fontSize: 20, color: 'black'},
+            //   //           {text: item.storeFrontQueue, fontSize: 120, color: 'black'}
+            //   //         ],
+            //   //         border: [false, false, false, false]
+            //   //         // fillColor: '#092C4C'
+            //   //       }
+            //   //     ]
+            //   //   ]
+            //   // }
+            // },
             {
               text: 'QR Code for receiving notifications',
               fontSize: 15,
@@ -780,11 +910,13 @@ export default {
             { qr: 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '200', alignment: 'center' },
             {
               text: '   ',
-              style: 'subheader',
+              fontSize: 15,
+              // style: 'subheader',
               widths: ['*']
             },
             {
-              text: "The hospital reserves the right to skip the queue. In case the customer doesn't come",
+              text: "The company reserves the right to skip the queue. In case the customer doesn't come",
+              // text: "The hospital reserves the right to skip the queue. In case the customer doesn't come",
               fontSize: 15,
               alignment: 'center'
             },

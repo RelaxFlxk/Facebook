@@ -223,6 +223,9 @@
                         <h2>ชำระเงินแล้ว กรุณาทำรายการให้</h2>
                         <h2>ทุกวันที่ 1-7 ของแต่ละเดือน</h2>
                     </v-col>
+                    <v-col cols="12" class="text-center">
+                      <v-btn color="teal" dark large @click="gotoLogin()"><strong>Login</strong></v-btn>
+                    </v-col>
                 </v-row>
                 <!-- <div class="text-right plan_button">
                   <v-btn rounded color="error" dark @click="dialogCash = false">
@@ -674,9 +677,12 @@ export default {
     this.chkPlan()
   },
   methods: {
+    gotoLogin () {
+      this.$router.push('/Core/Login')
+    },
     async getCheckCountBook () {
       // await axios.get(this.DNS_IP + '/booking_view/getCheckPack?statusBt=wait and confirm&shopId=' + this.$session.getAll().data.shopId + '&dueDate=' + this.format_dateNoDay(new Date())).then(response => {
-      await axios.get(this.DNS_IP + '/booking_view/getCheckPack?statusBt=wait and confirm&shopId=' + this.$session.getAll().data.shopId + '&dueDateLastMonth=T').then(response => {
+      await axios.get(this.DNS_IP + '/booking_view/getCheckPack?shopId=' + this.$session.getAll().data.shopId + '&dueDateLastMonth=T').then(response => {
         let rs = response.data
         if (rs.status !== false) {
           this.countBooking = response.data.countJob
@@ -766,8 +772,9 @@ export default {
     async showQrCode (item) {
       console.log('showQrCode', item)
       await this.getCheckCountBook()
-      console.log(parseInt(item.close), this.countBooking)
-      if (this.countBooking > parseInt(item.close)) {
+      let closeJob = parseInt(item.close) * 30
+      console.log(closeJob, this.countBooking)
+      if (this.countBooking > closeJob) {
         this.$swal('ผิดพลาด', 'เนื่องจากรายการนัดหมายของท่านเกินจำนวนของแพ็คเกจที่ท่านเลือก', 'error')
       } else {
         // const date1 = new Date(this.dataPayment.endDate)

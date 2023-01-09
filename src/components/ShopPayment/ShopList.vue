@@ -56,6 +56,15 @@
                 </v-date-picker>
               </v-menu>
             </v-col>
+            <v-col cols="auto" class="pt-0">
+              <v-btn
+                color="warning"
+                block
+                class="mt-4"
+                style="border-radius: 20px !important;margin-right: 0px;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
+                @click="checkSearch()"
+              ><v-icon color="white" left>mdi-account-reactivate</v-icon>รีเฟรชข้อมูล</v-btn>
+            </v-col>
           </v-row>
           <v-row style="justify-content: space-around;">
             <v-col cols="auto" style="display: flex;justify-content: center;">
@@ -279,10 +288,105 @@
                 <img :src="item.paymentImage" alt="img"
               /></v-avatar>
             </template>
+            <template v-slot:[`item.shopName`]="{ item }">
+              <v-row>
+                <v-col cols="12">
+                  <a @click.stop="openDetail(item)" style="cursor:hand"><u>{{ item.shopName }}</u></a>
+                </v-col>
+              </v-row>
+            </template>
             </v-data-table>
           </v-card>
           </v-col>
         </v-row>
+        <v-dialog v-model="dialogDetails" scrollable persistent max-width="500px">
+            <v-card>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="8" class="text-left pt-10">
+                      <h3><strong>รายละเอียดนัดหมาย</strong></h3>
+                    </v-col>
+                    <v-col cols="4" class="pt-10">
+                      <div style="text-align: end;">
+                        <v-btn
+                          class="mx-2"
+                          fab
+                          small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
+                          @click="dialogDetails = false"
+                          >
+                          X
+                        </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
+                  <v-row >
+                    <v-col cols="12">
+                      <v-card-text v-if="itemPayMent">
+                        <div class="avatar text-center">
+                          <v-avatar size="120" style="border:5px solid #FFFFFF;">
+                          <v-img
+                            v-if="itemPayMent.shopImge"
+                            :src="itemPayMent.shopImge"
+                          ></v-img>
+                          <v-icon size="100" color="orange" v-else>
+                            mdi-tooltip-account
+                          </v-icon>
+                        </v-avatar>
+                        </div>
+                        <div class="text-center">
+                          <h3>{{itemPayMent.shopName}}</h3>
+                        </div>
+                        <v-row>
+                          <v-col cols="12" class="pb-0">
+                            <h4>เลขประจำตัวผู้เสียภาษี : {{itemPayMent.billingTax}}</h4>
+                          </v-col>
+                          <v-col cols="12" class="pb-0">
+                            <h4>ชื่อ-สกุล : {{itemPayMent.billingCusName}}</h4>
+                          </v-col>
+                          <v-col cols="12" class="pb-0">
+                            <h4>เบอร์โทร : {{itemPayMent.contactTel}}</h4>
+                          </v-col>
+                          <v-col cols="12" class="pb-0">
+                            <h4>อีเมล : {{itemPayMent.contactEmail}}</h4>
+                          </v-col>
+                          <v-col cols="12" class="pb-0">
+                            <h4>ที่อยู่ : {{itemPayMent.billingAddress}}</h4>
+                          </v-col>
+                          <v-col cols="12" class="pb-0">
+                            <h4>ราคาแพ็คเกจ : {{itemPayMent.paymentAmount}}</h4>
+                          </v-col>
+                          <v-col cols="12" class="pt-0">
+                            <h4>รอบชำระ : {{itemPayMent.paymentDateMonthYear}}</h4>
+                          </v-col>
+                        </v-row>
+                        <br>
+                          <div class="text-center" v-if="itemPayMent.paymentImage !== ''">
+                            <h6><strong>หลักฐานเงินมัดจำ</strong></h6>
+                          </div>
+                      </v-card-text>
+                      <v-card-text>
+                        <v-container>
+                          <v-img
+                            v-if="itemPayMent.paymentImage !== ''"
+                            class="pa-3"
+                            contain
+                            max-height="100%"
+                            max-width="100%"
+                            @click="gotoPicture(itemPayMent.paymentImage)"
+                            :src="itemPayMent.paymentImage"
+                          ></v-img>
+                        </v-container>
+                      </v-card-text>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+            </v-card>
+        </v-dialog>
         </template>
         </div>
     </v-main>
@@ -370,7 +474,9 @@ export default {
           return pattern.test(value) || 'Invalid e-mail.'
         }
       },
-      itemBookingUse: []
+      itemBookingUse: [],
+      itemPayMent: [],
+      dialogDetails: false
     }
   },
   async mounted () {
@@ -378,6 +484,10 @@ export default {
     this.checkSearch()
   },
   methods: {
+    openDetail (item) {
+      this.itemPayMent = item
+      this.dialogDetails = true
+    },
     gotoPicture (Linkitem) {
       window.open(Linkitem, '_blank')
     },

@@ -8,6 +8,44 @@
     <v-card flat v-if="dataReady">
       <v-card-text>
         <v-container>
+          <template v-if="paymentStatus === 'noCash'">
+            <v-alert
+              class="mt-3"
+              dense
+              prominent
+              color="warning"
+              icon="mdi-alarm-multiple"
+              dark
+            >
+              <v-row align="center">
+                <v-col class="grow">
+                  ท่านยังไม่ได้ชำระค่าบริการ
+                </v-col>
+                <v-col class="shrink" @click="gotoBilling()">
+                  <v-btn small>ชำระค่าบริการ</v-btn>
+                </v-col>
+              </v-row>
+            </v-alert>
+        </template>
+          <template v-if="paymentStatus === 'wait'">
+            <v-alert
+              class="mt-3"
+              dense
+              prominent
+              color="warning"
+              icon="mdi-cash-remove"
+              dark
+            >
+              <v-row align="center">
+                <v-col class="grow">
+                  สลิปของท่านไม่ถูกต้อง
+                </v-col>
+                <v-col class="shrink" @click="gotoBilling()">
+                  <v-btn small>อัพเดทสลิป</v-btn>
+                </v-col>
+              </v-row>
+            </v-alert>
+        </template>
           <v-row>
           <v-col cols="6">
             <v-btn
@@ -123,6 +161,7 @@
 <script>
 import axios from 'axios' // api
 import waitingAlert from '../waitingAlert.vue'
+import moment from 'moment-timezone'
 export default {
   components: {
     waitingAlert
@@ -148,18 +187,42 @@ export default {
         { text: 'ชื่อลูกค้า', value: 'cusName', sortable: true, align: 'left' },
         { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
       ],
-      desserts: []
+      desserts: [],
+      paymentStatus: '',
+      dateCheckBill: ''
     }
   },
   async mounted () {
+    this.dateCheckBill = moment().format('YYYY-MM')
     await this.beforeCreate()
   },
   methods: {
+    async chkPlan () {
+      await axios
+        .get(
+          this.DNS_IP +
+              '/system_shop_Payment/get?shopId=' +
+              this.$session.getAll().data.shopId +
+              '&paymentDate=' + this.dateCheckBill
+        )
+        .then(async (response) => {
+          let rs = response.data
+          if (rs.status === false) {
+            this.paymentStatus = 'noCash'
+          } else {
+            this.paymentStatus = rs[0].paymentStatus
+          }
+        })
+    },
+    gotoBilling () {
+      this.$router.push('/BillingPlan')
+    },
     async beforeCreate () {
       if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
         if (JSON.parse(localStorage.getItem('sessionData')).shopId === this.$route.query.shopId) {
           this.$session.start()
           this.$session.set('data', JSON.parse(localStorage.getItem('sessionData')))
+          this.chkPlan()
           await this.getDataFlow()
           await this.getCheckWait()
         } else {
@@ -171,6 +234,7 @@ export default {
         } else {
           if (this.$session.getAll().data.shopId === this.$route.query.shopId) {
             localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
+            this.chkPlan()
             await this.getDataFlow()
             await this.getCheckWait()
           } else {
