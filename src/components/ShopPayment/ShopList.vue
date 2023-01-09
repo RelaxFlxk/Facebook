@@ -555,28 +555,49 @@ export default {
       this.getSelect(this.getSelectText)
     },
     async changStatus (item, text) {
-      console.log('changStatus', item)
-      let url = this.DNS_IP + '/system_shop_Payment/edit/' + item.id
-      let dt = {
-        paymentStatus: text,
-        LAST_USER: this.$session.getAll().data.userName
+      let textShow = ''
+      if (text === 'finish') {
+        textShow = 'ชำระเรียบร้อย'
+      } else if (text === 'wait') {
+        textShow = 'ลูกค้าชำระอีกครั้ง'
+      } else if (text === 'confirm') {
+        textShow = 'Active'
+      } else if (text === 'inactive') {
+        textShow = 'Inactive'
       }
-      // }
-      await axios.post(url, dt).then(async (response) => {
-        if (text === 'inactive') {
-          await this.updateShopActive('inactive', item)
-          this.checkSearch()
-        } else if (text === 'confirm') {
-          if (item.shopActive === 'inactive') {
-            await this.updateShopActive('active', item)
-            this.checkSearch()
-          } else {
-            this.chkPayMent()
-          }
-        } else {
-          this.checkSearch()
-        }
+      console.log('changStatus', item)
+      this.$swal({
+        title: 'ต้องการเปลี่ยนแปลงสถานะเป็น ' + textShow + ' ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
       })
+        .then(async (result) => {
+          let url = this.DNS_IP + '/system_shop_Payment/edit/' + item.id
+          let dt = {
+            paymentStatus: text,
+            LAST_USER: this.$session.getAll().data.userName
+          }
+          // }
+          await axios.post(url, dt).then(async (response) => {
+            if (text === 'inactive') {
+              await this.updateShopActive('inactive', item)
+              this.checkSearch()
+            } else if (text === 'confirm') {
+              if (item.shopActive === 'inactive') {
+                await this.updateShopActive('active', item)
+                this.checkSearch()
+              } else {
+                this.chkPayMent()
+              }
+            } else {
+              this.checkSearch()
+            }
+          })
+        })
     },
     async updateShopActive (text, item) {
       var ds = {
