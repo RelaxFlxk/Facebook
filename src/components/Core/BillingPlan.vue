@@ -931,7 +931,7 @@ export default {
                 // }
                 await axios.post(url, dt).then(async (response) => {
                   if (response.status) {
-                    this.updateShopActive('active')
+                    this.updateShopActive('active', item.id)
                     this.$swal('สำเร็จ', 'อัพโหลดสลิปสำเร็จ', 'success')
                     let dtMgs = {
                       shopId: this.$session.getAll().data.shopId,
@@ -1045,13 +1045,25 @@ export default {
         this.$swal('ผิดพลาด', 'กรุณากรอกข้อมูลให้ครบ', 'error')
       }
     },
-    async updateShopActive (text) {
-      var ds = {
-        shopActive: text,
-        billingCusName: this.billingCusName,
-        billingAddress: this.billingAddress,
-        billingTax: this.billingTax,
-        LAST_USER: this.$session.getAll().data.userName
+    async updateShopActive (text, packetId) {
+      var ds = {}
+      if (packetId) {
+        ds = {
+          shopActive: text,
+          billingCusName: this.billingCusName,
+          billingAddress: this.billingAddress,
+          billingTax: this.billingTax,
+          billingPlan: packetId,
+          LAST_USER: this.$session.getAll().data.userName
+        }
+      } else {
+        ds = {
+          shopActive: text,
+          billingCusName: this.billingCusName,
+          billingAddress: this.billingAddress,
+          billingTax: this.billingTax,
+          LAST_USER: this.$session.getAll().data.userName
+        }
       }
       await axios
         .post(
