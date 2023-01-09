@@ -104,7 +104,7 @@
                   {{item.flowName}}
                 </p>
                 </div>
-                <div style="display: flex;align-items: flex-start;">
+                <div style="display: flex;align-items: flex-start;word-break: break-word;">
                   <v-icon color="#F48686" class="mx-1 mr-2">mdi-map-marker-radius</v-icon>
                   <p class="font-weight-medium mb-1" style="font-size:14px" v-if="item.address !== null">
                   <!-- <v-icon color="#F48686" class="mx-1 mr-2">mdi-map-marker-radius</v-icon> -->
@@ -254,6 +254,17 @@
               แผนที่</v-btn>
             </v-col>
            </v-row>
+           <v-row class="mt-2 mb-1 px-3">
+            <v-col cols="12" class="text-center pa-1">
+              <v-btn
+                color="#173053"
+                rounded
+                dark
+                block
+                @click="detailsJob(item)"
+              >รายละเอียดนัดหมาย</v-btn>
+            </v-col>
+           </v-row>
              </v-card>
             <div class="mx-6 pa-3 ma-2">
               <div v-if="shopId !== 'U9f316c85400fd716ea8c80d7cd5b61f8'">
@@ -374,7 +385,7 @@
                 block
                 color="#173053"
                 dark
-                @click="closeJobStart(item.sortNo, item.jobId, item)"
+                @click="closeJobStart(item)"
               >ปิดจบงาน</v-btn>
 
             </div>
@@ -410,7 +421,7 @@
                   {{CloseJob.flowName}}
                 </p>
                 </div>
-                <div style="display: flex;align-items: flex-start;">
+                <div style="display: flex;align-items: flex-start;word-break: break-word;">
                   <v-icon color="#F48686" class="mx-1 mr-2">mdi-map-marker-radius</v-icon>
                   <p class="font-weight-medium mb-1" style="font-size:14px" v-if="CloseJob.address !== null">
                     <!-- <v-icon color="#F48686" class="mx-1 mr-2">mdi-map-marker-radius</v-icon> -->
@@ -467,13 +478,22 @@
                 <v-container>
                   <v-row>
                     <v-col cols="12" class="pb-0">
-                      <v-text-field
+                      <!-- <v-text-field
                         v-model="address"
                         outlined
                         label="ชื่อของที่อยู่"
                         auto-grow
                         readonly
-                      ></v-text-field>
+                        append-outer-icon="mdi-open-in-new"
+                        @click:append-outer="NewTap(address)"
+                      >
+                      <template v-slot:label>
+                        <a>{{address}}</a>
+                      </template>
+                    </v-text-field> -->
+                    <!-- <a @click="NewTap(address)">{{address}}</a> -->
+                    <div v-html="setLinks(address)" style="font-size:20px"></div>
+                    <!-- <a>{{address}}<v-icon>mdi-open-in-new</v-icon></a> -->
                     </v-col>
                     <v-col cols="12" class="pb-0">
                       <v-card class="text-center">
@@ -506,9 +526,8 @@
                     <v-btn
                       elevation="10"
                       color="#173053"
-                      outlined
-                      style="background-color:#FFFFFF"
-                      small
+                      rounded
+                      dark
                       @click="dialogMap = false"
                       >ปิด</v-btn
                     >
@@ -517,9 +536,61 @@
               </v-card-text>
             </v-card>
           </v-dialog>
-        <v-dialog v-model="dialogDetail" :max-width="dialogwidth">
-            <v-card class="text-center">
-              <v-card-title><b>รายละเอียดนัดหมาย</b></v-card-title>
+        <v-dialog v-model="dialogDetail" persistent :max-width="dialogwidth">
+            <v-card class="text-center pa-2 px-4">
+              <v-row class="pa-5">
+              <v-col cols="3" md="3" sm="12"  class="pa-0 ma-0" style="display: flex;align-items: flex-start;justify-content: flex-end;padding-left: 11px !important;">
+                <v-avatar size="90" v-if="dataInfo.memberPicture">
+                <img
+                  :src="dataInfo.memberPicture"
+                >
+              </v-avatar>
+              <v-avatar size="90" color="#173053" v-else>
+                <v-icon dark x-large>
+                  mdi-account-circle
+                </v-icon>
+              </v-avatar>
+              </v-col>
+              <v-col cols="9" md="9" sm="12" class="pa-0 ma-0 pl-6">
+                <p class="font-weight-bold mb-1 ml-2" style="font-size:20px" v-if="dataJob.filter((dt) => dt.jobNo === dataInfo.jobNo && dt.fieldName === 'ชื่อ').length > 0">
+                  {{dataJob.filter((dt) => dt.jobNo === dataInfo.jobNo && dt.fieldName === 'ชื่อ')[0].fieldValue}}
+                </p>
+                <div style="display: flex;align-items: flex-start;">
+                  <v-icon color="#F48686" class="mx-1">mdi-square-medium</v-icon>
+                <p class="font-weight-medium mb-1" style="font-size:14px" v-if="dataInfo.flowName !== null">
+                  <!-- <v-icon color="#F48686" class="mx-1">mdi-square-medium</v-icon> -->
+                  {{dataInfo.flowName}}
+                </p>
+                </div>
+                <div style="display: flex;align-items: flex-start;word-break: break-word;">
+                  <v-icon color="#F48686" class="mx-1 mr-2">mdi-map-marker-radius</v-icon>
+                  <p class="font-weight-medium mb-1" style="font-size:14px" v-if="dataInfo.address !== null">
+                  <!-- <v-icon color="#F48686" class="mx-1 mr-2">mdi-map-marker-radius</v-icon> -->
+                  {{dataInfo.address}}
+                </p>
+                </div>
+                <div style="display: flex;align-items: flex-start;">
+                  <v-icon  color="#24C74D" class="mx-2 mr-2 mt-1 iconify" small data-icon="el:phone-alt"></v-icon>
+                  <p class="font-weight-bold mb-1" style="font-size:14px" v-if="dataJob.filter((dt) => dt.jobNo === dataInfo.jobNo && dt.fieldName === 'เบอร์โทร').length > 0">
+                  <!-- <v-icon  color="#24C74D" class="mx-2 mr-2 mt-1 iconify" small data-icon="el:phone-alt"></v-icon> -->
+                {{dataJob.filter((dt) => dt.jobNo === dataInfo.jobNo && dt.fieldName === 'เบอร์โทร')[0].fieldValue}}
+                </p>
+                </div>
+              </v-col>
+            </v-row>
+            <v-row>
+                <v-col cols="12">
+                  <v-btn
+                    depressed
+                    color="error"
+                    rounded
+                    @click="dialogDetail = false"
+                  >
+                  ปิดหน้านี้
+                  </v-btn>
+                </v-col>
+              </v-row>
+              <!-- <v-card-title><b>รายละเอียดนัดหมาย</b></v-card-title>
               <v-card-text>
                 <v-row>
                   <v-col class="text-right">ประเภทบริการ</v-col>
@@ -567,7 +638,7 @@
                   ปิดหน้านี้
                   </v-btn>
                 </v-col>
-              </v-row>
+              </v-row> -->
             </v-card>
           </v-dialog>
                   <!-- DIALOG ค่าใช้จ่าย -->
@@ -627,6 +698,7 @@
                       elevation="2"
                       depressed
                       color="#1B437C"
+                      :disabled="totalPrice === ''? true : false"
                       @click="closeJobSubmit(totalPrice)"
                     >
                       <v-icon left>mdi-checkbox-marked-circle</v-icon>
@@ -694,7 +766,7 @@
           </v-card>
         </v-dialog>
         <!-- end add -->
-        <v-dialog v-model="dialogMessage" persistent :max-width="dialogwidth">
+        <v-dialog v-model="dialogMessage" persistent max-width="80%">
           <v-card class="pa-1 px-3">
             <div style="text-align: end;">
                 <v-btn
@@ -796,6 +868,7 @@ import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import moment from 'moment-timezone' // แปลง date
 import VuetifyMoney from '../VuetifyMoney.vue'
+
 export default {
   name: 'JobList',
   components: {
@@ -977,6 +1050,14 @@ export default {
         await this.getCloseJob(this.date)
       }
     },
+    setLinks (text) {
+      // eslint-disable-next-line no-useless-escape
+      const Rexp = /(\b(https?|ftp|file):\/\/([-A-Z0-9+&@#%?=~_|!:,.;]*)([-A-Z0-9+&@#%?\/=~_|!:,.;]*)[-A-Z0-9+&@#\/%=~_|])/ig
+      return text.replace(Rexp, "<a href='$1' target='_blank'>$1</a>")
+    },
+    NewTap (address) {
+      window.open(address, '_blank')
+    },
     setMessage (item) {
       console.log('item', item)
       this.formMessage.jobNo = item.jobNo
@@ -1153,8 +1234,9 @@ export default {
       this.dataInfo = {}
       this.dataInfoPackage = []
       this.dataInfo = data
+      this.dialogDetail = true
       console.log('detailsJob', data)
-      var packageIds = packageId[0].packageId || ''
+      let packageIds = packageId[0].packageId || ''
       if (packageIds !== '') {
         await axios.get(this.DNS_IP_Loyalty + '/PackageLog/get?shopId=' + data.shopId + '&lineUserId=' + data.lineUserId + '&packageId=' + packageIds).then(response => {
           console.log('PackageLog', response.data)
@@ -1626,7 +1708,7 @@ export default {
         )
       }
     },
-    closeJobStart (sortNo, jobId, data) {
+    closeJobStart (data, text = 'Alert') {
       this.checkPayment = this.itemFlow.filter((item) => item.value === data.flowId)[0].allData.checkPayment
       // console.log('data', data)
       console.log('itemFlow', this.itemFlow)
@@ -1646,34 +1728,16 @@ export default {
         this.dialogDelete = true
         console.log('testIF')
       } else {
-        this.closeJobSubmit('0')
+        if (text === 'notAlert') {
+          this.closeJobSubmit('0', text)
+        } else {
+          this.closeJobSubmit('0')
+        }
       }
       console.log('this.formDelete', this.formDelete)
     },
-    closeJobSubmit (totalPrice) {
-      this.$swal({
-        title: 'ให้บริการ เสร็จเรียบร้อยแล้ว ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#F38383',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      }).then(async response => {
-        // if (this.packageId !== '' && this.productExchangeRateId === '') {
-        //   await this.usePackage()
-        // } else if (this.packageId === '' && this.productExchangeRateId !== '') {
-        //   if (this.lineUserId !== '') {
-        //     await this.useCoin(totalPrice)
-        //   }
-        // } else if (this.packageId !== '' && this.productExchangeRateId !== '') {
-        //   if (this.lineUserId !== '') {
-        //     await this.useCoin(totalPrice)
-        //     await this.usePackage()
-        //   } else {
-        //     await this.usePackage()
-        //   }
-        // }
+    async closeJobSubmit (totalPrice, text = 'Alert') {
+      if (text === 'notAlert') {
         if (this.totalPrice === '') {
           this.formDelete.totalPrice = totalPrice
         } else {
@@ -1689,7 +1753,47 @@ export default {
             this.dialogDelete = false
             this.totalPrice = ''
           })
-      })
+      } else {
+        this.$swal({
+          title: 'ให้บริการ เสร็จเรียบร้อยแล้ว ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#F38383',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        }).then(async response => {
+        // if (this.packageId !== '' && this.productExchangeRateId === '') {
+        //   await this.usePackage()
+        // } else if (this.packageId === '' && this.productExchangeRateId !== '') {
+        //   if (this.lineUserId !== '') {
+        //     await this.useCoin(totalPrice)
+        //   }
+        // } else if (this.packageId !== '' && this.productExchangeRateId !== '') {
+        //   if (this.lineUserId !== '') {
+        //     await this.useCoin(totalPrice)
+        //     await this.usePackage()
+        //   } else {
+        //     await this.usePackage()
+        //   }
+        // }
+          if (this.totalPrice === '') {
+            this.formDelete.totalPrice = totalPrice
+          } else {
+            this.formDelete.totalPrice = this.totalPrice
+          }
+          await axios
+            .post(this.DNS_IP + '/job/editPrice/' + this.formDelete.jobId, this.formDelete)
+            .then(async response => {
+              await this.pushmessagePrice(this.formDelete.jobNo)
+              this.$swal('เรียบร้อย', 'ปิดงานเรียบร้อย', 'success')
+              await this.getDataJob()
+              await this.getCloseJob(this.date)
+              this.dialogDelete = false
+              this.totalPrice = ''
+            })
+        })
+      }
     },
     async pushmessagePrice (jobNo) {
       let updateStatusSend = { updateStatusSend: 'false', checkPayment: this.checkPayment }
@@ -1719,6 +1823,7 @@ export default {
       // this.formUpdate.stepId = this.formUpdate.stepTitle.stepId
       // this.formUpdate.flowId = this.flowId
       // this.formUpdate.shopId = this.shopId
+      let checkLastStep = this.checkLastStep(this.selectStep)
       formUpdate.stepId = this.selectStep
       formUpdate.flowId = this.selectFlow
       formUpdate.shopId = this.shopId
@@ -1747,12 +1852,32 @@ export default {
               // Debug response
               console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
               await this.pushMessageCus(formUpdate.jobId)
-              this.$swal('เรียบร้อย', 'แก้ไขสถานะ เรียบร้อย', 'success')
               // this.getLayout()
               await this.getJobData()
               await this.getDataJob()
               await this.getJobLog()
               await this.getFlowStep()
+              if (checkLastStep) {
+                console.log('True')
+                this.$swal({
+                  title: 'คุณต้องการ ปิดจบงาน เลยหรือไม่?',
+                  type: 'question',
+                  showCancelButton: true,
+                  confirmButtonColor: '#3085d6',
+                  cancelButtonColor: '#b3b1ab',
+                  confirmButtonText: 'ปิดจบงาน',
+                  cancelButtonText: 'ยังไม่ปิดงาน'
+                })
+                  .then(async result => {
+                    this.closeJobStart(item, 'notAlert')
+                  })
+                  .catch(error => {
+                    console.log('error function editDataGlobal : ', error)
+                  })
+              } else {
+                console.log('False')
+                this.$swal('เรียบร้อย', 'แก้ไขสถานะ เรียบร้อย', 'success')
+              }
             })
             // eslint-disable-next-line handle-callback-err
             .catch(error => {
@@ -1763,6 +1888,14 @@ export default {
           this.selectStep = ''
           console.log('error function editDataGlobal : ', error)
         })
+    },
+    checkLastStep (stepId) {
+      let Index = this.itemStep.findIndex((item) => parseInt(item.value) === stepId)
+      if ((Index + 1) === this.itemStep.length) {
+        return true
+      } else {
+        return false
+      }
     }
   }
 }
