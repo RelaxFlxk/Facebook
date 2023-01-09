@@ -374,13 +374,10 @@
                   </v-btn>
                   </div>
                   <h3 class="text-center" style="color:#1B437C;font-weight: bold;">ชำระเงินด้วย</h3>
-                  <h3 class="text-center" style="color:#1B437C;font-weight: bold;">QR PromptPay</h3>
-                  <!-- <p class="text-center mt-5">
-                    กรุณาแคปหน้าจอ QR Code
-                    เพื่อดำเนินการจ่ายเงินด้วยแอพพลิเคชั่นของธนาคาร
-                  </p> -->
+                  <h3 class="text-center" style="color:#1B437C;font-weight: bold;">วิธีการโอน</h3>
+                  <!-- <h3 class="text-center" style="color:#1B437C;font-weight: bold;">QR PromptPay</h3> -->
                   <v-card class="mt-6 mb-6 pb-6" elevation="0">
-                    <v-img
+                    <!-- <v-img
                       height="170"
                       src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2FQR-prompt.jpg?alt=media&token=42637b63-af5b-45d9-8900-b866b789819e"
                     ></v-img>
@@ -391,10 +388,10 @@
                         level="H"
                         :foreground="foreground"
                       />
-                    </div>
-                    <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-3">
+                    </div> -->
+                    <!-- <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-3">
                       บริษัท บีแทสก์ คอนซัลติ้ง จำกัด
-                    </h6>
+                    </h6> -->
                     <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
                       บัญชี : บริษัท บีแทสก์ คอนซัลติ้ง จำกัด
                     </h6>
@@ -514,6 +511,28 @@
                         @change="selectImg"
                         v-model="filesImg"
                       ></v-file-input>
+                    </v-col>
+                    <v-col cols="12" class="text-center pa-2">
+                    <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
+                      บัญชี : บริษัท บีแทสก์ คอนซัลติ้ง จำกัด
+                    </h6>
+                    <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
+                      จำนวนเงิน : {{ formatNumber(paymentAmount) }} บาท
+                    </h6>
+                    <div class="pl-4 pr-4"><v-divider></v-divider></div>
+                    <div class="text-center" style="display:flex;"><v-img
+                          style="position: relative;left: -33px;"
+                          aspect-ratio="6"
+                          contain
+                          max-width="200"
+                          src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2Fktb.png?alt=media&token=f197ab8f-f502-4136-91a0-8c92f2968ecf"
+                        ></v-img><h6 style="position: relative;left: -85px;margin-bottom: 0;">ธนาคารกรุงไทย สาขาประชาอุทิศ  เลขบัญชี 094-0-34082-8</h6></div>
+                    <div class="text-center" style="display:flex;padding:20px"><v-img
+                          aspect-ratio="6"
+                          contain
+                          max-width="200"
+                          src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2Fkbank.png?alt=media&token=f492fd39-0b56-4aa4-82d7-730b53167029"
+                        ></v-img><h6>ธนาคารกสิกรไทย สาขาศรีวรา ทาวน์อินทาวน์ เลขบัญชี 107-3-15084-8</h6></div>
                     </v-col>
                     <v-col cols="12" class="pt-1 pb-0">
                       <v-text-field
