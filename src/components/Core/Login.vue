@@ -116,13 +116,13 @@
         </v-container>
       </v-col>
     </v-row>
-    <v-dialog v-model="dialogPaymentUpload" persistent max-width="445">
+    <v-dialog v-model="dialogPaymentUpload" persistent max-width="500px">
       <v-card>
         <v-container>
           <v-card-text>
             <v-row>
               <v-col cols="10" class="text-left pt-10">
-                <h3><strong>เนื่องจากร้านค้าของท่าน ค้างชำระค่าบริการรายเดือน</strong></h3>
+                <h3><strong>กรุณาชำระค่าบริการรายเดือน</strong></h3>
               </v-col>
               <v-col cols="2" class="pt-10">
                 <div style="text-align: end;">
@@ -144,9 +144,6 @@
           <v-card-text>
             <v-row>
               <v-col cols="12">
-                ติดต่อเรา เพื่อต่ออายุ: 09xxxxxxx
-              </v-col>
-              <v-col cols="12">
                 <v-btn
                   elevation="2"
                   x-large
@@ -158,6 +155,9 @@
                   <v-icon left  class="iconify" data-icon="medical-icon:billing"></v-icon>
                   ชำระค่าบริการ
                 </v-btn>
+              </v-col>
+              <v-col cols="12">
+                <h4>หากต้องการติดต่อเจ้าหน้าที่ กรุณาติดต่อที่ LINE OA : <a href="https://lin.ee/8dJyn31">@betaskthai</a></h4>
               </v-col>
             </v-row>
           </v-card-text>

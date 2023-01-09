@@ -184,7 +184,7 @@
                       class="pa-3"
                       color="error"
                     >
-                      <v-icon dark size="30" class="iconify" data-icon="mdi:cash-check">
+                      <v-icon dark size="30" class="iconify" data-icon="lucide:shield-close">
                       </v-icon>
                     </v-avatar>
                   </div>
@@ -270,7 +270,7 @@
                 dark
                 @click="changStatus(item, 'inactive')"
               >
-                <v-icon > mdi-check-circle </v-icon>
+                <v-icon > mdi-close-circle </v-icon>
                 Inactive
               </v-btn>
             </template>
@@ -445,6 +445,7 @@ export default {
       this.getSelect(this.getSelectText)
     },
     async changStatus (item, text) {
+      console.log('changStatus', item)
       let url = this.DNS_IP + '/system_shop_Payment/edit/' + item.id
       let dt = {
         paymentStatus: text,
@@ -453,19 +454,21 @@ export default {
       // }
       await axios.post(url, dt).then(async (response) => {
         if (text === 'inactive') {
-          await this.updateShopActive('inactive')
+          await this.updateShopActive('inactive', item)
           this.checkSearch()
         } else if (text === 'confirm') {
           if (item.shopActive === 'inactive') {
-            await this.updateShopActive('active')
+            await this.updateShopActive('active', item)
             this.checkSearch()
+          } else {
+            this.chkPayMent()
           }
         } else {
           this.checkSearch()
         }
       })
     },
-    async updateShopActive (text) {
+    async updateShopActive (text, item) {
       var ds = {
         shopActive: text,
         LAST_USER: this.$session.getAll().data.userName
@@ -473,7 +476,7 @@ export default {
       await axios
         .post(
           // eslint-disable-next-line quotes
-          this.DNS_IP + "/sys_shop/edit/" + this.$session.getAll().data.shopId,
+          this.DNS_IP + "/sys_shop/edit/" + item.shopId,
           ds
         )
         .then(async (response) => {
