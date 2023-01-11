@@ -348,7 +348,7 @@
                             <h4>ชื่อ-สกุล : {{itemPayMent.billingCusName}}</h4>
                           </v-col>
                           <v-col cols="12" class="pb-0">
-                            <h4>เบอร์โทร : {{itemPayMent.contactTel}}</h4>
+                            <h4>เบอร์โทร : {{itemPayMent.billingPhone || itemPayMent.contactTel}}</h4>
                           </v-col>
                           <v-col cols="12" class="pb-0">
                             <h4>อีเมล : {{itemPayMent.contactEmail}}</h4>
@@ -448,7 +448,9 @@ export default {
       headers: [
         { text: 'ชื่อร้าน', value: 'shopName' },
         // { text: 'วันที่นัดหมาย', value: 'dueDate' },
-        { text: 'เบอร์โทร', value: 'contactTel' },
+        { text: 'เบอร์โทร', value: 'billingPhone' },
+        { text: 'email', value: 'contactEmail' },
+        { text: 'จำนวนนัดหมายที่สร้างของเดือนที่แล้ว', value: 'countBooking' },
         { text: 'สลิป', value: 'paymentImage' },
         { text: 'ราคาแพ็กเกจ', value: 'paymentAmount' },
         { text: 'สถานะ', value: 'paymentStatus' },
@@ -476,6 +478,7 @@ export default {
       },
       itemBookingUse: [],
       itemPayMent: [],
+      itemCountBooking: [],
       dialogDetails: false
     }
   },
@@ -496,7 +499,22 @@ export default {
       // setTimeout(() => this.searchBooking(), 500)
       this.searchBooking()
     },
+    async getCountBooking () {
+      this.itemCountBooking = []
+      let urlApi = this.DNS_IP + '/Booking/getCountBooking'
+      await axios
+        .get(urlApi)
+        .then(async response => {
+          let rs = response.data
+          if (rs.status !== false) {
+            this.itemCountBooking = rs
+          } else {
+            this.itemCountBooking = []
+          }
+        })
+    },
     async searchBooking () {
+      await this.getCountBooking()
       this.countWait = 0
       this.countConfirm = 0
       this.countNoCash = 0
@@ -513,7 +531,13 @@ export default {
           if (rs.status !== false) {
             for (let i = 0; i < rs.length; i++) {
               let d = rs[i]
+              d.billingPhone = d.billingPhone || d.contactTel
               d.paymentStatus = d.paymentStatus || ''
+              if (this.itemCountBooking.filter(el => { return el.shopId === d.shopId }).length > 0) {
+                d.countBooking = this.itemCountBooking.filter(el => { return el.shopId === d.shopId })[0].countBooking
+              } else {
+                d.countBooking = 0
+              }
               if (d.shopActive === 'inactive') {
                 d.paymentStatus = 'inactive'
               }
@@ -531,7 +555,13 @@ export default {
           if (rs.status !== false) {
             for (let i = 0; i < rs.length; i++) {
               let d = rs[i]
+              d.billingPhone = d.billingPhone || d.contactTel
               d.paymentStatus = d.paymentStatus || 'noCash'
+              if (this.itemCountBooking.filter(el => { return el.shopId === d.shopId_Shop }).length > 0) {
+                d.countBooking = this.itemCountBooking.filter(el => { return el.shopId === d.shopId_Shop })[0].countBooking
+              } else {
+                d.countBooking = 0
+              }
               if (d.paymentStatus === 'noCash') {
                 if (d.shopActive === 'inactive') {
                   d.paymentStatus = 'inactive'

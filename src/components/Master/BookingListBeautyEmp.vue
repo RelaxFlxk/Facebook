@@ -1976,7 +1976,7 @@
                 </v-container>
               </v-card-text>
               <v-card-text  v-if="dataEditJobReady && !statusConfirmJob">
-                <strong><h2>เนื่องจากวันที่นัดหมาย {{format_dateNotime(dueDate)}} ไม่ตรงกับวันที่ปัจจุบัน</h2></strong>
+                <strong><h2>เนื่องจากวันที่นัดหมาย {{dueDate}} ไม่ตรงกับวันที่ปัจจุบัน</h2></strong>
                 <strong style="color: red;"><h3>กรุณาตรวจสอบข้อมูล หรือ เปลี่ยนเวลานัดหมายใหม่</h3></strong>
               </v-card-text>
               <v-card-text  v-if="!dataEditJobReady">
@@ -4451,7 +4451,7 @@
               </v-col>
             </center>
             <v-col class="text-center">
-              <span class="headline">จบกระบวนการซ่อม</span>
+              <span class="headline">ปิดงานนนี้</span>
             </v-col>
             <v-card-text>
               <v-container>
@@ -4465,7 +4465,7 @@
                       @click="closeJob()"
                     >
                       <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                      จบกระบวนการซ่อม
+                      ปิดงานนนี้
                     </v-btn>
                     <v-btn
                       color="primary"
@@ -6719,7 +6719,7 @@ export default {
             // pageStatus: 'cancel',
             // limitBookingCount: dtint,
             bookNo: item.bookNo,
-            contactDate: this.format_date(new Date()),
+            contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
             status: 'confirm',
             statusUse: 'use',
             shopId: this.$session.getAll().data.shopId,
@@ -7644,7 +7644,7 @@ export default {
                         .then(async response1 => {
                           var dtt = {
                             bookNo: this.BookingDataItem[0].bookNo,
-                            contactDate: this.format_date(new Date()),
+                            contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
                             status: 'confirmJob',
                             statusUse: 'use',
                             shopId: this.$session.getAll().data.shopId,
@@ -8267,7 +8267,7 @@ export default {
       }).then(async () => {
         var dt = {
           bookNo: item.bookNo,
-          contactDate: this.format_date(new Date()),
+          contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
           status: 'wait',
           statusUse: 'use',
           shopId: this.$session.getAll().data.shopId,
@@ -8653,12 +8653,13 @@ export default {
                   if (s.dueDate === '') {
                     s.dueDateText = 'ไม่มีเวลานัดหมาย'
                   } else {
-                    s.dueDateText = this.format_dateNotime(d.dueDate) + ' ' + d.timeText
+                    s.dueDateText = d.dueDateTextDay + ' ' + d.timeText
                   }
                   s.shopId = d.shopId
                   s.bookingEmpFlow = d.bookingEmpFlow
                   s.bookingEmpFlowName = d.bookingEmpFlowName
                   s.dueDateDay = d.dueDateDay
+                  s.dueDateTextDay = d.dueDateTextDay
                   s.remark = d.remark || ''
                   s.masBranchID = d.masBranchID
                   s.limitBookingCheck = d.limitBookingCheck
@@ -9745,7 +9746,7 @@ export default {
       if (dateS) {
         dateSelect = this.momenDate_1(dateS)
       } else {
-        dateSelect = this.momenDate_1(new Date())
+        dateSelect = moment().format('YYYY-MM-DD')
       }
       await axios
         .get(
@@ -10378,8 +10379,8 @@ export default {
     },
     async getBookingListJob (item) {
       await this.getEmpChange(item)
-      let dateCurrent = this.momenDate_1(new Date())
-      let dueDate = this.momenDate_1(item.dueDate)
+      let dateCurrent = moment().format('YYYY-MM-DD')
+      let dueDate = item.dueDateDay
       if (dateCurrent >= dueDate) {
         this.statusConfirmJob = true
       } else {
@@ -10387,23 +10388,8 @@ export default {
         this.statusConfirmJob = false
       }
       if (this.statusConfirmJob) {
-        // let checkStep = await axios.get(this.DNS_IP + '/flowStep/get?flowId=' + item.flowId)
-        // console.log('checkStep', checkStep)
-        // if (checkStep.data.status === false) {
-        //   this.endDate = this.momenDate_1(new Date())
-        //   this.endTime = this.momenTime(new Date())
-        //   this.statusShowDateConfiremjob = false
-        // } else {
-        //   if (this.$session.getAll().data.timeSlotStatus === 'True') {
-        //     this.endDate = this.momenDate_1(new Date())
-        //     this.endTime = this.momenTime(new Date())
-        //     this.statusShowDateConfiremjob = false
-        //   } else {
-        //     this.statusShowDateConfiremjob = true
-        //   }
-        // }
-        this.endDate = this.momenDate_1(new Date())
-        this.endTime = this.momenTime(new Date())
+        this.endDate = moment().format('YYYY-MM-DD')
+        this.endTime = moment().format('HH:mm')
         this.statusShowDateConfiremjob = false
         this.dataQrcode = item
         this.dataReady = false
@@ -11403,12 +11389,13 @@ export default {
                 if (s.dueDate === '') {
                   s.dueDateText = 'ไม่มีเวลานัดหมาย'
                 } else {
-                  s.dueDateText = this.format_dateNotime(d.dueDate) + ' ' + d.timeText
+                  s.dueDateText = d.dueDateTextDay + ' ' + d.timeText
                 }
                 s.shopId = d.shopId
                 s.bookingEmpFlow = d.bookingEmpFlow
                 s.bookingEmpFlowName = d.bookingEmpFlowName
                 s.dueDateDay = d.dueDateDay
+                s.dueDateTextDay = d.dueDateTextDay
                 s.remark = d.remark || ''
                 s.masBranchID = d.masBranchID
                 s.limitBookingCheck = d.limitBookingCheck
@@ -11567,12 +11554,13 @@ export default {
                 if (s.dueDate === '') {
                   s.dueDateText = 'ไม่มีเวลานัดหมาย'
                 } else {
-                  s.dueDateText = this.format_dateNotime(d.dueDate) + ' ' + d.timeText
+                  s.dueDateText = d.dueDateTextDay + ' ' + d.timeText
                 }
                 s.shopId = d.shopId
                 s.bookingEmpFlow = d.bookingEmpFlow
                 s.bookingEmpFlowName = d.bookingEmpFlowName
                 s.dueDateDay = d.dueDateDay
+                s.dueDateTextDay = d.dueDateTextDay
                 s.remark = d.remark || ''
                 s.masBranchID = d.masBranchID
                 s.limitBookingCheck = d.limitBookingCheck
@@ -12196,7 +12184,7 @@ export default {
     async confirmChkAdd (item) {
       var dt = {
         bookNo: item.bookNo,
-        contactDate: this.format_date(new Date()),
+        contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
         status: 'confirm',
         statusUse: 'use',
         shopId: this.$session.getAll().data.shopId,
@@ -12321,27 +12309,18 @@ export default {
     },
     async getBookingDataJob (dt, text) {
       this.dueDateText = dt.dueDateText
-      let dateCurrent = this.momenDate_1(new Date())
-      let dueDate = this.momenDate_1(dt.dueDate)
-      console.log(dateCurrent, dueDate)
+      let dateCurrent = moment().format('YYYY-MM-DD')
+      let dueDate = dt.dueDateDay
+      console.log(dateCurrent, dueDate, dt)
       await this.getEmpChange(dt)
       if (dateCurrent >= dueDate) {
         this.statusConfirmJob = true
       } else {
         this.statusConfirmJob = false
       }
-      // console.log('this.statusConfirmJob', this.statusConfirmJob)
-      // let checkStep = await axios.get(this.DNS_IP + '/flowStep/get?flowId=' + dt.flowId)
-      // console.log('checkStep', checkStep)
-      // if (checkStep.data.status === false) {
-      //   this.endDate = this.momenDate_1(new Date())
-      //   this.endTime = this.momenTime(new Date())
-      //   this.statusShowDateConfiremjob = false
-      // } else {
-      //   this.statusShowDateConfiremjob = true
-      // }
-      this.endDate = this.momenDate_1(new Date())
-      this.endTime = this.momenTime(new Date())
+      this.endDate = moment().format('YYYY-MM-DD')
+      this.endTime = moment().format('HH:mm')
+      this.dueDate = dt.dueDateTextDay
       this.statusShowDateConfiremjob = false
       if (this.statusConfirmJob && this.showOnsite === 'แสดง') {
         this.jobCheckPackage = false
@@ -12377,7 +12356,6 @@ export default {
         this.BookingDataItem = []
         let itemIncustomField = []
         // this.statusConfirmJob = false
-        this.dueDate = dt.dueDate
 
         await axios
           .get(
@@ -12484,7 +12462,6 @@ export default {
         this.BookingDataItem = []
         let itemIncustomField = []
         // this.statusConfirmJob = false
-        this.dueDate = dt.dueDate
 
         await axios
           .get(
@@ -12707,7 +12684,7 @@ export default {
                             await this.pushMsg(response.data.jobNo)
                             var dtt = {
                               bookNo: this.BookingDataItem[0].bookNo,
-                              contactDate: this.format_date(new Date()),
+                              contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
                               status: 'confirmJob',
                               statusUse: 'use',
                               shopId: this.$session.getAll().data.shopId,
@@ -12944,7 +12921,7 @@ export default {
         console.log('dtint', dtint)
         var dt = {
           bookNo: item.bookNo,
-          contactDate: this.format_date(new Date()),
+          contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
           status: 'confirm',
           statusUse: 'use',
           pageStatus: this.getSelectText,
@@ -13110,7 +13087,7 @@ export default {
       this.dataCancelReady = false
       var dt = {
         bookNo: this.bookNoRemove.bookNo,
-        contactDate: this.format_date(new Date()),
+        contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
         status: 'cancel',
         statusUse: 'use',
         shopId: this.$session.getAll().data.shopId,
@@ -13266,7 +13243,7 @@ export default {
         .then(async response => {
           var dt = {
             bookNo: item.bookNo,
-            contactDate: this.format_date(new Date()),
+            contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
             status: changeStatus,
             statusUse: 'use',
             shopId: this.$session.getAll().data.shopId,

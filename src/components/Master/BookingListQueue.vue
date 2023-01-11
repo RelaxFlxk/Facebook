@@ -413,8 +413,11 @@ export default {
   },
   methods: {
     async sendQonline (item) {
+      let dtt = {
+        checkGetQueue: 'False'
+      }
       await axios
-        .post(this.DNS_IP + '/Booking/pushMsgQueue/' + item.bookNo)
+        .post(this.DNS_IP + '/Booking/pushMsgQueue/' + item.bookNo, dtt)
         .then(async responses => {
           this.$swal({
             title: 'Send successfully',
@@ -641,23 +644,34 @@ export default {
         await axios
           .post(this.DNS_IP + '/booking_transaction/add', dtt)
           .then(async responses => {
+            let lineUserId = item.lineUserId || ''
+            if (lineUserId !== '') {
+              let dtt = {
+                checkGetQueue: 'True'
+              }
+              await axios
+                .post(this.DNS_IP + '/Booking/pushMsgQueue/' + item.bookNo, dtt)
+                .then(async responses => {}).catch(error => {
+                  console.log('error function pushMsgQueue : ', error)
+                })
+            }
             this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
             await this.searchBooking()
-            let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
-            if (bookSelect.length > 0) {
-              for (let i = 0; i < bookSelect.length; i++) {
-                let d = bookSelect[i]
-                let s = {}
-                s.lineUserId = d.lineUserId || ''
-                if (s.lineUserId !== '') {
-                  await axios
-                    .post(this.DNS_IP + '/Booking/pushMsgQueue/' + d.bookNo)
-                    .then(async responses => {}).catch(error => {
-                      console.log('error function pushMsgQueue : ', error)
-                    })
-                }
-              }
-            }
+            // let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
+            // if (bookSelect.length > 0) {
+            //   for (let i = 0; i < bookSelect.length; i++) {
+            //     let d = bookSelect[i]
+            //     let s = {}
+            //     s.lineUserId = d.lineUserId || ''
+            //     if (s.lineUserId !== '') {
+            //       await axios
+            //         .post(this.DNS_IP + '/Booking/pushMsgQueue/' + d.bookNo)
+            //         .then(async responses => {}).catch(error => {
+            //           console.log('error function pushMsgQueue : ', error)
+            //         })
+            //     }
+            //   }
+            // }
           })
       })
     },

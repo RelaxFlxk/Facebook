@@ -665,7 +665,10 @@ export default {
       // } else {
       //   this.paymentStatus = 'fix'
       // }
-      this.chkPlan()
+      let trialsVersionDate = this.$session.getAll().data.trialsVersionDate || ''
+      if (trialsVersionDate === '' || moment().format('YYYY-MM-DD HH:mm') > trialsVersionDate) {
+        this.chkPlan()
+      }
       console.log('session', this.session)
       console.log('router', this.$route.fullPath)
       this.billingCustomerId = this.session.data.billingCustomerId || ''
