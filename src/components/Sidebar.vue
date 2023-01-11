@@ -23,25 +23,45 @@
             </v-row>
           </v-alert>
       </template>
-        <template v-if="paymentStatus === 'wait'">
-          <v-spacer></v-spacer>
-          <v-alert
-            class="mt-3"
-            dense
-            prominent
-            color="warning"
-            icon="mdi-cash-remove"
-            dark
-          >
-            <v-row align="center">
-              <v-col class="grow">
-                สลิปของท่านไม่ถูกต้อง
-              </v-col>
-              <v-col class="shrink" @click="gotoBilling()">
-                <v-btn small>อัพเดทสลิป</v-btn>
-              </v-col>
-            </v-row>
-          </v-alert>
+      <template v-if="paymentStatus === 'wait'">
+        <v-spacer></v-spacer>
+        <v-alert
+          class="mt-3"
+          dense
+          prominent
+          color="warning"
+          icon="mdi-cash-remove"
+          dark
+        >
+          <v-row align="center">
+            <v-col class="grow">
+              สลิปของท่านไม่ถูกต้อง
+            </v-col>
+            <v-col class="shrink" @click="gotoBilling()">
+              <v-btn small>อัพเดทสลิป</v-btn>
+            </v-col>
+          </v-row>
+        </v-alert>
+      </template>
+      <template v-if="lineOaStatus === 'True'">
+        <v-spacer></v-spacer>
+        <v-alert
+          class="mt-3"
+          dense
+          prominent
+          color="teal"
+          icon="mdi-link-variant-remove"
+          dark
+        >
+          <v-row align="center">
+            <v-col class="grow">
+              บัญชีของท่านยังไม่ได้เชื่อมต่อ LINE OA
+            </v-col>
+            <v-col class="shrink" @click="gotoConnectLine()">
+              <v-btn small>เชื่อมต่อ</v-btn>
+            </v-col>
+          </v-row>
+        </v-alert>
       </template>
       <v-spacer></v-spacer>
       <v-avatar class="mr-3">
@@ -643,7 +663,8 @@ export default {
       broadCastValue: false,
       DashboardValue: false,
       paymentStatus: '',
-      dateCheckBill: ''
+      dateCheckBill: '',
+      lineOaStatus: 'False'
     }
   },
   // beforeCreate () {
@@ -653,10 +674,15 @@ export default {
   //   }
   // },
   computed: {},
-  mounted () {
+  async mounted () {
     if (this.$session.getAll().data.shopActive === 'inactive') {
       this.$router.push('/Core/Login')
     } else {
+      if (this.$session.getAll().data.shopId.includes('SD_')) {
+        await this.chkConnectLineOa()
+      } else {
+        this.lineOaStatus = 'False'
+      }
       // console.log('DD', parseInt(moment().format('DD')))
       // this.dateCheckBill = '2023-01'
       this.dateCheckBill = moment().format('YYYY-MM')
@@ -698,6 +724,48 @@ export default {
   methods: {
     gotoBilling () {
       this.$router.push('/BillingPlan')
+    },
+    gotoConnectLine () {
+      this.$swal({
+        title: 'หากท่านต้องการเชื่อมต่อ LINE OA ระบบจะนำท่านไปยังหน้าเชื่อมต่อ และ เข้าสู่ระบบอีกครั้ง',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async result => {
+          console.log('result', result)
+          if (result) {
+            window.open('https://betask-linked.web.app/CreateLineOAaccount?shopId=' + this.$session.getAll().data.shopId, '_blank').focus()
+            this.$router.push('/Core/Login')
+          }
+        }).catch(error => {
+          console.log('error function editDataGlobal : ', error)
+        })
+      // window.open('https://betask-linked.web.app/CreateLineOAaccount?shopId=' + this.$session.getAll().data.shopId, '_blank').focus()
+    },
+    async chkConnectLineOa () {
+      this.lineOaStatus = 'False'
+      await axios
+        .get(
+          this.DNS_IP +
+              '/lineconfig/get?shopId=' +
+              this.$session.getAll().data.shopId
+        )
+        .then(async (response) => {
+          let rs = response.data
+          console.log('chkConnectLineOa', rs)
+          if (rs.status === false) {
+            this.lineOaStatus = 'True'
+          } else {
+            this.lineOaStatus = 'False'
+          }
+        }).catch((error) => {
+          console.log(error)
+          this.lineOaStatus = 'False'
+        })
     },
     async chkPlan () {
       await axios
