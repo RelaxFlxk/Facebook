@@ -3554,6 +3554,8 @@ export default {
             this.formAdd[key] = 'True'
           } else if (key === 'checkOnsite') {
             this.formAdd[key] = 'False'
+          } else if (key === 'servicePointStatus') {
+            this.formAdd[key] = 'False'
           } else if (key === 'checkDeposit') {
             this.formAdd[key] = 'False'
           } else if (key === 'bookingNowCheck') {
