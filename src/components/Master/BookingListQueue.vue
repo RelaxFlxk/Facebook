@@ -192,13 +192,12 @@
                 ปริ้น (EN)
               </v-btn>
               <v-btn
-                v-if="item.statusBt === 'confirm'"
-                color="red"
+                color="error"
                 small
-                dark
+                :disabled="item.statusBt === 'confirm' ? false:true"
                 @click="closeJobSubmit(item)"
               >
-                <v-icon > mdi-check-circle </v-icon>
+                <v-icon > mdi-bullhorn </v-icon>
                 เรียกคิว
               </v-btn>
             </template>
@@ -494,7 +493,7 @@ export default {
             // '&flowId=' +
             // this.flowSelect +
             '&dueDate=' +
-            this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm'
+            this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
         // '&dueDate=' +
         // this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm'
         await axios

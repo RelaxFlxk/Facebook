@@ -551,7 +551,7 @@
                               v-model="formAdd.customerTimeSlot"
                             ></v-checkbox>
                             </v-col>
-                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="$session.getAll().data.timeSlotStatus !== 'True'">
+                            <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="$session.getAll().data.timeSlotStatus !== 'True'">
                               <v-checkbox
                               label="เปิดรับคิวหน้าร้าน"
                               false-value="False"
@@ -562,6 +562,46 @@
                               v-model="formAdd.storeFrontCheck"
                               @change="checkStoreFrontAdd()"
                             ></v-checkbox>
+                            </v-col>
+                            <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;"  v-if="formAdd.storeFrontCheck === 'True'">
+                            <v-text-field
+                                v-if="formAdd.storeFrontCheck === 'True'"
+                                v-model="formAdd.storeFrontText"
+                                label="อักษรหน้าเลขคิว"
+                                outlined
+                                required
+                                dense
+                                :rules="[rules.required]"
+                                maxlength="1"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontCheck === 'True'"></v-col>
+                            <v-col clos="12" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontCheck === 'True'"  >
+                              <v-text-field
+                                v-model="formAdd.servicePointTh"
+                                label="ชื่อจุดบริการ (TH)"
+                                outlined
+                                required
+                                dense
+                                :rules="[rules.required]"
+                              ></v-text-field>
+                              <v-text-field
+                                v-model="formAdd.servicePointEn"
+                                label="ชื่อจุดบริการ (EN)"
+                                outlined
+                                required
+                                dense
+                                :rules="[rules.required]"
+                              ></v-text-field>
+                              <v-text-field
+                                v-model="formAdd.servicePointCount"
+                                label="จำนวนจุดบริการ"
+                                outlined
+                                required
+                                dense
+                                v-mask="'###'"
+                                :rules="[rules.required]"
+                              ></v-text-field>
                             </v-col>
                           </v-row>
                           <v-row v-if="$session.getAll().data.timeSlotStatus !== 'True'">
@@ -815,7 +855,7 @@
                               v-model="formUpdate.customerTimeSlot"
                             ></v-checkbox>
                             </v-col>
-                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;"  v-if="$session.getAll().data.timeSlotStatus !== 'True'">
+                            <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;"  v-if="$session.getAll().data.timeSlotStatus !== 'True'">
                               <v-checkbox
                               label="เปิดรับคิวหน้าร้าน"
                               false-value="False"
@@ -826,6 +866,45 @@
                               v-model="formUpdate.storeFrontCheck"
                               @change="checkStoreFrontUpdate()"
                             ></v-checkbox>
+                            </v-col>
+                            <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;"  v-if="formUpdate.storeFrontCheck === 'True'">
+                            <v-text-field
+                                v-model="formUpdate.storeFrontText"
+                                label="อักษรหน้าเลขคิว"
+                                outlined
+                                required
+                                dense
+                                :rules="[rules.required]"
+                                maxlength="1"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.storeFrontCheck === 'True'"></v-col>
+                            <v-col cols='12' class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.storeFrontCheck === 'True'"  >
+                              <v-text-field
+                                v-model="formUpdate.servicePointTh"
+                                label="ชื่อจุดบริการ (TH)"
+                                outlined
+                                required
+                                dense
+                                :rules="[rules.required]"
+                              ></v-text-field>
+                              <v-text-field
+                                v-model="formUpdate.servicePointEn"
+                                label="ชื่อจุดบริการ (EN)"
+                                outlined
+                                required
+                                dense
+                                :rules="[rules.required]"
+                              ></v-text-field>
+                              <v-text-field
+                                v-model="formUpdate.servicePointCount"
+                                label="จำนวนจุดบริการ"
+                                outlined
+                                required
+                                dense
+                                v-mask="'###'"
+                                :rules="[rules.required]"
+                              ></v-text-field>
                             </v-col>
                           </v-row>
                           <v-row v-if="$session.getAll().data.timeSlotStatus !== 'True'">
@@ -1942,7 +2021,11 @@ export default {
         overTime: 'True',
         customerTimeSlot: 'False',
         empTitleTh: 'พนักงานช่าง',
-        empTitleEng: 'Employee'
+        empTitleEng: 'Employee',
+        storeFrontText: '',
+        servicePointTh: '',
+        servicePointEn: '',
+        servicePointCount: ''
       },
       formAddStep: {
         stepId: '',
@@ -1994,7 +2077,11 @@ export default {
         overTime: 'True',
         customerTimeSlot: 'False',
         empTitleTh: 'พนักงานช่าง',
-        empTitleEng: 'Employee'
+        empTitleEng: 'Employee',
+        storeFrontText: '',
+        servicePointTh: '',
+        servicePointEn: '',
+        servicePointCount: ''
       },
       formUpdateItemFlow: {
         fieldId: '',
