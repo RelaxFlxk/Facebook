@@ -200,6 +200,15 @@
                 <v-icon > mdi-bullhorn </v-icon>
                 เรียกคิว
               </v-btn>
+              <v-btn
+                color="cyan"
+                small
+                :disabled="item.statusBt === 'confirmJob' || item.statusBt === 'closeJob' ? false:true"
+                @click="closeJobSubmitReturn(item)"
+              >
+                <v-icon > mdi-autorenew </v-icon>
+                เรียกคิวอีกครั้ง
+              </v-btn>
             </template>
             <template v-slot:[`item.storeFrontQueue`]="{ item }">
               <v-row>
@@ -299,6 +308,77 @@
               </v-card-text>
             </v-card>
           </v-dialog>
+            <v-dialog v-model="dialogServicePointStatus" scrollable persistent :max-width="dialogwidth">
+            <v-card>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="6" class="text-left pt-10">
+                      <h3><strong>กรุณาเลือกจุดบริการ</strong></h3>
+                    </v-col>
+                    <v-col cols="6" class="pt-10">
+                      <div style="text-align: end;">
+                        <v-btn
+                          class="mx-2"
+                          fab
+                          small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
+                          @click="dialogServicePointStatus = false"
+                          >
+                          X
+                        </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
+                   <v-row >
+                    <v-col cols="12">
+                      <v-select
+                        v-model="servicePoint"
+                        item-text="textTh"
+                        item-value="textTh"
+                        background-color="white"
+                        style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
+                        hide-details
+                        :items="servicePointItem"
+                        label="จุดบริการ"
+                        outlined
+                        dense
+                        ><template #prepend-inner>
+                          <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                            mdi-access-point
+                          </v-icon>
+                        </template>
+                      </v-select>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-btn
+                        color="#1B437C"
+                        block
+                        v-if="statusReturn"
+                        dark
+                        @click="closeJobServicePointReturn(closeItem)"
+                      >
+                        <v-icon left>mdi-bullhorn</v-icon>
+                        เรียกคิว
+                      </v-btn>
+                      <v-btn
+                        v-else
+                        color="#1B437C"
+                        block
+                        dark
+                        @click="closeJobServicePoint(closeItem)"
+                      >
+                        <v-icon left>mdi-bullhorn</v-icon>
+                        เรียกคิว
+                      </v-btn>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
           </v-card>
           </v-col>
         </v-row>
@@ -325,6 +405,10 @@ export default {
   },
   data () {
     return {
+      servicePointItem: [],
+      servicePoint: '',
+      closeItem: '',
+      dialogServicePointStatus: false,
       validSearch: true,
       itemBooking: [],
       BookingDataList: [],
@@ -493,7 +577,7 @@ export default {
             // '&flowId=' +
             // this.flowSelect +
             '&dueDate=' +
-            this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
+            this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob and closeJob'
         // '&dueDate=' +
         // this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm'
         await axios
@@ -619,43 +703,78 @@ export default {
         })
       return result
     },
-    async closeJobSubmit (item) {
-      console.log('closeJobSubmit', item)
-      this.$swal({
-        title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#fa0202',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      }).then(async response => {
-        await this.clearConfirmJob(item.dueDate)
-        var dtt = {
-          bookNo: item.bookNo,
-          contactDate: this.format_date(new Date()),
-          status: 'confirmJob',
-          statusUse: 'use',
-          shopId: this.$session.getAll().data.shopId,
-          CREATE_USER: this.$session.getAll().data.userName,
-          LAST_USER: this.$session.getAll().data.userName
-        }
-        await axios
-          .post(this.DNS_IP + '/booking_transaction/add', dtt)
-          .then(async responses => {
-            let lineUserId = item.lineUserId || ''
-            if (lineUserId !== '') {
-              let dtt = {
-                checkGetQueue: 'True'
-              }
-              await axios
-                .post(this.DNS_IP + '/Booking/pushMsgQueue/' + item.bookNo, dtt)
-                .then(async responses => {}).catch(error => {
-                  console.log('error function pushMsgQueue : ', error)
-                })
+    closeJobServicePointReturn (item) {
+      if (this.servicePoint === '') {
+        this.$swal('ผิดพลาด', 'กรุณาเลือกจุดบริการ', 'error')
+      } else {
+        this.$swal({
+          title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#fa0202',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        }).then(async response => {
+          await this.updateServicePoint(item.bookNo)
+          let lineUserId = item.lineUserId || ''
+          if (lineUserId !== '') {
+            let dtt = {
+              checkGetQueue: 'True'
             }
-            this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
-            await this.searchBooking()
+            await axios
+              .post(this.DNS_IP + '/Booking/pushMsgQueueReturn/' + item.bookNo, dtt)
+              .then(async responses => {}).catch(error => {
+                console.log('error function pushMsgQueueReturn : ', error)
+              })
+          }
+          this.dialogServicePointStatus = false
+          this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+          await this.searchBooking()
+        })
+      }
+    },
+    closeJobServicePoint (item) {
+      if (this.servicePoint === '') {
+        this.$swal('ผิดพลาด', 'กรุณาเลือกจุดบริการ', 'error')
+      } else {
+        this.$swal({
+          title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#fa0202',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        }).then(async response => {
+          await this.clearConfirmJob(item.dueDate)
+          var dtt = {
+            bookNo: item.bookNo,
+            contactDate: this.format_date(new Date()),
+            status: 'confirmJob',
+            statusUse: 'use',
+            shopId: this.$session.getAll().data.shopId,
+            CREATE_USER: this.$session.getAll().data.userName,
+            LAST_USER: this.$session.getAll().data.userName
+          }
+          await axios
+            .post(this.DNS_IP + '/booking_transaction/add', dtt)
+            .then(async responses => {
+              await this.updateServicePoint(item.bookNo)
+              let lineUserId = item.lineUserId || ''
+              if (lineUserId !== '') {
+                let dtt = {
+                  checkGetQueue: 'True'
+                }
+                await axios
+                  .post(this.DNS_IP + '/Booking/pushMsgQueue/' + item.bookNo, dtt)
+                  .then(async responses => {}).catch(error => {
+                    console.log('error function pushMsgQueue : ', error)
+                  })
+              }
+              this.dialogServicePointStatus = false
+              this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+              await this.searchBooking()
             // let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
             // if (bookSelect.length > 0) {
             //   for (let i = 0; i < bookSelect.length; i++) {
@@ -671,8 +790,106 @@ export default {
             //     }
             //   }
             // }
-          })
-      })
+            })
+        })
+      }
+    },
+    closeJobSubmitReturn (item) {
+      console.log('closeJobSubmit', item)
+      if (item.servicePointStatus === 'True') {
+        this.closeItem = item
+        this.dialogServicePointStatus = true
+        this.servicePoint = item.servicePoint || ''
+        this.servicePointItem = JSON.parse(item.servicePointCount) || []
+        this.statusReturn = true
+      } else {
+        this.$swal({
+          title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#fa0202',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        }).then(async response => {
+          let lineUserId = item.lineUserId || ''
+          if (lineUserId !== '') {
+            let dtt = {
+              checkGetQueue: 'True'
+            }
+            await axios
+              .post(this.DNS_IP + '/Booking/pushMsgQueueReturn/' + item.bookNo, dtt)
+              .then(async responses => {}).catch(error => {
+                console.log('error function pushMsgQueueReturn : ', error)
+              })
+          }
+          this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+          await this.searchBooking()
+        })
+      }
+    },
+    async closeJobSubmit (item) {
+      console.log('closeJobSubmit', item)
+      if (item.servicePointStatus === 'True') {
+        this.closeItem = item
+        this.dialogServicePointStatus = true
+        this.servicePoint = item.servicePoint || ''
+        this.servicePointItem = JSON.parse(item.servicePointCount) || []
+        this.statusReturn = false
+      } else {
+        this.$swal({
+          title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#fa0202',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        }).then(async response => {
+          await this.clearConfirmJob(item.dueDate)
+          var dtt = {
+            bookNo: item.bookNo,
+            contactDate: this.format_date(new Date()),
+            status: 'confirmJob',
+            statusUse: 'use',
+            shopId: this.$session.getAll().data.shopId,
+            CREATE_USER: this.$session.getAll().data.userName,
+            LAST_USER: this.$session.getAll().data.userName
+          }
+          await axios
+            .post(this.DNS_IP + '/booking_transaction/add', dtt)
+            .then(async responses => {
+              let lineUserId = item.lineUserId || ''
+              if (lineUserId !== '') {
+                let dtt = {
+                  checkGetQueue: 'True'
+                }
+                await axios
+                  .post(this.DNS_IP + '/Booking/pushMsgQueue/' + item.bookNo, dtt)
+                  .then(async responses => {}).catch(error => {
+                    console.log('error function pushMsgQueue : ', error)
+                  })
+              }
+              this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+              await this.searchBooking()
+            // let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
+            // if (bookSelect.length > 0) {
+            //   for (let i = 0; i < bookSelect.length; i++) {
+            //     let d = bookSelect[i]
+            //     let s = {}
+            //     s.lineUserId = d.lineUserId || ''
+            //     if (s.lineUserId !== '') {
+            //       await axios
+            //         .post(this.DNS_IP + '/Booking/pushMsgQueue/' + d.bookNo)
+            //         .then(async responses => {}).catch(error => {
+            //           console.log('error function pushMsgQueue : ', error)
+            //         })
+            //     }
+            //   }
+            // }
+            })
+        })
+      }
     },
     async clearConfirmJob (dueDateUse) {
       var dtt = {
@@ -681,6 +898,14 @@ export default {
       }
       await axios
         .post(this.DNS_IP + '/booking_transaction/changeQueue', dtt)
+        .then(async responses => {})
+    },
+    async updateServicePoint (bookNo) {
+      var dtt = {
+        servicePoint: this.servicePoint
+      }
+      await axios
+        .post(this.DNS_IP + '/Booking/edit/' + bookNo, dtt)
         .then(async responses => {})
     },
     // async getBase64ImageFromURL (img) {
