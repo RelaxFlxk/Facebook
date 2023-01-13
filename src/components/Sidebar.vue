@@ -347,7 +347,7 @@
         </v-list-item>
       </v-list-group>
       <template v-slot:append>
-        <!-- <v-divider class="ma-0"></v-divider>
+        <v-divider class="ma-0"></v-divider>
         <v-btn block
             text
             tile
@@ -356,7 +356,7 @@
             class="nav-button-dark"
             @click.prevent="$router.push('/LoyaltyPresent')">
             <v-icon color="white">mdi-gift-open</v-icon>&nbsp;&nbsp;Be-Loyalty
-          </v-btn> -->
+          </v-btn>
         <!-- <v-divider class="ma-0"></v-divider>
         <v-btn block
             text
