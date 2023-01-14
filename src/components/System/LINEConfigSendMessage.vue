@@ -74,6 +74,18 @@
                     >
                       ต่อไป
                     </v-btn>
+                    <v-btn
+                      color="warning"
+                      @click="gotoManaul('messagingApi')"
+                    >
+                      <v-icon
+                        left
+                        dark
+                      >
+                        mdi-help-circle
+                      </v-icon>
+                      วิธีได้รับ Channel ID และ Channel secret (Messaging API)
+                    </v-btn>
                   </v-stepper-content>
 
                   <v-stepper-content step="2">
@@ -131,6 +143,18 @@
                      @click="checkLineLoginUpdate()"
                     >
                       แก้ไขข้อมูล
+                    </v-btn>
+                    <v-btn
+                      color="warning"
+                      @click="gotoManaul('lineLogin')"
+                    >
+                      <v-icon
+                        left
+                        dark
+                      >
+                        mdi-help-circle
+                      </v-icon>
+                      วิธีได้รับ Channel ID และ Channel secret (LINE Login)
                     </v-btn>
                   </v-stepper-content>
                 </v-stepper-items>
@@ -199,6 +223,13 @@ export default {
     await this.getData()
   },
   methods: {
+    gotoManaul (text) {
+      if (text === 'messagingApi') {
+        window.open('https://firebasestorage.googleapis.com/v0/b/betask-linked/o/manual%2F%E0%B8%A7%E0%B8%B4%E0%B8%98%E0%B8%B5%E0%B9%80%E0%B8%9B%E0%B8%B4%E0%B8%94%20Messaging%20API.pdf?alt=media&token=556bcad5-8000-48d4-8100-cce6f3eff032', '_blank')
+      } else {
+        window.open('https://firebasestorage.googleapis.com/v0/b/betask-linked/o/manual%2F%E0%B8%A7%E0%B8%B4%E0%B8%98%E0%B8%B5%E0%B8%AA%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%87%20LINE%20Login.pdf?alt=media&token=5c6e446c-7b5c-49cf-ade4-5b472b283783', '_blank')
+      }
+    },
     async getData () {
       this.dataReady = false
       await axios.get(this.DNS_IP + '/lineconfig/get?shopId=' + this.$session.getAll().data.shopId).then((response) => {
