@@ -2318,6 +2318,16 @@
                               <strong style="color: red;" v-if="jobitem[0].recordStatus === 'D'"><h2>รายการนี้ปิดไปแล้ว</h2></strong>
                             </div>
                             <div>
+                              <v-btn
+                                v-if="userId !== ''"
+                                color="#1B437C"
+                                small
+                                dark
+                                @click="FunCopyQrcode(value)"
+                              >
+                                <v-icon left>mdi-content-copy</v-icon>
+                                คัดลอกลิงค์
+                              </v-btn>
                               <v-btn small class="ma-2" color="success" v-if="userId !== '' && recordStatusJob === 'N'" @click="dialogCloseJob = true" dark>
                                   ปิดงานนี้
                                 <v-icon dark right>
