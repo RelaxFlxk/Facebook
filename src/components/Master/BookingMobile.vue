@@ -285,16 +285,15 @@
                 id="v-step-2"
                 v-if="
                   dataItem[0].statusBt !== 'confirmJob' &&
-                    dataItem[0].statusBt !== 'confirm' && dataItem[0].checkOnsite !== 'True'
+                    dataItem[0].statusBt !== 'confirm'
                 "
                 :disabled="dataItem[0].chkConfirm"
                 @click.stop="confirmChk(dataItem[0])"
               >
-                <!-- <v-icon dark> mdi-phone-check </v-icon> -->
                 <v-icon dark size="30" class="iconify" data-icon="quill:mail-subbed"></v-icon>
                 ยืนยัน
               </v-btn>
-              <v-btn
+              <!-- <v-btn
                 color="success"
                 id="v-step-2"
                 v-if="
@@ -304,10 +303,9 @@
                 :disabled="dataItem[0].chkConfirm"
                 @click.stop="confirmChkOnsite(dataItem[0])"
               >
-                <!-- <v-icon dark> mdi-phone-check </v-icon> -->
                 <v-icon dark size="30" class="iconify" data-icon="quill:mail-subbed"></v-icon>
                 ยืนยัน
-              </v-btn>
+              </v-btn> -->
               <v-btn
                 color="warning"
                 v-if="dataItem[0].statusBt !== 'cancel'"
@@ -317,7 +315,7 @@
                 <v-icon> mdi-calendar-clock </v-icon>
                 เลื่อนนัด
               </v-btn>
-              <v-btn
+              <!-- <v-btn
                 color="error"
                 id="v-step-2"
                 v-if="
@@ -326,20 +324,18 @@
                 "
                 @click.stop="setDataRemove(dataItem[0])"
               >
-                <!-- <v-icon dark> mdi-phone-cancel </v-icon> -->
                 <v-icon dark size="30" class="iconify" data-icon="carbon:rule-cancelled"></v-icon>
                 ยกเลิกนัด
-              </v-btn>
+              </v-btn> -->
               <v-btn
                 color="error"
                 id="v-step-2"
                 v-if="
                   dataItem[0].statusBt !== 'cancel' &&
-                    dataItem[0].statusBt !== 'confirmJob' && dataItem[0].checkOnsite !== 'True'
+                    dataItem[0].statusBt !== 'confirmJob'
                 "
                 @click.stop="setDataRemove(dataItem[0])"
               >
-                <!-- <v-icon dark> mdi-phone-cancel </v-icon> -->
                 <v-icon dark size="30" class="iconify" data-icon="carbon:rule-cancelled"></v-icon>
                 ยกเลิกนัด
               </v-btn>
