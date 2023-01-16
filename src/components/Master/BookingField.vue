@@ -698,6 +698,16 @@
                       ></v-checkbox>
                       <v-text-field v-model="showTime" readonly label="แสดงเวลาการจองหรือไม่"></v-text-field>
                     </v-row>
+                    <v-row align="center">
+                      <v-checkbox
+                        false-value="False"
+                        true-value="True"
+                        v-model="statusEngPayment"
+                        hide-details
+                        class="shrink ml-6 mr-0 mt-0 mb-6"
+                      ></v-checkbox>
+                      <v-text-field :value="statusEngPayment === 'True' ? 'ใช้งาน' : 'ไม่ใช้งาน'" readonly label="ภาษาอังกฤษรับเงินมัดจำหรือไม่"></v-text-field>
+                    </v-row>
                     <!-- <v-row align="center">
                       <v-checkbox
                         false-value="False"
@@ -872,6 +882,7 @@ export default {
   },
   data () {
     return {
+      statusEngPayment: 'False',
       editBycustomField: 'False',
       dialogchekField: false,
       hindRedirect: true,
@@ -1141,6 +1152,11 @@ export default {
               } else {
                 this.showUpload2 = rs[0].showUpload2
               }
+              if (rs[0].statusEngPayment === null || rs[0].statusEngPayment === '') {
+                this.statusEngPayment = 'False'
+              } else {
+                this.statusEngPayment = rs[0].statusEngPayment
+              }
               this.showLimitBooking = rs[0].showLimitBooking || 'False'
               bookingData = JSON.parse(rs[0].flowfieldName)
               for (let i = 0; i < bookingData.length; i++) {
@@ -1240,6 +1256,7 @@ export default {
       booking.showMap = this.showMap
       booking.multiDueDate = this.multiDueDate
       booking.showLimitBooking = this.showLimitBooking
+      booking.statusEngPayment = this.statusEngPayment
       booking.LAST_USER = this.session.data.userName
       console.log('dtbooking', booking)
       this.$swal({

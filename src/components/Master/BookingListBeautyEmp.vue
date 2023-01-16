@@ -7590,6 +7590,8 @@ export default {
                   update.optionField = dataField[0].optionField || ''
                   update.shopId = dataField[0].shopId || ''
                   update.showCard = dataField[0].showCard || ''
+                  update.bookNo = this.BookingDataItem[0].bookNo || ''
+                  update.tokenPackage = this.tokenPackage || ''
                   Add.push(update)
                 }
               }
@@ -7619,6 +7621,8 @@ export default {
                 update.optionField = dataField[0].optionField || ''
                 update.shopId = dataField[0].shopId || ''
                 update.showCard = dataField[0].showCard || ''
+                update.bookNo = this.BookingDataItem[0].bookNo || ''
+                update.tokenPackage = this.tokenPackage || ''
                 Add.push(update)
               }
             }
@@ -7627,53 +7631,69 @@ export default {
               .then(async result => {
                 this.dataEditJobReady = false
                 await axios
-                  .post(this.DNS_IP + '/job/add', Add)
+                  .post(this.DNS_IP + '/job/addOneStep', Add)
                   .then(async response => {
                     this.endDate = ''
                     this.endTime = ''
                     this.empSelectJob = ''
                     this.statusShowDateConfiremjob = true
                     if (response.data.status) {
-                      var dt = {
-                        bookNo: this.BookingDataItem[0].bookNo,
-                        statusJob: 'job',
-                        jobNo: response.data.jobNo
+                      this.lineNotifyGroupOnsite(this.BookingDataItem[0].bookNo)
+                      if (this.jobCheckPackage) {
+                        console.log('usePackage')
+                        await this.usePackage()
                       }
-                      await axios
-                        .post(this.DNS_IP + '/Booking/editStatus/' + this.BookingDataItem[0].bookNo, dt)
-                        .then(async response1 => {
-                          var dtt = {
-                            bookNo: this.BookingDataItem[0].bookNo,
-                            contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
-                            status: 'confirmJob',
-                            statusUse: 'use',
-                            shopId: this.$session.getAll().data.shopId,
-                            CREATE_USER: this.session.data.userName,
-                            LAST_USER: this.session.data.userName,
-                            packageId: this.packageId,
-                            tokenPackage: this.tokenPackage
-                          }
-                          axios
-                            .post(this.DNS_IP + '/booking_transaction/add', dtt)
-                            .then(async response => {
-                              this.lineNotifyGroupOnsite(this.BookingDataItem[0].bookNo)
-                              if (this.jobCheckPackage) {
-                                console.log('usePackage')
-                                await this.usePackage()
-                              }
-                              this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
-                              if (this.statusSearch === 'no') {
-                                await this.getBookingList()
-                              } else {
-                                await this.searchAny()
-                              }
-                              this.dialogOnsite = false
-                              this.dataEditJobReady = true
-                              var dataJob = this.dataItem.filter(el => { return el.bookNo === this.dataQrcode.bookNo })
-                              this.getjob(dataJob[0])
-                              this.dialogJob = true
-                            })
-                        })
+                      this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
+                      if (this.statusSearch === 'no') {
+                        await this.getBookingList()
+                      } else {
+                        await this.searchAny()
+                      }
+                      this.dialogOnsite = false
+                      this.dataEditJobReady = true
+                      var dataJob = this.dataItem.filter(el => { return el.bookNo === this.dataQrcode.bookNo })
+                      this.getjob(dataJob[0])
+                      this.dialogJob = true
+                      // var dt = {
+                      //   bookNo: this.BookingDataItem[0].bookNo,
+                      //   statusJob: 'job',
+                      //   jobNo: response.data.jobNo
+                      // }
+                      // await axios
+                      //   .post(this.DNS_IP + '/Booking/editStatus/' + this.BookingDataItem[0].bookNo, dt)
+                      //   .then(async response1 => {
+                      //     var dtt = {
+                      //       bookNo: this.BookingDataItem[0].bookNo,
+                      //       contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
+                      //       status: 'confirmJob',
+                      //       statusUse: 'use',
+                      //       shopId: this.$session.getAll().data.shopId,
+                      //       CREATE_USER: this.session.data.userName,
+                      //       LAST_USER: this.session.data.userName,
+                      //       packageId: this.packageId,
+                      //       tokenPackage: this.tokenPackage
+                      //     }
+                      //     axios
+                      //       .post(this.DNS_IP + '/booking_transaction/add', dtt)
+                      //       .then(async response => {
+                      //         this.lineNotifyGroupOnsite(this.BookingDataItem[0].bookNo)
+                      //         if (this.jobCheckPackage) {
+                      //           console.log('usePackage')
+                      //           await this.usePackage()
+                      //         }
+                      //         this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
+                      //         if (this.statusSearch === 'no') {
+                      //           await this.getBookingList()
+                      //         } else {
+                      //           await this.searchAny()
+                      //         }
+                      //         this.dialogOnsite = false
+                      //         this.dataEditJobReady = true
+                      //         var dataJob = this.dataItem.filter(el => { return el.bookNo === this.dataQrcode.bookNo })
+                      //         this.getjob(dataJob[0])
+                      //         this.dialogJob = true
+                      //       })
+                      //   })
                     } else {
                       this.$swal('ผิดพลาด', 'กรุณาทำรายการใหม่', 'error')
                       this.dialogOnsite = false
@@ -12623,6 +12643,8 @@ export default {
                     update.optionField = dataField[0].optionField || ''
                     update.shopId = dataField[0].shopId || ''
                     update.showCard = dataField[0].showCard || ''
+                    update.bookNo = this.BookingDataItem[0].bookNo || ''
+                    update.tokenPackage = this.tokenPackage || ''
                     Add.push(update)
                   }
                 }
@@ -12651,6 +12673,8 @@ export default {
                   update.optionField = dataField[0].optionField || ''
                   update.shopId = dataField[0].shopId || ''
                   update.showCard = dataField[0].showCard || ''
+                  update.bookNo = this.BookingDataItem[0].bookNo || ''
+                  update.tokenPackage = this.tokenPackage || ''
                   Add.push(update)
                 }
               }
@@ -12661,58 +12685,73 @@ export default {
                 .then(async result => {
                   this.dataEditJobReady = false
                   await axios
-                    .post(this.DNS_IP + '/job/add', Add)
+                    .post(this.DNS_IP + '/job/addOneStep', Add)
                     .then(async response => {
                       this.endDate = ''
                       this.endTime = ''
                       this.empSelectJob = ''
                       this.statusShowDateConfiremjob = true
                       if (response.data.status) {
-                        var dt = {
-                          bookNo: this.BookingDataItem[0].bookNo,
-                          statusJob: 'job',
-                          jobNo: response.data.jobNo
+                        if (this.jobCheckPackage) {
+                          console.log('usePackage')
+                          await this.usePackage()
                         }
-                        await axios
-                          .post(
-                            this.DNS_IP +
-                    '/Booking/editStatus/' +
-                    this.BookingDataItem[0].bookNo,
-                            dt
-                          )
-                          .then(async response1 => {
-                            await this.pushMsg(response.data.jobNo)
-                            var dtt = {
-                              bookNo: this.BookingDataItem[0].bookNo,
-                              contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
-                              status: 'confirmJob',
-                              statusUse: 'use',
-                              shopId: this.$session.getAll().data.shopId,
-                              CREATE_USER: this.session.data.userName,
-                              LAST_USER: this.session.data.userName,
-                              packageId: this.packageId,
-                              tokenPackage: this.tokenPackage
-                            }
-                            axios
-                              .post(this.DNS_IP + '/booking_transaction/add', dtt)
-                              .then(async response => {
-                                if (this.jobCheckPackage) {
-                                  console.log('usePackage')
-                                  await this.usePackage()
-                                }
-                                this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
-                                if (this.statusSearch === 'no') {
-                                  await this.getBookingList()
-                                } else {
-                                  await this.searchAny()
-                                }
-                                this.dialogEdit = false
-                                this.dataEditJobReady = true
-                                var dataJob = this.dataItem.filter(el => { return el.bookNo === this.dataQrcode.bookNo })
-                                this.getjob(dataJob[0])
-                                this.dialogJob = true
-                              })
-                          })
+                        this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
+                        if (this.statusSearch === 'no') {
+                          await this.getBookingList()
+                        } else {
+                          await this.searchAny()
+                        }
+                        this.dialogEdit = false
+                        this.dataEditJobReady = true
+                        var dataJob = this.dataItem.filter(el => { return el.bookNo === this.dataQrcode.bookNo })
+                        this.getjob(dataJob[0])
+                        this.dialogJob = true
+                      //     var dt = {
+                      //       bookNo: this.BookingDataItem[0].bookNo,
+                      //       statusJob: 'job',
+                      //       jobNo: response.data.jobNo
+                      //     }
+                      //     await axios
+                      //       .post(
+                      //         this.DNS_IP +
+                      // '/Booking/editStatus/' +
+                      // this.BookingDataItem[0].bookNo,
+                      //         dt
+                      //       )
+                      //       .then(async response1 => {
+                      //         await this.pushMsg(response.data.jobNo)
+                      //         var dtt = {
+                      //           bookNo: this.BookingDataItem[0].bookNo,
+                      //           contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
+                      //           status: 'confirmJob',
+                      //           statusUse: 'use',
+                      //           shopId: this.$session.getAll().data.shopId,
+                      //           CREATE_USER: this.session.data.userName,
+                      //           LAST_USER: this.session.data.userName,
+                      //           packageId: this.packageId,
+                      //           tokenPackage: this.tokenPackage
+                      //         }
+                      //         axios
+                      //           .post(this.DNS_IP + '/booking_transaction/add', dtt)
+                      //           .then(async response => {
+                      //             if (this.jobCheckPackage) {
+                      //               console.log('usePackage')
+                      //               await this.usePackage()
+                      //             }
+                      //             this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
+                      //             if (this.statusSearch === 'no') {
+                      //               await this.getBookingList()
+                      //             } else {
+                      //               await this.searchAny()
+                      //             }
+                      //             this.dialogEdit = false
+                      //             this.dataEditJobReady = true
+                      //             var dataJob = this.dataItem.filter(el => { return el.bookNo === this.dataQrcode.bookNo })
+                      //             this.getjob(dataJob[0])
+                      //             this.dialogJob = true
+                      //           })
+                      //       })
                       } else {
                         this.$swal('ผิดพลาด', 'กรุณาทำรายการใหม่', 'error')
                         this.dialogEdit = false
