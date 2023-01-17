@@ -2177,7 +2177,7 @@
                 </v-container>
               </v-card-text>
               <v-card-text  v-if="dataEditJobReady && !statusConfirmJob">
-                <strong><h2>เนื่องจากวันที่นัดหมาย {{format_dateNotime(dueDate)}} ไม่ตรงกับวันที่ปัจจุบัน</h2></strong>
+                <strong><h2>เนื่องจากวันที่นัดหมาย {{dueDate}} ไม่ตรงกับวันที่ปัจจุบัน</h2></strong>
                 <strong style="color: red;"><h3>กรุณาตรวจสอบข้อมูล หรือ เปลี่ยนเวลานัดหมายใหม่</h3></strong>
               </v-card-text>
               <v-card-text  v-if="!dataEditJobReady">
@@ -2318,6 +2318,16 @@
                               <strong style="color: red;" v-if="jobitem[0].recordStatus === 'D'"><h2>รายการนี้ปิดไปแล้ว</h2></strong>
                             </div>
                             <div>
+                              <v-btn
+                                v-if="userId !== ''"
+                                color="#1B437C"
+                                small
+                                dark
+                                @click="FunCopyQrcode(value)"
+                              >
+                                <v-icon left>mdi-content-copy</v-icon>
+                                คัดลอกลิงค์
+                              </v-btn>
                               <v-btn small class="ma-2" color="success" v-if="userId !== '' && recordStatusJob === 'N'" @click="dialogCloseJob = true" dark>
                                   ปิดงานนี้
                                 <v-icon dark right>
@@ -4925,7 +4935,7 @@
               </v-col>
             </center>
             <v-col class="text-center">
-              <span class="headline">จบกระบวนการซ่อม</span>
+              <span class="headline">ปิดงานนนี้</span>
             </v-col>
             <v-card-text>
               <v-container>
@@ -4939,7 +4949,7 @@
                       @click="closeJob()"
                     >
                       <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                      จบกระบวนการซ่อม
+                      ปิดงานนนี้
                     </v-btn>
                     <v-btn
                       color="primary"
@@ -7208,6 +7218,8 @@ export default {
                   update.optionField = dataField[0].optionField || ''
                   update.shopId = dataField[0].shopId || ''
                   update.showCard = dataField[0].showCard || ''
+                  update.bookNo = this.BookingDataItem[0].bookNo || ''
+                  update.tokenPackage = this.tokenPackage || ''
                   Add.push(update)
                 }
               }
@@ -7237,6 +7249,8 @@ export default {
                 update.optionField = dataField[0].optionField || ''
                 update.shopId = dataField[0].shopId || ''
                 update.showCard = dataField[0].showCard || ''
+                update.bookNo = this.BookingDataItem[0].bookNo || ''
+                update.tokenPackage = this.tokenPackage || ''
                 Add.push(update)
               }
             }
@@ -7245,53 +7259,53 @@ export default {
               .then(async result => {
                 this.dataEditJobReady = false
                 await axios
-                  .post(this.DNS_IP + '/job/add', Add)
+                  .post(this.DNS_IP + '/job/addOneStep', Add)
                   .then(async response => {
                     this.endDate = ''
                     this.endTime = ''
                     this.empSelectJob = ''
                     this.statusShowDateConfiremjob = true
                     if (response.data.status) {
-                      var dt = {
-                        bookNo: this.BookingDataItem[0].bookNo,
-                        statusJob: 'job',
-                        jobNo: response.data.jobNo
+                      // var dt = {
+                      //   bookNo: this.BookingDataItem[0].bookNo,
+                      //   statusJob: 'job',
+                      //   jobNo: response.data.jobNo
+                      // }
+                      // await axios
+                      //   .post(this.DNS_IP + '/Booking/editStatus/' + this.BookingDataItem[0].bookNo, dt)
+                      //   .then(async response1 => {
+                      //     var dtt = {
+                      //       bookNo: this.BookingDataItem[0].bookNo,
+                      //       contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
+                      //       status: 'confirmJob',
+                      //       statusUse: 'use',
+                      //       shopId: this.$session.getAll().data.shopId,
+                      //       CREATE_USER: this.session.data.userName,
+                      //       LAST_USER: this.session.data.userName,
+                      //       packageId: this.packageId,
+                      //       tokenPackage: this.tokenPackage
+                      //     }
+                      //     axios
+                      //       .post(this.DNS_IP + '/booking_transaction/add', dtt)
+                      //       .then(async response => {
+                      this.lineNotifyGroupOnsite(this.BookingDataItem[0].bookNo)
+                      if (this.jobCheckPackage) {
+                        console.log('usePackage')
+                        await this.usePackage()
                       }
-                      await axios
-                        .post(this.DNS_IP + '/Booking/editStatus/' + this.BookingDataItem[0].bookNo, dt)
-                        .then(async response1 => {
-                          var dtt = {
-                            bookNo: this.BookingDataItem[0].bookNo,
-                            contactDate: this.format_date(new Date()),
-                            status: 'confirmJob',
-                            statusUse: 'use',
-                            shopId: this.$session.getAll().data.shopId,
-                            CREATE_USER: this.session.data.userName,
-                            LAST_USER: this.session.data.userName,
-                            packageId: this.packageId,
-                            tokenPackage: this.tokenPackage
-                          }
-                          axios
-                            .post(this.DNS_IP + '/booking_transaction/add', dtt)
-                            .then(async response => {
-                              this.lineNotifyGroupOnsite(this.BookingDataItem[0].bookNo)
-                              if (this.jobCheckPackage) {
-                                console.log('usePackage')
-                                await this.usePackage()
-                              }
-                              this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
-                              if (this.statusSearch === 'no') {
-                                await this.getBookingList()
-                              } else {
-                                await this.searchAny()
-                              }
-                              this.dialogOnsite = false
-                              this.dataEditJobReady = true
-                              var dataJob = this.dataItem.filter(el => { return el.bookNo === this.dataQrcode.bookNo })
-                              this.getjob(dataJob[0])
-                              this.dialogJob = true
-                            })
-                        })
+                      this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
+                      if (this.statusSearch === 'no') {
+                        await this.getBookingList()
+                      } else {
+                        await this.searchAny()
+                      }
+                      this.dialogOnsite = false
+                      this.dataEditJobReady = true
+                      var dataJob = this.dataItem.filter(el => { return el.bookNo === this.dataQrcode.bookNo })
+                      this.getjob(dataJob[0])
+                      this.dialogJob = true
+                      //     })
+                      // })
                     } else {
                       this.$swal('ผิดพลาด', 'กรุณาทำรายการใหม่', 'error')
                       this.dialogOnsite = false
@@ -7618,9 +7632,7 @@ export default {
             dtint = '0'
           }
           console.log('test', dtint)
-          // console.log('test', item.flowId === this.formAdd.flowId && this.momenDate_1(item.bookingDate) === this.date && item.bookingTime === this.time.value)
-          // if (item.masBranchID === this.formAdd.masBranchID && this.momenDate_1(item.bookingDate) === this.date && item.bookingTime === this.time.value) {
-          if (item.flowId === this.formAdd.flowId && this.momenDate_1(item.bookingDate) === this.date && item.bookingTime === this.time.value) {
+          if (item.flowId === this.formAdd.flowId && item.bookingDate === this.date && item.bookingTime === this.time.value) {
             this.checkLimitBooking.ID = item.id
             console.log('1266')
             this.checkLimitBooking.countBooking = parseInt(item.countBooking) + 1
@@ -7659,8 +7671,6 @@ export default {
           console.log('limitBookingCheck === False')
           this.dateDaylimit = []
         }
-
-        // this.dateDaylimit = result.data.map((item) => { return this.momenDate_1(item.bookingDate) })
       } else {
         console.log('getMonth ELSE')
         this.dateDaylimit = []
@@ -7953,7 +7963,7 @@ export default {
       }).then(async () => {
         var dt = {
           bookNo: item.bookNo,
-          contactDate: this.format_date(new Date()),
+          contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
           status: 'wait',
           statusUse: 'use',
           shopId: this.$session.getAll().data.shopId,
@@ -8334,10 +8344,11 @@ export default {
                   if (s.dueDate === '') {
                     s.dueDateText = 'ไม่มีเวลานัดหมาย'
                   } else {
-                    s.dueDateText = this.format_dateNotime(d.dueDate) + ' ' + d.timeText
+                    s.dueDateText = d.dueDateTextDay + ' ' + d.timeText
                   }
                   s.shopId = d.shopId
                   s.dueDateDay = d.dueDateDay
+                  s.dueDateTextDay = d.dueDateTextDay
                   s.remark = d.remark || ''
                   s.masBranchID = d.masBranchID
                   s.limitBookingCheck = d.limitBookingCheck
@@ -9193,7 +9204,7 @@ export default {
       if (dateS) {
         dateSelect = this.momenDate_1(dateS)
       } else {
-        dateSelect = this.momenDate_1(new Date())
+        dateSelect = moment().format('YYYY-MM-DD')
       }
       await axios
         .get(
@@ -9825,8 +9836,8 @@ export default {
       }
     },
     async getBookingListJob (item) {
-      let dateCurrent = this.momenDate_1(new Date())
-      let dueDate = this.momenDate_1(item.dueDate)
+      let dateCurrent = moment().format('YYYY-MM-DD')
+      let dueDate = item.dueDateDay
       if (dateCurrent >= dueDate) {
         this.statusConfirmJob = true
       } else {
@@ -9837,8 +9848,8 @@ export default {
         let checkStep = await axios.get(this.DNS_IP + '/flowStep/get?flowId=' + item.flowId)
         console.log('checkStep', checkStep)
         if (checkStep.data.status === false) {
-          this.endDate = this.momenDate_1(new Date())
-          this.endTime = this.momenTime(new Date())
+          this.endDate = moment().format('YYYY-MM-DD')
+          this.endTime = moment().format('HH:mm')
           this.statusShowDateConfiremjob = false
         } else {
           this.statusShowDateConfiremjob = true
@@ -9884,6 +9895,7 @@ export default {
                   s.dueDate = d.dueDate
                   s.shopId = d.shopId
                   s.dueDateDay = d.dueDateDay
+                  s.dueDateTextDay = d.dueDateTextDay
                   s.remark = d.remark || ''
                   s.masBranchID = d.masBranchID
                   s.empSelect = d.empSelect
@@ -10864,10 +10876,11 @@ export default {
                 if (s.dueDate === '') {
                   s.dueDateText = 'ไม่มีเวลานัดหมาย'
                 } else {
-                  s.dueDateText = this.format_dateNotime(d.dueDate) + ' ' + d.timeText
+                  s.dueDateText = d.dueDateTextDay + ' ' + d.timeText
                 }
                 s.shopId = d.shopId
                 s.dueDateDay = d.dueDateDay
+                s.dueDateTextDay = d.dueDateTextDay
                 s.remark = d.remark || ''
                 s.masBranchID = d.masBranchID
                 s.limitBookingCheck = d.limitBookingCheck
@@ -11027,10 +11040,11 @@ export default {
                 if (s.dueDate === '') {
                   s.dueDateText = 'ไม่มีเวลานัดหมาย'
                 } else {
-                  s.dueDateText = this.format_dateNotime(d.dueDate) + ' ' + d.timeText
+                  s.dueDateText = d.dueDateTextDay + ' ' + d.timeText
                 }
                 s.shopId = d.shopId
                 s.dueDateDay = d.dueDateDay
+                s.dueDateTextDay = d.dueDateTextDay
                 s.remark = d.remark || ''
                 s.masBranchID = d.masBranchID
                 s.limitBookingCheck = d.limitBookingCheck
@@ -11665,7 +11679,7 @@ export default {
     async confirmChkAdd (item) {
       var dt = {
         bookNo: item.bookNo,
-        contactDate: this.format_date(new Date()),
+        contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
         status: 'confirm',
         statusUse: 'use',
         shopId: this.$session.getAll().data.shopId,
@@ -11793,8 +11807,8 @@ export default {
     async getBookingDataJob (dt, text) {
       this.dataEmpOnsite = dt
       this.dueDateText = dt.dueDateText
-      let dateCurrent = this.momenDate_1(new Date())
-      let dueDate = this.momenDate_1(dt.dueDate)
+      let dateCurrent = moment().format('YYYY-MM-DD')
+      let dueDate = dt.dueDateDay
       console.log(dateCurrent, dueDate)
       if (dateCurrent >= dueDate) {
         this.statusConfirmJob = true
@@ -11805,12 +11819,13 @@ export default {
       let checkStep = await axios.get(this.DNS_IP + '/flowStep/get?flowId=' + dt.flowId)
       console.log('checkStep', checkStep)
       if (checkStep.data.status === false) {
-        this.endDate = this.momenDate_1(new Date())
-        this.endTime = this.momenTime(new Date())
+        this.endDate = moment().format('YYYY-MM-DD')
+        this.endTime = moment().format('HH:mm')
         this.statusShowDateConfiremjob = false
       } else {
         this.statusShowDateConfiremjob = true
       }
+      this.dueDate = dt.dueDateTextDay
       if (this.statusConfirmJob && this.showOnsite === 'แสดง') {
         this.jobCheckPackage = false
         console.log('dt', dt)
@@ -11840,8 +11855,6 @@ export default {
         this.checkTimeFlow(dt)
         this.BookingDataItem = []
         let itemIncustomField = []
-        // this.statusConfirmJob = false
-        this.dueDate = dt.dueDate
 
         await axios
           .get(
@@ -11943,8 +11956,6 @@ export default {
         this.checkTimeFlow(dt)
         this.BookingDataItem = []
         let itemIncustomField = []
-        // this.statusConfirmJob = false
-        this.dueDate = dt.dueDate
 
         await axios
           .get(
@@ -12106,6 +12117,8 @@ export default {
                     update.optionField = dataField[0].optionField || ''
                     update.shopId = dataField[0].shopId || ''
                     update.showCard = dataField[0].showCard || ''
+                    update.bookNo = this.BookingDataItem[0].bookNo || ''
+                    update.tokenPackage = this.tokenPackage || ''
                     Add.push(update)
                   }
                 }
@@ -12134,6 +12147,8 @@ export default {
                   update.optionField = dataField[0].optionField || ''
                   update.shopId = dataField[0].shopId || ''
                   update.showCard = dataField[0].showCard || ''
+                  update.bookNo = this.BookingDataItem[0].bookNo || ''
+                  update.tokenPackage = this.tokenPackage || ''
                   Add.push(update)
                 }
               }
@@ -12144,58 +12159,58 @@ export default {
                 .then(async result => {
                   this.dataEditJobReady = false
                   await axios
-                    .post(this.DNS_IP + '/job/add', Add)
+                    .post(this.DNS_IP + '/job/addOneStep', Add)
                     .then(async response => {
                       this.endDate = ''
                       this.endTime = ''
                       this.empSelectJob = ''
                       this.statusShowDateConfiremjob = true
                       if (response.data.status) {
-                        var dt = {
-                          bookNo: this.BookingDataItem[0].bookNo,
-                          statusJob: 'job',
-                          jobNo: response.data.jobNo
+                      //     var dt = {
+                      //       bookNo: this.BookingDataItem[0].bookNo,
+                      //       statusJob: 'job',
+                      //       jobNo: response.data.jobNo
+                      //     }
+                      //     await axios
+                      //       .post(
+                      //         this.DNS_IP +
+                      // '/Booking/editStatus/' +
+                      // this.BookingDataItem[0].bookNo,
+                      //         dt
+                      //       )
+                      //       .then(async response1 => {
+                      //         var dtt = {
+                      //           bookNo: this.BookingDataItem[0].bookNo,
+                      //           contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
+                      //           status: 'confirmJob',
+                      //           statusUse: 'use',
+                      //           shopId: this.$session.getAll().data.shopId,
+                      //           CREATE_USER: this.session.data.userName,
+                      //           LAST_USER: this.session.data.userName,
+                      //           packageId: this.packageId,
+                      //           tokenPackage: this.tokenPackage
+                      //         }
+                      //         axios
+                      //           .post(this.DNS_IP + '/booking_transaction/add', dtt)
+                      //           .then(async response => {
+                        await this.pushMsg(response.data.jobNo)
+                        if (this.jobCheckPackage) {
+                          console.log('usePackage')
+                          await this.usePackage()
                         }
-                        await axios
-                          .post(
-                            this.DNS_IP +
-                    '/Booking/editStatus/' +
-                    this.BookingDataItem[0].bookNo,
-                            dt
-                          )
-                          .then(async response1 => {
-                            await this.pushMsg(response.data.jobNo)
-                            var dtt = {
-                              bookNo: this.BookingDataItem[0].bookNo,
-                              contactDate: this.format_date(new Date()),
-                              status: 'confirmJob',
-                              statusUse: 'use',
-                              shopId: this.$session.getAll().data.shopId,
-                              CREATE_USER: this.session.data.userName,
-                              LAST_USER: this.session.data.userName,
-                              packageId: this.packageId,
-                              tokenPackage: this.tokenPackage
-                            }
-                            axios
-                              .post(this.DNS_IP + '/booking_transaction/add', dtt)
-                              .then(async response => {
-                                if (this.jobCheckPackage) {
-                                  console.log('usePackage')
-                                  await this.usePackage()
-                                }
-                                this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
-                                if (this.statusSearch === 'no') {
-                                  await this.getBookingList()
-                                } else {
-                                  await this.searchAny()
-                                }
-                                this.dialogEdit = false
-                                this.dataEditJobReady = true
-                                var dataJob = this.dataItem.filter(el => { return el.bookNo === this.dataQrcode.bookNo })
-                                this.getjob(dataJob[0])
-                                this.dialogJob = true
-                              })
-                          })
+                        this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
+                        if (this.statusSearch === 'no') {
+                          await this.getBookingList()
+                        } else {
+                          await this.searchAny()
+                        }
+                        this.dialogEdit = false
+                        this.dataEditJobReady = true
+                        var dataJob = this.dataItem.filter(el => { return el.bookNo === this.dataQrcode.bookNo })
+                        this.getjob(dataJob[0])
+                        this.dialogJob = true
+                      //     })
+                      // })
                       } else {
                         this.$swal('ผิดพลาด', 'กรุณาทำรายการใหม่', 'error')
                         this.dialogEdit = false
@@ -12404,7 +12419,7 @@ export default {
         console.log('dtint', dtint)
         var dt = {
           bookNo: item.bookNo,
-          contactDate: this.format_date(new Date()),
+          contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
           status: 'confirm',
           statusUse: 'use',
           pageStatus: this.getSelectText,
@@ -12575,7 +12590,7 @@ export default {
       this.dataCancelReady = false
       var dt = {
         bookNo: this.bookNoRemove.bookNo,
-        contactDate: this.format_date(new Date()),
+        contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
         status: 'cancel',
         statusUse: 'use',
         shopId: this.$session.getAll().data.shopId,
@@ -12765,7 +12780,7 @@ export default {
         .then(async response => {
           var dt = {
             bookNo: item.bookNo,
-            contactDate: this.format_date(new Date()),
+            contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
             status: changeStatus,
             statusUse: 'use',
             shopId: this.$session.getAll().data.shopId,

@@ -12,6 +12,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 // import vueXlsxTable from 'vue-xlsx-table'
 import axios from 'axios' // api
 import moment from 'moment-timezone' // แปลง date
+// import moment from 'moment' // แปลง date
 // import { PivotViewPlugin } from '@syncfusion/ej2-vue-pivotview'
 import * as Sentry from '@sentry/vue'
 import { Integrations } from '@sentry/tracing'
@@ -139,37 +140,39 @@ Vue.mixin({
     },
     format_date (value) {
       if (value) {
-        // return moment(moment(value, 'YYYY-MM-DD HH:mm:ss').tz('Asia/Bangkok').toDate()).format('YYYY-MM-DD HH:mm')
         return moment(moment(new Date(value)), 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss')
-        // return moment(moment((value), ('Asia/Bangkok')).format('DD/MM/YYYY HH:mm:ss'))
+        // return moment(String(value)).format('YYYY-MM-DD HH:mm:ss')
       }
     },
     format_dateFUllTime (value) {
       if (value) {
-        // moment.tz.add('Asia/Bangkok|ICT|-70|0|')
-        // return moment(new Date(value)).zone('UTC+7').format('YYYY-MM-DD HH:mm:ss')
         return moment(moment(new Date(value)), 'DD/MM/YYYY HH:mm:ss').format('DD/MM/YYYY HH:mm:ss')
+        // return moment(String(value)).format('DD/MM/YYYY HH:mm:ss')
       }
     },
     format_dateNotime (value) {
       if (value) {
         return moment(moment(new Date(value), 'DD/MM/YYYY').toDate()).format('DD/MM/YYYY')
+        // return moment(String(value)).format('DD/MM/YYYY')
       }
     },
     format_dateThai (value) {
       if (value) {
+        // return moment(String(value)).format('DD') + ' ' + this.monthNamesThai[moment(String(value)).format('M')]
         return moment(moment(new Date(value), 'DD/MM/YYYY').toDate()).format('DD') + ' ' + this.monthNamesThai[moment(moment(new Date(value), 'DD/MM/YYYY').toDate()).format('M')]
       }
     },
     // YYYY-MM-DD
     momenDate_1 (value) {
       if (value) {
+        // return moment(String(value)).format('YYYY-MM-DD')
         return moment(moment(new Date(value), 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
       }
     },
     // HH:MM:ss
     momenTime (value) {
       if (value) {
+        // return moment(String(value)).format('HH:mm')
         return moment(moment(new Date(value), 'HH:mm').toDate()).format('HH:mm')
       }
     },
@@ -348,9 +351,6 @@ Vue.mixin({
           }
         )
         .then(async (response) => {
-          // var dateObj = new Date(response.data.CREATE_DATE)
-          // var momentObj = moment(dateObj)
-          // response.data.CREATE_DATE = momentObj.format('YYYY-MM-DD')
           console.log('getData', response.data)
           this.dataReady = true
           this.dataItem = response.data

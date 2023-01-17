@@ -551,7 +551,7 @@
                               v-model="formAdd.customerTimeSlot"
                             ></v-checkbox>
                             </v-col>
-                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="$session.getAll().data.timeSlotStatus !== 'True'">
+                            <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="$session.getAll().data.timeSlotStatus !== 'True'">
                               <v-checkbox
                               label="เปิดรับคิวหน้าร้าน"
                               false-value="False"
@@ -560,8 +560,63 @@
                               color="#1B437C"
                               true-value="True"
                               v-model="formAdd.storeFrontCheck"
-                              @change="checkStoreFrontAdd()"
+                              @change="checkStoreFrontAdd(),formAdd.servicePointTh = '', formAdd.servicePointEn = '',formAdd.servicePointCount = '',servicePointCount = '', formAdd.storeFrontText = '',formAdd.servicePointStatus = 'False'"
                             ></v-checkbox>
+                            </v-col>
+                            <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;"  v-if="formAdd.storeFrontCheck === 'True'">
+                            <v-text-field
+                                v-if="formAdd.storeFrontCheck === 'True'"
+                                v-model="formAdd.storeFrontText"
+                                label="อักษรหน้าเลขคิว"
+                                outlined
+                                required
+                                dense
+                                maxlength="1"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontCheck === 'True'"></v-col>
+                            <v-col cols="12" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontCheck === 'True'">
+                              <v-checkbox
+                              label="เปิดการตั้งค่าจุดบริการ"
+                              false-value="False"
+                              :on-icon="'mdi-check-circle'"
+                              :off-icon="'mdi-checkbox-blank-circle-outline'"
+                              color="#1B437C"
+                              true-value="True"
+                              v-model="formAdd.servicePointStatus"
+                              @change="formAdd.servicePointTh = '', formAdd.servicePointEn = '',formAdd.servicePointCount = ''"
+                            ></v-checkbox>
+                            </v-col>
+                            <v-col clos="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.servicePointStatus === 'True'"  >
+                              <v-text-field
+                                v-model="formAdd.servicePointTh"
+                                label="ชื่อจุดบริการ (TH)"
+                                outlined
+                                required
+                                dense
+                                :rules="[rules.required]"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col clos="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.servicePointStatus === 'True'"  >
+                              <v-text-field
+                                v-model="formAdd.servicePointEn"
+                                label="ชื่อจุดบริการ (EN)"
+                                outlined
+                                required
+                                dense
+                                :rules="[rules.required]"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col clos="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.servicePointStatus === 'True'"  >
+                              <v-text-field
+                                v-model="servicePointCount"
+                                label="จำนวนจุดบริการ"
+                                outlined
+                                required
+                                dense
+                                v-mask="'###'"
+                                :rules="[rules.required]"
+                              ></v-text-field>
                             </v-col>
                           </v-row>
                           <v-row v-if="$session.getAll().data.timeSlotStatus !== 'True'">
@@ -815,7 +870,7 @@
                               v-model="formUpdate.customerTimeSlot"
                             ></v-checkbox>
                             </v-col>
-                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;"  v-if="$session.getAll().data.timeSlotStatus !== 'True'">
+                            <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;"  v-if="$session.getAll().data.timeSlotStatus !== 'True'">
                               <v-checkbox
                               label="เปิดรับคิวหน้าร้าน"
                               false-value="False"
@@ -824,8 +879,62 @@
                               color="#1B437C"
                               true-value="True"
                               v-model="formUpdate.storeFrontCheck"
-                              @change="checkStoreFrontUpdate()"
+                              @change="checkStoreFrontUpdate(),formUpdate.servicePointTh = '', formUpdate.servicePointEn = '',servicePointCount = '',formUpdate.servicePointCount = '', formUpdate.storeFrontText = '',formUpdate.servicePointStatus = 'False'"
                             ></v-checkbox>
+                            </v-col>
+                            <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;"  v-if="formUpdate.storeFrontCheck === 'True'">
+                            <v-text-field
+                                v-model="formUpdate.storeFrontText"
+                                label="อักษรหน้าเลขคิว"
+                                outlined
+                                required
+                                dense
+                                maxlength="1"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.storeFrontCheck === 'True'"></v-col>
+                            <v-col cols="12" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.storeFrontCheck === 'True'">
+                              <v-checkbox
+                              label="เปิดการตั้งค่าจุดบริการ"
+                              false-value="False"
+                              :on-icon="'mdi-check-circle'"
+                              :off-icon="'mdi-checkbox-blank-circle-outline'"
+                              color="#1B437C"
+                              true-value="True"
+                              v-model="formUpdate.servicePointStatus"
+                              @change="formUpdate.servicePointTh = '', formUpdate.servicePointEn = '',formUpdate.servicePointCount = ''"
+                            ></v-checkbox>
+                            </v-col>
+                            <v-col cols='4' class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.servicePointStatus === 'True'"  >
+                              <v-text-field
+                                v-model="formUpdate.servicePointTh"
+                                label="ชื่อจุดบริการ (TH)"
+                                outlined
+                                required
+                                dense
+                                :rules="[rules.required]"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols='4' class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.servicePointStatus === 'True'"  >
+                              <v-text-field
+                                v-model="formUpdate.servicePointEn"
+                                label="ชื่อจุดบริการ (EN)"
+                                outlined
+                                required
+                                dense
+                                :rules="[rules.required]"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols='4' class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.servicePointStatus === 'True'"  >
+                              <v-text-field
+                                v-model="servicePointCount"
+                                label="จำนวนจุดบริการ"
+                                outlined
+                                required
+                                dense
+                                v-mask="'###'"
+                                :rules="[rules.required]"
+                              ></v-text-field>
                             </v-col>
                           </v-row>
                           <v-row v-if="$session.getAll().data.timeSlotStatus !== 'True'">
@@ -1754,6 +1863,7 @@ export default {
   },
   data () {
     return {
+      servicePointCount: '',
       dialogwarn: false,
       checkboxwarn: false,
       warnText: [],
@@ -1941,7 +2051,12 @@ export default {
         overTime: 'True',
         customerTimeSlot: 'False',
         empTitleTh: 'พนักงานช่าง',
-        empTitleEng: 'Employee'
+        empTitleEng: 'Employee',
+        storeFrontText: '',
+        servicePointTh: '',
+        servicePointEn: '',
+        servicePointCount: '',
+        servicePointStatus: 'False'
       },
       formAddStep: {
         stepId: '',
@@ -1993,7 +2108,12 @@ export default {
         overTime: 'True',
         customerTimeSlot: 'False',
         empTitleTh: 'พนักงานช่าง',
-        empTitleEng: 'Employee'
+        empTitleEng: 'Employee',
+        storeFrontText: '',
+        servicePointTh: '',
+        servicePointEn: '',
+        servicePointCount: '',
+        servicePointStatus: 'False'
       },
       formUpdateItemFlow: {
         fieldId: '',
@@ -3095,6 +3215,19 @@ export default {
       this.desserts = []
       this.dataReady = false
       this.PK = item.flowCode
+      this.formUpdate.servicePointTh = item.servicePointTh || ''
+      this.formUpdate.servicePointEn = item.servicePointEn || ''
+      this.formUpdate.storeFrontText = item.storeFrontText || ''
+      this.formUpdate.servicePointStatus = item.servicePointStatus || 'False'
+      if (this.formUpdate.servicePointStatus === 'True') {
+        this.formUpdate.servicePointCount = item.servicePointCount || ''
+        if (this.formUpdate.servicePointCount !== '') {
+          this.formUpdate.servicePointCount = JSON.parse(this.formUpdate.servicePointCount)
+          this.servicePointCount = this.formUpdate.servicePointCount.length
+        }
+      } else {
+        this.formUpdate.servicePointCount = ''
+      }
       this.formUpdate.checkOnsite = item.checkOnsite || 'False'
       this.formUpdate.repeatBooking = item.repeatBooking || 'False'
       console.log('item: ', item)
@@ -3130,64 +3263,81 @@ export default {
       console.log(this.formUpdate)
     },
     async addData () {
-      this.dataReady = false
-      // this.formAdd.flowCode = this.generateCodeGlobal()
-      this.formAdd.CREATE_USER = this.session.data.userName
-      this.formAdd.LAST_USER = this.session.data.userName
-      this.formAdd.flowCode = this.generateCodeGlobal()
-      this.formAdd.flowfieldName = JSON.stringify(this.desserts)
-      this.formAdd.shopId = this.$session.getAll().data.shopId
-      console.log('test', this.formAdd)
-      this.$swal({
-        title: 'ต้องการ เพิ่มข้อมูล ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      })
-        .then(async result => {
-          this.formAdd.CREATE_USER = this.session.data.userName
-          this.formAdd.LAST_USER = this.session.data.userName
-          this.formAdd.flowCode = this.generateCodeGlobal()
-          this.formAdd.flowfieldName = JSON.stringify(this.desserts)
-          this.formAdd.amountDeposit = this.formAdd.amountDeposit || 0
-          console.log('flowfieldName', this.formAdd.flowfieldName)
-          console.log('shopId', this.shopId)
-          console.log('forAdd', this.formAdd)
-          await axios
-            .post(
-              // eslint-disable-next-line quotes
-              this.DNS_IP + this.path + "add",
-              this.formAdd
-            )
-            .then(async response => {
-              // Debug response
-              console.log('addDataGlobal DNS_IP + PATH + "add"', response)
-              // Close Dialog
-              this.dialogAdd = false
+      this.validate('ADD')
+      setTimeout(() => this.addDataSubmit(), 500)
+    },
+    async addDataSubmit () {
+      if (this.validAdd !== false) {
+        this.dataReady = false
+        // this.formAdd.flowCode = this.generateCodeGlobal()
+        this.formAdd.CREATE_USER = this.session.data.userName
+        this.formAdd.LAST_USER = this.session.data.userName
+        this.formAdd.flowCode = this.generateCodeGlobal()
+        this.formAdd.flowfieldName = JSON.stringify(this.desserts)
+        this.formAdd.shopId = this.$session.getAll().data.shopId
+        this.$swal({
+          title: 'ต้องการ เพิ่มข้อมูล ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        })
+          .then(async result => {
+            this.formAdd.CREATE_USER = this.session.data.userName
+            this.formAdd.LAST_USER = this.session.data.userName
+            this.formAdd.flowCode = this.generateCodeGlobal()
+            this.formAdd.flowfieldName = JSON.stringify(this.desserts)
+            this.formAdd.amountDeposit = this.formAdd.amountDeposit || 0
 
-              // Load Data
-              await this.getDataGlobal(
-                this.DNS_IP,
-                this.path,
-                this.session.data.shopId
+            this.formAdd.servicePointCount = []
+            if (this.formAdd.servicePointStatus === 'True') {
+              for (let i = 0; i < parseInt(this.servicePointCount); i++) {
+                let s = {}
+                let no = i
+                s.textTh = this.formAdd.servicePointTh + ' ' + (no + 1).toString()
+                s.textEn = this.formAdd.servicePointEn + ' ' + (no + 1).toString()
+                this.formAdd.servicePointCount.push(s)
+              }
+              this.formAdd.servicePointCount = JSON.stringify(this.formAdd.servicePointCount)
+            } else {
+              this.formAdd.servicePointCount = ''
+            }
+            console.log('forAdd', this.formAdd)
+            await axios
+              .post(
+              // eslint-disable-next-line quotes
+                this.DNS_IP + this.path + "add",
+                this.formAdd
               )
-              // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-              await this.clearData()
-              await this.warningFlow()
-            })
+              .then(async response => {
+              // Debug response
+                console.log('addDataGlobal DNS_IP + PATH + "add"', response)
+                // Close Dialog
+                this.dialogAdd = false
+
+                // Load Data
+                await this.getDataGlobal(
+                  this.DNS_IP,
+                  this.path,
+                  this.session.data.shopId
+                )
+                // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+                await this.clearData()
+                await this.warningFlow()
+              })
             // eslint-disable-next-line handle-callback-err
-            .catch(error => {
-              console.log('error function addDataGlobal : ', error)
-              this.dataReady = true
-            })
-        })
-        .catch(error => {
-          console.log('error function addData : ', error)
-          this.dataReady = true
-        })
+              .catch(error => {
+                console.log('error function addDataGlobal : ', error)
+                this.dataReady = true
+              })
+          })
+          .catch(error => {
+            console.log('error function addData : ', error)
+            this.dataReady = true
+          })
+      }
     },
     async addDataStep () {
       this.dataReady = false
@@ -3247,88 +3397,108 @@ export default {
         })
     },
     async editData () {
-      console.log('this.formUpdate', this.formUpdate)
-      let fieldId = []
-      for (let i = 0; i < this.desserts.length; i++) {
-        let d = this.desserts[i]
-        let s = {}
-        s.fieldId = d.fieldId
-        fieldId.push(s)
-      }
-      this.dataReady = false
-      this.$swal({
-        title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      })
-        .then(async result => {
-          this.formUpdate.LAST_USER = this.session.data.userName
-          this.formUpdate.amountDeposit = this.formUpdate.amountDeposit || 0
-          this.formUpdate.flowfieldName = JSON.stringify(fieldId)
-          var ID = this.formUpdate.flowId
-          delete this.formUpdate['flowId']
-          delete this.formUpdate['fieldId']
-          delete this.formUpdate['fieldName']
-          delete this.formUpdate['fieldType']
-          delete this.formUpdate['flowfieldId']
-          await axios
-            .post(
+      this.validate('UPDATE')
+      setTimeout(() => this.editDataSubmit(), 500)
+    },
+    async editDataSubmit () {
+      if (this.validUpdate !== false) {
+        console.log('this.formUpdate', this.formUpdate)
+        let fieldId = []
+        for (let i = 0; i < this.desserts.length; i++) {
+          let d = this.desserts[i]
+          let s = {}
+          s.fieldId = d.fieldId
+          fieldId.push(s)
+        }
+        this.dataReady = false
+        this.$swal({
+          title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        })
+          .then(async result => {
+            this.formUpdate.LAST_USER = this.session.data.userName
+            this.formUpdate.amountDeposit = this.formUpdate.amountDeposit || 0
+            this.formUpdate.flowfieldName = JSON.stringify(fieldId)
+            var ID = this.formUpdate.flowId
+            delete this.formUpdate['flowId']
+            delete this.formUpdate['fieldId']
+            delete this.formUpdate['fieldName']
+            delete this.formUpdate['fieldType']
+            delete this.formUpdate['flowfieldId']
+
+            this.formUpdate.servicePointCount = []
+            if (this.formUpdate.servicePointStatus === 'True') {
+              for (let i = 0; i < parseInt(this.servicePointCount); i++) {
+                let s = {}
+                let no = i
+                s.textTh = this.formUpdate.servicePointTh + ' ' + (no + 1).toString()
+                s.textEn = this.formUpdate.servicePointEn + ' ' + (no + 1).toString()
+                this.formUpdate.servicePointCount.push(s)
+              }
+              this.formUpdate.servicePointCount = JSON.stringify(this.formUpdate.servicePointCount)
+            } else {
+              this.formUpdate.servicePointCount = ''
+            }
+            await axios
+              .post(
               // eslint-disable-next-line quotes
-              this.DNS_IP + this.path + "edit/" + ID,
-              this.formUpdate
-            )
-            .then(async response => {
+                this.DNS_IP + this.path + "edit/" + ID,
+                this.formUpdate
+              )
+              .then(async response => {
               // Debug response
-              console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
-              // Close Dialog
-              this.dialogEdit = false
-              for (let i = 0; i < this.desserts.length; i++) {
-                let d = this.desserts[i]
-                let showcarditem = {}
-                if (
-                  d.showCard === undefined ||
+                console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
+                // Close Dialog
+                this.dialogEdit = false
+                for (let i = 0; i < this.desserts.length; i++) {
+                  let d = this.desserts[i]
+                  let showcarditem = {}
+                  if (
+                    d.showCard === undefined ||
                   d.showCard === '' ||
                   d.showCard === null ||
                   d.showCard === 'False'
-                ) {
-                  showcarditem.showCard = 'False'
-                  console.log('1')
-                } else {
-                  showcarditem.showCard = d.showCard
-                  console.log('2')
+                  ) {
+                    showcarditem.showCard = 'False'
+                    console.log('1')
+                  } else {
+                    showcarditem.showCard = d.showCard
+                    console.log('2')
+                  }
+                  axios
+                    .post(
+                      this.DNS_IP + '/customField/edit/' + d.fieldId,
+                      showcarditem
+                    )
+                    .then(response => {})
+                    .catch(error => {
+                      console.log('error function addData : ', error)
+                    })
                 }
-                axios
-                  .post(
-                    this.DNS_IP + '/customField/edit/' + d.fieldId,
-                    showcarditem
-                  )
-                  .then(response => {})
-                  .catch(error => {
-                    console.log('error function addData : ', error)
-                  })
-              }
-              // Load Data
-              await this.getDataGlobal(
-                this.DNS_IP,
-                this.path,
-                this.session.data.shopId
-              )
-              this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
-            })
+                // Load Data
+                await this.getDataGlobal(
+                  this.DNS_IP,
+                  this.path,
+                  this.session.data.shopId
+                )
+                this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
+              })
             // eslint-disable-next-line handle-callback-err
-            .catch(error => {
-              this.dataReady = true
-              console.log('error function editDataGlobal : ', error)
-            })
-        })
-        .catch(error => {
-          this.dataReady = true
-          console.log('error function editDataGlobal : ', error)
-        })
+              .catch(error => {
+                this.dataReady = true
+                console.log('error function editDataGlobal : ', error)
+              })
+          })
+          .catch(error => {
+            this.dataReady = true
+            console.log('error function editDataGlobal : ', error)
+          })
+      }
     },
     async editDataStepTitle () {
       console.log('stepItemSelete', this.stepItemSelete)
@@ -3549,6 +3719,8 @@ export default {
           } else if (key === 'checkPayment') {
             this.formAdd[key] = 'True'
           } else if (key === 'checkOnsite') {
+            this.formAdd[key] = 'False'
+          } else if (key === 'servicePointStatus') {
             this.formAdd[key] = 'False'
           } else if (key === 'checkDeposit') {
             this.formAdd[key] = 'False'

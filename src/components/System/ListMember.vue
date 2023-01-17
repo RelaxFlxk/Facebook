@@ -521,7 +521,7 @@ export default {
         this.linkUpdateUserId = 'https://betask-linked.web.app/UpdateLineUserID?shopId=' + item.shopId + '&memberId=' + item.memberId
       } else {
         await axios
-          .get(this.DNS_IP + '/line/getProfileByUserId?shopId=' + this.session.data.shopId + '&userId=' + lineUserId)
+          .post(this.DNS_IP + '/line/getProfileByUserId', {'userId': lineUserId, 'shopId': this.session.data.shopId})
           .then(async response => {
             console.log('getProfileByUserId', response)
             let rs = response.data

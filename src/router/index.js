@@ -161,6 +161,11 @@ export default new Router({
     component: System.User
   },
   {
+    path: '/System/LINEConfigSendMessage',
+    name: 'LINEConfigSendMessage',
+    component: System.LINEConfigSendMessage
+  },
+  {
     path: '/System/UserTypeGroup',
     name: 'UserTypeGroup',
     component: System.UserTypeGroup

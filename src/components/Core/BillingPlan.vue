@@ -320,6 +320,17 @@
                     </v-col>
                     <v-col cols="12" class="pt-1 pb-0">
                       <v-text-field
+                        prepend-icon="mdi-card-account-phone-outline"
+                        v-mask="'##########'"
+                        v-model="billingPhone"
+                        label="เบอร์โทร"
+                        outlined
+                        dense
+                        required
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pt-1 pb-0">
+                      <v-text-field
                         prepend-icon="mdi-hail"
                         v-model="billingTax"
                         label="เลขประจำตัวผู้เสียภาษี"
@@ -374,11 +385,8 @@
                   </v-btn>
                   </div>
                   <h3 class="text-center" style="color:#1B437C;font-weight: bold;">ชำระเงินด้วย</h3>
+                  <!-- <h3 class="text-center" style="color:#1B437C;font-weight: bold;">วิธีการโอน</h3> -->
                   <h3 class="text-center" style="color:#1B437C;font-weight: bold;">QR PromptPay</h3>
-                  <!-- <p class="text-center mt-5">
-                    กรุณาแคปหน้าจอ QR Code
-                    เพื่อดำเนินการจ่ายเงินด้วยแอพพลิเคชั่นของธนาคาร
-                  </p> -->
                   <v-card class="mt-6 mb-6 pb-6" elevation="0">
                     <v-img
                       height="170"
@@ -392,9 +400,9 @@
                         :foreground="foreground"
                       />
                     </div>
-                    <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-3">
+                    <!-- <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-3">
                       บริษัท บีแทสก์ คอนซัลติ้ง จำกัด
-                    </h6>
+                    </h6> -->
                     <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
                       บัญชี : บริษัท บีแทสก์ คอนซัลติ้ง จำกัด
                     </h6>
@@ -515,11 +523,66 @@
                         v-model="filesImg"
                       ></v-file-input>
                     </v-col>
+                    <v-col cols="12" class="text-center pa-2">
+                      <v-expansion-panels
+                        v-model="panel"
+                        multiple
+                      >
+                        <v-expansion-panel>
+                          <v-expansion-panel-header>ช่องทางการชำระเงิน</v-expansion-panel-header>
+                          <v-expansion-panel-content>
+                            <v-img
+                              height="170"
+                              src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2FQR-prompt.jpg?alt=media&token=42637b63-af5b-45d9-8900-b866b789819e"
+                            ></v-img>
+                            <div class="text-center mt-4" v-if="value">
+                              <qrcode-vue
+                                :value="value"
+                                :size="size"
+                                level="H"
+                                :foreground="foreground"
+                              />
+                            </div>
+                            <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
+                              บัญชี : บริษัท บีแทสก์ คอนซัลติ้ง จำกัด
+                            </h6>
+                            <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
+                              จำนวนเงิน : {{ formatNumber(paymentAmount) }} บาท
+                            </h6>
+                            <div class="pl-4 pr-4"><v-divider></v-divider></div>
+                            <div class="text-center" style="display:flex;"><v-img
+                                  style="position: relative;left: -33px;"
+                                  aspect-ratio="6"
+                                  contain
+                                  max-width="200"
+                                  src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2Fktb.png?alt=media&token=f197ab8f-f502-4136-91a0-8c92f2968ecf"
+                                ></v-img><h6 style="position: relative;left: -85px;margin-bottom: 0;">ธนาคารกรุงไทย สาขาประชาอุทิศ  เลขบัญชี 094-0-34082-8</h6></div>
+                            <div class="text-center" style="display:flex;padding:20px"><v-img
+                                  aspect-ratio="6"
+                                  contain
+                                  max-width="200"
+                                  src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2Fkbank.png?alt=media&token=f492fd39-0b56-4aa4-82d7-730b53167029"
+                                ></v-img><h6>ธนาคารกสิกรไทย สาขาศรีวรา ทาวน์อินทาวน์ เลขบัญชี 107-3-15084-8</h6></div>
+                          </v-expansion-panel-content>
+                        </v-expansion-panel>
+                      </v-expansion-panels>
+                    </v-col>
                     <v-col cols="12" class="pt-1 pb-0">
                       <v-text-field
                         prepend-icon="mdi-account"
                         v-model="billingCusName"
                         label="ชื่อ-สกุล"
+                        outlined
+                        dense
+                        required
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pt-1 pb-0">
+                      <v-text-field
+                        prepend-icon="mdi-card-account-phone-outline"
+                        v-mask="'##########'"
+                        v-model="billingPhone"
+                        label="เบอร์โทร"
                         outlined
                         dense
                         required
@@ -607,9 +670,11 @@ export default {
   },
   data () {
     return {
+      panel: [],
       billingCusName: '',
       billingAddress: '',
       billingTax: '',
+      billingPhone: '',
       paymentAmount: '',
       paymentDateMonthYear: '',
       breadcrumbs: [
@@ -682,7 +747,7 @@ export default {
     },
     async getCheckCountBook () {
       // await axios.get(this.DNS_IP + '/booking_view/getCheckPack?statusBt=wait and confirm&shopId=' + this.$session.getAll().data.shopId + '&dueDate=' + this.format_dateNoDay(new Date())).then(response => {
-      await axios.get(this.DNS_IP + '/booking_view/getCheckPack?shopId=' + this.$session.getAll().data.shopId + '&dueDateLastMonth=T').then(response => {
+      await axios.get(this.DNS_IP + '/booking_view/getCheckPack?shopId=' + this.$session.getAll().data.shopId + '&CREATE_DATELastMonth=T').then(response => {
         let rs = response.data
         if (rs.status !== false) {
           this.countBooking = response.data.countJob
@@ -857,15 +922,17 @@ export default {
               this.billingCusName = rs[0].billingCusName || ''
               this.billingAddress = rs[0].billingAddress || ''
               this.billingTax = rs[0].billingTax || ''
+              this.billingPhone = rs[0].billingPhone || rs[0].contactTel
             } else {
               this.billingCusName = ''
               this.billingAddress = ''
               this.billingTax = ''
+              this.billingPhone = ''
             }
           })
         const generatePayload = require('promptpay-qr')
-        // const mobileNumber = '1129900371744'
-        const promptpayID = '1529900508673'
+        // const promptpayID = '1529900508673'
+        const promptpayID = '0125563009946'
         // const IDCardNumber = '0-0000-00000-00-0'
         const amount = parseFloat(item.pricePackage)
         this.value = generatePayload(promptpayID, { amount })
@@ -893,7 +960,7 @@ export default {
       if (this.paymentImge === null || this.paymentImge === '') {
         this.$swal('ผิดพลาด', 'กรุณาอัพโหลดหลักฐานการโอนเงิน', 'error')
       } else {
-        if (this.billingCusName !== '' && this.billingAddress !== '' && this.billingTax !== '') {
+        if (this.billingCusName !== '' && this.billingAddress !== '' && this.billingTax !== '' && this.billingPhone !== '') {
           this.$swal({
             title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
             type: 'question',
@@ -931,7 +998,7 @@ export default {
                 // }
                 await axios.post(url, dt).then(async (response) => {
                   if (response.status) {
-                    this.updateShopActive('active')
+                    this.updateShopActive('active', item.id)
                     this.$swal('สำเร็จ', 'อัพโหลดสลิปสำเร็จ', 'success')
                     let dtMgs = {
                       shopId: this.$session.getAll().data.shopId,
@@ -942,6 +1009,7 @@ export default {
                       billingCusName: this.billingCusName,
                       billingAddress: this.billingAddress,
                       billingTax: this.billingTax,
+                      billingPhone: this.billingPhone,
                       paymentAmount: this.paymentAmount,
                       paymentDateMonthYear: moment().format('MM/YYYY'),
                       statusNoti: 'New'
@@ -975,6 +1043,12 @@ export default {
       this.idPayment = item.id
       this.paymentAmount = item.paymentAmount
       this.paymentDateMonthYear = item.paymentDateMonthYear
+      const generatePayload = require('promptpay-qr')
+      // const promptpayID = '1529900508673'
+      const promptpayID = '0125563009946'
+      // const IDCardNumber = '0-0000-00000-00-0'
+      const amount = parseFloat(item.paymentAmount)
+      this.value = generatePayload(promptpayID, { amount })
       await axios
         .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.$session.getAll().data.shopId)
         .then(async (response) => {
@@ -983,15 +1057,17 @@ export default {
             this.billingCusName = rs[0].billingCusName || ''
             this.billingAddress = rs[0].billingAddress || ''
             this.billingTax = rs[0].billingTax || ''
+            this.billingPhone = rs[0].billingPhone || rs[0].contactTel
           } else {
             this.billingCusName = ''
             this.billingAddress = ''
             this.billingTax = ''
+            this.billingPhone = ''
           }
         })
     },
     async updateReturn () {
-      if (this.billingCusName !== '' && this.billingAddress !== '' && this.billingTax !== '') {
+      if (this.billingCusName !== '' && this.billingAddress !== '' && this.billingTax !== '' && this.billingPhone !== '') {
         if (this.filesImg) {
           const _this = this
           let params = new FormData()
@@ -1026,6 +1102,7 @@ export default {
                 billingCusName: this.billingCusName,
                 billingAddress: this.billingAddress,
                 billingTax: this.billingTax,
+                billingPhone: this.billingPhone,
                 paymentAmount: this.paymentAmount,
                 paymentDateMonthYear: this.paymentDateMonthYear,
                 statusNoti: 'Update'
@@ -1045,13 +1122,27 @@ export default {
         this.$swal('ผิดพลาด', 'กรุณากรอกข้อมูลให้ครบ', 'error')
       }
     },
-    async updateShopActive (text) {
-      var ds = {
-        shopActive: text,
-        billingCusName: this.billingCusName,
-        billingAddress: this.billingAddress,
-        billingTax: this.billingTax,
-        LAST_USER: this.$session.getAll().data.userName
+    async updateShopActive (text, packetId) {
+      var ds = {}
+      if (packetId) {
+        ds = {
+          shopActive: text,
+          billingCusName: this.billingCusName,
+          billingAddress: this.billingAddress,
+          billingTax: this.billingTax,
+          billingPhone: this.billingPhone,
+          billingPlan: packetId,
+          LAST_USER: this.$session.getAll().data.userName
+        }
+      } else {
+        ds = {
+          shopActive: text,
+          billingCusName: this.billingCusName,
+          billingAddress: this.billingAddress,
+          billingTax: this.billingTax,
+          billingPhone: this.billingPhone,
+          LAST_USER: this.$session.getAll().data.userName
+        }
       }
       await axios
         .post(
