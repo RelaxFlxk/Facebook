@@ -703,7 +703,16 @@
                           <v-textarea
                             outlined
                             v-model="formAdd.remarkConfirm"
-                            label="หมายเหตุการยืนยันนัดหมาย"
+                            label="หมายเหตุการยืนยันนัดหมาย (TH)"
+                          ></v-textarea>
+                        </v-col>
+                        <v-col
+                          cols="12"
+                        >
+                          <v-textarea
+                            outlined
+                            v-model="formAdd.remarkConfirmEn"
+                            label="หมายเหตุการยืนยันนัดหมาย (EN)"
                           ></v-textarea>
                         </v-col>
                         <br />
@@ -1021,7 +1030,16 @@
                           <v-textarea
                             outlined
                             v-model="formUpdate.remarkConfirm"
-                            label="หมายเหตุการยืนยันนัดหมาย"
+                            label="หมายเหตุการยืนยันนัดหมาย (TH)"
+                          ></v-textarea>
+                        </v-col>
+                        <v-col
+                          cols="12"
+                        >
+                          <v-textarea
+                            outlined
+                            v-model="formUpdate.remarkConfirmEn"
+                            label="หมายเหตุการยืนยันนัดหมาย (EN)"
                           ></v-textarea>
                         </v-col>
                         <!-- สำหรับ ธุรกิจรถยนต์ -->
@@ -2044,6 +2062,7 @@ export default {
         amountDeposit: 0,
         shopId: this.$session.getAll().data.shopId,
         remarkConfirm: '',
+        remarkConfirmEn: '',
         timeSlotStatus: this.$session.getAll().data.timeSlotStatus || 'False',
         timeSlot: 1,
         bookingNowCheck: 'False',
@@ -2101,6 +2120,7 @@ export default {
         promptPayName: null,
         shopId: '',
         remarkConfirm: '',
+        remarkConfirmEn: '',
         timeSlotStatus: this.$session.getAll().data.timeSlotStatus || 'False',
         timeSlot: 1,
         bookingNowCheck: 'False',
@@ -2139,7 +2159,8 @@ export default {
         checkPayment: 'True',
         checkOnsite: 'False',
         LAST_USER: '',
-        remarkConfirm: ''
+        remarkConfirm: '',
+        remarkConfirmEn: ''
       },
       columnsStep: [
         { text: 'แจ้งเตือน', value: 'sendCard', align: 'center' },
@@ -3251,6 +3272,7 @@ export default {
       this.formUpdate.promptPayID = item.promptPayID || ''
       this.formUpdate.promptPayName = item.promptPayName || ''
       this.formUpdate.remarkConfirm = item.remarkConfirm || ''
+      this.formUpdate.remarkConfirmEn = item.remarkConfirmEn || ''
       this.formUpdate.depositTime = item.depositTime || 'NO'
       this.shopId = this.$session.getAll().data.shopId
       this.fieldType = this.formUpdate.fieldType

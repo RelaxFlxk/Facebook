@@ -58,7 +58,30 @@
                 </v-avatar>
                 </v-col>
               </v-row>
-              <h3 class="text-center" :style="'color:' + DarkModefont +';'">{{'นัดหมายเข้ารับบริการ'}}</h3>
+              <div style="display:flex;justify-content: center;" class="ma-3">
+                <v-chip
+                  class="mr-1 font-weight-black"
+                  :style="'background-color:' + (languageSelect === 0 ? DarkModeButton : 'rgb(103 103 103 / 18%)') + ';font-size:20px'"
+                  dark
+                  @click="languageSelect = 0"
+                  >
+                  <v-avatar left>
+                    <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2Fflag-TH.png?alt=media&token=e4bd7ffa-aed9-47e3-9240-4dcb9d8d284e"></v-img>
+                  </v-avatar>
+                    TH
+                </v-chip>
+                <v-chip
+                  class="ml-1 font-weight-black"
+                  :style="'background-color:' + (languageSelect === 1 ? DarkModeButton : 'rgb(103 103 103 / 18%)') + ';font-size:20px'"
+                  dark
+                  @click="languageSelect = 1">
+                  <v-avatar left>
+                    <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2Fflag-USA1.png?alt=media&token=a83dd820-f576-457a-8d08-1009cea9d70b"></v-img>
+                  </v-avatar>
+                    EN
+                </v-chip>
+              </div>
+              <h3 class="text-center" :style="'color:' + DarkModefont +';'">{{ languageSelect === 0 ? bookingFormHeader : bookingFormHeaderEn}}</h3>
               <h5 class="text-center" :style="'color:' + DarkModefont +';'" v-if="shop.length > 0">{{shop[0].shopName}}</h5>
               <v-col cols="12" class="text-center  pa-0 mb-3" >
                 <v-btn
@@ -68,7 +91,7 @@
                   @click="dialogHistory = true"
                   readonly
                 >
-                ประวัติการเข้ารับบริการ
+                {{ languageSelect === 0 ? bookingFormHistoryBT : bookingFormHistoryBTEn}}
                 <v-icon
                   right
                   dark
@@ -98,7 +121,7 @@
                   :key="indexFix"
                 >
                   <v-text-field
-                    :label="itemFix.fieldName"
+                    :label="languageSelect === 0 ? itemFix.fieldName:itemFix.fieldNameEn"
                     outlined
 
                   ></v-text-field>
@@ -110,7 +133,7 @@
                     <div v-if="item.fieldType == 'text'">
                     <v-text-field
                     v-model="item.fieldValue"
-                    :label="item.fieldName"
+                    :label="languageSelect === 0 ? item.fieldName:item.fieldNameEn"
                     outlined
                     required
 
@@ -119,7 +142,7 @@
                   <div v-if="item.fieldType == 'number'">
                     <v-text-field
                     v-model="item.fieldValue"
-                    :label="item.fieldName"
+                    :label="languageSelect === 0 ? item.fieldName:item.fieldNameEn"
                     outlined
                     required
 
@@ -130,7 +153,7 @@
                       v-model="item.fieldValue"
                       :items="JSON.parse(item.optionField)"
                       outlined
-                      :label="item.fieldName"
+                      :label="languageSelect === 0 ? item.fieldName:item.fieldNameEn"
                       required
 
                     ></v-autocomplete>
@@ -140,7 +163,7 @@
                       v-model="item.fieldValue"
                       :items="JSON.parse(item.optionField)"
                       menu-props="auto"
-                      :label="item.fieldName"
+                      :label="languageSelect === 0 ? item.fieldName:item.fieldNameEn"
                       required
 
                       outlined
@@ -169,7 +192,7 @@
                     <div v-if="item.fieldType == 'text'">
                     <v-text-field
                     v-model="item.fieldValue"
-                    :label="item.fieldName"
+                    :label="languageSelect === 0 ? item.fieldName:item.fieldNameEn"
                     outlined
                     required
 
@@ -178,7 +201,7 @@
                     <div v-if="item.fieldType == 'number'">
                       <v-text-field
                       v-model="item.fieldValue"
-                      :label="item.fieldName"
+                      :label="languageSelect === 0 ? item.fieldName:item.fieldNameEn"
                       outlined
                       required
 
@@ -189,7 +212,7 @@
                         v-model="item.fieldValue"
                         :items="JSON.parse(item.optionField)"
                         outlined
-                        :label="item.fieldName"
+                        :label="languageSelect === 0 ? item.fieldName:item.fieldNameEn"
                         required
 
                       ></v-autocomplete>
@@ -199,7 +222,7 @@
                         v-model="item.fieldValue"
                         :items="JSON.parse(item.optionField)"
                         menu-props="auto"
-                        :label="item.fieldName"
+                        :label="languageSelect === 0 ? item.fieldName:item.fieldNameEn"
                         required
 
                         outlined
@@ -242,8 +265,8 @@
                       <template v-slot:activator="{ on, attrs }">
                         <v-text-field
                           v-model="date"
-                          label="วันที่"
-                          prepend-icon="mdi-calendar"
+                          :label="languageSelect === 0 ? 'วันที่' : 'Date'"
+                          prepend-inner-icon="mdi-calendar"
                           readonly
                           v-bind="attrs"
                           v-on="on"
@@ -277,7 +300,7 @@
                     <v-text-field
                     outlined
                       v-model="time"
-                      label="เวลา"
+                      :label="languageSelect === 0 ? 'เวลา' : 'Time'"
                       type="time"
                       suffix=""
                       required
@@ -294,14 +317,14 @@
               dark
               large
                readonly
-            >{{'ยืนยัน'}}</v-btn>
-            <v-btn
+            >{{ languageSelect === 0 ? bookingFormConfirmBT : bookingFormConfirmBTEn }}</v-btn>
+            <!-- <v-btn
               class="button"
               large
               :color="DarkModeButton"
               dark
                readonly
-            >{{'ยกเลิก'}}</v-btn>
+            >{{'ยกเลิก'}}</v-btn> -->
             </div>
               </v-card>
             </div>
@@ -687,6 +710,96 @@
               <v-col cols="12" md="12" sm="12">
                 <v-card min-height="50%">
                   <v-col cols="12" class="text-center">
+                    <h4 class="text-center">ตั้งค่า หน้านัดหมายของลูกค้า</h4>
+                    <v-row align="center">
+                      <v-expansion-panels
+                          multiple
+                        >
+                        <v-expansion-panel>
+                          <v-expansion-panel-header>จัดการ หัวข้อที่ต้องการแสดง</v-expansion-panel-header>
+                          <v-form ref="form_bookingText" v-model="validBookingText" lazy-validation>
+                          <v-expansion-panel-content>
+                            <v-row>
+                              <v-col cols="6" class="pb-0 pt-3">
+                                <v-text-field
+                                  v-model="bookingFormHeader"
+                                  dense
+                                  label="หัวข้อ (TH)"
+                                  required
+                                  :rules="[rules.required]"
+                                ></v-text-field>
+                              </v-col>
+                              <v-col cols="6" class="pb-0 pt-3">
+                                <v-text-field
+                                  v-model="bookingFormHeaderEn"
+                                  dense
+                                  label="หัวข้อ (EN)"
+                                  required
+                                  :rules="[rules.required]"
+                                ></v-text-field>
+                              </v-col>
+                              <v-col cols="6" class="pb-0 pt-1">
+                                <v-text-field
+                                  v-model="bookingFormHistoryBT"
+                                  dense
+                                  label="ชื่อปุ่ม ประวัติการเข้าใช้บริการ (TH)"
+                                  required
+                                  :rules="[rules.required]"
+                                ></v-text-field>
+                              </v-col>
+                              <v-col cols="6" class="pb-0 pt-1">
+                                <v-text-field
+                                  v-model="bookingFormHistoryBTEn"
+                                  dense
+                                  label="ชื่อปุ่ม ประวัติการเข้าใช้บริการ (EN)"
+                                  required
+                                  :rules="[rules.required]"
+                                ></v-text-field>
+                              </v-col>
+                              <v-col cols="6" class="pb-0 pt-1">
+                                <v-text-field
+                                  v-model="bookingFormConfirmBT"
+                                  dense
+                                  label="ชื่อปุ่ม ยืนยันนัดหมาย (TH)"
+                                  required
+                                  :rules="[rules.required]"
+                                ></v-text-field>
+                              </v-col>
+                              <v-col cols="6" class="pb-0 pt-1">
+                                <v-text-field
+                                  v-model="bookingFormConfirmBTEn"
+                                  dense
+                                  label="ชื่อปุ่ม ยืนยันนัดหมาย (EN)"
+                                  required
+                                  :rules="[rules.required]"
+                                ></v-text-field>
+                              </v-col>
+                            </v-row>
+                            <div class="text-center">
+                              <v-btn
+                                elevation="2"
+                                small
+                                dark
+                                @click="updateTextBooking()"
+                                color="info"
+                              >
+                                <v-icon left>mdi-content-save-edit</v-icon>
+                                เปลี่ยนแปลง
+                              </v-btn>
+                            </div>
+                          </v-expansion-panel-content>
+                          </v-form>
+                        </v-expansion-panel>
+                      </v-expansion-panels>
+                    </v-row>
+                  </v-col>
+                </v-card>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" md="12" sm="12">
+                <v-card min-height="50%">
+                  <v-col cols="12" class="text-center">
                     <h4 class="text-center">โปรดเลือกข้อมูลที่ต้องการแสดง</h4>
                     <v-row align="center">
                       <v-checkbox
@@ -882,6 +995,7 @@ export default {
   },
   data () {
     return {
+      languageSelect: 0,
       statusEngPayment: 'False',
       editBycustomField: 'False',
       dialogchekField: false,
@@ -920,6 +1034,7 @@ export default {
       validOther: false,
       validJob: false,
       validProcess: false,
+      validBookingText: false,
       textOther: '',
       date: '',
       time: '',
@@ -950,10 +1065,12 @@ export default {
       ],
       fixtureField: [
         {
-          fieldName: 'ประเภทบริการ'
+          fieldName: 'ประเภทบริการ',
+          fieldNameEn: 'Services'
         },
         {
-          fieldName: 'สาขา'
+          fieldName: 'สาขา',
+          fieldNameEn: 'Branch'
         }
       ],
       FieldSelect: [
@@ -986,7 +1103,13 @@ export default {
           return pattern.test(value) || 'Invalid e-mail.'
         }
       },
-      dataLineConfig: []
+      dataLineConfig: [],
+      bookingFormHeader: '',
+      bookingFormHistoryBT: '',
+      bookingFormConfirmBT: '',
+      bookingFormHeaderEn: '',
+      bookingFormHistoryBTEn: '',
+      bookingFormConfirmBTEn: ''
     }
   },
   async mounted () {
@@ -996,6 +1119,32 @@ export default {
     await this.getBookingField()
   },
   methods: {
+    updateTextBooking () {
+      this.validate('updateBookingText')
+      setTimeout(() => this.updateTextBookingSubmit(), 500)
+    },
+    updateTextBookingSubmit () {
+      if (this.validBookingText !== false) {
+        this.dataReady = true
+        let url = '/BookingField/edit/' + this.IdUpdate
+        let dt = {
+          bookingFormHeader: this.bookingFormHeader,
+          bookingFormHeaderEn: this.bookingFormHeaderEn,
+          bookingFormHistoryBT: this.bookingFormHistoryBT,
+          bookingFormHistoryBTEn: this.bookingFormHistoryBTEn,
+          bookingFormConfirmBT: this.bookingFormConfirmBT,
+          bookingFormConfirmBTEn: this.bookingFormConfirmBTEn,
+          LAST_USER: this.session.data.userName
+        }
+        axios
+          .post(this.DNS_IP + url, dt)
+          .then(async response => {
+            this.$swal('สำเร็จ', 'เปลี่ยนแปลงเรียบร้อย', 'success')
+            await this.getBookingField()
+            this.dataReady = false
+          })
+      }
+    },
     async editDataByBookingField (item) {
       console.log('item1111111111111111111111111111', item)
       this.editBycustomField = 'True'
@@ -1077,6 +1226,12 @@ export default {
             self.$refs.form_process.validate()
           })
           break
+        case 'updateBookingText':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_bookingText.validate()
+          })
+          break
         default:
           break
       }
@@ -1126,6 +1281,12 @@ export default {
               this.dataTypeProcess4 = rs[0].typeProcess4 || ''
               this.textUpload1 = rs[0].textUpload1 || 'Upload File 1'
               this.textUpload2 = rs[0].textUpload2 || 'Upload File 2'
+              this.bookingFormHeader = rs[0].bookingFormHeader || 'ลงทะเบียนนัดหมาย'
+              this.bookingFormHistoryBT = rs[0].bookingFormHistoryBT || 'ประวัติการเข้ารับบริการ'
+              this.bookingFormConfirmBT = rs[0].bookingFormConfirmBT || 'ยืนยันนัดหมาย'
+              this.bookingFormHeaderEn = rs[0].bookingFormHeaderEn || 'Booking Services'
+              this.bookingFormHistoryBTEn = rs[0].bookingFormHistoryBTEn || 'History'
+              this.bookingFormConfirmBTEn = rs[0].bookingFormConfirmBTEn || 'Confirm'
               let bookingData = []
               if (rs[0].multiDueDate === null || rs[0].multiDueDate === '') {
                 this.multiDueDate = 'False'
@@ -1210,6 +1371,7 @@ export default {
             let s = {}
             s.fieldId = d.fieldId
             s.fieldName = d.fieldName
+            s.fieldNameEn = d.fieldNameEn
             s.fieldType = d.fieldType
             s.optionField = d.optionField
             s.conditionField = d.conditionField
