@@ -520,7 +520,7 @@
         </v-dialog>
     <v-dialog v-model="dialogChange" persistent max-width="90%">
       <v-card class="text-center">
-        <v-card-text>
+        <v-card-text v-if="dataReady">
           <v-row>
               <v-col cols="10" class="text-left pt-10">
               <h3><strong>เปลี่ยนเวลานัดหมาย</strong></h3>
@@ -646,139 +646,145 @@
             >
           </div>
         </v-card-text>
+        <v-card-text v-else>
+          <waitingAlert></waitingAlert>
+        </v-card-text>
         <br />
       </v-card>
     </v-dialog>
     <v-dialog v-model="dialogConfirm" max-width="90%">
-            <v-card class="text-center">
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col cols="10" class="text-left pt-10">
-                    <h3><strong>ยืนยันรายการนี้</strong></h3>
-                    </v-col>
-                    <v-col cols="2" class="pt-10">
-                    <div style="text-align: end;">
-                        <v-btn
-                        class="mx-2"
-                        fab
-                        small
-                        dark
-                        color="white"
-                        :style="styleCloseBt"
-                        @click="dialogConfirm = false"
-                        >
-                        X
-                        </v-btn>
-                    </div>
-                    </v-col>
-                </v-row>
-                  <v-row v-if="checkStatusBooking === 'cancel'">
-                    <v-col cols="12" class="pt-0 pb-0">
-                    <v-select
-                      v-model="flowSelect"
-                      :items="dataFlow"
-                      label="เลือกประเภทบริการ"
-                      menu-props="auto"
-                      outlined
-                      dense
-                      @change="getEmp(masBranchID), empSelect=''"
-                    ></v-select>
-                    </v-col>
-                    <v-col  cols="12" class="pt-0 pb-0">
-                        <v-select
-                          v-model="bookingEmpFlow"
-                          :items="dataEmp"
-                          label="พนักงานช่าง"
-                          menu-props="auto"
-                          outlined
-                          required
-                          :rules="[rules.required]"
-                          dense
-                          @change="checkTime(),SetallowedDatesChange(bookingEmpFlow), formChange.date = ''"
-                        ></v-select>
-                      </v-col>
-                    <v-col cols="12" class="pt-0 pb-0">
-                      <v-menu
-                        v-model="menuDateChange"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        transition="scale-transition"
-                        offset-y
-                        min-width="auto"
-                      >
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-text-field
-                            v-model="formChange.date"
-                            label="วันที่"
-                            prepend-icon="mdi-calendar"
-                            readonly
-                            outlined
-                            dense
-                            v-bind="attrs"
-                            v-on="on"
-                            required
-                            :rules="[rules.required]"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker
-                          v-model="formChange.date"
-                          :allowed-dates="allowedDatesChange"
-                          @change="setLimitBooking(formChange.date)"
-                          @input="menuDateChange = false"
-                          :min="
-                            new Date(
-                              Date.now() - new Date().getTimezoneOffset() * 60000
-                            )
-                              .toISOString()
-                              .substr(0, 10)
-                          "
-                        ></v-date-picker>
-                      </v-menu>
-                    </v-col>
-                    <v-col cols="12" class="pt-0 pb-0" v-if="formChange.date != ''">
-                        <v-select
-                          v-model="formChange.time"
-                          :items="timeavailable"
-                          label="เวลา"
-                          item-text="text"
-                          item-value="text"
-                          persistent-hint
-                          return-object
-                          outlined
-                          dense
-                          required
-                          :rules ="[rules.required]"
-                        ></v-select>
-                    </v-col>
-                  </v-row>
-                <v-row>
-                  <v-col cols="12" class="pt-0 pb-0">
+      <v-card class="text-center">
+        <v-card-text v-if="dataReady">
+          <v-container>
+            <v-row>
+              <v-col cols="10" class="text-left pt-10">
+              <h3><strong>ยืนยันรายการนี้</strong></h3>
+              </v-col>
+              <v-col cols="2" class="pt-10">
+              <div style="text-align: end;">
+                  <v-btn
+                  class="mx-2"
+                  fab
+                  small
+                  dark
+                  color="white"
+                  :style="styleCloseBt"
+                  @click="dialogConfirm = false"
+                  >
+                  X
+                  </v-btn>
+              </div>
+              </v-col>
+          </v-row>
+            <v-row v-if="checkStatusBooking === 'cancel'">
+              <v-col cols="12" class="pt-0 pb-0">
+              <v-select
+                v-model="flowSelect"
+                :items="dataFlow"
+                label="เลือกประเภทบริการ"
+                menu-props="auto"
+                outlined
+                dense
+                @change="getEmp(masBranchID), empSelect=''"
+              ></v-select>
+              </v-col>
+              <v-col  cols="12" class="pt-0 pb-0">
                   <v-select
-                    v-model="empSelect"
-                    :items="empSelectStep"
-                    label="พนักงานที่รับนัดหมาย"
+                    v-model="bookingEmpFlow"
+                    :items="dataEmp"
+                    label="พนักงานช่าง"
                     menu-props="auto"
                     outlined
+                    required
+                    :rules="[rules.required]"
                     dense
+                    @change="checkTime(),SetallowedDatesChange(bookingEmpFlow), formChange.date = ''"
                   ></v-select>
-                  </v-col>
-                </v-row>
-                <div class="text-center">
-                  <v-btn
-                    elevation="2"
-                    color="#173053"
-                    dark
-                    large
-                    block
-                    @click="onConfirm(dataConfirm)"
-                    >ยืนยันรายการนี้</v-btn
-                  >
-                </div>
-                </v-container>
-              </v-card-text>
-            </v-card>
-          </v-dialog>
+                </v-col>
+              <v-col cols="12" class="pt-0 pb-0">
+                <v-menu
+                  v-model="menuDateChange"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="formChange.date"
+                      label="วันที่"
+                      prepend-icon="mdi-calendar"
+                      readonly
+                      outlined
+                      dense
+                      v-bind="attrs"
+                      v-on="on"
+                      required
+                      :rules="[rules.required]"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="formChange.date"
+                    :allowed-dates="allowedDatesChange"
+                    @change="setLimitBooking(formChange.date)"
+                    @input="menuDateChange = false"
+                    :min="
+                      new Date(
+                        Date.now() - new Date().getTimezoneOffset() * 60000
+                      )
+                        .toISOString()
+                        .substr(0, 10)
+                    "
+                  ></v-date-picker>
+                </v-menu>
+              </v-col>
+              <v-col cols="12" class="pt-0 pb-0" v-if="formChange.date != ''">
+                  <v-select
+                    v-model="formChange.time"
+                    :items="timeavailable"
+                    label="เวลา"
+                    item-text="text"
+                    item-value="text"
+                    persistent-hint
+                    return-object
+                    outlined
+                    dense
+                    required
+                    :rules ="[rules.required]"
+                  ></v-select>
+              </v-col>
+            </v-row>
+          <v-row>
+            <v-col cols="12" class="pt-0 pb-0">
+            <v-select
+              v-model="empSelect"
+              :items="empSelectStep"
+              label="พนักงานที่รับนัดหมาย"
+              menu-props="auto"
+              outlined
+              dense
+            ></v-select>
+            </v-col>
+          </v-row>
+          <div class="text-center">
+            <v-btn
+              elevation="2"
+              color="#173053"
+              dark
+              large
+              block
+              @click="onConfirm(dataConfirm)"
+              >ยืนยันรายการนี้</v-btn
+            >
+          </div>
+          </v-container>
+        </v-card-text>
+        <v-card-text v-else>
+          <waitingAlert></waitingAlert>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
     <v-dialog v-model="dialogRemove" max-width="90%">
       <v-card class="text-center">
         <v-card-text>
@@ -2632,7 +2638,9 @@ export default {
       console.log('flowSelect', this.flowSelect)
     },
     async onConfirm (item) {
+      this.dataReady = false
       if (this.dataItem[0].checkOnsite === 'True') {
+        this.dataReady = true
       } else {
         if (this.checkStatusBooking === 'cancel') {
           let chkStatLimit = this.dataEmpAll.filter(el => { return el.value === this.bookingEmpFlow })
@@ -2682,6 +2690,7 @@ export default {
                   let DTitem = item.userId
                   console.log('DTITEM', DTitem)
                   this.dialogConfirm = false
+                  this.dataReady = true
                   if (DTitem !== 'user-skip') {
                     await this.chkBookingNo()
                     // this.getTimesChange('update')
@@ -2695,6 +2704,7 @@ export default {
                 })
                 .catch(error => {
                   console.log('error function addData : ', error)
+                  this.dataReady = true
                 })
             })
         } else {
@@ -2724,6 +2734,7 @@ export default {
               let DTitem = item.userId
               console.log('DTITEM', DTitem)
               this.dialogConfirm = false
+              this.dataReady = true
               if (DTitem !== 'user-skip') {
                 await this.chkBookingNo()
                 // this.getTimesChange('update')
@@ -2737,6 +2748,7 @@ export default {
             })
             .catch(error => {
               console.log('error function addData : ', error)
+              this.dataReady = true
             })
         }
       }
@@ -2927,26 +2939,36 @@ export default {
       console.log('this.formChange', this.formChange)
     },
     async changeChk (item) {
-      let checkCountTime = await axios.get(this.DNS_IP + '/booking_view/get?bookNo=' + item.bookNo)
-      let chkStatLimit = this.dataEmpAll.filter(el => { return el.value === this.bookingEmpFlow })
-      console.log('chkStatLimit', chkStatLimit)
-      console.log('this.DataFlowName', chkStatLimit)
-      if (chkStatLimit.length > 0) {
-        if (chkStatLimit[0].limitBookingCheck === 'True') {
-          let limitBookingCounts = 0
-          let chkStatus = await this.updateLimitBookingChange(item, this.dueDateOld, this.dueDateTimeOld, this.formChange.date, this.formChange.time.value || this.formChange.time, limitBookingCounts, this.bookingEmpFlowOld, this.flowSelect)
-          console.log('chkStatus', chkStatus)
-          if (chkStatus.status) {
-            this.onChangeChkSubmit(item, checkCountTime)
+      // console.log('timeavailable', this.timeavailable)
+      // console.log('this.formChange.time', this.formChange.time.value)
+      // console.log('timeavailable', this.timeavailable.filter(el => { return el.value === this.formChange.time.value }))
+      this.dataReady = false
+      if (this.timeavailable.filter(el => { return el.value === this.formChange.time.value }).length > 0) {
+        let checkCountTime = await axios.get(this.DNS_IP + '/booking_view/get?bookNo=' + item.bookNo)
+        let chkStatLimit = this.dataEmpAll.filter(el => { return el.value === this.bookingEmpFlow })
+        console.log('chkStatLimit', chkStatLimit)
+        console.log('this.DataFlowName', chkStatLimit)
+        if (chkStatLimit.length > 0) {
+          if (chkStatLimit[0].limitBookingCheck === 'True') {
+            let limitBookingCounts = 0
+            let chkStatus = await this.updateLimitBookingChange(item, this.dueDateOld, this.dueDateTimeOld, this.formChange.date, this.formChange.time.value || this.formChange.time, limitBookingCounts, this.bookingEmpFlowOld, this.flowSelect)
+            console.log('chkStatus', chkStatus)
+            if (chkStatus.status) {
+              this.onChangeChkSubmit(item, checkCountTime)
+            } else {
+              this.$swal('ผิดพลาด', 'กรุณาทำรายการใหม่', 'error')
+              this.dataReady = true
+              this.dataChangeReady = true
+            }
           } else {
-            this.$swal('ผิดพลาด', 'กรุณาทำายการใหม่', 'error')
-            this.dataChangeReady = true
+            this.onChangeChkSubmit(item, checkCountTime)
           }
         } else {
           this.onChangeChkSubmit(item, checkCountTime)
         }
       } else {
-        this.onChangeChkSubmit(item, checkCountTime)
+        this.dataReady = true
+        this.$swal('ผิดพลาด', 'กรุณาเลือกเวลา', 'error')
       }
     },
     async onChangeChkSubmit (item, checkCountTime) {
@@ -3000,6 +3022,7 @@ export default {
               this.fromAddTimeCus = ''
               this.customerTimeSlot = 'False'
               console.log('addDataGlobal', response)
+              this.dataReady = true
               if (item.statusBt === 'confirm') {
                 if (item.userId !== 'user-skip') {
                   await this.chkBookingNo()
@@ -3015,6 +3038,7 @@ export default {
               }
             })
             .catch(error => {
+              this.dataReady = true
               console.log('error function addData : ', error)
             })
         })

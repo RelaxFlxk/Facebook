@@ -159,6 +159,15 @@
                   </v-stepper-content>
                 </v-stepper-items>
               </v-stepper>
+              <br>
+              <v-alert
+                border="bottom"
+                colored-border
+                type="warning"
+                elevation="2"
+              >
+                เมื่อทำรายการสำเร็จกรุณาเปลี่ยนลิ้งค์นัดหมายใน Rich Menu หรือ โพสโปรโมทใน Social Media ของท่าน
+              </v-alert>
             </v-container>
           </v-col>
           <v-col v-else  cols="12">
@@ -225,9 +234,9 @@ export default {
   methods: {
     gotoManaul (text) {
       if (text === 'messagingApi') {
-        window.open('https://firebasestorage.googleapis.com/v0/b/betask-linked/o/manual%2F%E0%B8%A7%E0%B8%B4%E0%B8%98%E0%B8%B5%E0%B9%80%E0%B8%9B%E0%B8%B4%E0%B8%94%20Messaging%20API.pdf?alt=media&token=556bcad5-8000-48d4-8100-cce6f3eff032', '_blank')
+        window.open('https://betaskthai.com/messaging_api/', '_blank')
       } else {
-        window.open('https://firebasestorage.googleapis.com/v0/b/betask-linked/o/manual%2F%E0%B8%A7%E0%B8%B4%E0%B8%98%E0%B8%B5%E0%B8%AA%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%87%20LINE%20Login.pdf?alt=media&token=5c6e446c-7b5c-49cf-ade4-5b472b283783', '_blank')
+        window.open('https://betaskthai.com/create-line-login/', '_blank')
       }
     },
     async getData () {
