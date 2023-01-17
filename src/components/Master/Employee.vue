@@ -616,8 +616,36 @@
                               class="shrink ml-6 mr-0 mt-0 mb-2"
                             ></v-checkbox>
                           </v-row>
-
-                          <div class="text-center px-5 mb-5">
+                          <v-row align="center" class="ma-0">
+                            <v-checkbox
+                              false-value="False"
+                              true-value="True"
+                              :on-icon="'mdi-check-circle'"
+                              :off-icon="'mdi-checkbox-blank-circle-outline'"
+                              label="เวลาไม่เหมือนกันในแต่ละวัน"
+                              v-model="formUpdateLimitbooking.setTimebyday"
+                              hide-details
+                              class="shrink ml-6 mr-0 mt-0 mb-2"
+                            ></v-checkbox>
+                          </v-row>
+                          <v-row class="pl-8 mb-3" v-if="formUpdateLimitbooking.setTimebyday === 'True'">
+                              <v-btn-toggle
+                                v-model="toggle_setTimebyday"
+                                mandatory
+                              >
+                              <div v-for="(item, i) in setTimebyday" :key="i">
+                                <v-btn
+                                class="ma-1"
+                                elevation="2"
+                                dark
+                                :color="toggle_setTimebyday === i ? 'rgb(22 48 83)' : 'rgb(22 48 83)'">
+                                  <v-icon v-if="toggle_setTimebyday === i " color="#FFFFFF">mdi-check-circle</v-icon>
+                                  <h4 v-else class="font-weight-bold">{{item.text}}</h4>
+                                </v-btn>
+                              </div>
+                              </v-btn-toggle>
+                            </v-row>
+                          <div class="text-center px-5 mb-5" v-if="formUpdateLimitbooking.setTimebyday === 'False'">
                             <v-sheet class="pa-0">
                               <v-row class="mt-3">
                                 <v-col
@@ -670,32 +698,6 @@
                                     class="elevation-1"
                                     min-height="300px"
                                   >
-                                    <!-- <template v-slot:top>
-            <v-toolbar color="white"> -->
-                                    <!-- <div class="text-left">
-              <v-btn
-                  color="teal"
-                  elevation="2"
-                  rounded
-                  small
-                  dark
-                  @click="presetTime()"
-                >
-                  แบบร่าง เวลา
-                </v-btn>
-              </div>
-              <div class="text-right">
-
-                <v-btn
-                  small
-                  color="primary"
-                  class="ml-2 white--text"
-                  @click="addNewNew">
-                  <v-icon dark>mdi-plus</v-icon>เพิ่มเวลานัดหมาย
-                </v-btn>
-              </div> -->
-                                    <!-- </v-toolbar>
-          </template> -->
                                     <template v-slot:[`item.text`]="{ item }">
                                       <v-text-field
                                         class="pa-0 ma-0"
@@ -784,120 +786,148 @@
                               </v-row>
                             </v-sheet>
                           </div>
+                          <div class="text-center px-5 mb-5" v-else>
+                            <v-sheet class="pa-0">
+                              <v-row class="mt-3">
+                                <v-col
+                                  cols="6"
+                                  class="pt-0"
+                                  style="text-align: start;"
+                                >
+                                  <v-btn
+                                    small
+                                    class="mb-n3"
+                                    color="teal"
+                                    dark
+                                    @click="presetTimebyday()"
+                                  >
+                                    <v-icon class="mr-2" small dark>
+                                      mdi-clock-time-eight</v-icon
+                                    >เพิ่มเวลาอัตโนมัติ
+                                  </v-btn>
+                                </v-col>
+                                <v-col
+                                  cols="6"
+                                  class="pt-0"
+                                  style="text-align: end;"
+                                >
+                                  <v-btn
+                                    small
+                                    class="mb-n3"
+                                    style="text-align: end;"
+                                    color="#173053"
+                                    dark
+                                    @click="addNewNewbyday"
+                                  >
+                                    <v-icon class="mr-2" small dark
+                                      >mdi-plus-box</v-icon
+                                    >เพิ่มเวลานัดหมาย
+                                  </v-btn>
+                                </v-col>
+                                <v-col
+                                  cols="12"
+                                  class="mb-0"
+                                  style="text-align: center;"
+                                >
+                                  <v-data-table
+                                    disable-pagination
+                                    hide-default-footer
+                                    :headers="columnsAddTime"
+                                    :items="dataItemAddTimebyday.filter((i) => i.value === toggle_setTimebyday)[0].setTime"
+                                    :search="search"
+                                    disable-sort
+                                    class="elevation-1"
+                                    min-height="300px"
+                                  >
+                                    <template v-slot:[`item.text`]="{ item }">
+                                      <v-text-field
+                                        class="pa-0 ma-0"
+                                        filled
+                                        v-model="editedItemNew.text"
+                                        :counter="50"
+                                        maxlength="50"
+                                        :hide-details="true"
+                                        dense
+                                        single-line
+                                        :autofocus="true"
+                                        v-if="item.id === editedItemNew.id"
+                                      ></v-text-field>
+                                      <span v-else>{{ item.text }}</span>
+                                    </template>
+                                    <template v-slot:[`item.value`]="{ item }">
+                                      <v-text-field
+                                        class="pa-0 ma-0"
+                                        placeholder="HH:mm"
+                                        filled
+                                        v-model="editedItemNew.value"
+                                        v-mask="'##:##'"
+                                        :hide-details="true"
+                                        dense
+                                        single-line
+                                        v-if="item.id === editedItemNew.id"
+                                      ></v-text-field>
+                                      <span v-else>{{ item.value }}</span>
+                                    </template>
+                                    <template
+                                      v-slot:[`item.limitBooking`]="{ item }"
+                                    >
+                                      <div v-if="item.id === editedItemNew.id">
+                                        <!-- <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" dense single-line v-if="formUpdateLimitbooking.limitBookingCheck === 'True'" ></v-text-field>
+              <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" disabled dense single-line v-else></v-text-field> -->
+                                        <v-text-field
+                                          class="pa-0 ma-0"
+                                          filled
+                                          v-model="editedItemNew.limitBooking"
+                                          :hide-details="true"
+                                          disabled
+                                          dense
+                                          single-line
+                                        ></v-text-field>
+                                      </div>
+                                      <span v-else>{{
+                                        item.limitBooking
+                                      }}</span>
+                                    </template>
+                                    <template
+                                      v-slot:[`item.actions2`]="{ item }"
+                                    >
+                                      <div
+                                        class="pa-0 ma-0"
+                                        v-if="item.id === editedItemNew.id"
+                                      >
+                                        <v-icon
+                                          color="red"
+                                          class="mr-3"
+                                          @click="closeNewbyday"
+                                        >
+                                          mdi-window-close
+                                        </v-icon>
+                                        <v-icon color="green" @click="saveNewbyday">
+                                          mdi-content-save
+                                        </v-icon>
+                                      </div>
+                                      <div v-else>
+                                        <v-icon
+                                          color="green"
+                                          class="mr-3"
+                                          @click="editItemNewbyday(item)"
+                                        >
+                                          mdi-pencil
+                                        </v-icon>
+                                        <v-icon
+                                          color="red"
+                                          @click="deleteItemNewbyday(item)"
+                                        >
+                                          mdi-delete
+                                        </v-icon>
+                                      </div>
+                                    </template>
+                                  </v-data-table>
+                                </v-col>
+                              </v-row>
+                            </v-sheet>
+                          </div>
                         </v-card>
-                        <!-- <v-card class="pa-5 mb-5">
-                    <v-row>
-                    <v-col cols="3">
-                      <v-text-field
-                        label="แสดงเวลา"
-                        v-model="timeText"
-                        :counter="50"
-                        maxlength="50"
-                        outlined
-
-                      ></v-text-field>
-                      <v-text-field
-                          v-model="formUpdateLimitbooking.time"
-                           v-mask="'##:##'"
-                           label="ตั้งค่าเวลาที่ต้องการ"
-                           placeholder="HH:mm"
-                           outlined
-                      ></v-text-field>
-                      <VuetifyMoney
-                          label="Limit Booking"
-                          v-model="formUpdateLimitbooking.limitBooking"
-                          placeholder="Limit Booking"
-                          required
-                          outlined
-                          v-bind:options="options2" />
-                      <v-select
-                        v-if="dataItemAddTime.length > 0"
-                        :items="dataItemAddTime"
-                        label="ตัวอย่างการแสดงเวลา"
-                        item-text="text"
-                        item-value="text"
-                        outlined
-                      ></v-select>
-                      <v-btn
-                        block
-                        color="teal"
-                        elevation="2"
-                        rounded
-                        small
-                        dark
-                        @click="presetTime()"
-                      >
-                        แบบร่าง เวลา
-                      </v-btn>
-                    </v-col>
-                    <v-col cols="2">
-                      <v-btn
-                        class="mx-2"
-                        fab
-                        dark
-                        v-if="typeTimeAdd === 'add'"
-                        color="indigo"
-                        @click="addDataTimeAdd()"
-                      >
-                        <v-icon dark>
-                          mdi-plus
-                        </v-icon>
-                      </v-btn>
-                      <v-btn
-                        class="mx-2"
-                        fab
-                        dark
-                        v-if="typeTimeAdd === 'update'"
-                        color="question"
-                        @click="UpdateDataTimeAdd()"
-                      >
-                        <v-icon dark>
-                          mdi-tools
-                        </v-icon>
-                      </v-btn>
-                    </v-col>
-                    <v-col cols="7">
-                      <v-row align="center" class="ma-5">
-                        <v-checkbox
-                          @click="chekshowTime()"
-                          false-value="False"
-                          true-value="True"
-                          label="ตั้ง Limit การนัดหมาย"
-                          v-model="formUpdateLimitbooking.limitBookingCheck"
-                          hide-details
-                          class="shrink ml-6 mr-0 mt-0 mb-2"
-                        ></v-checkbox>
-                         </v-row>
-                      <v-data-table
-                        :headers="columnsAddTime"
-                        :items="dataItemAddTime"
-                        disable-pagination
-                        hide-default-footer
-                      >
-                        <template v-slot:[`item.actions2`]="{ item, index }">
-                          <v-btn
-                            color="question"
-                            fab
-                            dark
-                            x-small
-                            @click.stop="getUpdateAdd(item, 'update', index)"
-                          >
-                            <v-icon color="#FFFFFF"> mdi-tools </v-icon>
-                          </v-btn>
-                          <v-btn
-                            color="red"
-                            dark
-                            fab
-                            x-small
-                            @click.stop="getUpdateAdd(item, 'delete', index)"
-                          >
-                            <v-icon> mdi-delete </v-icon>
-                          </v-btn>
-                        </template>
-                      </v-data-table>
-                    </v-col>
-                  </v-row>
-                      </v-card> -->
                       </v-col>
                     </v-row>
                   </v-form>
@@ -1113,6 +1143,7 @@ export default {
         setTime: '',
         limitBooking: 1,
         limitBookingCheck: 'True',
+        setTimebyday: 'False',
         shopId: this.$session.getAll().data.shopId,
         dateDayoffText: [],
         dateDayoffValue: [],
@@ -1181,6 +1212,15 @@ export default {
       ],
       filesUpdate: null,
       filesAdd: null,
+      dataItemAddTimebyday: [
+        { text: 'อา.', value: 0, setTime: [] },
+        { text: 'จ.', value: 1, setTime: [] },
+        { text: 'อ.', value: 2, setTime: [] },
+        { text: 'พ.', value: 3, setTime: [] },
+        { text: 'พฤ.', value: 4, setTime: [] },
+        { text: 'ศ.', value: 5, setTime: [] },
+        { text: 'ส.', value: 6, setTime: [] }
+      ],
       dataItemAddTime: [],
       columnsAddTime: [
         { text: 'แสดงเวลา', value: 'text' },
@@ -1217,7 +1257,17 @@ export default {
       branch: [],
       flow: [],
       value: '',
-      flowIdAdd: []
+      flowIdAdd: [],
+      toggle_setTimebyday: 0,
+      setTimebyday: [
+        { text: 'อา.', value: 0 },
+        { text: 'จ.', value: 1 },
+        { text: 'อ.', value: 2 },
+        { text: 'พ.', value: 3 },
+        { text: 'พฤ.', value: 4 },
+        { text: 'ศ.', value: 5 },
+        { text: 'ส.', value: 6 }
+      ]
       // End Export Config
     }
   },
@@ -1270,6 +1320,67 @@ export default {
         return a.value.localeCompare(b.value)
       })
       this.closeNew()
+    },
+    editItemNewbyday (item) {
+      console.log('item', item)
+      console.log('this.dataItemAddTimebyday', this.dataItemAddTimebyday.filter((item) => item.value === this.toggle_setTimebyday)[0].setTime)
+      this.editedIndexNew = this.dataItemAddTimebyday.filter((item) => item.value === this.toggle_setTimebyday)[0].setTime.indexOf(item)
+      this.editedItemNew = Object.assign({}, item)
+    },
+
+    deleteItemNewbyday (item) {
+      const index = this.dataItemAddTimebyday.filter((item) => item.value === this.toggle_setTimebyday)[0].setTime.indexOf(item)
+      this.dataItemAddTimebyday.filter((item) => item.value === this.toggle_setTimebyday)[0].setTime.splice(index, 1)
+    },
+
+    closeNewbyday () {
+      setTimeout(() => {
+        this.editedItemNew = Object.assign({}, this.defaultItemNew)
+        this.editedIndexNew = -1
+      }, 300)
+    },
+    addNewNewbyday () {
+      const addObj = Object.assign({}, this.defaultItemNew)
+      addObj.id = this.dataItemAddTimebyday.filter((item) => item.value === this.toggle_setTimebyday)[0].setTime.length + 1
+      this.dataItemAddTimebyday.filter((item) => item.value === this.toggle_setTimebyday)[0].setTime.unshift(addObj)
+      this.editItemNewbyday(addObj)
+    },
+    saveNewbyday () {
+      if (this.editedIndexNew > -1) {
+        Object.assign(
+          this.dataItemAddTimebyday.filter((item) => item.value === this.toggle_setTimebyday)[0].setTime[this.editedIndexNew],
+          this.editedItemNew
+        )
+      }
+      this.dataItemAddTimebyday.filter((item) => item.value === this.toggle_setTimebyday)[0].setTime.sort(function (a, b) {
+        return a.value.localeCompare(b.value)
+      })
+      this.closeNewbyday()
+    },
+    presetTimebyday () {
+      this.dataItemAddTimebyday.filter((item) => item.value === this.toggle_setTimebyday).map((item) => {
+        item.setTime = [
+          { id: 1, value: '08:00', text: '08:00', limitBooking: '1' },
+          { id: 2, value: '08:30', text: '08:30', limitBooking: '1' },
+          { id: 3, value: '09:00', text: '09:00', limitBooking: '1' },
+          { id: 4, value: '09:30', text: '09:30', limitBooking: '1' },
+          { id: 5, value: '10:00', text: '10:00', limitBooking: '1' },
+          { id: 6, value: '10:30', text: '10:30', limitBooking: '1' },
+          { id: 7, value: '11:00', text: '11:00', limitBooking: '1' },
+          { id: 8, value: '11:30', text: '11:30', limitBooking: '1' },
+          { id: 9, value: '12:00', text: '12:00', limitBooking: '1' },
+          { id: 10, value: '12:30', text: '12:30', limitBooking: '1' },
+          { id: 11, value: '13:00', text: '13:00', limitBooking: '1' },
+          { id: 12, value: '13:30', text: '13:30', limitBooking: '1' },
+          { id: 13, value: '14:00', text: '14:00', limitBooking: '1' },
+          { id: 14, value: '14:30', text: '14:30', limitBooking: '1' },
+          { id: 15, value: '15:00', text: '15:00', limitBooking: '1' },
+          { id: 16, value: '15:30', text: '15:30', limitBooking: '1' },
+          { id: 17, value: '16:00', text: '16:00', limitBooking: '1' },
+          { id: 18, value: '16:30', text: '16:30', limitBooking: '1' },
+          { id: 19, value: '17:00', text: '17:00', limitBooking: '1' }
+        ]
+      })
     },
     presetTime () {
       this.dataItemAddTime = [
@@ -1346,6 +1457,16 @@ export default {
       }
     },
     async getlimitbooking (item) {
+      this.toggle_setTimebyday = 0
+      this.dataItemAddTimebyday = [
+        { text: 'อา.', value: 0, setTime: [] },
+        { text: 'จ.', value: 1, setTime: [] },
+        { text: 'อ.', value: 2, setTime: [] },
+        { text: 'พ.', value: 3, setTime: [] },
+        { text: 'พฤ.', value: 4, setTime: [] },
+        { text: 'ศ.', value: 5, setTime: [] },
+        { text: 'ส.', value: 6, setTime: [] }
+      ]
       this.formUpdateLimitbooking.empId = item.empId
       // console.log('this.formUpdateLimitbooking.empId', this.formUpdateLimitbooking.empId)
       let dt = []
@@ -1373,23 +1494,37 @@ export default {
             }
             this.formUpdateLimitbooking.typeDayCustom = rs[0].typeDayCustom
             this.formUpdateLimitbooking.dateDayoffValue = rs[0].dateDayoffValue
+            this.formUpdateLimitbooking.setTimebyday = rs[0].setTimebyday
             console.log('this.formUpdateLimitbooking.setTime', rs[0].setTime)
-            if (rs[0].setTime === null || rs[0].setTime === '' || rs[0].setTime === '[]') {
-              this.dataItemAddTime = []
-              console.log('dataItemAddTime')
-            } else {
-              let setTime = JSON.parse(rs[0].setTime)
-              setTime.map((v, k) => { v.id = k + 1 })
-              if (setTime[0].limitBooking === undefined) {
-                console.log('dasdas')
-                for (let i = 0; i < setTime.length; i++) {
-                  let d = setTime[i]
-                  d.limitBooking = ''
-                  this.dataItemAddTime.push(d)
-                }
+            if (rs[0].setTimebyday === 'True') {
+              if (rs[0].setTime === null || rs[0].setTime === '' || rs[0].setTime === '[]') {
+
               } else {
-                this.dataItemAddTime = setTime
-                console.log('test')
+                let allTime = JSON.parse(rs[0].setTime)
+                console.log('allTime', allTime)
+                console.log('dataItemAddTimebyday', this.dataItemAddTimebyday)
+                this.dataItemAddTimebyday.forEach((item) => {
+                  item.setTime = allTime.filter((ii) => ii.value === item.value)[0].setTime
+                })
+              }
+            } else {
+              if (rs[0].setTime === null || rs[0].setTime === '' || rs[0].setTime === '[]') {
+                this.dataItemAddTime = []
+                console.log('dataItemAddTime')
+              } else {
+                let setTime = JSON.parse(rs[0].setTime)
+                setTime.map((v, k) => { v.id = k + 1 })
+                if (setTime[0].limitBooking === undefined) {
+                  console.log('dasdas')
+                  for (let i = 0; i < setTime.length; i++) {
+                    let d = setTime[i]
+                    d.limitBooking = ''
+                    this.dataItemAddTime.push(d)
+                  }
+                } else {
+                  this.dataItemAddTime = setTime
+                  console.log('test')
+                }
               }
             }
             console.log('testgetgetlimitbooking', this.formUpdateLimitbooking)
@@ -1402,30 +1537,54 @@ export default {
       await this.chekshowTime('open', dt[0])
     },
     EditlimitBooking () {
-      if (
-        this.dataItemAddTime.filter(el => {
-          return el.value === ''
-        }).length === 0
-      ) {
-        if (this.formUpdateLimitbooking.limitBookingCheck === 'True') {
-          if (
-            this.dataItemAddTime.filter(el => {
-              return el.limitBooking === ''
-            }).length === 0
-          ) {
-            this.EditlimitBookingSubmit()
+      if (this.formUpdateLimitbooking.setTimebyday === 'True') {
+        let checkTimevalue = true
+        let checklimitBooking = true
+        this.dataItemAddTimebyday.forEach((item) => {
+          if (item.setTime.filter((el) => el.value === '').length === 0) {
           } else {
-            this.$swal(
-              'ผิดพลาด',
-              'กรุณาเลือก ใส่จำนวน Limit Booking ให้ครบ เนื่องจาก เปิดใช้งาน Limit การจอง',
-              'error'
-            )
+            checkTimevalue = false
+          }
+          if (item.setTime.filter((el) => el.limitBooking === '').length === 0) {
+          } else {
+            checklimitBooking = false
+          }
+        })
+        if (checkTimevalue) {
+          if (this.formUpdateLimitbooking.limitBookingCheck === 'True') {
+            if (checklimitBooking) {
+              this.EditlimitBookingSubmit()
+            } else {
+              this.$swal(
+                'ผิดพลาด',
+                'กรุณาเลือก ใส่จำนวน Limit Booking ให้ครบ เนื่องจาก เปิดใช้งาน Limit การจอง',
+                'error'
+              )
+            }
+          } else {
+            this.EditlimitBookingSubmit()
           }
         } else {
-          this.EditlimitBookingSubmit()
+          this.$swal('ผิดพลาด', 'กรุณาเลือก กรอกเวลาให้ครบ', 'error')
         }
       } else {
-        this.$swal('ผิดพลาด', 'กรุณาเลือก กรอกเวลาให้ครบ', 'error')
+        if (this.dataItemAddTime.filter(el => { return el.value === '' }).length === 0) {
+          if (this.formUpdateLimitbooking.limitBookingCheck === 'True') {
+            if (this.dataItemAddTime.filter(el => { return el.limitBooking === '' }).length === 0) {
+              this.EditlimitBookingSubmit()
+            } else {
+              this.$swal(
+                'ผิดพลาด',
+                'กรุณาเลือก ใส่จำนวน Limit Booking ให้ครบ เนื่องจาก เปิดใช้งาน Limit การจอง',
+                'error'
+              )
+            }
+          } else {
+            this.EditlimitBookingSubmit()
+          }
+        } else {
+          this.$swal('ผิดพลาด', 'กรุณาเลือก กรอกเวลาให้ครบ', 'error')
+        }
       }
     },
     async EditlimitBookingSubmit () {
@@ -1441,9 +1600,15 @@ export default {
           dd.push(k)
         }
       })
+      let setTime = []
+      if (this.formUpdateLimitbooking.setTimebyday === 'True') {
+        setTime = this.dataItemAddTimebyday
+      } else {
+        setTime = this.dataItemAddTime
+      }
       let Dataitem = {
         limitBookingCheck: this.formUpdateLimitbooking.limitBookingCheck,
-        setTime: JSON.stringify(this.dataItemAddTime),
+        setTime: JSON.stringify(setTime),
         dateDayoffText: JSON.stringify(
           this.formUpdateLimitbooking.dateDayoffText
         ),
@@ -1451,7 +1616,8 @@ export default {
         dateDayCustom: JSON.stringify(
           this.formUpdateLimitbooking.dateDayCustom
         ),
-        typeDayCustom: this.formUpdateLimitbooking.typeDayCustom
+        typeDayCustom: this.formUpdateLimitbooking.typeDayCustom,
+        setTimebyday: this.formUpdateLimitbooking.setTimebyday
       }
       console.log('Dataitem', Dataitem)
       this.$swal({
@@ -1529,6 +1695,16 @@ export default {
       }
     },
     async clearLimit () {
+      this.dataItemAddTimebyday = [
+        { text: 'อา.', value: 0, setTime: [] },
+        { text: 'จ.', value: 1, setTime: [] },
+        { text: 'อ.', value: 2, setTime: [] },
+        { text: 'พ.', value: 3, setTime: [] },
+        { text: 'พฤ.', value: 4, setTime: [] },
+        { text: 'ศ.', value: 5, setTime: [] },
+        { text: 'ส.', value: 6, setTime: [] }
+      ]
+      this.toggle_setTimebyday = 0
       this.dataItemAddTime = []
       this.timeText = ''
       this.formUpdateLimitbooking.setTime = ''
