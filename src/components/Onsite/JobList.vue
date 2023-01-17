@@ -160,6 +160,12 @@
         <div class="pa-0 ma-0" v-if="sortNo === 2 && item.sortNo >= 2">
             <v-card  class="mx-6 pa-3 ma-2" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;">
             <p class="font-weight-bold">เปลี่ยนสถานะขั้นตอน</p>
+            <!-- <div style="display: flex;justify-content: space-between;align-items: flex-start;">
+              <div style="word-break: break-word;">
+                <p class="font-weight-bold ml-4" style="font-size:19px">{{item.flowName}}</p>
+              </div>
+              <v-icon color="rgb(23, 48, 83)" large @click="ChatHistory(item)">mdi-history</v-icon>
+            </div> -->
             <p class="font-weight-bold ml-4" style="font-size:19px">{{item.flowName}}</p>
             <v-select
                 class="ma-3"
@@ -232,7 +238,7 @@
                 @click="callCustomer(dataJob.filter(el => {return el.jobNo === item.jobNo;}))"
               >โทร</v-btn>
             </v-col>
-            <v-col cols="4" class="text-center pa-1">
+            <!-- <v-col cols="4" class="text-center pa-1">
               <v-btn
                 color="#F38383"
                 rounded
@@ -240,6 +246,17 @@
                 block
                 outlined
                 @click="dialogMessage = true, setMessage(item)"
+              >
+              ข้อความ</v-btn>
+            </v-col> -->
+            <v-col cols="4" class="text-center pa-1">
+              <v-btn
+                color="#F38383"
+                rounded
+                dark
+                block
+                outlined
+                @click="ChatHistory(item)"
               >
               ข้อความ</v-btn>
             </v-col>
@@ -411,9 +428,18 @@
               </v-col>
               <v-col cols="9" md="9" sm="12" class="pa-0 ma-0 pl-2">
                 <p class="font-weight-bold mb-1 ml-2" v-if="dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo && dt.fieldName === 'ชื่อ').length > 0"
-                style="font-size:20px">
-                  {{dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo && dt.fieldName === 'ชื่อ')[0].fieldValue}}
-                </p>
+                      style="font-size:20px;">
+                      {{dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo && dt.fieldName === 'ชื่อ')[0].fieldValue}}
+                    </p>
+                <!-- <div style="display: flex;justify-content: space-between;align-items: flex-start;">
+                  <div style="word-break: break-word;">
+                    <p class="font-weight-bold mb-1 ml-2" v-if="dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo && dt.fieldName === 'ชื่อ').length > 0"
+                      style="font-size:20px;">
+                      {{dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo && dt.fieldName === 'ชื่อ')[0].fieldValue}}
+                    </p>
+                  </div>
+                <v-icon color="rgb(23, 48, 83)" large @click="ChatHistory(CloseJob)">mdi-history</v-icon>
+                </div> -->
                 <div style="display: flex;align-items: flex-start;">
                   <v-icon color="#F48686" class="mx-1">mdi-square-medium</v-icon>
                   <p class="font-weight-medium mb-1" v-if="CloseJob.flowName !== null" style="font-size:14px">
@@ -456,7 +482,7 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="12" class="text-center pa-1 mb-3">
+              <!-- <v-col cols="12" class="text-center pa-1 mb-3">
               <v-btn
                 color="#F38383"
                 rounded
@@ -464,8 +490,28 @@
                 @click="dialogMessage = true, setMessage(CloseJob)"
               >
               ข้อความ</v-btn>
+            </v-col> -->
+            <v-col cols="12" class="text-center pa-1 mb-3">
+              <v-btn
+                color="#F38383"
+                rounded
+                dark
+                @click="ChatHistory(CloseJob)"
+              >
+              ข้อความ</v-btn>
             </v-col>
             </v-row>
+            <!-- <v-row>
+              <v-col cols="12" class="text-center pa-1 mb-3">
+              <v-btn
+                color="#F38383"
+                rounded
+                dark
+                @click="ChatHistory(CloseJob)"
+              >
+              ประวัติข้อความ</v-btn>
+            </v-col>
+            </v-row> -->
           </v-card>
         </div>
 
@@ -792,8 +838,8 @@
             ></v-textarea>
               <v-img
                 v-if="formMessage.Img !== ''"
-              class="pa-3 text-center"
-              contain
+                class="pa-3 text-center"
+                contain
                 max-height="60%"
                 max-width="100%"
                 :src="formMessage.Img"
@@ -859,6 +905,7 @@
               </v-list>
             </v-sheet>
         </v-footer>
+        <ChatHistory ref="ChatHistory"></ChatHistory>
       </div>
     </v-main>
   </div>
@@ -868,12 +915,14 @@ import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import moment from 'moment-timezone' // แปลง date
 import VuetifyMoney from '../VuetifyMoney.vue'
+import ChatHistory from '../Master/ChatHistory.vue'
 
 export default {
   name: 'JobList',
   components: {
     'left-menu-admin': adminLeftMenu,
-    VuetifyMoney
+    VuetifyMoney,
+    ChatHistory
   },
   watch: {
     // whenever question changes, this function will run
@@ -1013,6 +1062,9 @@ export default {
     await this.setDefault()
   },
   methods: {
+    ChatHistory (item) {
+      this.$refs.ChatHistory.getChatHistory(item)
+    },
     async setDefault () {
       this.selectFlow = 'All'
       await this.getByflow()

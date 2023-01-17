@@ -38,8 +38,10 @@ import TableCheckQueue from './TableCheckQueue'
 import BookingListQueue from './BookingListQueue'
 import BookingListQueueMonitoring from './BookingListQueueMonitoring'
 import WorkShopComponent from './WorkShopComponent'
+import ChatHistory from './ChatHistory'
 
 export default {
+  ChatHistory,
   WorkShopComponent,
   CustomField,
   ServiceType,
