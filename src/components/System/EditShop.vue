@@ -182,8 +182,15 @@
                       <v-col cols="12" class="pb-0">
                           <v-textarea
                             outlined
-                            label="ข้อความตอบกลับการนัดหมาย"
+                            label="ข้อความตอบกลับการนัดหมาย (TH)"
                             v-model="formUpdate.bookingthankText"
+                          ></v-textarea>
+                      </v-col>
+                      <v-col cols="12" class="pb-0">
+                          <v-textarea
+                            outlined
+                            label="ข้อความตอบกลับการนัดหมาย (EN)"
+                            v-model="formUpdate.bookingthankTextEn"
                           ></v-textarea>
                       </v-col>
                     </v-row>
@@ -356,7 +363,9 @@ export default {
         darkMode: false,
         category: '',
         timeSlotStatus: '',
-        showQrPayments: 'False'
+        showQrPayments: 'False',
+        bookingthankTextEn: '',
+        bookingthankText: ''
       },
       timeSlotStatusOld: '',
       filesShop: null,
@@ -523,6 +532,11 @@ export default {
       } else {
         console.log('bookingthankText', this.formUpdate.bookingthankText)
       }
+      if (this.formUpdate.bookingthankTextEn === null) {
+        this.formUpdate.bookingthankTextEn = ''
+      } else {
+        console.log('bookingthankTextEn', this.formUpdate.bookingthankTextEn)
+      }
       if (this.formUpdate.showQrPayments === null || this.formUpdate.showQrPayments === '') {
         this.formUpdate.showQrPayments = 'False'
       }
@@ -587,6 +601,12 @@ export default {
           } else {
             bookingthankText = this.formUpdate.bookingthankText
           }
+          let bookingthankTextEn = null
+          if (this.formUpdate.bookingthankTextEn === '') {
+            bookingthankTextEn = ''
+          } else {
+            bookingthankTextEn = this.formUpdate.bookingthankTextEn
+          }
           var dt = {
             shopName: this.formUpdate.shopName,
             shopImge: this.formUpdate.shopImge,
@@ -600,7 +620,8 @@ export default {
             timeSlotStatus: this.formUpdate.timeSlotStatus,
             showQrPayments: this.formUpdate.showQrPayments,
             darkMode: darkMode,
-            bookingthankText: bookingthankText
+            bookingthankText: bookingthankText,
+            bookingthankTextEn: bookingthankTextEn
           }
           await axios
             .post(
@@ -626,7 +647,8 @@ export default {
                 secondaryColor: this.formUpdate.secondaryColor,
                 darkMode: darkMode,
                 bookingthankText: bookingthankText,
-                sourceProgram: 'belinked'
+                sourceProgram: 'belinked',
+                bookingthankTextEn: bookingthankTextEn
               }
               this.updateBetaskDB(ds, this.$session.getAll().data.shopId)
               console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
