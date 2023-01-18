@@ -2834,6 +2834,7 @@ export default {
       let lineUserId = item.lineUserId || ''
       if (lineUserId !== '') {
         var dt = {
+          bookNo: item.bookNo,
           lineUserId: lineUserId,
           dueDate: item.dueDate,
           flowName: item.flowName,
