@@ -127,12 +127,11 @@
             <v-col cols="auto" class="pt-0">
               <v-btn
                 color="warning"
-                block
-                class="mt-4"
-                style="border-radius: 20px !important;margin-right: 0px;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
+                fab
+                style="border-radius: 20px !important;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
                 @click="checkSearch()"
               >
-                <v-icon color="white" left>mdi-clipboard-text-search</v-icon>
+                <v-icon color="white">mdi-clipboard-text-search</v-icon>
               </v-btn>
             </v-col>
           </v-row>
@@ -192,7 +191,7 @@
                 ปริ้น (EN)
               </v-btn>
               <v-btn
-                color="error"
+                color="primary"
                 small
                 :disabled="item.statusBt === 'confirm' ? false:true"
                 @click="closeJobSubmit(item)"
@@ -201,9 +200,18 @@
                 เรียกคิว
               </v-btn>
               <v-btn
+                color="error"
+                small
+                :disabled="item.statusBt === 'confirmJob' ? false:true"
+                @click="backHomeSubmit(item)"
+              >
+                <v-icon > mdi-account-multiple-check </v-icon>
+                ลูกค้ากลับแล้ว
+              </v-btn>
+              <v-btn
                 color="cyan"
                 small
-                :disabled="item.statusBt === 'confirmJob' || item.statusBt === 'closeJob' ? false:true"
+                :disabled="item.statusBt === 'confirmJob' ? false:true"
                 @click="closeJobSubmitReturn(item)"
               >
                 <v-icon > mdi-autorenew </v-icon>
@@ -410,6 +418,7 @@ export default {
       closeItem: '',
       dialogServicePointStatus: false,
       validSearch: true,
+      statusReturn: false,
       itemBooking: [],
       BookingDataList: [],
       menuStart: false,
@@ -747,7 +756,7 @@ export default {
           confirmButtonText: 'ใช่',
           cancelButtonText: 'ไม่'
         }).then(async response => {
-          await this.clearConfirmJob(item.dueDate)
+          // await this.clearConfirmJob(item.dueDate)
           var dtt = {
             bookNo: item.bookNo,
             contactDate: this.format_date(new Date()),
@@ -794,13 +803,13 @@ export default {
         })
       }
     },
-    closeJobSubmitReturn (item) {
+    async closeJobSubmitReturn (item) {
       console.log('closeJobSubmit', item)
       if (item.servicePointStatus === 'True') {
         this.closeItem = item
         this.dialogServicePointStatus = true
         this.servicePoint = item.servicePoint || ''
-        this.servicePointItem = JSON.parse(item.servicePointCount) || []
+        await this.setservicePointCount(item)
         this.statusReturn = true
       } else {
         this.$swal({
@@ -828,13 +837,99 @@ export default {
         })
       }
     },
+    async backHomeSubmit (item) {
+      console.log('backHomeSubmit', item)
+      this.$swal({
+        title: 'ต้องการปิดงานนี้ ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#fa0202',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      }).then(async response => {
+        // await this.clearConfirmJob(item.dueDate)
+        var dtt = {
+          bookNo: item.bookNo,
+          contactDate: this.format_date(new Date()),
+          status: 'closeJob',
+          statusUse: 'use',
+          shopId: this.$session.getAll().data.shopId,
+          CREATE_USER: this.$session.getAll().data.userName,
+          LAST_USER: this.$session.getAll().data.userName
+        }
+        await axios
+          .post(this.DNS_IP + '/booking_transaction/add', dtt)
+          .then(async responses => {
+            this.$swal('เรียบร้อย', 'ปิดงานสำเร็จ', 'success')
+            await this.searchBooking()
+            // let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
+            // if (bookSelect.length > 0) {
+            //   for (let i = 0; i < bookSelect.length; i++) {
+            //     let d = bookSelect[i]
+            //     let s = {}
+            //     s.lineUserId = d.lineUserId || ''
+            //     if (s.lineUserId !== '') {
+            //       await axios
+            //         .post(this.DNS_IP + '/Booking/pushMsgQueue/' + d.bookNo)
+            //         .then(async responses => {}).catch(error => {
+            //           console.log('error function pushMsgQueue : ', error)
+            //         })
+            //     }
+            //   }
+            // }
+          })
+      })
+    },
+    async setservicePointCount (item) {
+      this.servicePointItem = []
+      await axios
+        // .get(this.DNS_IP + '/BookingData/get?shopId=' + this.shopId + '&bookNo=' + this.bookNo)
+        .get(this.DNS_IP + '/booking_view/get?shopId=' + item.shopId + '&flowId=' + item.flowId +
+        '&dueDateDay=' + this.dateStart + '&storeFrontQueue=is not null&statusBt=confirmJob&servicePointStatus=True')
+        .then(async response => {
+          let rs = response.data
+          console.log('setservicePointCount', rs)
+          if (rs.status !== false) {
+            let servicePointItem = rs.filter(el => { return el.servicePoint !== null || el.servicePoint !== '' })
+            if (servicePointItem.length > 0) {
+              if (JSON.parse(item.servicePointCount).length > 0) {
+                for (let i = 0; i < JSON.parse(item.servicePointCount).length; i++) {
+                  let d = JSON.parse(item.servicePointCount)[i]
+                  console.log('Count', servicePointItem.filter(el => { return el.servicePoint === d.textTh }))
+                  if (servicePointItem.filter(el => { return el.servicePoint === d.textTh }).length === 0) {
+                    this.servicePointItem.push(d)
+                  }
+                }
+                if (servicePointItem.filter(el => { return el.servicePoint === item.servicePoint }).length > 0) {
+                  let otherCounr = JSON.parse(item.servicePointCount).filter(el => { return el.textTh === item.servicePoint })
+                  if (otherCounr.length > 0) {
+                    this.servicePointItem.push(otherCounr[0])
+                  }
+                }
+              } else {
+                this.servicePointItem = []
+              }
+            } else {
+              this.servicePointItem = JSON.parse(item.servicePointCount) || []
+            }
+          } else {
+            this.servicePointItem = JSON.parse(item.servicePointCount) || []
+          }
+        })
+        .catch(err => {
+          // this.$router.push({ name: '404' })
+          console.log(err.code, err.message)
+          this.servicePointItem = JSON.parse(item.servicePointCount) || []
+        })
+    },
     async closeJobSubmit (item) {
       console.log('closeJobSubmit', item)
       if (item.servicePointStatus === 'True') {
         this.closeItem = item
         this.dialogServicePointStatus = true
         this.servicePoint = item.servicePoint || ''
-        this.servicePointItem = JSON.parse(item.servicePointCount) || []
+        await this.setservicePointCount(item)
         this.statusReturn = false
       } else {
         this.$swal({
@@ -846,7 +941,7 @@ export default {
           confirmButtonText: 'ใช่',
           cancelButtonText: 'ไม่'
         }).then(async response => {
-          await this.clearConfirmJob(item.dueDate)
+          // await this.clearConfirmJob(item.dueDate)
           var dtt = {
             bookNo: item.bookNo,
             contactDate: this.format_date(new Date()),
