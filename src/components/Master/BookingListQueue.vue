@@ -206,7 +206,7 @@
                 @click="backHomeSubmit(item)"
               >
                 <v-icon > mdi-account-multiple-check </v-icon>
-                ลูกค้ากลับแล้ว
+                ปิดงาน
               </v-btn>
               <v-btn
                 color="cyan"

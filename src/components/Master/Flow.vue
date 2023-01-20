@@ -3750,6 +3750,8 @@ export default {
             this.formAdd[key] = 'False'
           } else if (key === 'repeatBooking') {
             this.formAdd[key] = 'False'
+          } else if (key === 'customerTimeSlot') {
+            this.formAdd[key] = 'False'
           } else if (key === 'amountDeposit') {
             this.formAdd[key] = 0
           } else if (key === 'promptPayID') {
@@ -3775,7 +3777,9 @@ export default {
       // eslint-disable-next-line no-redeclare
       for (var key in this.formUpdate) {
         if (this.formUpdate[key]) {
-          if (key === 'flowfieldName') {
+          if (key === 'depositTime') {
+            this.formUpdate[key] = 'NO'
+          } else if (key === 'flowfieldName') {
             this.formUpdate[key] = []
           } else if (key === 'overTime') {
             this.formUpdate[key] = 'True'
@@ -3783,11 +3787,15 @@ export default {
             this.formUpdate[key] = 'True'
           } else if (key === 'checkOnsite') {
             this.formUpdate[key] = 'False'
+          } else if (key === 'servicePointStatus') {
+            this.formUpdate[key] = 'False'
           } else if (key === 'checkDeposit') {
+            this.formUpdate[key] = 'False'
+          } else if (key === 'bookingNowCheck') {
             this.formUpdate[key] = 'False'
           } else if (key === 'repeatBooking') {
             this.formUpdate[key] = 'False'
-          } else if (key === 'bookingNowCheck') {
+          } else if (key === 'customerTimeSlot') {
             this.formUpdate[key] = 'False'
           } else if (key === 'amountDeposit') {
             this.formUpdate[key] = 0
@@ -3799,6 +3807,8 @@ export default {
             this.formUpdate[key] = this.$session.getAll().data.timeSlotStatus || 'False'
           } else if (key === 'timeSlot') {
             this.formUpdate[key] = 1
+          } else if (key === 'shopId') {
+            this.formUpdate[key] = this.$session.getAll().data.shopId
           } else {
             this.formUpdate[key] = ''
           }
