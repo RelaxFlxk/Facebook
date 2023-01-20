@@ -555,6 +555,8 @@ export default {
           }
           if (shopImg !== '') {
             this.shopImg = shopImg
+          } else {
+            this.shopImg = ''
           }
         })
     },
@@ -1010,54 +1012,50 @@ export default {
     // },
     setPrint (item, language) {
       let docDefinition = {}
-      if (language === 'th') {
-        docDefinition = {
-          pageSize: 'A4',
-          content: [
-            {
-              text: this.shopName,
-              style: 'header',
-              alignment: 'center'
-            },
-            {
-              image: 'mySuperImage',
-              width: 150,
-              alignment: 'center'
-            },
-            // {
-            //   text: '   ',
-            //   style: 'header',
-            //   widths: ['*']
-            // },
-            // {
-            //   text: '   ',
-            //   style: 'subheader',
-            //   widths: ['*']
-            // },
-            // {
-            //   columns: [
-            //     {
-            //       style: 'subheader',
-            //       text: 'รับคิวเวลา'
-            //     },
-            //     {
-            //       style: 'subheader',
-            //       text: item.timeText,
-            //       alignment: 'right'
-            //     }
-            //   ]
-            // },
-            {
-              alignment: 'center',
-              text: item.flowName,
-              fontSize: 30,
-              widths: ['*']
-            },
-            {
-              text: [
-                {alignment: 'center', text: 'หมายเลขคิวของคุณ\n', fontSize: 20, color: 'black'},
-                {alignment: 'center', text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-              ]
+      if (this.shopImg === '') {
+        if (language === 'th') {
+          docDefinition = {
+            pageSize: 'A4',
+            content: [
+              {
+                text: this.shopName,
+                style: 'header',
+                alignment: 'center'
+              },
+              // {
+              //   text: '   ',
+              //   style: 'header',
+              //   widths: ['*']
+              // },
+              // {
+              //   text: '   ',
+              //   style: 'subheader',
+              //   widths: ['*']
+              // },
+              // {
+              //   columns: [
+              //     {
+              //       style: 'subheader',
+              //       text: 'รับคิวเวลา'
+              //     },
+              //     {
+              //       style: 'subheader',
+              //       text: item.timeText,
+              //       alignment: 'right'
+              //     }
+              //   ]
+              // },
+              {
+                alignment: 'center',
+                text: item.flowName,
+                fontSize: 30,
+                widths: ['*']
+              },
+              {
+                text: [
+                  {alignment: 'center', text: 'หมายเลขคิวของคุณ\n', fontSize: 20, color: 'black'},
+                  {alignment: 'center', text: item.storeFrontQueue, fontSize: 120, color: 'black'}
+                ]
               // alignment: 'center',
               // style: 'tableExample',
               // table: {
@@ -1076,201 +1074,315 @@ export default {
               //     ]
               //   ]
               // }
+              },
+              {
+                text: 'QR Code สำหรับรับการแจ้งเตือน',
+                fontSize: 15,
+                alignment: 'center'
+              },
+              { qr: 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '200', alignment: 'center' },
+              {
+                text: '   ',
+                fontSize: 15,
+                // style: 'subheader',
+                widths: ['*']
+              },
+              {
+                text: '*ทางบริษัทขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
+                // text: '*ทางโรงพยาบาลขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
+                fontSize: 15,
+                alignment: 'center'
+              },
+              // {
+              //   text: '   ',
+              //   fontSize: 25,
+              //   widths: ['*']
+              // },
+              {
+                columns: [
+                  {
+                    fontSize: 15,
+                    alignment: 'center',
+                    text: 'วันที่ ' + item.dueDateText.split(' ')[0]
+                  }
+                ]
+              },
+              {
+                text: '................................................',
+                style: 'subheader',
+                widths: ['*'],
+                alignment: 'center'
+              }
+            ],
+            styles: {
+              header: {
+                fontSize: 30,
+                bold: true
+              },
+              subheader: {
+                fontSize: 29,
+                bold: true
+              },
+              quote: {
+                italics: true
+              },
+              small: {
+                fontSize: 8
+              },
+              defaultStyle: {
+                columnGap: 20
+              },
+              tableExample: {
+                margin: [0, 5, 0, 15]
+              }
             },
-            {
-              text: 'QR Code สำหรับรับการแจ้งเตือน',
-              fontSize: 15,
-              alignment: 'center'
-            },
-            { qr: 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '200', alignment: 'center' },
-            {
-              text: '   ',
-              fontSize: 15,
-              // style: 'subheader',
-              widths: ['*']
-            },
-            {
-              text: '*ทางบริษัทขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
-              // text: '*ทางโรงพยาบาลขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
-              fontSize: 15,
-              alignment: 'center'
-            },
-            // {
-            //   text: '   ',
-            //   fontSize: 25,
-            //   widths: ['*']
-            // },
-            {
-              columns: [
-                {
-                  fontSize: 15,
-                  alignment: 'center',
-                  text: 'วันที่ ' + item.dueDateText.split(' ')[0]
-                }
-              ]
-            },
-            {
-              text: '................................................',
-              style: 'subheader',
-              widths: ['*'],
-              alignment: 'center'
+            defaultStyle: { // 4. default style 'KANIT' font to test
+              font: 'Kanit'
             }
-          ],
-          images: {
-            mySuperImage: this.shopImg
-
-            // in browser is supported loading images via url (https or http protocol) (minimal version: 0.1.67)
-            // snow: this.shopImg
-
-            // is supported loading images via url with custom headers (minimal version: 0.2.5)
-            // strawberries: {
-            //   url: 'https://picsum.photos/id/1080/367/267',
-            //   headers: {
-            //     myheader: '123',
-            //     myotherheader: 'abc',
-            //   }
-            // }
-          },
-          styles: {
-            header: {
-              fontSize: 30,
-              bold: true
+          }
+        } else {
+          docDefinition = {
+            pageSize: 'A4',
+            content: [
+              {
+                text: this.shopName,
+                style: 'header',
+                alignment: 'center'
+              },
+              // {
+              //   text: '   ',
+              //   style: 'header',
+              //   widths: ['*']
+              // },
+              // {
+              //   text: '   ',
+              //   style: 'subheader',
+              //   widths: ['*']
+              // },
+              // {
+              //   columns: [
+              //     {
+              //       style: 'subheader',
+              //       text: 'Time'
+              //     },
+              //     {
+              //       style: 'subheader',
+              //       text: item.timeText,
+              //       alignment: 'right'
+              //     }
+              //   ]
+              // },
+              // {
+              //   text: '   ',
+              //   style: 'subheader',
+              //   widths: ['*']
+              // },
+              {
+                alignment: 'center',
+                text: item.flowNameEn,
+                fontSize: 30,
+                widths: ['*']
+              },
+              {
+                alignment: 'center', text: 'Number', fontSize: 20, color: 'black'
+              },
+              {
+                alignment: 'center', text: item.storeFrontQueue, fontSize: 110, color: 'black'
+              },
+              // {
+              //   text: [
+              //     {alignment: 'center', text: 'Number\n', fontSize: 20, color: 'black'},
+              //     {alignment: 'center', text: item.storeFrontQueue, fontSize: 120, color: 'black'}
+              //   ]
+              //   // alignment: 'center',
+              //   // style: 'tableExample',
+              //   // table: {
+              //   //   heights: [50],
+              //   //   widths: ['*'],
+              //   //   body: [
+              //   //     [
+              //   //       {
+              //   //         text: [
+              //   //           {text: 'Number\n', fontSize: 20, color: 'black'},
+              //   //           {text: item.storeFrontQueue, fontSize: 120, color: 'black'}
+              //   //         ],
+              //   //         border: [false, false, false, false]
+              //   //         // fillColor: '#092C4C'
+              //   //       }
+              //   //     ]
+              //   //   ]
+              //   // }
+              // },
+              {
+                text: 'QR Code for receiving notifications',
+                fontSize: 15,
+                alignment: 'center'
+              },
+              { qr: 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '200', alignment: 'center' },
+              {
+                text: '   ',
+                fontSize: 15,
+                // style: 'subheader',
+                widths: ['*']
+              },
+              {
+                text: "The company reserves the right to skip the queue. In case the customer doesn't come",
+                // text: "The hospital reserves the right to skip the queue. In case the customer doesn't come",
+                fontSize: 15,
+                alignment: 'center'
+              },
+              {
+                columns: [
+                  {
+                    fontSize: 15,
+                    alignment: 'center',
+                    text: 'Date ' + item.dueDateText.split(' ')[0]
+                  }
+                ]
+              },
+              {
+                text: '................................................',
+                style: 'subheader',
+                widths: ['*'],
+                alignment: 'center'
+              }
+            ],
+            styles: {
+              header: {
+                fontSize: 30,
+                bold: true
+              },
+              subheader: {
+                fontSize: 29,
+                bold: true
+              },
+              quote: {
+                italics: true
+              },
+              small: {
+                fontSize: 8
+              },
+              defaultStyle: {
+                columnGap: 20
+              },
+              tableExample: {
+                margin: [0, 5, 0, 15]
+              }
             },
-            subheader: {
-              fontSize: 29,
-              bold: true
-            },
-            quote: {
-              italics: true
-            },
-            small: {
-              fontSize: 8
-            },
-            defaultStyle: {
-              columnGap: 20
-            },
-            tableExample: {
-              margin: [0, 5, 0, 15]
+            defaultStyle: { // 4. default style 'KANIT' font to test
+              font: 'Kanit'
             }
-          },
-          defaultStyle: { // 4. default style 'KANIT' font to test
-            font: 'Kanit'
           }
         }
       } else {
-        docDefinition = {
-          pageSize: 'A4',
-          content: [
-            {
-              text: this.shopName,
-              style: 'header',
-              alignment: 'center'
-            },
-            {
-              image: 'mySuperImage',
-              width: 150,
-              alignment: 'center'
-            },
-            // {
-            //   text: '   ',
-            //   style: 'header',
-            //   widths: ['*']
-            // },
-            // {
-            //   text: '   ',
-            //   style: 'subheader',
-            //   widths: ['*']
-            // },
-            // {
-            //   columns: [
-            //     {
-            //       style: 'subheader',
-            //       text: 'Time'
-            //     },
-            //     {
-            //       style: 'subheader',
-            //       text: item.timeText,
-            //       alignment: 'right'
-            //     }
-            //   ]
-            // },
-            // {
-            //   text: '   ',
-            //   style: 'subheader',
-            //   widths: ['*']
-            // },
-            {
-              alignment: 'center',
-              text: item.flowNameEn,
-              fontSize: 30,
-              widths: ['*']
-            },
-            {
-              alignment: 'center', text: 'Number', fontSize: 20, color: 'black'
-            },
-            {
-              alignment: 'center', text: item.storeFrontQueue, fontSize: 110, color: 'black'
-            },
-            // {
-            //   text: [
-            //     {alignment: 'center', text: 'Number\n', fontSize: 20, color: 'black'},
-            //     {alignment: 'center', text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-            //   ]
-            //   // alignment: 'center',
-            //   // style: 'tableExample',
-            //   // table: {
-            //   //   heights: [50],
-            //   //   widths: ['*'],
-            //   //   body: [
-            //   //     [
-            //   //       {
-            //   //         text: [
-            //   //           {text: 'Number\n', fontSize: 20, color: 'black'},
-            //   //           {text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-            //   //         ],
-            //   //         border: [false, false, false, false]
-            //   //         // fillColor: '#092C4C'
-            //   //       }
-            //   //     ]
-            //   //   ]
-            //   // }
-            // },
-            {
-              text: 'QR Code for receiving notifications',
-              fontSize: 15,
-              alignment: 'center'
-            },
-            { qr: 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '200', alignment: 'center' },
-            {
-              text: '   ',
-              fontSize: 15,
-              // style: 'subheader',
-              widths: ['*']
-            },
-            {
-              text: "The company reserves the right to skip the queue. In case the customer doesn't come",
-              // text: "The hospital reserves the right to skip the queue. In case the customer doesn't come",
-              fontSize: 15,
-              alignment: 'center'
-            },
-            {
-              columns: [
-                {
-                  fontSize: 15,
-                  alignment: 'center',
-                  text: 'Date ' + item.dueDateText.split(' ')[0]
-                }
-              ]
-            },
-            {
-              text: '................................................',
-              style: 'subheader',
-              widths: ['*'],
-              alignment: 'center'
-            }
-          ],
-          images: {
-            mySuperImage: this.shopImg
+        if (language === 'th') {
+          docDefinition = {
+            pageSize: 'A4',
+            content: [
+              {
+                text: this.shopName,
+                style: 'header',
+                alignment: 'center'
+              },
+              {
+                image: 'mySuperImage',
+                width: 150,
+                alignment: 'center'
+              },
+              // {
+              //   text: '   ',
+              //   style: 'header',
+              //   widths: ['*']
+              // },
+              // {
+              //   text: '   ',
+              //   style: 'subheader',
+              //   widths: ['*']
+              // },
+              // {
+              //   columns: [
+              //     {
+              //       style: 'subheader',
+              //       text: 'รับคิวเวลา'
+              //     },
+              //     {
+              //       style: 'subheader',
+              //       text: item.timeText,
+              //       alignment: 'right'
+              //     }
+              //   ]
+              // },
+              {
+                alignment: 'center',
+                text: item.flowName,
+                fontSize: 30,
+                widths: ['*']
+              },
+              {
+                text: [
+                  {alignment: 'center', text: 'หมายเลขคิวของคุณ\n', fontSize: 20, color: 'black'},
+                  {alignment: 'center', text: item.storeFrontQueue, fontSize: 120, color: 'black'}
+                ]
+              // alignment: 'center',
+              // style: 'tableExample',
+              // table: {
+              //   heights: [50],
+              //   widths: ['*'],
+              //   body: [
+              //     [
+              //       {
+              //         text: [
+              //           {text: 'หมายเลขคิวของคุณ\n', fontSize: 20, color: 'black'},
+              //           {text: item.storeFrontQueue, fontSize: 120, color: 'black'}
+              //         ],
+              //         border: [false, false, false, false]
+              //         // fillColor: '#092C4C'
+              //       }
+              //     ]
+              //   ]
+              // }
+              },
+              {
+                text: 'QR Code สำหรับรับการแจ้งเตือน',
+                fontSize: 15,
+                alignment: 'center'
+              },
+              { qr: 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '200', alignment: 'center' },
+              {
+                text: '   ',
+                fontSize: 15,
+                // style: 'subheader',
+                widths: ['*']
+              },
+              {
+                text: '*ทางบริษัทขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
+                // text: '*ทางโรงพยาบาลขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
+                fontSize: 15,
+                alignment: 'center'
+              },
+              // {
+              //   text: '   ',
+              //   fontSize: 25,
+              //   widths: ['*']
+              // },
+              {
+                columns: [
+                  {
+                    fontSize: 15,
+                    alignment: 'center',
+                    text: 'วันที่ ' + item.dueDateText.split(' ')[0]
+                  }
+                ]
+              },
+              {
+                text: '................................................',
+                style: 'subheader',
+                widths: ['*'],
+                alignment: 'center'
+              }
+            ],
+            images: {
+              mySuperImage: this.shopImg
 
             // in browser is supported loading images via url (https or http protocol) (minimal version: 0.1.67)
             // snow: this.shopImg
@@ -1283,31 +1395,185 @@ export default {
             //     myotherheader: 'abc',
             //   }
             // }
-          },
-          styles: {
-            header: {
-              fontSize: 30,
-              bold: true
             },
-            subheader: {
-              fontSize: 29,
-              bold: true
+            styles: {
+              header: {
+                fontSize: 30,
+                bold: true
+              },
+              subheader: {
+                fontSize: 29,
+                bold: true
+              },
+              quote: {
+                italics: true
+              },
+              small: {
+                fontSize: 8
+              },
+              defaultStyle: {
+                columnGap: 20
+              },
+              tableExample: {
+                margin: [0, 5, 0, 15]
+              }
             },
-            quote: {
-              italics: true
-            },
-            small: {
-              fontSize: 8
-            },
-            defaultStyle: {
-              columnGap: 20
-            },
-            tableExample: {
-              margin: [0, 5, 0, 15]
+            defaultStyle: { // 4. default style 'KANIT' font to test
+              font: 'Kanit'
             }
-          },
-          defaultStyle: { // 4. default style 'KANIT' font to test
-            font: 'Kanit'
+          }
+        } else {
+          docDefinition = {
+            pageSize: 'A4',
+            content: [
+              {
+                text: this.shopName,
+                style: 'header',
+                alignment: 'center'
+              },
+              {
+                image: 'mySuperImage',
+                width: 150,
+                alignment: 'center'
+              },
+              // {
+              //   text: '   ',
+              //   style: 'header',
+              //   widths: ['*']
+              // },
+              // {
+              //   text: '   ',
+              //   style: 'subheader',
+              //   widths: ['*']
+              // },
+              // {
+              //   columns: [
+              //     {
+              //       style: 'subheader',
+              //       text: 'Time'
+              //     },
+              //     {
+              //       style: 'subheader',
+              //       text: item.timeText,
+              //       alignment: 'right'
+              //     }
+              //   ]
+              // },
+              // {
+              //   text: '   ',
+              //   style: 'subheader',
+              //   widths: ['*']
+              // },
+              {
+                alignment: 'center',
+                text: item.flowNameEn,
+                fontSize: 30,
+                widths: ['*']
+              },
+              {
+                alignment: 'center', text: 'Number', fontSize: 20, color: 'black'
+              },
+              {
+                alignment: 'center', text: item.storeFrontQueue, fontSize: 110, color: 'black'
+              },
+              // {
+              //   text: [
+              //     {alignment: 'center', text: 'Number\n', fontSize: 20, color: 'black'},
+              //     {alignment: 'center', text: item.storeFrontQueue, fontSize: 120, color: 'black'}
+              //   ]
+              //   // alignment: 'center',
+              //   // style: 'tableExample',
+              //   // table: {
+              //   //   heights: [50],
+              //   //   widths: ['*'],
+              //   //   body: [
+              //   //     [
+              //   //       {
+              //   //         text: [
+              //   //           {text: 'Number\n', fontSize: 20, color: 'black'},
+              //   //           {text: item.storeFrontQueue, fontSize: 120, color: 'black'}
+              //   //         ],
+              //   //         border: [false, false, false, false]
+              //   //         // fillColor: '#092C4C'
+              //   //       }
+              //   //     ]
+              //   //   ]
+              //   // }
+              // },
+              {
+                text: 'QR Code for receiving notifications',
+                fontSize: 15,
+                alignment: 'center'
+              },
+              { qr: 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '200', alignment: 'center' },
+              {
+                text: '   ',
+                fontSize: 15,
+                // style: 'subheader',
+                widths: ['*']
+              },
+              {
+                text: "The company reserves the right to skip the queue. In case the customer doesn't come",
+                // text: "The hospital reserves the right to skip the queue. In case the customer doesn't come",
+                fontSize: 15,
+                alignment: 'center'
+              },
+              {
+                columns: [
+                  {
+                    fontSize: 15,
+                    alignment: 'center',
+                    text: 'Date ' + item.dueDateText.split(' ')[0]
+                  }
+                ]
+              },
+              {
+                text: '................................................',
+                style: 'subheader',
+                widths: ['*'],
+                alignment: 'center'
+              }
+            ],
+            images: {
+              mySuperImage: this.shopImg
+
+            // in browser is supported loading images via url (https or http protocol) (minimal version: 0.1.67)
+            // snow: this.shopImg
+
+            // is supported loading images via url with custom headers (minimal version: 0.2.5)
+            // strawberries: {
+            //   url: 'https://picsum.photos/id/1080/367/267',
+            //   headers: {
+            //     myheader: '123',
+            //     myotherheader: 'abc',
+            //   }
+            // }
+            },
+            styles: {
+              header: {
+                fontSize: 30,
+                bold: true
+              },
+              subheader: {
+                fontSize: 29,
+                bold: true
+              },
+              quote: {
+                italics: true
+              },
+              small: {
+                fontSize: 8
+              },
+              defaultStyle: {
+                columnGap: 20
+              },
+              tableExample: {
+                margin: [0, 5, 0, 15]
+              }
+            },
+            defaultStyle: { // 4. default style 'KANIT' font to test
+              font: 'Kanit'
+            }
           }
         }
       }
