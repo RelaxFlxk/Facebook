@@ -255,20 +255,19 @@
                 rounded
                 dark
                 block
-                outlined
-                @click="ChatHistory(item)"
-              >
-              ข้อความ</v-btn>
-            </v-col>
-            <v-col cols="4" class="text-center pa-1">
-              <v-btn
-                color="#F38383"
-                rounded
-                dark
-                block
                 @click="setShowMap(item)"
               >
               แผนที่</v-btn>
+            </v-col>
+            <v-col cols="4" class="text-center pa-1">
+              <v-btn
+                color="#8A94A3"
+                rounded
+                dark
+                block
+                @click="ChatHistory(item)"
+              >
+              ข้อความ</v-btn>
             </v-col>
            </v-row>
            <v-row class="mt-2 mb-1 px-3">
@@ -465,18 +464,29 @@
               </v-col>
             </v-row>
             <div style="display: flex;align-items: center;justify-content: center;" class="mb-2">
-              <v-icon x-large color="#F48686" class="mx-1 mr-2 iconify" data-icon="ic:twotone-access-time"></v-icon>
+              <v-icon color="#F48686" class="mx-1 mr-2 iconify" data-icon="ic:twotone-access-time"></v-icon>
               <p class="font-weight-bold mb-1 text-center" v-if="CloseJob.dueDate !== null & CloseJob.dueDate !== ''"
               style="font-size:15px">
               {{'วันที่นัดหมาย ' + momentThaiTextClose(CloseJob.dueDate)}}
               </p>
             </div>
             <v-row>
-              <v-col cols="6">
+              <v-col cols="6" style="display: flex;
+                  align-items: flex-start;
+                  padding-left: 25px;
+                  flex-direction: column;">
                 <p class="font-weight-bold mb-1 text-center" v-if="dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo).length > 0" style="font-size:13px">{{'วันที่เริ่มงาน ' + dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo)[0].CREATE_DATE_DAY}}</p>
                 <p class="font-weight-bold mb-1 text-center" v-if="dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo).length > 0" style="font-size:13px">{{'เวลาเริ่มงาน ' + dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo)[0].CREATE_DATE_TIME + ' น.'}}</p>
               </v-col>
-              <v-col cols="6">
+              <v-divider
+                class="pt-3 mt-3"
+                style="height: 40px;"
+                vertical
+              ></v-divider>
+              <v-col cols="6" style="display: flex;
+                  align-items: flex-start;
+                  padding-left: 25px;
+                  flex-direction: column;">
                 <p class="font-weight-bold mb-1 text-center" v-if="dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo).length > 0" style="font-size:13px">{{'วันที่จบงาน ' + dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo)[0].LAST_DATE_DAY}}</p>
                 <p class="font-weight-bold mb-1 text-center" v-if="dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo).length > 0" style="font-size:13px">{{'เวลาจบงาน ' + dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo)[0].LAST_DATE_TIME + ' น.'}}</p>
               </v-col>
@@ -493,7 +503,7 @@
             </v-col> -->
             <v-col cols="12" class="text-center pa-1 mb-3">
               <v-btn
-                color="#F38383"
+                color="#8A94A3"
                 rounded
                 dark
                 @click="ChatHistory(CloseJob)"
