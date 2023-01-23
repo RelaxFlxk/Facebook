@@ -606,27 +606,40 @@ export default {
         cancelButtonText: 'ไม่'
       })
         .then(async (result) => {
-          let url = this.DNS_IP + '/system_shop_Payment/edit/' + item.id
-          let dt = {
-            paymentStatus: text,
-            LAST_USER: this.$session.getAll().data.userName
-          }
-          // }
-          await axios.post(url, dt).then(async (response) => {
+          if (item.id) {
+            let url = this.DNS_IP + '/system_shop_Payment/edit/' + item.id
+            let dt = {
+              paymentStatus: text,
+              LAST_USER: this.$session.getAll().data.userName
+            }
+            // }
+            await axios.post(url, dt).then(async (response) => {
+              if (text === 'inactive') {
+                await this.updateShopActive('inactive', item)
+                this.checkSearch()
+              } else if (text === 'confirm') {
+                if (item.shopActive === 'inactive') {
+                  await this.updateShopActive('active', item)
+                  this.checkSearch()
+                } else {
+                  this.checkSearch()
+                }
+              } else {
+                this.checkSearch()
+              }
+            })
+          } else {
             if (text === 'inactive') {
               await this.updateShopActive('inactive', item)
               this.checkSearch()
-            } else if (text === 'confirm') {
-              if (item.shopActive === 'inactive') {
-                await this.updateShopActive('active', item)
-                this.checkSearch()
-              } else {
-                this.chkPayMent()
-              }
             } else {
-              this.checkSearch()
+              this.$swal(
+                'พบความผิดพลาดระหว่างดำเนินการ',
+                'ไม่มีข้อมูลร้านค้า',
+                'info'
+              )
             }
-          })
+          }
         })
     },
     async updateShopActive (text, item) {
