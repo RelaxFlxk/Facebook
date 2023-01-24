@@ -587,7 +587,7 @@
                               @change="formAdd.servicePointTh = '', formAdd.servicePointEn = '',formAdd.servicePointCount = ''"
                             ></v-checkbox>
                             </v-col>
-                            <v-col clos="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.servicePointStatus === 'True'"  >
+                            <v-col clos="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.servicePointStatus === 'True'"  >
                               <v-text-field
                                 v-model="formAdd.servicePointTh"
                                 label="ชื่อจุดบริการ (TH)"
@@ -597,7 +597,7 @@
                                 :rules="[rules.required]"
                               ></v-text-field>
                             </v-col>
-                            <v-col clos="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.servicePointStatus === 'True'"  >
+                            <v-col clos="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.servicePointStatus === 'True'"  >
                               <v-text-field
                                 v-model="formAdd.servicePointEn"
                                 label="ชื่อจุดบริการ (EN)"
@@ -607,10 +607,21 @@
                                 :rules="[rules.required]"
                               ></v-text-field>
                             </v-col>
-                            <v-col clos="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.servicePointStatus === 'True'"  >
+                            <v-col clos="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.servicePointStatus === 'True'"  >
                               <v-text-field
-                                v-model="servicePointCount"
-                                label="จำนวนจุดบริการ"
+                                v-model="formAdd.servicePointCountStart"
+                                label="จำนวนจุดบริการเริ่ม"
+                                outlined
+                                required
+                                dense
+                                v-mask="'###'"
+                                :rules="[rules.required]"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col clos="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.servicePointStatus === 'True'"  >
+                              <v-text-field
+                                v-model="formAdd.servicePointCountEnd"
+                                label="จำนวนจุดบริการสิ้นสุด"
                                 outlined
                                 required
                                 dense
@@ -934,7 +945,29 @@
                                 :rules="[rules.required]"
                               ></v-text-field>
                             </v-col>
-                            <v-col cols='4' class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.servicePointStatus === 'True'"  >
+                            <v-col clos="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.servicePointStatus === 'True'"  >
+                              <v-text-field
+                                v-model="formUpdate.servicePointCountStart"
+                                label="จำนวนจุดบริการเริ่ม"
+                                outlined
+                                required
+                                dense
+                                v-mask="'###'"
+                                :rules="[rules.required]"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col clos="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.servicePointStatus === 'True'"  >
+                              <v-text-field
+                                v-model="formUpdate.servicePointCountEnd"
+                                label="จำนวนจุดบริการสิ้นสุด"
+                                outlined
+                                required
+                                dense
+                                v-mask="'###'"
+                                :rules="[rules.required]"
+                              ></v-text-field>
+                            </v-col>
+                            <!-- <v-col cols='4' class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.servicePointStatus === 'True'"  >
                               <v-text-field
                                 v-model="servicePointCount"
                                 label="จำนวนจุดบริการ"
@@ -944,7 +977,7 @@
                                 v-mask="'###'"
                                 :rules="[rules.required]"
                               ></v-text-field>
-                            </v-col>
+                            </v-col> -->
                           </v-row>
                           <v-row v-if="$session.getAll().data.timeSlotStatus !== 'True'">
                             <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;">
@@ -2075,7 +2108,9 @@ export default {
         servicePointTh: '',
         servicePointEn: '',
         servicePointCount: '',
-        servicePointStatus: 'False'
+        servicePointStatus: 'False',
+        servicePointCountStart: 0,
+        servicePointCountEnd: 0
       },
       formAddStep: {
         stepId: '',
@@ -2133,7 +2168,9 @@ export default {
         servicePointTh: '',
         servicePointEn: '',
         servicePointCount: '',
-        servicePointStatus: 'False'
+        servicePointStatus: 'False',
+        servicePointCountStart: 0,
+        servicePointCountEnd: 0
       },
       formUpdateItemFlow: {
         fieldId: '',
@@ -3240,6 +3277,8 @@ export default {
       this.formUpdate.servicePointEn = item.servicePointEn || ''
       this.formUpdate.storeFrontText = item.storeFrontText || ''
       this.formUpdate.servicePointStatus = item.servicePointStatus || 'False'
+      this.formUpdate.servicePointCountStart = item.servicePointCountStart || '0'
+      this.formUpdate.servicePointCountEnd = item.servicePointCountEnd || '0'
       if (this.formUpdate.servicePointStatus === 'True') {
         this.formUpdate.servicePointCount = item.servicePointCount || ''
         if (this.formUpdate.servicePointCount !== '') {
@@ -3286,7 +3325,15 @@ export default {
     },
     async addData () {
       this.validate('ADD')
-      setTimeout(() => this.addDataSubmit(), 500)
+      if (this.formAdd.servicePointStatus === 'True') {
+        if (parseInt(this.formAdd.servicePointCountStart) >= parseInt(this.formAdd.servicePointCountEnd)) {
+          this.$swal('ผิดพลาด', 'จำนวนเริ่มต้นมากกว่าหรือเท่ากับจำนวนสิ้นสุด', 'error')
+        } else {
+          setTimeout(() => this.addDataSubmit(), 500)
+        }
+      } else {
+        setTimeout(() => this.addDataSubmit(), 500)
+      }
     },
     async addDataSubmit () {
       if (this.validAdd !== false) {
@@ -3315,13 +3362,26 @@ export default {
 
             this.formAdd.servicePointCount = []
             if (this.formAdd.servicePointStatus === 'True') {
-              for (let i = 0; i < parseInt(this.servicePointCount); i++) {
+              let countService = parseInt(this.formAdd.servicePointCountEnd) - parseInt(this.formAdd.servicePointCountStart)
+              let startCount = {
+                'textTh': this.formAdd.servicePointTh + ' ' + (this.formAdd.servicePointCountStart).toString(),
+                'textEn': this.formAdd.servicePointEn + ' ' + (this.formAdd.servicePointCountStart).toString()
+              }
+              this.formAdd.servicePointCount.push(startCount)
+              for (let i = 0; i < countService; i++) {
                 let s = {}
-                let no = i
+                let no = parseInt(this.formAdd.servicePointCountStart) + i
                 s.textTh = this.formAdd.servicePointTh + ' ' + (no + 1).toString()
                 s.textEn = this.formAdd.servicePointEn + ' ' + (no + 1).toString()
                 this.formAdd.servicePointCount.push(s)
               }
+              // for (let i = 0; i < parseInt(this.servicePointCount); i++) {
+              //   let s = {}
+              //   let no = i
+              //   s.textTh = this.formAdd.servicePointTh + ' ' + (no + 1).toString()
+              //   s.textEn = this.formAdd.servicePointEn + ' ' + (no + 1).toString()
+              //   this.formAdd.servicePointCount.push(s)
+              // }
               this.formAdd.servicePointCount = JSON.stringify(this.formAdd.servicePointCount)
             } else {
               this.formAdd.servicePointCount = ''
@@ -3420,7 +3480,15 @@ export default {
     },
     async editData () {
       this.validate('UPDATE')
-      setTimeout(() => this.editDataSubmit(), 500)
+      if (this.formUpdate.servicePointStatus === 'True') {
+        if (parseInt(this.formUpdate.servicePointCountStart) >= parseInt(this.formUpdate.servicePointCountEnd)) {
+          this.$swal('ผิดพลาด', 'จำนวนเริ่มต้นมากกว่าหรือเท่ากับจำนวนสิ้นสุด', 'error')
+        } else {
+          setTimeout(() => this.editDataSubmit(), 500)
+        }
+      } else {
+        setTimeout(() => this.editDataSubmit(), 500)
+      }
     },
     async editDataSubmit () {
       if (this.validUpdate !== false) {
@@ -3455,13 +3523,26 @@ export default {
 
             this.formUpdate.servicePointCount = []
             if (this.formUpdate.servicePointStatus === 'True') {
-              for (let i = 0; i < parseInt(this.servicePointCount); i++) {
+              let countService = parseInt(this.formUpdate.servicePointCountEnd) - parseInt(this.formUpdate.servicePointCountStart)
+              let startCount = {
+                'textTh': this.formUpdate.servicePointTh + ' ' + (this.formUpdate.servicePointCountStart).toString(),
+                'textEn': this.formUpdate.servicePointEn + ' ' + (this.formUpdate.servicePointCountStart).toString()
+              }
+              this.formUpdate.servicePointCount.push(startCount)
+              for (let i = 0; i < countService; i++) {
                 let s = {}
-                let no = i
+                let no = parseInt(this.formUpdate.servicePointCountStart) + i
                 s.textTh = this.formUpdate.servicePointTh + ' ' + (no + 1).toString()
                 s.textEn = this.formUpdate.servicePointEn + ' ' + (no + 1).toString()
                 this.formUpdate.servicePointCount.push(s)
               }
+              // for (let i = 0; i < parseInt(this.servicePointCount); i++) {
+              //   let s = {}
+              //   let no = i
+              //   s.textTh = this.formUpdate.servicePointTh + ' ' + (no + 1).toString()
+              //   s.textEn = this.formUpdate.servicePointEn + ' ' + (no + 1).toString()
+              //   this.formUpdate.servicePointCount.push(s)
+              // }
               this.formUpdate.servicePointCount = JSON.stringify(this.formUpdate.servicePointCount)
             } else {
               this.formUpdate.servicePointCount = ''
@@ -3754,6 +3835,10 @@ export default {
             this.formAdd[key] = 'False'
           } else if (key === 'amountDeposit') {
             this.formAdd[key] = 0
+          } else if (key === 'servicePointCountStart') {
+            this.formAdd[key] = 0
+          } else if (key === 'servicePointCountEnd') {
+            this.formAdd[key] = 0
           } else if (key === 'promptPayID') {
             this.formAdd[key] = null
           } else if (key === 'promptPayName') {
@@ -3798,6 +3883,10 @@ export default {
           } else if (key === 'customerTimeSlot') {
             this.formUpdate[key] = 'False'
           } else if (key === 'amountDeposit') {
+            this.formUpdate[key] = 0
+          } else if (key === 'servicePointCountStart') {
+            this.formUpdate[key] = 0
+          } else if (key === 'servicePointCountEnd') {
             this.formUpdate[key] = 0
           } else if (key === 'promptPayID') {
             this.formUpdate[key] = null
