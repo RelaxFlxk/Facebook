@@ -6277,7 +6277,7 @@ export default {
         prefix: '',
         suffix: '',
         length: 9,
-        precision: 0
+        precision: 2
       },
       options1: {
         locale: 'en-US',
