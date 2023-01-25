@@ -785,7 +785,7 @@
                             dense
                             required
                             :rules="[rules.required]"
-                            @change="date = ''"
+                            @change="date = '',AddallowedDatesBysetTimebyday()"
                           ></v-select>
                           <template v-if="fieldNameItem">
                             <div
@@ -2195,7 +2195,7 @@
                       dense
                       required
                       :rules="[rules.required]"
-                      @change="formChange.date = ''"
+                      @change="formChange.date = '', AddallowedDatesBysetTimebydayChange()"
                     ></v-select>
                     </v-col>
                   </v-row>
@@ -3397,7 +3397,7 @@
                             outlined
                             dense
                             required
-                            @change="formEdit.bookingEmpFlow = '', setEmpEdit()"
+                            @change="formEdit.bookingEmpFlow = '',fromAddTimeCus = '',dateEdit = '', setEmpEdit()"
                             :rules="[rules.required]"
                           ></v-select>
                           <v-select
@@ -3408,7 +3408,7 @@
                             dense
                             required
                             :rules="[rules.required]"
-                            @change="formEdit.bookingEmpFlow = '', setEmpEdit()"
+                            @change="formEdit.bookingEmpFlow = '', fromAddTimeCus = '',dateEdit='', setEmpEdit()"
                           ></v-select>
                           <v-select
                             v-if="formEdit.masBranchID !== null && formEdit.flowId !== null && (flowIdOldEdit !== formEdit.flowId) && (getSelectText !== 'cancel') && (checkSelectText !== 'confirmJob')"
@@ -3419,7 +3419,7 @@
                             dense
                             required
                             :rules="[rules.required]"
-                            @change="setEmpEdit()"
+                            @change="dateEdit = '',setEmpEdit()"
                           ></v-select>
                           <v-select
                             v-if="customerTimeSlot === 'True' && formEdit.bookingEmpFlow !== '' && timeSlotbyCustomer.length > 1"
@@ -3430,7 +3430,7 @@
                             dense
                             required
                             :rules="[rules.required]"
-                            @change="dateEdit = ''"
+                            @change="dateEdit = '',AddallowedDatesBysetTimebydayEdit()"
                           ></v-select>
                           <template v-if="BookingDataItemEdit">
                             <div
@@ -6896,12 +6896,14 @@ export default {
     async setEmpEdit () {
       this.fromAddTimeCus = ''
       if (this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
-        this.SetallowedDatesChange(this.formEdit.bookingEmpFlow)
         if (this.formEdit.masBranchID !== null && this.formEdit.flowId !== null) {
           await this.getEmpEdit(this.formEdit.masBranchID)
           console.log('this.dataEdit', this.dataEdit)
-          await this.checkCustomerTimeSlotEdit(this.dataEdit)
-          this.checkTimeEdit(this.dataEdit, {flowId: this.formEdit.flowId, bookingEmpFlow: this.formEdit.bookingEmpFlow})
+          if (this.formEdit.bookingEmpFlow) {
+            this.SetallowedDatesChange(this.formEdit.bookingEmpFlow)
+            await this.checkCustomerTimeSlotEdit(this.dataEdit)
+          // this.checkTimeEdit(this.dataEdit, {flowId: this.formEdit.flowId, bookingEmpFlow: this.formEdit.bookingEmpFlow})
+          }
         }
       }
     },
@@ -6931,33 +6933,118 @@ export default {
       }
       return countTime
     },
+    async AddallowedDatesBysetTimebyday () {
+      await this.SetallowedDates()
+      if (this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTime)
+        timeJson.forEach((item) => {
+          if (item.setTime.length < this.fromAddTimeCus) {
+            if (this.dateDayoff.filter((i) => i === item.value).length === 0) {
+              this.dateDayoff.push(item.value)
+            }
+          }
+        })
+      }
+      console.log('this.dateDayoff', this.dateDayoff)
+    },
+    async AddallowedDatesBysetTimebydayEdit () {
+      console.log('formChang', this.bookingEmpFlow)
+      this.dateDayoff = []
+      console.log('this.dateDayoff', this.dateDayoff)
+      await this.SetallowedDatesChange(this.formEdit.bookingEmpFlow)
+      if (this.dataEmpAllChange.filter(item => { return item.empId === this.formEdit.bookingEmpFlow })[0].setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.dataEmpAllChange.filter(item => { return item.empId === this.formEdit.bookingEmpFlow })[0].setTime)
+        console.log('timeJson', timeJson)
+        timeJson.forEach((item) => {
+          if (item.setTime.length < this.fromAddTimeCus) {
+            if (this.dateDayoff.filter((i) => i === item.value).length === 0) {
+              this.dateDayoff.push(item.value)
+            }
+          }
+        })
+      }
+      console.log('this.dateDayoff', this.dateDayoff)
+    },
+    async AddallowedDatesBysetTimebydayChange () {
+      console.log('formChang', this.bookingEmpFlow)
+      this.dateDayoff = []
+      console.log('this.dateDayoff', this.dateDayoff)
+      await this.SetallowedDatesChange(this.bookingEmpFlow)
+      if (this.dataEmpAllChange.filter(item => { return item.empId === this.bookingEmpFlow })[0].setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.dataEmpAllChange.filter(item => { return item.empId === this.bookingEmpFlow })[0].setTime)
+        console.log('timeJson', timeJson)
+        timeJson.forEach((item) => {
+          if (item.setTime.length < this.fromAddTimeCus) {
+            if (this.dateDayoff.filter((i) => i === item.value).length === 0) {
+              this.dateDayoff.push(item.value)
+            }
+          }
+        })
+      }
+      console.log('this.dateDayoff', this.dateDayoff)
+    },
     checkCustomerTimeSlot () {
       this.timeSlotbyCustomer = []
       this.customerTimeSlot = this.DataFlowName.filter((v) => v.value === this.formAdd.flowId)[0].allData.customerTimeSlot
       let allTime = []
       if (this.customerTimeSlot === 'True') {
-        // allTime = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.fromAdd.empId })[0].setTime)
-        allTime = JSON.parse(this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTime)
-        // allTime = this.limitBookingCheck = this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].limitBookingCheck || 'False'
-        console.log('allTime', allTime)
-        allTime.forEach((item, key) => {
-          let ss = {}
-          if (allTime.length === 1) {
+        if (this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTimebyday === 'True') {
+          // let timeJson = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.fromAdd.empId })[0].setTime).filter((items) => items.value === new Date().getDay())
+          // setTime = timeJson[0].setTime || []
+          let timeJson = JSON.parse(this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTime)
+          let dataTime = []
+          timeJson.forEach((itemTime, index) => {
+            // console.log('item', itemTime)
+            allTime = itemTime.setTime
+            allTime.forEach((item, key) => {
+              let ss = {}
+              if (allTime.length === 1) {
+                ss.text = 'ไม่ระบุ (มีเวลาเดียว)'
+                ss.value = key + 1
+                dataTime.push(ss)
+              } else {
+                if (key > 0) {
+                  let start = allTime.filter((i, k) => k === 0)[0].value
+                  let end = item.value
+                  ss.text = this.calculateTime(start, end)
+                  ss.value = key
+                  // console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
+                  dataTime.push(ss)
+                  // this.timeSlotbyCustomer.push(ss)
+                }
+              }
+            })
+          })
+          dataTime.forEach((i, n) => {
+            if (this.timeSlotbyCustomer.filter((item) => item.text === i.text && item.value === i.value).length === 0) {
+              console.log('n', n)
+              this.timeSlotbyCustomer.push(i)
+            }
+          })
+          console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
+        } else {
+          allTime = JSON.parse(this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTime)
+          // allTime = this.limitBookingCheck = this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].limitBookingCheck || 'False'
+          console.log('allTime', allTime)
+          allTime.forEach((item, key) => {
+            let ss = {}
+            if (allTime.length === 1) {
             // ss.text = item.value
             // ss.value = key + 1
             // this.timeSlotbyCustomer.push(ss)
-            this.fromAddTimeCus = key + 1
-          } else {
-            if (key > 0) {
-              let start = allTime.filter((i, k) => k === 0)[0].value
-              let end = item.value
-              ss.text = this.calculateTime(start, end)
-              ss.value = key
-              console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
-              this.timeSlotbyCustomer.push(ss)
+              this.fromAddTimeCus = key + 1
+            } else {
+              if (key > 0) {
+                let start = allTime.filter((i, k) => k === 0)[0].value
+                let end = item.value
+                ss.text = this.calculateTime(start, end)
+                ss.value = key
+                console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
+                this.timeSlotbyCustomer.push(ss)
+              }
             }
-          }
-        })
+          })
+        }
       }
       if (this.date !== '') {
         this.setLimitBooking(this.date)
@@ -6973,27 +7060,65 @@ export default {
       let allTime = []
       if (this.customerTimeSlot === 'True') {
         // allTime = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.fromAdd.empId })[0].setTime)
-        console.log('itemTest', this.dataEmpAllChange)
-        allTime = JSON.parse(this.dataEmpAllChange.filter(item => { return item.empId === this.formEdit.bookingEmpFlow })[0].setTime)
-        // allTime = this.limitBookingCheck = this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].limitBookingCheck || 'False'
-        allTime.forEach((item, key) => {
-          let ss = {}
-          if (allTime.length === 1) {
-            // ss.text = item.value
-            // ss.value = key + 1
-            // this.timeSlotbyCustomer.push(ss)
-            this.fromAddTimeCus = key + 1
-          } else {
-            if (key > 0) {
-              let start = allTime.filter((i, k) => k === 0)[0].value
-              let end = item.value
-              ss.text = this.calculateTime(start, end)
-              ss.value = key
-              console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
-              this.timeSlotbyCustomer.push(ss)
+        console.log('!@!@!@!@!@!@', this.dataEmpAllChange)
+        if (this.dataEmpAllChange.filter(item => { return item.empId === this.formEdit.bookingEmpFlow })[0].setTimebyday === 'True') {
+          // let timeJson = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.fromAdd.empId })[0].setTime).filter((items) => items.value === new Date().getDay())
+          // setTime = timeJson[0].setTime || []
+          let timeJson = JSON.parse(this.dataEmpAllChange.filter(item => { return item.empId === this.formEdit.bookingEmpFlow })[0].setTime)
+          console.log('IF', timeJson)
+          let dataTime = []
+          timeJson.forEach((itemTime, index) => {
+            // console.log('item', itemTime)
+            allTime = itemTime.setTime
+            allTime.forEach((item, key) => {
+              let ss = {}
+              if (allTime.length === 1) {
+                ss.text = 'ไม่ระบุ (มีเวลาเดียว)'
+                ss.value = key + 1
+                dataTime.push(ss)
+              } else {
+                if (key > 0) {
+                  let start = allTime.filter((i, k) => k === 0)[0].value
+                  let end = item.value
+                  ss.text = this.calculateTime(start, end)
+                  ss.value = key
+                  // console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
+                  dataTime.push(ss)
+                  // this.timeSlotbyCustomer.push(ss)
+                }
+              }
+            })
+          })
+          dataTime.forEach((i, n) => {
+            if (this.timeSlotbyCustomer.filter((item) => item.text === i.text && item.value === i.value).length === 0) {
+              console.log('n', n)
+              this.timeSlotbyCustomer.push(i)
             }
-          }
-        })
+          })
+          console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
+        } else {
+          console.log('ELSE', this.dataEmpAllChange)
+          allTime = JSON.parse(this.dataEmpAllChange.filter(item => { return item.empId === this.formEdit.bookingEmpFlow })[0].setTime)
+          // allTime = this.limitBookingCheck = this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].limitBookingCheck || 'False'
+          allTime.forEach((item, key) => {
+            let ss = {}
+            if (allTime.length === 1) {
+              // ss.text = item.value
+              // ss.value = key + 1
+              // this.timeSlotbyCustomer.push(ss)
+              this.fromAddTimeCus = key + 1
+            } else {
+              if (key > 0) {
+                let start = allTime.filter((i, k) => k === 0)[0].value
+                let end = item.value
+                ss.text = this.calculateTime(start, end)
+                ss.value = key
+                console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
+                this.timeSlotbyCustomer.push(ss)
+              }
+            }
+          })
+        }
       }
       console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
     },
@@ -7006,27 +7131,63 @@ export default {
       let allTime = []
       if (this.customerTimeSlot === 'True') {
         // allTime = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.fromAdd.empId })[0].setTime)
-        console.log('itemTest', this.dataEmpAllChange)
-        allTime = JSON.parse(this.dataEmpAllChange.filter(item => { return item.empId === itemChang.bookingEmpFlow })[0].setTime)
-        // allTime = this.limitBookingCheck = this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].limitBookingCheck || 'False'
-        allTime.forEach((item, key) => {
-          let ss = {}
-          if (allTime.length === 1) {
+        if (this.dataEmpAllChange.filter(item => { return item.empId === itemChang.bookingEmpFlow })[0].setTimebyday === 'True') {
+          console.log('IF!!!!!!!!!!!')
+          let timeJson = JSON.parse(this.dataEmpAllChange.filter(item => { return item.empId === itemChang.bookingEmpFlow })[0].setTime)
+          let dataTime = []
+          timeJson.forEach((itemTime, index) => {
+            // console.log('item', itemTime)
+            allTime = itemTime.setTime
+            allTime.forEach((item, key) => {
+              let ss = {}
+              if (allTime.length === 1) {
+                ss.text = 'ไม่ระบุ (มีเวลาเดียว)'
+                ss.value = key + 1
+                dataTime.push(ss)
+              } else {
+                if (key > 0) {
+                  let start = allTime.filter((i, k) => k === 0)[0].value
+                  let end = item.value
+                  ss.text = this.calculateTime(start, end)
+                  ss.value = key
+                  // console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
+                  dataTime.push(ss)
+                  // this.timeSlotbyCustomer.push(ss)
+                }
+              }
+            })
+          })
+          dataTime.forEach((i, n) => {
+            if (this.timeSlotbyCustomer.filter((item) => item.text === i.text && item.value === i.value).length === 0) {
+              console.log('n', n)
+              this.timeSlotbyCustomer.push(i)
+            }
+          })
+          console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
+        } else {
+          console.log('ELSE!!!!!!!!!')
+          console.log('itemTest', this.dataEmpAllChange)
+          allTime = JSON.parse(this.dataEmpAllChange.filter(item => { return item.empId === itemChang.bookingEmpFlow })[0].setTime)
+          // allTime = this.limitBookingCheck = this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].limitBookingCheck || 'False'
+          allTime.forEach((item, key) => {
+            let ss = {}
+            if (allTime.length === 1) {
             // ss.text = item.value
             // ss.value = key + 1
             // this.timeSlotbyCustomer.push(ss)
-            this.fromAddTimeCus = key + 1
-          } else {
-            if (key > 0) {
-              let start = allTime.filter((i, k) => k === 0)[0].value
-              let end = item.value
-              ss.text = this.calculateTime(start, end)
-              ss.value = key
-              console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
-              this.timeSlotbyCustomer.push(ss)
+              this.fromAddTimeCus = key + 1
+            } else {
+              if (key > 0) {
+                let start = allTime.filter((i, k) => k === 0)[0].value
+                let end = item.value
+                ss.text = this.calculateTime(start, end)
+                ss.value = key
+                console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
+                this.timeSlotbyCustomer.push(ss)
+              }
             }
-          }
-        })
+          })
+        }
       }
       console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
     },
@@ -7055,6 +7216,7 @@ export default {
                   limit.empId = d.empId
                   limit.limitBookingCheck = d.limitBookingCheck || 'False'
                   limit.setTime = d.setTime || '[]'
+                  limit.setTimebyday = d.setTimebyday
                   this.EmpItemLimitAdd.push(limit)
                 }
               }
@@ -7091,6 +7253,7 @@ export default {
             if (d.flowId !== null && d.flowId !== '') {
               let checkFlowId = JSON.parse(d.flowId)
               if (checkFlowId.filter((a) => parseInt(a) === this.formEdit.flowId).length > 0) {
+                console.log('rs!!!!!!!!!!!!getEmpEdit', rs)
                 let s = {}
                 s.text = d.empFull_NameTH
                 s.textEng = d.empFull_NameTH
@@ -7106,6 +7269,7 @@ export default {
                 limit.empId = d.empId
                 limit.limitBookingCheck = d.limitBookingCheck || 'False'
                 limit.setTime = d.setTime || '[]'
+                limit.setTimebyday = d.setTimebyday
                 this.EmpItemLimitAdd.push(limit)
                 this.EmpItemLimitChange.push(limit)
               }
@@ -7153,6 +7317,7 @@ export default {
                 limit.empId = d.empId
                 limit.limitBookingCheck = d.limitBookingCheck || 'False'
                 limit.setTime = d.setTime || '[]'
+                limit.setTimebyday = d.setTimebyday
                 this.EmpItemLimitChange.push(limit)
               }
             }
@@ -8023,10 +8188,19 @@ export default {
       this.time = ''
       this.timeavailable = []
       // this.showTable = []
-      console.log('setLimitBooking', dateitem)
+      let setTime = []
+      console.log('setLimitBooking', this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0])
+      if (this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTime).filter((items) => items.value === new Date(dateitem).getDay())
+        setTime = timeJson[0].setTime || []
+        console.log('IF++++++++')
+      } else {
+        console.log('ELSE++++++')
+        setTime = JSON.parse(this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTime) || []
+      }
       this.limitBookingCheck = this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].limitBookingCheck || 'False'
       if (this.limitBookingCheck === 'True') {
-        this.timeavailable = JSON.parse(this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTime) || []
+        this.timeavailable = setTime
         // let slotByflow = this.DataFlowName.filter((v) => v.value === this.formAdd.flowId)[0].allData.timeSlot
         let slotByflow = []
         if (this.customerTimeSlot === 'False') {
@@ -8112,7 +8286,7 @@ export default {
       } else {
         console.log('this.timeavailable ELSEEEEE', this.timeavailable)
         // LimitBookingBy Flow
-        this.timeavailable = JSON.parse(this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTime) || []
+        this.timeavailable = []
       }
     },
     async getLimitBooking () {
@@ -9366,6 +9540,7 @@ export default {
             update.masBranchID = this.formEdit.masBranchID
             update.fastTrack = fastTrack
             update.extraJob = extraJob
+            update.bookingEmpFlow = this.formEdit.bookingEmpFlow
             update.LAST_USER = this.$session.getAll().data.userName
             update.empSelect = this.empSelectEdit
             update.shopId = this.session.data.shopId
@@ -9395,6 +9570,7 @@ export default {
                 update.masBranchID = this.formEdit.masBranchID
                 update.fastTrack = fastTrack
                 update.extraJob = extraJob
+                update.bookingEmpFlow = this.formEdit.bookingEmpFlow
                 update.LAST_USER = this.$session.getAll().data.userName
                 update.empSelect = this.empSelectEdit
                 update.shopId = this.session.data.shopId
@@ -9415,6 +9591,7 @@ export default {
                 update.masBranchID = this.formEdit.masBranchID
                 update.fastTrack = fastTrack
                 update.extraJob = extraJob
+                update.bookingEmpFlow = this.formEdit.bookingEmpFlow
                 update.LAST_USER = this.$session.getAll().data.userName
                 update.empSelect = this.empSelectEdit
                 update.shopId = this.session.data.shopId
@@ -9548,13 +9725,24 @@ export default {
       if (this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
         this.timeEdit = ''
         this.timeavailable = []
-        console.log('checkTimeFlow', dt)
+        console.log('checkTimeFlow', dateC, dt)
         // this.showTable = []
+        let setTime = []
+        // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
+        console.log('!!!!!!!!!!!!!!!!!!!!', this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0])
+        if (this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].setTimebyday === 'True') {
+          let timeJson = JSON.parse(this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].setTime).filter((items) => items.value === new Date(dateC).getDay())
+          setTime = timeJson[0].setTime || []
+          console.log('IF')
+        } else {
+          console.log('ELSE')
+          setTime = JSON.parse(this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].setTime) || []
+        }
         let dtEmpItemLimitChange = this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })
         console.log('dtEmpItemLimitChange', dtEmpItemLimitChange)
         this.limitBookingCheck = dtEmpItemLimitChange.length > 0 ? dtEmpItemLimitChange[0].limitBookingCheck || 'False' : 'False'
         if (this.limitBookingCheck === 'True') {
-          this.timeavailable = JSON.parse(this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].setTime) || []
+          this.timeavailable = setTime
           // let slotByflow = this.dataFlowSelectEdit.filter((v) => v.value === dt.flowId)[0].allData.timeSlot
           let slotByflow = []
           if (this.customerTimeSlot === 'False') {
@@ -9642,7 +9830,7 @@ export default {
           console.log('this.timeavailable ELSEEEEE', this.timeavailable)
           // LimitBookingBy Flow
           if (this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow }).length > 0) {
-            this.timeavailable = JSON.parse(this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].setTime) || []
+            this.timeavailable = setTime
           } else {
             this.timeavailable = []
           }
@@ -9665,11 +9853,22 @@ export default {
     async checkTimeFlow (dateC, dt) {
       this.time = ''
       this.timeavailable = []
-      console.log('checkTimeFlow', dt)
+      console.log('checkTimeFlow', dateC, '=====', dt)
       // this.showTable = []
+      let setTime = []
+      // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
+      console.log('EmpItemLimitChange', this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0])
+      if (this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].setTime).filter((items) => items.value === new Date(dateC).getDay())
+        setTime = timeJson[0].setTime || []
+        console.log('IF', setTime)
+      } else {
+        console.log('ELSE', setTime)
+        setTime = JSON.parse(this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].setTime) || []
+      }
       this.limitBookingCheck = this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].limitBookingCheck || 'False'
       if (this.limitBookingCheck === 'True') {
-        this.timeavailable = JSON.parse(this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].setTime) || []
+        this.timeavailable = setTime
         console.log('this.DataFlowName', this.DataFlowName)
         // let slotByflow = this.DataFlowName.filter((v) => v.value === dt.flowId)[0].allData.timeSlot
         let slotByflow = []
@@ -9757,7 +9956,7 @@ export default {
       } else {
         console.log('this.timeavailable ELSEEEEE', this.timeavailable)
         // LimitBookingBy Flow
-        this.timeavailable = JSON.parse(this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].setTime) || []
+        this.timeavailable = setTime
       }
     },
     async getCountFastTrack (dateS, flowId, branch) {

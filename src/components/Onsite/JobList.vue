@@ -82,19 +82,19 @@
           <v-card v-if="sortNo === 1 && item.sortNo === 1" class="mx-6 pa-3 ma-2" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;">
             <v-row class="pa-5">
               <v-col cols="3" md="3" sm="12"  class="pa-0 ma-0" style="display: flex;align-items: flex-start;justify-content: flex-end;padding-left: 11px !important;">
-                <v-avatar size="90" v-if="item.memberPicture">
+                <v-avatar size="65" v-if="item.memberPicture">
                 <img
                   :src="item.memberPicture"
                 >
               </v-avatar>
-              <v-avatar size="90" color="#173053" v-else>
+              <v-avatar size="65" color="#173053" v-else>
                 <v-icon dark x-large>
                   mdi-account-circle
                 </v-icon>
               </v-avatar>
               </v-col>
               <v-col cols="9" md="9" sm="12" class="pa-0 ma-0 pl-2">
-                <p class="font-weight-bold mb-1 ml-2" style="font-size:20px" v-if="dataJob.filter((dt) => dt.jobNo === item.jobNo && dt.fieldName === 'ชื่อ').length > 0">
+                <p class="font-weight-bold mb-1 ml-2" style="font-size:16px" v-if="dataJob.filter((dt) => dt.jobNo === item.jobNo && dt.fieldName === 'ชื่อ').length > 0">
                   {{dataJob.filter((dt) => dt.jobNo === item.jobNo && dt.fieldName === 'ชื่อ')[0].fieldValue}}
                 </p>
                 <div style="display: flex;align-items: flex-start;">
@@ -121,7 +121,7 @@
               </v-col>
             </v-row>
             <div style="display: flex;align-items: center;justify-content: center;">
-              <v-icon x-large color="#F48686" class="iconify" data-icon="ic:twotone-access-time"></v-icon>
+              <v-icon  color="#F48686" class="iconify" data-icon="ic:twotone-access-time"></v-icon>
               <p class="font-weight-bold text-center ma-0 ml-2" v-if="item.dueDate" style="font-size:16px">
                 <!-- <v-icon x-large color="#F48686" class="mx-1 mr-2 iconify" data-icon="ic:twotone-access-time"></v-icon> -->
                 {{momentThaiText(item.dueDate)}}</p>
@@ -413,13 +413,13 @@
           <v-card v-if="sortNo === 3" class="mx-6 pa-3 ma-2" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;">
             <v-row class="pa-5">
               <v-col cols="3" md="3" sm="12"  class="pa-0 ma-0" style="display: flex;align-items: flex-start;justify-content: flex-end;padding-left: 11px !important;">
-                <v-avatar size="90" v-if="CloseJob.memberPicture">
+                <v-avatar size="65" v-if="CloseJob.memberPicture">
                   <img
                     :src="CloseJob.memberPicture"
                     onerror="this.onerror=null;this.src='https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2FLINE_ALBUM_220214_0.jpg?alt=media&token=6389daf9-9473-4b5d-8b19-2afb67d015e4';"
                   >
                 </v-avatar>
-                <v-avatar size="90" color="#173053" v-else>
+                <v-avatar size="65" color="#173053" v-else>
                   <v-icon dark x-large>
                     mdi-account-circle
                   </v-icon>
@@ -427,7 +427,7 @@
               </v-col>
               <v-col cols="9" md="9" sm="12" class="pa-0 ma-0 pl-2">
                 <p class="font-weight-bold mb-1 ml-2" v-if="dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo && dt.fieldName === 'ชื่อ').length > 0"
-                      style="font-size:20px;">
+                      style="font-size:16px;">
                       {{dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo && dt.fieldName === 'ชื่อ')[0].fieldValue}}
                     </p>
                 <!-- <div style="display: flex;justify-content: space-between;align-items: flex-start;">
@@ -881,7 +881,9 @@
           </v-card>
         </v-dialog>
         <!-- END -->
-          <v-footer padless fixed color="#FFFFFF">
+          <v-footer padless fixed color="#FFFFFF" style="border-top-color: #bdbdbd;
+    border-top-style: double;
+    padding-top: 10px;">
           <v-sheet
               width="100%"
               height="80px"
@@ -1064,7 +1066,8 @@ export default {
         totalPrice: '',
         LAST_USER: '',
         statusDelete: 'true'
-      }
+      },
+      jobLog_jobNo: ''
     }
   },
   async mounted () {
@@ -1316,22 +1319,29 @@ export default {
     async getJobLog () {
       console.log('shopId', this.shopId)
       console.log('this.selectFlow', this.selectFlow)
-      let params = null
-      if (this.selectFlow === 'All') {
-        params = this.DNS_IP + '/job_log/get?shopId=' + this.shopId + '&checkOnsite=True'
+      console.log('jobLog_jobNo', this.jobLog_jobNo)
+      this.dataJobLog = []
+      if (this.jobLog_jobNo !== '') {
+        let params = null
+        if (this.selectFlow === 'All') {
+        // if ()
+          params = this.DNS_IP + '/job_log/get?shopId=' + this.shopId + '&checkOnsite=True&empStepId=' + this.session.data.empId + '&jobNo=' + this.jobLog_jobNo
+        } else {
+          params = this.DNS_IP + '/job_log/get?shopId=' + this.shopId + '&flowId=' + this.selectFlow + '&empStepId=' + this.session.data.empId + '&jobNo=' + this.jobLog_jobNo
+        }
+        await axios.get(params)
+          .then(response => {
+            let rs = response.data
+            if (rs.length > 0) {
+              this.dataJobLog = rs
+            }
+            console.log('!!!!!!JOB_LOG', rs)
+          }).catch(error => {
+            console.log('error function addData : ', error)
+          })
       } else {
-        params = this.DNS_IP + '/job_log/get?shopId=' + this.shopId + '&flowId=' + this.selectFlow
+        this.dataJobLog = []
       }
-      await axios.get(params)
-        .then(response => {
-          let rs = response.data
-          if (rs.length > 0) {
-            this.dataJobLog = rs
-          }
-          console.log('rs12121212', rs)
-        }).catch(error => {
-          console.log('error function addData : ', error)
-        })
     },
     async getFlowStep () {
       console.log('shopId', this.shopId)
@@ -1631,6 +1641,10 @@ export default {
               }
             }
             console.log('this.itemJob', this.itemJob)
+            if (this.itemJob.filter((item) => item.sortNo === 2).length === 1) {
+              this.jobLog_jobNo = this.itemJob[0].jobNo
+            }
+            console.log('checkIF!!!!!!!!!!!!Sort2', this.jobLog_jobNo)
           }
         })
     },
@@ -1656,9 +1670,9 @@ export default {
       this.dataCloseJobData = []
       let paramsCloseJobData = null
       if (this.selectFlow === 'All') {
-        paramsCloseJobData = this.DNS_IP + '/job/getCloseJobData?shopId=' + this.$session.getAll().data.shopId + '&empStepId=' + this.$session.getAll().data.empId + '&checkOnsite=True'
+        paramsCloseJobData = this.DNS_IP + '/job/getCloseJobData?shopId=' + this.$session.getAll().data.shopId + '&empStepId=' + this.$session.getAll().data.empId + '&checkOnsite=True&month=' + dateMonth
       } else {
-        paramsCloseJobData = this.DNS_IP + '/job/getCloseJobData?shopId=' + this.$session.getAll().data.shopId + '&empStepId=' + this.$session.getAll().data.empId + '&flowId=' + this.selectFlow
+        paramsCloseJobData = this.DNS_IP + '/job/getCloseJobData?shopId=' + this.$session.getAll().data.shopId + '&empStepId=' + this.$session.getAll().data.empId + '&flowId=' + this.selectFlow + '&month=' + dateMonth
       }
       await axios
         .get(paramsCloseJobData)

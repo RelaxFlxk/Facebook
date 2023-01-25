@@ -32,7 +32,8 @@
               <v-icon x-large color="#007bff" @click="dialogHistory = false">mdi-chevron-left</v-icon>
             </v-col>
             <v-col cols="7" style="word-wrap: break-word;display: flex;justify-content: center;align-items: center;">
-              <p class="mt-1 mb-0 font-weight-bold" style="font-size: 16px;">{{session.data.userFirst_NameTH}}</p>
+              <p class="mt-1 mb-0 font-weight-bold" v-if="session.data.userFirst_NameTH.length > 20" style="font-size: 16px;">{{session.data.userFirst_NameTH.substring(0, 20)}}...</p>
+              <p class="mt-1 mb-0 font-weight-bold" v-else style="font-size: 16px;">{{session.data.userFirst_NameTH}}</p>
             </v-col>
             <v-col cols="3" class="pl-0 pr-4" style="display: flex;justify-content: flex-end;">
                 <v-avatar v-if="empData[0].empImge" color="#007bff">
@@ -66,7 +67,7 @@
           </div>
           <div v-if="item.Message" class="mb-2" style="display: flex;justify-content: flex-start;flex-direction: column;align-items: flex-end;flex-direction: row-reverse;">
             <!-- <p style="font-size: 12px;" class="mr-1 ma-0  font-weight-bold">{{item.CREATE_DATEtime}}</p> -->
-            <div v-if="item.Message" color="#007bff" class="pa-2 ml-3" max-width="auto" style="word-break: break-word; background-color:#007bff ;border-radius: 20px 20px 0px 20px;;min-width: 60px;text-align: center;">
+            <div v-if="item.Message" color="#007bff" class="pa-2 pl-4 ml-3" max-width="auto" style="word-break: break-word; background-color:#007bff ;border-radius: 20px 20px 0px 20px;;min-width: 60px;text-align: left;">
               <p style="color:#FFFFFF" class="ma-0">{{item.Message}}</p>
             </div>
           <!-- <v-card v-if="item.Img" class="pa-0 ml-8 mt-2" max-width="auto" > -->
@@ -102,8 +103,8 @@
           </div>
         </div>
         </v-card-text>
-        <v-card-action>
-          <v-col cols="12" class="text-center py-0 mt-3">
+        <v-card-action style="border-top-style: groove;" class="mt-1">
+          <v-col cols="12" class="text-center py-0">
             <v-file-input
             style="display: none;"
               class="mt-6 mb-6"
@@ -135,7 +136,7 @@
             <v-textarea
               background-color="rgb(244 244 244)"
               v-model="formMessage.Message"
-              class="mx-2 pt-2"
+              class="mx-2 pt-4"
               filled
               auto-grow
               dense
@@ -144,13 +145,13 @@
               label="Type message"
               rows="1"
               row-height="20"
-              style="margin-top: 5px;box-shadow: none !important;"
+              style="margin-top: 10px;box-shadow: none !important;"
             >
             <template v-slot:prepend>
-              <v-icon large  class="mx-2 mb-1" @click="refUpload()" color="#007bff">mdi-image</v-icon>
+              <v-icon large  class="mx-2 mb-1 mt-n2" @click="refUpload()" color="#007bff">mdi-image</v-icon>
             </template>
             <template v-slot:append-outer>
-              <v-icon large  class="mx-2 mb-1" @click="sendMessage()" color="#007bff">mdi-send</v-icon>
+              <v-icon large  class="mx-2 mb-1 mt-n2" @click="sendMessage()" color="#007bff">mdi-send</v-icon>
             </template>
           </v-textarea>
           </v-col>

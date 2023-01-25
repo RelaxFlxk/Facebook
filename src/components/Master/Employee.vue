@@ -616,7 +616,7 @@
                               class="shrink ml-6 mr-0 mt-0 mb-2"
                             ></v-checkbox>
                           </v-row>
-                          <!-- <v-row align="center" class="ma-0">
+                          <v-row align="center" class="ma-0">
                             <v-checkbox
                               false-value="False"
                               true-value="True"
@@ -627,13 +627,15 @@
                               hide-details
                               class="shrink ml-6 mr-0 mt-0 mb-2"
                             ></v-checkbox>
-                          </v-row> -->
+                          </v-row>
                           <v-row class="pl-8 mb-3" v-if="formUpdateLimitbooking.setTimebyday === 'True'">
                               <v-btn-toggle
                                 v-model="toggle_setTimebyday"
                                 mandatory
                               >
                               <div v-for="(item, i) in setTimebyday" :key="i">
+                                <!-- {{toggle_setTimebyday + ' ' +i}} -->
+                                <!-- v-if="JSON.parse(formUpdateLimitbooking.dateDayoffValue).filter((t) => t === item.value).length === 0" -->
                                 <v-btn
                                 class="ma-1"
                                 elevation="2"
@@ -1438,6 +1440,7 @@ export default {
         }
       })
       this.formUpdateLimitbooking.dateDayoffValue = JSON.stringify(dd)
+      // console.log(this.formUpdateLimitbooking.dateDayoffValue, 'typeof', typeof this.formUpdateLimitbooking.dateDayoffValue)
     },
     allowedDates (val) {
       // this.getMonth(this.pickerDate)

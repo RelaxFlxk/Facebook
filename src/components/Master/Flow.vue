@@ -1465,7 +1465,7 @@
                 class="shrink ml-6 mr-0 mt-0 mb-2"
               ></v-checkbox>
             </v-row>
-            <!-- <v-row align="center" class="ma-0">
+            <v-row align="center" class="ma-0">
               <v-checkbox
                 @click="chekshowTime()"
                 false-value="False"
@@ -1477,7 +1477,7 @@
                 hide-details
                 class="shrink ml-6 mr-0 mt-0 mb-2"
               ></v-checkbox>
-            </v-row> -->
+            </v-row>
             <v-row class="pl-8 mb-3" v-if="formUpdateLimitbooking.setTimebyday === 'True'">
                 <v-btn-toggle
                   v-model="toggle_setTimebyday"

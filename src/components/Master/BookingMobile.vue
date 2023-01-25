@@ -460,7 +460,7 @@
                 <v-date-picker
                   v-model="formChange.date"
                   :allowed-dates="allowedDatesChange"
-                  @input="menuDateChange = false"
+                  @input="menuDateChange = false,setLimitBooking(formChange.date)"
                   :min="
                     new Date(
                       Date.now() - new Date().getTimezoneOffset() * 60000
@@ -2248,30 +2248,137 @@ export default {
       // this.dueDateTimeOld = this.momenTime(item.dueDate)
       this.dueDateOld = item.dueDateDay
       this.dueDateTimeOld = item.timeDuetext
-      let dtTime = this.dataFlow.filter(el => { return el.value === item.flowId })
-      // let dtTime = this.branch.filter(item => { return item.value === this.masBranchID })
-      // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
-      if (dtTime.length > 0) {
-        this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
-        if (this.timeavailable.filter(el => { return el.text === item.timeText }).length > 0) {
-          if (item.timeText) {
-            this.formChange.time = { text: item.timeText, value: item.timeDuetext }
-          } else {
-            this.formChange.time = item.timeDuetext
-          }
-        } else {
-          this.formChange.time = item.timeDuetext
-        //     this.formChange.time = { text: item.timeText, value: this.momenTime(item.dueDate) }
-        //   } else {
-        //     this.formChange.time = this.momenTime(item.dueDate)
-        //   }
-        // } else {
-        //   this.formChange.time = this.momenTime(item.dueDate)
-        }
-      }
+      // let dtTime = this.dataFlow.filter(el => { return el.value === item.flowId })
+      console.log('test', this.dataFlow)
+      this.setLimitBooking(item.dueDateDay)
+      // if (dtTime.length > 0) {
+      //   this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+      //   if (this.timeavailable.filter(el => { return el.text === item.timeText }).length > 0) {
+      //     if (item.timeText) {
+      //       this.formChange.time = { text: item.timeText, value: item.timeDuetext }
+      //     } else {
+      //       this.formChange.time = item.timeDuetext
+      //     }
+      //   } else {
+      //     this.formChange.time = item.timeDuetext
+      //   //     this.formChange.time = { text: item.timeText, value: this.momenTime(item.dueDate) }
+      //   //   } else {
+      //   //     this.formChange.time = this.momenTime(item.dueDate)
+      //   //   }
+      //   // } else {
+      //   //   this.formChange.time = this.momenTime(item.dueDate)
+      //   }
+      // }
       this.dialogChange = true
       this.SetallowedDatesChange(item.flowId)
       console.log(this.formChange)
+    },
+    async getLimitBooking () {
+      // console.log('date', this.date)
+      // let LimitBooking = axios.get(this.DNS_IP + '/LimitBookingDate/get?shopId=' + this.shopId + '&masBranchID=' + this.fromAdd.masBranchID + '&bookingDate=' + this.date).then(async (response) => {
+      //   let rs = response.data
+      //   return rs
+      // })
+      // return LimitBooking
+      let LimitBooking = axios.get(this.DNS_IP + '/LimitBookingDate/get?shopId=' + this.$route.query.shopId + '&flowId=' + this.flowIDLimit + '&bookingDate=' + this.formChange.date).then(async (response) => {
+        let rs = response.data
+        return rs
+      })
+      return LimitBooking
+    },
+    async setLimitBooking (dateitem) {
+      console.log('ifififififif')
+      this.time = ''
+      this.timeavailable = []
+      // LimitBookingBy Flow
+      // let setTime = this.flowItemLimit.filter(item => { return item.flowId === this.fromAdd.flowId })[0].setTime
+      let setTime = []
+      // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
+      if (this.dataFlow.filter(el => { return el.value === this.flowIDLimit })[0].allData.setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.dataFlow.filter(el => { return el.value === this.flowIDLimit })[0].allData.setTime).filter((items) => items.value === new Date(dateitem).getDay())
+        setTime = timeJson[0].setTime || []
+        console.log('IF')
+      } else {
+        console.log('ELSE')
+        setTime = JSON.parse(this.dataFlow.filter(el => { return el.value === this.flowIDLimit })[0].allData.setTime) || []
+      }
+      this.limitBookingCheck = this.dataFlow.filter(el => { return el.value === this.flowIDLimit })[0].allData.limitBookingCheck || 'False'
+      console.log('this.limitBookindCheck', this.limitBookingCheck)
+      // LimitBookingBy masBranch
+      // this.limitBookingCheck = this.branchData.filter(item => { return item.masBranchID === this.fromAdd.masBranchID })[0].limitBookingCheck || 'False'
+      if (this.limitBookingCheck === 'True') {
+        console.log('if')
+        let TimeData = []
+        let currentDate = setTime || []
+        if (
+          moment(dateitem).format('YYYY-MM-DD') ===
+          moment().format('YYYY-MM-DD')
+        ) {
+          TimeData = currentDate.filter(
+            item => moment().format(item.value) > moment().format('HH:mm')
+          )
+        } else {
+          TimeData = currentDate
+        }
+        console.log('TimeData', TimeData)
+        this.timeavailable = TimeData.filter((item) => parseInt(item.limitBooking) > 0)
+        console.log('TimeData111', TimeData.filter((item) => parseInt(item.limitBooking)))
+        if (this.timeavailable.length > 0) {
+          let LimitBooking = await this.getLimitBooking()
+          console.log('LimitBooking', LimitBooking)
+          if (LimitBooking.status !== false) {
+            if (LimitBooking.length > 0) {
+              LimitBooking.forEach((i, n) => {
+                this.timeavailable.forEach((v, k) => {
+                  console.log('key', k)
+                  if (i.bookingTime === v.value) {
+                    if (i.countBooking >= parseInt(v.limitBooking)) {
+                      this.timeavailable.splice(k, 1)
+                    }
+                  }
+                })
+              })
+              if (this.timeavailable.length === 0) {
+                this.$swal('คิวเต็มแล้ว', 'กรุณาเลือกวันที่ใหม่อีกครั้ง', 'error')
+                this.date = ''
+              }
+            }
+            if (this.timeavailable.length === 1) {
+              this.time = this.timeavailable[0]
+            }
+            console.log('this.timeavailable IF', this.timeavailable)
+          } else {
+            this.timeavailable = TimeData.filter((item) => parseInt(item.limitBooking) > 0)
+            console.log('this.timeavailable ELSE', this.timeavailable)
+            if (this.timeavailable.length === 1) {
+              this.time = this.timeavailable[0]
+            }
+          }
+        } else {
+          this.$swal('คิวเต็มแล้ว', 'กรุณาเลือกวันที่ใหม่อีกครั้ง', 'error')
+          this.date = ''
+        }
+      } else {
+        // LimitBookingBy Flow
+        let TimeData = []
+        let currentDate = setTime || []
+        if (moment(dateitem).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')) {
+          console.log('IF')
+          TimeData = currentDate.filter(item => moment().format(item.value) > moment().format('HH:mm'))
+        } else {
+          console.log('Else')
+          TimeData = currentDate
+        }
+        this.timeavailable = TimeData
+        if (this.timeavailable.length === 1) {
+          this.time = this.timeavailable[0]
+        }
+        console.log('this.timeavailable ELSEEEEE', this.timeavailable)
+        console.log('ELSE')
+
+        // LimitBookingBy masBranch
+        // this.timeavailable = JSON.parse(this.branchData.filter(item => { return item.masBranchID === this.fromAdd.masBranchID })[0].setTime) || []
+      }
     },
     async changeChk (item) {
       console.log('item', item)

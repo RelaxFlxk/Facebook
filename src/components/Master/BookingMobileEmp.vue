@@ -567,7 +567,6 @@
                 ></v-select>
               </v-col>
               <v-col  cols="12" class="pt-0 pb-0">
-                {{fromAddTimeCus}}
                 <v-select
                   v-if="customerTimeSlot === 'True' && bookingEmpFlow !== '' && timeSlotbyCustomer.length > 1"
                   v-model="fromAddTimeCus"
@@ -577,7 +576,7 @@
                   dense
                   required
                   :rules="[rules.required]"
-                  @change="formChange.date = ''"
+                  @change="formChange.date = '', AddallowedDatesBysetTimebyday()"
                 ></v-select>
               </v-col>
             <v-col cols="12" class="pt-0 pb-0" v-if="customerTimeSlot === 'False' ? bookingEmpFlow !== '' : fromAddTimeCus">
@@ -1235,25 +1234,63 @@ export default {
       // console.log('DataFlowNameall', this.customerTimeSlot, flowId)
       let allTime = []
       if (this.customerTimeSlot === 'True') {
-        allTime = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.bookingEmpFlow })[0].setTime)
-        allTime.forEach((item, key) => {
-          let ss = {}
-          if (allTime.length === 1) {
+        // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
+        console.log('!!!!', this.EmpItemLimit)
+        if (this.EmpItemLimit.filter(item => { return item.empId === this.bookingEmpFlow })[0].setTimebyday === 'True') {
+          // let timeJson = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.bookingEmpFlow })[0].setTime).filter((items) => items.value === new Date().getDay())
+          // setTime = timeJson[0].setTime || []
+          let timeJson = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.bookingEmpFlow })[0].setTime)
+          let dataTime = []
+          timeJson.forEach((itemTime, index) => {
+            // console.log('item', itemTime)
+            allTime = itemTime.setTime
+            allTime.forEach((item, key) => {
+              let ss = {}
+              if (allTime.length === 1) {
+                ss.text = 'ไม่ระบุ (มีเวลาเดียว)'
+                ss.value = key + 1
+                dataTime.push(ss)
+              } else {
+                if (key > 0) {
+                  let start = allTime.filter((i, k) => k === 0)[0].value
+                  let end = item.value
+                  ss.text = this.calculateTime(start, end)
+                  ss.value = key
+                  // console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
+                  dataTime.push(ss)
+                  // this.timeSlotbyCustomer.push(ss)
+                }
+              }
+            })
+          })
+          dataTime.forEach((i, n) => {
+            if (this.timeSlotbyCustomer.filter((item) => item.text === i.text && item.value === i.value).length === 0) {
+              console.log('n', n)
+              this.timeSlotbyCustomer.push(i)
+            }
+          })
+          console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
+        } else {
+          allTime = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.bookingEmpFlow })[0].setTime)
+          allTime.forEach((item, key) => {
+            let ss = {}
+            if (allTime.length === 1) {
             // ss.text = item.value
             // ss.value = key + 1
             // this.timeSlotbyCustomer.push(ss)
-            this.fromAddTimeCus = key + 1
-          } else {
-            if (key > 0) {
-              let start = allTime.filter((i, k) => k === 0)[0].value
-              let end = item.value
-              ss.text = this.calculateTime(start, end)
-              ss.value = key
-              console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
-              this.timeSlotbyCustomer.push(ss)
+              this.fromAddTimeCus = key + 1
+            } else {
+              if (key > 0) {
+                let start = allTime.filter((i, k) => k === 0)[0].value
+                let end = item.value
+                ss.text = this.calculateTime(start, end)
+                ss.value = key
+                console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
+                this.timeSlotbyCustomer.push(ss)
+              }
             }
-          }
-        })
+          })
+        }
       }
       console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
     },
@@ -1263,25 +1300,61 @@ export default {
       console.log('DataFlowNameall', this.customerTimeSlot, this.flowSelect)
       let allTime = []
       if (this.customerTimeSlot === 'True') {
-        allTime = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.bookingEmpFlow })[0].setTime)
-        allTime.forEach((item, key) => {
-          let ss = {}
-          if (allTime.length === 1) {
+        if (this.EmpItemLimit.filter(item => { return item.empId === this.bookingEmpFlow })[0].setTimebyday === 'True') {
+          // let timeJson = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.bookingEmpFlow })[0].setTime).filter((items) => items.value === new Date().getDay())
+          // setTime = timeJson[0].setTime || []
+          let timeJson = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.bookingEmpFlow })[0].setTime)
+          let dataTime = []
+          timeJson.forEach((itemTime, index) => {
+            // console.log('item', itemTime)
+            allTime = itemTime.setTime
+            allTime.forEach((item, key) => {
+              let ss = {}
+              if (allTime.length === 1) {
+                ss.text = 'ไม่ระบุ (มีเวลาเดียว)'
+                ss.value = key + 1
+                dataTime.push(ss)
+              } else {
+                if (key > 0) {
+                  let start = allTime.filter((i, k) => k === 0)[0].value
+                  let end = item.value
+                  ss.text = this.calculateTime(start, end)
+                  ss.value = key
+                  // console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
+                  dataTime.push(ss)
+                  // this.timeSlotbyCustomer.push(ss)
+                }
+              }
+            })
+          })
+          dataTime.forEach((i, n) => {
+            if (this.timeSlotbyCustomer.filter((item) => item.text === i.text && item.value === i.value).length === 0) {
+              console.log('n', n)
+              this.timeSlotbyCustomer.push(i)
+            }
+          })
+          console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
+        } else {
+          allTime = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.bookingEmpFlow })[0].setTime)
+          allTime.forEach((item, key) => {
+            let ss = {}
+            if (allTime.length === 1) {
             // ss.text = item.value
             // ss.value = key + 1
             // this.timeSlotbyCustomer.push(ss)
-            this.fromAddTimeCus = key + 1
-          } else {
-            if (key > 0) {
-              let start = allTime.filter((i, k) => k === 0)[0].value
-              let end = item.value
-              ss.text = this.calculateTime(start, end)
-              ss.value = key
-              console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
-              this.timeSlotbyCustomer.push(ss)
+              this.fromAddTimeCus = key + 1
+            } else {
+              if (key > 0) {
+                let start = allTime.filter((i, k) => k === 0)[0].value
+                let end = item.value
+                ss.text = this.calculateTime(start, end)
+                ss.value = key
+                console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
+                this.timeSlotbyCustomer.push(ss)
+              }
             }
-          }
-        })
+          })
+        }
       }
       // console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
     },
@@ -1408,6 +1481,20 @@ export default {
           }
         })
     },
+    async AddallowedDatesBysetTimebyday () {
+      await this.SetallowedDatesChange(this.bookingEmpFlow)
+      if (this.EmpItemLimit.filter(item => { return item.empId === this.bookingEmpFlow })[0].setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.bookingEmpFlow })[0].setTime)
+        timeJson.forEach((item) => {
+          if (item.setTime.length < this.fromAddTimeCus) {
+            if (this.dateDayoff.filter((i) => i === item.value).length === 0) {
+              this.dateDayoff.push(item.value)
+            }
+          }
+        })
+      }
+      console.log('this.dateDayoff', this.dateDayoff)
+    },
     async checkTime () {
       // LimitBookingBy masBranch
       // this.timeavailable = JSON.parse(this.branchData.filter(item => { return item.masBranchID === this.fromAdd.masBranchID })[0].setTime) || []
@@ -1440,6 +1527,7 @@ export default {
                 limit.empId = d.empId
                 limit.limitBookingCheck = d.limitBookingCheck || 'False'
                 limit.setTime = d.setTime || '[]'
+                limit.setTimebyday = d.setTimebyday
                 this.EmpItemLimit.push(limit)
               }
             }
@@ -1464,10 +1552,21 @@ export default {
       console.log('dateitem', dateitem)
       this.time = ''
       this.timeavailable = []
+      let setTime = []
+      // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
+      if (this.EmpItemLimit.filter(item => { return item.empId === this.bookingEmpFlow })[0].setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.bookingEmpFlow })[0].setTime).filter((items) => items.value === new Date(dateitem).getDay())
+        setTime = timeJson[0].setTime || []
+        console.log('IF')
+      } else {
+        console.log('ELSE')
+        setTime = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.bookingEmpFlow })[0].setTime) || []
+      }
+      console.log('this.EmpItemLimit.filter', this.EmpItemLimit)
       // this.showTable = []
       this.limitBookingCheck = this.EmpItemLimit.filter(item => { return item.empId === this.bookingEmpFlow })[0].limitBookingCheck || 'False'
       if (this.EmpItemLimit.filter(item => { return item.empId === this.bookingEmpFlow })[0].limitBookingCheck || 'False') {
-        this.timeavailable = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.bookingEmpFlow })[0].setTime) || []
+        this.timeavailable = setTime
         console.log('DataFlowName', this.dataFlow.filter((v) => v.value === this.dataItem[0].flowId)[0].allData)
         // let slotByflow = this.dataFlow.filter((v) => v.value === this.dataItem[0].flowId)[0].allData.timeSlot
         let slotByflow = []
@@ -1557,7 +1656,7 @@ export default {
       } else {
         console.log('this.timeavailable ELSEEEEE', this.timeavailable)
         // LimitBookingBy Flow
-        this.timeavailable = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.bookingEmpFlow })[0].setTime) || []
+        this.timeavailable = setTime
       }
       // await this.chekSlotTime()
     },
