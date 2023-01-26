@@ -7064,6 +7064,13 @@ export default {
     },
     async insertLimitBooking (item, dueDateNew, dueDateTimeNew, bookingEmpFlow) {
       let result = []
+      let timeSlotCustomer = ''
+      if (this.customerTimeSlot === 'True') {
+        timeSlotCustomer = this.fromAddTimeCus
+      } else {
+        console.log('TESTSTTETETSETSET', this.dataFlowCancel.filter((v) => v.value === this.flowSelectCancel)[0].allData)
+        timeSlotCustomer = this.dataFlowCancel.filter((v) => v.value === this.flowSelectCancel)[0].allData.timeSlot
+      }
       let dt = {
         dueDateNew: dueDateNew,
         dueDateTimeNew: dueDateTimeNew,
@@ -7072,6 +7079,7 @@ export default {
         shopId: item.shopId,
         userId: item.userId,
         bookingEmpFlow: bookingEmpFlow,
+        timeSlotCustomer: timeSlotCustomer,
         LAST_USER: this.$session.getAll().data.userName
       }
       await axios.post(this.DNS_IP + '/Booking/insertLimitBooking', dt).then(async response => {
