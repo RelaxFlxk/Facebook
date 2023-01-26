@@ -6428,6 +6428,7 @@ export default {
       dataEdit: '',
       statusShowDateConfiremjob: true,
       memberId: '',
+      masBranchIDOldEdit: '',
       flowIdOldEdit: '',
       Redirect: '',
       dialogShowDeposit: false,
@@ -6905,6 +6906,16 @@ export default {
           // this.checkTimeEdit(this.dataEdit, {flowId: this.formEdit.flowId, bookingEmpFlow: this.formEdit.bookingEmpFlow})
           }
         }
+      } else if (this.formEdit.masBranchID !== this.masBranchIDOldEdit) {
+        if (this.formEdit.masBranchID !== null && this.formEdit.flowId !== null) {
+          await this.getEmpEdit(this.formEdit.masBranchID)
+          console.log('this.dataEdit', this.dataEdit)
+          if (this.formEdit.bookingEmpFlow) {
+            this.SetallowedDatesChange(this.formEdit.bookingEmpFlow)
+            await this.checkCustomerTimeSlotEdit(this.dataEdit)
+          // this.checkTimeEdit(this.dataEdit, {flowId: this.formEdit.flowId, bookingEmpFlow: this.formEdit.bookingEmpFlow})
+          }
+        }
       }
     },
     calculateTime (start, end) {
@@ -7281,6 +7292,7 @@ export default {
               'กรุณาเลือกประเภทบริการอื่นๆ',
               'info'
             )
+            this.formEdit.masBranchID = this.masBranchIDOldEdit
           }
           console.log('EmpItemLimitAdd', this.EmpItemLimitAdd)
         } else {
@@ -9134,6 +9146,7 @@ export default {
       this.userId = dt.userId
       this.BookingDataItemEdit = []
       this.formEdit.masBranchID = dt.masBranchID
+      this.masBranchIDOldEdit = dt.masBranchID
       this.formEdit.bookingEmpFlow = dt.bookingEmpFlow
       this.formEdit.flowId = dt.flowId
       this.flowIdOldEdit = dt.flowId
@@ -9330,11 +9343,11 @@ export default {
                 let getcount = await this.getCountFastTrack(this.dateEdit, this.formEdit.flowId, this.formEdit.masBranchID)
                 let setCountFast = this.branch.filter(el => { return el.value === this.formEdit.masBranchID })[0].allData.countFastTrack
                 if (getcount < setCountFast) {
-                  if (this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+                  if (this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
                     let chkStatLimit = this.dataEmpAllChange.filter(el => { return el.empId === this.formEdit.bookingEmpFlow })
                     if (chkStatLimit.length > 0) {
                       if (chkStatLimit[0].limitBookingCheck === 'True') {
-                        let chkStatus = await this.updateLimitBookingChange(this.dataEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value || this.timeEdit.time, this.formEdit.flowId, 'Edit')
+                        let chkStatus = await this.updateLimitBookingChange(this.dataEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value || this.timeEdit.time, this.formEdit.flowId, 'Edit', this.formEdit.masBranchID)
                         console.log('chkStatus', chkStatus)
                         if (chkStatus.status) {
                           this.editDataSelectSubmit()
@@ -9357,11 +9370,11 @@ export default {
                   this.loadingEdit = false
                 }
               } else {
-                if (this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+                if (this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
                   let chkStatLimit = this.dataEmpAllChange.filter(el => { return el.empId === this.formEdit.bookingEmpFlow })
                   if (chkStatLimit.length > 0) {
                     if (chkStatLimit[0].limitBookingCheck === 'True') {
-                      let chkStatus = await this.updateLimitBookingChange(this.dataEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value || this.timeEdit.time, this.formEdit.flowId, 'Edit')
+                      let chkStatus = await this.updateLimitBookingChange(this.dataEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value || this.timeEdit.time, this.formEdit.flowId, 'Edit', this.formEdit.masBranchID)
                       console.log('chkStatus', chkStatus)
                       if (chkStatus.status) {
                         this.editDataSelectSubmit()
@@ -13434,7 +13447,7 @@ export default {
               if (chkStatLimit.length > 0) {
                 console.log('chkStatLimit', chkStatLimit[0].limitBookingCheck)
                 if (chkStatLimit[0].limitBookingCheck === 'True') {
-                  let chkStatus = await this.updateLimitBookingChange(item, this.dueDateOld, this.dueDateTimeOld, this.formChange.date, this.formChange.time.value || this.formChange.time, item.flowId, 'chang')
+                  let chkStatus = await this.updateLimitBookingChange(item, this.dueDateOld, this.dueDateTimeOld, this.formChange.date, this.formChange.time.value || this.formChange.time, item.flowId, 'chang', item.masBranchID)
                   console.log('chkStatus', chkStatus)
                   if (chkStatus.status) {
                     this.onChangeChkSubmit(item, changeStatus, checkCountTime)
@@ -13548,7 +13561,7 @@ export default {
             })
         })
     },
-    async updateLimitBookingChange (item, dueDateOld, dueDateTimeOld, dueDateNew, dueDateTimeNew, flowIdNew, Textcheck) {
+    async updateLimitBookingChange (item, dueDateOld, dueDateTimeOld, dueDateNew, dueDateTimeNew, flowIdNew, Textcheck, masBranchIDNew) {
       console.log('updateLimitBookingChange', item)
       console.log('this.fromAddTimeCus', this.fromAddTimeCus)
       // console.log('TESTSTTETETSETSET', this.DataFlowName.filter((v) => v.value === flowIdNew)[0].allData)
@@ -13574,6 +13587,7 @@ export default {
         flowId: item.flowId,
         flowIdNew: flowIdNew,
         masBranchID: item.masBranchID,
+        masBranchIDNew: masBranchIDNew,
         dateSelect: dueDateNew,
         timeSelect: dueDateTimeNew,
         shopId: item.shopId,
