@@ -412,7 +412,7 @@
         </v-dialog>
     <v-dialog v-model="dialogChange" persistent max-width="90%">
       <v-card class="text-center">
-        <v-card-text>
+        <v-card-text v-if="dataReady">
           <v-row>
               <v-col cols="10" class="text-left pt-10">
               <h3><strong>เปลี่ยนเวลานัดหมาย</strong></h3>
@@ -509,12 +509,15 @@
             >
           </div>
         </v-card-text>
+        <v-card-text v-else>
+          <waitingAlert></waitingAlert>
+        </v-card-text>
         <br />
       </v-card>
     </v-dialog>
     <v-dialog v-model="dialogConfirm" max-width="90%">
             <v-card class="text-center">
-              <v-card-text>
+              <v-card-text v-if="dataReady">
                 <v-container>
                   <v-row>
               <v-col cols="10" class="text-left pt-10">
@@ -557,11 +560,14 @@
                 </v-row>
                 </v-container>
               </v-card-text>
+              <v-card-text v-else>
+                <waitingAlert></waitingAlert>
+              </v-card-text>
             </v-card>
           </v-dialog>
     <v-dialog v-model="dialogRemove" max-width="90%">
       <v-card class="text-center">
-        <v-card-text>
+        <v-card-text v-if="dataReady">
           <v-container>
             <v-row>
               <v-col cols="10" class="text-left pt-10">
@@ -611,6 +617,9 @@
             >
           </v-row>
           </v-container>
+        </v-card-text>
+         <v-card-text v-else>
+          <waitingAlert></waitingAlert>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -2052,14 +2061,26 @@ export default {
       //   }
       // }
       // if (statusPackage === 'open') {
+      this.dataReady = false
       if (this.dataItem[0].checkOnsite === 'True') {
         console.log('IF!!!!')
+        this.dataReady = true
       } else {
         let dtint = '0'
+        console.log('dataFlow', this.dataFlow.filter(el => { return el.value === item.flowId }))
         if (this.dataFlow.filter(el => { return el.value === item.flowId }).length > 0) {
-          let dts = JSON.parse(this.dataFlow.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
-          if (dts.filter(el => el.value === item.timeDuetext).length > 0) {
-            dtint = parseInt(dts.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
+          let setTime = []
+          // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
+          if (this.dataFlow.filter(el => { return el.value === item.flowId })[0].allData.setTimebyday === 'True') {
+            let timeJson = JSON.parse(this.dataFlow.filter(el => { return el.value === item.flowId })[0].allData.setTime).filter((items) => items.value === new Date(item.dueDate).getDay())
+            setTime = timeJson[0].setTime || []
+            console.log('IF')
+          } else {
+            console.log('ELSE')
+            setTime = JSON.parse(this.dataFlow.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
+          }
+          if (setTime.length > 0) {
+            dtint = parseInt(setTime.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
           } else {
             dtint = '0'
           }
@@ -2080,24 +2101,29 @@ export default {
         axios
           .post(this.DNS_IP + '/booking_transaction/add', dt)
           .then(async response => {
-            await this.updateRemark(item)
-            this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-            let DTitem = item.userId
-            console.log('DTITEM', DTitem)
-            this.dialogConfirm = false
-            if (DTitem !== 'user-skip') {
-              await this.chkBookingNo()
-              // this.getTimesChange('update')
-              this.pushMsgConfirm(item.bookNo)
+            if (response.data.status) {
+              await this.updateRemark(item)
+              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              let DTitem = item.userId
+              console.log('DTITEM', DTitem)
+              this.dialogConfirm = false
+              this.dataReady = true
+              if (DTitem !== 'user-skip') {
+                await this.chkBookingNo()
+                // this.getTimesChange('update')
+                this.pushMsgConfirm(item.bookNo)
+              } else {
+                await this.chkBookingNo()
+                // this.getTimesChange('update')
+              }
             } else {
-              await this.chkBookingNo()
-              // this.getTimesChange('update')
+              this.dataReady = true
+              this.$swal('ผิดพลาด', response.data.message, 'error')
             }
-            this.dialogConfirm = false
-            console.log('addDataGlobal', response)
           })
           .catch(error => {
             console.log('error function addData : ', error)
+            this.dataReady = true
           })
       }
       // }
@@ -2113,8 +2139,10 @@ export default {
       console.log('this.bookNoRemove', this.bookNoRemove)
     },
     async cancelChk () {
+      this.dataReady = false
       if (this.remarkRemove === '') {
         this.$swal('ผิดพลาด', 'กรุณากรอกหมายเหตุ', 'error')
+        this.dataReady = true
       } else {
         let chkStatLimit = this.dataFlow.filter(el => { return el.value === this.bookNoRemove.flowId })
         if (chkStatLimit.length > 0) {
@@ -2153,12 +2181,12 @@ export default {
           this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
           console.log('addDataGlobal', response)
           this.dialogRemove = false
+          this.dataReady = true
           await this.chkBookingNo()
-          // this.getTimesChange('update')
-          this.dialogRemove = false
         })
         .catch(error => {
           console.log('error function addData : ', error)
+          this.dataReady = true
         })
     },
     pushMsglineCancel (item) {
@@ -2252,27 +2280,27 @@ export default {
       // this.dueDateTimeOld = this.momenTime(item.dueDate)
       this.dueDateOld = item.dueDateDay
       this.dueDateTimeOld = item.timeDuetext
-      // let dtTime = this.dataFlow.filter(el => { return el.value === item.flowId })
+      let dtTime = this.dataFlow.filter(el => { return el.value === item.flowId })
       console.log('test', this.dataFlow)
       this.setLimitBooking(item.dueDateDay)
-      // if (dtTime.length > 0) {
-      //   this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
-      //   if (this.timeavailable.filter(el => { return el.text === item.timeText }).length > 0) {
-      //     if (item.timeText) {
-      //       this.formChange.time = { text: item.timeText, value: item.timeDuetext }
-      //     } else {
-      //       this.formChange.time = item.timeDuetext
-      //     }
-      //   } else {
-      //     this.formChange.time = item.timeDuetext
-      //   //     this.formChange.time = { text: item.timeText, value: this.momenTime(item.dueDate) }
-      //   //   } else {
-      //   //     this.formChange.time = this.momenTime(item.dueDate)
-      //   //   }
-      //   // } else {
-      //   //   this.formChange.time = this.momenTime(item.dueDate)
-      //   }
-      // }
+      if (dtTime.length > 0) {
+        // this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+        if (this.timeavailable.filter(el => { return el.text === item.timeText }).length > 0) {
+          if (item.timeText) {
+            this.formChange.time = { text: item.timeText, value: item.timeDuetext }
+          } else {
+            this.formChange.time = { text: item.timeDuetext, value: item.timeDuetext }
+          }
+        } else {
+          this.formChange.time = ''
+        //     this.formChange.time = { text: item.timeText, value: this.momenTime(item.dueDate) }
+        //   } else {
+        //     this.formChange.time = this.momenTime(item.dueDate)
+        //   }
+        // } else {
+        //   this.formChange.time = this.momenTime(item.dueDate)
+        }
+      }
       this.dialogChange = true
       this.SetallowedDatesChange(item.flowId)
       console.log(this.formChange)
@@ -2386,30 +2414,36 @@ export default {
     },
     async changeChk (item) {
       console.log('item', item)
-      let checkCountTime = await axios.get(this.DNS_IP + '/booking_view/get?bookNo=' + item.bookNo)
-      let chkStatLimit = this.dataFlow.filter(el => { return el.value === item.flowId })
-      console.log('chkStatLimit', chkStatLimit)
-      console.log('this.DataFlowName', this.DataFlowName)
-      if (chkStatLimit.length > 0) {
-        if (chkStatLimit[0].allData.limitBookingCheck === 'True') {
-          let dueOld = this.dueDateOld + this.dueDateTimeOld
-          let dueNew = this.formChange.date + this.formChange.time.value
-          let limitBookingCount = this.timeavailable.filter(el => { return el.value === this.formChange.time.value })
-          console.log('limitBookingCount', limitBookingCount)
-          let limitBookingCounts = 0
-          if (limitBookingCount.length > 0) {
-            limitBookingCounts = parseInt(limitBookingCount[0].limitBooking)
-          } else {
-            limitBookingCounts = 0
-          }
-          if (dueOld !== dueNew) {
-            let chkStatus = await this.updateLimitBookingChange(item, this.dueDateOld, this.dueDateTimeOld, this.formChange.date, this.formChange.time.value, limitBookingCounts)
-            console.log('chkStatus', chkStatus)
-            if (chkStatus.status) {
-              this.onChangeChkSubmit(item, checkCountTime)
+      this.dataReady = false
+      if (this.timeavailable.filter(el => { return el.value === this.formChange.time.value }).length > 0) {
+        let checkCountTime = await axios.get(this.DNS_IP + '/booking_view/get?bookNo=' + item.bookNo)
+        let chkStatLimit = this.dataFlow.filter(el => { return el.value === item.flowId })
+        console.log('chkStatLimit', chkStatLimit)
+        console.log('this.DataFlowName', this.DataFlowName)
+        if (chkStatLimit.length > 0) {
+          if (chkStatLimit[0].allData.limitBookingCheck === 'True') {
+            let dueOld = this.dueDateOld + this.dueDateTimeOld
+            let dueNew = this.formChange.date + this.formChange.time.value
+            let limitBookingCount = this.timeavailable.filter(el => { return el.value === this.formChange.time.value })
+            console.log('limitBookingCount', limitBookingCount)
+            let limitBookingCounts = 0
+            if (limitBookingCount.length > 0) {
+              limitBookingCounts = parseInt(limitBookingCount[0].limitBooking)
             } else {
-              this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-              this.dataChangeReady = true
+              limitBookingCounts = 0
+            }
+            if (dueOld !== dueNew) {
+              let chkStatus = await this.updateLimitBookingChange(item, this.dueDateOld, this.dueDateTimeOld, this.formChange.date, this.formChange.time.value, limitBookingCounts)
+              console.log('chkStatus', chkStatus)
+              if (chkStatus.status) {
+                this.onChangeChkSubmit(item, checkCountTime)
+              } else {
+                this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
+                this.dataChangeReady = true
+                this.dataReady = true
+              }
+            } else {
+              this.onChangeChkSubmit(item, checkCountTime)
             }
           } else {
             this.onChangeChkSubmit(item, checkCountTime)
@@ -2418,7 +2452,8 @@ export default {
           this.onChangeChkSubmit(item, checkCountTime)
         }
       } else {
-        this.onChangeChkSubmit(item, checkCountTime)
+        this.$swal('ผิดพลาด', 'กรุณาเลือกเวลา', 'error')
+        this.dataReady = true
       }
     },
     async onChangeChkSubmit (item, checkCountTime) {
@@ -2466,6 +2501,7 @@ export default {
             .then(async response => {
               this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
               this.dialogChange = false
+              this.dataReady = true
               console.log('addDataGlobal', response)
               if (item.statusBt === 'confirm') {
                 if (item.userId !== 'user-skip') {
@@ -2483,6 +2519,7 @@ export default {
             })
             .catch(error => {
               console.log('error function addData : ', error)
+              this.dataReady = true
             })
         })
       // })

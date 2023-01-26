@@ -44,7 +44,7 @@
                 </template>
               </v-select>
             </v-col>
-            <!-- <v-col col="auto">
+            <v-col col="auto">
               <v-select
                 style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
                 v-model="flowSelect"
@@ -56,7 +56,7 @@
                 dense
                 required
                 :rules ="[rules.required]"
-                @change="setTime()"
+                @change="searchBooking()"
               >
                 <template #prepend-inner>
                   <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
@@ -64,7 +64,7 @@
                   </v-icon>
                 </template>
               </v-select>
-            </v-col> -->
+            </v-col>
             <v-col col="auto">
               <v-menu
                 ref="menu"
@@ -580,7 +580,9 @@ export default {
       if (this.validSearch === true) {
         this.itemBooking = []
         await this.getBookingDataList(this.dateStart)
-        let urlApi = this.DNS_IP +
+        let urlApi = {}
+        if (this.flowSelect === 'allFlow') {
+          urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.shopId +
             '&masBranchID=' +
@@ -591,6 +593,17 @@ export default {
             this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob and closeJob'
         // '&dueDate=' +
         // this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm'
+        } else {
+          urlApi = this.DNS_IP +
+            '/booking_view/get?shopId=' +
+            this.shopId +
+            '&masBranchID=' +
+            this.masBranchID +
+            '&flowId=' +
+            this.flowSelect +
+            '&dueDate=' +
+            this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob and closeJob'
+        }
         await axios
           .get(urlApi)
           .then(async response => {
@@ -626,7 +639,12 @@ export default {
     },
     async getBookingDataList (dateStart) {
       this.BookingDataList = []
-      let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
+      let url = ''
+      if (this.flowSelect === 'allFlow') {
+        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
+      } else {
+        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}&flowId=${this.flowSelect}`
+      }
       // let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}&flowId=${this.flowSelect}`
       await axios
         .get(url)
@@ -662,6 +680,7 @@ export default {
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
+            resultOption.push({'text': 'ทั้งหมด', 'value': 'allFlow'})
             for (var i = 0; i < rs.length; i++) {
               let d = rs[i]
               let s = {}

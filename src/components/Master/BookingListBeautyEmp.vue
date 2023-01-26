@@ -3411,7 +3411,29 @@
                             @change="formEdit.bookingEmpFlow = '', fromAddTimeCus = '',dateEdit='', setEmpEdit()"
                           ></v-select>
                           <v-select
-                            v-if="formEdit.masBranchID !== null && formEdit.flowId !== null && (flowIdOldEdit !== formEdit.flowId) && (getSelectText !== 'cancel') && (checkSelectText !== 'confirmJob')"
+                            v-if="formEdit.masBranchID !== null && formEdit.flowId !== null && (flowIdOldEdit !== formEdit.flowId)  && (masBranchIDOldEdit !== formEdit.masBranchID) && (getSelectText !== 'cancel') && (checkSelectText !== 'confirmJob')"
+                            v-model="formEdit.bookingEmpFlow"
+                            :items="dataEmpChange"
+                            label="พนักงานช่าง"
+                            outlined
+                            dense
+                            required
+                            :rules="[rules.required]"
+                            @change="dateEdit = '',setEmpEdit()"
+                          ></v-select>
+                          <v-select
+                            v-if="formEdit.masBranchID !== null && formEdit.flowId !== null && (flowIdOldEdit !== formEdit.flowId)  && (masBranchIDOldEdit === formEdit.masBranchID) && (getSelectText !== 'cancel') && (checkSelectText !== 'confirmJob')"
+                            v-model="formEdit.bookingEmpFlow"
+                            :items="dataEmpChange"
+                            label="พนักงานช่าง"
+                            outlined
+                            dense
+                            required
+                            :rules="[rules.required]"
+                            @change="dateEdit = '',setEmpEdit()"
+                          ></v-select>
+                          <v-select
+                            v-if="formEdit.masBranchID !== null && formEdit.flowId !== null && (flowIdOldEdit === formEdit.flowId)  && (masBranchIDOldEdit !== formEdit.masBranchID) && (getSelectText !== 'cancel') && (checkSelectText !== 'confirmJob')"
                             v-model="formEdit.bookingEmpFlow"
                             :items="dataEmpChange"
                             label="พนักงานช่าง"
@@ -3856,7 +3878,117 @@
                                 </template>
                             </div>
                           </template>
-                          <v-row v-if="flowIdOldEdit !== formEdit.flowId && (getSelectText !== 'cancel') && (checkSelectText !== 'confirmJob')">
+                          <v-row v-if="flowIdOldEdit !== formEdit.flowId && (masBranchIDOldEdit === formEdit.masBranchID) && (getSelectText !== 'cancel') && (checkSelectText !== 'confirmJob')">
+                            <v-col class="pb-0" v-if="customerTimeSlot === 'False' ? formEdit.bookingEmpFlow : fromAddTimeCus">
+                              <v-menu
+                                v-model="menuDateEdit"
+                                :close-on-content-click="false"
+                                :nudge-right="40"
+                                transition="scale-transition"
+                                offset-y
+                                min-width="auto"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                    v-model="dateEdit"
+                                    label="วันที่นัดหมาย"
+                                    prepend-icon="mdi-calendar"
+                                    readonly
+                                    v-bind="attrs"
+                                    dense
+                                    outlined
+                                    v-on="on"
+                                    required
+                                    :rules="[rules.required]"
+                                  ></v-text-field>
+                                </template>
+                                <v-date-picker
+                                  v-model="dateEdit"
+                                  :allowed-dates="allowedDatesEdit"
+                                  @input="menuDateEdit = false, checkTimeEdit(dateEdit, {flowId: formEdit.flowId, bookingEmpFlow: formEdit.bookingEmpFlow})"
+                                  :min="
+                                    new Date(
+                                      Date.now() -
+                                        new Date().getTimezoneOffset() * 60000
+                                    )
+                                      .toISOString()
+                                      .substr(0, 10)
+                                  "
+                                ></v-date-picker>
+                              </v-menu>
+                            </v-col>
+                            <v-col class="pb-0" v-if="customerTimeSlot === 'False' ? timeavailable.length > 0 && dateEdit !== '' : fromAddTimeCus !== '' &&  dateEdit !== ''">
+                            <v-select
+                              v-model="timeEdit"
+                              :items="timeavailable"
+                              label="เวลา"
+                              item-text="text"
+                              item-value="text"
+                              persistent-hint
+                              return-object
+                              outlined
+                              dense
+                              required
+                              :rules ="[rules.required]"
+                            ></v-select>
+                            </v-col>
+                          </v-row>
+                          <v-row v-if="flowIdOldEdit !== formEdit.flowId && (masBranchIDOldEdit !== formEdit.masBranchID) && (getSelectText !== 'cancel') && (checkSelectText !== 'confirmJob')">
+                            <v-col class="pb-0" v-if="customerTimeSlot === 'False' ? formEdit.bookingEmpFlow : fromAddTimeCus">
+                              <v-menu
+                                v-model="menuDateEdit"
+                                :close-on-content-click="false"
+                                :nudge-right="40"
+                                transition="scale-transition"
+                                offset-y
+                                min-width="auto"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                    v-model="dateEdit"
+                                    label="วันที่นัดหมาย"
+                                    prepend-icon="mdi-calendar"
+                                    readonly
+                                    v-bind="attrs"
+                                    dense
+                                    outlined
+                                    v-on="on"
+                                    required
+                                    :rules="[rules.required]"
+                                  ></v-text-field>
+                                </template>
+                                <v-date-picker
+                                  v-model="dateEdit"
+                                  :allowed-dates="allowedDatesEdit"
+                                  @input="menuDateEdit = false, checkTimeEdit(dateEdit, {flowId: formEdit.flowId, bookingEmpFlow: formEdit.bookingEmpFlow})"
+                                  :min="
+                                    new Date(
+                                      Date.now() -
+                                        new Date().getTimezoneOffset() * 60000
+                                    )
+                                      .toISOString()
+                                      .substr(0, 10)
+                                  "
+                                ></v-date-picker>
+                              </v-menu>
+                            </v-col>
+                            <v-col class="pb-0" v-if="customerTimeSlot === 'False' ? timeavailable.length > 0 && dateEdit !== '' : fromAddTimeCus !== '' &&  dateEdit !== ''">
+                            <v-select
+                              v-model="timeEdit"
+                              :items="timeavailable"
+                              label="เวลา"
+                              item-text="text"
+                              item-value="text"
+                              persistent-hint
+                              return-object
+                              outlined
+                              dense
+                              required
+                              :rules ="[rules.required]"
+                            ></v-select>
+                            </v-col>
+                          </v-row>
+                          <v-row v-if="flowIdOldEdit === formEdit.flowId && (masBranchIDOldEdit !== formEdit.masBranchID) && (getSelectText !== 'cancel') && (checkSelectText !== 'confirmJob')">
                             <v-col class="pb-0" v-if="customerTimeSlot === 'False' ? formEdit.bookingEmpFlow : fromAddTimeCus">
                               <v-menu
                                 v-model="menuDateEdit"
@@ -5798,21 +5930,35 @@
                       menu-props="auto"
                       outlined
                       dense
+                      @change="getEmpCancel(masBranchID), flowIDLimit = flowSelectCancel, bookingEmpFlowCancel = '',fromAddTimeCus = '', formChangeDateCancel = ''"
                     ></v-select>
                     </v-col>
                     <v-col  cols="12" class="pt-0 pb-0">
-                        <v-select
-                          v-model="bookingEmpFlowCancel"
-                          :items="dataEmpCancel"
-                          label="พนักงานช่าง"
-                          menu-props="auto"
-                          outlined
-                          required
-                          :rules="[rules.required]"
-                          dense
-                          @change="checkTimeCancel(),SetallowedDatesChangeCancel(bookingEmpFlowCancel), formChangeDateCancel = ''"
-                        ></v-select>
-                      </v-col>
+                      <v-select
+                        v-model="bookingEmpFlowCancel"
+                        :items="dataEmpCancel"
+                        label="พนักงานช่าง"
+                        menu-props="auto"
+                        outlined
+                        required
+                        :rules="[rules.required]"
+                        dense
+                        @change="checkTimeCancel(),SetallowedDatesChangeCancel(bookingEmpFlowCancel), formChangeDateCancel = '',fromAddTimeCus = '', checkCustomerTimeSlotCancel(), flowIDLimit = flowSelectCancel"
+                      ></v-select>
+                    </v-col>
+                    <v-col  cols="12" class="pt-0 pb-0">
+                      <v-select
+                        v-if="customerTimeSlot === 'True' && bookingEmpFlowCancel !== '' && timeSlotbyCustomer.length > 1"
+                        v-model="fromAddTimeCus"
+                        :items="timeSlotbyCustomer"
+                        label="จำนวนชั่วโมง"
+                        outlined
+                        dense
+                        required
+                        :rules="[rules.required]"
+                        @change="formChangeDateCancel = '', AddallowedDatesBysetTimebydayCancel()"
+                      ></v-select>
+                    </v-col>
                     <v-col cols="12" class="pt-0 pb-0">
                       <v-menu
                         v-model="menuDateChangeCancel"
@@ -6481,23 +6627,26 @@ export default {
       this.dataFlowCancel = await this.getDataFromAPI('/flow/get', 'flowId', 'flowName', '')
     },
     async confirmChkCancel (item) {
+      this.fromAddTimeCus = ''
       this.dataConfirmCancel = item
       this.bookingEmpFlowCancel = item.bookingEmpFlow
       this.flowSelectCancel = item.flowId
       this.flowIDLimit = item.flowId
+      this.masBranchID = item.masBranchID
       this.empSelectCancel = ''
       this.formChangeDateCancel = item.dueDateDay
 
       await this.getDataFlowAllCancel()
       await this.getEmpCancel(item.masBranchID)
+
+      this.checkCustomerTimeSlotCancel()
+
       await this.SetallowedDatesChangeCancel(item.bookingEmpFlow)
       await this.setLimitBookingCancel(item.dueDateDay)
       await this.getEmpSelect(item)
-      console.log('this.timeavailableCancel.filter(el => { return el.value === item.timeDuetext })', this.timeavailableCancel.filter(el => { return el.value === item.timeDuetext }))
+
       if (this.timeavailableCancel.filter(el => { return el.value === item.timeDuetext }).length > 0) {
         this.formChangeTimeCancel = item.timeDuetext
-      // if (this.timeavailable.filter(el => { return el.value === this.momenTime(item.dueDate) }).length > 0) {
-      //   this.formChange.time = this.momenTime(item.dueDate)
       } else {
         this.formChangeTimeCancel = ''
       }
@@ -6558,74 +6707,104 @@ export default {
       return LimitBooking
     },
     async setLimitBookingCancel (dateitem) {
-      // this.time = ''
+      console.log('setLimitBookingCancel', dateitem)
+      this.time = ''
       this.timeavailableCancel = []
+      let setTime = []
+      // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
+      console.log(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel }))
+      if (this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime).filter((items) => items.value === new Date(dateitem).getDay())
+        setTime = timeJson[0].setTime || []
+        console.log('IF')
+      } else {
+        console.log('ELSE')
+        setTime = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime) || []
+      }
+      console.log('this.EmpItemLimit.filter', this.EmpItemLimitCancel)
+      console.log('setTime', setTime)
       // this.showTable = []
       this.limitBookingCheck = this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].limitBookingCheck || 'False'
       if (this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].limitBookingCheck || 'False') {
-        this.timeavailableCancel = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime) || []
-        let slotByflow = this.dataFlowCancel.filter((v) => v.value === this.dataConfirmCancel.flowId)[0].allData.timeSlot
+        this.timeavailableCancel = setTime
+        console.log('DataFlowName', this.dataFlowCancel.filter((v) => v.value === this.flowSelectCancel)[0].allData)
+        // let slotByflow = this.dataFlow.filter((v) => v.value === this.flowSelect)[0].allData.timeSlot
+        let slotByflow = []
+        console.log('dataEmp', this.dataItem)
+        if (this.customerTimeSlot === 'False') {
+          slotByflow = this.dataFlowCancel.filter((v) => v.value === this.flowSelectCancel)[0].allData.timeSlot
+        } else {
+          slotByflow = this.fromAddTimeCus
+        }
+        let overTime = this.dataFlowCancel.filter((v) => v.value === this.flowSelectCancel)[0].allData.overTime
         if (this.timeavailableCancel.length >= slotByflow) {
-          let LimitBooking = await this.getLimitBookingCancel(dateitem)
+          let LimitBooking = await this.getLimitBooking(dateitem)
           console.log('LimitBooking', LimitBooking)
           // เซ็ต Status ให้แต่ละช่วงเวลา
+          this.timeavailableCancel.forEach((v, k) => {
+            if (typeof v.status === 'undefined') {
+              v.status = true
+            }
+          })
           if (LimitBooking.status !== false) {
             if (LimitBooking.length > 0) {
               this.timeavailableCancel.forEach((v, k) => {
-                if (typeof v.status === 'undefined') {
-                  v.status = true
-                }
                 let bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value)
                 if (bookingTarget.length > 0) {
                   v.status = false
-                  for (let bT = 0; bT < bookingTarget[0].timeSlot; bT++) {
+                  let bookingTargetSlot = bookingTarget[0].timeSlotCustomer || bookingTarget[0].timeSlot
+                  for (let bT = 0; bT < bookingTargetSlot; bT++) {
                     if (this.timeavailableCancel[k + bT] !== undefined) {
                       this.timeavailableCancel[k + bT].status = false
                     }
                   }
                 }
-              // this.showTable.push(v)
               })
-              console.log('this.timeavailableCancel 1', this.timeavailableCancel)
-              // For ค่าใส่ ตัวแปร array
-              let Newtimeavailable = []
-              let slotCheck = slotByflow
-              for (let i = 0; i < this.timeavailableCancel.length; i++) {
-                let num = i + (slotCheck - 1)
-                let checkitem = this.timeavailableCancel.filter((item, key) => (key >= i && key <= num))
-                console.log('checkitem', checkitem, slotCheck)
-                Newtimeavailable.push(checkitem)
-              }
-              console.log('Newtimeavailable', Newtimeavailable)
-              this.timeavailableCancel = []
-              Newtimeavailable.forEach((v, k) => {
+            }
+          }
+          console.log('timeavailable', this.timeavailableCancel)
+          // For ค่าใส่ ตัวแปร array
+          let Newtimeavailable = []
+          let slotCheck = slotByflow
+          for (let i = 0; i < this.timeavailableCancel.length; i++) {
+            let num = i + (slotCheck - 1)
+            let checkitem = this.timeavailableCancel.filter((item, key) => (key >= i && key <= num))
+            console.log('checkitem', checkitem, slotCheck)
+            Newtimeavailable.push(checkitem)
+          }
+          console.log('Newtimeavailable', Newtimeavailable)
+          this.timeavailableCancel = []
+          Newtimeavailable.forEach((v, k) => {
+            // console.log('v.length >= slotCheck', v.length, slotCheck)
+            if (v.length > 0) {
+              if (overTime === 'True') {
                 if (v.filter((v) => v.status === false).length <= 0) {
                   this.timeavailableCancel.push(v[0])
                 }
-              })
-              console.log('this.timeavailableCancel 3', this.timeavailableCancel)
-
-              // ตัดเวลาในกรณีที่เป็นวันปัจจุบัน เพื่อตัดเวลาที่ผ่านมาแล้วออก
-              if (moment(dateitem).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')) {
-                this.timeavailableCancel = this.timeavailableCancel.filter(item => moment().format(item.value) > moment().format('HH:mm'))
               } else {
-              }
-              if (this.timeavailableCancel.length === 0) {
-                this.$swal(
-                  'วันนี้ไม่มีคิวว่างแล้ว',
-                  'กรุณาเลือกวันที่ใหม่อีกครั้ง',
-                  'error'
-                )
-                this.date = ''
+              // ปิดเวลาสุดท้ายในกรณีที่ ไม่ต้องการให้จองเลยเวลา
+                if (v.filter((v) => v.status === false).length <= 0 && v.length >= slotCheck) {
+                // console.log('else', v)
+                  this.timeavailableCancel.push(v[0])
+                }
               }
             }
-          } else {
-            this.timeavailableCancel = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime) || []
-            if (moment(dateitem).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')) {
-              this.timeavailableCancel = this.timeavailableCancel.filter(item => moment().format(item.value) > moment().format('HH:mm'))
-            } else {
-            }
-            console.log('this.timeavailableCancel ELSE', this.timeavailableCancel)
+          })
+
+          // ตัดเวลาในกรณีที่เป็นวันปัจจุบัน เพื่อตัดเวลาที่ผ่านมาแล้วออก
+          // if (dateC === moment().format('YYYY-MM-DD')) {
+          //   this.timeavailable = this.timeavailable.filter(item => moment().format(item.value) > moment().format('HH:mm'))
+          // } else {
+          // }
+          // console.log('this.timeavailable 4', this.timeavailable)
+          // console.log('Newitem', Newtimeavailable)
+          if (this.timeavailableCancel.length === 0) {
+            this.$swal(
+              'คิวเต็มแล้ว',
+              'กรุณาเลือกวันที่ใหม่อีกครั้ง',
+              'error'
+            )
+            this.formChangeDateCancel = ''
           }
         } else {
           this.timeavailableCancel = []
@@ -6633,17 +6812,136 @@ export default {
             'คิวเต็ม',
             'ช่างคนนี้คิวเต็มแล้ว',
             'error'
-          ).then(() => { this.date = '' }).catch(() => { this.date = '' })
+          ).then(() => { this.formChangeDateCancel = '' }).catch(() => { this.formChangeDateCancel = '' })
         }
       } else {
         console.log('this.timeavailable ELSEEEEE', this.timeavailableCancel)
         // LimitBookingBy Flow
-        this.timeavailableCancel = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime) || []
+        this.timeavailableCancel = setTime
       }
       // await this.chekSlotTime()
     },
+    // async setLimitBookingCancel (dateitem) {
+    //   // this.time = ''
+    //   this.timeavailableCancel = []
+    //   // this.showTable = []
+    //   let setTime = []
+    //   // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
+    //   if (this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTimebyday === 'True') {
+    //     let timeJson = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime).filter((items) => items.value === new Date(dateitem).getDay())
+    //     setTime = timeJson[0].setTime || []
+    //     console.log('IF')
+    //   } else {
+    //     console.log('ELSE')
+    //     setTime = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime) || []
+    //   }
+
+    //   this.limitBookingCheck = this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].limitBookingCheck || 'False'
+    //   if (this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].limitBookingCheck || 'False') {
+    //     this.timeavailableCancel = setTime
+    //     // let slotByflow = this.dataFlowCancel.filter((v) => v.value === this.dataConfirmCancel.flowId)[0].allData.timeSlot
+    //     let slotByflow = []
+    //     console.log('dataEmp', this.dataItem)
+    //     if (this.customerTimeSlot === 'False') {
+    //       slotByflow = this.dataFlow.filter((v) => v.value === this.dataItem[0].flowId)[0].allData.timeSlot
+    //     } else {
+    //       slotByflow = this.fromAddTimeCus
+    //     }
+    //     let overTime = this.dataFlow.filter((v) => v.value === this.dataItem[0].flowId)[0].allData.overTime
+    //     if (this.timeavailableCancel.length >= slotByflow) {
+    //       let LimitBooking = await this.getLimitBookingCancel(dateitem)
+    //       console.log('LimitBooking', LimitBooking)
+    //       // เซ็ต Status ให้แต่ละช่วงเวลา
+    //       if (LimitBooking.status !== false) {
+    //         if (LimitBooking.length > 0) {
+    //           this.timeavailableCancel.forEach((v, k) => {
+    //             if (typeof v.status === 'undefined') {
+    //               v.status = true
+    //             }
+    //             let bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value)
+    //             if (bookingTarget.length > 0) {
+    //               v.status = false
+    //               for (let bT = 0; bT < bookingTarget[0].timeSlot; bT++) {
+    //                 if (this.timeavailableCancel[k + bT] !== undefined) {
+    //                   this.timeavailableCancel[k + bT].status = false
+    //                 }
+    //               }
+    //             }
+    //           // this.showTable.push(v)
+    //           })
+    //           console.log('this.timeavailableCancel 1', this.timeavailableCancel)
+    //           // For ค่าใส่ ตัวแปร array
+    //           let Newtimeavailable = []
+    //           let slotCheck = slotByflow
+    //           for (let i = 0; i < this.timeavailableCancel.length; i++) {
+    //             let num = i + (slotCheck - 1)
+    //             let checkitem = this.timeavailableCancel.filter((item, key) => (key >= i && key <= num))
+    //             console.log('checkitem', checkitem, slotCheck)
+    //             Newtimeavailable.push(checkitem)
+    //           }
+    //           console.log('Newtimeavailable', Newtimeavailable)
+    //           this.timeavailableCancel = []
+    //           Newtimeavailable.forEach((v, k) => {
+    //             // console.log('v.length >= slotCheck', v.length, slotCheck)
+    //             if (slotByflow === 'True') {
+    //               if (v.filter((v) => v.status === false).length <= 0) {
+    //                 this.timeavailableCancel.push(v[0])
+    //               }
+    //             } else {
+    //               // ปิดเวลาสุดท้ายในกรณีที่ ไม่ต้องการให้จองเลยเวลา
+    //               if (v.filter((v) => v.status === false).length <= 0 && v.length >= slotCheck) {
+    //                 console.log('else', v[0])
+    //                 this.timeavailableCancel.push(v[0])
+    //               }
+    //             }
+    //           })
+    //           // Newtimeavailable.forEach((v, k) => {
+    //           //   if (v.filter((v) => v.status === false).length <= 0) {
+    //           //     this.timeavailableCancel.push(v[0])
+    //           //   }
+    //           // })
+    //           // console.log('this.timeavailableCancel 3', this.timeavailableCancel)
+
+    //           // ตัดเวลาในกรณีที่เป็นวันปัจจุบัน เพื่อตัดเวลาที่ผ่านมาแล้วออก
+    //           // if (moment(dateitem).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')) {
+    //           //   this.timeavailableCancel = this.timeavailableCancel.filter(item => moment().format(item.value) > moment().format('HH:mm'))
+    //           // } else {
+    //           // }
+    //           if (this.timeavailableCancel.length === 0) {
+    //             this.$swal(
+    //               'วันนี้ไม่มีคิวว่างแล้ว',
+    //               'กรุณาเลือกวันที่ใหม่อีกครั้ง',
+    //               'error'
+    //             )
+    //             this.date = ''
+    //           }
+    //         }
+    //       } else {
+    //         this.timeavailableCancel = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime) || []
+    //         if (moment(dateitem).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')) {
+    //           this.timeavailableCancel = this.timeavailableCancel.filter(item => moment().format(item.value) > moment().format('HH:mm'))
+    //         } else {
+    //         }
+    //         console.log('this.timeavailableCancel ELSE', this.timeavailableCancel)
+    //       }
+    //     } else {
+    //       this.timeavailableCancel = []
+    //       this.$swal(
+    //         'คิวเต็ม',
+    //         'ช่างคนนี้คิวเต็มแล้ว',
+    //         'error'
+    //       ).then(() => { this.date = '' }).catch(() => { this.date = '' })
+    //     }
+    //   } else {
+    //     console.log('this.timeavailable ELSEEEEE', this.timeavailableCancel)
+    //     // LimitBookingBy Flow
+    //     this.timeavailableCancel = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime) || []
+    //   }
+    //   // await this.chekSlotTime()
+    // },
     async getEmpCancel (masBranchID) {
       this.dataEmpCancel = []
+      this.EmpItemLimitCancel = []
       await axios.get(this.DNS_IP + '/empSelect/get?privacyPage=bookingform&masBranchID=' + masBranchID).then(response => {
         let rs = response.data
         if (rs.length > 0) {
@@ -6666,6 +6964,7 @@ export default {
                 limit.empId = d.empId
                 limit.limitBookingCheck = d.limitBookingCheck || 'False'
                 limit.setTime = d.setTime || '[]'
+                limit.setTimebyday = d.setTimebyday
                 this.EmpItemLimitCancel.push(limit)
               }
             }
@@ -6906,7 +7205,17 @@ export default {
           // this.checkTimeEdit(this.dataEdit, {flowId: this.formEdit.flowId, bookingEmpFlow: this.formEdit.bookingEmpFlow})
           }
         }
-      } else if (this.formEdit.masBranchID !== this.masBranchIDOldEdit) {
+      } else if (this.formEdit.masBranchID !== this.masBranchIDOldEdit && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+        if (this.formEdit.masBranchID !== null && this.formEdit.flowId !== null) {
+          await this.getEmpEdit(this.formEdit.masBranchID)
+          console.log('this.dataEdit', this.dataEdit)
+          if (this.formEdit.bookingEmpFlow) {
+            this.SetallowedDatesChange(this.formEdit.bookingEmpFlow)
+            await this.checkCustomerTimeSlotEdit(this.dataEdit)
+          // this.checkTimeEdit(this.dataEdit, {flowId: this.formEdit.flowId, bookingEmpFlow: this.formEdit.bookingEmpFlow})
+          }
+        }
+      } else if (this.flowIdOldEdit !== this.formEdit.flowId && this.formEdit.masBranchID !== this.masBranchIDOldEdit && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
         if (this.formEdit.masBranchID !== null && this.formEdit.flowId !== null) {
           await this.getEmpEdit(this.formEdit.masBranchID)
           console.log('this.dataEdit', this.dataEdit)
@@ -6943,6 +7252,20 @@ export default {
         countTime = 'No Data'
       }
       return countTime
+    },
+    async AddallowedDatesBysetTimebydayCancel () {
+      await this.SetallowedDatesCancel(this.bookingEmpFlowCancel)
+      if (this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime)
+        timeJson.forEach((item) => {
+          if (item.setTime.length < this.fromAddTimeCus) {
+            if (this.dateDayoff.filter((i) => i === item.value).length === 0) {
+              this.dateDayoff.push(item.value)
+            }
+          }
+        })
+      }
+      console.log('this.dateDayoff', this.dateDayoff)
     },
     async AddallowedDatesBysetTimebyday () {
       await this.SetallowedDates()
@@ -7060,6 +7383,77 @@ export default {
       if (this.date !== '') {
         this.setLimitBooking(this.date)
         this.time = ''
+      }
+      // console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
+    },
+    checkCustomerTimeSlotCancel () {
+      this.timeSlotbyCustomer = []
+      this.customerTimeSlot = this.DataFlowName.filter((v) => v.value === this.flowSelectCancel)[0].allData.customerTimeSlot
+      console.log('this.customerTimeSlot', this.customerTimeSlot)
+      let allTime = []
+      if (this.customerTimeSlot === 'True') {
+        if (this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTimebyday === 'True') {
+          // let timeJson = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.fromAdd.empId })[0].setTime).filter((items) => items.value === new Date().getDay())
+          // setTime = timeJson[0].setTime || []
+          let timeJson = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime)
+          let dataTime = []
+          console.log('timeJson', timeJson)
+          timeJson.forEach((itemTime, index) => {
+            // console.log('item', itemTime)
+            allTime = itemTime.setTime
+            allTime.forEach((item, key) => {
+              let ss = {}
+              if (allTime.length === 1) {
+                ss.text = 'ไม่ระบุ (มีเวลาเดียว)'
+                ss.value = key + 1
+                dataTime.push(ss)
+              } else {
+                if (key > 0) {
+                  let start = allTime.filter((i, k) => k === 0)[0].value
+                  let end = item.value
+                  ss.text = this.calculateTime(start, end)
+                  ss.value = key
+                  // console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
+                  dataTime.push(ss)
+                  // this.timeSlotbyCustomer.push(ss)
+                }
+              }
+            })
+          })
+          dataTime.forEach((i, n) => {
+            if (this.timeSlotbyCustomer.filter((item) => item.text === i.text && item.value === i.value).length === 0) {
+              console.log('n', n)
+              this.timeSlotbyCustomer.push(i)
+            }
+          })
+          console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
+        } else {
+          allTime = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime)
+          // allTime = this.limitBookingCheck = this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].limitBookingCheck || 'False'
+          console.log('allTime', allTime)
+          allTime.forEach((item, key) => {
+            let ss = {}
+            if (allTime.length === 1) {
+            // ss.text = item.value
+            // ss.value = key + 1
+            // this.timeSlotbyCustomer.push(ss)
+              this.fromAddTimeCus = key + 1
+            } else {
+              if (key > 0) {
+                let start = allTime.filter((i, k) => k === 0)[0].value
+                let end = item.value
+                ss.text = this.calculateTime(start, end)
+                ss.value = key
+                console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
+                this.timeSlotbyCustomer.push(ss)
+              }
+            }
+          })
+        }
+      }
+      if (this.formChangeDateCancel !== '') {
+        this.setLimitBookingCancel(this.formChangeDateCancel)
+        this.formChangeTimeCancel = ''
       }
       // console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
     },
@@ -7292,7 +7686,7 @@ export default {
               'กรุณาเลือกประเภทบริการอื่นๆ',
               'info'
             )
-            this.formEdit.masBranchID = this.masBranchIDOldEdit
+            this.formEdit.masBranchID = ''
           }
           console.log('EmpItemLimitAdd', this.EmpItemLimitAdd)
         } else {
@@ -8041,6 +8435,28 @@ export default {
     },
     SetallowedDatesChange (bookingEmpFlow) {
       this.dataEmpAllChange.forEach((v, k) => {
+        if (v.empId === bookingEmpFlow) {
+          v.dateDayCustom = v.dateDayCustom || ''
+          v.dateDayoffValue = v.dateDayoffValue || ''
+          if (v.dateDayoffValue !== '') {
+            // console.log('if')
+            this.dateDayoff = JSON.parse(v.dateDayoffValue)
+          } else {
+            // console.log('else')
+            this.dateDayoff = []
+          }
+          if (v.dateDayCustom !== '') {
+            this.dateDayCustom = JSON.parse(v.dateDayCustom)
+          } else {
+            this.dateDayCustom = []
+          }
+        }
+      })
+      console.log('datoff', this.dateDayoff)
+      console.log('Daycustom', this.dateDayCustom)
+    },
+    SetallowedDatesCancel (bookingEmpFlow) {
+      this.dataEmpCancel.forEach((v, k) => {
         if (v.empId === bookingEmpFlow) {
           v.dateDayCustom = v.dateDayCustom || ''
           v.dateDayoffValue = v.dateDayoffValue || ''
@@ -9330,6 +9746,25 @@ export default {
       setTimeout(() => this.checkDuplicate(), 500)
       // setTimeout(() => this.editDataSelectSubmit(), 500)
     },
+    async checkLimitempEdit () {
+      let chkStatLimit = this.dataEmpAllChange.filter(el => { return el.empId === this.formEdit.bookingEmpFlow })
+      if (chkStatLimit.length > 0) {
+        if (chkStatLimit[0].limitBookingCheck === 'True') {
+          let chkStatus = await this.updateLimitBookingChange(this.dataEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value || this.timeEdit.time, this.formEdit.flowId, 'Edit', this.formEdit.masBranchID)
+          console.log('chkStatus', chkStatus)
+          if (chkStatus.status) {
+            this.editDataSelectSubmit()
+          } else {
+            this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
+            this.loadingEdit = false
+          }
+        } else {
+          this.editDataSelectSubmit()
+        }
+      } else {
+        this.editDataSelectSubmit()
+      }
+    },
     async checkDuplicate () {
       if (this.validEdit !== false) {
         this.loadingEdit = true
@@ -9345,27 +9780,11 @@ export default {
                 let setCountFast = this.branch.filter(el => { return el.value === this.formEdit.masBranchID })[0].allData.countFastTrack
                 if (getcount < setCountFast) {
                   if (this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
-                    let chkStatLimit = this.dataEmpAllChange.filter(el => { return el.empId === this.formEdit.bookingEmpFlow })
-                    if (chkStatLimit.length > 0) {
-                      if (chkStatLimit[0].limitBookingCheck === 'True') {
-                        let chkStatus = await this.updateLimitBookingChange(this.dataEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value || this.timeEdit.time, this.formEdit.flowId, 'Edit', this.formEdit.masBranchID)
-                        console.log('chkStatus', chkStatus)
-                        if (chkStatus.status) {
-                          this.editDataSelectSubmit()
-                        } else {
-                          this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-                          this.loadingEdit = false
-                        }
-                      } else {
-                        this.editDataSelectSubmit()
-                      }
-                    } else {
-                      this.editDataSelectSubmit()
-                    }
+                    this.checkLimitempEdit()
                   } else if (this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
-
-                  } else if (this.flowIdOldEdit !== this.formEdit.flowId && this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) { 
-
+                    this.checkLimitempEdit()
+                  } else if (this.flowIdOldEdit !== this.formEdit.flowId && this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+                    this.checkLimitempEdit()
                   } else {
                     this.editDataSelectSubmit()
                   }
@@ -9376,26 +9795,35 @@ export default {
                 }
               } else {
                 if (this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
-                  let chkStatLimit = this.dataEmpAllChange.filter(el => { return el.empId === this.formEdit.bookingEmpFlow })
-                  if (chkStatLimit.length > 0) {
-                    if (chkStatLimit[0].limitBookingCheck === 'True') {
-                      let chkStatus = await this.updateLimitBookingChange(this.dataEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value || this.timeEdit.time, this.formEdit.flowId, 'Edit', this.formEdit.masBranchID)
-                      console.log('chkStatus', chkStatus)
-                      if (chkStatus.status) {
-                        this.editDataSelectSubmit()
-                      } else {
-                        this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-                        this.loadingEdit = false
-                      }
-                    } else {
-                      this.editDataSelectSubmit()
-                    }
-                  } else {
-                    this.editDataSelectSubmit()
-                  }
+                  this.checkLimitempEdit()
+                } else if (this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+                  this.checkLimitempEdit()
+                } else if (this.flowIdOldEdit !== this.formEdit.flowId && this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+                  this.checkLimitempEdit()
                 } else {
                   this.editDataSelectSubmit()
                 }
+                // if (this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+                //   let chkStatLimit = this.dataEmpAllChange.filter(el => { return el.empId === this.formEdit.bookingEmpFlow })
+                //   if (chkStatLimit.length > 0) {
+                //     if (chkStatLimit[0].limitBookingCheck === 'True') {
+                //       let chkStatus = await this.updateLimitBookingChange(this.dataEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value || this.timeEdit.time, this.formEdit.flowId, 'Edit', this.formEdit.masBranchID)
+                //       console.log('chkStatus', chkStatus)
+                //       if (chkStatus.status) {
+                //         this.editDataSelectSubmit()
+                //       } else {
+                //         this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
+                //         this.loadingEdit = false
+                //       }
+                //     } else {
+                //       this.editDataSelectSubmit()
+                //     }
+                //   } else {
+                //     this.editDataSelectSubmit()
+                //   }
+                // } else {
+                //   this.editDataSelectSubmit()
+                // }
               }
             }
           }).catch(error => {
@@ -9749,120 +10177,127 @@ export default {
         }
       }
     },
-    async checkTimeEdit (dateC, dt) {
-      if (this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
-        this.timeEdit = ''
-        this.timeavailable = []
-        console.log('checkTimeFlow', dateC, dt)
-        // this.showTable = []
-        let setTime = []
-        // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
-        console.log('!!!!!!!!!!!!!!!!!!!!', this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0])
-        if (this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].setTimebyday === 'True') {
-          let timeJson = JSON.parse(this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].setTime).filter((items) => items.value === new Date(dateC).getDay())
-          setTime = timeJson[0].setTime || []
-          console.log('IF')
+    async checkTimeEditSubmit (dateC, dt) {
+      this.timeEdit = ''
+      this.timeavailable = []
+      console.log('checkTimeFlow', dateC, dt)
+      // this.showTable = []
+      let setTime = []
+      // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
+      console.log('!!!!!!!!!!!!!!!!!!!!', this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0])
+      if (this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].setTime).filter((items) => items.value === new Date(dateC).getDay())
+        setTime = timeJson[0].setTime || []
+        console.log('IF')
+      } else {
+        console.log('ELSE')
+        setTime = JSON.parse(this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].setTime) || []
+      }
+      let dtEmpItemLimitChange = this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })
+      console.log('dtEmpItemLimitChange', dtEmpItemLimitChange)
+      this.limitBookingCheck = dtEmpItemLimitChange.length > 0 ? dtEmpItemLimitChange[0].limitBookingCheck || 'False' : 'False'
+      if (this.limitBookingCheck === 'True') {
+        this.timeavailable = setTime
+        // let slotByflow = this.dataFlowSelectEdit.filter((v) => v.value === dt.flowId)[0].allData.timeSlot
+        let slotByflow = []
+        if (this.customerTimeSlot === 'False') {
+          slotByflow = this.dataFlowSelectEdit.filter((v) => v.value === dt.flowId)[0].allData.timeSlot
         } else {
-          console.log('ELSE')
-          setTime = JSON.parse(this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].setTime) || []
+          slotByflow = this.fromAddTimeCus
         }
-        let dtEmpItemLimitChange = this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })
-        console.log('dtEmpItemLimitChange', dtEmpItemLimitChange)
-        this.limitBookingCheck = dtEmpItemLimitChange.length > 0 ? dtEmpItemLimitChange[0].limitBookingCheck || 'False' : 'False'
-        if (this.limitBookingCheck === 'True') {
-          this.timeavailable = setTime
-          // let slotByflow = this.dataFlowSelectEdit.filter((v) => v.value === dt.flowId)[0].allData.timeSlot
-          let slotByflow = []
-          if (this.customerTimeSlot === 'False') {
-            slotByflow = this.dataFlowSelectEdit.filter((v) => v.value === dt.flowId)[0].allData.timeSlot
-          } else {
-            slotByflow = this.fromAddTimeCus
-          }
-          let overTime = this.dataFlowSelectEdit.filter((v) => v.value === dt.flowId)[0].allData.overTime
-          if (this.timeavailable.length >= slotByflow) {
-            let LimitBooking = await this.getLimitBookingChange(dateC, dt)
-            console.log('LimitBooking', LimitBooking)
-            // เซ็ต Status ให้แต่ละช่วงเวลา
-            this.timeavailable.forEach((v, k) => {
-              if (typeof v.status === 'undefined') {
-                v.status = true
-              }
-            })
-            console.log('timeavailable', this.timeavailable)
-            if (LimitBooking.status !== false) {
-              if (LimitBooking.length > 0) {
-                this.timeavailable.forEach((v, k) => {
-                  let bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value)
-                  if (bookingTarget.length > 0) {
-                    v.status = false
-                    let bookingTargetSlot = bookingTarget[0].timeSlotCustomer || bookingTarget[0].timeSlot
-                    for (let bT = 0; bT < bookingTargetSlot; bT++) {
-                      if (this.timeavailable[k + bT] !== undefined) {
-                        this.timeavailable[k + bT].status = false
-                      }
+        let overTime = this.dataFlowSelectEdit.filter((v) => v.value === dt.flowId)[0].allData.overTime
+        if (this.timeavailable.length >= slotByflow) {
+          let LimitBooking = await this.getLimitBookingChange(dateC, dt)
+          console.log('LimitBooking', LimitBooking)
+          // เซ็ต Status ให้แต่ละช่วงเวลา
+          this.timeavailable.forEach((v, k) => {
+            if (typeof v.status === 'undefined') {
+              v.status = true
+            }
+          })
+          console.log('timeavailable', this.timeavailable)
+          if (LimitBooking.status !== false) {
+            if (LimitBooking.length > 0) {
+              this.timeavailable.forEach((v, k) => {
+                let bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value)
+                if (bookingTarget.length > 0) {
+                  v.status = false
+                  let bookingTargetSlot = bookingTarget[0].timeSlotCustomer || bookingTarget[0].timeSlot
+                  for (let bT = 0; bT < bookingTargetSlot; bT++) {
+                    if (this.timeavailable[k + bT] !== undefined) {
+                      this.timeavailable[k + bT].status = false
                     }
                   }
-                })
+                }
+              })
+            }
+          }
+          // For ค่าใส่ ตัวแปร array
+          let Newtimeavailable = []
+          let slotCheck = slotByflow
+          for (let i = 0; i < this.timeavailable.length; i++) {
+            let num = i + (slotCheck - 1)
+            let checkitem = this.timeavailable.filter((item, key) => (key >= i && key <= num))
+            console.log('checkitem', checkitem, slotCheck)
+            Newtimeavailable.push(checkitem)
+          }
+          console.log('Newtimeavailable', Newtimeavailable)
+          this.timeavailable = []
+          Newtimeavailable.forEach((v, k) => {
+          // console.log('v.length >= slotCheck', v.length, slotCheck)
+            if (overTime === 'True') {
+              if (v.filter((v) => v.status === false).length <= 0) {
+                this.timeavailable.push(v[0])
+              }
+            } else {
+            // ปิดเวลาสุดท้ายในกรณีที่ ไม่ต้องการให้จองเลยเวลา
+              if (v.filter((v) => v.status === false).length <= 0 && v.length >= slotCheck) {
+                console.log('else', v[0])
+                this.timeavailable.push(v[0])
               }
             }
-            // For ค่าใส่ ตัวแปร array
-            let Newtimeavailable = []
-            let slotCheck = slotByflow
-            for (let i = 0; i < this.timeavailable.length; i++) {
-              let num = i + (slotCheck - 1)
-              let checkitem = this.timeavailable.filter((item, key) => (key >= i && key <= num))
-              console.log('checkitem', checkitem, slotCheck)
-              Newtimeavailable.push(checkitem)
-            }
-            console.log('Newtimeavailable', Newtimeavailable)
-            this.timeavailable = []
-            Newtimeavailable.forEach((v, k) => {
-            // console.log('v.length >= slotCheck', v.length, slotCheck)
-              if (overTime === 'True') {
-                if (v.filter((v) => v.status === false).length <= 0) {
-                  this.timeavailable.push(v[0])
-                }
-              } else {
-              // ปิดเวลาสุดท้ายในกรณีที่ ไม่ต้องการให้จองเลยเวลา
-                if (v.filter((v) => v.status === false).length <= 0 && v.length >= slotCheck) {
-                  console.log('else', v[0])
-                  this.timeavailable.push(v[0])
-                }
-              }
-            })
+          })
 
-            // ตัดเวลาในกรณีที่เป็นวันปัจจุบัน เพื่อตัดเวลาที่ผ่านมาแล้วออก
-            // if (dateC === moment().format('YYYY-MM-DD')) {
-            //   this.timeavailable = this.timeavailable.filter(item => moment().format(item.value) > moment().format('HH:mm'))
-            // } else {
-            // }
-            // console.log('this.timeavailable 4', this.timeavailable)
-            // console.log('Newitem', Newtimeavailable)
-            if (this.timeavailable.length === 0) {
-              this.$swal(
-                'คิวเต็มแล้ว',
-                'กรุณาเลือกวันที่ใหม่อีกครั้ง',
-                'error'
-              )
-              this.date = ''
-            }
-          } else {
-            this.timeavailable = []
+          // ตัดเวลาในกรณีที่เป็นวันปัจจุบัน เพื่อตัดเวลาที่ผ่านมาแล้วออก
+          // if (dateC === moment().format('YYYY-MM-DD')) {
+          //   this.timeavailable = this.timeavailable.filter(item => moment().format(item.value) > moment().format('HH:mm'))
+          // } else {
+          // }
+          // console.log('this.timeavailable 4', this.timeavailable)
+          // console.log('Newitem', Newtimeavailable)
+          if (this.timeavailable.length === 0) {
             this.$swal(
-              'คิวเต็ม',
-              'ช่างคนนี้คิวเต็มแล้ว',
+              'คิวเต็มแล้ว',
+              'กรุณาเลือกวันที่ใหม่อีกครั้ง',
               'error'
-            ).then(() => { this.date = '' }).catch(() => { this.date = '' })
+            )
+            this.date = ''
           }
         } else {
-          console.log('this.timeavailable ELSEEEEE', this.timeavailable)
-          // LimitBookingBy Flow
-          if (this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow }).length > 0) {
-            this.timeavailable = setTime
-          } else {
-            this.timeavailable = []
-          }
+          this.timeavailable = []
+          this.$swal(
+            'คิวเต็ม',
+            'ช่างคนนี้คิวเต็มแล้ว',
+            'error'
+          ).then(() => { this.date = '' }).catch(() => { this.date = '' })
         }
+      } else {
+        console.log('this.timeavailable ELSEEEEE', this.timeavailable)
+        // LimitBookingBy Flow
+        if (this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow }).length > 0) {
+          this.timeavailable = setTime
+        } else {
+          this.timeavailable = []
+        }
+      }
+    },
+    async checkTimeEdit (dateC, dt) {
+      if (this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+        this.checkTimeEditSubmit(dateC, dt)
+      } else if (this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+        this.checkTimeEditSubmit(dateC, dt)
+      } else if (this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+        this.checkTimeEditSubmit(dateC, dt)
       }
     },
     async getLimitBookingChange (dateC, dt) {
@@ -13174,13 +13609,26 @@ export default {
         this.dataConfirmReady = false
         let dtint = '0'
         if (this.DataFlowName.filter(el => { return el.value === item.flowId }).length > 0) {
-          let dts = JSON.parse(this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
-          console.log(dts.filter(el => el.value === item.timeDuetext))
-          if (dts.filter(el => el.value === item.timeDuetext).length > 0) {
-            dtint = parseInt(dts.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
+          let setTime = []
+          // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
+          if (this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTimebyday === 'True') {
+            let timeJson = JSON.parse(this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTime).filter((items) => items.value === new Date(item.dueDate).getDay())
+            setTime = timeJson[0].setTime || []
+          } else {
+            setTime = JSON.parse(this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
+          }
+          if (setTime.length > 0) {
+            dtint = parseInt(setTime.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
           } else {
             dtint = '0'
           }
+          // let dts = JSON.parse(this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
+          // console.log(dts.filter(el => el.value === item.timeDuetext))
+          // if (dts.filter(el => el.value === item.timeDuetext).length > 0) {
+          //   dtint = parseInt(dts.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
+          // } else {
+          //   dtint = '0'
+          // }
         } else {
           dtint = '0'
         }

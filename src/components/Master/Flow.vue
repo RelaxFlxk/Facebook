@@ -3360,6 +3360,22 @@ export default {
             this.formAdd.flowfieldName = JSON.stringify(this.desserts)
             this.formAdd.amountDeposit = this.formAdd.amountDeposit || 0
 
+            this.formAdd.flowName = this.formAdd.flowName.replace(/%/g, '%%').replace(/'/g, "\\'")
+            this.formAdd.flowNameEn = this.formAdd.flowNameEn.replace(/%/g, '%%').replace(/'/g, "\\'")
+            if (this.formAdd.remarkConfirm !== '') {
+              this.formAdd.remarkConfirm = this.formAdd.remarkConfirm.replace(/%/g, '%%').replace(/'/g, "\\'")
+            }
+            if (this.formAdd.remarkConfirmEn !== '') {
+              this.formAdd.remarkConfirmEn = this.formAdd.remarkConfirmEn.replace(/%/g, '%%').replace(/'/g, "\\'")
+            }
+
+            if (this.formAdd.empTitleTh !== '') {
+              this.formAdd.empTitleTh = this.formAdd.empTitleTh.replace(/%/g, '%%').replace(/'/g, "\\'")
+            }
+            if (this.formAdd.empTitleEng !== '') {
+              this.formAdd.empTitleEng = this.formAdd.empTitleEng.replace(/%/g, '%%').replace(/'/g, "\\'")
+            }
+
             this.formAdd.servicePointCount = []
             if (this.formAdd.servicePointStatus === 'True') {
               let countService = parseInt(this.formAdd.servicePointCountEnd) - parseInt(this.formAdd.servicePointCountStart)
@@ -3514,6 +3530,23 @@ export default {
             this.formUpdate.LAST_USER = this.session.data.userName
             this.formUpdate.amountDeposit = this.formUpdate.amountDeposit || 0
             this.formUpdate.flowfieldName = JSON.stringify(fieldId)
+
+            this.formUpdate.flowName = this.formUpdate.flowName.replace(/%/g, '%%').replace(/'/g, "\\'")
+            this.formUpdate.flowNameEn = this.formUpdate.flowNameEn.replace(/%/g, '%%').replace(/'/g, "\\'")
+            if (this.formUpdate.remarkConfirm !== '') {
+              this.formUpdate.remarkConfirm = this.formUpdate.remarkConfirm.replace(/%/g, '%%').replace(/'/g, "\\'")
+            }
+            if (this.formUpdate.remarkConfirmEn !== '') {
+              this.formUpdate.remarkConfirmEn = this.formUpdate.remarkConfirmEn.replace(/%/g, '%%').replace(/'/g, "\\'")
+            }
+
+            if (this.formUpdate.empTitleTh !== '') {
+              this.formUpdate.empTitleTh = this.formUpdate.empTitleTh.replace(/%/g, '%%').replace(/'/g, "\\'")
+            }
+            if (this.formUpdate.empTitleEng !== '') {
+              this.formUpdate.empTitleEng = this.formUpdate.empTitleEng.replace(/%/g, '%%').replace(/'/g, "\\'")
+            }
+
             var ID = this.formUpdate.flowId
             delete this.formUpdate['flowId']
             delete this.formUpdate['fieldId']

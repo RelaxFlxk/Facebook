@@ -12630,13 +12630,26 @@ export default {
         this.dataConfirmReady = false
         let dtint = '0'
         if (this.DataFlowName.filter(el => { return el.value === item.flowId }).length > 0) {
-          let dts = JSON.parse(this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
-          console.log(dts.filter(el => el.value === item.timeDuetext))
-          if (dts.filter(el => el.value === item.timeDuetext).length > 0) {
-            dtint = parseInt(dts.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
+          let setTime = []
+          // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
+          if (this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTimebyday === 'True') {
+            let timeJson = JSON.parse(this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTime).filter((items) => items.value === new Date(item.dueDate).getDay())
+            setTime = timeJson[0].setTime || []
+          } else {
+            setTime = JSON.parse(this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
+          }
+          if (setTime.length > 0) {
+            dtint = parseInt(setTime.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
           } else {
             dtint = '0'
           }
+          // let dts = JSON.parse(this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
+          // console.log(dts.filter(el => el.value === item.timeDuetext))
+          // if (dts.filter(el => el.value === item.timeDuetext).length > 0) {
+          //   dtint = parseInt(dts.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
+          // } else {
+          //   dtint = '0'
+          // }
         } else {
           dtint = '0'
         }
