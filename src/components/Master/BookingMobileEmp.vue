@@ -2844,34 +2844,57 @@ export default {
         })
     },
     async confirmChk (item) {
-      this.fromAddTimeCus = ''
-      this.flowIDLimit = this.flowSelect
-      this.checkStatusBooking = item.statusBt
-      await this.getEmp(item.masBranchID)
-      // this.bookingEmpFlow = ''
-      this.checkCustomerTimeSlot()
-      // await this.getEmp(this.masBranchID)
-      // this.checkTime()
-      this.SetallowedDatesChange(this.bookingEmpFlow)
-      // this.fromAddTimeCus = ''
-      // this.checkCustomerTimeSlot()
-      this.formChange.date = item.dueDateDay
-      await this.setLimitBookingEdit(item.dueDateDay)
-      // this.formChange.date = this.momenDate_1(item.dueDate)
-      // await this.setLimitBooking(this.momenDate_1(item.dueDate))
-      console.log('confirmChk', item)
-      this.dataConfirm = item
-      await this.getEmpSelect(item)
-      if (this.timeavailable.filter(el => { return el.value === item.timeDuetext }).length > 0) {
-        this.formChange.time = item.timeDuetext
-      // if (this.timeavailable.filter(el => { return el.value === this.momenTime(item.dueDate) }).length > 0) {
-      //   this.formChange.time = this.momenTime(item.dueDate)
+      console.log('item', item)
+      if (item.statusBt === 'wait') {
+        this.checkStatusBooking = item.statusBt
+        this.SetallowedDatesChange(this.bookingEmpFlow)
+        this.formChange.date = item.dueDateDay
+        await this.setLimitBookingEdit(item.dueDateDay)
+        // this.formChange.date = this.momenDate_1(item.dueDate)
+        // await this.setLimitBooking(this.momenDate_1(item.dueDate))
+        console.log('confirmChk', item)
+        this.dataConfirm = item
+        await this.getEmpSelect(item)
+        if (this.timeavailable.filter(el => { return el.value === item.timeDuetext }).length > 0) {
+          this.formChange.time = item.timeDuetext
+          // if (this.timeavailable.filter(el => { return el.value === this.momenTime(item.dueDate) }).length > 0) {
+          //   this.formChange.time = this.momenTime(item.dueDate)
+        } else {
+          this.formChange.time = ''
+        }
+        this.dialogConfirm = true
+        console.log('formChange', this.formChange)
+        console.log('flowSelect', this.flowSelect)
       } else {
-        this.formChange.time = ''
+        this.fromAddTimeCus = ''
+        this.flowIDLimit = this.flowSelect
+        this.checkStatusBooking = item.statusBt
+        await this.getEmp(item.masBranchID)
+        // this.bookingEmpFlow = ''
+        this.checkCustomerTimeSlot()
+        // await this.getEmp(this.masBranchID)
+        // this.checkTime()
+        this.SetallowedDatesChange(this.bookingEmpFlow)
+        // this.fromAddTimeCus = ''
+        // this.checkCustomerTimeSlot()
+        this.formChange.date = item.dueDateDay
+        await this.setLimitBookingEdit(item.dueDateDay)
+        // this.formChange.date = this.momenDate_1(item.dueDate)
+        // await this.setLimitBooking(this.momenDate_1(item.dueDate))
+        console.log('confirmChk', item)
+        this.dataConfirm = item
+        await this.getEmpSelect(item)
+        if (this.timeavailable.filter(el => { return el.value === item.timeDuetext }).length > 0) {
+          this.formChange.time = item.timeDuetext
+          // if (this.timeavailable.filter(el => { return el.value === this.momenTime(item.dueDate) }).length > 0) {
+          //   this.formChange.time = this.momenTime(item.dueDate)
+        } else {
+          this.formChange.time = ''
+        }
+        this.dialogConfirm = true
+        console.log('formChange', this.formChange)
+        console.log('flowSelect', this.flowSelect)
       }
-      this.dialogConfirm = true
-      console.log('formChange', this.formChange)
-      console.log('flowSelect', this.flowSelect)
     },
     async onConfirm (item) {
       this.dataReady = false
