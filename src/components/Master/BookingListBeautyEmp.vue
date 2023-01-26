@@ -9339,11 +9339,12 @@ export default {
             if (this.getSelectText === 'cancel') {
               this.editDataSelectSubmit()
             } else {
+              // this.masBranchIDOldEdit !== this.formEdit.masBranchID
               if (this.formEdit.radiosRemark === 'FastTrack') {
                 let getcount = await this.getCountFastTrack(this.dateEdit, this.formEdit.flowId, this.formEdit.masBranchID)
                 let setCountFast = this.branch.filter(el => { return el.value === this.formEdit.masBranchID })[0].allData.countFastTrack
                 if (getcount < setCountFast) {
-                  if (this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+                  if (this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
                     let chkStatLimit = this.dataEmpAllChange.filter(el => { return el.empId === this.formEdit.bookingEmpFlow })
                     if (chkStatLimit.length > 0) {
                       if (chkStatLimit[0].limitBookingCheck === 'True') {
@@ -9361,6 +9362,10 @@ export default {
                     } else {
                       this.editDataSelectSubmit()
                     }
+                  } else if (this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+
+                  } else if (this.flowIdOldEdit !== this.formEdit.flowId && this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) { 
+
                   } else {
                     this.editDataSelectSubmit()
                   }
@@ -9370,7 +9375,7 @@ export default {
                   this.loadingEdit = false
                 }
               } else {
-                if (this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+                if (this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
                   let chkStatLimit = this.dataEmpAllChange.filter(el => { return el.empId === this.formEdit.bookingEmpFlow })
                   if (chkStatLimit.length > 0) {
                     if (chkStatLimit[0].limitBookingCheck === 'True') {
