@@ -2053,12 +2053,16 @@ export default {
       // }
       // if (statusPackage === 'open') {
       if (this.dataItem[0].checkOnsite === 'True') {
-
+        console.log('IF!!!!')
       } else {
         let dtint = '0'
         if (this.dataFlow.filter(el => { return el.value === item.flowId }).length > 0) {
           let dts = JSON.parse(this.dataFlow.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
-          dtint = parseInt(dts.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
+          if (dts.filter(el => el.value === item.timeDuetext).length > 0) {
+            dtint = parseInt(dts.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
+          } else {
+            dtint = '0'
+          }
         } else {
           dtint = '0'
         }

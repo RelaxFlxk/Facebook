@@ -6630,6 +6630,7 @@ export default {
       statusShowDateConfiremjob: true,
       memberId: '',
       flowIdOldEdit: '',
+      masBranchIDOldEdit: '',
       Redirect: '',
       dialogShowDeposit: false,
       depositLink: '',
@@ -7624,7 +7625,17 @@ export default {
       } else {
         console.log('1259', LimitBooking)
         LimitBooking.forEach((item) => {
-          let dt = JSON.parse(this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.setTime) || []
+          let setTime = []
+          // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
+          if (this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.setTimebyday === 'True') {
+            let timeJson = JSON.parse(this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.setTime).filter((items) => items.value === new Date(this.date).getDay())
+            setTime = timeJson[0].setTime || []
+            console.log('IF')
+          } else {
+            console.log('ELSE')
+            setTime = JSON.parse(this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.setTime) || []
+          }
+          let dt = setTime
           // let dt = JSON.parse(this.branchData.filter(item => { return item.masBranchID === this.formAdd.masBranchID })[0].setTime) || []
           let dtint = '0'
           if (dt.filter(item => item.value === this.time.value).length > 0) {
@@ -7733,7 +7744,7 @@ export default {
         console.log('TimeData', TimeData)
         if (this.timeavailable.length > 0) {
           let LimitBooking = await this.getLimitBookingChang()
-          console.log('LimitBooking', LimitBooking)
+          console.log('LimitBooking!!!!!!!', LimitBooking)
           if (LimitBooking.status !== false) {
             if (LimitBooking.length > 0) {
               LimitBooking.forEach((i, n) => {
@@ -7931,6 +7942,7 @@ export default {
     async getLimitBookingChang () {
       let LimitBooking = axios.get(this.DNS_IP + '/LimitBookingDate/get?shopId=' + this.$session.getAll().data.shopId + '&flowId=' + this.flowIDLimit + '&bookingDate=' + this.formChange.date).then(async (response) => {
         let rs = response.data
+        console.log('rs', rs)
         return rs
       })
       return LimitBooking
@@ -8784,6 +8796,7 @@ export default {
       this.userId = dt.userId
       this.BookingDataItemEdit = []
       this.formEdit.masBranchID = dt.masBranchID
+      this.masBranchIDOldEdit = dt.masBranchID
       this.formEdit.flowId = dt.flowId
       this.flowIdOldEdit = dt.flowId
       this.empSelectEdit = parseInt(dt.empSelect)
@@ -8800,29 +8813,38 @@ export default {
       // let dtTime = await this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
       let dtTime = this.dataFlowSelectEdit.filter(item => { return item.value === this.formEdit.flowId }) || []
       console.log('dtTime', dtTime)
-      this.setLimitBookingEdit(dt.dueDateDay)
-      // if (dtTime.length > 0) {
-      //   this.statusShowMap = dtTime[0].allData.checkOnsite || 'False'
-      //   // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
-      //   console.log('timeavailable', dtTime.map(item => item.allData.setTime))
-      //   if (dtTime.map(item => item.allData.setTime)[0] === null || dtTime.map(item => item.allData.setTime)[0] === '') {
-      //     this.timeavailable = []
-      //     this.timeEdit = ''
-      //   } else {
-      //     this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
-      //     if (this.timeavailable.filter(el => { return el.text === dt.timeText }).length > 0) {
-      //       if (dt.timeText) {
-      //         this.timeEdit = { text: dt.timeText, value: dt.dueDate.slice(-5) }
-      //       } else {
-      //         this.timeEdit = { text: dt.dueDate.slice(-5), value: dt.dueDate.slice(-5) }
-      //       }
-      //     } else {
-      //       this.timeEdit = { text: dt.dueDate.slice(-5), value: dt.dueDate.slice(-5) }
-      //     }
-      //   }
-      // } else {
-      //   this.statusShowMap = 'False'
-      // }
+      await this.setLimitBookingEdit(dt.dueDateDay)
+      let setTime = []
+      if (this.DataFlowName.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime).filter((items) => items.value === new Date(dt.dueDateDay).getDay())
+        setTime = timeJson[0].setTime || []
+        console.log('IF')
+      } else {
+        console.log('ELSE')
+        setTime = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime) || []
+      }
+      if (dtTime.length > 0) {
+        this.statusShowMap = dtTime[0].allData.checkOnsite || 'False'
+        // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
+        console.log('timeavailable', dtTime.map(item => item.allData.setTime))
+        if (dtTime.map(item => item.allData.setTime)[0] === null || dtTime.map(item => item.allData.setTime)[0] === '') {
+          this.timeavailable = []
+          this.timeEdit = ''
+        } else {
+          this.timeavailable = setTime
+          if (this.timeavailable.filter(el => { return el.text === dt.timeText }).length > 0) {
+            if (dt.timeText) {
+              this.timeEdit = { text: dt.timeText, value: dt.dueDate.slice(-5) }
+            } else {
+              this.timeEdit = { text: dt.dueDate.slice(-5), value: dt.dueDate.slice(-5) }
+            }
+          } else {
+            this.timeEdit = { text: dt.dueDate.slice(-5), value: dt.dueDate.slice(-5) }
+          }
+        }
+      } else {
+        this.statusShowMap = 'False'
+      }
       console.log('setDataEdit', dt)
       await this.getPackage(dt)
       if (this.dataPackage.length > 0) {
@@ -9013,6 +9035,8 @@ export default {
                       } else {
                         limitBookingCounts = 0
                       }
+                      console.log('NEW', this.formEdit.masBranchID)
+                      console.log('OLD', this.masBranchIDOldEdit)
                       if (dueOld !== dueNew) {
                         let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
                         console.log('chkStatus', chkStatus)
@@ -9023,6 +9047,24 @@ export default {
                           this.loadingEdit = false
                         }
                       } else if (dueOld === dueNew && this.flowIdOldEdit !== this.formEdit.flowId) {
+                        let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
+                        console.log('chkStatus', chkStatus)
+                        if (chkStatus.status) {
+                          this.editDataSelectSubmit()
+                        } else {
+                          this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
+                          this.loadingEdit = false
+                        }
+                      } else if (dueOld === dueNew && this.masBranchIDOldEdit !== this.formEdit.masBranchID) {
+                        let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
+                        console.log('chkStatus', chkStatus)
+                        if (chkStatus.status) {
+                          this.editDataSelectSubmit()
+                        } else {
+                          this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
+                          this.loadingEdit = false
+                        }
+                      } else if (dueOld === dueNew && this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.flowIdOldEdit !== this.formEdit.flowId) {
                         let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
                         console.log('chkStatus', chkStatus)
                         if (chkStatus.status) {
@@ -9070,6 +9112,24 @@ export default {
                         this.loadingEdit = false
                       }
                     } else if (dueOld === dueNew && this.flowIdOldEdit !== this.formEdit.flowId) {
+                      let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
+                      console.log('chkStatus', chkStatus)
+                      if (chkStatus.status) {
+                        this.editDataSelectSubmit()
+                      } else {
+                        this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
+                        this.loadingEdit = false
+                      }
+                    } else if (dueOld === dueNew && this.masBranchIDOldEdit !== this.formEdit.masBranchID) {
+                      let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
+                      console.log('chkStatus', chkStatus)
+                      if (chkStatus.status) {
+                        this.editDataSelectSubmit()
+                      } else {
+                        this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
+                        this.loadingEdit = false
+                      }
+                    } else if (dueOld === dueNew && this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.flowIdOldEdit !== this.formEdit.flowId) {
                       let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
                       console.log('chkStatus', chkStatus)
                       if (chkStatus.status) {
@@ -9242,11 +9302,6 @@ export default {
             setTimeout(() => this.editDataSelectSubmit(), 3000)
             console.log('close alert : ', error)
           })
-          // }).catch(error => {
-          //   // this.dataEditReady = true
-          //   setTimeout(() => this.editDataSelectSubmit(), 3000)
-          //   console.log('close alert : ', error)
-          // })
       } else {
         this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
         clearInterval(this.setTimerCalendar)
@@ -13034,6 +13089,7 @@ export default {
         dueDateTimeNew: dueDateTimeNew,
         flowId: item.flowId,
         flowIdOld: this.flowIdOldEdit,
+        masBranchIDOld: this.masBranchIDOldEdit,
         masBranchID: item.masBranchID,
         dateSelect: dueDateNew,
         timeSelect: dueDateTimeNew,

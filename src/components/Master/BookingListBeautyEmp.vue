@@ -8117,7 +8117,17 @@ export default {
         console.log('1257')
       } else {
         let allBookingTime = []
-        let dt = JSON.parse(this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTime) || []
+        let setTime = []
+        console.log('setLimitBooking', this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0])
+        if (this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTimebyday === 'True') {
+          let timeJson = JSON.parse(this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTime).filter((items) => items.value === new Date(this.date).getDay())
+          setTime = timeJson[0].setTime || []
+          console.log('IF++++++++')
+        } else {
+          console.log('ELSE++++++')
+          setTime = JSON.parse(this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTime) || []
+        }
+        let dt = setTime
         LimitBooking.forEach((item, key) => {
           if (dt.filter((i, k) => i.value === item.bookingTime).length > 0) {
             let index = dt.findIndex((i, k) => i.value === item.bookingTime)
