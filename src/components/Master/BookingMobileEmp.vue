@@ -2847,21 +2847,22 @@ export default {
       console.log('item', item)
       if (item.statusBt === 'wait') {
         this.checkStatusBooking = item.statusBt
-        this.SetallowedDatesChange(this.bookingEmpFlow)
+        // this.SetallowedDatesChange(this.bookingEmpFlow)
         this.formChange.date = item.dueDateDay
-        await this.setLimitBookingEdit(item.dueDateDay)
+        this.formChange.time = { text: item.timeText, value: item.timeDuetext }
+        // await this.setLimitBookingEdit(item.dueDateDay)
         // this.formChange.date = this.momenDate_1(item.dueDate)
         // await this.setLimitBooking(this.momenDate_1(item.dueDate))
         console.log('confirmChk', item)
         this.dataConfirm = item
         await this.getEmpSelect(item)
-        if (this.timeavailable.filter(el => { return el.value === item.timeDuetext }).length > 0) {
-          this.formChange.time = item.timeDuetext
-          // if (this.timeavailable.filter(el => { return el.value === this.momenTime(item.dueDate) }).length > 0) {
-          //   this.formChange.time = this.momenTime(item.dueDate)
-        } else {
-          this.formChange.time = ''
-        }
+        // if (this.timeavailable.filter(el => { return el.value === item.timeDuetext }).length > 0) {
+        //   this.formChange.time = item.timeDuetext
+        //   // if (this.timeavailable.filter(el => { return el.value === this.momenTime(item.dueDate) }).length > 0) {
+        //   //   this.formChange.time = this.momenTime(item.dueDate)
+        // } else {
+        //   this.formChange.time = ''
+        // }
         this.dialogConfirm = true
         console.log('formChange', this.formChange)
         console.log('flowSelect', this.flowSelect)
@@ -2898,11 +2899,11 @@ export default {
     },
     async onConfirm (item) {
       this.dataReady = false
-      if (this.timeavailable.filter(el => { return el.value === this.formChange.time.value }).length > 0) {
-        if (this.dataItem[0].checkOnsite === 'True') {
-          this.dataReady = true
-        } else {
-          if (this.checkStatusBooking === 'cancel') {
+      if (this.dataItem[0].checkOnsite === 'True') {
+        this.dataReady = true
+      } else {
+        if (this.checkStatusBooking === 'cancel') {
+          if (this.timeavailable.filter(el => { return el.value === this.formChange.time.value }).length > 0) {
             let chkStatLimit = this.dataEmpAll.filter(el => { return el.value === this.bookingEmpFlow })
             if (chkStatLimit.length > 0) {
               if (chkStatLimit[0].limitBookingCheck === 'True') {
@@ -2969,53 +2970,53 @@ export default {
                   })
               })
           } else {
-            // let dtint = '0'
-            // if (this.dataFlow.filter(el => { return el.value === item.flowId }).length > 0) {
-            //   let dts = JSON.parse(this.dataFlow.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
-            //   dtint = parseInt(dts.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
-            // } else {
-            //   dtint = '0'
-            // }
-            let dt = {
-              pageStatus: this.dataItem[0].statusBt,
-              // limitBookingCount: dtint,
-              bookNo: item.bookNo,
-              contactDate: this.format_date(new Date()),
-              status: 'confirm',
-              statusUse: 'use',
-              shopId: this.$session.getAll().data.shopId,
-              CREATE_USER: this.$session.getAll().data.userName,
-              LAST_USER: this.$session.getAll().data.userName
-            }
-            axios
-              .post(this.DNS_IP + '/booking_transaction/add', dt)
-              .then(async response => {
-                await this.updateRemark(item)
-                this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-                let DTitem = item.userId
-                console.log('DTITEM', DTitem)
-                this.dialogConfirm = false
-                this.dataReady = true
-                if (DTitem !== 'user-skip') {
-                  await this.chkBookingNo()
-                  // this.getTimesChange('update')
-                  this.pushMsgConfirm(item.bookNo)
-                } else {
-                  await this.chkBookingNo()
-                // this.getTimesChange('update')
-                }
-                this.dialogConfirm = false
-                console.log('addDataGlobal', response)
-              })
-              .catch(error => {
-                console.log('error function addData : ', error)
-                this.dataReady = true
-              })
+            this.$swal('ผิดพลาด', 'กรุณาเลือกเวลา', 'error')
+            this.dataReady = true
           }
+        } else {
+          // let dtint = '0'
+          // if (this.dataFlow.filter(el => { return el.value === item.flowId }).length > 0) {
+          //   let dts = JSON.parse(this.dataFlow.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
+          //   dtint = parseInt(dts.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
+          // } else {
+          //   dtint = '0'
+          // }
+          let dt = {
+            pageStatus: this.dataItem[0].statusBt,
+            // limitBookingCount: dtint,
+            bookNo: item.bookNo,
+            contactDate: this.format_date(new Date()),
+            status: 'confirm',
+            statusUse: 'use',
+            shopId: this.$session.getAll().data.shopId,
+            CREATE_USER: this.$session.getAll().data.userName,
+            LAST_USER: this.$session.getAll().data.userName
+          }
+          axios
+            .post(this.DNS_IP + '/booking_transaction/add', dt)
+            .then(async response => {
+              await this.updateRemark(item)
+              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              let DTitem = item.userId
+              console.log('DTITEM', DTitem)
+              this.dialogConfirm = false
+              this.dataReady = true
+              if (DTitem !== 'user-skip') {
+                await this.chkBookingNo()
+                // this.getTimesChange('update')
+                this.pushMsgConfirm(item.bookNo)
+              } else {
+                await this.chkBookingNo()
+                // this.getTimesChange('update')
+              }
+              this.dialogConfirm = false
+              console.log('addDataGlobal', response)
+            })
+            .catch(error => {
+              console.log('error function addData : ', error)
+              this.dataReady = true
+            })
         }
-      } else {
-        this.$swal('ผิดพลาด', 'กรุณาเลือกเวลา', 'error')
-        this.dataReady = true
       }
       // }
     },
