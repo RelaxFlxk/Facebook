@@ -405,7 +405,7 @@
                         ></v-select>
                       </v-col>
                       <v-col cols="12" class="pa-0" v-if="formUpdate.privacyPage === 'bookingform'">
-                        <v-autocomplete
+                        <v-select
                           v-model="formUpdate.flowId"
                           :items="flow"
                           label="ประเภทบริการ"
@@ -413,8 +413,9 @@
                           dense
                           outlined
                           multiple
+                          attach
                           :rules="nameRules"
-                        ></v-autocomplete>
+                        ></v-select>
                       </v-col>
                       <v-col cols="12" class="pa-0">
                         <v-textarea
