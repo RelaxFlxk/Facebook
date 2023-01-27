@@ -969,7 +969,8 @@
                   :headers="columns"
                   :items="dataItem"
                   :search="searchAll2"
-                  :items-per-page="10"
+                  disable-pagination
+                  hide-default-footer
                 >
                   <template v-slot:[`item.privacyPage`]="{ item }">
                     <p v-if="item.privacyPage === 'booking'">หน้านัดหมาย</p>
