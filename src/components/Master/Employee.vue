@@ -970,7 +970,8 @@
                   :headers="columns"
                   :items="dataItem"
                   :search="searchAll2"
-                  :items-per-page="10"
+                  disable-pagination
+                  hide-default-footer
                 >
                   <template v-slot:[`item.privacyPage`]="{ item }">
                     <p v-if="item.privacyPage === 'booking'">หน้านัดหมาย</p>
@@ -1844,6 +1845,12 @@ export default {
             if (this.formAdd.additionalInformation) {
               this.formAdd.additionalInformation = (this.formAdd.additionalInformation || '').replace(/%/g, '%%').replace(/'/g, "\\'")
             }
+            if (this.formAdd.empFirst_NameTH) {
+              this.formAdd.empFirst_NameTH = (this.formAdd.empFirst_NameTH || '').replace(/%/g, '%%').replace(/'/g, "\\'")
+            }
+            if (this.formAdd.empLast_NameTH) {
+              this.formAdd.empLast_NameTH = (this.formAdd.empLast_NameTH || '').replace(/%/g, '%%').replace(/'/g, "\\'")
+            }
             delete this.formAdd['pictureUrlPreview']
             await axios
               .post(
@@ -1935,6 +1942,12 @@ export default {
             }
             if (this.formUpdateItem.additionalInformation) {
               this.formUpdateItem.additionalInformation = (this.formUpdateItem.additionalInformation || '').replace(/%/g, '%%').replace(/'/g, "\\'")
+            }
+            if (this.formUpdateItem.empFirst_NameTH) {
+              this.formUpdateItem.empFirst_NameTH = (this.formUpdateItem.empFirst_NameTH || '').replace(/%/g, '%%').replace(/'/g, "\\'")
+            }
+            if (this.formUpdateItem.empLast_NameTH) {
+              this.formUpdateItem.empLast_NameTH = (this.formUpdateItem.empLast_NameTH || '').replace(/%/g, '%%').replace(/'/g, "\\'")
             }
             await axios
               .post(
