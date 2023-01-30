@@ -1319,15 +1319,21 @@ export default {
     async getJobLog () {
       console.log('shopId', this.shopId)
       console.log('this.selectFlow', this.selectFlow)
-      console.log('jobLog_jobNo', this.jobLog_jobNo)
+      console.log('jobLog_jobNo!!!!!!!', this.jobLog_jobNo)
       this.dataJobLog = []
       if (this.jobLog_jobNo !== '') {
         let params = null
+        // if (this.selectFlow === 'All') {
+        // // if ()
+        //   params = this.DNS_IP + '/job_log/get?shopId=' + this.shopId + '&checkOnsite=True&empStepId=' + this.session.data.empId + '&jobNo=' + this.jobLog_jobNo
+        // } else {
+        //   params = this.DNS_IP + '/job_log/get?shopId=' + this.shopId + '&flowId=' + this.selectFlow + '&empStepId=' + this.session.data.empId + '&jobNo=' + this.jobLog_jobNo
+        // }
         if (this.selectFlow === 'All') {
         // if ()
-          params = this.DNS_IP + '/job_log/get?shopId=' + this.shopId + '&checkOnsite=True&empStepId=' + this.session.data.empId + '&jobNo=' + this.jobLog_jobNo
+          params = this.DNS_IP + '/job_log/get?shopId=' + this.shopId + '&checkOnsite=True&jobNo=' + this.jobLog_jobNo
         } else {
-          params = this.DNS_IP + '/job_log/get?shopId=' + this.shopId + '&flowId=' + this.selectFlow + '&empStepId=' + this.session.data.empId + '&jobNo=' + this.jobLog_jobNo
+          params = this.DNS_IP + '/job_log/get?shopId=' + this.shopId + '&flowId=' + this.selectFlow + '&jobNo=' + this.jobLog_jobNo
         }
         await axios.get(params)
           .then(response => {
@@ -1641,8 +1647,9 @@ export default {
               }
             }
             console.log('this.itemJob', this.itemJob)
-            if (this.itemJob.filter((item) => item.sortNo === 2).length === 1) {
-              this.jobLog_jobNo = this.itemJob[0].jobNo
+            if (this.itemJob.filter((item) => item.sortNo >= 2).length === 1) {
+              // console.log('???')
+              this.jobLog_jobNo = this.itemJob.filter((item) => item.sortNo >= 2)[0].jobNo
             }
             console.log('checkIF!!!!!!!!!!!!Sort2', this.jobLog_jobNo)
           }

@@ -669,10 +669,9 @@
                           <p class="ma-0" v-if="items.fieldValue.length <= 14">{{ items.fieldValue }}</p>
                         </div>
                         </div>
-                        <v-row style="height:50px;" class=" ps-3 pt-5 pb-1 mb-1">
+                        <!-- <v-row style="height:50px;" class=" ps-3 pt-5 pb-1 mb-1">
                           <v-col cols="12" class="mt-1 pa-0">
                             <p class="font-weight-medium mb-0 pb-1">
-                              <!-- <v-icon class="pb-1 mr-1 ml-1" large > mdi-shield-account</v-icon> -->
                               <v-tooltip top
                               color="#84C650"
                                 v-if="itemsJob.statusTime === 'timeStart' || itemsJob.statusTime === null">
@@ -708,7 +707,7 @@
                                 {{JobDataItem.filter(row => {return row.jobId == itemsJob.jobId})[0].empStep}}
                             </p>
                           </v-col>
-                        </v-row>
+                        </v-row> -->
                         <!-- <v-avatar
                 color="brown"
               >
