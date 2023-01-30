@@ -16,6 +16,15 @@
               <v-icon color="orange darken-2" large left>mdi-alert-box-outline</v-icon>
             </v-btn> -->
             <v-btn
+              color="purple"
+              depressed
+              dark
+              @click="(dialogSortFlow = true)"
+            >
+              <v-icon left>mdi-vector-selection</v-icon>
+              จัดลำดับการแสดง
+            </v-btn>
+            <v-btn
               color="primary"
               depressed
               @click="(dialogAdd = true), validate('ADD'), (desserts = []), getCustomField(), formAdd.storeFrontCheck = 'False'"
@@ -26,6 +35,88 @@
           </v-col>
         </v-row>
         <v-row>
+          <v-dialog v-model="dialogSortFlow" persistent max-width="70%">
+            <v-card>
+              <v-card-text v-if="dataReady">
+                <v-container>
+                  <v-row>
+                    <v-col cols="10" class="text-left pt-10">
+                    <h3><strong>จัดลำดับการแสดง</strong></h3>
+                    </v-col>
+                    <v-col cols="2" class="pt-10">
+                      <div style="text-align: end;">
+                          <v-btn
+                          class="mx-2"
+                          fab
+                          small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
+                          @click="(dialogSortFlow = false)"
+                          >
+                          X
+                          </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12">
+                      <draggable
+                        :list="dessertsSort"
+                        :disabled="!enabled"
+                        class="list-group"
+                        ghost-class="ghost"
+                        :move="checkMove"
+                        @start="dragging = true"
+                        @end="dragging = false"
+                      >
+                        <div
+                          class="list-group-item"
+                          v-for="element in dessertsSort"
+                          :key="element.flowId"
+                        >
+                          <v-icon>mdi-drag-variant</v-icon>
+                          <!-- {{ element.flowId }} -->
+                          {{ element.flowName }}
+                        </div>
+                      </draggable>
+                    </v-col>
+                  </v-row>
+                  <br>
+                  <div class="text-right">
+                      <v-btn
+                      color="teal"
+                      class="button"
+                      dark
+                      large
+                      @click="saveSortFlow()"
+                    >
+                      จัดลำดับการแสดง
+                    </v-btn>
+                    <v-btn
+                      color="error"
+                      class="button"
+                      dark
+                      large
+                      @click="dialogSortFlow = false"
+                    >
+                      ปิด
+                    </v-btn>
+                  </div>
+                </v-container>
+              </v-card-text>
+              <v-card-text v-else>
+                <v-row>
+                  <v-col cols="10" class="text-left pt-10">
+                    <h3><strong>จัดลำดับการแสดง</strong></h3>
+                  </v-col>
+                </v-row>
+                <div class="text-center">
+                  <waitingAlert></waitingAlert>
+                </div>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
           <!-- step -->
           <v-dialog v-model="dialogStep" persistent max-width="70%">
           <!-- <v-dialog v-model="dialogStep" persistent :max-width="checkOnsite === 'True' ? '50%' : '70%'"> -->
@@ -1900,9 +1991,11 @@ import waitingAlert from '../waitingAlert.vue'
 import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
+import draggable from 'vuedraggable'
 
 export default {
   components: {
+    draggable,
     waitingAlert,
     'left-menu-admin': adminLeftMenu,
     VuetifyMoney
@@ -1910,11 +2003,31 @@ export default {
   computed: {
     formTitle () {
       return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+    },
+    draggingInfo () {
+      return this.dragging ? 'under drag' : ''
     }
   },
   data () {
     return {
+      // allowDrag: true,
+      // selected: [],
+      enabled: true,
+      dragging: false,
+      dessertsSort: [],
+      headersSort: [
+        // { text: 'Lock', value: 'lock', width: '50px', sortable: false },
+        {
+          text: 'รหัสบริการ',
+          align: 'start',
+          value: 'flowId'
+        },
+        { text: 'ชื่อบริการ', value: 'flowName' }
+      ],
+      reRender: 0,
+      dragNdrop: [],
       servicePointCount: '',
+      dialogSortFlow: false,
       dialogwarn: false,
       checkboxwarn: false,
       warnText: [],
@@ -2323,9 +2436,64 @@ export default {
     // Get Data
     await this.getCustomField()
     await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
+    if (this.dataItem.length > 0) {
+      for (let i = 0; i < this.dataItem.length; i++) {
+        let d = this.dataItem[i]
+        let s = {}
+        s.flowId = d.flowId
+        s.flowName = d.flowName
+        this.dessertsSort.push(s)
+      }
+      // this.initSortable()
+    }
     await this.getBookingField()
   },
   methods: {
+    saveSortFlow () {
+      // console.log('saveSortFlow', JSON.stringify(this.dessertsSort))
+      this.$swal({
+        title: 'ต้องการ เปลี่ยนแปลงลำดับการแสดง ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async (result) => {
+          this.dataReady = false
+          let dt = {
+            data: this.dessertsSort
+          }
+          await axios
+            .post(this.DNS_IP + '/flow/updateSortFlow', dt)
+            .then(async (response) => {
+              this.$swal('เรียบร้อย', 'เปลี่ยนแปลงลำดับการแสดง เรียบร้อย', 'success')
+              this.dialogSortFlow = false
+              this.dataReady = true
+              await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
+              if (this.dataItem.length > 0) {
+                this.dessertsSort = []
+                for (let i = 0; i < this.dataItem.length; i++) {
+                  let d = this.dataItem[i]
+                  let s = {}
+                  s.flowId = d.flowId
+                  s.flowName = d.flowName
+                  this.dessertsSort.push(s)
+                }
+                // this.initSortable()
+              }
+            })
+            .catch(error => {
+              console.log('error function addData : ', error)
+              this.dataReady = true
+            })
+        })
+      // console.log('dataList', JSON.stringify(dataList))
+    },
+    checkMove: function (e) {
+      window.console.log('Future index: ' + e.draggedContext.futureIndex)
+    },
     checkStoreFrontAdd () {
       if (this.formAdd.storeFrontCheck === 'True') {
         this.formAdd.checkDeposit = 'False'
@@ -3941,6 +4109,15 @@ export default {
 }
 </script>
 <style scope>
+.handle {
+  cursor: move;
+}
+tbody tr:nth-of-type(even) {
+  background-color: rgba(0, 0, 0, 0.01);
+}
+tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.05);
+}
 #margin {
   margin-top: 50px;
   margin-bottom: 40px;
