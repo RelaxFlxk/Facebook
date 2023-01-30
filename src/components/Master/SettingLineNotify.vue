@@ -819,7 +819,7 @@ export default {
       }
       if (checkitemSelect.length > 0) {
         dataAdd = {
-          flowData: JSON.stringify(this.flowData),
+          flowData: JSON.stringify(this.flowData).replace(/'/g, ''),
           masBranchID: JSON.stringify(BranchJSON),
           BookingSend: bookingS,
           shopId: this.shopId,
@@ -986,7 +986,7 @@ export default {
         BranchJSON.push(s)
       }
       var data = {
-        flowData: JSON.stringify(this.itemSelectEdit),
+        flowData: JSON.stringify(this.itemSelectEdit).replace(/'/g, ''),
         masBranchID: JSON.stringify(BranchJSON),
         BookingSend: bookingS,
         LAST_USER: this.$session.getAll().data.userName
