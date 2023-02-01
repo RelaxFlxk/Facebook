@@ -526,7 +526,7 @@ export default {
       await axios
         .get(urlApi)
         .then(async response => {
-          console.log('getData', response.data.length)
+          console.log('system_shop_Payment', response.data)
           let rs = response.data
           if (rs.status !== false) {
             for (let i = 0; i < rs.length; i++) {
@@ -546,7 +546,8 @@ export default {
             // this.itemBookingUse = this.itemBooking.filter(el => { return el.paymentStatus === this.getSelectText })
           }
         })
-      let urlApi1 = this.DNS_IP + '/system_shop_Payment/get?paymentStatus=is null'
+      let urlApi1 = this.DNS_IP + '/system_shop_Payment/get'
+      // let urlApi1 = this.DNS_IP + '/system_shop_Payment/get?paymentStatus=is null&NopaymentDate=' + this.dateStart
       await axios
         .get(urlApi1)
         .then(async response => {
@@ -556,17 +557,21 @@ export default {
             for (let i = 0; i < rs.length; i++) {
               let d = rs[i]
               d.billingPhone = d.billingPhone || d.contactTel
-              d.paymentStatus = d.paymentStatus || 'noCash'
-              if (this.itemCountBooking.filter(el => { return el.shopId === d.shopId_Shop }).length > 0) {
-                d.countBooking = this.itemCountBooking.filter(el => { return el.shopId === d.shopId_Shop })[0].countBooking
-              } else {
-                d.countBooking = 0
-              }
-              if (d.paymentStatus === 'noCash') {
-                if (d.shopActive === 'inactive') {
-                  d.paymentStatus = 'inactive'
+              // d.paymentStatus = d.paymentStatus || 'noCash'
+              console.log(this.itemBooking.filter(el => { return el.shopId === d.shopId_Shop }))
+              if (this.itemBooking.filter(el => { return el.shopId === d.shopId_Shop }).length === 0) {
+                if (this.itemCountBooking.filter(el => { return el.shopId === d.shopId_Shop }).length > 0) {
+                  d.countBooking = this.itemCountBooking.filter(el => { return el.shopId === d.shopId_Shop })[0].countBooking
+                } else {
+                  d.countBooking = 0
                 }
-                this.itemBooking.push(d)
+                d.paymentStatus = 'noCash'
+                if (d.paymentStatus === 'noCash') {
+                  if (d.shopActive === 'inactive') {
+                    d.paymentStatus = 'inactive'
+                  }
+                  this.itemBooking.push(d)
+                }
               }
             }
           } else {
