@@ -15,7 +15,7 @@
           >
             <v-row align="center">
               <v-col class="grow">
-                ท่านยังไม่ได้ชำระค่าบริการ
+                โปรดชำระเงิน ภายในวันที่ 7 ของทุกเดือนเพื่อการใช้งานที่ต่อเนื่อง
               </v-col>
               <v-col class="shrink" @click="gotoBilling()">
                 <v-btn small>ชำระค่าบริการ</v-btn>
@@ -692,8 +692,18 @@ export default {
       //   this.paymentStatus = 'fix'
       // }
       let trialsVersionDate = this.$session.getAll().data.trialsVersionDate || ''
+      let billingEndDate = this.$session.getAll().data.billingEndDate || ''
       if (trialsVersionDate === '' || moment().format('YYYY-MM-DD HH:mm') > trialsVersionDate) {
-        this.chkPlan()
+        if (parseInt(moment().format('DD')) <= 7) {
+          if (billingEndDate === '') {
+            this.chkPlan()
+          } else {
+            console.log(moment().format('YYYY-MM-DD'), billingEndDate)
+            if (moment().format('YYYY-MM-DD') > billingEndDate) {
+              this.chkPlan()
+            }
+          }
+        }
       }
       console.log('session', this.session)
       console.log('router', this.$route.fullPath)
