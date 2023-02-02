@@ -362,7 +362,7 @@ export default {
         secondaryColor: '',
         darkMode: false,
         category: '',
-        timeSlotStatus: '',
+        timeSlotStatus: 'False',
         showQrPayments: 'False',
         bookingthankTextEn: '',
         bookingthankText: ''
