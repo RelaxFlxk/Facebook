@@ -546,7 +546,7 @@ export default {
             // this.itemBookingUse = this.itemBooking.filter(el => { return el.paymentStatus === this.getSelectText })
           }
         })
-      let urlApi1 = this.DNS_IP + '/system_shop_Payment/get'
+      let urlApi1 = this.DNS_IP + '/system_shop_Payment/get?accountTest=False'
       // let urlApi1 = this.DNS_IP + '/system_shop_Payment/get?paymentStatus=is null&NopaymentDate=' + this.dateStart
       await axios
         .get(urlApi1)
