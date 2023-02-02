@@ -572,6 +572,8 @@ export default {
               this.$router.push('/Master/BookingListBeauty')
             }
           }
+        } else if (dataitem.USER_ROLE === 'storeFront') {
+          this.$router.push('/Master/BookingListQueueByUser')
         } else {
           // this.$router.push('/Dashbord/ReportBooking')
           this.$router.push('/Master/BookingField')

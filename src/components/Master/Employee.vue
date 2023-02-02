@@ -230,7 +230,7 @@
                           :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-col>
-                      <v-col cols="12" class="pa-0" v-if="formAdd.privacyPage === 'bookingform'">
+                      <v-col cols="12" class="pa-0" v-if="formAdd.privacyPage === 'bookingform' || formUpdate.privacyPage === 'bookingStoreFront'">
                         <v-autocomplete
                           v-model="formAdd.flowId"
                           :items="flow"
@@ -404,7 +404,7 @@
                           :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-col>
-                      <v-col cols="12" class="pa-0" v-if="formUpdate.privacyPage === 'bookingform'">
+                      <v-col cols="12" class="pa-0" v-if="formUpdate.privacyPage === 'bookingform' || formUpdate.privacyPage === 'bookingStoreFront'">
                         <v-select
                           v-model="formUpdate.flowId"
                           :items="flow"
@@ -981,6 +981,9 @@
                     <p v-if="item.privacyPage === 'bookingform'">
                       หน้านัดหมายของลูกค้า
                     </p>
+                    <p v-if="item.privacyPage === 'bookingStoreFront'">
+                      นัดหมายบัตรคิว
+                    </p>
                     <p v-if="item.privacyPage === 'all'">ทั้งหมด</p>
                   </template>
                   <template v-slot:[`item.CREATE_DATE`]="{ item }">
@@ -1178,6 +1181,7 @@ export default {
         { text: 'รายชื่อลูกค้านัดหมาย', value: 'booking' },
         { text: 'หน้ากระดานการทำงาน', value: 'board' },
         { text: 'หน้านัดหมายของลูกค้า', value: 'bookingform' },
+        { text: 'นัดหมายบัตรคิว', value: 'bookingStoreFront' },
         { text: 'ทั้งหมด', value: 'all' }
       ],
       nameRules: [v => !!v || 'กรุณากรอกข้อมูล '],
@@ -1837,10 +1841,10 @@ export default {
             } else {
               this.formAdd.empImge = ''
             }
-            if (this.formAdd.privacyPage !== 'bookingform') {
-              delete this.formAdd['flowId']
-            } else {
+            if (this.formAdd.privacyPage === 'bookingform' || this.formAdd.privacyPage === 'bookingStoreFront') {
               this.formAdd.flowId = JSON.stringify(this.formAdd.flowId)
+            } else {
+              delete this.formAdd['flowId']
             }
             if (this.formAdd.additionalInformation) {
               this.formAdd.additionalInformation = (this.formAdd.additionalInformation || '').replace(/%/g, '%%').replace(/'/g, "\\'")
@@ -1935,10 +1939,10 @@ export default {
             } else {
               this.formUpdateItem.empImge = this.formUpdate.pictureUrlPreview
             }
-            if (this.formUpdate.privacyPage !== 'bookingform') {
-              delete this.formUpdateItem['flowId']
-            } else {
+            if (this.formUpdate.privacyPage === 'bookingform' || this.formUpdate.privacyPage === 'bookingStoreFront') {
               this.formUpdateItem.flowId = JSON.stringify(this.formUpdate.flowId)
+            } else {
+              delete this.formUpdateItem['flowId']
             }
             if (this.formUpdateItem.additionalInformation) {
               this.formUpdateItem.additionalInformation = (this.formUpdateItem.additionalInformation || '').replace(/%/g, '%%').replace(/'/g, "\\'")

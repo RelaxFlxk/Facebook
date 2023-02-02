@@ -719,6 +719,8 @@ export default {
         this.board()
       } else if (this.session.data.USER_ROLE === 'booking') {
         this.bookingChk()
+      } else if (this.session.data.USER_ROLE === 'storeFront') {
+        this.storeFrontChk()
       } else {
         this.adminChk()
       }
@@ -934,6 +936,12 @@ export default {
     // code block
       }
       console.log('textValue', textValue[0].type)
+    },
+    storeFrontChk () {
+      this.booking = [
+        { title: 'รายการจัดการคิวหน้าร้าน', icon: 'mdi-notebook-edit', to: '/Master/BookingListQueue', type: 'booking' },
+        { title: 'จัดการคิวหน้าร้าน', icon: 'mdi-notebook-edit', to: '/Master/BookingListQueueByUser', type: 'booking' }
+      ]
     },
     bookingChk () {
       if (this.$session.getAll().data.timeSlotStatus === 'True') {

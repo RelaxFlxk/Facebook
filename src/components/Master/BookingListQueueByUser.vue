@@ -2,18 +2,18 @@
   <div>
     <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
     <v-main>
-      <div class="pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4">
-        <v-row>
-          <v-col cols="6" class="text-left">
+      <div class="px-lg-4 mb-16" style="overflow-x: hidden;min-height:400px;">
+        <!-- <v-row> -->
+          <!-- <v-col cols="6" class="text-left">
             <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
-          </v-col>
+          </v-col> -->
           <!-- <v-col cols="6" class="v-margit_button text-right">
             <v-btn color="primary" depressed @click="dialogAdd = true">
               <v-icon left>mdi-text-box-plus</v-icon>
               เพิ่มข้อมูล
             </v-btn>
           </v-col> -->
-        </v-row>
+        <!-- </v-row> -->
         <v-card flat v-if="!overlay">
           <v-card-text>
             <div class="text-center">
@@ -23,8 +23,8 @@
         </v-card>
         <template v-else>
         <v-form ref="form_search" v-model="validSearch" lazy-validation>
-          <v-row>
-            <v-col col="auto">
+          <v-row class="no-gutters">
+            <v-col col="auto" class="px-3 mt-5 text-right">
               <v-select
                 v-model="masBranchID"
                 background-color="white"
@@ -44,7 +44,7 @@
                 </template>
               </v-select>
             </v-col>
-            <v-col col="auto">
+            <v-col col="auto" class="px-3 mt-5 text-right">
               <v-select
                 style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
                 v-model="flowSelect"
@@ -65,7 +65,7 @@
                 </template>
               </v-select>
             </v-col>
-            <v-col col="auto">
+            <v-col cols="12" class="px-3 mt-5 text-right">
               <v-menu
                 ref="menu"
                 v-model="menuStart"
@@ -124,7 +124,7 @@
                 </template>
               </v-select>
             </v-col> -->
-            <v-col cols="auto" class="pt-0">
+            <!-- <v-col cols="auto" class="pt-0">
               <v-btn
                 color="warning"
                 fab
@@ -133,7 +133,7 @@
               >
                 <v-icon color="white">mdi-clipboard-text-search</v-icon>
               </v-btn>
-            </v-col>
+            </v-col> -->
           </v-row>
           <!-- <v-row justify="center">
             <v-col cols="3" class="pt-0">
@@ -149,140 +149,47 @@
             </v-col>
           </v-row> -->
         </v-form>
-        <v-row>
+        <v-row v-if="itemBooking.length > 0">
           <v-col cols="12">
-            <v-card>
-            <v-card-title>
-              <v-text-field
-                v-model="search"
-                append-icon="mdi-magnify"
-                label="ค้นหา"
-                single-line
-                hide-details
-              ></v-text-field>
-            </v-card-title>
-            <v-data-table
-              :headers="headers"
-              :items="itemBooking"
-              :search="search"
-              disable-pagination
-              hide-default-footer
-            >
-            <template v-slot:[`item.dueDate`]="{ item }">
-              {{ format_dateFUllTime(item.dueDate) }}
-            </template>
-            <template v-slot:[`item.action1`]="{ item }">
-              <v-btn
-                color="green"
-                small
-                dark
+            <br>
+            <v-card class="mx-6 pa-3 ma-2" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;">
+              <h6 style="color:#092C4C" class="text-left font-weight-bold ml-10">{{ itemBooking[0].flowName }}</h6>
+              <p style="color:#092C4C;font-size: 80px;" class="text-center font-weight-black mt-n10 mb-n5">{{itemBooking[0].storeFrontQueue}}</p>
+              <div v-for="(item3 , index3) in HistoryData" :key="index3">
+                <h5 class="text-start  ml-10" v-if="item3.fieldValue !== '' && item3.fieldName !== 'เบอร์โทร'"><strong>{{item3.fieldValue}}</strong></h5>
+                <h5 @click="dial(item3.fieldValue.replace(/-/g, ''))" class="text-start  ml-10" v-if="item3.fieldValue !== '' && item3.fieldName === 'เบอร์โทร'"><v-icon color="#24C74D" class="iconify" data-icon="el:phone-alt">mdi-phone</v-icon><strong class="ml-4">{{'' + item3.fieldValue}}</strong></h5>
+              </div>
+              <h5 v-if="itemBooking[0].servicePoint" class="text-start  ml-10"><strong>{{ languageSelect === 0 ? itemBooking[0].servicePoint : JSON.parse(itemBooking[0].servicePointCount).filter(el => { return el.textTh === itemBooking[0].servicePoint}).length > 0 ? JSON.parse(itemBooking[0].servicePointCount).filter(el => { return el.textTh === itemBooking[0].servicePoint})[0].textEn:itemBooking[0].servicePoint}}</strong></h5>
+              <br>
+              <div class="text-center">
+                <v-btn
+                color="#1DBF73"
                 rounded
-                @click="overlay = false, setPrint(item, 'th')"
+                :disabled="itemBooking[0].statusBt === 'confirm' ? false:true"
+                @click="closeJobSubmit(itemBooking[0])"
               >
-                <v-icon > mdi-printer </v-icon>
-                ปริ้น (TH)
+                <strong class="text-white">เรียกคิว</strong>
               </v-btn>
               <v-btn
-                color="teal"
-                small
-                dark
+                color="#1B437C"
                 rounded
-                @click="overlay = false, setPrint(item, 'en')"
+                :disabled="itemBooking[0].statusBt === 'confirmJob' ? false:true"
+                @click="closeJobSubmitReturn(itemBooking[0])"
               >
-                <v-icon > mdi-printer </v-icon>
-                ปริ้น (EN)
+                <strong class="text-white">เรียกคิวซ้ำ</strong>
               </v-btn>
-            </template>
-            <template v-slot:[`item.action`]="{ item }">
-              <v-row v-if="dialogwidth !== '50%'" class="text-center">
-                <v-col col="auto" class="pb-0">
-                  <v-btn
-                    color="primary"
-                    small
-                    rounded
-                    :disabled="item.statusBt === 'confirm' ? false:true"
-                    @click="closeJobSubmit(item)"
-                  >
-                    <v-icon > mdi-bullhorn </v-icon>
-                    เรียกคิว
-                  </v-btn>
-                </v-col>
-                <v-col col="auto" class="pb-0">
-                  <v-btn
-                    color="cyan"
-                    small
-                    rounded
-                    :disabled="item.statusBt === 'confirmJob' ? false:true"
-                    @click="closeJobSubmitReturn(item)"
-                  >
-                    <v-icon > mdi-autorenew </v-icon>
-                    เรียกคิวซ้ำ
-                  </v-btn>
-                </v-col>
-                <v-col col="auto" class="pb-0">
-                  <v-btn
-                      color="error"
-                      small
-                      rounded
-                      :disabled="item.statusBt === 'confirmJob' ? false:true"
-                      @click="backHomeSubmit(item)"
-                    >
-                      <v-icon > mdi-account-multiple-check </v-icon>
-                      ปิดงาน
-                    </v-btn>
-                </v-col>
-              </v-row>
-              <template v-else>
-                <v-btn
-                  color="primary"
-                  small
-                  rounded
-                  :disabled="item.statusBt === 'confirm' ? false:true"
-                  @click="closeJobSubmit(item)"
-                >
-                  <v-icon > mdi-bullhorn </v-icon>
-                  เรียกคิว
-                </v-btn>
-                <v-btn
-                  color="cyan"
-                  small
-                  rounded
-                  :disabled="item.statusBt === 'confirmJob' ? false:true"
-                  @click="closeJobSubmitReturn(item)"
-                >
-                  <v-icon > mdi-autorenew </v-icon>
-                  เรียกคิวซ้ำ
-                </v-btn>
-                <v-btn
-                  color="error"
-                  small
-                  rounded
-                  :disabled="item.statusBt === 'confirmJob' ? false:true"
-                  @click="backHomeSubmit(item)"
-                >
-                  <v-icon > mdi-account-multiple-check </v-icon>
-                  ปิดงาน
-                </v-btn>
-              </template>
-            </template>
-            <template v-slot:[`item.storeFrontQueue`]="{ item }">
-              <v-row>
-                <v-col cols="12">
-                  <v-row>
-                    <v-col col="auto" class="text-ceter" v-if="item.userId === 'user-skip' || item.userId === '' || item.userId === null || item.userId === 'data import'">
-                        {{ item.storeFrontQueue }}
-                    </v-col>
-                    <template v-else>
-                      <v-col col="auto" class="text-ceter">
-                        <a @click.stop="openHistory(item)" style="cursor:hand"><u>{{ item.storeFrontQueue }}</u></a>
-                      </v-col>
-                    </template>
-                  </v-row>
-                </v-col>
-              </v-row>
-            </template>
-            </v-data-table>
-            <v-dialog v-model="dialogPrint" scrollable transition="dialog-bottom-transition" persistent max-width="100%">
+              <v-btn
+                color="#F38383"
+                rounded
+                :disabled="itemBooking[0].statusBt === 'confirmJob' ? false:true"
+                @click="backHomeSubmit(itemBooking[0])"
+              >
+                <strong class="text-white">ปิดงาน</strong>
+              </v-btn>
+              </div>
+            </v-card>
+          </v-col>
+          <v-dialog v-model="dialogPrint" scrollable transition="dialog-bottom-transition" persistent max-width="100%">
               <v-card class="text-center">
                 <v-card-text>
                   <iframe id='pdfV' style="width:100%; height: 900px"></iframe>
@@ -363,15 +270,15 @@
               </v-card-text>
             </v-card>
           </v-dialog>
-            <v-dialog v-model="dialogServicePointStatus" scrollable persistent :max-width="dialogwidth">
+            <v-dialog v-model="dialogServicePointStatus" scrollable persistent max-width="90%">
             <v-card>
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="6" class="text-left pt-10">
-                      <h3><strong>กรุณาเลือกจุดบริการ</strong></h3>
+                    <v-col cols="10" class="text-left pt-10">
+                      <h5><strong>กรุณาเลือกจุดบริการ</strong></h5>
                     </v-col>
-                    <v-col cols="6" class="pt-10">
+                    <v-col cols="2" class="pt-7">
                       <div style="text-align: end;">
                         <v-btn
                           class="mx-2"
@@ -434,8 +341,6 @@
               </v-card-text>
             </v-card>
           </v-dialog>
-          </v-card>
-          </v-col>
         </v-row>
         </template>
         </div>
@@ -460,6 +365,7 @@ export default {
   },
   data () {
     return {
+      languageSelect: 0,
       servicePointItem: [],
       servicePoint: '',
       closeItem: '',
@@ -503,8 +409,7 @@ export default {
         { text: 'บริการ', value: 'flowName' },
         { text: 'ชื่อลูกค้า', value: 'cusName' },
         // { text: 'H.N.', value: 'hnNo' },
-        { text: 'พิมพ์', value: 'action1', sortable: false, align: 'center' },
-        { text: '', value: 'action', sortable: false, align: 'center' }
+        { text: 'จัดการข้อมูล', value: 'action', sortable: false, align: 'center' }
       ],
       rules: {
         numberRules: value =>
@@ -552,6 +457,9 @@ export default {
     this.checkSearch()
   },
   methods: {
+    dial: function (number) {
+      window.location = 'tel:' + number
+    },
     async sendQonline (item) {
       let dtt = {
         checkGetQueue: 'False'
@@ -580,7 +488,7 @@ export default {
       //     let rs = response.data
       //     if (rs.status !== false) {
       //       this.HistoryData = response.data
-      this.dialogHistory = true
+      // this.dialogHistory = true
       //     }
       //   })
       //   .catch((error) => {
@@ -638,7 +546,7 @@ export default {
             // '&flowId=' +
             // this.flowSelect +
             '&dueDate=' +
-            this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob and closeJob'
+            this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
         // '&dueDate=' +
         // this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm'
         } else {
@@ -650,7 +558,7 @@ export default {
             '&flowId=' +
             this.flowSelect +
             '&dueDate=' +
-            this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob and closeJob'
+            this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
         }
         await axios
           .get(urlApi)
@@ -672,6 +580,7 @@ export default {
                   this.itemBooking.push(d)
                 }
               }
+              this.openHistory(this.itemBooking[0])
             }
           })
       }
@@ -728,28 +637,17 @@ export default {
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
-            if (this.$session.getAll().data.USER_ROLE === 'storeFront') {
-              for (let i = 0; i < rs.length; i++) {
-                let d = rs[i]
-                let s = {}
-                if (JSON.parse(this.$session.getAll().data.flowId).filter(el => { return el === d.flowId }).length > 0) {
-                  s.text = d.flowName
-                  s.value = d.flowId
-                  s.allData = d
-                  resultOption.push(s)
-                }
-              }
-            } else {
-              resultOption.push({'text': 'ทั้งหมด', 'value': 'allFlow'})
-              for (let i = 0; i < rs.length; i++) {
-                let d = rs[i]
-                let s = {}
+            // resultOption.push({'text': 'ทั้งหมด', 'value': 'allFlow'})
+            for (var i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              let s = {}
+              if (JSON.parse(this.$session.getAll().data.flowId).filter(el => { return el === d.flowId }).length > 0) {
                 s.text = d.flowName
                 s.value = d.flowId
                 s.allData = d
                 resultOption.push(s)
-              // console.log('this.DataFlowName', this.DataFlowName)
               }
+              // console.log('this.DataFlowName', this.DataFlowName)
             }
           } else {
             resultOption = []

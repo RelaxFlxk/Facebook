@@ -101,6 +101,11 @@ export default new Router({
     component: Master.BookingListQueue
   },
   {
+    path: '/Master/BookingListQueueByUser',
+    name: 'BookingListQueueByUser',
+    component: Master.BookingListQueueByUser
+  },
+  {
     path: '/Master/BookingListQueueMonitoring',
     name: 'BookingListQueueMonitoring',
     component: Master.BookingListQueueMonitoring

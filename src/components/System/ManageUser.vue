@@ -426,7 +426,8 @@ export default {
         // { text: 'User', value: 'user' },
         { text: 'นัดหมาย', value: 'booking' },
         { text: 'Onsite', value: 'onsite' },
-        { text: 'Board', value: 'board' }
+        { text: 'Board', value: 'board' },
+        { text: 'บัตรคิว', value: 'storeFront' }
       ],
       nameRules: [
         v => !!v || 'Name is required'

@@ -39,6 +39,7 @@ import BookingListQueue from './BookingListQueue'
 import BookingListQueueMonitoring from './BookingListQueueMonitoring'
 import WorkShopComponent from './WorkShopComponent'
 import ChatHistory from './ChatHistory'
+import BookingListQueueByUser from './BookingListQueueByUser'
 
 export default {
   ChatHistory,
@@ -81,5 +82,6 @@ export default {
   ManageLink,
   TableCheckQueue,
   BookingListQueue,
-  BookingListQueueMonitoring
+  BookingListQueueMonitoring,
+  BookingListQueueByUser
 }
