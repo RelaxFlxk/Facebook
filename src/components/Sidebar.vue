@@ -856,7 +856,8 @@ export default {
             { title: 'รายชื่อลูกค้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingListBeauty', type: 'booking' },
             { title: 'ปฏิทินนัดหมาย', icon: 'mdi-calendar-search', to: '/Master/CalendarBooking', type: 'booking' },
             { title: 'จัดการคิวหน้าร้าน', icon: 'mdi-notebook-edit', to: '/Master/BookingListQueue', type: 'booking' },
-            { title: 'แสดงผลคิวหน้าร้าน', icon: 'mdi-monitor-eye', to: '/Master/BookingListQueueMonitoring', type: 'booking' }
+            { title: 'แสดงผลคิวหน้าร้าน', icon: 'mdi-monitor-eye', to: '/Master/BookingListQueueMonitoring', type: 'booking' },
+            { title: 'แสดงผลคิวหน้าร้าน วิดีโอ', icon: 'mdi-monitor-eye', to: '/Master/BookingListQueueMonitoringVideo', type: 'booking' }
           ]
         }
         this.Dashboard = [

@@ -40,6 +40,7 @@ import BookingListQueueMonitoring from './BookingListQueueMonitoring'
 import WorkShopComponent from './WorkShopComponent'
 import ChatHistory from './ChatHistory'
 import BookingListQueueByUser from './BookingListQueueByUser'
+import BookingListQueueMonitoringVideo from './BookingListQueueMonitoringVideo'
 
 export default {
   ChatHistory,
@@ -83,5 +84,6 @@ export default {
   TableCheckQueue,
   BookingListQueue,
   BookingListQueueMonitoring,
-  BookingListQueueByUser
+  BookingListQueueByUser,
+  BookingListQueueMonitoringVideo
 }

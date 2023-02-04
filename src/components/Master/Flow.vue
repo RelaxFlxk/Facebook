@@ -666,7 +666,7 @@
                               ></v-text-field>
                             </v-col>
                             <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontCheck === 'True'"></v-col>
-                            <v-col cols="12" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontCheck === 'True'">
+                            <v-col cols="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontCheck === 'True'">
                               <v-checkbox
                               label="เปิดการตั้งค่าจุดบริการ"
                               false-value="False"
@@ -675,7 +675,18 @@
                               color="#1B437C"
                               true-value="True"
                               v-model="formAdd.servicePointStatus"
-                              @change="formAdd.servicePointTh = '', formAdd.servicePointEn = '',formAdd.servicePointCount = ''"
+                              @change="formAdd.servicePointTh = '', formAdd.servicePointEn = '',formAdd.servicePointCount = '',formAdd.servicePointRecursive = ''"
+                            ></v-checkbox>
+                            </v-col>
+                            <v-col cols="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.servicePointStatus === 'True'">
+                              <v-checkbox
+                              label="เรียกจุดบริการซ้ำ"
+                              false-value="False"
+                              :on-icon="'mdi-check-circle'"
+                              :off-icon="'mdi-checkbox-blank-circle-outline'"
+                              color="#1B437C"
+                              true-value="True"
+                              v-model="formAdd.servicePointRecursive"
                             ></v-checkbox>
                             </v-col>
                             <v-col clos="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.servicePointStatus === 'True'"  >
@@ -1004,7 +1015,7 @@
                               ></v-text-field>
                             </v-col>
                             <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.storeFrontCheck === 'True'"></v-col>
-                            <v-col cols="12" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.storeFrontCheck === 'True'">
+                            <v-col cols="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.storeFrontCheck === 'True'">
                               <v-checkbox
                               label="เปิดการตั้งค่าจุดบริการ"
                               false-value="False"
@@ -1013,7 +1024,18 @@
                               color="#1B437C"
                               true-value="True"
                               v-model="formUpdate.servicePointStatus"
-                              @change="formUpdate.servicePointTh = '', formUpdate.servicePointEn = '',formUpdate.servicePointCount = ''"
+                              @change="formUpdate.servicePointTh = '', formUpdate.servicePointEn = '',formUpdate.servicePointCount = '',formUpdate.servicePointRecursive = ''"
+                            ></v-checkbox>
+                            </v-col>
+                            <v-col cols="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.servicePointStatus === 'True'">
+                              <v-checkbox
+                              label="เรียกจุดบริการซ้ำ"
+                              false-value="False"
+                              :on-icon="'mdi-check-circle'"
+                              :off-icon="'mdi-checkbox-blank-circle-outline'"
+                              color="#1B437C"
+                              true-value="True"
+                              v-model="formUpdate.servicePointRecursive"
                             ></v-checkbox>
                             </v-col>
                             <v-col cols='4' class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.servicePointStatus === 'True'"  >
@@ -2223,7 +2245,8 @@ export default {
         servicePointCount: '',
         servicePointStatus: 'False',
         servicePointCountStart: 0,
-        servicePointCountEnd: 0
+        servicePointCountEnd: 0,
+        servicePointRecursive: 'False'
       },
       formAddStep: {
         stepId: '',
@@ -2283,7 +2306,8 @@ export default {
         servicePointCount: '',
         servicePointStatus: 'False',
         servicePointCountStart: 0,
-        servicePointCountEnd: 0
+        servicePointCountEnd: 0,
+        servicePointRecursive: 'False'
       },
       formUpdateItemFlow: {
         fieldId: '',
@@ -3445,6 +3469,7 @@ export default {
       this.formUpdate.servicePointEn = item.servicePointEn || ''
       this.formUpdate.storeFrontText = item.storeFrontText || ''
       this.formUpdate.servicePointStatus = item.servicePointStatus || 'False'
+      this.formUpdate.servicePointRecursive = item.servicePointRecursive || 'False'
       this.formUpdate.servicePointCountStart = item.servicePointCountStart || '0'
       this.formUpdate.servicePointCountEnd = item.servicePointCountEnd || '0'
       if (this.formUpdate.servicePointStatus === 'True') {
@@ -4034,6 +4059,8 @@ export default {
             this.formAdd[key] = 'False'
           } else if (key === 'customerTimeSlot') {
             this.formAdd[key] = 'False'
+          } else if (key === 'servicePointRecursive') {
+            this.formAdd[key] = 'False'
           } else if (key === 'amountDeposit') {
             this.formAdd[key] = 0
           } else if (key === 'servicePointCountStart') {
@@ -4082,6 +4109,8 @@ export default {
           } else if (key === 'repeatBooking') {
             this.formUpdate[key] = 'False'
           } else if (key === 'customerTimeSlot') {
+            this.formUpdate[key] = 'False'
+          } else if (key === 'servicePointRecursive') {
             this.formUpdate[key] = 'False'
           } else if (key === 'amountDeposit') {
             this.formUpdate[key] = 0

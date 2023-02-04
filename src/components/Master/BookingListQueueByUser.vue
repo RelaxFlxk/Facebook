@@ -789,7 +789,11 @@ export default {
         this.closeItem = item
         this.dialogServicePointStatus = true
         this.servicePoint = item.servicePoint || ''
-        await this.setservicePointCount(item)
+        if (item.servicePointRecursive === 'False') {
+          await this.setservicePointCount(item)
+        } else {
+          this.servicePointItem = JSON.parse(item.servicePointCount) || []
+        }
         this.statusReturn = true
       } else {
         this.$swal({
@@ -909,7 +913,11 @@ export default {
         this.closeItem = item
         this.dialogServicePointStatus = true
         this.servicePoint = item.servicePoint || ''
-        await this.setservicePointCount(item)
+        if (item.servicePointRecursive === 'False') {
+          await this.setservicePointCount(item)
+        } else {
+          this.servicePointItem = JSON.parse(item.servicePointCount) || []
+        }
         this.statusReturn = false
       } else {
         this.$swal({
