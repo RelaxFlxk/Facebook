@@ -5075,17 +5075,18 @@ export default {
                   await axios
                     .get(
                     // eslint-disable-next-line quotes
-                      this.DNS_IP + "/BookingData/getView?bookNo=" + d.bookNo
+                      this.DNS_IP + "/BookingData/getViewGroup?bookNo=" + d.bookNo
                     )
                     .then(async responses => {
                       console.log('getDataData', responses.data)
                       dataBookingData = responses.data
                       if (responses.data.status !== false) {
                         responses.data.forEach((row) => {
-                          if (typeof (this.BookingDataList[row.bookNo]) === 'undefined') {
-                            this.BookingDataList[row.bookNo] = []
-                          }
-                          this.BookingDataList[row.bookNo].push(row)
+                          this.BookingDataList[row.bookNo] = JSON.parse(row.customData)
+                          // if (typeof (this.BookingDataList[row.bookNo]) === 'undefined') {
+                          //   this.BookingDataList[row.bookNo] = []
+                          // }
+                          // this.BookingDataList[row.bookNo].push(row)
                         })
                       }
                     // this.BookingDataList[dataBookingData[0].bookNo].push(dataBookingData[0])
@@ -5217,6 +5218,7 @@ export default {
       this.branch = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName', '')
     },
     getDataFromFieldName (data, key) {
+      console.log(typeof data)
       if (data !== undefined) {
         return data.filter(function (el) {
           return el.fieldName === key
@@ -5279,10 +5281,10 @@ export default {
             let dataBookingData = []
             await axios
               .get(
-                this.DNS_IP + `/BookingData/getView?bookNo=${d.bookNo}`
+                this.DNS_IP + `/BookingData/getViewGroup?bookNo=${d.bookNo}`
               )
               .then(async responses => {
-                dataBookingData = responses.data
+                dataBookingData = responses.data.customData
               })
             s.cusName = this.getDataFromFieldName(dataBookingData, 'ชื่อ')
             s.cusReg = this.getDataFromFieldName(dataBookingData, 'เลขทะเบียน')
@@ -5774,16 +5776,17 @@ export default {
           this.masBranchID = ''
         }
       }
-      let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
+      let url = `${this.DNS_IP}/BookingData/getViewGroup?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
       await axios
         .get(url)
         .then(async response => {
           if (response.data.status !== false) {
             response.data.forEach((row) => {
-              if (typeof (this.BookingDataListTimechange[row.bookNo]) === 'undefined') {
-                this.BookingDataListTimechange[row.bookNo] = []
-              }
-              this.BookingDataListTimechange[row.bookNo].push(row)
+              this.BookingDataListTimechange[row.bookNo] = JSON.parse(row.customData)
+              // if (typeof (this.BookingDataListTimechange[row.bookNo]) === 'undefined') {
+              //   this.BookingDataListTimechange[row.bookNo] = []
+              // }
+              // this.BookingDataListTimechange[row.bookNo].push(row)
             })
           }
         })
@@ -5803,19 +5806,20 @@ export default {
       }
       let url = ''
       if (dateStart === 'no') {
-        url = `${this.DNS_IP}/BookingData/getsearchOther?shopId=${this.session.data.shopId}&fieldValue=${searchOther}`
+        url = `${this.DNS_IP}/BookingData/getsearchOtherGroup?shopId=${this.session.data.shopId}&fieldValue=${searchOther}`
       } else {
-        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
+        url = `${this.DNS_IP}/BookingData/getViewGroup?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
       }
       await axios
         .get(url)
         .then(async response => {
           if (response.data.status !== false) {
             response.data.forEach((row) => {
-              if (typeof (this.BookingDataList[row.bookNo]) === 'undefined') {
-                this.BookingDataList[row.bookNo] = []
-              }
-              this.BookingDataList[row.bookNo].push(row)
+              this.BookingDataList[row.bookNo] = JSON.parse(row.customData)
+              // if (typeof (this.BookingDataList[row.bookNo]) === 'undefined') {
+              //   this.BookingDataList[row.bookNo] = []
+              // }
+              // this.BookingDataList[row.bookNo].push(row)
             })
           }
         }).catch(error => {
@@ -5976,16 +5980,17 @@ export default {
           this.dataReady = true
           //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
         })
-      let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&statusBt=is null`
+      let url = `${this.DNS_IP}/BookingData/getViewGroup?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&statusBt=is null`
       await axios
         .get(url)
         .then(async response => {
           if (response.data.status !== false) {
             response.data.forEach((row) => {
-              if (typeof (this.BookingDataList[row.bookNo]) === 'undefined') {
-                this.BookingDataList[row.bookNo] = []
-              }
-              this.BookingDataList[row.bookNo].push(row)
+              this.BookingDataList[row.bookNo] = JSON.parse(row.customData)
+              // if (typeof (this.BookingDataList[row.bookNo]) === 'undefined') {
+              //   this.BookingDataList[row.bookNo] = []
+              // }
+              // this.BookingDataList[row.bookNo].push(row)
             })
           }
         })
