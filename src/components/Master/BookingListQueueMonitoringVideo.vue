@@ -272,7 +272,7 @@
           <v-row>
             <v-col cols="12" class="text-center">
               <video ref="video" class="mt-16" width="90%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
-                <source src="https://www.w3schools.com/tags/movie.mp4" type="video/webm">
+                <source src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FSamsungS23.mp4?alt=media&token=eeea61dd-7448-43d6-ae28-f6c8eed0de12" type="video/webm">
                 <!-- <source src="@/assets/samsung.mp4" type="video/mp4"> -->
               </video>
             </v-col>
