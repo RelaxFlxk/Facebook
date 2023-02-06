@@ -399,6 +399,7 @@
               </div>
             </v-card>
           </v-col>
+          <br>
         </v-row>
         </template>
         <v-dialog v-model="dialogPrint" scrollable transition="dialog-bottom-transition" persistent max-width="100%">
@@ -558,10 +559,10 @@
               </v-card-text>
             </v-card>
           </v-dialog>
-        <v-footer v-if="dialogwidth !== '50%'" fixed padless color="#1B437C" class="text-center mt-n16" style="justify-content: center;">
+        </div>
+        <v-footer v-if="dialogwidth !== '50%'" fixed padless color="#1B437C" class="text-center" style="justify-content: center;padding-top: 10px;">
           <p class="text-white" width="100%">POWER BY  BETASK CONSULTING</p>
         </v-footer>
-        </div>
     </v-main>
   </div>
 </template>
