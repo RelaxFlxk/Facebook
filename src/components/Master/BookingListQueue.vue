@@ -926,43 +926,149 @@ export default {
         })
       return result
     },
-    closeJobServicePointReturn (item) {
+    async closeJobServicePointReturn (item) {
       if (this.servicePoint === '') {
         this.$swal('ผิดพลาด', 'กรุณาเลือกจุดบริการ', 'error')
       } else {
-        this.$swal({
-          title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
-          type: 'question',
-          showCancelButton: true,
-          confirmButtonColor: '#1DBF73',
-          cancelButtonColor: '#F38383',
-          confirmButtonText: 'ใช่',
-          cancelButtonText: 'ไม่'
-        }).then(async response => {
-          await this.updateServicePoint(item.bookNo)
-          let lineUserId = item.lineUserId || ''
-          if (lineUserId !== '') {
-            let dtt = {
-              checkGetQueue: 'True'
+        let statusBooking = await this.checkBookingStatus(item.bookNo)
+        if (statusBooking === 'confirmJob') {
+          this.$swal({
+            title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#1DBF73',
+            cancelButtonColor: '#F38383',
+            confirmButtonText: 'ใช่',
+            cancelButtonText: 'ไม่'
+          }).then(async response => {
+            await this.updateServicePoint(item.bookNo)
+            let lineUserId = item.lineUserId || ''
+            if (lineUserId !== '') {
+              let dtt = {
+                checkGetQueue: 'True'
+              }
+              await axios
+                .post(this.DNS_IP + '/Booking/pushMsgQueueReturn/' + item.bookNo, dtt)
+                .then(async responses => {}).catch(error => {
+                  console.log('error function pushMsgQueueReturn : ', error)
+                })
             }
-            await axios
-              .post(this.DNS_IP + '/Booking/pushMsgQueueReturn/' + item.bookNo, dtt)
-              .then(async responses => {}).catch(error => {
-                console.log('error function pushMsgQueueReturn : ', error)
-              })
-          }
-          this.dialogServicePointStatus = false
-          this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+            this.dialogServicePointStatus = false
+            this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+            await this.searchBooking()
+          })
+        } else {
+          this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
           await this.searchBooking()
-        })
+        }
       }
     },
-    closeJobServicePoint (item) {
+    async closeJobServicePoint (item) {
       if (this.servicePoint === '') {
         this.$swal('ผิดพลาด', 'กรุณาเลือกจุดบริการ', 'error')
       } else {
+        let statusBooking = await this.checkBookingStatus(item.bookNo)
+        if (statusBooking === 'confirm') {
+          this.$swal({
+            title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#1DBF73',
+            cancelButtonColor: '#F38383',
+            confirmButtonText: 'ใช่',
+            cancelButtonText: 'ไม่'
+          }).then(async response => {
+          // await this.clearConfirmJob(item.dueDate)
+            var dtt = {
+              bookNo: item.bookNo,
+              contactDate: this.format_date(new Date()),
+              status: 'confirmJob',
+              statusUse: 'use',
+              shopId: this.$session.getAll().data.shopId,
+              CREATE_USER: this.$session.getAll().data.userName,
+              LAST_USER: this.$session.getAll().data.userName
+            }
+            await axios
+              .post(this.DNS_IP + '/booking_transaction/add', dtt)
+              .then(async responses => {
+                await this.updateServicePoint(item.bookNo)
+                let lineUserId = item.lineUserId || ''
+                if (lineUserId !== '') {
+                  let dtt = {
+                    checkGetQueue: 'True'
+                  }
+                  await axios
+                    .post(this.DNS_IP + '/Booking/pushMsgQueue/' + item.bookNo, dtt)
+                    .then(async responses => {}).catch(error => {
+                      console.log('error function pushMsgQueue : ', error)
+                    })
+                }
+                let USER_ROLE = this.session.data.USER_ROLE || ''
+                let empId = this.session.data.empId || ''
+                if (USER_ROLE === 'storeFront' && empId !== '') {
+                  this.updateEmp(item.bookNo)
+                }
+                this.dialogServicePointStatus = false
+                this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+                await this.searchBooking()
+              })
+          })
+        } else {
+          this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
+          await this.searchBooking()
+        }
+      }
+    },
+    async closeJobSubmitReturn (item) {
+      console.log('closeJobSubmit', item)
+      let statusBooking = await this.checkBookingStatus(item.bookNo)
+      if (statusBooking === 'confirmJob') {
+        if (item.servicePointStatus === 'True') {
+          this.closeItem = item
+          this.dialogServicePointStatus = true
+          this.servicePoint = item.servicePoint || ''
+          if (item.servicePointRecursive === 'False') {
+            await this.setservicePointCount(item)
+          } else {
+            this.servicePointItem = JSON.parse(item.servicePointCount) || []
+          }
+          this.statusReturn = true
+        } else {
+          this.$swal({
+            title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#1DBF73',
+            cancelButtonColor: '#F38383',
+            confirmButtonText: 'ใช่',
+            cancelButtonText: 'ไม่'
+          }).then(async response => {
+            let lineUserId = item.lineUserId || ''
+            if (lineUserId !== '') {
+              let dtt = {
+                checkGetQueue: 'True'
+              }
+              await axios
+                .post(this.DNS_IP + '/Booking/pushMsgQueueReturn/' + item.bookNo, dtt)
+                .then(async responses => {}).catch(error => {
+                  console.log('error function pushMsgQueueReturn : ', error)
+                })
+            }
+            this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+            await this.searchBooking()
+          })
+        }
+      } else {
+        this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
+        await this.searchBooking()
+      }
+    },
+    async backHomeSubmit (item) {
+      console.log('backHomeSubmit', item)
+      let statusBooking = await this.checkBookingStatus(item.bookNo)
+      if (statusBooking === 'confirmJob') {
         this.$swal({
-          title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
+          title: 'ต้องการปิดงานนี้ ใช่หรือไม่?',
           type: 'question',
           showCancelButton: true,
           confirmButtonColor: '#1DBF73',
@@ -970,11 +1076,11 @@ export default {
           confirmButtonText: 'ใช่',
           cancelButtonText: 'ไม่'
         }).then(async response => {
-          // await this.clearConfirmJob(item.dueDate)
+        // await this.clearConfirmJob(item.dueDate)
           var dtt = {
             bookNo: item.bookNo,
             contactDate: this.format_date(new Date()),
-            status: 'confirmJob',
+            status: 'closeJob',
             statusUse: 'use',
             shopId: this.$session.getAll().data.shopId,
             CREATE_USER: this.$session.getAll().data.userName,
@@ -983,20 +1089,7 @@ export default {
           await axios
             .post(this.DNS_IP + '/booking_transaction/add', dtt)
             .then(async responses => {
-              await this.updateServicePoint(item.bookNo)
-              let lineUserId = item.lineUserId || ''
-              if (lineUserId !== '') {
-                let dtt = {
-                  checkGetQueue: 'True'
-                }
-                await axios
-                  .post(this.DNS_IP + '/Booking/pushMsgQueue/' + item.bookNo, dtt)
-                  .then(async responses => {}).catch(error => {
-                    console.log('error function pushMsgQueue : ', error)
-                  })
-              }
-              this.dialogServicePointStatus = false
-              this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+              this.$swal('เรียบร้อย', 'ปิดงานสำเร็จ', 'success')
               await this.searchBooking()
             // let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
             // if (bookSelect.length > 0) {
@@ -1015,89 +1108,10 @@ export default {
             // }
             })
         })
-      }
-    },
-    async closeJobSubmitReturn (item) {
-      console.log('closeJobSubmit', item)
-      if (item.servicePointStatus === 'True') {
-        this.closeItem = item
-        this.dialogServicePointStatus = true
-        this.servicePoint = item.servicePoint || ''
-        if (item.servicePointRecursive === 'False') {
-          await this.setservicePointCount(item)
-        } else {
-          this.servicePointItem = JSON.parse(item.servicePointCount) || []
-        }
-        this.statusReturn = true
       } else {
-        this.$swal({
-          title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
-          type: 'question',
-          showCancelButton: true,
-          confirmButtonColor: '#1DBF73',
-          cancelButtonColor: '#F38383',
-          confirmButtonText: 'ใช่',
-          cancelButtonText: 'ไม่'
-        }).then(async response => {
-          let lineUserId = item.lineUserId || ''
-          if (lineUserId !== '') {
-            let dtt = {
-              checkGetQueue: 'True'
-            }
-            await axios
-              .post(this.DNS_IP + '/Booking/pushMsgQueueReturn/' + item.bookNo, dtt)
-              .then(async responses => {}).catch(error => {
-                console.log('error function pushMsgQueueReturn : ', error)
-              })
-          }
-          this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
-          await this.searchBooking()
-        })
+        this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
+        await this.searchBooking()
       }
-    },
-    async backHomeSubmit (item) {
-      console.log('backHomeSubmit', item)
-      this.$swal({
-        title: 'ต้องการปิดงานนี้ ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#1DBF73',
-        cancelButtonColor: '#F38383',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      }).then(async response => {
-        // await this.clearConfirmJob(item.dueDate)
-        var dtt = {
-          bookNo: item.bookNo,
-          contactDate: this.format_date(new Date()),
-          status: 'closeJob',
-          statusUse: 'use',
-          shopId: this.$session.getAll().data.shopId,
-          CREATE_USER: this.$session.getAll().data.userName,
-          LAST_USER: this.$session.getAll().data.userName
-        }
-        await axios
-          .post(this.DNS_IP + '/booking_transaction/add', dtt)
-          .then(async responses => {
-            this.$swal('เรียบร้อย', 'ปิดงานสำเร็จ', 'success')
-            await this.searchBooking()
-            // let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
-            // if (bookSelect.length > 0) {
-            //   for (let i = 0; i < bookSelect.length; i++) {
-            //     let d = bookSelect[i]
-            //     let s = {}
-            //     s.lineUserId = d.lineUserId || ''
-            //     if (s.lineUserId !== '') {
-            //       await axios
-            //         .post(this.DNS_IP + '/Booking/pushMsgQueue/' + d.bookNo)
-            //         .then(async responses => {}).catch(error => {
-            //           console.log('error function pushMsgQueue : ', error)
-            //         })
-            //     }
-            //   }
-            // }
-          })
-      })
     },
     async setservicePointCount (item) {
       this.servicePointItem = []
@@ -1144,52 +1158,59 @@ export default {
     async closeJobSubmit (item) {
       console.log('closeJobSubmit', item)
       if (item.statusBt === 'confirm') {
-        if (item.servicePointStatus === 'True') {
-          this.closeItem = item
-          this.dialogServicePointStatus = true
-          this.servicePoint = item.servicePoint || ''
-          if (item.servicePointRecursive === 'False') {
-            await this.setservicePointCount(item)
-          } else {
-            this.servicePointItem = JSON.parse(item.servicePointCount) || []
-          }
-          this.statusReturn = false
-        } else {
-          this.$swal({
-            title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
-            type: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#1DBF73',
-            cancelButtonColor: '#F38383',
-            confirmButtonText: 'ใช่',
-            cancelButtonText: 'ไม่'
-          }).then(async response => {
-          // await this.clearConfirmJob(item.dueDate)
-            var dtt = {
-              bookNo: item.bookNo,
-              contactDate: this.format_date(new Date()),
-              status: 'confirmJob',
-              statusUse: 'use',
-              shopId: this.$session.getAll().data.shopId,
-              CREATE_USER: this.$session.getAll().data.userName,
-              LAST_USER: this.$session.getAll().data.userName
+        let statusBooking = await this.checkBookingStatus(item.bookNo)
+        if (statusBooking === 'confirm') {
+          if (item.servicePointStatus === 'True') {
+            this.closeItem = item
+            this.dialogServicePointStatus = true
+            this.servicePoint = item.servicePoint || ''
+            if (item.servicePointRecursive === 'False') {
+              await this.setservicePointCount(item)
+            } else {
+              this.servicePointItem = JSON.parse(item.servicePointCount) || []
             }
-            await axios
-              .post(this.DNS_IP + '/booking_transaction/add', dtt)
-              .then(async responses => {
-                let lineUserId = item.lineUserId || ''
-                if (lineUserId !== '') {
-                  let dtt = {
-                    checkGetQueue: 'True'
+            this.statusReturn = false
+          } else {
+            this.$swal({
+              title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
+              type: 'question',
+              showCancelButton: true,
+              confirmButtonColor: '#1DBF73',
+              cancelButtonColor: '#F38383',
+              confirmButtonText: 'ใช่',
+              cancelButtonText: 'ไม่'
+            }).then(async response => {
+              // await this.clearConfirmJob(item.dueDate)
+              var dtt = {
+                bookNo: item.bookNo,
+                contactDate: this.format_date(new Date()),
+                status: 'confirmJob',
+                statusUse: 'use',
+                shopId: this.$session.getAll().data.shopId,
+                CREATE_USER: this.$session.getAll().data.userName,
+                LAST_USER: this.$session.getAll().data.userName
+              }
+              await axios
+                .post(this.DNS_IP + '/booking_transaction/add', dtt)
+                .then(async responses => {
+                  let lineUserId = item.lineUserId || ''
+                  if (lineUserId !== '') {
+                    let dtt = {
+                      checkGetQueue: 'True'
+                    }
+                    await axios
+                      .post(this.DNS_IP + '/Booking/pushMsgQueue/' + item.bookNo, dtt)
+                      .then(async responses => {}).catch(error => {
+                        console.log('error function pushMsgQueue : ', error)
+                      })
                   }
-                  await axios
-                    .post(this.DNS_IP + '/Booking/pushMsgQueue/' + item.bookNo, dtt)
-                    .then(async responses => {}).catch(error => {
-                      console.log('error function pushMsgQueue : ', error)
-                    })
-                }
-                this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
-                await this.searchBooking()
+                  let USER_ROLE = this.session.data.USER_ROLE || ''
+                  let empId = this.session.data.empId || ''
+                  if (USER_ROLE === 'storeFront' && empId !== '') {
+                    this.updateEmp(item.bookNo)
+                  }
+                  this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+                  await this.searchBooking()
                 // let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
                 // if (bookSelect.length > 0) {
                 //   for (let i = 0; i < bookSelect.length; i++) {
@@ -1205,8 +1226,12 @@ export default {
                 //     }
                 //   }
                 // }
-              })
-          })
+                })
+            })
+          }
+        } else {
+          this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
+          await this.searchBooking()
         }
       }
     },
@@ -1226,6 +1251,30 @@ export default {
       await axios
         .post(this.DNS_IP + '/Booking/edit/' + bookNo, dtt)
         .then(async responses => {})
+    },
+    async updateEmp (bookNo) {
+      var dtt = {
+        storeFrontQueueEmpId: parseInt(this.session.data.empId)
+      }
+      await axios
+        .post(this.DNS_IP + '/Booking/edit/' + bookNo, dtt)
+        .then(async responses => {})
+    },
+    async checkBookingStatus (bookNo) {
+      let result = ''
+      await axios
+        .get(this.DNS_IP + '/booking_view/get?shopId=' +
+            this.shopId +
+            '&bookNo=' + bookNo)
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            result = rs[0].statusBt || ''
+          } else {
+            result = ''
+          }
+        })
+      return result
     },
     // async getBase64ImageFromURL (img) {
     //   let image = await axios.get(img, {withCredentials: true, responseType: 'arraybuffer'})
@@ -1839,12 +1888,6 @@ export default {
 }
 </script>
 <style scope>
-.disabledList .v-list-item:not(.v-list-item--active):not(.v-list-item--disabled) {
-  background-color: white !important;
-}
-.disabledTitle .v-list-item__title{
-  color: #73777B !important;
-}
 .btnTobicon .v-btn__content {
     display:flex;
     flex-direction:column;
