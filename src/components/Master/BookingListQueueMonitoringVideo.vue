@@ -11,10 +11,10 @@
           style="border-bottom: 1px solid #695988 !important"
         >
           <v-row>
-            <v-col cols="6" align="left" class="mt-6">
+            <v-col cols="8" align="left" class="mt-6 ml-8">
               <v-img :src="shopImage" max-width="200px" max-height="100px"></v-img>
             </v-col>
-            <v-col cols="6" align="right" class="mt-6">
+            <v-col cols="3" align="right" class="mt-6 ml-16">
               <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6" max-width="200px"></v-img>
             </v-col>
           </v-row>
@@ -143,11 +143,11 @@
       height="100%"
       width="100%"
     >
-      <v-row>
+      <v-row class="ml-6">
         <v-col cols="4" class="pr-0">
           <v-container>
             <v-row>
-              <v-col cols="8">
+              <v-col cols="6">
                 <v-menu
                   ref="menu"
                   v-model="menuStart"
@@ -159,10 +159,11 @@
                   <template v-slot:activator="{ on, attrs }">
                     <v-text-field
                       hide-details
-                      background-color="white"
-                      v-model="dateStart"
+                      :background-color="bgColor3"
+                      v-model="dateStartShow"
                       style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
                       readonly
+                      dark
                       outlined
                       dense
                       required
@@ -171,7 +172,7 @@
                       v-on="on"
                     >
                     <template #prepend-inner>
-                    <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                    <v-icon color="white" style="padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
                       mdi-calendar
                     </v-icon>
                   </template>
@@ -186,16 +187,18 @@
                   </v-date-picker>
                 </v-menu>
               </v-col>
-              <v-col cols="4">
+              <v-col cols="6">
                 <v-text-field
                   outlined
-                  background-color="white"
+                  :background-color="bgColor3"
                   dense
+                  dark
+                  readonly
                   v-model="shopTime"
                   style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
                 >
                   <template #prepend-inner>
-                    <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                    <v-icon color="white" style="padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
                       mdi-clock-time-four
                     </v-icon>
                   </template>
@@ -207,7 +210,7 @@
                 <v-sheet
                   :color="bgColor3"
                   elevation="1"
-                  height="100"
+                  height="130"
                   width="100%"
                   dark
                   style="border-bottom: 1px solid #695988 !important;border-radius: 10px 10px 0px 0px;"
@@ -215,6 +218,7 @@
                   <v-container>
                     <v-row>
                       <v-col cols="6">
+                        <br>
                         <v-row class="text-center">
                           <v-col cols="12" style="font-weight: 700;font-size: 32px;line-height: 24px;">
                             หมายเลขคิว
@@ -225,6 +229,7 @@
                         </v-row>
                       </v-col>
                       <v-col cols="6">
+                        <br>
                         <v-row class="text-center">
                           <v-col cols="12" style="font-weight: 700;font-size: 32px;line-height: 24px;">
                             ช่องบริการ
@@ -240,21 +245,21 @@
                 <v-sheet
                   :color="bgColor2"
                   elevation="1"
-                  height="90%"
+                  height="85%"
                   width="100%"
                   dark
                   style="border-radius: 0px 0px 10px 10px;"
                 >
                   <v-container>
                     <v-row v-for="(items, id) in itemBookingUse" :key="id">
-                      <v-col cols="6" class="pt-1">
+                      <v-col cols="6" class="pt-2">
                         <v-row class="text-center">
                           <v-col cols="12" style="font-weight: 700;font-size: 48px;">
                             {{items.storeFrontQueue}}
                           </v-col>
                         </v-row>
                       </v-col>
-                      <v-col cols="6" class="pt-1" style="border-left: 1px solid #695988 !important">
+                      <v-col cols="6" class="pt-2" style="border-left: 1px solid #695988 !important">
                         <v-row class="text-center">
                           <v-col cols="12" style="font-weight: 700;font-size: 48px;">
                             {{items.servicePoint}}
@@ -334,6 +339,7 @@ export default {
   },
   data () {
     return {
+      dateStartShow: '',
       video: 'https://www.youtube.com/watch?v=B5TDAXLPrRY&list=RDCMUC-4vsQo3bHMzLuHyVM_iIRA&start_radio=1',
       Fontsize: null,
       DiSize: null,
@@ -429,7 +435,7 @@ export default {
       // const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
       // const time = today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds()
       // const dateTime = date + ' ' + time
-      this.shopTime = moment().format('HH:mm') + ' น.'
+      this.shopTime = 'เวลา ' + moment().format('HH:mm') + ' น.'
     },
     async getShop () {
       this.shop = []
@@ -502,6 +508,8 @@ export default {
     async searchBooking () {
       if (this.validSearch === true) {
         this.itemBooking = []
+        // this.dateStartShow = moment(this.dateStart).locale('th').format('LLLL')
+        this.dateStartShow = 'วัน' + moment(this.dateStart).locale('th').format('dddd') + 'ที่ ' + moment(this.dateStart).locale('th').format('D MMMM ') + (parseInt(moment(this.dateStart).format('YYYY')) + 543).toString()
         await this.getBookingDataList(this.dateStart)
         let urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
@@ -929,6 +937,9 @@ export default {
 }
 </script>
 <style scope>
+.centered-input >>> input {
+      text-align: center
+    }
 #margin {
   margin-top: 50px;
   margin-bottom: 40px;
