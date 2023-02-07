@@ -229,6 +229,7 @@
                   <h5 class="text-start  ml-10" v-if="item3.fieldValue !== '' && item3.fieldName !== 'เบอร์โทร'"><strong>{{item3.fieldValue}}</strong></h5>
                   <!-- <h5 @click="dial(item3.fieldValue.replace(/-/g, ''))" class="text-start  ml-10" v-if="item3.fieldValue !== '' && item3.fieldName === 'เบอร์โทร'"><v-icon color="#24C74D" class="iconify" data-icon="el:phone-alt">mdi-phone</v-icon><strong class="ml-4">{{'' + item3.fieldValue}}</strong></h5> -->
                 </div>
+                <h5 v-if="itemBooking[0].servicePoint" class="text-start  ml-10 mt-2"><strong>{{ languageSelect === 0 ? itemBooking[0].servicePoint : JSON.parse(itemBooking[0].servicePointCount).filter(el => { return el.textTh === itemBooking[0].servicePoint}).length > 0 ? JSON.parse(itemBooking[0].servicePointCount).filter(el => { return el.textTh === itemBooking[0].servicePoint})[0].textEn:itemBooking[0].servicePoint}}</strong></h5>
                 <div class="text-start ml-9 mt-2" style="display: flex;word-break: break-word;">
                   <v-icon  color="#979797" class="iconify" data-icon="ic:twotone-access-time"></v-icon>
                   <p class="font-weight-medium text-center ma-0 ml-2" v-if="dateStart" style="font-size:16px;color:#979797;">
@@ -240,7 +241,6 @@
                   สาขา : {{branchItem.filter(el => { return masBranchID === el.value })[0].text}}
                 </p>
                 </div>
-                <h5 v-if="itemBooking[0].servicePoint" class="text-start  ml-10 mt-2"><strong>{{ languageSelect === 0 ? itemBooking[0].servicePoint : JSON.parse(itemBooking[0].servicePointCount).filter(el => { return el.textTh === itemBooking[0].servicePoint}).length > 0 ? JSON.parse(itemBooking[0].servicePointCount).filter(el => { return el.textTh === itemBooking[0].servicePoint})[0].textEn:itemBooking[0].servicePoint}}</strong></h5>
                 <br>
                 <div class="text-center">
                   <v-btn
