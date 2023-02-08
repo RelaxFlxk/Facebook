@@ -274,10 +274,10 @@
           </v-container>
         </v-col>
         <v-col cols="8">
-          <v-row>
+          <v-row v-if="videoLinkMonition">
             <v-col cols="12" class="text-center">
               <video ref="video" class="mt-16" width="90%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
-                <source src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FSamsungS23.mp4?alt=media&token=eeea61dd-7448-43d6-ae28-f6c8eed0de12" type="video/webm">
+                <source :src="videoLinkMonition" type="video/webm">
                 <!-- <source src="@/assets/samsung.mp4" type="video/mp4"> -->
               </video>
             </v-col>
@@ -409,15 +409,16 @@ export default {
       shopTime: '',
       bgColor: '',
       bgColor2: '',
-      bgColor3: ''
+      bgColor3: '',
+      videoLinkMonition: ''
     }
   },
   async mounted () {
     this.Fontsize = this.colsWidth
+    await this.getShop()
     await this.getDataFlow()
     await this.getDataBranch()
     this.setTime()
-    this.getShop()
     this.$root.$on('closeSetTimeBookingMonitor', () => {
       // your code goes here
       this.closeSetTimeBookingMonitor()
@@ -449,6 +450,7 @@ export default {
             this.shopName = rs[0].shopName
             this.shopColor = rs[0].primaryColor
             this.shopImage = rs[0].shopImge
+            this.videoLinkMonition = rs[0].videoLinkMonition
             this.bgColor = this.hexToRgbA(rs[0].primaryColor.length > 6 ? rs[0].primaryColor.slice(0, -2) : rs[0].primaryColor)
             this.bgColor2 = this.bgColor22(this.bgColor)
             this.bgColor3 = this.bgColor33(this.bgColor2)

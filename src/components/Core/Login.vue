@@ -27,92 +27,97 @@
               <p><strong>ลงชื่อเข้าใช้บัญชีของคุณ</strong></p>
             </v-col>
           </v-row>
-          <div>
-            <v-row justify="center" no-gutters>
-              <v-col cols="10" class="pa-0">
-                <v-text-field
-                  label="อีเมล"
-                  outlined
-                  autofocus
-                  v-model="form.userName"
-                  @keyup.enter="onSubmit()"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row justify="center" no-gutters style="height: 70px">
-              <v-col cols="10" class="pa-0">
-                <v-text-field
-                  class=""
-                  label="รหัสผ่าน"
-                  outlined
-                  v-model="form.userPassword"
-                  @keyup.enter="onSubmit()"
-                  type="password"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row justify="center" no-gutters style="height: 70px">
-              <v-col cols="10" style="display: flex; justify-content: center">
-                <vue-recaptcha
-                  ref="recaptcha"
-                  @verify="verifyMethod"
-                  @render="renderMethod"
-                  sitekey="6Lef5A8hAAAAAIffpLLp_mpt_UFbcuq6l_mXbh8e"
-                ></vue-recaptcha>
-              </v-col>
-            </v-row>
-            <v-row
-              v-if="recapStatus"
-              justify="center"
-              class="mt-3"
-              no-gutters
-              style="height: 40px"
-            >
-              <v-col cols="10">
-                <v-alert text outlined type="error">
-                  กรุณากดยืนยันตัว.
-                </v-alert>
-              </v-col>
-            </v-row>
-            <v-row justify="center" no-gutter>
-              <v-col cols="10">
-                <v-btn
-                  color="#001D6E"
-                  style="font-size: 20px"
-                  dark
-                  x-large
-                  block
-                  @click="onSubmit()"
+            <div>
+              <v-form ref="form_login" v-model="validAdd" lazy-validation>
+                <v-row justify="center" no-gutters>
+                  <v-col cols="10" class="pa-0">
+                    <v-text-field
+                      label="อีเมล"
+                      outlined
+                      autofocus
+                      v-model="form.userName"
+                      required
+                      :rules="[rules.email]"
+                      @keyup.enter="onSubmit()"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+                <v-row justify="center" no-gutters style="height: 70px">
+                  <v-col cols="10" class="pa-0">
+                    <v-text-field
+                      :rules="[rules.required]"
+                      required
+                      class=""
+                      label="รหัสผ่าน"
+                      outlined
+                      v-model="form.userPassword"
+                      @keyup.enter="onSubmit()"
+                      type="password"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+                <v-row justify="center" no-gutters style="height: 70px">
+                  <v-col cols="10" style="display: flex; justify-content: center">
+                    <vue-recaptcha
+                      ref="recaptcha"
+                      @verify="verifyMethod"
+                      @render="renderMethod"
+                      sitekey="6Lef5A8hAAAAAIffpLLp_mpt_UFbcuq6l_mXbh8e"
+                    ></vue-recaptcha>
+                  </v-col>
+                </v-row>
+                <v-row
+                  v-if="recapStatus"
+                  justify="center"
+                  class="mt-3"
+                  no-gutters
+                  style="height: 40px"
                 >
-                  เข้าสู่ระบบ
-                </v-btn>
-              </v-col>
-            </v-row>
-            <v-col style="display: flex; justify-content: center">
-              <div class="mr-1" style="font-size: 18px">ลืม?</div>
-              <div
-                style="
-                  font-size: 18px;
-                  color: #001d6e;
-                  cursor: pointer;
-                  text-decoration: underline;
-                "
-                @click="(dialog = true), validate('UPDATE')"
-              >
-                รหัสผ่าน
-              </div>
-            </v-col>
-            <v-col>
-              <h6>
-                คุณได้ลงทะเบียนแล้วหรือยัง?
-                <a
-                  style="cursor: pointer; text-decoration: underline"
-                  href="https://belinked.betaskthai.com/register"
-                  >ลงทะเบียน!</a
+                  <v-col cols="10">
+                    <v-alert text outlined type="error">
+                      กรุณากดยืนยันตัว.
+                    </v-alert>
+                  </v-col>
+                </v-row>
+                <v-row justify="center" no-gutter>
+                  <v-col cols="10">
+                    <v-btn
+                      color="#001D6E"
+                      style="font-size: 20px"
+                      dark
+                      x-large
+                      block
+                      @click="onSubmit()"
+                    >
+                      เข้าสู่ระบบ
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-form>
+              <v-col style="display: flex; justify-content: center">
+                <div class="mr-1" style="font-size: 18px">ลืม?</div>
+                <div
+                  style="
+                    font-size: 18px;
+                    color: #001d6e;
+                    cursor: pointer;
+                    text-decoration: underline;"
+                  @click="(dialog = true), validate('UPDATE')"
                 >
-              </h6>
-            </v-col>
-          </div>
+                  รหัสผ่าน
+                </div>
+              </v-col>
+              <v-col>
+                <h6>
+                  คุณได้ลงทะเบียนแล้วหรือยัง?
+                  <a
+                    style="cursor: pointer; text-decoration: underline"
+                    href="https://belinked.betaskthai.com/register"
+                    >ลงทะเบียน!</a
+                  >
+                </h6>
+              </v-col>
+            </div>
         </v-container>
       </v-col>
     </v-row>
@@ -287,6 +292,7 @@ export default {
   // },
   data () {
     return {
+      validAdd: true,
       dialogPaymentUpload: false,
       session: this.$session.getAll(),
       cards: [
@@ -379,6 +385,12 @@ export default {
           this.$nextTick(() => {
             let self = this
             self.$refs.form_update.validate()
+          })
+          break
+        case 'LOGIN':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_login.validate()
           })
           break
 
@@ -581,48 +593,54 @@ export default {
       }
     },
     async onSubmit () {
-      this.dataReady = false
-      this.form.type = 'username'
-      console.log(JSON.stringify(this.form))
-      if (this.recapchaToken !== '') {
-        await axios
-          .get(
+      this.validate('LOGIN')
+      setTimeout(() => this.onSubmitSubmit(), 500)
+    },
+    async onSubmitSubmit () {
+      if (this.validAdd !== false) {
+        this.dataReady = false
+        this.form.type = 'username'
+        console.log(JSON.stringify(this.form))
+        if (this.recapchaToken !== '') {
+          await axios
+            .get(
             // eslint-disable-next-line quotes
-            this.DNS_IP +
+              this.DNS_IP +
               '/system_user/auth?userName=' +
               this.form.userName +
               '&userPassword=' +
               this.form.userPassword
-          )
-          .then(async (response) => {
-            if (response.data.status !== false) {
-              console.log('response.data[0]', response.data[0])
-              if (response.data[0]) {
-                if (response.data[0].shopActive === 'active') {
-                  this.$session.start()
-                  this.$session.set('data', response.data[0])
-                  localStorage.clear()
-                  this.checkbookNo(response.data[0])
+            )
+            .then(async (response) => {
+              if (response.data.status !== false) {
+                console.log('response.data[0]', response.data[0])
+                if (response.data[0]) {
+                  if (response.data[0].shopActive === 'active') {
+                    this.$session.start()
+                    this.$session.set('data', response.data[0])
+                    localStorage.clear()
+                    this.checkbookNo(response.data[0])
+                  } else {
+                    this.dataBilling = response.data[0]
+                    this.dataReady = true
+                    this.dialogPaymentUpload = true
+                  }
                 } else {
-                  this.dataBilling = response.data[0]
                   this.dataReady = true
-                  this.dialogPaymentUpload = true
+                  this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง1', 'error')
                 }
-              } else {
-                this.dataReady = true
-                this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง1', 'error')
               }
-            }
-          })
+            })
           // eslint-disable-next-line handle-callback-err
-          .catch((error) => {
-            this.dataReady = true
-            console.log(error)
-            this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง2', 'error')
-          })
-      } else {
-        this.recapStatus = true
-        this.dataReady = true
+            .catch((error) => {
+              this.dataReady = true
+              console.log(error)
+              this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง2', 'error')
+            })
+        } else {
+          this.recapStatus = true
+          this.dataReady = true
+        }
       }
     },
     async onSubmitForgot () {
