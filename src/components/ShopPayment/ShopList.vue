@@ -263,11 +263,21 @@
                 ลูกค้าชำระอีกครั้ง
               </v-btn>
               <v-btn
-                v-if="item.paymentStatus === 'wait' || item.paymentStatus === 'inactive'"
+                v-if="item.paymentStatus === 'wait'"
                 color="success"
                 small
                 dark
                 @click="changStatus(item, 'confirm')"
+              >
+                <v-icon > mdi-check-circle </v-icon>
+                Active
+              </v-btn>
+              <v-btn
+                v-if="item.paymentStatus === 'inactive'"
+                color="success"
+                small
+                dark
+                @click="changStatus(item, 'inactiveToactive')"
               >
                 <v-icon > mdi-check-circle </v-icon>
                 Active
@@ -455,6 +465,7 @@ export default {
         { text: 'ราคาแพ็กเกจ', value: 'paymentAmount' },
         { text: 'สถานะ', value: 'paymentStatus' },
         { text: 'วันที่จ่าย', value: 'paymentDate' },
+        { text: 'วันวันที่สิ้นสุดทดลองใช้', value: 'trialsVersionDate' },
         { text: 'จัดการข้อมูล', value: 'action', sortable: false, align: 'center' }
       ],
       rules: {
@@ -600,7 +611,7 @@ export default {
       } else if (text === 'inactive') {
         textShow = 'Inactive'
       }
-      console.log('changStatus', item)
+      console.log('changStatus', item, text)
       this.$swal({
         title: 'ต้องการเปลี่ยนแปลงสถานะเป็น ' + textShow + ' ใช่หรือไม่?',
         type: 'question',
@@ -636,6 +647,9 @@ export default {
           } else {
             if (text === 'inactive') {
               await this.updateShopActive('inactive', item)
+              this.checkSearch()
+            } else if (text === 'inactiveToactive') {
+              await this.updateShopActive('active', item)
               this.checkSearch()
             } else {
               this.$swal(
