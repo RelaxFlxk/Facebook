@@ -603,19 +603,19 @@ export default {
           } else {
             darkMode = 'False'
           }
-          let bookingthankText = null
+          let bookingthankText = ''
           if (this.formUpdate.bookingthankText === '') {
             bookingthankText = ''
           } else {
             bookingthankText = this.formUpdate.bookingthankText.replace(/%/g, '%%').replace(/'/g, "\\'")
           }
-          let bookingthankTextEn = null
+          let bookingthankTextEn = ''
           if (this.formUpdate.bookingthankTextEn === '') {
             bookingthankTextEn = ''
           } else {
             bookingthankTextEn = this.formUpdate.bookingthankTextEn.replace(/%/g, '%%').replace(/'/g, "\\'")
           }
-          let videoLinkMonition = null
+          let videoLinkMonition = ''
           if (this.formUpdate.videoLinkMonition === '') {
             videoLinkMonition = ''
           } else {
