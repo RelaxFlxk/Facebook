@@ -10,6 +10,7 @@ import PrintPdf from '@/components/PrintPdf'
 import Onsite from '@/components/Onsite'
 import Mazda from '@/components/Mazda'
 import ShopPayment from '@/components/ShopPayment'
+import Sound from '@/components/Sound'
 
 Vue.use(Router)
 
@@ -394,6 +395,11 @@ export default new Router({
     path: '/Master/ServiceType',
     name: 'ServiceType',
     component: Master.ServiceType
+  },
+  {
+    path: '/Sound/CallQueue',
+    name: 'CallQueue',
+    component: Sound.callQueue
   }
   ]
 })
