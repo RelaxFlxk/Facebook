@@ -14,14 +14,14 @@
             </v-btn>
           </v-col> -->
         <!-- </v-row> -->
-        <v-card flat v-if="!overlay">
+        <template>
+          <v-card flat v-if="!overlay">
           <v-card-text>
             <div class="text-center">
               <waitingAlert></waitingAlert>
             </div>
           </v-card-text>
         </v-card>
-        <template v-else>
         <v-form ref="form_search" v-model="validSearch" lazy-validation>
           <v-row class="no-gutters">
             <!-- <v-col col="auto" class="px-3 mt-5 text-right">
@@ -150,7 +150,7 @@
           </v-row> -->
         </v-form>
         <v-row>
-          <v-col cols="12">
+          <v-col cols="12" v-if="overlay">
             <br>
             <v-card class="mx-6 pa-3 ma-2" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;">
               <v-card-text>
@@ -379,7 +379,7 @@
                       </div>
                     </v-col>
                   </v-row>
-                   <v-row >
+                   <v-row v-if="overlay">
                     <v-col cols="12">
                       <!-- <v-select
                         v-model="servicePoint"
@@ -427,6 +427,11 @@
                         <!-- <v-icon left>mdi-bullhorn</v-icon> -->
                         ตกลง
                       </v-btn>
+                    </v-col>
+                  </v-row>
+                  <v-row v-else>
+                    <v-col clos="12" class="text-center">
+                      <waitingAlert></waitingAlert>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -579,16 +584,17 @@ export default {
         })
     },
     async openHistory (item) {
-      console.log('item', item)
-      console.log('this.BookingDataList[item.bookNo]', this.BookingDataList[item.bookNo])
-      this.HistoryData = this.BookingDataList[item.bookNo]
-      this.pictureUrHistory = item.memberPicture
-      let phoneNum = this.HistoryData.filter(item3 => { return item3.fieldValue !== '' && item3.fieldName === 'เบอร์โทร' })
-      if (phoneNum.length > 0) {
-        this.shopPhone = phoneNum[0].fieldValue.replace(/-/g, '')
-      } else {
-        this.shopPhone = ''
-      }
+      // console.log('item', item)
+      // console.log('this.BookingDataList[item.bookNo]', this.BookingDataList[item.bookNo])
+      if (item) {
+        this.HistoryData = this.BookingDataList[item.bookNo]
+        this.pictureUrHistory = item.memberPicture
+        let phoneNum = this.HistoryData.filter(item3 => { return item3.fieldValue !== '' && item3.fieldName === 'เบอร์โทร' })
+        if (phoneNum.length > 0) {
+          this.shopPhone = phoneNum[0].fieldValue.replace(/-/g, '')
+        } else {
+          this.shopPhone = ''
+        }
       // axios.get(this.DNS_IP + '/BookingData/get_history?bookNo=' + item.bookNo)
       //   .then(async (response) => {
       //     let rs = response.data
@@ -600,6 +606,7 @@ export default {
       //   .catch((error) => {
       //     console.log('error function addData : ', error)
       //   })
+      }
     },
     async getShop () {
       let shopImg = ''
@@ -640,6 +647,7 @@ export default {
     },
     async searchBooking () {
       if (this.validSearch === true) {
+        this.overlay = false
         this.itemBooking = []
         let itemBooking = []
         await this.getBookingDataList(this.dateStart)
@@ -696,6 +704,7 @@ export default {
               } else {
                 this.itemBooking = itemBooking
               }
+              this.overlay = true
               this.openHistory(this.itemBooking[0])
             }
           })
@@ -821,6 +830,7 @@ export default {
           confirmButtonText: 'ใช่',
           cancelButtonText: 'ไม่'
         }).then(async response => {
+          this.overlay = false
           await this.updateServicePoint(item.bookNo)
           let lineUserId = item.lineUserId || ''
           if (lineUserId !== '') {
@@ -839,75 +849,73 @@ export default {
         })
       }
     },
+    async closeJobServicePointSubmit (item) {
+      var dtt = {
+        bookNo: item.bookNo,
+        contactDate: this.format_date(new Date()),
+        status: 'confirmJob',
+        statusUse: 'use',
+        shopId: this.$session.getAll().data.shopId,
+        CREATE_USER: this.$session.getAll().data.userName,
+        LAST_USER: this.$session.getAll().data.userName
+      }
+      await axios
+        .post(this.DNS_IP + '/booking_transaction/add', dtt)
+        .then(async responses => {
+          await this.updateServicePoint(item.bookNo)
+          let lineUserId = item.lineUserId || ''
+          if (lineUserId !== '') {
+            let dtt = {
+              checkGetQueue: 'True'
+            }
+            await axios
+              .post(this.DNS_IP + '/Booking/pushMsgQueue/' + item.bookNo, dtt)
+              .then(async responses => {}).catch(error => {
+                console.log('error function pushMsgQueue : ', error)
+              })
+          }
+          this.dialogServicePointStatus = false
+          this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+          await this.searchBooking()
+        })
+    },
     async closeJobServicePoint (item) {
       if (this.servicePoint === '') {
         this.$swal('ผิดพลาด', 'กรุณาเลือกจุดบริการ', 'error')
       } else {
-        let statusBooking = await this.checkBookingStatus(item.bookNo)
-        if (statusBooking === 'confirm') {
-          this.$swal({
-            title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
-            type: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#1DBF73',
-            cancelButtonColor: '#F38383',
-            confirmButtonText: 'ใช่',
-            cancelButtonText: 'ไม่'
-          }).then(async response => {
+        // let statusBooking = await this.checkBookingStatus(item.bookNo)
+        // if (statusBooking === 'confirm') {
+        this.$swal({
+          title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#1DBF73',
+          cancelButtonColor: '#F38383',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        }).then(async response => {
+          this.overlay = false
           // await this.clearConfirmJob(item.dueDate)
-            var dtt = {
-              bookNo: item.bookNo,
-              contactDate: this.format_date(new Date()),
-              status: 'confirmJob',
-              statusUse: 'use',
-              shopId: this.$session.getAll().data.shopId,
-              CREATE_USER: this.$session.getAll().data.userName,
-              LAST_USER: this.$session.getAll().data.userName
+          let USER_ROLE = this.session.data.USER_ROLE || ''
+          let empId = this.session.data.empId || ''
+          if (USER_ROLE === 'storeFront' && empId !== '') {
+            let statusUpdateEmp = await this.updateEmp(item.bookNo, 'confirm')
+            if (statusUpdateEmp === true) {
+              this.closeJobServicePointSubmit(item)
+            } else {
+              this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
+              this.dialogServicePointStatus = false
+              await this.searchBooking()
             }
-            await axios
-              .post(this.DNS_IP + '/booking_transaction/add', dtt)
-              .then(async responses => {
-                await this.updateServicePoint(item.bookNo)
-                let lineUserId = item.lineUserId || ''
-                if (lineUserId !== '') {
-                  let dtt = {
-                    checkGetQueue: 'True'
-                  }
-                  await axios
-                    .post(this.DNS_IP + '/Booking/pushMsgQueue/' + item.bookNo, dtt)
-                    .then(async responses => {}).catch(error => {
-                      console.log('error function pushMsgQueue : ', error)
-                    })
-                }
-                let USER_ROLE = this.session.data.USER_ROLE || ''
-                let empId = this.session.data.empId || ''
-                if (USER_ROLE === 'storeFront' && empId !== '') {
-                  this.updateEmp(item.bookNo)
-                }
-                this.dialogServicePointStatus = false
-                this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
-                await this.searchBooking()
-                // let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
-                // if (bookSelect.length > 0) {
-                //   for (let i = 0; i < bookSelect.length; i++) {
-                //     let d = bookSelect[i]
-                //     let s = {}
-                //     s.lineUserId = d.lineUserId || ''
-                //     if (s.lineUserId !== '') {
-                //       await axios
-                //         .post(this.DNS_IP + '/Booking/pushMsgQueue/' + d.bookNo)
-                //         .then(async responses => {}).catch(error => {
-                //           console.log('error function pushMsgQueue : ', error)
-                //         })
-                //     }
-                //   }
-                // }
-              })
-          })
-        } else {
-          this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
-          await this.searchBooking()
-        }
+          } else {
+            this.closeJobServicePointSubmit(item)
+          }
+        })
+        // } else {
+        //   this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
+        //   this.dialogServicePointStatus = false
+        //   await this.searchBooking()
+        // }
       }
     },
     async closeJobSubmitReturn (item) {
@@ -976,21 +984,6 @@ export default {
             .then(async responses => {
               this.$swal('เรียบร้อย', 'ปิดงานสำเร็จ', 'success')
               await this.searchBooking()
-            // let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
-            // if (bookSelect.length > 0) {
-            //   for (let i = 0; i < bookSelect.length; i++) {
-            //     let d = bookSelect[i]
-            //     let s = {}
-            //     s.lineUserId = d.lineUserId || ''
-            //     if (s.lineUserId !== '') {
-            //       await axios
-            //         .post(this.DNS_IP + '/Booking/pushMsgQueue/' + d.bookNo)
-            //         .then(async responses => {}).catch(error => {
-            //           console.log('error function pushMsgQueue : ', error)
-            //         })
-            //     }
-            //   }
-            // }
             })
         })
       } else {
@@ -1066,52 +1059,19 @@ export default {
               cancelButtonText: 'ไม่'
             }).then(async response => {
               // await this.clearConfirmJob(item.dueDate)
-              var dtt = {
-                bookNo: item.bookNo,
-                contactDate: this.format_date(new Date()),
-                status: 'confirmJob',
-                statusUse: 'use',
-                shopId: this.$session.getAll().data.shopId,
-                CREATE_USER: this.$session.getAll().data.userName,
-                LAST_USER: this.$session.getAll().data.userName
-              }
-              await axios
-                .post(this.DNS_IP + '/booking_transaction/add', dtt)
-                .then(async responses => {
-                  let lineUserId = item.lineUserId || ''
-                  if (lineUserId !== '') {
-                    let dtt = {
-                      checkGetQueue: 'True'
-                    }
-                    await axios
-                      .post(this.DNS_IP + '/Booking/pushMsgQueue/' + item.bookNo, dtt)
-                      .then(async responses => {}).catch(error => {
-                        console.log('error function pushMsgQueue : ', error)
-                      })
-                  }
-                  let USER_ROLE = this.session.data.USER_ROLE || ''
-                  let empId = this.session.data.empId || ''
-                  if (USER_ROLE === 'storeFront' && empId !== '') {
-                    this.updateEmp(item.bookNo)
-                  }
-                  this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+              let USER_ROLE = this.session.data.USER_ROLE || ''
+              let empId = this.session.data.empId || ''
+              if (USER_ROLE === 'storeFront' && empId !== '') {
+                let statusUpdateEmp = await this.updateEmp(item.bookNo, 'confirm')
+                if (statusUpdateEmp === true) {
+                  this.closeJob(item)
+                } else {
+                  this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                   await this.searchBooking()
-                // let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
-                // if (bookSelect.length > 0) {
-                //   for (let i = 0; i < bookSelect.length; i++) {
-                //     let d = bookSelect[i]
-                //     let s = {}
-                //     s.lineUserId = d.lineUserId || ''
-                //     if (s.lineUserId !== '') {
-                //       await axios
-                //         .post(this.DNS_IP + '/Booking/pushMsgQueue/' + d.bookNo)
-                //         .then(async responses => {}).catch(error => {
-                //           console.log('error function pushMsgQueue : ', error)
-                //         })
-                //     }
-                //   }
-                // }
-                })
+                }
+              } else {
+                this.closeJob(item)
+              }
             })
           }
         } else {
@@ -1119,6 +1079,34 @@ export default {
           await this.searchBooking()
         }
       }
+    },
+    async closeJob (item) {
+      var dtt = {
+        bookNo: item.bookNo,
+        contactDate: this.format_date(new Date()),
+        status: 'confirmJob',
+        statusUse: 'use',
+        shopId: this.$session.getAll().data.shopId,
+        CREATE_USER: this.$session.getAll().data.userName,
+        LAST_USER: this.$session.getAll().data.userName
+      }
+      await axios
+        .post(this.DNS_IP + '/booking_transaction/add', dtt)
+        .then(async responses => {
+          let lineUserId = item.lineUserId || ''
+          if (lineUserId !== '') {
+            let dtt = {
+              checkGetQueue: 'True'
+            }
+            await axios
+              .post(this.DNS_IP + '/Booking/pushMsgQueue/' + item.bookNo, dtt)
+              .then(async responses => {}).catch(error => {
+                console.log('error function pushMsgQueue : ', error)
+              })
+          }
+          this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+          await this.searchBooking()
+        })
     },
     async clearConfirmJob (dueDateUse) {
       var dtt = {
@@ -1153,13 +1141,19 @@ export default {
         })
       return result
     },
-    async updateEmp (bookNo) {
+    async updateEmp (bookNo, status) {
+      let result = ''
       var dtt = {
-        storeFrontQueueEmpId: parseInt(this.session.data.empId)
+        storeFrontQueueEmpId: parseInt(this.session.data.empId),
+        LAST_USER: this.$session.getAll().data.userName
       }
       await axios
-        .post(this.DNS_IP + '/Booking/edit/' + bookNo, dtt)
-        .then(async responses => {})
+        .post(this.DNS_IP + '/Booking/editQueueEmp/' + bookNo + '?status=' + status, dtt)
+        .then(async response => {
+          let rs = response.data
+          result = rs.status
+        })
+      return result
     },
     // async getBase64ImageFromURL (img) {
     //   let image = await axios.get(img, {withCredentials: true, responseType: 'arraybuffer'})

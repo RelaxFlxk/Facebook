@@ -423,7 +423,7 @@ export default {
       // your code goes here
       this.closeSetTimeBookingMonitor()
     })
-    this.dateStart = this.momenDate_1('2023-02-02')
+    this.dateStart = moment().format('YYYY-MM-DD')
     this.clearTimeLoop()
     this.checkSearch()
   },
