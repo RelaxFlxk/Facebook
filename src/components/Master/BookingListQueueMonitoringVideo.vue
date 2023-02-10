@@ -543,7 +543,11 @@ export default {
               let dataCon = this.itemBooking.filter(el => { return el.statusBt === 'confirmJob' })
               let dataWain = this.itemBooking.filter(el => { return el.statusBt === 'confirm' })
               console.log(dataCon, dataWain)
-              this.itemBookingUse = [ ...dataCon, ...dataWain ].filter((el, ind) => { return ind <= 5 })
+              let sortDataDataCon = dataCon.sort((a, b) => {
+                if (a.LAST_DATE > b.LAST_DATE) return -1
+                return a.LAST_DATE < b.LAST_DATE ? 1 : 0
+              })
+              this.itemBookingUse = [ ...sortDataDataCon, ...dataWain ].filter((el, ind) => { return ind <= 6 })
             } else {
               this.itemBookingUse = []
             }
