@@ -815,6 +815,8 @@ export default {
             }
             this.overlaySave = true
           })
+      } else {
+        this.overlaySave = true
       }
     },
     getDataFromFieldName (data, key) {

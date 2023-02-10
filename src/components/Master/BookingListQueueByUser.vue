@@ -706,8 +706,12 @@ export default {
               }
               this.overlay = true
               this.openHistory(this.itemBooking[0])
+            } else {
+              this.overlay = true
             }
           })
+      } else {
+        this.overlay = true
       }
     },
     getDataFromFieldName (data, key) {
