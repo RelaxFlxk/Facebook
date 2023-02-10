@@ -103,7 +103,7 @@
                 </template></v-text-field>
                 </template>
                 <v-date-picker
-                  @input="menuStart = false, checkSearch()"
+                  @input="menuStart = false, clearTimeLoop(), checkSearch()"
                   v-model="dateStart"
                   no-title
                   scrollable
@@ -141,6 +141,33 @@
               ></v-text-field>
             </v-col>
           </v-row>
+          <v-row v-if="DataFlowItem.filter(el => { return el.value !== 'allFlow' }).length > 0">
+            <v-col col="auto" v-for="(item3 , index3) in DataFlowItem.filter(el => { return el.value !== 'allFlow' })" :key="index3" style="display: flex;justify-content: center;">
+              <v-card
+                v-if="itemBookingCount.filter(el => { return el.flowId === item3.value  }).length > 0"
+                elevation="1"
+                :color="(item3.text === search) ? '#C9F2DC' : 'white'"
+                style="padding: 10px; width: 230px;"
+                @click="searchFlow(item3)"
+              >
+                <div style="margin: auto 0;">
+                  <strong>{{item3.text}}</strong>
+                  <div>จำนวน : {{itemBookingCount.filter(el => { return el.flowId === item3.value  })[0].countFlow}}</div>
+                </div>
+              </v-card>
+              <v-card
+                v-else
+                elevation="1"
+                color="white"
+                style="padding: 10px; width: 230px;"
+              >
+                <div style="margin: auto 0;">
+                  <strong>{{item3.text}}</strong>
+                  <div>จำนวน : 0</div>
+                </div>
+              </v-card>
+            </v-col>
+          </v-row>
           <!-- <v-row justify="center">
             <v-col cols="3" class="pt-0">
               <v-btn
@@ -157,7 +184,7 @@
         </v-form>
         <v-form ref="form_search" v-model="validSearch" lazy-validation v-else>
           <v-row>
-            <v-col cols="12" class="pl-10 pr-10">
+            <!-- <v-col cols="12" class="pl-10 pr-10">
               <v-select
                 style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
                 v-model="flowSelect"
@@ -176,7 +203,7 @@
                   </v-icon>
                 </template>
               </v-select>
-            </v-col>
+            </v-col> -->
             <v-col cols="12" class="pl-10 pr-10">
               <v-menu
                 ref="menu"
@@ -207,7 +234,7 @@
                 </template></v-text-field>
                 </template>
                 <v-date-picker
-                  @input="menuStart = false, checkSearch()"
+                  @input="menuStart = false, clearTimeLoop(), checkSearch()"
                   v-model="dateStart"
                   no-title
                   scrollable
@@ -330,7 +357,83 @@
           </v-card>
           </v-col>
         </v-row>
-        <v-row v-if="itemBooking.filter(el => el.statusBt !== 'closeJob').length > 0 && dialogwidth !== '50%'">
+        <v-row v-if="itemBooking.filter(el => el.statusBt !== 'closeJob').length > 0 && dialogwidth !== '50%'" justify="center">
+          <v-col cols="10">
+            <v-row>
+              <v-slide-group
+                mandatory
+              >
+                <v-slide-item
+                  v-for="(item, n) in DataFlowItem"
+                  :key="n"
+                >
+                  <v-card
+                    elevation="1"
+                    class="ma-4"
+                    :color="modelslide === item.value ? '#092C4C': ''"
+                    v-if="itemBookingCount.filter(el => { return el.flowId === item.value || item.value === 'allFlow'  }).length > 0"
+                    @click="modelslide = item.value, item.value === 'allFlow' ? itemBooking = itemBookingUse: itemBooking = itemBookingUse.filter(el => { return el.flowId === item.value })"
+                  >
+                    <v-container>
+                      <v-card-text>
+                        <div class="text-center">
+                          <template>
+                            <strong v-if="item.value !== 'allFlow'" :class="modelslide === item.value ? 'text-white': ''">{{item.text}} : {{itemBookingCount.filter(el => { return el.flowId === item.value  })[0].countFlow}}</strong>
+                            <strong v-else :class="modelslide === item.value ? 'text-white': ''">{{item.text}}</strong>
+                          </template>
+                          <!-- <strong :class="active ? 'text-white': ''">{{itemBookingCount.filter(el => { return el.flowId === item.value  })[0].countFlow}}</strong> -->
+                        </div>
+                      </v-card-text>
+                    </v-container>
+                  </v-card>
+                  <v-card
+                    elevation="1"
+                    class="ma-4"
+                    v-else
+                  >
+                    <v-container>
+                      <v-card-text>
+                        <div class="text-center">
+                          <template>
+                            <strong v-if="item.value !== 'allFlow'">{{item.text}} : 0</strong>
+                            <strong v-else>{{item.text}}</strong>
+                          </template>
+                          <!-- <strong :class="active ? 'text-white': ''">{{itemBookingCount.filter(el => { return el.flowId === item.value  })[0].countFlow}}</strong> -->
+                        </div>
+                      </v-card-text>
+                    </v-container>
+                  </v-card>
+                </v-slide-item>
+              </v-slide-group>
+              <!-- <v-col col="4" v-for="(item3 , index3) in DataFlowItem.filter(el => { return el.value !== 'allFlow' })" :key="index3" style="justify-content: center;">
+                <template v-if="itemBookingCount.filter(el => { return el.flowId === item3.value  }).length > 0">
+                <v-card
+                  elevation="1"
+                  :color="(item3.text === search) ? '#C9F2DC' : 'white'"
+                  style="padding: 10px; width: 50px;"
+                  @click="searchFlow(item3)"
+                >
+                  <div class="text-center">
+                    <div>{{itemBookingCount.filter(el => { return el.flowId === item3.value  })[0].countFlow}}</div>
+                  </div>
+                </v-card>
+                <strong>{{item3.text}}</strong>
+              </template>
+              <template v-else>
+                <v-card
+                  elevation="1"
+                  color="white"
+                  style="padding: 10px; width: 50px;"
+                >
+                  <div class="text-center">
+                    <div>0</div>
+                  </div>
+                </v-card>
+                <strong>{{item3.text}}</strong>
+              </template>
+              </v-col> -->
+            </v-row>
+          </v-col>
           <v-col cols="12"  v-for="(item, id) in itemBooking.filter(el => el.statusBt !== 'closeJob')" :key="id">
             <v-card class="mx-6 pa-3 ma-2" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;">
               <div mb-n5>
@@ -589,6 +692,7 @@ export default {
   },
   data () {
     return {
+      modelslide: '',
       shopPhone: '',
       languageSelect: 0,
       servicePointItem: [],
@@ -598,6 +702,7 @@ export default {
       validSearch: true,
       statusReturn: false,
       itemBooking: [],
+      itemBookingUse: [],
       BookingDataList: [],
       menuStart: false,
       dialogPrint: false,
@@ -660,7 +765,9 @@ export default {
       dataLineConfig: {},
       HistoryData: [],
       pictureUrHistory: '',
-      dialogHistory: false
+      dialogHistory: false,
+      itemBookingCount: [],
+      setTimerCalendar: null
     }
   },
   computed: {
@@ -679,11 +786,30 @@ export default {
     this.dateStart = this.momenDate_1(new Date())
     await this.getDataFlow()
     await this.getDataBranch()
+    await this.searchBooking()
+    this.$root.$on('closeSetTimeBookingMonitor', () => {
+      // your code goes here
+      this.closeSetTimeBookingMonitor()
+    })
+    this.dateStart = moment().format('YYYY-MM-DD')
+    this.clearTimeLoop()
     this.setTime()
     this.getShop()
-    this.checkSearch()
   },
   methods: {
+    closeSetTimeBookingMonitor () {
+      clearInterval(this.setTimerCalendar)
+      this.setTimerCalendar = null
+    },
+    clearTimeLoop () {
+      clearInterval(this.setTimerCalendar)
+      this.setTimerCalendar = null
+      let _this = this
+      this.setTimerCalendar = setInterval(function () { _this.searchBooking() }, 15000)
+    },
+    searchFlow (item) {
+      this.search = item.text
+    },
     momentThaiText (item) {
       let dt = moment(item).locale('th').format('LL')
       return dt
@@ -766,7 +892,8 @@ export default {
     async searchBooking () {
       if (this.validSearch === true) {
         this.overlaySave = false
-        this.itemBooking = []
+        this.itemBookingUse = []
+        this.itemBookingCount = []
         await this.getBookingDataList(this.dateStart)
         let urlApi = {}
         if (this.flowSelect === 'allFlow') {
@@ -809,7 +936,20 @@ export default {
                   d.cusName = (d.cusName.length > 0) ? d.cusName[0].fieldValue : ''
                   d.cusPhone = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เบอร์โทร')
                   d.cusPhone = (d.cusPhone.length > 0) ? d.cusPhone[0].fieldValue : ''
-                  this.itemBooking.push(d)
+                  this.itemBookingUse.push(d)
+                }
+              }
+              this.itemBooking = this.itemBookingUse
+              for (let i = 0; i < this.itemBookingUse.length; i++) {
+                let d = this.itemBookingUse[i]
+                if (d.statusBt === 'confirm') {
+                  let checkFlow = this.itemBookingCount.filter(el => { return el.flowId === d.flowId })
+                  let checkIndexFlow = this.itemBookingCount.findIndex(el => { return el.flowId === d.flowId })
+                  if (checkFlow.length > 0) {
+                    this.itemBookingCount[checkIndexFlow].countFlow = this.itemBookingCount[checkIndexFlow].countFlow + 1
+                  } else {
+                    this.itemBookingCount.push({flowId: d.flowId, flowName: d.flowName, statusBt: d.statusBt, countFlow: 1})
+                  }
                 }
               }
             }
@@ -872,6 +1012,7 @@ export default {
           let rs = response.data
           if (rs.length > 0) {
             if (this.$session.getAll().data.USER_ROLE === 'storeFront') {
+              resultOption.push({'text': 'ทั้งหมด', 'value': 'allFlow'})
               for (let i = 0; i < rs.length; i++) {
                 let d = rs[i]
                 let s = {}
