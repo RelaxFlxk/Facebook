@@ -952,6 +952,11 @@ export default {
                   }
                 }
               }
+              if (this.modelslide === '' || this.modelslide === 'allFlow') {
+                this.itemBooking = this.itemBookingUse
+              } else {
+                this.itemBooking = this.itemBookingUse.filter(el => { return el.flowId === this.modelslide })
+              }
             }
             this.overlaySave = true
           })
