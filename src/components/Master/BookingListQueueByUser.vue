@@ -836,6 +836,7 @@ export default {
         }).then(async response => {
           this.overlay = false
           await this.updateServicePoint(item.bookNo)
+          await this.reCallNoti(item)
           let lineUserId = item.lineUserId || ''
           if (lineUserId !== '') {
             let dtt = {
@@ -867,6 +868,7 @@ export default {
         .post(this.DNS_IP + '/booking_transaction/add', dtt)
         .then(async responses => {
           await this.updateServicePoint(item.bookNo)
+          await this.CallNoti(item)
           let lineUserId = item.lineUserId || ''
           if (lineUserId !== '') {
             let dtt = {
@@ -887,39 +889,39 @@ export default {
       if (this.servicePoint === '') {
         this.$swal('ผิดพลาด', 'กรุณาเลือกจุดบริการ', 'error')
       } else {
-        // let statusBooking = await this.checkBookingStatus(item.bookNo)
-        // if (statusBooking === 'confirm') {
-        this.$swal({
-          title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
-          type: 'question',
-          showCancelButton: true,
-          confirmButtonColor: '#1DBF73',
-          cancelButtonColor: '#F38383',
-          confirmButtonText: 'ใช่',
-          cancelButtonText: 'ไม่'
-        }).then(async response => {
-          this.overlay = false
-          // await this.clearConfirmJob(item.dueDate)
-          let USER_ROLE = this.session.data.USER_ROLE || ''
-          let empId = this.session.data.empId || ''
-          if (USER_ROLE === 'storeFront' && empId !== '') {
-            let statusUpdateEmp = await this.updateEmp(item.bookNo, 'confirm')
-            if (statusUpdateEmp === true) {
-              this.closeJobServicePointSubmit(item)
+        let statusBooking = await this.checkBookingStatus(item.bookNo)
+        if (statusBooking === 'confirm') {
+          this.$swal({
+            title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#1DBF73',
+            cancelButtonColor: '#F38383',
+            confirmButtonText: 'ใช่',
+            cancelButtonText: 'ไม่'
+          }).then(async response => {
+            this.overlay = false
+            // await this.clearConfirmJob(item.dueDate)
+            let USER_ROLE = this.session.data.USER_ROLE || ''
+            let empId = this.session.data.empId || ''
+            if (USER_ROLE === 'storeFront' && empId !== '') {
+              let statusUpdateEmp = await this.updateEmp(item.bookNo, 'confirm')
+              if (statusUpdateEmp === true) {
+                this.closeJobServicePointSubmit(item)
+              } else {
+                this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
+                this.dialogServicePointStatus = false
+                await this.searchBooking()
+              }
             } else {
-              this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
-              this.dialogServicePointStatus = false
-              await this.searchBooking()
+              this.closeJobServicePointSubmit(item)
             }
-          } else {
-            this.closeJobServicePointSubmit(item)
-          }
-        })
-        // } else {
-        //   this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
-        //   this.dialogServicePointStatus = false
-        //   await this.searchBooking()
-        // }
+          })
+        } else {
+          this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
+          this.dialogServicePointStatus = false
+          await this.searchBooking()
+        }
       }
     },
     async closeJobSubmitReturn (item) {
@@ -1158,6 +1160,31 @@ export default {
           result = rs.status
         })
       return result
+    },
+    async CallNoti (item) {
+      let dtdt = {
+        bookNo: item.bookNo,
+        servicePoint: this.servicePoint,
+        shopId: this.$session.getAll().data.shopId,
+        storeFrontQueue: item.storeFrontQueue,
+        CREATE_USER: this.$session.getAll().data.userName,
+        LAST_USER: this.$session.getAll().data.userName
+      }
+      await axios
+        .post(this.DNS_IP + '/callQueues/add', dtdt)
+        .then(async responses => {})
+    },
+    async reCallNoti (item) {
+      let dtdt = {
+        statusNotify: 'False',
+        servicePoint: this.servicePoint,
+        LAST_USER: this.$session.getAll().data.userName
+      }
+      await axios
+        .post(this.DNS_IP + '/callQueues/edit/' + item.audioFileId, dtdt)
+        .then(async responses => {
+          this.$swal('เรียบร้อย', 'กรุณารอเรียกคิว', 'success')
+        })
     },
     // async getBase64ImageFromURL (img) {
     //   let image = await axios.get(img, {withCredentials: true, responseType: 'arraybuffer'})
