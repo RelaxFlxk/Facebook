@@ -356,12 +356,14 @@
                 >
                   <v-card
                     elevation="1"
-                    class="ma-4"
+                    class="ma-2"
+                    min-width="100px"
+                    height="76px"
+                    :style="'border-radius: 15px 15px 15px 15px;'"
                     :color="modelslide === item.value ? '#092C4C': ''"
                     v-if="itemBookingCount.filter(el => { return el.flowId === item.value || item.value === 'allFlow'  }).length > 0"
                     @click="modelslide = item.value, item.value === 'allFlow' ? itemBooking = itemBookingUse: itemBooking = itemBookingUse.filter(el => { return el.flowId === item.value })"
                   >
-                    <v-container>
                       <v-card-text>
                         <div class="text-center">
                           <template>
@@ -372,14 +374,15 @@
                           <!-- <strong :class="active ? 'text-white': ''">{{itemBookingCount.filter(el => { return el.flowId === item.value  })[0].countFlow}}</strong> -->
                         </div>
                       </v-card-text>
-                    </v-container>
                   </v-card>
                   <v-card
                     elevation="1"
-                    class="ma-4"
+                    min-width="100px"
+                    height="76px"
+                    class="ma-2"
                     v-else
+                    :style="'border-radius: 15px 15px 15px 15px;'"
                   >
-                    <v-container>
                       <v-card-text>
                         <div class="text-center">
                           <template>
@@ -390,7 +393,6 @@
                           <!-- <strong :class="active ? 'text-white': ''">{{itemBookingCount.filter(el => { return el.flowId === item.value  })[0].countFlow}}</strong> -->
                         </div>
                       </v-card-text>
-                    </v-container>
                   </v-card>
                 </v-slide-item>
               </v-slide-group>
@@ -619,11 +621,14 @@
                         </template>
                       </v-select> -->
                       <v-radio-group v-model="servicePoint" row>
-                        <v-radio
-                          v-for="(n, id) in servicePointItem" :key="id"
-                          :label="`${n.textTh}`"
-                          :value="n.textTh"
-                        ></v-radio>
+                        <v-row>
+                          <v-col class="px-0" cols="4" v-for="(n, id) in servicePointItem" :key="id">
+                            <v-radio
+                              :label="`${n.textTh}`"
+                              :value="n.textTh"
+                            ></v-radio>
+                          </v-col>
+                        </v-row>
                       </v-radio-group>
                     </v-col>
                     <v-col cols="12">
