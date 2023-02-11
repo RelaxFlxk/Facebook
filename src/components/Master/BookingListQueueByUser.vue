@@ -440,7 +440,7 @@
           </v-dialog>
         </v-row>
         <v-footer fixed padless color="#1B437C" class="text-center mt-n16" style="justify-content: center;">
-          <p class="text-white" width="100%">POWER BY  BETASK CONSULTING</p>
+          <p class="text-white" width="100%">POWERED BY  BETASK CONSULTING</p>
         </v-footer>
         </template>
         </div>

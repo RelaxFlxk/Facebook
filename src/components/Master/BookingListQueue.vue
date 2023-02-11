@@ -43,7 +43,7 @@
                 dense
                 required
                 :rules ="[rules.required]"
-                @change="searchBooking()"
+                @change="searchBooking(),clearTimeLoop()"
                 ><template #prepend-inner>
                   <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
                     mdi-map-marker-outline
@@ -63,7 +63,7 @@
                 dense
                 required
                 :rules ="[rules.required]"
-                @change="searchBooking()"
+                @change="searchBooking(),clearTimeLoop()"
               >
                 <template #prepend-inner>
                   <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
@@ -168,19 +168,6 @@
               </v-card>
             </v-col>
           </v-row>
-          <!-- <v-row justify="center">
-            <v-col cols="3" class="pt-0">
-              <v-btn
-                color="warning"
-                block
-                style="border-radius: 20px !important;margin-right: 0px;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
-                @click="checkSearch()"
-              >
-                <v-icon color="white" left>mdi-clipboard-text-search</v-icon>
-                ค้นหา
-              </v-btn>
-            </v-col>
-          </v-row> -->
         </v-form>
         <v-form ref="form_search" v-model="validSearch" lazy-validation v-else>
           <v-row>
@@ -378,7 +365,8 @@
                       <v-card-text>
                         <div class="text-center">
                           <template>
-                            <strong v-if="item.value !== 'allFlow'" :class="modelslide === item.value ? 'text-white': ''">{{item.text}} : {{itemBookingCount.filter(el => { return el.flowId === item.value  })[0].countFlow}}</strong>
+                            <strong v-if="item.value !== 'allFlow'"  style="color:#FFFFFF;background-color:#092C4C;min-height: 30px;width:30px;border-radius: 80px 80px 80px 80px;display: flex;justify-content: center;align-items: center;">{{itemBookingCount.filter(el => { return el.flowId === item.value  })[0].countFlow}}</strong>
+                            <strong v-if="item.value !== 'allFlow'" :class="modelslide === item.value ? 'text-white': ''">{{item.text}}</strong>
                             <strong v-else :class="modelslide === item.value ? 'text-white': ''">{{item.text}}</strong>
                           </template>
                           <!-- <strong :class="active ? 'text-white': ''">{{itemBookingCount.filter(el => { return el.flowId === item.value  })[0].countFlow}}</strong> -->
@@ -395,8 +383,9 @@
                       <v-card-text>
                         <div class="text-center">
                           <template>
-                            <strong v-if="item.value !== 'allFlow'">{{item.text}} : 0</strong>
-                            <strong v-else>{{item.text}}</strong>
+                            <strong v-if="item.value !== 'allFlow'"  style="color:#FFFFFF;background-color:#092C4C;min-height: 30px;width:30px;border-radius: 80px 80px 80px 80px;display: flex;justify-content: center;align-items: center;">0</strong>
+                            <strong v-if="item.value !== 'allFlow'" >{{item.text}}</strong>
+                            <strong v-if="item.value === 'allFlow'">{{item.text}}</strong>
                           </template>
                           <!-- <strong :class="active ? 'text-white': ''">{{itemBookingCount.filter(el => { return el.flowId === item.value  })[0].countFlow}}</strong> -->
                         </div>
@@ -542,7 +531,7 @@
                           dark
                           color="white"
                           :style="styleCloseBt"
-                          @click="dialogHistory = false"
+                          @click="dialogHistory = false,clearTimeLoop()"
                           >
                           X
                         </v-btn>
@@ -603,7 +592,7 @@
                           dark
                           color="white"
                           :style="styleCloseBt"
-                          @click="dialogServicePointStatus = false"
+                          @click="dialogServicePointStatus = false,clearTimeLoop()"
                           >
                           X
                         </v-btn>
@@ -668,7 +657,7 @@
             </v-card>
           </v-dialog>
           <v-footer v-if="dialogwidth !== '50%'" fixed padless color="#1B437C" class="text-center" style="justify-content: center;padding-top: 10px;">
-          <p class="text-white" width="100%">POWER BY  BETASK CONSULTING</p>
+          <p class="text-white" width="100%">POWERED BY  BETASK CONSULTING</p>
         </v-footer>
         </div>
     </v-main>
@@ -773,8 +762,8 @@ export default {
   computed: {
     dialogwidth () {
       switch (this.$vuetify.breakpoint.name) {
-        case 'xs': return '70%'
-        case 'sm': return '60%'
+        case 'xs': return '90%'
+        case 'sm': return '70%'
         case 'md': return '50%'
         case 'lg': return '50%'
         case 'xl': return '50%'
@@ -787,9 +776,9 @@ export default {
     await this.getDataFlow()
     await this.getDataBranch()
     await this.searchBooking()
-    this.$root.$on('closeSetTimeBookingMonitor', () => {
+    this.$root.$on('closeSetTimeBookingListQueue', () => {
       // your code goes here
-      this.closeSetTimeBookingMonitor()
+      this.closeSetTimeBookingListQueue()
     })
     this.dateStart = moment().format('YYYY-MM-DD')
     this.clearTimeLoop()
@@ -797,7 +786,7 @@ export default {
     this.getShop()
   },
   methods: {
-    closeSetTimeBookingMonitor () {
+    closeSetTimeBookingListQueue () {
       clearInterval(this.setTimerCalendar)
       this.setTimerCalendar = null
     },
@@ -957,6 +946,8 @@ export default {
               } else {
                 this.itemBooking = this.itemBookingUse.filter(el => { return el.flowId === this.modelslide })
               }
+            } else {
+              this.itemBooking = []
             }
             this.overlaySave = true
           })
@@ -1115,10 +1106,12 @@ export default {
             this.dialogServicePointStatus = false
             this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
             await this.searchBooking()
+            this.clearTimeLoop()
           })
         } else {
           this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
           await this.searchBooking()
+          this.clearTimeLoop()
         }
       }
     },
@@ -1151,6 +1144,7 @@ export default {
           this.dialogServicePointStatus = false
           this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
           await this.searchBooking()
+          this.clearTimeLoop()
         })
     },
     async closeJobServicePoint (item) {
@@ -1180,6 +1174,7 @@ export default {
                 this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                 this.dialogServicePointStatus = false
                 await this.searchBooking()
+                this.clearTimeLoop()
               }
             } else {
               this.closeJobServicePointSubmit(item)
@@ -1188,10 +1183,12 @@ export default {
         } else {
           this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
           await this.searchBooking()
+          this.clearTimeLoop()
         }
       }
     },
     async closeJobSubmitReturn (item) {
+      this.closeSetTimeBookingListQueue()
       console.log('closeJobSubmit', item)
       let statusBooking = await this.checkBookingStatus(item.bookNo)
       if (statusBooking === 'confirmJob') {
@@ -1228,15 +1225,18 @@ export default {
             }
             this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
             await this.searchBooking()
+            this.clearTimeLoop()
           })
         }
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
         await this.searchBooking()
+        this.clearTimeLoop()
       }
     },
     async backHomeSubmit (item) {
       console.log('backHomeSubmit', item)
+      this.closeSetTimeBookingListQueue()
       let statusBooking = await this.checkBookingStatus(item.bookNo)
       if (statusBooking === 'confirmJob') {
         this.$swal({
@@ -1263,6 +1263,7 @@ export default {
             .then(async responses => {
               this.$swal('เรียบร้อย', 'ปิดงานสำเร็จ', 'success')
               await this.searchBooking()
+              this.clearTimeLoop()
             // let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
             // if (bookSelect.length > 0) {
             //   for (let i = 0; i < bookSelect.length; i++) {
@@ -1279,10 +1280,16 @@ export default {
             //   }
             // }
             })
+        }).catch(async err => {
+          // this.$router.push({ name: '404' })
+          console.log(err.code, err.message)
+          await this.searchBooking()
+          this.clearTimeLoop()
         })
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
         await this.searchBooking()
+        this.clearTimeLoop()
       }
     },
     async setservicePointCount (item) {
@@ -1353,9 +1360,11 @@ export default {
           }
           this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
           await this.searchBooking()
+          this.clearTimeLoop()
         })
     },
     async closeJobSubmit (item) {
+      this.closeSetTimeBookingListQueue()
       if (item.statusBt === 'confirm') {
         let statusBooking = await this.checkBookingStatus(item.bookNo)
         if (statusBooking === 'confirm') {
@@ -1389,6 +1398,7 @@ export default {
                 } else {
                   this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                   await this.searchBooking()
+                  this.clearTimeLoop()
                 }
               } else {
                 this.closeJob(item)
@@ -1398,6 +1408,7 @@ export default {
         } else {
           this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
           await this.searchBooking()
+          this.clearTimeLoop()
         }
       }
     },
