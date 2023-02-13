@@ -140,7 +140,7 @@
     <v-sheet
       :color="shopColor"
       elevation="0"
-      height="100%"
+      height="110vh"
       width="100%"
     >
       <v-row class="ml-6">
