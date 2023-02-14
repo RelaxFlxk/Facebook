@@ -294,7 +294,7 @@
         <v-col cols="8">
           <v-row v-if="videoLinkMonition">
             <v-col cols="12" class="text-center">
-              <video ref="video" class="mt-16" width="90%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
+              <video ref="video" id="videoAds" class="mt-16" width="90%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
                 <source :src="videoLinkMonition" type="video/webm">
                 <!-- <source src="@/assets/samsung.mp4" type="video/mp4"> -->
               </video>
@@ -613,6 +613,8 @@ export default {
                 playerQueue.play()
                 playerQueue.onended = (event) => {
                   playerSuffix.play()
+                  var vid = document.getElementById('videoAds')
+                  vid.play()
                 }
               }
             }
