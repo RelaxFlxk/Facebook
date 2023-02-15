@@ -472,14 +472,14 @@ export default {
         'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023085449577454.wav',
         'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023085522454629.wav',
         'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023085559998864.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023093543960032.wav',
+        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02152023022750480676.wav',
         'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023085715437991.wav',
         'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023092857509523.wav',
         'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023092928359581.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023093332910450.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023093040753032.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023093110789405.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023093435485318.wav'
+        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02152023022850924702.wav',
+        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02152023022934174433.wav',
+        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02152023023007881725.wav',
+        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02152023023039434650.wav'
       ],
       tableTarget: 0,
       tableId: 0
@@ -546,39 +546,53 @@ export default {
       axios.post(`${this.DNS_IP}/callQueues/edit/${id}`, params)
     },
     async generateSound (item) {
-      this.tableId = item.servicePoint.replace('โต๊ะ ', '')
-      let storeFrontQueue = item.storeFrontQueue
-      storeFrontQueue = storeFrontQueue.replace('A', 'เอ')
-      storeFrontQueue = storeFrontQueue.replace('B', 'บี')
-      storeFrontQueue = storeFrontQueue.replace('C', 'ซี')
-      storeFrontQueue = storeFrontQueue.replace('D', 'ดี')
-      storeFrontQueue = storeFrontQueue.replace('E', 'อี')
-      let result
-      // let text = this.convertItemtoText(item)
-      if (!item.audioFile) {
-        var params = {
-          text: storeFrontQueue,
-          text_delay: storeFrontQueue,
-          speaker: this.speakerId,
-          volume: 1,
-          speed: 1,
-          type_media: 'wav'
-        }
+      try {
+        this.tableId = item.servicePoint.replace('โต๊ะ ', '')
+        let storeFrontQueue = item.storeFrontQueue
+        storeFrontQueue = storeFrontQueue.replace('A', 'เอ')
+        storeFrontQueue = storeFrontQueue.replace('B', 'บี')
+        storeFrontQueue = storeFrontQueue.replace('C', 'ซี')
+        storeFrontQueue = storeFrontQueue.replace('D', 'ดี')
+        storeFrontQueue = storeFrontQueue.replace('E', 'อี')
+        let result
         await axios
-          .post(
-            'https://api-voice.botnoi.ai/api/service/generate_audio',
-            params,
-            { headers: { 'Botnoi-Token': 'bb16e727e89afe8b24cb08041e78d70cf01efb3b8bd96a004ee2020020f86976' } }
-          ).then((res) => {
-            this.playSound(res.data)
-            result = res.data
+          .get(
+            `${this.DNS_IP}/callQueues/get?storeFrontQueue=${item.storeFrontQueue}`
+          ).then(async (response) => {
+            if (response.data.length > 0 && typeof response.data.status === 'undefined') {
+              item.audioFile = response.data[0].audioFile
+            }
           })
-      } else {
-        let res = { text: item.storeFrontQueue, audio_url: item.audioFile }
-        this.playSound(res)
-        result = res
+
+        // let text = this.convertItemtoText(item)
+        if (!item.audioFile) {
+          var params = {
+            text: storeFrontQueue,
+            text_delay: storeFrontQueue,
+            speaker: this.speakerId,
+            volume: 1,
+            speed: 1,
+            type_media: 'wav'
+          }
+          await axios
+            .post(
+              'https://api-voice.botnoi.ai/api/service/generate_audio',
+              params,
+              { headers: { 'Botnoi-Token': 'bb16e727e89afe8b24cb08041e78d70cf01efb3b8bd96a004ee2020020f86976' } }
+            ).then((res) => {
+              this.playSound(res.data)
+              result = res.data
+            })
+        } else {
+          let res = { text: item.storeFrontQueue, audio_url: item.audioFile }
+          this.playSound(res)
+          result = res
+        }
+        return result
+      } catch (e) {
+        console.log(e)
+        return null
       }
-      return result
     },
     convertItemtoText (item) {
       let { dock, regNo, storeFrontQueue } = item
