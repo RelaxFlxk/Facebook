@@ -398,12 +398,22 @@
                           </v-icon>
                         </template>
                       </v-select> -->
-                      <v-radio-group v-model="servicePoint" row>
+                      <!-- <v-radio-group v-model="servicePoint" row>
                         <v-radio
                           v-for="(n, id) in servicePointItem" :key="id"
                           :label="`${n.textTh}`"
                           :value="n.textTh"
                         ></v-radio>
+                      </v-radio-group> -->
+                      <v-radio-group v-model="servicePoint" row>
+                        <v-row>
+                          <v-col class="px-0" cols="4" v-for="(n, id) in servicePointItem" :key="id">
+                            <v-radio
+                              :label="`${n.textTh}`"
+                              :value="n.textTh"
+                            ></v-radio>
+                          </v-col>
+                        </v-row>
                       </v-radio-group>
                     </v-col>
                     <v-col cols="12">
