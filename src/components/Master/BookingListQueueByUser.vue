@@ -225,10 +225,12 @@
                     @click="closeJobSubmit(itemBooking[0])"
                     :src="itemBooking[0].statusBt === 'confirm' ? 'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FselectActiveQ1.png?alt=media&token=938edfa3-26a9-4c27-94a6-208cc2e81a0f': 'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FselectInactiveQ1.png?alt=media&token=e7c25716-7e4d-4499-af94-8ef382a51185'" max-width="179px" max-height="179px"></v-img>
                 </div>
+                <template v-if="HistoryData.length > 0">
                 <div class="mt-5" v-for="(item3 , index3) in HistoryData" :key="index3">
                   <h5 class="text-start  ml-10" v-if="item3.fieldValue !== '' && item3.fieldName !== 'เบอร์โทร'"><strong>{{item3.fieldValue}}</strong></h5>
                   <!-- <h5 @click="dial(item3.fieldValue.replace(/-/g, ''))" class="text-start  ml-10" v-if="item3.fieldValue !== '' && item3.fieldName === 'เบอร์โทร'"><v-icon color="#24C74D" class="iconify" data-icon="el:phone-alt">mdi-phone</v-icon><strong class="ml-4">{{'' + item3.fieldValue}}</strong></h5> -->
                 </div>
+                </template>
                 <h5 v-if="itemBooking[0].servicePoint" class="text-start  ml-10 mt-2"><strong>{{ languageSelect === 0 ? itemBooking[0].servicePoint : JSON.parse(itemBooking[0].servicePointCount).filter(el => { return el.textTh === itemBooking[0].servicePoint}).length > 0 ? JSON.parse(itemBooking[0].servicePointCount).filter(el => { return el.textTh === itemBooking[0].servicePoint})[0].textEn:itemBooking[0].servicePoint}}</strong></h5>
                 <div class="text-start ml-9 mt-2" style="display: flex;word-break: break-word;">
                   <v-icon  color="#979797" class="iconify" data-icon="ic:twotone-access-time"></v-icon>
@@ -508,8 +510,8 @@ export default {
       ],
       dialog: false,
       dialogAdd: false,
-      session: this.$session.getAll(),
-      shopId: this.$session.getAll().data.shopId,
+      // session: this.$session.getAll(),
+      // shopId: this.$session.getAll().data.shopId,
       search: '',
       shopName: '',
       shopImg: '',
@@ -559,15 +561,40 @@ export default {
     }
   },
   async mounted () {
-    this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
     this.dateStart = this.momenDate_1(new Date())
-    await this.getDataFlow()
-    await this.getDataBranch()
-    this.setTime()
-    this.getShop()
-    this.checkSearch()
+    await this.beforeCreate()
   },
   methods: {
+    async getBefore () {
+      await this.getDataFlow()
+      await this.getDataBranch()
+      this.setTime()
+      this.getShop()
+      this.checkSearch()
+      this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
+    },
+    async beforeCreate () {
+      if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
+        if (JSON.parse(localStorage.getItem('sessionData')).shopId) {
+          this.$session.start()
+          this.$session.set('data', JSON.parse(localStorage.getItem('sessionData')))
+          await this.getBefore()
+        } else {
+          this.$router.push('/Core/Login')
+        }
+      } else {
+        if (!this.$session.exists()) {
+          this.$router.push('/Core/Login')
+        } else {
+          if (this.$session.getAll().data.shopId) {
+            localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
+            await this.getBefore()
+          } else {
+            this.$router.push('/Core/Login')
+          }
+        }
+      }
+    },
     momentThaiText (item) {
       let dt = moment(item).locale('th').format('LL')
       return dt
@@ -621,7 +648,7 @@ export default {
     async getShop () {
       let shopImg = ''
       await axios
-        .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.shopId)
+        .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.$session.getAll().data.shopId)
         .then(async response => {
           let rs = response.data
           if (rs.length > 0) {
@@ -665,7 +692,7 @@ export default {
         if (this.flowSelect === 'allFlow') {
           urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
-            this.shopId +
+            this.$session.getAll().data.shopId +
             '&masBranchID=' +
             this.masBranchID +
             // '&flowId=' +
@@ -677,7 +704,7 @@ export default {
         } else {
           urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
-            this.shopId +
+            this.$session.getAll().data.shopId +
             '&masBranchID=' +
             this.masBranchID +
             '&flowId=' +
@@ -705,8 +732,8 @@ export default {
                   itemBooking.push(d)
                 }
               }
-              let USER_ROLE = this.session.data.USER_ROLE || ''
-              let empId = this.session.data.empId || ''
+              let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
+              let empId = this.$session.getAll().data.empId || ''
               if (USER_ROLE === 'storeFront' && empId !== '') {
                 let dataCon = itemBooking.filter(el => { return el.statusBt === 'confirmJob' && el.storeFrontQueueEmpId === parseInt(empId) })
                 let dataWain = itemBooking.filter(el => { return el.statusBt === 'confirm' })
@@ -737,11 +764,11 @@ export default {
       this.BookingDataList = []
       let url = ''
       if (this.flowSelect === 'allFlow') {
-        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
+        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
       } else {
-        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}&flowId=${this.flowSelect}`
+        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}&flowId=${this.flowSelect}`
       }
-      // let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}&flowId=${this.flowSelect}`
+      // let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}&flowId=${this.flowSelect}`
       await axios
         .get(url)
         .then(async response => {
@@ -772,7 +799,7 @@ export default {
     async getDataFlow () {
       let resultOption = []
       await axios
-        .get(this.DNS_IP + `/flow/get?shopId=${this.shopId}&storeFrontCheck=True`)
+        .get(this.DNS_IP + `/flow/get?shopId=${this.$session.getAll().data.shopId}&storeFrontCheck=True`)
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
@@ -812,7 +839,7 @@ export default {
     async getDataFromAPI (url, fieldId, fieldName, param) {
       let result = []
       await axios
-        .get(this.DNS_IP + `${url}?shopId=${this.shopId}${param}`)
+        .get(this.DNS_IP + `${url}?shopId=${this.$session.getAll().data.shopId}${param}`)
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
@@ -912,8 +939,8 @@ export default {
           }).then(async response => {
             this.overlay = false
             // await this.clearConfirmJob(item.dueDate)
-            let USER_ROLE = this.session.data.USER_ROLE || ''
-            let empId = this.session.data.empId || ''
+            let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
+            let empId = this.$session.getAll().data.empId || ''
             if (USER_ROLE === 'storeFront' && empId !== '') {
               let statusUpdateEmp = await this.updateEmp(item.bookNo, 'confirm')
               if (statusUpdateEmp === true) {
@@ -1010,7 +1037,7 @@ export default {
     async setservicePointCount (item) {
       this.servicePointItem = []
       await axios
-        // .get(this.DNS_IP + '/BookingData/get?shopId=' + this.shopId + '&bookNo=' + this.bookNo)
+        // .get(this.DNS_IP + '/BookingData/get?shopId=' + this.$session.getAll().data.shopId + '&bookNo=' + this.bookNo)
         .get(this.DNS_IP + '/booking_view/get?shopId=' + item.shopId + '&flowId=' + item.flowId +
         '&dueDateDay=' + this.dateStart + '&storeFrontQueue=is not null&statusBt=confirmJob&servicePointStatus=True')
         .then(async response => {
@@ -1075,8 +1102,8 @@ export default {
               cancelButtonText: 'ไม่'
             }).then(async response => {
               // await this.clearConfirmJob(item.dueDate)
-              let USER_ROLE = this.session.data.USER_ROLE || ''
-              let empId = this.session.data.empId || ''
+              let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
+              let empId = this.$session.getAll().data.empId || ''
               if (USER_ROLE === 'storeFront' && empId !== '') {
                 let statusUpdateEmp = await this.updateEmp(item.bookNo, 'confirm')
                 if (statusUpdateEmp === true) {
@@ -1145,7 +1172,7 @@ export default {
       let result = ''
       await axios
         .get(this.DNS_IP + '/booking_view/get?shopId=' +
-            this.shopId +
+            this.$session.getAll().data.shopId +
             '&bookNo=' + bookNo)
         .then(response => {
           let rs = response.data
@@ -1160,7 +1187,7 @@ export default {
     async updateEmp (bookNo, status) {
       let result = ''
       var dtt = {
-        storeFrontQueueEmpId: parseInt(this.session.data.empId),
+        storeFrontQueueEmpId: parseInt(this.$session.getAll().data.empId),
         LAST_USER: this.$session.getAll().data.userName
       }
       await axios

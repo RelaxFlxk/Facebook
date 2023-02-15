@@ -503,16 +503,24 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
-    changeStatusSound (text) {
+    async changeStatusSound (text) {
       console.log('changeStatusSound', text)
       if (text === 'on') {
         this.statusSound = true
+        await this.updatestatusNotifyByShopId()
         this.getMessage()
       } else {
         this.statusSound = false
         clearInterval(this.statusSoundCheck)
         this.statusSoundCheck = null
       }
+    },
+    async updatestatusNotifyByShopId () {
+      const params = {
+        statusNotify: 'True',
+        shopId: this.$session.getAll().data.shopId
+      }
+      await axios.post(`${this.DNS_IP}/callQueues/updateStatusNotify`, params)
     },
     async getMessage () {
       try {
