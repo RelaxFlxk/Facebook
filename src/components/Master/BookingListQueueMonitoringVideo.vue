@@ -292,14 +292,65 @@
           </v-container>
         </v-col>
         <v-col cols="8">
+          <!-- <v-row>
+            <v-col cols="11" class="pb-0 pt-0 mt-3" style="display: flex;justify-content: flex-end;">
+              <v-card
+                elevation="1"
+                :color="bgColor3"
+                style="padding: 10px; width: 330px;"
+              >
+                <div style="margin: auto 0;" class="text-center text-white">
+                  <div style="font-weight: 700;font-size: 28px;">คิวที่ยังไม่ได้เลือก</div>
+                  <strong style="font-weight: 700;font-size: 28px;">{{countConfirm}}</strong>
+                </div>
+              </v-card>
+            </v-col>
+          </v-row> -->
           <v-row v-if="videoLinkMonition">
-            <v-col cols="12" class="text-center">
-              <video ref="video" id="videoAds" class="mt-16" width="90%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
+            <v-col cols="12" class="text-center pt-0">
+              <video ref="video" id="videoAds" class="mt-15" width="90%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
                 <source :src="videoLinkMonition" type="video/webm">
                 <!-- <source src="@/assets/samsung.mp4" type="video/mp4"> -->
               </video>
             </v-col>
           </v-row>
+          <template>
+            <v-row>
+              <v-col cols="4" class="pb-0 pt-0 mt-3 pr-0">
+                <v-card
+                  elevation="1"
+                  :color="bgColor3"
+                  style="padding: 10px; width: 90%;"
+                >
+                  <div style="margin: auto 0;" class="text-center text-white">
+                    <div style="font-weight: 700;font-size: 28px;">คิวที่รอเรียก : {{countConfirm}}</div>
+                    <!-- <strong style="font-weight: 700;font-size: 28px;">{{countConfirm}}</strong> -->
+                    <v-row>
+                      <v-col cols="4" v-for="(item3 , index3) in DataFlowItem.filter(el => { return el.value !== 'allFlow' })" :key="index3">
+                         <strong class="text-white" style="font-size: 20px;">{{item3.storeFrontText}} : {{countConfirmList.filter(el => { return el.flowId === item3.value  }).length}}</strong>
+                      </v-col>
+                    </v-row>
+                  </div>
+                </v-card>
+              </v-col>
+              <v-col clos="8" class="pb-0 pt-0 mt-3 pl-0">
+                <v-sheet
+                  :color="bgColor3"
+                  elevation="1"
+                  height="100%"
+                  width="93%"
+                  dark
+                  style="border-radius: 10px 10px 10px 10px;padding: 10px;"
+                >
+                  <v-row>
+                    <v-col cols="2" class="pb-0 pt-1 mt-3 pl-10" v-for="(items, id) in countConfirmList" :key="id">
+                      <strong class="text-white" style="font-size: 20px;">{{items.storeFrontQueue}}</strong>
+                    </v-col>
+                  </v-row>
+                </v-sheet>
+              </v-col>
+            </v-row>
+          </template>
         </v-col>
         <v-row v-show="hideSound === true">
           <v-col>
@@ -482,7 +533,9 @@ export default {
         'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02152023023039434650.wav'
       ],
       tableTarget: 0,
-      tableId: 0
+      tableId: 0,
+      countConfirm: 0,
+      countConfirmList: []
     }
   },
   async mounted () {
@@ -760,9 +813,12 @@ export default {
                 if (a.LAST_DATE > b.LAST_DATE) return -1
                 return a.LAST_DATE < b.LAST_DATE ? 1 : 0
               })
+              this.countConfirm = dataWain.length
+              this.countConfirmList = dataWain.filter((el, ind) => { return ind <= 11 })
               this.itemBookingUse = [ ...sortDataDataCon, ...dataWain ].filter((el, ind) => { return ind <= 5 })
             } else {
               this.itemBookingUse = []
+              this.countConfirm = 0
             }
           })
       }
@@ -820,6 +876,7 @@ export default {
               s.textEng = d.flowNameEn
               s.text = d.flowName
               s.value = d.flowId
+              s.storeFrontText = d.storeFrontText
               s.allData = d
               resultOption.push(s)
               // console.log('this.DataFlowName', this.DataFlowName)
