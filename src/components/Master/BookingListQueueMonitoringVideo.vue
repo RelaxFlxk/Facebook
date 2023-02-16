@@ -538,7 +538,7 @@ export default {
             } else {
               clearInterval(this.statusSoundCheck)
               this.statusSoundCheck = null
-              this.statusSoundCheck = setTimeout(this.getMessage, 5000)
+              this.statusSoundCheck = setTimeout(this.getMessage, 2500)
             }
           })
       } catch (e) {

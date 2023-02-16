@@ -283,7 +283,7 @@
             </template>
             <template v-slot:[`item.action`]="{ item }">
               <v-row class="text-center">
-                <v-col cols="4" class="pb-0">
+                <v-col cols="3" class="pb-0">
                   <v-btn
                     color="#24C74D"
                     small
@@ -296,7 +296,7 @@
                     เรียกคิว
                   </v-btn>
                 </v-col>
-                <v-col cols="4" class="pb-0">
+                <v-col cols="3" class="pb-0">
                   <v-btn
                     color="#F38383"
                     small
@@ -309,7 +309,7 @@
                     เรียกคิวซ้ำ
                   </v-btn>
                 </v-col>
-                <v-col cols="4" class="pb-0">
+                <v-col cols="3" class="pb-0">
                   <v-btn
                     color="#1B437C"
                     small
@@ -320,6 +320,19 @@
                     :class="item.statusBt === 'confirmJob' ? 'text-white':''"
                   >
                     เสร็จสิ้น
+                  </v-btn>
+                </v-col>
+                <v-col cols="3" class="pb-0">
+                  <v-btn
+                    color="error"
+                    small
+                    rounded
+                    block
+                    :disabled="item.statusBt === 'confirmJob' ? false:true"
+                    @click="removeQueue(item)"
+                    :class="item.statusBt === 'confirmJob' ? 'text-white':''"
+                  >
+                    ยกเลิกคิว
                   </v-btn>
                 </v-col>
               </v-row>
@@ -430,12 +443,27 @@
               <div mb-n5>
                 <!-- <h6 style="color:#092C4C" class="text-left font-weight-bold ml-10">{{ item.flowName }}</h6> -->
                 <v-row>
-                  <v-col cols="8">
-                    <p style="color:#092C4C;font-size: 48px;" class="text-left font-weight-black mt-n1 mb-n5 pa-7">{{item.storeFrontQueue}}</p>
+                  <v-col cols="12" class="pb-0 pt-0">
+                    <v-btn
+                      v-if="item.statusBt === 'confirmJob'"
+                      color="#ECEFF1"
+                      class="ma-2 white--text"
+                      fab
+                      elevation="1"
+                      x-small
+                      @click="removeQueue(item)"
+                    >
+                      <v-icon color="red">
+                        mdi-delete-circle
+                      </v-icon>
+                    </v-btn>
+                  </v-col>
+                  <v-col cols="8" class="pt-0">
+                    <p style="color:#092C4C;font-size: 48px;" class="text-left font-weight-black mt-n1 mb-n5 pa-7 pt-0">{{item.storeFrontQueue}}</p>
                     <p style="color:#000000;font-size: 16px;" class="text-left font-weight-medium mt-n10 ml-7">{{item.cusName}}</p>
                     <p style="color:#000000;font-size: 16px;" class="text-left font-weight-medium mt-n3 ml-7">{{ languageSelect === 0 ? item.servicePoint : JSON.parse(item.servicePointCount).filter(el => { return el.textTh === item.servicePoint}).length > 0 ? JSON.parse(item.servicePointCount).filter(el => { return el.textTh === item.servicePoint})[0].textEn:item.servicePoint}}</p>
                   </v-col>
-                  <v-col cols="4">
+                  <v-col cols="4" class="pt-0">
                     <div class="mt-5" align="center">
                       <v-img
                         @click="closeJobSubmit(item)"
@@ -791,6 +819,50 @@ export default {
     this.getShop()
   },
   methods: {
+    async removeQueue (item) {
+      console.log('removeQueue', item)
+      this.closeSetTimeBookingListQueue()
+      let statusBooking = await this.checkBookingStatus(item.bookNo)
+      if (statusBooking === 'confirmJob') {
+        this.$swal({
+          title: 'ต้องการยกเลิกคิวนี้ ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#1DBF73',
+          cancelButtonColor: '#F38383',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        }).then(async response => {
+        // await this.clearConfirmJob(item.dueDate)
+          var dtt = {
+            bookNo: item.bookNo,
+            contactDate: this.format_date(new Date()),
+            status: 'cancel',
+            statusUse: 'use',
+            shopId: this.$session.getAll().data.shopId,
+            CREATE_USER: this.$session.getAll().data.userName,
+            LAST_USER: this.$session.getAll().data.userName,
+            remarkRemove: 'เนื่องจากลูกค้าไม่มาตามคิวที่เลือก'
+          }
+          await axios
+            .post(this.DNS_IP + '/booking_transaction/add', dtt)
+            .then(async responses => {
+              this.$swal('เรียบร้อย', 'ยกเลิกคิวสำเร็จ', 'success')
+              await this.searchBooking()
+              this.clearTimeLoop()
+            })
+        }).catch(async err => {
+          // this.$router.push({ name: '404' })
+          console.log(err.code, err.message)
+          await this.searchBooking()
+          this.clearTimeLoop()
+        })
+      } else {
+        this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
+        await this.searchBooking()
+        this.clearTimeLoop()
+      }
+    },
     closeSetTimeBookingListQueue () {
       clearInterval(this.setTimerCalendar)
       this.setTimerCalendar = null

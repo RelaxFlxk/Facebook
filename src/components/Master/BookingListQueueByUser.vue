@@ -219,6 +219,21 @@
               </v-card-text>
               <div mb-n5 v-if="itemBooking.length > 0">
                 <!-- <h6 style="color:#092C4C" class="text-left font-weight-bold ml-10">{{ itemBooking[0].flowName }}</h6> -->
+                <div class="text-right">
+                  <v-btn
+                    v-if="itemBooking[0].statusBt === 'confirmJob'"
+                    color="#ECEFF1"
+                    class="ma-2 white--text"
+                    fab
+                    elevation="1"
+                    x-small
+                    @click="removeQueue(itemBooking[0])"
+                  >
+                    <v-icon color="red">
+                      mdi-delete-circle
+                    </v-icon>
+                  </v-btn>
+                </div>
                 <p style="color:#092C4C;font-size: 80px;" class="text-center font-weight-black mt-n5 mb-n5">{{itemBooking[0].storeFrontQueue}}</p>
                 <div class="mt-5" align="center">
                   <v-img
@@ -565,6 +580,46 @@ export default {
     await this.beforeCreate()
   },
   methods: {
+    async removeQueue (item) {
+      console.log('removeQueue', item)
+      let statusBooking = await this.checkBookingStatus(item.bookNo)
+      if (statusBooking === 'confirmJob') {
+        this.$swal({
+          title: 'ต้องการยกเลิกคิวนี้ ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#1DBF73',
+          cancelButtonColor: '#F38383',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        }).then(async response => {
+        // await this.clearConfirmJob(item.dueDate)
+          var dtt = {
+            bookNo: item.bookNo,
+            contactDate: this.format_date(new Date()),
+            status: 'cancel',
+            statusUse: 'use',
+            shopId: this.$session.getAll().data.shopId,
+            CREATE_USER: this.$session.getAll().data.userName,
+            LAST_USER: this.$session.getAll().data.userName,
+            remarkRemove: 'เนื่องจากลูกค้าไม่มาตามคิวที่เลือก'
+          }
+          await axios
+            .post(this.DNS_IP + '/booking_transaction/add', dtt)
+            .then(async responses => {
+              this.$swal('เรียบร้อย', 'ยกเลิกคิวสำเร็จ', 'success')
+              await this.searchBooking()
+            })
+        }).catch(async err => {
+          // this.$router.push({ name: '404' })
+          console.log(err.code, err.message)
+          await this.searchBooking()
+        })
+      } else {
+        this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
+        await this.searchBooking()
+      }
+    },
     async getBefore () {
       await this.getDataFlow()
       await this.getDataBranch()
