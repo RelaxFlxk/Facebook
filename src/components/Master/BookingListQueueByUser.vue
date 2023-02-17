@@ -997,9 +997,16 @@ export default {
             let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
             let empId = this.$session.getAll().data.empId || ''
             if (USER_ROLE === 'storeFront' && empId !== '') {
-              let statusUpdateEmp = await this.updateEmp(item.bookNo, 'confirm')
-              if (statusUpdateEmp === true) {
-                this.closeJobServicePointSubmit(item)
+              let statusBookingCheck = await this.checkBookingStatus(item.bookNo)
+              if (statusBookingCheck === 'confirm') {
+                let statusUpdateEmp = await this.updateEmp(item.bookNo, 'confirm')
+                if (statusUpdateEmp === true) {
+                  this.closeJobServicePointSubmit(item)
+                } else {
+                  this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
+                  this.dialogServicePointStatus = false
+                  await this.searchBooking()
+                }
               } else {
                 this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                 this.dialogServicePointStatus = false
@@ -1160,9 +1167,15 @@ export default {
               let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
               let empId = this.$session.getAll().data.empId || ''
               if (USER_ROLE === 'storeFront' && empId !== '') {
-                let statusUpdateEmp = await this.updateEmp(item.bookNo, 'confirm')
-                if (statusUpdateEmp === true) {
-                  this.closeJob(item)
+                let statusBookingCheck = await this.checkBookingStatus(item.bookNo)
+                if (statusBookingCheck === 'confirm') {
+                  let statusUpdateEmp = await this.updateEmp(item.bookNo, 'confirm')
+                  if (statusUpdateEmp === true) {
+                    this.closeJob(item)
+                  } else {
+                    this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
+                    await this.searchBooking()
+                  }
                 } else {
                   this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                   await this.searchBooking()
