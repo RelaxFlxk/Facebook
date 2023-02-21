@@ -69,7 +69,16 @@ export default {
   },
   methods: {
     async getLimitBooking () {
-      this.timeEmp = JSON.parse(this.dataEmpAll.filter((a) => a.empId === this.empId)[0].setTime)
+      this.timeEmp = []
+      // this.timeEmp = JSON.parse(this.dataEmpAll.filter((a) => a.empId === this.empId)[0].setTime)
+      if (this.dataEmpAll.filter((a) => a.empId === this.empId)[0].setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.dataEmpAll.filter((a) => a.empId === this.empId)[0].setTime).filter((items) => items.value === new Date(this.picker).getDay())
+        this.timeEmp = timeJson[0].setTime || []
+        console.log('IF')
+      } else {
+        console.log('ELSE')
+        this.timeEmp = JSON.parse(this.dataEmpAll.filter((a) => a.empId === this.empId)[0].setTime) || []
+      }
       this.allBookingTime = []
       console.log('this.TimeEmp', this.timeEmp)
       await axios.get(this.DNS_IP + '/LimitBookingDateEmp/get?shopId=' + this.shopId + '&empId=' + this.empId + '&bookingDate=' + this.picker)

@@ -472,6 +472,32 @@
                 >
               </v-avatar>
             </template> -->
+            <template v-slot:[`item.notifyLanguage`]="{ item }">
+              <div style="display:flex;justify-content: center;" class="ma-3">
+            <v-chip
+              class="mr-1 font-weight-black"
+              :style="'background-color:' + (item.notifyLanguage === 0 ? 'rgb(0, 31, 165)' : 'rgb(103 103 103 / 18%)') + ';font-size:20px'"
+              dark
+              @click="Editlanguage(item,0)"
+              >
+              <v-avatar left>
+                <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2Fflag-TH.png?alt=media&token=e4bd7ffa-aed9-47e3-9240-4dcb9d8d284e"></v-img>
+              </v-avatar>
+                TH
+            </v-chip>
+            <v-chip
+              class="ml-1 font-weight-black"
+              :style="'background-color:' + (item.notifyLanguage === 1 ? 'rgb(0, 31, 165)' : 'rgb(103 103 103 / 18%)') + ';font-size:20px'"
+              dark
+              @click="Editlanguage(item,1)"
+              >
+              <v-avatar left>
+                <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2Fflag-USA1.png?alt=media&token=a83dd820-f576-457a-8d08-1009cea9d70b"></v-img>
+              </v-avatar>
+                EN
+            </v-chip>
+          </div>
+            </template>
                 <template v-slot:[`item.action`]="{ item }">
                   <v-btn
                     color="info"
@@ -572,6 +598,12 @@ export default {
         { text: 'ประเภท', value: 'targetType' },
         { text: 'วันที่สร้าง', value: 'CREATE_DATEtext' },
         { text: 'วันที่แก้ไข', value: 'LAST_DATEtext' },
+        {
+          text: 'ภาษา',
+          value: 'notifyLanguage',
+          sortable: false,
+          align: 'center'
+        },
         {
           text: 'จัดการข้อมูล',
           value: 'action',
@@ -789,6 +821,21 @@ export default {
           console.log('error function addData : ', error)
         })
     },
+    async Editlanguage (item, language) {
+      console.log('item', item, 'language', language)
+      let update = {
+        'notifyLanguage': language
+      }
+      await axios
+        .post(this.DNS_IP + '/lineNotifySetUp/edit/' + item.id, update)
+        .then(async response => {
+          await this.getLineGroup()
+        })
+        // eslint-disable-next-line handle-callback-err
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
+    },
     async AddData () {
       let BranchJSON = []
       this.notifyId = moment().valueOf()
@@ -822,6 +869,7 @@ export default {
           flowData: JSON.stringify(this.flowData).replace(/'/g, ''),
           masBranchID: JSON.stringify(BranchJSON),
           BookingSend: bookingS,
+          notifyLanguage: 0,
           shopId: this.shopId,
           notifyId: this.notifyId.toString(),
           CREATE_USER: this.$session.getAll().data.userName,
@@ -832,6 +880,7 @@ export default {
           flowData: null,
           masBranchID: JSON.stringify(BranchJSON),
           BookingSend: bookingS,
+          notifyLanguage: 0,
           shopId: this.shopId,
           notifyId: this.notifyId.toString(),
           CREATE_USER: this.$session.getAll().data.userName,
