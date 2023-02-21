@@ -11,10 +11,10 @@
           style="border-bottom: 1px solid #695988 !important"
         >
           <v-row>
-            <v-col cols="6" align="left" class="mt-6">
+            <v-col cols="8" align="left" class="mt-6 ml-8">
               <v-img :src="shopImage" max-width="200px" max-height="100px"></v-img>
             </v-col>
-            <v-col cols="6" align="right" class="mt-6">
+            <v-col cols="3" align="right" class="mt-6 ml-16">
               <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6" max-width="200px"></v-img>
             </v-col>
           </v-row>
@@ -140,14 +140,14 @@
     <v-sheet
       :color="shopColor"
       elevation="0"
-      height="100%"
+      height="110vh"
       width="100%"
     >
-      <v-row>
+      <v-row class="ml-6">
         <v-col cols="4" class="pr-0">
           <v-container>
             <v-row>
-              <v-col cols="8">
+              <v-col cols="6">
                 <v-menu
                   ref="menu"
                   v-model="menuStart"
@@ -159,10 +159,11 @@
                   <template v-slot:activator="{ on, attrs }">
                     <v-text-field
                       hide-details
-                      background-color="white"
-                      v-model="dateStart"
+                      :background-color="bgColor3"
+                      v-model="dateStartShow"
                       style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
                       readonly
+                      dark
                       outlined
                       dense
                       required
@@ -171,7 +172,7 @@
                       v-on="on"
                     >
                     <template #prepend-inner>
-                    <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                    <v-icon color="white" style="padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
                       mdi-calendar
                     </v-icon>
                   </template>
@@ -186,16 +187,18 @@
                   </v-date-picker>
                 </v-menu>
               </v-col>
-              <v-col cols="4">
+              <v-col cols="6">
                 <v-text-field
                   outlined
-                  background-color="white"
+                  :background-color="bgColor3"
                   dense
+                  dark
+                  readonly
                   v-model="shopTime"
                   style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
                 >
                   <template #prepend-inner>
-                    <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                    <v-icon color="white" style="padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
                       mdi-clock-time-four
                     </v-icon>
                   </template>
@@ -207,7 +210,7 @@
                 <v-sheet
                   :color="bgColor3"
                   elevation="1"
-                  height="100"
+                  height="130"
                   width="100%"
                   dark
                   style="border-bottom: 1px solid #695988 !important;border-radius: 10px 10px 0px 0px;"
@@ -215,6 +218,7 @@
                   <v-container>
                     <v-row>
                       <v-col cols="6">
+                        <br>
                         <v-row class="text-center">
                           <v-col cols="12" style="font-weight: 700;font-size: 32px;line-height: 24px;">
                             หมายเลขคิว
@@ -225,6 +229,7 @@
                         </v-row>
                       </v-col>
                       <v-col cols="6">
+                        <br>
                         <v-row class="text-center">
                           <v-col cols="12" style="font-weight: 700;font-size: 32px;line-height: 24px;">
                             ช่องบริการ
@@ -240,21 +245,21 @@
                 <v-sheet
                   :color="bgColor2"
                   elevation="1"
-                  height="90%"
+                  height="85%"
                   width="100%"
                   dark
                   style="border-radius: 0px 0px 10px 10px;"
                 >
                   <v-container>
                     <v-row v-for="(items, id) in itemBookingUse" :key="id">
-                      <v-col cols="6" class="pt-1">
+                      <v-col cols="6" class="pt-2">
                         <v-row class="text-center">
                           <v-col cols="12" style="font-weight: 700;font-size: 48px;">
                             {{items.storeFrontQueue}}
                           </v-col>
                         </v-row>
                       </v-col>
-                      <v-col cols="6" class="pt-1" style="border-left: 1px solid #695988 !important">
+                      <v-col cols="6" class="pt-2" style="border-left: 1px solid #695988 !important">
                         <v-row class="text-center">
                           <v-col cols="12" style="font-weight: 700;font-size: 48px;">
                             {{items.servicePoint}}
@@ -262,6 +267,24 @@
                         </v-row>
                       </v-col>
                     </v-row>
+                    <div class="text-right">
+                      <v-icon
+                        large
+                        color="#695988"
+                        @click="changeStatusSound('off')"
+                        v-if="statusSound === true"
+                      >
+                        mdi-volume-high
+                      </v-icon>
+                      <v-icon
+                        large
+                        color="#695988"
+                        @click="changeStatusSound('on')"
+                        v-else
+                      >
+                         mdi-volume-off
+                      </v-icon>
+                    </div>
                   </v-container>
                 </v-sheet>
               </v-col>
@@ -269,15 +292,85 @@
           </v-container>
         </v-col>
         <v-col cols="8">
-          <v-row>
-            <v-col cols="12" class="text-center">
-              <video ref="video" class="mt-16" width="90%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
-                <source src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FSamsungS23.mp4?alt=media&token=eeea61dd-7448-43d6-ae28-f6c8eed0de12" type="video/webm">
+          <!-- <v-row>
+            <v-col cols="11" class="pb-0 pt-0 mt-3" style="display: flex;justify-content: flex-end;">
+              <v-card
+                elevation="1"
+                :color="bgColor3"
+                style="padding: 10px; width: 330px;"
+              >
+                <div style="margin: auto 0;" class="text-center text-white">
+                  <div style="font-weight: 700;font-size: 28px;">คิวที่ยังไม่ได้เลือก</div>
+                  <strong style="font-weight: 700;font-size: 28px;">{{countConfirm}}</strong>
+                </div>
+              </v-card>
+            </v-col>
+          </v-row> -->
+          <v-row v-if="videoLinkMonition">
+            <v-col cols="12" class="text-center pt-0">
+              <video ref="video" id="videoAds" class="mt-15" width="90%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
+                <source :src="videoLinkMonition" type="video/webm">
                 <!-- <source src="@/assets/samsung.mp4" type="video/mp4"> -->
               </video>
             </v-col>
           </v-row>
+          <template>
+            <v-row>
+              <v-col cols="4" class="pb-0 pt-0 mt-3 pr-0">
+                <v-card
+                  elevation="1"
+                  :color="bgColor3"
+                  style="padding: 10px; width: 90%;"
+                >
+                  <div style="margin: auto 0;" class="text-center text-white">
+                    <div style="font-weight: 700;font-size: 28px;">คิวที่รอเรียก : {{countConfirm}}</div>
+                    <!-- <strong style="font-weight: 700;font-size: 28px;">{{countConfirm}}</strong> -->
+                    <v-row>
+                      <v-col cols="4" v-for="(item3 , index3) in DataFlowItem.filter(el => { return el.value !== 'allFlow' })" :key="index3">
+                         <strong class="text-white" style="font-size: 20px;">{{item3.storeFrontText}} : {{countConfirmList.filter(el => { return el.flowId === item3.value  }).length}}</strong>
+                      </v-col>
+                    </v-row>
+                  </div>
+                </v-card>
+              </v-col>
+              <v-col clos="8" class="pb-0 pt-0 mt-3 pl-0">
+                <v-sheet
+                  :color="bgColor3"
+                  elevation="1"
+                  height="100%"
+                  width="93%"
+                  dark
+                  style="border-radius: 10px 10px 10px 10px;padding: 10px;"
+                >
+                  <v-row>
+                    <v-col cols="2" class="pb-0 pt-1 mt-3 pl-10" v-for="(items, id) in countConfirmList" :key="id">
+                      <strong class="text-white" style="font-size: 20px;">{{items.storeFrontQueue}}</strong>
+                    </v-col>
+                  </v-row>
+                </v-sheet>
+              </v-col>
+            </v-row>
+          </template>
         </v-col>
+        <v-row v-show="hideSound === true">
+          <v-col>
+            <audio id="playerPrefix" controls="controls">>
+              <source src="https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084603578380.wav">
+              Your browser does not support the audio format.
+            </audio>
+            <audio id="playerQueue" controls="controls">>
+              <source :src="audio">
+              Your browser does not support the audio format.
+            </audio>
+            <audio id="playerSuffix" controls="controls">>
+              <source :src="tableTarget">
+              Your browser does not support the audio format.
+            </audio>
+          </v-col>
+          <v-col>
+            {{history}}
+          </v-col>
+        </v-row>
       </v-row>
     </v-sheet>
   </div>
@@ -334,6 +427,8 @@ export default {
   },
   data () {
     return {
+      statusSound: false,
+      dateStartShow: '',
       video: 'https://www.youtube.com/watch?v=B5TDAXLPrRY&list=RDCMUC-4vsQo3bHMzLuHyVM_iIRA&start_radio=1',
       Fontsize: null,
       DiSize: null,
@@ -403,20 +498,57 @@ export default {
       shopTime: '',
       bgColor: '',
       bgColor2: '',
-      bgColor3: ''
+      bgColor3: '',
+      videoLinkMonition: '',
+      statusSoundCheck: null,
+      hideSound: false,
+      sound: 'ขอเชิญ คิว A delay{0.2} 001 ที่ช่อง 2 ค่ะ',
+      audio: null,
+      timeCount: 0,
+      repeatRound: 2,
+      speakerId: 3,
+      history: [],
+      objInterval: null,
+      tableAudioList: [
+        '',
+        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084650542663.wav',
+        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084725582074.wav',
+        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084756871326.wav',
+        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084819480984.wav',
+        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084846176701.wav',
+        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084914852921.wav',
+        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084938851367.wav',
+        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023085009434829.wav',
+        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023085042497294.wav',
+        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023085449577454.wav',
+        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023085522454629.wav',
+        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023085559998864.wav',
+        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02152023022750480676.wav',
+        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023085715437991.wav',
+        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023092857509523.wav',
+        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023092928359581.wav',
+        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02152023022850924702.wav',
+        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02152023022934174433.wav',
+        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02152023023007881725.wav',
+        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02152023023039434650.wav'
+      ],
+      tableTarget: 0,
+      tableId: 0,
+      countConfirm: 0,
+      countConfirmList: []
     }
   },
   async mounted () {
     this.Fontsize = this.colsWidth
+    await this.getShop()
     await this.getDataFlow()
     await this.getDataBranch()
     this.setTime()
-    this.getShop()
     this.$root.$on('closeSetTimeBookingMonitor', () => {
       // your code goes here
       this.closeSetTimeBookingMonitor()
     })
-    this.dateStart = this.momenDate_1('2023-02-02')
+    this.dateStart = moment().format('YYYY-MM-DD')
     this.clearTimeLoop()
     this.checkSearch()
   },
@@ -424,12 +556,153 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
+    async changeStatusSound (text) {
+      console.log('changeStatusSound', text)
+      if (text === 'on') {
+        this.statusSound = true
+        await this.updatestatusNotifyByShopId()
+        this.getMessage()
+      } else {
+        this.statusSound = false
+        clearInterval(this.statusSoundCheck)
+        this.statusSoundCheck = null
+      }
+    },
+    async updatestatusNotifyByShopId () {
+      const params = {
+        statusNotify: 'True',
+        shopId: this.$session.getAll().data.shopId
+      }
+      await axios.post(`${this.DNS_IP}/callQueues/updateStatusNotify`, params)
+    },
+    async getMessage () {
+      try {
+        await axios
+          .get(
+            `${this.DNS_IP}/callQueues/get?statusNotify=False`
+          ).then(async (response) => {
+            if (response.data.length > 0 && typeof response.data.status === 'undefined') {
+              clearInterval(this.objInterval)
+              let result = await this.generateSound(response.data[0])
+              await this.updateMessage(response.data[0].id, result)
+              clearInterval(this.statusSoundCheck)
+              this.statusSoundCheck = null
+              this.statusSoundCheck = setTimeout(this.getMessage, 12000)
+            } else {
+              clearInterval(this.statusSoundCheck)
+              this.statusSoundCheck = null
+              this.statusSoundCheck = setTimeout(this.getMessage, 2500)
+            }
+          })
+      } catch (e) {
+        console.log(e)
+        setTimeout(this.getMessage, 10000)
+      }
+    },
+    updateMessage (id, result) {
+      const params = {
+        statusNotify: 'True',
+        audioFile: result.audio_url
+      }
+      axios.post(`${this.DNS_IP}/callQueues/edit/${id}`, params)
+    },
+    async generateSound (item) {
+      try {
+        this.tableId = item.servicePoint.replace('โต๊ะ ', '')
+        let storeFrontQueue = item.storeFrontQueue
+        storeFrontQueue = storeFrontQueue.replace('A', 'เอ')
+        storeFrontQueue = storeFrontQueue.replace('B', 'บี')
+        storeFrontQueue = storeFrontQueue.replace('C', 'ซี')
+        storeFrontQueue = storeFrontQueue.replace('D', 'ดี')
+        storeFrontQueue = storeFrontQueue.replace('E', 'อี')
+        let result
+        await axios
+          .get(
+            `${this.DNS_IP}/callQueues/get?storeFrontQueue=${item.storeFrontQueue}`
+          ).then(async (response) => {
+            if (response.data.length > 0 && typeof response.data.status === 'undefined') {
+              item.audioFile = response.data[0].audioFile
+            }
+          })
+
+        // let text = this.convertItemtoText(item)
+        if (!item.audioFile) {
+          var params = {
+            text: storeFrontQueue,
+            text_delay: storeFrontQueue,
+            speaker: this.speakerId,
+            volume: 1,
+            speed: 1,
+            type_media: 'wav'
+          }
+          await axios
+            .post(
+              'https://api-voice.botnoi.ai/api/service/generate_audio',
+              params,
+              { headers: { 'Botnoi-Token': 'bb16e727e89afe8b24cb08041e78d70cf01efb3b8bd96a004ee2020020f86976' } }
+            ).then((res) => {
+              this.playSound(res.data)
+              result = res.data
+            })
+        } else {
+          let res = { text: item.storeFrontQueue, audio_url: item.audioFile }
+          this.playSound(res)
+          result = res
+        }
+        return result
+      } catch (e) {
+        console.log(e)
+        return null
+      }
+    },
+    convertItemtoText (item) {
+      let { dock, regNo, storeFrontQueue } = item
+      console.log(dock, regNo, storeFrontQueue)
+      dock = dock.replace('Dock ', '')
+      storeFrontQueue = storeFrontQueue.split('')
+      storeFrontQueue[0] = storeFrontQueue[0] + ' delay{0.2} '
+      storeFrontQueue = storeFrontQueue.join(' ')
+      let text = `ขอเชิญ คิว ${storeFrontQueue} ที่ช่อง ${dock} ค่ะ`
+      return text
+    },
+    playSound (res) {
+      console.log(res)
+      this.audio = res.audio_url
+      this.tableTarget = this.tableAudioList[this.tableId]
+      this.timeCount = 1
+      let playerPrefix = document.getElementById('playerPrefix')
+      let playerQueue = document.getElementById('playerQueue')
+      let playerSuffix = document.getElementById('playerSuffix')
+      playerPrefix.play()
+      playerPrefix.onended = (event) => {
+        playerQueue.load()
+        playerQueue.play()
+        playerQueue.onended = (event) => {
+          playerSuffix.load()
+          playerSuffix.play()
+          playerSuffix.onended = (event) => {
+            if (this.timeCount < this.repeatRound) {
+              this.timeCount++
+              playerPrefix.play()
+              playerPrefix.onended = (event) => {
+                playerQueue.play()
+                playerQueue.onended = (event) => {
+                  playerSuffix.play()
+                  var vid = document.getElementById('videoAds')
+                  vid.play()
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     getNow: function () {
       // const today = new Date()
       // const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
       // const time = today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds()
       // const dateTime = date + ' ' + time
-      this.shopTime = moment().format('HH:mm') + ' น.'
+      this.shopTime = 'เวลา ' + moment().format('HH:mm') + ' น.'
     },
     async getShop () {
       this.shop = []
@@ -443,6 +716,7 @@ export default {
             this.shopName = rs[0].shopName
             this.shopColor = rs[0].primaryColor
             this.shopImage = rs[0].shopImge
+            this.videoLinkMonition = rs[0].videoLinkMonition
             this.bgColor = this.hexToRgbA(rs[0].primaryColor.length > 6 ? rs[0].primaryColor.slice(0, -2) : rs[0].primaryColor)
             this.bgColor2 = this.bgColor22(this.bgColor)
             this.bgColor3 = this.bgColor33(this.bgColor2)
@@ -502,6 +776,8 @@ export default {
     async searchBooking () {
       if (this.validSearch === true) {
         this.itemBooking = []
+        // this.dateStartShow = moment(this.dateStart).locale('th').format('LLLL')
+        this.dateStartShow = 'วัน' + moment(this.dateStart).locale('th').format('dddd') + 'ที่ ' + moment(this.dateStart).locale('th').format('D MMMM ') + (parseInt(moment(this.dateStart).format('YYYY')) + 543).toString()
         await this.getBookingDataList(this.dateStart)
         let urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
@@ -533,9 +809,16 @@ export default {
               let dataCon = this.itemBooking.filter(el => { return el.statusBt === 'confirmJob' })
               let dataWain = this.itemBooking.filter(el => { return el.statusBt === 'confirm' })
               console.log(dataCon, dataWain)
-              this.itemBookingUse = [ ...dataCon, ...dataWain ].filter((el, ind) => { return ind <= 5 })
+              let sortDataDataCon = dataCon.sort((a, b) => {
+                if (a.LAST_DATE > b.LAST_DATE) return -1
+                return a.LAST_DATE < b.LAST_DATE ? 1 : 0
+              })
+              this.countConfirm = dataWain.length
+              this.countConfirmList = dataWain.filter((el, ind) => { return ind <= 11 })
+              this.itemBookingUse = [ ...sortDataDataCon, ...dataWain ].filter((el, ind) => { return ind <= 5 })
             } else {
               this.itemBookingUse = []
+              this.countConfirm = 0
             }
           })
       }
@@ -593,6 +876,7 @@ export default {
               s.textEng = d.flowNameEn
               s.text = d.flowName
               s.value = d.flowId
+              s.storeFrontText = d.storeFrontText
               s.allData = d
               resultOption.push(s)
               // console.log('this.DataFlowName', this.DataFlowName)
@@ -929,6 +1213,9 @@ export default {
 }
 </script>
 <style scope>
+.centered-input >>> input {
+      text-align: center
+    }
 #margin {
   margin-top: 50px;
   margin-bottom: 40px;

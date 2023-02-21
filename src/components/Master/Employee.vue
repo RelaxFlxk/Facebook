@@ -230,7 +230,7 @@
                           :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-col>
-                      <v-col cols="12" class="pa-0" v-if="formAdd.privacyPage === 'bookingform' || formUpdate.privacyPage === 'bookingStoreFront'">
+                      <v-col cols="12" class="pa-0" v-if="formAdd.privacyPage === 'bookingform' || formAdd.privacyPage === 'bookingStoreFront'">
                         <v-autocomplete
                           v-model="formAdd.flowId"
                           :items="flow"

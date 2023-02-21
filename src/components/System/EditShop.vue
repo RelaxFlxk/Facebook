@@ -193,6 +193,13 @@
                             v-model="formUpdate.bookingthankTextEn"
                           ></v-textarea>
                       </v-col>
+                      <v-col cols="12" class="pb-0">
+                        <v-text-field
+                          outlined
+                            label="ลิ้งค์วิดีโอ สำหรับแสดงผลคิวหน้าร้าน"
+                            v-model="formUpdate.videoLinkMonition"
+                          ></v-text-field>
+                      </v-col>
                     </v-row>
 
                     <v-row justify="center">
@@ -365,7 +372,8 @@ export default {
         timeSlotStatus: 'False',
         showQrPayments: 'False',
         bookingthankTextEn: '',
-        bookingthankText: ''
+        bookingthankText: '',
+        videoLinkMonition: ''
       },
       timeSlotStatusOld: '',
       filesShop: null,
@@ -595,17 +603,23 @@ export default {
           } else {
             darkMode = 'False'
           }
-          let bookingthankText = null
+          let bookingthankText = ''
           if (this.formUpdate.bookingthankText === '') {
             bookingthankText = ''
           } else {
-            bookingthankText = this.formUpdate.bookingthankText
+            bookingthankText = this.formUpdate.bookingthankText.replace(/%/g, '%%').replace(/'/g, "\\'")
           }
-          let bookingthankTextEn = null
+          let bookingthankTextEn = ''
           if (this.formUpdate.bookingthankTextEn === '') {
             bookingthankTextEn = ''
           } else {
-            bookingthankTextEn = this.formUpdate.bookingthankTextEn
+            bookingthankTextEn = this.formUpdate.bookingthankTextEn.replace(/%/g, '%%').replace(/'/g, "\\'")
+          }
+          let videoLinkMonition = ''
+          if (this.formUpdate.videoLinkMonition === '') {
+            videoLinkMonition = ''
+          } else {
+            videoLinkMonition = this.formUpdate.videoLinkMonition.replace(/%/g, '%%').replace(/'/g, "\\'")
           }
           var dt = {
             shopName: this.formUpdate.shopName,
@@ -619,6 +633,7 @@ export default {
             category: this.formUpdate.category,
             timeSlotStatus: this.formUpdate.timeSlotStatus,
             showQrPayments: this.formUpdate.showQrPayments,
+            videoLinkMonition: videoLinkMonition,
             darkMode: darkMode,
             bookingthankText: bookingthankText,
             bookingthankTextEn: bookingthankTextEn

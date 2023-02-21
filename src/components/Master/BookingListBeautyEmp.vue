@@ -97,7 +97,7 @@
                       dense
                       elevation="0"
                       prominent
-                      @click="getSelect('wait',countWaiting)"
+                      @click="getSelect('wait',countWaiting, filterCloseJobValue)"
                     >
                       <div>
                         <div class="text-center">
@@ -126,7 +126,7 @@
                       icon="mdi-email-check"
                       prominent
                       elevation="0"
-                      @click="getSelect('confirm',countConfirm)"
+                      @click="getSelect('confirm',countConfirm, filterCloseJobValue)"
                     >
                     <div>
                       <div class="text-center">
@@ -155,7 +155,7 @@
                       icon="mdi-account-check"
                       prominent
                       elevation="0"
-                      @click="getSelect('confirmJob',countJob)"
+                      @click="getSelect('confirmJob',countJob, filterCloseJobValue)"
                     >
                     <div>
                       <div class="text-center">
@@ -183,7 +183,7 @@
                       dense
                       elevation="0"
                       icon="mdi-expand-all"
-                      @click="getSelect('confirmSum',(countConfirm + countJob))"
+                      @click="getSelect('confirmSum',(countConfirm + countJob)), filterCloseJobValue"
                     >
                     <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
                       <div class="text-center">
@@ -211,7 +211,7 @@
                       elevation="0"
                       icon="mdi-calendar-remove"
                       prominent
-                      @click="getSelect('cancel',countCancel)"
+                      @click="getSelect('cancel',countCancel, filterCloseJobValue)"
                     >
                     <div>
                       <div class="text-center">
@@ -249,7 +249,7 @@
                       dense
                       elevation="0"
                       prominent
-                      @click="getSelect('wait',countWaiting)"
+                      @click="getSelect('wait',countWaiting, filterCloseJobValue)"
                     >
                       <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
                         <div class="text-center">
@@ -278,7 +278,7 @@
                       icon="mdi-email-check"
                       prominent
                       elevation="0"
-                      @click="getSelect('confirm',countConfirm)"
+                      @click="getSelect('confirm',countConfirm, filterCloseJobValue)"
                     >
                     <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
                       <div class="text-center">
@@ -307,7 +307,7 @@
                       icon="mdi-account-check"
                       prominent
                       elevation="0"
-                      @click="getSelect('confirmJob',countJob)"
+                      @click="getSelect('confirmJob',countJob, filterCloseJobValue)"
                     >
                     <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
                       <div class="text-center">
@@ -335,7 +335,7 @@
                       dense
                       elevation="0"
                       icon="mdi-expand-all"
-                      @click="getSelect('confirmSum',(countConfirm + countJob))"
+                      @click="getSelect('confirmSum',(countConfirm + countJob), filterCloseJobValue)"
                     >
                     <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
                       <div class="text-center">
@@ -363,7 +363,7 @@
                       elevation="0"
                       icon="mdi-calendar-remove"
                       prominent
-                      @click="getSelect('cancel',countCancel)"
+                      @click="getSelect('cancel',countCancel, filterCloseJobValue)"
                     >
                     <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
                       <div class="text-center">
@@ -2544,7 +2544,26 @@
                   </v-icon>
                 </v-btn>
                 </v-col>
-                <v-col class="text-right" cols="auto"></v-col>
+                <v-col class="text-right" cols="auto">
+                  <template v-if="getSelectText === 'confirmJob'">
+                    <v-select
+                      v-model="filterCloseJobValue"
+                      background-color="white"
+                      style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
+                      hide-details
+                      :items="listFilterCloseJob"
+                      label="สถานะบริการ"
+                      outlined
+                      dense
+                      required
+                      @change="getSelect('confirmJob', countJob, filterCloseJobValue)">
+                      <template #prepend-inner>
+                        <v-icon class="mr-2 iconify" data-icon='eos-icons:cronjob' color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                        </v-icon>
+                      </template>
+                    </v-select>
+                  </template>
+                </v-col>
               </v-row>
               </v-card-text>
               <v-card-title>
@@ -6132,6 +6151,8 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      listFilterCloseJob: ['ทั้งหมด', 'ยังไม่ปิดงาน', 'ปิดงาน'],
+      filterCloseJobValue: 'ทั้งหมด',
       // confirm (Cancel)
       flowSelectCancel: '',
       dataFlowCancel: [],
@@ -7041,7 +7062,7 @@ export default {
                 }
                 // this.getTimesChange('update')
                 if (this.getSelectText) {
-                  this.getSelect(this.getSelectText, this.getSelectCount)
+                  this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
                 }
                 this.pushMsgConfirm(item.bookNo)
               } else {
@@ -7052,7 +7073,7 @@ export default {
                 }
                 // this.getTimesChange('update')
                 if (this.getSelectText) {
-                  this.getSelect(this.getSelectText, this.getSelectCount)
+                  this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
                 }
               }
               this.dialogConfirmCancel = false
@@ -7778,7 +7799,7 @@ export default {
       }
       // this.getTimesChange('update')
       if (this.getSelectText) {
-        this.getSelect(this.getSelectText, this.getSelectCount)
+        this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
       }
     },
     async FunCopyDeposit () {
@@ -8284,7 +8305,7 @@ export default {
                       }
                       // this.getTimesChange('update')
                       if (this.getSelectText) {
-                        this.getSelect(this.getSelectText, this.getSelectCount)
+                        this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
                       }
                     }
                   })
@@ -8302,7 +8323,7 @@ export default {
                 await this.searchAny()
               }
               if (this.getSelectText) {
-                this.getSelect(this.getSelectText, this.getSelectCount)
+                this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
               }
             }).catch(error => {
               console.log('error function addData : ', error)
@@ -8314,7 +8335,7 @@ export default {
                 this.searchAny()
               }
               if (this.getSelectText) {
-                this.getSelect(this.getSelectText, this.getSelectCount)
+                this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
               }
             })
           }
@@ -8379,7 +8400,7 @@ export default {
                 this.dialogChangeOnsite = false
                 // this.getTimesChange('update')
                 if (this.getSelectText) {
-                  this.getSelect(this.getSelectText, this.getSelectCount)
+                  this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
                 }
               })
           } else {
@@ -8827,7 +8848,7 @@ export default {
               }
               // this.getTimesChange('update')
               if (this.getSelectText) {
-                this.getSelect(this.getSelectText, this.getSelectCount)
+                this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
               }
               this.dialogCloseJob = false
               this.dialogJob = false
@@ -8948,7 +8969,7 @@ export default {
           }
           // this.getTimesChange('update')
           if (this.getSelectText) {
-            this.getSelect(this.getSelectText, this.getSelectCount)
+            this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
           }
           clearInterval(this.setTimerCalendar)
           this.setTimerCalendar = null
@@ -9080,7 +9101,7 @@ export default {
           }
           // this.getTimesChange('update')
           if (this.getSelectText) {
-            this.getSelect(this.getSelectText, this.getSelectCount)
+            this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
           }
         })
     },
@@ -9130,7 +9151,7 @@ export default {
           }
           // this.getTimesChange('update')
           if (this.getSelectText) {
-            this.getSelect(this.getSelectText, this.getSelectCount)
+            this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
           }
         })
     },
@@ -9162,7 +9183,7 @@ export default {
           }
           // this.getTimesChange('update')
           if (this.getSelectText) {
-            this.getSelect(this.getSelectText, this.getSelectCount)
+            this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
           }
         })
     },
@@ -9296,6 +9317,7 @@ export default {
                     s.dueDateText = d.dueDateTextDay + ' ' + d.timeText
                   }
                   s.shopId = d.shopId
+                  s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
                   s.bookingEmpFlow = d.bookingEmpFlow
                   s.bookingEmpFlowName = d.bookingEmpFlowName
                   s.dueDateDay = d.dueDateDay
@@ -9407,9 +9429,9 @@ export default {
               this.dataItemTime = []
               // await this.getTimesChange('update')
               if (this.getSelectText) {
-                this.getSelect(this.getSelectText, 0)
+                this.getSelect(this.getSelectText, 0, this.filterCloseJobValue)
               } else {
-                this.getSelect('wait', this.countWaiting)
+                this.getSelect('wait', this.countWaiting, this.filterCloseJobValue)
               }
               this.dataReady = true
             // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
@@ -9432,9 +9454,9 @@ export default {
               }
               // await this.getTimesChange('update')
               if (this.getSelectText) {
-                this.getSelect(this.getSelectText, 0)
+                this.getSelect(this.getSelectText, 0, this.filterCloseJobValue)
               } else {
-                this.getSelect('wait', this.countWaiting)
+                this.getSelect('wait', this.countWaiting, this.filterCloseJobValue)
               }
               // this.dataItemTime = dataItemTimes.sort((a, b) => {
               //   if (a.timeDueHtext < b.timeDueHtext) return -1
@@ -9498,7 +9520,7 @@ export default {
           }
           // this.getTimesChange('update')
           if (this.getSelectText) {
-            this.getSelect(this.getSelectText, this.getSelectCount)
+            this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
           }
         })
     },
@@ -9549,7 +9571,7 @@ export default {
             }
             // this.getTimesChange('update')
             if (this.getSelectText) {
-              this.getSelect(this.getSelectText, this.getSelectCount)
+              this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
             }
           })
       } else {
@@ -10083,7 +10105,7 @@ export default {
             // this.getTimesChange('update')
             this.formEdit.radiosRemark = ''
             if (this.getSelectText) {
-              this.getSelect(this.getSelectText, this.getSelectCount)
+              this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
             }
             // this.getDataCalendaBooking()
             this.dialogEditData = false
@@ -10153,7 +10175,7 @@ export default {
       this.getDataFlow()
       await this.getBookingList()
       // await this.getTimesChange('update')
-      this.getSelect(this.getSelectText, this.getSelectCount)
+      this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
       // this.getDataCalendaBooking()
       this.loadingRefresh = false
     },
@@ -10165,7 +10187,7 @@ export default {
       }
       // await this.getTimesChange('update')
       if (this.getSelectText) {
-        this.getSelect(this.getSelectText, this.getSelectCount)
+        this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
       }
     },
     checkTime () {
@@ -10515,7 +10537,7 @@ export default {
             }
             // this.getTimesChange('update')
             if (this.getSelectText) {
-              this.getSelect(this.getSelectText, this.getSelectCount)
+              this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
             }
             console.log('getSelectText', this.getSelectText, this.getSelectCount)
           })
@@ -11424,7 +11446,7 @@ export default {
           //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
         })
     },
-    getSelect (text, count) {
+    getSelect (text, count, filterCloseJobValue) {
       this.selectedStatus = true
       this.getSelectText = text
       this.getSelectCount = count || 0
@@ -11494,8 +11516,30 @@ export default {
         var dataSelect = []
         if (text === 'confirmSum') {
           dataSelect = this.dataItem.filter(el => { return el.statusBt === 'confirm' || el.statusBt === 'confirmJob' })
+          this.countJob = this.dataItem.filter(el => { return el.statusBt === 'confirmJob' }).length
+          this.filterCloseJobValue = 'ทั้งหมด'
         } else {
-          dataSelect = this.dataItem.filter(el => { return el.statusBt === text })
+          // dataSelect = this.dataItem.filter(el => { return el.statusBt === text })
+          if (text === 'confirmJob') {
+            if (filterCloseJobValue) {
+              if (filterCloseJobValue === 'ยังไม่ปิดงาน') {
+                dataSelect = this.dataItem.filter(el => { return el.statusBt === text && el.RECORD_STATUS_Job === 'N' })
+                this.countJob = dataSelect.length
+              } else if (filterCloseJobValue === 'ปิดงาน') {
+                dataSelect = this.dataItem.filter(el => { return el.statusBt === text && el.RECORD_STATUS_Job === 'D' })
+                this.countJob = dataSelect.length
+              } else {
+                dataSelect = this.dataItem.filter(el => { return el.statusBt === text })
+                this.countJob = dataSelect.length
+              }
+            } else {
+              dataSelect = this.dataItem.filter(el => { return el.statusBt === text })
+              this.countJob = dataSelect.length
+            }
+          } else {
+            // this.filterCloseJobValue = filterCloseJobValue
+            dataSelect = this.dataItem.filter(el => { return el.statusBt === text })
+          }
         }
         // console.log('fieldflow', dataSelect)
         if (dataSelect.length > 0) {
@@ -12059,6 +12103,7 @@ export default {
                   s.dueDateText = d.dueDateTextDay + ' ' + d.timeText
                 }
                 s.shopId = d.shopId
+                s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
                 s.bookingEmpFlow = d.bookingEmpFlow
                 s.bookingEmpFlowName = d.bookingEmpFlowName
                 s.dueDateDay = d.dueDateDay
@@ -12224,6 +12269,7 @@ export default {
                   s.dueDateText = d.dueDateTextDay + ' ' + d.timeText
                 }
                 s.shopId = d.shopId
+                s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
                 s.bookingEmpFlow = d.bookingEmpFlow
                 s.bookingEmpFlowName = d.bookingEmpFlowName
                 s.dueDateDay = d.dueDateDay
@@ -12318,9 +12364,9 @@ export default {
         this.dataItemTime = []
         // await this.getTimesChange('update')
         if (this.getSelectText) {
-          this.getSelect(this.getSelectText, 0)
+          this.getSelect(this.getSelectText, 0, this.filterCloseJobValue)
         } else {
-          this.getSelect('wait', this.countWaiting)
+          this.getSelect('wait', this.countWaiting, this.filterCloseJobValue)
         }
         this.dataReady = true
         // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
@@ -12344,9 +12390,9 @@ export default {
         console.log('dataItemTime', this.dataItemTime)
         // await this.getTimesChange('update')
         if (this.getSelectText) {
-          this.getSelect(this.getSelectText, 0)
+          this.getSelect(this.getSelectText, 0, this.filterCloseJobValue)
         } else {
-          this.getSelect('wait', this.countWaiting)
+          this.getSelect('wait', this.countWaiting, this.filterCloseJobValue)
         }
         this.dataReady = true
       }
@@ -12904,7 +12950,7 @@ export default {
         this.searchAny()
       }
       if (this.getSelectText) {
-        this.getSelect(this.getSelectText, this.getSelectCount)
+        this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
       }
       this.getDataCalendaBooking()
     },
@@ -12955,7 +13001,7 @@ export default {
               }
               // this.getTimesChange('update')
               if (this.getSelectText) {
-                this.getSelect(this.getSelectText, this.getSelectCount)
+                this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
               }
               this.getDataCalendaBooking()
               this.dialogDelete = false
@@ -13409,7 +13455,7 @@ export default {
                         }
                         // this.getTimesChange('update')
                         if (this.getSelectText) {
-                          this.getSelect(this.getSelectText, this.getSelectCount)
+                          this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
                         }
                       }
                     }).catch(error => {
@@ -13427,7 +13473,7 @@ export default {
                 }
                 // this.getTimesChange('update')
                 if (this.getSelectText) {
-                  this.getSelect(this.getSelectText, this.getSelectCount)
+                  this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
                 }
               }).catch(error => {
                 console.log('error function addData : ', error)
@@ -13439,7 +13485,7 @@ export default {
                 }
                 // this.getTimesChange('update')
                 if (this.getSelectText) {
-                  this.getSelect(this.getSelectText, this.getSelectCount)
+                  this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
                 }
               })
             }
@@ -13454,7 +13500,7 @@ export default {
             }
             // this.getTimesChange('update')
             if (this.getSelectText) {
-              this.getSelect(this.getSelectText, this.getSelectCount)
+              this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
             }
           }).catch(error => {
             console.log('error function addData : ', error)
@@ -13466,7 +13512,7 @@ export default {
             }
             // this.getTimesChange('update')
             if (this.getSelectText) {
-              this.getSelect(this.getSelectText, this.getSelectCount)
+              this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
             }
           })
         }
@@ -13651,7 +13697,7 @@ export default {
                 }
                 // this.getTimesChange('update')
                 if (this.getSelectText) {
-                  this.getSelect(this.getSelectText, this.getSelectCount)
+                  this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
                 }
                 this.pushMsgConfirm(item.bookNo)
               } else {
@@ -13662,7 +13708,7 @@ export default {
                 }
                 // this.getTimesChange('update')
                 if (this.getSelectText) {
-                  this.getSelect(this.getSelectText, this.getSelectCount)
+                  this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
                 }
               }
               this.dataConfirmReady = true
@@ -13808,7 +13854,7 @@ export default {
           }
           // this.getTimesChange('update')
           if (this.getSelectText) {
-            this.getSelect(this.getSelectText, this.getSelectCount)
+            this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
           }
           // this.getDataCalendaBooking()
           this.dataCancelReady = true
@@ -13964,7 +14010,7 @@ export default {
                   }
                   // this.getTimesChange('update')
                   if (this.getSelectText) {
-                    this.getSelect(this.getSelectText, this.getSelectCount)
+                    this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
                   }
                   this.pushMsgConfirmChangeTime(item.bookNo)
                 } else {
@@ -13975,7 +14021,7 @@ export default {
                   }
                   // this.getTimesChange('update')
                   if (this.getSelectText) {
-                    this.getSelect(this.getSelectText, this.getSelectCount)
+                    this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
                   }
                 }
               } else {
@@ -13986,7 +14032,7 @@ export default {
                 }
                 // this.getTimesChange('update')
                 if (this.getSelectText) {
-                  this.getSelect(this.getSelectText, this.getSelectCount)
+                  this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
                 }
               }
               this.$swal('เรียบร้อย', 'เปลี่ยนเวลานัดหมาย เรียบร้อย', 'success')
@@ -14354,7 +14400,7 @@ export default {
               }
               // this.getTimesChange('update')
               if (this.getSelectText) {
-                this.getSelect(this.getSelectText, this.getSelectCount)
+                this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
               }
               this.loadingBookingAgain = false
               this.dialogBookingAgain = false

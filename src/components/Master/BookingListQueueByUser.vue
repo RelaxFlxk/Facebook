@@ -2,7 +2,7 @@
   <div>
     <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
     <v-main>
-      <div class="px-lg-4 mb-16" style="overflow-x: hidden;min-height:400px;">
+      <div class="px-lg-4" style="overflow-x: hidden;height:100vh;background-color: #1B437C;">
         <!-- <v-row> -->
           <!-- <v-col cols="6" class="text-left">
             <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
@@ -14,17 +14,17 @@
             </v-btn>
           </v-col> -->
         <!-- </v-row> -->
-        <v-card flat v-if="!overlay">
+        <template>
+          <v-card flat v-if="!overlay">
           <v-card-text>
             <div class="text-center">
               <waitingAlert></waitingAlert>
             </div>
           </v-card-text>
         </v-card>
-        <template v-else>
         <v-form ref="form_search" v-model="validSearch" lazy-validation>
           <v-row class="no-gutters">
-            <v-col col="auto" class="px-3 mt-5 text-right">
+            <!-- <v-col col="auto" class="px-3 mt-5 text-right">
               <v-select
                 v-model="masBranchID"
                 background-color="white"
@@ -103,7 +103,7 @@
                 >
                 </v-date-picker>
               </v-menu>
-            </v-col>
+            </v-col> -->
             <!-- <v-col col="auto">
               <v-select
                 style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
@@ -149,43 +149,145 @@
             </v-col>
           </v-row> -->
         </v-form>
-        <v-row v-if="itemBooking.length > 0">
-          <v-col cols="12">
+        <v-row>
+          <v-col cols="12" v-if="overlay">
             <br>
             <v-card class="mx-6 pa-3 ma-2" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;">
-              <h6 style="color:#092C4C" class="text-left font-weight-bold ml-10">{{ itemBooking[0].flowName }}</h6>
-              <p style="color:#092C4C;font-size: 80px;" class="text-center font-weight-black mt-n10 mb-n5">{{itemBooking[0].storeFrontQueue}}</p>
-              <div v-for="(item3 , index3) in HistoryData" :key="index3">
-                <h5 class="text-start  ml-10" v-if="item3.fieldValue !== '' && item3.fieldName !== 'เบอร์โทร'"><strong>{{item3.fieldValue}}</strong></h5>
-                <h5 @click="dial(item3.fieldValue.replace(/-/g, ''))" class="text-start  ml-10" v-if="item3.fieldValue !== '' && item3.fieldName === 'เบอร์โทร'"><v-icon color="#24C74D" class="iconify" data-icon="el:phone-alt">mdi-phone</v-icon><strong class="ml-4">{{'' + item3.fieldValue}}</strong></h5>
-              </div>
-              <h5 v-if="itemBooking[0].servicePoint" class="text-start  ml-10"><strong>{{ languageSelect === 0 ? itemBooking[0].servicePoint : JSON.parse(itemBooking[0].servicePointCount).filter(el => { return el.textTh === itemBooking[0].servicePoint}).length > 0 ? JSON.parse(itemBooking[0].servicePointCount).filter(el => { return el.textTh === itemBooking[0].servicePoint})[0].textEn:itemBooking[0].servicePoint}}</strong></h5>
-              <br>
-              <div class="text-center">
+              <v-card-text>
+                <v-row class="no-gutters">
+                  <v-col col="auto" class="px-3 mt-5 text-right">
+                    <v-select
+                      style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
+                      v-model="flowSelect"
+                      hide-details
+                      background-color="white"
+                      :items="DataFlowItem"
+                      label="ประเภทบริการ"
+                      outlined
+                      dense
+                      required
+                      :rules ="[rules.required]"
+                      @change="searchBooking()"
+                    >
+                      <template #prepend-inner>
+                        <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                          mdi-note-text-outline
+                        </v-icon>
+                      </template>
+                    </v-select>
+                  </v-col>
+                  <v-col cols="12" class="px-3 mt-5 text-right">
+                    <v-menu
+                      ref="menu"
+                      v-model="menuStart"
+                      transition="scale-transition"
+                      offset-y
+                      max-width="290px"
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          hide-details
+                          background-color="white"
+                          v-model="dateStart"
+                          style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
+                          label="วัน/เดือน/ปี"
+                          readonly
+                          outlined
+                          dense
+                          required
+                          :rules ="[rules.required]"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                        <template #prepend-inner>
+                        <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                          mdi-calendar
+                        </v-icon>
+                      </template></v-text-field>
+                      </template>
+                      <v-date-picker
+                        @input="menuStart = false, checkSearch()"
+                        v-model="dateStart"
+                        no-title
+                        scrollable
+                      >
+                      </v-date-picker>
+                    </v-menu>
+                  </v-col>
+                </v-row>
+              </v-card-text>
+              <div mb-n5 v-if="itemBooking.length > 0">
+                <!-- <h6 style="color:#092C4C" class="text-left font-weight-bold ml-10">{{ itemBooking[0].flowName }}</h6> -->
+                <div class="text-right">
+                  <v-btn
+                    v-if="itemBooking[0].statusBt === 'confirmJob'"
+                    color="#ECEFF1"
+                    class="ma-2 white--text"
+                    fab
+                    elevation="1"
+                    x-small
+                    @click="removeQueue(itemBooking[0])"
+                  >
+                    <v-icon color="red">
+                      mdi-delete-circle
+                    </v-icon>
+                  </v-btn>
+                </div>
+                <p style="color:#092C4C;font-size: 80px;" class="text-center font-weight-black mt-n5 mb-n5">{{itemBooking[0].storeFrontQueue}}</p>
+                <div class="mt-5" align="center">
+                  <v-img
+                    @click="closeJobSubmit(itemBooking[0])"
+                    :src="itemBooking[0].statusBt === 'confirm' ? 'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FselectActiveQ1.png?alt=media&token=938edfa3-26a9-4c27-94a6-208cc2e81a0f': 'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FselectInactiveQ1.png?alt=media&token=e7c25716-7e4d-4499-af94-8ef382a51185'" max-width="179px" max-height="179px"></v-img>
+                </div>
+                <template v-if="HistoryData.length > 0">
+                <div class="mt-5" v-for="(item3 , index3) in HistoryData" :key="index3">
+                  <h5 class="text-start  ml-10" v-if="item3.fieldValue !== '' && item3.fieldName !== 'เบอร์โทร'"><strong>{{item3.fieldValue}}</strong></h5>
+                  <!-- <h5 @click="dial(item3.fieldValue.replace(/-/g, ''))" class="text-start  ml-10" v-if="item3.fieldValue !== '' && item3.fieldName === 'เบอร์โทร'"><v-icon color="#24C74D" class="iconify" data-icon="el:phone-alt">mdi-phone</v-icon><strong class="ml-4">{{'' + item3.fieldValue}}</strong></h5> -->
+                </div>
+                </template>
+                <h5 v-if="itemBooking[0].servicePoint" class="text-start  ml-10 mt-2"><strong>{{ languageSelect === 0 ? itemBooking[0].servicePoint : JSON.parse(itemBooking[0].servicePointCount).filter(el => { return el.textTh === itemBooking[0].servicePoint}).length > 0 ? JSON.parse(itemBooking[0].servicePointCount).filter(el => { return el.textTh === itemBooking[0].servicePoint})[0].textEn:itemBooking[0].servicePoint}}</strong></h5>
+                <div class="text-start ml-9 mt-2" style="display: flex;word-break: break-word;">
+                  <v-icon  color="#979797" class="iconify" data-icon="ic:twotone-access-time"></v-icon>
+                  <p class="font-weight-medium text-center ma-0 ml-2" v-if="dateStart" style="font-size:16px;color:#979797;">
+                    {{momentThaiText(dateStart)}}</p>
+                </div>
+                <div class="text-start ml-8 mt-2" style="display: flex;word-break: break-word;">
+                  <v-icon color="#979797" class="mx-1 mr-2">mdi-map-marker-radius</v-icon>
+                  <p class="font-weight-medium mb-1" style="font-size:16px;color:#979797;" v-if="masBranchID !== ''">
+                  สาขา : {{branchItem.filter(el => { return masBranchID === el.value })[0].text}}
+                </p>
+                </div>
+                <br>
+                <div class="text-center">
+                  <v-btn
+                  color="#F8CD70"
+                  rounded
+                  min-width="88px"
+                  v-if="shopPhone !== ''"
+                  @click="dial(shopPhone)"
+                >
+                  <strong class="text-white">โทร</strong>
+                </v-btn>
                 <v-btn
-                color="#1DBF73"
-                rounded
-                :disabled="itemBooking[0].statusBt === 'confirm' ? false:true"
-                @click="closeJobSubmit(itemBooking[0])"
-              >
-                <strong class="text-white">เรียกคิว</strong>
-              </v-btn>
-              <v-btn
-                color="#1B437C"
-                rounded
-                :disabled="itemBooking[0].statusBt === 'confirmJob' ? false:true"
-                @click="closeJobSubmitReturn(itemBooking[0])"
-              >
-                <strong class="text-white">เรียกคิวซ้ำ</strong>
-              </v-btn>
-              <v-btn
-                color="#F38383"
-                rounded
-                :disabled="itemBooking[0].statusBt === 'confirmJob' ? false:true"
-                @click="backHomeSubmit(itemBooking[0])"
-              >
-                <strong class="text-white">ปิดงาน</strong>
-              </v-btn>
+                  color="#1B437C"
+                  rounded
+                  min-width="88px"
+                  :disabled="itemBooking[0].statusBt === 'confirmJob' ? false:true"
+                  @click="closeJobSubmitReturn(itemBooking[0])"
+                >
+                  <strong class="text-white">เรียกคิวซ้ำ</strong>
+                </v-btn>
+                <v-btn
+                  color="#F38383"
+                  rounded
+                  min-width="88px"
+                  :disabled="itemBooking[0].statusBt === 'confirmJob' ? false:true"
+                  @click="backHomeSubmit(itemBooking[0])"
+                >
+                  <strong class="text-white">ปิดงาน</strong>
+                </v-btn>
+                </div>
               </div>
             </v-card>
           </v-col>
@@ -276,7 +378,7 @@
                 <v-container>
                   <v-row>
                     <v-col cols="10" class="text-left pt-10">
-                      <h5><strong>กรุณาเลือกจุดบริการ</strong></h5>
+                      <h5><strong style="color:#000000">กรุณาเลือกจุดบริการ</strong></h5>
                     </v-col>
                     <v-col cols="2" class="pt-7">
                       <div style="text-align: end;">
@@ -294,9 +396,9 @@
                       </div>
                     </v-col>
                   </v-row>
-                   <v-row >
+                   <v-row v-if="overlay">
                     <v-col cols="12">
-                      <v-select
+                      <!-- <v-select
                         v-model="servicePoint"
                         item-text="textTh"
                         item-value="textTh"
@@ -312,29 +414,51 @@
                             mdi-access-point
                           </v-icon>
                         </template>
-                      </v-select>
+                      </v-select> -->
+                      <!-- <v-radio-group v-model="servicePoint" row>
+                        <v-radio
+                          v-for="(n, id) in servicePointItem" :key="id"
+                          :label="`${n.textTh}`"
+                          :value="n.textTh"
+                        ></v-radio>
+                      </v-radio-group> -->
+                      <v-radio-group v-model="servicePoint" row>
+                        <v-row>
+                          <v-col class="px-0" cols="4" v-for="(n, id) in servicePointItem" :key="id">
+                            <v-radio
+                              :label="`${n.textTh}`"
+                              :value="n.textTh"
+                            ></v-radio>
+                          </v-col>
+                        </v-row>
+                      </v-radio-group>
                     </v-col>
                     <v-col cols="12">
                       <v-btn
-                        color="#1B437C"
+                        color="#1DBF73"
                         block
                         v-if="statusReturn"
                         dark
                         @click="closeJobServicePointReturn(closeItem)"
                       >
-                        <v-icon left>mdi-bullhorn</v-icon>
-                        เรียกคิว
+                        <!-- <v-icon left>mdi-bullhorn</v-icon> -->
+                        ตกลง
                       </v-btn>
                       <v-btn
                         v-else
-                        color="#1B437C"
+                        color="#1DBF73"
                         block
                         dark
                         @click="closeJobServicePoint(closeItem)"
                       >
-                        <v-icon left>mdi-bullhorn</v-icon>
-                        เรียกคิว
+                        <!-- <v-icon left>mdi-bullhorn</v-icon> -->
+                        ตกลง
                       </v-btn>
+                    </v-col>
+                  </v-row>
+                  <v-row v-else>
+                    <v-col clos="12" class="text-center">
+                      <waitingAlert></waitingAlert>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -342,6 +466,9 @@
             </v-card>
           </v-dialog>
         </v-row>
+        <v-footer fixed padless color="#1B437C" class="text-center mt-n16" style="justify-content: center;">
+          <p class="text-white" width="100%">POWERED BY  BETASK CONSULTING</p>
+        </v-footer>
         </template>
         </div>
     </v-main>
@@ -354,7 +481,7 @@ import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
 import pdfMake from 'pdfmake'
 import pdfFonts from '../../assets/custom-fonts.js' // 1. import custom fonts
-// import moment from 'moment-timezone'
+import moment from 'moment-timezone'
 import printJS from 'print-js'
 
 export default {
@@ -398,8 +525,8 @@ export default {
       ],
       dialog: false,
       dialogAdd: false,
-      session: this.$session.getAll(),
-      shopId: this.$session.getAll().data.shopId,
+      // session: this.$session.getAll(),
+      // shopId: this.$session.getAll().data.shopId,
       search: '',
       shopName: '',
       shopImg: '',
@@ -433,7 +560,8 @@ export default {
       dataLineConfig: {},
       HistoryData: [],
       pictureUrHistory: '',
-      dialogHistory: false
+      dialogHistory: false,
+      shopPhone: ''
     }
   },
   computed: {
@@ -448,15 +576,84 @@ export default {
     }
   },
   async mounted () {
-    this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
     this.dateStart = this.momenDate_1(new Date())
-    await this.getDataFlow()
-    await this.getDataBranch()
-    this.setTime()
-    this.getShop()
-    this.checkSearch()
+    await this.beforeCreate()
   },
   methods: {
+    async removeQueue (item) {
+      console.log('removeQueue', item)
+      let statusBooking = await this.checkBookingStatus(item.bookNo)
+      if (statusBooking === 'confirmJob') {
+        this.$swal({
+          title: 'ต้องการยกเลิกคิวนี้ ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#1DBF73',
+          cancelButtonColor: '#F38383',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        }).then(async response => {
+        // await this.clearConfirmJob(item.dueDate)
+          var dtt = {
+            bookNo: item.bookNo,
+            contactDate: this.format_date(new Date()),
+            status: 'cancel',
+            statusUse: 'use',
+            shopId: this.$session.getAll().data.shopId,
+            CREATE_USER: this.$session.getAll().data.userName,
+            LAST_USER: this.$session.getAll().data.userName,
+            remarkRemove: 'เนื่องจากลูกค้าไม่มาตามคิวที่เลือก'
+          }
+          await axios
+            .post(this.DNS_IP + '/booking_transaction/add', dtt)
+            .then(async responses => {
+              this.$swal('เรียบร้อย', 'ยกเลิกคิวสำเร็จ', 'success')
+              await this.searchBooking()
+            })
+        }).catch(async err => {
+          // this.$router.push({ name: '404' })
+          console.log(err.code, err.message)
+          await this.searchBooking()
+        })
+      } else {
+        this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
+        await this.searchBooking()
+      }
+    },
+    async getBefore () {
+      await this.getDataFlow()
+      await this.getDataBranch()
+      this.setTime()
+      this.getShop()
+      this.checkSearch()
+      this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
+    },
+    async beforeCreate () {
+      if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
+        if (JSON.parse(localStorage.getItem('sessionData')).shopId) {
+          this.$session.start()
+          this.$session.set('data', JSON.parse(localStorage.getItem('sessionData')))
+          await this.getBefore()
+        } else {
+          this.$router.push('/Core/Login')
+        }
+      } else {
+        if (!this.$session.exists()) {
+          this.$router.push('/Core/Login')
+        } else {
+          if (this.$session.getAll().data.shopId) {
+            localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
+            await this.getBefore()
+          } else {
+            this.$router.push('/Core/Login')
+          }
+        }
+      }
+    },
+    momentThaiText (item) {
+      let dt = moment(item).locale('th').format('LL')
+      return dt
+    },
     dial: function (number) {
       window.location = 'tel:' + number
     },
@@ -479,10 +676,17 @@ export default {
         })
     },
     async openHistory (item) {
-      console.log('item', item)
-      console.log('this.BookingDataList[item.bookNo]', this.BookingDataList[item.bookNo])
-      this.HistoryData = this.BookingDataList[item.bookNo]
-      this.pictureUrHistory = item.memberPicture
+      // console.log('item', item)
+      // console.log('this.BookingDataList[item.bookNo]', this.BookingDataList[item.bookNo])
+      if (item) {
+        this.HistoryData = this.BookingDataList[item.bookNo]
+        this.pictureUrHistory = item.memberPicture
+        let phoneNum = this.HistoryData.filter(item3 => { return item3.fieldValue !== '' && item3.fieldName === 'เบอร์โทร' })
+        if (phoneNum.length > 0) {
+          this.shopPhone = phoneNum[0].fieldValue.replace(/-/g, '')
+        } else {
+          this.shopPhone = ''
+        }
       // axios.get(this.DNS_IP + '/BookingData/get_history?bookNo=' + item.bookNo)
       //   .then(async (response) => {
       //     let rs = response.data
@@ -494,11 +698,12 @@ export default {
       //   .catch((error) => {
       //     console.log('error function addData : ', error)
       //   })
+      }
     },
     async getShop () {
       let shopImg = ''
       await axios
-        .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.shopId)
+        .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.$session.getAll().data.shopId)
         .then(async response => {
           let rs = response.data
           if (rs.length > 0) {
@@ -534,13 +739,15 @@ export default {
     },
     async searchBooking () {
       if (this.validSearch === true) {
+        this.overlay = false
         this.itemBooking = []
+        let itemBooking = []
         await this.getBookingDataList(this.dateStart)
         let urlApi = {}
         if (this.flowSelect === 'allFlow') {
           urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
-            this.shopId +
+            this.$session.getAll().data.shopId +
             '&masBranchID=' +
             this.masBranchID +
             // '&flowId=' +
@@ -552,7 +759,7 @@ export default {
         } else {
           urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
-            this.shopId +
+            this.$session.getAll().data.shopId +
             '&masBranchID=' +
             this.masBranchID +
             '&flowId=' +
@@ -577,12 +784,26 @@ export default {
                   d.cusName = (d.cusName.length > 0) ? d.cusName[0].fieldValue : ''
                   d.hnNo = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'H.N.')
                   d.hnNo = (d.hnNo.length > 0) ? d.hnNo[0].fieldValue : ''
-                  this.itemBooking.push(d)
+                  itemBooking.push(d)
                 }
               }
+              let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
+              let empId = this.$session.getAll().data.empId || ''
+              if (USER_ROLE === 'storeFront' && empId !== '') {
+                let dataCon = itemBooking.filter(el => { return el.statusBt === 'confirmJob' && el.storeFrontQueueEmpId === parseInt(empId) })
+                let dataWain = itemBooking.filter(el => { return el.statusBt === 'confirm' })
+                this.itemBooking = [ ...dataCon, ...dataWain ]
+              } else {
+                this.itemBooking = itemBooking
+              }
+              this.overlay = true
               this.openHistory(this.itemBooking[0])
+            } else {
+              this.overlay = true
             }
           })
+      } else {
+        this.overlay = true
       }
     },
     getDataFromFieldName (data, key) {
@@ -598,11 +819,11 @@ export default {
       this.BookingDataList = []
       let url = ''
       if (this.flowSelect === 'allFlow') {
-        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
+        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
       } else {
-        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}&flowId=${this.flowSelect}`
+        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}&flowId=${this.flowSelect}`
       }
-      // let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}&flowId=${this.flowSelect}`
+      // let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}&flowId=${this.flowSelect}`
       await axios
         .get(url)
         .then(async response => {
@@ -633,7 +854,7 @@ export default {
     async getDataFlow () {
       let resultOption = []
       await axios
-        .get(this.DNS_IP + `/flow/get?shopId=${this.shopId}&storeFrontCheck=True`)
+        .get(this.DNS_IP + `/flow/get?shopId=${this.$session.getAll().data.shopId}&storeFrontCheck=True`)
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
@@ -673,7 +894,7 @@ export default {
     async getDataFromAPI (url, fieldId, fieldName, param) {
       let result = []
       await axios
-        .get(this.DNS_IP + `${url}?shopId=${this.shopId}${param}`)
+        .get(this.DNS_IP + `${url}?shopId=${this.$session.getAll().data.shopId}${param}`)
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
@@ -705,7 +926,9 @@ export default {
           confirmButtonText: 'ใช่',
           cancelButtonText: 'ไม่'
         }).then(async response => {
+          this.overlay = false
           await this.updateServicePoint(item.bookNo)
+          await this.reCallNoti(item)
           let lineUserId = item.lineUserId || ''
           if (lineUserId !== '') {
             let dtt = {
@@ -723,64 +946,81 @@ export default {
         })
       }
     },
-    closeJobServicePoint (item) {
+    async closeJobServicePointSubmit (item) {
+      var dtt = {
+        bookNo: item.bookNo,
+        contactDate: this.format_date(new Date()),
+        status: 'confirmJob',
+        statusUse: 'use',
+        shopId: this.$session.getAll().data.shopId,
+        CREATE_USER: this.$session.getAll().data.userName,
+        LAST_USER: this.$session.getAll().data.userName
+      }
+      await axios
+        .post(this.DNS_IP + '/booking_transaction/add', dtt)
+        .then(async responses => {
+          await this.updateServicePoint(item.bookNo)
+          await this.CallNoti(item)
+          let lineUserId = item.lineUserId || ''
+          if (lineUserId !== '') {
+            let dtt = {
+              checkGetQueue: 'True'
+            }
+            await axios
+              .post(this.DNS_IP + '/Booking/pushMsgQueue/' + item.bookNo, dtt)
+              .then(async responses => {}).catch(error => {
+                console.log('error function pushMsgQueue : ', error)
+              })
+          }
+          this.dialogServicePointStatus = false
+          this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+          await this.searchBooking()
+        })
+    },
+    async closeJobServicePoint (item) {
       if (this.servicePoint === '') {
         this.$swal('ผิดพลาด', 'กรุณาเลือกจุดบริการ', 'error')
       } else {
-        this.$swal({
-          title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
-          type: 'question',
-          showCancelButton: true,
-          confirmButtonColor: '#1DBF73',
-          cancelButtonColor: '#F38383',
-          confirmButtonText: 'ใช่',
-          cancelButtonText: 'ไม่'
-        }).then(async response => {
-          // await this.clearConfirmJob(item.dueDate)
-          var dtt = {
-            bookNo: item.bookNo,
-            contactDate: this.format_date(new Date()),
-            status: 'confirmJob',
-            statusUse: 'use',
-            shopId: this.$session.getAll().data.shopId,
-            CREATE_USER: this.$session.getAll().data.userName,
-            LAST_USER: this.$session.getAll().data.userName
-          }
-          await axios
-            .post(this.DNS_IP + '/booking_transaction/add', dtt)
-            .then(async responses => {
-              await this.updateServicePoint(item.bookNo)
-              let lineUserId = item.lineUserId || ''
-              if (lineUserId !== '') {
-                let dtt = {
-                  checkGetQueue: 'True'
+        let statusBooking = await this.checkBookingStatus(item.bookNo)
+        if (statusBooking === 'confirm') {
+          this.$swal({
+            title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#1DBF73',
+            cancelButtonColor: '#F38383',
+            confirmButtonText: 'ใช่',
+            cancelButtonText: 'ไม่'
+          }).then(async response => {
+            this.overlay = false
+            // await this.clearConfirmJob(item.dueDate)
+            let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
+            let empId = this.$session.getAll().data.empId || ''
+            if (USER_ROLE === 'storeFront' && empId !== '') {
+              let statusBookingCheck = await this.checkBookingStatus(item.bookNo)
+              if (statusBookingCheck === 'confirm') {
+                let statusUpdateEmp = await this.updateEmp(item.bookNo, 'confirm')
+                if (statusUpdateEmp === true) {
+                  this.closeJobServicePointSubmit(item)
+                } else {
+                  this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
+                  this.dialogServicePointStatus = false
+                  await this.searchBooking()
                 }
-                await axios
-                  .post(this.DNS_IP + '/Booking/pushMsgQueue/' + item.bookNo, dtt)
-                  .then(async responses => {}).catch(error => {
-                    console.log('error function pushMsgQueue : ', error)
-                  })
+              } else {
+                this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
+                this.dialogServicePointStatus = false
+                await this.searchBooking()
               }
-              this.dialogServicePointStatus = false
-              this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
-              await this.searchBooking()
-            // let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
-            // if (bookSelect.length > 0) {
-            //   for (let i = 0; i < bookSelect.length; i++) {
-            //     let d = bookSelect[i]
-            //     let s = {}
-            //     s.lineUserId = d.lineUserId || ''
-            //     if (s.lineUserId !== '') {
-            //       await axios
-            //         .post(this.DNS_IP + '/Booking/pushMsgQueue/' + d.bookNo)
-            //         .then(async responses => {}).catch(error => {
-            //           console.log('error function pushMsgQueue : ', error)
-            //         })
-            //     }
-            //   }
-            // }
-            })
-        })
+            } else {
+              this.closeJobServicePointSubmit(item)
+            }
+          })
+        } else {
+          this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
+          this.dialogServicePointStatus = false
+          await this.searchBooking()
+        }
       }
     },
     async closeJobSubmitReturn (item) {
@@ -823,52 +1063,43 @@ export default {
     },
     async backHomeSubmit (item) {
       console.log('backHomeSubmit', item)
-      this.$swal({
-        title: 'ต้องการปิดงานนี้ ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#1DBF73',
-        cancelButtonColor: '#F38383',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      }).then(async response => {
+      let statusBooking = await this.checkBookingStatus(item.bookNo)
+      if (statusBooking === 'confirmJob') {
+        this.$swal({
+          title: 'ต้องการปิดงานนี้ ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#1DBF73',
+          cancelButtonColor: '#F38383',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        }).then(async response => {
         // await this.clearConfirmJob(item.dueDate)
-        var dtt = {
-          bookNo: item.bookNo,
-          contactDate: this.format_date(new Date()),
-          status: 'closeJob',
-          statusUse: 'use',
-          shopId: this.$session.getAll().data.shopId,
-          CREATE_USER: this.$session.getAll().data.userName,
-          LAST_USER: this.$session.getAll().data.userName
-        }
-        await axios
-          .post(this.DNS_IP + '/booking_transaction/add', dtt)
-          .then(async responses => {
-            this.$swal('เรียบร้อย', 'ปิดงานสำเร็จ', 'success')
-            await this.searchBooking()
-            // let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
-            // if (bookSelect.length > 0) {
-            //   for (let i = 0; i < bookSelect.length; i++) {
-            //     let d = bookSelect[i]
-            //     let s = {}
-            //     s.lineUserId = d.lineUserId || ''
-            //     if (s.lineUserId !== '') {
-            //       await axios
-            //         .post(this.DNS_IP + '/Booking/pushMsgQueue/' + d.bookNo)
-            //         .then(async responses => {}).catch(error => {
-            //           console.log('error function pushMsgQueue : ', error)
-            //         })
-            //     }
-            //   }
-            // }
-          })
-      })
+          var dtt = {
+            bookNo: item.bookNo,
+            contactDate: this.format_date(new Date()),
+            status: 'closeJob',
+            statusUse: 'use',
+            shopId: this.$session.getAll().data.shopId,
+            CREATE_USER: this.$session.getAll().data.userName,
+            LAST_USER: this.$session.getAll().data.userName
+          }
+          await axios
+            .post(this.DNS_IP + '/booking_transaction/add', dtt)
+            .then(async responses => {
+              this.$swal('เรียบร้อย', 'ปิดงานสำเร็จ', 'success')
+              await this.searchBooking()
+            })
+        })
+      } else {
+        this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
+        await this.searchBooking()
+      }
     },
     async setservicePointCount (item) {
       this.servicePointItem = []
       await axios
-        // .get(this.DNS_IP + '/BookingData/get?shopId=' + this.shopId + '&bookNo=' + this.bookNo)
+        // .get(this.DNS_IP + '/BookingData/get?shopId=' + this.$session.getAll().data.shopId + '&bookNo=' + this.bookNo)
         .get(this.DNS_IP + '/booking_view/get?shopId=' + item.shopId + '&flowId=' + item.flowId +
         '&dueDateDay=' + this.dateStart + '&storeFrontQueue=is not null&statusBt=confirmJob&servicePointStatus=True')
         .then(async response => {
@@ -908,71 +1139,85 @@ export default {
         })
     },
     async closeJobSubmit (item) {
-      console.log('closeJobSubmit', item)
-      if (item.servicePointStatus === 'True') {
-        this.closeItem = item
-        this.dialogServicePointStatus = true
-        this.servicePoint = item.servicePoint || ''
-        if (item.servicePointRecursive === 'False') {
-          await this.setservicePointCount(item)
-        } else {
-          this.servicePointItem = JSON.parse(item.servicePointCount) || []
-        }
-        this.statusReturn = false
-      } else {
-        this.$swal({
-          title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
-          type: 'question',
-          showCancelButton: true,
-          confirmButtonColor: '#1DBF73',
-          cancelButtonColor: '#F38383',
-          confirmButtonText: 'ใช่',
-          cancelButtonText: 'ไม่'
-        }).then(async response => {
-          // await this.clearConfirmJob(item.dueDate)
-          var dtt = {
-            bookNo: item.bookNo,
-            contactDate: this.format_date(new Date()),
-            status: 'confirmJob',
-            statusUse: 'use',
-            shopId: this.$session.getAll().data.shopId,
-            CREATE_USER: this.$session.getAll().data.userName,
-            LAST_USER: this.$session.getAll().data.userName
-          }
-          await axios
-            .post(this.DNS_IP + '/booking_transaction/add', dtt)
-            .then(async responses => {
-              let lineUserId = item.lineUserId || ''
-              if (lineUserId !== '') {
-                let dtt = {
-                  checkGetQueue: 'True'
+      if (item.statusBt === 'confirm') {
+        console.log('closeJobSubmit', item)
+        let statusBooking = await this.checkBookingStatus(item.bookNo)
+        if (statusBooking === 'confirm') {
+          if (item.servicePointStatus === 'True') {
+            this.closeItem = item
+            this.dialogServicePointStatus = true
+            this.servicePoint = item.servicePoint || ''
+            if (item.servicePointRecursive === 'False') {
+              await this.setservicePointCount(item)
+            } else {
+              this.servicePointItem = JSON.parse(item.servicePointCount) || []
+            }
+            this.statusReturn = false
+          } else {
+            this.$swal({
+              title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
+              type: 'question',
+              showCancelButton: true,
+              confirmButtonColor: '#1DBF73',
+              cancelButtonColor: '#F38383',
+              confirmButtonText: 'ใช่',
+              cancelButtonText: 'ไม่'
+            }).then(async response => {
+              // await this.clearConfirmJob(item.dueDate)
+              let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
+              let empId = this.$session.getAll().data.empId || ''
+              if (USER_ROLE === 'storeFront' && empId !== '') {
+                let statusBookingCheck = await this.checkBookingStatus(item.bookNo)
+                if (statusBookingCheck === 'confirm') {
+                  let statusUpdateEmp = await this.updateEmp(item.bookNo, 'confirm')
+                  if (statusUpdateEmp === true) {
+                    this.closeJob(item)
+                  } else {
+                    this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
+                    await this.searchBooking()
+                  }
+                } else {
+                  this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
+                  await this.searchBooking()
                 }
-                await axios
-                  .post(this.DNS_IP + '/Booking/pushMsgQueue/' + item.bookNo, dtt)
-                  .then(async responses => {}).catch(error => {
-                    console.log('error function pushMsgQueue : ', error)
-                  })
+              } else {
+                this.closeJob(item)
               }
-              this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
-              await this.searchBooking()
-            // let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
-            // if (bookSelect.length > 0) {
-            //   for (let i = 0; i < bookSelect.length; i++) {
-            //     let d = bookSelect[i]
-            //     let s = {}
-            //     s.lineUserId = d.lineUserId || ''
-            //     if (s.lineUserId !== '') {
-            //       await axios
-            //         .post(this.DNS_IP + '/Booking/pushMsgQueue/' + d.bookNo)
-            //         .then(async responses => {}).catch(error => {
-            //           console.log('error function pushMsgQueue : ', error)
-            //         })
-            //     }
-            //   }
-            // }
             })
-        })
+          }
+        } else {
+          this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
+          await this.searchBooking()
+        }
       }
+    },
+    async closeJob (item) {
+      var dtt = {
+        bookNo: item.bookNo,
+        contactDate: this.format_date(new Date()),
+        status: 'confirmJob',
+        statusUse: 'use',
+        shopId: this.$session.getAll().data.shopId,
+        CREATE_USER: this.$session.getAll().data.userName,
+        LAST_USER: this.$session.getAll().data.userName
+      }
+      await axios
+        .post(this.DNS_IP + '/booking_transaction/add', dtt)
+        .then(async responses => {
+          let lineUserId = item.lineUserId || ''
+          if (lineUserId !== '') {
+            let dtt = {
+              checkGetQueue: 'True'
+            }
+            await axios
+              .post(this.DNS_IP + '/Booking/pushMsgQueue/' + item.bookNo, dtt)
+              .then(async responses => {}).catch(error => {
+                console.log('error function pushMsgQueue : ', error)
+              })
+          }
+          this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+          await this.searchBooking()
+        })
     },
     async clearConfirmJob (dueDateUse) {
       var dtt = {
@@ -990,6 +1235,61 @@ export default {
       await axios
         .post(this.DNS_IP + '/Booking/edit/' + bookNo, dtt)
         .then(async responses => {})
+    },
+    async checkBookingStatus (bookNo) {
+      let result = ''
+      await axios
+        .get(this.DNS_IP + '/booking_view/get?shopId=' +
+            this.$session.getAll().data.shopId +
+            '&bookNo=' + bookNo)
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            result = rs[0].statusBt || ''
+          } else {
+            result = ''
+          }
+        })
+      return result
+    },
+    async updateEmp (bookNo, status) {
+      let result = ''
+      var dtt = {
+        storeFrontQueueEmpId: parseInt(this.$session.getAll().data.empId),
+        LAST_USER: this.$session.getAll().data.userName
+      }
+      await axios
+        .post(this.DNS_IP + '/Booking/editQueueEmp/' + bookNo + '?status=' + status, dtt)
+        .then(async response => {
+          let rs = response.data
+          result = rs.status
+        })
+      return result
+    },
+    async CallNoti (item) {
+      let dtdt = {
+        bookNo: item.bookNo,
+        servicePoint: this.servicePoint,
+        shopId: this.$session.getAll().data.shopId,
+        storeFrontQueue: item.storeFrontQueue,
+        CREATE_USER: this.$session.getAll().data.userName,
+        LAST_USER: this.$session.getAll().data.userName
+      }
+      await axios
+        .post(this.DNS_IP + '/callQueues/add', dtdt)
+        .then(async responses => {})
+    },
+    async reCallNoti (item) {
+      let dtdt = {
+        statusNotify: 'False',
+        servicePoint: this.servicePoint,
+        LAST_USER: this.$session.getAll().data.userName
+      }
+      await axios
+        .post(this.DNS_IP + '/callQueues/edit/' + item.audioFileId, dtdt)
+        .then(async responses => {
+          this.$swal('เรียบร้อย', 'กรุณารอเรียกคิว', 'success')
+        })
     },
     // async getBase64ImageFromURL (img) {
     //   let image = await axios.get(img, {withCredentials: true, responseType: 'arraybuffer'})

@@ -490,17 +490,16 @@ export default {
       const dateSplit = today.split('-')
       const year = String(dateSplit[0])
       const month = String(dateSplit[1])
-      let url = `${this.DNS_IP}/BookingData/getViewGroup?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchName=${this.masBranchName.text}`
+      let url = `${this.DNS_IP}/BookingData/get?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchName=${this.masBranchName.text}`
       await axios
         .get(url)
         .then(async response => {
           if (response.data.length > 0) {
             response.data.forEach((row) => {
-              this.bookingData[row.bookNo] = JSON.parse(row.customData)
-              // if (typeof (this.bookingData[row.bookNo]) === 'undefined') {
-              //   this.bookingData[row.bookNo] = []
-              // }
-              // this.bookingData[row.bookNo].push(row)
+              if (typeof (this.bookingData[row.bookNo]) === 'undefined') {
+                this.bookingData[row.bookNo] = []
+              }
+              this.bookingData[row.bookNo].push(row)
             })
           }
         })

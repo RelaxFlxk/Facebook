@@ -712,6 +712,7 @@ export default {
       this.$root.$emit('closeSetTime')
       this.$root.$emit('closeSetTimeGetCalenda')
       this.$root.$emit('closeSetTimeBookingMonitor')
+      this.$root.$emit('closeSetTimeBookingListQueue')
       this.items = []
       if (this.session.data.USER_ROLE === 'onsite') {
         this.onsite()

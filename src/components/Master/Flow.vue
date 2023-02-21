@@ -3547,6 +3547,7 @@ export default {
           cancelButtonText: 'ไม่'
         })
           .then(async result => {
+            this.formAdd.setTime = JSON.stringify([])
             this.formAdd.CREATE_USER = this.session.data.userName
             this.formAdd.LAST_USER = this.session.data.userName
             this.formAdd.flowCode = this.generateCodeGlobal()
