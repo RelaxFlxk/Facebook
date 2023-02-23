@@ -403,11 +403,24 @@
                     <!-- <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-3">
                       บริษัท บีแทสก์ คอนซัลติ้ง จำกัด
                     </h6> -->
+                    <br>
                     <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
                       บัญชี : บริษัท บีแทสก์ คอนซัลติ้ง จำกัด
                     </h6>
+                    <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="trialsPrice > 0">
+                      จำนวนเงินหลังใช้ฟรี 7 วัน : {{ formatNumber(trialsPrice) }} บาท
+                    </h6>
+                    <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="trialsPrice > 0">
+                      (วันที่ {{ billingTrialsPriceDateFomatShow }} )
+                    </h6>
+                    <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="currentPrice > 0">
+                      จำนวนเงินค่าบริการที่เหลือ : {{ formatNumber(currentPrice) }} บาท
+                    </h6>
+                    <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="currentPrice > 0">
+                      (วันที่ {{ billingCurrentPriceDateFomatShow }} )
+                    </h6>
                     <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
-                      จำนวนเงิน : {{ formatNumber(pricePackage) }} บาท
+                      จำนวนเงินรวม : {{ formatNumber(paymentAmount) }} บาท
                     </h6>
                     <div class="pl-4 pr-4"><v-divider></v-divider></div>
                     <div class="text-center" style="display:flex;" v-if="dialogwidth === '50%'"><v-img
@@ -551,8 +564,20 @@
                             <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
                               บัญชี : บริษัท บีแทสก์ คอนซัลติ้ง จำกัด
                             </h6>
+                            <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="trialsPrice > 0">
+                              จำนวนเงินหลังใช้ฟรี 7 วัน : {{ formatNumber(trialsPrice) }} บาท
+                            </h6>
+                            <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="trialsPrice > 0">
+                              (วันที่ {{ billingTrialsPriceDateFomatShow }} )
+                            </h6>
+                            <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="currentPrice > 0">
+                              จำนวนเงินค่าบริการที่เหลือ : {{ formatNumber(currentPrice) }} บาท
+                            </h6>
+                            <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="currentPrice > 0">
+                              (วันที่ {{ billingCurrentPriceDateFomatShow }} )
+                            </h6>
                             <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
-                              จำนวนเงิน : {{ formatNumber(paymentAmount) }} บาท
+                              จำนวนเงินรวม : {{ formatNumber(paymentAmount) }} บาท
                             </h6>
                             <div class="pl-4 pr-4"><v-divider></v-divider></div>
                             <div class="text-center" style="display:flex;"><v-img
@@ -758,7 +783,13 @@ export default {
       closeFree: false,
       countDateEnd: 0,
       paymentStatus: '',
-      sysShopData: []
+      sysShopData: [],
+      trialsPrice: 0,
+      currentPrice: 0,
+      billingTrialsPriceDateFomat: '',
+      billingCurrentPriceDateFomat: '',
+      billingTrialsPriceDateFomatShow: '',
+      billingCurrentPriceDateFomatShow: ''
     }
   },
   mounted () {
@@ -859,12 +890,132 @@ export default {
     },
     async showQrCode (item) {
       console.log('showQrCode', item)
+      console.log('trialsVersionDate', this.$session.getAll().data.trialsVersionDate)
+      this.trialsPrice = 0
+      this.currentPrice = 0
+      this.billingTrialsPriceDateFomat = ''
+      this.billingCurrentPriceDateFomat = ''
+      this.billingTrialsPriceDateFomatShow = ''
+      this.billingCurrentPriceDateFomatShow = ''
       await this.getCheckCountBook()
       let closeJob = parseInt(item.close) * 30
       console.log(closeJob, this.countBooking)
       if (this.countBooking > closeJob) {
         this.$swal('ผิดพลาด', 'เนื่องจากรายการนัดหมายของท่านเกินจำนวนของแพ็คเกจที่ท่านเลือก', 'error')
       } else {
+        this.dataPlan = item
+        let dateTrials = this.$session.getAll().data.trialsVersionDate.split('-')
+        let dateTrialsYear = dateTrials[0]
+        let dateTrialsMonth = dateTrials[1]
+        let dateTrialsDay = dateTrials[2]
+        let dateTrialsYearMonth = dateTrialsYear + '-' + dateTrialsMonth
+        console.log(dateTrialsYear, dateTrialsMonth, dateTrialsDay)
+        await axios
+          .get(
+            this.DNS_IP +
+              '/system_shop_Payment/get?shopId=' +
+              this.$session.getAll().data.shopId
+          )
+          .then(async (response) => {
+            let rs = response.data
+            if (rs.status === false || rs[0].id === null) {
+              if (moment().format('YYYY-MM') === dateTrialsYearMonth) {
+                if (parseInt(dateTrialsDay) === 1) {
+                  console.log('1')
+                  if (parseInt(dateTrialsDay) === parseInt(moment().format('DD'))) {
+                    this.pricePackage = item.pricePackage || 0
+                    this.paymentAmount = item.pricePackage
+                  } else {
+                    let dateCalDay = 30 - parseInt(moment().format('DD'))
+                    this.pricePackage = item.pricePackage
+                    this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / 30)
+                    this.trialsPrice = Math.ceil((dateCalDay * item.pricePackage) / 30)
+                    this.currentPrice = 0
+                    this.billingTrialsPriceDateFomat = moment().format('YYYY-MM-DD')
+                    this.billingCurrentPriceDateFomat = ''
+                    this.billingTrialsPriceDateFomatShow = moment().format('DD/MM/YYYY')
+                    this.billingCurrentPriceDateFomatShow = ''
+                  }
+                } else {
+                  console.log('2')
+                  let dateCalDay = 30 - parseInt(moment().format('DD'))
+                  this.pricePackage = item.pricePackage
+                  this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / 30)
+                  this.trialsPrice = Math.ceil((dateCalDay * item.pricePackage) / 30)
+                  this.currentPrice = 0
+                  this.billingTrialsPriceDateFomat = moment().format('YYYY-MM-DD')
+                  this.billingCurrentPriceDateFomat = ''
+                  this.billingTrialsPriceDateFomatShow = moment().format('DD/MM/YYYY')
+                  this.billingCurrentPriceDateFomatShow = ''
+                }
+              } else {
+                console.log('3')
+                let dateCalDay = 30 - parseInt(dateTrialsDay)
+                let dateCalDayCurrent = 30 - parseInt(moment().format('DD'))
+                this.pricePackage = item.pricePackage
+                this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / 30) + Math.ceil((dateCalDayCurrent * item.pricePackage) / 30)
+                this.trialsPrice = Math.ceil((dateCalDay * item.pricePackage) / 30)
+                this.currentPrice = Math.ceil((dateCalDayCurrent * item.pricePackage) / 30)
+                this.billingTrialsPriceDateFomat = dateTrialsYear + '-' + dateTrialsMonth + '-' + dateTrialsDay
+                this.billingCurrentPriceDateFomat = moment().format('YYYY-MM-DD')
+                this.billingTrialsPriceDateFomatShow = dateTrialsDay + '/' + dateTrialsMonth + '/' + dateTrialsYear
+                this.billingCurrentPriceDateFomatShow = moment().format('DD/MM/YYYY')
+              }
+            } else {
+              if (rs[0].paymentDateMMYY === moment().format('YYYY-MM')) {
+                if (parseInt(rs[0].paymentDateDay) === 1) {
+                  if (parseInt(rs[0].paymentDateDay) === parseInt(moment().format('DD'))) {
+                    this.pricePackage = item.pricePackage || 0
+                    this.paymentAmount = item.pricePackage
+                  } else {
+                    let dateCalDay = 30 - parseInt(moment().format('DD'))
+                    this.pricePackage = item.pricePackage
+                    this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / 30)
+                    this.trialsPrice = 0
+                    this.currentPrice = Math.ceil((dateCalDay * item.pricePackage) / 30)
+                    this.billingTrialsPriceDateFomat = ''
+                    this.billingCurrentPriceDateFomat = moment().format('YYYY-MM-DD')
+                    this.billingTrialsPriceDateFomatShow = ''
+                    this.billingCurrentPriceDateFomatShow = moment().format('DD/MM/YYYY')
+                  }
+                } else {
+                  console.log('2')
+                  let dateCalDay = 30 - parseInt(moment().format('DD'))
+                  this.pricePackage = item.pricePackage
+                  this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / 30)
+                  this.trialsPrice = 0
+                  this.currentPrice = Math.ceil((dateCalDay * item.pricePackage) / 30)
+                  this.billingTrialsPriceDateFomat = ''
+                  this.billingCurrentPriceDateFomat = moment().format('YYYY-MM-DD')
+                  this.billingTrialsPriceDateFomatShow = ''
+                  this.billingCurrentPriceDateFomatShow = moment().format('DD/MM/YYYY')
+                }
+              } else {
+                console.log('2')
+                let dateCalDay = 30 - parseInt(moment().format('DD'))
+                this.pricePackage = item.pricePackage
+                this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / 30)
+                this.trialsPrice = 0
+                this.currentPrice = Math.ceil((dateCalDay * item.pricePackage) / 30)
+                this.billingTrialsPriceDateFomat = ''
+                this.billingCurrentPriceDateFomat = moment().format('YYYY-MM-DD')
+                this.billingTrialsPriceDateFomatShow = ''
+                this.billingCurrentPriceDateFomatShow = moment().format('DD/MM/YYYY')
+                // console.log('3')
+                // let dateCalDay = 30 - parseInt(dateTrialsDay)
+                // let dateCalDayCurrent = 30 - parseInt(rs[0].paymentDateDay)
+                // this.pricePackage = Math.ceil((dateCalDay * item.pricePackage) / 30) + Math.ceil((dateCalDayCurrent * item.pricePackage) / 30)
+                // this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / 30) + Math.ceil((dateCalDayCurrent * item.pricePackage) / 30)
+                // this.trialsPrice = Math.ceil((dateCalDay * item.pricePackage) / 30)
+                // this.currentPrice = Math.ceil((dateCalDayCurrent * item.pricePackage) / 30)
+                // this.billingTrialsPriceDateFomat = dateTrialsYear + '-' + dateTrialsMonth + '-' + dateTrialsDay
+                // this.billingCurrentPriceDateFomat = moment().format('YYYY-MM-DD')
+                // this.billingTrialsPriceDateFomatShow = dateTrialsDay + '/' + dateTrialsMonth + '/' + dateTrialsYear
+                // this.billingCurrentPriceDateFomatShow = moment().format('DD/MM/YYYY')
+              }
+            }
+          })
+          // moment().format('YYYY-MM')
         // const date1 = new Date(this.dataPayment.endDate)
         // const date2 = new Date()
         // const diffTime = date1 - date2
@@ -933,9 +1084,6 @@ export default {
         //     this.dialogQrcode = true
         //   }
         // } else {
-        this.dataPlan = item
-        this.pricePackage = item.pricePackage || 0
-        this.paymentAmount = item.pricePackage
         // this.paymentDateMonthYear = item.paymentDateMonthYear
         await axios
           .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.$session.getAll().data.shopId)
@@ -957,7 +1105,7 @@ export default {
         // const promptpayID = '1529900508673'
         const promptpayID = '0125563009946'
         // const IDCardNumber = '0-0000-00000-00-0'
-        const amount = parseFloat(item.pricePackage)
+        const amount = parseFloat(this.paymentAmount)
         this.value = generatePayload(promptpayID, { amount })
         this.dialogQrcode = true
         // }
@@ -1013,7 +1161,7 @@ export default {
                   packetId: item.id,
                   paymentImage: this.paymentImge,
                   paymentStatus: 'confirm',
-                  paymentAmount: item.pricePackage,
+                  paymentAmount: this.paymentAmount,
                   shopId: this.$session.getAll().data.shopId,
                   CREATE_USER: this.$session.getAll().data.userName,
                   LAST_USER: this.$session.getAll().data.userName
@@ -1034,6 +1182,11 @@ export default {
                       billingTax: this.billingTax,
                       billingPhone: this.billingPhone,
                       paymentAmount: this.paymentAmount,
+                      pricePackage: this.pricePackage,
+                      trialsPrice: this.trialsPrice,
+                      currentPrice: this.currentPrice,
+                      billingTrialsPriceDateFomat: this.billingTrialsPriceDateFomat,
+                      billingCurrentPriceDateFomat: this.billingCurrentPriceDateFomat,
                       paymentDateMonthYear: moment().format('MM/YYYY'),
                       statusNoti: 'New'
                     }
@@ -1064,8 +1217,12 @@ export default {
       this.paymentImge = item.paymentImage || null
       this.dialogReConfirm = true
       this.idPayment = item.id
-      this.paymentAmount = item.paymentAmount
+      this.paymentAmount = item.billingTrialsPrice + item.billingCurrentPrice
       this.paymentDateMonthYear = item.paymentDateMonthYear
+      this.trialsPrice = item.billingTrialsPrice
+      this.currentPrice = item.billingCurrentPrice
+      this.billingTrialsPriceDateFomat = item.billingTrialsPriceDateFomat
+      this.billingCurrentPriceDateFomat = item.billingCurrentPriceDateFomat
       const generatePayload = require('promptpay-qr')
       // const promptpayID = '1529900508673'
       const promptpayID = '0125563009946'
@@ -1127,6 +1284,11 @@ export default {
                 billingTax: this.billingTax,
                 billingPhone: this.billingPhone,
                 paymentAmount: this.paymentAmount,
+                pricePackage: this.pricePackage,
+                trialsPrice: this.trialsPrice,
+                currentPrice: this.currentPrice,
+                billingTrialsPriceDateFomat: this.billingTrialsPriceDateFomat,
+                billingCurrentPriceDateFomat: this.billingCurrentPriceDateFomat,
                 paymentDateMonthYear: this.paymentDateMonthYear,
                 statusNoti: 'Update'
               }
@@ -1148,6 +1310,8 @@ export default {
     async updateShopActive (text, packetId) {
       var ds = {}
       if (packetId) {
+        let billingTrialsPriceDateFomat = this.billingTrialsPriceDateFomat === '' ? null : this.billingTrialsPriceDateFomat
+        let billingCurrentPriceDateFomat = this.billingCurrentPriceDateFomat === '' ? null : this.billingCurrentPriceDateFomat
         ds = {
           shopActive: text,
           billingCusName: this.billingCusName,
@@ -1155,6 +1319,10 @@ export default {
           billingTax: this.billingTax,
           billingPhone: this.billingPhone,
           billingPlan: packetId,
+          billingTrialsPrice: this.trialsPrice,
+          billingCurrentPrice: this.currentPrice,
+          billingTrialsPriceDate: billingTrialsPriceDateFomat,
+          billingCurrentPriceDate: billingCurrentPriceDateFomat,
           LAST_USER: this.$session.getAll().data.userName
         }
       } else {

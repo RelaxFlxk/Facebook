@@ -703,6 +703,8 @@ export default {
               this.chkPlan()
             }
           }
+        } else {
+          this.chkPlan()
         }
       }
       console.log('session', this.session)
