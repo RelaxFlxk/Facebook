@@ -57,6 +57,11 @@ export default new Router({
     component: Core.Home
   },
   {
+    path: '/InstallWizard',
+    name: 'InstallWizard',
+    component: Core.InstallWizard
+  },
+  {
     path: '/Master/CustomField',
     name: 'CustomField',
     component: Master.CustomField

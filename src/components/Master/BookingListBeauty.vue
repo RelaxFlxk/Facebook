@@ -3364,7 +3364,7 @@
                           <v-list-item  @click.stop="setShowMap(item)" v-if="item.addressLatLong !== null">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-map-marker-radius-outline </v-icon> ดูแผนที่ </v-list-item-title>
                           </v-list-item>
-                          <v-list-item @click.stop="setDataEdit(item)">
+                          <v-list-item @click.stop="setDataEdit(item)" v-if="item.RECORD_STATUS_Job !== 'D'">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-tools </v-icon> แก้ไขข้อมูล </v-list-item-title>
                           </v-list-item>
                           <v-list-item @click.stop="setDataCallLog(item)">
