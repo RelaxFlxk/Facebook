@@ -854,7 +854,13 @@ export default {
             s.rangeRePackage = d.rangeRePackage
             // console.log(s.pricePackage)
             if (s.pricePackage !== '0') {
-              this.dataPackage.push(s)
+              if (this.$session.getAll().data.show499 === 'True') {
+                this.dataPackage.push(s)
+              } else {
+                if (s.pricePackage !== '499') {
+                  this.dataPackage.push(s)
+                }
+              }
             }
           }
         //   if (this.dataBilling === 'free') {
@@ -889,6 +895,7 @@ export default {
       this.dataReadyGet = true
     },
     async showQrCode (item) {
+      console.log('endOf', moment().endOf('month').format('DD'))
       console.log('showQrCode', item)
       console.log('trialsVersionDate', this.$session.getAll().data.trialsVersionDate)
       this.trialsPrice = 0
@@ -903,6 +910,7 @@ export default {
       if (this.countBooking > closeJob) {
         this.$swal('ผิดพลาด', 'เนื่องจากรายการนัดหมายของท่านเกินจำนวนของแพ็คเกจที่ท่านเลือก', 'error')
       } else {
+        let lastDayOfMonth = moment().endOf('month').format('DD')
         this.dataPlan = item
         let dateTrials = this.$session.getAll().data.trialsVersionDate.split('-')
         let dateTrialsYear = dateTrials[0]
@@ -926,10 +934,10 @@ export default {
                     this.pricePackage = item.pricePackage || 0
                     this.paymentAmount = item.pricePackage
                   } else {
-                    let dateCalDay = 30 - parseInt(moment().format('DD'))
+                    let dateCalDay = parseInt(lastDayOfMonth) - parseInt(moment().format('DD'))
                     this.pricePackage = item.pricePackage
-                    this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / 30)
-                    this.trialsPrice = Math.ceil((dateCalDay * item.pricePackage) / 30)
+                    this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth))
+                    this.trialsPrice = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth))
                     this.currentPrice = 0
                     this.billingTrialsPriceDateFomat = moment().format('YYYY-MM-DD')
                     this.billingCurrentPriceDateFomat = ''
@@ -938,10 +946,10 @@ export default {
                   }
                 } else {
                   console.log('2')
-                  let dateCalDay = 30 - parseInt(moment().format('DD'))
+                  let dateCalDay = parseInt(lastDayOfMonth) - parseInt(moment().format('DD'))
                   this.pricePackage = item.pricePackage
-                  this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / 30)
-                  this.trialsPrice = Math.ceil((dateCalDay * item.pricePackage) / 30)
+                  this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth))
+                  this.trialsPrice = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth))
                   this.currentPrice = 0
                   this.billingTrialsPriceDateFomat = moment().format('YYYY-MM-DD')
                   this.billingCurrentPriceDateFomat = ''
@@ -950,12 +958,12 @@ export default {
                 }
               } else {
                 console.log('3')
-                let dateCalDay = 30 - parseInt(dateTrialsDay)
-                let dateCalDayCurrent = 30 - parseInt(moment().format('DD'))
+                let dateCalDay = parseInt(lastDayOfMonth) - parseInt(dateTrialsDay)
+                let dateCalDayCurrent = parseInt(lastDayOfMonth) - parseInt(moment().format('DD'))
                 this.pricePackage = item.pricePackage
-                this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / 30) + Math.ceil((dateCalDayCurrent * item.pricePackage) / 30)
-                this.trialsPrice = Math.ceil((dateCalDay * item.pricePackage) / 30)
-                this.currentPrice = Math.ceil((dateCalDayCurrent * item.pricePackage) / 30)
+                this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth)) + Math.ceil((dateCalDayCurrent * item.pricePackage) / parseInt(lastDayOfMonth))
+                this.trialsPrice = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth))
+                this.currentPrice = Math.ceil((dateCalDayCurrent * item.pricePackage) / parseInt(lastDayOfMonth))
                 this.billingTrialsPriceDateFomat = dateTrialsYear + '-' + dateTrialsMonth + '-' + dateTrialsDay
                 this.billingCurrentPriceDateFomat = moment().format('YYYY-MM-DD')
                 this.billingTrialsPriceDateFomatShow = dateTrialsDay + '/' + dateTrialsMonth + '/' + dateTrialsYear
@@ -963,44 +971,37 @@ export default {
               }
             } else {
               if (rs[0].paymentDateMMYY === moment().format('YYYY-MM')) {
-                if (parseInt(rs[0].paymentDateDay) === 1) {
-                  if (parseInt(rs[0].paymentDateDay) === parseInt(moment().format('DD'))) {
-                    this.pricePackage = item.pricePackage || 0
-                    this.paymentAmount = item.pricePackage
-                  } else {
-                    let dateCalDay = 30 - parseInt(moment().format('DD'))
-                    this.pricePackage = item.pricePackage
-                    this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / 30)
-                    this.trialsPrice = 0
-                    this.currentPrice = Math.ceil((dateCalDay * item.pricePackage) / 30)
-                    this.billingTrialsPriceDateFomat = ''
-                    this.billingCurrentPriceDateFomat = moment().format('YYYY-MM-DD')
-                    this.billingTrialsPriceDateFomatShow = ''
-                    this.billingCurrentPriceDateFomatShow = moment().format('DD/MM/YYYY')
-                  }
+                if (parseInt(moment().format('DD')) >= 1 && parseInt(moment().format('DD')) <= 7) {
+                  this.pricePackage = item.pricePackage || 0
+                  this.paymentAmount = item.pricePackage
                 } else {
                   console.log('2')
-                  let dateCalDay = 30 - parseInt(moment().format('DD'))
+                  let dateCalDay = parseInt(lastDayOfMonth) - parseInt(moment().format('DD'))
                   this.pricePackage = item.pricePackage
-                  this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / 30)
+                  this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth))
                   this.trialsPrice = 0
-                  this.currentPrice = Math.ceil((dateCalDay * item.pricePackage) / 30)
+                  this.currentPrice = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth))
                   this.billingTrialsPriceDateFomat = ''
                   this.billingCurrentPriceDateFomat = moment().format('YYYY-MM-DD')
                   this.billingTrialsPriceDateFomatShow = ''
                   this.billingCurrentPriceDateFomatShow = moment().format('DD/MM/YYYY')
                 }
               } else {
-                console.log('2')
-                let dateCalDay = 30 - parseInt(moment().format('DD'))
-                this.pricePackage = item.pricePackage
-                this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / 30)
-                this.trialsPrice = 0
-                this.currentPrice = Math.ceil((dateCalDay * item.pricePackage) / 30)
-                this.billingTrialsPriceDateFomat = ''
-                this.billingCurrentPriceDateFomat = moment().format('YYYY-MM-DD')
-                this.billingTrialsPriceDateFomatShow = ''
-                this.billingCurrentPriceDateFomatShow = moment().format('DD/MM/YYYY')
+                if (parseInt(moment().format('DD')) >= 1 && parseInt(moment().format('DD')) <= 7) {
+                  this.pricePackage = item.pricePackage || 0
+                  this.paymentAmount = item.pricePackage
+                } else {
+                  console.log('2')
+                  let dateCalDay = parseInt(lastDayOfMonth) - parseInt(moment().format('DD'))
+                  this.pricePackage = item.pricePackage
+                  this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth))
+                  this.trialsPrice = 0
+                  this.currentPrice = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth))
+                  this.billingTrialsPriceDateFomat = ''
+                  this.billingCurrentPriceDateFomat = moment().format('YYYY-MM-DD')
+                  this.billingTrialsPriceDateFomatShow = ''
+                  this.billingCurrentPriceDateFomatShow = moment().format('DD/MM/YYYY')
+                }
                 // console.log('3')
                 // let dateCalDay = 30 - parseInt(dateTrialsDay)
                 // let dateCalDayCurrent = 30 - parseInt(rs[0].paymentDateDay)

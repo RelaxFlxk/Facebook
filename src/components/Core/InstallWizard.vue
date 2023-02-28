@@ -154,7 +154,7 @@
                 </v-card>
                 <v-btn
                   color="primary"
-                  @click="checkDeposit ? e1 = 2 : e1 = 3, saveSortFlow(), checkDeposit ? setDataDeposit() : ''"
+                  @click="checkDeposit ? e1 = 2 : e1 = 3, saveSortFlow(), checkDeposit ? setDataDeposit() : '', setTimeEmp()"
                 >
                   ต่อไป
                 </v-btn>
@@ -213,13 +213,13 @@
                 <br>
                 <v-btn
                   color="primary"
-                  @click="depositFlow()"
+                  @click="depositFlow(), setTimeEmp()"
                 >
                   ต่อไป
                 </v-btn>
                 <v-btn
                   color="error"
-                  @click="e1 = 3"
+                  @click="e1 = 3, setTimeEmp()"
                 >
                   ข้าม
                 </v-btn>
@@ -245,7 +245,7 @@
                             color="#173053"
                             dark
                             block
-                            @click="dialogEmp = true, titleEmpDialog = 'เพิ่มพนักงานช่าง'"
+                            @click="dialogEmp = true, titleEmpDialog = 'เพิ่มพนักงานช่าง',showBTEmp = true"
                           >
                             เพิ่มพนักงานช่าง
                           </v-btn>
@@ -278,7 +278,7 @@
                                     fab
                                     dark
                                     x-small
-                                    @click="setDataEmp(element), titleEmpDialog = 'แก้ไขพนักงานช่าง'"
+                                    @click="setDataEmp(element), titleEmpDialog = 'แก้ไขพนักงานช่าง',showBTEmp = false"
                                     color="primary"
                                   >
                                     <v-icon dark>
@@ -422,7 +422,7 @@
     </v-dialog>
     <v-dialog v-model="dialogEmp" persistent max-width="90%">
       <v-card>
-        <v-form ref="form_add" v-model="validAddEmp" lazy-validation>
+        <v-form ref="form_addEmp" v-model="validAddEmp" lazy-validation>
           <v-card-text>
             <v-container>
               <v-row>
@@ -488,9 +488,33 @@
                     <v-select
                       dense
                       outlined
+                      label="เวลาเริ่มงาน"
+                      :items="itemsTimeStart"
+                      v-model="formEmp.startTime"
+                      :rules="[rules.required]"
+                      required
+                      @change="setTimeEnd()"
+                    ></v-select>
+                  </v-col>
+                  <v-col cols="12" class="pa-0" v-if="formEmp.startTime">
+                    <v-select
+                      dense
+                      outlined
+                      label="เวลาเลิกงาน"
+                      :items="itemsTimeEnd"
+                      v-model="formEmp.endTime"
+                      :rules="[rules.required]"
+                      required
+                    ></v-select>
+                  </v-col>
+                  <v-col cols="12" class="pa-0">
+                    <v-select
+                      dense
+                      outlined
                       v-model="formEmp.privacyPage"
                       :items="privacyPageSelect"
                       menu-props="auto"
+                      readonly
                       :rules="[rules.required]"
                       label="เลือกหน้าที่จะแสดง"
                       prepend-icon="mdi-map"
@@ -500,7 +524,7 @@
                   <v-col cols="12" class="pa-0" v-if="formEmp.privacyPage === 'bookingform' || formEmp.privacyPage === 'bookingStoreFront'">
                     <v-autocomplete
                       v-model="formEmp.flowId"
-                      :items="flow"
+                      :items="dataListFlow"
                       :rules="[rules.required]"
                       required
                       clearable
@@ -508,16 +532,48 @@
                       dense
                       outlined
                       multiple
+                      item-text="flowName"
+                      item-value="flowId"
                     ></v-autocomplete>
                   </v-col>
-                  <v-col clos="12" class="pb-0 pt-0">
+                  <!-- <v-col clos="12" class="pb-0 pt-0">
                     <v-btn
                       color="#173053"
                       dark
                       block
-                      @click="dialogEmp = false"
+                      @click="addEmp()"
                     >
                       บันทึกข้อมูล
+                    </v-btn>
+                  </v-col> -->
+                  <v-col clos="12" class="pb-0 pt-0" v-if="showBTEmp">
+                    <v-btn
+                      color="#173053"
+                      dark
+                      block
+                      @click="addEmp()"
+                    >
+                      บันทึกข้อมูล
+                    </v-btn>
+                  </v-col>
+                  <v-col clos="6" class="pb-2 pt-0" v-if="!showBTEmp">
+                    <v-btn
+                      color="#173053"
+                      dark
+                      block
+                      @click="editEmp()"
+                    >
+                      บันทึกข้อมูล
+                    </v-btn>
+                  </v-col>
+                  <v-col clos="6" class="pb-0 pt-0" v-if="!showBTEmp">
+                    <v-btn
+                      color="error"
+                      dark
+                      block
+                      @click="deleteDataEmp(dataListEmpSelect)"
+                    >
+                      ลบข้อมูล
                     </v-btn>
                   </v-col>
                 </v-col>
@@ -584,12 +640,14 @@ export default {
       titleFlowDialog: '',
       dataListFlow: [],
 
+      showBTEmp: true,
       titleEmpDialog: '',
       validAddEmp: true,
       dialogEmp: false,
       dataListEmp: [],
       enabledEmp: true,
       draggingEmp: false,
+      dataListEmpSelect: [],
       itemsTitle: ['นาย', 'นาง', 'นางสาว', 'คุณ', ' '],
       privacyPageSelect: [
         { text: 'รายชื่อลูกค้านัดหมาย', value: 'booking' },
@@ -598,12 +656,15 @@ export default {
         { text: 'นัดหมายบัตรคิว', value: 'bookingStoreFront' },
         { text: 'ทั้งหมด', value: 'all' }
       ],
+      itemsTimeStart: [],
+      itemsTimeEnd: [],
+      itemsTimeFull: [],
       formEmp: {
         empCode: '',
         empTitle_NameTH: '',
         empFirst_NameTH: '',
         empLast_NameTH: '',
-        privacyPage: '',
+        privacyPage: 'bookingform',
         empImge: '',
         pictureUrlPreview: '',
         shopId: this.$session.getAll().data.shopId,
@@ -611,7 +672,9 @@ export default {
         masBranchID: '',
         flowId: '',
         additionalInformation: '',
-        phoneNumber: ''
+        phoneNumber: '',
+        startTime: '',
+        endTime: ''
       },
 
       dataReady: true,
@@ -678,7 +741,9 @@ export default {
       },
       showBTFlow: true,
       dataListFlowSelect: [],
-      checkDeposit: true
+      checkDeposit: true,
+      checkTimeFlow: '',
+      masBranchID: ''
     }
   },
   async mounted () {
@@ -687,6 +752,7 @@ export default {
     } else {
       await this.getDataFlow()
       this.getDataEmp()
+      this.getDataBranch()
       if (this.$session.getAll().data.shopId.includes('SD_')) {
         await this.chkConnectLineOa()
       } else {
@@ -714,9 +780,193 @@ export default {
             self.$refs.form_addFlowDeposit.validate()
           })
           break
+        case 'ADDEMP':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_addEmp.validate()
+          })
+          break
 
         default:
           break
+      }
+    },
+    setTimeEmp () {
+      let checkTimeFlow = 'h'
+      if (this.dataListFlow.filter(el => { return el.selectTimeFlow === 30 || el.selectTimeFlow === 90 }).length > 0) {
+        checkTimeFlow = 'm'
+      } else {
+        checkTimeFlow = 'h'
+      }
+      this.checkTimeFlow = checkTimeFlow
+      if (checkTimeFlow === 'm') {
+        this.itemsTimeStart = [
+          { id: 1, value: '07:00', text: '07:00', limitBooking: '1' },
+          { id: 2, value: '07:30', text: '07:30', limitBooking: '1' },
+          { id: 3, value: '08:00', text: '08:00', limitBooking: '1' },
+          { id: 4, value: '08:30', text: '08:30', limitBooking: '1' },
+          { id: 5, value: '09:00', text: '09:00', limitBooking: '1' },
+          { id: 6, value: '09:30', text: '09:30', limitBooking: '1' },
+          { id: 7, value: '10:00', text: '10:00', limitBooking: '1' },
+          { id: 8, value: '10:30', text: '10:30', limitBooking: '1' },
+          { id: 9, value: '11:00', text: '11:00', limitBooking: '1' },
+          { id: 10, value: '11:30', text: '11:30', limitBooking: '1' },
+          { id: 11, value: '12:00', text: '12:00', limitBooking: '1' },
+          { id: 12, value: '12:30', text: '12:30', limitBooking: '1' },
+          { id: 13, value: '13:00', text: '13:00', limitBooking: '1' },
+          { id: 14, value: '13:30', text: '13:30', limitBooking: '1' },
+          { id: 15, value: '14:00', text: '14:00', limitBooking: '1' },
+          { id: 16, value: '14:30', text: '14:30', limitBooking: '1' },
+          { id: 17, value: '15:00', text: '15:00', limitBooking: '1' },
+          { id: 18, value: '15:30', text: '15:30', limitBooking: '1' },
+          { id: 19, value: '16:00', text: '16:00', limitBooking: '1' },
+          { id: 20, value: '16:30', text: '16:30', limitBooking: '1' },
+          { id: 21, value: '17:00', text: '17:00', limitBooking: '1' },
+          { id: 22, value: '17:30', text: '17:30', limitBooking: '1' },
+          { id: 23, value: '18:00', text: '18:00', limitBooking: '1' },
+          { id: 24, value: '18:30', text: '18:30', limitBooking: '1' },
+          { id: 25, value: '19:00', text: '19:00', limitBooking: '1' },
+          { id: 26, value: '19:30', text: '19:30', limitBooking: '1' },
+          { id: 27, value: '20:00', text: '20:00', limitBooking: '1' },
+          { id: 28, value: '20:30', text: '20:30', limitBooking: '1' },
+          { id: 29, value: '21:00', text: '21:00', limitBooking: '1' },
+          { id: 30, value: '21:30', text: '21:30', limitBooking: '1' },
+          { id: 31, value: '22:00', text: '22:00', limitBooking: '1' },
+          { id: 32, value: '22:30', text: '22:30', limitBooking: '1' },
+          { id: 33, value: '23:00', text: '23:00', limitBooking: '1' }
+        // { id: 32, value: '23:30', text: '23:30', limitBooking: '1' }
+        ]
+        this.itemsTimeEnd = [
+          { id: 1, value: '07:00', text: '07:00', limitBooking: '1' },
+          { id: 2, value: '07:30', text: '07:30', limitBooking: '1' },
+          { id: 3, value: '08:00', text: '08:00', limitBooking: '1' },
+          { id: 4, value: '08:30', text: '08:30', limitBooking: '1' },
+          { id: 5, value: '09:00', text: '09:00', limitBooking: '1' },
+          { id: 6, value: '09:30', text: '09:30', limitBooking: '1' },
+          { id: 7, value: '10:00', text: '10:00', limitBooking: '1' },
+          { id: 8, value: '10:30', text: '10:30', limitBooking: '1' },
+          { id: 9, value: '11:00', text: '11:00', limitBooking: '1' },
+          { id: 10, value: '11:30', text: '11:30', limitBooking: '1' },
+          { id: 11, value: '12:00', text: '12:00', limitBooking: '1' },
+          { id: 12, value: '12:30', text: '12:30', limitBooking: '1' },
+          { id: 13, value: '13:00', text: '13:00', limitBooking: '1' },
+          { id: 14, value: '13:30', text: '13:30', limitBooking: '1' },
+          { id: 15, value: '14:00', text: '14:00', limitBooking: '1' },
+          { id: 16, value: '14:30', text: '14:30', limitBooking: '1' },
+          { id: 17, value: '15:00', text: '15:00', limitBooking: '1' },
+          { id: 18, value: '15:30', text: '15:30', limitBooking: '1' },
+          { id: 19, value: '16:00', text: '16:00', limitBooking: '1' },
+          { id: 20, value: '16:30', text: '16:30', limitBooking: '1' },
+          { id: 21, value: '17:00', text: '17:00', limitBooking: '1' },
+          { id: 22, value: '17:30', text: '17:30', limitBooking: '1' },
+          { id: 23, value: '18:00', text: '18:00', limitBooking: '1' },
+          { id: 24, value: '18:30', text: '18:30', limitBooking: '1' },
+          { id: 25, value: '19:00', text: '19:00', limitBooking: '1' },
+          { id: 26, value: '19:30', text: '19:30', limitBooking: '1' },
+          { id: 27, value: '20:00', text: '20:00', limitBooking: '1' },
+          { id: 28, value: '20:30', text: '20:30', limitBooking: '1' },
+          { id: 29, value: '21:00', text: '21:00', limitBooking: '1' },
+          { id: 30, value: '21:30', text: '21:30', limitBooking: '1' },
+          { id: 31, value: '22:00', text: '22:00', limitBooking: '1' },
+          { id: 32, value: '22:30', text: '22:30', limitBooking: '1' },
+          { id: 33, value: '23:00', text: '23:00', limitBooking: '1' },
+          { id: 34, value: '23:30', text: '23:30', limitBooking: '1' }
+        ]
+        this.itemsTimeFull = [
+          { id: 1, value: '07:00', text: '07:00', limitBooking: '1' },
+          { id: 2, value: '07:30', text: '07:30', limitBooking: '1' },
+          { id: 3, value: '08:00', text: '08:00', limitBooking: '1' },
+          { id: 4, value: '08:30', text: '08:30', limitBooking: '1' },
+          { id: 5, value: '09:00', text: '09:00', limitBooking: '1' },
+          { id: 6, value: '09:30', text: '09:30', limitBooking: '1' },
+          { id: 7, value: '10:00', text: '10:00', limitBooking: '1' },
+          { id: 8, value: '10:30', text: '10:30', limitBooking: '1' },
+          { id: 9, value: '11:00', text: '11:00', limitBooking: '1' },
+          { id: 10, value: '11:30', text: '11:30', limitBooking: '1' },
+          { id: 11, value: '12:00', text: '12:00', limitBooking: '1' },
+          { id: 12, value: '12:30', text: '12:30', limitBooking: '1' },
+          { id: 13, value: '13:00', text: '13:00', limitBooking: '1' },
+          { id: 14, value: '13:30', text: '13:30', limitBooking: '1' },
+          { id: 15, value: '14:00', text: '14:00', limitBooking: '1' },
+          { id: 16, value: '14:30', text: '14:30', limitBooking: '1' },
+          { id: 17, value: '15:00', text: '15:00', limitBooking: '1' },
+          { id: 18, value: '15:30', text: '15:30', limitBooking: '1' },
+          { id: 19, value: '16:00', text: '16:00', limitBooking: '1' },
+          { id: 20, value: '16:30', text: '16:30', limitBooking: '1' },
+          { id: 21, value: '17:00', text: '17:00', limitBooking: '1' },
+          { id: 22, value: '17:30', text: '17:30', limitBooking: '1' },
+          { id: 23, value: '18:00', text: '18:00', limitBooking: '1' },
+          { id: 24, value: '18:30', text: '18:30', limitBooking: '1' },
+          { id: 25, value: '19:00', text: '19:00', limitBooking: '1' },
+          { id: 26, value: '19:30', text: '19:30', limitBooking: '1' },
+          { id: 27, value: '20:00', text: '20:00', limitBooking: '1' },
+          { id: 28, value: '20:30', text: '20:30', limitBooking: '1' },
+          { id: 29, value: '21:00', text: '21:00', limitBooking: '1' },
+          { id: 30, value: '21:30', text: '21:30', limitBooking: '1' },
+          { id: 31, value: '22:00', text: '22:00', limitBooking: '1' },
+          { id: 32, value: '22:30', text: '22:30', limitBooking: '1' },
+          { id: 33, value: '23:00', text: '23:00', limitBooking: '1' },
+          { id: 34, value: '23:30', text: '23:30', limitBooking: '1' }
+        ]
+      } else {
+        this.itemsTimeStart = [
+          { id: 1, value: '07:00', text: '07:00', limitBooking: '1' },
+          { id: 3, value: '08:00', text: '08:00', limitBooking: '1' },
+          { id: 5, value: '09:00', text: '09:00', limitBooking: '1' },
+          { id: 7, value: '10:00', text: '10:00', limitBooking: '1' },
+          { id: 9, value: '11:00', text: '11:00', limitBooking: '1' },
+          { id: 11, value: '12:00', text: '12:00', limitBooking: '1' },
+          { id: 13, value: '13:00', text: '13:00', limitBooking: '1' },
+          { id: 15, value: '14:00', text: '14:00', limitBooking: '1' },
+          { id: 17, value: '15:00', text: '15:00', limitBooking: '1' },
+          { id: 19, value: '16:00', text: '16:00', limitBooking: '1' },
+          { id: 20, value: '17:00', text: '17:00', limitBooking: '1' },
+          { id: 21, value: '18:00', text: '18:00', limitBooking: '1' },
+          { id: 22, value: '19:00', text: '19:00', limitBooking: '1' },
+          { id: 23, value: '20:00', text: '20:00', limitBooking: '1' },
+          { id: 24, value: '21:00', text: '21:00', limitBooking: '1' },
+          { id: 25, value: '22:00', text: '22:00', limitBooking: '1' }
+          // { id: 31, value: '23:00', text: '23:00', limitBooking: '1' }
+        // { id: 32, value: '23:30', text: '23:30', limitBooking: '1' }
+        ]
+        this.itemsTimeEnd = [
+          { id: 1, value: '07:00', text: '07:00', limitBooking: '1' },
+          { id: 3, value: '08:00', text: '08:00', limitBooking: '1' },
+          { id: 5, value: '09:00', text: '09:00', limitBooking: '1' },
+          { id: 7, value: '10:00', text: '10:00', limitBooking: '1' },
+          { id: 9, value: '11:00', text: '11:00', limitBooking: '1' },
+          { id: 11, value: '12:00', text: '12:00', limitBooking: '1' },
+          { id: 13, value: '13:00', text: '13:00', limitBooking: '1' },
+          { id: 15, value: '14:00', text: '14:00', limitBooking: '1' },
+          { id: 17, value: '15:00', text: '15:00', limitBooking: '1' },
+          { id: 19, value: '16:00', text: '16:00', limitBooking: '1' },
+          { id: 20, value: '17:00', text: '17:00', limitBooking: '1' },
+          { id: 21, value: '18:00', text: '18:00', limitBooking: '1' },
+          { id: 22, value: '19:00', text: '19:00', limitBooking: '1' },
+          { id: 23, value: '20:00', text: '20:00', limitBooking: '1' },
+          { id: 24, value: '21:00', text: '21:00', limitBooking: '1' },
+          { id: 25, value: '22:00', text: '22:00', limitBooking: '1' },
+          { id: 26, value: '23:00', text: '23:00', limitBooking: '1' }
+        ]
+        this.itemsTimeFull = [
+          { id: 1, value: '07:00', text: '07:00', limitBooking: '1' },
+          { id: 3, value: '08:00', text: '08:00', limitBooking: '1' },
+          { id: 5, value: '09:00', text: '09:00', limitBooking: '1' },
+          { id: 7, value: '10:00', text: '10:00', limitBooking: '1' },
+          { id: 9, value: '11:00', text: '11:00', limitBooking: '1' },
+          { id: 11, value: '12:00', text: '12:00', limitBooking: '1' },
+          { id: 13, value: '13:00', text: '13:00', limitBooking: '1' },
+          { id: 15, value: '14:00', text: '14:00', limitBooking: '1' },
+          { id: 17, value: '15:00', text: '15:00', limitBooking: '1' },
+          { id: 19, value: '16:00', text: '16:00', limitBooking: '1' },
+          { id: 20, value: '17:00', text: '17:00', limitBooking: '1' },
+          { id: 21, value: '18:00', text: '18:00', limitBooking: '1' },
+          { id: 22, value: '19:00', text: '19:00', limitBooking: '1' },
+          { id: 23, value: '20:00', text: '20:00', limitBooking: '1' },
+          { id: 24, value: '21:00', text: '21:00', limitBooking: '1' },
+          { id: 25, value: '22:00', text: '22:00', limitBooking: '1' },
+          { id: 26, value: '23:00', text: '23:00', limitBooking: '1' }
+        ]
       }
     },
     checkMove: function (e) {
@@ -736,13 +986,31 @@ export default {
     async getDataEmp () {
       this.dataListEmp = await this.getDataFromAPI('/empSelect/get', '')
     },
+    async getDataBranch () {
+      let masBranchID = await this.getDataFromAPI('/master_branch/get', '')
+      this.masBranchID = masBranchID[0].masBranchID
+    },
     setDataEmp (item) {
       console.log('setDataEmp', item)
+      this.dataListEmpSelect = item
+      this.formEmp.empId = item.empId
+      this.formEmp.startTime = item.startTime || ''
+      this.formEmp.endTime = item.endTime || ''
       this.formEmp.empTitle_NameTH = item.empTitle_NameTH
       this.formEmp.empFirst_NameTH = item.empFirst_NameTH
       this.formEmp.empLast_NameTH = item.empLast_NameTH || 0
       this.formEmp.privacyPage = item.privacyPage || ''
+      this.formEmp.flowId = JSON.parse(item.flowId) || ''
+      this.setTimeEnd()
       this.dialogEmp = true
+    },
+    setTimeEnd () {
+      this.itemsTimeEnd = this.itemsTimeStart.filter(el => { return el.value > this.formEmp.startTime })
+      if (this.checkTimeFlow === 'm') {
+        this.itemsTimeEnd.push({ id: 34, value: '23:30', text: '23:30', limitBooking: '1' })
+      } else {
+        this.itemsTimeEnd.push({ id: 26, value: '23:00', text: '23:00', limitBooking: '1' })
+      }
     },
     setDataFlow (item) {
       this.dataListFlowSelect = item
@@ -1037,6 +1305,205 @@ export default {
       }
     },
     //* ------Flow and Deposit------*
+    addEmp () {
+      this.validate('ADDEMP')
+      setTimeout(() => this.addEmpSubmit(), 500)
+      this.dataReady = false
+    },
+    addEmpSubmit () {
+      if (this.validAddEmp === true) {
+        console.log('addEmp', this.formEmp)
+        this.$swal({
+          title: 'ต้องการ เพิ่มข้อมูลพนักงาน ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        })
+          .then(async result => {
+            let setTime = this.itemsTimeFull.filter(el => { return el.value >= this.formEmp.startTime && el.value <= this.formEmp.endTime })
+            if (setTime.length > 0) {
+              this.formEmp.setTime = JSON.stringify(setTime)
+            } else {
+              this.formEmp.setTime = JSON.stringify([])
+            }
+            this.formEmp.empImge = ''
+            this.formEmp.masBranchID = this.masBranchID
+            if (this.formEmp.privacyPage === 'bookingform' || this.formEmp.privacyPage === 'bookingStoreFront') {
+              this.formEmp.flowId = JSON.stringify(this.formEmp.flowId)
+            } else {
+              delete this.formEmp['flowId']
+            }
+            // if (this.formEmp.additionalInformation) {
+            //   this.formEmp.additionalInformation = (this.formEmp.additionalInformation || '').replace(/%/g, '%%').replace(/'/g, "\\'")
+            // }
+            if (this.formEmp.empFirst_NameTH) {
+              this.formEmp.empFirst_NameTH = (this.formEmp.empFirst_NameTH || '').replace(/%/g, '%%').replace(/'/g, "\\'")
+            }
+            if (this.formEmp.empLast_NameTH) {
+              this.formEmp.empLast_NameTH = (this.formEmp.empLast_NameTH || '').replace(/%/g, '%%').replace(/'/g, "\\'")
+            }
+            delete this.formEmp['pictureUrlPreview']
+            await axios
+              .post(
+                this.DNS_IP + '/empSelect/add',
+                this.formEmp
+              )
+              .then(async response => {
+                this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+                // Close Dialog
+                // if (this.dataListFlow.filter(el => { return el.timeSlotStatus === 'False' }).length > 0) {
+                this.updateFlowSlotTime()
+                // }
+                this.dialogEmp = false
+                this.dataReady = true
+
+                // Load Data
+                await this.clearDataEmp()
+                await this.getDataEmp()
+              })
+            // eslint-disable-next-line handle-callback-err
+              .catch(error => {
+                console.log('error function addDataGlobal : ', error)
+                this.dataReady = true
+              })
+          })
+          .catch(error => {
+            console.log('error function addData : ', error)
+            this.dataReady = true
+          })
+      } else {
+        this.dataReady = true
+      }
+    },
+    editEmp () {
+      this.validate('ADDEMP')
+      setTimeout(() => this.editEmpSubmit(), 500)
+    },
+    editEmpSubmit () {
+      if (this.validAddEmp === true) {
+        this.dataReady = false
+        this.$swal({
+          title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        })
+          .then(async result => {
+            let setTime = this.itemsTimeFull.filter(el => { return el.value >= this.formEmp.startTime && el.value <= this.formEmp.endTime })
+            if (setTime.length > 0) {
+              this.formEmp.setTime = JSON.stringify(setTime)
+            } else {
+              this.formEmp.setTime = JSON.stringify([])
+            }
+            this.formEmp.empImge = ''
+            this.formEmp.masBranchID = this.masBranchID
+            if (this.formEmp.privacyPage === 'bookingform' || this.formEmp.privacyPage === 'bookingStoreFront') {
+              this.formEmp.flowId = JSON.stringify(this.formEmp.flowId)
+            } else {
+              delete this.formEmp['flowId']
+            }
+            // if (this.formEmp.additionalInformation) {
+            //   this.formEmp.additionalInformation = (this.formEmp.additionalInformation || '').replace(/%/g, '%%').replace(/'/g, "\\'")
+            // }
+            if (this.formEmp.empFirst_NameTH) {
+              this.formEmp.empFirst_NameTH = (this.formEmp.empFirst_NameTH || '').replace(/%/g, '%%').replace(/'/g, "\\'")
+            }
+            if (this.formEmp.empLast_NameTH) {
+              this.formEmp.empLast_NameTH = (this.formEmp.empLast_NameTH || '').replace(/%/g, '%%').replace(/'/g, "\\'")
+            }
+            delete this.formEmp['pictureUrlPreview']
+
+            var ID = this.formEmp.empId
+            delete this.formEmp['empId']
+            await axios
+              .post(
+              // eslint-disable-next-line quotes
+                this.DNS_IP + "/empSelect/edit/" + ID,
+                this.formEmp
+              )
+              .then(async response => {
+                // Close Dialog
+                this.updateFlowSlotTime()
+                this.dialogEmp = false
+                this.dataReady = true
+
+                // Load Data
+                await this.getDataEmp()
+                this.$swal('เรียบร้อย', 'แก้ไขข้อมูลบริการ เรียบร้อย', 'success')
+                await this.clearDataEmp()
+              })
+          })
+      }
+    },
+    async deleteDataEmp (item) {
+      this.dataReady = false
+      this.$swal({
+        title: 'ต้องการ ลบข้อมูล ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async result => {
+          let dt = {
+            LAST_USER: this.$session.getAll().data.userName
+          }
+          var ID = item.empId
+          await axios
+            .post(
+              // eslint-disable-next-line quotes
+              this.DNS_IP + "/empSelect/delete/" + ID,
+              dt
+            )
+            .then(async response => {
+              this.dataReady = true
+              this.dialogEmp = false
+              // Load Data
+              await this.getDataEmp()
+              await this.clearDataEmp()
+              this.$swal('เรียบร้อย', 'ลบข้อมูล เรียบร้อย', 'success')
+            })
+            // eslint-disable-next-line handle-callback-err
+            .catch(error => {
+              this.dataReady = true
+              console.log('error function editDataGlobal : ', error)
+            })
+        })
+        .catch(error => {
+          this.dataReady = true
+          console.log('error function editDataGlobal : ', error)
+        })
+    },
+    async updateFlowSlotTime () {
+      let data = []
+      let num = 0
+      if (this.checkTimeFlow === 'm') {
+        num = 30
+      } else {
+        num = 60
+      }
+      for (let i = 0; i < this.dataListFlow.length; i++) {
+        let d = this.dataListFlow[i]
+        let s = {}
+        s.timeSlot = parseInt(d.selectTimeFlow) / num
+        s.flowId = d.flowId
+        data.push(s)
+      }
+      await axios
+        .post(
+          this.DNS_IP + '/flow/updateTimeSlotByShop',
+          data
+        )
+        .then(async response => {})
+    },
     async clearDataEmp () {
       this.formEmp.empCode = ''
       this.formEmp.empTitle_NameTH = ''
