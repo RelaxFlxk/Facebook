@@ -898,6 +898,7 @@ export default {
       console.log('endOf', moment().endOf('month').format('DD'))
       console.log('showQrCode', item)
       console.log('trialsVersionDate', this.$session.getAll().data.trialsVersionDate)
+      let trialCheck = this.$session.getAll().data.trialsVersionDate || ''
       this.trialsPrice = 0
       this.currentPrice = 0
       this.billingTrialsPriceDateFomat = ''
@@ -912,11 +913,18 @@ export default {
       } else {
         let lastDayOfMonth = moment().endOf('month').format('DD')
         this.dataPlan = item
-        let dateTrials = this.$session.getAll().data.trialsVersionDate.split('-')
-        let dateTrialsYear = dateTrials[0]
-        let dateTrialsMonth = dateTrials[1]
-        let dateTrialsDay = dateTrials[2]
-        let dateTrialsYearMonth = dateTrialsYear + '-' + dateTrialsMonth
+        let dateTrials = ''
+        let dateTrialsYear = ''
+        let dateTrialsMonth = ''
+        let dateTrialsDay = ''
+        let dateTrialsYearMonth = ''
+        if (trialCheck !== '') {
+          dateTrials = this.$session.getAll().data.trialsVersionDate.split('-')
+          dateTrialsYear = dateTrials[0]
+          dateTrialsMonth = dateTrials[1]
+          dateTrialsDay = dateTrials[2]
+          dateTrialsYearMonth = dateTrialsYear + '-' + dateTrialsMonth
+        }
         console.log(dateTrialsYear, dateTrialsMonth, dateTrialsDay)
         await axios
           .get(
@@ -927,13 +935,43 @@ export default {
           .then(async (response) => {
             let rs = response.data
             if (rs.status === false || rs[0].id === null) {
-              if (moment().format('YYYY-MM') === dateTrialsYearMonth) {
-                if (parseInt(dateTrialsDay) === 1) {
-                  console.log('1')
-                  if (parseInt(dateTrialsDay) === parseInt(moment().format('DD'))) {
-                    this.pricePackage = item.pricePackage || 0
-                    this.paymentAmount = item.pricePackage
+              if (trialCheck === '') {
+                console.log('1')
+                if (parseInt(moment().format('DD')) >= 1 && parseInt(moment().format('DD')) <= 7) {
+                  this.pricePackage = item.pricePackage || 0
+                  this.paymentAmount = item.pricePackage
+                } else {
+                  console.log('2')
+                  let dateCalDay = parseInt(lastDayOfMonth) - parseInt(moment().format('DD'))
+                  this.pricePackage = item.pricePackage
+                  this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth))
+                  this.trialsPrice = 0
+                  this.currentPrice = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth))
+                  this.billingTrialsPriceDateFomat = ''
+                  this.billingCurrentPriceDateFomat = moment().format('YYYY-MM-DD')
+                  this.billingTrialsPriceDateFomatShow = ''
+                  this.billingCurrentPriceDateFomatShow = moment().format('DD/MM/YYYY')
+                }
+              } else {
+                if (moment().format('YYYY-MM') === dateTrialsYearMonth) {
+                  if (parseInt(dateTrialsDay) === 1) {
+                    console.log('1')
+                    if (parseInt(dateTrialsDay) === parseInt(moment().format('DD'))) {
+                      this.pricePackage = item.pricePackage || 0
+                      this.paymentAmount = item.pricePackage
+                    } else {
+                      let dateCalDay = parseInt(lastDayOfMonth) - parseInt(moment().format('DD'))
+                      this.pricePackage = item.pricePackage
+                      this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth))
+                      this.trialsPrice = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth))
+                      this.currentPrice = 0
+                      this.billingTrialsPriceDateFomat = moment().format('YYYY-MM-DD')
+                      this.billingCurrentPriceDateFomat = ''
+                      this.billingTrialsPriceDateFomatShow = moment().format('DD/MM/YYYY')
+                      this.billingCurrentPriceDateFomatShow = ''
+                    }
                   } else {
+                    console.log('2')
                     let dateCalDay = parseInt(lastDayOfMonth) - parseInt(moment().format('DD'))
                     this.pricePackage = item.pricePackage
                     this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth))
@@ -945,29 +983,18 @@ export default {
                     this.billingCurrentPriceDateFomatShow = ''
                   }
                 } else {
-                  console.log('2')
-                  let dateCalDay = parseInt(lastDayOfMonth) - parseInt(moment().format('DD'))
+                  console.log('3')
+                  let dateCalDay = parseInt(lastDayOfMonth) - parseInt(dateTrialsDay)
+                  let dateCalDayCurrent = parseInt(lastDayOfMonth) - parseInt(moment().format('DD'))
                   this.pricePackage = item.pricePackage
-                  this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth))
+                  this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth)) + Math.ceil((dateCalDayCurrent * item.pricePackage) / parseInt(lastDayOfMonth))
                   this.trialsPrice = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth))
-                  this.currentPrice = 0
-                  this.billingTrialsPriceDateFomat = moment().format('YYYY-MM-DD')
-                  this.billingCurrentPriceDateFomat = ''
-                  this.billingTrialsPriceDateFomatShow = moment().format('DD/MM/YYYY')
-                  this.billingCurrentPriceDateFomatShow = ''
+                  this.currentPrice = Math.ceil((dateCalDayCurrent * item.pricePackage) / parseInt(lastDayOfMonth))
+                  this.billingTrialsPriceDateFomat = dateTrialsYear + '-' + dateTrialsMonth + '-' + dateTrialsDay
+                  this.billingCurrentPriceDateFomat = moment().format('YYYY-MM-DD')
+                  this.billingTrialsPriceDateFomatShow = dateTrialsDay + '/' + dateTrialsMonth + '/' + dateTrialsYear
+                  this.billingCurrentPriceDateFomatShow = moment().format('DD/MM/YYYY')
                 }
-              } else {
-                console.log('3')
-                let dateCalDay = parseInt(lastDayOfMonth) - parseInt(dateTrialsDay)
-                let dateCalDayCurrent = parseInt(lastDayOfMonth) - parseInt(moment().format('DD'))
-                this.pricePackage = item.pricePackage
-                this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth)) + Math.ceil((dateCalDayCurrent * item.pricePackage) / parseInt(lastDayOfMonth))
-                this.trialsPrice = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth))
-                this.currentPrice = Math.ceil((dateCalDayCurrent * item.pricePackage) / parseInt(lastDayOfMonth))
-                this.billingTrialsPriceDateFomat = dateTrialsYear + '-' + dateTrialsMonth + '-' + dateTrialsDay
-                this.billingCurrentPriceDateFomat = moment().format('YYYY-MM-DD')
-                this.billingTrialsPriceDateFomatShow = dateTrialsDay + '/' + dateTrialsMonth + '/' + dateTrialsYear
-                this.billingCurrentPriceDateFomatShow = moment().format('DD/MM/YYYY')
               }
             } else {
               if (rs[0].paymentDateMMYY === moment().format('YYYY-MM')) {
@@ -1016,76 +1043,6 @@ export default {
               }
             }
           })
-          // moment().format('YYYY-MM')
-        // const date1 = new Date(this.dataPayment.endDate)
-        // const date2 = new Date()
-        // const diffTime = date1 - date2
-        // const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-        // console.log(diffDays)
-        // if (diffDays > 0) {
-        //   if (parseInt(this.dataPayment.packetClose) >= parseInt(item.close)) {
-        //     this.dialogQrcode = false
-        //     this.$swal({
-        //       title: 'ต้องการ อัพเดท ใช่หรือไม่?',
-        //       type: 'question',
-        //       showCancelButton: true,
-        //       confirmButtonColor: '#3085d6',
-        //       cancelButtonColor: '#b3b1ab',
-        //       confirmButtonText: 'ใช่',
-        //       cancelButtonText: 'ไม่'
-        //     })
-        //       .then(async (result) => {
-        //         if (this.idPayment !== '') {
-        //           let dt = {
-        //             LAST_USER: this.$session.getAll().data.userName,
-        //             statusPayment: 'change',
-        //             RECORD_STATUS: 'D'
-        //           }
-        //           await axios
-        //             .post(
-        //             // eslint-disable-next-line quotes
-        //               this.DNS_IP + "/Payment_LOG/editPaymentId/" + this.idPayment,
-        //               dt
-        //             )
-        //             .then(async response => {})
-        //         }
-        //         let url = ''
-        //         let dt = {}
-        //         url = this.DNS_IP + '/Payment_LOG/add'
-        //         dt = {
-        //           paymentId: this.idPayment,
-        //           packetId: item.id,
-        //           img: this.dataPayment.img,
-        //           statusPayment: 'confirm',
-        //           shopId: this.$session.getAll().data.shopId,
-        //           CREATE_USER: this.$session.getAll().data.userName,
-        //           LAST_USER: this.$session.getAll().data.userName,
-        //           endDate: this.format_date(this.dataPayment.endDate),
-        //           startDate: this.format_date(this.dataPayment.startDate),
-        //           paymentIdOld: this.dataPayment.packetId
-        //         }
-        //         await axios.post(url, dt).then(async (response) => {
-        //           this.updatePlan(item.id)
-        //           this.$swal('สำเร็จ', 'อัพเดทสำเร็จ', 'success')
-        //           setTimeout(() => this.chkPlan(), 500)
-        //         })
-        //       })
-        //       .catch((error) => {
-        //         console.log('Update : ', error)
-        //       })
-        //   } else {
-        //     this.dataPlan = item
-        //     this.pricePackage = item.pricePackage || 0
-        //     const generatePayload = require('promptpay-qr')
-        //     // const mobileNumber = '1129900371744'
-        //     const promptpayID = '1529900508673'
-        //     // const IDCardNumber = '0-0000-00000-00-0'
-        //     const amount = parseFloat(item.pricePackage)
-        //     this.value = generatePayload(promptpayID, { amount })
-        //     this.dialogQrcode = true
-        //   }
-        // } else {
-        // this.paymentDateMonthYear = item.paymentDateMonthYear
         await axios
           .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.$session.getAll().data.shopId)
           .then(async (response) => {
