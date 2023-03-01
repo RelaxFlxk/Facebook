@@ -4,6 +4,7 @@ import LoginFailed from './LoginFailed'
 import LoyaltyPresent from './LoyaltyPresent'
 import BillingPlan from './BillingPlan'
 import LoginAdmin from './LoginAdmin'
+import InstallWizard from './InstallWizard'
 
 export default {
   Login,
@@ -11,5 +12,6 @@ export default {
   LoginFailed,
   LoyaltyPresent,
   BillingPlan,
-  LoginAdmin
+  LoginAdmin,
+  InstallWizard
 }
