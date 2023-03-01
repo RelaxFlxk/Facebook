@@ -176,6 +176,16 @@ Vue.mixin({
         return moment(moment(new Date(value), 'HH:mm').toDate()).format('HH:mm')
       }
     },
+    momenDate_YYYY (value) {
+      if (value) {
+        return moment(String(value)).format('YYYY')
+      }
+    },
+    momenDate_MM (value) {
+      if (value) {
+        return moment(String(value)).format('MM')
+      }
+    },
     getGetToken (DNS_IP) {
       this.ApplicationKey = ''
       axios

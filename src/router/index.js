@@ -262,6 +262,16 @@ export default new Router({
     component: Master.BoardControlM
   },
   {
+    path: '/Master/BookingWalkinEmp',
+    name: 'BookingWalkinEmp',
+    component: Master.BookingWalkinEmp
+  },
+  {
+    path: '/Master/BookingWalkin',
+    name: 'BookingWalkin',
+    component: Master.BookingWalkin
+  },
+  {
     path: '/Master/SettingLineNotify',
     name: 'SettingLineNotify',
     component: Master.SettingLineNotify

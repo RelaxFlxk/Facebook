@@ -41,6 +41,8 @@ import WorkShopComponent from './WorkShopComponent'
 import ChatHistory from './ChatHistory'
 import BookingListQueueByUser from './BookingListQueueByUser'
 import BookingListQueueMonitoringVideo from './BookingListQueueMonitoringVideo'
+import BookingWalkinEmp from './BookingWalkinEmp'
+import BookingWalkin from './BookingWalkin.vue'
 
 export default {
   ChatHistory,
@@ -85,5 +87,7 @@ export default {
   BookingListQueue,
   BookingListQueueMonitoring,
   BookingListQueueByUser,
-  BookingListQueueMonitoringVideo
+  BookingListQueueMonitoringVideo,
+  BookingWalkinEmp,
+  BookingWalkin
 }
