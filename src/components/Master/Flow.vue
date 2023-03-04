@@ -2218,7 +2218,10 @@
         </v-card>
       </v-dialog>
       <v-dialog v-model="dialogAddMenu" max-width="550px" persistent>
-        <v-card class="text-center">
+        <div v-if="!dataReadyAddMenu" class="text-center">
+          <waitingAlert></waitingAlert>
+        </div>
+        <v-card class="text-center" v-else>
           <v-card-text>
             <v-row>
               <v-col cols="6" class="text-left pt-10">
@@ -2360,6 +2363,7 @@ export default {
       draggingMenu: false,
       dialogAddMenu: false,
       valid_addMenu: true,
+      dataReadyAddMenu: true,
       indexMenu: '',
       formAddMenu: {
         name: '',
@@ -2844,6 +2848,9 @@ export default {
       // console.log('this.filesMenu', this.formAddMenu.filesMenu)
       if (this.formAddMenu.filesMenu) {
         this.formAddMenu.pictureUrlPreview = URL.createObjectURL(this.formAddMenu.filesMenu)
+        if (this.titleMenuDialog !== 'เพิ่มรายการเมนู') {
+          this.formAddMenu.picture = this.formAddMenu.pictureUrlPreview
+        }
       } else {
         this.formAddMenu.pictureUrlPreview = ''
       }
@@ -2871,6 +2878,7 @@ export default {
     },
     async addMenuSubmit () {
       if (this.valid_addMenu === true) {
+        this.dataReadyAddMenu = false
         if (this.formAddMenu.filesMenu) {
           const _this = this
           let params = new FormData()
@@ -2890,8 +2898,10 @@ export default {
           this.formMenu.menuItem.push(dataMenu)
           await this.UpdateMenuInFlow(this.formMenu.menuItem)
           this.dialogAddMenu = false
+          this.dataReadyAddMenu = true
           this.$swal('เรียบร้อย', 'บันทึกข้อมูล เรียบร้อย', 'success')
         } else {
+          this.dataReadyAddMenu = true
           this.$swal('ผิดพลาด', 'กรุณาใส่รูปเมนู', 'error')
         }
       }
@@ -2899,6 +2909,7 @@ export default {
     async editMenuSubmit () {
       if (this.valid_addMenu === true) {
         // this.formAddMenu.picture = this.formAddMenu.pictureUrlPreview
+        this.dataReadyAddMenu = false
         this.formMenu.menuItem[this.indexMenu].name = this.formAddMenu.name
         this.formMenu.menuItem[this.indexMenu].nameSub = this.formAddMenu.nameSub
         this.formMenu.menuItem[this.indexMenu].price = this.formAddMenu.price
@@ -2916,14 +2927,17 @@ export default {
         await this.UpdateMenuInFlow(this.formMenu.menuItem)
         this.dialogAddMenu = false
         this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
+        this.dataReadyAddMenu = true
         this.dialogAddMenu = false
       }
     },
     async deleteMenuSubmit () {
+      this.dataReadyAddMenu = false
       this.formMenu.menuItem.splice(this.indexMenu, 1)
       await this.UpdateMenuInFlow(this.formMenu.menuItem)
       this.$swal('เรียบร้อย', 'ลบข้อมูล เรียบร้อย', 'success')
       this.dialogAddMenu = false
+      this.dataReadyAddMenu = true
     },
     async UpdateMenuInFlow (dateUpdate) {
       let addMenu = {
@@ -2936,6 +2950,7 @@ export default {
           addMenu
         )
         .then(async response => {
+          this.clearFormAddMenu()
         })
     },
     saveSortFlow () {
