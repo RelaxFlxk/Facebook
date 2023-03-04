@@ -1864,6 +1864,13 @@
                     {{ format_dateFUllTime(item.LAST_DATE) }}
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
+                     <v-btn
+                        color="#880E4F"
+                        fab
+                        small
+                        @click="setDataMenu(item)">
+                        <v-icon color="#FFFFFF" class="iconify" data-icon="ic:outline-menu-book"></v-icon>
+                      </v-btn>
                     <template v-if="$session.getAll().data.timeSlotStatus === 'True'">
                       <v-btn
                       color="question"
@@ -2005,6 +2012,206 @@
           </div>
         </v-card>
       </v-dialog>
+      <v-dialog v-model="dialogMenu" max-width="90%" persistent>
+        <v-card class="text-center">
+          <v-card-text>
+            <v-row>
+              <v-col cols="6" class="text-left pt-10">
+                <h3><strong>จัดการรายการเมนู</strong></h3>
+              </v-col>
+              <v-col cols="6" class="pt-10">
+                <div style="text-align: end;">
+                  <v-btn
+                    class="mx-2"
+                    fab
+                    small
+                    dark
+                    color="white"
+                    :style="styleCloseBt"
+                    @click="(dialogMenu = false)"
+                    >
+                    X
+                  </v-btn>
+                </div>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col :cols="colswidth">
+                <v-btn
+                  color="blue-grey"
+                  class="ma-2 white--text"
+                  block
+                  @click="dialogAddMenu = true, clearFormAddMenu()"
+                >
+                  เพิ่มเมนู
+                  <v-icon
+                    right
+                    dark
+                  >
+                    mdi-text-box-plus
+                  </v-icon>
+                </v-btn>
+                <draggable
+                  :list="formMenu.menuItem"
+                  :disabled="!enabledMenu"
+                  class="list-group"
+                  ghost-class="ghost"
+                  :move="checkMove"
+                  @start="draggingMenu = true"
+                  @end="draggingMenu = false"
+                >
+                  <div
+                    class="list-group-item"
+                    v-for="element in formMenu.menuItem"
+                    :key="element.id"
+                  >
+                    <v-row>
+                      <v-col cols="10" class="pr-0">
+                        <v-avatar color="primary" size="40">
+                          <img :src="element.picture" alt="img"
+                        /></v-avatar>
+                        <!-- {{ element.flowId }} -->
+                        {{ element.name }} : {{ element.price }}
+                      </v-col>
+                      <!-- <v-col cols="2" class="pl-0">
+                        <v-btn
+                          fab
+                          dark
+                          x-small
+                          @click="setDataFlow(element),showBTFlow=false, titleFlowDialog = 'แก้ไขข้อมูลบริการ'"
+                          color="primary"
+                        >
+                          <v-icon dark>
+                            mdi-file-document-edit
+                          </v-icon>
+                        </v-btn>
+                      </v-col> -->
+                    </v-row>
+                  </div>
+                </draggable>
+              </v-col>
+              <v-col :cols="colswidth">
+                <h5>ตัวอย่างเมนู</h5>
+                <v-card class="text-center">
+                  <v-card-text>
+                    <v-list three-line v-if="formMenu.menuItem.length > 0">
+                      <template v-for="(item) in formMenu.menuItem">
+                        <v-list-item
+                          :key="item.id"
+                        >
+                          <v-list-item-avatar>
+                            <v-img :src="item.picture"></v-img>
+                          </v-list-item-avatar>
+
+                          <v-list-item-content>
+                            <v-list-item-title>{{ item.name }}</v-list-item-title>
+                            <v-list-item-subtitle>{{ item.nameSub }}</v-list-item-subtitle>
+                          </v-list-item-content>
+                        </v-list-item>
+                      </template>
+                    </v-list>
+                  </v-card-text>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+      <v-dialog v-model="dialogAddMenu" max-width="550px" persistent>
+        <v-card class="text-center">
+          <v-card-text>
+            <v-row>
+              <v-col cols="6" class="text-left pt-10">
+                <h3><strong>เพิ่มรายการเมนู</strong></h3>
+              </v-col>
+              <v-col cols="6" class="pt-10">
+                <div style="text-align: end;">
+                  <v-btn
+                    class="mx-2"
+                    fab
+                    small
+                    dark
+                    color="white"
+                    :style="styleCloseBt"
+                    @click="(dialogAddMenu = false), clearFormAddMenu()"
+                    >
+                    X
+                  </v-btn>
+                </div>
+              </v-col>
+            </v-row>
+            <v-form ref="form_addMenu" v-model="valid_addMenu" lazy-validation>
+              <v-row>
+                <v-col cols="12" class="text-center">
+                  <v-img
+                    aspect-ratio="6"
+                    contain
+                    :src="formAddMenu.pictureUrlPreview"
+                  ></v-img>
+                  <!-- <v-avatar size="100px"><img alt="Avatar" :src="formAdd.pictureUrl"></v-avatar> -->
+                  <br />
+                  <v-file-input
+                    required
+                    counter
+                    show-size
+                    accept="image/png, image/jpeg, image/bmp"
+                    prepend-icon="mdi-camera"
+                    label="รูปรายการ"
+                    @change="selectImgMenu"
+                    v-model="filesMenu"
+                  ></v-file-input>
+                </v-col>
+                <v-col cols="12" class="pb-0">
+                  <v-text-field
+                    dense
+                    outlined
+                    label="ชื่อรายการ"
+                    v-model="formAddMenu.name"
+                    required
+                    :rules="[rules.required]"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" class="pb-0">
+                  <v-text-field
+                    dense
+                    outlined
+                    label="ชื่อรองรายการ"
+                    v-model="formAddMenu.nameSub"
+                    required
+                    :rules="[rules.required]"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" class="pb-0">
+                  <VuetifyMoney
+                    label="ราคา"
+                    v-model="formAddMenu.price"
+                    required
+                    :rules="[rules.required]"
+                    outlined
+                    dense
+                    v-bind:options="options2" />
+                </v-col>
+                <v-col cols="12">
+                  <v-btn
+                    color="blue-grey"
+                    class="ma-2 white--text"
+                    block
+                    @click="addMenu()"
+                  >
+                    เพิ่มเมนู
+                    <v-icon
+                      right
+                      dark
+                    >
+                      mdi-text-box-plus
+                    </v-icon>
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-form>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
     </v-main>
   </div>
 </template>
@@ -2023,6 +2230,15 @@ export default {
     VuetifyMoney
   },
   computed: {
+    colswidth () {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return '12'
+        case 'sm': return '12'
+        case 'md': return '6'
+        case 'lg': return '6'
+        case 'xl': return '6'
+      }
+    },
     formTitle () {
       return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
     },
@@ -2034,6 +2250,18 @@ export default {
     return {
       // allowDrag: true,
       // selected: [],
+      filesMenu: null,
+      enabledMenu: true,
+      draggingMenu: false,
+      dialogAddMenu: false,
+      valid_addMenu: true,
+      formAddMenu: {
+        name: '',
+        nameSub: '',
+        price: 0,
+        picture: '',
+        pictureUrlPreview: ''
+      },
       enabled: true,
       dragging: false,
       dessertsSort: [],
@@ -2450,7 +2678,12 @@ export default {
         { text: 'พฤ.', value: 4 },
         { text: 'ศ.', value: 5 },
         { text: 'ส.', value: 6 }
-      ]
+      ],
+      formMenu: {
+        menuItem: [],
+        menuShowStatus: 'False'
+      },
+      dialogMenu: false
       // End Data Table Config
     }
   },
@@ -2473,6 +2706,61 @@ export default {
     await this.getBookingField()
   },
   methods: {
+    setDataMenu (item) {
+      this.flowId = item.flowId
+      this.formMenu.menuItem = item.menuItem || []
+      this.formMenu.menuShowStatus = item.menuShowStatus || 'False'
+      this.dialogMenu = true
+      console.log('setDataMenu', this.formMenu)
+    },
+    selectImgMenu () {
+      console.log('this.filesMenu', this.filesMenu)
+      if (this.filesMenu) {
+        this.formAddMenu.pictureUrlPreview = URL.createObjectURL(this.filesMenu)
+      } else {
+        this.formAddMenu.pictureUrlPreview = ''
+      }
+    },
+    clearFormAddMenu () {
+      this.formAddMenu.name = ''
+      this.formAddMenu.nameSub = ''
+      this.formAddMenu.price = 0
+      this.formAddMenu.picture = ''
+      this.formAddMenu.pictureUrlPreview = ''
+    },
+    async addMenu () {
+      this.validate('ADDMENU')
+      setTimeout(() => this.addMenuSubmit(), 500)
+    },
+    async addMenuSubmit () {
+      if (this.valid_addMenu === true) {
+        if (this.filesMenu) {
+          const _this = this
+          let params = new FormData()
+          params.append('file', this.filesMenu)
+          await axios
+            .post(this.DNS_IP + `/file/upload/employee`, params)
+            .then(function (response) {
+              _this.formAddMenu.picture = response.data
+              console.log('url Pic', response.data)
+            })
+        } else {
+          this.formAddMenu.picture = ''
+        }
+        delete this.formAddMenu['pictureUrlPreview']
+        let addMenu = {
+          menuItem: JSON.stringify([this.formAddMenu])
+        }
+        await axios
+          .post(
+            this.DNS_IP + this.path + 'edit/' + this.flowId,
+            addMenu
+          )
+          .then(async response => {
+            this.dialogAddMenu = false
+          })
+      }
+    },
     saveSortFlow () {
       // console.log('saveSortFlow', JSON.stringify(this.dessertsSort))
       this.$swal({
@@ -3402,6 +3690,12 @@ export default {
           this.$nextTick(() => {
             let self = this
             self.$refs.form_condition.validate()
+          })
+          break
+        case 'ADDMENU':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_addMenu.validate()
           })
           break
 
