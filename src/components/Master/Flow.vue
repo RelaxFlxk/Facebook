@@ -2056,8 +2056,8 @@
           </div>
         </v-card>
       </v-dialog>
-      <v-dialog v-model="dialogMenu" max-width="90%" persistent>
-        <v-card class="text-center">
+      <v-dialog v-model="dialogMenu" max-width="550px" persistent>
+        <v-card>
           <v-card-text>
             <v-row>
               <v-col cols="6" class="text-left pt-10">
@@ -2072,7 +2072,7 @@
                     dark
                     color="white"
                     :style="styleCloseBt"
-                    @click="(dialogMenu = false)"
+                    @click="(dialogMenu = false), getDataGlobal(DNS_IP, path, session.data.shopId)"
                     >
                     X
                   </v-btn>
@@ -2080,20 +2080,17 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col :cols="colswidth">
+              <v-col cols="12">
                 <v-btn
                   color="blue-grey"
-                  class="ma-2 white--text"
+                  class="white--text"
+                  depressed
+                  dark
                   block
-                  @click="dialogAddMenu = true, clearFormAddMenu()"
+                  @click="dialogAddMenu = true, clearFormAddMenu(), titleMenuDialog='เพิ่มรายการเมนู'"
                 >
+                  <v-icon left>mdi-text-box-plus</v-icon>
                   เพิ่มเมนู
-                  <v-icon
-                    right
-                    dark
-                  >
-                    mdi-text-box-plus
-                  </v-icon>
                 </v-btn>
                 <draggable
                   :list="formMenu.menuItem"
@@ -2106,57 +2103,116 @@
                 >
                   <div
                     class="list-group-item"
-                    v-for="element in formMenu.menuItem"
-                    :key="element.id"
+                    v-for="(element,id) in formMenu.menuItem"
+                    :key="id"
                   >
-                    <v-row>
-                      <v-col cols="10" class="pr-0">
-                        <v-avatar color="primary" size="40">
+                  <v-row>
+                    <v-col cols="10">
+                    <div style="display: flex">
+                      <div style="height: 70px; width: 70px">
+                        <!-- <v-avatar color="white" size="60">
                           <img :src="element.picture" alt="img"
-                        /></v-avatar>
-                        <!-- {{ element.flowId }} -->
-                        {{ element.name }} : {{ element.price }}
-                      </v-col>
-                      <!-- <v-col cols="2" class="pl-0">
-                        <v-btn
-                          fab
-                          dark
-                          x-small
-                          @click="setDataFlow(element),showBTFlow=false, titleFlowDialog = 'แก้ไขข้อมูลบริการ'"
-                          color="primary"
+                        /></v-avatar> -->
+                        <v-img
+                          :src="element.picture"
+                          height="70"
+                          width="70"
+                          class="link mt-4"
+                          style="opacity: 1;border-top-right-radius: 0;border-bottom-right-radius: 0px;border-top-left-radius: 20px;border-bottom-left-radius: 0;"
                         >
-                          <v-icon dark>
-                            mdi-file-document-edit
-                          </v-icon>
-                        </v-btn>
-                      </v-col> -->
+                        </v-img>
+                      </div>
+                      <div style="display: flex">
+                        <div style="padding: 8px; position: relative;">
+                          <div height="100">
+                            <div class="colorBetaskText" style="font-weight: bold;font-size: 17px;">{{ element.name.substring(0, 79) }}</div>
+                          </div>
+                          <div height="100" v-if="element.name.length >= 49">
+                            <div style="font-size: 15px;">{{ element.nameSub.substring(0, 41) }}...</div>
+                          </div>
+                          <div height="100" v-else>
+                            <div style="font-size: 15px;">{{ element.nameSub.substring(0, 41) }}</div>
+                          </div>
+                          <div height="100">
+                            <div style="font-weight: bold;font-size: 17px;color:#1B5E20;">฿ {{ formatNumber(element.price) }}</div>
+                          </div>
+                        </div>
+                        </div>
+                    </div>
+                    </v-col>
+                    <v-col cols="2">
+                      <v-btn
+                        fab
+                        small
+                        dark
+                        color="warning"
+                        @click="titleMenuDialog='แก้ไขรายการเมนู', setFormAddMenu(element, id)"
+                        >
+                        <v-icon>mdi-cog</v-icon>
+                      </v-btn>
+                    </v-col>
                     </v-row>
                   </div>
                 </draggable>
               </v-col>
-              <v-col :cols="colswidth">
+              <!-- <v-col cols="4">
                 <h5>ตัวอย่างเมนู</h5>
-                <v-card class="text-center">
-                  <v-card-text>
-                    <v-list three-line v-if="formMenu.menuItem.length > 0">
-                      <template v-for="(item) in formMenu.menuItem">
-                        <v-list-item
-                          :key="item.id"
+                <div v-if="formMenu.menuItem.length > 0" max-width="412px">
+                  <v-card
+                    v-for="(item, i) in formMenu.menuItem"
+                    :key="i"
+                    class="ml-4 mr-4 mb-5 mt-4"
+                    style="border-top-right-radius: 0;border-bottom-right-radius: 20px;border-top-left-radius: 20px;border-bottom-left-radius: 0;"
+                    width="93%"
+                    elevation="10"
+                  >
+                    <div style="display: flex">
+                      <div style="height: 100px; width: 100px">
+                        <v-img
+                          :src="item.picture"
+                          height="100"
+                          width="100"
+                          class="link mt-4"
+                          style="opacity: 1;border-top-right-radius: 0;border-bottom-right-radius: 0px;border-top-left-radius: 20px;border-bottom-left-radius: 0;"
                         >
-                          <v-list-item-avatar>
-                            <v-img :src="item.picture"></v-img>
-                          </v-list-item-avatar>
-
-                          <v-list-item-content>
-                            <v-list-item-title>{{ item.name }}</v-list-item-title>
-                            <v-list-item-subtitle>{{ item.nameSub }}</v-list-item-subtitle>
-                          </v-list-item-content>
-                        </v-list-item>
-                      </template>
-                    </v-list>
-                  </v-card-text>
-                </v-card>
-              </v-col>
+                        </v-img>
+                      </div>
+                      <div style="display: flex">
+                        <div style="padding: 8px; position: relative;">
+                          <div height="100">
+                            <div class="colorBetaskText" style="font-weight: bold;font-size: 17px;">{{ item.name.substring(0, 79) }}</div>
+                          </div>
+                          <div height="100" v-if="item.name.length >= 49">
+                            <div style="font-size: 15px;">{{ item.nameSub.substring(0, 41) }}...</div>
+                          </div>
+                          <div height="100" v-else>
+                            <div style="font-size: 15px;">{{ item.nameSub.substring(0, 41) }}</div>
+                          </div>
+                        </div>
+                        </div>
+                    </div>
+                    <div style="display: flex" class="mt-4">
+                      <div style="width: 100px"></div>
+                      <v-row>
+                        <v-col cols='6' class="pt-1 pb-0">
+                          <div style="font-weight: bold;font-size: 20px;color:#1B5E20;">฿ {{ formatNumber(item.price) }}</div>
+                        </v-col>
+                        <v-col cols='6'  class="pt-1 pb-0 pr-10" align="right">
+                          <v-text-field
+                          style="width: 90px;font-weight: bold;font-size: 17px;"
+                          class="centered-input pa-0"
+                          prepend-inner-icon="mdi-minus-thick"
+                          append-icon="mdi-plus-thick"
+                          v-model="counter"
+                          @click:prepend-inner="changeCounter('-1')"
+                          @click:append="changeCounter('+1')"
+                        ></v-text-field>
+                        </v-col>
+                      </v-row>
+                    </div>
+                  </v-card>
+                </div>
+              </v-col> -->
             </v-row>
           </v-card-text>
         </v-card>
@@ -2166,7 +2222,7 @@
           <v-card-text>
             <v-row>
               <v-col cols="6" class="text-left pt-10">
-                <h3><strong>เพิ่มรายการเมนู</strong></h3>
+                <h3><strong>{{titleMenuDialog}}</strong></h3>
               </v-col>
               <v-col cols="6" class="pt-10">
                 <div style="text-align: end;">
@@ -2190,7 +2246,7 @@
                   <v-img
                     aspect-ratio="6"
                     contain
-                    :src="formAddMenu.pictureUrlPreview"
+                    :src="titleMenuDialog === 'เพิ่มรายการเมนู' ? formAddMenu.pictureUrlPreview:formAddMenu.picture"
                   ></v-img>
                   <!-- <v-avatar size="100px"><img alt="Avatar" :src="formAdd.pictureUrl"></v-avatar> -->
                   <br />
@@ -2202,7 +2258,7 @@
                     prepend-icon="mdi-camera"
                     label="รูปรายการ"
                     @change="selectImgMenu"
-                    v-model="filesMenu"
+                    v-model="formAddMenu.filesMenu"
                   ></v-file-input>
                 </v-col>
                 <v-col cols="12" class="pb-0">
@@ -2240,15 +2296,18 @@
                     color="blue-grey"
                     class="ma-2 white--text"
                     block
-                    @click="addMenu()"
+                    @click="titleMenuDialog === 'เพิ่มรายการเมนู' ? addMenu() : editMenuSubmit()"
                   >
-                    เพิ่มเมนู
-                    <v-icon
-                      right
-                      dark
-                    >
-                      mdi-text-box-plus
-                    </v-icon>
+                    บันทึก
+                  </v-btn>
+                  <v-btn
+                    v-if="titleMenuDialog !== 'เพิ่มรายการเมนู'"
+                    color="error"
+                    class="ma-2 white--text"
+                    block
+                    @click="deleteMenuSubmit()"
+                  >
+                    ลบข้อมูล
                   </v-btn>
                 </v-col>
               </v-row>
@@ -2294,17 +2353,21 @@ export default {
     return {
       // allowDrag: true,
       // selected: [],
-      filesMenu: null,
+      // filesMenu: null,
+      titleMenuDialog: '',
+      counter: 0,
       enabledMenu: true,
       draggingMenu: false,
       dialogAddMenu: false,
       valid_addMenu: true,
+      indexMenu: '',
       formAddMenu: {
         name: '',
         nameSub: '',
         price: 0,
         picture: '',
-        pictureUrlPreview: ''
+        pictureUrlPreview: '',
+        filesMenu: null
       },
       enabled: true,
       dragging: false,
@@ -2754,17 +2817,33 @@ export default {
     await this.getBookingField()
   },
   methods: {
+    changeCounter (num) {
+      this.counter += +num
+      console.log(this.counter)
+      // eslint-disable-next-line no-unused-expressions
+      !isNaN(this.counter) && this.counter > 0 ? this.counter : this.counter = 0
+    },
+    formatNumber (value) {
+      if (value && value !== 0) {
+        // console.log('valuevalue', value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','))
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+      } else {
+        return 0
+      }
+    },
     setDataMenu (item) {
       this.flowId = item.flowId
-      this.formMenu.menuItem = item.menuItem || []
+      this.formMenu.menuItem = JSON.parse(item.menuItem) || []
+      // this.formMenu.menuItem = item.menuItem || []
       this.formMenu.menuShowStatus = item.menuShowStatus || 'False'
       this.dialogMenu = true
       console.log('setDataMenu', this.formMenu)
+      console.log('setDataMenu', item)
     },
     selectImgMenu () {
-      console.log('this.filesMenu', this.filesMenu)
-      if (this.filesMenu) {
-        this.formAddMenu.pictureUrlPreview = URL.createObjectURL(this.filesMenu)
+      // console.log('this.filesMenu', this.formAddMenu.filesMenu)
+      if (this.formAddMenu.filesMenu) {
+        this.formAddMenu.pictureUrlPreview = URL.createObjectURL(this.formAddMenu.filesMenu)
       } else {
         this.formAddMenu.pictureUrlPreview = ''
       }
@@ -2775,6 +2854,16 @@ export default {
       this.formAddMenu.price = 0
       this.formAddMenu.picture = ''
       this.formAddMenu.pictureUrlPreview = ''
+      this.formAddMenu.filesMenu = null
+    },
+    setFormAddMenu (item, id) {
+      console.log('setFormAddMenu', item)
+      this.indexMenu = id
+      this.formAddMenu.name = item.name
+      this.formAddMenu.nameSub = item.nameSub
+      this.formAddMenu.price = item.price
+      this.formAddMenu.picture = item.picture
+      this.dialogAddMenu = true
     },
     async addMenu () {
       this.validate('ADDMENU')
@@ -2782,32 +2871,72 @@ export default {
     },
     async addMenuSubmit () {
       if (this.valid_addMenu === true) {
-        if (this.filesMenu) {
+        if (this.formAddMenu.filesMenu) {
           const _this = this
           let params = new FormData()
-          params.append('file', this.filesMenu)
+          params.append('file', this.formAddMenu.filesMenu)
           await axios
-            .post(this.DNS_IP + `/file/upload/employee`, params)
+            .post(this.DNS_IP + `/file/upload/menu`, params)
             .then(function (response) {
               _this.formAddMenu.picture = response.data
-              console.log('url Pic', response.data)
             })
+
+          let dataMenu = {
+            name: this.formAddMenu.name,
+            nameSub: this.formAddMenu.nameSub,
+            price: this.formAddMenu.price,
+            picture: this.formAddMenu.picture
+          }
+          this.formMenu.menuItem.push(dataMenu)
+          await this.UpdateMenuInFlow(this.formMenu.menuItem)
+          this.dialogAddMenu = false
+          this.$swal('เรียบร้อย', 'บันทึกข้อมูล เรียบร้อย', 'success')
         } else {
-          this.formAddMenu.picture = ''
+          this.$swal('ผิดพลาด', 'กรุณาใส่รูปเมนู', 'error')
         }
-        delete this.formAddMenu['pictureUrlPreview']
-        let addMenu = {
-          menuItem: JSON.stringify([this.formAddMenu])
-        }
-        await axios
-          .post(
-            this.DNS_IP + this.path + 'edit/' + this.flowId,
-            addMenu
-          )
-          .then(async response => {
-            this.dialogAddMenu = false
-          })
       }
+    },
+    async editMenuSubmit () {
+      if (this.valid_addMenu === true) {
+        // this.formAddMenu.picture = this.formAddMenu.pictureUrlPreview
+        this.formMenu.menuItem[this.indexMenu].name = this.formAddMenu.name
+        this.formMenu.menuItem[this.indexMenu].nameSub = this.formAddMenu.nameSub
+        this.formMenu.menuItem[this.indexMenu].price = this.formAddMenu.price
+        if (this.formAddMenu.filesMenu) {
+          const _this = this
+          let params = new FormData()
+          params.append('file', this.formAddMenu.filesMenu)
+          await axios
+            .post(this.DNS_IP + `/file/upload/menu`, params)
+            .then(function (response) {
+              _this.formAddMenu.picture = response.data
+            })
+        }
+        this.formMenu.menuItem[this.indexMenu].picture = this.formAddMenu.picture
+        await this.UpdateMenuInFlow(this.formMenu.menuItem)
+        this.dialogAddMenu = false
+        this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
+        this.dialogAddMenu = false
+      }
+    },
+    async deleteMenuSubmit () {
+      this.formMenu.menuItem.splice(this.indexMenu, 1)
+      await this.UpdateMenuInFlow(this.formMenu.menuItem)
+      this.$swal('เรียบร้อย', 'ลบข้อมูล เรียบร้อย', 'success')
+      this.dialogAddMenu = false
+    },
+    async UpdateMenuInFlow (dateUpdate) {
+      let addMenu = {
+        menuItem: JSON.stringify(dateUpdate),
+        LAST_USER: this.$session.getAll().data.userName
+      }
+      await axios
+        .post(
+          this.DNS_IP + this.path + 'editData/' + this.flowId,
+          addMenu
+        )
+        .then(async response => {
+        })
     },
     saveSortFlow () {
       // console.log('saveSortFlow', JSON.stringify(this.dessertsSort))
@@ -4483,6 +4612,15 @@ export default {
 }
 </script>
 <style scope>
+.centered-input input {
+  text-align: center
+}
+.colorBetaskText {
+  color: #173053 !important;
+}
+.link {
+  cursor:pointer;
+}
 .handle {
   cursor: move;
 }
