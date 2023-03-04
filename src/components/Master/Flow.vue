@@ -771,6 +771,28 @@
                             </v-col>
                           </v-row>
                         </v-col>
+                        <v-col
+                          cols="12"
+                        >
+                          <v-textarea
+                          v-if="formAdd.checkDeposit === 'True'"
+                            outlined
+                            rows="1"
+                            v-model="formAdd.depositTextTH"
+                            label="ข้อความสำหรับหัวข้อการโอนเงิน (TH)"
+                          ></v-textarea>
+                        </v-col>
+                        <v-col
+                          cols="12"
+                        >
+                          <v-textarea
+                          v-if="formAdd.checkDeposit === 'True'"
+                            outlined
+                            rows="1"
+                            v-model="formAdd.depositTextEN"
+                            label="ข้อความสำหรับหัวข้อการโอนเงิน (EN)"
+                          ></v-textarea>
+                        </v-col>
                         <v-col cols="12" class="pb-0 pt-0">
                           <v-select
                             v-if="formAdd.checkDeposit === 'True'"
@@ -780,7 +802,7 @@
                             outlined
                             dense
                             attach
-            :menu-props="{ bottom: true, offsetY: true }"
+                            :menu-props="{ bottom: true, offsetY: true }"
                           ></v-select>
                           <v-text-field
                           v-if="formAdd.checkDeposit === 'True'"
@@ -1130,6 +1152,28 @@
                             ></v-select>
                             </v-col>
                           </v-row>
+                        </v-col>
+                        <v-col
+                          cols="12"
+                        >
+                          <v-textarea
+                          v-if="formUpdate.checkDeposit === 'True'"
+                            outlined
+                            rows="1"
+                            v-model="formUpdate.depositTextTH"
+                            label="ข้อความสำหรับหัวข้อการโอนเงิน (TH)"
+                          ></v-textarea>
+                        </v-col>
+                        <v-col
+                          cols="12"
+                        >
+                          <v-textarea
+                          v-if="formUpdate.checkDeposit === 'True'"
+                            outlined
+                            rows="1"
+                            v-model="formUpdate.depositTextEN"
+                            label="ข้อความสำหรับหัวข้อการโอนเงิน (EN)"
+                          ></v-textarea>
                         </v-col>
                         <v-col cols="12" class="pb-0 pt-0">
                           <v-select
@@ -2474,7 +2518,9 @@ export default {
         servicePointStatus: 'False',
         servicePointCountStart: 0,
         servicePointCountEnd: 0,
-        servicePointRecursive: 'False'
+        servicePointRecursive: 'False',
+        depositTextTH: 'ชำระเงินมัดจำ',
+        depositTextEN: 'pay deposit'
       },
       formAddStep: {
         stepId: '',
@@ -2535,7 +2581,9 @@ export default {
         servicePointStatus: 'False',
         servicePointCountStart: 0,
         servicePointCountEnd: 0,
-        servicePointRecursive: 'False'
+        servicePointRecursive: 'False',
+        depositTextTH: '',
+        depositTextEN: ''
       },
       formUpdateItemFlow: {
         fieldId: '',
@@ -3800,6 +3848,8 @@ export default {
       this.formUpdate.remarkConfirm = item.remarkConfirm || ''
       this.formUpdate.remarkConfirmEn = item.remarkConfirmEn || ''
       this.formUpdate.depositTime = item.depositTime || 'NO'
+      this.formUpdate.depositTextTH = item.depositTextTH || 'ชำระเงินมัดจำ'
+      this.formUpdate.depositTextEN = item.depositTextEN || 'pay deposit'
       this.shopId = this.$session.getAll().data.shopId
       this.fieldType = this.formUpdate.fieldType
       // this.desserts = JSON.parse(response.data[0].flowfieldName)
