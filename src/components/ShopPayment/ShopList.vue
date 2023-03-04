@@ -67,6 +67,58 @@
             </v-col>
           </v-row>
           <v-row style="justify-content: space-around;">
+            <v-col cols="6" style="display: flex;justify-content: center;">
+              <v-card
+                style="padding: 10px; width: 230px;"
+                color="#E65100"
+                dense
+                elevation="0"
+                prominent
+              >
+                <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
+                  <div class="text-center">
+                    <v-avatar
+                      size="70"
+                      class="pa-3"
+                      color="#F57C00"
+                    >
+                      <v-icon dark size="30" class="iconify" data-icon="material-symbols:fiber-new">
+                      </v-icon>
+                    </v-avatar>
+                  </div>
+                  <div style="margin: auto 0;" class="text-white">
+                    <strong>ลูกค้าใหม่</strong>
+                    <div>จำนวน : {{countNewCus}}</div>
+                  </div>
+                </div>
+              </v-card>
+            </v-col>
+            <v-col cols="6" style="display: flex;justify-content: center;">
+              <v-card
+                style="padding: 10px; width: 230px;"
+                color="#1A237E"
+                dense
+                elevation="0"
+                prominent
+              >
+                <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
+                  <div class="text-center">
+                    <v-avatar
+                      size="70"
+                      class="pa-3"
+                      color="#303F9F"
+                    >
+                      <v-icon dark size="30" class="iconify" data-icon="mdi:super-chat-for-good">
+                      </v-icon>
+                    </v-avatar>
+                  </div>
+                  <div style="margin: auto 0;" class="text-white">
+                    <strong>ลูกค้าเก่า</strong>
+                    <div>จำนวน : {{countOldCus}}</div>
+                  </div>
+                </div>
+              </v-card>
+            </v-col>
             <v-col cols="auto" style="display: flex;justify-content: center;">
               <v-card
                 style="padding: 10px; width: 230px;"
@@ -292,6 +344,18 @@
                 <v-icon > mdi-close-circle </v-icon>
                 Inactive
               </v-btn>
+              <v-btn
+                class="mx-2"
+                fab
+                dark
+                small
+                color="primary"
+                @click="setDataSetting(item)"
+              >
+                <v-icon dark>
+                  mdi-cog-box
+                </v-icon>
+              </v-btn>
             </template>
             <template v-slot:[`item.paymentImage`]="{ item }">
               <v-avatar color="primary" size="40" @click="gotoPicture(item.paymentImage)" v-if="item.paymentImage !== null">
@@ -372,6 +436,9 @@
                           <v-col cols="12" class="pt-0">
                             <h4>รอบชำระ : {{itemPayMent.paymentDateMonthYear}}</h4>
                           </v-col>
+                          <v-col cols="12" class="pt-0" v-if="itemPayMent.billingEndDate">
+                            <h4>วันที่หมดอายุ : {{itemPayMent.billingEndDate}}</h4>
+                          </v-col>
                         </v-row>
                         <br>
                           <div class="text-center" v-if="itemPayMent.paymentImage !== ''">
@@ -397,6 +464,108 @@
               </v-card-text>
             </v-card>
         </v-dialog>
+        <v-dialog v-model="dialogSetting" scrollable persistent max-width="500px">
+          <v-card>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="8" class="text-left pt-10">
+                      <h3><strong>รายละเอียดนัดหมาย</strong></h3>
+                    </v-col>
+                    <v-col cols="4" class="pt-10">
+                      <div style="text-align: end;">
+                        <v-btn
+                          class="mx-2"
+                          fab
+                          small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
+                          @click="dialogSetting = false"
+                          >
+                          X
+                        </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
+                  <v-row >
+                    <v-col cols="12" class="pt-1 pb-0">
+                      <v-text-field
+                        prepend-icon="mdi-format-list-numbered"
+                        v-model="btNumber"
+                        label="BT Number"
+                        outlined
+                        dense
+                        required
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pt-1 pb-0">
+                      <v-menu
+                        ref="menu"
+                        v-model="menupaymentDateTrue"
+                        transition="scale-transition"
+                        offset-y
+                        max-width="290px"
+                        min-width="auto"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            v-model="paymentDateTrue"
+                            label="วันที่ได้รับเงินจริง"
+                            readonly
+                            outlined
+                            dense
+                            v-bind="attrs"
+                            v-on="on"
+                          >
+                          <template #prepend>
+                          <v-icon>
+                            mdi-calendar
+                          </v-icon>
+                        </template></v-text-field>
+                        </template>
+                        <v-date-picker
+                          @input="menupaymentDateTrue = false"
+                          v-model="paymentDateTrue"
+                          no-title
+                          scrollable
+                        >
+                        </v-date-picker>
+                      </v-menu>
+                    </v-col>
+                    <v-col cols="12" class="pt-1 pb-0">
+                      <v-text-field
+                        v-model="paymentDateTrueTime"
+                        dense
+                        v-mask="'##:##'"
+                        placeholder="HH:mm"
+                        outlined
+                        label="เวลา"
+                        prepend-icon="mdi-clock-time-eleven"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pt-1 pb-0">
+                      <v-textarea
+                        prepend-icon="mdi-comment-edit"
+                        v-model="remark"
+                        label="หมายเหตุ"
+                        outlined
+                        dense
+                      ></v-textarea>
+                    </v-col>
+                  </v-row>
+                  <div class="text-center mt-5">
+                      <v-btn
+                      class="button pa-2"
+                      dark
+                      large
+                      @click="saveDateSetting()"
+                      >บันทึกข้อมูล</v-btn>
+                  </div>
+                </v-container>
+              </v-card-text>
+          </v-card>
+        </v-dialog>
         </template>
         </div>
     </v-main>
@@ -417,6 +586,16 @@ export default {
   },
   data () {
     return {
+      menupaymentDateTrue: false,
+      paymentDateTrue: '',
+      paymentDateTrueTime: '',
+      btNumber: '',
+      remark: '',
+      shopId_Shop: '',
+      idPayment: '',
+      dialogSetting: false,
+      countNewCus: 0,
+      countOldCus: 0,
       countWait: 0,
       countConfirm: 0,
       countNoCash: 0,
@@ -456,6 +635,7 @@ export default {
       shopName: '',
       shopImg: '',
       headers: [
+        { text: 'BT', value: 'btNumber' },
         { text: 'ชื่อร้าน', value: 'shopName' },
         // { text: 'วันที่นัดหมาย', value: 'dueDate' },
         { text: 'เบอร์โทร', value: 'billingPhone' },
@@ -464,7 +644,7 @@ export default {
         { text: 'สลิป', value: 'paymentImage' },
         { text: 'ราคาแพ็กเกจ', value: 'paymentAmount' },
         { text: 'สถานะ', value: 'paymentStatus' },
-        { text: 'วันที่จ่าย', value: 'paymentDate' },
+        { text: 'วันที่จ่าย/วันที่หมดอายุ', value: 'paymentDate' },
         { text: 'วันวันที่สิ้นสุดทดลองใช้', value: 'trialsVersionDate' },
         { text: 'จัดการข้อมูล', value: 'action', sortable: false, align: 'center' }
       ],
@@ -498,6 +678,61 @@ export default {
     this.checkSearch()
   },
   methods: {
+    setDataSetting (item) {
+      console.log('setDataSetting', item)
+      this.paymentDateTrue = item.paymentDateTrue || ''
+      if (this.paymentDateTrue === '') {
+        this.paymentDateTrueTime = ''
+      } else {
+        this.paymentDateTrueTime = this.paymentDateTrue.split(' ')[1]
+        this.paymentDateTrue = this.paymentDateTrue.split(' ')[0]
+      }
+      this.btNumber = item.btNumber || ''
+      this.remark = item.remark || ''
+      this.shopId_Shop = item.shopId_Shop
+      this.idPayment = item.id
+      this.dialogSetting = true
+    },
+    async saveDateSetting () {
+      let paymentDateTrue = ''
+      if (this.paymentDateTrue) {
+        if (this.paymentDateTrueTime) {
+          paymentDateTrue = this.paymentDateTrue + ' ' + this.paymentDateTrueTime || '00:00'
+        } else {
+          paymentDateTrue = this.paymentDateTrue + ' 00:00'
+        }
+      } else {
+        paymentDateTrue = ''
+      }
+      if (this.btNumber !== '') {
+        this.btNumber = this.btNumber.replace(/%/g, '%%').replace(/'/g, "\\'")
+      }
+      if (this.remark !== '') {
+        this.remark = this.remark.replace(/%/g, '%%').replace(/'/g, "\\'")
+      }
+      var ds = {
+        paymentDateTrue: paymentDateTrue,
+        btNumber: this.btNumber,
+        remark: this.remark,
+        shopId: this.shopId_Shop
+      }
+      await axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + "/system_shop_Payment/editAdmin/" + this.idPayment,
+          ds
+        )
+        .then(async (response) => {
+          this.dialogSetting = false
+          this.$swal('สำเร็จ', 'บันทึกสำเร็จ', 'success')
+          this.checkSearch()
+          this.paymentDateTrue = ''
+          this.btNumber = ''
+          this.remark = ''
+          this.shopId_Shop = ''
+          this.idPayment = ''
+        })
+    },
     openDetail (item) {
       this.itemPayMent = item
       this.dialogDetails = true
@@ -512,7 +747,7 @@ export default {
     },
     async getCountBooking () {
       this.itemCountBooking = []
-      let urlApi = this.DNS_IP + '/Booking/getCountBooking'
+      let urlApi = this.DNS_IP + '/Booking/getCountBooking?paymentDate=' + this.dateStart
       await axios
         .get(urlApi)
         .then(async response => {
@@ -531,6 +766,8 @@ export default {
       this.countNoCash = 0
       this.countFinish = 0
       this.countInactive = 0
+      this.countNewCus = 0
+      this.countOldCus = 0
       this.itemBooking = []
       this.itemBookingUse = []
       let urlApi = this.DNS_IP + '/system_shop_Payment/get?paymentStatus=not null&paymentDate=' + this.dateStart
@@ -552,6 +789,13 @@ export default {
               if (d.shopActive === 'inactive') {
                 d.paymentStatus = 'inactive'
               }
+              d.billingEndDate = d.billingEndDate || ''
+              if (d.billingEndDate !== '') {
+                if (d.billingEndDate >= moment().format('YYYY-MM-DD')) {
+                  d.paymentStatus = 'finish'
+                  d.paymentDate = d.billingEndDate
+                }
+              }
               this.itemBooking.push(d)
             }
             // this.itemBookingUse = this.itemBooking.filter(el => { return el.paymentStatus === this.getSelectText })
@@ -569,7 +813,7 @@ export default {
               let d = rs[i]
               d.billingPhone = d.billingPhone || d.contactTel
               // d.paymentStatus = d.paymentStatus || 'noCash'
-              console.log(this.itemBooking.filter(el => { return el.shopId === d.shopId_Shop }))
+              // console.log(this.itemBooking.filter(el => { return el.shopId === d.shopId_Shop }))
               if (this.itemBooking.filter(el => { return el.shopId === d.shopId_Shop }).length === 0) {
                 if (this.itemCountBooking.filter(el => { return el.shopId === d.shopId_Shop }).length > 0) {
                   d.countBooking = this.itemCountBooking.filter(el => { return el.shopId === d.shopId_Shop })[0].countBooking
@@ -577,9 +821,21 @@ export default {
                   d.countBooking = 0
                 }
                 d.paymentStatus = 'noCash'
+                d.billingEndDate = d.billingEndDate || ''
+                // if (d.billingEndDate !== '') {
+                //   if (d.billingEndDate >= moment().format('YYYY-MM-DD')) {
+                //     d.paymentStatus = 'finish'
+                //   }
+                // }
                 if (d.paymentStatus === 'noCash') {
                   if (d.shopActive === 'inactive') {
                     d.paymentStatus = 'inactive'
+                  }
+                  if (d.billingEndDate !== '') {
+                    if (d.billingEndDate >= moment().format('YYYY-MM-DD')) {
+                      d.paymentStatus = 'finish'
+                      d.paymentDate = d.billingEndDate
+                    }
                   }
                   this.itemBooking.push(d)
                 }
@@ -591,6 +847,8 @@ export default {
             this.countWait = 0
             this.countConfirm = 0
             this.countNoCash = 0
+            this.countNewCus = 0
+            this.countOldCus = 0
           }
         })
       this.countWait = this.itemBooking.filter(el => { return el.paymentStatus === 'wait' }).length
@@ -598,6 +856,18 @@ export default {
       this.countConfirm = this.itemBooking.filter(el => { return el.paymentStatus === 'confirm' }).length
       this.countNoCash = this.itemBooking.filter(el => { return el.paymentStatus === 'noCash' }).length
       this.countInactive = this.itemBooking.filter(el => { return el.paymentStatus === 'inactive' }).length
+      let dataCus = this.itemBooking.filter(el => { return el.paymentStatus === 'finish' })
+      console.log('dataCus', dataCus)
+      for (let i = 0; i < dataCus.length; i++) {
+        let d = dataCus[i]
+        d.countBooking = d.countBooking || 0
+        console.log('dataCus', d.countBooking)
+        if (parseInt(d.countBooking) === 0) {
+          this.countNewCus = this.countNewCus + 1
+        } else {
+          this.countOldCus = this.countOldCus + 1
+        }
+      }
       this.getSelect(this.getSelectText)
     },
     async changStatus (item, text) {
