@@ -2081,17 +2081,34 @@
             </v-row>
             <v-row>
               <v-col cols="12">
-                <v-btn
-                  color="blue-grey"
-                  class="white--text"
-                  depressed
-                  dark
-                  block
-                  @click="dialogAddMenu = true, clearFormAddMenu(), titleMenuDialog='เพิ่มรายการเมนู'"
-                >
-                  <v-icon left>mdi-text-box-plus</v-icon>
-                  เพิ่มเมนู
-                </v-btn>
+                <v-row>
+                  <v-col cols="8">
+                    <v-checkbox
+                      class="mt-2"
+                      label="เปิดใช้งานเมนู"
+                      false-value="False"
+                      :on-icon="'mdi-check-circle'"
+                      :off-icon="'mdi-checkbox-blank-circle-outline'"
+                      color="#1B437C"
+                      true-value="True"
+                      v-model="formMenu.menuShowStatus"
+                      @change="changeFormMenuStatus()"
+                    ></v-checkbox>
+                  </v-col>
+                  <v-col cols="4">
+                    <v-btn
+                      color="blue-grey"
+                      class="white--text"
+                      depressed
+                      dark
+                      block
+                      @click="dialogAddMenu = true, clearFormAddMenu(), titleMenuDialog='เพิ่มรายการเมนู'"
+                    >
+                      <v-icon left>mdi-text-box-plus</v-icon>
+                      เพิ่มเมนู
+                    </v-btn>
+                  </v-col>
+                </v-row>
                 <draggable
                   :list="formMenu.menuItem"
                   :disabled="!enabledMenu"
@@ -2155,64 +2172,6 @@
                   </div>
                 </draggable>
               </v-col>
-              <!-- <v-col cols="4">
-                <h5>ตัวอย่างเมนู</h5>
-                <div v-if="formMenu.menuItem.length > 0" max-width="412px">
-                  <v-card
-                    v-for="(item, i) in formMenu.menuItem"
-                    :key="i"
-                    class="ml-4 mr-4 mb-5 mt-4"
-                    style="border-top-right-radius: 0;border-bottom-right-radius: 20px;border-top-left-radius: 20px;border-bottom-left-radius: 0;"
-                    width="93%"
-                    elevation="10"
-                  >
-                    <div style="display: flex">
-                      <div style="height: 100px; width: 100px">
-                        <v-img
-                          :src="item.picture"
-                          height="100"
-                          width="100"
-                          class="link mt-4"
-                          style="opacity: 1;border-top-right-radius: 0;border-bottom-right-radius: 0px;border-top-left-radius: 20px;border-bottom-left-radius: 0;"
-                        >
-                        </v-img>
-                      </div>
-                      <div style="display: flex">
-                        <div style="padding: 8px; position: relative;">
-                          <div height="100">
-                            <div class="colorBetaskText" style="font-weight: bold;font-size: 17px;">{{ item.name.substring(0, 79) }}</div>
-                          </div>
-                          <div height="100" v-if="item.name.length >= 49">
-                            <div style="font-size: 15px;">{{ item.nameSub.substring(0, 41) }}...</div>
-                          </div>
-                          <div height="100" v-else>
-                            <div style="font-size: 15px;">{{ item.nameSub.substring(0, 41) }}</div>
-                          </div>
-                        </div>
-                        </div>
-                    </div>
-                    <div style="display: flex" class="mt-4">
-                      <div style="width: 100px"></div>
-                      <v-row>
-                        <v-col cols='6' class="pt-1 pb-0">
-                          <div style="font-weight: bold;font-size: 20px;color:#1B5E20;">฿ {{ formatNumber(item.price) }}</div>
-                        </v-col>
-                        <v-col cols='6'  class="pt-1 pb-0 pr-10" align="right">
-                          <v-text-field
-                          style="width: 90px;font-weight: bold;font-size: 17px;"
-                          class="centered-input pa-0"
-                          prepend-inner-icon="mdi-minus-thick"
-                          append-icon="mdi-plus-thick"
-                          v-model="counter"
-                          @click:prepend-inner="changeCounter('-1')"
-                          @click:append="changeCounter('+1')"
-                        ></v-text-field>
-                        </v-col>
-                      </v-row>
-                    </div>
-                  </v-card>
-                </div>
-              </v-col> -->
             </v-row>
           </v-card-text>
         </v-card>
@@ -2354,6 +2313,7 @@ export default {
   },
   data () {
     return {
+      formMenuStatus: 'False',
       // allowDrag: true,
       // selected: [],
       // filesMenu: null,
@@ -2821,11 +2781,19 @@ export default {
     await this.getBookingField()
   },
   methods: {
-    changeCounter (num) {
-      this.counter += +num
-      console.log(this.counter)
-      // eslint-disable-next-line no-unused-expressions
-      !isNaN(this.counter) && this.counter > 0 ? this.counter : this.counter = 0
+    async changeFormMenuStatus () {
+      let changeStatus = {
+        menuShowStatus: this.formMenu.menuShowStatus,
+        LAST_USER: this.$session.getAll().data.userName
+      }
+      await axios
+        .post(
+          this.DNS_IP + this.path + 'editData/' + this.flowId,
+          changeStatus
+        )
+        .then(async response => {
+          this.clearFormAddMenu()
+        })
     },
     formatNumber (value) {
       if (value && value !== 0) {
