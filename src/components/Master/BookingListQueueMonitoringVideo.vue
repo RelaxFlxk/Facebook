@@ -6,16 +6,16 @@
         <v-sheet
           :color="shopColor"
           elevation="1"
-          height="150"
+          height="170"
           width="100%"
           style="border-bottom: 1px solid #695988 !important"
         >
           <v-row>
-            <v-col cols="8" align="left" class="mt-6 ml-8">
-              <v-img :src="shopImage" max-width="200px" max-height="100px"></v-img>
+            <v-col cols="8" align="left" class="mt-6 ml-8 pa-0">
+              <v-img :src="shopImage" contain max-width="200px" max-height="130px"></v-img>
             </v-col>
             <v-col cols="3" align="right" class="mt-6 ml-16">
-              <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6" max-width="200px"></v-img>
+              <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6" max-width="220px"></v-img>
             </v-col>
           </v-row>
         </v-sheet>
@@ -155,28 +155,28 @@
                   offset-y
                   max-width="290px"
                   min-width="auto"
+                  :style="'color:' + text"
                 >
                   <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      hide-details
-                      :background-color="bgColor3"
-                      v-model="dateStartShow"
-                      style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
-                      readonly
-                      dark
-                      outlined
-                      dense
-                      required
-                      :rules ="[rules.required]"
-                      v-bind="attrs"
-                      v-on="on"
-                    >
-                    <template #prepend-inner>
-                    <v-icon color="white" style="padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                      mdi-calendar
-                    </v-icon>
-                  </template>
-                </v-text-field>
+                        <v-text-field
+                          hide-details
+                          :background-color="bgColor3"
+                          v-model="dateStartShow"
+                          :style="'box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;' + text"
+                          readonly
+                          outlined
+                          dense
+                          required
+                          :rules ="[rules.required]"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                        <template #prepend-inner>
+                        <v-icon :color="text" style="padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                          mdi-calendar
+                        </v-icon>
+                      </template>
+                    </v-text-field>
                   </template>
                   <v-date-picker
                     @input="menuStart = false, clearTimeLoop(), checkSearch()"
@@ -192,13 +192,12 @@
                   outlined
                   :background-color="bgColor3"
                   dense
-                  dark
                   readonly
                   v-model="shopTime"
-                  style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
+                  :style="'border-radius: 40px !important;margin-bottom: 10px;color:' + text + '!important'"
                 >
                   <template #prepend-inner>
-                    <v-icon color="white" style="padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                    <v-icon :color="text" style="padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
                       mdi-clock-time-four
                     </v-icon>
                   </template>
@@ -220,10 +219,10 @@
                       <v-col cols="6">
                         <br>
                         <v-row class="text-center">
-                          <v-col cols="12" style="font-weight: 700;font-size: 32px;line-height: 24px;">
+                          <v-col cols="12" :style="'font-weight: 700;font-size: 32px;line-height: 24px;color:' + text">
                             หมายเลขคิว
                           </v-col>
-                          <v-col cols="12" style="font-weight: 700;font-size: 24px;line-height: 24px;">
+                          <v-col cols="12" :style="'font-weight: 700;font-size: 24px;line-height: 24px;color:' + text" >
                             Number
                           </v-col>
                         </v-row>
@@ -231,10 +230,10 @@
                       <v-col cols="6">
                         <br>
                         <v-row class="text-center">
-                          <v-col cols="12" style="font-weight: 700;font-size: 32px;line-height: 24px;">
+                          <v-col cols="12" :style="'font-weight: 700;font-size: 32px;line-height: 24px;color:' + text">
                             ช่องบริการ
                           </v-col>
-                          <v-col cols="12" style="font-weight: 700;font-size: 24px;line-height: 24px;">
+                          <v-col cols="12" :style="'font-weight: 700;font-size: 24px;line-height: 24px;color:' + text">
                             Counter
                           </v-col>
                         </v-row>
@@ -243,25 +242,23 @@
                   </v-container>
                 </v-sheet>
                 <v-sheet
-                  :color="bgColor2"
                   elevation="1"
                   height="85%"
                   width="100%"
-                  dark
                   style="border-radius: 0px 0px 10px 10px;"
                 >
                   <v-container>
                     <v-row v-for="(items, id) in itemBookingUse" :key="id">
                       <v-col cols="6" class="pt-2">
                         <v-row class="text-center">
-                          <v-col cols="12" style="font-weight: 700;font-size: 48px;">
+                          <v-col cols="12" :style="'font-weight: 700;font-size: 48px;color' + text">
                             {{items.storeFrontQueue}}
                           </v-col>
                         </v-row>
                       </v-col>
                       <v-col cols="6" class="pt-2" style="border-left: 1px solid #695988 !important">
                         <v-row class="text-center">
-                          <v-col cols="12" style="font-weight: 700;font-size: 48px;">
+                          <v-col cols="12" :style="'font-weight: 700;font-size: 48px;color:' + text">
                             {{items.servicePoint}}
                           </v-col>
                         </v-row>
@@ -323,11 +320,11 @@
                   style="padding: 10px; width: 90%;"
                 >
                   <div style="margin: auto 0;" class="text-center text-white">
-                    <div style="font-weight: 700;font-size: 28px;">คิวที่รอเรียก : {{countConfirm}}</div>
+                    <div :style="'font-weight: 700;font-size: 28px;color:' + text">คิวที่รอเรียก : {{countConfirm}}</div>
                     <!-- <strong style="font-weight: 700;font-size: 28px;">{{countConfirm}}</strong> -->
                     <v-row>
                       <v-col cols="4" v-for="(item3 , index3) in DataFlowItem.filter(el => { return el.value !== 'allFlow' })" :key="index3">
-                         <strong class="text-white" style="font-size: 20px;">{{item3.storeFrontText}} : {{countConfirmList.filter(el => { return el.flowId === item3.value  }).length}}</strong>
+                         <strong :style="'font-size: 20px;color:' + text ">{{item3.storeFrontText}} : {{countConfirmList.filter(el => { return el.flowId === item3.value  }).length}}</strong>
                       </v-col>
                     </v-row>
                   </div>
@@ -499,6 +496,7 @@ export default {
       bgColor: '',
       bgColor2: '',
       bgColor3: '',
+      text: '',
       videoLinkMonition: '',
       statusSoundCheck: null,
       hideSound: false,
@@ -551,6 +549,7 @@ export default {
     this.dateStart = moment().format('YYYY-MM-DD')
     this.clearTimeLoop()
     this.checkSearch()
+    console.log('tetx', this.text)
   },
   beforeDestroy () {
     this.$root.$off('dataReturn')
@@ -717,9 +716,13 @@ export default {
             this.shopColor = rs[0].primaryColor
             this.shopImage = rs[0].shopImge
             this.videoLinkMonition = rs[0].videoLinkMonition
-            this.bgColor = this.hexToRgbA(rs[0].primaryColor.length > 6 ? rs[0].primaryColor.slice(0, -2) : rs[0].primaryColor)
+            this.bgColor = this.hexToRgbA(rs[0].primaryColor)
+            console.log('rs[0].primaryColor', rs[0].primaryColor)
             this.bgColor2 = this.bgColor22(this.bgColor)
             this.bgColor3 = this.bgColor33(this.bgColor2)
+            this.text = this.HEXToVBColor(rs[0].primaryColor)
+            console.log('bgColor2', this.bgColor)
+            console.log('bgColor3', this.bgColor3)
           } else {
             this.shopName = ''
             this.shopColor = ''
@@ -740,12 +743,29 @@ export default {
       // throw new Error('Bad Hex')
     },
     bgColor22 (rgb) {
+      console.log('rgb', rgb)
       var c = rgb.slice(3).slice(1, -1).split(',')
+      console.log('ddddds', c)
       return 'rgb(' + (parseInt(c[0]) + 50) + ',' + (parseInt(c[1]) + 50) + ',' + (parseInt(c[2]) + 50) + ')'
     },
     bgColor33 (rgb) {
       var c = rgb.slice(3).slice(1, -1).split(',')
       return 'rgb(' + (parseInt(c[0]) + 50) + ',' + (parseInt(c[1]) + 50) + ',' + (parseInt(c[2]) + 50) + ', 0.3)'
+    },
+    HEXToVBColor (a) {
+      console.log('HEXToVBColor', a)
+      let rr = parseInt(a.substr(1, 2), 16)
+      let gg = parseInt(a.substr(3, 2), 16)
+      let bb = parseInt(a.substr(5, 2), 16)
+
+      console.log('rrrr', rr * 0.299 + gg * 0.587 + bb * 0.114)
+      if (rr * 0.299 + gg * 0.587 + bb * 0.114 > 186) {
+        let black = '#000000'
+        return black
+      } else {
+        let white = '#ffffff'
+        return white
+      }
     },
     validate (Action) {
       switch (Action) {
