@@ -2884,7 +2884,8 @@ export default {
             name: this.formAddMenu.name,
             nameSub: this.formAddMenu.nameSub,
             price: this.formAddMenu.price,
-            picture: this.formAddMenu.picture
+            picture: this.formAddMenu.picture,
+            qty: 0
           }
           this.formMenu.menuItem.push(dataMenu)
           await this.UpdateMenuInFlow(this.formMenu.menuItem)
