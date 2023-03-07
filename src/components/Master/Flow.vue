@@ -585,7 +585,7 @@
                           <v-row>
                           <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontCheck === 'False'"  >
                             <v-checkbox
-                            label="เงินมัดจำ"
+                            label="ชำระเงิน"
                             false-value="False"
                             :on-icon="'mdi-check-circle'"
                             :off-icon="'mdi-checkbox-blank-circle-outline'"
@@ -783,7 +783,7 @@
                           </v-row>
                         </v-col>
                         <v-col
-                          cols="12"
+                          cols="12" class="pb-0"
                         >
                           <v-textarea
                           v-if="formAdd.checkDeposit === 'True'"
@@ -794,7 +794,7 @@
                           ></v-textarea>
                         </v-col>
                         <v-col
-                          cols="12"
+                          cols="12"  class="pb-0"
                         >
                           <v-textarea
                           v-if="formAdd.checkDeposit === 'True'"
@@ -809,7 +809,7 @@
                             v-if="formAdd.checkDeposit === 'True'"
                             v-model="formAdd.depositTime"
                             :items="depositTimeItem"
-                            label="ชำระเงินมัดจำภายในกี่นาที"
+                            label="ชำระเงินภายในกี่นาที"
                             outlined
                             dense
                             attach
@@ -835,7 +835,7 @@
                           ></v-text-field>
                           <VuetifyMoney
                             v-if="formAdd.checkDeposit === 'True'"
-                            label="จำนวนเงินมัดจำ"
+                            label="จำนวนเงิน"
                             v-model="formAdd.amountDeposit"
                             required
                             :rules="[rules.required]"
@@ -969,7 +969,7 @@
                           <v-row>
                           <v-col style="display: flex;justify-content: flex-start;" v-if="formUpdate.storeFrontCheck === 'False'">
                             <v-checkbox
-                            label="เงินมัดจำ"
+                            label="ชำระเงิน"
                             false-value="False"
                             :on-icon="'mdi-check-circle'"
                             :off-icon="'mdi-checkbox-blank-circle-outline'"
@@ -1176,7 +1176,7 @@
                           </v-row>
                         </v-col>
                         <v-col
-                          cols="12"
+                          cols="12" class="pb-0"
                         >
                           <v-textarea
                           v-if="formUpdate.checkDeposit === 'True'"
@@ -1187,7 +1187,7 @@
                           ></v-textarea>
                         </v-col>
                         <v-col
-                          cols="12"
+                          cols="12" class="pb-0"
                         >
                           <v-textarea
                           v-if="formUpdate.checkDeposit === 'True'"
@@ -1202,11 +1202,11 @@
                             v-if="formUpdate.checkDeposit === 'True'"
                             v-model="formUpdate.depositTime"
                             :items="depositTimeItem"
-                            label="ชำระเงินมัดจำภายในกี่นาที"
+                            label="ชำระเงินภายในกี่นาที"
                             outlined
                             dense
                             attach
-            :menu-props="{ bottom: true, offsetY: true }"
+                            :menu-props="{ bottom: true, offsetY: true }"
                           ></v-select>
                           <v-text-field
                           v-if="formUpdate.checkDeposit === 'True'"
@@ -1228,7 +1228,7 @@
                           ></v-text-field>
                           <VuetifyMoney
                             v-if="formUpdate.checkDeposit === 'True'"
-                            label="จำนวนเงินมัดจำ"
+                            label="จำนวนเงิน"
                             v-model="formUpdate.amountDeposit"
                             required
                             :rules="[rules.required]"
