@@ -578,7 +578,7 @@ export default {
       try {
         await axios
           .get(
-            `${this.DNS_IP}/callQueues/get?statusNotify=False`
+            `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId
           ).then(async (response) => {
             if (response.data.length > 0 && typeof response.data.status === 'undefined') {
               clearInterval(this.objInterval)
