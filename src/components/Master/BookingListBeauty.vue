@@ -14512,7 +14512,7 @@ export default {
               this.date = ''
               this.time = ''
             } else {
-              await this.confirmChkAddBookingAgain(response.data)
+              // await this.confirmChkAddBookingAgain(response.data)
               if (this.statusSearch === 'no') {
                 await this.getBookingList()
               } else {
