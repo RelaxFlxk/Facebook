@@ -162,9 +162,10 @@
                           hide-details
                           :background-color="bgColor3"
                           v-model="dateStartShow"
-                          :style="'box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;' + text"
+                          :style="'box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;color:' + text"
                           readonly
                           outlined
+                          dark
                           dense
                           required
                           :rules ="[rules.required]"
@@ -193,8 +194,9 @@
                   :background-color="bgColor3"
                   dense
                   readonly
+                  dark
                   v-model="shopTime"
-                  :style="'border-radius: 40px !important;margin-bottom: 10px;color:' + text + '!important'"
+                  :style="'border-radius: 40px !important;margin-bottom: 10px;'"
                 >
                   <template #prepend-inner>
                     <v-icon :color="text" style="padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
@@ -1261,5 +1263,8 @@ export default {
   text-align: center;
   border: solid 1px blue;
   padding: .5rem;
+}
+.text-black >>> .v-input__slot {
+  color: #005fcc !important;
 }
 </style>
