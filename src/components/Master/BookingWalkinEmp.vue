@@ -29,7 +29,7 @@
           :style="'color:' + '#000000' + ';'"
           v-if="shop.length > 0"
         >
-          {{ languageSelect === 0 ? "จัดการเวลานัดหมาย" : "Check queue" }}
+          {{ languageSelect === 0 ? "จัดการคิวนัดหมาย" : "Check queue" }}
         </h2>
         <h4
           class="text-center mt-1 font-weight-bold"

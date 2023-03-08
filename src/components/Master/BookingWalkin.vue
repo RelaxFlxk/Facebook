@@ -29,7 +29,7 @@
           :style="'color:' + '#000000' + ';'"
           v-if="shop.length > 0"
         >
-          {{ languageSelect === 0 ? "จัดการเวลานัดหมาย" : "Check queue" }}
+          {{ languageSelect === 0 ? "จัดการคิวนัดหมาย" : "Check queue" }}
         </h2>
         <h4
           class="text-center mt-1 font-weight-bold"
@@ -221,9 +221,9 @@
           >
           <v-row>
             <v-col cols="4" class="pa-0">
-              <h5 class="mt-3 font-weight-bold text-center" >
+              <h6 class="mt-3 font-weight-bold text-center" >
                 {{languageSelect === 0 ? 'เวลา': 'Time'}}
-              </h5>
+              </h6>
               <div v-for="(item , index) in showDetails" :key="index">
                 <h5  class="mt-3 font-weight-bold text-center" >
                   <div v-if="(item.countBooking < parseInt(item.limitBooking)) && !item.Overtime">
@@ -290,9 +290,9 @@
               </div>
             </v-col>
             <v-col cols="4" class="pa-0">
-              <h5 class="mt-3 font-weight-bold text-center" >
-                {{languageSelect === 0 ? 'จำนวนคิว': 'Queues'}}
-              </h5>
+              <h6 class="mt-3 font-weight-bold text-center" >
+                {{languageSelect === 0 ? 'จำนวนคิวว่าง ': 'Queues'}}
+              </h6>
               <div v-for="(item , index) in showDetails" :key="index">
                 <h5  class="mt-3 font-weight-bold text-center" >
                   <div v-if="(item.countBooking < parseInt(item.limitBooking)) && !item.Overtime">
@@ -301,7 +301,7 @@
                       class="font-weight-bold  text-center"
                       color="#0ACF83"
                       width="80%"
-                      >{{item.countBooking + ' / ' + item.limitBooking}}
+                      >{{(item.limitBooking - item.countBooking)}}
                     </v-btn>
                   </div>
                   <div v-else-if="item.Overtime">
@@ -310,7 +310,7 @@
                       class="font-weight-bold  text-center"
                       color="#000000"
                       width="80%"
-                      >{{item.countBooking + ' / ' + item.limitBooking}}
+                      >{{(item.limitBooking - item.countBooking)}}
                     </v-btn>
                   </div>
                   <div v-else>
@@ -320,65 +320,43 @@
                       class="font-weight-bold  text-center"
                       color="#EB5757"
                       width="80%"
-                      >{{item.countBooking + ' / ' + item.limitBooking}}
+                      >{{('เต็ม')}}
                     </v-btn>
                   </div>
                 </h5>
               </div>
             </v-col>
             <v-col cols="4" class="pa-0">
-              <h5 class="mt-3 font-weight-bold text-center" >
-                {{languageSelect === 0 ? 'เพิ่ม / ลด (คิว)': 'Booking'}}
-              </h5>
+              <h6 class="mt-3 font-weight-bold text-center" >
+                {{languageSelect === 0 ? 'ลด / เพิ่ม (คิวว่าง)': 'Booking'}}
+              </h6>
               <div v-for="(item , index) in showDetails" :key="index">
                 <div  class="mt-3 font-weight-bold text-center" >
                   <div style="height: 36px; display: flex; justify-content: center;align-items: center;" v-if="(item.countBooking < parseInt(item.limitBooking)) && !item.Overtime">
-                    <!-- <v-btn
-                      dark
-                      class="font-weight-bold  text-center"
-                      color="#0D47A1"
-                      width="100%"
-                      fab
-                      >
-                      <v-icon left class="ml-1">
-                        mdi-calendar-month
-                      </v-icon>
-                      {{languageSelect === 0 ? 'นัดหมาย': 'Booking'}}
-                    </v-btn> -->
                     <v-btn
-                    :disabled="item.countBooking === 0 ? true : false"
                     color="#0D47A1"
                       icon
                       x-large
-                      @click="removeWalkin(item)"
+                      @click="addWalkin(item)"
                     >
                     <v-icon>
                       mdi-minus-circle
                       </v-icon>
                   </v-btn>
                   <v-btn
+                  :disabled="item.countBooking === 0 ? true : false"
                       color="#0D47A1"
                       icon
                       x-large
-                      @click="addWalkin(item)"
+                      @click="removeWalkin(item)"
                     >
                     <v-icon>
                       mdi-plus-circle
+
                       </v-icon>
                   </v-btn>
                   </div>
                   <div style="height: 36px; display: flex; justify-content: center;align-items: center;" v-else-if="item.Overtime">
-                    <!-- <v-btn
-                      disabled
-                      class="font-weight-bold  text-center"
-                      color="#000000"
-                      width="100%"
-                      >
-                      <v-icon left class="ml-1">
-                        mdi-calendar-month
-                      </v-icon>
-                      {{languageSelect === 0 ? 'นัดหมาย': 'Booking'}}
-                    </v-btn> -->
                     <v-btn
                     disabled
                     color="#0D47A1"
@@ -401,33 +379,23 @@
                   </v-btn>
                   </div>
                   <div  style="height: 36px; display: flex; justify-content: center;align-items: center;" v-else>
-                    <!-- <v-btn
-                      disabled
-                      class="font-weight-bold  text-center"
-                      color="#000000"
-                      width="100%"
-                      >
-                      <v-icon left class="ml-1">
-                        mdi-calendar-month
-                      </v-icon>
-                      {{languageSelect === 0 ? 'นัดหมาย': 'Booking'}}
-                    </v-btn> -->
                     <v-btn
+                    disabled
                     color="#0D47A1"
                       icon
                       x-large
-                      @click="removeWalkin(item)"
+                      @click="addWalkin(item)"
                     >
                     <v-icon>
                       mdi-minus-circle
                       </v-icon>
                     </v-btn>
                     <v-btn
-                        disabled
+                      :disabled="item.limitBooking === 0 ? true : false"
                         color="#0D47A1"
                         icon
                         x-large
-                        @click="addWalkin(item)"
+                        @click="removeWalkin(item)"
                       >
                       <v-icon>
                         mdi-plus-circle

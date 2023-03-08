@@ -585,14 +585,14 @@
                           <v-row>
                           <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontCheck === 'False'"  >
                             <v-checkbox
-                            label="เงินมัดจำ"
+                            label="ชำระเงิน"
                             false-value="False"
                             :on-icon="'mdi-check-circle'"
                             :off-icon="'mdi-checkbox-blank-circle-outline'"
                             color="#1B437C"
                             true-value="True"
                             v-model="formAdd.checkDeposit"
-                            @change="formAdd.amountDeposit = 0"
+                            @change="formAdd.amountDeposit = 0, formAdd.updateStatusConfirm = 'False'"
                           ></v-checkbox>
                           </v-col>
                           <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;">
@@ -619,6 +619,17 @@
                           </v-col>
                           </v-row>
                           <v-row>
+                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.checkDeposit === 'False'"  >
+                              <v-checkbox
+                                label="เมื่อนัดหมายเสร็จ สถานะเป็นยืนยัน"
+                                false-value="False"
+                                :on-icon="'mdi-check-circle'"
+                                :off-icon="'mdi-checkbox-blank-circle-outline'"
+                                color="#1B437C"
+                                true-value="True"
+                                v-model="formAdd.updateStatusConfirm"
+                              ></v-checkbox>
+                            </v-col>
                             <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="$session.getAll().data.timeSlotStatus === 'True'">
                               <v-checkbox
                               label="เปิดรับจองนอกเวลา"
@@ -772,7 +783,7 @@
                           </v-row>
                         </v-col>
                         <v-col
-                          cols="12"
+                          cols="12" class="pb-0"
                         >
                           <v-textarea
                           v-if="formAdd.checkDeposit === 'True'"
@@ -783,7 +794,7 @@
                           ></v-textarea>
                         </v-col>
                         <v-col
-                          cols="12"
+                          cols="12"  class="pb-0"
                         >
                           <v-textarea
                           v-if="formAdd.checkDeposit === 'True'"
@@ -798,7 +809,7 @@
                             v-if="formAdd.checkDeposit === 'True'"
                             v-model="formAdd.depositTime"
                             :items="depositTimeItem"
-                            label="ชำระเงินมัดจำภายในกี่นาที"
+                            label="ชำระเงินภายในกี่นาที"
                             outlined
                             dense
                             attach
@@ -824,7 +835,7 @@
                           ></v-text-field>
                           <VuetifyMoney
                             v-if="formAdd.checkDeposit === 'True'"
-                            label="จำนวนเงินมัดจำ"
+                            label="จำนวนเงิน"
                             v-model="formAdd.amountDeposit"
                             required
                             :rules="[rules.required]"
@@ -958,14 +969,14 @@
                           <v-row>
                           <v-col style="display: flex;justify-content: flex-start;" v-if="formUpdate.storeFrontCheck === 'False'">
                             <v-checkbox
-                            label="เงินมัดจำ"
+                            label="ชำระเงิน"
                             false-value="False"
                             :on-icon="'mdi-check-circle'"
                             :off-icon="'mdi-checkbox-blank-circle-outline'"
                             color="#1B437C"
                             true-value="True"
                             v-model="formUpdate.checkDeposit"
-                            @change="formUpdate.amountDeposit = 0"
+                            @change="formUpdate.amountDeposit = 0, formUpdate.updateStatusConfirm = 'False'"
                           ></v-checkbox>
                           </v-col>
                            <v-col style="display: flex;justify-content: flex-start;">
@@ -992,6 +1003,17 @@
                           </v-col>
                           </v-row>
                           <v-row>
+                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.checkDeposit === 'False'"  >
+                              <v-checkbox
+                                label="เมื่อนัดหมายเสร็จ สถานะเป็นยืนยัน"
+                                false-value="False"
+                                :on-icon="'mdi-check-circle'"
+                                :off-icon="'mdi-checkbox-blank-circle-outline'"
+                                color="#1B437C"
+                                true-value="True"
+                                v-model="formUpdate.updateStatusConfirm"
+                              ></v-checkbox>
+                            </v-col>
                             <v-col cols="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="$session.getAll().data.timeSlotStatus === 'True'">
                               <v-checkbox
                               label="เปิดรับจองนอกเวลา"
@@ -1154,7 +1176,7 @@
                           </v-row>
                         </v-col>
                         <v-col
-                          cols="12"
+                          cols="12" class="pb-0"
                         >
                           <v-textarea
                           v-if="formUpdate.checkDeposit === 'True'"
@@ -1165,7 +1187,7 @@
                           ></v-textarea>
                         </v-col>
                         <v-col
-                          cols="12"
+                          cols="12" class="pb-0"
                         >
                           <v-textarea
                           v-if="formUpdate.checkDeposit === 'True'"
@@ -1180,11 +1202,11 @@
                             v-if="formUpdate.checkDeposit === 'True'"
                             v-model="formUpdate.depositTime"
                             :items="depositTimeItem"
-                            label="ชำระเงินมัดจำภายในกี่นาที"
+                            label="ชำระเงินภายในกี่นาที"
                             outlined
                             dense
                             attach
-            :menu-props="{ bottom: true, offsetY: true }"
+                            :menu-props="{ bottom: true, offsetY: true }"
                           ></v-select>
                           <v-text-field
                           v-if="formUpdate.checkDeposit === 'True'"
@@ -1206,7 +1228,7 @@
                           ></v-text-field>
                           <VuetifyMoney
                             v-if="formUpdate.checkDeposit === 'True'"
-                            label="จำนวนเงินมัดจำ"
+                            label="จำนวนเงิน"
                             v-model="formUpdate.amountDeposit"
                             required
                             :rules="[rules.required]"
@@ -2547,7 +2569,8 @@ export default {
         servicePointCountEnd: 0,
         servicePointRecursive: 'False',
         depositTextTH: 'ชำระเงินมัดจำ',
-        depositTextEN: 'pay deposit'
+        depositTextEN: 'pay deposit',
+        updateStatusConfirm: 'False'
       },
       formAddStep: {
         stepId: '',
@@ -2861,7 +2884,8 @@ export default {
             name: this.formAddMenu.name,
             nameSub: this.formAddMenu.nameSub,
             price: this.formAddMenu.price,
-            picture: this.formAddMenu.picture
+            picture: this.formAddMenu.picture,
+            qty: 0
           }
           this.formMenu.menuItem.push(dataMenu)
           await this.UpdateMenuInFlow(this.formMenu.menuItem)
@@ -3923,6 +3947,7 @@ export default {
       this.formUpdate.servicePointEn = item.servicePointEn || ''
       this.formUpdate.storeFrontText = item.storeFrontText || ''
       this.formUpdate.servicePointStatus = item.servicePointStatus || 'False'
+      this.formUpdate.updateStatusConfirm = item.updateStatusConfirm || 'False'
       this.formUpdate.servicePointRecursive = item.servicePointRecursive || 'False'
       this.formUpdate.servicePointCountStart = item.servicePointCountStart || '0'
       this.formUpdate.servicePointCountEnd = item.servicePointCountEnd || '0'
@@ -4518,6 +4543,8 @@ export default {
             this.formAdd[key] = 'False'
           } else if (key === 'servicePointRecursive') {
             this.formAdd[key] = 'False'
+          } else if (key === 'updateStatusConfirm') {
+            this.formAdd[key] = 'False'
           } else if (key === 'amountDeposit') {
             this.formAdd[key] = 0
           } else if (key === 'servicePointCountStart') {
@@ -4564,6 +4591,8 @@ export default {
           } else if (key === 'bookingNowCheck') {
             this.formUpdate[key] = 'False'
           } else if (key === 'repeatBooking') {
+            this.formUpdate[key] = 'False'
+          } else if (key === 'updateStatusConfirm') {
             this.formUpdate[key] = 'False'
           } else if (key === 'customerTimeSlot') {
             this.formUpdate[key] = 'False'
