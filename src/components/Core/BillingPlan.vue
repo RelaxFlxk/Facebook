@@ -827,13 +827,17 @@ export default {
           if (rs.status === false) {
             this.paymentStatus = ''
           } else {
-            this.paymentStatus = rs[0].paymentStatus
-            this.sysShopData = rs[0]
+            if (rs[0].paymentDate < moment().format('YYYY-MM-DD HH:mm')) {
+              this.paymentStatus = ''
+            } else {
+              this.paymentStatus = rs[0].paymentStatus
+              this.sysShopData = rs[0]
+            }
           }
         })
       this.dataPackage = []
       await axios
-        .get(this.DNS_IP + '/system_shop_package/get?source=BeLinked')
+        .get(this.DNS_IP + '/system_shop_package/get?source=BeLinked&typeShop=' + this.$session.getAll().data.typeShop)
         .then(async (responses) => {
           let rsPacket = responses.data
           for (let i = 0; i < rsPacket.length; i++) {
