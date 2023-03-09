@@ -689,8 +689,8 @@ export default {
       }
       this.btNumber = item.btNumber || ''
       this.remark = item.remark || ''
-      this.shopId_Shop = item.shopId_Shop
-      this.idPayment = item.id
+      this.shopId_Shop = item.shopId_Shop || ''
+      this.idPayment = item.id || ''
       this.dialogSetting = true
     },
     async saveDateSetting () {
@@ -710,28 +710,52 @@ export default {
       if (this.remark !== '') {
         this.remark = this.remark.replace(/%/g, '%%').replace(/'/g, "\\'")
       }
-      var ds = {
-        paymentDateTrue: paymentDateTrue,
-        btNumber: this.btNumber,
-        remark: this.remark,
-        shopId: this.shopId_Shop
-      }
-      await axios
-        .post(
+      if (this.idPayment === '') {
+        if (this.shopId_Shop !== '') {
+          let ds = {
+            btNumber: this.btNumber
+          }
+          await axios
+            .post(
+              // eslint-disable-next-line quotes
+              this.DNS_IP + "/sys_shop/edit/" + this.shopId_Shop,
+              ds
+            )
+            .then(async (response) => {
+              this.dialogSetting = false
+              this.$swal('สำเร็จ', 'บันทึกสำเร็จ', 'success')
+              this.checkSearch()
+              this.paymentDateTrue = ''
+              this.btNumber = ''
+              this.remark = ''
+              this.shopId_Shop = ''
+              this.idPayment = ''
+            })
+        }
+      } else {
+        let ds = {
+          paymentDateTrue: paymentDateTrue,
+          btNumber: this.btNumber,
+          remark: this.remark,
+          shopId: this.shopId_Shop
+        }
+        await axios
+          .post(
           // eslint-disable-next-line quotes
-          this.DNS_IP + "/system_shop_Payment/editAdmin/" + this.idPayment,
-          ds
-        )
-        .then(async (response) => {
-          this.dialogSetting = false
-          this.$swal('สำเร็จ', 'บันทึกสำเร็จ', 'success')
-          this.checkSearch()
-          this.paymentDateTrue = ''
-          this.btNumber = ''
-          this.remark = ''
-          this.shopId_Shop = ''
-          this.idPayment = ''
-        })
+            this.DNS_IP + "/system_shop_Payment/editAdmin/" + this.idPayment,
+            ds
+          )
+          .then(async (response) => {
+            this.dialogSetting = false
+            this.$swal('สำเร็จ', 'บันทึกสำเร็จ', 'success')
+            this.checkSearch()
+            this.paymentDateTrue = ''
+            this.btNumber = ''
+            this.remark = ''
+            this.shopId_Shop = ''
+            this.idPayment = ''
+          })
+      }
     },
     openDetail (item) {
       this.itemPayMent = item

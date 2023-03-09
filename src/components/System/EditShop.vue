@@ -514,6 +514,7 @@ export default {
       //
       //
       // Get ID /main.js
+      console.log('getDataById', item)
       this.formUpdate.timeSlotStatus = item.timeSlotStatus || 'False'
       this.timeSlotStatusOld = item.timeSlotStatus || 'False'
       this.dataReady = false
@@ -616,7 +617,7 @@ export default {
             bookingthankTextEn = this.formUpdate.bookingthankTextEn.replace(/%/g, '%%').replace(/'/g, "\\'")
           }
           let videoLinkMonition = ''
-          if (this.formUpdate.videoLinkMonition === '') {
+          if (this.formUpdate.videoLinkMonition === '' || this.formUpdate.videoLinkMonition === null) {
             videoLinkMonition = ''
           } else {
             videoLinkMonition = this.formUpdate.videoLinkMonition.replace(/%/g, '%%').replace(/'/g, "\\'")
@@ -667,7 +668,9 @@ export default {
               }
               this.updateBetaskDB(ds, this.$session.getAll().data.shopId)
               console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
-              if (this.timeSlotStatusOld === this.formUpdate.timeSlotStatus) {
+              console.log(this.timeSlotStatusOld, this.formUpdate.timeSlotStatus)
+              let checktimeSlotStatus = this.formUpdate.timeSlotStatus || 'False'
+              if (this.timeSlotStatusOld === checktimeSlotStatus) {
                 this.$swal('เรียบร้อย', 'บันทึกสำเร็จ', 'success')
               } else {
                 let dt = {}
