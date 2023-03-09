@@ -3146,7 +3146,7 @@
                           filter
                           dark
                           color="green darken-1"
-                          @click="dialogDeposit = true, bookNo = item.bookNo, statusDeposit = true, pictureUrlPreviewDeposit = item.depositImge || ''"
+                          @click="getDataMenu(item),dialogDeposit = true, bookNo = item.bookNo, statusDeposit = true, pictureUrlPreviewDeposit = item.depositImge || ''"
                         >
                         <!-- <v-icon class="iconify mr-1" size="70px" color="#FFAB2D" data-icon="flat-color-icons:money-transfer"></v-icon> -->
                         <v-icon class="iconify mr-1" color="#FFAB2D">mdi-script-text-outline</v-icon>
@@ -4588,7 +4588,7 @@
                         dark
                         color="white"
                         :style="styleCloseBt"
-                        @click="dialogDeposit = false, pictureUrlPreviewDeposit = null"
+                        @click="dialogDeposit = false, pictureUrlPreviewDeposit = null, dataMenu = [], priceMenu = null"
                         >
                         X
                       </v-btn>
@@ -4596,61 +4596,94 @@
                   </v-col>
                 </v-row>
               </v-container>
-              <v-card-text v-if="pictureUrlPreviewDeposit === ''">
-                <v-alert
-                    dense
-                    border="left"
-                    type="warning"
-                  >
-                    <strong>ไม่มี รูปหลักฐานการมัดจำ</strong>
-                  </v-alert>
-                  <v-file-input
-                        required
-                        :rules="[rules.resizeImag]"
-                        counter
-                        show-size
-                        accept="image/png, image/jpeg, image/bmp"
-                        prepend-icon="mdi-camera"
-                        label="รูปหลักฐานการมัดจำ"
-                        @change="selectImgDeposit"
-                        v-model="filesDeposit"
-                      ></v-file-input>
-              </v-card-text>
-              <v-card-text v-else>
-                <v-container>
-                   <v-form
-                    ref="form_deposit"
-                    v-model="valid_deposit"
-                    lazy-validation
-                  >
-                  <v-row justify="center">
-                    <v-col cols="12" class="text-center">
-                      <v-img
-                        aspect-ratio="6"
-                        height="500"
-                        contain
-                        @click="gotoPicture(pictureUrlPreviewDeposit)"
-                        :src="pictureUrlPreviewDeposit"
-                      ></v-img>
-                      <br />
-                      <v-file-input
-                        required
-                        :rules="[rules.resizeImag]"
-                        counter
-                        show-size
-                        accept="image/png, image/jpeg, image/bmp"
-                        prepend-icon="mdi-camera"
-                        label="รูปหลักฐานการมัดจำ"
-                        @change="selectImgDeposit"
-                        v-model="filesDeposit"
-                      ></v-file-input>
-                    </v-col>
-                  </v-row>
-                   </v-form>
-                </v-container>
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
+             <v-row>
+                <v-col :cols="dataMenu.length > 0 ? 6 : 12">
+                  <v-card-text v-if="pictureUrlPreviewDeposit === ''">
+                  <v-alert
+                      dense
+                      border="left"
+                      type="warning"
+                    >
+                      <strong>ไม่มี รูปหลักฐานการมัดจำ</strong>
+                    </v-alert>
+                    <v-file-input
+                          required
+                          :rules="[rules.resizeImag]"
+                          counter
+                          show-size
+                          accept="image/png, image/jpeg, image/bmp"
+                          prepend-icon="mdi-camera"
+                          label="รูปหลักฐานการมัดจำ"
+                          @change="selectImgDeposit"
+                          v-model="filesDeposit"
+                        ></v-file-input>
+                </v-card-text>
+                <v-card-text v-else>
+                  <v-container>
+                    <v-form
+                      ref="form_deposit"
+                      v-model="valid_deposit"
+                      lazy-validation
+                    >
+                    <v-row justify="center">
+                      <v-col cols="12" class="text-center">
+                        <v-img
+                          aspect-ratio="6"
+                          height="500"
+                          contain
+                          @click="gotoPicture(pictureUrlPreviewDeposit)"
+                            :src="pictureUrlPreviewDeposit"
+                          ></v-img>
+                          <br />
+                          <v-file-input
+                            required
+                            :rules="[rules.resizeImag]"
+                            counter
+                            show-size
+                            accept="image/png, image/jpeg, image/bmp"
+                            prepend-icon="mdi-camera"
+                            label="รูปหลักฐานการมัดจำ"
+                            @change="selectImgDeposit"
+                            v-model="filesDeposit"
+                          ></v-file-input>
+                        </v-col>
+                      </v-row>
+                      </v-form>
+                    </v-container>
+                  </v-card-text>
+                </v-col>
+                <v-col cols="6" v-if="dataMenu.length > 0">
+                  <v-expansion-panels multiple v-model="expansionMenu" class="px-3 pr-5">
+                      <v-expansion-panel>
+                        <v-expansion-panel-header>{{"รายการและราคา"}}</v-expansion-panel-header>
+                        <v-expansion-panel-content>
+                          <div style="align-items: center;width:100%;">
+                            <v-row>
+                              <v-col cols="12" v-for="(item,id) in dataMenu.filter(el => { return parseInt(el.qty) > 0 })" :key="id" style="display: flex;">
+                                <v-card class="cardMenu">
+                                    <v-img
+                                      class="pictureMenu"
+                                      :src="item.picture"
+                                    ></v-img>
+                                    <v-row>
+                                      <v-col cols="6"><p class="ma-0 textTitelMenu">{{item.name}}</p></v-col>
+                                      <v-col cols="6" style="display: flex;justify-content: flex-end;" class="textTitelMenu">{{item.qty}} x {{formatNumber(item.price)}}</v-col>
+                                    </v-row>
+                                </v-card>
+                              </v-col>
+                              <v-col cols="12">
+                                <v-row>
+                                  <v-col cols="6"><p class="ma-0 textTitelPriceMenu">{{"รวมราคา"}}</p></v-col>
+                                  <v-col cols="6" style="display: flex;justify-content: flex-end;" class="textTitelPriceMenu">{{formatNumber(priceMenu)}}</v-col>
+                                </v-row>
+                              </v-col>
+                            </v-row>
+                          </div>
+                        </v-expansion-panel-content>
+                      </v-expansion-panel>
+                    </v-expansion-panels>
+                </v-col>
+             </v-row>
                 <!-- <v-btn
                   elevation="2"
                   x-large
@@ -4663,6 +4696,8 @@
                   <v-icon left> mdi-cancel</v-icon>
                   ปิด
                 </v-btn> -->
+            <v-card-actions>
+                <v-spacer></v-spacer>
                 <v-btn
                   elevation="2"
                   x-large
@@ -7259,7 +7294,10 @@ export default {
       dataCoin: [],
       productExchangeRateId: '',
       memberTel: '',
-      dataLineConfig: {}
+      dataLineConfig: {},
+      priceMenu: null,
+      dataMenu: [],
+      expansionMenu: [0]
     }
   },
   beforeCreate () {
@@ -7314,6 +7352,16 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
+    getDataMenu (item) {
+      this.dataMenu = []
+      this.priceMenu = null
+      console.log('itemGetDataMenu', item)
+      if (item.menuItem !== null || item.menuItem !== '') {
+        this.dataMenu = JSON.parse(item.menuItem)
+        this.priceMenu = item.menuPrice
+      }
+      console.log('priceMenu', this.priceMenu, 'dataMenu', this.dataMenu)
+    },
     FunCopyQrcode (text) {
       // var copyText = document.getElementById('myInput')
       // copyText.select()
@@ -11755,6 +11803,8 @@ export default {
                 s.packageId = d.packageId || ''
                 s.tokenPackage = d.tokenPackage || ''
                 s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
+                s.menuItem = d.menuItem || []
+                s.menuPrice = d.menuPrice || ''
                 s.memberDataTag = JSON.parse(d.memberDataTag) || []
                 if (s.memberDataTag.length > 0) {
                   s.tagDataShow = []
@@ -11919,6 +11969,8 @@ export default {
                 s.packageId = d.packageId || ''
                 s.tokenPackage = d.tokenPackage || ''
                 s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
+                s.menuItem = d.menuItem || []
+                s.menuPrice = d.menuPrice || ''
                 s.memberDataTag = JSON.parse(d.memberDataTag) || []
                 if (s.memberDataTag.length > 0) {
                   s.tagDataShow = []
@@ -14842,5 +14894,65 @@ body {
 }
 .v-data-table__wrapper{
   min-height: 400px !important;
+}
+.textPriceMenu {
+/* Price/Small */
+font-style: normal;
+font-weight: 700;
+font-size: 14px;
+line-height: 20px;
+
+color: #FF7B2C;
+
+}
+.textTitelPriceMenu {
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 22px;
+}
+.textTitelMenu {
+font-style: normal;
+font-weight: 600;
+font-size: 14px;
+line-height: 22px;
+}
+.textSubTitelMenu {
+font-style: normal;
+font-weight: 200;
+font-size: 14px;
+line-height: 22px;
+}
+.pictureMenu {
+  width: 40px;
+  height: 40px;
+
+  filter: drop-shadow(0px 0px 8px rgba(255, 255, 255, 0.7));
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+.cardMenu {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px 12px;
+  gap: 12px;
+
+  width: 327px;
+  height: 70px;
+
+  background: #FFFFFF;
+  box-shadow: 0px 0px 1px rgba(12, 26, 75, 0.03), 0px 4px 20px -2px rgba(50, 50, 71, 0.04);
+  border-radius: 16px;
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 0;
+  flex-grow: 1;
 }
 </style>
