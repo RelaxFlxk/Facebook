@@ -155,14 +155,13 @@
                   offset-y
                   max-width="290px"
                   min-width="auto"
-                  :style="'color:' + text"
                 >
                   <template v-slot:activator="{ on, attrs }">
                         <v-text-field
                           hide-details
                           :background-color="bgColor3"
                           v-model="dateStartShow"
-                          :style="'box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;color:' + text"
+                          :style="'box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;'"
                           readonly
                           outlined
                           dark
@@ -253,14 +252,14 @@
                     <v-row v-for="(items, id) in itemBookingUse" :key="id">
                       <v-col cols="6" class="pt-2">
                         <v-row class="text-center">
-                          <v-col cols="12" :style="'font-weight: 700;font-size: 48px;color' + text">
+                          <v-col cols="12" :style="'font-weight: 700;font-size: 48px;color:black'">
                             {{items.storeFrontQueue}}
                           </v-col>
                         </v-row>
                       </v-col>
                       <v-col cols="6" class="pt-2" style="border-left: 1px solid #695988 !important">
                         <v-row class="text-center">
-                          <v-col cols="12" :style="'font-weight: 700;font-size: 48px;color:' + text">
+                          <v-col cols="12" :style="'font-weight: 700;font-size: 48px;color:black'">
                             {{items.servicePoint}}
                           </v-col>
                         </v-row>
@@ -343,7 +342,7 @@
                 >
                   <v-row>
                     <v-col cols="2" class="pb-0 pt-1 mt-3 pl-10" v-for="(items, id) in countConfirmList" :key="id">
-                      <strong class="text-white" style="font-size: 20px;">{{items.storeFrontQueue}}</strong>
+                      <strong :style="'font-size: 20px;color:' + text">{{items.storeFrontQueue}}</strong>
                     </v-col>
                   </v-row>
                 </v-sheet>
@@ -509,6 +508,7 @@ export default {
       speakerId: 3,
       history: [],
       objInterval: null,
+      text2: '',
       tableAudioList: [
         '',
         'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084650542663.wav',
@@ -723,8 +723,9 @@ export default {
             this.bgColor2 = this.bgColor22(this.bgColor)
             this.bgColor3 = this.bgColor33(this.bgColor2)
             this.text = this.HEXToVBColor(rs[0].primaryColor)
+            this.text2 = this.HEXToVBColor(this.bgColor3)
             console.log('bgColor2', this.bgColor)
-            console.log('bgColor3', this.bgColor3)
+            console.log('bgColor3', this.text2)
           } else {
             this.shopName = ''
             this.shopColor = ''
