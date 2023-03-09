@@ -1931,6 +1931,7 @@
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
                      <v-btn
+                        v-if="item.checkDeposit === 'True'"
                         color="#880E4F"
                         fab
                         small
@@ -4183,7 +4184,7 @@ export default {
     },
     async editDataSubmit () {
       if (this.validUpdate !== false) {
-        console.log('this.formUpdate', this.formUpdate)
+        console.log('this.formUpdate111', this.formUpdate)
         let fieldId = []
         for (let i = 0; i < this.desserts.length; i++) {
           let d = this.desserts[i]
@@ -4221,7 +4222,9 @@ export default {
             if (this.formUpdate.empTitleEng !== '') {
               this.formUpdate.empTitleEng = this.formUpdate.empTitleEng.replace(/%/g, '%%').replace(/'/g, "\\'")
             }
-
+            if (this.formUpdate.checkDeposit === 'False') {
+              this.formUpdate.menuShowStatus = 'False'
+            }
             var ID = this.formUpdate.flowId
             delete this.formUpdate['flowId']
             delete this.formUpdate['fieldId']
