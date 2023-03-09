@@ -704,7 +704,9 @@ export default {
             }
           }
         } else {
-          this.chkPlan()
+          if (moment().format('YYYY-MM-DD') > billingEndDate) {
+            this.chkPlan()
+          }
         }
       }
       console.log('session', this.session)
