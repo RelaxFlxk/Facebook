@@ -619,7 +619,7 @@ export default {
         let result
         await axios
           .get(
-            `${this.DNS_IP}/callQueues/get?storeFrontQueue=${item.storeFrontQueue}`
+            `${this.DNS_IP}/callQueues/get?storeFrontQueue=${item.storeFrontQueue}&shopId=` + this.$session.getAll().data.shopId + `&audioFile=notNull`
           ).then(async (response) => {
             if (response.data.length > 0 && typeof response.data.status === 'undefined') {
               item.audioFile = response.data[0].audioFile
