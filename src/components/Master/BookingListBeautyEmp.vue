@@ -4485,6 +4485,23 @@
                     <v-col class="main" col="12" md="12" sm="12" >
                       <v-card class="p-3 " min-height="70vh" rounded>
                         <div class="avatar text-center">
+                          <div style="display:flex;align-items: center;justify-content: center;">
+                            <h4 v-if="memberName">
+                            {{memberName}}
+                            </h4>
+                            <v-btn
+                              class="ml-3"
+                              dark
+                              fab
+                              x-small
+                              color="blue"
+                              @click="coppyLink(memberName)"
+                            >
+                              <v-icon dark>
+                                mdi-content-copy
+                              </v-icon>
+                            </v-btn>
+                          </div>
                           <v-avatar size="120" style="border:5px solid #FFFFFF;">
                           <v-img
                             v-if="pictureUrHistory"
@@ -4494,6 +4511,16 @@
                             mdi-tooltip-account
                           </v-icon>
                         </v-avatar>
+                        </div>
+                        <div v-if="memberName" class="text-center my-3">
+                          <v-btn
+                          dark
+                          small
+                          color="#2BC155"
+                          @click="gotoLineOa()"
+                          >
+                          LINE OA
+                        </v-btn>
                         </div>
                         <br>
                         <v-select
@@ -6310,6 +6337,7 @@ export default {
       dataFlowSelectEdit: [],
       checkSelectText: '',
       pictureUrHistory: '',
+      memberName: '',
       tagName: '',
       dialogHistory: false,
       dialogAddTag: false,
@@ -6682,6 +6710,22 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
+    gotoLineOa () {
+      window.open('https://chat.line.biz/', '_blank')
+    },
+    async coppyLink (item) {
+      console.log('item', item)
+      // this.$swal.fire('Any fool can use a computer')
+      // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+      this.$swal({
+        title: 'Copy successfully',
+        text: 'คัดลอกลายชื่อเรียบร้อย',
+        type: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      })
+      await navigator.clipboard.writeText(item)
+    },
     getDataMenu (item) {
       this.dataMenu = []
       this.priceMenu = null
@@ -9031,6 +9075,7 @@ export default {
     async openHistory (item) {
       console.log('item', item)
       this.pictureUrHistory = item.memberPicture
+      this.memberName = item.memberName
       const BookingData = await axios.get(this.DNS_IP + '/BookingData/get_history?shopId=' + this.$session.getAll().data.shopId + '&userId=' + item.userId)
         .then(async (response) => {
           return response.data
@@ -12126,7 +12171,7 @@ export default {
       await axios
         .get(urlApi)
         .then(async response => {
-          console.log('getData', response.data.length)
+          console.log('getData', response.data)
           if (response.data.length > 0) {
             for (let i = 0; i < response.data.length; i++) {
               let d = response.data[i]
@@ -12185,6 +12230,7 @@ export default {
                 s.remarkDepositLinked = d.remarkDepositLinked || ''
                 s.lineUserId = d.lineUserId
                 s.memberPicture = d.memberPicture
+                s.memberName = d.memberName
                 s.timeDueHtext = d.timeDueH + ':00'
                 s.timeDuetext = d.timeDue
                 s.countChangeTime = d.countChangeTime || 0
@@ -12353,6 +12399,7 @@ export default {
                 s.remarkDepositLinked = d.remarkDepositLinked || ''
                 s.lineUserId = d.lineUserId
                 s.memberPicture = d.memberPicture
+                s.memberName = d.memberName
                 s.timeDueHtext = d.timeDueH + ':00'
                 s.timeDuetext = d.timeDue
                 s.countChangeTime = d.countChangeTime || 0
