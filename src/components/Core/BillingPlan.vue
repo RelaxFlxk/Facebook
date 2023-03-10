@@ -1133,6 +1133,7 @@ export default {
                       shopName: this.$session.getAll().data.shopName,
                       contactTel: this.$session.getAll().data.contactTel,
                       contactEmail: this.$session.getAll().data.contactEmail,
+                      btNumber: this.$session.getAll().data.btNumber,
                       billingCusName: this.billingCusName,
                       billingAddress: this.billingAddress,
                       billingTax: this.billingTax,
