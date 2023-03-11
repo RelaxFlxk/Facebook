@@ -7617,7 +7617,11 @@ export default {
                   //   this.dataMenuShowMenuReport.push(s)
                   // }
                   d.hide = false
-                  d.menuItem = JSON.parse(d.menuItem || [])
+                  if (d.menuItem === null || d.menuItem === '') {
+                    d.menuItem = []
+                  } else {
+                    d.menuItem = JSON.parse(d.menuItem || [])
+                  }
                   d.cusName = this.getDataFromFieldName(this.BookingDataListShowMenuReport[d.bookNo], 'ชื่อ')
                   d.cusReg = this.getDataFromFieldName(this.BookingDataListShowMenuReport[d.bookNo], 'เลขทะเบียน')
                   d.tel = this.getDataFromFieldName(this.BookingDataListShowMenuReport[d.bookNo], 'เบอร์โทร')
