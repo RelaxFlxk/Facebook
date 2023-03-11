@@ -2821,7 +2821,7 @@
                           filter
                           dark
                           color="green darken-1"
-                          @click="getDataMenu(item),dialogDeposit = true, bookNo = item.bookNo, statusDeposit = true, pictureUrlPreviewDeposit = item.depositImge || ''"
+                          @click="dialogDeposit = true, bookNo = item.bookNo, statusDeposit = true, pictureUrlPreviewDeposit = item.depositImge || '',getDataMenu(item)"
                         >
                         <!-- <v-icon class="iconify mr-1" size="70px" color="#FFAB2D" data-icon="flat-color-icons:money-transfer"></v-icon> -->
                         <v-icon class="iconify mr-1" color="#FFAB2D">mdi-script-text-outline</v-icon>
@@ -4285,7 +4285,7 @@
                 </v-row>
               </v-container>
               <v-row>
-                <v-col :cols="dataMenu.length > 0 ? 6 : 12">
+                <v-col :cols="dataMenu.length > 1 ? 6 : 12">
                   <v-card-text v-if="pictureUrlPreviewDeposit === ''">
                 <v-alert
                     dense
@@ -4340,7 +4340,7 @@
                 </v-container>
               </v-card-text>
                 </v-col>
-                <v-col cols="6" v-if="dataMenu.length > 0">
+                <v-col cols="6" v-if="dataMenu.length > 1">
                   <v-expansion-panels multiple v-model="expansionMenu" class="px-3 pr-5">
                       <v-expansion-panel>
                         <v-expansion-panel-header>{{"รายการและราคา"}}</v-expansion-panel-header>
@@ -7084,7 +7084,8 @@ export default {
       this.dataMenu = []
       this.priceMenu = null
       console.log('itemGetDataMenu', item)
-      if (item.menuItem !== null || item.menuItem !== '') {
+      if (item.menuItem !== null || item.menuItem !== '' || item.menuItem.length > 1) {
+        console.log('IF')
         this.dataMenu = JSON.parse(item.menuItem)
         this.priceMenu = item.menuPrice
       }
