@@ -922,7 +922,7 @@ export default {
         cancelButtonText: 'ไม่'
       })
         .then(async (result) => {
-          if (item.id) {
+          if (item.id && text !== 'inactiveToactive') {
             let url = this.DNS_IP + '/system_shop_Payment/edit/' + item.id
             let dt = {
               paymentStatus: text,
