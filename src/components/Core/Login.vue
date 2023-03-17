@@ -621,11 +621,29 @@ export default {
                     localStorage.clear()
                     // เช็คว่ามาจาก boot หรือป่าว
                     if (response.data[0].sourceLink === 'boot') {
+                      if (response.data[0].timeSlotStatus === 'False') {
+                        let dt = {
+                          shopId: this.$session.getAll().data.shopId,
+                          timeSlotStatus: 'True',
+                          storeFrontCheck: 'False',
+                          LAST_USER: this.$session.getAll().data.userName,
+                          type: 'boot'
+                        }
+                        await axios
+                          .post(
+                            this.DNS_IP + '/flow/editTimeSlotStatusByshopId',
+                            dt
+                          )
+                          .then(() => {
+                            response.data[0]['timeSlotStatus'] = 'True'
+                            this.$session.start()
+                            this.$session.set('data', response.data[0])
+                          })
+                      }
+                      //
                       if (response.data[0].statusFollowOA === 'False') {
-                        // alert('statusFollowOA')
                         this.$router.push('/Core/QrcodeBoot')
                       } else if (response.data[0].statusFinishWizard === 'False') {
-                        // alert('InstallWizard')
                         this.$router.push('/InstallWizard')
                       } else {
                         this.checkbookNo(response.data[0])
@@ -633,7 +651,6 @@ export default {
                     } else {
                       this.checkbookNo(response.data[0])
                     }
-                    // this.checkbookNo(response.data[0])
                   } else {
                     this.dataBilling = response.data[0]
                     this.dataReady = true
