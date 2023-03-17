@@ -619,7 +619,21 @@ export default {
                     this.$session.start()
                     this.$session.set('data', response.data[0])
                     localStorage.clear()
-                    this.checkbookNo(response.data[0])
+                    // เช็คว่ามาจาก boot หรือป่าว
+                    if (response.data[0].sourceLink === 'boot') {
+                      if (response.data[0].statusFollowOA === 'False') {
+                        // alert('statusFollowOA')
+                        this.$router.push('/Core/QrcodeBoot')
+                      } else if (response.data[0].statusFinishWizard === 'False') {
+                        // alert('InstallWizard')
+                        this.$router.push('/InstallWizard')
+                      } else {
+                        this.checkbookNo(response.data[0])
+                      }
+                    } else {
+                      this.checkbookNo(response.data[0])
+                    }
+                    // this.checkbookNo(response.data[0])
                   } else {
                     this.dataBilling = response.data[0]
                     this.dataReady = true

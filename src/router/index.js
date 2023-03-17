@@ -415,6 +415,11 @@ export default new Router({
     path: '/Sound/CallQueue',
     name: 'CallQueue',
     component: Sound.callQueue
+  },
+  {
+    path: '/Core/QrcodeBoot',
+    name: 'QrcodeBoot',
+    component: Core.QrcodeBoot
   }
   ]
 })
