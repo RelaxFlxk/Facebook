@@ -357,6 +357,11 @@
                 </v-icon>
               </v-btn>
             </template>
+            <template v-slot:[`item.shopImge`]="{ item }">
+              <v-avatar color="primary" size="40" @click="gotoPicture(item.shopImge)" v-if="item.shopImge !== null">
+                <img :src="item.shopImge" alt="img"
+              /></v-avatar>
+            </template>
             <template v-slot:[`item.paymentImage`]="{ item }">
               <v-avatar color="primary" size="40" @click="gotoPicture(item.paymentImage)" v-if="item.paymentImage !== null">
                 <img :src="item.paymentImage" alt="img"
@@ -635,6 +640,7 @@ export default {
       shopName: '',
       shopImg: '',
       headers: [
+        { text: 'รูปร้าน', value: 'shopImge' },
         { text: 'BT', value: 'btNumber' },
         { text: 'ชื่อร้าน', value: 'shopName' },
         // { text: 'วันที่นัดหมาย', value: 'dueDate' },
@@ -642,7 +648,7 @@ export default {
         { text: 'email', value: 'contactEmail' },
         { text: 'จำนวนนัดหมายที่สร้างของเดือนที่แล้ว', value: 'countBooking' },
         { text: 'สลิป', value: 'paymentImage' },
-        { text: 'ราคาแพ็กเกจ', value: 'paymentAmount' },
+        { text: 'ยอดเงินที่ชำระ', value: 'paymentAmount' },
         { text: 'สถานะ', value: 'paymentStatus' },
         { text: 'วันที่จ่าย/วันที่หมดอายุ', value: 'paymentDate' },
         { text: 'วันวันที่สิ้นสุดทดลองใช้', value: 'trialsVersionDate' },
@@ -916,7 +922,7 @@ export default {
         cancelButtonText: 'ไม่'
       })
         .then(async (result) => {
-          if (item.id) {
+          if (item.id && text !== 'inactiveToactive') {
             let url = this.DNS_IP + '/system_shop_Payment/edit/' + item.id
             let dt = {
               paymentStatus: text,

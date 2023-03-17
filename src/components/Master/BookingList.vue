@@ -3942,7 +3942,7 @@ export default {
     async onSaveRemark () {
       var dt = {
         LAST_USER: this.session.data.userName,
-        remark: (this.remark || '').replace(/%/g, '%%')
+        remark: (this.remark || '').replace(/%/g, '%%').replace(/'/g, "\\'")
       }
       await axios
         .post(
@@ -7153,7 +7153,7 @@ export default {
       var dt = {
         LAST_USER: this.session.data.userName,
         empSelect: this.empSelect,
-        remark: (this.remark || '').replace(/%/g, '%%')
+        remark: (this.remark || '').replace(/%/g, '%%').replace(/'/g, "\\'")
       }
       await axios
         .post(
@@ -7327,7 +7327,7 @@ export default {
         if (this.remark !== '') {
           var dt = {
             LAST_USER: this.session.data.userName,
-            remark: (this.remark || '').replace(/%/g, '%%')
+            remark: (this.remark || '').replace(/%/g, '%%').replace(/'/g, "\\'")
           }
           await axios
             .post(

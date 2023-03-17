@@ -138,6 +138,14 @@ Vue.mixin({
       })
       return dataLineConfig
     },
+    formatNumber (value) {
+      if (value && value !== 0) {
+        console.log('valuevalue', value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','))
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+      } else {
+        return 0
+      }
+    },
     format_date (value) {
       if (value) {
         return moment(moment(new Date(value)), 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss')

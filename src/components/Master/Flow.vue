@@ -546,6 +546,21 @@
                             required
                             :rules="[rules.required]"
                           ></v-text-field>
+                          <v-select
+                            v-if="categorySub.length > 0"
+                            class="pa-0"
+                            v-model="formAdd.categorySub"
+                            :items="categorySub"
+                            label="ประเภทบริการ"
+                            outlined
+                            required
+                            multiple
+                            return-object
+                            attach
+                            chips
+                            :menu-props="{ bottom: true, offsetY: true }"
+                            :rules="[rules.required]"
+                          ></v-select>
                         </v-col>
                           <v-col cols="12" class="pt-0 pb-0">
                           <v-row v-if="formAdd.timeSlotStatus === 'True' && formAdd.customerTimeSlot !== 'True'">
@@ -619,7 +634,7 @@
                           </v-col>
                           </v-row>
                           <v-row>
-                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.checkDeposit === 'False'"  >
+                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;">
                               <v-checkbox
                                 label="เมื่อนัดหมายเสร็จ สถานะเป็นยืนยัน"
                                 false-value="False"
@@ -930,6 +945,21 @@
                             required
                             :rules="[rules.required]"
                           ></v-text-field>
+                          <v-select
+                            v-if="categorySub.length > 0"
+                            class="pa-0"
+                            v-model="formUpdate.categorySub"
+                            :items="categorySub"
+                            label="ประเภทบริการ"
+                            outlined
+                            required
+                            multiple
+                            return-object
+                            attach
+                            chips
+                            :menu-props="{ bottom: true, offsetY: true }"
+                            :rules="[rules.required]"
+                          ></v-select>
                         </v-col>
                         <v-col cols="12" class="pt-0 pb-0" >
                           <v-row v-if="formUpdate.timeSlotStatus === 'True' && formUpdate.customerTimeSlot !== 'True'">
@@ -1003,7 +1033,7 @@
                           </v-col>
                           </v-row>
                           <v-row>
-                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.checkDeposit === 'False'"  >
+                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;"  >
                               <v-checkbox
                                 label="เมื่อนัดหมายเสร็จ สถานะเป็นยืนยัน"
                                 false-value="False"
@@ -2571,7 +2601,8 @@ export default {
         servicePointRecursive: 'False',
         depositTextTH: 'ชำระเงินมัดจำ',
         depositTextEN: 'pay deposit',
-        updateStatusConfirm: 'False'
+        updateStatusConfirm: 'False',
+        categorySub: []
       },
       formAddStep: {
         stepId: '',
@@ -2634,7 +2665,8 @@ export default {
         servicePointCountEnd: 0,
         servicePointRecursive: 'False',
         depositTextTH: '',
-        depositTextEN: ''
+        depositTextEN: '',
+        categorySub: []
       },
       formUpdateItemFlow: {
         fieldId: '',
@@ -2782,7 +2814,9 @@ export default {
         menuItem: [],
         menuShowStatus: 'False'
       },
-      dialogMenu: false
+      dialogMenu: false,
+      categorySubByShop: [],
+      categorySub: []
       // End Data Table Config
     }
   },
@@ -2803,8 +2837,47 @@ export default {
       // this.initSortable()
     }
     await this.getBookingField()
+    await this.getShop()
+    await this.getCategorySub()
   },
   methods: {
+    async getShop () {
+      await axios.get(this.DNS_IP + '/sys_shop/get?shopId=' + this.shopId)
+        .then(async (response) => {
+          let rs = response.data
+          console.log('rs_getCategory', rs)
+          if (rs.length > 0) {
+            this.categorySubByShop = rs
+          }
+        }).catch(function (error) {
+          console.log('Error getting profile: ' + error)
+        })
+    },
+    async getCategorySub () {
+      await axios.get(this.DNS_IP + '/categorySub/getsort')
+        .then(async (response) => {
+          let rs = response.data
+          console.log('rs_getCategorySub', rs)
+          if (rs.length > 0) {
+            let categorySubByShopID = JSON.parse(this.categorySubByShop[0].categorySub)
+            // console.log('ccc', categorySubByShopID)
+            rs.forEach((d) => {
+              categorySubByShopID.forEach((i) => {
+                if (d.idCategorySub === i) {
+                  let s = {}
+                  s.text = d.nameCategorySubTH
+                  s.textEn = d.nameCategorySubEN
+                  s.value = d.idCategorySub
+                  this.categorySub.push(s)
+                }
+              })
+            })
+            console.log('idCategorySub', this.categorySub)
+          }
+        }).catch(function (error) {
+          console.log('Error getting profile: ' + error)
+        })
+    },
     async changeFormMenuStatus () {
       let changeStatus = {
         menuShowStatus: this.formMenu.menuShowStatus,
@@ -3988,6 +4061,7 @@ export default {
       this.formUpdate.depositTime = item.depositTime || 'NO'
       this.formUpdate.depositTextTH = item.depositTextTH || 'ชำระเงินมัดจำ'
       this.formUpdate.depositTextEN = item.depositTextEN || 'pay deposit'
+      this.formUpdate.categorySub = item.categorySub ? JSON.parse(item.categorySub) : []
       this.shopId = this.$session.getAll().data.shopId
       this.fieldType = this.formUpdate.fieldType
       // this.desserts = JSON.parse(response.data[0].flowfieldName)
@@ -4051,7 +4125,7 @@ export default {
             if (this.formAdd.empTitleEng !== '') {
               this.formAdd.empTitleEng = this.formAdd.empTitleEng.replace(/%/g, '%%').replace(/'/g, "\\'")
             }
-
+            this.formAdd.categorySub = JSON.stringify(this.formAdd.categorySub)
             this.formAdd.servicePointCount = []
             if (this.formAdd.servicePointStatus === 'True') {
               let countService = parseInt(this.formAdd.servicePointCountEnd) - parseInt(this.formAdd.servicePointCountStart)
@@ -4233,6 +4307,7 @@ export default {
             delete this.formUpdate['flowfieldId']
 
             this.formUpdate.servicePointCount = []
+            this.formUpdate.categorySub = JSON.stringify(this.formUpdate.categorySub)
             if (this.formUpdate.servicePointStatus === 'True') {
               let countService = parseInt(this.formUpdate.servicePointCountEnd) - parseInt(this.formUpdate.servicePointCountStart)
               let startCount = {

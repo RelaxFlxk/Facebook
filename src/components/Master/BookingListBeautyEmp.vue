@@ -2543,6 +2543,15 @@
                     mdi-book-account-outline
                   </v-icon>
                 </v-btn>
+                <v-btn
+                  v-if="DataFlowNameMenu.length > 0"
+                  color="blue-grey"
+                  class="ma-2 white--text"
+                  small
+                  @click="dialogShowMenuReport = true, dataShowMenuReport = [], dateStartShowMenuReport = ''"
+                >
+                  ตรวจสอบรายการเมนูรายวัน
+                </v-btn>
                 </v-col>
                 <v-col class="text-right" cols="auto">
                   <template v-if="getSelectText === 'confirmJob'">
@@ -2812,7 +2821,7 @@
                           filter
                           dark
                           color="green darken-1"
-                          @click="dialogDeposit = true, bookNo = item.bookNo, statusDeposit = true, pictureUrlPreviewDeposit = item.depositImge || ''"
+                          @click="dialogDeposit = true, bookNo = item.bookNo, statusDeposit = true, pictureUrlPreviewDeposit = item.depositImge || '',getDataMenu(item)"
                         >
                         <!-- <v-icon class="iconify mr-1" size="70px" color="#FFAB2D" data-icon="flat-color-icons:money-transfer"></v-icon> -->
                         <v-icon class="iconify mr-1" color="#FFAB2D">mdi-script-text-outline</v-icon>
@@ -4267,7 +4276,7 @@
                         dark
                         color="white"
                         :style="styleCloseBt"
-                        @click="dialogDeposit = false, pictureUrlPreviewDeposit = null"
+                        @click="dialogDeposit = false, pictureUrlPreviewDeposit = null, dataMenu = [], priceMenu = null"
                         >
                         X
                       </v-btn>
@@ -4275,7 +4284,9 @@
                   </v-col>
                 </v-row>
               </v-container>
-              <v-card-text v-if="pictureUrlPreviewDeposit === ''">
+              <v-row>
+                <v-col :cols="dataMenu.length > 1 ? 6 : 12">
+                  <v-card-text v-if="pictureUrlPreviewDeposit === ''">
                 <v-alert
                     dense
                     border="left"
@@ -4328,6 +4339,39 @@
                    </v-form>
                 </v-container>
               </v-card-text>
+                </v-col>
+                <v-col cols="6" v-if="dataMenu.length > 1">
+                  <v-expansion-panels multiple v-model="expansionMenu" class="px-3 pr-5">
+                      <v-expansion-panel>
+                        <v-expansion-panel-header>{{"รายการและราคา"}}</v-expansion-panel-header>
+                        <v-expansion-panel-content>
+                          <div style="align-items: center;width:100%;">
+                            <v-row>
+                              <v-col cols="12" v-for="(item,id) in dataMenu.filter(el => { return parseInt(el.qty) > 0 })" :key="id" style="display: flex;">
+                                <v-card class="cardMenu">
+                                    <v-img
+                                      class="pictureMenu"
+                                      :src="item.picture"
+                                    ></v-img>
+                                    <v-row>
+                                      <v-col cols="6"><p class="ma-0 textTitelMenu">{{item.name}}</p></v-col>
+                                      <v-col cols="6" style="display: flex;justify-content: flex-end;" class="textTitelMenu">{{item.qty}} x {{formatNumber(item.price)}}</v-col>
+                                    </v-row>
+                                </v-card>
+                              </v-col>
+                              <v-col cols="12">
+                                <v-row>
+                                  <v-col cols="6"><p class="ma-0 textTitelPriceMenu">{{"รวมราคา"}}</p></v-col>
+                                  <v-col cols="6" style="display: flex;justify-content: flex-end;" class="textTitelPriceMenu">{{formatNumber(priceMenu)}}</v-col>
+                                </v-row>
+                              </v-col>
+                            </v-row>
+                          </div>
+                        </v-expansion-panel-content>
+                      </v-expansion-panel>
+                    </v-expansion-panels>
+                </v-col>
+              </v-row>
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <!-- <v-btn
@@ -4450,6 +4494,23 @@
                     <v-col class="main" col="12" md="12" sm="12" >
                       <v-card class="p-3 " min-height="70vh" rounded>
                         <div class="avatar text-center">
+                          <div style="display:flex;align-items: center;justify-content: center;">
+                            <h4 v-if="memberName">
+                            {{memberName}}
+                            </h4>
+                            <v-btn
+                              class="ml-3"
+                              dark
+                              fab
+                              x-small
+                              color="blue"
+                              @click="coppyLink(memberName)"
+                            >
+                              <v-icon dark>
+                                mdi-content-copy
+                              </v-icon>
+                            </v-btn>
+                          </div>
                           <v-avatar size="120" style="border:5px solid #FFFFFF;">
                           <v-img
                             v-if="pictureUrHistory"
@@ -4459,6 +4520,16 @@
                             mdi-tooltip-account
                           </v-icon>
                         </v-avatar>
+                        </div>
+                        <div v-if="memberName" class="text-center my-3">
+                          <v-btn
+                          dark
+                          small
+                          color="#2BC155"
+                          @click="gotoLineOa()"
+                          >
+                          LINE OA
+                        </v-btn>
                         </div>
                         <br>
                         <v-select
@@ -6059,6 +6130,207 @@
               </v-card-text>
             </v-card>
           </v-dialog>
+          <v-dialog v-model="dialogShowMenuReport" persistent max-width="80%">
+            <v-card>
+              <v-card-text>
+                  <v-row>
+                    <v-col cols="6" class="text-left pt-10">
+                      <h3><strong>รายการนัดหมาย</strong></h3>
+                    </v-col>
+                    <v-col cols="6" class="pt-10">
+                      <div style="text-align: end;">
+                        <v-btn
+                          class="mx-2"
+                          fab
+                          small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
+                          @click="dialogShowMenuReport = false"
+                          >
+                          X
+                        </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="6">
+                       <v-menu
+                        ref="menu"
+                        v-model="menuShowMenuReport"
+                        transition="scale-transition"
+                        offset-y
+                        max-width="290px"
+                        min-width="auto"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            hide-details
+                            background-color="white"
+                            v-model="dateStartShowMenuReport"
+                            style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
+                            label="วัน/เดือน/ปี นัดหมาย"
+                            readonly
+                            outlined
+                            dense
+                            v-bind="attrs"
+                            v-on="on"
+                          >
+                          <template #prepend-inner>
+                          <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                            mdi-calendar
+                          </v-icon>
+                        </template></v-text-field>
+                        </template>
+                        <v-date-picker
+                          @input="menuShowMenuReport = false,getBookingShowMenuList()"
+                          v-model="dateStartShowMenuReport"
+                          no-title
+                          scrollable
+                        >
+                        </v-date-picker>
+                        </v-menu>
+                    </v-col>
+                    <v-col cols="6">
+                      <v-select
+                        style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
+                        v-model="flowSelectMenu"
+                        hide-details
+                        background-color="white"
+                        :items="DataFlowNameMenu"
+                        label="ประเภทบริการ"
+                        outlined
+                        dense
+                        @change="getBookingShowMenuList()"
+                      >
+                      <template #prepend-inner>
+                        <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                          mdi-note-text-outline
+                        </v-icon>
+                      </template>
+                      </v-select>
+                    </v-col>
+                    <!-- <v-col cols="6" v-if="dataShowMenuReport.length > 0">
+                      <v-btn
+                        color="teal"
+                        dark
+                        style="border-radius: 20px !important;margin-right: 0px;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
+                        @click="exportShowMenuReport()"
+                      >
+                        <v-icon color="white" left>mdi-microsoft-excel</v-icon>
+                        ส่งออกเป็น Excel
+                      </v-btn>
+                    </v-col> -->
+                    <v-col cols="12">
+                      <v-data-table
+                        :search="searchShowMenuReport"
+                        :headers="headersShowMenuReport"
+                        :items="dataShowMenuReport"
+                        item-key="bookNo"
+                        sort-by="dueDate"
+                        group-by="cusNameTel"
+                        class="elevation-1"
+                        show-group-by
+                        hide-default-footer
+                      >
+                        <template v-slot:group="{ items }">
+                          <tr @click="toggleShowMenuList(items[0].cusNameTel)" style="background-color:#CFD8DC;">
+                            <td  class="text-xs-right"><strong>{{ items[0].cusNameTel }}</strong></td>
+                            <td class="text-xs-right"></td>
+                            <td class="text-xs-right"></td>
+                            <td class="text-xs-right"></td>
+                          </tr>
+                          <tr v-for="(item) in items" :key="item.bookNo" v-show="!item.hide">
+                            <td  v-for="(header, index) in headersShowMenuReport"
+                              :key="index">
+                              <p v-if="header.value !== 'statusBt'">{{ header.value === 'menuPrice' ? formatNumber(item[header.value]) : item[header.value] }}</p>
+                              <template v-else>
+                                <v-chip
+                                  filter
+                                  dark
+                                  v-if="item['statusBt'] === 'confirm'"
+                                  color="#97DDBB"
+                                >
+                                  {{dataTypeProcess2}}
+                                </v-chip>
+                                <v-chip
+                                  filter
+                                  dark
+                                  v-if="item['statusBt'] === 'confirmJob'"
+                                  color="#E5B5D8"
+                                >
+                                  {{dataTypeProcess4}}
+                                </v-chip>
+                                <v-chip
+                                  filter
+                                  dark
+                                  v-if="item['statusBt'] === 'wait'"
+                                  color="#FEAE34"
+                                >
+                                  {{dataTypeProcess1}}
+                                </v-chip>
+                              </template>
+                            </td>
+                          </tr>
+                          <tr v-for="(item) in items" :key="item.bookingId" v-show="!item.hide">
+                            <td  class="text-xs-right" colspan="4">
+                            <div style="align-items: center;width:100%;">
+                              <v-row>
+                                <v-col cols="4" v-for="(itemss,id) in item.menuItem.filter(el => { return parseInt(el.qty) > 0 })" :key="id" style="display: flex;">
+                                  <v-card class="cardMenu">
+                                      <v-img
+                                        class="pictureMenu"
+                                        :src="itemss.picture"
+                                      ></v-img>
+                                      <v-row>
+                                        <v-col cols="6"><p class="ma-0 textTitelMenu">{{itemss.name}}</p></v-col>
+                                        <v-col cols="6" style="display: flex;justify-content: flex-end;" class="textTitelMenu">{{itemss.qty}} x {{formatNumber(itemss.price)}}</v-col>
+                                      </v-row>
+                                  </v-card>
+                                </v-col>
+                                <v-col cols="12">
+                                  <v-row>
+                                    <v-col cols="6"><p class="ma-0 textTitelPriceMenu">รวมราคา</p></v-col>
+                                    <v-col cols="6" style="display: flex;justify-content: flex-end;" class="textTitelPriceMenu">{{formatNumber(item.menuPrice)}}</v-col>
+                                  </v-row>
+                                </v-col>
+                              </v-row>
+                            </div>
+                            </td>
+                          </tr>
+                        </template>
+                        <template v-slot:expanded-item="{ headers, item }">
+                          <td :colspan="headers.length">
+                            <div style="align-items: center;width:100%;">
+                            <v-row>
+                              <v-col cols="12" v-for="(items,id) in item.menuItem.filter(el => { return parseInt(el.qty) > 0 })" :key="id" style="display: flex;">
+                                <v-card class="cardMenu">
+                                    <v-img
+                                      class="pictureMenu"
+                                      :src="items.picture"
+                                    ></v-img>
+                                    <v-row>
+                                      <v-col cols="6"><p class="ma-0 textTitelMenu">{{items.name}}</p></v-col>
+                                      <v-col cols="6" style="display: flex;justify-content: flex-end;" class="textTitelMenu">{{items.qty}} x {{formatNumber(items.price)}}</v-col>
+                                    </v-row>
+                                </v-card>
+                              </v-col>
+                              <v-col cols="12">
+                                <v-row>
+                                  <v-col cols="6"><p class="ma-0 textTitelPriceMenu">"รวมราคา"</p></v-col>
+                                  <v-col cols="6" style="display: flex;justify-content: flex-end;" class="textTitelPriceMenu">{{formatNumber(item.menuPrice)}}</v-col>
+                                </v-row>
+                              </v-col>
+                            </v-row>
+                          </div>
+                          </td>
+                        </template>
+                      </v-data-table>
+                    </v-col>
+                  </v-row>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
           <RetureDeposit ref="RetureDeposit"></RetureDeposit>
           <CallLog ref="CallLog"></CallLog>
           <NotificationService ref="NotificationService"></NotificationService>
@@ -6151,6 +6423,29 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      dialogShowMenuReport: false,
+      menuShowMenuReport: false,
+      dataShowMenuReport: [],
+      dateStartShowMenuReport: '',
+      searchShowMenuReport: null,
+      dataMenuShowMenuReport: [],
+      BookingDataListShowMenuReport: [],
+      DataFlowNameMenu: [],
+      flowSelectMenu: '',
+      expandedMenu: [],
+      headersShowMenuReport: [
+        {
+          text: 'สถานะ',
+          groupable: false,
+          value: 'statusBt'
+        },
+        // { text: 'ชื่อลูกค้า', value: 'cusName', sortable: false, groupable: false }
+        { text: 'วันที่/เวลา', value: 'dueDate', sortable: false, groupable: false },
+        { text: 'บริการ', value: 'flowName', sortable: false, groupable: false },
+        { text: 'ราคา', value: 'menuPrice', sortable: false, groupable: false }
+        // { text: 'เบอร์โทร', value: 'tel', sortable: false, groupable: false }
+      ],
+
       listFilterCloseJob: ['ทั้งหมด', 'ยังไม่ปิดงาน', 'ปิดงาน'],
       filterCloseJobValue: 'ทั้งหมด',
       // confirm (Cancel)
@@ -6275,6 +6570,7 @@ export default {
       dataFlowSelectEdit: [],
       checkSelectText: '',
       pictureUrHistory: '',
+      memberName: '',
       tagName: '',
       dialogHistory: false,
       dialogAddTag: false,
@@ -6614,7 +6910,10 @@ export default {
       timeSlotbyCustomer: [],
       customerTimeSlot: 'False',
       fromAddTimeCus: '',
-      dataLineConfig: {}
+      dataLineConfig: {},
+      priceMenu: null,
+      dataMenu: [],
+      expansionMenu: [0]
     }
   },
   beforeCreate () {
@@ -6644,6 +6943,158 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
+    exportShowMenuReport () {
+      let dataexport = []
+      for (let i = 0; i < this.dataShowMenuReport.length; i++) {
+        let a = this.dataShowMenuReport[i]
+        if (a.statusBt === 'wait') {
+          a.statusBtShow = this.dataTypeProcess1
+        } else if (a.statusBt === 'confirm') {
+          a.statusBtShow = this.dataTypeProcess2
+        } else if (a.statusBt === 'confirmJob') {
+          a.statusBtShow = this.dataTypeProcess4
+        }
+        let data1 = {
+          'สถานะ': a.statusBtShow,
+          'บริการ': a.flowName,
+          'ชื่อลูกค้า': a.cusName,
+          'เบอร์โทร': a.tel,
+          'วันที่': a.dueDate,
+          'ชื่อพนักงาน': a.bookingEmpFlowName
+        }
+        dataexport.push(data1)
+      }
+
+      const wb = XLSX.utils.book_new()
+      let datause2 = dataexport.sort((a, b) => {
+        if (a.วันที่ < b.วันที่) return -1
+        return a.วันที่ > b.วันที่ ? 1 : 0
+      })
+      console.log(datause2)
+      console.log(this.dataMenuShowMenuReport)
+      for (let i = 0; i < this.dataMenuShowMenuReport.length; i++) {
+        let d = this.dataMenuShowMenuReport[i]
+        if (datause2.filter(el => { return el.ชื่อพนักงาน === d.value }).length > 0) {
+          console.log(datause2.filter(el => { return el.ชื่อพนักงาน === d.value }))
+          let sheetNm = ''
+          if (d.value.length > 30) {
+            sheetNm = d.value.substring(0, 29)
+          } else {
+            sheetNm = d.value
+          }
+          XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(datause2.filter(el => { return el.ชื่อพนักงาน === d.value })), sheetNm)
+        }
+      }
+      // console.log('dataexport', dataexport)
+      XLSX.writeFile(wb, 'export_' + this.format_dateNotime(this.dateStartShowMenuReport) + '.xlsx')
+    },
+    toggleShowMenuList (cusNameTel) {
+      this.dataShowMenuReport.forEach(dessert => {
+        if (dessert.cusNameTel === cusNameTel) {
+          dessert.hide = !dessert.hide
+        }
+      })
+    },
+    async getBookingShowMenuList () {
+      this.dataShowMenuReport = []
+      this.dataMenuShowMenuReport = []
+      this.BookingDataListShowMenuReport = []
+      if (this.dateStartShowMenuReport && this.flowSelectMenu) {
+        await this.getBookingDataListShowMenuReport(this.dateStartShowMenuReport)
+        let urlApi = ''
+        urlApi = this.DNS_IP +
+            '/booking_view/get?shopId=' +
+            this.session.data.shopId +
+            '&dueDate=' + this.dateStartShowMenuReport +
+            '&flowId=' + this.flowSelectMenu
+        await axios
+          .get(urlApi)
+          .then(async response => {
+            console.log('getData', response.data.length)
+            if (response.data.length > 0) {
+              for (let i = 0; i < response.data.length; i++) {
+                let d = response.data[i]
+                d.statusBt = d.statusBt || 'wait'
+                if (d.statusBt !== 'cancel') {
+                  // if (this.dataMenuShowMenuReport.filter(el => { return el.value === d.bookingEmpFlowName }).length === 0) {
+                  //   let s = {}
+                  //   s.text = d.bookingEmpFlowName
+                  //   s.value = d.bookingEmpFlowName
+                  //   this.dataMenuShowMenuReport.push(s)
+                  // }
+                  d.hide = false
+                  if (d.menuItem === null || d.menuItem === '') {
+                    d.menuItem = []
+                  } else {
+                    d.menuItem = JSON.parse(d.menuItem || [])
+                  }
+                  d.cusName = this.getDataFromFieldName(this.BookingDataListShowMenuReport[d.bookNo], 'ชื่อ')
+                  d.cusReg = this.getDataFromFieldName(this.BookingDataListShowMenuReport[d.bookNo], 'เลขทะเบียน')
+                  d.tel = this.getDataFromFieldName(this.BookingDataListShowMenuReport[d.bookNo], 'เบอร์โทร')
+                  d.cusName = (d.cusName.length > 0) ? d.cusName[0].fieldValue : ''
+                  d.cusReg = (d.cusReg.length > 0) ? d.cusReg[0].fieldValue : ''
+                  d.tel = (d.tel.length > 0) ? d.tel[0].fieldValue : ''
+                  d.cusNameTel = d.cusName + ' : ' + d.tel
+                  this.dataShowMenuReport.push(d)
+                }
+              }
+            } else {
+              this.dataShowMenuReport = []
+              this.dataMenuShowMenuReport = []
+            }
+          })
+      }
+    },
+    async getBookingDataListShowMenuReport (dateStart) {
+      console.log('dateStart', dateStart)
+      this.BookingDataListShowMenuReport = []
+      let url = ''
+      url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&dueDate=${dateStart}`
+      await axios
+        .get(url)
+        .then(async response => {
+          if (response.data.status !== false) {
+            response.data.forEach((row) => {
+              if (typeof (this.BookingDataListShowMenuReport[row.bookNo]) === 'undefined') {
+                this.BookingDataListShowMenuReport[row.bookNo] = []
+              }
+              this.BookingDataListShowMenuReport[row.bookNo].push(row)
+            })
+          }
+        }).catch(error => {
+          // this.dataEditReady = true
+          setTimeout(() => this.getBookingDataListShowMenuReport(dateStart), 3000)
+          console.log('catch getBookingDataListShowMenuReport : ', error)
+        })
+      console.log('this.BookingDataListShowMenuReport', this.BookingDataListShowMenuReport)
+    },
+    gotoLineOa () {
+      window.open('https://chat.line.biz/', '_blank')
+    },
+    async coppyLink (item) {
+      console.log('item', item)
+      // this.$swal.fire('Any fool can use a computer')
+      // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+      this.$swal({
+        title: 'Copy successfully',
+        text: 'คัดลอกลายชื่อเรียบร้อย',
+        type: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      })
+      await navigator.clipboard.writeText(item)
+    },
+    getDataMenu (item) {
+      this.dataMenu = []
+      this.priceMenu = null
+      console.log('itemGetDataMenu', item)
+      if (item.menuItem !== null || item.menuItem !== '' || item.menuItem.length > 1) {
+        console.log('IF')
+        this.dataMenu = JSON.parse(item.menuItem)
+        this.priceMenu = item.menuPrice
+      }
+      console.log('priceMenu', this.priceMenu, 'dataMenu', this.dataMenu)
+    },
     async getDataFlowAllCancel () {
       this.dataFlowCancel = await this.getDataFromAPI('/flow/get', 'flowId', 'flowName', '')
     },
@@ -8983,6 +9434,7 @@ export default {
     async openHistory (item) {
       console.log('item', item)
       this.pictureUrHistory = item.memberPicture
+      this.memberName = item.memberName
       const BookingData = await axios.get(this.DNS_IP + '/BookingData/get_history?shopId=' + this.$session.getAll().data.shopId + '&userId=' + item.userId)
         .then(async (response) => {
           return response.data
@@ -11320,6 +11772,7 @@ export default {
               s.text = d.flowName
               s.value = d.flowId
               s.allData = d
+              s.menuShowStatus = d.menuShowStatus
               result.push(s)
               resultOption.push(s)
               // console.log('this.DataFlowName', this.DataFlowName)
@@ -11330,6 +11783,7 @@ export default {
           }
         })
       this.DataFlowName = result
+      this.DataFlowNameMenu = result.filter(el => { return el.menuShowStatus === 'True' })
       this.dataFlowSelectAdd = resultOption
       this.dataFlowSelectEdit = resultOption
     },
@@ -12078,7 +12532,7 @@ export default {
       await axios
         .get(urlApi)
         .then(async response => {
-          console.log('getData', response.data.length)
+          console.log('getData', response.data)
           if (response.data.length > 0) {
             for (let i = 0; i < response.data.length; i++) {
               let d = response.data[i]
@@ -12137,6 +12591,7 @@ export default {
                 s.remarkDepositLinked = d.remarkDepositLinked || ''
                 s.lineUserId = d.lineUserId
                 s.memberPicture = d.memberPicture
+                s.memberName = d.memberName
                 s.timeDueHtext = d.timeDueH + ':00'
                 s.timeDuetext = d.timeDue
                 s.countChangeTime = d.countChangeTime || 0
@@ -12144,6 +12599,8 @@ export default {
                 s.dateReturn = d.dateReturn || ''
                 s.packageId = d.packageId || ''
                 s.tokenPackage = d.tokenPackage || ''
+                s.menuItem = d.menuItem || []
+                s.menuPrice = d.menuPrice || ''
                 s.memberDataTag = JSON.parse(d.memberDataTag) || []
                 if (s.memberDataTag.length > 0) {
                   s.tagDataShow = []
@@ -12303,6 +12760,7 @@ export default {
                 s.remarkDepositLinked = d.remarkDepositLinked || ''
                 s.lineUserId = d.lineUserId
                 s.memberPicture = d.memberPicture
+                s.memberName = d.memberName
                 s.timeDueHtext = d.timeDueH + ':00'
                 s.timeDuetext = d.timeDue
                 s.countChangeTime = d.countChangeTime || 0
@@ -12310,6 +12768,8 @@ export default {
                 s.dateReturn = d.dateReturn || ''
                 s.packageId = d.packageId || ''
                 s.tokenPackage = d.tokenPackage || ''
+                s.menuItem = d.menuItem || []
+                s.menuPrice = d.menuPrice || ''
                 s.memberDataTag = JSON.parse(d.memberDataTag) || []
                 if (s.memberDataTag.length > 0) {
                   s.tagDataShow = []
@@ -14583,5 +15043,65 @@ body {
 }
 .v-data-table__wrapper{
   min-height: 400px !important;
+}
+.textPriceMenu {
+/* Price/Small */
+font-style: normal;
+font-weight: 700;
+font-size: 14px;
+line-height: 20px;
+
+color: #FF7B2C;
+
+}
+.textTitelPriceMenu {
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 22px;
+}
+.textTitelMenu {
+font-style: normal;
+font-weight: 600;
+font-size: 14px;
+line-height: 22px;
+}
+.textSubTitelMenu {
+font-style: normal;
+font-weight: 200;
+font-size: 14px;
+line-height: 22px;
+}
+.pictureMenu {
+  width: 40px;
+  height: 40px;
+
+  filter: drop-shadow(0px 0px 8px rgba(255, 255, 255, 0.7));
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+.cardMenu {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px 12px;
+  gap: 12px;
+
+  width: 327px;
+  height: 70px;
+
+  background: #FFFFFF;
+  box-shadow: 0px 0px 1px rgba(12, 26, 75, 0.03), 0px 4px 20px -2px rgba(50, 50, 71, 0.04);
+  border-radius: 16px;
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 0;
+  flex-grow: 1;
 }
 </style>
