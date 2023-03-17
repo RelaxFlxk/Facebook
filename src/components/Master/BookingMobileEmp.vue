@@ -267,6 +267,51 @@
                 readonly
               ></v-text-field>
             </v-row>
+            <v-row class="my-3" v-if="bookItemAll[0].statusUpload1 === 'True' && bookItemAll[0].fileUpload1" style="display: flex;flex-direction: column;align-items: center;">
+              <h5 v-if="get_url_extension(bookItemAll[0].fileUpload1) !== 'pdf'">File 1</h5>
+              <v-img
+                v-if="get_url_extension(bookItemAll[0].fileUpload1) !== 'pdf'"
+                max-height="150"
+                max-width="250"
+                :src="bookItemAll[0].fileUpload1"
+                @click="SelectImg(bookItemAll[0].fileUpload1)"
+              ></v-img>
+              <v-text-field
+                v-else
+                class="mx-4"
+                v-model="bookItemAll[0].fileUpload1"
+                readonly
+                style="width: -webkit-fill-available;"
+                outlined
+                dense
+                label="File"
+                prepend-inner-icon="mdi-chevron-right-box"
+                @click="gotoLink(bookItemAll[0].fileUpload1)"
+              ></v-text-field>
+              <!-- <p @click="gotoLink(bookItemAll[0].fileUpload1)">{{  bookItemAll[0].fileUpload1}}</p> -->
+            </v-row>
+            <v-row class="my-3" v-if="bookItemAll[0].statusUpload2 === 'True' && bookItemAll[0].fileUpload2" style="display: flex;flex-direction: column;align-items: center;">
+              <h5 v-if="get_url_extension(bookItemAll[0].fileUpload2) !== 'pdf'">File 2</h5>
+              <v-img
+                v-if="get_url_extension(bookItemAll[0].fileUpload2) !== 'pdf'"
+                max-height="150"
+                max-width="250"
+                :src="bookItemAll[0].fileUpload2"
+                @click="SelectImg(bookItemAll[0].fileUpload2)"
+              ></v-img>
+              <v-text-field
+                v-else
+                class="mx-4"
+                v-model="bookItemAll[0].fileUpload2"
+                readonly
+                style="width: -webkit-fill-available;"
+                outlined
+                dense
+                label="File 2"
+                prepend-inner-icon="mdi-chevron-right-box"
+                @click="gotoLink(bookItemAll[0].fileUpload2)"
+              ></v-text-field>
+            </v-row>
             <v-col cols='12' class="pb-0 pt-0 mt-0" v-if="dataItem[0].checkOnsite !== 'True'">
               <v-radio-group v-model="radiosRemark">
                 <v-radio value="ซ่อมปกติ">
@@ -389,6 +434,17 @@
         </v-card-text>
       </v-card>
     </v-card>
+    <v-dialog
+      v-model="dialogImg"
+      max-width="100%"
+    >
+      <v-card>
+        <v-img
+          :lazy-src="showImg"
+          :src="showImg"
+        ></v-img>
+      </v-card>
+    </v-dialog>
     <v-dialog v-model="dialogDataWait" fullscreen
       hide-overlay
       transition="dialog-bottom-transition">
@@ -1184,7 +1240,10 @@ export default {
       customerTimeSlot: 'False',
       fromAddTimeCus: '',
       paymentStatus: '',
-      dateCheckBill: ''
+      dateCheckBill: '',
+      bookItemAll: [],
+      dialogImg: false,
+      showImg: ''
     }
   },
   async mounted () {
@@ -1193,6 +1252,16 @@ export default {
     console.log('this.$session.getAll()', this.$session.getAll())
   },
   methods: {
+    async SelectImg (Imgitem) {
+      this.showImg = Imgitem
+      this.dialogImg = true
+    },
+    gotoLink (Link) {
+      window.open(Link, '_blank')
+    },
+    get_url_extension (url) {
+      return url.split(/[#?]/)[0].split('.').pop().trim()
+    },
     async chkPlan () {
       await axios
         .get(
@@ -2669,6 +2738,7 @@ export default {
                   .then(async responses => {
                     console.log('dataBookingData', responses.data)
                     dataBookingData = responses.data
+                    this.bookItemAll = response.data
                     if (responses.data) {
                       this.BookingDataItem.push({
                         fieldName: 'วันที่นัดหมาย',

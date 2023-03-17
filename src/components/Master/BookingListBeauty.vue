@@ -5717,7 +5717,7 @@
             <v-card-text>
             <v-row justify="center">
               <v-col class="videoWrapper">
-                <iframe :src="srcUpload"></iframe>
+                <iframe style="max-width: -webkit-fill-available;" :src="srcUpload"></iframe>
               </v-col>
             </v-row>
             </v-card-text>
