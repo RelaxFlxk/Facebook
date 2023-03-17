@@ -296,6 +296,7 @@
                 <br>
                 <v-btn
                   color="primary"
+                  @click="updateWizard()"
                 >
                   Save
                 </v-btn>
@@ -518,7 +519,6 @@
                       :rules="[rules.required]"
                       label="เลือกหน้าที่จะแสดง"
                       prepend-icon="mdi-map"
-                      attach
                     ></v-select>
                   </v-col>
                   <v-col cols="12" class="pa-0" v-if="formEmp.privacyPage === 'bookingform' || formEmp.privacyPage === 'bookingStoreFront'">
@@ -790,6 +790,32 @@ export default {
         default:
           break
       }
+    },
+    async updateWizard () {
+      // update status blitzard
+      // และพาไปหน้าแรก
+      axios.post(this.DNS_IP + '/sys_shop/edit/' + this.$session.getAll().data.shopId, {'statusFinishWizard': 'True'})
+        .then((res) => {
+          if (res.data.status === true) {
+            this.$swal({
+              title: 'บันทึกข้อมูลสำเร็จ',
+              icon: 'success',
+              type: 'success',
+              confirmButtonText: 'รับทราบ',
+              confirmButtonColor: '#3085d6'
+            })
+              .then((confirm) => {
+                // if (confirm.isConfirmed) {
+                this.$router.push('/Master/BookingField')
+                // }
+              })
+          }
+        })
+        .catch((error) => {
+          this.dataReady = true
+          console.log(error)
+          this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง2', 'error')
+        })
     },
     setTimeEmp () {
       let checkTimeFlow = 'h'
@@ -1509,7 +1535,7 @@ export default {
       this.formEmp.empTitle_NameTH = ''
       this.formEmp.empFirst_NameTH = ''
       this.formEmp.empLast_NameTH = ''
-      this.formEmp.privacyPage = ''
+      this.formEmp.privacyPage = 'bookingform'
       this.formEmp.empImge = ''
       this.formEmp.pictureUrlPreview = ''
       this.formEmp.shopId = this.$session.getAll().data.shopId
