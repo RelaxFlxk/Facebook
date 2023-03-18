@@ -1500,6 +1500,7 @@ export default {
       booking.showLimitBooking = this.showLimitBooking
       booking.statusEngPayment = this.statusEngPayment
       booking.LAST_USER = this.session.data.userName
+      booking.checkLocationStatus = this.checkLocationStatus
       if (this.checkLocationStatus === 'True') {
         if (this.shopLat !== '' && this.shopLong !== '' && this.distanceSet !== '') {
           booking.shopLat = this.shopLat
