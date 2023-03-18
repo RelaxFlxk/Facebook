@@ -821,26 +821,59 @@
                       ></v-checkbox>
                       <v-text-field :value="statusEngPayment === 'True' ? 'ใช้งาน' : 'ไม่ใช้งาน'" readonly label="ภาษาอังกฤษรับเงินมัดจำหรือไม่"></v-text-field>
                     </v-row>
-                    <!-- <v-row align="center">
+                    <v-row align="center">
                       <v-checkbox
                         false-value="False"
                         true-value="True"
-                        v-model="multiDueDate"
+                        v-model="checkLocationStatus"
                         hide-details
                         class="shrink ml-6 mr-0 mt-0 mb-6"
+                        @change="checkLocationStatus === 'True' ? geolocate() : ''"
                       ></v-checkbox>
-                      <v-text-field :value="multiDueDate === 'True' ? 'ใช้งาน' : 'ไม่ใช้งาน'" readonly label="นัดหมายหลายวันหรือไม่"></v-text-field>
-                    </v-row> -->
-                    <!-- <v-row align="center">
-                      <v-checkbox
-                        false-value="False"
-                        true-value="True"
-                        v-model="showLimitBooking"
-                        hide-details
-                        class="shrink ml-6 mr-0 mt-0 mb-6"
-                      ></v-checkbox>
-                      <v-text-field :value="showLimitBooking === 'True' ? 'แสดง' : 'ไม่แสดง'" readonly label="แสดงชั่วโมงของงานหรือไม่"></v-text-field>
-                    </v-row> -->
+                      <v-text-field :value="checkLocationStatus === 'True' ? 'ใช้งาน' : 'ไม่ใช้งาน'" readonly label="เปิดระบบจองในพื้นที่ที่กำหนด"></v-text-field>
+                    </v-row>
+                    <template v-if="checkLocationStatus === 'True'">
+                      <v-col cols="12" class="pb-0 pt-0">
+                        <v-select
+                          v-model="distanceSet"
+                          :items="itemDistance"
+                          label="จับระยะภายใน"
+                          outlined
+                          attach
+                          dense
+                          :menu-props="{ bottom: true, offsetY: true }"
+                        ></v-select>
+                      </v-col>
+                      <v-col class="pb-0 pt-0" cols="12">
+                        <gmap-autocomplete
+                          class="introInput"
+                          placeholder="ค้นหาสถานที่"
+                          @place_changed="updatePlace" style="width: 100%; height: 45px; border: 1px solid;padding-left: 8px; border-radius: 4px;">
+                        </gmap-autocomplete>
+                      </v-col>
+                      <v-col class="pb-0" cols="12">
+                        <v-card class="p-3">
+                          <GmapMap
+                            v-if="center !== null"
+                            :center="center"
+                            :zoom="15"
+                            style="width: 100%; height: 200px"
+                            :options="{
+                              disableDefaultUI: true,
+                              fullscreenControl: true,
+                              zoomControl: true
+                            }"
+                          >
+                            <GmapMarker
+                              :position="center"
+                              :draggable="true"
+                              @drag="updateCoordinates"
+                            />
+                          </GmapMap>
+                        </v-card>
+                      </v-col>
+                    </template>
+                    <br>
                     <v-data-table
                       v-model="itemdetell"
                       :headers="FieldSelect"
@@ -922,26 +955,6 @@
         <v-card min-height="50%" class="pa-3">
                   <v-col cols="12" class="text-center">
                     <h4 class="text-center">โปรดเลือกข้อมูลที่ต้องการแสดงในหน้านัดหมาย</h4>
-                    <!-- <v-row align="center">
-                      <v-checkbox
-                        false-value="ไม่แสดง"
-                        true-value="แสดง"
-                        v-model="showTime"
-                        hide-details
-                        class="shrink ml-6 mr-0 mt-0 mb-6"
-                      ></v-checkbox>
-                      <v-text-field v-model="showTime" readonly label="แสดงเวลาการจองหรือไม่"></v-text-field>
-                    </v-row> -->
-                    <!-- <v-row align="center">
-                      <v-checkbox
-                        false-value="False"
-                        true-value="True"
-                        v-model="showLimitBooking"
-                        hide-details
-                        class="shrink ml-6 mr-0 mt-0 mb-6"
-                      ></v-checkbox>
-                      <v-text-field :value="showLimitBooking === 'True' ? 'แสดง' : 'ไม่แสดง'" readonly label="แสดงชั่วโมงของงานหรือไม่"></v-text-field>
-                    </v-row> -->
                     <v-data-table
                       v-model="itemdetell"
                       :headers="FieldSelect"
@@ -995,6 +1008,23 @@ export default {
   },
   data () {
     return {
+      itemDistance: [
+        {text: '500 เมตร', value: '0.5'},
+        {text: '1 กิโลเมตร', value: '1'},
+        {text: '1 กิโลเมตรครึ่ง', value: '1.5'},
+        {text: '2 กิโลเมตร', value: '2'},
+        {text: '2 กิโลเมตรครึ่ง', value: '2.5'},
+        {text: '3 กิโลเมตร', value: '3'},
+        {text: '3 กิโลเมตรครึ่ง', value: '3.5'},
+        {text: '4 กิโลเมตร', value: '4'},
+        {text: '4 กิโลเมตรครึ่ง', value: '4.5'},
+        {text: '5 กิโลเมตร', value: '5'}
+      ],
+      checkLocationStatus: 'False',
+      distanceSet: '',
+      shopLat: '',
+      shopLong: '',
+      center: null,
       languageSelect: 0,
       statusEngPayment: 'False',
       editBycustomField: 'False',
@@ -1119,6 +1149,46 @@ export default {
     await this.getBookingField()
   },
   methods: {
+    async geolocate () {
+      await navigator.geolocation.getCurrentPosition(
+        async position => {
+          const center = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          }
+          if (center) {
+            this.center = center
+            this.shopLat = center.lat
+            this.shopLong = center.lng
+          }
+        },
+        error => {
+          this.center = null
+          this.shopLat = ''
+          this.shopLong = ''
+          // this.center.lat = null
+          // this.center.lng = null
+          console.log('error map :', error.message)
+        }
+      )
+    },
+    updatePlace (place) {
+      // console.log(place)
+      this.shopLat = place.geometry.location.lat()
+      this.shopLong = place.geometry.location.lng()
+      this.center = {
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng()
+      }
+    },
+    updateCoordinates (location) {
+      this.shopLat = location.latLng.lat()
+      this.shopLong = location.latLng.lng()
+      this.center = {
+        lat: location.latLng.lat(),
+        lng: location.latLng.lng()
+      }
+    },
     updateTextBooking () {
       this.validate('updateBookingText')
       setTimeout(() => this.updateTextBookingSubmit(), 500)
@@ -1287,6 +1357,16 @@ export default {
               this.bookingFormHeaderEn = rs[0].bookingFormHeaderEn || 'Booking Services'
               this.bookingFormHistoryBTEn = rs[0].bookingFormHistoryBTEn || 'History'
               this.bookingFormConfirmBTEn = rs[0].bookingFormConfirmBTEn || 'Confirm'
+              this.shopLat = rs[0].shopLat || ''
+              this.shopLong = rs[0].shopLong || ''
+              this.distanceSet = rs[0].distanceSet || ''
+              this.checkLocationStatus = rs[0].checkLocationStatus || 'False'
+              if (this.checkLocationStatus === 'True') {
+                this.center = {
+                  lat: parseFloat(this.shopLat),
+                  lng: parseFloat(this.shopLong)
+                }
+              }
               let bookingData = []
               if (rs[0].multiDueDate === null || rs[0].multiDueDate === '') {
                 this.multiDueDate = 'False'
@@ -1420,23 +1500,52 @@ export default {
       booking.showLimitBooking = this.showLimitBooking
       booking.statusEngPayment = this.statusEngPayment
       booking.LAST_USER = this.session.data.userName
-      console.log('dtbooking', booking)
-      this.$swal({
-        title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      })
-        .then(async result => {
-          await this.saveBooking(booking)
-        })
-        .catch(error => {
+      if (this.checkLocationStatus === 'True') {
+        if (this.shopLat !== '' && this.shopLong !== '' && this.distanceSet !== '') {
+          booking.shopLat = this.shopLat
+          booking.shopLong = this.shopLong
+          booking.distanceSet = this.distanceSet
+          booking.checkLocationStatus = this.checkLocationStatus
+          console.log('dtbooking', booking)
+          this.$swal({
+            title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#b3b1ab',
+            confirmButtonText: 'ใช่',
+            cancelButtonText: 'ไม่'
+          })
+            .then(async result => {
+              await this.saveBooking(booking)
+            })
+            .catch(error => {
+              this.dataReady = false
+              console.log('Cencel : ', error)
+            })
+        } else {
           this.dataReady = false
-          console.log('Cencel : ', error)
+          this.$swal('ผิดพลาด', 'กรุณาใส่ข้อมูล ระบบจองในพื้นืี่ ในครบ', 'info')
+        }
+      } else {
+        console.log('dtbooking', booking)
+        this.$swal({
+          title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
         })
+          .then(async result => {
+            await this.saveBooking(booking)
+          })
+          .catch(error => {
+            this.dataReady = false
+            console.log('Cencel : ', error)
+          })
+      }
     },
     async saveBooking (booking) {
       let url = '/BookingField/add'
