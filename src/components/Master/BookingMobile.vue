@@ -234,7 +234,7 @@
               ></v-text-field>
             </v-row>
             <v-row class="my-3" v-if="bookItemAll[0].statusUpload1 === 'True' && bookItemAll[0].fileUpload1" style="display: flex;flex-direction: column;align-items: center;">
-              <h5 v-if="get_url_extension(bookItemAll[0].fileUpload1) !== 'pdf'">File 1</h5>
+              <h5 v-if="get_url_extension(bookItemAll[0].fileUpload1) !== 'pdf'">{{ BookingFieldData[0].textUpload1 }}</h5>
               <v-img
                 v-if="get_url_extension(bookItemAll[0].fileUpload1) !== 'pdf'"
                 max-height="150"
@@ -250,14 +250,14 @@
                 style="width: -webkit-fill-available;"
                 outlined
                 dense
-                label="File"
+                :label="BookingFieldData[0].textUpload1"
                 prepend-inner-icon="mdi-chevron-right-box"
                 @click="gotoLink(bookItemAll[0].fileUpload1)"
               ></v-text-field>
               <!-- <p @click="gotoLink(bookItemAll[0].fileUpload1)">{{  bookItemAll[0].fileUpload1}}</p> -->
             </v-row>
             <v-row class="my-3" v-if="bookItemAll[0].statusUpload2 === 'True' && bookItemAll[0].fileUpload2" style="display: flex;flex-direction: column;align-items: center;">
-              <h5 v-if="get_url_extension(bookItemAll[0].fileUpload2) !== 'pdf'">File 2</h5>
+              <h5 v-if="get_url_extension(bookItemAll[0].fileUpload2) !== 'pdf'">{{ BookingFieldData[0].textUpload2 }}</h5>
               <v-img
                 v-if="get_url_extension(bookItemAll[0].fileUpload2) !== 'pdf'"
                 max-height="150"
@@ -273,7 +273,7 @@
                 style="width: -webkit-fill-available;"
                 outlined
                 dense
-                label="File 2"
+                :label="BookingFieldData[0].textUpload2"
                 prepend-inner-icon="mdi-chevron-right-box"
                 @click="gotoLink(bookItemAll[0].fileUpload2)"
               ></v-text-field>
@@ -994,7 +994,8 @@ export default {
       dateCheckBill: '',
       bookItemAll: [],
       dialogImg: false,
-      showImg: ''
+      showImg: '',
+      BookingFieldData: []
     }
   },
   async mounted () {
@@ -1012,6 +1013,18 @@ export default {
     },
     get_url_extension (url) {
       return url.split(/[#?]/)[0].split('.').pop().trim()
+    },
+    async getBookingField () {
+      this.BookingFieldData = []
+      await axios
+        .get(this.DNS_IP + '/BookingField/get?shopId=' + this.$session.getAll().data.shopId)
+        .then(async response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            this.BookingFieldData = rs
+            console.log('this.await this.getBookingField()', this.BookingFieldData)
+          }
+        })
     },
     async chkPlan () {
       await axios
@@ -1628,6 +1641,7 @@ export default {
           await this.chkBookingNo()
           await this.getDataBranch()
           await this.getDataFlowAll()
+          await this.getBookingField()
         } else {
           this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
         }
@@ -1641,6 +1655,7 @@ export default {
             await this.chkBookingNo()
             await this.getDataBranch()
             await this.getDataFlowAll()
+            await this.getBookingField()
           } else {
             this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
           }
