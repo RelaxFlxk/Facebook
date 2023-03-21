@@ -3098,7 +3098,7 @@
                           filter
                           dark
                           color="green darken-1"
-                          @click="dialogDeposit = true, bookNo = item.bookNo, statusDeposit = true, pictureUrlPreviewDeposit = item.depositImge || '',getDataMenu(item)"
+                          @click="dialogDeposit = true, bookNo = item.bookNo, statusDeposit = true, pictureUrlPreviewDeposit = item.depositImge || ''"
                         >
                         <!-- <v-icon class="iconify mr-1" size="70px" color="#FFAB2D" data-icon="flat-color-icons:money-transfer"></v-icon> -->
                         <v-icon class="iconify mr-1" color="#FFAB2D">mdi-script-text-outline</v-icon>
@@ -3310,6 +3310,9 @@
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-calendar-clock </v-icon> เปลี่ยนเวลานัดหมาย {{item.countChangeTime}} ครั้ง</v-list-item-title>
                           </v-list-item>
                           <!-- คุณ Joy -->
+                          <v-list-item @click.stop="getDataMenu(item)" v-if="(item.statusBt === 'confirm' || item.statusBt === 'wait') && item.menuShowStatus === 'True'">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-microsoft-xbox-controller-menu </v-icon> รายการเมนู </v-list-item-title>
+                          </v-list-item>
                           <v-list-item @click.stop="setDataReture(item)" v-if="item.statusBt !== 'confirmJob' && item.depositStatus === 'True' && item.depositImge != ''">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="uil:money-withdrawal"></v-icon> คืนเงินมัดจำ </v-list-item-title>
                           </v-list-item>
@@ -4549,7 +4552,8 @@
                 </v-row>
               </v-container>
              <v-row>
-                <v-col :cols="dataMenu.length > 1 ? 6 : 12">
+                <v-col cols="12">
+                <!-- <v-col :cols="dataMenu.length > 1 ? 6 : 12"> -->
                   <v-card-text v-if="pictureUrlPreviewDeposit === ''">
                   <v-alert
                       dense
@@ -4603,37 +4607,6 @@
                       </v-form>
                     </v-container>
                   </v-card-text>
-                </v-col>
-                <v-col cols="6" v-if="dataMenu.length > 1">
-                  <v-expansion-panels multiple v-model="expansionMenu" class="px-3 pr-5">
-                      <v-expansion-panel>
-                        <v-expansion-panel-header>{{"รายการและราคา"}}</v-expansion-panel-header>
-                        <v-expansion-panel-content>
-                          <div style="align-items: center;width:100%;">
-                            <v-row>
-                              <v-col cols="12" v-for="(item,id) in dataMenu.filter(el => { return parseInt(el.qty) > 0 })" :key="id" style="display: flex;">
-                                <v-card class="cardMenu">
-                                    <v-img
-                                      class="pictureMenu"
-                                      :src="item.picture"
-                                    ></v-img>
-                                    <v-row>
-                                      <v-col cols="6"><p class="ma-0 textTitelMenu">{{item.name}}</p></v-col>
-                                      <v-col cols="6" style="display: flex;justify-content: flex-end;" class="textTitelMenu">{{item.qty}} x {{formatNumber(item.price)}}</v-col>
-                                    </v-row>
-                                </v-card>
-                              </v-col>
-                              <v-col cols="12">
-                                <v-row>
-                                  <v-col cols="6"><p class="ma-0 textTitelPriceMenu">{{"รวมราคา"}}</p></v-col>
-                                  <v-col cols="6" style="display: flex;justify-content: flex-end;" class="textTitelPriceMenu">{{formatNumber(priceMenu)}}</v-col>
-                                </v-row>
-                              </v-col>
-                            </v-row>
-                          </div>
-                        </v-expansion-panel-content>
-                      </v-expansion-panel>
-                    </v-expansion-panels>
                 </v-col>
              </v-row>
                 <!-- <v-btn
@@ -6665,6 +6638,117 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
+          <v-dialog v-model="dialogMenu" persistent :max-width="dialogwidth">
+            <v-card>
+              <v-card-text>
+                  <v-row>
+                    <v-col cols="6" class="text-left pt-10">
+                      <h3><strong>รายการเมนู</strong></h3>
+                    </v-col>
+                    <v-col cols="6" class="pt-10">
+                      <div style="text-align: end;">
+                        <v-btn
+                          class="mx-2"
+                          fab
+                          small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
+                          @click="dialogMenu = false"
+                          >
+                          X
+                        </v-btn>
+                      </div>
+                    </v-col>
+                    <v-col cols="12" v-if="dataMenu.length > 1">
+                       <div
+                          style="'width:100% !important';background: linear-gradient(90deg, #FCFCFC 0%, #F7F7F7 10.04%, #F7F7F7 51.56%, #F7F7F7 89.58%, #FCFCFC 100%);box-shadow: 0px 4px 20px rgba(114, 114, 114, 0.1);"
+                        >
+                          <div style="align-items: center;width:100%;height:600px;overflow-y: scroll;">
+                          <v-row>
+                            <v-col cols="12" v-for="(item,id) in dataMenu" :key="id" style="display: flex;">
+                              <v-card class="cardMenuEdit">
+                                  <v-img
+                                    class="pictureMenuEdit"
+                                    :src="item.picture"
+                                  ></v-img>
+                                  <div class="cardTextMenu">
+                                    <div>
+                                      <p class="ma-0 textTitelMenu">{{item.name}}</p>
+                                      <p class="ma-0 textSubTitelMenu">{{ item.nameSub.length < 20 ? item.nameSub : (item.nameSub.substring(0,20) + '..') }}</p>
+                                      <br>
+                                      <p class="ma-0 textPriceMenu">{{formatNumber(item.price) + " บาท"}}</p>
+                                      <!-- <p>{{item.nameSub}}</p> -->
+                                      <v-text-field
+                                        v-if="parseInt(item.qty) > 0"
+                                        v-model="item.remark"
+                                        label="หมายเหตุ"
+                                        single-line
+                                        hide-details
+                                        dense
+                                        class="pl-0"
+                                      ></v-text-field>
+                                    </div>
+                                  </div>
+                                  <div class="buttomMenu">
+                                    <v-btn
+                                      icon
+                                      x-small
+                                      color="#FF7B2C"
+                                      class="buttomMenuplusmins"
+                                      @click="changeCounter('-1', item)"
+                                    >
+                                      <v-icon dark>
+                                        mdi-minus
+                                      </v-icon>
+                                    </v-btn>
+                                    {{item.qty}}
+                                    <v-btn
+                                      icon
+                                      x-small
+                                      color="#FF7B2C"
+                                      class="buttomMenuplusmins "
+                                      @click="changeCounter('1', item)"
+                                    >
+                                      <v-icon dark>
+                                        mdi-plus
+                                      </v-icon>
+                                    </v-btn>
+                                  </div>
+                              </v-card>
+                            </v-col>
+                          </v-row>
+                          </div>
+                          <div class="sendOrder">
+                            <v-card width="100%" height="58px" class="display: flex;align-items: center;"  style="border-radius: 16px;">
+                              <v-container>
+                              <v-row>
+                                <v-col cols="6">รวมราคา</v-col>
+                                <v-col cols="6" class="text-right">{{formatNumber(priceMenu)}}</v-col>
+                              </v-row>
+                              </v-container>
+                            </v-card>
+                          </div>
+                          <hr>
+                          <v-row>
+                            <v-col cols="12">
+                              <v-btn
+                                color="#1B437C"
+                                large
+                                block
+                                dark
+                                @click="updateMenu()"
+                              >
+                                อัพเดทรายการเมนู
+                              </v-btn>
+                            </v-col>
+                          </v-row>
+                        </div>
+                    </v-col>
+                  </v-row>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
           <v-dialog v-model="dialogShowDeposit" persistent :max-width="dialogwidth">
             <v-card>
               <v-card-text>
@@ -7501,7 +7585,8 @@ export default {
       dataLineConfig: {},
       priceMenu: null,
       dataMenu: [],
-      expansionMenu: [0]
+      expansionMenu: [0],
+      dialogMenu: false
     }
   },
   beforeCreate () {
@@ -7537,6 +7622,87 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
+    async updateMenu () {
+      let dt = {
+        menuItem: JSON.stringify(this.dataMenu.filter((i) => parseInt(i.qty) > 0)),
+        menuPrice: this.priceMenu || '',
+        LAST_USER: this.$session.getAll().data.userName
+      }
+      await axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + "/Booking/edit/" + this.bookNo,
+          dt
+        )
+        .then(async response => {
+          this.$swal('สำเร็จ', 'แก้ไขรายการเมนูเรียบร้อย', 'success')
+          if (this.statusSearch === 'no') {
+            this.getBookingList()
+          } else {
+            this.searchAny()
+          }
+          if (this.getSelectText) {
+            this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
+          }
+          this.getDataCalendaBooking()
+          this.dialogMenu = false
+        })
+    },
+    getDataMenu (item) {
+      this.dataMenu = []
+      this.priceMenu = null
+      this.bookNo = item.bookNo
+      var dataCheckmenu = this.DataFlowNameMenu.filter(el => {
+        return el.value === item.flowId
+      })
+      console.log('dataCheckmenu', dataCheckmenu)
+      if (dataCheckmenu.length > 0) {
+        let setMenu = JSON.parse(dataCheckmenu[0].allData.menuItem) || []
+        console.log('setMenu', setMenu)
+        if (item.menuItem !== null || item.menuItem !== '' || item.menuItem.length > 1) {
+          let dataMenu = JSON.parse(item.menuItem)
+          for (let i = 0; i < dataMenu.length; i++) {
+            let d = dataMenu[i]
+            if (setMenu.filter(el => { return el.name === d.name }).length > 0) {
+              let index = setMenu.findIndex(it => { return it.name === d.name })
+              console.log(index)
+              setMenu[index].price = d.price
+              setMenu[index].qty = d.qty
+              setMenu[index].remark = d.remark
+            }
+          }
+          if (setMenu.length > 0) {
+            this.dataMenu = setMenu
+          } else {
+            if (item.menuItem !== null || item.menuItem !== '' || item.menuItem.length > 1) {
+              this.dataMenu = JSON.parse(item.menuItem)
+            }
+          }
+          this.priceMenu = parseInt(item.menuPrice)
+        }
+      } else {
+        if (item.menuItem !== null || item.menuItem !== '' || item.menuItem.length > 1) {
+          this.dataMenu = JSON.parse(item.menuItem)
+          this.priceMenu = parseInt(item.menuPrice)
+        }
+      }
+      this.dialogMenu = true
+    },
+    changeCounter (num, item) {
+      item.qty += +num
+      if (num === '1') {
+        this.priceMenu = this.priceMenu + parseInt(item.price)
+      } else {
+        if (item.qty >= 0) {
+          this.priceMenu = this.priceMenu - parseInt(item.price)
+        }
+      }
+      // eslint-disable-next-line no-unused-expressions
+      !isNaN(item.qty) && item.qty > 0 ? item.qty : item.qty = 0
+      if (item.qty === 0) {
+        item.remark = ''
+      }
+    },
     exportShowMenuReport () {
       let dataexport = []
       for (let i = 0; i < this.dataShowMenuReport.length; i++) {
@@ -7677,16 +7843,6 @@ export default {
         showConfirmButton: false
       })
       await navigator.clipboard.writeText(item)
-    },
-    getDataMenu (item) {
-      this.dataMenu = []
-      this.priceMenu = null
-      console.log('itemGetDataMenu', item)
-      if (item.menuItem !== null || item.menuItem !== '' || item.menuItem.length > 1) {
-        this.dataMenu = JSON.parse(item.menuItem)
-        this.priceMenu = item.menuPrice
-      }
-      console.log('priceMenu', this.priceMenu, 'dataMenu', this.dataMenu)
     },
     FunCopyQrcode (text) {
       // var copyText = document.getElementById('myInput')
@@ -9516,6 +9672,7 @@ export default {
                   }
                   s.shopId = d.shopId
                   s.dueDateDay = d.dueDateDay
+                  s.menuShowStatus = d.menuShowStatus
                   s.dueDateTextDay = d.dueDateTextDay
                   s.remark = d.remark || ''
                   s.masBranchID = d.masBranchID
@@ -11107,6 +11264,7 @@ export default {
                   s.dueDate = d.dueDate
                   s.shopId = d.shopId
                   s.dueDateDay = d.dueDateDay
+                  s.menuShowStatus = d.menuShowStatus
                   s.dueDateTextDay = d.dueDateTextDay
                   s.remark = d.remark || ''
                   s.masBranchID = d.masBranchID
@@ -12094,6 +12252,7 @@ export default {
                 }
                 s.shopId = d.shopId
                 s.dueDateDay = d.dueDateDay
+                s.menuShowStatus = d.menuShowStatus
                 s.dueDateTextDay = d.dueDateTextDay
                 s.remark = d.remark || ''
                 s.masBranchID = d.masBranchID
@@ -12261,6 +12420,7 @@ export default {
                 }
                 s.shopId = d.shopId
                 s.dueDateDay = d.dueDateDay
+                s.menuShowStatus = d.menuShowStatus
                 s.dueDateTextDay = d.dueDateTextDay
                 s.remark = d.remark || ''
                 s.masBranchID = d.masBranchID
@@ -15107,6 +15267,97 @@ export default {
 </script>
 
 <style scoped>
+.sendOrder {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+
+  width: 100%;
+  height: 112px;
+
+  flex: none;
+  order: 2;
+  align-self: stretch;
+  flex-grow: 0;
+  justify-content: flex-end;
+}
+.buttomMenuplusminus {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0px;
+
+  width: 32px;
+  height: 32px;
+  /* Inside auto layout */
+
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+.buttomMenu {
+  /* display: flex;
+  flex-direction: row;
+  align-items: flex-end; */
+  padding: 0px;
+  gap: 10px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: 32px;
+  height: 100px;
+  /* Inside auto layout */
+
+  flex: none;
+  order: 2;
+  flex-grow: 0;
+}
+.textTitelMenu {
+font-style: normal;
+font-weight: 600;
+font-size: 14px;
+line-height: 22px;
+}
+.textSubTitelMenu {
+font-style: normal;
+font-weight: 200;
+font-size: 14px;
+line-height: 22px;
+}
+.cardTextMenu {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0px;
+  gap: 15px;
+
+  width: 147px;
+  height: 104px;
+  /* Inside auto layout */
+
+  flex: none;
+  order: 1;
+  flex-grow: 1;
+}
+.textOneBox {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 4px;
+
+  width: 147px;
+  height: 64px;
+  /* Inside auto layout */
+
+  flex: none;
+  order: 0;
+  align-self: stretch;
+  flex-grow: 0;
+}
 #autocompleteMap {
   border: 1px solid rgba(0, 60, 255, 0.329);
   background: #fff;
@@ -15266,6 +15517,18 @@ line-height: 22px;
   order: 0;
   flex-grow: 0;
 }
+.pictureMenuEdit {
+  width: 100px;
+  height: 100px;
+
+  filter: drop-shadow(0px 0px 8px rgba(255, 255, 255, 0.7));
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
 .cardMenu {
   display: flex;
   flex-direction: row;
@@ -15275,6 +15538,25 @@ line-height: 22px;
 
   width: 327px;
   height: 70px;
+
+  background: #FFFFFF;
+  box-shadow: 0px 0px 1px rgba(12, 26, 75, 0.03), 0px 4px 20px -2px rgba(50, 50, 71, 0.04);
+  border-radius: 16px;
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 0;
+  flex-grow: 1;
+}
+.cardMenuEdit {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 10px 20px 10px;
+  width: 327px;
+  min-height: auto;
 
   background: #FFFFFF;
   box-shadow: 0px 0px 1px rgba(12, 26, 75, 0.03), 0px 4px 20px -2px rgba(50, 50, 71, 0.04);
