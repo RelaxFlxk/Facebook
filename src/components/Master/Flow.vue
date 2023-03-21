@@ -830,6 +830,17 @@
                             attach
                             :menu-props="{ bottom: true, offsetY: true }"
                           ></v-select>
+                          <v-col style="display: flex;justify-content: flex-start;" v-if="formAdd.checkDeposit === 'True'">
+                            <v-checkbox
+                            label="บัตรเครดิต/อื่นๆ"
+                            false-value="False"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            color="#1B437C"
+                            true-value="True"
+                            v-model="formAdd.checkCreditCard"
+                          ></v-checkbox>
+                          </v-col>
                           <v-text-field
                           v-if="formAdd.checkDeposit === 'True'"
                             v-model="formAdd.promptPayName"
@@ -1006,7 +1017,7 @@
                             color="#1B437C"
                             true-value="True"
                             v-model="formUpdate.checkDeposit"
-                            @change="formUpdate.amountDeposit = 0, formUpdate.updateStatusConfirm = 'False'"
+                            @change="formUpdate.amountDeposit = 0, formUpdate.updateStatusConfirm = 'False',formUpdate.checkCreditCard = 'False'"
                           ></v-checkbox>
                           </v-col>
                            <v-col style="display: flex;justify-content: flex-start;">
@@ -1238,6 +1249,17 @@
                             attach
                             :menu-props="{ bottom: true, offsetY: true }"
                           ></v-select>
+                          <v-col style="display: flex;justify-content: flex-start;" v-if="formUpdate.checkDeposit === 'True'">
+                            <v-checkbox
+                            label="บัตรเครดิต/อื่นๆ"
+                            false-value="False"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            color="#1B437C"
+                            true-value="True"
+                            v-model="formUpdate.checkCreditCard"
+                          ></v-checkbox>
+                          </v-col>
                           <v-text-field
                           v-if="formUpdate.checkDeposit === 'True'"
                             v-model="formUpdate.promptPayName"
@@ -2602,7 +2624,8 @@ export default {
         depositTextTH: 'ชำระเงินมัดจำ',
         depositTextEN: 'pay deposit',
         updateStatusConfirm: 'False',
-        categorySub: []
+        categorySub: [],
+        checkCreditCard: 'False'
       },
       formAddStep: {
         stepId: '',
@@ -2666,7 +2689,8 @@ export default {
         servicePointRecursive: 'False',
         depositTextTH: '',
         depositTextEN: '',
-        categorySub: []
+        categorySub: [],
+        checkCreditCard: 'False'
       },
       formUpdateItemFlow: {
         fieldId: '',
@@ -4063,6 +4087,7 @@ export default {
       this.formUpdate.depositTextTH = item.depositTextTH || 'ชำระเงินมัดจำ'
       this.formUpdate.depositTextEN = item.depositTextEN || 'pay deposit'
       this.formUpdate.categorySub = item.categorySub ? JSON.parse(item.categorySub) : []
+      this.formUpdate.checkCreditCard = item.checkCreditCard || 'False'
       this.shopId = this.$session.getAll().data.shopId
       this.fieldType = this.formUpdate.fieldType
       // this.desserts = JSON.parse(response.data[0].flowfieldName)
