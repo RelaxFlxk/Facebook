@@ -584,9 +584,14 @@ export default {
     }
   },
   async mounted () {
-    this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
-    this.pathToweb = 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/JobConfirm?jobId='
-    await this.beforeCreate()
+    if (this.$route.query.shopId) {
+      this.dataLineConfig = await this.getDataLineConfig(this.$route.query.shopId)
+      this.pathToweb = 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/JobConfirm?jobId='
+      await this.beforeCreate()
+    } else {
+      this.$swal('ผิดพลาด', 'ลิ้งค์ที่ท่านใช้ไม่ถูกต้องกรุณา ติดต่อพนักงาน', 'info')
+      this.$router.push('/Core/Login')
+    }
   },
   methods: {
     async jobConfirm () {
@@ -719,6 +724,9 @@ export default {
         .then(async response => {})
     },
     async beforeCreate () {
+      console.log(JSON.parse(localStorage.getItem('sessionData')))
+      console.log(this.$session.exists())
+      console.log(this.$session.getAll().data)
       if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
         if (
           JSON.parse(localStorage.getItem('sessionData')).shopId ===
