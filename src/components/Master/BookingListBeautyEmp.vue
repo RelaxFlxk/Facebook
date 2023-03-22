@@ -6255,8 +6255,9 @@
                                         :src="itemss.picture"
                                       ></v-img>
                                       <v-row>
-                                        <v-col cols="6"><p class="ma-0 textTitelMenu">{{itemss.name}}</p></v-col>
-                                        <v-col cols="6" style="display: flex;justify-content: flex-end;" class="textTitelMenu">{{itemss.qty}} x {{formatNumber(itemss.price)}}</v-col>
+                                        <v-col cols="12" class="textTitelMenu pb-0 pt-0">{{itemss.name}}</v-col>
+                                        <v-col cols="12" style="display: flex;justify-content: flex-end;" class="textTitelMenu pb-0 pt-0">{{itemss.qty}} x {{formatNumber(itemss.price)}}</v-col>
+                                        <v-col cols="12" class="textTitelMenu pb-0 pt-0">{{itemss.remark}}</v-col>
                                       </v-row>
                                   </v-card>
                                 </v-col>
@@ -6282,8 +6283,9 @@
                                       :src="items.picture"
                                     ></v-img>
                                     <v-row>
-                                      <v-col cols="6"><p class="ma-0 textTitelMenu">{{items.name}}</p></v-col>
-                                      <v-col cols="6" style="display: flex;justify-content: flex-end;" class="textTitelMenu">{{items.qty}} x {{formatNumber(items.price)}}</v-col>
+                                      <v-col cols="12" class="textTitelMenu pb-0 pt-0">{{items.name}}</v-col>
+                                      <v-col cols="12" style="display: flex;justify-content: flex-end;" class="textTitelMenu pb-0 pt-0">{{items.qty}} x {{formatNumber(items.price)}}</v-col>
+                                      <v-col cols="12" class="textTitelMenu pb-0 pt-0">{{items.remark}}</v-col>
                                     </v-row>
                                 </v-card>
                               </v-col>

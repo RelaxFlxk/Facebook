@@ -6900,7 +6900,7 @@
                       </template>
                       </v-select>
                     </v-col>
-                    <!-- <v-col cols="6" v-if="dataShowMenuReport.length > 0">
+                    <v-col cols="6" v-if="dataShowMenuReport.length > 0">
                       <v-btn
                         color="teal"
                         dark
@@ -6910,7 +6910,7 @@
                         <v-icon color="white" left>mdi-microsoft-excel</v-icon>
                         ส่งออกเป็น Excel
                       </v-btn>
-                    </v-col> -->
+                    </v-col>
                     <v-col cols="12">
                       <v-data-table
                         :search="searchShowMenuReport"
@@ -6973,8 +6973,9 @@
                                         :src="itemss.picture"
                                       ></v-img>
                                       <v-row>
-                                        <v-col cols="6"><p class="ma-0 textTitelMenu">{{itemss.name}}</p></v-col>
-                                        <v-col cols="6" style="display: flex;justify-content: flex-end;" class="textTitelMenu">{{itemss.qty}} x {{formatNumber(itemss.price)}}</v-col>
+                                        <v-col cols="12" class="textTitelMenu pb-0 pt-0">{{itemss.name}}</v-col>
+                                        <v-col cols="12" style="display: flex;justify-content: flex-end;" class="textTitelMenu pb-0 pt-0">{{itemss.qty}} x {{formatNumber(itemss.price)}}</v-col>
+                                        <v-col cols="12" class="textTitelMenu pb-0 pt-0">{{itemss.remark}}</v-col>
                                       </v-row>
                                   </v-card>
                                 </v-col>
@@ -7000,8 +7001,9 @@
                                       :src="items.picture"
                                     ></v-img>
                                     <v-row>
-                                      <v-col cols="6"><p class="ma-0 textTitelMenu">{{items.name}}</p></v-col>
-                                      <v-col cols="6" style="display: flex;justify-content: flex-end;" class="textTitelMenu">{{items.qty}} x {{formatNumber(items.price)}}</v-col>
+                                      <v-col cols="12" class="textTitelMenu pb-0 pt-0">{{items.name}}</v-col>
+                                      <v-col cols="12" style="display: flex;justify-content: flex-end;" class="textTitelMenu pb-0 pt-0">{{items.qty}} x {{formatNumber(items.price)}}</v-col>
+                                      <v-col cols="12" class="textTitelMenu pb-0 pt-0">{{items.remark}}</v-col>
                                     </v-row>
                                 </v-card>
                               </v-col>
@@ -7719,34 +7721,33 @@ export default {
           'บริการ': a.flowName,
           'ชื่อลูกค้า': a.cusName,
           'เบอร์โทร': a.tel,
-          'วันที่': a.dueDate,
-          'ชื่อพนักงาน': a.bookingEmpFlowName
+          'วันที่': a.dueDate
         }
         dataexport.push(data1)
       }
 
-      const wb = XLSX.utils.book_new()
+      // const wb = XLSX.utils.book_new()
       let datause2 = dataexport.sort((a, b) => {
         if (a.วันที่ < b.วันที่) return -1
         return a.วันที่ > b.วันที่ ? 1 : 0
       })
       console.log(datause2)
       console.log(this.dataMenuShowMenuReport)
-      for (let i = 0; i < this.dataMenuShowMenuReport.length; i++) {
-        let d = this.dataMenuShowMenuReport[i]
-        if (datause2.filter(el => { return el.ชื่อพนักงาน === d.value }).length > 0) {
-          console.log(datause2.filter(el => { return el.ชื่อพนักงาน === d.value }))
-          let sheetNm = ''
-          if (d.value.length > 30) {
-            sheetNm = d.value.substring(0, 29)
-          } else {
-            sheetNm = d.value
-          }
-          XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(datause2.filter(el => { return el.ชื่อพนักงาน === d.value })), sheetNm)
-        }
-      }
+      // for (let i = 0; i < this.dataMenuShowMenuReport.length; i++) {
+      //   let d = this.dataMenuShowMenuReport[i]
+      //   if (datause2.filter(el => { return el.ชื่อพนักงาน === d.value }).length > 0) {
+      //     console.log(datause2.filter(el => { return el.ชื่อพนักงาน === d.value }))
+      //     let sheetNm = ''
+      //     if (d.value.length > 30) {
+      //       sheetNm = d.value.substring(0, 29)
+      //     } else {
+      //       sheetNm = d.value
+      //     }
+      //     XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(datause2.filter(el => { return el.ชื่อพนักงาน === d.value })), sheetNm)
+      //   }
+      // }
       // console.log('dataexport', dataexport)
-      XLSX.writeFile(wb, 'export_' + this.format_dateNotime(this.dateStartShowMenuReport) + '.xlsx')
+      // XLSX.writeFile(wb, 'export_' + this.format_dateNotime(this.dateStartShowMenuReport) + '.xlsx')
     },
     toggleShowMenuList (cusNameTel) {
       this.dataShowMenuReport.forEach(dessert => {
