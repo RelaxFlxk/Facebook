@@ -6182,7 +6182,7 @@
                       </template>
                       </v-select>
                     </v-col>
-                    <!-- <v-col cols="6" v-if="dataShowMenuReport.length > 0">
+                    <v-col cols="6" v-if="dataShowMenuReport.length > 0">
                       <v-btn
                         color="teal"
                         dark
@@ -6192,7 +6192,7 @@
                         <v-icon color="white" left>mdi-microsoft-excel</v-icon>
                         ส่งออกเป็น Excel
                       </v-btn>
-                    </v-col> -->
+                    </v-col>
                     <v-col cols="12">
                       <v-data-table
                         :search="searchShowMenuReport"
@@ -7126,34 +7126,54 @@ export default {
           'บริการ': a.flowName,
           'ชื่อลูกค้า': a.cusName,
           'เบอร์โทร': a.tel,
-          'วันที่': a.dueDate,
-          'ชื่อพนักงาน': a.bookingEmpFlowName
+          'วันที่': a.dueDate
+        }
+        let checkFlow = this.DataFlowNameMenu.filter(el => { return el.value === this.flowSelectMenu })
+        let menuItem = JSON.parse(checkFlow[0].allData.menuItem) || []
+        console.log(menuItem)
+        if (menuItem.length > 0) {
+          for (let y = 0; y < menuItem.length; y++) {
+            let x = menuItem[y]
+            // console.log(menuItem)
+            let checkmenu = a.menuItem.filter(el => { return el.name === x.name })
+            if (checkmenu.length > 0) {
+              data1[x.name] = checkmenu[0].qty
+              data1['หมายเหตุ' + x.name] = checkmenu[0].remark || ''
+            } else {
+              data1[x.name] = '0'
+              data1['หมายเหตุ' + x.name] = ''
+            }
+          }
         }
         dataexport.push(data1)
       }
 
-      const wb = XLSX.utils.book_new()
+      // const wb = XLSX.utils.book_new()
       let datause2 = dataexport.sort((a, b) => {
         if (a.วันที่ < b.วันที่) return -1
         return a.วันที่ > b.วันที่ ? 1 : 0
       })
-      console.log(datause2)
-      console.log(this.dataMenuShowMenuReport)
-      for (let i = 0; i < this.dataMenuShowMenuReport.length; i++) {
-        let d = this.dataMenuShowMenuReport[i]
-        if (datause2.filter(el => { return el.ชื่อพนักงาน === d.value }).length > 0) {
-          console.log(datause2.filter(el => { return el.ชื่อพนักงาน === d.value }))
-          let sheetNm = ''
-          if (d.value.length > 30) {
-            sheetNm = d.value.substring(0, 29)
-          } else {
-            sheetNm = d.value
-          }
-          XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(datause2.filter(el => { return el.ชื่อพนักงาน === d.value })), sheetNm)
-        }
-      }
-      // console.log('dataexport', dataexport)
+      const dataWS = XLSX.utils.json_to_sheet(datause2)
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, dataWS)
       XLSX.writeFile(wb, 'export_' + this.format_dateNotime(this.dateStartShowMenuReport) + '.xlsx')
+      // console.log(datause2)
+      // console.log(this.dataShowMenuReport)
+      // for (let i = 0; i < this.dataMenuShowMenuReport.length; i++) {
+      //   let d = this.dataMenuShowMenuReport[i]
+      //   if (datause2.filter(el => { return el.ชื่อพนักงาน === d.value }).length > 0) {
+      //     console.log(datause2.filter(el => { return el.ชื่อพนักงาน === d.value }))
+      //     let sheetNm = ''
+      //     if (d.value.length > 30) {
+      //       sheetNm = d.value.substring(0, 29)
+      //     } else {
+      //       sheetNm = d.value
+      //     }
+      //     XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(datause2.filter(el => { return el.ชื่อพนักงาน === d.value })), sheetNm)
+      //   }
+      // }
+      // console.log('dataexport', dataexport)
+      // XLSX.writeFile(wb, 'export_' + this.format_dateNotime(this.dateStartShowMenuReport) + '.xlsx')
     },
     toggleShowMenuList (cusNameTel) {
       this.dataShowMenuReport.forEach(dessert => {
