@@ -9694,6 +9694,7 @@ export default {
                   }
                   s.shopId = d.shopId
                   s.dueDateDay = d.dueDateDay
+                  s.CREATE_DATE_Status = d.CREATE_DATE_Status
                   s.menuShowStatus = d.menuShowStatus
                   s.dueDateTextDay = d.dueDateTextDay
                   s.remark = d.remark || ''
@@ -11286,6 +11287,7 @@ export default {
                   s.dueDate = d.dueDate
                   s.shopId = d.shopId
                   s.dueDateDay = d.dueDateDay
+                  s.CREATE_DATE_Status = d.CREATE_DATE_Status
                   s.menuShowStatus = d.menuShowStatus
                   s.dueDateTextDay = d.dueDateTextDay
                   s.remark = d.remark || ''
@@ -12274,6 +12276,7 @@ export default {
                 }
                 s.shopId = d.shopId
                 s.dueDateDay = d.dueDateDay
+                s.CREATE_DATE_Status = d.CREATE_DATE_Status
                 s.menuShowStatus = d.menuShowStatus
                 s.dueDateTextDay = d.dueDateTextDay
                 s.remark = d.remark || ''
@@ -12442,6 +12445,7 @@ export default {
                 }
                 s.shopId = d.shopId
                 s.dueDateDay = d.dueDateDay
+                s.CREATE_DATE_Status = d.CREATE_DATE_Status
                 s.menuShowStatus = d.menuShowStatus
                 s.dueDateTextDay = d.dueDateTextDay
                 s.remark = d.remark || ''
