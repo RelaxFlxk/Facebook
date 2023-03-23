@@ -9949,6 +9949,7 @@ export default {
                   s.bookingEmpFlow = d.bookingEmpFlow
                   s.bookingEmpFlowName = d.bookingEmpFlowName
                   s.dueDateDay = d.dueDateDay
+                  s.CREATE_DATE_Status = d.CREATE_DATE_Status
                   s.menuShowStatus = d.menuShowStatus
                   s.dueDateTextDay = d.dueDateTextDay
                   s.remark = d.remark || ''
@@ -12738,6 +12739,7 @@ export default {
                 s.bookingEmpFlow = d.bookingEmpFlow
                 s.bookingEmpFlowName = d.bookingEmpFlowName
                 s.dueDateDay = d.dueDateDay
+                s.CREATE_DATE_Status = d.CREATE_DATE_Status
                 s.menuShowStatus = d.menuShowStatus
                 s.dueDateTextDay = d.dueDateTextDay
                 s.remark = d.remark || ''
@@ -12908,6 +12910,7 @@ export default {
                 s.bookingEmpFlow = d.bookingEmpFlow
                 s.bookingEmpFlowName = d.bookingEmpFlowName
                 s.dueDateDay = d.dueDateDay
+                s.CREATE_DATE_Status = d.CREATE_DATE_Status
                 s.menuShowStatus = d.menuShowStatus
                 s.dueDateTextDay = d.dueDateTextDay
                 s.remark = d.remark || ''
