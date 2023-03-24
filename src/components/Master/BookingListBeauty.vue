@@ -2692,7 +2692,7 @@
                   class="ma-2 white--text"
                   @click="toggle"
                   small
-                >
+                  >
                   ตรวจสอบคิวจองรายวัน
                   <v-icon
                     right
@@ -2719,6 +2719,51 @@
                   ตรวจสอบรายการเมนูรายวัน
                 </v-btn>
                 </v-col>
+                <v-col cols="3">
+                  <v-select
+                    style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 5px;"
+                    v-model="sortSelect"
+                    hide-details
+                    background-color="white"
+                    :items="getSelectText === 'wait' ? itemsSortWaiting : itemsSort"
+                    label="จัดเรียงข้อมูล"
+                    outlined
+                    dense
+                    @change="checkTypeSort(sortSelect)"
+                  ></v-select>
+                  <v-radio-group
+                    v-model="sort"
+                    row
+                    @change="checkTypeSort()"
+                  >
+                    <v-radio
+                      label="มากไปน้อย"
+                      value="มากไปน้อย"
+                      hide-details
+                    ></v-radio>
+                    <v-radio
+                      label="น้อยไปมาก"
+                      value="น้อยไปมาก"
+                      hide-details
+                    ></v-radio>
+                  </v-radio-group>
+                </v-col>
+                <!-- <v-col>
+                  <v-row>
+                    <v-checkbox
+                    v-model="ex4"
+                    label="มาก"
+                    value="red"
+                    hide-details
+                  ></v-checkbox>
+                  <v-checkbox
+                    v-model="ex4"
+                    label="น้อย"
+                    value="red"
+                    hide-details
+                  ></v-checkbox>
+                  </v-row>
+                </v-col> -->
                 <v-col class="text-right" cols="auto">
                   <template v-if="getSelectText === 'confirmJob'">
                     <v-select
@@ -6675,7 +6720,8 @@
                                   <div class="cardTextMenu">
                                     <div>
                                       <p class="ma-0 textTitelMenu">{{item.name}}</p>
-                                      <p class="ma-0 textSubTitelMenu">{{ item.nameSub.length < 20 ? item.nameSub : (item.nameSub.substring(0,20) + '..') }}</p>
+                                      <p class="ma-0 textSubTitelMenu" v-if="item.nameSub.length < 20">{{ item.nameSub }}</p>
+                                      <p class="ma-0 textSubTitelMenu" v-else>{{ (item.nameSub.substring(0,20) + '..') }}</p>
                                       <br>
                                       <p class="ma-0 textPriceMenu">{{formatNumber(item.price) + " บาท"}}</p>
                                       <!-- <p>{{item.nameSub}}</p> -->
@@ -7073,6 +7119,7 @@ export default {
   },
   computed: {
     filteredSelect () {
+      // console.log('tset')
       return this.dataItemSelect.filter(d => {
         return this.filters.length < 1 || d['dueDate'].toString().toLowerCase().includes(this.filters.toLowerCase())
         // return Object.keys(this.filters).every(f => {
@@ -7134,6 +7181,7 @@ export default {
       BookingDataListShowMenuReport: [],
       DataFlowNameMenu: [],
       flowSelectMenu: '',
+      sortSelect: null,
       expandedMenu: [],
       headersShowMenuReport: [
         {
@@ -7354,6 +7402,7 @@ export default {
       session: this.$session.getAll(),
       fieldNameItem: [],
       flowfieldNameitem: [],
+      sort: null,
       DataflowId: '',
       breadcrumbs: [
         {
@@ -7391,6 +7440,8 @@ export default {
       dataItemSelect: [],
       editedItemSeleteField: [],
       jobitem: [],
+      itemsSort: ['เรียงตามวันที่นัดหมาย', 'เรียงตามวันที่เปลี่ยนสถานะ', 'เรียงตามวันที่สร้าง'],
+      itemsSortWaiting: ['เรียงตามวันที่นัดหมาย', 'เรียงตามวันที่สร้าง'],
       // End Data Table Config
       formAdd: {
         bookingId: null,
@@ -7588,7 +7639,8 @@ export default {
       priceMenu: null,
       dataMenu: [],
       expansionMenu: [0],
-      dialogMenu: false
+      dialogMenu: false,
+      depositTextTH: ''
     }
   },
   beforeCreate () {
@@ -7624,6 +7676,44 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
+    checkTypeSort () {
+      if (this.sortSelect && this.sort) {
+        if (this.sortSelect === 'เรียงตามวันที่นัดหมาย') {
+          console.log('เรียงตามวันที่นัดหมาย')
+          if (this.sort === 'มากไปน้อย') {
+            this.dataItemSelect.sort(function (a, b) {
+              return new Date(b.dueDate) - new Date(a.dueDate)
+            })
+          } else {
+            this.dataItemSelect.sort(function (a, b) {
+              return new Date(a.dueDate) - new Date(b.dueDate)
+            })
+          }
+        } else if (this.sortSelect === 'เรียงตามวันที่เปลี่ยนสถานะ') {
+          console.log('เรียงตามวันที่เปลี่ยนสถานะ')
+          if (this.sort === 'มากไปน้อย') {
+            this.dataItemSelect.sort(function (a, b) {
+              return new Date(b.CREATE_DATE_Status) - new Date(a.CREATE_DATE_Status)
+            })
+          } else {
+            this.dataItemSelect.sort(function (a, b) {
+              return new Date(a.CREATE_DATE_Status) - new Date(b.CREATE_DATE_Status)
+            })
+          }
+        } else if (this.sortSelect === 'เรียงตามวันที่สร้าง') {
+          if (this.sort === 'มากไปน้อย') {
+            this.dataItemSelect.sort(function (a, b) {
+              return new Date(b.CREATE_DATE) - new Date(a.CREATE_DATE)
+            })
+          } else {
+            this.dataItemSelect.sort(function (a, b) {
+              return new Date(a.CREATE_DATE) - new Date(b.CREATE_DATE)
+            })
+          }
+        }
+      }
+      console.log('this.dataItemSelect', this.dataItemSelect)
+    },
     async updateMenu () {
       let dt = {
         menuItem: JSON.stringify(this.dataMenu.filter((i) => parseInt(i.qty) > 0)),
@@ -7982,6 +8072,7 @@ export default {
       console.log('filteredSelect', this.filteredSelect)
       this.statusdepositPrice = true
       this.depositPrice = item.depositPrice || 0
+      this.depositTextTH = item.depositTextTH || 'ชำระเงินมัดจำ'
       this.bookNo = item.bookNo
       this.datailLinkDeposit = item.remarkDepositLinked
       this.depositLink = 'https://betask-linked.web.app/Thank?shopId=' + item.shopId + '&redirectBy=BookingAdmin&flowId=' + item.flowId + '&bookNo=' + item.bookNo
@@ -8035,8 +8126,8 @@ export default {
             if (depositPrice === '0') {
               textLink = 'กรุณากดเพื่อผูกบัญชี : ' + this.depositLink
             } else {
-              textLink = 'กรุณากดเพื่อโอนเงินมัดจำ : ' + this.depositLink
-              textDepositPrice = `\nจำนวนเงินมัดจำ : ` + depositPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+              textLink = 'กรุณากดเพื่อโอน' + this.depositTextTH + ' : ' + this.depositLink
+              textDepositPrice = `\nจำนวนเงิน : ` + depositPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
             }
             // console.log('textBookNo', textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink)
             let copyText = textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink
@@ -9694,7 +9785,9 @@ export default {
                   }
                   s.shopId = d.shopId
                   s.dueDateDay = d.dueDateDay
+                  s.depositTextTH = d.depositTextTH
                   s.CREATE_DATE_Status = d.CREATE_DATE_Status
+                  s.CREATE_DATE = d.CREATE_DATE
                   s.menuShowStatus = d.menuShowStatus
                   s.dueDateTextDay = d.dueDateTextDay
                   s.remark = d.remark || ''
@@ -11287,7 +11380,9 @@ export default {
                   s.dueDate = d.dueDate
                   s.shopId = d.shopId
                   s.dueDateDay = d.dueDateDay
+                  s.depositTextTH = d.depositTextTH
                   s.CREATE_DATE_Status = d.CREATE_DATE_Status
+                  s.CREATE_DATE = d.CREATE_DATE
                   s.menuShowStatus = d.menuShowStatus
                   s.dueDateTextDay = d.dueDateTextDay
                   s.remark = d.remark || ''
@@ -11949,6 +12044,7 @@ export default {
         }
       }
       // }
+      this.checkTypeSort()
     },
     updateTimeTablefromChild (timeTable) {
       this.timeTable = timeTable
@@ -12276,7 +12372,9 @@ export default {
                 }
                 s.shopId = d.shopId
                 s.dueDateDay = d.dueDateDay
+                s.depositTextTH = d.depositTextTH
                 s.CREATE_DATE_Status = d.CREATE_DATE_Status
+                s.CREATE_DATE = d.CREATE_DATE
                 s.menuShowStatus = d.menuShowStatus
                 s.dueDateTextDay = d.dueDateTextDay
                 s.remark = d.remark || ''
@@ -12445,7 +12543,9 @@ export default {
                 }
                 s.shopId = d.shopId
                 s.dueDateDay = d.dueDateDay
+                s.depositTextTH = d.depositTextTH
                 s.CREATE_DATE_Status = d.CREATE_DATE_Status
+                s.CREATE_DATE = d.CREATE_DATE
                 s.menuShowStatus = d.menuShowStatus
                 s.dueDateTextDay = d.dueDateTextDay
                 s.remark = d.remark || ''
@@ -15593,5 +15693,8 @@ line-height: 22px;
   flex: none;
   order: 0;
   flex-grow: 1;
+}
+.v-input--selection-controls {
+    margin-top: 0px !important;
 }
 </style>
