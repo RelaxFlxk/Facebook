@@ -9955,6 +9955,7 @@ export default {
                   s.dueDateDay = d.dueDateDay
                   s.depositTextTH = d.depositTextTH
                   s.CREATE_DATE_Status = d.CREATE_DATE_Status
+                  s.CREATE_DATE = d.CREATE_DATE
                   s.menuShowStatus = d.menuShowStatus
                   s.dueDateTextDay = d.dueDateTextDay
                   s.remark = d.remark || ''
@@ -12746,6 +12747,7 @@ export default {
                 s.dueDateDay = d.dueDateDay
                 s.depositTextTH = d.depositTextTH
                 s.CREATE_DATE_Status = d.CREATE_DATE_Status
+                s.CREATE_DATE = d.CREATE_DATE
                 s.menuShowStatus = d.menuShowStatus
                 s.dueDateTextDay = d.dueDateTextDay
                 s.remark = d.remark || ''
@@ -12918,6 +12920,7 @@ export default {
                 s.dueDateDay = d.dueDateDay
                 s.depositTextTH = d.depositTextTH
                 s.CREATE_DATE_Status = d.CREATE_DATE_Status
+                s.CREATE_DATE = d.CREATE_DATE
                 s.menuShowStatus = d.menuShowStatus
                 s.dueDateTextDay = d.dueDateTextDay
                 s.remark = d.remark || ''
