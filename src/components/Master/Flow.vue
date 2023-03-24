@@ -532,6 +532,17 @@
                     <v-row >
                       <v-col cols="12" class="v-margit_text_add mt-1">
                         <v-col cols="12" class="pb-0">
+                          <v-select
+                            class="pa-0"
+                            v-model="formAdd.masBranchID"
+                            :items="branch"
+                            label="สาขา"
+                            outlined
+                            required
+                            attach
+                            :menu-props="{ bottom: true, offsetY: true }"
+                            :rules="[rules.required]"
+                          ></v-select>
                           <v-text-field
                             v-model="formAdd.flowName"
                             label="ชื่อบริการ (ภาษาไทย)"
@@ -940,6 +951,17 @@
                     <v-row>
                       <v-col cols="12" class="v-margit_text_add mt-1">
                         <v-col cols="12" class="pb-0">
+                          <v-select
+                            class="pa-0"
+                            v-model="formUpdate.masBranchID"
+                            :items="branch"
+                            label="สาขา"
+                            outlined
+                            required
+                            attach
+                            :menu-props="{ bottom: true, offsetY: true }"
+                            :rules="[rules.required]"
+                          ></v-select>
                           <v-text-field
                             class="pa-0"
                             v-model="formUpdate.flowName"
@@ -1975,6 +1997,9 @@
                   disable-pagination
                   hide-default-footer
                 >
+                <template v-slot:[`item.masBranchID`]="{ item }">
+                    {{ branch.filter((i) => i.value === item.masBranchID).length > 0 ? branch.filter((i) => i.value === item.masBranchID)[0].text : 'ทั้งหมด'}}
+                  </template>
                   <template v-slot:[`item.CREATE_DATE`]="{ item }">
                     {{ format_dateFUllTime(item.CREATE_DATE) }}
                   </template>
@@ -2625,7 +2650,8 @@ export default {
         depositTextEN: 'pay deposit',
         updateStatusConfirm: 'False',
         categorySub: [],
-        checkCreditCard: 'False'
+        checkCreditCard: 'False',
+        masBranchID: ''
       },
       formAddStep: {
         stepId: '',
@@ -2690,7 +2716,8 @@ export default {
         depositTextTH: '',
         depositTextEN: '',
         categorySub: [],
-        checkCreditCard: 'False'
+        checkCreditCard: 'False',
+        masBranchID: ''
       },
       formUpdateItemFlow: {
         fieldId: '',
@@ -2774,6 +2801,7 @@ export default {
       columns: [
         // { text: 'ID', value: 'flowId' },
         { text: 'ชื่อบริการ', value: 'flowName' },
+        { text: 'สาขา', value: 'masBranchID' },
         // { text: 'Field', value: 'flowfieldName' },
         { text: 'วันที่สร้าง', value: 'CREATE_DATE' },
         { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
@@ -2840,7 +2868,8 @@ export default {
       },
       dialogMenu: false,
       categorySubByShop: [],
-      categorySub: []
+      categorySub: [],
+      branch: []
       // End Data Table Config
     }
   },
@@ -2862,9 +2891,34 @@ export default {
     }
     await this.getBookingField()
     await this.getShop()
+    await this.getDataBranch()
     await this.getCategorySub()
   },
   methods: {
+    async getDataBranch () {
+      this.branch = []
+      await axios
+        .get(this.DNS_IP + '/master_branch/get?shopId=' + this.shopId)
+        .then(response => {
+          let rs = response.data
+          console.log('rs', rs)
+          if (rs.length > 0) {
+            let All = {}
+            All.text = 'ทั้งหมด'
+            All.value = 'All'
+            this.branch.push(All)
+            for (var i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              let s = {}
+              s.text = d.masBranchName
+              s.value = d.masBranchID.toString()
+              this.branch.push(s)
+              // console.log('dtdtdtdt', this.branch)
+            }
+          }
+        })
+      console.log('branch', this.branch)
+    },
     async getShop () {
       await axios.get(this.DNS_IP + '/sys_shop/get?shopId=' + this.shopId)
         .then(async (response) => {
@@ -4088,6 +4142,7 @@ export default {
       this.formUpdate.depositTextEN = item.depositTextEN || 'pay deposit'
       this.formUpdate.categorySub = item.categorySub ? JSON.parse(item.categorySub) : []
       this.formUpdate.checkCreditCard = item.checkCreditCard || 'False'
+      this.formUpdate.masBranchID = item.masBranchID || 'All'
       this.shopId = this.$session.getAll().data.shopId
       this.fieldType = this.formUpdate.fieldType
       // this.desserts = JSON.parse(response.data[0].flowfieldName)
