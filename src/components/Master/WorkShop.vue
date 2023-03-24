@@ -38,7 +38,7 @@
                    <v-card
                     class="pa-1 pl-3 mb-5"
                     width="180"
-                    height="30px"
+                    min-height="30px"
                    >
                     <p style="color:#1B437C">{{element.stepTitle}}</p>
                     </v-card>
@@ -51,7 +51,7 @@
                     <v-card
                     class="pa-1 pl-2 mb-5"
                     width="180"
-                    height="30px"
+                    min-height="30px"
                     :color="codeColor[i]"
                    >
                     <strong dark class="mb-n5" style="color:#FFFFFF">{{element.stepTitle}}</strong>

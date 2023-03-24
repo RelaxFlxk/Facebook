@@ -6720,7 +6720,8 @@
                                   <div class="cardTextMenu">
                                     <div>
                                       <p class="ma-0 textTitelMenu">{{item.name}}</p>
-                                      <p class="ma-0 textSubTitelMenu">{{ item.nameSub.length < 20 ? item.nameSub : (item.nameSub.substring(0,20) + '..') }}</p>
+                                      <p class="ma-0 textSubTitelMenu" v-if="item.nameSub.length < 20">{{ item.nameSub }}</p>
+                                      <p class="ma-0 textSubTitelMenu" v-else>{{ (item.nameSub.substring(0,20) + '..') }}</p>
                                       <br>
                                       <p class="ma-0 textPriceMenu">{{formatNumber(item.price) + " บาท"}}</p>
                                       <!-- <p>{{item.nameSub}}</p> -->
@@ -7638,7 +7639,8 @@ export default {
       priceMenu: null,
       dataMenu: [],
       expansionMenu: [0],
-      dialogMenu: false
+      dialogMenu: false,
+      depositTextTH: ''
     }
   },
   beforeCreate () {
@@ -8060,6 +8062,7 @@ export default {
       console.log('filteredSelect', this.filteredSelect)
       this.statusdepositPrice = true
       this.depositPrice = item.depositPrice || 0
+      this.depositTextTH = item.depositTextTH || 'ชำระเงินมัดจำ'
       this.bookNo = item.bookNo
       this.datailLinkDeposit = item.remarkDepositLinked
       this.depositLink = 'https://betask-linked.web.app/Thank?shopId=' + item.shopId + '&redirectBy=BookingAdmin&flowId=' + item.flowId + '&bookNo=' + item.bookNo
@@ -8113,8 +8116,8 @@ export default {
             if (depositPrice === '0') {
               textLink = 'กรุณากดเพื่อผูกบัญชี : ' + this.depositLink
             } else {
-              textLink = 'กรุณากดเพื่อโอนเงินมัดจำ : ' + this.depositLink
-              textDepositPrice = `\nจำนวนเงินมัดจำ : ` + depositPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+              textLink = 'กรุณากดเพื่อโอน' + this.depositTextTH + ' : ' + this.depositLink
+              textDepositPrice = `\nจำนวนเงิน : ` + depositPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
             }
             // console.log('textBookNo', textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink)
             let copyText = textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink
@@ -9772,7 +9775,9 @@ export default {
                   }
                   s.shopId = d.shopId
                   s.dueDateDay = d.dueDateDay
+                  s.depositTextTH = d.depositTextTH
                   s.CREATE_DATE_Status = d.CREATE_DATE_Status
+                  s.CREATE_DATE = d.CREATE_DATE
                   s.menuShowStatus = d.menuShowStatus
                   s.dueDateTextDay = d.dueDateTextDay
                   s.remark = d.remark || ''
@@ -11365,7 +11370,9 @@ export default {
                   s.dueDate = d.dueDate
                   s.shopId = d.shopId
                   s.dueDateDay = d.dueDateDay
+                  s.depositTextTH = d.depositTextTH
                   s.CREATE_DATE_Status = d.CREATE_DATE_Status
+                  s.CREATE_DATE = d.CREATE_DATE
                   s.menuShowStatus = d.menuShowStatus
                   s.dueDateTextDay = d.dueDateTextDay
                   s.remark = d.remark || ''
@@ -12355,7 +12362,9 @@ export default {
                 }
                 s.shopId = d.shopId
                 s.dueDateDay = d.dueDateDay
+                s.depositTextTH = d.depositTextTH
                 s.CREATE_DATE_Status = d.CREATE_DATE_Status
+                s.CREATE_DATE = d.CREATE_DATE
                 s.menuShowStatus = d.menuShowStatus
                 s.dueDateTextDay = d.dueDateTextDay
                 s.remark = d.remark || ''
@@ -12524,7 +12533,9 @@ export default {
                 }
                 s.shopId = d.shopId
                 s.dueDateDay = d.dueDateDay
+                s.depositTextTH = d.depositTextTH
                 s.CREATE_DATE_Status = d.CREATE_DATE_Status
+                s.CREATE_DATE = d.CREATE_DATE
                 s.menuShowStatus = d.menuShowStatus
                 s.dueDateTextDay = d.dueDateTextDay
                 s.remark = d.remark || ''
