@@ -2692,7 +2692,7 @@
                   class="ma-2 white--text"
                   @click="toggle"
                   small
-                >
+                  >
                   ตรวจสอบคิวจองรายวัน
                   <v-icon
                     right
@@ -2719,6 +2719,51 @@
                   ตรวจสอบรายการเมนูรายวัน
                 </v-btn>
                 </v-col>
+                <v-col cols="3">
+                  <v-select
+                    style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 5px;"
+                    v-model="sortSelect"
+                    hide-details
+                    background-color="white"
+                    :items="getSelectText === 'wait' ? itemsSortWaiting : itemsSort"
+                    label="จัดเรียงข้อมูล"
+                    outlined
+                    dense
+                    @change="checkTypeSort(sortSelect)"
+                  ></v-select>
+                  <v-radio-group
+                    v-model="sort"
+                    row
+                    @change="checkTypeSort()"
+                  >
+                    <v-radio
+                      label="มากไปน้อย"
+                      value="มากไปน้อย"
+                      hide-details
+                    ></v-radio>
+                    <v-radio
+                      label="น้อยไปมาก"
+                      value="น้อยไปมาก"
+                      hide-details
+                    ></v-radio>
+                  </v-radio-group>
+                </v-col>
+                <!-- <v-col>
+                  <v-row>
+                    <v-checkbox
+                    v-model="ex4"
+                    label="มาก"
+                    value="red"
+                    hide-details
+                  ></v-checkbox>
+                  <v-checkbox
+                    v-model="ex4"
+                    label="น้อย"
+                    value="red"
+                    hide-details
+                  ></v-checkbox>
+                  </v-row>
+                </v-col> -->
                 <v-col class="text-right" cols="auto">
                   <template v-if="getSelectText === 'confirmJob'">
                     <v-select
@@ -7073,6 +7118,7 @@ export default {
   },
   computed: {
     filteredSelect () {
+      // console.log('tset')
       return this.dataItemSelect.filter(d => {
         return this.filters.length < 1 || d['dueDate'].toString().toLowerCase().includes(this.filters.toLowerCase())
         // return Object.keys(this.filters).every(f => {
@@ -7134,6 +7180,7 @@ export default {
       BookingDataListShowMenuReport: [],
       DataFlowNameMenu: [],
       flowSelectMenu: '',
+      sortSelect: null,
       expandedMenu: [],
       headersShowMenuReport: [
         {
@@ -7354,6 +7401,7 @@ export default {
       session: this.$session.getAll(),
       fieldNameItem: [],
       flowfieldNameitem: [],
+      sort: null,
       DataflowId: '',
       breadcrumbs: [
         {
@@ -7391,6 +7439,8 @@ export default {
       dataItemSelect: [],
       editedItemSeleteField: [],
       jobitem: [],
+      itemsSort: ['เรียงตามวันที่นัดหมาย', 'เรียงตามวันที่เปลี่ยนสถานะ'],
+      itemsSortWaiting: ['เรียงตามวันที่นัดหมาย'],
       // End Data Table Config
       formAdd: {
         bookingId: null,
@@ -7624,6 +7674,34 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
+    checkTypeSort () {
+      if (this.sortSelect && this.sort) {
+        if (this.sortSelect === 'เรียงตามวันที่นัดหมาย') {
+          console.log('เรียงตามวันที่นัดหมาย')
+          if (this.sort === 'มากไปน้อย') {
+            this.dataItemSelect.sort(function (a, b) {
+              return new Date(b.dueDate) - new Date(a.dueDate)
+            })
+          } else {
+            this.dataItemSelect.sort(function (a, b) {
+              return new Date(a.dueDate) - new Date(b.dueDate)
+            })
+          }
+        } else if (this.sortSelect === 'เรียงตามวันที่เปลี่ยนสถานะ') {
+          console.log('เรียงตามวันที่เปลี่ยนสถานะ')
+          if (this.sort === 'มากไปน้อย') {
+            this.dataItemSelect.sort(function (a, b) {
+              return new Date(b.CREATE_DATE_Status) - new Date(a.CREATE_DATE_Status)
+            })
+          } else {
+            this.dataItemSelect.sort(function (a, b) {
+              return new Date(a.CREATE_DATE_Status) - new Date(b.CREATE_DATE_Status)
+            })
+          }
+        }
+      }
+      console.log('this.dataItemSelect', this.dataItemSelect)
+    },
     async updateMenu () {
       let dt = {
         menuItem: JSON.stringify(this.dataMenu.filter((i) => parseInt(i.qty) > 0)),
@@ -11949,6 +12027,7 @@ export default {
         }
       }
       // }
+      this.checkTypeSort()
     },
     updateTimeTablefromChild (timeTable) {
       this.timeTable = timeTable
@@ -15593,5 +15672,8 @@ line-height: 22px;
   flex: none;
   order: 0;
   flex-grow: 1;
+}
+.v-input--selection-controls {
+    margin-top: 0px !important;
 }
 </style>

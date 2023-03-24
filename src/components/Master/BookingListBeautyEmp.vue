@@ -2553,6 +2553,35 @@
                   ตรวจสอบรายการเมนูรายวัน
                 </v-btn>
                 </v-col>
+                <v-col cols="3">
+                  <v-select
+                    style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 5px;"
+                    v-model="sortSelect"
+                    hide-details
+                    background-color="white"
+                    :items="getSelectText === 'wait' ? itemsSortWaiting : itemsSort"
+                    label="จัดเรียงข้อมูล"
+                    outlined
+                    dense
+                    @change="checkTypeSort(sortSelect)"
+                  ></v-select>
+                  <v-radio-group
+                    v-model="sort"
+                    row
+                    @change="checkTypeSort()"
+                  >
+                    <v-radio
+                      label="มากไปน้อย"
+                      value="มากไปน้อย"
+                      hide-details
+                    ></v-radio>
+                    <v-radio
+                      label="น้อยไปมาก"
+                      value="น้อยไปมาก"
+                      hide-details
+                    ></v-radio>
+                  </v-radio-group>
+                </v-col>
                 <v-col class="text-right" cols="auto">
                   <template v-if="getSelectText === 'confirmJob'">
                     <v-select
@@ -6596,6 +6625,10 @@ export default {
       dataCalendar: [],
       dataSummary: [],
       today: '',
+      sortSelect: null,
+      itemsSort: ['เรียงตามวันที่นัดหมาย', 'เรียงตามวันที่เปลี่ยนสถานะ'],
+      itemsSortWaiting: ['เรียงตามวันที่นัดหมาย'],
+      sort: null,
       events: [],
       dialogCalenda: false,
 
@@ -7029,6 +7062,34 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
+    checkTypeSort () {
+      if (this.sortSelect && this.sort) {
+        if (this.sortSelect === 'เรียงตามวันที่นัดหมาย') {
+          console.log('เรียงตามวันที่นัดหมาย')
+          if (this.sort === 'มากไปน้อย') {
+            this.dataItemSelect.sort(function (a, b) {
+              return new Date(b.dueDate) - new Date(a.dueDate)
+            })
+          } else {
+            this.dataItemSelect.sort(function (a, b) {
+              return new Date(a.dueDate) - new Date(b.dueDate)
+            })
+          }
+        } else if (this.sortSelect === 'เรียงตามวันที่เปลี่ยนสถานะ') {
+          console.log('เรียงตามวันที่เปลี่ยนสถานะ')
+          if (this.sort === 'มากไปน้อย') {
+            this.dataItemSelect.sort(function (a, b) {
+              return new Date(b.CREATE_DATE_Status) - new Date(a.CREATE_DATE_Status)
+            })
+          } else {
+            this.dataItemSelect.sort(function (a, b) {
+              return new Date(a.CREATE_DATE_Status) - new Date(b.CREATE_DATE_Status)
+            })
+          }
+        }
+      }
+      console.log('this.dataItemSelect', this.dataItemSelect)
+    },
     async updateMenu () {
       let dt = {
         menuItem: JSON.stringify(this.dataMenu.filter((i) => parseInt(i.qty) > 0)),
