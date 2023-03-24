@@ -7440,8 +7440,8 @@ export default {
       dataItemSelect: [],
       editedItemSeleteField: [],
       jobitem: [],
-      itemsSort: ['เรียงตามวันที่นัดหมาย', 'เรียงตามวันที่เปลี่ยนสถานะ'],
-      itemsSortWaiting: ['เรียงตามวันที่นัดหมาย'],
+      itemsSort: ['เรียงตามวันที่นัดหมาย', 'เรียงตามวันที่เปลี่ยนสถานะ', 'เรียงตามวันที่สร้าง'],
+      itemsSortWaiting: ['เรียงตามวันที่นัดหมาย', 'เรียงตามวันที่สร้าง'],
       // End Data Table Config
       formAdd: {
         bookingId: null,
@@ -7698,6 +7698,16 @@ export default {
           } else {
             this.dataItemSelect.sort(function (a, b) {
               return new Date(a.CREATE_DATE_Status) - new Date(b.CREATE_DATE_Status)
+            })
+          }
+        } else if (this.sortSelect === 'เรียงตามวันที่สร้าง') {
+          if (this.sort === 'มากไปน้อย') {
+            this.dataItemSelect.sort(function (a, b) {
+              return new Date(b.CREATE_DATE) - new Date(a.CREATE_DATE)
+            })
+          } else {
+            this.dataItemSelect.sort(function (a, b) {
+              return new Date(a.CREATE_DATE) - new Date(b.CREATE_DATE)
             })
           }
         }
