@@ -1979,6 +1979,19 @@
 
           <!-- data table -->
           <v-col cols="12">
+            <v-row style="display: flex;justify-content: flex-start;">
+              <v-col cols="4">
+                <v-select
+                v-model="selectBranch"
+                :items="branch"
+                label="เลือกสาขา"
+                solo
+                @change="filterBranch()"
+                dense
+                ></v-select>
+              </v-col>
+            </v-row>
+
             <v-card elevation="7" v-if="dataReady">
               <v-card-title>
                 <v-text-field
@@ -1992,13 +2005,13 @@
               <v-card-text>
                 <v-data-table
                   :headers="columns"
-                  :items="dataItem"
+                  :items="dataItemsearch"
                   :search="searchAll2"
                   disable-pagination
                   hide-default-footer
                 >
                 <template v-slot:[`item.masBranchID`]="{ item }">
-                    {{ branch.filter((i) => i.value === item.masBranchID).length > 0 ? branch.filter((i) => i.value === item.masBranchID)[0].text : 'ทั้งหมด'}}
+                    {{ branch.filter((i) => i.value === item.masBranchID).length > 0 ? branch.filter((i) => i.value === item.masBranchID)[0].text : 'ทั้งหมด' }}
                   </template>
                   <template v-slot:[`item.CREATE_DATE`]="{ item }">
                     {{ format_dateFUllTime(item.CREATE_DATE) }}
@@ -2869,7 +2882,9 @@ export default {
       dialogMenu: false,
       categorySubByShop: [],
       categorySub: [],
-      branch: []
+      branch: [],
+      dataItemsearch: [],
+      selectBranch: 'All'
       // End Data Table Config
     }
   },
@@ -2882,6 +2897,9 @@ export default {
     if (this.dataItem.length > 0) {
       for (let i = 0; i < this.dataItem.length; i++) {
         let d = this.dataItem[i]
+        if (d.masBranchID === null) {
+          d.masBranchID = 'All'
+        }
         let s = {}
         s.flowId = d.flowId
         s.flowName = d.flowName
@@ -2893,8 +2911,16 @@ export default {
     await this.getShop()
     await this.getDataBranch()
     await this.getCategorySub()
+    await this.filterBranch()
   },
   methods: {
+    filterBranch () {
+      if (this.selectBranch === 'All') {
+        this.dataItemsearch = this.dataItem
+      } else {
+        this.dataItemsearch = this.dataItem.filter((item) => item.masBranchID === this.selectBranch || item.masBranchID === 'All')
+      }
+    },
     async getDataBranch () {
       this.branch = []
       await axios
