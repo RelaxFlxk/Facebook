@@ -160,7 +160,7 @@
                           maxlength="50"
                           required
                           attach
-        :menu-props="{ bottom: true, offsetY: true }"
+                          :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-col>
                       <v-col cols="12" class="pa-0">
@@ -228,9 +228,10 @@
                           label="สาขา"
                           attach
                           :menu-props="{ bottom: true, offsetY: true }"
+                          @change="selectBranchAdd()"
                         ></v-select>
                       </v-col>
-                      <v-col cols="12" class="pa-0" v-if="formAdd.privacyPage === 'bookingform' || formAdd.privacyPage === 'bookingStoreFront'">
+                      <v-col cols="12" class="pa-0" v-if="(formAdd.masBranchID !== '' && formAdd.masBranchID !== null) && (formAdd.privacyPage === 'bookingform' || formAdd.privacyPage === 'bookingStoreFront')">
                         <v-autocomplete
                           v-model="formAdd.flowId"
                           :items="flow"
@@ -402,9 +403,10 @@
                           label="สาขา"
                           clearable
                           :menu-props="{ bottom: true, offsetY: true }"
+                          @change="selectBranchEdit()"
                         ></v-select>
                       </v-col>
-                      <v-col cols="12" class="pa-0" v-if="formUpdate.privacyPage === 'bookingform' || formUpdate.privacyPage === 'bookingStoreFront'">
+                      <v-col cols="12" class="pa-0" v-if="(formUpdate.masBranchID !== '' && formUpdate.masBranchID !== null) && (formUpdate.privacyPage === 'bookingform' || formUpdate.privacyPage === 'bookingStoreFront')">
                         <v-select
                           v-model="formUpdate.flowId"
                           :items="flow"
@@ -1011,8 +1013,7 @@
                       dark
                       @click.stop="
                         ;(dialogEdit = true),
-                          getDataById(item),
-                          getDataFlow()
+                          getDataById(item)
                       "
                     >
                       <v-icon> mdi-tools </v-icon>
@@ -1280,7 +1281,7 @@ export default {
     }
   },
   async mounted () {
-    await this.getDataFlow()
+    // await this.getDataFlow()
     await this.getDataBranch()
     await this.getBookingField()
     // this.getGetToken(this.DNS_IP)
@@ -1790,6 +1791,7 @@ export default {
       delete this.formUpdate['CREATE_DATE']
       delete this.formUpdate['RECORD_STATUS']
       console.log('this.formUpdate', this.formUpdate)
+      await this.selectBranchEdit()
     },
     async addData () {
       //
@@ -2214,7 +2216,45 @@ export default {
           console.log(error)
         })
     },
-    async getDataFlow () {
+    async selectBranchAdd () {
+      console.log('this.formAdd.masBranchID', typeof this.formAdd.masBranchID)
+      let masBranchID = this.formAdd.masBranchID
+      await this.getDataFlow(masBranchID)
+      if (this.formAdd.flowId !== '' && this.formAdd.flowId !== null) {
+        let itemFLow = []
+        this.flow.forEach((add) => {
+          this.formAdd.flowId.forEach((select) => {
+            // console.log(add.value, select)
+            if (add.value === select) {
+              itemFLow.push(select)
+            }
+          })
+        })
+        this.formAdd.flowId = itemFLow
+      }
+    },
+    async selectBranchEdit () {
+      if (this.formUpdate.masBranchID !== '' && this.formUpdate.masBranchID !== null) {
+        console.log('this.formUp', typeof this.formUpdate.masBranchID)
+        let masBranchID = this.formUpdate.masBranchID
+        await this.getDataFlow(masBranchID)
+        if (this.formUpdate.flowId !== '' && this.formUpdate.flowId !== null) {
+          let itemFLow = []
+          this.flow.forEach((add) => {
+            this.formUpdate.flowId.forEach((select) => {
+            // console.log(add.value, select)
+              if (add.value === select) {
+                itemFLow.push(select)
+              }
+            })
+            console.log('itemFLow', itemFLow)
+          })
+          this.formUpdate.flowId = itemFLow
+        }
+      }
+    },
+    async getDataFlow (masBranchID) {
+      // console.log('TEST', masBranchID.toString())
       this.flow = []
       await axios
         .get(this.DNS_IP + '/flow/get?shopId=' + this.shopId)
@@ -2222,10 +2262,14 @@ export default {
           let rs = response.data
           for (var i = 0; i < rs.length; i++) {
             let d = rs[i]
-            let s = {}
-            s.text = d.flowName
-            s.value = d.flowId
-            this.flow.push(s)
+            let checkBranchByFlow = d.masBranchID || 'All'
+            if ((checkBranchByFlow === masBranchID.toString()) || checkBranchByFlow === 'All') {
+              console.log('eeeeeee', d.flowName)
+              let s = {}
+              s.text = d.flowName
+              s.value = d.flowId
+              this.flow.push(s)
+            }
           }
           console.log('result', this.flow)
         })

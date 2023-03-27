@@ -891,6 +891,17 @@
                         </v-row>
                         <v-col cols="12">
                           <v-select
+                            v-model="formAdd.masBranchID"
+                            :items="branch"
+                            label="สาขา"
+                            outlined
+                            dense
+                            required
+                            :rules="[rules.required]"
+                            @change="setFlowByBranchAdd()"
+                          ></v-select>
+                          <v-select
+                            v-if="formAdd.masBranchID !== null && formAdd.masBranchID !== ''"
                             v-model="formAdd.flowId"
                             :items="dataFlowSelectAdd"
                             label="ประเภทบริการ"
@@ -898,15 +909,6 @@
                             dense
                             required
                             @change="SetallowedDates(),setFlowAdd(), checkTime(), date = ''"
-                            :rules="[rules.required]"
-                          ></v-select>
-                          <v-select
-                            v-model="formAdd.masBranchID"
-                            :items="branch"
-                            label="สาขา"
-                            outlined
-                            dense
-                            required
                             :rules="[rules.required]"
                           ></v-select>
                           <template v-if="fieldNameItem">
@@ -3852,6 +3854,16 @@
                         <v-form ref="form_edit" v-model="validEdit" lazy-validation>
                         <v-col cols="12" v-if="dataEditReady">
                           <v-select
+                            v-model="formEdit.masBranchID"
+                            :items="branch"
+                            label="สาขา"
+                            outlined
+                            dense
+                            required
+                            :rules="[rules.required]"
+                            @change="setFlowByBranchEdit()"
+                          ></v-select>
+                          <v-select
                             v-model="formEdit.flowId"
                             :items="dataFlowSelectEdit"
                             label="ประเภทบริการ"
@@ -3859,15 +3871,6 @@
                             dense
                             required
                             @change="SetallowedDatesEdit(), checkTimeEdit(), dateEdit = ''"
-                            :rules="[rules.required]"
-                          ></v-select>
-                          <v-select
-                            v-model="formEdit.masBranchID"
-                            :items="branch"
-                            label="สาขา"
-                            outlined
-                            dense
-                            required
                             :rules="[rules.required]"
                           ></v-select>
                           <template v-if="BookingDataItemEdit">
@@ -10117,6 +10120,7 @@ export default {
       this.userId = dt.userId
       this.BookingDataItemEdit = []
       this.formEdit.masBranchID = dt.masBranchID
+      await this.setFlowByBranchEdit()
       this.masBranchIDOldEdit = dt.masBranchID
       this.formEdit.flowId = dt.flowId
       this.flowIdOldEdit = dt.flowId
@@ -11638,6 +11642,42 @@ export default {
       this.DataFlowNameMenu = result.filter(el => { return el.menuShowStatus === 'True' })
       this.dataFlowSelectAdd = resultOption
       this.dataFlowSelectEdit = resultOption
+    },
+    setFlowByBranchEdit (item) {
+      this.formEdit.flowId = ''
+      this.dateEdit = ''
+      this.timeEdit = ''
+      console.log('item.allData', this.DataFlowName)
+      console.log('item.this.formEdit.masBranchID.toString()', this.formEdit.masBranchID.toString(), this.formEdit.masBranchID)
+      let DD = this.DataFlowName
+      let dataFilter = []
+      DD.forEach((item) => {
+        if (item.text !== 'ทั้งหมด') {
+          let checkBranchByFlow = item.allData.masBranchID || 'All'
+          if ((checkBranchByFlow === this.formEdit.masBranchID.toString()) || checkBranchByFlow === 'All') {
+            console.log('eeeeeee', item.allData.flowName)
+            dataFilter.push(item)
+          }
+        }
+      })
+      this.dataFlowSelectEdit = dataFilter
+    },
+    setFlowByBranchAdd () {
+      this.formAdd.flowId = ''
+      console.log('item.allData', this.DataFlowName)
+      console.log('item.this.formAdd.masBranchID.toString()', this.formAdd.masBranchID.toString(), this.formAdd.masBranchID)
+      let DD = this.DataFlowName
+      let dataFilter = []
+      DD.forEach((item) => {
+        if (item.text !== 'ทั้งหมด') {
+          let checkBranchByFlow = item.allData.masBranchID || 'All'
+          if ((checkBranchByFlow === this.formAdd.masBranchID.toString()) || checkBranchByFlow === 'All') {
+            console.log('eeeeeee', item.allData.flowName)
+            dataFilter.push(item)
+          }
+        }
+      })
+      this.dataFlowSelectAdd = dataFilter
     },
     async getDataBranch () {
       // if (localStorage.getItem('BRANCH') === null) {

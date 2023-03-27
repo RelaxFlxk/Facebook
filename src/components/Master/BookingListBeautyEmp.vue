@@ -746,6 +746,17 @@
                         </v-col> -->
                         <v-col cols="12">
                           <v-select
+                            v-model="formAdd.masBranchID"
+                            :items="branch"
+                            label="สาขา"
+                            outlined
+                            dense
+                            required
+                            :rules="[rules.required]"
+                            @change="setFlowByBranchAdd()"
+                          ></v-select>
+                          <v-select
+                          v-if="formAdd.masBranchID !== '' && formAdd.masBranchID !== null"
                             v-model="formAdd.flowId"
                             :items="dataFlowSelectAdd"
                             label="ประเภทบริการ"
@@ -756,17 +767,7 @@
                             :rules="[rules.required]"
                           ></v-select>
                           <v-select
-                            v-model="formAdd.masBranchID"
-                            :items="branch"
-                            label="สาขา"
-                            outlined
-                            dense
-                            required
-                            :rules="[rules.required]"
-                            @change="setEmpAdd()"
-                          ></v-select>
-                          <v-select
-                            v-if="formAdd.masBranchID !== null && formAdd.flowId !== null"
+                            v-if="formAdd.flowId !== '' && formAdd.flowId !== null"
                             v-model="formAdd.bookingEmpFlow"
                             :items="dataEmpAdd"
                             label="พนักงานช่าง"
@@ -3451,6 +3452,16 @@
                         <v-form ref="form_edit" v-model="validEdit" lazy-validation>
                         <v-col cols="12" v-if="dataEditReady">
                           <v-select
+                            v-model="formEdit.masBranchID"
+                            :items="branch"
+                            label="สาขา"
+                            outlined
+                            dense
+                            required
+                            :rules="[rules.required]"
+                            @change="setFlowByBranchEdit()"
+                          ></v-select>
+                          <v-select
                             v-model="formEdit.flowId"
                             :items="dataFlowSelectEdit"
                             label="ประเภทบริการ"
@@ -3461,17 +3472,7 @@
                             :rules="[rules.required]"
                           ></v-select>
                           <v-select
-                            v-model="formEdit.masBranchID"
-                            :items="branch"
-                            label="สาขา"
-                            outlined
-                            dense
-                            required
-                            :rules="[rules.required]"
-                            @change="formEdit.bookingEmpFlow = '', fromAddTimeCus = '',dateEdit='', setEmpEdit()"
-                          ></v-select>
-                          <v-select
-                            v-if="formEdit.masBranchID !== null && formEdit.flowId !== null && (flowIdOldEdit !== formEdit.flowId)  && (masBranchIDOldEdit !== formEdit.masBranchID) && (getSelectText !== 'cancel') && (checkSelectText !== 'confirmJob')"
+                            v-if="formEdit.flowId !== '' && formEdit.flowId !== null && (flowIdOldEdit !== formEdit.flowId)  && (masBranchIDOldEdit !== formEdit.masBranchID) && (getSelectText !== 'cancel') && (checkSelectText !== 'confirmJob')"
                             v-model="formEdit.bookingEmpFlow"
                             :items="dataEmpChange"
                             label="พนักงานช่าง"
@@ -8416,7 +8417,6 @@ export default {
               'กรุณาเลือกประเภทบริการอื่นๆ',
               'info'
             )
-            this.formEdit.masBranchID = ''
           }
           console.log('EmpItemLimitAdd', this.EmpItemLimitAdd)
         } else {
@@ -10299,6 +10299,7 @@ export default {
       this.userId = dt.userId
       this.BookingDataItemEdit = []
       this.formEdit.masBranchID = dt.masBranchID
+      this.setFlowByBranchEdit()
       this.masBranchIDOldEdit = dt.masBranchID
       this.formEdit.bookingEmpFlow = dt.bookingEmpFlow
       this.formEdit.flowId = dt.flowId
@@ -10917,7 +10918,7 @@ export default {
     async checkTimeEditSubmit (dateC, dt) {
       this.timeEdit = ''
       this.timeavailable = []
-      console.log('checkTimeFlow', dateC, dt)
+      console.log('checkTimeEditSubmit', dateC, dt)
       // this.showTable = []
       let setTime = []
       // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
@@ -11087,11 +11088,12 @@ export default {
               v.status = true
             }
           })
-          console.log('timeavailable', this.timeavailable)
+          // console.log('timeavailable', this.timeavailable)
           if (LimitBooking.status !== false) {
             if (LimitBooking.length > 0) {
               this.timeavailable.forEach((v, k) => {
-                let bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value)
+                let bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value && dt.timeDuetext !== a.bookingTime)
+                console.log('bookingTargetSlot', bookingTarget)
                 if (bookingTarget.length > 0) {
                   v.status = false
                   let bookingTargetSlot = bookingTarget[0].timeSlotCustomer || bookingTarget[0].timeSlot
@@ -11110,10 +11112,10 @@ export default {
           for (let i = 0; i < this.timeavailable.length; i++) {
             let num = i + (slotCheck - 1)
             let checkitem = this.timeavailable.filter((item, key) => (key >= i && key <= num))
-            console.log('checkitem', checkitem, slotCheck)
+            // console.log('checkitem', checkitem, slotCheck)
             Newtimeavailable.push(checkitem)
           }
-          console.log('Newtimeavailable', Newtimeavailable)
+          // console.log('Newtimeavailable', Newtimeavailable)
           this.timeavailable = []
           Newtimeavailable.forEach((v, k) => {
             // console.log('v.length >= slotCheck', v.length, slotCheck)
@@ -12041,6 +12043,46 @@ export default {
       this.DataFlowNameMenu = result.filter(el => { return el.menuShowStatus === 'True' })
       this.dataFlowSelectAdd = resultOption
       this.dataFlowSelectEdit = resultOption
+    },
+    setFlowByBranchEdit (item) {
+      this.formEdit.flowId = ''
+      this.dateEdit = ''
+      this.timeEdit = ''
+      this.customerTimeSlot = 'False'
+      this.formAdd.bookingEmpFlow = ''
+      console.log('item.allData', this.DataFlowName)
+      console.log('item.this.formEdit.masBranchID.toString()', this.formEdit.masBranchID.toString(), this.formEdit.masBranchID)
+      let DD = this.DataFlowName
+      let dataFilter = []
+      DD.forEach((item) => {
+        if (item.text !== 'ทั้งหมด') {
+          let checkBranchByFlow = item.allData.masBranchID || 'All'
+          if ((checkBranchByFlow === this.formEdit.masBranchID.toString()) || checkBranchByFlow === 'All') {
+            console.log('eeeeeee', item.allData.flowName)
+            dataFilter.push(item)
+          }
+        }
+      })
+      this.dataFlowSelectEdit = dataFilter
+    },
+    setFlowByBranchAdd () {
+      this.formAdd.flowId = ''
+      this.customerTimeSlot = 'False'
+      this.formAdd.bookingEmpFlow = ''
+      console.log('item.allData', this.DataFlowName)
+      console.log('item.this.formAdd.masBranchID.toString()', this.formAdd.masBranchID.toString(), this.formAdd.masBranchID)
+      let DD = this.DataFlowName
+      let dataFilter = []
+      DD.forEach((item) => {
+        if (item.text !== 'ทั้งหมด') {
+          let checkBranchByFlow = item.allData.masBranchID || 'All'
+          if ((checkBranchByFlow === this.formAdd.masBranchID.toString()) || checkBranchByFlow === 'All') {
+            console.log('eeeeeee', item.allData.flowName)
+            dataFilter.push(item)
+          }
+        }
+      })
+      this.dataFlowSelectAdd = dataFilter
     },
     async getDataBranch () {
       // if (localStorage.getItem('BRANCH') === null) {
