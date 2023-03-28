@@ -1397,6 +1397,48 @@
                             ></v-select>
                             </v-col>
                           </v-row>
+                          <v-row v-if="showMenu === 'True'">
+                          <sideMenu :drawerParent="drawerAdd" :toggleParent="toggleAdd" :languageSelectParent="languageSelect" :dataMenuParent="dataMenuAdd" :priceMenuParent="priceMenuAdd" @updatePriceMenuParent="updatePriceMenuAdd"></sideMenu>
+                          <v-col cols="12" class="pt-0 pb-4">
+                            <v-btn
+                              block
+                              dark
+                              @click="toggleAdd"
+                            >เมนู</v-btn>
+                          </v-col>
+                          <v-col cols="12" class="pt-0 pb-6">
+                            <v-expansion-panels multiple v-model="expansionMenuAdd">
+                              <v-expansion-panel>
+                                <v-expansion-panel-header>รายการและราคา</v-expansion-panel-header>
+                                <v-expansion-panel-content>
+                                  <div style="align-items: center;width:100%;">
+                                    <v-row>
+                                      <v-col cols="12" v-for="(item,id) in dataMenuAdd.filter(el => { return parseInt(el.qty) > 0 })" :key="id" style="display: flex;">
+                                        <v-card class="cardMenu">
+                                            <v-img
+                                              class="pictureMenu"
+                                              :src="item.picture"
+                                            ></v-img>
+                                            <v-row>
+                                              <v-col cols="8" class="pt-0 pb-0 textTitelMenu">{{item.name}}</v-col>
+                                              <v-col cols="8" style="display: flex;justify-content: flex-start;" class="pt-0 pb-0 textTitelMenuSub">{{item.qty}} x {{formatNumber(item.price)}}</v-col>
+                                              <v-col cols="6" class="pt-0 pb-0 textTitelMenuRemark">{{item.remark}}</v-col>
+                                            </v-row>
+                                        </v-card>
+                                      </v-col>
+                                      <v-col cols="12">
+                                        <v-row>
+                                          <v-col cols="6"><p class="ma-0 textTitelPriceMenu">รวมราคา</p></v-col>
+                                          <v-col cols="6" style="display: flex;justify-content: flex-end;" class="textTitelPriceMenu">{{formatNumber(priceMenuAdd)}}</v-col>
+                                        </v-row>
+                                      </v-col>
+                                    </v-row>
+                                  </div>
+                                </v-expansion-panel-content>
+                              </v-expansion-panel>
+                            </v-expansion-panels>
+                          </v-col>
+                        </v-row>
                           <v-row v-if="$session.getAll().data.shopId !== 'U9f316c85400fd716ea8c80d7cd5b61f8'">
                             <v-col class="pt-0 pb-0">
                               <v-radio-group v-model="formAdd.radiosRemark" row required :rules ="[rules.required]">
@@ -6708,7 +6750,7 @@
                         </v-btn>
                       </div>
                     </v-col>
-                    <v-col cols="12" v-if="dataMenu.length > 1">
+                    <v-col cols="12" v-if="dataMenu.length > 0">
                        <div
                           style="'width:100% !important';background: linear-gradient(90deg, #FCFCFC 0%, #F7F7F7 10.04%, #F7F7F7 51.56%, #F7F7F7 89.58%, #FCFCFC 100%);box-shadow: 0px 4px 20px rgba(114, 114, 114, 0.1);"
                         >
@@ -7099,11 +7141,13 @@ import waitingAlert from '../waitingAlert.vue'
 import RetureDeposit from '../BookingListComponents/RetureDeposit.vue'
 import CallLog from '../BookingListComponents/CallLog.vue'
 import NotificationService from '../BookingListComponents/NotificationService.vue'
+import sideMenu from '../Menu/sideMenu.vue'
 // import copy from 'copy-to-clipboard'
 
 export default {
   name: 'BookingListBeauty',
   components: {
+    sideMenu,
     draggable,
     'left-menu-admin': adminLeftMenu,
     DateRangePicker,
@@ -7175,6 +7219,14 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      // menu
+      showMenu: 'False',
+      dataMenuAdd: [],
+      expansionMenuAdd: [0],
+      drawerAdd: false,
+      priceMenuAdd: 0,
+      languageSelect: 0,
+      // ******
       dialogShowMenuReport: false,
       menuShowMenuReport: false,
       dataShowMenuReport: [],
@@ -7679,6 +7731,14 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
+    toggleAdd () {
+      this.drawerAdd = !this.drawerAdd
+    },
+    updatePriceMenuAdd (price, dataMenu) {
+      console.log('updatePriceMenu', price)
+      this.priceMenuAdd = price
+      this.dataMenuAdd = dataMenu
+    },
     checkTypeSort () {
       if (this.sortSelect && this.sort) {
         if (this.sortSelect === 'เรียงตามวันที่นัดหมาย') {
@@ -10638,6 +10698,13 @@ export default {
       // console.log('dataFlowSelectAdd', this.dataFlowSelectAdd)
       let dtTime = this.dataFlowSelectAdd.filter(item => { return item.value === this.formAdd.flowId })
       if (dtTime.length > 0) {
+        if (dtTime[0].menuShowStatus === 'True') {
+          this.showMenu = 'True'
+          this.dataMenuAdd = JSON.parse(dtTime[0].allData.menuItem) || []
+        } else {
+          this.showMenu = 'False'
+          this.dataMenuAdd = []
+        }
         // let dtTime = this.branch.filter(item => { return item.value === this.formAdd.masBranchID })
         // console.log('test', dtTime)
         // this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
@@ -12910,8 +12977,19 @@ export default {
     },
     addData () {
       this.loadingAdd = true
-      this.validate('ADD')
-      setTimeout(() => this.addDataSubmit(), 500)
+      let dtTime = this.dataFlowSelectAdd.filter(item => { return item.value === this.formAdd.flowId })
+      if (dtTime.length > 0) {
+        if (dtTime[0].menuShowStatus === 'True' && this.dataMenuAdd.filter(el => { return parseInt(el.qty) > 0 }).length === 0) {
+          this.loadingAdd = false
+          this.$swal('แจ้งเตือน', 'กรุณาเลือกเมนู', 'info')
+        } else {
+          this.validate('ADD')
+          setTimeout(() => this.addDataSubmit(), 500)
+        }
+      } else {
+        this.validate('ADD')
+        setTimeout(() => this.addDataSubmit(), 500)
+      }
     },
     async addDataInsert () {
       // this.swalConfig.title = 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?'
@@ -13031,6 +13109,10 @@ export default {
             update.statusBookingForm = 'BookingForm'
             update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
             update.addressLatLong = JSON.stringify(this.center)
+            if (this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0).length > 0) {
+              update.menuItem = JSON.stringify(this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0))
+              update.menuPrice = this.priceMenuAdd
+            }
             Add.push(update)
           } else {
             if (fielditem.filter(row => { return row.fieldId === parseInt(d.conditionField) }).length > 0) {
@@ -13064,6 +13146,10 @@ export default {
                 update.statusBookingForm = 'BookingForm'
                 update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
                 update.addressLatLong = JSON.stringify(this.center)
+                if (this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0).length > 0) {
+                  update.menuItem = JSON.stringify(this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0))
+                  update.menuPrice = this.priceMenuAdd
+                }
                 Add.push(update)
               }
             } else if (d.conditionField === 'flow') {
@@ -13097,6 +13183,10 @@ export default {
                 update.statusBookingForm = 'BookingForm'
                 update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
                 update.addressLatLong = JSON.stringify(this.center)
+                if (this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0).length > 0) {
+                  update.menuItem = JSON.stringify(this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0))
+                  update.menuPrice = this.priceMenuAdd
+                }
                 Add.push(update)
               }
             }
@@ -13247,6 +13337,8 @@ export default {
         })
     },
     async clearDataAdd () {
+      this.showMenu = 'False'
+      this.dataMenuAdd = []
       this.dataReady = true
       this.date = ''
       this.time = ''
