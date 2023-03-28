@@ -1181,6 +1181,7 @@ export default {
           }
           if (this.branch.length === 1) {
             this.formSelect.masBranchID = this.branch[0].value
+            this.selectBranch()
             // this.checkTime()
             // this.getEmp()
           }
