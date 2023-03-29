@@ -96,6 +96,16 @@
             </template>
             <template v-slot:[`item.action`]="{ item }">
               <v-btn
+                v-if="item.callBackStatus === 'True'"
+                :color="item.staffCallBack === 'True' ? '#173053' : 'warning'"
+                fab
+                small
+                dark
+                @click="getBookingDataCallBack(item)"
+              >
+                <v-icon > mdi-phone-in-talk </v-icon>
+              </v-btn>
+              <v-btn
                 color="#173053"
                 fab
                 small
@@ -121,7 +131,7 @@
         <v-dialog
             v-model="dialogBooking"
             persistent
-            width="25%"
+            width="500px"
           >
             <v-card class="pa-1">
               <v-container>
@@ -147,7 +157,7 @@
                 ></v-img> -->
                 <h2 class="font-weight-bold" style="color:#173053;">รายละเอียดนัดหมาย</h2>
               </v-col>
-                  <v-card-text class="text-center">
+                  <v-card-text class="text-left">
                     <v-container>
                       <h6 class="font-weight-bold" style="color:#000000;">วันที่นัดหมาย : {{format_dateThai(booking.dueDate)}}</h6>
                       <h6 class="font-weight-bold" style="color:#000000;">ประเภทบริการ : {{booking.flowName}}</h6>
@@ -156,7 +166,106 @@
                         <v-col v-if="item.fieldValue !== ''" col="6" class="pb-0" style="color:#000000;"><strong style="color:#000000;">{{item.fieldName}} : </strong> {{item.fieldValue}}</v-col>
                       </v-row>
                       <v-row>
-                        <h6 class="font-weight-bold" v-if="booking.remark" style="color:#000000;">หมายเหตุเพิ่มเติม : {{booking.remark}}</h6>
+                        <v-col cols="12" v-if="booking.remark" style="color:#000000;"><strong style="color:#000000;">หมายเหตุเพิ่มเติม : </strong>{{booking.remark}}</v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card-text>
+              <br>
+            </v-card>
+          </v-dialog>
+        <v-dialog
+            v-model="dialogCallBack"
+            persistent
+            width="500px"
+          >
+            <v-card class="pa-1">
+              <v-container>
+                <div style="text-align: end;">
+                        <v-btn
+                          fab
+                          small
+                          dark
+                          color="#F3F3F3"
+                          @click="dialogCallBack = false"
+                        >
+                          <v-icon dark
+                          color="#FE4A01 ">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>
+                        </div>
+              </v-container>
+              <v-col class="text-center pa-0 px-3">
+                <!-- <v-img
+                  id="v_text_edits"
+                  :src="require('@/assets/GroupEditTitle.svg')"
+                ></v-img> -->
+                <h2 class="font-weight-bold" style="color:#173053;">ลูกค้าต้องการให้ติดต่อกลับ</h2>
+              </v-col>
+                  <v-card-text class="text-left">
+                    <v-container>
+                      <h6 class="font-weight-bold" style="color:#000000;">วันที่นัดหมาย : {{format_dateThai(booking.dueDate)}}</h6>
+                      <h6 class="font-weight-bold" style="color:#000000;">ประเภทบริการ : {{booking.flowName}}</h6>
+                      <h6 class="font-weight-bold" style="color:#000000;">สาขา : {{booking.masBranchName}}</h6>
+                      <v-row v-for="(item , index3) in bookingData" :key="index3">
+                        <v-col v-if="item.fieldValue !== '' && item.fieldName !== 'เบอร์โทร'" col="6" class="pb-0" style="color:#000000;"><strong style="color:#000000;">{{item.fieldName}} : </strong> {{item.fieldValue}}</v-col>
+                        <v-col v-if="item.fieldValue !== '' && item.fieldName === 'เบอร์โทร'" col="12" class="pb-0" style="color:#000000;"><strong style="color:#000000;">{{item.fieldName}} : </strong> <a @click="dial(item.fieldValue)">{{item.fieldValue}}</a></v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" v-if="booking.remark" style="color:#000000;"><strong style="color:#000000;">หมายเหตุเพิ่มเติม : </strong>{{booking.remark}}</v-col>
+                      </v-row>
+                      <hr>
+                      <v-row>
+                        <v-col cols="12" style="color:#000000;" class="pb-0"><strong style="color:#000000;">คะแนนที่ได้</strong></v-col>
+                        <v-col cols="12" class="pt-0">
+                           <v-rating
+                            v-model="dataRating.rating"
+                            color="yellow darken-3"
+                            background-color="grey darken-1"
+                            empty-icon="$ratingFull"
+                            readonly
+                            small
+                          ></v-rating>
+                        </v-col>
+                        <v-col cols="12" style="color:#000000;"><strong style="color:#000000;">ความคิดเห็นเพิ่มเติม : </strong>{{dataRating.comment}}</v-col>
+                      </v-row>
+                      <hr>
+                      <v-row>
+                        <v-col cols="12" style="color:#000000;" class="pb-0"><strong style="color:#000000;">อัพเดทสถานะการติดต่อ</strong></v-col>
+                        <v-col cols="12" class="pt-0">
+                          <v-checkbox
+                            label="พนักงานติดต่อแล้ว"
+                            false-value="False"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            color="#1B437C"
+                            true-value="True"
+                            style="display: flex;align-items: flex-start;"
+                            v-model="formUpdate.staffCallBack"
+                          ></v-checkbox>
+                          <v-textarea
+                            v-model="formUpdate.staffCallBackRemark"
+                            label="หมายเหตุพนักงาน"
+                            auto-grow
+                            outlined
+                            rows="3"
+                            row-height="25"
+                            shaped
+                          ></v-textarea>
+                        </v-col>
+                        <v-col cols="12" class="pt-0">
+                          <v-btn
+                            dark
+                            elevation="2"
+                            large
+                            block
+                            color="#173053"
+                            @click="updateStatusCallBack()"
+                          >
+                            <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                            อัพเดทสถานะการติดต่อ
+                          </v-btn>
+                        </v-col>
                       </v-row>
                     </v-container>
                   </v-card-text>
@@ -179,6 +288,7 @@ export default {
   },
   data () {
     return {
+      dialogCallBack: false,
       breadcrumbs: [
         {
           text: 'Home',
@@ -220,13 +330,22 @@ export default {
         'rgb(41,50,65)'
       ],
       booking: [],
-      bookingData: []
+      bookingData: [],
+      dataRating: [],
+      formUpdate: {
+        staffCallBack: 'False',
+        staffCallBackRemark: '',
+        LAST_USER: ''
+      }
     }
   },
   async mounted () {
     this.getRating()
   },
   methods: {
+    dial: function (number) {
+      window.location = 'tel:' + number
+    },
     async getRating () {
       this.Ratingitem = []
       await axios
@@ -244,6 +363,9 @@ export default {
               s.typeWork = d.typeWork
               s.displayName = d.displayName
               s.pictureUrl = d.pictureUrl
+              s.callBackStatus = d.callBackStatus
+              s.staffCallBack = d.staffCallBack
+              s.staffCallBackRemark = d.staffCallBackRemark
               s.CREATE_DATE = this.format_dateNotime(d.CREATE_DATE)
               this.Ratingitem.push(s)
             }
@@ -284,6 +406,64 @@ export default {
             this.dialogBooking = true
           }
         })
+    },
+    async getBookingDataCallBack (item) {
+      console.log('getBookingDataCallBack', item)
+      this.booking = []
+      this.bookingData = []
+      this.dataRating = item
+      this.formUpdate.staffCallBack = item.staffCallBack || 'False'
+      this.formUpdate.staffCallBackRemark = item.staffCallBackRemark || ''
+      let urlApi = this.DNS_IP +
+            '/booking_view/get?shopId=' +
+            this.session.data.shopId +
+            '&jobNo=' +
+            item.refId
+      await axios
+        .get(urlApi)
+        .then(async response => {
+          console.log('getBookingData', response.data)
+          if (response.data.status === false) {
+            this.booking = []
+            this.bookingData = []
+            this.dialogCallBack = false
+            this.$swal('ผิดพลาด', 'ไม่มีข้อมูลนัดหมาย', 'error')
+          } else {
+            this.booking = response.data[0]
+            await axios
+              .get(`${this.DNS_IP}/BookingData/get?shopId=${this.session.data.shopId}&jobNo=${item.refId}`)
+              .then(async responses => {
+                console.log('BookingData', responses.data)
+                if (responses.data.status === false) {
+                  this.bookingData = []
+                } else {
+                  this.bookingData = responses.data
+                }
+              })
+            this.dialogCallBack = true
+          }
+        })
+    },
+    updateStatusCallBack () {
+      this.$swal({
+        title: 'ต้องการ อัพเดทสถานะการติดต่อ ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      }).then(async (result) => {
+        this.formUpdate.LAST_USER = this.session.data.LAST_USER
+        axios.post(this.DNS_IP + '/rating/edit/' + this.dataRating.id, this.formUpdate).then(response => {
+          this.$swal('เรียบร้อย', 'อัพเดทสถานะการติดต่อ เรียบร้อย', 'success')
+          this.getRating()
+          this.dialogCallBack = false
+        })
+          .catch((error) => {
+            console.log('error function updateStatusCallBack : ', error)
+          })
+      })
     },
     async getJobitem (item) {
       console.log('getJobitem', item)
