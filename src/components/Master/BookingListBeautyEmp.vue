@@ -745,6 +745,15 @@
                           ></v-img>
                         </v-col> -->
                         <v-col cols="12">
+                          <v-checkbox
+                            v-model="statusVIP"
+                            label="นัดหมายพิเศษ (VIP.)"
+                            false-value="False"
+                            true-value="True"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            @click="date = ''"
+                          ></v-checkbox>
                           <v-select
                             v-model="formAdd.masBranchID"
                             :items="branch"
@@ -7088,7 +7097,11 @@ export default {
       dataMenu: [],
       expansionMenu: [0],
       dialogMenu: false,
-      depositTextTH: ''
+      depositTextTH: '',
+      statusVIP: 'False',
+      statusVIPEdit: 'False',
+      statusVIPChang: 'False',
+      statusVIPRemove: 'False'
     }
   },
   beforeCreate () {
@@ -9374,17 +9387,19 @@ export default {
         this.checkLimitBooking.timeSelect = checkTimeSlot
         this.checkLimitBooking.timeBooking = dt
         this.checkLimitBooking.slotByflow = slot
-        checkTimeSlot.forEach((item, key) => {
-          allBookingTime.forEach((item2, key2) => {
-            // console.log('filter', item2.filter((i, n) => i.value === item.value))
-            if (item2.filter((i, n) => i.value === item.value).length > 0) {
-              this.checkLimitBooking.limitCheck = 'false'
-              console.log('เวลาซ้ำกัน')
-            } else {
-              console.log('เวลาไม่ซ้ำกัน')
-            }
+        if (this.statusVIP === 'False') {
+          checkTimeSlot.forEach((item, key) => {
+            allBookingTime.forEach((item2, key2) => {
+              // console.log('filter', item2.filter((i, n) => i.value === item.value))
+              if (item2.filter((i, n) => i.value === item.value).length > 0) {
+                this.checkLimitBooking.limitCheck = 'false'
+                console.log('เวลาซ้ำกัน')
+              } else {
+                console.log('เวลาไม่ซ้ำกัน')
+              }
+            })
           })
-        })
+        }
       }
       console.log('this.checkLimitBooking', this.checkLimitBooking)
     },
@@ -9447,62 +9462,64 @@ export default {
               v.status = true
             }
           })
-          if (LimitBooking.status !== false) {
-            if (LimitBooking.length > 0) {
-              this.timeavailable.forEach((v, k) => {
-                let bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value)
-                if (bookingTarget.length > 0) {
-                  v.status = false
-                  let bookingTargetSlot = bookingTarget[0].timeSlotCustomer || bookingTarget[0].timeSlot
-                  for (let bT = 0; bT < bookingTargetSlot; bT++) {
-                    if (this.timeavailable[k + bT] !== undefined) {
-                      this.timeavailable[k + bT].status = false
+          if (this.statusVIP === 'False') {
+            if (LimitBooking.status !== false) {
+              if (LimitBooking.length > 0) {
+                this.timeavailable.forEach((v, k) => {
+                  let bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value)
+                  if (bookingTarget.length > 0) {
+                    v.status = false
+                    let bookingTargetSlot = bookingTarget[0].timeSlotCustomer || bookingTarget[0].timeSlot
+                    for (let bT = 0; bT < bookingTargetSlot; bT++) {
+                      if (this.timeavailable[k + bT] !== undefined) {
+                        this.timeavailable[k + bT].status = false
+                      }
                     }
                   }
-                }
-              })
+                })
+              }
             }
-          }
-          // For ค่าใส่ ตัวแปร array
-          let Newtimeavailable = []
-          let slotCheck = slotByflow
-          for (let i = 0; i < this.timeavailable.length; i++) {
-            let num = i + (slotCheck - 1)
-            let checkitem = this.timeavailable.filter((item, key) => (key >= i && key <= num))
-            // console.log('checkitem', checkitem, slotCheck)
-            Newtimeavailable.push(checkitem)
-          }
-          // console.log('Newtimeavailable', Newtimeavailable)
-          this.timeavailable = []
-          Newtimeavailable.forEach((v, k) => {
+            // For ค่าใส่ ตัวแปร array
+            let Newtimeavailable = []
+            let slotCheck = slotByflow
+            for (let i = 0; i < this.timeavailable.length; i++) {
+              let num = i + (slotCheck - 1)
+              let checkitem = this.timeavailable.filter((item, key) => (key >= i && key <= num))
+              // console.log('checkitem', checkitem, slotCheck)
+              Newtimeavailable.push(checkitem)
+            }
+            // console.log('Newtimeavailable', Newtimeavailable)
+            this.timeavailable = []
+            Newtimeavailable.forEach((v, k) => {
             // console.log('v.length >= slotCheck', v.length, slotCheck)
-            if (overTime === 'True') {
-              if (v.filter((v) => v.status === false).length <= 0) {
-                this.timeavailable.push(v[0])
+              if (overTime === 'True') {
+                if (v.filter((v) => v.status === false).length <= 0) {
+                  this.timeavailable.push(v[0])
+                }
+              } else {
+                console.log('else')
+                // ปิดเวลาสุดท้ายในกรณีที่ ไม่ต้องการให้จองเลยเวลา
+                if (v.filter((v) => v.status === false).length <= 0 && v.length >= slotCheck) {
+                  this.timeavailable.push(v[0])
+                }
               }
-            } else {
-              console.log('else')
-              // ปิดเวลาสุดท้ายในกรณีที่ ไม่ต้องการให้จองเลยเวลา
-              if (v.filter((v) => v.status === false).length <= 0 && v.length >= slotCheck) {
-                this.timeavailable.push(v[0])
-              }
-            }
-          })
+            })
 
-          // ตัดเวลาในกรณีที่เป็นวันปัจจุบัน เพื่อตัดเวลาที่ผ่านมาแล้วออก
-          if (moment(dateitem).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')) {
-            this.timeavailable = this.timeavailable.filter(item => moment().format(item.value) > moment().format('HH:mm'))
-          } else {
-          }
-          console.log('this.timeavailable 4', this.timeavailable)
-          // console.log('Newitem', Newtimeavailable)
-          if (this.timeavailable.length === 0) {
-            this.$swal(
-              'คิวเต็มแล้ว',
-              'กรุณาเลือกวันที่ใหม่อีกครั้ง',
-              'error'
-            )
-            this.date = ''
+            // ตัดเวลาในกรณีที่เป็นวันปัจจุบัน เพื่อตัดเวลาที่ผ่านมาแล้วออก
+            if (moment(dateitem).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')) {
+              this.timeavailable = this.timeavailable.filter(item => moment().format(item.value) > moment().format('HH:mm'))
+            } else {
+            }
+            console.log('this.timeavailable 4', this.timeavailable)
+            // console.log('Newitem', Newtimeavailable)
+            if (this.timeavailable.length === 0) {
+              this.$swal(
+                'คิวเต็มแล้ว',
+                'กรุณาเลือกวันที่ใหม่อีกครั้ง',
+                'error'
+              )
+              this.date = ''
+            }
           }
         } else {
           this.timeavailable = []
@@ -10084,6 +10101,7 @@ export default {
                   s.bookingEmpFlow = d.bookingEmpFlow
                   s.bookingEmpFlowName = d.bookingEmpFlowName
                   s.dueDateDay = d.dueDateDay
+                  s.statusVIP = d.statusVIP
                   s.depositTextTH = d.depositTextTH
                   s.CREATE_DATE_Status = d.CREATE_DATE_Status
                   s.CREATE_DATE = d.CREATE_DATE
@@ -10365,7 +10383,8 @@ export default {
       this.formEdit.flowId = dt.flowId
       this.flowIdOldEdit = dt.flowId
       this.empSelectEdit = parseInt(dt.empSelect)
-
+      this.statusVIPEdit = dt.statusVIP
+      // console.log('statusVIPEdit', this.statusVIPEdit)
       this.dueDateOld = dt.dueDateDay
       this.dueDateTimeOld = dt.timeDuetext
 
@@ -10548,13 +10567,17 @@ export default {
       let chkStatLimit = this.dataEmpAllChange.filter(el => { return el.empId === this.formEdit.bookingEmpFlow })
       if (chkStatLimit.length > 0) {
         if (chkStatLimit[0].limitBookingCheck === 'True') {
-          let chkStatus = await this.updateLimitBookingChange(this.dataEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value || this.timeEdit.time, this.formEdit.flowId, 'Edit', this.formEdit.masBranchID)
-          console.log('chkStatus', chkStatus)
-          if (chkStatus.status) {
-            this.editDataSelectSubmit()
+          if (this.statusVIP === 'False') {
+            let chkStatus = await this.updateLimitBookingChange(this.dataEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value || this.timeEdit.time, this.formEdit.flowId, 'Edit', this.formEdit.masBranchID)
+            console.log('chkStatus', chkStatus)
+            if (chkStatus.status) {
+              this.editDataSelectSubmit()
+            } else {
+              this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
+              this.loadingEdit = false
+            }
           } else {
-            this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-            this.loadingEdit = false
+            this.editDataSelectSubmit()
           }
         } else {
           this.editDataSelectSubmit()
@@ -11021,62 +11044,64 @@ export default {
             }
           })
           console.log('timeavailable', this.timeavailable)
-          if (LimitBooking.status !== false) {
-            if (LimitBooking.length > 0) {
-              this.timeavailable.forEach((v, k) => {
-                let bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value)
-                if (bookingTarget.length > 0) {
-                  v.status = false
-                  let bookingTargetSlot = bookingTarget[0].timeSlotCustomer || bookingTarget[0].timeSlot
-                  for (let bT = 0; bT < bookingTargetSlot; bT++) {
-                    if (this.timeavailable[k + bT] !== undefined) {
-                      this.timeavailable[k + bT].status = false
+          if (this.statusVIPEdit === 'False') {
+            if (LimitBooking.status !== false) {
+              if (LimitBooking.length > 0) {
+                this.timeavailable.forEach((v, k) => {
+                  let bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value)
+                  if (bookingTarget.length > 0) {
+                    v.status = false
+                    let bookingTargetSlot = bookingTarget[0].timeSlotCustomer || bookingTarget[0].timeSlot
+                    for (let bT = 0; bT < bookingTargetSlot; bT++) {
+                      if (this.timeavailable[k + bT] !== undefined) {
+                        this.timeavailable[k + bT].status = false
+                      }
                     }
                   }
+                })
+              }
+            }
+            // For ค่าใส่ ตัวแปร array
+            let Newtimeavailable = []
+            let slotCheck = slotByflow
+            for (let i = 0; i < this.timeavailable.length; i++) {
+              let num = i + (slotCheck - 1)
+              let checkitem = this.timeavailable.filter((item, key) => (key >= i && key <= num))
+              console.log('checkitem', checkitem, slotCheck)
+              Newtimeavailable.push(checkitem)
+            }
+            console.log('Newtimeavailable', Newtimeavailable)
+            this.timeavailable = []
+            Newtimeavailable.forEach((v, k) => {
+              // console.log('v.length >= slotCheck', v.length, slotCheck)
+              if (overTime === 'True') {
+                if (v.filter((v) => v.status === false).length <= 0) {
+                  this.timeavailable.push(v[0])
                 }
-              })
-            }
-          }
-          // For ค่าใส่ ตัวแปร array
-          let Newtimeavailable = []
-          let slotCheck = slotByflow
-          for (let i = 0; i < this.timeavailable.length; i++) {
-            let num = i + (slotCheck - 1)
-            let checkitem = this.timeavailable.filter((item, key) => (key >= i && key <= num))
-            console.log('checkitem', checkitem, slotCheck)
-            Newtimeavailable.push(checkitem)
-          }
-          console.log('Newtimeavailable', Newtimeavailable)
-          this.timeavailable = []
-          Newtimeavailable.forEach((v, k) => {
-          // console.log('v.length >= slotCheck', v.length, slotCheck)
-            if (overTime === 'True') {
-              if (v.filter((v) => v.status === false).length <= 0) {
-                this.timeavailable.push(v[0])
+              } else {
+                // ปิดเวลาสุดท้ายในกรณีที่ ไม่ต้องการให้จองเลยเวลา
+                if (v.filter((v) => v.status === false).length <= 0 && v.length >= slotCheck) {
+                  console.log('else', v[0])
+                  this.timeavailable.push(v[0])
+                }
               }
-            } else {
-            // ปิดเวลาสุดท้ายในกรณีที่ ไม่ต้องการให้จองเลยเวลา
-              if (v.filter((v) => v.status === false).length <= 0 && v.length >= slotCheck) {
-                console.log('else', v[0])
-                this.timeavailable.push(v[0])
-              }
-            }
-          })
+            })
 
-          // ตัดเวลาในกรณีที่เป็นวันปัจจุบัน เพื่อตัดเวลาที่ผ่านมาแล้วออก
-          // if (dateC === moment().format('YYYY-MM-DD')) {
-          //   this.timeavailable = this.timeavailable.filter(item => moment().format(item.value) > moment().format('HH:mm'))
-          // } else {
-          // }
-          // console.log('this.timeavailable 4', this.timeavailable)
-          // console.log('Newitem', Newtimeavailable)
-          if (this.timeavailable.length === 0) {
-            this.$swal(
-              'คิวเต็มแล้ว',
-              'กรุณาเลือกวันที่ใหม่อีกครั้ง',
-              'error'
-            )
-            this.date = ''
+            // ตัดเวลาในกรณีที่เป็นวันปัจจุบัน เพื่อตัดเวลาที่ผ่านมาแล้วออก
+            // if (dateC === moment().format('YYYY-MM-DD')) {
+            //   this.timeavailable = this.timeavailable.filter(item => moment().format(item.value) > moment().format('HH:mm'))
+            // } else {
+            // }
+            // console.log('this.timeavailable 4', this.timeavailable)
+            // console.log('Newitem', Newtimeavailable)
+            if (this.timeavailable.length === 0) {
+              this.$swal(
+                'คิวเต็มแล้ว',
+                'กรุณาเลือกวันที่ใหม่อีกครั้ง',
+                'error'
+              )
+              this.date = ''
+            }
           }
         } else {
           this.timeavailable = []
@@ -11156,63 +11181,65 @@ export default {
             }
           })
           // console.log('timeavailable', this.timeavailable)
-          if (LimitBooking.status !== false) {
-            if (LimitBooking.length > 0) {
-              this.timeavailable.forEach((v, k) => {
-                let bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value && dt.timeDuetext !== a.bookingTime)
-                console.log('bookingTargetSlot', bookingTarget)
-                if (bookingTarget.length > 0) {
-                  v.status = false
-                  let bookingTargetSlot = bookingTarget[0].timeSlotCustomer || bookingTarget[0].timeSlot
-                  for (let bT = 0; bT < bookingTargetSlot; bT++) {
-                    if (this.timeavailable[k + bT] !== undefined) {
-                      this.timeavailable[k + bT].status = false
+          if (this.statusVIPChang === 'False') {
+            if (LimitBooking.status !== false) {
+              if (LimitBooking.length > 0) {
+                this.timeavailable.forEach((v, k) => {
+                  let bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value && dt.timeText !== a.bookingTime)
+                  console.log('bookingTargetSlot', bookingTarget)
+                  if (bookingTarget.length > 0) {
+                    v.status = false
+                    let bookingTargetSlot = bookingTarget[0].timeSlotCustomer || bookingTarget[0].timeSlot
+                    for (let bT = 0; bT < bookingTargetSlot; bT++) {
+                      if (this.timeavailable[k + bT] !== undefined) {
+                        this.timeavailable[k + bT].status = false
+                      }
                     }
                   }
+                })
+              }
+            }
+            // For ค่าใส่ ตัวแปร array
+            let Newtimeavailable = []
+            let slotCheck = slotByflow
+            for (let i = 0; i < this.timeavailable.length; i++) {
+              let num = i + (slotCheck - 1)
+              let checkitem = this.timeavailable.filter((item, key) => (key >= i && key <= num))
+              // console.log('checkitem', checkitem, slotCheck)
+              Newtimeavailable.push(checkitem)
+            }
+            // console.log('Newtimeavailable', Newtimeavailable)
+            this.timeavailable = []
+            Newtimeavailable.forEach((v, k) => {
+              // console.log('v.length >= slotCheck', v.length, slotCheck)
+              if (overTime === 'True') {
+                if (v.filter((v) => v.status === false).length <= 0) {
+                  this.timeavailable.push(v[0])
                 }
-              })
-            }
-          }
-          // For ค่าใส่ ตัวแปร array
-          let Newtimeavailable = []
-          let slotCheck = slotByflow
-          for (let i = 0; i < this.timeavailable.length; i++) {
-            let num = i + (slotCheck - 1)
-            let checkitem = this.timeavailable.filter((item, key) => (key >= i && key <= num))
-            // console.log('checkitem', checkitem, slotCheck)
-            Newtimeavailable.push(checkitem)
-          }
-          // console.log('Newtimeavailable', Newtimeavailable)
-          this.timeavailable = []
-          Newtimeavailable.forEach((v, k) => {
-            // console.log('v.length >= slotCheck', v.length, slotCheck)
-            if (overTime === 'True') {
-              if (v.filter((v) => v.status === false).length <= 0) {
-                this.timeavailable.push(v[0])
+              } else {
+                // ปิดเวลาสุดท้ายในกรณีที่ ไม่ต้องการให้จองเลยเวลา
+                if (v.filter((v) => v.status === false).length <= 0 && v.length >= slotCheck) {
+                  console.log('else', v[0])
+                  this.timeavailable.push(v[0])
+                }
               }
-            } else {
-              // ปิดเวลาสุดท้ายในกรณีที่ ไม่ต้องการให้จองเลยเวลา
-              if (v.filter((v) => v.status === false).length <= 0 && v.length >= slotCheck) {
-                console.log('else', v[0])
-                this.timeavailable.push(v[0])
-              }
-            }
-          })
+            })
 
-          // ตัดเวลาในกรณีที่เป็นวันปัจจุบัน เพื่อตัดเวลาที่ผ่านมาแล้วออก
-          // if (dateC === moment().format('YYYY-MM-DD')) {
-          //   this.timeavailable = this.timeavailable.filter(item => moment().format(item.value) > moment().format('HH:mm'))
-          // } else {
-          // }
-          // console.log('this.timeavailable 4', this.timeavailable)
-          // console.log('Newitem', Newtimeavailable)
-          if (this.timeavailable.length === 0) {
-            this.$swal(
-              'คิวเต็มแล้ว',
-              'กรุณาเลือกวันที่ใหม่อีกครั้ง',
-              'error'
-            )
-            this.date = ''
+            // ตัดเวลาในกรณีที่เป็นวันปัจจุบัน เพื่อตัดเวลาที่ผ่านมาแล้วออก
+            // if (dateC === moment().format('YYYY-MM-DD')) {
+            //   this.timeavailable = this.timeavailable.filter(item => moment().format(item.value) > moment().format('HH:mm'))
+            // } else {
+            // }
+            // console.log('this.timeavailable 4', this.timeavailable)
+            // console.log('Newitem', Newtimeavailable)
+            if (this.timeavailable.length === 0) {
+              this.$swal(
+                'คิวเต็มแล้ว',
+                'กรุณาเลือกวันที่ใหม่อีกครั้ง',
+                'error'
+              )
+              this.date = ''
+            }
           }
         } else {
           this.timeavailable = []
@@ -12925,6 +12952,7 @@ export default {
                 s.bookingEmpFlow = d.bookingEmpFlow
                 s.bookingEmpFlowName = d.bookingEmpFlowName
                 s.dueDateDay = d.dueDateDay
+                s.statusVIP = d.statusVIP
                 s.depositTextTH = d.depositTextTH
                 s.CREATE_DATE_Status = d.CREATE_DATE_Status
                 s.CREATE_DATE = d.CREATE_DATE
@@ -13098,6 +13126,7 @@ export default {
                 s.bookingEmpFlow = d.bookingEmpFlow
                 s.bookingEmpFlowName = d.bookingEmpFlowName
                 s.dueDateDay = d.dueDateDay
+                s.statusVIP = d.statusVIP
                 s.depositTextTH = d.depositTextTH
                 s.CREATE_DATE_Status = d.CREATE_DATE_Status
                 s.CREATE_DATE = d.CREATE_DATE
@@ -13542,6 +13571,11 @@ export default {
             update.customerTimeSlot = this.customerTimeSlot
             update.depositPrice = this.formAdd.depositPrice
             update.empId = this.formAdd.bookingEmpFlow
+            if (this.statusVIP === 'True') {
+              update.statusVIP = 'True'
+            } else {
+              update.statusVIP = 'False'
+            }
             if (this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0).length > 0) {
               update.menuItem = JSON.stringify(this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0))
               update.menuPrice = this.priceMenuAdd
@@ -13581,6 +13615,11 @@ export default {
                 update.customerTimeSlot = this.customerTimeSlot
                 update.depositPrice = this.formAdd.depositPrice
                 update.empId = this.formAdd.bookingEmpFlow
+                if (this.statusVIP === 'True') {
+                  update.statusVIP = 'True'
+                } else {
+                  update.statusVIP = 'False'
+                }
                 if (this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0).length > 0) {
                   update.menuItem = JSON.stringify(this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0))
                   update.menuPrice = this.priceMenuAdd
@@ -13620,6 +13659,11 @@ export default {
                 update.customerTimeSlot = this.customerTimeSlot
                 update.depositPrice = this.formAdd.depositPrice
                 update.empId = this.formAdd.bookingEmpFlow
+                if (this.statusVIP === 'True') {
+                  update.statusVIP = 'True'
+                } else {
+                  update.statusVIP = 'False'
+                }
                 if (this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0).length > 0) {
                   update.menuItem = JSON.stringify(this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0))
                   update.menuPrice = this.priceMenuAdd
@@ -13774,6 +13818,7 @@ export default {
         })
     },
     async clearDataAdd () {
+      this.statusVIP = 'False'
       this.showMenu = 'False'
       this.dataMenuAdd = []
       this.dataReady = true
@@ -14629,6 +14674,7 @@ export default {
         .then(async response => {})
     },
     async setDataRemove (item) {
+      this.statusVIPRemove = item.statusVIP
       this.bookNoRemove = item
       this.dueDateOld = item.dueDateDay
       this.dueDateTimeOld = item.timeDuetext
@@ -14664,10 +14710,14 @@ export default {
           let chkStatLimit = this.dataEmpAllChange.filter(el => { return el.empId === dt.bookingEmpFlow })
           if (chkStatLimit.length > 0) {
             if (chkStatLimit[0].limitBookingCheck === 'True') {
-              let chkStatus = await this.updateLimitBookingCancel(this.bookNoRemove, this.dueDateOld, this.dueDateTimeOld)
-              console.log('chkStatus', chkStatus)
-              if (chkStatus.status) {
-                this.onCancelChkSubmit()
+              if (this.statusVIPRemove === 'False') {
+                let chkStatus = await this.updateLimitBookingCancel(this.bookNoRemove, this.dueDateOld, this.dueDateTimeOld)
+                console.log('chkStatus', chkStatus)
+                if (chkStatus.status) {
+                  this.onCancelChkSubmit()
+                } else {
+                  this.onCancelChkSubmit()
+                }
               } else {
                 this.onCancelChkSubmit()
               }
@@ -15274,6 +15324,7 @@ export default {
     async setDataChang (item) {
       // clear Limit
       console.log('setDataChang', item)
+      this.statusVIPChang = item.statusVIP
       this.limitCountBranch = []
       this.limitCountBranchOld = []
       this.masBranchIDLimit = ''
