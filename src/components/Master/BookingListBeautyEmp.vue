@@ -7269,12 +7269,25 @@ export default {
         } else if (a.statusBt === 'confirmJob') {
           a.statusBtShow = this.dataTypeProcess4
         }
-        let data1 = {
-          'สถานะ': a.statusBtShow,
-          'บริการ': a.flowName,
-          'ชื่อลูกค้า': a.cusName,
-          'เบอร์โทร': a.tel,
-          'วันที่': a.dueDate
+        let data1 = {}
+        if (a.shopId === 'Uec804350aa290d70772883350c7c60c4') {
+          data1 = {
+            'สถานะ': a.statusBtShow,
+            'บริการ': a.flowName,
+            'ชื่อลูกค้า': a.cusName,
+            'เบอร์โทร': a.tel,
+            'วันที่': a.dueDate,
+            'การจัดส่ง': a.deliveryOptions,
+            'ที่อยู่': a.address
+          }
+        } else {
+          data1 = {
+            'สถานะ': a.statusBtShow,
+            'บริการ': a.flowName,
+            'ชื่อลูกค้า': a.cusName,
+            'เบอร์โทร': a.tel,
+            'วันที่': a.dueDate
+          }
         }
         let checkFlow = this.DataFlowNameMenu.filter(el => { return el.value === this.flowSelectMenu })
         let menuItem = JSON.parse(checkFlow[0].allData.menuItem) || []
@@ -7366,6 +7379,14 @@ export default {
                   d.cusName = this.getDataFromFieldName(this.BookingDataListShowMenuReport[d.bookNo], 'ชื่อ')
                   d.cusReg = this.getDataFromFieldName(this.BookingDataListShowMenuReport[d.bookNo], 'เลขทะเบียน')
                   d.tel = this.getDataFromFieldName(this.BookingDataListShowMenuReport[d.bookNo], 'เบอร์โทร')
+                  // ร้านข้าวมันไก่ (Uec804350aa290d70772883350c7c60c4)
+                  if (d.shopId === 'Uec804350aa290d70772883350c7c60c4') {
+                    d.deliveryOptions = this.getDataFromFieldName(this.BookingDataListShowMenuReport[d.bookNo], 'การจัดส่ง')
+                    d.address = this.getDataFromFieldName(this.BookingDataListShowMenuReport[d.bookNo], 'ที่อยู่')
+                    d.deliveryOptions = (d.deliveryOptions.length > 0) ? d.deliveryOptions[0].fieldValue : ''
+                    d.address = (d.address.length > 0) ? d.address[0].fieldValue : ''
+                  }
+                  //
                   d.cusName = (d.cusName.length > 0) ? d.cusName[0].fieldValue : ''
                   d.cusReg = (d.cusReg.length > 0) ? d.cusReg[0].fieldValue : ''
                   d.tel = (d.tel.length > 0) ? d.tel[0].fieldValue : ''
