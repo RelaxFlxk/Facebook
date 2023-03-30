@@ -7991,6 +7991,7 @@ export default {
       }
     },
     setEmpAdd () {
+      console.log('SetEmpAdd')
       if (this.formAdd.masBranchID !== null && this.formAdd.flowId !== null) {
         this.formAdd.bookingEmpFlow = ''
         this.fromAddTimeCus = ''
@@ -9993,6 +9994,7 @@ export default {
       } else {
         this.checkDepositAdd = 'False'
       }
+      console.log('this.checkDepositAdd', this.checkDepositAdd)
     },
     async getBookingFieldText () {
       if (JSON.parse(localStorage.getItem('sessionData')) === null) {
@@ -10982,14 +10984,16 @@ export default {
       }
     },
     checkTime () {
-      this.timeavailable = []
-      // console.log('dataFlowSelectAdd', this.dataFlowSelectAdd)
+      // this.timeavailable = []
+      console.log('dataFlowSelectAdd', this.dataFlowSelectAdd)
       let dtTime = this.dataFlowSelectAdd.filter(item => { return item.value === this.formAdd.flowId })
       if (dtTime.length > 0) {
         if (dtTime[0].menuShowStatus === 'True') {
+          console.log('IF')
           this.showMenu = 'True'
           this.dataMenuAdd = JSON.parse(dtTime[0].allData.menuItem) || []
         } else {
+          console.log('ELSE show menu')
           this.showMenu = 'False'
           this.dataMenuAdd = []
         }
@@ -10997,12 +11001,13 @@ export default {
         // console.log('test', dtTime)
         // this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
         // console.log('timevailable', this.timeavailable)
-        if (dtTime.map(item => item.allData.setTime) === null) {
-          this.timeavailable = []
-          // this.$swal('แจ้งเตือน', 'เนื่องจากยังไม่ได้ตั้งค่าเวลา', 'info')
-        } else {
-          this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
-        }
+        // if (dtTime.map(item => item.allData.setTime) === null) {
+        //   this.timeavailable = []
+        //   console.log('IF2')
+        // } else {
+        //   console.log('ELSE2')
+        //   this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+        // }
       }
     },
     async checkTimeEditSubmit (dateC, dt) {
