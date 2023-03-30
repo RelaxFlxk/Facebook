@@ -32,8 +32,11 @@
               <v-icon x-large color="#007bff" @click="dialogHistory = false">mdi-chevron-left</v-icon>
             </v-col>
             <v-col cols="7" style="word-wrap: break-word;display: flex;justify-content: center;align-items: center;">
-              <p class="mt-1 mb-0 font-weight-bold" v-if="session.data.userFirst_NameTH.length > 20" style="font-size: 16px;">{{session.data.userFirst_NameTH.substring(0, 20)}}...</p>
-              <p class="mt-1 mb-0 font-weight-bold" v-else style="font-size: 16px;">{{session.data.userFirst_NameTH}}</p>
+              <div v-if="session.data.userFirst_NameTH">
+                <p class="mt-1 mb-0 font-weight-bold" v-if="session.data.userFirst_NameTH.length > 20" style="font-size: 16px;">{{session.data.userFirst_NameTH.substring(0, 20)}}...</p>
+                <p class="mt-1 mb-0 font-weight-bold" v-else style="font-size: 16px;">{{session.data.userFirst_NameTH}}</p>
+              </div>
+              <p class="mt-1 mb-0 font-weight-bold" v-else style="font-size: 16px;">ADMIN</p>
             </v-col>
             <v-col cols="3" class="pl-0 pr-4" style="display: flex;justify-content: flex-end;">
                 <v-avatar v-if="empData[0].empImge" color="#007bff">
@@ -330,8 +333,8 @@ export default {
       await axios
         .get(this.DNS_IP + '/PushMessage_LOG/get?shopId=' + this.shopId + '&jobNo=' + this.jobNo).then((response) => {
           let rs = response.data
+          console.log('getData', rs)
           if (rs.length > 0) {
-            console.log('show', rs)
             this.history = rs.reverse()
             // this.dialogHistory = true
           }
@@ -340,13 +343,28 @@ export default {
         })
     },
     async getEmp () {
+      let path = ''
+      if (this.session.data.empId) {
+        path = '/empSelect/get?empId=' + this.session.data.empId
+      } else {
+        path = '/empSelect/get?shopId=' + this.session.data.shopId
+      }
+      console.log('path', path)
       await axios
-        .get(this.DNS_IP + '/empSelect/get?empId=' + this.session.data.empId).then((response) => {
+        .get(this.DNS_IP + path).then((response) => {
           let rs = response.data
           if (rs.length > 0) {
-            console.log('show', rs)
+            if (rs.length === 1) {
+              this.empData = rs
+            } else if (rs.length > 1) {
+              let s = {}
+              s.userFirst_NameTH = 'Admin'
+              s.empId = 0
+              this.empData.push(s)
+            }
             this.empData = rs
           }
+          console.log('show', this.empData)
         }).catch((error) => {
           console.log('error function addData : ', error)
         })
@@ -355,7 +373,7 @@ export default {
       console.log('itemsetMessage', item)
       console.log('this.session.data', this.session.data)
       this.formMessage.jobNo = this.jobNo
-      this.formMessage.empId = parseInt(this.session.data.empId)
+      this.formMessage.empId = parseInt(this.session.data.empId) || 0
       this.formMessage.LAST_USER = this.session.data.userName
       this.formMessage.CREATE_USER = this.session.data.userName
       this.formMessage.shopId = this.shopId
