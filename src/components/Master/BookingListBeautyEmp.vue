@@ -8607,13 +8607,13 @@ export default {
       let dt = {}
       if (this.statusdepositPrice === true) {
         dt = {
-          remarkDepositLinked: this.datailLinkDeposit,
+          remarkDepositLinked: this.datailLinkDeposit.replace(/%/g, '%%').replace(/'/g, "\\'").replace(/`/g, '\\`'),
           depositPrice: this.depositPrice || '',
           LAST_USER: this.$session.getAll().data.userName
         }
       } else {
         dt = {
-          remarkDepositLinked: this.datailLinkDeposit,
+          remarkDepositLinked: this.datailLinkDeposit.replace(/%/g, '%%').replace(/'/g, "\\'").replace(/`/g, '\\`'),
           LAST_USER: this.$session.getAll().data.userName
         }
       }
