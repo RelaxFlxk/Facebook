@@ -574,7 +574,7 @@
                   class="textserch"
                   background-color="white"
                   style="border-radius: 40px !important;"
-                  label="ค้นหาชื่อ และ เบอร์โทรศัพท์"
+                  label="ค้นหาชื่อ และ เบอร์โทรศัพท์ ในตาราง"
                   v-model="searchAll2"
                   outlined
                   hide-details
@@ -585,6 +585,42 @@
                 </v-icon>
                  </template>
                 </v-text-field>
+            </v-col>
+          </v-row>
+          <v-row justify="end">
+            <v-col :cols="resCol === 'sm' ? '3' : '4'" class="pr-0 pl-0 pt-3">
+                <v-text-field
+                  class="textserch"
+                  background-color="white"
+                  style="border-radius: 40px !important;"
+                  label="ค้นหาชื่อทั้งหมด"
+                  v-model="searchOther"
+                  outlined
+                  hide-details
+                  dense
+                  prepend-inner-icon="mdi-magnify"
+                >
+                </v-text-field>
+            </v-col>
+            <v-col cols="auto" class="pr-0 pl-1 pt-3">
+              <v-btn
+                rounded
+                color="primary"
+                dark
+                @click="searchAny()"
+              >
+                ค้นหา
+              </v-btn>
+            </v-col>
+            <v-col cols="auto" class="pr-0 pl-1 pt-3" v-if="searchOther.length > 1">
+              <v-btn
+                rounded
+                color="error"
+                dark
+                @click="getDataDefault(), searchOther = '', showColorSearch = false, statusSearch = 'no'"
+              >
+                clear
+              </v-btn>
             </v-col>
           </v-row>
           </div>
@@ -10088,7 +10124,7 @@ export default {
           .get(
           // eslint-disable-next-line quotes
             this.DNS_IP +
-            '/booking_view/getSearchNew?shopId=' +
+            '/booking_view/getSearchName?shopId=' +
             this.session.data.shopId +
             '&fieldValue=' +
             this.searchOther + this.selectOnsite
@@ -12840,7 +12876,7 @@ export default {
       }
       let url = ''
       if (dateStart === 'no') {
-        url = `${this.DNS_IP}/BookingData/getsearchOther?shopId=${this.session.data.shopId}&fieldValue=${searchOther}`
+        url = `${this.DNS_IP}/BookingData/getsearchName?shopId=${this.session.data.shopId}&fieldValue=${searchOther}`
       } else {
         url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
       }
