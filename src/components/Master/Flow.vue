@@ -3158,6 +3158,7 @@ export default {
                 }
                 // this.initSortable()
               }
+              await this.filterBranch()
             })
             .catch(error => {
               console.log('error function addData : ', error)
@@ -3842,6 +3843,7 @@ export default {
                   this.path,
                   this.session.data.shopId
                 )
+                await this.filterBranch()
                 this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
                 this.clearCondition()
               })
@@ -4278,6 +4280,7 @@ export default {
                   this.path,
                   this.session.data.shopId
                 )
+                await this.filterBranch()
                 // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
                 await this.clearData()
                 await this.warningFlow()
@@ -4338,6 +4341,7 @@ export default {
                 this.path,
                 this.session.data.shopId
               )
+              await this.filterBranch()
               this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
             })
             // eslint-disable-next-line handle-callback-err
@@ -4482,6 +4486,8 @@ export default {
                   this.path,
                   this.session.data.shopId
                 )
+                await this.filterBranch()
+                console.log('getNow')
                 this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
               })
             // eslint-disable-next-line handle-callback-err
@@ -4532,6 +4538,7 @@ export default {
                 this.path,
                 this.session.data.shopId
               )
+              await this.filterBranch()
             })
             // eslint-disable-next-line handle-callback-err
             .catch(error => {
@@ -4576,6 +4583,7 @@ export default {
                 this.path,
                 this.session.data.shopId
               )
+              await this.filterBranch()
               this.$swal('เรียบร้อย', 'ลบข้อมูล เรียบร้อย', 'success')
             })
             // eslint-disable-next-line handle-callback-err
@@ -4646,6 +4654,7 @@ export default {
                 this.path,
                 this.session.data.shopId
               )
+              await this.filterBranch()
             })
             // eslint-disable-next-line handle-callback-err
             .catch(error => {
