@@ -5822,12 +5822,65 @@
             <v-card-title>
               File Upload
             </v-card-title>
-            <v-card-text>
-            <v-row justify="center">
-              <v-col class="videoWrapper">
-                <iframe style="max-width: -webkit-fill-available;" :src="srcUpload"></iframe>
-              </v-col>
-            </v-row>
+            <v-card-text v-if="typeof srcUpload === 'string'">
+              <v-row>
+                <v-col cols="12">
+                   รายการที่ : 1
+                </v-col>
+                <v-col cols="12" v-if="srcUpload.endsWith('.pdf') || srcUpload.endsWith('.xlsx') || srcUpload.endsWith('.xls')">
+                  <v-btn
+                    color="blue-grey"
+                    class="ma-2 white--text"
+                    @click="gotoPicture(srcUpload)"
+                  >
+                    แสดงรายการ
+                    <v-icon
+                      right
+                      dark
+                    >
+                      mdi-eye
+                    </v-icon>
+                  </v-btn>
+                </v-col>
+                <v-col cols="12" v-else>
+                  <v-img
+                    height="300"
+                    contain
+                    :src="srcUpload"
+                    @click="gotoPicture(srcUpload)"
+                  ></v-img>
+                </v-col>
+              </v-row>
+            </v-card-text>
+            <v-card-text v-else>
+              <v-row  v-for="(item, index) in srcUpload" :key="index">
+                <v-col cols="12">
+                   รายการที่ : {{index+1}}
+                </v-col>
+                <v-col cols="12" v-if="item.endsWith('.pdf') || item.endsWith('.xlsx') || item.endsWith('.xls')">
+                  <v-btn
+                    color="blue-grey"
+                    class="ma-2 white--text"
+                    @click="gotoPicture(item)"
+                  >
+                    แสดงรายการ
+                    <v-icon
+                      right
+                      dark
+                    >
+                      mdi-eye
+                    </v-icon>
+                  </v-btn>
+                </v-col>
+                <v-col cols="12" v-else>
+                  <v-img
+                    height="300"
+                    contain
+                    :src="item"
+                    @click="gotoPicture(item)"
+                  ></v-img>
+                </v-col>
+              </v-row>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
@@ -8997,9 +9050,17 @@ export default {
     },
     showFileUpload (item, text) {
       if (text === '1') {
-        this.srcUpload = item.fileUpload1
+        if (item.fileUpload1.includes('[')) {
+          this.srcUpload = JSON.parse(item.fileUpload1)
+        } else {
+          this.srcUpload = item.fileUpload1
+        }
       } else {
-        this.srcUpload = item.fileUpload2
+        if (item.fileUpload2.includes('[')) {
+          this.srcUpload = JSON.parse(item.fileUpload2)
+        } else {
+          this.srcUpload = item.fileUpload2
+        }
       }
       this.dialogShowFileUpload = true
     },
@@ -15651,6 +15712,13 @@ export default {
 </script>
 
 <style scoped>
+.flex-container {
+  display: flex;
+  height: 100%;
+}
+iframe {
+  flex: 1;
+}
 .sendOrder {
   display: flex;
   flex-direction: column;
