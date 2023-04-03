@@ -66,6 +66,34 @@
         <v-card-text style="height: 100%;">
           <v-container>
             <template v-if="BookingDataItemEdit">
+              <div class="avatar text-center">
+                <div style="display:flex;align-items: center;justify-content: center;" v-if="dataItemBooking[0].memberName">
+                  <h4>
+                  {{dataItemBooking[0].memberName}}
+                  </h4>
+                  <v-btn
+                    class="ml-3"
+                    dark
+                    fab
+                    x-small
+                    color="blue"
+                    @click="coppyLink(dataItemBooking[0].memberName)"
+                  >
+                    <v-icon dark>
+                      mdi-content-copy
+                    </v-icon>
+                  </v-btn>
+                </div>
+                <v-avatar size="120" style="border:5px solid #FFFFFF;">
+                <v-img
+                  v-if="dataItemBooking[0].memberPicture"
+                  :src="dataItemBooking[0].memberPicture"
+                ></v-img>
+                <v-icon size="100" color="orange" v-else>
+                  mdi-tooltip-account
+                </v-icon>
+              </v-avatar>
+              </div>
               <v-row class="InputData">
                  <!-- <v-select
                     v-model="masBranchID"
@@ -1126,6 +1154,19 @@ export default {
     console.log('this.$session.getAll()', this.$session.getAll())
   },
   methods: {
+    async coppyLink (item) {
+      console.log('item', item)
+      // this.$swal.fire('Any fool can use a computer')
+      // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+      this.$swal({
+        title: 'Copy successfully',
+        text: 'คัดลอกลายชื่อเรียบร้อย',
+        type: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      })
+      await navigator.clipboard.writeText(item)
+    },
     async SelectImg (Imgitem) {
       this.showImg = Imgitem
       this.dialogImg = true
@@ -2777,6 +2818,8 @@ export default {
             for (let i = 0; i < response.data.length; i++) {
               let d = response.data[i]
               let s = {}
+              s.memberName = d.memberName || ''
+              s.memberPicture = d.memberPicture || ''
               s.bookNo = d.bookNo
               s.flowId = d.flowId
               s.flowName = d.flowName
