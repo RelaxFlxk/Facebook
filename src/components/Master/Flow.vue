@@ -1021,7 +1021,7 @@
                             <v-col class="pt-0 pb-0" clos='auto'>
                               <v-text-field
                                   v-model="formUpdate.empTitleEng"
-                                  label="ชื่อผู้ทำงาน (ภาษาไทย)"
+                                  label="ชื่อผู้ทำงาน (ภาษาอังกฤษ)"
                                   outlined
                                   required
                                   dense
