@@ -7144,6 +7144,7 @@ export default {
       selectCountBookingLimit: 1,
       dueDateOld: '',
       dueDateTimeOld: '',
+      empIdOld: '',
       masBranchIDLimit: '',
       flowIDLimit: '',
       dateDayoff: [],
@@ -10507,7 +10508,8 @@ export default {
       // console.log('statusVIPEdit', this.statusVIPEdit)
       this.dueDateOld = dt.dueDateDay
       this.dueDateTimeOld = dt.timeDuetext
-
+      this.empIdOld = dt.bookingEmpFlow
+      // checkTimeEdit
       // this.SetallowedDatesEdit()
       this.dateEdit = dt.dueDateDay
       console.log('dataFlowSelectEdit', this.dataFlowSelectEdit)
@@ -11132,6 +11134,7 @@ export default {
       this.timeEdit = ''
       this.timeavailable = []
       console.log('checkTimeEditSubmit', dateC, dt)
+      console.log('formEdit', this.dueDateOld, this.dueDateTimeOld, this.empIdOld)
       // this.showTable = []
       let setTime = []
       // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
@@ -11171,7 +11174,16 @@ export default {
             if (LimitBooking.status !== false) {
               if (LimitBooking.length > 0) {
                 this.timeavailable.forEach((v, k) => {
-                  let bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value)
+                  // console.log('dt.timeText', dt.timeText)
+                  // console.log('formEdit', this.dueDateOld, this.dueDateTimeOld)
+                  let bookingTarget = []
+                  if (this.dueDateOld === dateC && this.empIdOld === dt.bookingEmpFlow) {
+                    console.log('checkTRUE')
+                    bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value && this.dueDateTimeOld !== a.bookingTime)
+                  } else {
+                    console.log('checkFALSE')
+                    bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value)
+                  }
                   if (bookingTarget.length > 0) {
                     v.status = false
                     let bookingTargetSlot = bookingTarget[0].timeSlotCustomer || bookingTarget[0].timeSlot
@@ -11308,7 +11320,14 @@ export default {
             if (LimitBooking.status !== false) {
               if (LimitBooking.length > 0) {
                 this.timeavailable.forEach((v, k) => {
-                  let bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value && dt.timeText !== a.bookingTime)
+                  let bookingTarget = []
+                  if (this.dueDateOld === dateC) {
+                    console.log('checkTRUE')
+                    bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value && this.dueDateTimeOld !== a.bookingTime)
+                  } else {
+                    console.log('checkFALSE')
+                    bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value)
+                  }
                   console.log('bookingTargetSlot', bookingTarget)
                   if (bookingTarget.length > 0) {
                     v.status = false
