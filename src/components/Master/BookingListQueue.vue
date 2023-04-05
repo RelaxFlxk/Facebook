@@ -804,6 +804,27 @@ export default {
     }
   },
   async mounted () {
+    if (this.$session.getAll().data.shopId === 'U9d5a7b1e4399d8b0c8eb30d7210a0ef2') {
+      this.headers = [
+        { text: 'คิว', value: 'storeFrontQueue' },
+        // { text: 'วันที่นัดหมาย', value: 'dueDate' },
+        { text: 'บริการ', value: 'flowName' },
+        { text: 'ชื่อลูกค้า', value: 'cusName' },
+        { text: 'จำนวนที่นั่ง', value: 'countCus' },
+        { text: 'ปริ้นบัตรคิว', value: 'action1', sortable: false, align: 'center' },
+        { text: 'การจัดการคิว', value: 'action', sortable: false, align: 'center', width: '400px' }
+      ]
+    } else {
+      this.headers = [
+        { text: 'คิว', value: 'storeFrontQueue' },
+        // { text: 'วันที่นัดหมาย', value: 'dueDate' },
+        { text: 'บริการ', value: 'flowName' },
+        { text: 'ชื่อลูกค้า', value: 'cusName' },
+        // { text: 'H.N.', value: 'hnNo' },
+        { text: 'ปริ้นบัตรคิว', value: 'action1', sortable: false, align: 'center' },
+        { text: 'การจัดการคิว', value: 'action', sortable: false, align: 'center', width: '400px' }
+      ]
+    }
     this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
     this.dateStart = this.momenDate_1(new Date())
     await this.getDataFlow()
@@ -1002,6 +1023,8 @@ export default {
                   d.cusName = (d.cusName.length > 0) ? d.cusName[0].fieldValue : ''
                   d.cusPhone = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เบอร์โทร')
                   d.cusPhone = (d.cusPhone.length > 0) ? d.cusPhone[0].fieldValue : ''
+                  d.countCus = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'จำนวนที่นั่ง')
+                  d.countCus = (d.countCus.length > 0) ? d.countCus[0].fieldValue : ''
                   this.itemBookingUse.push(d)
                 }
               }
