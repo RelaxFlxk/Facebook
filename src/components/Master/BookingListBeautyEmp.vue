@@ -9346,6 +9346,19 @@ export default {
           console.log('error function addData : ', error)
         })
     },
+    pushMsgConfirmEditDataTime (bookNo) {
+      let dt = {
+        dueDateOld: this.dueDateOld + ' ' + this.dueDateTimeOld,
+        flowId: this.flowIdOldEdit
+      }
+      axios
+        .post(
+          this.DNS_IP + '/Booking/pushMsgConfirmChamgeTime/' + bookNo, dt
+        )
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
+    },
     gotoPicture (Linkitem) {
       window.open(Linkitem, '_blank')
     },
@@ -10901,6 +10914,7 @@ export default {
     async editDataSelectSubmit () {
       // if (this.validEdit !== false) {
       if (this.$session.id() !== undefined) {
+        let bookNoEditData = ''
         this.dataEditReady = false
         let rs = this.BookingDataItemEdit
         let Add = []
@@ -10925,6 +10939,7 @@ export default {
         for (let i = 0; i < rs.length; i++) {
           let d = rs[i]
           let update = {}
+          bookNoEditData = d.bookNo
           if (d.conditionField === '' || d.conditionField === null) {
             update.fieldId = d.fieldId
             update.bookingDataId = d.bookingDataId
@@ -11022,6 +11037,9 @@ export default {
             }
             // this.getDataCalendaBooking()
             this.dialogEditData = false
+            if (this.getSelectText === 'confirm') {
+              this.pushMsgConfirmEditDataTime(bookNoEditData)
+            }
             this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
             this.dataEditReady = true
             this.loadingEdit = false
