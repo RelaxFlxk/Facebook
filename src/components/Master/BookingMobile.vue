@@ -67,9 +67,9 @@
           <v-container>
             <template v-if="BookingDataItemEdit">
               <div class="avatar text-center">
-                <div style="display:flex;align-items: center;justify-content: center;" v-if="dataItemBooking[0].memberName">
+                <div style="display:flex;align-items: center;justify-content: center;" v-if="dataItem[0].memberName">
                   <h4>
-                  {{dataItemBooking[0].memberName}}
+                  {{dataItem[0].memberName}}
                   </h4>
                   <v-btn
                     class="ml-3"
@@ -77,7 +77,7 @@
                     fab
                     x-small
                     color="blue"
-                    @click="coppyLink(dataItemBooking[0].memberName)"
+                    @click="coppyLink(dataItem[0].memberName)"
                   >
                     <v-icon dark>
                       mdi-content-copy
@@ -86,8 +86,8 @@
                 </div>
                 <v-avatar size="120" style="border:5px solid #FFFFFF;">
                 <v-img
-                  v-if="dataItemBooking[0].memberPicture"
-                  :src="dataItemBooking[0].memberPicture"
+                  v-if="dataItem[0].memberPicture"
+                  :src="dataItem[0].memberPicture"
                 ></v-img>
                 <v-icon size="100" color="orange" v-else>
                   mdi-tooltip-account
@@ -2048,6 +2048,8 @@ export default {
                 } else if (d.fastTrack === 'True' && d.extraJob === 'False') {
                   this.radiosRemark = 'FastTrack'
                 }
+                s.memberName = d.memberName || ''
+                s.memberPicture = d.memberPicture || ''
                 s.bookNo = d.bookNo
                 s.flowId = d.flowId
                 s.flowName = d.flowName
@@ -2818,8 +2820,6 @@ export default {
             for (let i = 0; i < response.data.length; i++) {
               let d = response.data[i]
               let s = {}
-              s.memberName = d.memberName || ''
-              s.memberPicture = d.memberPicture || ''
               s.bookNo = d.bookNo
               s.flowId = d.flowId
               s.flowName = d.flowName
