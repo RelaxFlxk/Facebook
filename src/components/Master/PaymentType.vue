@@ -64,6 +64,21 @@
                     </v-col>
                   </v-row>
                   <v-row>
+                    <v-col cols="12" class="pb-0">
+                      <v-select
+                        class="pa-0"
+                        v-model="formAdd.masBranchID"
+                        :items="branchItem"
+                        label="สาขา"
+                        outlined
+                        required
+                        attach
+                        :menu-props="{ bottom: true, offsetY: true }"
+                        :rules="[rules.required]"
+                      ></v-select>
+                    </v-col>
+                  </v-row>
+                  <v-row>
                     <v-container fluid>
                       <v-textarea
                         outlined
@@ -144,6 +159,21 @@
                         @change="selectImgUpdate"
                         v-model="filesUpdate"
                       ></v-file-input>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12" class="pb-0">
+                      <v-select
+                        class="pa-0"
+                        v-model="formUpdate.masBranchID"
+                        :items="branchItem"
+                        label="สาขา"
+                        outlined
+                        required
+                        attach
+                        :menu-props="{ bottom: true, offsetY: true }"
+                        :rules="[rules.required]"
+                      ></v-select>
                     </v-col>
                   </v-row>
                   <v-row>
@@ -366,23 +396,27 @@ export default {
       // Search All
       searchAll: '',
       searchAll2: '',
+      branchItem: [],
       formAdd: {
         payTypeCode: '',
         payTypeName: '',
         shopId: this.$session.getAll().data.shopId,
         pictureUrlPreview: '',
-        payTypeImage: ''
+        payTypeImage: '',
+        masBranchID: 'All'
       },
       formUpdate: {
         payTypeCode: '',
         payTypeName: '',
         pictureUrlPreview: '',
-        payTypeImage: ''
+        payTypeImage: '',
+        masBranchID: 'All'
       },
       formUpdateItem: {
         payTypeCode: '',
         payTypeName: '',
-        payTypeImage: ''
+        payTypeImage: '',
+        masBranchID: 'All'
       },
       rules: {
         numberRules: value =>
@@ -408,6 +442,7 @@ export default {
       columns: [
         { text: 'รูปภาพ', value: 'payTypeImage' },
         { text: 'รหัส', value: 'payTypeCode' },
+        { text: 'สาขา', value: 'masBranchName' },
         { text: 'ประเภทการชำระเงิน', value: 'payTypeName' },
         { text: 'วันที่สร้าง', value: 'CREATE_DATE' },
         { text: 'ผู้สร้าง', value: 'CREATE_USER' },
@@ -433,9 +468,46 @@ export default {
     // this.getGetToken(this.DNS_IP)
     this.dataReady = false
     // Get Data
-    this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
+    await this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
+    await this.getDataBranch()
+    if (this.dataItem.length > 0) {
+      this.dataItem.forEach(el => {
+        if (el.masBranchID === 'All') {
+          el.masBranchName = 'ทั้งหมด'
+        }
+      })
+    }
   },
   methods: {
+    async getDataBranch () {
+      this.branchItem = []
+      await axios
+        .get(this.DNS_IP + '/master_branch/get?shopId=' + this.$session.getAll().data.shopId)
+        .then(response => {
+          let rs = response.data
+          console.log('rs', rs)
+          if (rs.status !== false) {
+            let all = {}
+            all.text = 'ทั้งหมด'
+            all.value = 'All'
+            this.branchItem.push(all)
+            for (var i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              let s = {}
+              s.text = d.masBranchName
+              s.value = d.masBranchID.toString()
+              this.branchItem.push(s)
+              // console.log('dtdtdtdt', this.branch)
+            }
+          } else {
+            let all = {}
+            all.text = 'ทั้งหมด'
+            all.value = 'All'
+            this.branchItem.push(all)
+          }
+        })
+      console.log('branch', this.branch)
+    },
     validate (Action) {
       switch (Action) {
         case 'ADD':
@@ -483,7 +555,7 @@ export default {
       //
       // Get ID /main.js
       this.dataReady = false
-      this.getDataByIdGlobal(this.DNS_IP, this.path, 'payTypeId', item.payTypeId)
+      await this.getDataByIdGlobal(this.DNS_IP, this.path, 'payTypeId', item.payTypeId)
       this.formUpdate.pictureUrlPreview = item.payTypeImage
     },
     async addData () {
@@ -552,6 +624,13 @@ export default {
               // Load Data
               await this.clearData()
               await this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
+              if (this.dataItem.length > 0) {
+                this.dataItem.forEach(el => {
+                  if (el.masBranchID === 'All') {
+                    el.masBranchName = 'ทั้งหมด'
+                  }
+                })
+              }
             })
           // eslint-disable-next-line handle-callback-err
             .catch((error) => {
@@ -644,6 +723,13 @@ export default {
 
               // Load Data
               await this.getDataGlobal(DNS_IP, PATH, this.$session.getAll().data.shopId)
+              if (this.dataItem.length > 0) {
+                this.dataItem.forEach(el => {
+                  if (el.masBranchID === 'All') {
+                    el.masBranchName = 'ทั้งหมด'
+                  }
+                })
+              }
             })
             // eslint-disable-next-line handle-callback-err
             .catch((error) => {

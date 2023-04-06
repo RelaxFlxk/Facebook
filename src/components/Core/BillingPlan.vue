@@ -801,7 +801,8 @@ export default {
     },
     async getCheckCountBook () {
       // await axios.get(this.DNS_IP + '/booking_view/getCheckPack?statusBt=wait and confirm&shopId=' + this.$session.getAll().data.shopId + '&dueDate=' + this.format_dateNoDay(new Date())).then(response => {
-      await axios.get(this.DNS_IP + '/booking_view/getCheckPack?shopId=' + this.$session.getAll().data.shopId + '&CREATE_DATELastMonth=T').then(response => {
+      await axios.get(this.DNS_IP + '/booking_view/getCheckPack?shopId=' + this.$session.getAll().data.shopId + '&dueDateLastMonth=T').then(response => {
+      // await axios.get(this.DNS_IP + '/booking_view/getCheckPack?shopId=' + this.$session.getAll().data.shopId + '&CREATE_DATELastMonth=T').then(response => {
         let rs = response.data
         if (rs.status !== false) {
           this.countBooking = response.data.countJob

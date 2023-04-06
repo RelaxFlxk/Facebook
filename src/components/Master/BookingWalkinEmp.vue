@@ -41,6 +41,19 @@
         <v-row align="center" class="pa-4 pl-7">
           <v-col cols="12" >
             <v-select
+            v-if="branch.length > 1"
+              v-model="formSelect.masBranchID"
+              :label="languageSelect === 0 ? 'สาขา *' : 'Branch *'"
+              dense
+              outlined
+              :item-text="languageSelect === 0 ? 'text' : 'textEn'"
+              :items="branch"
+              attach
+            :menu-props="{ bottom: true, offsetY: true }"
+              @change="selectBranch()"
+            ></v-select>
+            <v-select
+            v-if="formSelect.masBranchID !== '' && formSelect.masBranchID !== null"
               v-model="formSelect.flowId"
               :label="languageSelect === 0 ? 'ประเภทบริการ *' : 'Sevice *'"
               :item-text="languageSelect === 0 ? 'text' : 'textEn'"
@@ -55,19 +68,7 @@
               <p class="text-wrap" style="color:#FFFFFF;">{{languageSelect === 0 ? data.item.text : data.item.textEn}}</p>
           </template></v-select>
             <v-select
-            v-if="(formSelect.flowId !== '' || formSelect.masBranchID !== '') &&  branch.length > 1"
-              v-model="formSelect.masBranchID"
-              :label="languageSelect === 0 ? 'สาขา *' : 'Branch *'"
-              dense
-              outlined
-              :item-text="languageSelect === 0 ? 'text' : 'textEn'"
-              :items="branch"
-              attach
-            :menu-props="{ bottom: true, offsetY: true }"
-              @change="getEmp(), checkTitleEmp()"
-            ></v-select>
-            <v-select
-              v-if="formSelect.masBranchID !== '' && dataEmp.length > 1"
+              v-if="formSelect.flowId !== '' && dataEmp.length > 1"
               v-model="formSelect.empId"
               :label="languageSelect === 0 ? empTitleTh + ' *' : empTitleEng + ' *'"
               dense
@@ -558,7 +559,7 @@ export default {
   },
   async mounted () {
     await this.getShop()
-    await this.getDataFlow()
+    // await this.getDataFlow()
     await this.getDataBranch()
   },
   methods: {
@@ -1100,6 +1101,13 @@ export default {
         }
       })
     },
+    async selectBranch () {
+      this.formSelect.flowId = ''
+      this.dateSelect = []
+      this.showDetails = []
+      this.customerTimeSlot = 'False'
+      await this.getDataFlow()
+    },
     async getDataFlow () {
       this.DataFlowName = []
       this.DataFlowNameAll = []
@@ -1113,12 +1121,16 @@ export default {
         if (rs.length > 0) {
           for (var i = 0; i < rs.length; i++) {
             let d = rs[i]
-            d.text = d.flowName
-            d.textEn = d.flowNameEn
-            d.value = d.flowId
-            dataFlowName.push(d)
-            dataFlowNameAll.push(d)
-            dataFlow.push(d)
+            let checkBranchByFlow = d.masBranchID || 'All'
+            if ((checkBranchByFlow === this.formSelect.masBranchID.toString()) || checkBranchByFlow === 'All') {
+              console.log('eeeeeee', d.flowName)
+              d.text = d.flowName
+              d.textEn = d.flowNameEn
+              d.value = d.flowId
+              dataFlowName.push(d)
+              dataFlowNameAll.push(d)
+              dataFlow.push(d)
+            }
             // let s = rs[i]
             // s.dateDayCustom = JSON.parse(s.dateDayCustom)
             // s.flowId = s.flowId
@@ -1169,6 +1181,7 @@ export default {
           }
           if (this.branch.length === 1) {
             this.formSelect.masBranchID = this.branch[0].value
+            this.selectBranch()
             // this.checkTime()
             // this.getEmp()
           }

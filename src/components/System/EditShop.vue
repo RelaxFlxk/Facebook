@@ -146,7 +146,8 @@
                           required
                           :rules="[rules.required]"
                           attach
-        :menu-props="{ bottom: true, offsetY: true }"
+                          :menu-props="{ bottom: true, offsetY: true }"
+                          @change="selectCategorySub()"
                         ></v-select>
                       </v-col>
                       <v-col>
@@ -163,6 +164,22 @@
                               ></v-checkbox>
                             </v-col>
                           </v-row>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="8" v-if="formUpdate.category !== ''">
+                        <v-select
+                          v-model="formUpdate.categorySub"
+                          :items="categorySub"
+                          label="ประเภทบริการ"
+                          outlined
+                          required
+                          multiple
+                          attach
+                          chips
+                          :menu-props="{ bottom: true, offsetY: true }"
+                          :rules="[rules.required]"
+                        ></v-select>
                       </v-col>
                     </v-row>
                     <v-row>
@@ -262,6 +279,9 @@
                   :items="dataItem"
                   :items-per-page="10"
                 >
+                  <template v-slot:[`item.category`]="{ item }">
+                    {{ category.filter((a) => a.value === parseInt(item.category))[0].text }}
+                  </template>
                   <template v-slot:[`item.CREATE_DATE`]="{ item }">
                     {{ format_dateFUllTime(item.CREATE_DATE) }}
                   </template>
@@ -369,6 +389,7 @@ export default {
         secondaryColor: '',
         darkMode: false,
         category: '',
+        categorySub: [],
         timeSlotStatus: 'False',
         showQrPayments: 'False',
         bookingthankTextEn: '',
@@ -377,10 +398,10 @@ export default {
       },
       timeSlotStatusOld: '',
       filesShop: null,
-      category: [
-        { text: 'ธุรกิจรถยนต์', value: 'ธุรกิจรถยนต์' },
-        { text: 'ธุรกิจอื่นๆ', value: 'ธุรกิจอื่นๆ' }
-      ],
+      // category: [
+      //   { text: 'ธุรกิจรถยนต์', value: 'ธุรกิจรถยนต์' },
+      //   { text: 'ธุรกิจอื่นๆ', value: 'ธุรกิจอื่นๆ' }
+      // ],
       formUpdateItem: {
         userTypeGroupCode: '',
         userTypeGroupName: '',
@@ -441,7 +462,11 @@ export default {
       dataItem: [],
       filesUpdate: null,
       filesUpdateImgCover: null,
-      validUpdate: true
+      validUpdate: true,
+      category: [],
+      Allcategory: [],
+      categorySub: [],
+      AllcategorySub: []
       // End Data Table Config
     }
   },
@@ -455,14 +480,68 @@ export default {
     // this.getDataTypeGroup()
     this.dataReady = false
     // Get Data
-    this.getDataGlobal(
+    await this.getCategory()
+    await this.getCategorySub()
+    await this.getDataGlobal(
       this.DNS_IP,
       this.path,
       this.session.data.shopId,
       this.returnLink
     )
+    await this.selectCategorySub()
   },
   methods: {
+    async getCategory () {
+      await axios.get(this.DNS_IP + '/category/getsort')
+        .then(async (response) => {
+          let rs = response.data
+          console.log('rs_getCategory', rs)
+          if (rs.length > 0) {
+            this.Allcategory = rs
+            rs.forEach((d) => {
+              let s = {}
+              s.text = d.nameCategoryTH
+              s.textEn = d.nameCategoryEN
+              s.value = d.idCategory
+              console.log('type', typeof d.idCategory)
+              // s.value = d.nameCategoryTH
+              this.category.push(s)
+            })
+          }
+        }).catch(function (error) {
+          console.log('Error getting profile: ' + error)
+        })
+    },
+    async getCategorySub () {
+      await axios.get(this.DNS_IP + '/categorySub/getsort')
+        .then(async (response) => {
+          let rs = response.data
+          console.log('rs_getCategorySub', rs)
+          if (rs.length > 0) {
+            this.AllcategorySub = rs
+          }
+        }).catch(function (error) {
+          console.log('Error getting profile: ' + error)
+        })
+    },
+    async selectCategorySub () {
+      this.formUpdate.categorySub = []
+      this.categorySub = []
+      console.log('tthis.AllcategorySub', this.AllcategorySub)
+      // let Id = this.Allcategory.filter((i) => i.nameCategoryTH === this.formUpdate.category)[0].idCategory
+      // console.log('ddfdfsdfsdf', this.Allcategory.filter((i) => i.nameCategorySubTH === this.formUpdate.category))
+      this.AllcategorySub.forEach((d) => {
+        let s = {}
+        if (d.idCategory === this.formUpdate.category) {
+          console.log('IF')
+          s.text = d.nameCategorySubTH
+          s.textEn = d.nameCategorySubEN
+          s.value = d.idCategorySub
+          this.categorySub.push(s)
+        }
+      })
+      console.log('this.cat', this.categorySub)
+    },
     editDataByBookingField (item) {
       console.log('item1111111111111111111111111111', item)
       this.dialogEdit = true
@@ -549,11 +628,16 @@ export default {
       if (this.formUpdate.showQrPayments === null || this.formUpdate.showQrPayments === '') {
         this.formUpdate.showQrPayments = 'False'
       }
+      this.formUpdate.category = parseInt(item.category)
+      await this.selectCategorySub()
+      this.formUpdate.categorySub = JSON.parse(item.categorySub) || []
+
       // this.formUpdate.primaryColor = item.primaryColor
       // this.formUpdate.secondaryColor = item.secondaryColor
       // if (this.formUpdate.ZIP_CD.length >= 5) {
       //   this.getAddress()
       // }
+      console.log('formUpdate', this.formUpdate)
     },
     async editData () {
       console.log(this.formUpdate)
@@ -632,6 +716,7 @@ export default {
             primaryColor: this.formUpdate.primaryColor,
             secondaryColor: this.formUpdate.secondaryColor,
             category: this.formUpdate.category,
+            categorySub: JSON.stringify(this.formUpdate.categorySub),
             timeSlotStatus: this.formUpdate.timeSlotStatus,
             showQrPayments: this.formUpdate.showQrPayments,
             videoLinkMonition: videoLinkMonition,

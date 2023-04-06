@@ -66,6 +66,34 @@
         <v-card-text style="height: 100%;">
           <v-container>
             <template v-if="BookingDataItemEdit">
+              <div class="avatar text-center">
+                <div style="display:flex;align-items: center;justify-content: center;" v-if="dataItemBooking[0].memberName">
+                  <h4>
+                  {{dataItemBooking[0].memberName}}
+                  </h4>
+                  <v-btn
+                    class="ml-3"
+                    dark
+                    fab
+                    x-small
+                    color="blue"
+                    @click="coppyLink(dataItemBooking[0].memberName)"
+                  >
+                    <v-icon dark>
+                      mdi-content-copy
+                    </v-icon>
+                  </v-btn>
+                </div>
+                <v-avatar size="120" style="border:5px solid #FFFFFF;">
+                <v-img
+                  v-if="dataItemBooking[0].memberPicture"
+                  :src="dataItemBooking[0].memberPicture"
+                ></v-img>
+                <v-icon size="100" color="orange" v-else>
+                  mdi-tooltip-account
+                </v-icon>
+              </v-avatar>
+              </div>
               <v-row class="InputData">
                  <!-- <v-select
                     v-model="masBranchID"
@@ -234,8 +262,69 @@
               ></v-text-field>
             </v-row>
             <v-row class="my-3" v-if="bookItemAll[0].statusUpload1 === 'True' && bookItemAll[0].fileUpload1" style="display: flex;flex-direction: column;align-items: center;">
-              <h5 v-if="get_url_extension(bookItemAll[0].fileUpload1) !== 'pdf'">{{ BookingFieldData[0].textUpload1 }}</h5>
-              <v-img
+              <h5>{{ BookingFieldData[0].textUpload1 }}</h5>
+              <template v-if="bookItemAll[0].fileUpload1.includes('[')">
+                <v-row  v-for="(item, index) in JSON.parse(bookItemAll[0].fileUpload1)" :key="index">
+                <v-col cols="12">
+                   รายการที่ : {{index+1}}
+                </v-col>
+                <v-col cols="12" v-if="item.endsWith('.pdf') || item.endsWith('.xlsx') || item.endsWith('.xls')">
+                  <v-btn
+                    color="blue-grey"
+                    class="ma-2 white--text"
+                    @click="gotoLink(item)"
+                  >
+                    แสดงรายการ
+                    <v-icon
+                      right
+                      dark
+                    >
+                      mdi-eye
+                    </v-icon>
+                  </v-btn>
+                </v-col>
+                <v-col cols="12" v-else>
+                  <v-img
+                    max-height="150"
+                    max-width="250"
+                    contain
+                    :src="item"
+                    @click="gotoLink(item)"
+                  ></v-img>
+                </v-col>
+              </v-row>
+              </template>
+              <template v-else>
+                <v-row>
+                <v-col cols="12">
+                   รายการที่ : 1
+                </v-col>
+                <v-col cols="12" v-if="bookItemAll[0].fileUpload1.endsWith('.pdf') || bookItemAll[0].fileUpload1.endsWith('.xlsx') || bookItemAll[0].fileUpload1.endsWith('.xls')">
+                  <v-btn
+                    color="blue-grey"
+                    class="ma-2 white--text"
+                    @click="gotoPicture(bookItemAll[0].fileUpload1)"
+                  >
+                    แสดงรายการ
+                    <v-icon
+                      right
+                      dark
+                    >
+                      mdi-eye
+                    </v-icon>
+                  </v-btn>
+                </v-col>
+                <v-col cols="12" v-else>
+                  <v-img
+                    height="300"
+                    contain
+                    :src="srcUpload"
+                    @click="gotoPicture(bookItemAll[0].fileUpload1)"
+                  ></v-img>
+                </v-col>
+              </v-row>
+              </template>
+              <!-- <v-img
                 v-if="get_url_extension(bookItemAll[0].fileUpload1) !== 'pdf'"
                 max-height="150"
                 max-width="250"
@@ -253,12 +342,73 @@
                 :label="BookingFieldData[0].textUpload1"
                 prepend-inner-icon="mdi-chevron-right-box"
                 @click="gotoLink(bookItemAll[0].fileUpload1)"
-              ></v-text-field>
+              ></v-text-field> -->
               <!-- <p @click="gotoLink(bookItemAll[0].fileUpload1)">{{  bookItemAll[0].fileUpload1}}</p> -->
             </v-row>
             <v-row class="my-3" v-if="bookItemAll[0].statusUpload2 === 'True' && bookItemAll[0].fileUpload2" style="display: flex;flex-direction: column;align-items: center;">
-              <h5 v-if="get_url_extension(bookItemAll[0].fileUpload2) !== 'pdf'">{{ BookingFieldData[0].textUpload2 }}</h5>
-              <v-img
+              <h5>{{ BookingFieldData[0].textUpload2 }}</h5>
+              <template v-if="bookItemAll[0].fileUpload2.includes('[')">
+                <v-row  v-for="(item, index) in JSON.parse(bookItemAll[0].fileUpload2)" :key="index">
+                <v-col cols="12">
+                   รายการที่ : {{index+1}}
+                </v-col>
+                <v-col cols="12" v-if="item.endsWith('.pdf') || item.endsWith('.xlsx') || item.endsWith('.xls')">
+                  <v-btn
+                    color="blue-grey"
+                    class="ma-2 white--text"
+                    @click="gotoLink(item)"
+                  >
+                    แสดงรายการ
+                    <v-icon
+                      right
+                      dark
+                    >
+                      mdi-eye
+                    </v-icon>
+                  </v-btn>
+                </v-col>
+                <v-col cols="12" v-else>
+                  <v-img
+                    max-height="150"
+                    max-width="250"
+                    contain
+                    :src="item"
+                    @click="gotoLink(item)"
+                  ></v-img>
+                </v-col>
+              </v-row>
+              </template>
+              <template v-else>
+                <v-row>
+                <v-col cols="12">
+                   รายการที่ : 1
+                </v-col>
+                <v-col cols="12" v-if="bookItemAll[0].fileUpload2.endsWith('.pdf') || bookItemAll[0].fileUpload2.endsWith('.xlsx') || bookItemAll[0].fileUpload2.endsWith('.xls')">
+                  <v-btn
+                    color="blue-grey"
+                    class="ma-2 white--text"
+                    @click="gotoPicture(bookItemAll[0].fileUpload2)"
+                  >
+                    แสดงรายการ
+                    <v-icon
+                      right
+                      dark
+                    >
+                      mdi-eye
+                    </v-icon>
+                  </v-btn>
+                </v-col>
+                <v-col cols="12" v-else>
+                  <v-img
+                    height="300"
+                    contain
+                    :src="srcUpload"
+                    @click="gotoPicture(bookItemAll[0].fileUpload2)"
+                  ></v-img>
+                </v-col>
+              </v-row>
+              </template>
+              <!-- <v-img
                 v-if="get_url_extension(bookItemAll[0].fileUpload2) !== 'pdf'"
                 max-height="150"
                 max-width="250"
@@ -276,7 +426,7 @@
                 :label="BookingFieldData[0].textUpload2"
                 prepend-inner-icon="mdi-chevron-right-box"
                 @click="gotoLink(bookItemAll[0].fileUpload2)"
-              ></v-text-field>
+              ></v-text-field> -->
             </v-row>
             <v-col cols='12' class="pb-0 pt-0 mt-0" v-if="dataItem[0].checkOnsite !== 'True'">
               <v-radio-group v-model="radiosRemark">
@@ -1004,6 +1154,19 @@ export default {
     console.log('this.$session.getAll()', this.$session.getAll())
   },
   methods: {
+    async coppyLink (item) {
+      console.log('item', item)
+      // this.$swal.fire('Any fool can use a computer')
+      // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+      this.$swal({
+        title: 'Copy successfully',
+        text: 'คัดลอกลายชื่อเรียบร้อย',
+        type: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      })
+      await navigator.clipboard.writeText(item)
+    },
     async SelectImg (Imgitem) {
       this.showImg = Imgitem
       this.dialogImg = true
@@ -2655,6 +2818,8 @@ export default {
             for (let i = 0; i < response.data.length; i++) {
               let d = response.data[i]
               let s = {}
+              s.memberName = d.memberName || ''
+              s.memberPicture = d.memberPicture || ''
               s.bookNo = d.bookNo
               s.flowId = d.flowId
               s.flowName = d.flowName

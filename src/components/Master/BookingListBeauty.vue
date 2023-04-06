@@ -730,7 +730,7 @@
                   class="textserch"
                   background-color="white"
                   style="border-radius: 40px !important;"
-                  label="ค้นหาชื่อ และ เบอร์โทรศัพท์"
+                  label="ค้นหาชื่อ และ เบอร์โทรศัพท์ ในตาราง"
                   v-model="searchAll2"
                   outlined
                   hide-details
@@ -741,6 +741,42 @@
                 </v-icon>
                  </template>
                 </v-text-field>
+            </v-col>
+          </v-row>
+          <v-row justify="end">
+            <v-col :cols="resCol === 'sm' ? '3' : '4'" class="pr-0 pl-0 pt-3">
+                <v-text-field
+                  class="textserch"
+                  background-color="white"
+                  style="border-radius: 40px !important;"
+                  label="ค้นหาชื่อทั้งหมด"
+                  v-model="searchOther"
+                  outlined
+                  hide-details
+                  dense
+                  prepend-inner-icon="mdi-magnify"
+                >
+                </v-text-field>
+            </v-col>
+            <v-col cols="auto" class="pr-0 pl-1 pt-3">
+              <v-btn
+                rounded
+                color="primary"
+                dark
+                @click="searchAny()"
+              >
+                ค้นหา
+              </v-btn>
+            </v-col>
+            <v-col cols="auto" class="pr-0 pl-1 pt-3" v-if="searchOther.length > 1">
+              <v-btn
+                rounded
+                color="error"
+                dark
+                @click="getDataDefault(), searchOther = '', showColorSearch = false, statusSearch = 'no'"
+              >
+                clear
+              </v-btn>
             </v-col>
           </v-row>
           </div>
@@ -890,16 +926,15 @@
                           </v-col>
                         </v-row>
                         <v-col cols="12">
-                          <v-select
-                            v-model="formAdd.flowId"
-                            :items="dataFlowSelectAdd"
-                            label="ประเภทบริการ"
-                            outlined
-                            dense
-                            required
-                            @change="SetallowedDates(),setFlowAdd(), checkTime(), date = ''"
-                            :rules="[rules.required]"
-                          ></v-select>
+                          <v-checkbox
+                            v-model="statusVIP"
+                            label="นัดหมายพิเศษ (VIP.)"
+                            false-value="False"
+                            true-value="True"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            @click="date = ''"
+                          ></v-checkbox>
                           <v-select
                             v-model="formAdd.masBranchID"
                             :items="branch"
@@ -907,6 +942,18 @@
                             outlined
                             dense
                             required
+                            :rules="[rules.required]"
+                            @change="setFlowByBranchAdd()"
+                          ></v-select>
+                          <v-select
+                            v-if="formAdd.masBranchID !== null && formAdd.masBranchID !== ''"
+                            v-model="formAdd.flowId"
+                            :items="dataFlowSelectAdd"
+                            label="ประเภทบริการ"
+                            outlined
+                            dense
+                            required
+                            @change="SetallowedDates(),setFlowAdd(), checkTime(), date = ''"
                             :rules="[rules.required]"
                           ></v-select>
                           <template v-if="fieldNameItem">
@@ -1395,6 +1442,48 @@
                             ></v-select>
                             </v-col>
                           </v-row>
+                          <v-row v-if="showMenu === 'True'">
+                          <sideMenu :drawerParent="drawerAdd" :toggleParent="toggleAdd" :languageSelectParent="languageSelect" :dataMenuParent="dataMenuAdd" :priceMenuParent="priceMenuAdd" @updatePriceMenuParent="updatePriceMenuAdd"></sideMenu>
+                          <v-col cols="12" class="pt-0 pb-4">
+                            <v-btn
+                              block
+                              dark
+                              @click="toggleAdd"
+                            >เมนู</v-btn>
+                          </v-col>
+                          <v-col cols="12" class="pt-0 pb-6">
+                            <v-expansion-panels multiple v-model="expansionMenuAdd">
+                              <v-expansion-panel>
+                                <v-expansion-panel-header>รายการและราคา</v-expansion-panel-header>
+                                <v-expansion-panel-content>
+                                  <div style="align-items: center;width:100%;">
+                                    <v-row>
+                                      <v-col cols="12" v-for="(item,id) in dataMenuAdd.filter(el => { return parseInt(el.qty) > 0 })" :key="id" style="display: flex;">
+                                        <v-card class="cardMenu">
+                                            <v-img
+                                              class="pictureMenu"
+                                              :src="item.picture"
+                                            ></v-img>
+                                            <v-row>
+                                              <v-col cols="8" class="pt-0 pb-0 textTitelMenu">{{item.name}}</v-col>
+                                              <v-col cols="8" style="display: flex;justify-content: flex-start;" class="pt-0 pb-0 textTitelMenuSub">{{item.qty}} x {{formatNumber(item.price)}}</v-col>
+                                              <v-col cols="6" class="pt-0 pb-0 textTitelMenuRemark">{{item.remark}}</v-col>
+                                            </v-row>
+                                        </v-card>
+                                      </v-col>
+                                      <v-col cols="12">
+                                        <v-row>
+                                          <v-col cols="6"><p class="ma-0 textTitelPriceMenu">รวมราคา</p></v-col>
+                                          <v-col cols="6" style="display: flex;justify-content: flex-end;" class="textTitelPriceMenu">{{formatNumber(priceMenuAdd)}}</v-col>
+                                        </v-row>
+                                      </v-col>
+                                    </v-row>
+                                  </div>
+                                </v-expansion-panel-content>
+                              </v-expansion-panel>
+                            </v-expansion-panels>
+                          </v-col>
+                        </v-row>
                           <v-row v-if="$session.getAll().data.shopId !== 'U9f316c85400fd716ea8c80d7cd5b61f8'">
                             <v-col class="pt-0 pb-0">
                               <v-radio-group v-model="formAdd.radiosRemark" row required :rules ="[rules.required]">
@@ -3810,6 +3899,16 @@
                         <v-form ref="form_edit" v-model="validEdit" lazy-validation>
                         <v-col cols="12" v-if="dataEditReady">
                           <v-select
+                            v-model="formEdit.masBranchID"
+                            :items="branch"
+                            label="สาขา"
+                            outlined
+                            dense
+                            required
+                            :rules="[rules.required]"
+                            @change="setFlowByBranchEdit()"
+                          ></v-select>
+                          <v-select
                             v-model="formEdit.flowId"
                             :items="dataFlowSelectEdit"
                             label="ประเภทบริการ"
@@ -3817,15 +3916,6 @@
                             dense
                             required
                             @change="SetallowedDatesEdit(), checkTimeEdit(), dateEdit = ''"
-                            :rules="[rules.required]"
-                          ></v-select>
-                          <v-select
-                            v-model="formEdit.masBranchID"
-                            :items="branch"
-                            label="สาขา"
-                            outlined
-                            dense
-                            required
                             :rules="[rules.required]"
                           ></v-select>
                           <template v-if="BookingDataItemEdit">
@@ -5732,12 +5822,65 @@
             <v-card-title>
               File Upload
             </v-card-title>
-            <v-card-text>
-            <v-row justify="center">
-              <v-col class="videoWrapper">
-                <iframe style="max-width: -webkit-fill-available;" :src="srcUpload"></iframe>
-              </v-col>
-            </v-row>
+            <v-card-text v-if="typeof srcUpload === 'string'">
+              <v-row>
+                <v-col cols="12">
+                   รายการที่ : 1
+                </v-col>
+                <v-col cols="12" v-if="srcUpload.endsWith('.pdf') || srcUpload.endsWith('.xlsx') || srcUpload.endsWith('.xls')">
+                  <v-btn
+                    color="blue-grey"
+                    class="ma-2 white--text"
+                    @click="gotoPicture(srcUpload)"
+                  >
+                    แสดงรายการ
+                    <v-icon
+                      right
+                      dark
+                    >
+                      mdi-eye
+                    </v-icon>
+                  </v-btn>
+                </v-col>
+                <v-col cols="12" v-else>
+                  <v-img
+                    height="300"
+                    contain
+                    :src="srcUpload"
+                    @click="gotoPicture(srcUpload)"
+                  ></v-img>
+                </v-col>
+              </v-row>
+            </v-card-text>
+            <v-card-text v-else>
+              <v-row  v-for="(item, index) in srcUpload" :key="index">
+                <v-col cols="12">
+                   รายการที่ : {{index+1}}
+                </v-col>
+                <v-col cols="12" v-if="item.endsWith('.pdf') || item.endsWith('.xlsx') || item.endsWith('.xls')">
+                  <v-btn
+                    color="blue-grey"
+                    class="ma-2 white--text"
+                    @click="gotoPicture(item)"
+                  >
+                    แสดงรายการ
+                    <v-icon
+                      right
+                      dark
+                    >
+                      mdi-eye
+                    </v-icon>
+                  </v-btn>
+                </v-col>
+                <v-col cols="12" v-else>
+                  <v-img
+                    height="300"
+                    contain
+                    :src="item"
+                    @click="gotoPicture(item)"
+                  ></v-img>
+                </v-col>
+              </v-row>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
@@ -6705,7 +6848,7 @@
                         </v-btn>
                       </div>
                     </v-col>
-                    <v-col cols="12" v-if="dataMenu.length > 1">
+                    <v-col cols="12" v-if="dataMenu.length > 0">
                        <div
                           style="'width:100% !important';background: linear-gradient(90deg, #FCFCFC 0%, #F7F7F7 10.04%, #F7F7F7 51.56%, #F7F7F7 89.58%, #FCFCFC 100%);box-shadow: 0px 4px 20px rgba(114, 114, 114, 0.1);"
                         >
@@ -7096,11 +7239,13 @@ import waitingAlert from '../waitingAlert.vue'
 import RetureDeposit from '../BookingListComponents/RetureDeposit.vue'
 import CallLog from '../BookingListComponents/CallLog.vue'
 import NotificationService from '../BookingListComponents/NotificationService.vue'
+import sideMenu from '../Menu/sideMenu.vue'
 // import copy from 'copy-to-clipboard'
 
 export default {
   name: 'BookingListBeauty',
   components: {
+    sideMenu,
     draggable,
     'left-menu-admin': adminLeftMenu,
     DateRangePicker,
@@ -7172,6 +7317,14 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      // menu
+      showMenu: 'False',
+      dataMenuAdd: [],
+      expansionMenuAdd: [0],
+      drawerAdd: false,
+      priceMenuAdd: 0,
+      languageSelect: 0,
+      // ******
       dialogShowMenuReport: false,
       menuShowMenuReport: false,
       dataShowMenuReport: [],
@@ -7640,7 +7793,11 @@ export default {
       dataMenu: [],
       expansionMenu: [0],
       dialogMenu: false,
-      depositTextTH: ''
+      depositTextTH: '',
+      statusVIP: 'False',
+      statusVIPEdit: 'False',
+      statusVIPChang: 'False',
+      statusVIPRemove: 'False'
     }
   },
   beforeCreate () {
@@ -7676,6 +7833,14 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
+    toggleAdd () {
+      this.drawerAdd = !this.drawerAdd
+    },
+    updatePriceMenuAdd (price, dataMenu) {
+      console.log('updatePriceMenu', price)
+      this.priceMenuAdd = price
+      this.dataMenuAdd = dataMenu
+    },
     checkTypeSort () {
       if (this.sortSelect && this.sort) {
         if (this.sortSelect === 'เรียงตามวันที่นัดหมาย') {
@@ -7806,12 +7971,25 @@ export default {
         } else if (a.statusBt === 'confirmJob') {
           a.statusBtShow = this.dataTypeProcess4
         }
-        let data1 = {
-          'สถานะ': a.statusBtShow,
-          'บริการ': a.flowName,
-          'ชื่อลูกค้า': a.cusName,
-          'เบอร์โทร': a.tel,
-          'วันที่': a.dueDate
+        let data1 = {}
+        if (a.shopId === 'Uec804350aa290d70772883350c7c60c4') {
+          data1 = {
+            'สถานะ': a.statusBtShow,
+            'บริการ': a.flowName,
+            'ชื่อลูกค้า': a.cusName,
+            'เบอร์โทร': a.tel,
+            'วันที่': a.dueDate,
+            'การจัดส่ง': a.deliveryOptions,
+            'ที่อยู่': a.address
+          }
+        } else {
+          data1 = {
+            'สถานะ': a.statusBtShow,
+            'บริการ': a.flowName,
+            'ชื่อลูกค้า': a.cusName,
+            'เบอร์โทร': a.tel,
+            'วันที่': a.dueDate
+          }
         }
         let checkFlow = this.DataFlowNameMenu.filter(el => { return el.value === this.flowSelectMenu })
         let menuItem = JSON.parse(checkFlow[0].allData.menuItem) || []
@@ -7903,6 +8081,14 @@ export default {
                   d.cusName = this.getDataFromFieldName(this.BookingDataListShowMenuReport[d.bookNo], 'ชื่อ')
                   d.cusReg = this.getDataFromFieldName(this.BookingDataListShowMenuReport[d.bookNo], 'เลขทะเบียน')
                   d.tel = this.getDataFromFieldName(this.BookingDataListShowMenuReport[d.bookNo], 'เบอร์โทร')
+                  // ร้านข้าวมันไก่ (Uec804350aa290d70772883350c7c60c4)
+                  if (d.shopId === 'Uec804350aa290d70772883350c7c60c4') {
+                    d.deliveryOptions = this.getDataFromFieldName(this.BookingDataListShowMenuReport[d.bookNo], 'การจัดส่ง')
+                    d.address = this.getDataFromFieldName(this.BookingDataListShowMenuReport[d.bookNo], 'ที่อยู่')
+                    d.deliveryOptions = (d.deliveryOptions.length > 0) ? d.deliveryOptions[0].fieldValue : ''
+                    d.address = (d.address.length > 0) ? d.address[0].fieldValue : ''
+                  }
+                  //
                   d.cusName = (d.cusName.length > 0) ? d.cusName[0].fieldValue : ''
                   d.cusReg = (d.cusReg.length > 0) ? d.cusReg[0].fieldValue : ''
                   d.tel = (d.tel.length > 0) ? d.tel[0].fieldValue : ''
@@ -8098,13 +8284,13 @@ export default {
       let dt = {}
       if (this.statusdepositPrice === true) {
         dt = {
-          remarkDepositLinked: this.datailLinkDeposit,
+          remarkDepositLinked: (this.datailLinkDeposit || '').replace(/%/g, '%%').replace(/'/g, "\\'").replace(/`/g, '\\`'),
           depositPrice: this.depositPrice || '',
           LAST_USER: this.$session.getAll().data.userName
         }
       } else {
         dt = {
-          remarkDepositLinked: this.datailLinkDeposit,
+          remarkDepositLinked: (this.datailLinkDeposit || '').replace(/%/g, '%%').replace(/'/g, "\\'").replace(/`/g, '\\`'),
           LAST_USER: this.$session.getAll().data.userName
         }
       }
@@ -8864,9 +9050,17 @@ export default {
     },
     showFileUpload (item, text) {
       if (text === '1') {
-        this.srcUpload = item.fileUpload1
+        if (item.fileUpload1.includes('[')) {
+          this.srcUpload = JSON.parse(item.fileUpload1)
+        } else {
+          this.srcUpload = item.fileUpload1
+        }
       } else {
-        this.srcUpload = item.fileUpload2
+        if (item.fileUpload2.includes('[')) {
+          this.srcUpload = JSON.parse(item.fileUpload2)
+        } else {
+          this.srcUpload = item.fileUpload2
+        }
       }
       this.dialogShowFileUpload = true
     },
@@ -8874,41 +9068,43 @@ export default {
       this.checkLimitBooking.ID = 'NO'
       this.checkLimitBooking.countBooking = 1
       let LimitBooking = await this.getLimitBooking()
-      if (LimitBooking.status === false) {
-        this.checkLimitBooking.ID = 'NO'
-        this.checkLimitBooking.countBooking = 1
-        console.log('1257')
-      } else {
-        console.log('1259', LimitBooking)
-        LimitBooking.forEach((item) => {
-          let setTime = []
-          // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
-          if (this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.setTimebyday === 'True') {
-            let timeJson = JSON.parse(this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.setTime).filter((items) => items.value === new Date(this.date).getDay())
-            setTime = timeJson[0].setTime || []
-            console.log('IF')
-          } else {
-            console.log('ELSE')
-            setTime = JSON.parse(this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.setTime) || []
-          }
-          let dt = setTime
-          // let dt = JSON.parse(this.branchData.filter(item => { return item.masBranchID === this.formAdd.masBranchID })[0].setTime) || []
-          let dtint = '0'
-          if (dt.filter(item => item.value === this.time.value).length > 0) {
-            dtint = parseInt(dt.filter(item => item.value === this.time.value)[0].limitBooking || '0')
-          } else {
-            dtint = '0'
-          }
-          console.log('test', dtint)
-          if (item.flowId === this.formAdd.flowId && item.bookingDate === this.date && item.bookingTime === this.time.value) {
-            this.checkLimitBooking.ID = item.id
-            console.log('1266')
-            this.checkLimitBooking.countBooking = parseInt(item.countBooking) + 1
-            this.checkLimitBooking.limitCheck = parseInt(item.countBooking) >= dtint ? 'false' : 'true'
-            this.checkLimitBooking.limitBooking = dtint
+      if (this.statusVIP === 'False') {
+        if (LimitBooking.status === false) {
+          this.checkLimitBooking.ID = 'NO'
+          this.checkLimitBooking.countBooking = 1
+          console.log('1257')
+        } else {
+          console.log('1259', LimitBooking)
+          LimitBooking.forEach((item) => {
+            let setTime = []
+            // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
+            if (this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.setTimebyday === 'True') {
+              let timeJson = JSON.parse(this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.setTime).filter((items) => items.value === new Date(this.date).getDay())
+              setTime = timeJson[0].setTime || []
+              console.log('IF')
+            } else {
+              console.log('ELSE')
+              setTime = JSON.parse(this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.setTime) || []
+            }
+            let dt = setTime
+            // let dt = JSON.parse(this.branchData.filter(item => { return item.masBranchID === this.formAdd.masBranchID })[0].setTime) || []
+            let dtint = '0'
+            if (dt.filter(item => item.value === this.time.value).length > 0) {
+              dtint = parseInt(dt.filter(item => item.value === this.time.value)[0].limitBooking || '0')
+            } else {
+              dtint = '0'
+            }
+            console.log('test', dtint)
+            if (item.flowId === this.formAdd.flowId && item.bookingDate === this.date && item.bookingTime === this.time.value) {
+              this.checkLimitBooking.ID = item.id
+              console.log('1266')
+              this.checkLimitBooking.countBooking = parseInt(item.countBooking) + 1
+              this.checkLimitBooking.limitCheck = parseInt(item.countBooking) >= dtint ? 'false' : 'true'
+              this.checkLimitBooking.limitBooking = dtint
             // console.log('item.masBranchID', item)
-          }
-        })
+            }
+          })
+        }
       }
       console.log('this.checkLimitBooking', this.checkLimitBooking)
     },
@@ -8922,19 +9118,21 @@ export default {
         let dt = result.data
         if (dt[0].limitBookingCheck === 'True') {
           console.log('limitBookingCheck === True')
-          dt.forEach((v, k) => {
-            if (JSON.parse(v.setTime)) {
-              let count = 0
-              JSON.parse(v.setTime).forEach((v2, k2) => {
-                count += parseInt(v2.limitBooking)
-              })
-              if (v.sum >= count) {
-                this.dateDaylimit.push(
-                  moment(v.bookingDate).format('YYYY-MM-DD')
-                )
+          if (this.statusVIP === 'False') {
+            dt.forEach((v, k) => {
+              if (JSON.parse(v.setTime)) {
+                let count = 0
+                JSON.parse(v.setTime).forEach((v2, k2) => {
+                  count += parseInt(v2.limitBooking)
+                })
+                if (v.sum >= count) {
+                  this.dateDaylimit.push(
+                    moment(v.bookingDate).format('YYYY-MM-DD')
+                  )
+                }
               }
-            }
-          })
+            })
+          }
         } else {
           console.log('limitBookingCheck === False')
           this.dateDaylimit = []
@@ -8996,43 +9194,47 @@ export default {
         let TimeData = []
         let currentDate = setTime
         TimeData = currentDate
-        this.timeavailable = TimeData.filter((item) => parseInt(item.limitBooking) > 0)
-        console.log('TimeData', TimeData)
-        if (this.timeavailable.length > 0) {
-          let LimitBooking = await this.getLimitBookingChang()
-          console.log('LimitBooking!!!!!!!', LimitBooking)
-          if (LimitBooking.status !== false) {
-            if (LimitBooking.length > 0) {
-              LimitBooking.forEach((i, n) => {
-                this.timeavailable.forEach((v, k) => {
-                  if (i.bookingTime === v.value) {
-                    if (i.countBooking >= parseInt(v.limitBooking)) {
-                      this.timeavailable.splice(k, 1)
+        if (this.statusVIPChang === 'False') {
+          this.timeavailable = TimeData.filter((item) => parseInt(item.limitBooking) > 0)
+          console.log('TimeData', TimeData)
+          if (this.timeavailable.length > 0) {
+            let LimitBooking = await this.getLimitBookingChang()
+            console.log('LimitBooking!!!!!!!', LimitBooking)
+            if (LimitBooking.status !== false) {
+              if (LimitBooking.length > 0) {
+                LimitBooking.forEach((i, n) => {
+                  this.timeavailable.forEach((v, k) => {
+                    if (i.bookingTime === v.value) {
+                      if (i.countBooking >= parseInt(v.limitBooking)) {
+                        this.timeavailable.splice(k, 1)
+                      }
                     }
-                  }
+                  })
                 })
-              })
-              if (this.timeavailable.length === 0) {
-                this.$swal(
-                  'คิวเต็มแล้ว',
-                  'กรุณาเลือกวันที่ใหม่อีกครั้ง',
-                  'error'
-                )
-                this.date = ''
+                if (this.timeavailable.length === 0) {
+                  this.$swal(
+                    'คิวเต็มแล้ว',
+                    'กรุณาเลือกวันที่ใหม่อีกครั้ง',
+                    'error'
+                  )
+                  this.date = ''
+                }
               }
+              console.log('this.timeavailable IF', this.timeavailable)
+            } else {
+              this.timeavailable = TimeData.filter((item) => parseInt(item.limitBooking) > 0)
+              console.log('this.timeavailable ELSE', this.timeavailable)
             }
-            console.log('this.timeavailable IF', this.timeavailable)
           } else {
-            this.timeavailable = TimeData.filter((item) => parseInt(item.limitBooking) > 0)
-            console.log('this.timeavailable ELSE', this.timeavailable)
+            this.$swal(
+              'คิวเต็มแล้ว',
+              'กรุณาเลือกวันที่ใหม่อีกครั้ง',
+              'error'
+            )
+            this.date = ''
           }
         } else {
-          this.$swal(
-            'คิวเต็มแล้ว',
-            'กรุณาเลือกวันที่ใหม่อีกครั้ง',
-            'error'
-          )
-          this.date = ''
+          this.timeavailable = TimeData
         }
       } else {
         console.log('this.timeavailable ELSEEEEE', this.timeavailable)
@@ -9070,49 +9272,52 @@ export default {
         let TimeData = []
         let currentDate = setTime
         TimeData = currentDate
-        this.timeavailable = TimeData.filter((item) => parseInt(item.limitBooking) > 0)
-        console.log('TimeData', TimeData)
-        if (this.timeavailable.length > 0) {
-          let LimitBooking = await this.getLimitBookingEdit()
-          console.log('LimitBooking', LimitBooking)
-          if (LimitBooking.status !== false) {
-            if (LimitBooking.length > 0) {
-              LimitBooking.forEach((i, n) => {
-                this.timeavailable.forEach((v, k) => {
-                  if (i.bookingTime === v.value) {
-                    if (i.countBooking >= parseInt(v.limitBooking)) {
-                      this.timeavailable.splice(k, 1)
+        if (this.statusEdit === 'False') {
+          this.timeavailable = TimeData.filter((item) => parseInt(item.limitBooking) > 0)
+          console.log('TimeData', TimeData)
+          if (this.timeavailable.length > 0) {
+            let LimitBooking = await this.getLimitBookingEdit()
+            console.log('LimitBooking', LimitBooking)
+            if (LimitBooking.status !== false) {
+              if (LimitBooking.length > 0) {
+                LimitBooking.forEach((i, n) => {
+                  this.timeavailable.forEach((v, k) => {
+                    if (i.bookingTime === v.value) {
+                      if (i.countBooking >= parseInt(v.limitBooking)) {
+                        this.timeavailable.splice(k, 1)
+                      }
                     }
-                  }
+                  })
                 })
-              })
-              if (this.timeavailable.length === 0) {
-                this.$swal(
-                  'คิวเต็มแล้ว',
-                  'กรุณาเลือกวันที่ใหม่อีกครั้ง',
-                  'error'
-                )
-                this.date = ''
+                if (this.timeavailable.length === 0) {
+                  this.$swal(
+                    'คิวเต็มแล้ว',
+                    'กรุณาเลือกวันที่ใหม่อีกครั้ง',
+                    'error'
+                  )
+                  this.date = ''
+                }
               }
+              console.log('this.timeavailable IF', this.timeavailable)
+            } else {
+              this.timeavailable = TimeData.filter((item) => parseInt(item.limitBooking) > 0)
+              console.log('this.timeavailable ELSE', this.timeavailable)
             }
-            console.log('this.timeavailable IF', this.timeavailable)
           } else {
-            this.timeavailable = TimeData.filter((item) => parseInt(item.limitBooking) > 0)
-            console.log('this.timeavailable ELSE', this.timeavailable)
+            this.$swal(
+              'คิวเต็มแล้ว',
+              'กรุณาเลือกวันที่ใหม่อีกครั้ง',
+              'error'
+            )
+            this.date = ''
           }
         } else {
-          this.$swal(
-            'คิวเต็มแล้ว',
-            'กรุณาเลือกวันที่ใหม่อีกครั้ง',
-            'error'
-          )
-          this.date = ''
+          this.timeavailable = TimeData
         }
       } else {
         console.log('this.timeavailable ELSEEEEE', this.timeavailable)
         // LimitBookingBy Flow
         // this.timeavailable = JSON.parse(this.flowItemLimit.filter(item => { return item.flowId === this.formEdit.flowId })[0].setTime) || []
-
         // LimitBookingBy masBranch
         if (this.DataFlowName.filter(el => { return el.value === parseInt(this.formEdit.flowId) }).length > 0) {
           this.timeavailable = setTime
@@ -9144,43 +9349,47 @@ export default {
         let TimeData = []
         let currentDate = setTime
         TimeData = currentDate
-        this.timeavailable = TimeData.filter((item) => parseInt(item.limitBooking) > 0)
-        console.log('TimeData', TimeData)
-        if (this.timeavailable.length > 0) {
-          let LimitBooking = await this.getLimitBooking()
-          console.log('LimitBooking', LimitBooking)
-          if (LimitBooking.status !== false) {
-            if (LimitBooking.length > 0) {
-              LimitBooking.forEach((i, n) => {
-                this.timeavailable.forEach((v, k) => {
-                  if (i.bookingTime === v.value) {
-                    if (i.countBooking >= parseInt(v.limitBooking)) {
-                      this.timeavailable.splice(k, 1)
+        if (this.statusVIP === 'False') {
+          this.timeavailable = TimeData.filter((item) => parseInt(item.limitBooking) > 0)
+          console.log('TimeData', TimeData)
+          if (this.timeavailable.length > 0) {
+            let LimitBooking = await this.getLimitBooking()
+            console.log('LimitBooking', LimitBooking)
+            if (LimitBooking.status !== false) {
+              if (LimitBooking.length > 0) {
+                LimitBooking.forEach((i, n) => {
+                  this.timeavailable.forEach((v, k) => {
+                    if (i.bookingTime === v.value) {
+                      if (i.countBooking >= parseInt(v.limitBooking)) {
+                        this.timeavailable.splice(k, 1)
+                      }
                     }
-                  }
+                  })
                 })
-              })
-              if (this.timeavailable.length === 0) {
-                this.$swal(
-                  'คิวเต็มแล้ว',
-                  'กรุณาเลือกวันที่ใหม่อีกครั้ง',
-                  'error'
-                )
-                this.date = ''
+                if (this.timeavailable.length === 0) {
+                  this.$swal(
+                    'คิวเต็มแล้ว',
+                    'กรุณาเลือกวันที่ใหม่อีกครั้ง',
+                    'error'
+                  )
+                  this.date = ''
+                }
               }
+              console.log('this.timeavailable IF', this.timeavailable)
+            } else {
+              this.timeavailable = TimeData.filter((item) => parseInt(item.limitBooking) > 0)
+              console.log('this.timeavailable ELSE', this.timeavailable)
             }
-            console.log('this.timeavailable IF', this.timeavailable)
           } else {
-            this.timeavailable = TimeData.filter((item) => parseInt(item.limitBooking) > 0)
-            console.log('this.timeavailable ELSE', this.timeavailable)
+            this.$swal(
+              'คิวเต็มแล้ว',
+              'กรุณาเลือกวันที่ใหม่อีกครั้ง',
+              'error'
+            )
+            this.date = ''
           }
         } else {
-          this.$swal(
-            'คิวเต็มแล้ว',
-            'กรุณาเลือกวันที่ใหม่อีกครั้ง',
-            'error'
-          )
-          this.date = ''
+          this.timeavailable = TimeData
         }
       } else {
         console.log('this.timeavailable ELSEEEEE', this.timeavailable)
@@ -9752,7 +9961,7 @@ export default {
           .get(
           // eslint-disable-next-line quotes
             this.DNS_IP +
-            '/booking_view/getSearchNew?shopId=' +
+            '/booking_view/getSearchName?shopId=' +
             this.session.data.shopId +
             '&fieldValue=' +
             this.searchOther + this.selectOnsite
@@ -9785,6 +9994,7 @@ export default {
                   }
                   s.shopId = d.shopId
                   s.dueDateDay = d.dueDateDay
+                  s.statusVIP = d.statusVIP
                   s.depositTextTH = d.depositTextTH
                   s.CREATE_DATE_Status = d.CREATE_DATE_Status
                   s.CREATE_DATE = d.CREATE_DATE
@@ -10053,10 +10263,12 @@ export default {
       await this.getBookingField()
       // await this.getBookingData(dt, 'edit')
       console.log('setDataEdit', dt)
+      this.statusVIPEdit = dt.statusVIP
       this.dataEdit = dt
       this.userId = dt.userId
       this.BookingDataItemEdit = []
       this.formEdit.masBranchID = dt.masBranchID
+      await this.setFlowByBranchEdit()
       this.masBranchIDOldEdit = dt.masBranchID
       this.formEdit.flowId = dt.flowId
       this.flowIdOldEdit = dt.flowId
@@ -10251,6 +10463,7 @@ export default {
       // setTimeout(() => this.editDataSelectSubmit(), 500)
     },
     async checkDuplicate () {
+      console.log('statusVIP', this.statusVIPEdit)
       if (this.validEdit !== false) {
         this.loadingEdit = true
         this.swalConfig.title = 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?'
@@ -10298,6 +10511,76 @@ export default {
                       }
                       console.log('NEW', this.formEdit.masBranchID)
                       console.log('OLD', this.masBranchIDOldEdit)
+                      if (this.statusVIPEdit === 'False') {
+                        if (dueOld !== dueNew) {
+                          let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
+                          console.log('chkStatus', chkStatus)
+                          if (chkStatus.status) {
+                            this.editDataSelectSubmit()
+                          } else {
+                            this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
+                            this.loadingEdit = false
+                          }
+                        } else if (dueOld === dueNew && this.flowIdOldEdit !== this.formEdit.flowId) {
+                          let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
+                          console.log('chkStatus', chkStatus)
+                          if (chkStatus.status) {
+                            this.editDataSelectSubmit()
+                          } else {
+                            this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
+                            this.loadingEdit = false
+                          }
+                        } else if (dueOld === dueNew && this.masBranchIDOldEdit !== this.formEdit.masBranchID) {
+                          let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
+                          console.log('chkStatus', chkStatus)
+                          if (chkStatus.status) {
+                            this.editDataSelectSubmit()
+                          } else {
+                            this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
+                            this.loadingEdit = false
+                          }
+                        } else if (dueOld === dueNew && this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.flowIdOldEdit !== this.formEdit.flowId) {
+                          let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
+                          console.log('chkStatus', chkStatus)
+                          if (chkStatus.status) {
+                            this.editDataSelectSubmit()
+                          } else {
+                            this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
+                            this.loadingEdit = false
+                          }
+                        } else {
+                          this.editDataSelectSubmit()
+                        }
+                      } else {
+                        this.editDataSelectSubmit()
+                      }
+                    } else {
+                      this.editDataSelectSubmit()
+                    }
+                  } else {
+                    this.editDataSelectSubmit()
+                  }
+                } else {
+                  this.textError = 'จำนวนงานด่วนต่อวัน เกินกว่าที่ตั้งไว้'
+                  this.dialogError = true
+                  this.loadingEdit = false
+                }
+              } else {
+                let chkStatLimit = this.dataFlowSelectEdit.filter(el => { return el.value === this.formEdit.flowId })
+                console.log('this.getSelectText', this.getSelectText)
+                if (chkStatLimit.length > 0) {
+                  if (chkStatLimit[0].allData.limitBookingCheck === 'True') {
+                    let dueOld = this.dueDateOld + this.dueDateTimeOld
+                    let dueNew = this.dateEdit + this.timeEdit.value
+                    let limitBookingCount = this.timeavailable.filter(el => { return el.value === this.timeEdit.value })
+                    console.log('limitBookingCount', limitBookingCount)
+                    let limitBookingCounts = 0
+                    if (limitBookingCount.length > 0) {
+                      limitBookingCounts = parseInt(limitBookingCount[0].limitBooking)
+                    } else {
+                      limitBookingCounts = 0
+                    }
+                    if (this.statusVIPEdit === 'False') {
                       if (dueOld !== dueNew) {
                         let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
                         console.log('chkStatus', chkStatus)
@@ -10336,68 +10619,6 @@ export default {
                         }
                       } else {
                         this.editDataSelectSubmit()
-                      }
-                    } else {
-                      this.editDataSelectSubmit()
-                    }
-                  } else {
-                    this.editDataSelectSubmit()
-                  }
-                } else {
-                  this.textError = 'จำนวนงานด่วนต่อวัน เกินกว่าที่ตั้งไว้'
-                  this.dialogError = true
-                  this.loadingEdit = false
-                }
-              } else {
-                let chkStatLimit = this.dataFlowSelectEdit.filter(el => { return el.value === this.formEdit.flowId })
-                console.log('this.getSelectText', this.getSelectText)
-                if (chkStatLimit.length > 0) {
-                  if (chkStatLimit[0].allData.limitBookingCheck === 'True') {
-                    let dueOld = this.dueDateOld + this.dueDateTimeOld
-                    let dueNew = this.dateEdit + this.timeEdit.value
-                    let limitBookingCount = this.timeavailable.filter(el => { return el.value === this.timeEdit.value })
-                    console.log('limitBookingCount', limitBookingCount)
-                    let limitBookingCounts = 0
-                    if (limitBookingCount.length > 0) {
-                      limitBookingCounts = parseInt(limitBookingCount[0].limitBooking)
-                    } else {
-                      limitBookingCounts = 0
-                    }
-                    if (dueOld !== dueNew) {
-                      let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
-                      console.log('chkStatus', chkStatus)
-                      if (chkStatus.status) {
-                        this.editDataSelectSubmit()
-                      } else {
-                        this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-                        this.loadingEdit = false
-                      }
-                    } else if (dueOld === dueNew && this.flowIdOldEdit !== this.formEdit.flowId) {
-                      let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
-                      console.log('chkStatus', chkStatus)
-                      if (chkStatus.status) {
-                        this.editDataSelectSubmit()
-                      } else {
-                        this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-                        this.loadingEdit = false
-                      }
-                    } else if (dueOld === dueNew && this.masBranchIDOldEdit !== this.formEdit.masBranchID) {
-                      let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
-                      console.log('chkStatus', chkStatus)
-                      if (chkStatus.status) {
-                        this.editDataSelectSubmit()
-                      } else {
-                        this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-                        this.loadingEdit = false
-                      }
-                    } else if (dueOld === dueNew && this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.flowIdOldEdit !== this.formEdit.flowId) {
-                      let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
-                      console.log('chkStatus', chkStatus)
-                      if (chkStatus.status) {
-                        this.editDataSelectSubmit()
-                      } else {
-                        this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-                        this.loadingEdit = false
                       }
                     } else {
                       this.editDataSelectSubmit()
@@ -10634,6 +10855,13 @@ export default {
       // console.log('dataFlowSelectAdd', this.dataFlowSelectAdd)
       let dtTime = this.dataFlowSelectAdd.filter(item => { return item.value === this.formAdd.flowId })
       if (dtTime.length > 0) {
+        if (dtTime[0].menuShowStatus === 'True') {
+          this.showMenu = 'True'
+          this.dataMenuAdd = JSON.parse(dtTime[0].allData.menuItem) || []
+        } else {
+          this.showMenu = 'False'
+          this.dataMenuAdd = []
+        }
         // let dtTime = this.branch.filter(item => { return item.value === this.formAdd.masBranchID })
         // console.log('test', dtTime)
         // this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
@@ -11380,6 +11608,7 @@ export default {
                   s.dueDate = d.dueDate
                   s.shopId = d.shopId
                   s.dueDateDay = d.dueDateDay
+                  s.statusVIP = d.statusVIP
                   s.depositTextTH = d.depositTextTH
                   s.CREATE_DATE_Status = d.CREATE_DATE_Status
                   s.CREATE_DATE = d.CREATE_DATE
@@ -11571,6 +11800,42 @@ export default {
       this.DataFlowNameMenu = result.filter(el => { return el.menuShowStatus === 'True' })
       this.dataFlowSelectAdd = resultOption
       this.dataFlowSelectEdit = resultOption
+    },
+    setFlowByBranchEdit (item) {
+      this.formEdit.flowId = ''
+      this.dateEdit = ''
+      this.timeEdit = ''
+      console.log('item.allData', this.DataFlowName)
+      console.log('item.this.formEdit.masBranchID.toString()', this.formEdit.masBranchID.toString(), this.formEdit.masBranchID)
+      let DD = this.DataFlowName
+      let dataFilter = []
+      DD.forEach((item) => {
+        if (item.text !== 'ทั้งหมด') {
+          let checkBranchByFlow = item.allData.masBranchID || 'All'
+          if ((checkBranchByFlow === this.formEdit.masBranchID.toString()) || checkBranchByFlow === 'All') {
+            console.log('eeeeeee', item.allData.flowName)
+            dataFilter.push(item)
+          }
+        }
+      })
+      this.dataFlowSelectEdit = dataFilter
+    },
+    setFlowByBranchAdd () {
+      this.formAdd.flowId = ''
+      console.log('item.allData', this.DataFlowName)
+      console.log('item.this.formAdd.masBranchID.toString()', this.formAdd.masBranchID.toString(), this.formAdd.masBranchID)
+      let DD = this.DataFlowName
+      let dataFilter = []
+      DD.forEach((item) => {
+        if (item.text !== 'ทั้งหมด') {
+          let checkBranchByFlow = item.allData.masBranchID || 'All'
+          if ((checkBranchByFlow === this.formAdd.masBranchID.toString()) || checkBranchByFlow === 'All') {
+            console.log('eeeeeee', item.allData.flowName)
+            dataFilter.push(item)
+          }
+        }
+      })
+      this.dataFlowSelectAdd = dataFilter
     },
     async getDataBranch () {
       // if (localStorage.getItem('BRANCH') === null) {
@@ -12237,7 +12502,8 @@ export default {
       }
       let url = ''
       if (dateStart === 'no') {
-        url = `${this.DNS_IP}/BookingData/getsearchOther?shopId=${this.session.data.shopId}&fieldValue=${searchOther}`
+        url = `${this.DNS_IP}/BookingData/getsearchName?shopId=${this.session.data.shopId}&fieldValue=${searchOther}`
+        // url = `${this.DNS_IP}/BookingData/getsearchOther?shopId=${this.session.data.shopId}&fieldValue=${searchOther}`
       } else {
         url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
       }
@@ -12372,6 +12638,7 @@ export default {
                 }
                 s.shopId = d.shopId
                 s.dueDateDay = d.dueDateDay
+                s.statusVIP = d.statusVIP
                 s.depositTextTH = d.depositTextTH
                 s.CREATE_DATE_Status = d.CREATE_DATE_Status
                 s.CREATE_DATE = d.CREATE_DATE
@@ -12543,6 +12810,7 @@ export default {
                 }
                 s.shopId = d.shopId
                 s.dueDateDay = d.dueDateDay
+                s.statusVIP = d.statusVIP
                 s.depositTextTH = d.depositTextTH
                 s.CREATE_DATE_Status = d.CREATE_DATE_Status
                 s.CREATE_DATE = d.CREATE_DATE
@@ -12870,8 +13138,19 @@ export default {
     },
     addData () {
       this.loadingAdd = true
-      this.validate('ADD')
-      setTimeout(() => this.addDataSubmit(), 500)
+      let dtTime = this.dataFlowSelectAdd.filter(item => { return item.value === this.formAdd.flowId })
+      if (dtTime.length > 0) {
+        if (dtTime[0].menuShowStatus === 'True' && this.dataMenuAdd.filter(el => { return parseInt(el.qty) > 0 }).length === 0) {
+          this.loadingAdd = false
+          this.$swal('แจ้งเตือน', 'กรุณาเลือกเมนู', 'info')
+        } else {
+          this.validate('ADD')
+          setTimeout(() => this.addDataSubmit(), 500)
+        }
+      } else {
+        this.validate('ADD')
+        setTimeout(() => this.addDataSubmit(), 500)
+      }
     },
     async addDataInsert () {
       // this.swalConfig.title = 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?'
@@ -12988,9 +13267,18 @@ export default {
             update.getLimitBooking = this.checkLimitBooking.limitBooking
             update.depositPrice = this.formAdd.depositPrice
             update.storeFrontCheck = storeFrontCheck
+            if (this.statusVIP === 'True') {
+              update.statusVIP = 'True'
+            } else {
+              update.statusVIP = 'False'
+            }
             update.statusBookingForm = 'BookingForm'
             update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
             update.addressLatLong = JSON.stringify(this.center)
+            if (this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0).length > 0) {
+              update.menuItem = JSON.stringify(this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0))
+              update.menuPrice = this.priceMenuAdd
+            }
             Add.push(update)
           } else {
             if (fielditem.filter(row => { return row.fieldId === parseInt(d.conditionField) }).length > 0) {
@@ -13021,9 +13309,18 @@ export default {
                 update.getLimitBooking = this.checkLimitBooking.limitBooking
                 update.depositPrice = this.formAdd.depositPrice
                 update.storeFrontCheck = storeFrontCheck
+                if (this.statusVIP === 'True') {
+                  update.statusVIP = 'True'
+                } else {
+                  update.statusVIP = 'False'
+                }
                 update.statusBookingForm = 'BookingForm'
                 update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
                 update.addressLatLong = JSON.stringify(this.center)
+                if (this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0).length > 0) {
+                  update.menuItem = JSON.stringify(this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0))
+                  update.menuPrice = this.priceMenuAdd
+                }
                 Add.push(update)
               }
             } else if (d.conditionField === 'flow') {
@@ -13054,9 +13351,18 @@ export default {
                 update.getLimitBooking = this.checkLimitBooking.limitBooking
                 update.depositPrice = this.formAdd.depositPrice
                 update.storeFrontCheck = storeFrontCheck
+                if (this.statusVIP === 'True') {
+                  update.statusVIP = 'True'
+                } else {
+                  update.statusVIP = 'False'
+                }
                 update.statusBookingForm = 'BookingForm'
                 update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
                 update.addressLatLong = JSON.stringify(this.center)
+                if (this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0).length > 0) {
+                  update.menuItem = JSON.stringify(this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0))
+                  update.menuPrice = this.priceMenuAdd
+                }
                 Add.push(update)
               }
             }
@@ -13207,6 +13513,8 @@ export default {
         })
     },
     async clearDataAdd () {
+      this.showMenu = 'False'
+      this.dataMenuAdd = []
       this.dataReady = true
       this.date = ''
       this.time = ''
@@ -14044,6 +14352,8 @@ export default {
         .then(async response => {})
     },
     async setDataRemove (item) {
+      this.statusVIPRemove = item.statusVIP
+      console.log('this.statusVIPRemove', this.statusVIPRemove)
       this.bookNoRemove = item
       this.dueDateOld = item.dueDateDay
       this.dueDateTimeOld = item.timeDuetext
@@ -14084,10 +14394,14 @@ export default {
               // } else {
               //   limitBookingCounts = 0
               // }
-              let chkStatus = await this.updateLimitBookingCancel(this.bookNoRemove, this.dueDateOld, this.dueDateTimeOld)
-              console.log('chkStatus', chkStatus)
-              if (chkStatus.status) {
-                this.onCancelChkSubmit()
+              if (this.statusVIPRemove === 'False') {
+                let chkStatus = await this.updateLimitBookingCancel(this.bookNoRemove, this.dueDateOld, this.dueDateTimeOld)
+                console.log('chkStatus', chkStatus)
+                if (chkStatus.status) {
+                  this.onCancelChkSubmit()
+                } else {
+                  this.onCancelChkSubmit()
+                }
               } else {
                 this.onCancelChkSubmit()
               }
@@ -14218,13 +14532,17 @@ export default {
                     limitBookingCounts = 0
                   }
                   if (dueOld !== dueNew) {
-                    let chkStatus = await this.updateLimitBookingChange(item, this.dueDateOld, this.dueDateTimeOld, this.formChange.date, this.formChange.time.value, limitBookingCounts)
-                    console.log('chkStatus', chkStatus)
-                    if (chkStatus.status) {
-                      this.onChangeChkSubmit(item, changeStatus, checkCountTime)
+                    if (this.statusVIPChang === 'False') {
+                      let chkStatus = await this.updateLimitBookingChange(item, this.dueDateOld, this.dueDateTimeOld, this.formChange.date, this.formChange.time.value, limitBookingCounts)
+                      console.log('chkStatus', chkStatus)
+                      if (chkStatus.status) {
+                        this.onChangeChkSubmit(item, changeStatus, checkCountTime)
+                      } else {
+                        this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
+                        this.dataChangeReady = true
+                      }
                     } else {
-                      this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-                      this.dataChangeReady = true
+                      this.onChangeChkSubmit(item, changeStatus, checkCountTime)
                     }
                   } else {
                     this.onChangeChkSubmit(item, changeStatus, checkCountTime)
@@ -15239,6 +15557,7 @@ export default {
     async setDataChang (item) {
       // clear Limit
       console.log('setDataChang', item)
+      this.statusVIPChang = item.statusVIP
       this.limitCountBranch = []
       this.limitCountBranchOld = []
       this.masBranchIDLimit = ''
@@ -15393,6 +15712,13 @@ export default {
 </script>
 
 <style scoped>
+.flex-container {
+  display: flex;
+  height: 100%;
+}
+iframe {
+  flex: 1;
+}
 .sendOrder {
   display: flex;
   flex-direction: column;

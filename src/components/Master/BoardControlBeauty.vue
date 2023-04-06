@@ -793,6 +793,19 @@
                               <span>ประวัติการทำงาน</span>
                             </v-tooltip>
                           </v-row>
+                          <v-row class="pt-0 pl-1" v-if="itemsJob.userId !== '' && itemsJob.userId !== 'user-skip'">
+                            <v-tooltip top color="rgb(43 147 253)">
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-icon
+                                  color="rgb(43 147 253)"
+                                  @click="ChatHistory(itemsJob)"
+                                >
+                                mdi-message-text-outline
+                                </v-icon>
+                              </template>
+                              <span>แชท</span>
+                            </v-tooltip>
+                          </v-row>
                         </v-container>
                       </v-alert>
                     </v-list-item>
@@ -1002,6 +1015,18 @@
                           </template>
                           <span>จบงาน</span>
                         </v-tooltip>
+                        <v-tooltip top color="rgb(43 147 253)">
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-icon
+                                v-if="itemsJob.userId !== '' && itemsJob.userId !== 'user-skip'"
+                                  color="rgb(43 147 253)"
+                                  @click="ChatHistory(itemsJob)"
+                                >
+                                mdi-message-text-outline
+                                </v-icon>
+                              </template>
+                              <span>แชท</span>
+                            </v-tooltip>
                           <!-- <v-icon
                               large
                               color="#A12BFD"
@@ -1014,7 +1039,6 @@
                         </v-col>
                       </v-row>
                     </v-alert>
-
                 </v-expansion-panel-content>
                     </v-expansion-panel>
               </v-expansion-panels>
@@ -1248,6 +1272,7 @@
       <!-- <v-dialog v-model="dialogWorkShop" max-width="70%">
         <v-card min-width="200px" class="pa-2 pl-5 ma-0 pb-3 mt-n14" style="overflow-y: auto;"> -->
           <WorkShopComponent @confirmed="getLayout" ref="EditWorkShop"></WorkShopComponent>
+          <ChatHistory ref="ChatHistory"></ChatHistory>
         <!-- </v-card>
       </v-dialog> -->
       <!-- <WorkShop></WorkShop> -->
@@ -1261,6 +1286,7 @@ import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
 import Menu from '../System/Menu.vue'
 import WorkShopComponent from './WorkShopComponent.vue'
+import ChatHistory from './ChatHistory.vue'
 import moment from 'moment' // แปลง date
 
 export default {
@@ -1270,7 +1296,8 @@ export default {
     'left-menu-admin': adminLeftMenu,
     VuetifyMoney,
     Menu,
-    WorkShopComponent
+    WorkShopComponent,
+    ChatHistory
   },
   computed: {
     colsWidth () {
@@ -1477,6 +1504,10 @@ export default {
     // await this.getLayoutDefault()
   },
   methods: {
+    ChatHistory (item) {
+      console.log('item!!!!!!!', item)
+      this.$refs.ChatHistory.getChatHistory(item)
+    },
     filterJob () {
       let filterJob = this.allJob.filter((item) => item.dueDate === this.dateFilter)
       this.allJob = filterJob

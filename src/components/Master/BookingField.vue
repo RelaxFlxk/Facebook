@@ -825,6 +825,16 @@
                       <v-checkbox
                         false-value="False"
                         true-value="True"
+                        v-model="liffSendMessageAfterBookingStatus"
+                        hide-details
+                        class="shrink ml-6 mr-0 mt-0 mb-6"
+                      ></v-checkbox>
+                      <v-text-field :value="liffSendMessageAfterBookingStatus === 'True' ? 'ใช้งาน' : 'ไม่ใช้งาน'" readonly label="ส่งข้อความเข้า LINE OA เมื่อลูกค้านัดหมาย"></v-text-field>
+                    </v-row>
+                    <v-row align="center">
+                      <v-checkbox
+                        false-value="False"
+                        true-value="True"
                         v-model="checkLocationStatus"
                         hide-details
                         class="shrink ml-6 mr-0 mt-0 mb-6"
@@ -1139,7 +1149,8 @@ export default {
       bookingFormConfirmBT: '',
       bookingFormHeaderEn: '',
       bookingFormHistoryBTEn: '',
-      bookingFormConfirmBTEn: ''
+      bookingFormConfirmBTEn: '',
+      liffSendMessageAfterBookingStatus: ''
     }
   },
   async mounted () {
@@ -1361,6 +1372,7 @@ export default {
               this.shopLong = rs[0].shopLong || ''
               this.distanceSet = rs[0].distanceSet || ''
               this.checkLocationStatus = rs[0].checkLocationStatus || 'False'
+              this.liffSendMessageAfterBookingStatus = rs[0].liffSendMessageAfterBookingStatus || 'False'
               if (this.checkLocationStatus === 'True') {
                 this.center = {
                   lat: parseFloat(this.shopLat),
@@ -1501,6 +1513,7 @@ export default {
       booking.statusEngPayment = this.statusEngPayment
       booking.LAST_USER = this.session.data.userName
       booking.checkLocationStatus = this.checkLocationStatus
+      booking.liffSendMessageAfterBookingStatus = this.liffSendMessageAfterBookingStatus
       if (this.checkLocationStatus === 'True') {
         if (this.shopLat !== '' && this.shopLong !== '' && this.distanceSet !== '') {
           booking.shopLat = this.shopLat

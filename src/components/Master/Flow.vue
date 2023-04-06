@@ -532,6 +532,17 @@
                     <v-row >
                       <v-col cols="12" class="v-margit_text_add mt-1">
                         <v-col cols="12" class="pb-0">
+                          <v-select
+                            class="pa-0"
+                            v-model="formAdd.masBranchID"
+                            :items="branch"
+                            label="สาขา"
+                            outlined
+                            required
+                            attach
+                            :menu-props="{ bottom: true, offsetY: true }"
+                            :rules="[rules.required]"
+                          ></v-select>
                           <v-text-field
                             v-model="formAdd.flowName"
                             label="ชื่อบริการ (ภาษาไทย)"
@@ -940,6 +951,17 @@
                     <v-row>
                       <v-col cols="12" class="v-margit_text_add mt-1">
                         <v-col cols="12" class="pb-0">
+                          <v-select
+                            class="pa-0"
+                            v-model="formUpdate.masBranchID"
+                            :items="branch"
+                            label="สาขา"
+                            outlined
+                            required
+                            attach
+                            :menu-props="{ bottom: true, offsetY: true }"
+                            :rules="[rules.required]"
+                          ></v-select>
                           <v-text-field
                             class="pa-0"
                             v-model="formUpdate.flowName"
@@ -999,7 +1021,7 @@
                             <v-col class="pt-0 pb-0" clos='auto'>
                               <v-text-field
                                   v-model="formUpdate.empTitleEng"
-                                  label="ชื่อผู้ทำงาน (ภาษาไทย)"
+                                  label="ชื่อผู้ทำงาน (ภาษาอังกฤษ)"
                                   outlined
                                   required
                                   dense
@@ -1957,6 +1979,19 @@
 
           <!-- data table -->
           <v-col cols="12">
+            <v-row style="display: flex;justify-content: flex-start;">
+              <v-col cols="4">
+                <v-select
+                v-model="selectBranch"
+                :items="branch"
+                label="เลือกสาขา"
+                solo
+                @change="filterBranch()"
+                dense
+                ></v-select>
+              </v-col>
+            </v-row>
+
             <v-card elevation="7" v-if="dataReady">
               <v-card-title>
                 <v-text-field
@@ -1970,11 +2005,14 @@
               <v-card-text>
                 <v-data-table
                   :headers="columns"
-                  :items="dataItem"
+                  :items="dataItemsearch"
                   :search="searchAll2"
                   disable-pagination
                   hide-default-footer
                 >
+                <template v-slot:[`item.masBranchID`]="{ item }">
+                    {{ branch.filter((i) => i.value === item.masBranchID).length > 0 ? branch.filter((i) => i.value === item.masBranchID)[0].text : 'ทั้งหมด' }}
+                  </template>
                   <template v-slot:[`item.CREATE_DATE`]="{ item }">
                     {{ format_dateFUllTime(item.CREATE_DATE) }}
                   </template>
@@ -2583,7 +2621,7 @@ export default {
         { text: 'ครึ่งชั่วโมง', value: '30' },
         { text: '1 ชั่วโมง', value: '60' },
         { text: '6 ชั่วโมง', value: '360' },
-        { text: '1 วัน', value: '1,440' }
+        { text: '1 วัน', value: '1440' }
       ],
       formAdd: {
         flowCode: '',
@@ -2625,7 +2663,8 @@ export default {
         depositTextEN: 'pay deposit',
         updateStatusConfirm: 'False',
         categorySub: [],
-        checkCreditCard: 'False'
+        checkCreditCard: 'False',
+        masBranchID: ''
       },
       formAddStep: {
         stepId: '',
@@ -2690,7 +2729,8 @@ export default {
         depositTextTH: '',
         depositTextEN: '',
         categorySub: [],
-        checkCreditCard: 'False'
+        checkCreditCard: 'False',
+        masBranchID: ''
       },
       formUpdateItemFlow: {
         fieldId: '',
@@ -2774,6 +2814,7 @@ export default {
       columns: [
         // { text: 'ID', value: 'flowId' },
         { text: 'ชื่อบริการ', value: 'flowName' },
+        { text: 'สาขา', value: 'masBranchID' },
         // { text: 'Field', value: 'flowfieldName' },
         { text: 'วันที่สร้าง', value: 'CREATE_DATE' },
         { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
@@ -2840,7 +2881,10 @@ export default {
       },
       dialogMenu: false,
       categorySubByShop: [],
-      categorySub: []
+      categorySub: [],
+      branch: [],
+      dataItemsearch: [],
+      selectBranch: 'All'
       // End Data Table Config
     }
   },
@@ -2853,6 +2897,9 @@ export default {
     if (this.dataItem.length > 0) {
       for (let i = 0; i < this.dataItem.length; i++) {
         let d = this.dataItem[i]
+        if (d.masBranchID === null) {
+          d.masBranchID = 'All'
+        }
         let s = {}
         s.flowId = d.flowId
         s.flowName = d.flowName
@@ -2862,9 +2909,42 @@ export default {
     }
     await this.getBookingField()
     await this.getShop()
+    await this.getDataBranch()
     await this.getCategorySub()
+    await this.filterBranch()
   },
   methods: {
+    filterBranch () {
+      if (this.selectBranch === 'All') {
+        this.dataItemsearch = this.dataItem
+      } else {
+        this.dataItemsearch = this.dataItem.filter((item) => item.masBranchID === this.selectBranch || item.masBranchID === 'All')
+      }
+    },
+    async getDataBranch () {
+      this.branch = []
+      await axios
+        .get(this.DNS_IP + '/master_branch/get?shopId=' + this.shopId)
+        .then(response => {
+          let rs = response.data
+          console.log('rs', rs)
+          if (rs.length > 0) {
+            let All = {}
+            All.text = 'ทั้งหมด'
+            All.value = 'All'
+            this.branch.push(All)
+            for (var i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              let s = {}
+              s.text = d.masBranchName
+              s.value = d.masBranchID.toString()
+              this.branch.push(s)
+              // console.log('dtdtdtdt', this.branch)
+            }
+          }
+        })
+      console.log('branch', this.branch)
+    },
     async getShop () {
       await axios.get(this.DNS_IP + '/sys_shop/get?shopId=' + this.shopId)
         .then(async (response) => {
@@ -3078,6 +3158,7 @@ export default {
                 }
                 // this.initSortable()
               }
+              await this.filterBranch()
             })
             .catch(error => {
               console.log('error function addData : ', error)
@@ -3762,6 +3843,7 @@ export default {
                   this.path,
                   this.session.data.shopId
                 )
+                await this.filterBranch()
                 this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
                 this.clearCondition()
               })
@@ -4088,6 +4170,7 @@ export default {
       this.formUpdate.depositTextEN = item.depositTextEN || 'pay deposit'
       this.formUpdate.categorySub = item.categorySub ? JSON.parse(item.categorySub) : []
       this.formUpdate.checkCreditCard = item.checkCreditCard || 'False'
+      this.formUpdate.masBranchID = item.masBranchID || 'All'
       this.shopId = this.$session.getAll().data.shopId
       this.fieldType = this.formUpdate.fieldType
       // this.desserts = JSON.parse(response.data[0].flowfieldName)
@@ -4197,6 +4280,7 @@ export default {
                   this.path,
                   this.session.data.shopId
                 )
+                await this.filterBranch()
                 // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
                 await this.clearData()
                 await this.warningFlow()
@@ -4257,6 +4341,7 @@ export default {
                 this.path,
                 this.session.data.shopId
               )
+              await this.filterBranch()
               this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
             })
             // eslint-disable-next-line handle-callback-err
@@ -4401,6 +4486,8 @@ export default {
                   this.path,
                   this.session.data.shopId
                 )
+                await this.filterBranch()
+                console.log('getNow')
                 this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
               })
             // eslint-disable-next-line handle-callback-err
@@ -4451,6 +4538,7 @@ export default {
                 this.path,
                 this.session.data.shopId
               )
+              await this.filterBranch()
             })
             // eslint-disable-next-line handle-callback-err
             .catch(error => {
@@ -4495,6 +4583,7 @@ export default {
                 this.path,
                 this.session.data.shopId
               )
+              await this.filterBranch()
               this.$swal('เรียบร้อย', 'ลบข้อมูล เรียบร้อย', 'success')
             })
             // eslint-disable-next-line handle-callback-err
@@ -4565,6 +4654,7 @@ export default {
                 this.path,
                 this.session.data.shopId
               )
+              await this.filterBranch()
             })
             // eslint-disable-next-line handle-callback-err
             .catch(error => {
