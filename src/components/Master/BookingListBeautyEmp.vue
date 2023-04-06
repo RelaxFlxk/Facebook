@@ -12461,6 +12461,7 @@ export default {
           }
         }
       }
+      this.checkTypeSort()
       // }
     },
     updateTimeTablefromChild (timeTable) {
