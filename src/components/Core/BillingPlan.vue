@@ -793,7 +793,11 @@ export default {
     }
   },
   mounted () {
-    this.chkPlan()
+    if (this.$route.query.shopId) {
+      this.$router.push('/Core/Login?type=billing')
+    } else {
+      this.chkPlan()
+    }
   },
   methods: {
     gotoLogin () {
