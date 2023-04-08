@@ -1436,8 +1436,9 @@
                           <v-row>
                             <v-col class="pt-0 pb-0">
                               <v-select
+                                v-if="formAdd.masBranchID !== null && formAdd.masBranchID !== ''"
                                 v-model="empSelectAdd"
-                                :items="empSelectStepAdd"
+                                :items="empSelectStepAdd.filter((i) => i.masBranchID === formAdd.masBranchID)"
                                 label="พนักงานที่รับนัดหมาย"
                                 menu-props="auto"
                                 outlined
@@ -2036,8 +2037,9 @@
                     </v-col>
                     <v-col cols="12" sm="12" md="12" lg="12">
                       <v-select
+                      v-if="masBranchIDAddJob !== null && masBranchIDAddJob !== ''"
                         v-model="empSelectJob"
-                        :items="empSelectStepAdd"
+                        :items="empSelectStepAdd.filter((i) => i.masBranchID === masBranchIDAddJob)"
                         label="พนักงานที่นำเข้ากระดานทำงาน"
                         menu-props="auto"
                         outlined
@@ -4215,8 +4217,9 @@
                           <v-row v-if="checkSelectText !== 'confirmJob'">
                             <v-col class="pt-0">
                               <v-select
+                                v-if="formEdit.masBranchID !== null && formEdit.masBranchID !== ''"
                                 v-model="empSelectEdit"
-                                :items="empSelectStepAdd"
+                                :items="empSelectStepAdd.filter((i) => i.masBranchID === formEdit.masBranchID)"
                                 label="พนักงานที่รับนัดหมาย"
                                 menu-props="auto"
                                 outlined
@@ -7191,7 +7194,8 @@ export default {
       statusVIP: 'False',
       statusVIPEdit: 'False',
       statusVIPChang: 'False',
-      statusVIPRemove: 'False'
+      statusVIPRemove: 'False',
+      masBranchIDAddJob: ''
     }
   },
   beforeCreate () {
@@ -14084,6 +14088,8 @@ export default {
         })
     },
     async getBookingDataJob (dt, text) {
+      console.log('item!!!!!!', dt)
+      this.masBranchIDAddJob = dt.masBranchID
       this.dueDateText = dt.dueDateText
       let dateCurrent = moment().format('YYYY-MM-DD')
       let dueDate = dt.dueDateDay
@@ -14633,10 +14639,12 @@ export default {
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
-              var s = {}
-              s.text = d.empFirst_NameTH
-              s.value = d.empId
-              this.empSelectStep.push(s)
+              if (d.masBranchID === item.masBranchID) {
+                var s = {}
+                s.text = d.empFirst_NameTH
+                s.value = d.empId
+                this.empSelectStep.push(s)
+              }
             }
             this.empSelect = this.empSelectStep[0].value
           }
@@ -14674,12 +14682,14 @@ export default {
                 let s = {}
                 s.text = d.empFirst_NameTH
                 s.value = d.empId
+                s.masBranchID = d.masBranchID
                 this.empSelectStepAdd.push(s)
               } else {
                 if (this.$session.getAll().data.masBranchID === d.masBranchID) {
                   let s = {}
                   s.text = d.empFirst_NameTH
                   s.value = d.empId
+                  s.masBranchID = d.masBranchID
                   this.empSelectStepAdd.push(s)
                 }
               }
