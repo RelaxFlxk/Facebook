@@ -11879,6 +11879,7 @@ export default {
           }
         }
       }
+      // console.log('TEST', this.branch)
     },
     getDataFromFieldName (data, key) {
       if (data !== undefined) {
@@ -14186,6 +14187,7 @@ export default {
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
+              console.log('DDDDDSFDSDFSDF', d)
               var s = {}
               s.text = d.empFull_NameTH
               s.value = d.empId
@@ -14203,11 +14205,26 @@ export default {
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
-              var s = {}
-              s.text = d.empFirst_NameTH
-              s.value = d.empId
-              this.empSelectStepAdd.push(s)
+              console.log('this.$session.getAll().data.masBranchID', this.$session.getAll().data.masBranchID)
+              if (this.$session.getAll().data.masBranchID === '' || this.$session.getAll().data.masBranchID === null) {
+                console.log('D', d)
+                let s = {}
+                s.text = d.empFirst_NameTH
+                s.value = d.empId
+                this.empSelectStepAdd.push(s)
+              } else {
+                if (this.$session.getAll().data.masBranchID === d.masBranchID) {
+                  let s = {}
+                  s.text = d.empFirst_NameTH
+                  s.value = d.empId
+                  this.empSelectStepAdd.push(s)
+                }
+              }
             }
+            if (this.$session.getAll().data.empId !== '' && this.$session.getAll().data.empId !== null) {
+              this.empSelectAdd = this.empSelectStepAdd.filter((item) => item.value === parseInt(this.$session.getAll().data.empId))[0].value
+            }
+            console.log('this.empSelectStepAdd', this.empSelectStepAdd)
           }
         })
     },
