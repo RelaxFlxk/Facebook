@@ -541,6 +541,8 @@ export default {
         this.$router.push(
           '/PrintPdf/PrintInvoice?dateEvent=' + this.$route.query.dateEvent
         )
+      } else if (this.$route.query.type === 'billing') {
+        this.$router.push('/BillingPlan')
       } else if (this.$route.query.type === 'CheckListBookingEmp') {
         if (dataitem.shopId === this.$route.query.shopId) {
           this.$router.push(
