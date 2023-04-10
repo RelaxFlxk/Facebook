@@ -1438,7 +1438,7 @@
                               <v-select
                                 v-if="formAdd.masBranchID !== null && formAdd.masBranchID !== ''"
                                 v-model="empSelectAdd"
-                                :items="empSelectStepAdd.filter((i) => i.masBranchID === formAdd.masBranchID)"
+                                :items="empSelectStepAdd.filter((i) => i.masBranchID === formAdd.masBranchID || i.masBranchID === '')"
                                 label="พนักงานที่รับนัดหมาย"
                                 menu-props="auto"
                                 outlined
@@ -2039,7 +2039,7 @@
                       <v-select
                       v-if="masBranchIDAddJob !== null && masBranchIDAddJob !== ''"
                         v-model="empSelectJob"
-                        :items="empSelectStepAdd.filter((i) => i.masBranchID === masBranchIDAddJob)"
+                        :items="empSelectStepAdd.filter((i) => i.masBranchID === masBranchIDAddJob || i.masBranchID === '')"
                         label="พนักงานที่นำเข้ากระดานทำงาน"
                         menu-props="auto"
                         outlined
@@ -4219,7 +4219,7 @@
                               <v-select
                                 v-if="formEdit.masBranchID !== null && formEdit.masBranchID !== ''"
                                 v-model="empSelectEdit"
-                                :items="empSelectStepAdd.filter((i) => i.masBranchID === formEdit.masBranchID)"
+                                :items="empSelectStepAdd.filter((i) => i.masBranchID === formEdit.masBranchID || i.masBranchID === '')"
                                 label="พนักงานที่รับนัดหมาย"
                                 menu-props="auto"
                                 outlined
@@ -14640,7 +14640,12 @@ export default {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
               if (d.masBranchID === item.masBranchID) {
-                var s = {}
+                let s = {}
+                s.text = d.empFirst_NameTH
+                s.value = d.empId
+                this.empSelectStep.push(s)
+              } else if (d.masBranchID === null || d.masBranchID === '') {
+                let s = {}
                 s.text = d.empFirst_NameTH
                 s.value = d.empId
                 this.empSelectStep.push(s)
@@ -14676,6 +14681,7 @@ export default {
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
+              d.masBranchID = d.masBranchID || ''
               console.log('this.$session.getAll().data.masBranchID', this.$session.getAll().data.masBranchID)
               if (this.$session.getAll().data.masBranchID === '' || this.$session.getAll().data.masBranchID === null) {
                 console.log('D', d)
@@ -14685,7 +14691,7 @@ export default {
                 s.masBranchID = d.masBranchID
                 this.empSelectStepAdd.push(s)
               } else {
-                if (this.$session.getAll().data.masBranchID === d.masBranchID) {
+                if (this.$session.getAll().data.masBranchID === d.masBranchID || d.masBranchID === '') {
                   let s = {}
                   s.text = d.empFirst_NameTH
                   s.value = d.empId
