@@ -798,7 +798,7 @@
                             dense
                             required
                             :rules="[rules.required]"
-                            @change="setFlowByBranchAdd()"
+                            @change="getDataCalendaBookingAdd(),setFlowByBranchAdd()"
                           ></v-select>
                           <v-select
                           v-if="formAdd.masBranchID !== '' && formAdd.masBranchID !== null"
@@ -808,7 +808,7 @@
                             outlined
                             dense
                             required
-                            @change="setFlowAdd(), checkTime(),setEmpAdd(), date = ''"
+                            @change="getDataCalendaBookingAdd(),setFlowAdd(), checkTime(),setEmpAdd(), date = ''"
                             :rules="[rules.required]"
                           ></v-select>
                           <v-select
@@ -11073,6 +11073,27 @@ export default {
         console.log('getDataCalendaBooking')
         try {
           await this.$refs.CalendarBooking.getDataReturn(this.selectOnsite, this.dateStart, this.masBranchID, this.flowSelect)
+        } catch (e) { console.log(e) }
+      // this.$refs.CalendarBooking.getDataFlow()
+      // this.$refs.CalendarBooking.getDataBranch()
+      // this.$refs.CalendarBooking.getBookingList()
+      } else {
+        this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
+        clearInterval(this.setTimerCalendar)
+        this.setTimerCalendar = null
+        this.$router.push('/Core/Login')
+      }
+    },
+    async getDataCalendaBookingAdd () {
+      console.log('this.$session.id()', this.$session.id())
+      if (this.$session.id() !== undefined) {
+        console.log('getDataCalendaBooking')
+        let masBranchID = this.formAdd.masBranchID || this.masBranchID
+        let flowSelect = this.formAdd.flowId || this.flowSelect
+        console.log('masBranchID', masBranchID)
+        console.log('flowSelect', flowSelect)
+        try {
+          await this.$refs.CalendarBooking.getDataReturn(this.selectOnsite, this.dateStart, masBranchID, flowSelect)
         } catch (e) { console.log(e) }
       // this.$refs.CalendarBooking.getDataFlow()
       // this.$refs.CalendarBooking.getDataBranch()

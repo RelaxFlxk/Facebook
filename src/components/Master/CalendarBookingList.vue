@@ -50,9 +50,6 @@
               outlined
               filled
               hide-details
-              item-text="text"
-              item-value="value"
-              return-object
               label="สาขา"
               prepend-inner-icon="mdi-map-marker"
               class="ma-2"
@@ -404,7 +401,7 @@ export default {
   async mounted () {
     // this.getCustomFieldStart()
     // await this.getDataFlow()
-    // await this.getDataBranch()
+    await this.getDataBranch()
     // await this.getBookingList()
     // await this.getBookingData()
   },
@@ -416,9 +413,22 @@ export default {
     },
     async getDataReturn (text, date, branch, flow) {
       // console.log('getDataReturn')
+      console.log('branch, flow', branch, flow)
+      if (flow) {
+        if (flow === 'AllFlow') {
+          this.flowId = 'allFlow'
+        } else {
+          this.flowId = flow
+        }
+      }
+      if (branch) {
+        this.masBranchName = branch
+      }
+      console.log('flowId', this.flowId)
+      console.log('masBranchName', this.masBranchName)
       this.getCustomFieldStart()
       await this.getDataFlow(text)
-      await this.getDataBranch()
+      // await this.getDataBranch()
       await this.getBookingList(text, date, branch, flow)
       this.$refs.calendar.checkChange()
       if (this.dataReturnReady === false) {
@@ -476,10 +486,10 @@ export default {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
               d.text = d.masBranchName
-              d.value = d.masBranchName
+              d.value = d.masBranchID
               this.DataBranchName.push(d)
             }
-            this.masBranchName = this.DataBranchName[0]
+            this.masBranchName = this.DataBranchName[0].value
           } else {
             this.DataBranchName = []
           }
@@ -490,7 +500,12 @@ export default {
       const dateSplit = today.split('-')
       const year = String(dateSplit[0])
       const month = String(dateSplit[1])
-      let url = `${this.DNS_IP}/BookingData/get?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchName=${this.masBranchName.text}`
+      let url = ''
+      if (this.flowId === 'allFlow') {
+        url = `${this.DNS_IP}/BookingData/get?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchID=${this.masBranchName}`
+      } else {
+        url = `${this.DNS_IP}/BookingData/get?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchID=${this.masBranchName}&flowId=${this.flowId}`
+      }
       await axios
         .get(url)
         .then(async response => {
@@ -534,7 +549,11 @@ export default {
       // const date = dateSplit[0].split('-')
       const year = String(dateSplit[0])
       const month = String(dateSplit[1])
-      this.countCus = this.masBranchName.countCus
+      if (this.DataBranchName.filter(el => { return el.value === this.masBranchName }).length > 0) {
+        this.countCus = this.DataBranchName.filter(el => { return el.value === this.masBranchName })[0].countCus
+      } else {
+        this.countCus = 0
+      }
       let bookingDate = ''
       let bookingDataDate = ''
       if (this.dataReturnReady === false) {
@@ -561,15 +580,15 @@ export default {
             '/booking_view/get?shopId=' +
             this.$session.getAll().data.shopId +
             bookingDate +
-            '&masBranchName=' +
-            this.masBranchName.text + this.paramUse
+            '&masBranchID=' +
+            this.masBranchName + this.paramUse
         } else {
           url = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.$session.getAll().data.shopId +
             bookingDate +
-            '&masBranchName=' +
-            this.masBranchName.text +
+            '&masBranchID=' +
+            this.masBranchName +
             '&flowId=' + this.flowId + this.paramUse
         }
         await axios
@@ -689,22 +708,26 @@ export default {
             '/booking_view/getCountNotime?shopId=' +
             this.$session.getAll().data.shopId +
             bookingDate +
-            '&masBranchName=' +
-            this.masBranchName.text + this.paramUse
+            '&masBranchID=' +
+            this.masBranchName + this.paramUse
         } else {
           url = this.DNS_IP +
             '/booking_view/getCountNotime?shopId=' +
             this.$session.getAll().data.shopId +
             bookingDate +
-            '&masBranchName=' +
-            this.masBranchName.text +
+            '&masBranchID=' +
+            this.masBranchName +
             '&flowId=' + this.flowId + this.paramUse
         }
         await axios
           .get(url)
           .then(async response => {
             this.dataReady = true
-            this.countCus = this.masBranchName.countCus
+            if (this.DataBranchName.filter(el => { return el.value === this.masBranchName }).length > 0) {
+              this.countCus = this.DataBranchName.filter(el => { return el.value === this.masBranchName })[0].countCus
+            } else {
+              this.countCus = 0
+            }
             for (var i = 0; i < response.data.length; i++) {
               var d = response.data[i]
               var s = {}
@@ -760,15 +783,15 @@ export default {
                   '/booking_view/getCount?shopId=' +
                   this.$session.getAll().data.shopId +
                   bookingDate +
-                  '&masBranchName=' +
-                  this.masBranchName.text + this.paramUse
+                  '&masBranchID=' +
+                  this.masBranchName + this.paramUse
               } else {
                 url = this.DNS_IP +
                   '/booking_view/getCount?shopId=' +
                   this.$session.getAll().data.shopId +
                   bookingDate +
-                  '&masBranchName=' +
-                  this.masBranchName.text +
+                  '&masBranchID=' +
+                  this.masBranchName +
                   '&flowId=' + this.flowId + this.paramUse
               }
               await axios
