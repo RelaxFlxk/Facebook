@@ -41,27 +41,12 @@
             </v-btn>
             </v-btn-toggle>
           </v-col>
-          <v-col :cols="colsWidth">
-            <v-select
-              :items="DataFlowName"
-              v-model="flowId"
-              dense
-              outlined
-              filled
-              @change="chkBranchName()"
-              hide-details
-              label="ประเภทบริการ"
-              prepend-inner-icon="mdi-format-list-bulleted"
-              class="ma-2"
-            >
-            </v-select>
-          </v-col>
           <!-- สาขา -->
           <v-col :cols="colsWidth">
             <v-select
               :items="DataBranchName"
               v-model="masBranchID"
-              @change="chkFlowName(), checkTime()"
+              @change="clearDataFlow(),flowId = '',getDataFlow(),checkTime()"
               dense
               outlined
               hide-details
@@ -70,6 +55,22 @@
               prepend-inner-icon="mdi-map-marker"
               class="ma-2"
             ></v-select>
+          </v-col>
+          <v-col :cols="colsWidth">
+            <v-select
+              v-if="masBranchID !== '' && masBranchID !== null"
+              :items="DataFlowName"
+              v-model="flowId"
+              dense
+              outlined
+              filled
+              @change="chkFlowName()"
+              hide-details
+              label="ประเภทบริการ"
+              prepend-inner-icon="mdi-format-list-bulleted"
+              class="ma-2"
+            >
+            </v-select>
           </v-col>
           <v-col :cols="colsWidth" v-if="allJob.length > 0">
             <v-text-field
@@ -257,7 +258,7 @@
                           dense
                           label="ชื่อพนักงานที่รับผิดชอบ"
                           v-model="formUpdate.empStep"
-                          :items="empSeleteStep"
+                          :items="empSeleteStep.filter((i) => i.masBranchID === masBranchID || i.masBranchID === '')"
                           :rules="[rules.required]"
                         ></v-autocomplete>
                     </v-col>
@@ -460,6 +461,14 @@
                       return-object
                     >
                     </v-select>
+                  </v-col>
+                  <v-col class="pb-0"  cols="12">
+                    <v-checkbox
+                      v-model="statusPushEndStep"
+                      label="ส่งข้อความ ขึ้นตอนสุดท้าย ไปยังลูกค้า"
+                      true-value="True"
+                      false-value="False"
+                    ></v-checkbox>
                   </v-col>
                   <v-col class="text-center"  cols="12">
                     <v-btn
@@ -1488,7 +1497,10 @@ export default {
       productExchangeRateId: '',
       searchOther: '',
       allJobSupport: [],
-      jobDataItemSupport: []
+      jobDataItemSupport: [],
+      statusPushEndStep: 'False',
+      endStepItem: [],
+      ItemendStepStanby: []
     }
   },
   async mounted () {
@@ -1498,12 +1510,15 @@ export default {
       // your code goes here
       this.closeSetTime()
     })
-    await this.getDataFlow()
+    // await this.getDataFlow()
     await this.getDataBranch()
     await this.getEmpSelect()
     // await this.getLayoutDefault()
   },
   methods: {
+    CheckstatusPushEndStep (item) {
+
+    },
     ChatHistory (item) {
       console.log('item!!!!!!!', item)
       this.$refs.ChatHistory.getChatHistory(item)
@@ -1615,9 +1630,12 @@ export default {
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
-              d.text = d.flowName
-              d.value = d.flowId
-              this.DataFlowName.push(d)
+              if (d.masBranchID === this.masBranchID.toString() || (d.masBranchID === 'All' || d.masBranchID === null)) {
+                console.log('d', d.flowName, d.masBranchID, this.masBranchID)
+                d.text = d.flowName
+                d.value = d.flowId
+                this.DataFlowName.push(d)
+              }
             }
           } else {
             this.DataFlowName = []
@@ -1673,6 +1691,11 @@ export default {
             this.branchData = []
           }
         })
+    },
+    clearDataFlow () {
+      this.Layout = []
+      this.JobDataItem = []
+      this.allJob = []
     },
     async getLayout () {
       this.Layout = []
@@ -1734,13 +1757,17 @@ export default {
         )
         .then(async response => {
           let rs = response.data
+          // console.log('rs', rs)
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
+              console.log('DDDDDDDD', d)
               d.text = d.stepTitle
               d.value = d.stepId
               this.stepItemSelete.push(d)
             }
+            this.endStepItem = rs.filter((endItem) => endItem.sortNo === rs.length)
+            console.log('this.endStepItem', this.endStepItem)
             // console.log('stepItemSelete', this.stepItemSelete)
           }
         })
@@ -1754,10 +1781,23 @@ export default {
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
-              var s = {}
-              s.text = d.empFirst_NameTH + ' ' + d.empLast_NameTH
-              s.value = d.empId
-              this.empSeleteStep.push(s)
+              d.masBranchID = d.masBranchID || ''
+              console.log('this.$session.getAll().data.masBranchID', this.$session.getAll().data.masBranchID)
+              if (this.$session.getAll().data.masBranchID === '' || this.$session.getAll().data.masBranchID === null) {
+                let s = {}
+                s.text = d.empFirst_NameTH + ' ' + d.empLast_NameTH
+                s.value = d.empId
+                s.masBranchID = d.masBranchID
+                this.empSeleteStep.push(s)
+              } else {
+                if (this.$session.getAll().data.masBranchID === d.masBranchID || d.masBranchID === '') {
+                  let s = {}
+                  s.text = d.empFirst_NameTH + ' ' + d.empLast_NameTH
+                  s.value = d.empId
+                  s.masBranchID = d.masBranchID
+                  this.empSeleteStep.push(s)
+                }
+              }
             }
             // console.log('empSeleteStep', this.empSeleteStep)
           }
@@ -1897,6 +1937,8 @@ export default {
       this.item_newcars = item
     },
     async setUpdate (item, text, stepItem) {
+      this.ItemendStepStanby = item
+      console.log('ItemendStepStanby', this.ItemendStepStanby)
       this.dataPackage = []
       this.dataCoin = []
       // console.log(this.formUpdate)
@@ -1997,6 +2039,33 @@ export default {
             this.dataCoin = []
           }
         })
+      }
+    },
+    async updateStepEnd () {
+      console.log('endStepItem', this.endStepItem)
+      console.log('ItemendStepStanby', this.ItemendStepStanby)
+      if (this.statusPushEndStep === 'True') {
+        let itemUpdate = {}
+        itemUpdate.stepId = this.endStepItem[0].stepId
+        itemUpdate.flowId = this.flowId
+        itemUpdate.shopId = this.shopId
+        itemUpdate.LAST_USER = this.session.data.userName
+        itemUpdate.jobId = this.ItemendStepStanby.jobId
+        await axios
+          .post(
+          // eslint-disable-next-line quotes
+            this.DNS_IP + '/job/edit/' + itemUpdate.jobId,
+            itemUpdate
+          )
+          .then(async response => {
+          // Debug response
+            console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
+            await this.pushmessage(itemUpdate.jobId)
+          })
+        // eslint-disable-next-line handle-callback-err
+          .catch(error => {
+            console.log('error function editDataGlobal : ', error)
+          })
       }
     },
     async onUpdate () {
@@ -2133,16 +2202,18 @@ export default {
         .then(console.log(jobNo))
         .catch((error) => console.log('error', error))
     },
-    closeJob () {
+    async closeJob () {
       console.log('this.productExchangeRateId', this.productExchangeRateId)
       console.log('this.packageId', this.packageId)
       if (this.checkPayment === 'True') {
         if (this.formDelete.totalPrice !== '') {
+          await this.updateStepEnd()
           this.closeJobSubmit(this.formDelete.totalPrice)
         } else {
           this.$swal('ผิดพลาก', 'กรุณาใส่จำนวนเงิน', 'error')
         }
       } else {
+        await this.updateStepEnd()
         this.closeJobSubmit('0')
       }
     },
