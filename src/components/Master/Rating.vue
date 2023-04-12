@@ -59,6 +59,20 @@
             </v-card>
           </v-dialog>
         </v-row>
+        <v-col cols="6">
+            <v-select
+              :items="branch"
+              v-model="masBranchID"
+              dense
+              outlined
+              hide-details
+              filled
+              label="สาขา"
+              prepend-inner-icon="mdi-map-marker"
+              class="ma-2"
+              @change="getRating()"
+            ></v-select>
+          </v-col>
         <v-row>
           <v-col cols="12">
             <v-card>
@@ -336,15 +350,58 @@ export default {
         staffCallBack: 'False',
         staffCallBackRemark: '',
         LAST_USER: ''
-      }
+      },
+      DataBranchAll: [],
+      branch: [],
+      masBranchID: ''
     }
   },
   async mounted () {
+    await this.getDataBranch()
     this.getRating()
   },
   methods: {
     dial: function (number) {
       window.location = 'tel:' + number
+    },
+    getDataBranch () {
+      this.DataBranchAll = []
+      this.branch = []
+      console.log('DataBranchAll', this.DataBranchAll)
+      axios
+        .get(this.DNS_IP + '/master_branch/get?shopId=' + this.shopId)
+        .then(async response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              if (this.session.data.masBranchID === '' || this.session.data.masBranchID === null) {
+                console.log('TEST1', d.masBranchID, this.session.data.masBranchID)
+                let s = {}
+                s.text = d.masBranchName
+                s.value = d.masBranchID
+                this.DataBranchAll.push(d)
+                this.branch.push(s)
+              } else {
+                console.log('TEST', d.masBranchID, this.session.data.masBranchID)
+                if (d.masBranchID === this.session.data.masBranchID) {
+                  let s = {}
+                  s.text = d.masBranchName
+                  s.value = d.masBranchID
+                  this.DataBranchAll.push(d)
+                  this.branch.push(s)
+                }
+              }
+            }
+          } else {
+            this.DataBranchName = []
+            this.branch = []
+          }
+          if (this.branch.length === 1) {
+            this.masBranchID = this.branch[0].value
+            await this.getRating()
+          }
+        })
     },
     async getRating () {
       this.Ratingitem = []
@@ -355,19 +412,21 @@ export default {
           if (rs.length > 0) {
             for (let i = 0; i < rs.length; i++) {
               let d = rs[i]
-              let s = {}
-              s.id = d.id
-              s.refId = d.refId
-              s.rating = parseInt(d.rating)
-              s.comment = d.comment
-              s.typeWork = d.typeWork
-              s.displayName = d.displayName
-              s.pictureUrl = d.pictureUrl
-              s.callBackStatus = d.callBackStatus
-              s.staffCallBack = d.staffCallBack
-              s.staffCallBackRemark = d.staffCallBackRemark
-              s.CREATE_DATE = this.format_dateNotime(d.CREATE_DATE)
-              this.Ratingitem.push(s)
+              if (d.masBranchID === this.masBranchID) {
+                let s = {}
+                s.id = d.id
+                s.refId = d.refId
+                s.rating = parseInt(d.rating)
+                s.comment = d.comment
+                s.typeWork = d.typeWork
+                s.displayName = d.displayName
+                s.pictureUrl = d.pictureUrl
+                s.callBackStatus = d.callBackStatus
+                s.staffCallBack = d.staffCallBack
+                s.staffCallBackRemark = d.staffCallBackRemark
+                s.CREATE_DATE = this.format_dateNotime(d.CREATE_DATE)
+                this.Ratingitem.push(s)
+              }
             }
           }
         }).catch((error) => {

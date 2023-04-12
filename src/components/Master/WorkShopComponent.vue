@@ -223,6 +223,7 @@ export default {
         })
     },
     getDataFlow () {
+      this.Layout = []
       this.DataFlowName = []
       this.DataflowId = ''
       console.log('DataBranchID', this.DataBranchID)
@@ -232,10 +233,11 @@ export default {
         if (rs.length > 0) {
           for (var i = 0; i < rs.length; i++) {
             var d = rs[i]
-            d.text = d.flowName
-            d.value = d.flowId
-            this.DataFlowName.push(d)
-            // console.log('DataFlowName132', this.DataFlowName)
+            if (d.masBranchID === this.DataBranchID.toString() || (d.masBranchID === 'All' || d.masBranchID === null)) {
+              d.text = d.flowName
+              d.value = d.flowId
+              this.DataFlowName.push(d)
+            }
           }
         } else {
           this.DataFlowName = []
@@ -252,10 +254,17 @@ export default {
         if (rs.length > 0) {
           for (var i = 0; i < rs.length; i++) {
             var d = rs[i]
-            d.text = d.masBranchName
-            d.value = d.masBranchID
-            this.DataMasbranch.push(d)
-            // console.log('DataMasbranch132', this.DataMasbranch)
+            if (this.session.data.masBranchID === '' || this.session.data.masBranchID === null) {
+              d.text = d.masBranchName
+              d.value = d.masBranchID
+              this.DataMasbranch.push(d)
+            } else {
+              if (d.masBranchID === this.session.data.masBranchID) {
+                d.text = d.masBranchName
+                d.value = d.masBranchID
+                this.DataMasbranch.push(d)
+              }
+            }
           }
         } else {
           this.DataMasbranch = []

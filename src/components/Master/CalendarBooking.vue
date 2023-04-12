@@ -37,6 +37,24 @@
           </v-col>
           <v-col cols="4">
             <v-select
+              :items="DataBranchName"
+              v-model="masBranchName"
+              dense
+              outlined
+              filled
+              hide-details
+              item-text="text"
+              item-value="value"
+              return-object
+              label="สาขา"
+              prepend-inner-icon="mdi-map-marker"
+              @change="getByBranch()"
+              class="ma-2"
+            ></v-select>
+          </v-col>
+          <v-col cols="4">
+            <v-select
+              v-if="masBranchName !== '' && masBranchName !== null"
               :items="DataFlowName"
               v-model="flowId"
               dense
@@ -49,23 +67,6 @@
               class="ma-2"
             >
             </v-select>
-          </v-col>
-          <v-col cols="4">
-            <v-select
-              :items="DataBranchName"
-              v-model="masBranchName"
-              @change="getBookingList()"
-              dense
-              outlined
-              filled
-              hide-details
-              item-text="text"
-              item-value="value"
-              return-object
-              label="สาขา"
-              prepend-inner-icon="mdi-map-marker"
-              class="ma-2"
-            ></v-select>
           </v-col>
           <v-col cols="12">
             <v-alert
@@ -413,8 +414,8 @@ export default {
   },
   async mounted () {
     this.getCustomFieldStart()
-    await this.getDataFlow()
     await this.getDataBranch()
+    await this.getDataFlow()
     await this.getBookingList()
     this.$refs.calendar.checkChange()
     // await this.getBookingData()
@@ -430,6 +431,11 @@ export default {
       this.getBookingList()
       // this.getBookingData()
     },
+    async getByBranch () {
+      this.flowId = ''
+      await this.getDataFlow()
+      this.getBookingList()
+    },
     async getDataFlow () {
       this.DataFlowName = []
       await axios
@@ -440,9 +446,15 @@ export default {
             this.DataFlowName.push({text: 'ทั้งหมด', value: 'allFlow'})
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
-              d.text = d.flowName
-              d.value = d.flowId
-              this.DataFlowName.push(d)
+              console.log('masBranchName', this.masBranchName)
+              if (d.masBranchID === this.masBranchName.masBranchID.toString() || d.masBranchID === 'All' || d.masBranchID === null) {
+                console.log('d', d)
+                d.text = d.flowName
+                d.value = d.flowId
+                this.DataFlowName.push(d)
+              } else {
+                console.log('d3', d)
+              }
             }
             this.flowId = this.DataFlowName[0].value
           } else {
@@ -463,9 +475,22 @@ export default {
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
-              d.text = d.masBranchName
-              d.value = d.masBranchName
-              this.DataBranchName.push(d)
+              // d.text = d.masBranchName
+              // d.value = d.masBranchName
+              // this.DataBranchName.push(d)
+              if (this.session.data.masBranchID === '' || this.session.data.masBranchID === null) {
+                console.log('TEST1', d.masBranchID, this.session.data.masBranchID)
+                d.text = d.masBranchName
+                d.value = d.masBranchName
+                this.DataBranchName.push(d)
+              } else {
+                console.log('TEST', d.masBranchID, this.session.data.masBranchID)
+                if (d.masBranchID === this.session.data.masBranchID) {
+                  d.text = d.masBranchName
+                  d.value = d.masBranchName
+                  this.DataBranchName.push(d)
+                }
+              }
             }
             this.masBranchName = this.DataBranchName[0]
           } else {
@@ -522,6 +547,7 @@ export default {
         let dataItemTimes = []
         this.dataItemTime = []
         if (this.flowId === 'allFlow') {
+          console.log('IFTRUE')
           url = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.$session.getAll().data.shopId +

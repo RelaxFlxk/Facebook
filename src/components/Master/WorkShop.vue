@@ -194,18 +194,21 @@ export default {
         })
     },
     getDataFlow () {
+      this.Layout = []
       this.DataFlowName = []
       this.DataflowId = ''
       console.log('DataBranchID', this.DataBranchID)
       axios.get(this.DNS_IP + '/flow/get?shopId=' + this.shopId).then(response => {
         let rs = response.data
-        // console.log('rs', rs)
+        console.log('rsDataFlowName', rs)
         if (rs.length > 0) {
           for (var i = 0; i < rs.length; i++) {
             var d = rs[i]
-            d.text = d.flowName
-            d.value = d.flowId
-            this.DataFlowName.push(d)
+            if (d.masBranchID === this.DataBranchID.toString() || (d.masBranchID === 'All' || d.masBranchID === null)) {
+              d.text = d.flowName
+              d.value = d.flowId
+              this.DataFlowName.push(d)
+            }
             // console.log('DataFlowName132', this.DataFlowName)
           }
         } else {
@@ -216,16 +219,24 @@ export default {
     },
     getDataMasbranch () {
       this.DataMasbranch = []
-      console.log('shopId', this.shopId)
+      // console.log('shopId', this.shopId)
       axios.get(this.DNS_IP + '/master_branch/get?shopId=' + this.shopId).then(response => {
         let rs = response.data
-        console.log('rs', rs)
+        // console.log('rs', rs)
         if (rs.length > 0) {
           for (var i = 0; i < rs.length; i++) {
             var d = rs[i]
-            d.text = d.masBranchName
-            d.value = d.masBranchID
-            this.DataMasbranch.push(d)
+            if (this.session.data.masBranchID === '' || this.session.data.masBranchID === null) {
+              d.text = d.masBranchName
+              d.value = d.masBranchID
+              this.DataMasbranch.push(d)
+            } else {
+              if (d.masBranchID === this.session.data.masBranchID) {
+                d.text = d.masBranchName
+                d.value = d.masBranchID
+                this.DataMasbranch.push(d)
+              }
+            }
             // console.log('DataMasbranch132', this.DataMasbranch)
           }
         } else {

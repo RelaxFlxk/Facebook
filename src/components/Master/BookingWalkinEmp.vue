@@ -1171,13 +1171,23 @@ export default {
         if (rs.length > 0) {
           for (var i = 0; i < rs.length; i++) {
             let d = rs[i]
-            let s = {}
-            s.text = d.masBranchName
-            s.textEn = d.masBranchNameEn
-            s.value = d.masBranchID
-            this.branch.push(s)
-            this.branchData.push(d)
-            // console.log('dtdtdtdt', this.branch)
+            if (this.session.data.masBranchID === '' || this.session.data.masBranchID === null) {
+              let s = {}
+              s.text = d.masBranchName
+              s.textEn = d.masBranchNameEn
+              s.value = d.masBranchID
+              this.branch.push(s)
+              this.branchData.push(d)
+            } else {
+              if (d.masBranchID === this.session.data.masBranchID) {
+                let s = {}
+                s.text = d.masBranchName
+                s.textEn = d.masBranchNameEn
+                s.value = d.masBranchID
+                this.branch.push(s)
+                this.branchData.push(d)
+              }
+            }
           }
           if (this.branch.length === 1) {
             this.formSelect.masBranchID = this.branch[0].value

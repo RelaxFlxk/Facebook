@@ -2178,7 +2178,7 @@
                               <strong style="color: red;" v-if="jobitem[0].recordStatus === 'D'"><h2>รายการนี้ปิดไปแล้ว</h2></strong>
                             </div>
                             <div>
-                              <v-btn small class="ma-2" color="success" v-if="userId !== '' && recordStatusJob === 'N'" @click="dialogCloseJob = true" dark>
+                              <v-btn small class="ma-2" color="success" v-if="userId !== '' && recordStatusJob === 'N'" @click="dialogCloseJob = true ,setCloseJob(jobitem)" dark>
                                   ปิดงานนี้
                                 <v-icon dark right>
                                   mdi-cash-usd-outline
@@ -4725,6 +4725,14 @@
                       v-bind:options="options2"
                     />
                   </v-col>
+                  <v-col class="pb-0"  cols="12">
+                    <v-checkbox
+                      v-model="statusPushEndStep"
+                      label="ส่งข้อความ ขึ้นตอนสุดท้าย ไปยังลูกค้า"
+                      true-value="True"
+                      false-value="False"
+                    ></v-checkbox>
+                  </v-col>
                   <v-col class="text-center"  cols="12">
                     <v-btn
                       class="white--text"
@@ -4767,6 +4775,14 @@
             <v-col class="text-center">
               <span class="headline">ปิดงานนนี้</span>
             </v-col>
+            <v-col class="pb-0"  cols="12">
+                    <v-checkbox
+                      v-model="statusPushEndStep"
+                      label="ส่งข้อความ ขึ้นตอนสุดท้าย ไปยังลูกค้า"
+                      true-value="True"
+                      false-value="False"
+                    ></v-checkbox>
+                  </v-col>
             <v-card-text>
               <v-container>
                 <v-row>
@@ -7195,7 +7211,10 @@ export default {
       statusVIPEdit: 'False',
       statusVIPChang: 'False',
       statusVIPRemove: 'False',
-      masBranchIDAddJob: ''
+      masBranchIDAddJob: '',
+      statusPushEndStep: 'False',
+      endStepItem: [],
+      ItemendStepStanby: []
     }
   },
   beforeCreate () {
@@ -7225,6 +7244,70 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
+    async setCloseJob (item) {
+      console.log('item', item)
+      await this.setCloseJobItem(item[0].jobNo)
+      console.log('this.ItemendStepStanby', this.ItemendStepStanby)
+      await this.getStepFlowCloseJob(this.ItemendStepStanby.flowId, this.ItemendStepStanby.shopId)
+    },
+    async setCloseJobItem (jobNo) {
+      await axios.get(this.DNS_IP + '/job/getJobNo?jobNo=' + jobNo).then((response) => {
+        let rs = response.data
+        if (rs.length > 0) {
+          this.ItemendStepStanby = rs[0]
+        }
+      })
+    },
+    async getStepFlowCloseJob (flowId, shopId) {
+      await axios
+        .get(
+          this.DNS_IP +
+            '/flowStep/get?flowId=' +
+            flowId +
+            '&shopId=' +
+            shopId
+        )
+        .then(async response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            this.endStepItem = rs.filter((endItem) => endItem.sortNo === rs.length)
+            console.log('this.endStepItem', this.endStepItem)
+          }
+        })
+    },
+    async updateStepEnd () {
+      console.log('endStepItem', this.endStepItem)
+      console.log('ItemendStepStanby', this.ItemendStepStanby)
+      if (this.statusPushEndStep === 'True') {
+        let itemUpdate = {}
+        itemUpdate.stepId = this.endStepItem[0].stepId
+        itemUpdate.flowId = this.ItemendStepStanby.flowId
+        itemUpdate.shopId = this.ItemendStepStanby.shopId
+        itemUpdate.LAST_USER = this.session.data.userName
+        itemUpdate.jobId = this.ItemendStepStanby.jobId
+        await axios
+          .post(
+          // eslint-disable-next-line quotes
+            this.DNS_IP + '/job/edit/' + itemUpdate.jobId,
+            itemUpdate
+          )
+          .then(async response => {
+          // Debug response
+            console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
+            await this.pushmessage(itemUpdate.jobId)
+          })
+        // eslint-disable-next-line handle-callback-err
+          .catch(error => {
+            console.log('error function editDataGlobal : ', error)
+          })
+      }
+    },
+    async pushmessage (jobId) {
+      let updateStatusSend = { updateStatusSend: 'false' }
+      await axios
+        .post(this.DNS_IP + '/job/pushMsg/' + jobId, updateStatusSend)
+        .then(console.log(jobId))
+    },
     toggleAdd () {
       this.drawerAdd = !this.drawerAdd
     },
@@ -9710,16 +9793,18 @@ export default {
     onCopySuccess () {
       this.$swal('เรียบร้อย', 'คัดลอกสำเร็จ', 'success')
     },
-    closeJob () {
+    async closeJob () {
       this.loadingCloseJob = true
       if (this.checkPayment === 'True') {
         if (this.formCloseJob.totalPrice !== '') {
+          // await this.updateStepEnd()
           this.closeJobSubmit(this.formCloseJob.totalPrice)
         } else {
           this.loadingCloseJob = false
-          this.$swal('ผิดพลาก', 'กรุณาใส่จำนวนเงิน', 'error')
+          this.$swal('ผิดพลาด', 'กรุณาใส่จำนวนเงิน', 'error')
         }
       } else {
+        // await this.updateStepEnd()
         this.closeJobSubmit('0')
       }
     },
@@ -9742,6 +9827,7 @@ export default {
           LAST_USER: this.session.data.userName,
           statusDelete: 'true'
         }
+        await this.updateStepEnd()
         console.log('ds', ds)
         let checkJob = ''
         await axios.get(this.DNS_IP + '/job/getJobNo?jobNo=' + this.formCloseJob.jobNo).then((response) => {

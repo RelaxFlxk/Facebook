@@ -275,8 +275,22 @@
           <!-- end delete -->
 
           <!-- data table -->
+          <v-col cols="6">
+            <v-select
+              :items="branch"
+              v-model="masBranchID"
+              dense
+              outlined
+              hide-details
+              filled
+              label="สาขา"
+              prepend-inner-icon="mdi-map-marker"
+              class="ma-2"
+              @change="selectBranch()"
+            ></v-select>
+          </v-col>
          <v-col cols="12">
-            <v-card elevation="7" v-if="dataReady">
+            <v-card elevation="7" v-if="dataReady && statusFilterBranch">
               <v-card-title>
                 <v-text-field
                   v-model="searchAll2"
@@ -461,24 +475,77 @@ export default {
       filesAdd: null,
       filesUpdate: null,
       validAdd: true,
-      validUpdate: true
+      validUpdate: true,
+      branch: [],
+      DataBranchAll: [],
+      masBranchID: '',
+      statusFilterBranch: false
     }
   },
   async mounted () {
     // this.getGetToken(this.DNS_IP)
-    this.dataReady = false
-    // Get Data
-    await this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
-    await this.getDataBranch()
-    if (this.dataItem.length > 0) {
-      this.dataItem.forEach(el => {
-        if (el.masBranchID === 'All') {
-          el.masBranchName = 'ทั้งหมด'
-        }
-      })
-    }
+    await this.fiterBranch()
   },
   methods: {
+    async selectBranch () {
+      this.statusFilterBranch = false
+      this.dataReady = false
+      await this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
+      await this.getDataBranch()
+      if (this.dataItem.length > 0) {
+        this.dataItem.forEach(el => {
+          if (el.masBranchID === 'All') {
+            el.masBranchName = 'ทั้งหมด'
+          }
+        })
+      }
+      console.log('masBranchID', this.masBranchID)
+      console.log('dataItem', this.dataItem)
+      this.dataItem = await this.dataItem.filter((ii) => ii.masBranchID === this.masBranchID.toString() || (ii.masBranchID === 'All' || ii.masBranchID === null))
+      this.statusFilterBranch = true
+    },
+    fiterBranch () {
+      this.DataBranchAll = []
+      this.branch = []
+      console.log('DataBranchAll', this.DataBranchAll)
+      axios
+        .get(this.DNS_IP + '/master_branch/get?shopId=' + this.shopId)
+        .then(async response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              if (this.session.data.masBranchID === '' || this.session.data.masBranchID === null) {
+                console.log('TEST1', d.masBranchID, this.session.data.masBranchID)
+                let s = {}
+                s.text = d.masBranchName
+                s.value = d.masBranchID
+                this.DataBranchAll.push(d)
+                this.branch.push(s)
+              } else {
+                console.log('TEST', d.masBranchID, this.session.data.masBranchID)
+                if (d.masBranchID === this.session.data.masBranchID) {
+                  let s = {}
+                  s.text = d.masBranchName
+                  s.value = d.masBranchID
+                  this.DataBranchAll.push(d)
+                  this.branch.push(s)
+                }
+              }
+            }
+          } else {
+            this.DataBranchName = []
+            this.branch = []
+          }
+          if (this.branch.length === 1) {
+            this.masBranchID = this.branch[0].value
+            await this.selectBranch()
+          } else if (this.branch.length > 1) {
+            this.masBranchID = this.branch[0].value
+            await this.selectBranch()
+          }
+        })
+    },
     async getDataBranch () {
       this.branchItem = []
       await axios
@@ -487,23 +554,36 @@ export default {
           let rs = response.data
           console.log('rs', rs)
           if (rs.status !== false) {
-            let all = {}
-            all.text = 'ทั้งหมด'
-            all.value = 'All'
-            this.branchItem.push(all)
+            if (this.session.data.masBranchID === '' || this.session.data.masBranchID === null) {
+              let all = {}
+              all.text = 'ทั้งหมด'
+              all.value = 'All'
+              this.branchItem.push(all)
+            }
             for (var i = 0; i < rs.length; i++) {
               let d = rs[i]
-              let s = {}
-              s.text = d.masBranchName
-              s.value = d.masBranchID.toString()
-              this.branchItem.push(s)
+              if (this.session.data.masBranchID === '' || this.session.data.masBranchID === null) {
+                let s = {}
+                s.text = d.masBranchName
+                s.value = d.masBranchID.toString()
+                this.branchItem.push(s)
+              } else {
+                if (d.masBranchID === this.masBranchID) {
+                  let s = {}
+                  s.text = d.masBranchName
+                  s.value = d.masBranchID.toString()
+                  this.branchItem.push(s)
+                }
+              }
               // console.log('dtdtdtdt', this.branch)
             }
           } else {
-            let all = {}
-            all.text = 'ทั้งหมด'
-            all.value = 'All'
-            this.branchItem.push(all)
+            if (this.session.data.masBranchID === '' || this.session.data.masBranchID === null) {
+              let all = {}
+              all.text = 'ทั้งหมด'
+              all.value = 'All'
+              this.branchItem.push(all)
+            }
           }
         })
       console.log('branch', this.branch)
@@ -623,14 +703,15 @@ export default {
 
               // Load Data
               await this.clearData()
-              await this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
-              if (this.dataItem.length > 0) {
-                this.dataItem.forEach(el => {
-                  if (el.masBranchID === 'All') {
-                    el.masBranchName = 'ทั้งหมด'
-                  }
-                })
-              }
+              await this.selectBranch()
+              // await this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
+              // if (this.dataItem.length > 0) {
+              //   this.dataItem.forEach(el => {
+              //     if (el.masBranchID === 'All') {
+              //       el.masBranchName = 'ทั้งหมด'
+              //     }
+              //   })
+              // }
             })
           // eslint-disable-next-line handle-callback-err
             .catch((error) => {
@@ -722,14 +803,15 @@ export default {
               this.dialogEdit = false
 
               // Load Data
-              await this.getDataGlobal(DNS_IP, PATH, this.$session.getAll().data.shopId)
-              if (this.dataItem.length > 0) {
-                this.dataItem.forEach(el => {
-                  if (el.masBranchID === 'All') {
-                    el.masBranchName = 'ทั้งหมด'
-                  }
-                })
-              }
+              await this.selectBranch()
+              // await this.getDataGlobal(DNS_IP, PATH, this.$session.getAll().data.shopId)
+              // if (this.dataItem.length > 0) {
+              //   this.dataItem.forEach(el => {
+              //     if (el.masBranchID === 'All') {
+              //       el.masBranchName = 'ทั้งหมด'
+              //     }
+              //   })
+              // }
             })
             // eslint-disable-next-line handle-callback-err
             .catch((error) => {
