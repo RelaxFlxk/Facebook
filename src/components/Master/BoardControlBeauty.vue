@@ -598,21 +598,21 @@
                         <v-col cols="10" class="pa-1">
                           <v-tooltip
                             :color="codeColor[work]"
-                            v-if="item.stepTitle.length > 18"
+                            v-if="item.stepTitle.length > 17"
                             top
                             >
                               <template v-slot:activator="{ on, attrs }">
-                                <strong
-                                  class="ml-2 textLayout"
+                                <h2
+                                  class="ml-2 mt-3 textLayout"
                                   v-bind="attrs"
                                   v-on="on"
                                 >
-                                {{ item.stepTitle.substring(0, 18)}}...
-                                </strong>
+                                {{ item.stepTitle.substring(0, 17)}}...
+                                </h2>
                               </template>
                               <span>{{item.stepTitle}}</span>
                             </v-tooltip>
-                          <h2 class="ml-2 mt-3 textLayout" v-if="item.stepTitle.length <= 18">{{ item.stepTitle }}</h2>
+                          <h2 class="ml-2 mt-3 textLayout" v-if="item.stepTitle.length <= 17">{{ item.stepTitle }}</h2>
                         </v-col>
                         <v-col cols="2" class="text-right pb-1 pt-1 pl-0 ">
                           <h2 class="pa-0 mt-3 textLayout">{{
@@ -1618,14 +1618,14 @@ export default {
         this.setTimeJob()
       }
     },
-    getDataFlow () {
+    async getDataFlow () {
       this.DataFlowName = []
       console.log('DataFlowName', this.DataFlowName)
-      axios
+      await axios
         .get(this.DNS_IP + '/flow/get?shopId=' + this.shopId
         // + '&checkOnsite=is null'
         )
-        .then(response => {
+        .then(async response => {
           let rs = response.data
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
@@ -1641,6 +1641,11 @@ export default {
             this.DataFlowName = []
           }
         })
+      if (this.DataFlowName.length === 1) {
+        console.log('#########')
+        this.flowId = this.DataFlowName[0].value
+        await this.chkFlowName()
+      }
     },
     checkTime () {
       console.log('this.branchData', this.branchData)
@@ -1689,6 +1694,10 @@ export default {
           } else {
             this.DataBranchName = []
             this.branchData = []
+          }
+          if (this.branchData.length === 1) {
+            this.masBranchID = this.DataBranchName[1].value
+            await this.getDataFlow()
           }
         })
     },
