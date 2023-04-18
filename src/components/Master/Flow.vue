@@ -1985,9 +1985,9 @@
                 v-model="selectBranch"
                 :items="branch"
                 label="เลือกสาขา"
-                solo
+                outlined
+                elevation="3"
                 @change="filterBranch()"
-                dense
                 ></v-select>
               </v-col>
             </v-row>
