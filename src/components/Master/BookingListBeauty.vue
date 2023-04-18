@@ -4935,6 +4935,16 @@
                                   <div v-for="(item3 , index3) in item2" :key="index3">
                                     <v-card-text class="text-start" v-if="item3.fieldValue !== ''"><strong>{{item3.fieldName}} : </strong> {{item3.fieldValue}}</v-card-text>
                                   </div>
+                                  <br>
+                                  <v-card-text v-if="item2[0].depositStatus === 'True' && (item2[0].depositImge !== '' || item2[0].depositImge !== null)">
+                                    <v-img
+                                      aspect-ratio="6"
+                                      height="500"
+                                      contain
+                                      @click="gotoPicture(item2[0].depositImge)"
+                                      :src="item2[0].depositImge"
+                                    ></v-img>
+                                  </v-card-text>
                                   <v-card-text v-if="item2[0].statusUpload1 === 'True' || item2[0].statusUpload2 === 'True'">
                                     <v-row>
                                       <v-col cols="auto" v-if="item2[0].statusUpload1 === 'True'">
