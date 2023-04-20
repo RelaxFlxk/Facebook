@@ -67,7 +67,34 @@
             </v-col>
           </v-row>
           <v-row style="justify-content: space-around;">
-            <v-col cols="6" style="display: flex;justify-content: center;">
+            <v-col cols="4" style="display: flex;justify-content: center;">
+              <v-card
+                style="padding: 10px; width: 230px;"
+                dense
+                elevation="0"
+                prominent
+                :color="(getSelectText === 'countNewCusOnMonth') ? 'teal lighten-4' : 'white'"
+                @click="getSelectNewMonth('countNewCusOnMonth')"
+              >
+                <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
+                  <div class="text-center">
+                    <v-avatar
+                      size="70"
+                      class="pa-3"
+                      color="#F57C00"
+                    >
+                      <v-icon dark size="30" class="iconify" data-icon="mdi:calendar-cursor-outline">
+                      </v-icon>
+                    </v-avatar>
+                  </div>
+                  <div style="margin: auto 0;">
+                    <strong>ลูกค้าใหม่ในเดือน</strong>
+                    <div>จำนวน : {{countNewCusOnMonth}}</div>
+                  </div>
+                </div>
+              </v-card>
+            </v-col>
+            <v-col cols="4" style="display: flex;justify-content: center;">
               <v-card
                 style="padding: 10px; width: 230px;"
                 color="#E65100"
@@ -93,7 +120,7 @@
                 </div>
               </v-card>
             </v-col>
-            <v-col cols="6" style="display: flex;justify-content: center;">
+            <v-col cols="4" style="display: flex;justify-content: center;">
               <v-card
                 style="padding: 10px; width: 230px;"
                 color="#1A237E"
@@ -599,6 +626,7 @@ export default {
       shopId_Shop: '',
       idPayment: '',
       dialogSetting: false,
+      countNewCusOnMonth: 0,
       countNewCus: 0,
       countOldCus: 0,
       countWait: 0,
@@ -796,6 +824,7 @@ export default {
       this.countNoCash = 0
       this.countFinish = 0
       this.countInactive = 0
+      this.countNewCusOnMonth = 0
       this.countNewCus = 0
       this.countOldCus = 0
       this.itemBooking = []
@@ -877,21 +906,22 @@ export default {
             this.countWait = 0
             this.countConfirm = 0
             this.countNoCash = 0
+            this.countNewCusOnMonth = 0
             this.countNewCus = 0
             this.countOldCus = 0
           }
         })
+      console.log('this.itemBooking', this.itemBooking)
       this.countWait = this.itemBooking.filter(el => { return el.paymentStatus === 'wait' }).length
       this.countFinish = this.itemBooking.filter(el => { return el.paymentStatus === 'finish' }).length
       this.countConfirm = this.itemBooking.filter(el => { return el.paymentStatus === 'confirm' }).length
       this.countNoCash = this.itemBooking.filter(el => { return el.paymentStatus === 'noCash' }).length
       this.countInactive = this.itemBooking.filter(el => { return el.paymentStatus === 'inactive' }).length
+      this.countNewCusOnMonth = this.itemBooking.filter(el => { return moment(el.trialsVersionDate).month() === moment().month() && moment(el.trialsVersionDate).year() === moment().year() && (el.paymentStatus === 'confirm' || el.paymentStatus === 'finish') }).length
       let dataCus = this.itemBooking.filter(el => { return el.paymentStatus === 'finish' })
-      console.log('dataCus', dataCus)
       for (let i = 0; i < dataCus.length; i++) {
         let d = dataCus[i]
         d.countBooking = d.countBooking || 0
-        console.log('dataCus', d.countBooking)
         if (parseInt(d.countBooking) === 0) {
           this.countNewCus = this.countNewCus + 1
         } else {
@@ -976,8 +1006,42 @@ export default {
         })
     },
     getSelect (text) {
+      this.headers = [
+        { text: 'รูปร้าน', value: 'shopImge' },
+        { text: 'BT', value: 'btNumber' },
+        { text: 'ชื่อร้าน', value: 'shopName' },
+        // { text: 'วันที่นัดหมาย', value: 'dueDate' },
+        { text: 'เบอร์โทร', value: 'billingPhone' },
+        { text: 'email', value: 'contactEmail' },
+        { text: 'จำนวนนัดหมายที่สร้างของเดือนที่แล้ว', value: 'countBooking' },
+        { text: 'สลิป', value: 'paymentImage' },
+        { text: 'ยอดเงินที่ชำระ', value: 'paymentAmount' },
+        { text: 'สถานะ', value: 'paymentStatus' },
+        { text: 'วันที่จ่าย/วันที่หมดอายุ', value: 'paymentDate' },
+        { text: 'วันวันที่สิ้นสุดทดลองใช้', value: 'trialsVersionDate' },
+        { text: 'จัดการข้อมูล', value: 'action', sortable: false, align: 'center' }
+      ]
       this.getSelectText = text
       this.itemBookingUse = this.itemBooking.filter(el => { return el.paymentStatus === this.getSelectText })
+    },
+    getSelectNewMonth (text) {
+      this.getSelectText = text
+      this.headers = [
+        { text: 'รูปร้าน', value: 'shopImge' },
+        { text: 'BT', value: 'btNumber' },
+        { text: 'ชื่อร้าน', value: 'shopName' },
+        // { text: 'วันที่นัดหมาย', value: 'dueDate' },
+        { text: 'เบอร์โทร', value: 'billingPhone' },
+        { text: 'email', value: 'contactEmail' },
+        { text: 'จำนวนนัดหมายที่สร้างของเดือนที่แล้ว', value: 'countBooking' },
+        { text: 'สลิป', value: 'paymentImage' },
+        { text: 'ยอดเงินที่ชำระ', value: 'paymentAmount' },
+        { text: 'สถานะ', value: 'paymentStatus' },
+        { text: 'วันที่จ่าย/วันที่หมดอายุ', value: 'paymentDate' },
+        { text: 'วันวันที่สิ้นสุดทดลองใช้', value: 'trialsVersionDate' },
+        { text: 'วันที่สร้าง', value: 'CREATE_DATE_SHOP' }
+      ]
+      this.itemBookingUse = this.itemBooking.filter(el => { return moment(el.trialsVersionDate).month() === moment().month() && moment(el.trialsVersionDate).year() === moment().year() && (el.paymentStatus === 'confirm' || el.paymentStatus === 'finish') })
     }
   }
 }
