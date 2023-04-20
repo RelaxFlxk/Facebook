@@ -53,6 +53,7 @@
               label="สาขา"
               prepend-inner-icon="mdi-map-marker"
               class="ma-2"
+              :readonly="checkReadOnlyBranch"
             ></v-select>
           </v-col>
           <v-col cols="12">
@@ -390,7 +391,8 @@ export default {
       dataItemTimesChange: [],
       dataexport: [],
       paramUse: '',
-      dataReturnReady: false
+      dataReturnReady: false,
+      checkReadOnlyBranch: false
     }
   },
   beforeCreate () {
@@ -402,6 +404,11 @@ export default {
     // this.getCustomFieldStart()
     // await this.getDataFlow()
     await this.getDataBranch()
+    if (this.session.data.masBranchID === '' || this.session.data.masBranchID === null) {
+      this.checkReadOnlyBranch = false
+    } else {
+      this.checkReadOnlyBranch = true
+    }
     // await this.getBookingList()
     // await this.getBookingData()
   },

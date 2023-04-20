@@ -598,14 +598,16 @@ export default {
       // Clear ช่องค้นหา
       this.searchAll = ''
 
+      let url = ''
+      let dataItems = []
+      if (this.session.data.masBranchID === '' || this.session.data.masBranchID === null) {
+        url = this.DNS_IP + this.path + 'get?RECORD_STATUS=N&shopId=' + this.session.data.shopId
+      } else {
+        url = this.DNS_IP + this.path + 'getBranch?shopId=' + this.session.data.shopId
+      }
+
       await axios
-        .get(
-          // eslint-disable-next-line quotes
-          this.DNS_IP +
-            this.path +
-            'get?RECORD_STATUS=N&shopId=' +
-            this.session.data.shopId
-        )
+        .get(url)
         .then(async response => {
           if (response.data.length > 0) {
             this.dataReady = true
@@ -636,9 +638,27 @@ export default {
               s.lineUserId = d.lineUserId
               s.liffUserId = d.liffUserId
               s.shopId = d.shopId
-              this.dataItem.push(s)
+              d.masBranchID = d.masBranchID || ''
+              if (d.masBranchID !== '') {
+                s.masBranchID = JSON.parse(d.masBranchID)
+              } else {
+                s.masBranchID = []
+              }
+              console.log('branch', s.masBranchID)
+              dataItems.push(s)
+            }
+            if (this.session.data.masBranchID === '' || this.session.data.masBranchID === null) {
+              this.dataItem = dataItems
+            } else {
+              for (let i = 0; i < dataItems.length; i++) {
+                let d = dataItems[i]
+                if (d.masBranchID.filter(el => { return el === this.session.data.masBranchID }).length > 0) {
+                  this.dataItem.push(d)
+                }
+              }
             }
           } else {
+            this.dataItem = []
             // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
             this.dataReady = true
           }
