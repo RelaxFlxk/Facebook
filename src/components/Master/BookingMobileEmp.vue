@@ -2061,10 +2061,11 @@ export default {
       this.dataFlow = await this.getDataFromAPI('/flow/get', 'flowId', 'flowName', '')
     },
     SetallowedDatesChange (bookingEmpFlow) {
+      // console.log('!!!!!@@@@@@@', bookingEmpFlow)
       this.dataEmpAll.forEach((v, k) => {
         if (v.empId === bookingEmpFlow) {
-          console.log('dateDayoffValue', v.dateDayoffValue)
-          console.log('dateDayCustom', v.dateDayCustom)
+          // console.log('dateDayoffValue', v.dateDayoffValue)
+          // console.log('dateDayCustom', v.dateDayCustom)
           v.dateDayCustom = v.dateDayCustom || ''
           v.dateDayoffValue = v.dateDayoffValue || ''
           if (v.dateDayoffValue !== '') {
@@ -2081,15 +2082,19 @@ export default {
           }
         }
       })
-      console.log('datoff', this.dateDayoff)
-      console.log('Daycustom', this.dateDayCustom)
+      // console.log('datoff', this.dateDayoff)
+      // console.log('Daycustom', this.dateDayCustom)
     },
     allowedDatesChange (val) {
       // if (this.dateDaylimit) {
-      if (this.dataFlow.filter(el => el.value === this.flowIDLimit).length > 0) {
-        if (this.dataFlow.filter(el => el.value === this.flowIDLimit)[0].allData.typeDayCustom === 'on') {
+      console.log('!!!!!@@@@@@@', this.bookingEmpFlow)
+      console.log('!#@!@#!@#!@#!@#!@', this.dataEmpAll)
+      if (this.dataEmpAll.filter(el => el.empId === this.bookingEmpFlow).length > 0) {
+        if (this.dataEmpAll.filter(el => el.empId === this.bookingEmpFlow)[0].typeDayCustom === 'on') {
+          console.log('IF ON')
           return val === this.dateDayCustom.filter(el => el === val)[0]
         } else {
+          console.log('IF OFF')
           if (
             this.dateDayoff.filter(el => {
               return el === new Date(val).getDay()
