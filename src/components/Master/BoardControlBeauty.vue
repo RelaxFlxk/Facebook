@@ -128,7 +128,7 @@
           >
             นัดส่ง:
           </v-card-title> -->
-          <v-col cols="8">
+          <!-- <v-col cols="8">
             <strong class="text-h6">นัดส่ง:</strong>
             <v-chip color="#DE6467" text-color="white">
               ภายใน 2 วัน
@@ -141,8 +141,8 @@
             <v-chip color="#4F93D0" text-color="white">
               มากกว่า 4 วัน
             </v-chip>
-          </v-col>
-          <v-col cols="4" class="text-right" text color="#ABB1C7" v-if="allJob.length > 0">
+          </v-col> -->
+          <v-col cols="12" class="text-right" text color="#ABB1C7" v-if="allJob.length > 0">
             <v-btn-toggle>
             <v-btn
               text
@@ -181,7 +181,7 @@
             </v-btn-toggle>
           </v-col>
         </v-row>
-        <v-col cols="4" class="pa-0 ma-0 mt-6 mb-n6" v-if="flowId !== '' && masBranchID !== ''">
+        <v-col cols="12" class="pa-0 ma-0 mt-6 mb-n6" v-if="flowId !== '' && masBranchID !== ''">
           <v-menu
               v-model="menuDatefilter"
               :close-on-content-click="false"
@@ -192,6 +192,7 @@
             >
               <template v-slot:activator="{ on, attrs }">
                 <v-text-field
+                  style="max-width: 400px;"
                   v-model="dateFilter"
                   label="เลือกวันที่นัดหมาย"
                   prepend-inner-icon="mdi-calendar"
@@ -244,6 +245,7 @@
                     <v-col cols="12" class="pb-0">
                         <v-select
                           dense
+                          outlined
                           label="ขั้นตอนต่อไป"
                           v-model="formUpdate.stepTitle"
                           :items="stepItemSeleteInBoard"
@@ -255,6 +257,7 @@
                     </v-col>
                     <v-col cols="12" class="pb-0">
                         <v-autocomplete
+                          outlined
                           dense
                           label="ชื่อพนักงานที่รับผิดชอบ"
                           v-model="formUpdate.empStep"
@@ -302,7 +305,7 @@
                     </v-btn>
                   </v-col>
                   <v-row justify="center">
-                    <v-col cols="5" class="text-center">
+                    <!-- <v-col cols="5" class="text-center">
                       <v-col class="text-center">
                         <v-img
                           class="v-margit_img_reward"
@@ -310,16 +313,16 @@
                           max-width="330"
                         ></v-img>
                       </v-col>
-                    </v-col>
+                    </v-col> -->
 
-                    <v-col cols="6" class="v-margit_text_add mt-1">
+                    <v-col cols="12" class="v-margit_text_add mt-1">
                       <v-col class="text-center">
                         <v-img
                           class="v_text_edit"
                           :src="require('@/assets/GroupEditTitle.svg')"
                         ></v-img>
                       </v-col>
-                      <v-col cols="12">
+                      <v-col cols="12 px-0">
                         <div
                           class="column is-3"
                           v-for="(itemsEdit, index) in JobDataItem.filter(
@@ -329,11 +332,13 @@
                           )"
                           :key="index"
                         >
-                          <strong>{{ itemsEdit.fieldName }}: </strong>
+                          <!-- <strong>{{ itemsEdit.fieldName + '2' }}: </strong> -->
                           <v-col cols="12" class="pt-0 pb-0">
                             <v-text-field
+                              :label="itemsEdit.fieldName"
                               v-model="itemsEdit.fieldValue"
                               required
+                              outlined
                               dense
                             />
                           </v-col>
@@ -341,7 +346,7 @@
                       </v-col>
                       <v-col class="pt-0 pb-0" cols="12">
                         <v-row justify="center">
-                          <v-col class="pt-0 pb-0" cols="6">
+                          <v-col class="pt-0 pb-0" cols="12">
                             <v-menu
                               ref="menu"
                               v-model="menu"
@@ -356,6 +361,8 @@
                                   v-model="formUpdate.endDate"
                                   label="วันที่นัดส่งรถลูกค้า"
                                   persistent-hint
+                                  outlined
+                                  dense
                                   readonly
                                   prepend-icon="mdi-calendar"
                                   v-bind="attrs"
@@ -369,13 +376,15 @@
                               ></v-date-picker>
                             </v-menu>
                           </v-col>
-                          <v-col class="pt-0 pb-0" cols="6">
+                          <v-col class="pt-0 pb-0" cols="12">
                             <v-select
                               v-model="formUpdate.endTime"
                               :items="timeavailable"
                               label="เวลา"
                               menu-props="auto"
                               required
+                              dense
+                              outlined
                               :rules ="[rules.required]"
                             ></v-select>
                           </v-col>
@@ -577,10 +586,195 @@
             </v-col>
           </v-row>
         </div>
-
-        <!-- GridView -->
+        <!-- NewDesign -->
         <div
           v-if="layout === 'grid'"
+          :class="classWork"
+          v-show="masBranchID"
+        >
+        <v-row>
+          <v-col class="Layout pa-1"  cols="2" v-for="(element, work) in Layout" :key="work" >
+            <div
+                v-for="(item, indexitem) in Layout[work].workData"
+                :key="indexitem"
+                class="subLayout"
+            >
+              <div class="mb-2" style="display: flex;justify-content: space-between;align-items:flex-start;">
+                <div style="display:flex;align-items: flex-start;" class="ml-2">
+                  <v-icon class="ma-0 ml-n2 mr-1" :color="codeColor[work]">mdi-collage</v-icon>
+                  <p class="ma-0" style="max-width: 150px;">
+                    {{ item.stepTitle}}
+                  </p>
+                </div>
+                <div class="pa-1 totalJob" :style="'background-color:' + codeColor[work] + ';'">
+                  <p class="font-weight-black ma-0">{{allJob.filter(row => {return row.stepId == item.stepId }).length}}</p>
+                </div>
+              </div>
+              <div
+               v-for="(itemsJob, indexJob) in allJob.filter(row => { return row.stepId == item.stepId })" :key="indexJob"
+              >
+                <v-card class="cardItemNew">
+                  <div style="display: flex;justify-content: flex-start;align-items: baseline;" v-for="(items, index) in JobDataItem.filter(row => { return row.jobId == itemsJob.jobId })" :key="index">
+                      <v-icon color="#525252" class="mr-1" small style="font-size: 8px;" v-if="items.showCard === 'True' && items.fieldValue !== ''">
+                        mdi-checkbox-multiple-blank-circle
+                        </v-icon>
+                      <p class="ma-0 mb-1" v-if="items.showCard === 'True' && items.fieldValue !== ''">
+                        {{  items.fieldValue}}</p>
+                  </div>
+                  <div style="display: flex;justify-content: flex-start;align-items: flex-start;">
+                    <v-icon color="#525252" class="mr-2" v-if="JobDataItem.find(row => row.jobId === itemsJob.jobId).empStep !== '' && JobDataItem.find(row => row.jobId === itemsJob.jobId).empStep !== null">mdi-clipboard-account</v-icon>
+                    <p class="ma-0 mb-2" v-if="JobDataItem.find(row => row.jobId === itemsJob.jobId).empStep !== '' && JobDataItem.find(row => row.jobId === itemsJob.jobId).empStep !== null">{{ JobDataItem.find(row => row.jobId === itemsJob.jobId).empStep }}</p>
+                  </div>
+                  <div style="display: flex;justify-content: space-between;align-items: center;flex-direction: row;flex-wrap: wrap;">
+                    <v-btn
+                      color="primary"
+                      class="buttonGroup"
+                      elevation="2"
+                      icon
+                      small
+                    >
+                      <v-tooltip top
+                        color="#DE6467">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                              color="#DE6467"
+                              v-bind="attrs"
+                              v-on="on"
+                              dark
+                              @click=";(dialogEdit = true), setUpdate(itemsJob)"
+                              >
+                                mdi-square-edit-outline
+                              </v-icon>
+                          </template>
+                          <span>แก้ไขข้อมูล</span>
+                      </v-tooltip>
+                    </v-btn>
+                    <v-btn
+                      color="primary"
+                      class="buttonGroup"
+                      elevation="2"
+                      icon
+                      small
+                    >
+                      <v-tooltip
+                          v-if="allJob.filter(row => {return row.jobId == itemsJob.jobId})[0].checkCar !== 'False'"
+                          top
+                          color="#FF8C00"
+                      >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-icon
+                                color="#FF8C00"
+                                @click=";(dialog = true),
+                                    setUpdate(itemsJob, 'editFlow', item)
+                                "
+                                v-bind="attrs"
+                                v-on="on"
+                              >
+                                mdi-shuffle-variant
+                              </v-icon>
+                            </template>
+                            <span>เปลี่ยนขั้นตอนการทำงาน</span>
+                          </v-tooltip>
+                          <v-tooltip top
+                          color="#FF8C00"
+                          >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-icon
+                          v-if="
+                              allJob.filter(row => {
+                                return row.jobId == itemsJob.jobId
+                              })[0].checkCar == 'False'
+                            "
+                            v-bind="attrs"
+                            v-on="on"
+                            color="#9E9E9E"
+                          >
+                            mdi-shuffle-variant
+                          </v-icon>
+                        </template>
+                        <span>เปลี่ยนขั้นตอนการทำงาน</span>
+                      </v-tooltip>
+                    </v-btn>
+                    <v-btn
+                      color="primary"
+                      class="buttonGroup"
+                      elevation="2"
+                      icon
+                      small
+                    >
+                      <v-tooltip top
+                      color="#84C650"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-icon
+                            v-bind="attrs"
+                            v-on="on"
+                            color="#84C650"
+                            @click="
+                              ;(dialogDelete = true), setUpdate(itemsJob, 'closeJob')
+                            "
+                          >
+                            mdi-cash-usd-outline
+                          </v-icon>
+                        </template>
+                        <span>จบงาน</span>
+                      </v-tooltip>
+                    </v-btn>
+                    <v-btn
+                      color="primary"
+                      class="buttonGroup"
+                      elevation="2"
+                      icon
+                      small
+                    >
+                      <v-tooltip top color="#A12BFD">
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-icon
+                            color="#A12BFD"
+                            @click="
+                              ;(dialogProgress = true), getJobitem(itemsJob)
+                            "
+                              v-bind="attrs"
+                              v-on="on"
+                          >
+                            mdi-chart-timeline-variant
+                          </v-icon>
+                        </template>
+                        <span>ประวัติการทำงาน</span>
+                      </v-tooltip>
+                    </v-btn>
+                    <v-btn
+                    v-if="itemsJob.userId !== '' && itemsJob.userId !== 'user-skip'"
+                      color="primary"
+                      class="buttonGroup"
+                      elevation="2"
+                      icon
+                      small
+                    >
+                      <v-tooltip top color="rgb(43 147 253)">
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-icon
+                            color="rgb(43 147 253)"
+                            @click="ChatHistory(itemsJob)"
+                            small
+                          >
+                          mdi-message-processing
+                          </v-icon>
+                        </template>
+                        <span>แชท</span>
+                      </v-tooltip>
+                    </v-btn>
+                  </div>
+
+                </v-card>
+              </div>
+            </div>
+          </v-col>
+        </v-row>
+        </div>
+        <!-- GridView -->
+        <div
+          v-if="layout === 'grid' && false"
           :class="classWork"
           v-show="masBranchID"
         >
@@ -634,16 +828,15 @@
                       return row.stepId == item.stepId
                     })"
                     :key="indexJob"
-                    :style="'border-left-style: solid;border-width: 5px;border-color:' + codeColor[work] +';'"
+                    :style="'display:flex;border-left-style: solid;border-top-style: solid;border-width: 5px;border-color:' + codeColor[work] +';'"
                   >
                     <v-list-item class="pa-1 pb-2">
                       <v-alert
-                        class="pa-2 pt-0 mb-n1"
+                        class="pa-2 pt-0 mb-n1 cardItem"
                         width="100%"
                         min-height="120px"
                       >
                         <div
-                          class="bodyFrame"
                           v-for="(items, index) in JobDataItem.filter(row => {
                             return row.jobId == itemsJob.jobId
                           })"
@@ -669,10 +862,20 @@
                           <p class="ma-0" v-if="items.fieldValue.length <= 14">{{ items.fieldValue }}</p>
                         </div>
                         </div>
-                        <v-row style="height:50px;" class=" ps-3 pt-5 pb-1 mb-1">
+                        <div style="display: flex;">
+                          <p class="font-weight-medium mb-0 pb-1">
+                            <v-tooltip top color="#1B437C" v-if="itemsJob.statusTime === 'timeStart' || itemsJob.statusTime === null">
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-icon class="pb-1 mr-1 ml-1" v-bind="attrs" v-on="on" color="#1B437C">mdi-account-arrow-right</v-icon>
+                              </template>
+                              <span>พนักงานที่รับผิดชอบ</span>
+                            </v-tooltip>
+                            {{ JobDataItem.find(row => row.jobId === itemsJob.jobId).empStep }}
+                          </p>
+                        </div>
+                        <!-- <v-row style="height:50px;" class="ps-3 pt-5 pb-1 mb-1">
                           <v-col cols="12" class="mt-1 pa-0">
                             <p class="font-weight-medium mb-0 pb-1">
-                              <!-- <v-icon class="pb-1 mr-1 ml-1" large > mdi-shield-account</v-icon> -->
                               <v-tooltip top
                               color="#1B437C"
                                 v-if="itemsJob.statusTime === 'timeStart' || itemsJob.statusTime === null">
@@ -691,7 +894,8 @@
                                 {{JobDataItem.filter(row => {return row.jobId == itemsJob.jobId})[0].empStep}}
                             </p>
                           </v-col>
-                        </v-row>
+                        </v-row> -->
+
                         <!-- <v-avatar
                 color="brown"
               >
@@ -909,49 +1113,164 @@
                           </v-chip>
                         </v-col> -->
                         <!-- end diffDate -->
-                        <v-col cols="12" class="text-left">
-                          <v-chip
-                            outlined
-                            color="white"
-                            text-color="#212121"
-                            draggable
-                            small
-                            justify="center"
-                            align="center"
-                            v-for="(items, index) in JobDataItem.filter(row => {
-                              return row.jobId == itemsJob.jobId
-                            })"
-                            :key="index"
-                          >
-                          <div v-if="items.showCard === 'True'">
-                            <strong>
-                              {{ items.fieldValue }}
-                            </strong>
+                        <v-col cols="12" class="text-left pa-0 pl-4 pt-3">
+                          <div style="display: flex;justify-content: flex-start;align-items: baseline;" v-for="(items, index) in JobDataItem.filter(row => { return row.jobId == itemsJob.jobId })" :key="index">
+                              <v-icon color="#525252" class="mr-1" small style="font-size: 8px;" v-if="items.showCard === 'True' && items.fieldValue !== ''">
+                                mdi-checkbox-multiple-blank-circle
+                                </v-icon>
+                              <p class="ma-0 mb-1" v-if="items.showCard === 'True' && items.fieldValue !== ''">
+                                {{  items.fieldValue}}</p>
                           </div>
-                          </v-chip>
+                        </v-col>
+                        <v-col cols="12" class="text-left pa-0 pl-4 pt-3">
+                          <div style="display: flex;justify-content: flex-start;align-items: flex-start;">
+                            <v-icon color="#525252" class="mr-2" v-if="JobDataItem.find(row => row.jobId === itemsJob.jobId).empStep !== '' && JobDataItem.find(row => row.jobId === itemsJob.jobId).empStep !== null">mdi-clipboard-account</v-icon>
+                            <p class="ma-0 mb-2" v-if="JobDataItem.find(row => row.jobId === itemsJob.jobId).empStep !== '' && JobDataItem.find(row => row.jobId === itemsJob.jobId).empStep !== null">{{ JobDataItem.find(row => row.jobId === itemsJob.jobId).empStep }}</p>
+                          </div>
                         </v-col>
                         <v-col cols="12" class="text-right">
-                            <v-tooltip top
-                            color="#1B437C">
-                              <template v-slot:activator="{ on, attrs }">
-                                <v-icon
-                                  color="#1B437C"
-                                  v-bind="attrs"
-                                  v-on="on"
-                                  dark
-                            >
-                              mdi-account-arrow-right
-                            </v-icon>
-                              </template>
-                              <span>พนักงานที่รับผิดชอบ</span>
-                            </v-tooltip>
-                        <strong>{{
-                          JobDataItem.filter(row => {
-                            return row.jobId == itemsJob.jobId
-                          })[0].empStep
-                        }}</strong>
                           <!-- end update satatus car -->
-                          <v-tooltip top
+                          <div style="display: flex;flex-flow: row wrap;justify-content: flex-end;align-items: center;">
+                            <v-btn
+                              color="primary"
+                              class="buttonGroup"
+                              elevation="2"
+                              icon
+                              small
+                            >
+                              <v-tooltip top
+                                color="#DE6467">
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-icon
+                                      color="#DE6467"
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      dark
+                                      @click=";(dialogEdit = true), setUpdate(itemsJob)"
+                                      >
+                                        mdi-square-edit-outline
+                                      </v-icon>
+                                  </template>
+                                  <span>แก้ไขข้อมูล</span>
+                              </v-tooltip>
+                            </v-btn>
+                            <v-btn
+                              color="primary"
+                              class="buttonGroup"
+                              elevation="2"
+                              icon
+                              small
+                            >
+                              <v-tooltip
+                                  v-if="allJob.filter(row => {return row.jobId == itemsJob.jobId})[0].checkCar !== 'False'"
+                                  top
+                                  color="#FF8C00"
+                              >
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-icon
+                                        color="#FF8C00"
+                                        @click=";(dialog = true),
+                                            setUpdate(itemsJob, 'editFlow', item)
+                                        "
+                                        v-bind="attrs"
+                                        v-on="on"
+                                      >
+                                        mdi-shuffle-variant
+                                      </v-icon>
+                                    </template>
+                                    <span>เปลี่ยนขั้นตอนการทำงาน</span>
+                                  </v-tooltip>
+                                  <v-tooltip top
+                                  color="#FF8C00"
+                                  >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-icon
+                                  v-if="
+                                      allJob.filter(row => {
+                                        return row.jobId == itemsJob.jobId
+                                      })[0].checkCar == 'False'
+                                    "
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    color="#9E9E9E"
+                                  >
+                                    mdi-shuffle-variant
+                                  </v-icon>
+                                </template>
+                                <span>เปลี่ยนขั้นตอนการทำงาน</span>
+                              </v-tooltip>
+                            </v-btn>
+                            <v-btn
+                              color="primary"
+                              class="buttonGroup"
+                              elevation="2"
+                              icon
+                              small
+                            >
+                              <v-tooltip top
+                              color="#84C650"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-icon
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    color="#84C650"
+                                    @click="
+                                      ;(dialogDelete = true), setUpdate(itemsJob, 'closeJob')
+                                    "
+                                  >
+                                    mdi-cash-usd-outline
+                                  </v-icon>
+                                </template>
+                                <span>จบงาน</span>
+                              </v-tooltip>
+                            </v-btn>
+                            <!-- <v-btn
+                              color="primary"
+                              class="buttonGroup"
+                              elevation="2"
+                              icon
+                              small
+                            >
+                              <v-tooltip top color="#A12BFD">
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-icon
+                                    color="#A12BFD"
+                                    @click="
+                                      ;(dialogProgress = true), getJobitem(itemsJob)
+                                    "
+                                      v-bind="attrs"
+                                      v-on="on"
+                                  >
+                                    mdi-chart-timeline-variant
+                                  </v-icon>
+                                </template>
+                                <span>ประวัติการทำงาน</span>
+                              </v-tooltip>
+                            </v-btn> -->
+                            <v-btn
+                            v-if="itemsJob.userId !== '' && itemsJob.userId !== 'user-skip'"
+                              color="primary"
+                              class="buttonGroup"
+                              elevation="2"
+                              icon
+                              small
+                            >
+                              <v-tooltip top color="rgb(43 147 253)">
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-icon
+                                    color="rgb(43 147 253)"
+                                    @click="ChatHistory(itemsJob)"
+                                    small
+                                  >
+                                  mdi-message-processing
+                                  </v-icon>
+                                </template>
+                                <span>แชท</span>
+                              </v-tooltip>
+                            </v-btn>
+                          </div>
+                          <!-- <v-tooltip top
                             color="#DE6467">
                               <template v-slot:activator="{ on, attrs }">
                                 <v-icon
@@ -1035,7 +1354,7 @@
                                 </v-icon>
                               </template>
                               <span>แชท</span>
-                            </v-tooltip>
+                            </v-tooltip> -->
                           <!-- <v-icon
                               large
                               color="#A12BFD"
@@ -1092,191 +1411,6 @@
             </div>
           </v-card>
         </v-dialog>
-        <!-- <div v-if="layout === 'list'">
-          <div
-            class="mt-3"
-            v-for="(item, indexitem) in stepItemSelete"
-            :key="indexitem"
-          >
-            <v-alert
-              class="allFrame pb-3 ml-4"
-              style="height: 38px;"
-              border="left"
-              elevation="2"
-            >
-              <v-row class=" allFrame pb-3">
-                <v-col cols="3">
-                  <strong>{{ item.stepTitle }}</strong>
-                </v-col>
-                <v-col cols="9" class="text-right">
-                  <strong>{{
-                    allJob.filter(row => {
-                      return row.stepId == item.stepId
-                    }).length
-                  }}</strong>
-                  <v-icon cols="10" class="text-right" color="#ABB1C7">
-                    mdi-dots-vertical
-                  </v-icon>
-                </v-col>
-              </v-row>
-            </v-alert>
-            <div
-              v-for="(itemsJob, indexJob) in allJob.filter(row => {
-                return row.stepId == item.stepId
-              })"
-              :key="indexJob"
-            >
-
-                <v-alert
-                  class="allFrame pb-3 ml-4"
-                  style="height: 38px;"
-                  :color="codeColor[indexJob]"
-                  border="left"
-                  elevation="2"
-                  colored-border
-                >
-                  <v-row class=" allFrame pb-3">
-                    <v-col cols="2">
-                      <v-chip
-                        v-if="parseInt(itemsJob.totalDateDiff) <= 2"
-                        class="ma-2"
-                        color="#DE6467"
-                        text-color="white"
-                        x-small
-                        draggable
-                        justify="center"
-                        align="center"
-                      >
-                        {{ itemsJob.totalDateDiff }} วัน
-                      </v-chip>
-                      <v-chip
-                        v-else-if="
-                          parseInt(itemsJob.totalDateDiff) <= 4 &&
-                            parseInt(itemsJob.totalDateDiff) >= 2
-                        "
-                        class="ma-2"
-                        color="#FED966"
-                        text-color="white"
-                        draggable
-                        x-small
-                        justify="center"
-                        align="center"
-                      >
-                        {{ itemsJob.totalDateDiff }} วัน
-                      </v-chip>
-                      <v-chip
-                        v-else-if="parseInt(itemsJob.totalDateDiff) >= 4"
-                        class="ma-2"
-                        color="#4F93D0"
-                        text-color="white"
-                        draggable
-                        x-small
-                        justify="center"
-                        align="center"
-                      >
-                        {{ itemsJob.totalDateDiff }} วัน
-                      </v-chip>
-                    </v-col>
-                    <v-col cols="8" class="text-left">
-                      <v-chip
-                        outlined
-                        color="white"
-                        text-color="#212121"
-                        draggable
-                        small
-                        justify="center"
-                        align="center"
-                        v-for="(items, index) in JobDataItem.filter(row => {
-                          return row.jobId == itemsJob.jobId
-                        })"
-                        :key="index"
-                      >
-                      <div v-if="items.showCard === 'True'">
-                        <strong>
-                          {{ items.fieldValue }}
-                        </strong>
-                      </div>
-                      </v-chip>
-                    </v-col>
-                    <v-col cols="2" class="text-right">
-                      <v-tooltip bottom>
-                        <template v-slot:activator="{ on, attrs }">
-                      <v-icon
-                        v-if="
-                          allJob.filter(row => {
-                            return row.jobId == itemsJob.jobId
-                          })[0].checkCar == 'False'
-                        "
-                        color="#9E9E9E"
-                        depressed
-                        @click="updateStatusCars(itemsJob.jobId, 'False')"
-                        v-bind="attrs"
-                        v-on="on"
-                      >
-                        mdi-car
-                      </v-icon>
-
-                      <v-icon
-                        v-else
-                        color="#4F93D0"
-                        depressed
-                        @click="updateStatusCars(itemsJob.jobId, 'True')"
-                      >
-                        mdi-car
-                      </v-icon>
-                        </template>
-                        <span>รถไม่อยู่</span>
-                      </v-tooltip>
-                      <v-icon
-                        large
-                        color="#DE6467"
-                        dark
-                        @click=";(dialogEdit = true), setUpdate(itemsJob)"
-                      >
-                        mdi-square-edit-outline
-                      </v-icon>
-
-                      <v-icon
-                      v-if="
-                          allJob.filter(row => {
-                            return row.jobId == itemsJob.jobId
-                          })[0].checkCar !== 'False'
-                        "
-                        large
-                        color="#FED966"
-                        @click=";(dialog = true),
-                            setUpdate(itemsJob, 'editFlow', item)
-                        "
-                      >
-                        mdi-layers-triple
-                      </v-icon>
-                      <v-icon
-                      v-if="
-                          allJob.filter(row => {
-                            return row.jobId == itemsJob.jobId
-                          })[0].checkCar == 'False'
-                        "
-                        large
-                        color="#9E9E9E"
-                      >
-                        mdi-layers-triple
-                      </v-icon>
-
-                      <v-icon
-                        large
-                        color="#84C650"
-                        @click=";(dialogDelete = true), setUpdate(itemsJob)"
-                      >
-                        mdi-tag
-                      </v-icon>
-                    </v-col>
-                  </v-row>
-                </v-alert>
-
-            </div>
-            <br />
-          </div>
-        </div> -->
       </div>
       <!-- <v-dialog v-model="dialogWorkShop" max-width="70%">
         <v-card min-width="200px" class="pa-2 pl-5 ma-0 pb-3 mt-n14" style="overflow-y: auto;"> -->
@@ -1442,15 +1576,15 @@ export default {
       },
       codeColor: [
         '#4D67AB',
-        '#4E79C4',
+        // '#FED966',
+        '#E67F33',
         '#57A2AC',
         '#824D99',
         '#84C650',
-        '#C65050',
+        '#EB56F6',
         '#CE2220',
         '#E67F33',
-        '#EB56F6',
-        '#FED966',
+        '#4E79C4',
         '#4D67AB',
         '#4E79C4',
         '#57A2AC',
@@ -1459,8 +1593,30 @@ export default {
         '#C65050',
         '#CE2220',
         '#E67F33',
-        '#EB56F6',
+        '#C65050',
         '#FED966'
+      ],
+      pastelColor: [
+        '#FFA5B5',
+        '#FFCBA4',
+        '#FFD700',
+        '#90EE90',
+        '#7CFC00',
+        '#87CEEB',
+        '#6495ED',
+        '#4682B4',
+        '#9370DB',
+        '#D8BFD8',
+        '#FF69B4',
+        '#FFA500',
+        '#F4A460',
+        '#9ACD32',
+        '#BA55D3',
+        '#32CD32',
+        '#5DADE2',
+        '#A2D9CE',
+        '#D2B48C',
+        '#FFD480'
       ],
       formDelete: {
         jobNo: '',
@@ -2522,6 +2678,9 @@ export default {
 }
 </script>
 <style scoped>
+.cardItem {
+  display: flex;
+}
 .EditWorkShop {
   width: auto;
   background-color: #FFFFFF;
@@ -2540,6 +2699,14 @@ export default {
   width: max-content;
   height: max-content;
 }
+.Layout {
+  margin-top: 2rem;
+  min-width: 185px;
+  max-width: 220px;
+  background-color: #ffffff;
+  /* margin-left: 1px; */
+  max-width: auto;
+}
 .colum {
   margin-top: 2rem;
   width: 200px;
@@ -2547,7 +2714,8 @@ export default {
   margin-left: 1.5px;
 }
 .allFrame {
-  padding-top: 0px;
+  padding-top: 10px;
+  padding-left: 10px;
   width: 100%;
   min-height: max-content;
 }
@@ -2614,4 +2782,41 @@ body {
   overflow: auto;
   white-space: normal;
 }
+.totalJob {
+  background-color: rgb(107, 107, 107);
+    border-radius: 3px;
+    width: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #FFF;
+}
+.cardItemNew {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  /* margin: 5px; */
+  margin-bottom: 4px;
+  min-height:120px;
+  max-width: 100%;
+}
+.cardItemNone {
+  padding: 10px;
+  margin: 5px;
+}
+.subLayout {
+  background-color: #eeeeee;
+  padding: 5px;
+  margin-bottom: 5px;
+  border-radius: 6px;
+  border-width: 1px;
+  border-style: dashed;
+  border-color: #525252;
+}
+.buttonGroup {
+  margin-right: 3px;
+  margin-top: 5px;
+  padding: 2px;
+}
+
 </style>

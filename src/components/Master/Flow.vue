@@ -1651,15 +1651,15 @@
           <!-- end condition -->
 
         <!-- dialog limitbookint -->
-        <v-dialog v-model="dialoglimitbooking" max-width="70%" persistent >
-          <v-card min-width="400px" min-height="500px" class="pa-1 " color="#F4F4F4">
-              <v-card-text>
+        <v-dialog v-model="dialoglimitbooking" persistent >
+          <v-card  min-height="500px" class="pa-1 " color="#F4F4F4">
+              <v-card-text class="pa-2">
                 <v-container>
                   <v-row>
                       <v-col cols="10" class="text-left pt-10">
                       <h3><strong>ตั้งค่าวันหยุด / ตั้งจัดการเวลา</strong></h3>
                       </v-col>
-                      <v-col cols="2" class="pt-10">
+                      <v-col cols="2" class="pt-10 pa-0">
                       <div style="text-align: end;">
                           <v-btn
                           class="mx-2"
@@ -1681,10 +1681,10 @@
                     lazy-validation
                   >
                   <v-row style="justify-content: space-between;">
-                  <v-col cols="4">
+                  <v-col style="min-width: 270px;max-width: 400px;">
                     <v-row>
                       <v-col cols="12">
-                        <v-card class="pa-3" >
+                        <v-card class="pa-3">
                           <!-- <strong class="font-weight-bold">วันหยุดทั่วไปของบริษัท</strong> -->
                           <h4 class="font-weight-bold">วันหยุดทั่วไปของบริษัท</h4>
                           <v-select
@@ -1731,229 +1731,226 @@
                       </v-col>
                     </v-row>
                     </v-col>
-                    <v-divider
+                    <!-- <v-divider
                     class="mx-4"
                       vertical
-                    ></v-divider>
-      <v-col cols="7">
-      <v-card class="pa-3 mb-5" min-height="675px">
-        <h4 class="font-weight-bold mt-2">จัดการเวลานัดหมาย</h4>
-          <v-row align="center" class="ma-0">
-              <v-checkbox
-                @click="chekshowTime()"
-                false-value="False"
-                true-value="True"
-                :on-icon="'mdi-check-circle'"
-                :off-icon="'mdi-checkbox-blank-circle-outline'"
-                label="ต้องการใช้งานการจำกัดคิวนัดหมาย"
-                v-model="formUpdateLimitbooking.limitBookingCheck"
-                hide-details
-                class="shrink ml-6 mr-0 mt-0 mb-2"
-              ></v-checkbox>
-            </v-row>
-            <v-row align="center" class="ma-0">
-              <v-checkbox
-                @click="chekshowTime()"
-                false-value="False"
-                true-value="True"
-                :on-icon="'mdi-check-circle'"
-                :off-icon="'mdi-checkbox-blank-circle-outline'"
-                label="เวลาไม่เหมือนกันในแต่ละวัน"
-                v-model="formUpdateLimitbooking.setTimebyday"
-                hide-details
-                class="shrink ml-6 mr-0 mt-0 mb-2"
-              ></v-checkbox>
-            </v-row>
-            <v-row class="pl-8 mb-3" v-if="formUpdateLimitbooking.setTimebyday === 'True'">
-                <v-btn-toggle
-                  v-model="toggle_setTimebyday"
-                  mandatory
-                >
-                <div v-for="(item, i) in setTimebyday" :key="i">
-                  <v-btn
-                  class="ma-1"
-                  elevation="2"
-                  dark
-                  :color="toggle_setTimebyday === i ? 'rgb(22 48 83)' : 'rgb(22 48 83)'">
-                    <v-icon v-if="toggle_setTimebyday === i " color="#FFFFFF">mdi-check-circle</v-icon>
-                    <h4 v-else class="font-weight-bold">{{item.text}}</h4>
-                  </v-btn>
-                </div>
-                </v-btn-toggle>
-              </v-row>
-        <div class="text-center px-5 mb-5" v-if="formUpdateLimitbooking.setTimebyday === 'False'">
-          <v-sheet class="pa-0">
-          <v-row class="mt-3">
-            <v-col cols="6"  class="pt-0" style="text-align: start;">
-            <v-btn
-            small
-            class="mb-n3"
-                color="teal"
-                dark
-                @click="presetTime()"
-              >
-                <v-icon class="mr-2" small dark> mdi-clock-time-eight</v-icon>เพิ่มเวลาอัตโนมัติ
-              </v-btn>
-          </v-col>
-          <v-col cols="6" class="pt-0" style="text-align: end;">
-             <v-btn
-             small
-             class="mb-n3"
-              style="text-align: end;"
-                color="#173053"
-                dark
-                @click="addNewNew">
-                <v-icon class="mr-2" small dark>mdi-plus-box</v-icon>เพิ่มเวลานัดหมาย
-              </v-btn>
-          </v-col>
-          <v-col cols="12" class="mb-0"  style="text-align: center;">
-          <v-data-table
-          disable-pagination
-          hide-default-footer
-          :headers="columnsAddTime"
-          :items="dataItemAddTime"
-          :search="search"
-          disable-sort
-          class="elevation-1"
-          min-height="300px">
-          <!-- <template v-slot:top>
-            <v-toolbar color="white"> -->
-              <!-- <div class="text-left">
-              <v-btn
-                  color="teal"
-                  elevation="2"
-                  rounded
-                  small
-                  dark
-                  @click="presetTime()"
-                >
-                  แบบร่าง เวลา
-                </v-btn>
-              </div>
-              <div class="text-right">
+                    ></v-divider> -->
+                    <v-col style="min-width: 300px;">
+                      <v-card class="pa-3 mb-5" min-height="675px">
+                        <h4 class="font-weight-bold mt-2">จัดการเวลานัดหมาย</h4>
+                          <v-row align="center" class="ma-0">
+                              <v-checkbox
+                                @click="chekshowTime()"
+                                false-value="False"
+                                true-value="True"
+                                :on-icon="'mdi-check-circle'"
+                                :off-icon="'mdi-checkbox-blank-circle-outline'"
+                                label="ต้องการใช้งานการจำกัดคิวนัดหมาย"
+                                v-model="formUpdateLimitbooking.limitBookingCheck"
+                                hide-details
+                                class="shrink ml-6 mr-0 mt-0 mb-2"
+                              ></v-checkbox>
+                            </v-row>
+                            <v-row align="center" class="ma-0">
+                              <v-checkbox
+                                @click="chekshowTime()"
+                                false-value="False"
+                                true-value="True"
+                                :on-icon="'mdi-check-circle'"
+                                :off-icon="'mdi-checkbox-blank-circle-outline'"
+                                label="เวลาไม่เหมือนกันในแต่ละวัน"
+                                v-model="formUpdateLimitbooking.setTimebyday"
+                                hide-details
+                                class="shrink ml-6 mr-0 mt-0 mb-2"
+                              ></v-checkbox>
+                            </v-row>
+                            <v-row class="pl-8 mb-3" v-if="formUpdateLimitbooking.setTimebyday === 'True'">
+                                <v-btn-toggle
+                                  v-model="toggle_setTimebyday"
+                                  mandatory
+                                  style="display: flex;flex-wrap: wrap;"
+                                >
+                                <div v-for="(item, i) in setTimebyday" :key="i">
+                                  <v-btn
+                                  class="ma-1"
+                                  elevation="2"
+                                  dark
+                                  :color="toggle_setTimebyday === i ? 'rgb(22 48 83)' : 'rgb(22 48 83)'">
+                                    <v-icon v-if="toggle_setTimebyday === i " color="#FFFFFF">mdi-check-circle</v-icon>
+                                    <h4 v-else class="font-weight-bold">{{item.text}}</h4>
+                                  </v-btn>
+                                </div>
+                                </v-btn-toggle>
+                              </v-row>
+                        <div class="text-center px-5 mb-5" v-if="formUpdateLimitbooking.setTimebyday === 'False'">
+                          <v-sheet class="pa-0">
+                          <v-row class="mt-3" >
+                            <v-col cols="12" style="display:flex;justify-content: space-between;flex-wrap: wrap;"  class="pt-0" >
+                                <v-btn
+                                    small
+                                    class="mb-2"
+                                    color="teal"
+                                    dark
+                                    @click="presetTime()"
+                                  >
+                                  <v-icon class="mr-2" small dark> mdi-clock-time-eight</v-icon>เพิ่มเวลาอัตโนมัติ
+                                  </v-btn>
+                                <v-btn
+                                  small
+                                  color="#173053"
+                                  dark
+                                  @click="addNewNew">
+                                  <v-icon class="mr-2" small dark>mdi-plus-box</v-icon>เพิ่มเวลานัดหมาย
+                                </v-btn>
+                          </v-col>
+                          <v-col cols="12" class="mb-0"  style="text-align: center;">
+                          <v-data-table
+                          disable-pagination
+                          hide-default-footer
+                          :headers="columnsAddTime"
+                          :items="dataItemAddTime"
+                          :search="search"
+                          disable-sort
+                          class="elevation-1"
+                          min-height="300px">
+                          <!-- <template v-slot:top>
+                            <v-toolbar color="white"> -->
+                              <!-- <div class="text-left">
+                              <v-btn
+                                  color="teal"
+                                  elevation="2"
+                                  rounded
+                                  small
+                                  dark
+                                  @click="presetTime()"
+                                >
+                                  แบบร่าง เวลา
+                                </v-btn>
+                              </div>
+                              <div class="text-right">
 
-                <v-btn
-                  small
-                  color="primary"
-                  class="ml-2 white--text"
-                  @click="addNewNew">
-                  <v-icon dark>mdi-plus</v-icon>เพิ่มเวลานัดหมาย
-                </v-btn>
-              </div> -->
-            <!-- </v-toolbar>
-          </template> -->
-          <template v-slot:[`item.text`]="{ item }">
-            <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.text" :counter="50" maxlength="50" :hide-details="true" dense single-line :autofocus="true" v-if="item.id === editedItemNew.id"></v-text-field>
-            <span v-else>{{item.text}}</span>
-          </template>
-          <template v-slot:[`item.value`]="{ item }">
-            <v-text-field class="pa-0 ma-0" placeholder="HH:mm" filled v-model="editedItemNew.value" v-mask="'##:##'" :hide-details="true" dense single-line v-if="item.id === editedItemNew.id" ></v-text-field>
-            <span v-else>{{item.value}}</span>
-          </template>
-          <template v-slot:[`item.limitBooking`]="{ item }">
-            <div v-if="item.id === editedItemNew.id" >
-              <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" dense single-line v-if="formUpdateLimitbooking.limitBookingCheck === 'True'" ></v-text-field>
-              <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" disabled dense single-line v-else></v-text-field>
-            </div>
-            <span v-else>{{item.limitBooking}}</span>
-          </template>
-          <template v-slot:[`item.actions2`]="{ item }">
-            <div class="pa-0 ma-0" v-if="item.id === editedItemNew.id">
-              <v-icon color="red" class="mr-3" @click="closeNew">
-                mdi-window-close
-              </v-icon>
-              <v-icon color="green"  @click="saveNew">
-                mdi-content-save
-              </v-icon>
-            </div>
-            <div v-else>
-              <v-icon color="green" class="mr-3" @click="editItemNew(item)">
-                mdi-pencil
-              </v-icon>
-              <v-icon color="red" @click="deleteItemNew(item)">
-                mdi-delete
-              </v-icon>
-            </div>
-          </template>
-        </v-data-table>
-          </v-col>
-          </v-row>
-            </v-sheet>
-          </div>
-          <div class="text-center px-5 mb-5" v-else>
-          <v-sheet class="pa-0">
-          <v-row class="mt-3">
-            <v-col cols="6"  class="pt-0" style="text-align: start;">
-            <v-btn
-            small
-            class="mb-n3"
-                color="teal"
-                dark
-                @click="presetTimebyday()"
-              >
-                <v-icon class="mr-2" small dark> mdi-clock-time-eight</v-icon>เพิ่มเวลาอัตโนมัติ
-              </v-btn>
-          </v-col>
-          <v-col cols="6" class="pt-0" style="text-align: end;">
-             <v-btn
-             small
-             class="mb-n3"
-              style="text-align: end;"
-                color="#173053"
-                dark
-                @click="addNewNewbyday">
-                <v-icon class="mr-2" small dark>mdi-plus-box</v-icon>เพิ่มเวลานัดหมาย
-              </v-btn>
-          </v-col>
-          <v-col cols="12" class="mb-0"  style="text-align: center;">
-          <v-data-table
-          disable-pagination
-          hide-default-footer
-          :headers="columnsAddTime"
-          :items="dataItemAddTimebyday.filter((i) => i.value === toggle_setTimebyday)[0].setTime"
-          :search="search"
-          disable-sort
-          class="elevation-1"
-          min-height="300px">
-          <template v-slot:[`item.text`]="{ item }">
-            <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.text" :counter="50" maxlength="50" :hide-details="true" dense single-line :autofocus="true" v-if="item.id === editedItemNew.id"></v-text-field>
-            <span v-else>{{item.text}}</span>
-          </template>
-          <template v-slot:[`item.value`]="{ item }">
-            <v-text-field class="pa-0 ma-0" placeholder="HH:mm" filled v-model="editedItemNew.value" v-mask="'##:##'" :hide-details="true" dense single-line v-if="item.id === editedItemNew.id" ></v-text-field>
-            <span v-else>{{item.value}}</span>
-          </template>
-          <template v-slot:[`item.limitBooking`]="{ item }">
-            <div v-if="item.id === editedItemNew.id" >
-              <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" dense single-line v-if="formUpdateLimitbooking.limitBookingCheck === 'True'" ></v-text-field>
-              <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" disabled dense single-line v-else></v-text-field>
-            </div>
-            <span v-else>{{item.limitBooking}}</span>
-          </template>
-          <template v-slot:[`item.actions2`]="{ item }">
-            <div class="pa-0 ma-0" v-if="item.id === editedItemNew.id">
-              <v-icon color="red" class="mr-3" @click="closeNewbyday">
-                mdi-window-close
-              </v-icon>
-              <v-icon color="green"  @click="saveNewbyday">
-                mdi-content-save
-              </v-icon>
-            </div>
-            <div v-else>
-              <v-icon color="green" class="mr-3" @click="editItemNewbyday(item)">
-                mdi-pencil
-              </v-icon>
-              <v-icon color="red" @click="deleteItemNewbyday(item)">
-                mdi-delete
-              </v-icon>
-            </div>
-          </template>
-        </v-data-table>
-          </v-col>
-          </v-row>
-            </v-sheet>
-          </div>
-    </v-card>
+                                <v-btn
+                                  small
+                                  color="primary"
+                                  class="ml-2 white--text"
+                                  @click="addNewNew">
+                                  <v-icon dark>mdi-plus</v-icon>เพิ่มเวลานัดหมาย
+                                </v-btn>
+                              </div> -->
+                            <!-- </v-toolbar>
+                          </template> -->
+                          <template v-slot:[`item.text`]="{ item }">
+                            <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.text" :counter="50" maxlength="50" :hide-details="true" dense single-line :autofocus="true" v-if="item.id === editedItemNew.id"></v-text-field>
+                            <span v-else>{{item.text}}</span>
+                          </template>
+                          <template v-slot:[`item.value`]="{ item }">
+                            <v-text-field class="pa-0 ma-0" placeholder="HH:mm" filled v-model="editedItemNew.value" v-mask="'##:##'" :hide-details="true" dense single-line v-if="item.id === editedItemNew.id" ></v-text-field>
+                            <span v-else>{{item.value}}</span>
+                          </template>
+                          <template v-slot:[`item.limitBooking`]="{ item }">
+                            <div v-if="item.id === editedItemNew.id" >
+                              <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" dense single-line v-if="formUpdateLimitbooking.limitBookingCheck === 'True'" ></v-text-field>
+                              <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" disabled dense single-line v-else></v-text-field>
+                            </div>
+                            <span v-else>{{item.limitBooking}}</span>
+                          </template>
+                          <template v-slot:[`item.actions2`]="{ item }">
+                            <div class="pa-0 ma-0" v-if="item.id === editedItemNew.id">
+                              <v-icon color="red" class="mr-3" @click="closeNew">
+                                mdi-window-close
+                              </v-icon>
+                              <v-icon color="green"  @click="saveNew">
+                                mdi-content-save
+                              </v-icon>
+                            </div>
+                            <div v-else>
+                              <v-icon color="green" class="mr-3" @click="editItemNew(item)">
+                                mdi-pencil
+                              </v-icon>
+                              <v-icon color="red" @click="deleteItemNew(item)">
+                                mdi-delete
+                              </v-icon>
+                            </div>
+                          </template>
+                        </v-data-table>
+                          </v-col>
+                          </v-row>
+                            </v-sheet>
+                          </div>
+                          <div class="text-center px-5 mb-5" v-else>
+                          <v-sheet class="pa-0">
+                          <v-row class="mt-3">
+                            <v-col cols="6"  class="pt-0" style="text-align: start;">
+                            <v-btn
+                            small
+                            class="mb-n3"
+                                color="teal"
+                                dark
+                                @click="presetTimebyday()"
+                              >
+                                <v-icon class="mr-2" small dark> mdi-clock-time-eight</v-icon>เพิ่มเวลาอัตโนมัติ
+                              </v-btn>
+                          </v-col>
+                          <v-col cols="6" class="pt-0" style="text-align: end;">
+                            <v-btn
+                            small
+                            class="mb-n3"
+                              style="text-align: end;"
+                                color="#173053"
+                                dark
+                                @click="addNewNewbyday">
+                                <v-icon class="mr-2" small dark>mdi-plus-box</v-icon>เพิ่มเวลานัดหมาย
+                              </v-btn>
+                          </v-col>
+                          <v-col cols="12" class="mb-0"  style="text-align: center;">
+                          <v-data-table
+                          disable-pagination
+                          hide-default-footer
+                          :headers="columnsAddTime"
+                          :items="dataItemAddTimebyday.filter((i) => i.value === toggle_setTimebyday)[0].setTime"
+                          :search="search"
+                          disable-sort
+                          class="elevation-1"
+                          min-height="300px">
+                          <template v-slot:[`item.text`]="{ item }">
+                            <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.text" :counter="50" maxlength="50" :hide-details="true" dense single-line :autofocus="true" v-if="item.id === editedItemNew.id"></v-text-field>
+                            <span v-else>{{item.text}}</span>
+                          </template>
+                          <template v-slot:[`item.value`]="{ item }">
+                            <v-text-field class="pa-0 ma-0" placeholder="HH:mm" filled v-model="editedItemNew.value" v-mask="'##:##'" :hide-details="true" dense single-line v-if="item.id === editedItemNew.id" ></v-text-field>
+                            <span v-else>{{item.value}}</span>
+                          </template>
+                          <template v-slot:[`item.limitBooking`]="{ item }">
+                            <div v-if="item.id === editedItemNew.id" >
+                              <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" dense single-line v-if="formUpdateLimitbooking.limitBookingCheck === 'True'" ></v-text-field>
+                              <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" disabled dense single-line v-else></v-text-field>
+                            </div>
+                            <span v-else>{{item.limitBooking}}</span>
+                          </template>
+                          <template v-slot:[`item.actions2`]="{ item }">
+                            <div class="pa-0 ma-0" v-if="item.id === editedItemNew.id">
+                              <v-icon color="red" class="mr-3" @click="closeNewbyday">
+                                mdi-window-close
+                              </v-icon>
+                              <v-icon color="green"  @click="saveNewbyday">
+                                mdi-content-save
+                              </v-icon>
+                            </div>
+                            <div v-else>
+                              <v-icon color="green" class="mr-3" @click="editItemNewbyday(item)">
+                                mdi-pencil
+                              </v-icon>
+                              <v-icon color="red" @click="deleteItemNewbyday(item)">
+                                mdi-delete
+                              </v-icon>
+                            </div>
+                          </template>
+                        </v-data-table>
+                          </v-col>
+                          </v-row>
+                            </v-sheet>
+                          </div>
+                    </v-card>
                     </v-col>
                   </v-row>
                   </v-form>
@@ -1980,7 +1977,7 @@
           <!-- data table -->
           <v-col cols="12">
             <v-row style="display: flex;justify-content: flex-start;">
-              <v-col cols="4">
+              <v-col cols="12" style="max-width: 500px;">
                 <v-select
                 v-model="selectBranch"
                 :items="branch"
