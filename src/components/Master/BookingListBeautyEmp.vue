@@ -9224,8 +9224,7 @@ export default {
                     if (response.data.status) {
                       this.lineNotifyGroupOnsite(this.BookingDataItem[0].bookNo)
                       if (this.jobCheckPackage) {
-                        console.log('usePackage')
-                        await this.usePackage()
+                        await this.usePackage(this.BookingDataItem[0].bookNo)
                       }
                       this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
                       if (this.statusSearch === 'no') {
@@ -10336,6 +10335,14 @@ export default {
                   s.bookingEmpFlowName = d.bookingEmpFlowName
                   s.dueDateDay = d.dueDateDay
                   s.statusVIP = d.statusVIP
+                  s.packageName = d.packageName
+                  s.packageDetails = d.packageDetails
+                  s.packageImage = d.packageImage
+                  s.packagePrice = d.packagePrice
+                  s.packageBalanceAmount = d.packageBalanceAmount
+                  s.packageAmount = d.packageAmount
+                  s.packagePoint = d.packagePoint
+                  s.packageExpire = d.packageExpire
                   s.depositTextTH = d.depositTextTH
                   s.CREATE_DATE_Status = d.CREATE_DATE_Status
                   s.CREATE_DATE = d.CREATE_DATE
@@ -11712,6 +11719,15 @@ export default {
             s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
             s.tel = t.tel
             s.dataFiled = this.BookingDataListTimechange[t.bookNo] || []
+            s.packageName = t.packageName || ''
+            s.packageDetails = t.packageDetails || ''
+            s.packageImage = t.packageImage || ''
+            s.packagePrice = t.packagePrice || ''
+            s.packageBalanceAmount = t.packageBalanceAmount || ''
+            s.packageAmount = t.packageAmount || ''
+            s.packagePoint = t.packagePoint || ''
+            s.packageExpire = t.packageExpire || ''
+            s.empFull_NameTH = t.empFull_NameTH || ''
             dataExport.push(s)
           }
         }
@@ -11730,6 +11746,15 @@ export default {
       s.empFull_NameTH = ''
       s.carModel = ''
       s.dataFiled = []
+      s.packageName = ''
+      s.packageDetails = ''
+      s.packageImage = ''
+      s.packagePrice = ''
+      s.packageBalanceAmount = ''
+      s.packageAmount = ''
+      s.packagePoint = ''
+      s.packageExpire = ''
+      s.empFull_NameTH = ''
       dataExport.push(s)
       runNo = 0
       var datause2 = this.dataItemTime.sort((a, b) => {
@@ -11796,6 +11821,15 @@ export default {
             s.carModel = this.getDataFromFieldName(this.BookingDataListTimechange[t.bookNo], 'รุ่นรถ')
             s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
             s.dataFiled = this.BookingDataListTimechange[t.bookNo] || []
+            s.packageName = t.packageName || ''
+            s.packageDetails = t.packageDetails || ''
+            s.packageImage = t.packageImage || ''
+            s.packagePrice = t.packagePrice || ''
+            s.packageBalanceAmount = t.packageBalanceAmount || ''
+            s.packageAmount = t.packageAmount || ''
+            s.packagePoint = t.packagePoint || ''
+            s.packageExpire = t.packageExpire || ''
+            s.empFull_NameTH = t.empFull_NameTH || ''
             dataExport.push(s)
           }
         }
@@ -11806,6 +11840,8 @@ export default {
     },
     onExport () {
       var dataexport = []
+      let checkPackageShow = this.dataexport.filter(el => { return el.packageName !== '' }).length
+      console.log('checkPackageShow', checkPackageShow)
       for (var i = 0; i < this.dataexport.length; i++) {
         var a = this.dataexport[i]
         let data2 = {}
@@ -11835,8 +11871,19 @@ export default {
           // 'พนักงานรับนัดหมาย': a.empFull_NameTH,
           // 'หมายเหตุเพิ่มเติม': a.remark
         }
-        let dataSum = Object.assign({}, data1, data2)
-        dataexport.push(dataSum)
+        if (checkPackageShow > 0) {
+          let data3 = {
+            'แพ็คเกจที่ใช้': a.packageName,
+            'จำนวนการใช้ที่เหลือ': a.packageBalanceAmount,
+            'จำนวนการใช้ทั้งหมด': a.packageAmount,
+            'พนักงานที่รับนัดหมาย': a.empFull_NameTH
+          }
+          let dataSum = Object.assign({}, data1, data2, data3)
+          dataexport.push(dataSum)
+        } else {
+          let dataSum = Object.assign({}, data1, data2)
+          dataexport.push(dataSum)
+        }
       }
       // console.log('dataexport', dataexport)
       const dataWS = XLSX.utils.json_to_sheet(dataexport)
@@ -12227,6 +12274,14 @@ export default {
                   s.flowName = d.flowName
                   s.dueDate = d.dueDate
                   s.shopId = d.shopId
+                  s.packageName = d.packageName
+                  s.packageDetails = d.packageDetails
+                  s.packageImage = d.packageImage
+                  s.packagePrice = d.packagePrice
+                  s.packageBalanceAmount = d.packageBalanceAmount
+                  s.packageAmount = d.packageAmount
+                  s.packagePoint = d.packagePoint
+                  s.packageExpire = d.packageExpire
                   s.remark = d.remark || ''
                   s.masBranchID = d.masBranchID
                   s.empSelect = d.empSelect
@@ -13235,6 +13290,14 @@ export default {
                 s.bookingEmpFlowName = d.bookingEmpFlowName
                 s.dueDateDay = d.dueDateDay
                 s.statusVIP = d.statusVIP
+                s.packageName = d.packageName
+                s.packageDetails = d.packageDetails
+                s.packageImage = d.packageImage
+                s.packagePrice = d.packagePrice
+                s.packageBalanceAmount = d.packageBalanceAmount
+                s.packageAmount = d.packageAmount
+                s.packagePoint = d.packagePoint
+                s.packageExpire = d.packageExpire
                 s.depositTextTH = d.depositTextTH
                 s.CREATE_DATE_Status = d.CREATE_DATE_Status
                 s.CREATE_DATE = d.CREATE_DATE
@@ -13409,6 +13472,14 @@ export default {
                 s.bookingEmpFlowName = d.bookingEmpFlowName
                 s.dueDateDay = d.dueDateDay
                 s.statusVIP = d.statusVIP
+                s.packageName = d.packageName
+                s.packageDetails = d.packageDetails
+                s.packageImage = d.packageImage
+                s.packagePrice = d.packagePrice
+                s.packageBalanceAmount = d.packageBalanceAmount
+                s.packageAmount = d.packageAmount
+                s.packagePoint = d.packagePoint
+                s.packageExpire = d.packageExpire
                 s.depositTextTH = d.depositTextTH
                 s.CREATE_DATE_Status = d.CREATE_DATE_Status
                 s.CREATE_DATE = d.CREATE_DATE
@@ -14572,8 +14643,7 @@ export default {
                       this.statusShowDateConfiremjob = true
                       if (response.data.status) {
                         if (this.jobCheckPackage) {
-                          console.log('usePackage')
-                          await this.usePackage()
+                          await this.usePackage(this.dataQrcode.bookNo)
                         }
                         this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
                         if (this.statusSearch === 'no') {
@@ -14896,7 +14966,7 @@ export default {
               await this.updateRemarkAndEmpSelect(item)
               // this.getDataCalendaBooking()
               if (this.packageId !== '') {
-                await this.usePackage()
+                await this.usePackage(item.bookNo)
               }
               let DTitem = item.userId
               console.log('DTITEM', DTitem)
@@ -14939,7 +15009,7 @@ export default {
         this.$router.push('/Core/Login')
       }
     },
-    async usePackage () {
+    async usePackage (bookNo) {
       var params = {
         shopId: this.$session.getAll().data.shopId,
         token: this.StatusPackage.token
@@ -14954,6 +15024,38 @@ export default {
         url: this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token,
         data: params
       }).then((response) => {})
+      await this.updatePackageInBooking(this.$session.getAll().data.shopId, this.StatusPackage.token, this.packageId, bookNo)
+    },
+    async updatePackageInBooking (shopId, token, packageId, bookNo) {
+      console.log(shopId, token, packageId, bookNo)
+      await axios.get(this.DNS_IP_Loyalty + '/PackageLog/get?shopId=' + shopId + '&token=' + token + '&packageId=' + packageId).then(async response => {
+        console.log('updatePackageInBooking', response.data)
+        let rs = response.data
+        if (rs.status !== false) {
+          var dt = {
+            packageName: rs[0].packageName,
+            packageDetails: rs[0].packageDetail,
+            packageImage: rs[0].packageImg,
+            packagePrice: rs[0].packagePrice,
+            packageBalanceAmount: rs[0].balanceAmount,
+            packageAmount: rs[0].amount,
+            packagePoint: rs[0].packagePoint,
+            packageExpire: rs[0].packageExpire
+          }
+          await axios
+            .post(
+              // eslint-disable-next-line quotes
+              this.DNS_IP + "/Booking/edit/" + bookNo,
+              dt
+            )
+            .then(async response => {})
+            .catch(error => {
+              console.log(error)
+            })
+        }
+      }).catch(error => {
+        console.log(error)
+      })
     },
     async updateRemarkAndEmpSelect (item) {
       var dt = {

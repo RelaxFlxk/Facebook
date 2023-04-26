@@ -628,6 +628,15 @@ export default {
                 }
               }
               let s = {}
+              s.packageName = e.packageName
+              s.packageDetails = e.packageDetails
+              s.packageImage = e.packageImage
+              s.packagePrice = e.packagePrice
+              s.packageBalanceAmount = e.packageBalanceAmount
+              s.packageAmount = e.packageAmount
+              s.packagePoint = e.packagePoint
+              s.packageExpire = e.packageExpire
+
               s.bookNo = e.bookNo
               s.flowId = e.flowId
               s.flowName = e.flowName
@@ -1169,6 +1178,15 @@ export default {
             s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
             s.tel = t.tel
             s.dataFiled = this.bookingData[t.bookNo] || []
+            s.packageName = t.packageName || ''
+            s.packageDetails = t.packageDetails || ''
+            s.packageImage = t.packageImage || ''
+            s.packagePrice = t.packagePrice || ''
+            s.packageBalanceAmount = t.packageBalanceAmount || ''
+            s.packageAmount = t.packageAmount || ''
+            s.packagePoint = t.packagePoint || ''
+            s.packageExpire = t.packageExpire || ''
+            s.empFull_NameTH = t.empFull_NameTH || ''
             dataExport.push(s)
           }
         }
@@ -1193,6 +1211,15 @@ export default {
       s.dueDateTimeStamp = ''
       s.carModel = ''
       s.dataFiled = []
+      s.packageName = ''
+      s.packageDetails = ''
+      s.packageImage = ''
+      s.packagePrice = ''
+      s.packageBalanceAmount = ''
+      s.packageAmount = ''
+      s.packagePoint = ''
+      s.packageExpire = ''
+      s.empFull_NameTH = ''
       dataExport.push(s)
       runNo = 0
       var datause2 = this.dataItemTime.sort((a, b) => {
@@ -1260,6 +1287,15 @@ export default {
             s.carModel = this.getDataFromFieldName(this.bookingData[t.bookNo], 'รุ่นรถ')
             s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
             s.dataFiled = this.bookingData[t.bookNo] || []
+            s.packageName = t.packageName || ''
+            s.packageDetails = t.packageDetails || ''
+            s.packageImage = t.packageImage || ''
+            s.packagePrice = t.packagePrice || ''
+            s.packageBalanceAmount = t.packageBalanceAmount || ''
+            s.packageAmount = t.packageAmount || ''
+            s.packagePoint = t.packagePoint || ''
+            s.packageExpire = t.packageExpire || ''
+            s.empFull_NameTH = t.empFull_NameTH || ''
             sortDataExport2.push(s)
           }
         }
@@ -1274,6 +1310,8 @@ export default {
     },
     onExport () {
       var dataexport = []
+      let checkPackageShow = this.dataexport.filter(el => { return el.packageName !== '' }).length
+      console.log('checkPackageShow', checkPackageShow)
       for (var i = 0; i < this.dataexport.length; i++) {
         var a = this.dataexport[i]
         let data2 = {}
@@ -1303,13 +1341,29 @@ export default {
           // 'พนักงานรับนัดหมาย': a.empFull_NameTH,
           // 'หมายเหตุเพิ่มเติม': a.remark
         }
-        let dataSum = Object.assign({}, data1, data2)
-        dataexport.push(dataSum)
+        // let data3 = {
+        //   'แพ็คเกจที่ใช้': a.packageName,
+        //   'จำนวนการใช้ที่เหลือ': a.packageBalanceAmount,
+        //   'จำนวนการใช้ทั้งหมด': a.packageAmount,
+        //   'พนักงานที่รับนัดหมาย': a.empFull_NameTH
+        // }
+        // let dataSum = Object.assign({}, data1, data2, data3)
+        // dataexport.push(dataSum)
+        if (checkPackageShow > 0) {
+          let data3 = {
+            'แพ็คเกจที่ใช้': a.packageName,
+            'จำนวนการใช้ที่เหลือ': a.packageBalanceAmount,
+            'จำนวนการใช้ทั้งหมด': a.packageAmount,
+            'พนักงานที่รับนัดหมาย': a.empFull_NameTH
+          }
+          let dataSum = Object.assign({}, data1, data2, data3)
+          dataexport.push(dataSum)
+        } else {
+          let dataSum = Object.assign({}, data1, data2)
+          dataexport.push(dataSum)
+        }
       }
-      // console.log('dataexport', dataexport)
       const dateSplit = this.today.split('-')
-      // console.log(dateSplit)
-      // const date = dateSplit[0].split('-')
       const year = String(dateSplit[0])
       const month = String(dateSplit[1])
       const dataWS = XLSX.utils.json_to_sheet(dataexport)
