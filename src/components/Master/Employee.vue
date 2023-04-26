@@ -508,11 +508,9 @@
           </v-dialog>
           <!-- end delete -->
           <!-- dialog limitbookint -->
-          <v-dialog v-model="dialoglimitbooking" max-width="70%" persistent>
+          <v-dialog v-model="dialoglimitbooking"  persistent>
             <v-card
-              min-width="400px"
-              min-height="500px"
-              class="pa-1 "
+            min-height="500px" class="pa-1 "
               color="#F4F4F4"
             >
               <!-- <v-card-title>asdasdasdas</v-card-title> -->
@@ -544,8 +542,8 @@
                     v-model="valid_update"
                     lazy-validation
                   >
-                    <v-row style="justify-content: space-between;">
-                      <v-col cols="4">
+                  <v-row style="justify-content: space-between;">
+                  <v-col style="min-width: 270px;max-width: 400px;">
                         <v-row>
                           <v-col cols="12">
                             <v-card class="pa-3">
@@ -600,8 +598,8 @@
                         </v-row>
                       </v-col>
                       <v-divider class="mx-4" vertical></v-divider>
-                      <v-col cols="7">
-                        <v-card class="pa-3 mb-5" min-height="675px">
+                      <v-col style="min-width: 300px;">
+                      <v-card class="pa-3 mb-5" min-height="675px">
                           <h4 class="font-weight-bold mt-2">
                             จัดการเวลานัดหมาย
                           </h4>
@@ -631,12 +629,13 @@
                               class="shrink ml-6 mr-0 mt-0 mb-2"
                             ></v-checkbox>
                           </v-row>
-                          <v-row class="pl-8 mb-3" v-if="formUpdateLimitbooking.setTimebyday === 'True'">
+                          <v-row class="pl-8 mb-3" v-if="formUpdateLimitbooking.setTimebyday === 'True'" >
                               <v-btn-toggle
+                              style="display: flex;flex-wrap: wrap;"
                                 v-model="toggle_setTimebyday"
                                 mandatory
                               >
-                              <div v-for="(item, i) in setTimebyday" :key="i">
+                              <div v-for="(item, i) in setTimebyday" :key="i" >
                                 <!-- {{toggle_setTimebyday + ' ' +i}} -->
                                 <!-- v-if="JSON.parse(formUpdateLimitbooking.dateDayoffValue).filter((t) => t === item.value).length === 0" -->
                                 <v-btn
@@ -653,40 +652,23 @@
                           <div class="text-center px-5 mb-5" v-if="formUpdateLimitbooking.setTimebyday === 'False'">
                             <v-sheet class="pa-0">
                               <v-row class="mt-3">
-                                <v-col
-                                  cols="6"
-                                  class="pt-0"
-                                  style="text-align: start;"
-                                >
-                                  <v-btn
+                                <v-col cols="12" style="display:flex;justify-content: space-between;flex-wrap: wrap;"  class="pt-0" >
+                                <v-btn
                                     small
-                                    class="mb-n3"
+                                    class="mb-2"
                                     color="teal"
                                     dark
                                     @click="presetTime()"
                                   >
-                                    <v-icon class="mr-2" small dark>
-                                      mdi-clock-time-eight</v-icon
-                                    >เพิ่มเวลาอัตโนมัติ
+                                  <v-icon class="mr-2" small dark> mdi-clock-time-eight</v-icon>เพิ่มเวลาอัตโนมัติ
                                   </v-btn>
-                                </v-col>
-                                <v-col
-                                  cols="6"
-                                  class="pt-0"
-                                  style="text-align: end;"
-                                >
-                                  <v-btn
-                                    small
-                                    class="mb-n3"
-                                    style="text-align: end;"
-                                    color="#173053"
-                                    dark
-                                    @click="addNewNew"
-                                  >
-                                    <v-icon class="mr-2" small dark
-                                      >mdi-plus-box</v-icon
-                                    >เพิ่มเวลานัดหมาย
-                                  </v-btn>
+                                <v-btn
+                                  small
+                                  color="#173053"
+                                  dark
+                                  @click="addNewNew">
+                                  <v-icon class="mr-2" small dark>mdi-plus-box</v-icon>เพิ่มเวลานัดหมาย
+                                </v-btn>
                                 </v-col>
                                 <v-col
                                   cols="12"
@@ -794,40 +776,23 @@
                           <div class="text-center px-5 mb-5" v-else>
                             <v-sheet class="pa-0">
                               <v-row class="mt-3">
-                                <v-col
-                                  cols="6"
-                                  class="pt-0"
-                                  style="text-align: start;"
-                                >
-                                  <v-btn
+                                <v-col cols="12" style="display:flex;justify-content: space-between;flex-wrap: wrap;"  class="pt-0" >
+                                <v-btn
                                     small
-                                    class="mb-n3"
+                                    class="mb-2"
                                     color="teal"
                                     dark
-                                    @click="presetTimebyday()"
+                                    @click="presetTime()"
                                   >
-                                    <v-icon class="mr-2" small dark>
-                                      mdi-clock-time-eight</v-icon
-                                    >เพิ่มเวลาอัตโนมัติ
+                                  <v-icon class="mr-2" small dark> mdi-clock-time-eight</v-icon>เพิ่มเวลาอัตโนมัติ
                                   </v-btn>
-                                </v-col>
-                                <v-col
-                                  cols="6"
-                                  class="pt-0"
-                                  style="text-align: end;"
-                                >
-                                  <v-btn
-                                    small
-                                    class="mb-n3"
-                                    style="text-align: end;"
-                                    color="#173053"
-                                    dark
-                                    @click="addNewNewbyday"
-                                  >
-                                    <v-icon class="mr-2" small dark
-                                      >mdi-plus-box</v-icon
-                                    >เพิ่มเวลานัดหมาย
-                                  </v-btn>
+                                <v-btn
+                                  small
+                                  color="#173053"
+                                  dark
+                                  @click="addNewNew">
+                                  <v-icon class="mr-2" small dark>mdi-plus-box</v-icon>เพิ่มเวลานัดหมาย
+                                </v-btn>
                                 </v-col>
                                 <v-col
                                   cols="12"

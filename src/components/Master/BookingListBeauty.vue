@@ -118,7 +118,7 @@
                       </div>
                     </v-card>
                   </v-col>
-                  <v-col cols="6" style="display: flex;justify-content: center;">
+                  <v-col cols="12" style="display: flex;justify-content: center;">
                     <v-card
                       style="padding: 10px; width: 230px;"
                       :color="(getSelectText === 'confirm') ? '#C9F2DC' : 'white'"
@@ -313,16 +313,16 @@
               </v-col> -->
               <!-- <div v-if="">test</div> -->
               <v-row style="justify-content: space-around;">
-                  <v-col :cols="resCol === 'md' ? '4': 'auto'" style="display: flex;justify-content: center;">
+                  <v-col :cols="resCol === 'md' ? '2': 'auto'" style="display: flex;justify-content: center;">
                     <v-card
-                      style="padding: 10px; width: 230px;"
+                      :style="resCol === 'sm' ? 'padding: 10px; width: 130px;': 'padding: 10px; width: 230px;'"
                       :color="(getSelectText === 'wait') ? '#F9DBB2' : 'white'"
                       dense
                       elevation="0"
                       prominent
                       @click="getSelect('wait',countWaiting, filterCloseJobValue)"
                     >
-                      <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
+                      <div :style="resCol === 'lg' ? 'display: flex;justify-content: space-around;flex-wrap: wrap;' : resCol === 'md' ? '' : ''">
                         <div class="text-center">
                           <v-avatar
                             size="70"
@@ -334,16 +334,16 @@
                             </v-icon>
                           </v-avatar>
                         </div>
-                        <div style="margin: auto 0;">
+                        <div :style="resCol === 'md' ? 'text-align: center;' : resCol === 'sm' ?  'text-align: center;':'margin: auto 0;'">
                           <strong>{{dataTypeProcess1}}</strong>
                           <div>จำนวน : {{countWaiting}}</div>
                         </div>
                       </div>
                     </v-card>
                   </v-col>
-                  <v-col :cols="resCol === 'md' ? '4': 'auto'" style="display: flex;justify-content: center;">
+                  <v-col :cols="resCol === 'md' ? '2': 'auto'" style="display: flex;justify-content: center;">
                     <v-card
-                      style="padding: 10px; width: 230px;"
+                      :style="resCol === 'sm' ? 'padding: 10px; width: 130px;': 'padding: 10px; width: 230px;'"
                       :color="(getSelectText === 'confirm') ? '#C9F2DC' : 'white'"
                       dense
                       icon="mdi-email-check"
@@ -351,7 +351,7 @@
                       elevation="0"
                       @click="getSelect('confirm',countConfirm, filterCloseJobValue)"
                     >
-                    <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
+                    <div :style="resCol === 'lg' ? 'display: flex;justify-content: space-around;flex-wrap: wrap;' : resCol === 'md' ? '' : ''">
                       <div class="text-center">
                         <v-avatar
                           size="70"
@@ -363,16 +363,16 @@
                           </v-icon>
                         </v-avatar>
                       </div>
-                      <div style="margin: auto 0;">
+                      <div :style="resCol === 'md' ? 'text-align: center;' : resCol === 'sm' ?  'text-align: center;':'margin: auto 0;'">
                        <strong>{{dataTypeProcess2}}</strong>
                         <div>จำนวน : {{countConfirm}}</div>
                       </div>
                     </div>
                     </v-card>
                   </v-col>
-                  <v-col :cols="resCol === 'md' ? '4': 'auto'" style="display: flex;justify-content: center;">
+                  <v-col :cols="resCol === 'md' ? '2': 'auto'" style="display: flex;justify-content: center;">
                     <v-card
-                      style="padding: 10px; width: 230px;"
+                      :style="resCol === 'sm' ? 'padding: 10px; width: 130px;': 'padding: 10px; width: 230px;'"
                       :color="(getSelectText === 'confirmJob') ? '#F9E8F5' : 'white'"
                       dense
                       icon="mdi-account-check"
@@ -380,7 +380,7 @@
                       elevation="0"
                       @click="getSelect('confirmJob',countJob, filterCloseJobValue)"
                     >
-                    <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
+                    <div :style="resCol === 'lg' ? 'display: flex;justify-content: space-around;flex-wrap: wrap;' : resCol === 'md' ? '' : ''">
                       <div class="text-center">
                         <v-avatar
                           color="#E5B5D8"
@@ -392,23 +392,23 @@
                           </v-icon>
                         </v-avatar>
                       </div>
-                      <div style="margin: auto 0;">
+                      <div :style="resCol === 'md' ? 'text-align: center;' : resCol === 'sm' ?  'text-align: center;':'margin: auto 0;'">
                         <strong>{{dataTypeProcess4}}</strong>
-                         <div style="text-align: left;">จำนวน : {{countJob}}</div>
+                         <div :style="resCol === 'md' ? 'text-align: center;' : 'text-align: center;left'">จำนวน : {{countJob}}</div>
                       </div>
                     </div>
                     </v-card>
                   </v-col>
-                  <v-col :cols="resCol === 'md' ? '4': 'auto'" style="display: flex;justify-content: center;">
+                  <v-col :cols="resCol === 'md' ? '2': 'auto'" style="display: flex;justify-content: center;">
                     <v-card
-                      style="padding: 10px; width: 230px;"
+                      :style="resCol === 'sm' ? 'padding: 10px; width: 130px;': 'padding: 10px; width: 230px;'"
                       :color="(getSelectText === 'confirmSum') ? '#D7E8F9' : 'white'"
                       dense
                       elevation="0"
                       icon="mdi-expand-all"
                       @click="getSelect('confirmSum',(countConfirm + countJob), filterCloseJobValue)"
                     >
-                    <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
+                    <div :style="resCol === 'lg' ? 'display: flex;justify-content: space-around;flex-wrap: wrap;' : resCol === 'md' ? '' : ''">
                       <div class="text-center">
                         <v-avatar
                           color="#76ABE5"
@@ -419,16 +419,16 @@
                           </v-icon>
                         </v-avatar>
                       </div>
-                      <div style="margin: auto 0;">
+                      <div :style="resCol === 'md' ? 'text-align: center;' : resCol === 'sm' ?  'text-align: center;':'margin: auto 0;'">
                         <strong>รวมผู้เข้ารับบริการ</strong>
-                        <div style="text-align: left;">รวม : {{countConfirm + countJob}}</div>
+                        <div :style="resCol === 'md' ? 'text-align: center;' : 'text-align: center;left'">รวม : {{countConfirm + countJob}}</div>
                       </div>
                     </div>
                     </v-card>
                   </v-col>
-                  <v-col :cols="resCol === 'md' ? '4': 'auto'" style="display: flex;justify-content: center;">
+                  <v-col :cols="resCol === 'md' ? '2': 'auto'" style="display: flex;justify-content: center;">
                     <v-card
-                    style="padding: 10px; width: 230px;"
+                    :style="resCol === 'sm' ? 'padding: 10px; width: 130px;': 'padding: 10px; width: 230px;'"
                       :color="(getSelectText === 'cancel') ? '#F9CACA' : 'white'"
                       dense
                       elevation="0"
@@ -436,7 +436,7 @@
                       prominent
                       @click="getSelect('cancel',countCancel, filterCloseJobValue)"
                     >
-                    <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
+                    <div :style="resCol === 'lg' ? 'display: flex;justify-content: space-around;flex-wrap: wrap;' : resCol === 'md' ? '' : ''">
                       <div class="text-center">
                         <v-avatar
                           size="70"
@@ -448,7 +448,7 @@
                           </v-icon>
                         </v-avatar>
                       </div>
-                      <div style="margin: auto 0;">
+                      <div :style="resCol === 'md' ? 'text-align: center;' : resCol === 'sm' ?  'text-align: center;':'margin: auto 0;'">
                         <strong>{{dataTypeProcess3}}</strong>
                          <div>จำนวน : {{countCancel}}</div>
                       </div>

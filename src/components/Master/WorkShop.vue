@@ -415,37 +415,46 @@ export default {
         })
     },
     async AddColum () {
-      this.$swal({
-        title: 'ต้องการเพิ่ม Colum ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      })
-        .then(async (result) => {
-          this.fromAdd.CREATE_USER = this.session.data.userName
-          this.fromAdd.LAST_USER = this.session.data.userName
-          this.fromAdd.workData = '[]'
-          this.fromAdd.workColum = this.Layout.length + 1
-          this.fromAdd.flowId = this.DataflowId
-          this.fromAdd.shopId = this.shopId
-          this.fromAdd.masBranchID = this.DataBranchID
-          console.log('fromAdd', this.fromAdd)
-          await axios
-            .post(
-              this.DNS_IP + '/WorkShopLayout/add', this.fromAdd
-            ).then(async (response) => {
-              console.log('addDataGlobal DNS_IP + /job/add', response)
-              this.dialogAdd = false
-              this.getLayout()
-              await this.clearData()
-            })
-            .catch((error) => {
-              console.log('error function addData : ', error)
-            })
+      if (this.Layout.length >= 6) {
+        this.$swal({
+          title: 'ไม่สามารถเพิ่ม Colum มากกว่า 6 Colum ?',
+          type: 'info',
+          timer: 2000,
+          showConfirmButton: false
         })
+      } else {
+        this.$swal({
+          title: 'ต้องการเพิ่ม Colum ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        })
+          .then(async (result) => {
+            this.fromAdd.CREATE_USER = this.session.data.userName
+            this.fromAdd.LAST_USER = this.session.data.userName
+            this.fromAdd.workData = '[]'
+            this.fromAdd.workColum = this.Layout.length + 1
+            this.fromAdd.flowId = this.DataflowId
+            this.fromAdd.shopId = this.shopId
+            this.fromAdd.masBranchID = this.DataBranchID
+            console.log('fromAdd', this.fromAdd)
+            await axios
+              .post(
+                this.DNS_IP + '/WorkShopLayout/add', this.fromAdd
+              ).then(async (response) => {
+                console.log('addDataGlobal DNS_IP + /job/add', response)
+                this.dialogAdd = false
+                this.getLayout()
+                await this.clearData()
+              })
+              .catch((error) => {
+                console.log('error function addData : ', error)
+              })
+          })
+      }
     },
     clearData () {
       this.fromAdd = {}
