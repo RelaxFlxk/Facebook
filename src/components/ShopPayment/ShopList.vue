@@ -534,6 +534,51 @@
                     <v-col cols="12" class="pt-1 pb-0">
                       <v-menu
                         ref="menu"
+                        v-model="menutrialsVersionDate"
+                        transition="scale-transition"
+                        offset-y
+                        max-width="290px"
+                        min-width="auto"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            v-model="trialsVersionDate"
+                            label="วันที่ทดลองใช้"
+                            readonly
+                            outlined
+                            dense
+                            v-bind="attrs"
+                            v-on="on"
+                          >
+                          <template #prepend>
+                          <v-icon>
+                            mdi-calendar
+                          </v-icon>
+                        </template></v-text-field>
+                        </template>
+                        <v-date-picker
+                          @input="menutrialsVersionDate = false"
+                          v-model="trialsVersionDate"
+                          no-title
+                          scrollable
+                        >
+                        </v-date-picker>
+                      </v-menu>
+                    </v-col>
+                    <v-col cols="12" class="pt-1 pb-0">
+                      <v-text-field
+                        v-model="trialsVersionDateTime"
+                        dense
+                        v-mask="'##:##'"
+                        placeholder="HH:mm"
+                        outlined
+                        label="เวลาทดลองใช้"
+                        prepend-icon="mdi-clock-time-eleven"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pt-1 pb-0">
+                      <v-menu
+                        ref="menu"
                         v-model="menupaymentDateTrue"
                         transition="scale-transition"
                         offset-y
@@ -618,6 +663,9 @@ export default {
   },
   data () {
     return {
+      menutrialsVersionDate: false,
+      trialsVersionDate: '',
+      trialsVersionDateTime: '',
       menupaymentDateTrue: false,
       paymentDateTrue: '',
       paymentDateTrueTime: '',
@@ -721,6 +769,13 @@ export default {
         this.paymentDateTrueTime = this.paymentDateTrue.split(' ')[1]
         this.paymentDateTrue = this.paymentDateTrue.split(' ')[0]
       }
+      this.trialsVersionDate = item.trialsVersionDate || ''
+      if (this.trialsVersionDate === '') {
+        this.trialsVersionDate = ''
+      } else {
+        this.trialsVersionDateTime = this.trialsVersionDate.split(' ')[1]
+        this.trialsVersionDate = this.trialsVersionDate.split(' ')[0]
+      }
       this.btNumber = item.btNumber || ''
       this.remark = item.remark || ''
       this.shopId_Shop = item.shopId_Shop || ''
@@ -738,6 +793,16 @@ export default {
       } else {
         paymentDateTrue = ''
       }
+      let trialsVersionDate = ''
+      if (this.trialsVersionDate) {
+        if (this.trialsVersionDateTime) {
+          trialsVersionDate = this.trialsVersionDate + ' ' + this.trialsVersionDateTime || '00:00'
+        } else {
+          trialsVersionDate = this.trialsVersionDate + ' 00:00'
+        }
+      } else {
+        trialsVersionDate = ''
+      }
       if (this.btNumber !== '') {
         this.btNumber = this.btNumber.replace(/%/g, '%%').replace(/'/g, "\\'")
       }
@@ -747,7 +812,8 @@ export default {
       if (this.idPayment === '') {
         if (this.shopId_Shop !== '') {
           let ds = {
-            btNumber: this.btNumber
+            btNumber: this.btNumber,
+            trialsVersionDate: trialsVersionDate
           }
           await axios
             .post(
@@ -760,6 +826,8 @@ export default {
               this.$swal('สำเร็จ', 'บันทึกสำเร็จ', 'success')
               this.checkSearch()
               this.paymentDateTrue = ''
+              this.trialsVersionDate = ''
+              this.trialsVersionDateTime = ''
               this.btNumber = ''
               this.remark = ''
               this.shopId_Shop = ''
@@ -771,7 +839,8 @@ export default {
           paymentDateTrue: paymentDateTrue,
           btNumber: this.btNumber,
           remark: this.remark,
-          shopId: this.shopId_Shop
+          shopId: this.shopId_Shop,
+          trialsVersionDate: trialsVersionDate
         }
         await axios
           .post(
@@ -784,6 +853,8 @@ export default {
             this.$swal('สำเร็จ', 'บันทึกสำเร็จ', 'success')
             this.checkSearch()
             this.paymentDateTrue = ''
+            this.trialsVersionDate = ''
+            this.trialsVersionDateTime = ''
             this.btNumber = ''
             this.remark = ''
             this.shopId_Shop = ''
