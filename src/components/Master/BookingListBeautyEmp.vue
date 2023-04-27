@@ -9884,7 +9884,7 @@ export default {
     },
     async getPackage (dt) {
       this.dataPackage = []
-      await axios.get(this.DNS_IP_Loyalty + '/PackageLog/get?shopId=' + dt.shopId + '&lineUserId=' + dt.lineUserId +
+      await axios.get(this.DNS_IP_Loyalty + '/PackageLog/get?shopId=' + dt.shopId + '&userId=' + dt.lineUserId +
       '&flowId=' + dt.flowId).then(response => {
         console.log('PackageLog', response.data)
         let rs = response.data
