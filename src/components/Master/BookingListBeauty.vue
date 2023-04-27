@@ -14933,7 +14933,7 @@ export default {
             .post(this.DNS_IP + '/booking_transaction/add', dt)
             .then(async response => {
               console.log('addDataGlobal', response)
-              if (changeStatus === 'confirm') {
+              if (changeStatus === 'confirm' || changeStatus === 'confirmJob') {
                 if (item.userId !== 'user-skip') {
                   if (this.statusSearch === 'no') {
                     await this.getBookingList()
