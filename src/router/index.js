@@ -317,6 +317,11 @@ export default new Router({
     component: Master.CheckBookingEmpList
   },
   {
+    path: '/CheckBookingList',
+    name: 'CheckBookingList',
+    component: Master.CheckBookingList
+  },
+  {
     path: '/BookingMobileConfirmJob',
     name: 'BookingMobileConfirmJob',
     component: Master.BookingMobileConfirmJob
