@@ -260,7 +260,7 @@
                       <v-col cols="6" class="pt-2" style="border-left: 1px solid #695988 !important">
                         <v-row class="text-center">
                           <v-col cols="12" :style="'font-weight: 700;font-size: 48px;color:black'">
-                            {{items.servicePoint}}
+                            {{items.servicePoint === '' ? (items.statusBt === 'confirmJob' ? 'เรียกคิว' : '') : items.servicePoint}}
                           </v-col>
                         </v-row>
                       </v-col>
@@ -826,6 +826,7 @@ export default {
               for (let i = 0; i < sortData.length; i++) {
                 let d = sortData[i]
                 if (this.BookingDataList[d.bookNo] !== undefined) {
+                  d.servicePoint = d.servicePoint || ''
                   this.itemBooking.push(d)
                 }
               }
