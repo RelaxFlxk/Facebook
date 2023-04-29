@@ -790,7 +790,7 @@
                                   small
                                   color="#173053"
                                   dark
-                                  @click="addNewNew">
+                                  @click="addNewNewbyday">
                                   <v-icon class="mr-2" small dark>mdi-plus-box</v-icon>เพิ่มเวลานัดหมาย
                                 </v-btn>
                                 </v-col>
@@ -1197,6 +1197,7 @@ export default {
       ],
       dataItemAddTime: [],
       columnsAddTime: [
+        { text: 'ID', value: 'id' },
         { text: 'แสดงเวลา', value: 'text' },
         { text: 'เวลา', value: 'value' },
         {
@@ -1269,6 +1270,9 @@ export default {
     deleteItemNew (item) {
       const index = this.dataItemAddTime.indexOf(item)
       this.dataItemAddTime.splice(index, 1)
+      this.dataItemAddTime.forEach((item, key) => {
+        item.id = key + 1
+      })
     },
 
     closeNew () {
@@ -1293,6 +1297,9 @@ export default {
       this.dataItemAddTime.sort(function (a, b) {
         return a.value.localeCompare(b.value)
       })
+      this.dataItemAddTime.forEach((item, key) => {
+        item.id = key + 1
+      })
       this.closeNew()
     },
     editItemNewbyday (item) {
@@ -1305,6 +1312,9 @@ export default {
     deleteItemNewbyday (item) {
       const index = this.dataItemAddTimebyday.filter((item) => item.value === this.toggle_setTimebyday)[0].setTime.indexOf(item)
       this.dataItemAddTimebyday.filter((item) => item.value === this.toggle_setTimebyday)[0].setTime.splice(index, 1)
+      this.dataItemAddTimebyday.filter((item) => item.value === this.toggle_setTimebyday)[0].setTime.forEach((mitem, mKey) => {
+        mitem.id = mKey + 1
+      })
     },
 
     closeNewbyday () {
@@ -1328,6 +1338,9 @@ export default {
       }
       this.dataItemAddTimebyday.filter((item) => item.value === this.toggle_setTimebyday)[0].setTime.sort(function (a, b) {
         return a.value.localeCompare(b.value)
+      })
+      this.dataItemAddTimebyday.filter((item) => item.value === this.toggle_setTimebyday)[0].setTime.forEach((mitem, mKey) => {
+        mitem.id = mKey + 1
       })
       this.closeNewbyday()
     },
@@ -1476,6 +1489,12 @@ export default {
 
               } else {
                 let allTime = JSON.parse(rs[0].setTime)
+                allTime.forEach((a, i) => {
+                  a.setTime.forEach((a2, i2) => {
+                    a2.id = i2 + 1
+                    // console.log('a2' + i, a2.id)
+                  })
+                })
                 console.log('allTime', allTime)
                 console.log('dataItemAddTimebyday', this.dataItemAddTimebyday)
                 this.dataItemAddTimebyday.forEach((item) => {
