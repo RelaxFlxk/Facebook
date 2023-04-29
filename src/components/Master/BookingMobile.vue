@@ -17,6 +17,18 @@
           </v-toolbar-title>
 
           <v-spacer></v-spacer>
+          <v-btn
+            v-if="dataItem.length > 0"
+            class="text-white"
+            color="warning"
+            small
+            outlined
+            style="z-index:8;margin-right: 5px;"
+            @click="getCheckWait()"
+          >
+            <v-icon left>mdi-alert-decagram</v-icon>
+            รายการที่รอการยืนยัน
+          </v-btn>
 
           <v-btn color="#173053" icon @click="toggle">
             <v-icon>mdi-calendar-multiple-check</v-icon>
@@ -1012,6 +1024,69 @@
         </v-card>
       </v-form>
       </v-dialog>
+      <v-dialog v-model="dialogDataWait" fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition">
+      <v-card>
+          <v-card-text>
+            <!-- <div style="text-align: end;">
+                <v-btn
+                  fab
+                  small
+                  dark
+                  color="#F3F3F3"
+                  @click="(dialogDataWait = false)"
+                >
+                  <v-icon dark
+                  color="#FE4A01 ">
+                    mdi-close
+                  </v-icon>
+                </v-btn>
+            </div> -->
+              <v-row>
+                <v-col cols="8" class="text-left pt-10">
+                    <h5 class="font-weight-bold mt-5" style="color:#173053;">รายการที่ยังไม่ได้ยืนยัน</h5>
+                  </v-col>
+                  <v-col cols="4" class="text-right pt-10">
+                    <v-btn
+                      fab
+                      small
+                      dark
+                      color="#F3F3F3"
+                      @click="(dialogDataWait = false)"
+                    >
+                      <v-icon dark
+                      color="#FE4A01 ">
+                        mdi-close
+                      </v-icon>
+                    </v-btn>
+                  </v-col>
+                  <v-col cols= "12" class="pb-0">
+                    <v-data-table
+                      :headers="headers"
+                      :items="desserts"
+                      hide-default-footer
+                      disable-pagination
+                      :mobile-breakpoint="0"
+                      class="elevation-1"
+                    >
+                      <template v-slot:[`item.action`]="{ item }">
+                        <v-btn
+                          @click="gotoBookNo(item)"
+                          rounded
+                          x-small
+                          color="primary"
+                          dark
+                        >
+                          จัดการ
+                        </v-btn>
+                      </template>
+                    </v-data-table>
+                  </v-col>
+              </v-row>
+          </v-card-text>
+      </v-card>
+    </v-dialog>
     <BookingQueue :branchParent="branch" :masBranchIDParent="masBranchID" :drawerParent="drawer" :menu1Parent="menu1" :timeTableParent="timeTable" :rulesParent="rules" :masterTimeParent="masterTime" :dataItemTimesChangeParent="dataItemTimesChange" :getTimesChangeParent="getTimesChange" :toggleParent="toggle" @updateTimeTable="updateTimeTablefromChild"></BookingQueue>
   </div>
 </template>
@@ -1145,7 +1220,15 @@ export default {
       bookItemAll: [],
       dialogImg: false,
       showImg: '',
-      BookingFieldData: []
+      BookingFieldData: [],
+      BookingDataListWait: [],
+      headers: [
+        { text: 'วันที่นัดหมาย', value: 'dueDate', sortable: true, align: 'left' },
+        { text: 'ชื่อลูกค้า', value: 'cusName', sortable: true, align: 'left' },
+        { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
+      ],
+      desserts: [],
+      dialogDataWait: false
     }
   },
   async mounted () {
@@ -1154,6 +1237,130 @@ export default {
     console.log('this.$session.getAll()', this.$session.getAll())
   },
   methods: {
+    gotoBookNo (item) {
+      this.$router.push('/BookingMobile?bookNo=' + item.bookNo + '&shopId=' + this.$route.query.shopId)
+      location.reload()
+    },
+    async getCheckWait () {
+      this.BookingDataListWait = []
+      let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$route.query.shopId}&masBranchID=${this.masBranchID}&statusBt=is null`
+      await axios
+        .get(url)
+        .then(async response => {
+          if (response.data.status !== false) {
+            response.data.forEach((row) => {
+              if (typeof (this.BookingDataListWait[row.bookNo]) === 'undefined') {
+                this.BookingDataListWait[row.bookNo] = []
+              }
+              this.BookingDataListWait[row.bookNo].push(row)
+            })
+          }
+        })
+      let urlApiwait = this.DNS_IP + '/booking_view/get?shopId=' + this.$route.query.shopId + '&masBranchID=' + this.masBranchID + '&statusBt=null&checkOnsite=is null'
+      let dataItems = []
+      await axios
+        .get(urlApiwait)
+        .then(async responses => {
+          if (responses.data.length > 0) {
+            // console.log('length', responses.data.length)
+            for (let i = 0; i < responses.data.length; i++) {
+              let d = responses.data[i]
+              let s = {}
+              if (this.BookingDataListWait[d.bookNo] !== undefined) {
+                s.bookNo = d.bookNo
+                s.flowId = d.flowId
+                let checkDeposit = this.DataFlowName.filter(el => { return el.value === parseInt(d.flowId) })
+                if (checkDeposit.length > 0) {
+                  s.depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
+                } else {
+                  s.depositCheckStatus = 'False'
+                }
+                s.flowName = d.flowName
+                s.dueDate = d.dueDate || ''
+                s.dueDateDay = d.dueDateDay
+                if (d.timeText === null || d.timeText === '') {
+                  d.timeText = d.timeDue
+                }
+                if (s.dueDate === '') {
+                  s.dueDateText = 'ไม่มีเวลานัดหมาย'
+                } else {
+                  s.dueDateText = this.format_dateNotime(d.dueDate) + ' ' + d.timeText
+                }
+                s.shopId = d.shopId
+                s.remark = d.remark || ''
+                s.masBranchID = d.masBranchID
+                s.limitBookingCheck = d.limitBookingCheck
+                s.memberId = d.memberId || ''
+                s.countHourLimit = d.countHourLimit
+                s.empSelect = d.empSelect
+                s.empFull_NameTH = d.empFull_NameTH || ''
+                s.empFull_NameTH = s.empFull_NameTH.replace('นางสาว', '')
+                s.empFull_NameTH = s.empFull_NameTH.replace('นาย', '')
+                s.empFull_NameTH = s.empFull_NameTH.replace('นาง', '')
+                s.userId = d.userId
+                s.chkConfirm = false
+                s.chkCancel = false
+                s.address = d.address
+                s.addressLatLong = d.addressLatLong
+                s.jobNo = d.jobNo
+                s.timeText = d.timeText
+                s.remarkRemove = d.remarkRemove || ''
+                s.remarkConfirm1 = (d.remarkConfirm1 === 'true' || d.remarkConfirm1 === 'True')
+                s.remarkConfirm2 = (d.remarkConfirm2 === 'true' || d.remarkConfirm2 === 'True')
+                s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
+                s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
+                s.depositStatus = d.depositStatus || 'False'
+                s.depositImge = d.depositImge || ''
+                s.lineUserId = d.lineUserId
+                s.memberName = d.memberName || ''
+                s.memberPicture = d.memberPicture || ''
+                s.timeDueHtext = d.timeDueH + ':00'
+                s.timeDuetext = d.timeDue
+                s.countChangeTime = d.countChangeTime || 0
+                s.remarkReturn = d.remarkReturn || ''
+                s.dateReturn = d.dateReturn || ''
+                s.packageId = d.packageId || ''
+                s.tokenPackage = d.tokenPackage || ''
+                s.memberDataTag = JSON.parse(d.memberDataTag) || []
+                if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
+                  s.chkConfirm = true
+                  s.chkCancel = false
+                }
+                if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
+                  s.chkConfirm = false
+                  s.chkCancel = true
+                }
+                s.statusBt = d.statusBt || 'wait'
+                switch (s.statusBt) {
+                  case 'wait':
+                    s.statusBtText = 'รายการนัดหมายใหม่'
+                    break
+                }
+                s.cusName = this.getDataFromFieldName(this.BookingDataListWait[d.bookNo], 'ชื่อ')
+                s.cusReg = this.getDataFromFieldName(this.BookingDataListWait[d.bookNo], 'เลขทะเบียน')
+                s.tel = this.getDataFromFieldName(this.BookingDataListWait[d.bookNo], 'เบอร์โทร')
+                s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
+                s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
+                s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
+                dataItems.push(s)
+                // console.log('this.countWaiting', this.countWaiting)
+              } else {
+                console.log('BookingNo no bookingData', d.bookNo)
+              }
+            }
+            console.log('dataItems', dataItems)
+            if (dataItems.length > 0) {
+              this.desserts = dataItems.filter(el => { return el.bookNo !== this.bookNo })
+            } else {
+              this.desserts = []
+            }
+            this.dialogDataWait = true
+          } else {
+            this.desserts = []
+            await this.$swal('ผิดพลาด', 'ไม่พบข้อมูล', 'error')
+          }
+        })
+    },
     async coppyLink (item) {
       console.log('item', item)
       // this.$swal.fire('Any fool can use a computer')

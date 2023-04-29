@@ -307,6 +307,11 @@ export default {
             'type': 'customer'
           },
           {
+            'text': 'https://betask-linked-admin.web.app/CheckBookingList?shopId=' + this.shopId,
+            'title': 'ตรวจสอบรายการนัดหมาย ( มือถือ / แทปเล็ต )',
+            'type': 'admin'
+          },
+          {
             'text': 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/CheckBookingLatest?shopId=' + this.shopId,
             'title': 'ตรวจสอบรายการนัดหมาย ',
             'type': 'customer'

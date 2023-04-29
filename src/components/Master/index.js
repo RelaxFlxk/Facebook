@@ -43,6 +43,7 @@ import BookingListQueueByUser from './BookingListQueueByUser'
 import BookingListQueueMonitoringVideo from './BookingListQueueMonitoringVideo'
 import BookingWalkinEmp from './BookingWalkinEmp'
 import BookingWalkin from './BookingWalkin.vue'
+import CheckBookingList from './CheckBookingList.vue'
 
 export default {
   ChatHistory,
@@ -89,5 +90,6 @@ export default {
   BookingListQueueByUser,
   BookingListQueueMonitoringVideo,
   BookingWalkinEmp,
-  BookingWalkin
+  BookingWalkin,
+  CheckBookingList
 }
