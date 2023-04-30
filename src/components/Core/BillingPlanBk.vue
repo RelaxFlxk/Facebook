@@ -420,13 +420,7 @@
                       (วันที่ {{ billingCurrentPriceDateFomatShow }} )
                     </h6>
                     <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
-                      จำนวนเงิน : {{ formatNumber(paymentAmount) }} บาท
-                    </h6>
-                    <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
-                      จำนวน Vat : {{ formatNumber(paymentAmountVat) }} บาท
-                    </h6>
-                    <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
-                      จำนวนเงินรวม : {{ formatNumber(parseFloat(paymentAmount) + parseFloat(paymentAmountVat)) }} บาท
+                      จำนวนเงินรวม : {{ formatNumber(paymentAmount) }} บาท
                     </h6>
                     <div class="pl-4 pr-4"><v-divider></v-divider></div>
                     <div class="text-center" style="display:flex;" v-if="dialogwidth === '50%'"><v-img
@@ -583,13 +577,7 @@
                               (วันที่ {{ billingCurrentPriceDateFomatShow }} )
                             </h6>
                             <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
-                              จำนวนเงิน : {{ formatNumber(paymentAmount) }} บาท
-                            </h6>
-                            <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
-                              จำนวน Vat : {{ formatNumber(paymentAmountVat) }} บาท
-                            </h6>
-                            <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
-                              จำนวนเงินรวม : {{ formatNumber(parseFloat(paymentAmount) + parseFloat(paymentAmountVat)) }} บาท
+                              จำนวนเงินรวม : {{ formatNumber(paymentAmount) }} บาท
                             </h6>
                             <div class="pl-4 pr-4"><v-divider></v-divider></div>
                             <div class="text-center" style="display:flex;"><v-img
@@ -801,8 +789,7 @@ export default {
       billingTrialsPriceDateFomat: '',
       billingCurrentPriceDateFomat: '',
       billingTrialsPriceDateFomatShow: '',
-      billingCurrentPriceDateFomatShow: '',
-      paymentAmountVat: 0
+      billingCurrentPriceDateFomatShow: ''
     }
   },
   mounted () {
@@ -923,7 +910,6 @@ export default {
       let trialCheck = this.$session.getAll().data.trialsVersionDate || ''
       this.trialsPrice = 0
       this.currentPrice = 0
-      this.paymentAmountVat = 0
       this.billingTrialsPriceDateFomat = ''
       this.billingCurrentPriceDateFomat = ''
       this.billingTrialsPriceDateFomatShow = ''
@@ -963,16 +949,10 @@ export default {
                 if (parseInt(moment().format('DD')) >= 1 && parseInt(moment().format('DD')) <= 7) {
                   this.pricePackage = item.pricePackage || 0
                   this.paymentAmount = item.pricePackage
-                  const amount = parseFloat(this.paymentAmount)
-                  let amount7percen = (amount * 0.07)
-                  this.paymentAmountVat = amount7percen.toFixed(2)
                 } else {
                   console.log('2')
                   this.pricePackage = item.pricePackage || 0
                   this.paymentAmount = item.pricePackage
-                  const amount = parseFloat(this.paymentAmount)
-                  let amount7percen = (amount * 0.07)
-                  this.paymentAmountVat = amount7percen.toFixed(2)
                   // let dateCalDay = parseInt(lastDayOfMonth) - parseInt(moment().format('DD'))
                   // this.pricePackage = item.pricePackage
                   // this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth))
@@ -989,9 +969,6 @@ export default {
                     if (parseInt(dateTrialsDay) === parseInt(moment().format('DD'))) {
                       this.pricePackage = item.pricePackage || 0
                       this.paymentAmount = item.pricePackage
-                      const amount = parseFloat(this.paymentAmount)
-                      let amount7percen = (amount * 0.07)
-                      this.paymentAmountVat = amount7percen.toFixed(2)
                     } else {
                       let dateCalDay = parseInt(lastDayOfMonth) - parseInt(dateTrialsDay)
                       this.pricePackage = item.pricePackage
@@ -1002,9 +979,6 @@ export default {
                       this.billingCurrentPriceDateFomat = ''
                       this.billingTrialsPriceDateFomatShow = moment().format('DD/MM/YYYY')
                       this.billingCurrentPriceDateFomatShow = ''
-                      const amount = parseFloat(this.paymentAmount)
-                      let amount7percen = (amount * 0.07)
-                      this.paymentAmountVat = amount7percen.toFixed(2)
                     }
                   } else {
                     console.log('2')
@@ -1017,11 +991,6 @@ export default {
                     this.billingCurrentPriceDateFomat = ''
                     this.billingTrialsPriceDateFomatShow = moment().format('DD/MM/YYYY')
                     this.billingCurrentPriceDateFomatShow = ''
-                    console.log(this.paymentAmount)
-                    console.log(parseFloat(this.paymentAmount) * 0.07)
-                    const amount = parseFloat(this.paymentAmount) * 0.07
-                    // let amount7percen = Math.ceil(amount * 0.07)
-                    this.paymentAmountVat = amount.toFixed(2)
                   }
                 } else {
                   console.log('3')
@@ -1035,9 +1004,6 @@ export default {
                   this.billingCurrentPriceDateFomat = moment().format('YYYY-MM-DD')
                   this.billingTrialsPriceDateFomatShow = dateTrialsDay + '/' + dateTrialsMonth + '/' + dateTrialsYear
                   this.billingCurrentPriceDateFomatShow = moment().format('DD/MM/YYYY')
-                  const amount = parseFloat(this.paymentAmount)
-                  let amount7percen = (amount * 0.07)
-                  this.paymentAmountVat = amount7percen.toFixed(2)
                 }
               }
             } else {
@@ -1045,16 +1011,10 @@ export default {
                 if (parseInt(moment().format('DD')) >= 1 && parseInt(moment().format('DD')) <= 7) {
                   this.pricePackage = item.pricePackage || 0
                   this.paymentAmount = item.pricePackage
-                  const amount = parseFloat(this.paymentAmount)
-                  let amount7percen = (amount * 0.07)
-                  this.paymentAmountVat = amount7percen.toFixed(2)
                 } else {
                   console.log('2')
                   this.pricePackage = item.pricePackage || 0
                   this.paymentAmount = item.pricePackage
-                  const amount = parseFloat(this.paymentAmount)
-                  let amount7percen = (amount * 0.07)
-                  this.paymentAmountVat = amount7percen.toFixed(2)
                   // let dateCalDay = parseInt(lastDayOfMonth) - parseInt(moment().format('DD'))
                   // this.pricePackage = item.pricePackage
                   // this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth))
@@ -1068,9 +1028,6 @@ export default {
               } else {
                 this.pricePackage = item.pricePackage || 0
                 this.paymentAmount = item.pricePackage
-                const amount = parseFloat(this.paymentAmount)
-                let amount7percen = (amount * 0.07)
-                this.paymentAmountVat = amount7percen.toFixed(2)
                 // if (parseInt(moment().format('DD')) >= 1 && parseInt(moment().format('DD')) <= 7) {
                 //   this.pricePackage = item.pricePackage || 0
                 //   this.paymentAmount = item.pricePackage
@@ -1109,11 +1066,8 @@ export default {
         // const promptpayID = '1529900508673'
         const promptpayID = '0125563009946'
         // const IDCardNumber = '0-0000-00000-00-0'
-        const amount = (parseFloat(this.paymentAmount) * 0.07) + parseFloat(this.paymentAmount)
-        // let amount7percen = (amount * 0.07) + amount
-        console.log('amount7percen', amount)
+        const amount = parseFloat(this.paymentAmount)
         this.value = generatePayload(promptpayID, { amount })
-        console.log('value', this.value)
         this.dialogQrcode = true
         // }
         // }
@@ -1231,19 +1185,11 @@ export default {
       this.currentPrice = item.billingCurrentPrice
       this.billingTrialsPriceDateFomat = item.billingTrialsPriceDateFomat
       this.billingCurrentPriceDateFomat = item.billingCurrentPriceDateFomat
-      if (this.paymentAmount === 0) {
-        this.paymentAmount = item.paymentAmount
-      }
-      const amounts = parseFloat(this.paymentAmount)
-      let amount7percens = (amounts * 0.07)
-      this.paymentAmountVat = amount7percens
-
       const generatePayload = require('promptpay-qr')
       // const promptpayID = '1529900508673'
       const promptpayID = '0125563009946'
       // const IDCardNumber = '0-0000-00000-00-0'
-      // const amount = parseFloat(item.paymentAmount)
-      const amount = (parseFloat(this.paymentAmount) * 0.07) + parseFloat(this.paymentAmount)
+      const amount = parseFloat(item.paymentAmount)
       this.value = generatePayload(promptpayID, { amount })
       await axios
         .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.$session.getAll().data.shopId)
