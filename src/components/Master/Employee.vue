@@ -782,7 +782,7 @@
                                     class="mb-2"
                                     color="teal"
                                     dark
-                                    @click="presetTime()"
+                                    @click="presetTimebyday()"
                                   >
                                   <v-icon class="mr-2" small dark> mdi-clock-time-eight</v-icon>เพิ่มเวลาอัตโนมัติ
                                   </v-btn>
