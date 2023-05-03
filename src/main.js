@@ -19,6 +19,13 @@ import { Integrations } from '@sentry/tracing'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import VueCustomTooltip from '@adamdehaven/vue-custom-tooltip'
 import VueClipboard from 'vue-clipboard2'
+import GAuth from 'vue-google-oauth2'
+const gauthOption = {
+  clientId: '98104331104-1vtghokkaevmou3r1qiajsuc4kmi0f29.apps.googleusercontent.com',
+  scope: 'profile email openid https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events'
+  // prompt: 'select_account'
+}
+Vue.use(GAuth, gauthOption)
 
 Vue.use(VueClipboard)
 
