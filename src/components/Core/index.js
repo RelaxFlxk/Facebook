@@ -6,6 +6,7 @@ import BillingPlan from './BillingPlan'
 import LoginAdmin from './LoginAdmin'
 import InstallWizard from './InstallWizard'
 import QrcodeBoot from './QrcodeBoot'
+import GoogleCalendar from './GoogleCalendar'
 
 export default {
   Login,
@@ -15,5 +16,6 @@ export default {
   BillingPlan,
   LoginAdmin,
   InstallWizard,
-  QrcodeBoot
+  QrcodeBoot,
+  GoogleCalendar
 }

@@ -62,6 +62,11 @@ export default new Router({
     component: Core.InstallWizard
   },
   {
+    path: '/GoogleCalendar',
+    name: 'GoogleCalendar',
+    component: Core.GoogleCalendar
+  },
+  {
     path: '/Master/CustomField',
     name: 'CustomField',
     component: Master.CustomField
