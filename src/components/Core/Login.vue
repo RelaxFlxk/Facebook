@@ -56,7 +56,7 @@
                     ></v-text-field>
                   </v-col>
                 </v-row>
-                <v-row justify="center" no-gutters style="height: 70px">
+                <!-- <v-row justify="center" no-gutters style="height: 70px">
                   <v-col cols="10" style="display: flex; justify-content: center">
                     <vue-recaptcha
                       ref="recaptcha"
@@ -65,7 +65,7 @@
                       sitekey="6Lef5A8hAAAAAIffpLLp_mpt_UFbcuq6l_mXbh8e"
                     ></vue-recaptcha>
                   </v-col>
-                </v-row>
+                </v-row> -->
                 <v-row
                   v-if="recapStatus"
                   justify="center"
@@ -258,13 +258,13 @@ import waitingAlert from '../waitingAlert.vue'
 import axios from 'axios'
 import VuetifyLogo from '../logo'
 import NavbarRegister from './NavbarRegister'
-import VueRecaptcha from 'vue-recaptcha'
+// import VueRecaptcha from 'vue-recaptcha'
 export default {
   components: {
     waitingAlert,
     VuetifyLogo,
-    NavbarRegister,
-    'vue-recaptcha': VueRecaptcha
+    NavbarRegister
+    // 'vue-recaptcha': VueRecaptcha
   },
   name: 'Login',
   computed: {
@@ -603,77 +603,77 @@ export default {
         this.dataReady = false
         this.form.type = 'username'
         console.log(JSON.stringify(this.form))
-        if (this.recapchaToken !== '') {
-          await axios
-            .get(
+        // if (this.recapchaToken !== '') {
+        await axios
+          .get(
             // eslint-disable-next-line quotes
-              this.DNS_IP +
+            this.DNS_IP +
               '/system_user/auth?userName=' +
               this.form.userName +
               '&userPassword=' +
               this.form.userPassword
-            )
-            .then(async (response) => {
-              if (response.data.status !== false) {
-                console.log('response.data[0]', response.data[0])
-                if (response.data[0]) {
-                  if (response.data[0].shopActive === 'active') {
-                    this.$session.start()
-                    this.$session.set('data', response.data[0])
-                    localStorage.clear()
-                    // เช็คว่ามาจาก boot หรือป่าว
-                    if (response.data[0].sourceLink === 'boot') {
-                      if (response.data[0].timeSlotStatus === 'False') {
-                        let dt = {
-                          shopId: this.$session.getAll().data.shopId,
-                          timeSlotStatus: 'True',
-                          storeFrontCheck: 'False',
-                          LAST_USER: this.$session.getAll().data.userName,
-                          type: 'boot'
-                        }
-                        await axios
-                          .post(
-                            this.DNS_IP + '/flow/editTimeSlotStatusByshopId',
-                            dt
-                          )
-                          .then(() => {
-                            response.data[0]['timeSlotStatus'] = 'True'
-                            this.$session.start()
-                            this.$session.set('data', response.data[0])
-                          })
+          )
+          .then(async (response) => {
+            if (response.data.status !== false) {
+              console.log('response.data[0]', response.data[0])
+              if (response.data[0]) {
+                if (response.data[0].shopActive === 'active') {
+                  this.$session.start()
+                  this.$session.set('data', response.data[0])
+                  localStorage.clear()
+                  // เช็คว่ามาจาก boot หรือป่าว
+                  if (response.data[0].sourceLink === 'boot') {
+                    if (response.data[0].timeSlotStatus === 'False') {
+                      let dt = {
+                        shopId: this.$session.getAll().data.shopId,
+                        timeSlotStatus: 'True',
+                        storeFrontCheck: 'False',
+                        LAST_USER: this.$session.getAll().data.userName,
+                        type: 'boot'
                       }
-                      //
-                      if (response.data[0].statusFollowOA === 'False') {
-                        this.$router.push('/Core/QrcodeBoot')
-                      } else if (response.data[0].statusFinishWizard === 'False') {
-                        this.$router.push('/InstallWizard')
-                      } else {
-                        this.checkbookNo(response.data[0])
-                      }
+                      await axios
+                        .post(
+                          this.DNS_IP + '/flow/editTimeSlotStatusByshopId',
+                          dt
+                        )
+                        .then(() => {
+                          response.data[0]['timeSlotStatus'] = 'True'
+                          this.$session.start()
+                          this.$session.set('data', response.data[0])
+                        })
+                    }
+                    //
+                    if (response.data[0].statusFollowOA === 'False') {
+                      this.$router.push('/Core/QrcodeBoot')
+                    } else if (response.data[0].statusFinishWizard === 'False') {
+                      this.$router.push('/InstallWizard')
                     } else {
                       this.checkbookNo(response.data[0])
                     }
                   } else {
-                    this.dataBilling = response.data[0]
-                    this.dataReady = true
-                    this.dialogPaymentUpload = true
+                    this.checkbookNo(response.data[0])
                   }
                 } else {
+                  this.dataBilling = response.data[0]
                   this.dataReady = true
-                  this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง1', 'error')
+                  this.dialogPaymentUpload = true
                 }
+              } else {
+                this.dataReady = true
+                this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง1', 'error')
               }
-            })
+            }
+          })
           // eslint-disable-next-line handle-callback-err
-            .catch((error) => {
-              this.dataReady = true
-              console.log(error)
-              this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง2', 'error')
-            })
-        } else {
-          this.recapStatus = true
-          this.dataReady = true
-        }
+          .catch((error) => {
+            this.dataReady = true
+            console.log(error)
+            this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง2', 'error')
+          })
+        // } else {
+        //   this.recapStatus = true
+        //   this.dataReady = true
+        // }
       }
     },
     async onSubmitForgot () {
