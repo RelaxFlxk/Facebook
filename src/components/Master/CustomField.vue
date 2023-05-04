@@ -35,14 +35,14 @@
           </v-card>
         </v-dialog>
           <!-- ADD -->
-          <v-dialog v-model="dialogAdd" persistent max-width="80%" max-height="100%">
-            <v-card>
+          <v-dialog v-model="dialogAdd" persistent max-width="600px"  max-height="100%">
+            <v-card class="pa-3">
               <v-form ref="form_add" v-model="validAdd" lazy-validation>
               <v-card-text>
                 <v-container>
                   <v-row justify="center">
                     <!-- ซ้าย -->
-                    <v-col cols="6" class="text-center">
+                    <!-- <v-col cols="6" class="text-center">
                       <center>
                       <v-col class="mt-16">
                       <v-img id="img_add" :src="require('@/assets/customImgAdd.png')"></v-img>
@@ -78,24 +78,26 @@
                       </template>
                       </v-data-table>
                     </v-card-text>
-                    </v-col>
+                    </v-col> -->
                     <!-- ขวา -->
-                      <v-col cols="6" class="v-margit_text_add mt-1">
+                      <v-col cols="12" class=" mt-1">
                         <v-col class="text-right">
                     <v-icon color="#173053" @click="(dialogAdd = false), clearData(), checkbox ='false'">mdi-close</v-icon>
                   </v-col>
                     <v-col class="text-center">
-                      <v-img class="v_text_add" :src="require('@/assets/Grouptitle.svg')"></v-img>
+                      <!-- <v-img class="v_text_add" :src="require('@/assets/Grouptitle.svg')"></v-img> -->
+                      <h3 class="font-weight-black">เพิ่มข้อมูล</h3>
                       </v-col>
-                    <v-col cols="12">
-                      <v-row style="height: 35px">
+                    <v-col cols="12" class="mb-3">
+                      <!-- <v-row style="height: 35px">
                       <v-subheader >ชื่อช่องกรอกข้อมูล</v-subheader>
-                      </v-row>
+                      </v-row> -->
                       <v-row style="height: 50px">
                       <v-text-field
                         v-model="formAdd.fieldName"
-                        placeholder="ชื่อช่องกรอกข้อมูล"
+                        label="ชื่อช่องกรอกข้อมูล"
                         dense
+                        outlined
                         required
                         :rules="[
                           rules.required
@@ -103,14 +105,15 @@
                       ></v-text-field>
                       </v-row>
                     </v-col>
-                    <v-col cols="12">
-                      <v-row style="height: 35px">
+                    <v-col cols="12" class="mb-3">
+                      <!-- <v-row style="height: 35px">
                       <v-subheader >ชื่อช่องกรอกข้อมูล ภาษาอังกฤษ</v-subheader>
-                      </v-row>
+                      </v-row> -->
                       <v-row style="height: 50px">
                       <v-text-field
                         v-model="formAdd.fieldNameEn"
-                        placeholder="ชื่อช่องกรอกข้อมูล ภาษาอังกฤษ"
+                        label="ชื่อช่องกรอกข้อมูล ภาษาอังกฤษ"
+                        outlined
                         dense
                         required
                         :rules="[
@@ -119,10 +122,10 @@
                       ></v-text-field>
                       </v-row>
                     </v-col>
-                    <v-col cols="12">
-                      <v-row style="height: 35px">
+                    <v-col cols="12" class="mb-3">
+                      <!-- <v-row style="height: 35px">
                       <v-subheader >ประเภทช่องกรอกข้อมูล</v-subheader>
-                      </v-row>
+                      </v-row> -->
 
                       <v-row style="height: 50px">
                         <v-select
@@ -130,6 +133,8 @@
                         @change="chkAddoptionFieldType()"
                         :items="selectTypeField"
                         dense
+                        outlined
+                        label="ประเภทช่องกรอกข้อมูล"
                         value = 'text'
                         :rules="[rules.required]"
                         attach
@@ -137,33 +142,37 @@
                         ></v-select>
                       </v-row>
 
-                      <v-row style="height: 35px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
+                      <!-- <v-row style="height: 35px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
                       <v-subheader >ประเภทของตัวเลือกข้อมูล</v-subheader>
-                      </v-row>
+                      </v-row> -->
                       <v-row style="height: 50px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
                         <v-select
+                        class="mt-3"
+                        outlined
+                        label="ประเภทของตัวเลือกข้อมูล"
                         v-model="formAdd.optionFieldType"
                         :items="selectOptionField"
                         small-chips
                         dense
                         :rules="[rules.required]"
                         attach
-            :menu-props="{ bottom: true, offsetY: true }"
+                        :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-row>
                     </v-col>
 
                     <v-form ref="form_addOption" v-model="validAddOption" lazy-validation>
-                    <v-row>
-                    <v-col cols="4">
-                      <v-row style="height: 35px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
+                    <v-row class="mt-3 px-3">
+                    <v-col class="ma-1">
+                      <!-- <v-row style="height: 35px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
                       <v-subheader  >ไทย:</v-subheader >
-                      </v-row>
-                      <v-row style="height: 50px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
+                      </v-row> -->
+                      <v-row  v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
                       <v-text-field
                         v-model="formAddOption.optionText"
-                        placeholder="Text"
+                        label="ไทย"
                         dense
+                        outlined
                         required
                         :rules="[
                           rules.required
@@ -171,14 +180,15 @@
                       ></v-text-field>
                       </v-row>
                     </v-col>
-                     <v-col cols="4">
-                      <v-row style="height: 35px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
+                     <v-col class="ma-1">
+                      <!-- <v-row style="height: 35px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
                       <v-subheader  >อังกฤษ:</v-subheader >
-                      </v-row>
-                      <v-row style="height: 50px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
+                      </v-row> -->
+                      <v-row  v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
                       <v-text-field
                         v-model="formAddOption.optionTextEng"
-                        placeholder="TextEng"
+                        label="อังกฤษ"
+                        outlined
                         dense
                         required
                         :rules="[
@@ -187,15 +197,16 @@
                       ></v-text-field>
                       </v-row>
                     </v-col>
-                     <v-col cols="4">
-                      <v-row style="height: 35px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
+                     <v-col class="ma-1">
+                      <!-- <v-row style="height: 35px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
                       <v-subheader >Value:</v-subheader>
-                      </v-row>
-                      <v-row style="height: 50px" v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
+                      </v-row> -->
+                      <v-row  v-if="formAdd.fieldType === 'optionField' && formAdd.fieldType !== ''">
                       <v-text-field
                         v-model="formAddOption.optionValue"
-                        placeholder="Value"
+                        label="value"
                         dense
+                        outlined
                         required
                         :rules="[rules.required]"
                       ></v-text-field>
@@ -204,11 +215,9 @@
                     </v-row>
                      </v-form>
                     <br>
-
-                      <v-row justify="center" v-if="formAddOption.optionText && formAddOption.optionValue && formAddOption.optionTextEng">
+                      <v-row class="mb-3" justify="center" v-if="formAddOption.optionText && formAddOption.optionValue && formAddOption.optionTextEng">
                       <v-btn v-if="checkDataEdit"
                         elevation="2"
-                        x-large
                         dark
                         color="#173053"
                         :disabled="!validAddOption"
@@ -219,7 +228,6 @@
                       </v-btn>
                       <v-btn v-if="!checkDataEdit"
                         elevation="2"
-                        x-large
                         dark
                         color="#173053"
                         :disabled="!validAddOption"
@@ -229,22 +237,51 @@
                         แก้ไข
                       </v-btn>
                       </v-row>
-
-                      <!-- checkbox -->
-                     <v-container
-                        class="px-0"
-                        fluid
+                      <v-card-text class="mt-3" v-if="formAdd.fieldType === 'optionField'">
+                          <v-data-table
+                            class="elevation-1 custom_table_class"
+                            dense
+                            :headers="columnsOption"
+                            :items="dataItemOption"
+                            hide-default-footer
                       >
+                      <template v-slot:[`item.actions`]="{ item }">
+                        <v-icon
+                        color="#E91E63"
+                          small
+                          class="mr-2"
+                          @click="editItemAdd(item)"
+                        >
+                          mdi-pencil
+                        </v-icon>
+                        <v-icon
+                        color="#E91E63"
+                          small
+                          @click="deleteItemAdd(item)"
+                        >
+                          mdi-delete
+                        </v-icon>
+                      </template>
+                      </v-data-table>
+                    </v-card-text>
+                      <!-- checkbox -->
+                     <div style="display: flex;justify-content: flex-start;flex-wrap: wrap;">
                       <v-checkbox
+                          class="mr-3"
                           v-if="formAdd.fieldType !== 'Arguments'"
                           v-model="formAdd.requiredField"
+                          :on-icon="'mdi-check-circle'"
+                          :off-icon="'mdi-checkbox-blank-circle-outline'"
                           false-value="False"
                           true-value="True"
                           label="บังคับกรอก"
                         ></v-checkbox>
                       <v-checkbox
                           v-else
+                          class="mr-3"
                           v-model="formAdd.requiredField"
+                          :on-icon="'mdi-check-circle'"
+                          :off-icon="'mdi-checkbox-blank-circle-outline'"
                           false-value="False"
                           true-value="True"
                           value="True"
@@ -252,19 +289,23 @@
                           label="บังคับกรอก"
                         ></v-checkbox>
                       <v-checkbox
+                      class="mr-3"
+                          :on-icon="'mdi-check-circle'"
+                          :off-icon="'mdi-checkbox-blank-circle-outline'"
                           label="เงื่อนไข ช่องกรอกข้อมูล"
                           false-value="false"
                           true-value="true"
                           v-model="checkbox"
                         ></v-checkbox>
-                      </v-container>
+                      </div>
                       <!-- checkbox -->
 
-                      <v-row style="height: 35px" v-if="checkbox === 'true'">
+                      <!-- <v-row style="height: 35px" v-if="checkbox === 'true'">
                       <v-subheader >ช่องกรอกข้อมูล</v-subheader>
-                      </v-row>
+                      </v-row> -->
                       <v-row style="height: 50px" v-if="checkbox === 'true'">
                         <v-select
+                        class="mt-3 px-3"
                         v-model="formAdd.conditionField"
                         :items="selectConditionField"
                         dense
@@ -274,20 +315,25 @@
                         @change="formAdd.conditionValue = ''"
                         :rules="[rules.required]"
                         attach
-            :menu-props="{ bottom: true, offsetY: true }"
+                        outlined
+                        label="ช่องกรอกข้อมูล"
+                        :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-row>
                       <!-- END -->
-                      <v-row style="height: 35px" v-if="checkbox === 'true' && formAdd.conditionField">
+                      <!-- <v-row style="height: 35px" v-if="checkbox === 'true' && formAdd.conditionField">
                       <v-subheader >Value:</v-subheader>
-                      </v-row>
+                      </v-row> -->
                       <v-row style="height: 50px" v-if="checkbox === 'true' && formAdd.conditionField &&
                       (formAdd.conditionField.fieldType === 'Selects' || formAdd.conditionField.fieldType === 'Radio' || formAdd.conditionField.fieldType === 'Autocompletes' || formAdd.conditionField.fieldType === 'flow')">
                       <v-select
+                      class="mt-3 px-3"
+                      label="value"
                         v-model="formAdd.conditionValue"
                         :items="JSON.parse(formAdd.conditionField.optionField)"
                         dense
                         required
+                        outlined
                         :rules="[rules.required]"
                         attach
             :menu-props="{ bottom: true, offsetY: true }"
@@ -296,9 +342,11 @@
                       <v-row style="height: 50px" v-if="checkbox === 'true' && formAdd.conditionField &&
                       (formAdd.conditionField.fieldType === 'number' || formAdd.conditionField.fieldType === 'text' || formAdd.conditionField.fieldType === 'dateTime')">
                         <v-text-field
+                        class="mt-3 px-3"
                           v-model="formAdd.conditionValue"
-                          placeholder="Value"
+                          label="value"
                           dense
+                          outlined
                           required
                           :rules="[rules.required]"
                         ></v-text-field>
@@ -310,14 +358,13 @@
                       <div class="text-center">
                       <v-btn
                         elevation="2"
-                        x-large
                         dark
                         color="#173053"
                         :disabled="!validAdd"
                         @click="addData()"
                       >
                         <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                        เพิ่มข้อมูล
+                        บันทึกข้อมูล
                       </v-btn>
                       </div>
                       </v-col>
@@ -331,8 +378,8 @@
           <!-- end add -->
 
           <!-- edit -->
-          <v-dialog v-model="dialogEdit" persistent max-width="80%" max-height="100%">
-            <v-card>
+          <v-dialog v-model="dialogEdit" persistent max-width="600px"  max-height="100%">
+            <v-card class="pa-3">
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
               <v-card-text>
                 <v-container>
@@ -340,7 +387,7 @@
                     <v-icon color="#173053" @click="(dialogEdit = false),checkbox ='false', clearDataFormUpDate()">mdi-close</v-icon>
                   </v-col>
                   <v-row justify="center">
-                    <v-col cols="6" class="text-center">
+                    <!-- <v-col cols="6" class="text-center">
                       <center>
                       <v-col class="mt-16">
                       <v-img :src="require('@/assets/imgEditCustom.svg')"></v-img>
@@ -373,21 +420,23 @@
                         </template>
                       </v-data-table>
                     </v-card-text>
-                    </v-col>
+                    </v-col> -->
 
-                      <v-col cols="6" class="v-margit_text_add mt-1">
-                    <v-col>
-                      <v-img id="v_textEdit" :src="require('@/assets/GroupEditTitle.svg')"></v-img>
+                    <v-col cols="12" class="v-margit_text_add mt-1">
+                      <v-col class="text-center">
+                      <!-- <v-img id="v_textEdit" :src="require('@/assets/GroupEditTitle.svg')"></v-img> -->
+                      <h3 class="font-weight-black">แก้ไขข้อมูล</h3>
                       </v-col>
-                    <v-col cols="12">
-                      <v-row style="height: 35px">
+                    <v-col cols="12" class="mb-3">
+                      <!-- <v-row style="height: 35px">
                       <v-subheader >ชื่อช่องกรอกข้อมูล</v-subheader>
-                      </v-row>
+                      </v-row> -->
                       <v-row style="height: 50px">
                       <v-text-field
                         v-model="formUpdate.fieldName"
-                        placeholder="ชื่อช่องกรอกข้อมูล"
+                        label="ชื่อช่องกรอกข้อมูล"
                         dense
+                        outlined
                         required
                         :rules="[
                           rules.required
@@ -395,14 +444,15 @@
                       ></v-text-field>
                       </v-row>
                     </v-col>
-                    <v-col cols="12">
-                      <v-row style="height: 35px">
+                    <v-col cols="12" class="mb-3">
+                      <!-- <v-row style="height: 35px">
                       <v-subheader >ชื่อช่องกรอกข้อมูล ภาษาอังกฤษ</v-subheader>
-                      </v-row>
+                      </v-row> -->
                       <v-row style="height: 50px">
                       <v-text-field
                         v-model="formUpdate.fieldNameEn"
-                        placeholder="ชื่อช่องกรอกข้อมูล ภาษาอังกฤษ"
+                        label="ชื่อช่องกรอกข้อมูล ภาษาอังกฤษ"
+                        outlined
                         dense
                         required
                         :rules="[
@@ -411,28 +461,32 @@
                       ></v-text-field>
                       </v-row>
                     </v-col>
-                    <v-col cols="12">
-                      <v-row style="height: 35px">
+                    <v-col cols="12" class="mb-3">
+                      <!-- <v-row style="height: 35px">
                       <v-subheader >ประเภทช่องกรอกข้อมูล</v-subheader>
-                      </v-row>
+                      </v-row> -->
 
-                      <v-row style="height: 50px">
+                      <v-row style="height: 50px" class="mb-2">
                         <v-select
+                        outlined
+                        label="ประเภทช่องกรอกข้อมูล"
                         v-model="formUpdate.fieldType"
                         :items="selectTypeField"
                         @change="chkUpdateoptionFieldType()"
                         dense
                         :rules="[rules.required]"
                         attach
-            :menu-props="{ bottom: true, offsetY: true }"
+                        :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-row>
 
-                      <v-row style="height: 35px" v-if="formUpdate.fieldType === 'optionField'">
+                      <!-- <v-row style="height: 35px" v-if="formUpdate.fieldType === 'optionField'">
                       <v-subheader >ประเภทของตัวเลือกข้อมูล</v-subheader>
-                      </v-row>
-                      <v-row style="height: 50px" v-if="formUpdate.fieldType === 'optionField'">
+                      </v-row> -->
+                      <v-row style="height: 50px" v-if="formUpdate.fieldType === 'optionField'" class="mb-2">
                         <v-select
+                        outlined
+                        label="ประเภทของตัวเลือกข้อมูล"
                         v-model="formUpdate.optionFieldType"
                         :items="selectOptionField"
                         @change="chkfieldType()"
@@ -446,15 +500,16 @@
                     </v-col>
 
                     <v-form ref="form_addOption" v-model="validAddOption" lazy-validation>
-                    <v-row>
-                    <v-col cols="4">
-                      <v-row style="height: 35px" v-if="formUpdate.fieldType === 'optionField'">
+                    <v-row class="mt-3 px-3">
+                    <v-col class="ma-1" >
+                      <!-- <v-row style="height: 35px" v-if="formUpdate.fieldType === 'optionField'">
                       <v-subheader  >ไทย:</v-subheader >
-                      </v-row>
+                      </v-row> -->
                       <v-row style="height: 50px" v-if="formUpdate.fieldType === 'optionField'">
                       <v-text-field
+                        outlined
                         v-model="formUpdateOption.optionText"
-                        placeholder="Text"
+                        label="ไทย"
                         dense
                         required
                         :rules="[
@@ -463,14 +518,15 @@
                       ></v-text-field>
                       </v-row>
                     </v-col>
-                    <v-col cols="4">
-                      <v-row style="height: 35px" v-if="formUpdate.fieldType === 'optionField'">
+                    <v-col class="ma-1">
+                      <!-- <v-row style="height: 35px" v-if="formUpdate.fieldType === 'optionField'">
                       <v-subheader  >อังกฤษ:</v-subheader >
-                      </v-row>
+                      </v-row> -->
                       <v-row style="height: 50px" v-if="formUpdate.fieldType === 'optionField'">
                       <v-text-field
                         v-model="formUpdateOption.optionTextEng"
-                        placeholder="TextEng"
+                        outlined
+                        label="อังกฤษ"
                         dense
                         required
                         :rules="[
@@ -479,14 +535,15 @@
                       ></v-text-field>
                       </v-row>
                     </v-col>
-                     <v-col cols="4">
-                      <v-row style="height: 35px" v-if="formUpdate.fieldType === 'optionField'">
+                     <v-col class="ma-1">
+                      <!-- <v-row style="height: 35px" v-if="formUpdate.fieldType === 'optionField'">
                       <v-subheader >Value:</v-subheader>
-                      </v-row>
+                      </v-row> -->
                       <v-row style="height: 50px" v-if="formUpdate.fieldType === 'optionField'">
                       <v-text-field
                         v-model="formUpdateOption.optionValue"
-                        placeholder="Value"
+                        outlined
+                        label="value"
                         dense
                         required
                         :rules="[rules.required]"
@@ -500,7 +557,6 @@
                     <v-row justify="center" v-if="formUpdate.fieldType === 'optionField'">
                       <v-btn v-if="checkDataEdit"
                         elevation="2"
-                        x-large
                         dark
                         color="#173053"
                         :disabled="!validAddOption"
@@ -511,7 +567,6 @@
                       </v-btn>
                       <v-btn v-if="!checkDataEdit"
                         elevation="2"
-                        x-large
                         dark
                         color="#173053"
                         :disabled="!validAddOption"
@@ -521,44 +576,78 @@
                         แก้ไข
                       </v-btn>
                       </v-row>
-
+                      <v-card-text class="mt-5" v-if="formUpdate.fieldType === 'optionField'">
+                      <v-data-table
+                        :headers="columnsOption"
+                        :items="dataItemOption"
+                        class="elevation-1 custom_table_class"
+                      >
+                        <template v-slot:[`item.actions`]="{ item }">
+                          <v-icon
+                          color="#E91E63"
+                            small
+                            class="mr-2"
+                            @click="editItem(item)"
+                          >
+                            mdi-pencil
+                          </v-icon>
+                          <v-icon
+                          color="#E91E63"
+                            small
+                            @click="deleteItem(item)"
+                          >
+                            mdi-delete
+                          </v-icon>
+                        </template>
+                      </v-data-table>
+                    </v-card-text>
                       <!-- checkbox -->
-                     <v-container
-                        class="px-0"
+                     <div style="display: flex;justify-content: flex-start;flex-wrap: wrap;"
                       >
                       <v-checkbox
+                          class="mr-3"
                           v-if="formUpdate.fieldType !== 'Arguments'"
                           label="บังคับกรอก"
                           false-value="False"
                           true-value="True"
+                          :on-icon="'mdi-check-circle'"
+                          :off-icon="'mdi-checkbox-blank-circle-outline'"
                           v-model="formUpdate.requiredField"
                         ></v-checkbox>
                         <v-checkbox
                           v-else
+                          class="mr-3"
                           label="บังคับกรอก"
                           false-value="False"
                           true-value="True"
                           value="True"
+                          :on-icon="'mdi-check-circle'"
+                          :off-icon="'mdi-checkbox-blank-circle-outline'"
                           readonly
                           v-model="formUpdate.requiredField"
                         ></v-checkbox>
                        <v-checkbox
+                       class="mr-3"
                           label="เงื่อนไข ช่องกรอกข้อมูล"
                           false-value="false"
                           true-value="true"
+                          :on-icon="'mdi-check-circle'"
+                          :off-icon="'mdi-checkbox-blank-circle-outline'"
                           v-model="checkbox"
                           @change="chkUpdateCondition()"
                         ></v-checkbox>
-                      </v-container>
+                      </div>
                       <!-- checkbox -->
-                      <v-row style="height: 35px" v-if="checkbox === 'true'">
+                      <!-- <v-row style="height: 35px" v-if="checkbox === 'true'">
                       <v-subheader >ช่องกรอกข้อมูล</v-subheader>
-                      </v-row>
-                      <v-row style="height: 50px" v-if="checkbox === 'true'">
+                      </v-row> -->
+                      <v-row style="height: 50px" v-if="checkbox === 'true'" class="px-3 mt-3">
                         <v-select
                         v-model="formUpdate.conditionField"
                         :items="selectConditionField"
                         dense
+                        outlined
+                        label="ช่องกรอกข้อมูล"
                         item-text="text"
                         item-value="value"
                         return-object
@@ -568,14 +657,48 @@
                         :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-row>
-                      <!-- END -->
-                      <v-row style="height: 35px" v-if="checkbox === 'true' && formUpdate.conditionField && formUpdateConditionField.fieldType !== 'Selects' ">
-                      <v-subheader >Value:</v-subheader>
+                      <v-row style="height: 50px" v-if="formUpdateConditionField.fieldType === 'flow'" class="px-3 mt-3">
+                        <v-select
+                        v-model="branchByflow"
+                        :items="branch"
+                        dense
+                        outlined
+                        label="สาขา"
+                        item-text="text"
+                        item-value="value"
+                        :rules="[rules.required]"
+                        attach
+                        :menu-props="{ bottom: true, offsetY: true }"
+                        ></v-select>
                       </v-row>
-                      <v-row style="height: 50px" v-if="checkbox === 'true' && formUpdate.conditionField &&
+                      <!-- END -->
+                      <!-- <v-row style="height: 35px" v-if="checkbox === 'true' && formUpdate.conditionField && formUpdateConditionField.fieldType !== 'Selects' ">
+                      <v-subheader >Value:</v-subheader>
+                      </v-row> -->
+                      <div  class="px-3 mt-3" v-if="formUpdateConditionField.fieldType === 'flow'">
+                        <v-row style="height: 50px" v-if="checkbox === 'true' && formUpdate.conditionField &&
+                      (formUpdateConditionField.fieldType === 'Selects' || formUpdateConditionField.fieldType === 'Radio' || formUpdateConditionField.fieldType === 'Autocompletes' || formUpdateConditionField.fieldType === 'flow')">
+                      <v-select
+                        v-if="branchByflow !== ''"
+                        v-model="formUpdate.conditionValue"
+                        outlined
+                        label="value"
+                        :items="JSON.parse(formUpdateConditionField.optionField).filter((ii) => branchByflow === 'All' ? true : ii.masBranchID === branchByflow )"
+                        dense
+                        required
+                        :rules="[rules.required]"
+                        attach
+                        :menu-props="{ bottom: true, offsetY: true }"
+                        ></v-select>
+                      </v-row>
+                      </div>
+                      <div class="px-3 mt-3" v-else>
+                        <v-row style="height: 50px" v-if="checkbox === 'true' && formUpdate.conditionField &&
                       (formUpdateConditionField.fieldType === 'Selects' || formUpdateConditionField.fieldType === 'Radio' || formUpdateConditionField.fieldType === 'Autocompletes' || formUpdateConditionField.fieldType === 'flow')">
                       <v-select
                         v-model="formUpdate.conditionValue"
+                        outlined
+                        label="value"
                         :items="JSON.parse(formUpdateConditionField.optionField)"
                         dense
                         required
@@ -584,16 +707,18 @@
                         :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-row>
-                      <v-row style="height: 50px" v-if="checkbox === 'true' && formUpdateConditionField &&
+                      <v-row class="px-3" style="height: 50px" v-if="checkbox === 'true' && formUpdateConditionField &&
                       (formUpdateConditionField.fieldType === 'number' || formUpdateConditionField.fieldType === 'text' || formUpdateConditionField.fieldType === 'dateTime')">
                         <v-text-field
                           v-model="formUpdate.conditionValue"
-                          placeholder="Value"
+                          label="value"
+                          outlined
                           dense
                           required
                           :rules="[rules.required]"
                         ></v-text-field>
                       </v-row>
+                      </div>
                       <!-- <v-row style="height: 35px" v-if="checkbox == 'true'">
                       <v-subheader >Field</v-subheader>
                       </v-row>
@@ -618,17 +743,16 @@
                     </v-col>
                       <!-- END Radio buttun -->
                       <v-col>
-                      <v-row justify="center">
+                      <v-row justify="center" class="mt-3">
                       <v-btn
                          dark
                         elevation="2"
-                        x-large
                         color="#173053"
                         :disabled="!validUpdate"
                          @click="editData()"
                       >
                         <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                        แก้ไข
+                        บันทึก
                       </v-btn>
                       </v-row>
                       </v-col>
@@ -1052,7 +1176,10 @@ export default {
       filesUpdate: null,
       dialogNewAccess: false,
       checkDataEdit: true,
-      checkConditionField: true
+      checkConditionField: true,
+      branch: [],
+      branchByflow: '',
+      branchByflowAdd: ''
       // End Data Table Config
     }
   },
@@ -1070,6 +1197,7 @@ export default {
     // Get Data
     // this.getOption()
     await this.getDataFlow()
+    await this.getDataBranch()
     await this.getCondition()
     this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
   },
@@ -1367,6 +1495,19 @@ export default {
           break
       }
     },
+    async autobranch (item) {
+      if (item !== '') {
+        let checkBranchByFlow = this.DataFlowName.filter((ii) => ii.flowId.toString() === item)[0].masBranchID
+        console.log('checkBranchByFlow', checkBranchByFlow)
+        if (checkBranchByFlow !== null && checkBranchByFlow !== 'All') {
+          this.branchByflow = this.DataFlowName.filter((ii) => ii.flowId.toString() === item)[0].masBranchID
+          console.log('IF', this.DataFlowName.filter((ii) => ii.flowId.toString() === item)[0].masBranchID)
+        } else {
+          console.log('Else')
+          this.branchByflow = 'All'
+        }
+      }
+    },
     async getDataById (item) {
       console.log('conditionField', item.conditionField)
       console.log('item', item)
@@ -1382,9 +1523,13 @@ export default {
           var value1 = this.selectConditionField.filter((row) => {
             return row.value === 'flow'
           })[0]
+          // console.log('vauler', this.DataFlowName.filter((ii) => ii.flowId.toString() === item.conditionValue)[0].masBranchID)
+          await this.autobranch(item.conditionValue)
+          console.log('1')
           this.formUpdateConditionField = value1
           this.formUpdate.conditionField = value1.value
           this.formUpdate.conditionValue = item.conditionValue
+          console.log('2')
         } else {
           var value2 = this.selectConditionField.filter((row) => {
             return row.value === parseInt(item.conditionField)
@@ -1444,12 +1589,41 @@ export default {
       this.dataItemOption.push({'text': item.optionText, 'textEng': item.optionTextEng, 'value': item.optionValue})
       this.clearDataOption()
     },
+    async selectBranch () {
+
+    },
+    async getDataBranch () {
+      this.branch = []
+      await axios
+        .get(this.DNS_IP + '/master_branch/get?shopId=' + this.shopId)
+        .then(response => {
+          let rs = response.data
+          console.log('rs', rs)
+          if (rs.length > 0) {
+            let All = {}
+            All.text = 'ทั้งหมด'
+            All.value = 'All'
+            this.branch.push(All)
+            for (var i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              let s = {}
+              s.text = d.masBranchName
+              s.value = d.masBranchID.toString()
+              this.branch.push(s)
+              // console.log('dtdtdtdt', this.branch)
+            }
+          }
+        })
+      console.log('branch', this.branch)
+    },
     getCondition () {
       this.selectConditionField = []
       axios.get(this.DNS_IP + '/customField/get?shopId=' + this.shopId).then((response) => {
         let rs = response.data
         if (rs.length > 0) {
           console.log('getCondition', rs)
+          console.log('this.DataFlowName', this.DataFlowName)
+
           this.selectConditionField.push({text: 'ประเภทบริการ', value: 'flow', fieldType: 'flow', optionField: JSON.stringify(this.DataFlowName)})
           for (var i = 0; i < rs.length; i++) {
             var d = rs[i]
