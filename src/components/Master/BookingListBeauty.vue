@@ -9189,13 +9189,13 @@ export default {
           LimitBooking.forEach((item) => {
             let setTime = []
             // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
-            if (this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.setTimebyday === 'True') {
-              let timeJson = JSON.parse(this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.setTime).filter((items) => items.value === new Date(this.date).getDay())
+            if (this.DataFlowNameDefault.filter(item => { return item.value === this.formAdd.flowId })[0].allData.setTimebyday === 'True') {
+              let timeJson = JSON.parse(this.DataFlowNameDefault.filter(item => { return item.value === this.formAdd.flowId })[0].allData.setTime).filter((items) => items.value === new Date(this.date).getDay())
               setTime = timeJson[0].setTime || []
               console.log('IF')
             } else {
               console.log('ELSE')
-              setTime = JSON.parse(this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.setTime) || []
+              setTime = JSON.parse(this.DataFlowNameDefault.filter(item => { return item.value === this.formAdd.flowId })[0].allData.setTime) || []
             }
             let dt = setTime
             // let dt = JSON.parse(this.branchData.filter(item => { return item.masBranchID === this.formAdd.masBranchID })[0].setTime) || []
@@ -9288,16 +9288,16 @@ export default {
       let setTime = []
       console.log('!!!_____', this.formChange)
       // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
-      if (this.DataFlowName.filter(el => { return el.value === parseInt(this.flowIDLimit) })[0].allData.setTimebyday === 'True') {
-        let timeJson = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(this.flowIDLimit) })[0].allData.setTime).filter((items) => items.value === new Date(dateitem).getDay())
+      if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.flowIDLimit) })[0].allData.setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.flowIDLimit) })[0].allData.setTime).filter((items) => items.value === new Date(dateitem).getDay())
         setTime = timeJson[0].setTime || []
         console.log('IF')
       } else {
         console.log('ELSE')
-        setTime = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(this.flowIDLimit) })[0].allData.setTime) || []
+        setTime = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.flowIDLimit) })[0].allData.setTime) || []
       }
-      if (this.DataFlowName.filter(el => { return el.value === parseInt(this.flowIDLimit) }).length > 0) {
-        this.limitBookingCheck = this.DataFlowName.filter(el => { return el.value === parseInt(this.flowIDLimit) })[0].allData.limitBookingCheck || 'False'
+      if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.flowIDLimit) }).length > 0) {
+        this.limitBookingCheck = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.flowIDLimit) })[0].allData.limitBookingCheck || 'False'
       } else {
         this.limitBookingCheck = 'False'
       }
@@ -9353,7 +9353,7 @@ export default {
         // this.timeavailable = JSON.parse(this.flowItemLimit.filter(item => { return item.flowId === this.flowIDLimit })[0].setTime) || []
 
         // LimitBookingBy masBranch
-        if (this.DataFlowName.filter(el => { return el.value === parseInt(this.flowIDLimit) }).length > 0) {
+        if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.flowIDLimit) }).length > 0) {
           this.timeavailable = setTime
         } else {
           this.timeavailable = []
@@ -9366,16 +9366,16 @@ export default {
       this.limitBookingCheck = 'False'
       let setTime = []
       // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
-      if (this.DataFlowName.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTimebyday === 'True') {
-        let timeJson = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime).filter((items) => items.value === new Date(dateitem).getDay())
+      if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime).filter((items) => items.value === new Date(dateitem).getDay())
         setTime = timeJson[0].setTime || []
         console.log('IF')
       } else {
         console.log('ELSE')
-        setTime = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime) || []
+        setTime = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime) || []
       }
-      if (this.DataFlowName.filter(el => { return el.value === parseInt(this.formEdit.flowId) }).length > 0) {
-        this.limitBookingCheck = this.DataFlowName.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.limitBookingCheck || 'False'
+      if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) }).length > 0) {
+        this.limitBookingCheck = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.limitBookingCheck || 'False'
       } else {
         this.limitBookingCheck = 'False'
       }
@@ -9430,7 +9430,7 @@ export default {
         // LimitBookingBy Flow
         // this.timeavailable = JSON.parse(this.flowItemLimit.filter(item => { return item.flowId === this.formEdit.flowId })[0].setTime) || []
         // LimitBookingBy masBranch
-        if (this.DataFlowName.filter(el => { return el.value === parseInt(this.formEdit.flowId) }).length > 0) {
+        if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) }).length > 0) {
           this.timeavailable = setTime
         } else {
           this.timeavailable = []
@@ -9443,16 +9443,16 @@ export default {
       this.limitBookingCheck = 'False'
       let setTime = []
       // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
-      if (this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTimebyday === 'True') {
-        let timeJson = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTime).filter((items) => items.value === new Date(dateitem).getDay())
+      if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTime).filter((items) => items.value === new Date(dateitem).getDay())
         setTime = timeJson[0].setTime || []
         console.log('IF')
       } else {
         console.log('ELSE')
-        setTime = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTime) || []
+        setTime = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTime) || []
       }
-      if (this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) }).length > 0) {
-        this.limitBookingCheck = this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.limitBookingCheck || 'False'
+      if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) }).length > 0) {
+        this.limitBookingCheck = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.limitBookingCheck || 'False'
       } else {
         this.limitBookingCheck = 'False'
       }
@@ -9508,7 +9508,7 @@ export default {
         // this.timeavailable = JSON.parse(this.flowItemLimit.filter(item => { return item.flowId === this.formAdd.flowId })[0].setTime) || []
 
         // LimitBookingBy masBranch
-        if (this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) }).length > 0) {
+        if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) }).length > 0) {
           this.timeavailable = setTime
         } else {
           this.timeavailable = []
@@ -10220,7 +10220,7 @@ export default {
                   // s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
                   s.bookNo = d.bookNo
                   s.flowId = d.flowId
-                  let checkDeposit = this.DataFlowName.filter(el => { return el.value === parseInt(d.flowId) })
+                  let checkDeposit = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(d.flowId) })
                   if (checkDeposit.length > 0) {
                     s.depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
                   } else {
@@ -10534,13 +10534,13 @@ export default {
       console.log('dtTime', dtTime)
       await this.setLimitBookingEdit(dt.dueDateDay)
       let setTime = []
-      if (this.DataFlowName.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTimebyday === 'True') {
-        let timeJson = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime).filter((items) => items.value === new Date(dt.dueDateDay).getDay())
+      if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime).filter((items) => items.value === new Date(dt.dueDateDay).getDay())
         setTime = timeJson[0].setTime || []
         console.log('IF')
       } else {
         console.log('ELSE')
-        setTime = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime) || []
+        setTime = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime) || []
       }
       if (dtTime.length > 0) {
         this.statusShowMap = dtTime[0].allData.checkOnsite || 'False'
@@ -10910,7 +10910,7 @@ export default {
             extraJob = 'False'
             break
         }
-        let storeFront = this.DataFlowName.filter(item => { return item.value === this.formEdit.flowId })
+        let storeFront = this.DataFlowNameDefault.filter(item => { return item.value === this.formEdit.flowId })
         let storeFrontCheck = ''
         if (storeFront.length > 0) {
           storeFrontCheck = storeFront[0].allData.storeFrontCheck || 'False'
@@ -11163,7 +11163,7 @@ export default {
     checkTimeFlow (dt) {
       this.timeavailable = []
       // let dtTime = this.branch.filter(item => { return item.value === this.masBranchID })
-      let dtTime = this.DataFlowName.filter(item => { return item.value === dt.flowId })
+      let dtTime = this.DataFlowNameDefault.filter(item => { return item.value === dt.flowId })
       // console.log('dtTime', dtTime)
       if (dtTime.length > 0) {
         console.log('dtTime', dtTime.filter(item => item.allData.setTime))
@@ -12133,9 +12133,7 @@ export default {
       this.formEdit.flowId = ''
       this.dateEdit = ''
       this.timeEdit = ''
-      console.log('item.allData', this.DataFlowName)
-      console.log('item.this.formEdit.masBranchID.toString()', this.formEdit.masBranchID.toString(), this.formEdit.masBranchID)
-      let DD = this.DataFlowName
+      let DD = this.DataFlowNameDefault
       let dataFilter = []
       DD.forEach((item) => {
         if (item.text !== 'ทั้งหมด') {
@@ -12150,9 +12148,7 @@ export default {
     },
     setFlowByBranchAdd () {
       this.formAdd.flowId = ''
-      console.log('item.allData', this.DataFlowName)
-      console.log('item.this.formAdd.masBranchID.toString()', this.formAdd.masBranchID.toString(), this.formAdd.masBranchID)
-      let DD = this.DataFlowName
+      let DD = this.DataFlowNameDefault
       let dataFilter = []
       DD.forEach((item) => {
         if (item.text !== 'ทั้งหมด') {
@@ -12918,7 +12914,7 @@ export default {
       if (this.flowSelect !== '') {
         this.flowSelect = this.flowSelect
       } else {
-        this.DataFlowName = this.DataFlowNameDefault.filter(el => { return parseInt(el.masBranchID) === this.masBranchID || el.value === 'AllFlow' })
+        this.DataFlowName = this.DataFlowNameDefault.filter(el => { return parseInt(el.masBranchID) === this.masBranchID || el.value === 'AllFlow' || el.value === 'All' })
         if (this.DataFlowName.length > 0) {
           console.log('masBranchID', this.DataFlowName)
           this.flowSelect = this.DataFlowName[0].value
@@ -12976,7 +12972,7 @@ export default {
                 console.log('branch no flow', d.masBranchID, d.flowId)
                 s.bookNo = d.bookNo
                 s.flowId = d.flowId
-                let checkDeposit = this.DataFlowName.filter(el => { return el.value === parseInt(d.flowId) })
+                let checkDeposit = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(d.flowId) })
                 if (checkDeposit.length > 0) {
                   s.depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
                 } else {
@@ -13157,7 +13153,7 @@ export default {
                 console.log('branch no flow', d.masBranchID, d.flowId)
                 s.bookNo = d.bookNo
                 s.flowId = d.flowId
-                let checkDeposit = this.DataFlowName.filter(el => { return el.value === parseInt(d.flowId) })
+                let checkDeposit = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(d.flowId) })
                 if (checkDeposit.length > 0) {
                   s.depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
                 } else {
@@ -13594,7 +13590,7 @@ export default {
         } else {
           limitBookingCheck = 'False'
         }
-        let storeFront = this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })
+        let storeFront = this.DataFlowNameDefault.filter(item => { return item.value === this.formAdd.flowId })
         let storeFrontCheck = ''
         if (storeFront.length > 0) {
           storeFrontCheck = storeFront[0].allData.storeFrontCheck || 'False'
@@ -13751,7 +13747,7 @@ export default {
               this.date = ''
               this.time = ''
             } else {
-              let checkDeposit = this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })
+              let checkDeposit = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) })
               let depositCheckStatus = ''
               if (checkDeposit.length > 0) {
                 depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
@@ -13798,7 +13794,7 @@ export default {
             let getcount = await this.getCountFastTrack(this.date, this.formAdd.flowId, this.formAdd.masBranchID)
             let setCountFast = this.branch.filter(el => { return el.value === this.formAdd.masBranchID })[0].allData.countFastTrack
             if (getcount < setCountFast) {
-              if (this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.limitBookingCheck === 'True') {
+              if (this.DataFlowNameDefault.filter(item => { return item.value === this.formAdd.flowId })[0].allData.limitBookingCheck === 'True') {
                 await this.checkLimit()
                 // console.log('test', this.branchData.filter(item => { return item.masBranchID === this.formAdd.masBranchID })[0].setTime)
                 if (this.checkLimitBooking.limitCheck === 'true') {
@@ -13824,7 +13820,7 @@ export default {
               this.loadingAdd = false
             }
           } else {
-            if (this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.limitBookingCheck === 'True') {
+            if (this.DataFlowNameDefault.filter(item => { return item.value === this.formAdd.flowId })[0].allData.limitBookingCheck === 'True') {
               await this.checkLimit()
               // console.log('test', this.branchData.filter(item => { return item.masBranchID === this.formAdd.masBranchID })[0].setTime)
               if (this.checkLimitBooking.limitCheck === 'true') {
@@ -14631,17 +14627,17 @@ export default {
     onConfirm (item) {
       if (this.$session.id() !== undefined) {
         console.log('item', item)
-        console.log('DataFlowName', this.DataFlowName.filter(el => { return el.value === item.flowId }))
+        console.log('DataFlowName', this.DataFlowNameDefault.filter(el => { return el.value === item.flowId }))
         this.dataConfirmReady = false
         let dtint = '0'
-        if (this.DataFlowName.filter(el => { return el.value === item.flowId }).length > 0) {
+        if (this.DataFlowNameDefault.filter(el => { return el.value === item.flowId }).length > 0) {
           let setTime = []
           // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
-          if (this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTimebyday === 'True') {
-            let timeJson = JSON.parse(this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTime).filter((items) => items.value === new Date(item.dueDate).getDay())
+          if (this.DataFlowNameDefault.filter(el => { return el.value === item.flowId })[0].allData.setTimebyday === 'True') {
+            let timeJson = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === item.flowId })[0].allData.setTime).filter((items) => items.value === new Date(item.dueDate).getDay())
             setTime = timeJson[0].setTime || []
           } else {
-            setTime = JSON.parse(this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
+            setTime = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
           }
           if (setTime.length > 0) {
             dtint = parseInt(setTime.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
@@ -14829,7 +14825,7 @@ export default {
     async onCancelChk () {
       if (this.validRemove === true) {
         if (this.$session.id() !== undefined) {
-          let chkStatLimit = this.DataFlowName.filter(el => { return el.value === this.bookNoRemove.flowId })
+          let chkStatLimit = this.DataFlowNameDefault.filter(el => { return el.value === this.bookNoRemove.flowId })
           if (chkStatLimit.length > 0) {
             if (chkStatLimit[0].allData.limitBookingCheck === 'True') {
               // let dueOld = this.dueDateOld + this.dueDateTimeOld
@@ -14964,7 +14960,7 @@ export default {
             if (this.getSelectText === 'cancel') {
               this.onChangeChkSubmit(item, changeStatus, checkCountTime)
             } else {
-              let chkStatLimit = this.DataFlowName.filter(el => { return el.value === item.flowId })
+              let chkStatLimit = this.DataFlowNameDefault.filter(el => { return el.value === item.flowId })
               console.log('chkStatLimit', chkStatLimit)
               if (chkStatLimit.length > 0) {
                 console.log('chkStatLimit', chkStatLimit[0].allData.limitBookingCheck)
@@ -15027,7 +15023,7 @@ export default {
       } else {
         countTime = countTime + 1
       }
-      let storeFront = this.DataFlowName.filter(item => { return item.value === this.flowIDLimit })
+      let storeFront = this.DataFlowNameDefault.filter(item => { return item.value === this.flowIDLimit })
       let storeFrontCheck = ''
       if (storeFront.length > 0) {
         storeFrontCheck = storeFront[0].allData.storeFrontCheck || 'False'
@@ -15443,13 +15439,13 @@ export default {
       console.log('dtTime', dtTime)
       await this.setLimitBookingEdit(dt.dueDateDay)
       let setTime = []
-      if (this.DataFlowName.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTimebyday === 'True') {
-        let timeJson = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime).filter((items) => items.value === new Date(dt.dueDateDay).getDay())
+      if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime).filter((items) => items.value === new Date(dt.dueDateDay).getDay())
         setTime = timeJson[0].setTime || []
         console.log('IF')
       } else {
         console.log('ELSE')
-        setTime = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime) || []
+        setTime = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime) || []
       }
       if (dtTime.length > 0) {
         this.statusShowMap = dtTime[0].allData.checkOnsite || 'False'
@@ -15788,7 +15784,7 @@ export default {
             extraJob = 'False'
             break
         }
-        let storeFront = this.DataFlowName.filter(item => { return item.value === this.formEdit.flowId })
+        let storeFront = this.DataFlowNameDefault.filter(item => { return item.value === this.formEdit.flowId })
         let storeFrontCheck = ''
         if (storeFront.length > 0) {
           storeFrontCheck = storeFront[0].allData.storeFrontCheck || 'False'
@@ -16044,8 +16040,8 @@ export default {
       // }
 
       let limitCountBranchOld = 0
-      if (this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) }).length > 0) {
-        let setTimeOld = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(item.flowId) })[0].allData.setTime)
+      if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(item.flowId) }).length > 0) {
+        let setTimeOld = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(item.flowId) })[0].allData.setTime)
         console.log('setTimeOld', setTimeOld)
         if (setTimeOld === '' || setTimeOld === null) {
           this.limitCountBranchOld = []
@@ -16067,9 +16063,9 @@ export default {
     async setCountTime (dt) {
       console.log('this.formChange.time', this.formChange.time)
       let limitCountBranch = 0
-      if (this.DataFlowName.filter(el => { return el.value === parseInt(dt.flowId) }).length > 0) {
+      if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(dt.flowId) }).length > 0) {
         // let setTime = JSON.parse(this.branch.filter(el => { return el.value === parseInt(this.masBranchIDLimit) })[0].allData.setTime)
-        let setTime = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(dt.flowId) })[0].allData.setTime)
+        let setTime = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(dt.flowId) })[0].allData.setTime)
         let index = setTime.findIndex((element) => element.value === this.formChange.time.value)
         limitCountBranch = setTime.slice(index, index + this.selectCountBookingLimit)
         this.limitCountBranch = limitCountBranch
@@ -16079,7 +16075,7 @@ export default {
     async getDataLimitBooking (dt) {
       this.dataLimitBookingDate = []
       // let setTime = JSON.parse(this.branch.filter(el => { return el.value === parseInt(this.masBranchIDLimit) })[0].allData.setTime)
-      let setTime = JSON.parse(this.DataFlowName.filter(el => { return el.value === parseInt(dt.flowId) })[0].allData.setTime)
+      let setTime = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(dt.flowId) })[0].allData.setTime)
       let limitBooking = 0
       if (setTime.length > 0) {
         if (setTime.filter(el => { return el.value === this.formChange.time.value }).length > 0) {

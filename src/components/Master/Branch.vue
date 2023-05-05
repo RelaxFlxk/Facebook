@@ -55,7 +55,6 @@
                         :counter="50"
                         maxlength="50"
                         outlined
-
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" class="pb-0">
@@ -68,6 +67,18 @@
                         maxlength="50"
                         outlined
 
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pb-0">
+                      <v-text-field
+                        outlined
+                        label="เบอร์โทรศัพท์"
+                        placeholder="Contact Tel*"
+                        v-model="formAdd.contactTel"
+                        :rules="[rules.required, rules.numberRules]"
+                        :counter="10"
+                        maxlength="10"
+                        required
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" class="pb-0">
@@ -319,6 +330,18 @@
                         maxlength="50"
                         outlined
 
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pb-0">
+                      <v-text-field
+                        outlined
+                        label="เบอร์โทรศัพท์"
+                        placeholder="Contact Tel*"
+                        v-model="formUpdate.contactTel"
+                        :rules="[rules.required, rules.numberRules]"
+                        :counter="10"
+                        maxlength="10"
+                        required
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" class="pb-0">
@@ -728,7 +751,8 @@ export default {
         dateDayoffText: [],
         dateDayoffValue: [],
         dateDayCustom: [],
-        typeDayCustom: ''
+        typeDayCustom: '',
+        contactTel: ''
       },
       formUpdate: {
         masBranchCode: '',
@@ -742,7 +766,8 @@ export default {
         dateDayoffText: [],
         dateDayoffValue: [],
         dateDayCustom: [],
-        typeDayCustom: ''
+        typeDayCustom: '',
+        contactTel: ''
       },
       formUpdateItem: {
         countCus: 0,
@@ -754,7 +779,8 @@ export default {
         dateDayoffText: [],
         dateDayoffValue: [],
         dateDayCustom: [],
-        typeDayCustom: ''
+        typeDayCustom: '',
+        contactTel: ''
       },
       nameRules: [
         (v) => !!v || 'Name is required',
@@ -800,7 +826,26 @@ export default {
           text: 'วันที่ปิด',
           value: 'off'
         }
-      ]
+      ],
+      rules: {
+        numberRules: value =>
+          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
+          'กรุณากรอกตัวเลข 0 ถึง 9',
+        counterTel: value => value.length <= 10 || 'Max 10 characters',
+        IDcardRules: value =>
+          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999999) ||
+          'กรุณากรอกตัวเลข 0 ถึง 9',
+        required: value => !!value || 'กรุณากรอก.',
+        resizeImag: value =>
+          !value ||
+          value.size < 2000000 ||
+          'Avatar size should be less than 2 MB!',
+        counterIDcard: value => value.length <= 13 || 'Max 13 characters',
+        email: value => {
+          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+          return pattern.test(value) || 'Invalid e-mail.'
+        }
+      }
     }
   },
   async mounted () {
@@ -1015,6 +1060,7 @@ export default {
       } else {
         this.formUpdate.countCus = 0
       }
+      this.formUpdate.contactTel = item.contactTel || ''
       this.formUpdate.typeDayCustom = item.typeDayCustom
       this.formUpdate.limitBookingCheck = item.limitBookingCheck || 'False'
       console.log('this.formUpdate.setTime', item.setTime)
@@ -1151,6 +1197,7 @@ export default {
       // this.formUpdateItem.countCus = this.formUpdate.countCus
       this.formUpdateItem.masBranchName = this.formUpdate.masBranchName
       this.formUpdateItem.masBranchNameEn = this.formUpdate.masBranchNameEn
+      this.formUpdateItem.contactTel = this.formUpdate.contactTel
       this.formUpdateItem.setTime = JSON.stringify(this.dataItemAddTime)
       this.formUpdateItem.dateDayoffText = JSON.stringify(this.formUpdate.dateDayoffText)
       this.formUpdateItem.typeDayCustom = this.formUpdate.typeDayCustom

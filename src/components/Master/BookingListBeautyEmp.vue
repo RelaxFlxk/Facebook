@@ -8331,7 +8331,7 @@ export default {
     },
     checkCustomerTimeSlot () {
       this.timeSlotbyCustomer = []
-      this.customerTimeSlot = this.DataFlowName.filter((v) => v.value === this.formAdd.flowId)[0].allData.customerTimeSlot
+      this.customerTimeSlot = this.DataFlowNameDefault.filter((v) => v.value === this.formAdd.flowId)[0].allData.customerTimeSlot
       let allTime = []
       if (this.customerTimeSlot === 'True') {
         if (this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTimebyday === 'True') {
@@ -8400,7 +8400,7 @@ export default {
     },
     checkCustomerTimeSlotCancel () {
       this.timeSlotbyCustomer = []
-      this.customerTimeSlot = this.DataFlowName.filter((v) => v.value === this.flowSelectCancel)[0].allData.customerTimeSlot
+      this.customerTimeSlot = this.DataFlowNameDefault.filter((v) => v.value === this.flowSelectCancel)[0].allData.customerTimeSlot
       console.log('this.customerTimeSlot', this.customerTimeSlot)
       let allTime = []
       if (this.customerTimeSlot === 'True') {
@@ -8470,10 +8470,8 @@ export default {
       // console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
     },
     checkCustomerTimeSlotEdit () {
-      console.log('itemTest2', this.DataFlowName.filter((v) => v.value === this.formEdit.flowId)[0].allData.customerTimeSlot)
-      // this.DataFlowName.filter((v) => v.value === dt.flowId)[0].allData.timeSlot
       this.timeSlotbyCustomer = []
-      this.customerTimeSlot = this.DataFlowName.filter((v) => v.value === this.formEdit.flowId)[0].allData.customerTimeSlot
+      this.customerTimeSlot = this.DataFlowNameDefault.filter((v) => v.value === this.formEdit.flowId)[0].allData.customerTimeSlot
       let allTime = []
       if (this.customerTimeSlot === 'True') {
         // allTime = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.fromAdd.empId })[0].setTime)
@@ -8540,11 +8538,8 @@ export default {
       console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
     },
     checkCustomerTimeSlotChang (itemChang) {
-      console.log('itemTest', itemChang)
-      console.log('itemTest2', this.DataFlowName.filter((v) => v.value === itemChang.flowId)[0].allData.customerTimeSlot)
-      // this.DataFlowName.filter((v) => v.value === dt.flowId)[0].allData.timeSlot
       this.timeSlotbyCustomer = []
-      this.customerTimeSlot = this.DataFlowName.filter((v) => v.value === itemChang.flowId)[0].allData.customerTimeSlot
+      this.customerTimeSlot = this.DataFlowNameDefault.filter((v) => v.value === itemChang.flowId)[0].allData.customerTimeSlot
       let allTime = []
       if (this.customerTimeSlot === 'True') {
         // allTime = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.fromAdd.empId })[0].setTime)
@@ -9597,12 +9592,11 @@ export default {
             allBookingTime.push(dt.filter((i, k) => (k >= index && k <= num)))
           }
         })
-        console.log('timeSlot', this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId }))
         let checkTimeSlot = []
         let index = dt.findIndex((i, k) => i.value === this.time.value)
         let slot = ''
         if (this.customerTimeSlot === 'False') {
-          slot = this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.timeSlot
+          slot = this.DataFlowNameDefault.filter(item => { return item.value === this.formAdd.flowId })[0].allData.timeSlot
         } else {
           slot = this.fromAddTimeCus
         }
@@ -9676,11 +9670,11 @@ export default {
         // let slotByflow = this.DataFlowName.filter((v) => v.value === this.formAdd.flowId)[0].allData.timeSlot
         let slotByflow = []
         if (this.customerTimeSlot === 'False') {
-          slotByflow = this.DataFlowName.filter((v) => v.value === this.formAdd.flowId)[0].allData.timeSlot
+          slotByflow = this.DataFlowNameDefault.filter((v) => v.value === this.formAdd.flowId)[0].allData.timeSlot
         } else {
           slotByflow = this.fromAddTimeCus
         }
-        let overTime = this.DataFlowName.filter((v) => v.value === this.formAdd.flowId)[0].allData.overTime
+        let overTime = this.DataFlowNameDefault.filter((v) => v.value === this.formAdd.flowId)[0].allData.overTime
         if (this.timeavailable.length >= slotByflow) {
           let LimitBooking = await this.getLimitBooking()
           console.log('LimitBooking', LimitBooking)
@@ -10315,7 +10309,7 @@ export default {
                   // console.log('d.bookNo', d.bookNo)
                   s.bookNo = d.bookNo
                   s.flowId = d.flowId
-                  let checkDeposit = this.DataFlowName.filter(el => { return el.value === parseInt(d.flowId) })
+                  let checkDeposit = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(d.flowId) })
                   if (checkDeposit.length > 0) {
                     s.depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
                   } else {
@@ -11445,15 +11439,13 @@ export default {
       this.limitBookingCheck = this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].limitBookingCheck || 'False'
       if (this.limitBookingCheck === 'True') {
         this.timeavailable = setTime
-        console.log('this.DataFlowName', this.DataFlowName)
-        // let slotByflow = this.DataFlowName.filter((v) => v.value === dt.flowId)[0].allData.timeSlot
         let slotByflow = []
         if (this.customerTimeSlot === 'False') {
-          slotByflow = this.DataFlowName.filter((v) => v.value === dt.flowId)[0].allData.timeSlot
+          slotByflow = this.DataFlowNameDefault.filter((v) => v.value === dt.flowId)[0].allData.timeSlot
         } else {
           slotByflow = this.fromAddTimeCus
         }
-        let overTime = this.DataFlowName.filter((v) => v.value === dt.flowId)[0].allData.overTime
+        let overTime = this.DataFlowNameDefault.filter((v) => v.value === dt.flowId)[0].allData.overTime
         if (this.timeavailable.length >= slotByflow) {
           let LimitBooking = await this.getLimitBookingChange(dateC, dt)
           console.log('LimitBooking', LimitBooking)
@@ -12438,7 +12430,6 @@ export default {
               s.value = d[fieldId]
               s.allData = d
               result.push(s)
-              // console.log('this.DataFlowName', this.DataFlowName)
             }
           } else {
             result = []
@@ -12465,7 +12456,6 @@ export default {
               s.masBranchID = d.masBranchID
               result.push(s)
               resultOption.push(s)
-              // console.log('this.DataFlowName', this.DataFlowName)
             }
           } else {
             result = []
@@ -12484,9 +12474,7 @@ export default {
       this.timeEdit = ''
       this.customerTimeSlot = 'False'
       this.formAdd.bookingEmpFlow = ''
-      console.log('item.allData', this.DataFlowName)
-      console.log('item.this.formEdit.masBranchID.toString()', this.formEdit.masBranchID.toString(), this.formEdit.masBranchID)
-      let DD = this.DataFlowName
+      let DD = this.DataFlowNameDefault
       let dataFilter = []
       DD.forEach((item) => {
         if (item.text !== 'ทั้งหมด') {
@@ -12503,9 +12491,7 @@ export default {
       this.formAdd.flowId = ''
       this.customerTimeSlot = 'False'
       this.formAdd.bookingEmpFlow = ''
-      console.log('item.allData', this.DataFlowName)
-      console.log('item.this.formAdd.masBranchID.toString()', this.formAdd.masBranchID.toString(), this.formAdd.masBranchID)
-      let DD = this.DataFlowName
+      let DD = this.DataFlowNameDefault
       let dataFilter = []
       DD.forEach((item) => {
         if (item.text !== 'ทั้งหมด') {
@@ -13273,7 +13259,7 @@ export default {
               if (this.BookingDataList[d.bookNo] !== undefined) {
                 s.bookNo = d.bookNo
                 s.flowId = d.flowId
-                let checkDeposit = this.DataFlowName.filter(el => { return el.value === parseInt(d.flowId) })
+                let checkDeposit = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(d.flowId) })
                 if (checkDeposit.length > 0) {
                   s.depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
                 } else {
@@ -13455,7 +13441,7 @@ export default {
               if (this.BookingDataList[d.bookNo] !== undefined) {
                 s.bookNo = d.bookNo
                 s.flowId = d.flowId
-                let checkDeposit = this.DataFlowName.filter(el => { return el.value === parseInt(d.flowId) })
+                let checkDeposit = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(d.flowId) })
                 if (checkDeposit.length > 0) {
                   s.depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
                 } else {
@@ -14041,7 +14027,7 @@ export default {
               this.date = ''
               this.time = ''
             } else {
-              let checkDeposit = this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })
+              let checkDeposit = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) })
               let depositCheckStatus = ''
               if (checkDeposit.length > 0) {
                 depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
@@ -14921,35 +14907,6 @@ export default {
     },
     onConfirm (item) {
       if (this.$session.id() !== undefined) {
-        // console.log('item', item)
-        // console.log('DataFlowName', this.DataFlowName.filter(el => { return el.value === item.flowId }))
-        // this.dataConfirmReady = false
-        // let dtint = '0'
-        // if (this.DataFlowName.filter(el => { return el.value === item.flowId }).length > 0) {
-        //   let setTime = []
-        //   // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
-        //   if (this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTimebyday === 'True') {
-        //     let timeJson = JSON.parse(this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTime).filter((items) => items.value === new Date(item.dueDate).getDay())
-        //     setTime = timeJson[0].setTime || []
-        //   } else {
-        //     setTime = JSON.parse(this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
-        //   }
-        //   if (setTime.length > 0) {
-        //     dtint = parseInt(setTime.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
-        //   } else {
-        //     dtint = '0'
-        //   }
-        //   // let dts = JSON.parse(this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
-        //   // console.log(dts.filter(el => el.value === item.timeDuetext))
-        //   // if (dts.filter(el => el.value === item.timeDuetext).length > 0) {
-        //   //   dtint = parseInt(dts.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
-        //   // } else {
-        //   //   dtint = '0'
-        //   // }
-        // } else {
-        //   dtint = '0'
-        // }
-        // console.log('dtint', dtint)
         var dt = {
           bookNo: item.bookNo,
           contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
@@ -15369,16 +15326,12 @@ export default {
         })
     },
     async updateLimitBookingChange (item, dueDateOld, dueDateTimeOld, dueDateNew, dueDateTimeNew, flowIdNew, Textcheck, masBranchIDNew) {
-      console.log('updateLimitBookingChange', item)
-      console.log('this.fromAddTimeCus', this.fromAddTimeCus)
-      // console.log('TESTSTTETETSETSET', this.DataFlowName.filter((v) => v.value === flowIdNew)[0].allData)
       let result = []
       let timeSlotCustomer = ''
       if (this.customerTimeSlot === 'True') {
         timeSlotCustomer = this.fromAddTimeCus
       } else {
-        console.log('TESTSTTETETSETSET', this.DataFlowName.filter((v) => v.value === flowIdNew)[0].allData)
-        timeSlotCustomer = this.DataFlowName.filter((v) => v.value === flowIdNew)[0].allData.timeSlot
+        timeSlotCustomer = this.DataFlowNameDefault.filter((v) => v.value === flowIdNew)[0].allData.timeSlot
       }
       let bookingEmpFlow = ''
       if (Textcheck === 'Edit') {
