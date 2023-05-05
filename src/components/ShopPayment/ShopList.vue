@@ -521,7 +521,7 @@
                     </v-col>
                   </v-row>
                   <v-row >
-                    <v-col cols="12" class="pt-1 pb-0">
+                    <v-col cols="12" class="pt-1 pb-0" v-if="shopId_Shop !== ''">
                       <v-text-field
                         prepend-icon="mdi-format-list-numbered"
                         v-model="btNumber"
@@ -531,7 +531,7 @@
                         required
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" class="pt-1 pb-0">
+                    <v-col cols="12" class="pt-1 pb-0" v-if="shopId_Shop !== ''">
                       <v-menu
                         ref="menu"
                         v-model="menutrialsVersionDate"
@@ -565,7 +565,7 @@
                         </v-date-picker>
                       </v-menu>
                     </v-col>
-                    <v-col cols="12" class="pt-1 pb-0">
+                    <v-col cols="12" class="pt-1 pb-0" v-if="shopId_Shop !== ''">
                       <v-text-field
                         v-model="trialsVersionDateTime"
                         dense
@@ -576,7 +576,49 @@
                         prepend-icon="mdi-clock-time-eleven"
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" class="pt-1 pb-0">
+                    <v-col cols="12" class="pt-1 pb-0" v-if="shopId_Shop !== ''">
+                      <v-text-field
+                        prepend-icon="mdi-account"
+                        v-model="billingCusName"
+                        label="ชื่อ-สกุล"
+                        outlined
+                        dense
+                        required
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pt-1 pb-0" v-if="shopId_Shop !== ''">
+                      <v-text-field
+                        prepend-icon="mdi-card-account-phone-outline"
+                        v-mask="'##########'"
+                        v-model="billingPhone"
+                        label="เบอร์โทร"
+                        outlined
+                        dense
+                        required
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pt-1 pb-0" v-if="shopId_Shop !== ''">
+                      <v-text-field
+                        prepend-icon="mdi-hail"
+                        v-model="billingTax"
+                        label="เลขประจำตัวผู้เสียภาษี"
+                        outlined
+                        dense
+                        required
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pt-1 pb-0" v-if="shopId_Shop !== ''">
+                      <v-textarea
+                        prepend-icon="mdi-map-marker"
+                        v-model="billingAddress"
+                        auto-grow
+                        rows="2"
+                        label="ที่อยู่"
+                        dense
+                        outlined
+                      ></v-textarea>
+                    </v-col>
+                    <v-col cols="12" class="pt-1 pb-0" v-if="idPayment !== ''">
                       <v-menu
                         ref="menu"
                         v-model="menupaymentDateTrue"
@@ -610,7 +652,7 @@
                         </v-date-picker>
                       </v-menu>
                     </v-col>
-                    <v-col cols="12" class="pt-1 pb-0">
+                    <v-col cols="12" class="pt-1 pb-0" v-if="idPayment !== ''">
                       <v-text-field
                         v-model="paymentDateTrueTime"
                         dense
@@ -621,7 +663,7 @@
                         prepend-icon="mdi-clock-time-eleven"
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" class="pt-1 pb-0">
+                    <v-col cols="12" class="pt-1 pb-0" v-if="idPayment !== ''">
                       <v-textarea
                         prepend-icon="mdi-comment-edit"
                         v-model="remark"
@@ -663,6 +705,10 @@ export default {
   },
   data () {
     return {
+      billingCusName: '',
+      billingAddress: '',
+      billingTax: '',
+      billingPhone: '',
       menutrialsVersionDate: false,
       trialsVersionDate: '',
       trialsVersionDateTime: '',
@@ -762,6 +808,10 @@ export default {
   methods: {
     setDataSetting (item) {
       console.log('setDataSetting', item)
+      this.billingCusName = item.billingCusName || ''
+      this.billingAddress = item.billingAddress || ''
+      this.billingTax = item.billingTax || ''
+      this.billingPhone = item.billingPhone || ''
       this.paymentDateTrue = item.paymentDateTrue || ''
       if (this.paymentDateTrue === '') {
         this.paymentDateTrueTime = ''
@@ -813,7 +863,11 @@ export default {
         if (this.shopId_Shop !== '') {
           let ds = {
             btNumber: this.btNumber,
-            trialsVersionDate: trialsVersionDate
+            trialsVersionDate: trialsVersionDate,
+            billingCusName: this.billingCusName,
+            billingAddress: this.billingAddress,
+            billingTax: this.billingTax,
+            billingPhone: this.billingPhone
           }
           await axios
             .post(
@@ -840,7 +894,11 @@ export default {
           btNumber: this.btNumber,
           remark: this.remark,
           shopId: this.shopId_Shop,
-          trialsVersionDate: trialsVersionDate
+          trialsVersionDate: trialsVersionDate,
+          billingCusName: this.billingCusName,
+          billingAddress: this.billingAddress,
+          billingTax: this.billingTax,
+          billingPhone: this.billingPhone
         }
         await axios
           .post(
