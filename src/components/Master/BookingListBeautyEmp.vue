@@ -447,7 +447,7 @@
               dense
               required
               :disabled="statusBranchReadonly"
-              @change="dataReady = false,getBookingList()"
+              @change="dataReady = false,flowSelect = '',getBookingList()"
               ><template #prepend-inner>
                 <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
                   mdi-map-marker-outline
@@ -541,7 +541,7 @@
               dense
               required
               :disabled="statusBranchReadonly"
-              @change="dataReady = false,getBookingList()"
+              @change="dataReady = false,flowSelect = '',getBookingList()"
               ><template #prepend-inner>
                 <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
                   mdi-map-marker-outline
@@ -591,7 +591,7 @@
                   class="textserch"
                   background-color="white"
                   style="border-radius: 40px !important;"
-                  label="ค้นหาชื่อทั้งหมด"
+                  :label="session.data.category === 'ธุรกิจรถยนต์' ? 'ค้นหาชื่อทั้งหมด หรือ ทะเบียน' : 'ค้นหาชื่อทั้งหมด'"
                   v-model="searchOther"
                   outlined
                   hide-details
@@ -7222,7 +7222,8 @@ export default {
       masBranchIDAddJob: '',
       statusPushEndStep: 'False',
       endStepItem: [],
-      ItemendStepStanby: []
+      ItemendStepStanby: [],
+      DataFlowNameDefault: []
     }
   },
   beforeCreate () {
@@ -9407,7 +9408,7 @@ export default {
         await this.getEmpSelectAdd()
         await this.getBookingFieldText()
         this.getCustomFieldStart()
-        this.getDataFlow()
+        await this.getDataFlow()
         await this.scanQrcode()
         // this.getBookingList()
       } else {
@@ -9415,7 +9416,7 @@ export default {
         await this.getEmpSelectAdd()
         await this.getBookingFieldText()
         this.getCustomFieldStart()
-        this.getDataFlow()
+        await this.getDataFlow()
         this.getBookingList()
       }
     },
@@ -10298,6 +10299,9 @@ export default {
             this.DNS_IP +
             '/booking_view/getSearchName?shopId=' +
             this.session.data.shopId +
+            '&category=' +
+            this.session.data.category +
+            '&masBranchID=' + this.masBranchID +
             '&fieldValue=' +
             this.searchOther + this.selectOnsite
           )
@@ -11229,7 +11233,7 @@ export default {
       await this.getDataBranch()
       await this.getEmpSelectAdd()
       this.getCustomFieldStart()
-      this.getDataFlow()
+      await this.getDataFlow()
       await this.getBookingList()
       // await this.getTimesChange('update')
       this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
@@ -11858,7 +11862,7 @@ export default {
           'วันที่': a.dateBooking,
           'เวลา': a.title,
           // 'ชื่อลูกค้า': a.cusName,
-          'รายการบริการ': a.flowName
+          'รายการบริการ': a.flowName,
           // 'หมายเหตุ': a.extraJob,
           // 'หมายเหตุยกเลิก': a.remarkRemove,
           // 'เวลาติดตาม': '',
@@ -11866,7 +11870,7 @@ export default {
           // 'ตรง': '',
           // 'ไม่ตรง': '',
           // 'เปิดJob': '',
-          // 'พนักงานรับนัดหมาย': a.empFull_NameTH,
+          'พนักงานรับนัดหมาย': a.empFull_NameTH
           // 'หมายเหตุเพิ่มเติม': a.remark
         }
         if (checkPackageShow > 0) {
@@ -12458,6 +12462,7 @@ export default {
               s.value = d.flowId
               s.allData = d
               s.menuShowStatus = d.menuShowStatus
+              s.masBranchID = d.masBranchID
               result.push(s)
               resultOption.push(s)
               // console.log('this.DataFlowName', this.DataFlowName)
@@ -12467,7 +12472,8 @@ export default {
             resultOption = []
           }
         })
-      this.DataFlowName = result
+      this.DataFlowNameDefault = result
+      // this.DataFlowName = result
       this.DataFlowNameMenu = result.filter(el => { return el.menuShowStatus === 'True' })
       this.dataFlowSelectAdd = resultOption
       this.dataFlowSelectEdit = resultOption
@@ -13149,7 +13155,7 @@ export default {
       }
       let url = ''
       if (dateStart === 'no') {
-        url = `${this.DNS_IP}/BookingData/getsearchName?shopId=${this.session.data.shopId}&fieldValue=${searchOther}`
+        url = `${this.DNS_IP}/BookingData/getsearchName?shopId=${this.session.data.shopId}&fieldValue=${searchOther}&category=${this.session.data.category}&masBranchID=${this.masBranchID}`
       } else {
         url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
       }
@@ -13212,6 +13218,7 @@ export default {
       if (this.flowSelect !== '') {
         this.flowSelect = this.flowSelect
       } else {
+        this.DataFlowName = this.DataFlowNameDefault.filter(el => { return parseInt(el.masBranchID) === this.masBranchID || el.value === 'AllFlow' })
         if (this.DataFlowName.length > 0) {
           this.flowSelect = this.DataFlowName[0].value
         } else {
@@ -13595,7 +13602,7 @@ export default {
           let chkTimes = this.dataItemTime.filter(el => { return el.timeDueHtext === t.timeDueHtext })
           // console.log('chkTimes', chkTimes)
           if (chkTimes.length === 0) {
-            console.log('datause(H)', h)
+            // console.log('datause(H)', h)
             this.dataItemTime.push(h)
           }
         }
