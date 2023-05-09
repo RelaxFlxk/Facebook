@@ -14634,7 +14634,7 @@ export default {
                       this.statusShowDateConfiremjob = true
                       if (response.data.status) {
                         if (this.jobCheckPackage) {
-                          await this.usePackage(this.dataQrcode.bookNo)
+                          await this.usePackage(this.dataQrcode.bookNo, this.BookingDataItem[0].masBranchID)
                         }
                         this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
                         if (this.statusSearch === 'no') {
@@ -14928,7 +14928,7 @@ export default {
               await this.updateRemarkAndEmpSelect(item)
               // this.getDataCalendaBooking()
               if (this.packageId !== '') {
-                await this.usePackage(item.bookNo)
+                await this.usePackage(item.bookNo, item.masBranchID)
               }
               let DTitem = item.userId
               console.log('DTITEM', DTitem)
@@ -14971,10 +14971,11 @@ export default {
         this.$router.push('/Core/Login')
       }
     },
-    async usePackage (bookNo) {
+    async usePackage (bookNo, masBranchID) {
       var params = {
         shopId: this.$session.getAll().data.shopId,
-        token: this.StatusPackage.token
+        token: this.StatusPackage.token,
+        branchBeLinked: masBranchID
       }
       await axios({
         method: 'post',
@@ -14983,7 +14984,7 @@ export default {
           lineUserId: this.lineUserId,
           lineId: this.userId
         },
-        url: this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token,
+        url: this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token + '&branchBeLinked=' + masBranchID,
         data: params
       }).then((response) => {})
       await this.updatePackageInBooking(this.$session.getAll().data.shopId, this.StatusPackage.token, this.packageId, bookNo)
@@ -15281,7 +15282,7 @@ export default {
             .post(this.DNS_IP + '/booking_transaction/add', dt)
             .then(async response => {
               console.log('addDataGlobal', response)
-              if (changeStatus === 'confirm' || changeStatus === 'confirmJob') {
+              if (item.statusBt === 'confirm' || item.statusBt === 'confirmJob') {
                 if (item.userId !== 'user-skip') {
                   if (this.statusSearch === 'no') {
                     await this.getBookingList()

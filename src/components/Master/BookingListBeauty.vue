@@ -8832,8 +8832,7 @@ export default {
                       //       .then(async response => {
                       this.lineNotifyGroupOnsite(this.BookingDataItem[0].bookNo)
                       if (this.jobCheckPackage) {
-                        console.log('usePackage')
-                        await this.usePackage(this.BookingDataItem[0].bookNo)
+                        await this.usePackage(this.BookingDataItem[0].bookNo, this.BookingDataItem[0].masBranchID)
                       }
                       this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
                       if (this.statusSearch === 'no') {
@@ -14351,37 +14350,9 @@ export default {
                       this.empSelectJob = ''
                       this.statusShowDateConfiremjob = true
                       if (response.data.status) {
-                      //     var dt = {
-                      //       bookNo: this.BookingDataItem[0].bookNo,
-                      //       statusJob: 'job',
-                      //       jobNo: response.data.jobNo
-                      //     }
-                      //     await axios
-                      //       .post(
-                      //         this.DNS_IP +
-                      // '/Booking/editStatus/' +
-                      // this.BookingDataItem[0].bookNo,
-                      //         dt
-                      //       )
-                      //       .then(async response1 => {
-                      //         var dtt = {
-                      //           bookNo: this.BookingDataItem[0].bookNo,
-                      //           contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
-                      //           status: 'confirmJob',
-                      //           statusUse: 'use',
-                      //           shopId: this.$session.getAll().data.shopId,
-                      //           CREATE_USER: this.session.data.userName,
-                      //           LAST_USER: this.session.data.userName,
-                      //           packageId: this.packageId,
-                      //           tokenPackage: this.tokenPackage
-                      //         }
-                      //         axios
-                      //           .post(this.DNS_IP + '/booking_transaction/add', dtt)
-                      //           .then(async response => {
                         await this.pushMsg(response.data.jobNo)
                         if (this.jobCheckPackage) {
-                          console.log('usePackage')
-                          await this.usePackage(this.dataQrcode.bookNo)
+                          await this.usePackage(this.dataQrcode.bookNo, this.BookingDataItem[0].masBranchID)
                         }
                         this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
                         if (this.statusSearch === 'no') {
@@ -14676,7 +14647,7 @@ export default {
               await this.updateRemarkAndEmpSelect(item)
               // this.getDataCalendaBooking()
               if (this.packageId !== '') {
-                await this.usePackage(item.bookNo)
+                await this.usePackage(item.bookNo, item.masBranchID)
               }
               let DTitem = item.userId
               console.log('DTITEM', DTitem)
@@ -14719,10 +14690,11 @@ export default {
         this.$router.push('/Core/Login')
       }
     },
-    async usePackage (bookNo) {
+    async usePackage (bookNo, masBranchID) {
       var params = {
         shopId: this.$session.getAll().data.shopId,
-        token: this.StatusPackage.token
+        token: this.StatusPackage.token,
+        branchBeLinked: masBranchID
       }
       await axios({
         method: 'post',
@@ -14731,7 +14703,7 @@ export default {
           lineUserId: this.lineUserId,
           lineId: this.userId
         },
-        url: this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token,
+        url: this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token + '&branchBeLinked=' + masBranchID,
         data: params
       }).then((response) => {})
       await this.updatePackageInBooking(this.$session.getAll().data.shopId, this.StatusPackage.token, this.packageId, bookNo)
@@ -15072,8 +15044,7 @@ export default {
           await axios
             .post(this.DNS_IP + '/booking_transaction/add', dt)
             .then(async response => {
-              console.log('addDataGlobal', response)
-              if (changeStatus === 'confirm' || changeStatus === 'confirmJob') {
+              if (item.statusBt === 'confirm' || item.statusBt === 'confirmJob') {
                 if (item.userId !== 'user-skip') {
                   if (this.statusSearch === 'no') {
                     await this.getBookingList()
