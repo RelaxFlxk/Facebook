@@ -10286,6 +10286,12 @@ export default {
         // this.dataItemSelect = []
         var dataItemTimes = []
         var dataItems = []
+        let categoryUser = ''
+        if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์' || this.$session.getAll().data.category === '7') {
+          categoryUser = 'ธุรกิจรถยนต์'
+        } else {
+          categoryUser = this.$session.getAll().data.category
+        }
         await this.getBookingDataList('no', this.searchOther)
         await axios
           .get(
@@ -10294,7 +10300,7 @@ export default {
             '/booking_view/getSearchName?shopId=' +
             this.session.data.shopId +
             '&category=' +
-            this.session.data.category +
+            categoryUser +
             '&masBranchID=' + this.masBranchID +
             '&fieldValue=' +
             this.searchOther + this.selectOnsite
@@ -12757,7 +12763,7 @@ export default {
         }
         // console.log('dataSelect', this.dataItemSelect)
         if (text === 'cancel') {
-          if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์') {
+          if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์' || this.$session.getAll().data.category === '7') {
             this.columnsSelected = [
               // { text: 'Booking Id', value: 'bookNo' },
               { text: 'ชื่อลูกค้า', value: 'cusName', width: '150' },
@@ -12794,7 +12800,7 @@ export default {
             ]
           }
         } else if (text === 'confirm') {
-          if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์') {
+          if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์' || this.$session.getAll().data.category === '7') {
             this.columnsSelected = [
               // { text: 'Booking Id', value: 'bookNo' },
               { text: 'ชื่อลูกค้า', value: 'cusName', width: '120', sortable: false },
@@ -12833,7 +12839,7 @@ export default {
             ]
           }
         } else if (text === 'wait') {
-          if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์') {
+          if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์' || this.$session.getAll().data.category === '7') {
             this.columnsSelected = [
               // { text: 'Booking Id', value: 'bookNo' },
               { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
@@ -12862,7 +12868,7 @@ export default {
               { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
           }
         } else if (text === 'confirmJob') {
-          if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์') {
+          if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์' || this.$session.getAll().data.category === '7') {
             this.columnsSelected = [
               // { text: 'Booking Id', value: 'bookNo' },
               { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
@@ -12893,7 +12899,7 @@ export default {
               { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
           }
         } else {
-          if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์') {
+          if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์' || this.$session.getAll().data.category === '7') {
             this.columnsSelected = [
               // { text: 'Booking Id', value: 'bookNo' },
               { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
@@ -13139,9 +13145,15 @@ export default {
           this.masBranchID = ''
         }
       }
+      let categoryUser = ''
+      if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์' || this.$session.getAll().data.category === '7') {
+        categoryUser = 'ธุรกิจรถยนต์'
+      } else {
+        categoryUser = this.$session.getAll().data.category
+      }
       let url = ''
       if (dateStart === 'no') {
-        url = `${this.DNS_IP}/BookingData/getsearchName?shopId=${this.session.data.shopId}&fieldValue=${searchOther}&category=${this.session.data.category}&masBranchID=${this.masBranchID}`
+        url = `${this.DNS_IP}/BookingData/getsearchName?shopId=${this.session.data.shopId}&fieldValue=${searchOther}&category=${categoryUser}&masBranchID=${this.masBranchID}`
       } else {
         url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
       }
