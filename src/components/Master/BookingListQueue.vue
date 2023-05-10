@@ -1321,6 +1321,7 @@ export default {
             cancelButtonText: 'ไม่'
           }).then(async response => {
             let lineUserId = item.lineUserId || ''
+            this.reCallNoti(item)
             if (lineUserId !== '') {
               let dtt = {
                 checkGetQueue: 'True'
@@ -1455,6 +1456,7 @@ export default {
       await axios
         .post(this.DNS_IP + '/booking_transaction/add', dtt)
         .then(async responses => {
+          await this.CallNoti(item)
           let lineUserId = item.lineUserId || ''
           if (lineUserId !== '') {
             let dtt = {
