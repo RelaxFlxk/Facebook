@@ -591,7 +591,7 @@
                   class="textserch"
                   background-color="white"
                   style="border-radius: 40px !important;"
-                  :label="session.data.category === 'ธุรกิจรถยนต์' ? 'ค้นหาชื่อทั้งหมด หรือ ทะเบียน' : 'ค้นหาชื่อทั้งหมด'"
+                  :label="$session.getAll().data.category === 'ธุรกิจรถยนต์' || $session.getAll().data.category === '7' ? 'ค้นหาชื่อทั้งหมด หรือ ทะเบียน' : 'ค้นหาชื่อทั้งหมด'"
                   v-model="searchOther"
                   outlined
                   hide-details
