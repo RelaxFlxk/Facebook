@@ -361,7 +361,7 @@
               Your browser does not support the audio format.
             </audio>
             <audio id="playerSuffix" controls="controls">>
-              <source :src="tableTarget">
+              <source src="https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_05092023150816848745.wav">
               Your browser does not support the audio format.
             </audio>
           </v-col>
@@ -669,7 +669,7 @@ export default {
     playSound (res) {
       console.log(res)
       this.audio = res.audio_url
-      this.tableTarget = this.tableAudioList[this.tableId]
+      // this.tableTarget = this.tableAudioList[this.tableId]
       this.timeCount = 1
       let playerPrefix = document.getElementById('playerPrefix')
       let playerQueue = document.getElementById('playerQueue')
