@@ -498,7 +498,7 @@
                 @click.stop="confirmChk(dataItem[0])"
               >
                 <v-icon dark size="30" class="iconify" data-icon="quill:mail-subbed"></v-icon>
-                ยืนยัน
+                ยืนยันd
               </v-btn>
               <!-- <v-btn
                 color="success"
@@ -720,10 +720,18 @@
               elevation="2"
               color="#173053"
               dark
-              large
               block
               @click="changeChk(dataChange)"
               >เปลี่ยนเวลานัดหมาย</v-btn
+            >
+            <v-btn
+              class="mt-3"
+              elevation="2"
+              color="success"
+              dark
+              block
+              @click="changeChkAndConfirm(dataChange)"
+              >เปลี่ยนเวลานัดหมาย / ยืนยัน</v-btn
             >
           </div>
         </v-card-text>
@@ -1548,10 +1556,20 @@ export default {
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
+              d.masBranchID = d.masBranchID || ''
               var s = {}
-              s.text = d.empFull_NameTH
-              s.value = d.empId
               this.empSelectStepAdd.push(s)
+              if (this.$session.getAll().data.masBranchID === '' || this.$session.getAll().data.masBranchID === null) {
+                s.text = d.empFull_NameTH
+                s.value = d.empId
+                this.empSelectStepAdd.push(s)
+              } else {
+                if (this.$session.getAll().data.masBranchID === d.masBranchID || d.masBranchID === '') {
+                  s.text = d.empFull_NameTH
+                  s.value = d.empId
+                  this.empSelectStepAdd.push(s)
+                }
+              }
             }
           }
         })
@@ -2460,6 +2478,74 @@ export default {
       await this.getEmpSelect(item)
       this.dialogConfirm = true
     },
+    async onConfirmByChang (item) {
+      this.dataReady = false
+      if (this.dataItem[0].checkOnsite === 'True') {
+        console.log('IF!!!!')
+        this.dataReady = true
+      } else {
+        let dtint = '0'
+        console.log('dataFlow', this.dataFlow.filter(el => { return el.value === item.flowId }))
+        if (this.dataFlow.filter(el => { return el.value === item.flowId }).length > 0) {
+          let setTime = []
+          // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
+          if (this.dataFlow.filter(el => { return el.value === item.flowId })[0].allData.setTimebyday === 'True') {
+            let timeJson = JSON.parse(this.dataFlow.filter(el => { return el.value === item.flowId })[0].allData.setTime).filter((items) => items.value === new Date(item.dueDate).getDay())
+            setTime = timeJson[0].setTime || []
+            console.log('IF')
+          } else {
+            console.log('ELSE')
+            setTime = JSON.parse(this.dataFlow.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
+          }
+          if (setTime.length > 0) {
+            dtint = parseInt(setTime.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
+          } else {
+            dtint = '0'
+          }
+        } else {
+          dtint = '0'
+        }
+        var dt = {
+          pageStatus: this.dataItem[0].statusBt,
+          limitBookingCount: dtint,
+          bookNo: item.bookNo,
+          contactDate: this.format_date(new Date()),
+          status: 'confirm',
+          statusUse: 'use',
+          shopId: this.$session.getAll().data.shopId,
+          CREATE_USER: this.$session.getAll().data.userName,
+          LAST_USER: this.$session.getAll().data.userName
+        }
+        axios
+          .post(this.DNS_IP + '/booking_transaction/add', dt)
+          .then(async response => {
+            if (response.data.status) {
+              await this.updateRemark(item)
+              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              let DTitem = item.userId
+              console.log('DTITEM', DTitem)
+              this.dialogConfirm = false
+              this.dataReady = true
+              if (DTitem !== 'user-skip') {
+                await this.chkBookingNo()
+                // this.getTimesChange('update')
+                this.pushMsgConfirm(item.bookNo)
+              } else {
+                await this.chkBookingNo()
+                // this.getTimesChange('update')
+              }
+            } else {
+              this.dataReady = true
+              this.$swal('ผิดพลาด', response.data.message, 'error')
+            }
+          })
+          .catch(error => {
+            console.log('error function addData : ', error)
+            this.dataReady = true
+          })
+      }
+      // }
+    },
     async onConfirm (item) {
       // await this.getCheckCountBook()
       // console.log('countBooking', this.countBooking)
@@ -2717,10 +2803,21 @@ export default {
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
+              d.masBranchID = d.masBranchID || ''
               var s = {}
-              s.text = d.empFirst_NameTH
-              s.value = d.empId
-              this.empSelectStep.push(s)
+              if (this.$session.getAll().data.masBranchID === '' || this.$session.getAll().data.masBranchID === null) {
+                console.log('IF')
+                s.text = d.empFirst_NameTH
+                s.value = d.empId
+                this.empSelectStep.push(s)
+              } else {
+                if (this.$session.getAll().data.masBranchID === d.masBranchID || d.masBranchID === '') {
+                  console.log('ELSE')
+                  s.text = d.empFirst_NameTH
+                  s.value = d.empId
+                  this.empSelectStep.push(s)
+                }
+              }
             }
             this.empSelect = this.empSelectStep[0].value
           }
@@ -2868,6 +2965,109 @@ export default {
         // LimitBookingBy masBranch
         // this.timeavailable = JSON.parse(this.branchData.filter(item => { return item.masBranchID === this.fromAdd.masBranchID })[0].setTime) || []
       }
+    },
+    async changeChkAndConfirm (item) {
+      console.log('item', item)
+      this.dataReady = false
+      if (this.timeavailable.filter(el => { return el.value === this.formChange.time.value }).length > 0) {
+        let checkCountTime = await axios.get(this.DNS_IP + '/booking_view/get?bookNo=' + item.bookNo)
+        let chkStatLimit = this.dataFlow.filter(el => { return el.value === item.flowId })
+        console.log('chkStatLimit', chkStatLimit)
+        console.log('this.DataFlowName', this.DataFlowName)
+        if (chkStatLimit.length > 0) {
+          if (chkStatLimit[0].allData.limitBookingCheck === 'True') {
+            let dueOld = this.dueDateOld + this.dueDateTimeOld
+            let dueNew = this.formChange.date + this.formChange.time.value
+            let limitBookingCount = this.timeavailable.filter(el => { return el.value === this.formChange.time.value })
+            console.log('limitBookingCount', limitBookingCount)
+            let limitBookingCounts = 0
+            if (limitBookingCount.length > 0) {
+              limitBookingCounts = parseInt(limitBookingCount[0].limitBooking)
+            } else {
+              limitBookingCounts = 0
+            }
+            if (dueOld !== dueNew) {
+              let chkStatus = await this.updateLimitBookingChange(item, this.dueDateOld, this.dueDateTimeOld, this.formChange.date, this.formChange.time.value, limitBookingCounts)
+              console.log('chkStatus', chkStatus)
+              if (chkStatus.status) {
+                this.onChangeChkAndConfirmSubmit(item, checkCountTime)
+              } else {
+                this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
+                this.dataChangeReady = true
+                this.dataReady = true
+              }
+            } else {
+              this.onChangeChkAndConfirmSubmit(item, checkCountTime)
+            }
+          } else {
+            this.onChangeChkAndConfirmSubmit(item, checkCountTime)
+          }
+        } else {
+          this.onChangeChkAndConfirmSubmit(item, checkCountTime)
+        }
+      } else {
+        this.$swal('ผิดพลาด', 'กรุณาเลือกเวลา', 'error')
+        this.dataReady = true
+      }
+    },
+    async onChangeChkAndConfirmSubmit (item, checkCountTime) {
+      let countTime = 0
+      if (checkCountTime) {
+        countTime = checkCountTime.data[0].countChangeTime || 0
+      }
+      var dtChange = {
+        countChangeTime: countTime,
+        changeDueDate: 'change',
+        dueDate: this.formChange.date + ' ' + this.formChange.time.value,
+        timeText: this.formChange.time.text,
+        LAST_USER: this.$session.getAll().data.userName
+      }
+      await axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + "/BookingData/edit/" + item.bookNo,
+          dtChange
+        )
+        .then(async response => {
+          var dt = {
+            bookNo: item.bookNo,
+            contactDate: this.format_date(new Date()),
+            status: 'change',
+            statusUse: 'use',
+            shopId: this.$session.getAll().data.shopId,
+            CREATE_USER: this.$session.getAll().data.userName,
+            LAST_USER: this.$session.getAll().data.userName,
+            changDate: this.formChange.date + ' ' + this.formChange.time.value
+          }
+          await axios
+            .post(this.DNS_IP + '/booking_transaction/add', dt)
+            .then(async response => {
+              // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              // this.dialogChange = false
+              this.dataReady = true
+              console.log('addDataGlobal', response)
+              if (item.statusBt === 'confirm') {
+                if (item.userId !== 'user-skip') {
+                  await this.chkBookingNo()
+                  this.pushMsgConfirmChangeTime(item.bookNo)
+                  // this.getTimesChange('update')
+                } else {
+                  await this.chkBookingNo()
+                  // this.getTimesChange('update')
+                }
+              } else {
+                await this.chkBookingNo()
+                // this.getTimesChange('update')
+              }
+              await this.onConfirmByChang(item)
+              this.dialogChange = false
+            })
+            .catch(error => {
+              console.log('error function addData : ', error)
+              this.dataReady = true
+            })
+        })
+      // })
     },
     async changeChk (item) {
       console.log('item', item)

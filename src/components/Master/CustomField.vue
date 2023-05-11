@@ -35,7 +35,7 @@
           </v-card>
         </v-dialog>
           <!-- ADD -->
-          <v-dialog v-model="dialogAdd" persistent max-width="600px"  max-height="100%">
+          <v-dialog v-model="dialogAdd" persistent max-width="600px" >
             <v-card class="pa-3">
               <v-form ref="form_add" v-model="validAdd" lazy-validation>
               <v-card-text>
@@ -309,8 +309,6 @@
                         v-model="formAdd.conditionField"
                         :items="selectConditionField"
                         dense
-                        item-text="text"
-                        item-value="value"
                         return-object
                         @change="formAdd.conditionValue = ''"
                         :rules="[rules.required]"
@@ -320,11 +318,40 @@
                         :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-row>
+                      <v-row style="height: 50px" v-if="formAdd.conditionField.fieldType === 'flow'" class="px-3 mt-6">
+                        <v-select
+                        v-model="branchByflowAdd"
+                        :items="branch"
+                        dense
+                        outlined
+                        label="สาขา"
+                        :rules="[rules.required]"
+                        attach
+                        @change="logTest()"
+                        ></v-select>
+                      </v-row>
                       <!-- END -->
                       <!-- <v-row style="height: 35px" v-if="checkbox === 'true' && formAdd.conditionField">
                       <v-subheader >Value:</v-subheader>
                       </v-row> -->
-                      <v-row style="height: 50px" v-if="checkbox === 'true' && formAdd.conditionField &&
+                      <div  class="px-3 mt-3" v-if="formAdd.conditionField.fieldType === 'flow'">
+                        <v-row  v-if="checkbox === 'true' && formAdd.conditionField &&
+                      (formAdd.conditionField.fieldType === 'Selects' || formAdd.conditionField.fieldType === 'Radio' || formAdd.conditionField.fieldType === 'Autocompletes' || formAdd.conditionField.fieldType === 'flow')">
+                      <v-select
+                      v-if="branchByflowAdd !== ''"
+                        v-model="formAdd.conditionValue"
+                        outlined
+                        label="value"
+                        :items="JSON.parse(formAdd.conditionField.optionField).filter((ii) => branchByflowAdd === 'All' ? true : ii.masBranchID === branchByflowAdd )"
+                        dense
+                        required
+                        :rules="[rules.required]"
+                        attach
+                        ></v-select>
+                      </v-row>
+                      </div>
+                      <div v-else>
+                        <v-row style="height: 50px" v-if="checkbox === 'true' && formAdd.conditionField &&
                       (formAdd.conditionField.fieldType === 'Selects' || formAdd.conditionField.fieldType === 'Radio' || formAdd.conditionField.fieldType === 'Autocompletes' || formAdd.conditionField.fieldType === 'flow')">
                       <v-select
                       class="mt-3 px-3"
@@ -336,7 +363,7 @@
                         outlined
                         :rules="[rules.required]"
                         attach
-            :menu-props="{ bottom: true, offsetY: true }"
+                        :menu-props="{ bottom: true, offsetY: true }"
                         ></v-select>
                       </v-row>
                       <v-row style="height: 50px" v-if="checkbox === 'true' && formAdd.conditionField &&
@@ -351,6 +378,7 @@
                           :rules="[rules.required]"
                         ></v-text-field>
                       </v-row>
+                      </div>
                       <!-- END -->
                     </v-col>
                       <!-- END Radio buttun -->
@@ -912,7 +940,7 @@
           </v-col>
           <!-- end data table -->
         </v-row>
-        <v-dialog v-model="dialogwarn" max-width="30%" persistent >
+        <v-dialog v-model="dialogwarn" max-width="370px" persistent >
         <v-card class="pa-3" style="overflow-x: hidden">
           <div style="text-align: end;">
               <v-btn
@@ -1202,6 +1230,9 @@ export default {
     this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
   },
   methods: {
+    logTest () {
+      console.log('logTest', this.branchByflowAdd)
+    },
     getDialogEdit () {
       this.$refs.dialogBookingField.editDataByBookingField('test')
     },
