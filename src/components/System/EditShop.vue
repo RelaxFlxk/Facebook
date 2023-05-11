@@ -101,7 +101,7 @@
                       </v-col>
                       <v-col cols="6" class="pb-0">
                           <v-text-field
-                          outlined
+                            outlined
                             label="เบอร์โทรศัพท์"
                             placeholder="Contact Tel*"
                             v-model="formUpdate.contactTel"

@@ -181,7 +181,8 @@ export default {
           // on success
           console.log('authCode', authCode)
           axios
-            .post('http://localhost:5002/be-linked-a7cdc/asia-southeast1/GoogleCalendar-createToken', {code: authCode})
+            .post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/GoogleCalendar-createToken', {code: authCode})
+            // .post('http://localhost:5002/be-linked-a7cdc/asia-southeast1/GoogleCalendar-createToken', {code: authCode})
             .then(async (response) => {
               this.checkLogin = true
               console.log('token', response.data)
@@ -202,7 +203,7 @@ export default {
         EndDate: this.EndDate
       }
       axios
-        .post('http://localhost:5002/be-linked-a7cdc/asia-southeast1/GoogleCalendar-createEvent', dt)
+        .post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/GoogleCalendar-createEvent', dt)
         .then(async (response) => {
           console.log('createEvent', response.data)
         })
@@ -213,7 +214,7 @@ export default {
         eventId: this.eventId
       }
       axios
-        .post('http://localhost:5002/be-linked-a7cdc/asia-southeast1/GoogleCalendar-getEvent', dt)
+        .post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/GoogleCalendar-getEvent', dt)
         .then(async (response) => {
           console.log('getEvent', response.data)
           if (response.data.status === 200) {
@@ -242,7 +243,7 @@ export default {
         EndDate: this.EndDate
       }
       axios
-        .post('http://localhost:5002/be-linked-a7cdc/asia-southeast1/GoogleCalendar-updateEvent', dt)
+        .post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/GoogleCalendar-updateEvent', dt)
         .then(async (response) => {
           console.log('updateEvent', response.data)
         })
@@ -253,7 +254,7 @@ export default {
         eventId: this.eventId
       }
       axios
-        .post('http://localhost:5002/be-linked-a7cdc/asia-southeast1/GoogleCalendar-deleteEvent', dt)
+        .post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/GoogleCalendar-deleteEvent', dt)
         .then(async (response) => {
           console.log('deleteEvent', response.data)
         })

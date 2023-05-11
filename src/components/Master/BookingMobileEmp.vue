@@ -2637,7 +2637,8 @@ export default {
     async usePackage () {
       var params = {
         shopId: this.$session.getAll().data.shopId,
-        token: this.StatusPackage.token
+        token: this.StatusPackage.token,
+        branchBeLinked: this.BookingDataItem[0].masBranchID
       }
       await axios({
         method: 'post',
@@ -2646,7 +2647,7 @@ export default {
           lineUserId: this.lineUserId,
           lineId: this.userId
         },
-        url: this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token,
+        url: this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token + '&branchBeLinked=' + this.BookingDataItem[0].masBranchID,
         data: params
       }).then((response) => {})
     },

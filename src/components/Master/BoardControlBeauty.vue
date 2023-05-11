@@ -2437,7 +2437,8 @@ export default {
     async usePackage () {
       var params = {
         shopId: this.shopId,
-        token: this.packageId.token
+        token: this.packageId.token,
+        branchBeLinked: this.masBranchID
       }
       await axios({
         method: 'post',

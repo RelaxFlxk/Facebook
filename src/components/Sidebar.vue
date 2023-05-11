@@ -806,6 +806,7 @@ export default {
       this.$root.$emit('closeSetTime')
       this.$root.$emit('closeSetTimeGetCalenda')
       this.$root.$emit('closeSetTimeBookingMonitor')
+      this.$root.$emit('closeSetTimeBookingListQueue')
     },
     logout () {
       console.log(this.$session.getAll())

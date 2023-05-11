@@ -447,7 +447,7 @@
               dense
               required
               :disabled="statusBranchReadonly"
-              @change="dataReady = false,getBookingList()"
+              @change="dataReady = false,flowSelect = '',getBookingList()"
               ><template #prepend-inner>
                 <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
                   mdi-map-marker-outline
@@ -541,7 +541,7 @@
               dense
               required
               :disabled="statusBranchReadonly"
-              @change="dataReady = false,getBookingList()"
+              @change="dataReady = false,flowSelect = '',getBookingList()"
               ><template #prepend-inner>
                 <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
                   mdi-map-marker-outline
@@ -591,7 +591,7 @@
                   class="textserch"
                   background-color="white"
                   style="border-radius: 40px !important;"
-                  label="ค้นหาชื่อทั้งหมด"
+                  :label="$session.getAll().data.category === 'ธุรกิจรถยนต์' || $session.getAll().data.category === '7' ? 'ค้นหาชื่อทั้งหมด หรือ ทะเบียน' : 'ค้นหาชื่อทั้งหมด'"
                   v-model="searchOther"
                   outlined
                   hide-details
@@ -7222,7 +7222,8 @@ export default {
       masBranchIDAddJob: '',
       statusPushEndStep: 'False',
       endStepItem: [],
-      ItemendStepStanby: []
+      ItemendStepStanby: [],
+      DataFlowNameDefault: []
     }
   },
   beforeCreate () {
@@ -8330,7 +8331,7 @@ export default {
     },
     checkCustomerTimeSlot () {
       this.timeSlotbyCustomer = []
-      this.customerTimeSlot = this.DataFlowName.filter((v) => v.value === this.formAdd.flowId)[0].allData.customerTimeSlot
+      this.customerTimeSlot = this.DataFlowNameDefault.filter((v) => v.value === this.formAdd.flowId)[0].allData.customerTimeSlot
       let allTime = []
       if (this.customerTimeSlot === 'True') {
         if (this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTimebyday === 'True') {
@@ -8399,7 +8400,7 @@ export default {
     },
     checkCustomerTimeSlotCancel () {
       this.timeSlotbyCustomer = []
-      this.customerTimeSlot = this.DataFlowName.filter((v) => v.value === this.flowSelectCancel)[0].allData.customerTimeSlot
+      this.customerTimeSlot = this.DataFlowNameDefault.filter((v) => v.value === this.flowSelectCancel)[0].allData.customerTimeSlot
       console.log('this.customerTimeSlot', this.customerTimeSlot)
       let allTime = []
       if (this.customerTimeSlot === 'True') {
@@ -8469,10 +8470,8 @@ export default {
       // console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
     },
     checkCustomerTimeSlotEdit () {
-      console.log('itemTest2', this.DataFlowName.filter((v) => v.value === this.formEdit.flowId)[0].allData.customerTimeSlot)
-      // this.DataFlowName.filter((v) => v.value === dt.flowId)[0].allData.timeSlot
       this.timeSlotbyCustomer = []
-      this.customerTimeSlot = this.DataFlowName.filter((v) => v.value === this.formEdit.flowId)[0].allData.customerTimeSlot
+      this.customerTimeSlot = this.DataFlowNameDefault.filter((v) => v.value === this.formEdit.flowId)[0].allData.customerTimeSlot
       let allTime = []
       if (this.customerTimeSlot === 'True') {
         // allTime = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.fromAdd.empId })[0].setTime)
@@ -8539,11 +8538,8 @@ export default {
       console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
     },
     checkCustomerTimeSlotChang (itemChang) {
-      console.log('itemTest', itemChang)
-      console.log('itemTest2', this.DataFlowName.filter((v) => v.value === itemChang.flowId)[0].allData.customerTimeSlot)
-      // this.DataFlowName.filter((v) => v.value === dt.flowId)[0].allData.timeSlot
       this.timeSlotbyCustomer = []
-      this.customerTimeSlot = this.DataFlowName.filter((v) => v.value === itemChang.flowId)[0].allData.customerTimeSlot
+      this.customerTimeSlot = this.DataFlowNameDefault.filter((v) => v.value === itemChang.flowId)[0].allData.customerTimeSlot
       let allTime = []
       if (this.customerTimeSlot === 'True') {
         // allTime = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.fromAdd.empId })[0].setTime)
@@ -9407,7 +9403,7 @@ export default {
         await this.getEmpSelectAdd()
         await this.getBookingFieldText()
         this.getCustomFieldStart()
-        this.getDataFlow()
+        await this.getDataFlow()
         await this.scanQrcode()
         // this.getBookingList()
       } else {
@@ -9415,7 +9411,7 @@ export default {
         await this.getEmpSelectAdd()
         await this.getBookingFieldText()
         this.getCustomFieldStart()
-        this.getDataFlow()
+        await this.getDataFlow()
         this.getBookingList()
       }
     },
@@ -9596,12 +9592,11 @@ export default {
             allBookingTime.push(dt.filter((i, k) => (k >= index && k <= num)))
           }
         })
-        console.log('timeSlot', this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId }))
         let checkTimeSlot = []
         let index = dt.findIndex((i, k) => i.value === this.time.value)
         let slot = ''
         if (this.customerTimeSlot === 'False') {
-          slot = this.DataFlowName.filter(item => { return item.value === this.formAdd.flowId })[0].allData.timeSlot
+          slot = this.DataFlowNameDefault.filter(item => { return item.value === this.formAdd.flowId })[0].allData.timeSlot
         } else {
           slot = this.fromAddTimeCus
         }
@@ -9675,11 +9670,11 @@ export default {
         // let slotByflow = this.DataFlowName.filter((v) => v.value === this.formAdd.flowId)[0].allData.timeSlot
         let slotByflow = []
         if (this.customerTimeSlot === 'False') {
-          slotByflow = this.DataFlowName.filter((v) => v.value === this.formAdd.flowId)[0].allData.timeSlot
+          slotByflow = this.DataFlowNameDefault.filter((v) => v.value === this.formAdd.flowId)[0].allData.timeSlot
         } else {
           slotByflow = this.fromAddTimeCus
         }
-        let overTime = this.DataFlowName.filter((v) => v.value === this.formAdd.flowId)[0].allData.overTime
+        let overTime = this.DataFlowNameDefault.filter((v) => v.value === this.formAdd.flowId)[0].allData.overTime
         if (this.timeavailable.length >= slotByflow) {
           let LimitBooking = await this.getLimitBooking()
           console.log('LimitBooking', LimitBooking)
@@ -10291,6 +10286,12 @@ export default {
         // this.dataItemSelect = []
         var dataItemTimes = []
         var dataItems = []
+        let categoryUser = ''
+        if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์' || this.$session.getAll().data.category === '7') {
+          categoryUser = 'ธุรกิจรถยนต์'
+        } else {
+          categoryUser = this.$session.getAll().data.category
+        }
         await this.getBookingDataList('no', this.searchOther)
         await axios
           .get(
@@ -10298,6 +10299,9 @@ export default {
             this.DNS_IP +
             '/booking_view/getSearchName?shopId=' +
             this.session.data.shopId +
+            '&category=' +
+            categoryUser +
+            '&masBranchID=' + this.masBranchID +
             '&fieldValue=' +
             this.searchOther + this.selectOnsite
           )
@@ -10311,7 +10315,7 @@ export default {
                   // console.log('d.bookNo', d.bookNo)
                   s.bookNo = d.bookNo
                   s.flowId = d.flowId
-                  let checkDeposit = this.DataFlowName.filter(el => { return el.value === parseInt(d.flowId) })
+                  let checkDeposit = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(d.flowId) })
                   if (checkDeposit.length > 0) {
                     s.depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
                   } else {
@@ -11229,7 +11233,7 @@ export default {
       await this.getDataBranch()
       await this.getEmpSelectAdd()
       this.getCustomFieldStart()
-      this.getDataFlow()
+      await this.getDataFlow()
       await this.getBookingList()
       // await this.getTimesChange('update')
       this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
@@ -11441,15 +11445,13 @@ export default {
       this.limitBookingCheck = this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].limitBookingCheck || 'False'
       if (this.limitBookingCheck === 'True') {
         this.timeavailable = setTime
-        console.log('this.DataFlowName', this.DataFlowName)
-        // let slotByflow = this.DataFlowName.filter((v) => v.value === dt.flowId)[0].allData.timeSlot
         let slotByflow = []
         if (this.customerTimeSlot === 'False') {
-          slotByflow = this.DataFlowName.filter((v) => v.value === dt.flowId)[0].allData.timeSlot
+          slotByflow = this.DataFlowNameDefault.filter((v) => v.value === dt.flowId)[0].allData.timeSlot
         } else {
           slotByflow = this.fromAddTimeCus
         }
-        let overTime = this.DataFlowName.filter((v) => v.value === dt.flowId)[0].allData.overTime
+        let overTime = this.DataFlowNameDefault.filter((v) => v.value === dt.flowId)[0].allData.overTime
         if (this.timeavailable.length >= slotByflow) {
           let LimitBooking = await this.getLimitBookingChange(dateC, dt)
           console.log('LimitBooking', LimitBooking)
@@ -11858,7 +11860,7 @@ export default {
           'วันที่': a.dateBooking,
           'เวลา': a.title,
           // 'ชื่อลูกค้า': a.cusName,
-          'รายการบริการ': a.flowName
+          'รายการบริการ': a.flowName,
           // 'หมายเหตุ': a.extraJob,
           // 'หมายเหตุยกเลิก': a.remarkRemove,
           // 'เวลาติดตาม': '',
@@ -11866,7 +11868,7 @@ export default {
           // 'ตรง': '',
           // 'ไม่ตรง': '',
           // 'เปิดJob': '',
-          // 'พนักงานรับนัดหมาย': a.empFull_NameTH,
+          'พนักงานรับนัดหมาย': a.empFull_NameTH
           // 'หมายเหตุเพิ่มเติม': a.remark
         }
         if (checkPackageShow > 0) {
@@ -12434,7 +12436,6 @@ export default {
               s.value = d[fieldId]
               s.allData = d
               result.push(s)
-              // console.log('this.DataFlowName', this.DataFlowName)
             }
           } else {
             result = []
@@ -12458,16 +12459,17 @@ export default {
               s.value = d.flowId
               s.allData = d
               s.menuShowStatus = d.menuShowStatus
+              s.masBranchID = d.masBranchID
               result.push(s)
               resultOption.push(s)
-              // console.log('this.DataFlowName', this.DataFlowName)
             }
           } else {
             result = []
             resultOption = []
           }
         })
-      this.DataFlowName = result
+      this.DataFlowNameDefault = result
+      // this.DataFlowName = result
       this.DataFlowNameMenu = result.filter(el => { return el.menuShowStatus === 'True' })
       this.dataFlowSelectAdd = resultOption
       this.dataFlowSelectEdit = resultOption
@@ -12478,9 +12480,7 @@ export default {
       this.timeEdit = ''
       this.customerTimeSlot = 'False'
       this.formAdd.bookingEmpFlow = ''
-      console.log('item.allData', this.DataFlowName)
-      console.log('item.this.formEdit.masBranchID.toString()', this.formEdit.masBranchID.toString(), this.formEdit.masBranchID)
-      let DD = this.DataFlowName
+      let DD = this.DataFlowNameDefault
       let dataFilter = []
       DD.forEach((item) => {
         if (item.text !== 'ทั้งหมด') {
@@ -12497,9 +12497,7 @@ export default {
       this.formAdd.flowId = ''
       this.customerTimeSlot = 'False'
       this.formAdd.bookingEmpFlow = ''
-      console.log('item.allData', this.DataFlowName)
-      console.log('item.this.formAdd.masBranchID.toString()', this.formAdd.masBranchID.toString(), this.formAdd.masBranchID)
-      let DD = this.DataFlowName
+      let DD = this.DataFlowNameDefault
       let dataFilter = []
       DD.forEach((item) => {
         if (item.text !== 'ทั้งหมด') {
@@ -12765,7 +12763,7 @@ export default {
         }
         // console.log('dataSelect', this.dataItemSelect)
         if (text === 'cancel') {
-          if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์') {
+          if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์' || this.$session.getAll().data.category === '7') {
             this.columnsSelected = [
               // { text: 'Booking Id', value: 'bookNo' },
               { text: 'ชื่อลูกค้า', value: 'cusName', width: '150' },
@@ -12802,7 +12800,7 @@ export default {
             ]
           }
         } else if (text === 'confirm') {
-          if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์') {
+          if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์' || this.$session.getAll().data.category === '7') {
             this.columnsSelected = [
               // { text: 'Booking Id', value: 'bookNo' },
               { text: 'ชื่อลูกค้า', value: 'cusName', width: '120', sortable: false },
@@ -12841,7 +12839,7 @@ export default {
             ]
           }
         } else if (text === 'wait') {
-          if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์') {
+          if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์' || this.$session.getAll().data.category === '7') {
             this.columnsSelected = [
               // { text: 'Booking Id', value: 'bookNo' },
               { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
@@ -12870,7 +12868,7 @@ export default {
               { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
           }
         } else if (text === 'confirmJob') {
-          if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์') {
+          if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์' || this.$session.getAll().data.category === '7') {
             this.columnsSelected = [
               // { text: 'Booking Id', value: 'bookNo' },
               { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
@@ -12901,7 +12899,7 @@ export default {
               { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
           }
         } else {
-          if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์') {
+          if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์' || this.$session.getAll().data.category === '7') {
             this.columnsSelected = [
               // { text: 'Booking Id', value: 'bookNo' },
               { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
@@ -13147,9 +13145,15 @@ export default {
           this.masBranchID = ''
         }
       }
+      let categoryUser = ''
+      if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์' || this.$session.getAll().data.category === '7') {
+        categoryUser = 'ธุรกิจรถยนต์'
+      } else {
+        categoryUser = this.$session.getAll().data.category
+      }
       let url = ''
       if (dateStart === 'no') {
-        url = `${this.DNS_IP}/BookingData/getsearchName?shopId=${this.session.data.shopId}&fieldValue=${searchOther}`
+        url = `${this.DNS_IP}/BookingData/getsearchName?shopId=${this.session.data.shopId}&fieldValue=${searchOther}&category=${categoryUser}&masBranchID=${this.masBranchID}`
       } else {
         url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
       }
@@ -13212,6 +13216,7 @@ export default {
       if (this.flowSelect !== '') {
         this.flowSelect = this.flowSelect
       } else {
+        this.DataFlowName = this.DataFlowNameDefault.filter(el => { return parseInt(el.masBranchID) === this.masBranchID || el.value === 'AllFlow' })
         if (this.DataFlowName.length > 0) {
           this.flowSelect = this.DataFlowName[0].value
         } else {
@@ -13266,7 +13271,7 @@ export default {
               if (this.BookingDataList[d.bookNo] !== undefined) {
                 s.bookNo = d.bookNo
                 s.flowId = d.flowId
-                let checkDeposit = this.DataFlowName.filter(el => { return el.value === parseInt(d.flowId) })
+                let checkDeposit = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(d.flowId) })
                 if (checkDeposit.length > 0) {
                   s.depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
                 } else {
@@ -13448,7 +13453,7 @@ export default {
               if (this.BookingDataList[d.bookNo] !== undefined) {
                 s.bookNo = d.bookNo
                 s.flowId = d.flowId
-                let checkDeposit = this.DataFlowName.filter(el => { return el.value === parseInt(d.flowId) })
+                let checkDeposit = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(d.flowId) })
                 if (checkDeposit.length > 0) {
                   s.depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
                 } else {
@@ -13595,7 +13600,7 @@ export default {
           let chkTimes = this.dataItemTime.filter(el => { return el.timeDueHtext === t.timeDueHtext })
           // console.log('chkTimes', chkTimes)
           if (chkTimes.length === 0) {
-            console.log('datause(H)', h)
+            // console.log('datause(H)', h)
             this.dataItemTime.push(h)
           }
         }
@@ -14034,7 +14039,7 @@ export default {
               this.date = ''
               this.time = ''
             } else {
-              let checkDeposit = this.DataFlowName.filter(el => { return el.value === parseInt(this.formAdd.flowId) })
+              let checkDeposit = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) })
               let depositCheckStatus = ''
               if (checkDeposit.length > 0) {
                 depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
@@ -14641,7 +14646,7 @@ export default {
                       this.statusShowDateConfiremjob = true
                       if (response.data.status) {
                         if (this.jobCheckPackage) {
-                          await this.usePackage(this.dataQrcode.bookNo)
+                          await this.usePackage(this.dataQrcode.bookNo, this.BookingDataItem[0].masBranchID)
                         }
                         this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
                         if (this.statusSearch === 'no') {
@@ -14914,35 +14919,6 @@ export default {
     },
     onConfirm (item) {
       if (this.$session.id() !== undefined) {
-        // console.log('item', item)
-        // console.log('DataFlowName', this.DataFlowName.filter(el => { return el.value === item.flowId }))
-        // this.dataConfirmReady = false
-        // let dtint = '0'
-        // if (this.DataFlowName.filter(el => { return el.value === item.flowId }).length > 0) {
-        //   let setTime = []
-        //   // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
-        //   if (this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTimebyday === 'True') {
-        //     let timeJson = JSON.parse(this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTime).filter((items) => items.value === new Date(item.dueDate).getDay())
-        //     setTime = timeJson[0].setTime || []
-        //   } else {
-        //     setTime = JSON.parse(this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
-        //   }
-        //   if (setTime.length > 0) {
-        //     dtint = parseInt(setTime.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
-        //   } else {
-        //     dtint = '0'
-        //   }
-        //   // let dts = JSON.parse(this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
-        //   // console.log(dts.filter(el => el.value === item.timeDuetext))
-        //   // if (dts.filter(el => el.value === item.timeDuetext).length > 0) {
-        //   //   dtint = parseInt(dts.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
-        //   // } else {
-        //   //   dtint = '0'
-        //   // }
-        // } else {
-        //   dtint = '0'
-        // }
-        // console.log('dtint', dtint)
         var dt = {
           bookNo: item.bookNo,
           contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
@@ -14964,7 +14940,7 @@ export default {
               await this.updateRemarkAndEmpSelect(item)
               // this.getDataCalendaBooking()
               if (this.packageId !== '') {
-                await this.usePackage(item.bookNo)
+                await this.usePackage(item.bookNo, item.masBranchID)
               }
               let DTitem = item.userId
               console.log('DTITEM', DTitem)
@@ -15007,10 +14983,11 @@ export default {
         this.$router.push('/Core/Login')
       }
     },
-    async usePackage (bookNo) {
+    async usePackage (bookNo, masBranchID) {
       var params = {
         shopId: this.$session.getAll().data.shopId,
-        token: this.StatusPackage.token
+        token: this.StatusPackage.token,
+        branchBeLinked: masBranchID
       }
       await axios({
         method: 'post',
@@ -15019,7 +14996,7 @@ export default {
           lineUserId: this.lineUserId,
           lineId: this.userId
         },
-        url: this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token,
+        url: this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token + '&branchBeLinked=' + masBranchID,
         data: params
       }).then((response) => {})
       await this.updatePackageInBooking(this.$session.getAll().data.shopId, this.StatusPackage.token, this.packageId, bookNo)
@@ -15317,7 +15294,7 @@ export default {
             .post(this.DNS_IP + '/booking_transaction/add', dt)
             .then(async response => {
               console.log('addDataGlobal', response)
-              if (changeStatus === 'confirm' || changeStatus === 'confirmJob') {
+              if (item.statusBt === 'confirm' || item.statusBt === 'confirmJob') {
                 if (item.userId !== 'user-skip') {
                   if (this.statusSearch === 'no') {
                     await this.getBookingList()
@@ -15362,16 +15339,12 @@ export default {
         })
     },
     async updateLimitBookingChange (item, dueDateOld, dueDateTimeOld, dueDateNew, dueDateTimeNew, flowIdNew, Textcheck, masBranchIDNew) {
-      console.log('updateLimitBookingChange', item)
-      console.log('this.fromAddTimeCus', this.fromAddTimeCus)
-      // console.log('TESTSTTETETSETSET', this.DataFlowName.filter((v) => v.value === flowIdNew)[0].allData)
       let result = []
       let timeSlotCustomer = ''
       if (this.customerTimeSlot === 'True') {
         timeSlotCustomer = this.fromAddTimeCus
       } else {
-        console.log('TESTSTTETETSETSET', this.DataFlowName.filter((v) => v.value === flowIdNew)[0].allData)
-        timeSlotCustomer = this.DataFlowName.filter((v) => v.value === flowIdNew)[0].allData.timeSlot
+        timeSlotCustomer = this.DataFlowNameDefault.filter((v) => v.value === flowIdNew)[0].allData.timeSlot
       }
       let bookingEmpFlow = ''
       if (Textcheck === 'Edit') {
