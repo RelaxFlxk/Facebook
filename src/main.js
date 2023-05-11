@@ -130,6 +130,7 @@ Vue.mixin({
             liffMainID: '1656581804-7KRQyqo5',
             liffBookingFormID: '1656581804-32mk7OgE',
             liffBookingFormEmpID: '1656581804-b09WBwkP',
+            liffMainIDLoyalty: '1656906322-JN5MM8Ep',
             checkConfig: false
           }
         } else {
@@ -141,6 +142,7 @@ Vue.mixin({
           liffMainID: '1656581804-7KRQyqo5',
           liffBookingFormID: '1656581804-32mk7OgE',
           liffBookingFormEmpID: '1656581804-b09WBwkP',
+          liffMainIDLoyalty: '1656906322-JN5MM8Ep',
           checkConfig: false
         }
       })

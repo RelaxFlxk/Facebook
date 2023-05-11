@@ -1656,11 +1656,13 @@ export default {
       jobDataItemSupport: [],
       statusPushEndStep: 'False',
       endStepItem: [],
-      ItemendStepStanby: []
+      ItemendStepStanby: [],
+      dataLineConfig: {}
     }
   },
   async mounted () {
     this.dataReady = false
+    this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
     // Get Data
     this.$root.$on('closeSetTime', () => {
       // your code goes here
@@ -2483,7 +2485,7 @@ export default {
         CREATE_USER: this.session.data.userName,
         LAST_USER: this.session.data.userName,
         shopId: this.shopId,
-        qrCodeURL: `https://liff.line.me/1656906322-RnAKKNyq/collect?shopId=${this.shopId}&token=${tokenKey}`
+        qrCodeURL: `https://liff.line.me/${this.dataLineConfig.liffMainIDLoyalty}/collect?shopId=${this.shopId}&token=${tokenKey}`
         // masBranchID: '',
         // branchName: ''
       }
