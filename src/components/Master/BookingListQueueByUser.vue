@@ -167,7 +167,7 @@
                       dense
                       required
                       :rules ="[rules.required]"
-                      @change="searchBooking()"
+                      @change="searchBooking(),clearTimeLoop()"
                     >
                       <template #prepend-inner>
                         <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
@@ -561,7 +561,8 @@ export default {
       HistoryData: [],
       pictureUrHistory: '',
       dialogHistory: false,
-      shopPhone: ''
+      shopPhone: '',
+      setTimerCalendar: null
     }
   },
   computed: {
@@ -577,11 +578,24 @@ export default {
   },
   async mounted () {
     this.dateStart = this.momenDate_1(new Date())
+    console.log('localStorage', JSON.parse(localStorage.getItem('sessionData')))
+    console.log('session', this.$session.getAll().data)
     await this.beforeCreate()
   },
   methods: {
+    closeSetTimeBookingListQueue () {
+      clearInterval(this.setTimerCalendar)
+      this.setTimerCalendar = null
+    },
+    clearTimeLoop () {
+      clearInterval(this.setTimerCalendar)
+      this.setTimerCalendar = null
+      let _this = this
+      this.setTimerCalendar = setInterval(function () { _this.searchBooking() }, 15000)
+    },
     async removeQueue (item) {
       console.log('removeQueue', item)
+      this.closeSetTimeBookingListQueue()
       let statusBooking = await this.checkBookingStatus(item.bookNo)
       if (statusBooking === 'confirmJob') {
         this.$swal({
@@ -609,15 +623,18 @@ export default {
             .then(async responses => {
               this.$swal('เรียบร้อย', 'ยกเลิกคิวสำเร็จ', 'success')
               await this.searchBooking()
+              this.clearTimeLoop()
             })
         }).catch(async err => {
           // this.$router.push({ name: '404' })
           console.log(err.code, err.message)
           await this.searchBooking()
+          this.clearTimeLoop()
         })
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
         await this.searchBooking()
+        this.clearTimeLoop()
       }
     },
     async getBefore () {
@@ -626,7 +643,12 @@ export default {
       this.setTime()
       this.getShop()
       this.checkSearch()
+      this.$root.$on('closeSetTimeBookingListQueue', () => {
+      // your code goes here
+        this.closeSetTimeBookingListQueue()
+      })
       this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
+      this.clearTimeLoop()
     },
     async beforeCreate () {
       if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
@@ -943,6 +965,7 @@ export default {
           this.dialogServicePointStatus = false
           this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
           await this.searchBooking()
+          this.clearTimeLoop()
         })
       }
     },
@@ -975,6 +998,7 @@ export default {
           this.dialogServicePointStatus = false
           this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
           await this.searchBooking()
+          this.clearTimeLoop()
         })
     },
     async closeJobServicePoint (item) {
@@ -1006,11 +1030,13 @@ export default {
                   this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                   this.dialogServicePointStatus = false
                   await this.searchBooking()
+                  this.clearTimeLoop()
                 }
               } else {
                 this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                 this.dialogServicePointStatus = false
                 await this.searchBooking()
+                this.clearTimeLoop()
               }
             } else {
               this.closeJobServicePointSubmit(item)
@@ -1020,10 +1046,12 @@ export default {
           this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
           this.dialogServicePointStatus = false
           await this.searchBooking()
+          this.clearTimeLoop()
         }
       }
     },
     async closeJobSubmitReturn (item) {
+      this.closeSetTimeBookingListQueue()
       console.log('closeJobSubmit', item)
       if (item.servicePointStatus === 'True') {
         this.closeItem = item
@@ -1059,11 +1087,13 @@ export default {
           }
           this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
           await this.searchBooking()
+          this.clearTimeLoop()
         })
       }
     },
     async backHomeSubmit (item) {
       console.log('backHomeSubmit', item)
+      this.closeSetTimeBookingListQueue()
       let statusBooking = await this.checkBookingStatus(item.bookNo)
       if (statusBooking === 'confirmJob') {
         this.$swal({
@@ -1090,11 +1120,13 @@ export default {
             .then(async responses => {
               this.$swal('เรียบร้อย', 'ปิดงานสำเร็จ', 'success')
               await this.searchBooking()
+              this.clearTimeLoop()
             })
         })
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
         await this.searchBooking()
+        this.clearTimeLoop()
       }
     },
     async setservicePointCount (item) {
@@ -1140,6 +1172,7 @@ export default {
         })
     },
     async closeJobSubmit (item) {
+      this.closeSetTimeBookingListQueue()
       if (item.statusBt === 'confirm') {
         console.log('closeJobSubmit', item)
         let statusBooking = await this.checkBookingStatus(item.bookNo)
@@ -1176,10 +1209,12 @@ export default {
                   } else {
                     this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                     await this.searchBooking()
+                    this.clearTimeLoop()
                   }
                 } else {
                   this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                   await this.searchBooking()
+                  this.clearTimeLoop()
                 }
               } else {
                 this.closeJob(item)
@@ -1189,6 +1224,7 @@ export default {
         } else {
           this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
           await this.searchBooking()
+          this.clearTimeLoop()
         }
       }
     },
@@ -1219,6 +1255,7 @@ export default {
           }
           this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
           await this.searchBooking()
+          this.clearTimeLoop()
         })
     },
     async clearConfirmJob (dueDateUse) {
