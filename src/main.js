@@ -92,6 +92,7 @@ Vue.mixin({
       // IPPotocalENV_Developer: 'http://localhost:5001',
       IPPotocalENV_DeveloperBetask: 'http://localhost:5006',
       IPPotocalENV_DeveloperLoyalty: 'http://localhost:5001',
+      // IPPotocalENV_DeveloperLoyalty: 'https://api-beloyalty-productions.betaskthai.com',
       // IPPotocalENV_DeveloperLoyalty: 'http://localhost:5004',
       main_profile: {
         userLineuserId: 'U97a2b1814542579b9e5d7c1b891538ab',
