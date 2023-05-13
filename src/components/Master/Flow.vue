@@ -574,7 +574,7 @@
                           ></v-select>
                         </v-col>
                           <v-col cols="12" class="pt-0 pb-0">
-                          <v-row v-if="formAdd.timeSlotStatus === 'True' && formAdd.customerTimeSlot !== 'True'">
+                          <v-row v-if="formAdd.timeSlotStatus === 'True'">
                             <v-col class="pb-0">
                               <v-select
                                 v-model="formAdd.timeSlot"
@@ -995,7 +995,7 @@
                           ></v-select>
                         </v-col>
                         <v-col cols="12" class="pt-0 pb-0" >
-                          <v-row v-if="formUpdate.timeSlotStatus === 'True' && formUpdate.customerTimeSlot !== 'True'">
+                          <v-row v-if="formUpdate.timeSlotStatus === 'True' ">
                             <v-col class="pb-0">
                               <v-select
                                 v-model="formUpdate.timeSlot"

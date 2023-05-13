@@ -498,7 +498,7 @@
                 @click.stop="confirmChk(dataItem[0])"
               >
                 <v-icon dark size="30" class="iconify" data-icon="quill:mail-subbed"></v-icon>
-                ยืนยันd
+                ยืนยัน
               </v-btn>
               <!-- <v-btn
                 color="success"
