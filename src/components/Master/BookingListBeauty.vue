@@ -5021,7 +5021,7 @@
                     >
                     </v-select>
                   </v-col>
-                  <v-col cols="12" class="pb-0">
+                  <v-col cols="12" class="pb-0 pt-0">
                     <v-subheader>ค่าใช้จ่าย</v-subheader>
                     <VuetifyMoney
                       v-model="formCloseJob.totalPrice"
@@ -7869,6 +7869,7 @@ export default {
   methods: {
     async setCloseJob (item) {
       console.log('item', item)
+      // await this.getCoin(item)
       await this.setCloseJobItem(item[0].jobNo)
       console.log('this.ItemendStepStanby', this.ItemendStepStanby)
       await this.getStepFlowCloseJob(this.ItemendStepStanby.flowId, this.ItemendStepStanby.shopId)
@@ -9652,6 +9653,7 @@ export default {
         Amount: parseInt(totalPrice),
         shopId: this.$session.getAll().data.shopId,
         tel: this.memberTel,
+        liffUserId: this.lineUserId,
         refId: ''
       }
       console.log('ds', ds)
@@ -15257,16 +15259,31 @@ export default {
     },
     async getCoin (dt) {
       if (dt.lineUserId !== '') {
-        await axios.get(this.DNS_IP_Loyalty + '/member/get?shopId=' + dt.shopId + '&lineUserId=' + dt.lineUserId)
+        let checkLine = await this.getDataLineConfig(dt.shopId)
+        let urlLoyalty = ''
+        if (checkLine.checkLineConfig === false) {
+          urlLoyalty = this.DNS_IP_Loyalty + '/member/get?shopId=' + dt.shopId + '&lineUserId=' + dt.lineUserId
+        } else {
+          urlLoyalty = this.DNS_IP_Loyalty + '/member/get?shopId=' + dt.shopId + '&liffUserId=' + dt.lineUserId
+        }
+        await axios.get(urlLoyalty)
           .then(response => {
             let rs = response.data
             if (rs.status !== false) {
-              this.lineUserId = rs[0].lineUserId
-              this.memberTel = rs[0].tel
+              if (checkLine.checkLineConfig === false) {
+                this.lineUserId = rs[0].lineUserId || ''
+              } else {
+                this.lineUserId = rs[0].liffUserId || ''
+              }
+              this.memberTel = rs[0].tel || ''
             } else {
               this.lineUserId = ''
               this.memberTel = ''
             }
+          }).catch(error => {
+            this.lineUserId = ''
+            this.memberTel = ''
+            console.log('error function member : ', error)
           })
         if (this.lineUserId !== '') {
           this.dataCoin = []
@@ -15285,6 +15302,9 @@ export default {
               } else {
                 this.dataCoin = []
               }
+            }).catch(error => {
+              this.dataCoin = []
+              console.log('error function productExchangeRate : ', error)
             })
         }
       }

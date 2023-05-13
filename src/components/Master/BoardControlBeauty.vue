@@ -1657,7 +1657,8 @@ export default {
       statusPushEndStep: 'False',
       endStepItem: [],
       ItemendStepStanby: [],
-      dataLineConfig: {}
+      dataLineConfig: {},
+      memberTel: ''
     }
   },
   async mounted () {
@@ -2111,6 +2112,9 @@ export default {
       // console.log(this.formUpdate)
       // console.log(this.stepItemSelete)
       console.log('item1', item)
+      console.log('JobDataItem', this.JobDataItem.filter(row => {
+        return row.jobId === item.jobId
+      }))
       // console.log('stepItem', stepItem)
       clearInterval(this.setTimerJob)
       this.setTimerJob = null
@@ -2146,7 +2150,7 @@ export default {
         this.stepItemSeleteInBoard = dataStepItemSelete.filter(el => el.text !== stepItem.stepTitle)
       }
       if (text === 'closeJob') {
-        this.getCoin()
+        this.getCoin(item)
         if (item.packageId === '' || item.packageId === null) {
 
         } else {
@@ -2188,6 +2192,34 @@ export default {
       //     this.fieldNameItem[index].fieldValue = String(this.fromAdd.flowId)
       //   }
       // })
+      let checkLine = await this.getDataLineConfig(this.shopId)
+      let urlLoyalty = ''
+      if (checkLine.checkLineConfig === false) {
+        urlLoyalty = this.DNS_IP_Loyalty + '/member/get?shopId=' + this.shopId + '&lineUserId=' + dt.lineUserId
+      } else {
+        urlLoyalty = this.DNS_IP_Loyalty + '/member/get?shopId=' + this.shopId + '&liffUserId=' + dt.lineUserId
+      }
+      await axios.get(urlLoyalty)
+        .then(response => {
+          let rs = response.data
+          if (rs.status !== false) {
+            if (checkLine.checkLineConfig === false) {
+              this.lineUserId = rs[0].lineUserId || ''
+            } else {
+              this.lineUserId = rs[0].liffUserId || ''
+            }
+            this.memberTel = rs[0].tel || ''
+          } else {
+            this.lineUserId = ''
+            this.memberTel = ''
+          }
+        }).catch(error => {
+          this.lineUserId = ''
+          this.memberTel = ''
+          console.log('error function addDataGlobal : ', error)
+        })
+      console.log('this.lineUserId', this.lineUserId)
+      console.log('this.memberTel', this.memberTel)
       if (this.lineUserId !== '') {
         this.dataCoin = []
         await axios.get(this.DNS_IP_Loyalty + '/productExchangeRate/get?shopId=' + this.shopId +
@@ -2205,6 +2237,9 @@ export default {
           } else {
             this.dataCoin = []
           }
+        }).catch(error => {
+          this.dataCoin = []
+          console.log('error function addDataGlobal : ', error)
         })
       }
     },
@@ -2454,61 +2489,76 @@ export default {
       }).then((response) => {})
     },
     async useCoin (totalPrice) {
-      // productExchangeRateId
-      const today = new Date()
-      // console.log(today)
-      const date =
-            today.getFullYear() +
-            '' +
-            (today.getMonth() + 1) +
-            '' +
-            today.getDate()
-      const time =
-            today.getHours() + '' + today.getMinutes() + '' + today.getSeconds()
-      const token = date + '' + time
-      var point = ''
-      if (this.productExchangeRateId.exchangeRate === 0) {
-        point = 0
-      } else {
-        point = parseInt(totalPrice) / this.productExchangeRateId.exchangeRate
-      }
-      var md5 = require('md5')
-      var tokenKey = md5(token)
       let ds = {
-        productExchangeRateId: this.productExchangeRateId.value,
-        amount: parseInt(totalPrice),
-        refId: '',
-        point: parseInt(point),
-        token: tokenKey,
-        status: 'waiting',
-        statusMemberCard: 'collect',
-        CREATE_USER: this.session.data.userName,
-        LAST_USER: this.session.data.userName,
-        shopId: this.shopId,
-        qrCodeURL: `https://liff.line.me/${this.dataLineConfig.liffMainIDLoyalty}/collect?shopId=${this.shopId}&token=${tokenKey}`
-        // masBranchID: '',
-        // branchName: ''
+        exchangRateId: this.productExchangeRateId.value,
+        Amount: parseInt(totalPrice),
+        shopId: this.$session.getAll().data.shopId,
+        tel: this.memberTel,
+        liffUserId: this.lineUserId,
+        refId: ''
       }
       console.log('ds', ds)
       await axios
-        .post(this.DNS_IP_Loyalty + '/qrcode/add', ds)
+        .post(this.DNS_IP_Loyalty + '/POSapi', ds)
         .then(async response => {
-          var params = {
-            shopId: this.shopId,
-            token: tokenKey
-          }
-          await axios({
-            method: 'post',
-            headers: {
-              shopId: this.shopId,
-              lineUserId: this.lineUserId,
-              lineId: this.userId
-            },
-            url: this.DNS_IP_Loyalty + '/memberCard/edit',
-            data: params
-          }).then((response) => {})
         })
     },
+    // async useCoin (totalPrice) {
+    //   // productExchangeRateId
+    //   const today = new Date()
+    //   // console.log(today)
+    //   const date =
+    //         today.getFullYear() +
+    //         '' +
+    //         (today.getMonth() + 1) +
+    //         '' +
+    //         today.getDate()
+    //   const time =
+    //         today.getHours() + '' + today.getMinutes() + '' + today.getSeconds()
+    //   const token = date + '' + time
+    //   var point = ''
+    //   if (this.productExchangeRateId.exchangeRate === 0) {
+    //     point = 0
+    //   } else {
+    //     point = parseInt(totalPrice) / this.productExchangeRateId.exchangeRate
+    //   }
+    //   var md5 = require('md5')
+    //   var tokenKey = md5(token)
+    //   let ds = {
+    //     productExchangeRateId: this.productExchangeRateId.value,
+    //     amount: parseInt(totalPrice),
+    //     refId: '',
+    //     point: parseInt(point),
+    //     token: tokenKey,
+    //     status: 'waiting',
+    //     statusMemberCard: 'collect',
+    //     CREATE_USER: this.session.data.userName,
+    //     LAST_USER: this.session.data.userName,
+    //     shopId: this.shopId,
+    //     qrCodeURL: `https://liff.line.me/${this.dataLineConfig.liffMainIDLoyalty}/collect?shopId=${this.shopId}&token=${tokenKey}`
+    //     // masBranchID: '',
+    //     // branchName: ''
+    //   }
+    //   console.log('ds', ds)
+    //   await axios
+    //     .post(this.DNS_IP_Loyalty + '/qrcode/add', ds)
+    //     .then(async response => {
+    //       var params = {
+    //         shopId: this.shopId,
+    //         token: tokenKey
+    //       }
+    //       await axios({
+    //         method: 'post',
+    //         headers: {
+    //           shopId: this.shopId,
+    //           lineUserId: this.lineUserId,
+    //           lineId: this.userId
+    //         },
+    //         url: this.DNS_IP_Loyalty + '/memberCard/edit',
+    //         data: params
+    //       }).then((response) => {})
+    //     })
+    // },
     async editData () {
       console.log(
         this.JobDataItem.filter(row => {

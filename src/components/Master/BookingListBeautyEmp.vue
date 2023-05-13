@@ -4721,6 +4721,21 @@
             <v-card-text>
               <v-container>
                 <v-row>
+                  <v-col class="pb-0"  cols="12"  v-if="dataCoin.length > 0">
+                    <v-subheader>แจกคะแนน Loyalty</v-subheader>
+                    <v-select
+                      v-model="productExchangeRateId"
+                      :items="dataCoin"
+                      dense
+                      outlined
+                      label="เลือกอัตราแลกเปลี่ยน *"
+                      clearable
+                      item-text="text"
+                      item-value="value"
+                      return-object
+                    >
+                    </v-select>
+                  </v-col>
                   <v-col cols="12" class="pb-0">
                     <VuetifyMoney
                       v-model="formCloseJob.totalPrice"
@@ -7223,7 +7238,10 @@ export default {
       statusPushEndStep: 'False',
       endStepItem: [],
       ItemendStepStanby: [],
-      DataFlowNameDefault: []
+      DataFlowNameDefault: [],
+      dataCoin: [],
+      memberTel: '',
+      productExchangeRateId: ''
     }
   },
   beforeCreate () {
@@ -9843,6 +9861,9 @@ export default {
           await axios
             .post(this.DNS_IP + '/job/editPrice/' + ID, ds)
             .then(async response => {
+              if (this.productExchangeRateId !== '' && parseInt(totalPrice) > 0 && this.lineUserId !== '') {
+                await this.useCoin(totalPrice)
+              }
               await this.pushmessagePrice(this.formCloseJob.jobNo)
               this.$swal('เรียบร้อย', 'ให้บริการ เสร็จเรียบร้อยแล้ว', 'success')
               if (this.statusSearch === 'no') {
@@ -9870,6 +9891,21 @@ export default {
         this.loadingCloseJob = false
         console.log('Close Job Error', error)
       })
+    },
+    async useCoin (totalPrice) {
+      let ds = {
+        exchangRateId: this.productExchangeRateId.value,
+        Amount: parseInt(totalPrice),
+        shopId: this.$session.getAll().data.shopId,
+        tel: this.memberTel,
+        liffUserId: this.lineUserId,
+        refId: ''
+      }
+      console.log('ds', ds)
+      await axios
+        .post(this.DNS_IP_Loyalty + '/POSapi', ds)
+        .then(async response => {
+        })
     },
     async pushmessagePrice (jobNo) {
       let updateStatusSend = { updateStatusSend: 'false', checkPayment: this.checkPayment }
@@ -15442,6 +15478,7 @@ export default {
       this.bookNo = item.bookNo
       this.jobitem = []
       if (item.jobNo !== '') {
+        this.getCoin(item)
         let checkBookingMember = ''
         const result = await axios
           .get(
@@ -15499,6 +15536,51 @@ export default {
             // this.getUserId()
           }
         })
+      }
+    },
+    async getCoin (dt) {
+      if (dt.lineUserId !== '') {
+        let checkLine = await this.getDataLineConfig(dt.shopId)
+        let urlLoyalty = ''
+        if (checkLine.checkLineConfig === false) {
+          urlLoyalty = this.DNS_IP_Loyalty + '/member/get?shopId=' + dt.shopId + '&lineUserId=' + dt.lineUserId
+        } else {
+          urlLoyalty = this.DNS_IP_Loyalty + '/member/get?shopId=' + dt.shopId + '&liffUserId=' + dt.lineUserId
+        }
+        await axios.get(urlLoyalty)
+          .then(response => {
+            let rs = response.data
+            if (rs.status !== false) {
+              if (checkLine.checkLineConfig === false) {
+                this.lineUserId = rs[0].lineUserId || ''
+              } else {
+                this.lineUserId = rs[0].liffUserId || ''
+              }
+              this.memberTel = rs[0].tel || ''
+            } else {
+              this.lineUserId = ''
+              this.memberTel = ''
+            }
+          })
+        if (this.lineUserId !== '') {
+          this.dataCoin = []
+          await axios.get(this.DNS_IP_Loyalty + '/productExchangeRate/get?shopId=' + dt.shopId + '&flowId=' + dt.flowId)
+            .then(response => {
+              console.log('productExchangeRate', response.data)
+              let rs = response.data
+              if (rs.status !== false) {
+                for (var i = 0; i < rs.length; i++) {
+                  let d = rs[i]
+                  d.text = d.name
+                  d.value = d.productExchangeRateId
+                  this.dataCoin.push(d)
+                // console.log('this.DataFlowName', this.DataFlowName)
+                }
+              } else {
+                this.dataCoin = []
+              }
+            })
+        }
       }
     },
     async jobConfirm () {
