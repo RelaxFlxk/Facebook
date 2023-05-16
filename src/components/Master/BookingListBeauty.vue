@@ -12836,7 +12836,7 @@ export default {
         })
       console.log(this.BookingDataListTimechange)
     },
-    async getBookingDataList (dateStart, searchOther) {
+    async getBookingDataList (dateStart, searchOther, flowSelect) {
       console.log('dateStart', dateStart)
       this.BookingDataList = []
       if (this.masBranchID) {
@@ -12859,7 +12859,11 @@ export default {
         url = `${this.DNS_IP}/BookingData/getsearchName?shopId=${this.session.data.shopId}&fieldValue=${searchOther}&category=${categoryUser}&masBranchID=${this.masBranchID}`
         // url = `${this.DNS_IP}/BookingData/getsearchOther?shopId=${this.session.data.shopId}&fieldValue=${searchOther}`
       } else {
-        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
+        if (flowSelect === 'AllFlow') {
+          url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
+        } else {
+          url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}}&flowId=${flowSelect}`
+        }
       }
       await axios
         .get(url)
@@ -12954,9 +12958,9 @@ export default {
       var dataItemTimes = []
       var dataItems = []
       // await this.getShowMap()
-      await this.getBookingDataList(this.dateStart)
       let urlApi = ''
       if (this.flowSelect === 'AllFlow') {
+        await this.getBookingDataList(this.dateStart, '', 'AllFlow')
         urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.session.data.shopId +
@@ -12965,6 +12969,7 @@ export default {
             '&dueDate=' +
             this.dateStart + this.selectOnsite
       } else {
+        await this.getBookingDataList(this.dateStart, '', this.flowSelect)
         urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.session.data.shopId +
