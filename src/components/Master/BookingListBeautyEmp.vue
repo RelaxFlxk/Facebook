@@ -13210,7 +13210,7 @@ export default {
           }
         }).catch(error => {
           // this.dataEditReady = true
-          setTimeout(() => this.getBookingDataList(dateStart, searchOther), 3000)
+          setTimeout(() => this.getBookingDataList(dateStart, searchOther, flowSelect), 3000)
           console.log('catch getBookingDataList : ', error)
         })
       console.log('this.BookingDataList1', this.BookingDataList)
