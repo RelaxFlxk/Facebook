@@ -6633,6 +6633,7 @@
           <RetureDeposit ref="RetureDeposit"></RetureDeposit>
           <CallLog ref="CallLog"></CallLog>
           <NotificationService ref="NotificationService"></NotificationService>
+          <GoogleCalendarCmp ref="GoogleCalendarRef" />
       </div>
     </v-main>
   </div>
@@ -6658,6 +6659,7 @@ import RetureDeposit from '../BookingListComponents/RetureDeposit.vue'
 import CallLog from '../BookingListComponents/CallLog.vue'
 import NotificationService from '../BookingListComponents/NotificationService.vue'
 import sideMenu from '../Menu/sideMenu.vue'
+import GoogleCalendarCmp from '../Core/GoogleCalendarCmp.vue'
 // import copy from 'copy-to-clipboard'
 
 export default {
@@ -6678,7 +6680,8 @@ export default {
     RetureDeposit,
     CallLog,
     NotificationService,
-    sideMenu
+    sideMenu,
+    GoogleCalendarCmp
   },
   computed: {
     filteredSelect () {
@@ -7241,7 +7244,9 @@ export default {
       DataFlowNameDefault: [],
       dataCoin: [],
       memberTel: '',
-      productExchangeRateId: ''
+      productExchangeRateId: '',
+      statusGoogleCalendar: '',
+      statusGoogleCalendarEmp: ''
     }
   },
   beforeCreate () {
@@ -7254,6 +7259,8 @@ export default {
     }
   },
   async mounted () {
+    await this.getShop()
+    console.log('statusGoogleCalendar', this.statusGoogleCalendar, this.statusGoogleCalendarEmp)
     this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
     this.Redirect = 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/BookingAddress?shopId=' + this.$session.getAll().data.shopId
     this.pathToweb = 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/JobConfirm?jobId='
@@ -7271,6 +7278,19 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
+    async getShop () {
+      await axios
+        .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.session.data.shopId)
+        .then(response => {
+          let rs = response.data
+          console.log('rssssssssssss', rs)
+          if (rs.length > 0) {
+            this.shop = rs
+            this.statusGoogleCalendar = rs[0].statusGoogleCalendar
+            this.statusGoogleCalendarEmp = rs[0].statusGoogleCalendarEmp
+          }
+        })
+    },
     async setCloseJob (item) {
       console.log('item', item)
       await this.setCloseJobItem(item[0].jobNo)
@@ -7562,7 +7582,7 @@ export default {
         await axios
           .get(urlApi)
           .then(async response => {
-            console.log('getData', response.data.length)
+            console.log('getData', response.data)
             if (response.data.length > 0) {
               for (let i = 0; i < response.data.length; i++) {
                 let d = response.data[i]
@@ -7765,6 +7785,9 @@ export default {
           this.timeavailableCancel.forEach((v, k) => {
             if (typeof v.status === 'undefined') {
               v.status = true
+              if (v.limitBooking === '0') {
+                v.status = false
+              }
             }
           })
           if (LimitBooking.status !== false) {
@@ -9700,6 +9723,9 @@ export default {
           this.timeavailable.forEach((v, k) => {
             if (typeof v.status === 'undefined') {
               v.status = true
+              if (v.limitBooking === '0') {
+                v.status = false
+              }
             }
           })
           if (this.statusVIP === 'False') {
@@ -10388,6 +10414,7 @@ export default {
                   s.dueDateTextDay = d.dueDateTextDay
                   s.remark = d.remark || ''
                   s.masBranchID = d.masBranchID
+                  s.googleCalendarEventId = d.googleCalendarEventId || ''
                   s.limitBookingCheck = d.limitBookingCheck
                   s.memberId = d.memberId || ''
                   s.countHourLimit = d.countHourLimit
@@ -11061,6 +11088,7 @@ export default {
       if (this.$session.id() !== undefined) {
         let bookNoEditData = ''
         this.dataEditReady = false
+        console.log('this.BookingDataItemEdit!!!!!!!', this.BookingDataItemEdit)
         let rs = this.BookingDataItemEdit
         let Add = []
         let fielditem = this.BookingDataItemEdit
@@ -11174,6 +11202,10 @@ export default {
               await this.getBookingList()
             } else {
               await this.searchAny()
+            }
+            console.log('statusGoogleCalendar', this.statusGoogleCalendar)
+            if (this.statusGoogleCalendar === 'True') {
+              await this.connectGoogleCalendar('Edit', Add[0].bookNo)
             }
             // this.getTimesChange('update')
             this.formEdit.radiosRemark = ''
@@ -11351,6 +11383,9 @@ export default {
           this.timeavailable.forEach((v, k) => {
             if (typeof v.status === 'undefined') {
               v.status = true
+              if (v.limitBooking === '0') {
+                v.status = false
+              }
             }
           })
           console.log('timeavailable', this.timeavailable)
@@ -11495,6 +11530,9 @@ export default {
           this.timeavailable.forEach((v, k) => {
             if (typeof v.status === 'undefined') {
               v.status = true
+              if (v.limitBooking === '0') {
+                v.status = false
+              }
             }
           })
           // console.log('timeavailable', this.timeavailable)
@@ -12320,6 +12358,7 @@ export default {
                   s.packageExpire = d.packageExpire
                   s.remark = d.remark || ''
                   s.masBranchID = d.masBranchID
+                  s.googleCalendarEventId = d.googleCalendarEventId || ''
                   s.empSelect = d.empSelect
                   s.empFull_NameTH = d.empFull_NameTH || ''
                   s.empFull_NameTH = s.empFull_NameTH.replace('นางสาว', '')
@@ -13344,6 +13383,7 @@ export default {
                 s.dueDateTextDay = d.dueDateTextDay
                 s.remark = d.remark || ''
                 s.masBranchID = d.masBranchID
+                s.googleCalendarEventId = d.googleCalendarEventId || ''
                 s.limitBookingCheck = d.limitBookingCheck
                 s.memberId = d.memberId || ''
                 s.countHourLimit = d.countHourLimit
@@ -13526,6 +13566,7 @@ export default {
                 s.dueDateTextDay = d.dueDateTextDay
                 s.remark = d.remark || ''
                 s.masBranchID = d.masBranchID
+                s.googleCalendarEventId = d.googleCalendarEventId || ''
                 s.limitBookingCheck = d.limitBookingCheck
                 s.memberId = d.memberId || ''
                 s.countHourLimit = d.countHourLimit
@@ -14066,7 +14107,7 @@ export default {
           }
         }
         console.log('Add', Add)
-        axios
+        await axios
           .post(this.DNS_IP + '/Booking/addTimeEpm', Add)
           .then(async response => {
           // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
@@ -14075,6 +14116,7 @@ export default {
               this.date = ''
               this.time = ''
             } else {
+              console.log('resspons111111', this.statusGoogleCalendar)
               let checkDeposit = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) })
               let depositCheckStatus = ''
               if (checkDeposit.length > 0) {
@@ -14114,6 +14156,10 @@ export default {
         this.setTimerCalendar = null
         this.$router.push('/Core/Login')
       }
+    },
+    async connectGoogleCalendar (status, bookNo) {
+      console.log('status !!!', status)
+      this.$refs.GoogleCalendarRef.checkTypeEvenEmp(status, bookNo)
     },
     async addDataSubmit () {
       if (this.validAdd === true) {
@@ -14199,6 +14245,9 @@ export default {
         .post(this.DNS_IP + '/booking_transaction/add', dt)
         .then(async response => {
           // this.getDataCalendaBooking()
+          if (this.statusGoogleCalendar === 'True') {
+            await this.connectGoogleCalendar('Add', dt.bookNo)
+          }
           this.clearDataAdd()
           this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
           // await this.getBookingList()
@@ -14973,6 +15022,9 @@ export default {
           .then(async response => {
             if (response.data.status === true) {
               this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              if (this.statusGoogleCalendar === 'True') {
+                await this.connectGoogleCalendar('Add', dt.bookNo)
+              }
               await this.updateRemarkAndEmpSelect(item)
               // this.getDataCalendaBooking()
               if (this.packageId !== '') {
@@ -15172,6 +15224,9 @@ export default {
       axios
         .post(this.DNS_IP + '/booking_transaction/add', dt)
         .then(async response => {
+          if (this.statusGoogleCalendar === 'True') {
+            await this.connectGoogleCalendar('Delete', dt.bookNo)
+          }
           await this.updateRemark(this.bookNoRemove)
           this.pushMsglineCancel(this.bookNoRemove)
           this.$swal('เรียบร้อย', 'ยกเลิกเรียบร้อย', 'success')
@@ -15330,6 +15385,21 @@ export default {
             .post(this.DNS_IP + '/booking_transaction/add', dt)
             .then(async response => {
               console.log('addDataGlobal', response)
+              console.log('*****', item.statusBt, changeStatus)
+              if ((item.statusBt === 'confirm' || item.statusBt === 'confirmJob') && (changeStatus === 'change' || changeStatus === 'confirm')) {
+                console.log('*****Edit')
+                // edit
+                if (this.statusGoogleCalendar === 'True') {
+                  await this.connectGoogleCalendar('Edit', dt.bookNo)
+                }
+              }
+              if (item.statusBt === 'wait' && (changeStatus === 'confirm')) {
+                console.log('*****Add')
+                // create
+                if (this.statusGoogleCalendar === 'True') {
+                  await this.connectGoogleCalendar('Add', dt.bookNo)
+                }
+              }
               if (item.statusBt === 'confirm' || item.statusBt === 'confirmJob') {
                 if (item.userId !== 'user-skip') {
                   if (this.statusSearch === 'no') {

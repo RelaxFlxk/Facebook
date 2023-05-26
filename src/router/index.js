@@ -67,6 +67,11 @@ export default new Router({
     component: Core.GoogleCalendar
   },
   {
+    path: '/GoogleCalendarCmp',
+    name: 'GoogleCalendarCmp',
+    component: Core.GoogleCalendarCmp
+  },
+  {
     path: '/Master/CustomField',
     name: 'CustomField',
     component: Master.CustomField

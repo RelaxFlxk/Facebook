@@ -101,7 +101,7 @@
           <!-- end Import -->
 
           <!-- ADD -->
-          <v-dialog v-model="dialogAdd" persistent max-width="35%">
+          <v-dialog v-model="dialogAdd" persistent max-width="600px">
             <v-card class="pa-1">
               <v-card-text class="pa-0 px-2">
                 <v-container>
@@ -198,6 +198,25 @@
                           required
                         ></v-text-field>
                       </v-col>
+                      <v-col cols="12" class="pa-0" v-if="statusGoogleCalendar === 'True' && statusGoogleCalendarEmp === 'True'">
+                        <v-text-field
+                          dense
+                          outlined
+                          label="E-mail*"
+                          v-model="formAdd.empEmail"
+                          :rules="nameRules"
+                          required
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" class="pa-0" v-else>
+                        <v-text-field
+                          dense
+                          outlined
+                          label="E-mail*"
+                          v-model="formAdd.empEmail"
+                          required
+                        ></v-text-field>
+                      </v-col>
                     </v-row>
                     <v-row>
                       <v-col cols="12" class="pa-0">
@@ -277,7 +296,7 @@
           <!-- end add -->
 
           <!-- edit -->
-          <v-dialog v-model="dialogEdit" persistent max-width="35%">
+          <v-dialog v-model="dialogEdit" persistent max-width="600px">
             <v-card class="pa-1" >
               <v-card-text class="pa-0 px-2">
                 <v-container>
@@ -375,6 +394,25 @@
                           v-model="formUpdate.phoneNumber"
                           v-mask="'###-###-####'"
                           :rules="nameRules"
+                          required
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" class="pa-0" v-if="statusGoogleCalendar === 'True' && statusGoogleCalendarEmp === 'True'">
+                        <v-text-field
+                          dense
+                          outlined
+                          label="E-mail*"
+                          v-model="formUpdate.empEmail"
+                          :rules="nameRules"
+                          required
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" class="pa-0" v-else>
+                        <v-text-field
+                          dense
+                          outlined
+                          label="E-mail*"
+                          v-model="formUpdate.empEmail"
                           required
                         ></v-text-field>
                       </v-col>
@@ -561,7 +599,7 @@
                                 multiple
                                 outlined
                                 attach
-        :menu-props="{ bottom: true, offsetY: true }"
+                                :menu-props="{ bottom: true, offsetY: true }"
                                 @change="changedateDayoff()"
                               ></v-select>
                             </v-card>
@@ -720,7 +758,7 @@
                                       <div v-if="item.id === editedItemNew.id">
                                         <!-- <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" dense single-line v-if="formUpdateLimitbooking.limitBookingCheck === 'True'" ></v-text-field>
               <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" disabled dense single-line v-else></v-text-field> -->
-                                        <v-text-field
+                                        <!-- <v-text-field
                                           class="pa-0 ma-0"
                                           filled
                                           v-model="editedItemNew.limitBooking"
@@ -728,11 +766,40 @@
                                           disabled
                                           dense
                                           single-line
-                                        ></v-text-field>
+                                        ></v-text-field> -->
+                                        <v-row align="center">
+                                        <v-switch
+                                          false-value="0"
+                                          true-value="1"
+                                          color="success"
+                                          v-model="editedItemNew.limitBooking"
+                                          hide-details
+                                          class="shrink ml-6 mr-0 mt-0 mb-2"
+                                        ></v-switch>
+                                        <v-chip
+                                          v-if="editedItemNew.limitBooking === '1'"
+                                          color="green"
+                                          text-color="white"
+                                        >รับนัดหมาย</v-chip>
+                                        <v-chip
+                                          v-else
+                                          color="red"
+                                          text-color="white"
+                                        >ไม่รับนัดหมาย</v-chip>
+                                      </v-row>
                                       </div>
-                                      <span v-else>{{
-                                        item.limitBooking
-                                      }}</span>
+                                      <div v-else>
+                                        <v-chip
+                                          v-if="item.limitBooking === '1'"
+                                          color="green"
+                                          text-color="white"
+                                        >รับนัดหมาย</v-chip>
+                                        <v-chip
+                                          v-else
+                                          color="red"
+                                          text-color="white"
+                                        >ไม่รับนัดหมาย</v-chip>
+                                      </div>
                                     </template>
                                     <template
                                       v-slot:[`item.actions2`]="{ item }"
@@ -844,7 +911,7 @@
                                       <div v-if="item.id === editedItemNew.id">
                                         <!-- <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" dense single-line v-if="formUpdateLimitbooking.limitBookingCheck === 'True'" ></v-text-field>
               <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" disabled dense single-line v-else></v-text-field> -->
-                                        <v-text-field
+                                        <!-- <v-text-field
                                           class="pa-0 ma-0"
                                           filled
                                           v-model="editedItemNew.limitBooking"
@@ -852,11 +919,40 @@
                                           disabled
                                           dense
                                           single-line
-                                        ></v-text-field>
+                                        ></v-text-field> -->
+                                        <v-row align="center">
+                                        <v-switch
+                                          false-value="0"
+                                          true-value="1"
+                                          color="success"
+                                          v-model="editedItemNew.limitBooking"
+                                          hide-details
+                                          class="shrink ml-6 mr-0 mt-0 mb-2"
+                                        ></v-switch>
+                                        <v-chip
+                                          v-if="editedItemNew.limitBooking === '1'"
+                                          color="green"
+                                          text-color="white"
+                                        >รับนัดหมาย</v-chip>
+                                        <v-chip
+                                          v-else
+                                          color="red"
+                                          text-color="white"
+                                        >ไม่รับนัดหมาย</v-chip>
+                                      </v-row>
                                       </div>
-                                      <span v-else>{{
-                                        item.limitBooking
-                                      }}</span>
+                                      <div v-else>
+                                        <v-chip
+                                          v-if="item.limitBooking === '1'"
+                                          color="green"
+                                          text-color="white"
+                                        >รับนัดหมาย</v-chip>
+                                        <v-chip
+                                          v-else
+                                          color="red"
+                                          text-color="white"
+                                        >ไม่รับนัดหมาย</v-chip>
+                                      </div>
                                     </template>
                                     <template
                                       v-slot:[`item.actions2`]="{ item }"
@@ -1081,7 +1177,8 @@ export default {
         masBranchID: '',
         flowId: '',
         additionalInformation: '',
-        phoneNumber: ''
+        phoneNumber: '',
+        empEmail: ''
       },
       formUpdate: {
         empCode: '',
@@ -1095,7 +1192,8 @@ export default {
         masBranchID: '',
         flowId: '',
         additionalInformation: '',
-        phoneNumber: ''
+        phoneNumber: '',
+        empEmail: ''
       },
       formUpdateItem: {
         empCode: '',
@@ -1108,7 +1206,8 @@ export default {
         masBranchID: '',
         flowId: '',
         additionalInformation: '',
-        phoneNumber: ''
+        phoneNumber: '',
+        empEmail: ''
       },
       formUpdateLimitbooking: {
         empId: null,
@@ -1201,7 +1300,7 @@ export default {
         { text: 'แสดงเวลา', value: 'text' },
         { text: 'เวลา', value: 'value' },
         {
-          text: 'จำนวนนัดหมาย',
+          text: 'สถานะ',
           value: 'limitBooking',
           align: 'center',
           width: '200px'
@@ -1242,7 +1341,9 @@ export default {
         { text: 'พฤ.', value: 4 },
         { text: 'ศ.', value: 5 },
         { text: 'ส.', value: 6 }
-      ]
+      ],
+      statusGoogleCalendar: '',
+      statusGoogleCalendarEmp: ''
       // End Export Config
     }
   },
@@ -1258,6 +1359,7 @@ export default {
       this.path,
       this.$session.getAll().data.shopId
     )
+    await this.getShop()
   },
   methods: {
     editItemNew (item) {
@@ -2283,6 +2385,19 @@ export default {
       this.formUpdate.privacyPage = ''
       this.filesAdd = null
       this.filesUpdate = null
+    },
+    async getShop () {
+      await axios.get(this.DNS_IP + '/sys_shop/get?shopId=' + this.shopId)
+        .then(async (response) => {
+          let rs = response.data
+          console.log('rs_getCategory', rs)
+          if (rs.length > 0) {
+            this.statusGoogleCalendar = rs[0].statusGoogleCalendar
+            this.statusGoogleCalendarEmp = rs[0].statusGoogleCalendarEmp
+          }
+        }).catch(function (error) {
+          console.log('Error getting profile: ' + error)
+        })
     }
   }
 }

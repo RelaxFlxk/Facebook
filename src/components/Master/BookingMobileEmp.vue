@@ -1267,6 +1267,7 @@
       </v-form>
       </v-dialog>
     <BookingQueue :branchParent="branch" :masBranchIDParent="masBranchID" :drawerParent="drawer" :menu1Parent="menu1" :timeTableParent="timeTable" :rulesParent="rules" :masterTimeParent="masterTime" :dataItemTimesChangeParent="dataItemTimesChange" :getTimesChangeParent="getTimesChange" :toggleParent="toggle" @updateTimeTable="updateTimeTablefromChild"></BookingQueue>
+    <GoogleCalendarCmp ref="GoogleCalendarRef" />
   </div>
 </template>
 <script>
@@ -1275,11 +1276,13 @@ import moment from 'moment-timezone'
 import BookingQueue from './BookingQueueMobile.vue'
 import VuetifyMoney from '../VuetifyMoney.vue'
 import waitingAlert from '../waitingAlert.vue'
+import GoogleCalendarCmp from '../Core/GoogleCalendarCmp.vue'
 export default {
   components: {
     BookingQueue,
     VuetifyMoney,
-    waitingAlert
+    waitingAlert,
+    GoogleCalendarCmp
   },
   name: 'BookingMobileEmp',
   data () {
@@ -1420,15 +1423,36 @@ export default {
       bookItemAll: [],
       dialogImg: false,
       showImg: '',
-      BookingFieldData: []
+      BookingFieldData: [],
+      statusGoogleCalendar: '',
+      statusGoogleCalendarEmp: ''
     }
   },
   async mounted () {
+    await this.getShop()
+    console.log('statusGoogleCalendar', this.statusGoogleCalendar, this.statusGoogleCalendarEmp)
     this.dateCheckBill = moment().format('YYYY-MM')
     await this.beforeCreate()
     console.log('this.$session.getAll()', this.$session.getAll())
   },
   methods: {
+    async connectGoogleCalendar (status, bookNo) {
+      console.log('status !!!', status)
+      this.$refs.GoogleCalendarRef.checkTypeEvenEmp(status, bookNo)
+    },
+    async getShop () {
+      await axios
+        .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.session.data.shopId)
+        .then(response => {
+          let rs = response.data
+          console.log('rssssssssssss', rs)
+          if (rs.length > 0) {
+            this.shop = rs
+            this.statusGoogleCalendar = rs[0].statusGoogleCalendar
+            this.statusGoogleCalendarEmp = rs[0].statusGoogleCalendarEmp
+          }
+        })
+    },
     async coppyLink (item) {
       console.log('item', item)
       // this.$swal.fire('Any fool can use a computer')
@@ -1874,6 +1898,9 @@ export default {
           this.timeavailable.forEach((v, k) => {
             if (typeof v.status === 'undefined') {
               v.status = true
+              if (v.limitBooking === '0') {
+                v.status = false
+              }
             }
           })
           console.log('timeavailable', this.timeavailable)
@@ -1987,6 +2014,9 @@ export default {
           this.timeavailable.forEach((v, k) => {
             if (typeof v.status === 'undefined') {
               v.status = true
+              if (v.limitBooking === '0') {
+                v.status = false
+              }
             }
           })
           if (LimitBooking.status !== false) {
@@ -3299,6 +3329,10 @@ export default {
                 axios
                   .post(this.DNS_IP + '/booking_transaction/add', dt)
                   .then(async response => {
+                    console.log('statusGoogleCalendar', this.statusGoogleCalendar)
+                    if (this.statusGoogleCalendar === 'True') {
+                      await this.connectGoogleCalendar('Add', item.bookNo)
+                    }
                     await this.updateRemark(item)
                     this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
                     let DTitem = item.userId
@@ -3347,6 +3381,10 @@ export default {
           axios
             .post(this.DNS_IP + '/booking_transaction/add', dt)
             .then(async response => {
+              console.log('statusGoogleCalendar', this.statusGoogleCalendar)
+              if (this.statusGoogleCalendar === 'True') {
+                await this.connectGoogleCalendar('Add', item.bookNo)
+              }
               await this.updateRemark(item)
               this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
               let DTitem = item.userId
@@ -3443,6 +3481,10 @@ export default {
       axios
         .post(this.DNS_IP + '/booking_transaction/add', dt)
         .then(async response => {
+          console.log('!!!!!statusGoogleCalendar', this.statusGoogleCalendar)
+          if (this.statusGoogleCalendar === 'True') {
+            await this.connectGoogleCalendar('Delete', dt.bookNo)
+          }
           await this.updateRemark(this.bookNoRemove)
           this.pushMsglineCancel(this.bookNoRemove)
           this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
@@ -3799,6 +3841,10 @@ export default {
             .then(async response => {
               // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
               // this.dialogChange = false
+              console.log('statusGoogleCalendar', this.statusGoogleCalendar)
+              if (this.statusGoogleCalendar === 'True') {
+                await this.connectGoogleCalendar('Add', dt.bookNo)
+              }
               this.fromAddTimeCus = ''
               this.customerTimeSlot = 'False'
               console.log('addDataGlobal', response)
@@ -3995,6 +4041,10 @@ export default {
           await axios
             .post(this.DNS_IP + '/booking_transaction/add', dt)
             .then(async response => {
+              console.log('statusGoogleCalendar', this.statusGoogleCalendar)
+              if (this.statusGoogleCalendar === 'True') {
+                await this.connectGoogleCalendar('Edit', dt.bookNo)
+              }
               this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
               this.dialogChange = false
               this.fromAddTimeCus = ''
