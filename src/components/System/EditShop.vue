@@ -10,7 +10,7 @@
         ></v-breadcrumbs>
         <v-row>
           <!-- edit -->
-          <v-dialog ref="dialogEdit" v-model="dialogEdit" persistent max-width="50%">
+          <v-dialog ref="dialogEdit" v-model="dialogEdit" persistent max-width="600px">
             <v-card class="text-center">
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
                 <v-card-text>
@@ -136,7 +136,43 @@
                       </v-col>
                     </v-row>
                     <v-row>
-                      <v-col cols="6">
+                      <v-col cols="12" class="pt-0 pb-0" style="display: flex;justify-content: left;height: 40px;">
+                        <v-checkbox
+                          label="จำกัดเวลาตามช่าง"
+                          false-value="False"
+                          :on-icon="'mdi-check-circle'"
+                          :off-icon="'mdi-checkbox-blank-circle-outline'"
+                          color="#1B437C"
+                          true-value="True"
+                          v-model="formUpdate.timeSlotStatus"
+                        ></v-checkbox>
+                      </v-col>
+                      <v-col cols="12" class="pt-0 pb-0" style="display: flex;justify-content: left;height: 40px;">
+                        <v-checkbox
+                          label="เชื่อมต่อกับ Google Calendar"
+                          false-value="False"
+                          :on-icon="'mdi-check-circle'"
+                          :off-icon="'mdi-checkbox-blank-circle-outline'"
+                          color="#1B437C"
+                          true-value="True"
+                          v-model="formUpdate.statusGoogleCalendar"
+                          @change="connectGoogleCalendar(formUpdate.statusGoogleCalendar)"
+                        ></v-checkbox>
+                      </v-col>
+                      <v-col cols="12" class="pt-0 pb-0 ml-4" style="display: flex;justify-content: left;height: 40px;" v-if="formUpdate.statusGoogleCalendar === 'True' && formUpdate.timeSlotStatus === 'True'">
+                        <v-checkbox
+                          label="เชื่อมต่อ Google Calendar กับพนักงาน"
+                          false-value="False"
+                          :on-icon="'mdi-check-circle'"
+                          :off-icon="'mdi-checkbox-blank-circle-outline'"
+                          color="#1B437C"
+                          true-value="True"
+                          v-model="formUpdate.statusGoogleCalendarEmp"
+                        ></v-checkbox>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="6" class="mt-6">
                         <v-select
                           v-model="formUpdate.category"
                           :items="category"
@@ -151,32 +187,19 @@
                         ></v-select>
                       </v-col>
                       <v-col>
-                        <v-row>
-                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: left;">
-                              <v-checkbox
-                                label="จำกัดเวลาตามช่าง"
-                                false-value="False"
-                                :on-icon="'mdi-check-circle'"
-                                :off-icon="'mdi-checkbox-blank-circle-outline'"
-                                color="#1B437C"
-                                true-value="True"
-                                v-model="formUpdate.timeSlotStatus"
-                              ></v-checkbox>
-                            </v-col>
-                          </v-row>
                       </v-col>
                     </v-row>
                     <v-row>
-                      <v-col cols="8" v-if="formUpdate.category !== ''">
+                      <v-col cols="12" v-if="formUpdate.category !== ''">
                         <v-select
                           v-model="formUpdate.categorySub"
                           :items="categorySub"
                           label="ประเภทบริการ"
                           outlined
                           required
+                          dense
                           multiple
                           attach
-                          chips
                           :menu-props="{ bottom: true, offsetY: true }"
                           :rules="[rules.required]"
                         ></v-select>
@@ -317,6 +340,7 @@
             <div v-if="!dataReady" class="text-center">
               <waitingAlert></waitingAlert>
             </div>
+            <GoogleCalendarCmp ref="GoogleCalendarRef" />
           </v-col>
           <!-- end data table -->
         </v-row>
@@ -332,6 +356,7 @@ import JsonExcel from 'vue-json-excel' // https://www.npmjs.com/package/vue-json
 import XLSX from 'xlsx' // import xlsx
 import readXlsxFile from 'read-excel-file'
 import moment from 'moment' // แปลง date
+import GoogleCalendarCmp from '../Core/GoogleCalendarCmp.vue'
 
 export default {
   components: {
@@ -339,7 +364,8 @@ export default {
     'left-menu-admin': adminLeftMenu,
     downloadExcel: JsonExcel,
     XLSX,
-    readXlsxFile
+    readXlsxFile,
+    GoogleCalendarCmp
   },
   created () {
     setInterval(this.getNowGlobal, 1000)
@@ -394,7 +420,10 @@ export default {
         showQrPayments: 'False',
         bookingthankTextEn: '',
         bookingthankText: '',
-        videoLinkMonition: ''
+        videoLinkMonition: '',
+        statusGoogleCalendar: '',
+        statusGoogleCalendarEmp: '',
+        refreshTokenGoogleCalendar: ''
       },
       timeSlotStatusOld: '',
       filesShop: null,
@@ -491,6 +520,15 @@ export default {
     await this.selectCategorySub()
   },
   methods: {
+    connectGoogleCalendar (item) {
+      if (item === 'True') {
+        // this.$refs.GoogleCalendarRef.handleClickLogin()
+        this.$refs.GoogleCalendarRef.checkLoginByExpireDate()
+      }
+    },
+    resetShop () {
+      this.$emit('confirmed')
+    },
     async getCategory () {
       await axios.get(this.DNS_IP + '/category/getsort')
         .then(async (response) => {
@@ -610,6 +648,8 @@ export default {
       )
       this.formUpdate.pictureUrlPreview = this.formUpdate.shopImge
       this.formUpdate.pictureCoverUrlPreview = this.formUpdate.shopImageCover
+      this.formUpdate.statusGoogleCalendar = item.statusGoogleCalendar || 'False'
+      this.formUpdate.statusGoogleCalendarEmp = item.statusGoogleCalendarEmp || 'False'
       if (this.formUpdate.darkMode === 'True') {
         this.formUpdate.darkMode = true
       } else {
@@ -722,7 +762,9 @@ export default {
             videoLinkMonition: videoLinkMonition,
             darkMode: darkMode,
             bookingthankText: bookingthankText,
-            bookingthankTextEn: bookingthankTextEn
+            bookingthankTextEn: bookingthankTextEn,
+            statusGoogleCalendar: this.formUpdate.statusGoogleCalendar,
+            statusGoogleCalendarEmp: this.formUpdate.statusGoogleCalendarEmp
           }
           await axios
             .post(
@@ -793,6 +835,7 @@ export default {
 
               // Load Data
               // await this.reloadData()
+              this.resetShop()
               await this.clearDataUpdate()
               this.filesShop = null
               await this.getDataGlobal(

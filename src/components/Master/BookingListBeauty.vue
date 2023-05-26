@@ -7296,6 +7296,7 @@ import CallLog from '../BookingListComponents/CallLog.vue'
 import NotificationService from '../BookingListComponents/NotificationService.vue'
 import PrintQrCodeConfirmJobLINE from '../BookingListComponents/PrintQrCodeConfirmJobLINE.vue'
 import sideMenu from '../Menu/sideMenu.vue'
+import GoogleCalendarCmp from '../Core/GoogleCalendarCmp.vue'
 // import copy from 'copy-to-clipboard'
 
 export default {
@@ -7317,7 +7318,8 @@ export default {
     RetureDeposit,
     CallLog,
     NotificationService,
-    PrintQrCodeConfirmJobLINE
+    PrintQrCodeConfirmJobLINE,
+    GoogleCalendarCmp
   },
   computed: {
     filteredSelect () {
@@ -7859,7 +7861,9 @@ export default {
       statusPushEndStep: 'False',
       endStepItem: [],
       ItemendStepStanby: [],
-      DataFlowNameDefault: []
+      DataFlowNameDefault: [],
+      statusGoogleCalendar: '',
+      statusGoogleCalendarEmp: ''
     }
   },
   beforeCreate () {
@@ -7878,6 +7882,8 @@ export default {
     }
   },
   async mounted () {
+    await this.getShop()
+    console.log('statusGoogleCalendar', this.statusGoogleCalendar, this.statusGoogleCalendarEmp)
     this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
     this.Redirect = 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/BookingAddress?shopId=' + this.$session.getAll().data.shopId
     this.pathToweb = 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/JobConfirm?jobId='
@@ -7895,6 +7901,23 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
+    async connectGoogleCalendar (status, bookNo) {
+      console.log('status !!!', status)
+      this.$refs.GoogleCalendarRef.checkTypeEven(status, bookNo)
+    },
+    async getShop () {
+      await axios
+        .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.session.data.shopId)
+        .then(response => {
+          let rs = response.data
+          console.log('rssssssssssss', rs)
+          if (rs.length > 0) {
+            this.shop = rs
+            this.statusGoogleCalendar = rs[0].statusGoogleCalendar
+            this.statusGoogleCalendarEmp = rs[0].statusGoogleCalendarEmp
+          }
+        })
+    },
     async setCloseJob (item) {
       console.log('item', item)
       // await this.getCoin(item)
@@ -11056,6 +11079,10 @@ export default {
             } else {
               await this.searchAny()
             }
+            console.log('statusGoogleCalendar', this.statusGoogleCalendar)
+            if (this.statusGoogleCalendar === 'True') {
+              await this.connectGoogleCalendar('Edit', Add[0].bookNo)
+            }
             // this.getTimesChange('update')
             this.formEdit.radiosRemark = ''
             if (this.getSelectText) {
@@ -13921,6 +13948,9 @@ export default {
         .post(this.DNS_IP + '/booking_transaction/add', dt)
         .then(async response => {
           // this.getDataCalendaBooking()
+          if (this.statusGoogleCalendar === 'True') {
+            await this.connectGoogleCalendar('Add', dt.bookNo)
+          }
           this.clearDataAdd()
           this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
           // await this.getBookingList()
@@ -14695,6 +14725,10 @@ export default {
           .then(async response => {
             if (response.data.status === true) {
               this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              console.log('statusGoogleCalendar', this.statusGoogleCalendar)
+              if (this.statusGoogleCalendar === 'True') {
+                await this.connectGoogleCalendar('Add', dt.bookNo)
+              }
               await this.updateRemarkAndEmpSelect(item)
               // this.getDataCalendaBooking()
               if (this.packageId !== '') {
@@ -14902,6 +14936,10 @@ export default {
         .then(async response => {
           await this.updateRemark(this.bookNoRemove)
           this.pushMsglineCancel(this.bookNoRemove)
+          console.log('statusGoogleCalendar', this.statusGoogleCalendar)
+          if (this.statusGoogleCalendar === 'True') {
+            await this.connectGoogleCalendar('Delete', dt.bookNo)
+          }
           this.$swal('เรียบร้อย', 'ยกเลิกเรียบร้อย', 'success')
           console.log('addDataGlobal', response)
           if (this.statusSearch === 'no') {
@@ -15095,6 +15133,21 @@ export default {
           await axios
             .post(this.DNS_IP + '/booking_transaction/add', dt)
             .then(async response => {
+              console.log('*****', item.statusBt, changeStatus)
+              if ((item.statusBt === 'confirm' || item.statusBt === 'confirmJob') && (changeStatus === 'change' || changeStatus === 'confirm')) {
+                console.log('*****Edit')
+                // edit
+                if (this.statusGoogleCalendar === 'True') {
+                  await this.connectGoogleCalendar('Edit', dt.bookNo)
+                }
+              }
+              if (item.statusBt === 'wait' && (changeStatus === 'confirm')) {
+                console.log('*****Add')
+                // create
+                if (this.statusGoogleCalendar === 'True') {
+                  await this.connectGoogleCalendar('Add', dt.bookNo)
+                }
+              }
               if (item.statusBt === 'confirm' || item.statusBt === 'confirmJob') {
                 if (item.userId !== 'user-skip') {
                   if (this.statusSearch === 'no') {

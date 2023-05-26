@@ -2983,6 +2983,7 @@ export default {
       // this.initSortable()
     }
     await this.getBookingField()
+    console.log('TEST')
     await this.getShop()
     await this.getDataBranch()
     await this.getCategorySub()

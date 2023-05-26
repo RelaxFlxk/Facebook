@@ -7,6 +7,7 @@ import LoginAdmin from './LoginAdmin'
 import InstallWizard from './InstallWizard'
 import QrcodeBoot from './QrcodeBoot'
 import GoogleCalendar from './GoogleCalendar'
+import GoogleCalendarCmp from './GoogleCalendarCmp'
 
 export default {
   Login,
@@ -17,5 +18,6 @@ export default {
   LoginAdmin,
   InstallWizard,
   QrcodeBoot,
-  GoogleCalendar
+  GoogleCalendar,
+  GoogleCalendarCmp
 }

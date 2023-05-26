@@ -12,7 +12,7 @@
         </v-row>
         <h3 class="text-left ml-4 mb-16 font-weight-bold">ลิ้งค์สำหรับส่งให้ลูกค้า / Admin</h3>
         <v-row>
-          <v-col cols="6" >
+          <v-col  >
             <v-sheet min-height="650px">
               <h3 class="text-left ml-4 mb-10 font-weight-bold"> QR CODE สำหรับสแกน</h3>
               <div class="ml-1">
@@ -24,7 +24,7 @@
                    </v-sheet>
                 </div>
                 <div class="text-center ma-7" v-else>
-                  <v-icon color="#000000" style="font-size:300px;">
+                  <v-icon color="#000000" style="font-size:200px;">
                     mdi-select-search
                   </v-icon>
                 </div>
@@ -72,10 +72,7 @@
               </div>
             </v-sheet>
           </v-col>
-          <v-divider
-            vertical
-          ></v-divider>
-          <v-col cols="6">
+          <v-col >
             <v-sheet min-height="650px">
               <h3 class="text-left ml-4 mb-10 font-weight-bold">ลิ้งค์สำหรับลูกค้า</h3>
               <div class="ml-10" >
@@ -92,9 +89,10 @@
                       <v-tooltip top>
                         <template v-slot:activator="{ on, attrs }">
                           <v-btn
-                          class="mx-2 mt-n4 ml-n1"
+                          class="mx-2 mt-n2 ml-n1"
                           dark
                           fab
+                          small
                           v-bind="attrs"
                           v-on="on"
                           color="#2BC155"
@@ -126,9 +124,10 @@
                      <v-tooltip top>
                         <template v-slot:activator="{ on, attrs }">
                           <v-btn
-                          class="mx-2 mt-n4 ml-n1"
+                          class="mx-2 mt-n2 ml-n1"
                           dark
                           fab
+                          small
                           v-bind="attrs"
                           v-on="on"
                           color="#2BC155"
@@ -189,7 +188,7 @@ export default {
       Alerts: false,
       output: null,
       value: '',
-      size: 300,
+      size: 200,
       foreground: '#000000',
       qrValue: null,
       dataLineConfig: {}
@@ -265,6 +264,11 @@ export default {
           {
             'text': 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/CalendarBookingEmp?shopId=' + this.shopId,
             'title': 'ตรวจสอบคิวว่างก่อนนัดหมาย',
+            'type': 'customer'
+          },
+          {
+            'text': 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/CalendarBookingAutoEmp?shopId=' + this.shopId,
+            'title': 'ตรวจสอบคิวว่างก่อนนัดหมาย (ลูกค้าไม่ระบุช่าง)',
             'type': 'customer'
           },
           {

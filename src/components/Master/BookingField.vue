@@ -9,7 +9,7 @@
       </v-row>
       <v-container>
         <v-row>
-          <EditShop v-show="showEdit" ref="dialogEdit"></EditShop>
+          <EditShop v-show="showEdit" @confirmed="getShop" ref="dialogEdit"></EditShop>
           <v-col cols="12" md="5" sm="5" class="main" style="background-color:#FFFFFF;">
             <div class="Bar">
                 <v-row>
