@@ -471,17 +471,6 @@ export default {
               '&type=jobList&empId=' +
               this.$route.query.empId
           )
-        } else if (this.$route.query.type === 'AdminStampStep') {
-          if (this.$route.query.jobNo !== undefined) {
-            this.$router.push(
-              '/AdminStampStep?jobNo=' + this.$route.query.jobNo +
-                '&shopId=' + this.$route.query.shopId
-            )
-          } else {
-            this.$router.push(
-              '/AdminStampStep?shopId=' + this.$route.query.shopId
-            )
-          }
         } else {
           if (dataitem.shopId === this.$route.query.shopId) {
             // this.jobNo = this.$route.query.jobNo
