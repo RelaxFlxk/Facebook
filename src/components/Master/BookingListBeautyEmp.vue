@@ -3537,7 +3537,9 @@
                         <br>
                       </v-col>
                         <v-form ref="form_edit" v-model="validEdit" lazy-validation>
-                        <v-col cols="12" v-if="dataEditReady">
+                          <v-col cols="12" v-if="dataEditReady">
+                          <v-row justify="start">
+                        <v-col cols="10" class="pb-0">
                           <v-select
                             v-model="formEdit.masBranchID"
                             :items="branch"
@@ -3548,6 +3550,21 @@
                             :rules="[rules.required]"
                             @change="setFlowByBranchEdit()"
                           ></v-select>
+                        </v-col>
+                        <v-col cols="2" class="pb-0">
+                          <v-btn
+                            color="warning"
+                            dark
+                            class='ma-0'
+                            @click="formEdit.bookingEmpFlow = '',fromAddTimeCus = '',dateEdit = '',flowIdOldEdit='',setEmpEdit()"
+                          >
+                            <v-icon color="white" left>mdi-account-clock</v-icon>
+                            เปลี่ยน
+                          </v-btn>
+                        </v-col>
+                          </v-row>
+                          </v-col>
+                        <v-col cols="12" v-if="dataEditReady">
                           <v-select
                             v-model="formEdit.flowId"
                             :items="dataFlowSelectEdit"

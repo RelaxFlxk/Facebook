@@ -95,9 +95,9 @@ export default {
     }
   },
   async mounted () {
+    await this.beforeCreate()
     this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
     this.pathToweb = 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/JobConfirm?jobId='
-    await this.beforeCreate()
   },
   methods: {
     beforeCreate () {

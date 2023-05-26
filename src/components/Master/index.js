@@ -44,8 +44,10 @@ import BookingListQueueMonitoringVideo from './BookingListQueueMonitoringVideo'
 import BookingWalkinEmp from './BookingWalkinEmp'
 import BookingWalkin from './BookingWalkin.vue'
 import CheckBookingList from './CheckBookingList.vue'
+import AdminStampStep from './AdminStampStep.vue'
 
 export default {
+  AdminStampStep,
   ChatHistory,
   WorkShopComponent,
   CustomField,

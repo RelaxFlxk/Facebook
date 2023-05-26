@@ -2293,6 +2293,13 @@
                                 <v-icon left>mdi-content-copy</v-icon>
                                 คัดลอกลิงค์
                               </v-btn>
+                              <hr>
+                              <v-btn
+                                small
+                                dark
+                                color="#14AE5C"
+                                @click="printQrcodeComfirmJob(value, jobitem)"
+                              ><v-icon left>mdi-printer</v-icon>Print QR</v-btn>
                             </div>
                           </v-tab-item>
                         </v-tabs>
@@ -2314,6 +2321,15 @@
                           <v-icon left>mdi-content-copy</v-icon>
                           คัดลอกลิงค์
                         </v-btn>
+                        <div v-if="userId === ''">
+                          <hr>
+                          <v-btn
+                            small
+                            dark
+                            color="#14AE5C"
+                            @click="printQrcodeComfirmJob(value, jobitem)"
+                          ><v-icon left>mdi-printer</v-icon>Print QR</v-btn>
+                        </div>
                         <template v-if="jobitem.length > 0">
                          <div v-if="userId !== ''" class="avatar text-center">
                             <v-avatar v-if="memberPicture !== ''" size="120" style="border:5px solid #FFFFFF;">
@@ -2340,6 +2356,15 @@
                               <v-icon left>mdi-content-copy</v-icon>
                               คัดลอกลิงค์
                             </v-btn>
+                            <div v-if="userId === 'user-skip' && jobitem[0].recordStatus === 'N'">
+                              <hr>
+                              <v-btn
+                                small
+                                dark
+                                color="#14AE5C"
+                                @click="printQrcodeComfirmJob(value, jobitem)"
+                              ><v-icon left>mdi-printer</v-icon>Print QR</v-btn>
+                            </div>
                         </div>
                     </div>
                   </v-col>
@@ -7244,6 +7269,7 @@
           <RetureDeposit ref="RetureDeposit"></RetureDeposit>
           <CallLog ref="CallLog"></CallLog>
           <NotificationService ref="NotificationService"></NotificationService>
+          <PrintQrCodeConfirmJobLINE ref="PrintQrCodeConfirmJobLINE"></PrintQrCodeConfirmJobLINE>
       </div>
     </v-main>
   </div>
@@ -7268,6 +7294,7 @@ import waitingAlert from '../waitingAlert.vue'
 import RetureDeposit from '../BookingListComponents/RetureDeposit.vue'
 import CallLog from '../BookingListComponents/CallLog.vue'
 import NotificationService from '../BookingListComponents/NotificationService.vue'
+import PrintQrCodeConfirmJobLINE from '../BookingListComponents/PrintQrCodeConfirmJobLINE.vue'
 import sideMenu from '../Menu/sideMenu.vue'
 // import copy from 'copy-to-clipboard'
 
@@ -7289,7 +7316,8 @@ export default {
     waitingAlert,
     RetureDeposit,
     CallLog,
-    NotificationService
+    NotificationService,
+    PrintQrCodeConfirmJobLINE
   },
   computed: {
     filteredSelect () {
@@ -8346,6 +8374,10 @@ export default {
     },
     async setDataServiceList (item) {
       this.$refs.NotificationService.setData(item)
+    },
+    async printQrcodeComfirmJob (value, jobitem) {
+      let valueStep = 'https://betask-linked-admin.web.app/AdminStampStep?jobNo=' + this.dataGetJob.jobNo + '&shopId=' + this.$session.getAll().data.shopId
+      this.$refs.PrintQrCodeConfirmJobLINE.printQrcode(value, jobitem, this.dataGetJob, valueStep)
     },
     async setDataCallLog (item) {
       this.$refs.CallLog.setData(item)

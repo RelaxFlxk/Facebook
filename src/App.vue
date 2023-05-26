@@ -1,6 +1,6 @@
 <template>
  <v-app>
-   <Sidebar v-if="$router.currentRoute.name !== 'Login' && $router.currentRoute.name !== 'BookingMobile' && $router.currentRoute.name !== 'BookingMobileConfirmJob' && $router.currentRoute.name !== 'BookingMobileEmp' && $router.currentRoute.name !==  'CheckBookingEmpList'  && $router.currentRoute.name !==  'CheckBookingList' && $router.currentRoute.name !== 'BillingPlan' && $router.currentRoute.name !== 'LoginAdmin' && $router.currentRoute.name !== 'ShopList' && $router.currentRoute.name !== 'UpdateStatusPayment' && $router.currentRoute.name !== 'BookingListQueueMonitoringVideo' && $router.currentRoute.name !== 'InstallWizard' && $router.currentRoute.name !== 'QrcodeBoot' && $router.currentRoute.name !== 'GoogleCalendar'"/>
+   <Sidebar v-if="$router.currentRoute.name !== 'Login' && $router.currentRoute.name !== 'BookingMobile' && $router.currentRoute.name !== 'BookingMobileConfirmJob' && $router.currentRoute.name !== 'BookingMobileEmp' && $router.currentRoute.name !==  'CheckBookingEmpList'  && $router.currentRoute.name !==  'CheckBookingList' && $router.currentRoute.name !== 'BillingPlan' && $router.currentRoute.name !== 'LoginAdmin' && $router.currentRoute.name !== 'ShopList' && $router.currentRoute.name !== 'UpdateStatusPayment' && $router.currentRoute.name !== 'BookingListQueueMonitoringVideo' && $router.currentRoute.name !== 'InstallWizard' && $router.currentRoute.name !== 'QrcodeBoot' && $router.currentRoute.name !== 'GoogleCalendar' && $router.currentRoute.name !== 'AdminStampStep'"/>
    <router-view/>
   </v-app>
 </template>

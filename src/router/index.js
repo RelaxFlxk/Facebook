@@ -67,6 +67,11 @@ export default new Router({
     component: Core.GoogleCalendar
   },
   {
+    path: '/AdminStampStep',
+    name: 'AdminStampStep',
+    component: Master.AdminStampStep
+  },
+  {
     path: '/Master/CustomField',
     name: 'CustomField',
     component: Master.CustomField
