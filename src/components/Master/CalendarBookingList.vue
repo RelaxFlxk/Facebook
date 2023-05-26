@@ -460,7 +460,7 @@ export default {
       }
       this.DataFlowName = []
       await axios
-        .get(this.DNS_IP + '/flow/get?shopId=' + this.$session.getAll().data.shopId + this.paramUse)
+        .get(this.DNS_IP + '/flow/get?shopId=' + this.$session.getAll().data.shopId + '&masBranchId=' + this.masBranchName + this.paramUse)
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {

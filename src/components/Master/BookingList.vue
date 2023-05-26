@@ -1857,16 +1857,6 @@
                   <template v-slot:[`item.action2`]="{ item }">
                     <v-row>
                       <v-col>
-                        <!-- <v-chip
-                          filter
-                          dark
-                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
-                          :color="(item.remarkConfirm1) ? 'green darken-2' : 'grey darken-1'"
-                          v-model="item.remarkConfirm1"
-                          @click.stop="item.remarkConfirm1=!item.remarkConfirm1;confirmRemark(item, 'inAdvance')"
-                        >
-                          1 วัน
-                        </v-chip> -->
                         <v-btn
                           elevation="2"
                           rounded
@@ -1879,18 +1869,6 @@
                           1 วัน
                         </v-btn>
                       </v-col>
-                      <!-- <v-col>
-                        <v-chip
-                          filter
-                          dark
-                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
-                          :color="(item.remarkConfirm2) ? 'green darken-2' : 'grey darken-1'"
-                          v-model="item.remarkConfirm2"
-                          @click.stop="item.remarkConfirm2=!item.remarkConfirm2;confirmRemark(item, 'inDay')"
-                        >
-                          30 นาที
-                        </v-chip>
-                      </v-col> -->
                     </v-row>
                   </template>
                   <template v-slot:[`item.action3`]="{ item }">
@@ -1902,6 +1880,8 @@
                           :color="(item.fastTrack) ? 'green darken-2' : 'grey darken-1'"
                           v-model="item.fastTrack"
                           @click.stop="item.fastTrack=!item.fastTrack;confirmRemark(item, 'fastTrack')"
+                          :loading="loadingConfirmDay"
+                          :disabled="loadingConfirmDay"
                         >
                           {{dataTypeJob3}}
                         </v-chip>
@@ -1913,6 +1893,8 @@
                           :color="(item.extraJob) ? 'green darken-2' : 'grey darken-1'"
                           v-model="item.extraJob"
                           @click.stop="item.extraJob=!item.extraJob;confirmRemark(item, 'extraJob')"
+                          :loading="loadingConfirmDay"
+                          :disabled="loadingConfirmDay"
                         >
                           {{dataTypeJob2}}
                         </v-chip>
@@ -2045,29 +2027,7 @@
                         >
                           1 วัน
                         </v-btn>
-                        <!-- <v-chip
-                          filter
-                          dark
-                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
-                          :color="(item.remarkConfirm1) ? 'green darken-2' : 'grey darken-1'"
-                          v-model="item.remarkConfirm1"
-                          @click.stop="item.remarkConfirm1=!item.remarkConfirm1;confirmRemark(item, 'inAdvance')"
-                        >
-                          1 วัน
-                        </v-chip> -->
                       </v-col>
-                      <!-- <v-col>
-                        <v-chip
-                          filter
-                          dark
-                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
-                          :color="(item.remarkConfirm2) ? 'green darken-2' : 'grey darken-1'"
-                          v-model="item.remarkConfirm2"
-                          @click.stop="item.remarkConfirm2=!item.remarkConfirm2;confirmRemark(item, 'inDay')"
-                        >
-                          30 นาที
-                        </v-chip>
-                      </v-col> -->
                     </v-row>
                   </template>
                   <template v-slot:[`item.action3`]="{ item }">
@@ -2079,6 +2039,8 @@
                           :color="(item.fastTrack) ? 'green darken-2' : 'grey darken-1'"
                           v-model="item.fastTrack"
                           @click.stop="item.fastTrack=!item.fastTrack;confirmRemark(item, 'fastTrack')"
+                          :loading="loadingConfirmDay"
+                          :disabled="loadingConfirmDay"
                         >
                           {{dataTypeJob3}}
                         </v-chip>
@@ -2090,6 +2052,8 @@
                           :color="(item.extraJob) ? 'green darken-2' : 'grey darken-1'"
                           v-model="item.extraJob"
                           @click.stop="item.extraJob=!item.extraJob;confirmRemark(item, 'extraJob')"
+                          :loading="loadingConfirmDay"
+                          :disabled="loadingConfirmDay"
                         >
                           {{dataTypeJob2}}
                         </v-chip>
@@ -4436,17 +4400,20 @@ export default {
           LAST_USER: this.session.data.userName
         }
       } else if (text === 'inDay') {
+        this.loadingConfirmDay = true
         dt = {
           remarkConfirm2: item.remarkConfirm2,
           LAST_USER: this.session.data.userName
         }
       } else if (text === 'extraJob') {
+        this.loadingConfirmDay = true
         dt = {
           fastTrack: (item.extraJob) ? false : item.fastTrack,
           extraJob: item.extraJob,
           LAST_USER: this.session.data.userName
         }
       } else if (text === 'fastTrack') {
+        this.loadingConfirmDay = true
         dt = {
           extraJob: (item.fastTrack) ? false : item.extraJob,
           fastTrack: item.fastTrack,

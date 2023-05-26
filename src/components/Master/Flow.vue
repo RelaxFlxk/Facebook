@@ -149,9 +149,9 @@
                       <v-dialog
                         v-model="dialogAddStepTitle"
                         persistent
-                        max-width="30%"
+                        max-width="600px"
                       >
-                        <v-card min-height="500px">
+                        <v-card>
                           <v-card-text>
                             <v-container>
                               <div style="text-align: end;">
@@ -191,19 +191,31 @@
                                     </v-col>
                                   </center> -->
                                   <v-col cols="12">
-                                    <v-row style="height: 35px">
+                                    <v-row>
                                       <v-col cols="12">
                                       <v-row >
                                         <h3 class="font-weight-bold" style="color:#173053;">ขั้นตอนบริการ</h3>
                                       </v-row>
                                       <v-row >
+                                        <v-col cols="12" class="pb-0">
                                         <v-text-field
                                           v-model="formAddStep.stepTitle"
                                           dense
                                           outlined
                                           required
-                                          label="ชื่อขั้นตอน"
+                                          label="ชื่อขั้นตอน(TH)"
                                         ></v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" class="pb-0 pt-0">
+                                        <v-text-field
+                                          v-model="formAddStep.stepTitleEN"
+                                          dense
+                                          outlined
+                                          required
+                                          label="ชื่อขั้นตอน(EN)"
+                                        ></v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" class="pt-0 pb-0">
                                         <v-text-field
                                           v-model="formAddStep.finishTime"
                                           dense
@@ -213,6 +225,32 @@
                                           required
                                           label="เวลาที่คาดว่าจะเสร็จ"
                                         ></v-text-field>
+                                        </v-col>
+                                        <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;">
+                                          <v-checkbox
+                                          label="ท่านต้องการให้ส่งข้อความหลังเปลี่ยนขั้นตอนหรือไม่"
+                                          :on-icon="'mdi-check-circle'"
+                                          :off-icon="'mdi-checkbox-blank-circle-outline'"
+                                          false-value="False"
+                                          color="#1B437C"
+                                          true-value="True"
+                                          v-model="formAddStep.pushMessageStatus"
+                                        ></v-checkbox>
+                                        </v-col>
+                                        <v-col class="pt-0 pb-0" cols="12" v-if="formAddStep.pushMessageStatus === 'True'">
+                                          <v-textarea
+                                            outlined
+                                            v-model="formAddStep.pushMessageTextTH"
+                                            label="ข้อความหลังเปลี่ยนขั้นตอน (TH)"
+                                          ></v-textarea>
+                                        </v-col>
+                                        <v-col class="pt-0 pb-0" cols="12" v-if="formAddStep.pushMessageStatus === 'True'">
+                                          <v-textarea
+                                            outlined
+                                            v-model="formAddStep.pushMessageTextEN"
+                                            label="ข้อความหลังเปลี่ยนขั้นตอน (EN)"
+                                          ></v-textarea>
+                                        </v-col>
                                         <v-btn
                                           dark
                                           elevation="2"
@@ -229,14 +267,6 @@
                                       </v-row>
                                     </v-col>
                                     </v-row>
-                                    <!-- <v-row class="mt-5">
-                                      <v-text-field
-                                        v-model="formAddStep.stepTitle"
-                                        placeholder="หัวข้อ"
-                                        dense
-                                        required
-                                      ></v-text-field>
-                                    </v-row> -->
                                   </v-col>
                                 </v-col>
                               </v-row>
@@ -250,7 +280,7 @@
                       <v-dialog
                         v-model="dialogEditStep"
                         persistent
-                        max-width="30%"
+                        max-width="600px"
                        > <v-card>
                           <v-form
                             ref="form_update"
@@ -293,13 +323,25 @@
                                         <h3 class="font-weight-bold" style="color:#173053;">ขั้นตอนบริการ</h3>
                                       </v-row>
                                       <v-row >
+                                        <v-col cols="12" class="pb-0">
                                         <v-text-field
                                           v-model="formUpdateStep.stepTitle"
                                           dense
                                           outlined
                                           required
-                                          label="ชื่อขั้นตอน"
+                                          label="ชื่อขั้นตอน(TH)"
                                         ></v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" class="pb-0 pt-0">
+                                        <v-text-field
+                                          v-model="formUpdateStep.stepTitleEN"
+                                          dense
+                                          outlined
+                                          required
+                                          label="ชื่อขั้นตอน(EN)"
+                                        ></v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" class="pt-0 pb-0">
                                         <v-text-field
                                           v-model="formUpdateStep.finishTime"
                                           dense
@@ -309,6 +351,32 @@
                                           required
                                           label="เวลาที่คาดว่าจะเสร็จ"
                                         ></v-text-field>
+                                        </v-col>
+                                        <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;">
+                                          <v-checkbox
+                                          label="ท่านต้องการให้ส่งข้อความหลังเปลี่ยนขั้นตอนหรือไม่"
+                                          :on-icon="'mdi-check-circle'"
+                                          :off-icon="'mdi-checkbox-blank-circle-outline'"
+                                          false-value="False"
+                                          color="#1B437C"
+                                          true-value="True"
+                                          v-model="formUpdateStep.pushMessageStatus"
+                                        ></v-checkbox>
+                                        </v-col>
+                                        <v-col class="pt-0 pb-0" cols="12" v-if="formUpdateStep.pushMessageStatus === 'True'">
+                                          <v-textarea
+                                            outlined
+                                            v-model="formUpdateStep.pushMessageTextTH"
+                                            label="ข้อความหลังเปลี่ยนขั้นตอน (TH)"
+                                          ></v-textarea>
+                                        </v-col>
+                                        <v-col class="pt-0 pb-0" cols="12" v-if="formUpdateStep.pushMessageStatus === 'True'">
+                                          <v-textarea
+                                            outlined
+                                            v-model="formUpdateStep.pushMessageTextEN"
+                                            label="ข้อความหลังเปลี่ยนขั้นตอน (EN)"
+                                          ></v-textarea>
+                                        </v-col>
                                       </v-row>
                                     </v-col>
                                     <v-col >
@@ -2668,22 +2736,31 @@ export default {
         stepId: '',
         flowId: '',
         stepTitle: '',
+        stepTitleEN: '',
         sortNo: '',
         finishTime: '',
         CREATE_USER: '',
         LAST_USER: '',
         shopId: '',
-        sendCard: 'True'
+        sendCard: 'True',
+        pushMessageStatus: 'False',
+        pushMessageTextTH: '',
+        pushMessageTextEN: ''
       },
       formUpdateStep: {
         stepId: '',
         flowId: '',
         stepTitle: '',
+        stepTitleEN: '',
         sortNo: '',
         finishTime: '',
         LAST_USER: '',
         shopId: '',
-        sendCard: ''
+        sendCard: '',
+        pushMessageStatus: 'False',
+        pushMessageText: '',
+        pushMessageTextTH: '',
+        pushMessageTextEN: ''
       },
       formUpdate: {
         flowCode: '',
@@ -4134,7 +4211,11 @@ export default {
       this.formUpdateStep.stepId = item.stepId
       this.formUpdateStep.flowId = item.flowId
       this.formUpdateStep.stepTitle = item.stepTitle
+      this.formUpdateStep.stepTitleEN = item.stepTitleEN
       this.formUpdateStep.finishTime = item.finishTime
+      this.formUpdateStep.pushMessageStatus = item.pushMessageStatus || 'False'
+      this.formUpdateStep.pushMessageTextTH = item.pushMessageTextTH
+      this.formUpdateStep.pushMessageTextEN = item.pushMessageTextEN
     },
     async getDataById (item) {
       this.editedItemSelete = []
@@ -4332,10 +4413,6 @@ export default {
           delete this.formAddStep['stepId']
           this.formAddStep.sortNo = this.stepItemSelete.length + 1
           this.formAddStep.shopId = this.shopId
-          console.log('stepTitle', this.formAddStep.stepTitle)
-          console.log('stepId', this.formAddStep.stepId)
-          console.log('shopId', this.shopId)
-          console.log('formAddStep', this.formAddStep)
           await axios
             .post(
               // eslint-disable-next-line quotes
@@ -4350,7 +4427,11 @@ export default {
               this.dataReady = true
               this.getStepFlow(this.formAddStep)
               this.formAddStep.stepTitle = ''
+              this.formAddStep.stepTitleEN = ''
               this.formAddStep.finishTime = ''
+              this.formAddStep.pushMessageStatus = 'False'
+              this.formAddStep.pushMessageTextTH = ''
+              this.formAddStep.pushMessageTextEN = ''
 
               // Load Data
               await this.getDataGlobal(
@@ -4699,7 +4780,11 @@ export default {
           let ID = this.formUpdateStep.stepId
           let dt = {
             stepTitle: this.formUpdateStep.stepTitle,
+            stepTitleEN: this.formUpdateStep.stepTitleEN,
             finishTime: this.formUpdateStep.finishTime,
+            pushMessageStatus: this.formUpdateStep.pushMessageStatus,
+            pushMessageTextTH: this.formUpdateStep.pushMessageTextTH,
+            pushMessageTextEN: this.formUpdateStep.pushMessageTextEN,
             LAST_USER: this.formUpdateStep.LAST_USER
           }
           await axios
