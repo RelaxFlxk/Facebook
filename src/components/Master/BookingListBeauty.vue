@@ -10152,134 +10152,6 @@ export default {
                 let d = response.data[i]
                 let s = {}
                 if (dataItems.filter(el => { return el.bookNo === d.bookNo }).length === 0) {
-                  // console.log('d.bookNo', d.bookNo)
-                  // s.bookNo = d.bookNo
-                  // s.flowId = d.flowId
-                  // let checkDeposit = this.DataFlowName.filter(el => { return el.value === parseInt(d.flowId) })
-                  // if (checkDeposit.length > 0) {
-                  //   s.depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
-                  // } else {
-                  //   s.depositCheckStatus = 'False'
-                  // }
-                  // s.flowName = d.flowName
-                  // s.dueDate = d.dueDate || ''
-                  // if (d.timeText === null || d.timeText === '') {
-                  //   d.timeText = d.timeDue
-                  // }
-                  // if (s.dueDate === '') {
-                  //   s.dueDateText = 'ไม่มีเวลานัดหมาย'
-                  // } else {
-                  //   s.dueDateText = d.dueDateTextDay + ' ' + d.timeText
-                  // }
-                  // s.shopId = d.shopId
-                  // s.dueDateDay = d.dueDateDay
-                  // s.statusVIP = d.statusVIP
-                  // s.packageName = d.packageName
-                  // s.packageDetails = d.packageDetails
-                  // s.packageImage = d.packageImage
-                  // s.packagePrice = d.packagePrice
-                  // s.packageBalanceAmount = d.packageBalanceAmount
-                  // s.packageAmount = d.packageAmount
-                  // s.packagePoint = d.packagePoint
-                  // s.packageExpire = d.packageExpire
-                  // s.depositTextTH = d.depositTextTH
-                  // s.CREATE_DATE_Status = d.CREATE_DATE_Status
-                  // s.CREATE_DATE = d.CREATE_DATE
-                  // s.menuShowStatus = d.menuShowStatus
-                  // s.dueDateTextDay = d.dueDateTextDay
-                  // s.remark = d.remark || ''
-                  // s.masBranchID = d.masBranchID
-                  // s.limitBookingCheck = d.limitBookingCheck
-                  // s.memberId = d.memberId || ''
-                  // s.countHourLimit = d.countHourLimit
-                  // s.empSelect = d.empSelect
-                  // s.empFull_NameTH = d.empFull_NameTH || ''
-                  // s.empFull_NameTH = s.empFull_NameTH.replace('นางสาว', '')
-                  // s.empFull_NameTH = s.empFull_NameTH.replace('นาย', '')
-                  // s.empFull_NameTH = s.empFull_NameTH.replace('นาง', '')
-                  // s.userId = d.userId
-                  // s.chkConfirm = false
-                  // s.chkCancel = false
-                  // s.address = d.address
-                  // s.addressLatLong = d.addressLatLong
-                  // s.jobNo = d.jobNo
-                  // s.timeText = d.timeText
-                  // s.remarkRemove = d.remarkRemove || ''
-                  // s.remarkConfirm1 = (d.remarkConfirm1 === 'true' || d.remarkConfirm1 === 'True')
-                  // s.remarkConfirm2 = (d.remarkConfirm2 === 'true' || d.remarkConfirm2 === 'True')
-                  // s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
-                  // s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
-                  // s.depositStatus = d.depositStatus || 'False'
-                  // s.depositImge = d.depositImge || ''
-                  // s.depositReturnImge = d.depositReturnImge || ''
-                  // s.depositPrice = d.depositPrice || ''
-                  // s.remarkDepositLinked = d.remarkDepositLinked || ''
-                  // s.lineUserId = d.lineUserId
-                  // s.memberPicture = d.memberPicture
-                  // s.timeDueHtext = d.timeDueH + ':00'
-                  // s.timeDuetext = d.timeDue
-                  // s.address = d.address
-                  // s.addressLatLong = d.addressLatLong
-                  // s.countChangeTime = d.countChangeTime || 0
-                  // s.remarkReturn = d.remarkReturn || ''
-                  // s.dateReturn = d.dateReturn || ''
-                  // s.packageId = d.packageId || ''
-                  // s.tokenPackage = d.tokenPackage || ''
-                  // s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
-                  // s.memberDataTag = JSON.parse(d.memberDataTag) || []
-                  // if (s.memberDataTag.length > 0) {
-                  //   s.tagDataShow = []
-                  //   let memberDataTag = s.memberDataTag
-                  //   for (let i = 0; i < memberDataTag.length; i++) {
-                  //     let d = memberDataTag[i]
-                  //     let x = {}
-                  //     let checkTagItem = this.tagItem.filter(el => { return el.value === d })
-                  //     if (checkTagItem.length > 0) {
-                  //       x.text = checkTagItem[0].text
-                  //       x.value = checkTagItem[0].value
-                  //       s.tagDataShow.push(x)
-                  //     }
-                  //   }
-                  // }
-                  // this.countAll = this.countAll + 1
-                  // if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
-                  //   s.chkConfirm = true
-                  //   s.chkCancel = false
-                  // }
-                  // if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
-                  //   s.chkConfirm = false
-                  //   s.chkCancel = true
-                  // }
-                  // s.statusBt = d.statusBt || 'wait'
-                  // switch (d.statusBt) {
-                  //   case 'confirm':
-                  //     s.statusBtText = 'ยืนยันแล้ว'
-                  //     this.countConfirm = this.countConfirm + 1
-                  //     break
-                  //   case 'cancel':
-                  //     s.statusBtText = 'ยกเลิก'
-                  //     this.countCancel = this.countCancel + 1
-                  //     break
-                  //   case 'confirmJob':
-                  //     s.statusBtText = 'รับรถแล้ว'
-                  //     this.countJob = this.countJob + 1
-                  //     break
-                  //   default:
-                  //     s.statusBtText = 'รายการนัดหมายใหม่'
-                  //     this.countWaiting = this.countWaiting + 1
-                  //     break
-                  // }
-                  // var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
-                  // if (chkTime.length === 0) {
-                  //   dataItemTimes.push(s)
-                  // }
-                  // // console.log('this.BookingDataListSearch', this.BookingDataList[d.bookNo])
-                  // s.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
-                  // s.cusReg = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เลขทะเบียน')
-                  // s.tel = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เบอร์โทร')
-                  // s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
-                  // s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
-                  // s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
                   s.bookNo = d.bookNo
                   s.flowId = d.flowId
                   let checkDeposit = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(d.flowId) })
@@ -11351,10 +11223,6 @@ export default {
       let dataExport = []
       this.dataexport = []
       let runNo = 0
-      // console.log('bookingData', this.BookingDataListTimechange)
-      // console.log('this.editedItemSeleteField', this.editedItemSeleteField)
-      // console.log('this.dataItemTimesChange', this.dataItemTimesChange)
-      // console.log('this.dataItemTime', this.dataItemTime)
       var datause = this.dataItemTime.sort((a, b) => {
         if (a.timeDuetext < b.timeDuetext) return -1
         return a.timeDuetext > b.timeDuetext ? 1 : 0
@@ -12082,12 +11950,6 @@ export default {
                   s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
                   s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
                   s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
-                  // s.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
-                  // s.cusReg = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เลขทะเบียน')
-                  // s.tel = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เบอร์โทร')
-                  // s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
-                  // s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
-                  // s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
                   dataItems.push(s)
                 }
               }
