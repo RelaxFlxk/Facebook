@@ -1,17 +1,17 @@
 <template>
-  <div>
-    <v-card flat>
-      <v-toolbar color="#173053" dark extended flat>
-        <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
-      </v-toolbar>
-      <v-card class="mx-auto" elevation="0"  style="margin-top: -64px;">
-        <v-toolbar flat>
-          <v-toolbar-title class="#173053--text">
-            เปลี่ยนขั้นตอน
-          </v-toolbar-title>
-        </v-toolbar>
-        <v-card-text style="height: 100%;">
-          <v-container>
+    <div flat class="pa-3" :style="'background-color:' + primaryColor + ' ;min-height: 100vh;'">
+      <!-- <v-toolbar color="#173053" dark extended flat>
+        <v-app-bar-nav-icon></v-app-bar-nav-icon>
+      </v-toolbar> -->
+      <div class="pa-0 ma-2 mb-4" style="display: flex;justify-content: flex-end;">
+        <v-avatar size="62" >
+        <img
+          :src="shopData[0].shopImge"
+          alt="John"
+        >
+      </v-avatar>
+      </div>
+        <v-card-text>
             <div>
               <v-row class="InputData">
                 <v-select
@@ -19,33 +19,34 @@
                   :items="DataBranchName"
                   v-model="masBranchID"
                   @change="flowId = '', getDataFlow()"
-                  dense
-                  outlined
+                  solo
                   hide-details
-                  filled
                   label="สาขา"
-                  prepend-inner-icon="mdi-map-marker"
                   class="ma-2"
-                ></v-select>
+                >
+                <template v-slot:prepend-inner>
+                  <v-icon class="" color="primary">mdi-map-marker</v-icon>
+                </template>
+              </v-select>
               </v-row>
               <v-row class="InputData">
                 <v-select
                   v-if="(masBranchID !== '' && masBranchID !== null) && $route.query.jobNo === undefined"
                   :items="DataFlowName"
                   v-model="flowId"
-                  dense
-                  outlined
-                  filled
+                  solo
                   hide-details
                   label="ประเภทบริการ"
-                  prepend-inner-icon="mdi-format-list-bulleted"
                   class="ma-2"
                   @change="getAllJob()"
                 >
+                <template v-slot:prepend-inner>
+                  <v-icon class="ma-2 mt-1 iconify" color="primary" data-icon="maki:doctor"></v-icon>
+                </template>
                 </v-select>
               </v-row>
               <v-row v-if="dataItemAll.length > 0">
-                <v-col cols="12">
+                <v-col cols="12" class="pa-0 ma-0">
                 <!-- <v-autocomplete
                   outlined
                   dense
@@ -60,7 +61,7 @@
                    @change="getDataJob()"
                 ></v-autocomplete> -->
                   <div v-for="(item , index) in dataItemAll" :key="index">
-                    <v-card class="mx-6 pa-3 ma-2" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;">
+                    <v-card class="mx-7 pa-3 ma-2 mb-6" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;">
                       <v-row class="pa-5">
                         <v-col cols="3" md="3" sm="12"  class="pa-0 ma-0" style="display: flex;align-items: flex-start;justify-content: flex-end;padding-left: 11px !important;">
                           <v-avatar size="65" v-if="item.memberPicture">
@@ -68,7 +69,7 @@
                             :src="item.memberPicture"
                           >
                         </v-avatar>
-                        <v-avatar size="65" color="#173053" v-else>
+                        <v-avatar size="65" color="primary" v-else>
                           <v-icon dark x-large>
                             mdi-account-circle
                           </v-icon>
@@ -84,23 +85,23 @@
                             {{item.flowName}}
                           </p>
                           </div> -->
-                          <div style="display: flex;align-items: flex-start;">
+                          <div style="display: flex;align-items: flex-start;" v-if="item.CustomerTel">
                             <v-icon  color="#24C74D" class="mx-2 mr-2 mt-1 iconify" small data-icon="el:phone-alt"></v-icon>
-                            <p class="font-weight-bold mb-1" style="font-size:14px" v-if="item.CustomerTel">
+                            <p class="font-weight-bold mb-1" style="font-size:14px" >
                             <!-- <v-icon  color="#24C74D" class="mx-2 mr-2 mt-1 iconify" small data-icon="el:phone-alt"></v-icon> -->
                           {{item.CustomerTel}}
                           </p>
                           </div>
                         </v-col>
                       </v-row>
-                      <div style="display: flex;align-items: center;justify-content: center;">
+                      <div style="display: flex;align-items: center;justify-content: center;" v-if="item.dueDate">
                         <v-icon  color="#F48686" class="iconify" data-icon="ic:twotone-access-time"></v-icon>
-                        <p class="font-weight-bold text-center ma-0 ml-2" v-if="item.dueDate" style="font-size:16px">
+                        <p class="font-weight-bold text-center ma-0 ml-2" style="font-size:16px">
                           <!-- <v-icon x-large color="#F48686" class="mx-1 mr-2 iconify" data-icon="ic:twotone-access-time"></v-icon> -->
                           {{momentThaiText(item.dueDate)}}</p>
                       </div>
                     <v-row class="mt-2 mb-1 px-3">
-                      <v-col cols="4" class="text-center pa-1" v-if="item.CustomerTel">
+                      <v-col class="text-center pa-1" v-if="item.CustomerTel">
                         <v-btn
                           color="#1DBF73"
                           rounded
@@ -109,9 +110,9 @@
                           @click="callCustomer(item.CustomerTel)"
                         >โทร</v-btn>
                       </v-col>
-                      <v-col cols="4" class="text-center pa-1">
+                      <v-col class="text-center pa-1">
                         <v-btn
-                          color="#F38383"
+                          color="rgb(153 153 153)"
                           rounded
                           dark
                           block
@@ -119,36 +120,37 @@
                         >
                         รายละเอียด</v-btn>
                       </v-col>
-                      <v-col cols="4" class="text-center pa-1">
+                      <v-col class="text-center pa-1">
                         <v-btn
-                          color="#173053"
+                          :color="secondaryColor"
                           rounded
                           dark
                           block
                           @click="jobNo=item.jobNo,stepId=item.stepId,dialogLogStampStep = true, getJobLog(item.jobNo), getStepFlow(item.stepId)"
-                        >เปลี่ยนขั้นตอน</v-btn>
+                        >เริ่ม</v-btn>
                       </v-col>
                     </v-row>
                   </v-card>
                   </div>
                 </v-col>
               </v-row>
-              <template v-if="dataItem.length > 0">
-                <v-row class="InputData">
-                  <v-col cols="12">
-                    <v-btn
-                      class="ma-2"
-                      outlined
-                      small
-                      color="red"
+              <v-card v-if="dataItem.length > 0" class="pa-3 mx-2" style="background-color:#FFFFFF;">
+                <v-row class="InputData" >
+                  <v-col cols="12" class="pa-0 ma-0 mb-2">
+                    <!-- <v-btn
+                      class="ma-1 mx-n1"
+                      rounded
+                      dark
+                      :color="secondaryColor"
                       block
                       @click="getAllJob(), dataItem=[]"
-                    >
-                      กลับไปหน้ารวม
-                    </v-btn>
+                    > -->
+                      <v-icon x-large :color="secondaryColor"  @click="getAllJob(), dataItem=[]" class="mr-6">mdi-arrow-left-box</v-icon>
+                      <!-- กลับไปหน้ารวม
+                    </v-btn> -->
                   </v-col>
                 </v-row>
-                <div class="avatar text-center">
+                <div class="avatar text-center mb-5">
                   <div style="display:flex;align-items: center;justify-content: center;" v-if="dataItem[0].memberName">
                     <h4>
                     {{dataItem[0].memberName}}
@@ -168,7 +170,8 @@
                     <v-text-field
                       v-model="dataItem[0].masBranchName"
                       label="สาขา"
-                      class="pa-2 pb-0 pt-0"
+                      hide-details
+                      class="pa-2 pb-0 pt-0 mb-3"
                       outlined
                       dense
                       readonly
@@ -178,8 +181,9 @@
                     <v-text-field
                       v-model="dataItem[0].flowName"
                       label="ประเภทบริการ"
-                      class="pa-2 pb-0 pt-0"
+                      class="pa-2 pb-0 pt-0 mb-3"
                       outlined
+                      hide-details
                       dense
                       readonly
                     ></v-text-field>
@@ -198,7 +202,8 @@
                       <v-text-field
                         v-model="item.fieldValue"
                         :label="item.fieldName"
-                        class="pa-2 pb-0 pt-0"
+                        class="pa-2 pb-0 pt-0 mb-3"
+                        hide-details
                         outlined
                         dense
                         readonly
@@ -209,7 +214,8 @@
                       <v-text-field
                         v-model="item.fieldValue"
                         :label="item.fieldName"
-                        class="pa-2 pb-0 pt-0"
+                        hide-details
+                        class="pa-2 pb-0 pt-0 mb-3"
                         outlined
                         dense
                         readonly
@@ -243,7 +249,8 @@
                         <v-text-field
                           v-model="item.fieldValue"
                           :label="item.fieldName"
-                          class="pa-2 pb-0 pt-0"
+                          class="pa-2 pb-0 pt-0 mb-3"
+                          hide-details
                           outlined
                           dense
                           readonly
@@ -254,7 +261,8 @@
                         <v-text-field
                           v-model="item.fieldValue"
                           :label="item.fieldName"
-                          class="pa-2 pb-0 pt-0"
+                          class="pa-2 pb-0 pt-0 mb-3"
+                          hide-details
                           outlined
                           dense
                           readonly
@@ -269,7 +277,8 @@
                           <v-text-field
                             v-model="item.fieldValue"
                             :label="item.fieldName"
-                            class="pa-2 pb-0 pt-0"
+                            class="pa-2 pb-0 pt-0 mb-3"
+                        hide-details
                             outlined
                             dense
                             readonly
@@ -280,7 +289,8 @@
                           <v-text-field
                             v-model="item.fieldValue"
                             :label="item.fieldName"
-                            class="pa-2 pb-0 pt-0"
+                            class="pa-2 pb-0 pt-0 mb-3"
+                        hide-details
                             outlined
                             dense
                             readonly
@@ -290,10 +300,61 @@
                       </template>
                     </template>
                 </div>
-                <v-row class="InputData" v-if="dataItem[0].stepTitle"><h5>ขั้นตอนปัจจุบัน : {{dataItem[0].stepTitle}}</h5></v-row>
+                <!-- <v-row class="InputData" v-if="dataItem[0].stepTitle">
+                  <h5>ขั้นตอนปัจจุบัน : {{dataItem[0].stepTitle}}</h5>
+                </v-row> -->
                 <v-col cols="12" class="pb-2">
-                  <v-row v-for="(itemStep , indexStep) in dataFlowStep.filter((v) => parseInt(v.flowId) === flowId)" :key="indexStep">
-                    <v-col cols="4" class="text-right py-0 pr-0" style="display: flex;justify-content: flex-end;align-items: center;">
+                  <v-timeline
+                  v-for="(itemStep , indexStep) in dataFlowStep.filter((v) => parseInt(v.flowId) === flowId)" :key="indexStep"
+                      align-top
+                      dense
+                      class="pt-2"
+                    >
+                      <v-timeline-item
+                      class="pb-1 pt-0"
+                      v-if="itemStep.stepId === stepId"
+                        :color="secondaryColor"
+                        small
+                      >
+                        <v-row class="pt-1">
+                          <v-col cols="3" class="px-1">
+                            <strong
+                              v-if="dataJobLog.filter((Ilog,inLog) => Ilog.jobNo === jobNo && Ilog.stepId === itemStep.stepId).length > 0"
+                              >{{dataJobLog.filter((Ilog,inLog) => Ilog.jobNo === jobNo && Ilog.stepId === itemStep.stepId)[0].CREATE_DATE_TIME + ' น.'}}
+                            </strong>
+                          </v-col>
+                          <v-col cols="9">
+                            <strong
+                      v-if="itemStep.stepTitle !== null"
+                      class="mb-1" style="font-size:14px;color: #000000;"
+                      >{{itemStep.stepTitle}}</strong>
+                          </v-col>
+                        </v-row>
+                      </v-timeline-item>
+                      <v-timeline-item
+                      class="pb-1 pt-0"
+                      v-else
+                        color="#8A8D9F"
+                        small
+                      >
+                        <v-row class="pt-1">
+                          <v-col cols="3" class="px-1">
+                            <strong
+                              v-if="dataJobLog.filter((Ilog,inLog) => Ilog.jobNo === jobNo && Ilog.stepId === itemStep.stepId).length > 0"
+                              >{{dataJobLog.filter((Ilog,inLog) => Ilog.jobNo === jobNo && Ilog.stepId === itemStep.stepId)[0].CREATE_DATE_TIME + ' น.'}}
+                            </strong>
+                          </v-col>
+                          <v-col cols="9">
+                            <strong
+                      v-if="itemStep.stepTitle !== null"
+                      class="mb-1" style="font-size:14px;color: #000000;"
+                      >{{itemStep.stepTitle}}</strong>
+                          </v-col>
+                        </v-row>
+                      </v-timeline-item>
+                  </v-timeline>
+                  <!-- <v-row v-for="(itemStep , indexStep) in dataFlowStep.filter((v) => parseInt(v.flowId) === flowId)" :key="indexStep">
+                    <v-col cols="2" class="text-right py-0 pr-0" style="display: flex;justify-content: flex-end;align-items: center;">
                       <p
                       class="font-weight-bold mb-1" style="font-size:14px"
                       v-if="dataJobLog.filter((Ilog,inLog) => Ilog.jobNo === jobNo && Ilog.stepId === itemStep.stepId).length > 0"
@@ -304,13 +365,13 @@
                       <v-icon v-if="itemStep.stepId === stepId" color="#173053" class="mx-2 mr-2 mt-1 iconify"  data-icon="teenyicons:git-commit-solid"></v-icon>
                       <v-icon v-else class="mx-2 mr-2 mt-1 iconify" color="#8A8D9F"  data-icon="teenyicons:git-commit-outline"></v-icon>
                     </v-col>
-                    <v-col cols="6" class="py-0 pl-0">
+                    <v-col cols="8" class="py-0 pl-0">
                       <p
                       v-if="itemStep.stepTitle !== null"
                       class="font-weight-bold mb-1" style="font-size:14px;color: #8A8D9F;"
                       >{{itemStep.stepTitle}}</p>
                     </v-col>
-                  </v-row>
+                  </v-row> -->
                 </v-col>
                 <v-row class="InputData">
                   <v-select
@@ -320,6 +381,7 @@
                     label="ขั้นตอนต่อไป"
                     v-model="stepItemSelete"
                     :items="stepItemSeleteInBoard"
+                    hide-details
                     item-text="text"
                     item-value="stepId"
                     :rules="[rules.required]"
@@ -330,31 +392,44 @@
                   class="ma-2"
                     outlined
                     dense
+                    hide-details
                     label="ชื่อพนักงานที่รับผิดชอบ"
                     v-model="empSelete"
                     :items="empSeleteStep.filter((i) => i.masBranchID === masBranchID || i.masBranchID === '')"
                     :rules="[rules.required]"
                   ></v-autocomplete>
                 </v-row>
-                <div class="text-center">
-                  <v-btn color="#1B437C" depressed dark @click="onUpdate()">
+                <div class="text-center mb-10 mt-6">
+                  <v-btn :color="secondaryColor" rounded depressed dark @click="onUpdate()">
                     <v-icon left>
                       mdi-swap-horizontal
                     </v-icon>
                     เปลี่ยนสถานะ
                   </v-btn>
                 </div>
-              </template>
-              <v-dialog v-model="dialogLogStampStep" width="90%">
-                <v-card class="text-center">
-                <v-card-title>
+              </v-card >
+              <v-dialog v-model="dialogLogStampStep"  fullscreen scrollable>
+                <v-card :style="'background-color:' + primaryColor + ' ;'" >
+                  <div class="pa-0 ma-2 mb-4 mt-4 mr-5" style="display: flex;justify-content: flex-end;">
+                    <v-avatar size="62" >
+                    <img
+                      :src="shopData[0].shopImge"
+                      alt="John"
+                    >
+                  </v-avatar>
+                  </div>
+                 <v-card class="ma-4 py-4 px-3">
+                  <div style="display: flex;justify-content: flex-start;" class="mb-4">
+                    <v-icon x-large :color="secondaryColor"  @click="dialogLogStampStep = false" class="mr-6">mdi-arrow-left-box</v-icon>
+                  </div>
+                  <v-card-title class="my-3" style="display: flex;justify-content: center;">
                   เปลี่ยนขั้นตอน
                 </v-card-title>
                 <v-card-text>
                   <v-container>
                     <v-row>
                       <v-col cols="12" class="pb-0">
-                        <v-row v-for="(itemStep , indexStep) in dataFlowStep.filter((v) => parseInt(v.flowId) === flowId)" :key="indexStep">
+                        <!-- <v-row v-for="(itemStep , indexStep) in dataFlowStep.filter((v) => parseInt(v.flowId) === flowId)" :key="indexStep">
                           <v-col cols="4" class="text-right py-0 pr-0" style="display: flex;justify-content: flex-end;align-items: center;">
                             <p
                             class="font-weight-bold mb-1" style="font-size:14px"
@@ -372,14 +447,66 @@
                             class="font-weight-bold mb-1" style="font-size:14px;color: #8A8D9F;"
                             >{{itemStep.stepTitle}}</p>
                           </v-col>
+                        </v-row> -->
+                        <v-timeline
+                  v-for="(itemStep , indexStep) in dataFlowStep.filter((v) => parseInt(v.flowId) === flowId)" :key="indexStep"
+                      align-top
+                      dense
+                      class="pt-2"
+                    >
+                      <v-timeline-item
+                      class="pb-1 pt-0"
+                      v-if="itemStep.stepId === stepId"
+                        :color="secondaryColor"
+                        small
+                      >
+                        <v-row class="pt-1">
+                          <v-col cols="3" class="px-1">
+                            <strong
+                              v-if="dataJobLog.filter((Ilog,inLog) => Ilog.jobNo === jobNo && Ilog.stepId === itemStep.stepId).length > 0"
+                              style="color: #000000;"
+                              >{{dataJobLog.filter((Ilog,inLog) => Ilog.jobNo === jobNo && Ilog.stepId === itemStep.stepId)[0].CREATE_DATE_TIME + ' น.'}}
+                            </strong>
+                          </v-col>
+                          <v-col cols="9">
+                            <strong
+                      v-if="itemStep.stepTitle !== null"
+                      class="mb-1" style="font-size:14px;color: #000000;"
+                      >{{itemStep.stepTitle}}</strong>
+                          </v-col>
                         </v-row>
+                      </v-timeline-item>
+                      <v-timeline-item
+                      class="pb-1 pt-0"
+                      v-else
+                        color="#8A8D9F"
+                        small
+                      >
+                        <v-row class="pt-1">
+                          <v-col cols="3" class="px-1">
+                            <strong
+                              v-if="dataJobLog.filter((Ilog,inLog) => Ilog.jobNo === jobNo && Ilog.stepId === itemStep.stepId).length > 0"
+                              style="color: #000000;"
+                              >{{dataJobLog.filter((Ilog,inLog) => Ilog.jobNo === jobNo && Ilog.stepId === itemStep.stepId)[0].CREATE_DATE_TIME + ' น.'}}
+                            </strong>
+                          </v-col>
+                          <v-col cols="9">
+                            <strong
+                      v-if="itemStep.stepTitle !== null"
+                      class="mb-1" style="font-size:14px;color: #000000;"
+                      >{{itemStep.stepTitle}}</strong>
+                          </v-col>
+                        </v-row>
+                      </v-timeline-item>
+                  </v-timeline>
                       </v-col>
                       <v-col cols="12" class="pb-0">
                         <v-row class="InputData">
                             <v-select
-                            class="ma-2"
-                              dense
+                            class="pa-2 pb-0 pt-0 mb-3 mt-4"
                               outlined
+                              hide-details
+                              dense
                               label="ขั้นตอนต่อไป"
                               v-model="stepItemSelete"
                               :items="stepItemSeleteInBoard"
@@ -390,8 +517,9 @@
                           </v-row>
                           <v-row class="InputData">
                             <v-autocomplete
-                            class="ma-2"
+                            class="pa-2 pb-0 pt-0 mb-3"
                               outlined
+                              hide-details
                               dense
                               label="ชื่อพนักงานที่รับผิดชอบ"
                               v-model="empSelete"
@@ -399,8 +527,8 @@
                               :rules="[rules.required]"
                             ></v-autocomplete>
                           </v-row>
-                          <div class="text-center">
-                            <v-btn color="#1B437C" depressed dark @click="onUpdate()">
+                          <div class="text-center my-4">
+                            <v-btn :color="secondaryColor" rounded dark @click="onUpdate()">
                               <v-icon left>
                                 mdi-swap-horizontal
                               </v-icon>
@@ -411,14 +539,20 @@
                     </v-row>
                   </v-container>
                 </v-card-text>
+                 </v-card>
                 </v-card>
               </v-dialog>
             </div>
-          </v-container>
         </v-card-text>
-      </v-card>
-    </v-card>
-  </div>
+        <v-footer
+        fixed
+        :style="'background-color:' + primaryColor + ' ;display: flex;justify-content: center;'"
+        class="pa-6 py-1"
+
+    >
+    <strong style="color: #FFFFFF;">POWER BY  BETASK CONSULTING</strong>
+    </v-footer>
+   </div>
 </template>
 
 <script>
@@ -455,14 +589,31 @@ export default {
       dataFlowStep: [],
       shopId: this.$session.getAll().data.shopId,
       jobId: '',
-      jobNo: ''
+      jobNo: '',
+      shopData: [],
+      primaryColor: '',
+      secondaryColor: ''
     }
   },
   async mounted () {
     // await this.getDataJob()
+    await this.getShop()
     await this.beforeCreate()
   },
   methods: {
+    async getShop () {
+      await axios
+        .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.shopId)
+        .then(response => {
+          let rs = response.data
+          console.log('rssssssssssss', rs)
+          if (rs.length > 0) {
+            this.shopData = rs
+            this.primaryColor = rs[0].primaryColor
+            this.secondaryColor = rs[0].secondaryColor
+          }
+        })
+    },
     momentThaiText (item) {
       let dt = moment(item).locale('th').format('LLLL')
       return dt
@@ -828,6 +979,7 @@ export default {
 .InputData{
   margin: 0px !important;
   padding: 0px !important;
+  border-radius: 15px 15px 15px 15px;
 }
 .footer {
   position: fixed;

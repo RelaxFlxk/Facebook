@@ -187,6 +187,34 @@ export default {
     // await this.checkTypeEvenEmp()
   },
   methods: {
+    async UseGoogleCalendar () {
+      await this.getShop()
+      if (this.refreshToken === null || this.refreshToken === '') {
+        await this.handleClickLoginByUse()
+      }
+    },
+    async handleClickLoginByUse () {
+      this.$gAuth
+        .getAuthCode()
+        .then((authCode) => {
+          // on success
+          console.log('authCode', authCode)
+          axios
+            .post('http://127.0.0.1:5002/be-linked-a7cdc/asia-southeast1/GoogleCalendar-createToken', {code: authCode})
+            // .post('http://localhost:5002/be-linked-a7cdc/asia-southeast1/GoogleCalendar-createToken', {code: authCode})
+            .then(async (response) => {
+              // this.checkLogin = true
+              console.log('token', response.data)
+              await this.UpdateRefreshToken(response.data)
+            }).catch((err) => {
+              console.log('err', err)
+            })
+        })
+        .catch((error) => {
+          console.log('error login', error)
+          // on fail do something
+        })
+    },
     async checkTypeEvenEmp (status, bookNo) {
       console.log('status!!', status)
       this.evenStatus = status

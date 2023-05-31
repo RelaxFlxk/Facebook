@@ -521,9 +521,10 @@ export default {
   },
   methods: {
     connectGoogleCalendar (item) {
+      console.log('test', item)
       if (item === 'True') {
         // this.$refs.GoogleCalendarRef.handleClickLogin()
-        this.$refs.GoogleCalendarRef.checkLoginByExpireDate()
+        this.$refs.GoogleCalendarRef.UseGoogleCalendar()
       }
     },
     resetShop () {
