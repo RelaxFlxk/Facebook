@@ -147,7 +147,7 @@
                           v-model="formUpdate.timeSlotStatus"
                         ></v-checkbox>
                       </v-col>
-                      <v-col cols="12" class="pt-0 pb-0" style="display: flex;justify-content: left;height: 40px;">
+                      <!-- <v-col cols="12" class="pt-0 pb-0" style="display: flex;justify-content: left;height: 40px;">
                         <v-checkbox
                           label="เชื่อมต่อกับ Google Calendar"
                           false-value="False"
@@ -169,7 +169,7 @@
                           true-value="True"
                           v-model="formUpdate.statusGoogleCalendarEmp"
                         ></v-checkbox>
-                      </v-col>
+                      </v-col> -->
                     </v-row>
                     <v-row>
                       <v-col cols="6" class="mt-6">
@@ -421,8 +421,8 @@ export default {
         bookingthankTextEn: '',
         bookingthankText: '',
         videoLinkMonition: '',
-        statusGoogleCalendar: '',
-        statusGoogleCalendarEmp: '',
+        statusGoogleCalendar: 'False',
+        statusGoogleCalendarEmp: 'False',
         refreshTokenGoogleCalendar: ''
       },
       timeSlotStatusOld: '',
