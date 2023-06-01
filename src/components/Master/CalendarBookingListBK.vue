@@ -98,11 +98,8 @@
                     }}</v-toolbar-title>
 
                     <v-spacer></v-spacer>
-                    <v-btn
-                      :loading="loadingExcel"
-                      :disabled="loadingExcel"
-                      color="primary" @click="exportExcel()" v-if="dataItemTimesChange.length > 0 && $session.getAll().data.shopId !== 'U9084920b3005bd1dcb57af1ae6bdba32'">
-                      <v-icon right class="white--text">mdi-microsoft-excel</v-icon>
+                    <v-btn color="primary" @click="exportExcel()" dark v-if="dataItemTimesChange.length > 0 && $session.getAll().data.shopId !== 'U9084920b3005bd1dcb57af1ae6bdba32'">
+                      <v-icon right dark>mdi-microsoft-excel</v-icon>
                       &nbsp;Export
                     </v-btn>
                     &nbsp;
@@ -366,7 +363,6 @@ export default {
       selectedOpen: false,
       menuDate: false,
       dialog: false,
-      loadingExcel: false,
       dataCalendar: [],
       dataSummary: [],
       DataFlowName: [],
@@ -396,8 +392,7 @@ export default {
       dataexport: [],
       paramUse: '',
       dataReturnReady: false,
-      checkReadOnlyBranch: false,
-      bookingDataDate: ''
+      checkReadOnlyBranch: false
     }
   },
   beforeCreate () {
@@ -567,21 +562,21 @@ export default {
         this.countCus = 0
       }
       let bookingDate = ''
-      this.bookingDataDate = ''
+      let bookingDataDate = ''
       if (this.dataReturnReady === false) {
         if (dateMonth !== undefined) {
           bookingDate = '&dueDate=' + dateMonth
-          this.bookingDataDate = dateMonth
+          bookingDataDate = dateMonth
           this.today = dateMonth + '-01'
         } else {
           bookingDate = '&dueDate=' + year + '-' + month
-          this.bookingDataDate = year + '-' + month
+          bookingDataDate = year + '-' + month
         }
       } else {
         bookingDate = '&dueDate=' + year + '-' + month
-        this.bookingDataDate = year + '-' + month
+        bookingDataDate = year + '-' + month
       }
-      // await this.getBookingData(this.bookingDataDate)
+      await this.getBookingData(bookingDataDate)
       if (this.type === 'month') {
         let url = ''
         let dataItems = []
@@ -642,12 +637,6 @@ export default {
               s.packagePoint = e.packagePoint
               s.packageExpire = e.packageExpire
 
-              s.cusName = e.bookingDataCustomerName || ''
-              s.cusReg = e.bookingDataCustomerRegisNumber || ''
-              s.tel = e.bookingDataCustomerTel || ''
-              s.carModel = e.bookingDataCustomerCarModel || ''
-              s.displayFlowName = e.displayFlowName || ''
-
               s.bookNo = e.bookNo
               s.flowId = e.flowId
               s.flowName = e.flowName
@@ -693,12 +682,12 @@ export default {
               if (chkTime.length === 0) {
                 dataItemTimes.push(s)
               }
-              // s.cusName = this.getDataFromFieldName(this.bookingData[e.bookNo], 'ชื่อ')
-              // s.cusReg = this.getDataFromFieldName(this.bookingData[e.bookNo], 'เลขทะเบียน')
-              // s.tel = this.getDataFromFieldName(this.bookingData[e.bookNo], 'เบอร์โทร')
-              // s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
-              // s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
-              // s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
+              s.cusName = this.getDataFromFieldName(this.bookingData[e.bookNo], 'ชื่อ')
+              s.cusReg = this.getDataFromFieldName(this.bookingData[e.bookNo], 'เลขทะเบียน')
+              s.tel = this.getDataFromFieldName(this.bookingData[e.bookNo], 'เบอร์โทร')
+              s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
+              s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
+              s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
               dataItems.push(s)
             }
             this.dataReady = true
@@ -925,14 +914,14 @@ export default {
         if (d.statusBt === 'cancel' || !d.statusBt) {
           continue
         }
-        // let serviceDetail = ''
-        // let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(d.flowId) })
-        // fieldflow.forEach((row) => {
-        //   let tempField = this.bookingData[d.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
-        //   serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
-        // })
-        // serviceDetail = serviceDetail || d.flowName
-        d.serviceDetail = d.displayFlowName || d.flowName
+        let serviceDetail = ''
+        let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(d.flowId) })
+        fieldflow.forEach((row) => {
+          let tempField = this.bookingData[d.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+          serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
+        })
+        serviceDetail = serviceDetail || d.flowName
+        d.serviceDetail = serviceDetail
         if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
           d.chkConfirm = true
           d.chkCancel = false
@@ -952,19 +941,14 @@ export default {
           d.bgcolorChip = 'blue'
         }
         d.bookingEmpFlowName = d.bookingEmpFlowName || ''
-        // d.name = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'ชื่อ' })
-        // d.licenseNo = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เลขทะเบียน' })
-        // d.tel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เบอร์โทร' })
-        // d.carModel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'รุ่นรถ' })
-        // d.name = (d.name.length > 0) ? d.name[0].fieldValue : ''
-        // d.licenseNo = (d.licenseNo.length > 0) ? d.licenseNo[0].fieldValue : ''
-        // d.tel = (d.tel.length > 0) ? d.tel[0].fieldValue : ''
-        // d.carModel = (d.carModel.length > 0) ? d.carModel[0].fieldValue : ''
-        d.name = d.bookingDataCustomerName || ''
-        d.licenseNo = d.bookingDataCustomerRegisNumber || ''
-        d.tel = d.bookingDataCustomerTel || ''
-        d.carModel = d.bookingDataCustomerCarModel || ''
-        d.displayFlowName = d.displayFlowName || ''
+        d.name = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'ชื่อ' })
+        d.licenseNo = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เลขทะเบียน' })
+        d.tel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เบอร์โทร' })
+        d.carModel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'รุ่นรถ' })
+        d.name = (d.name.length > 0) ? d.name[0].fieldValue : ''
+        d.licenseNo = (d.licenseNo.length > 0) ? d.licenseNo[0].fieldValue : ''
+        d.tel = (d.tel.length > 0) ? d.tel[0].fieldValue : ''
+        d.carModel = (d.carModel.length > 0) ? d.carModel[0].fieldValue : ''
         this.dataCalendar.push(d)
       }
       this.dataCalendar.sort((a, b) => {
@@ -1038,19 +1022,14 @@ export default {
             } else {
               d.color = 'orange'
             }
-            // d.name = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'ชื่อ' })
-            // d.licenseNo = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เลขทะเบียน' })
-            // d.tel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เบอร์โทร' })
-            // d.carModel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'รุ่นรถ' })
-            // d.name = (d.name.length > 0) ? d.name[0].fieldValue : ''
-            // d.licenseNo = (d.licenseNo.length > 0) ? d.licenseNo[0].fieldValue : ''
-            // d.tel = (d.tel.length > 0) ? d.tel[0].fieldValue : ''
-            // d.carModel = (d.carModel.length > 0) ? d.carModel[0].fieldValue : ''
-            d.name = d.bookingDataCustomerName || ''
-            d.licenseNo = d.bookingDataCustomerRegisNumber || ''
-            d.tel = d.bookingDataCustomerTel || ''
-            d.carModel = d.bookingDataCustomerCarModel || ''
-            d.displayFlowName = d.displayFlowName || ''
+            d.name = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'ชื่อ' })
+            d.licenseNo = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เลขทะเบียน' })
+            d.tel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เบอร์โทร' })
+            d.carModel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'รุ่นรถ' })
+            d.name = (d.name.length > 0) ? d.name[0].fieldValue : ''
+            d.licenseNo = (d.licenseNo.length > 0) ? d.licenseNo[0].fieldValue : ''
+            d.tel = (d.tel.length > 0) ? d.tel[0].fieldValue : ''
+            d.carModel = (d.carModel.length > 0) ? d.carModel[0].fieldValue : ''
             this.dataCalendar.push(d)
           }
           this.dialog = true
@@ -1122,8 +1101,7 @@ export default {
           })
       })
     },
-    async exportExcel () {
-      this.loadingExcel = true
+    exportExcel () {
       let dataExport = []
       this.dataexport = []
       let runNo = 0
@@ -1131,7 +1109,6 @@ export default {
       // console.log('this.editedItemSeleteField', this.editedItemSeleteField)
       // console.log('this.dataItemTimesChange', this.dataItemTimesChange)
       // console.log('this.dataItemTime', this.dataItemTime)
-      await this.getBookingData(this.bookingDataDate)
       var datause = this.dataItemTime.sort((a, b) => {
         if (a.timeDuetext < b.timeDuetext) return -1
         return a.timeDuetext > b.timeDuetext ? 1 : 0
@@ -1393,7 +1370,6 @@ export default {
       const wb = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(wb, dataWS)
       XLSX.writeFile(wb, 'export_' + this.format_dateNotime(year + '-' + month) + '.xlsx')
-      this.loadingExcel = false
     }
   }
 }

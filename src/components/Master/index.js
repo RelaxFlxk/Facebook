@@ -45,8 +45,10 @@ import BookingWalkinEmp from './BookingWalkinEmp'
 import BookingWalkin from './BookingWalkin.vue'
 import CheckBookingList from './CheckBookingList.vue'
 import AdminStampStep from './AdminStampStep.vue'
+// import BookingListBeautyEmpTestRedis from './BookingListBeautyEmpTestRedis.vue'
 
 export default {
+  // BookingListBeautyEmpTestRedis,
   AdminStampStep,
   ChatHistory,
   WorkShopComponent,

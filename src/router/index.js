@@ -151,6 +151,21 @@ export default new Router({
     name: 'BookingListBeauty',
     component: Master.BookingListBeauty
   },
+  // {
+  //   path: '/Master/BookingListBeautyEmpTestRedis',
+  //   name: 'BookingListBeautyEmpTestRedis',
+  //   component: Master.BookingListBeautyEmpTestRedis
+  // },
+  // {
+  //   path: '/Master/BookingListBeautyTestRedis',
+  //   name: 'BookingListBeautyTestRedis',
+  //   component: Master.BookingListBeautyTestRedis
+  // },
+  // {
+  //   path: '/Master/CalendarBookingListTestRedis',
+  //   name: 'CalendarBookingListTestRedis',
+  //   component: Master.CalendarBookingListTestRedis
+  // },
   {
     path: '/Master/BookingListBeautyEmp',
     name: 'BookingListBeautyEmp',

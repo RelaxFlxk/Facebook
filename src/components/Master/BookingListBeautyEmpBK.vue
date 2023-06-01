@@ -12,7 +12,7 @@
                 class="text-white mb-2"
                 :color="showOnsite === 'ไม่แสดง' ? 'error' : 'teal'"
                 style="border-radius: 20px !important;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
-                @click="checkShowDataOnsiteSet(showOnsite)"
+                @click="checkShowDataOnsite(showOnsite)"
               >
                 <v-icon color="white" left>{{showOnsite === 'ไม่แสดง' ? 'mdi-eye-remove' : 'mdi-eye-check'}}</v-icon>
                 {{showOnsite}} Onsite
@@ -45,7 +45,7 @@
                 :disabled="loadingRefresh"
                 :color="showOnsite === 'ไม่แสดง' ? 'error' : 'teal'"
                 style="border-radius: 20px !important;margin-right: 10px;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
-                @click="checkShowDataOnsiteSet(showOnsite)"
+                @click="checkShowDataOnsite(showOnsite)"
               >
                 <v-icon color="white" left>{{showOnsite === 'ไม่แสดง' ? 'mdi-eye-remove' : 'mdi-eye-check'}}</v-icon>
                 {{showOnsite}} Onsite
@@ -118,7 +118,7 @@
                       </div>
                     </v-card>
                   </v-col>
-                  <v-col cols="12" style="display: flex;justify-content: center;">
+                  <v-col cols="6" style="display: flex;justify-content: center;">
                     <v-card
                       style="padding: 10px; width: 230px;"
                       :color="(getSelectText === 'confirm') ? '#C9F2DC' : 'white'"
@@ -183,7 +183,7 @@
                       dense
                       elevation="0"
                       icon="mdi-expand-all"
-                      @click="getSelect('confirmSum',(countConfirm + countJob, filterCloseJobValue))"
+                      @click="getSelect('confirmSum',(countConfirm + countJob)), filterCloseJobValue"
                     >
                     <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
                       <div class="text-center">
@@ -240,79 +240,7 @@
         <v-row style="margin-bottom: 29px;" v-if="resCol !== 'xs'">
           <v-col cols="12" class="text-left">
             <template  v-if="changeBackgroundColor">
-            <v-row class="test">
-              <!-- <v-col cols="3" class="text-center" align="left">
-                <div>
-                  <v-col cols="12" class="pt-0 mb-5" style="border-right: 4px solid #25318C;">
-                    <v-card
-                      style="padding: 18px;
-                              color:black;
-                              border-top-right-radius: 20px;
-                              border-top-left-radius: 20px;
-                              border-bottom-left-radius: 20px;
-                              border-bottom-right-radius: 20px;"
-                      :color="(getSelectText === 'wait') ? '#F9DBB2' : 'white'"
-                      dense
-                      elevation="0"
-                      prominent
-                      @click="getSelect('wait',countWaiting)"
-                    >
-                      <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
-                        <div class="text-center">
-                          <v-avatar
-                            size="70"
-                            class="pa-3"
-                            color="#FEAE34"
-                          >
-                            <v-icon dark size="30" class="iconify" data-icon="ps:warning">
-                              mdi-alarm
-                            </v-icon>
-                          </v-avatar>
-                        </div>
-                        <div style="margin: auto 0;">
-                          <strong>{{dataTypeProcess1}}</strong>
-                          <div>จำนวน : {{countWaiting}}</div>
-                        </div>
-                      </div>
-                    </v-card>
-                  </v-col>
-                  <v-col cols="12" style="border-right: 4px solid #25318C;">
-                    <v-card
-                    style="padding: 18px;
-                              border-top-right-radius: 20px;
-                              border-top-left-radius: 20px;
-                              border-bottom-left-radius: 20px;
-                              border-bottom-right-radius: 20px;"
-                      :color="(getSelectText === 'cancel') ? '#F9CACA' : 'white'"
-                      dense
-                      elevation="0"
-                      icon="mdi-calendar-remove"
-                      prominent
-                      @click="getSelect('cancel',countCancel)"
-                    >
-                    <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
-                      <div class="text-center">
-                        <v-avatar
-                          size="70"
-                          class="pa-3"
-                          color="#B72929"
-                        >
-                          <v-icon dark size="40" class="iconify" data-icon="carbon:rule-cancelled">
-                            mdi-alarm
-                          </v-icon>
-                        </v-avatar>
-                      </div>
-                      <div style="margin: auto 0;">
-                        <strong>{{dataTypeProcess3}}</strong>
-                         <div>จำนวน : {{countCancel}}</div>
-                      </div>
-                    </div>
-                    </v-card>
-                  </v-col>
-                </div>
-              </v-col> -->
-              <!-- <div v-if="">test</div> -->
-              <v-row style="justify-content: space-around;">
+            <v-row style="justify-content: space-around;">
                   <v-col :cols="resCol === 'md' ? '2': 'auto'" style="display: flex;justify-content: center;">
                     <v-card
                       :style="resCol === 'sm' ? 'padding: 10px; width: 130px;': 'padding: 10px; width: 230px;'"
@@ -456,92 +384,6 @@
                     </v-card>
                   </v-col>
               </v-row>
-            </v-row>
-            <!-- <v-row>
-              <v-col cols="6" class="text-center pb-0">
-                <v-alert
-                  :color="'orange ' + ((getSelectText === 'wait') ? '' : 'lighten-4')"
-                  :dark="((getSelectText === 'wait') ? true : false)"
-                  dense
-                  icon="mdi-phone-ring"
-                  prominent
-                  @click="getSelect('wait',countWaiting)"
-                >
-                  <div>
-                    <strong>{{dataTypeProcess1}}</strong>
-                  </div>
-                  <div>จำนวน : {{countWaiting}}</div>
-                </v-alert>
-              </v-col>
-              <v-col cols="6" class="text-center pb-0">
-                <v-alert
-                  :color="'green ' + ((getSelectText === 'confirm') ? '' : 'lighten-4')"
-                  :dark="((getSelectText === 'confirm') ? true : false)"
-                  dense
-                  icon="mdi-phone-check"
-                  prominent
-                  @click="getSelect('confirm',countConfirm)"
-                >
-                  <div>
-                    <strong>{{dataTypeProcess2}}</strong>
-                  </div>
-                  <div>จำนวน : {{countConfirm}}</div>
-                </v-alert>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="6" class="text-center pb-0">
-                <v-alert
-                  :color="'red ' + ((getSelectText === 'cancel') ? '' : 'lighten-4')"
-                  :dark="((getSelectText === 'cancel') ? true : false)"
-                  dense
-                  icon="mdi-phone-cancel"
-                  prominent
-                  @click="getSelect('cancel',countCancel)"
-                >
-                  <div>
-                    <strong>{{dataTypeProcess3}}</strong>
-                  </div>
-                  <div>จำนวน : {{countCancel}}</div>
-                </v-alert>
-              </v-col>
-              <v-col cols="6" class="text-center pb-0">
-                <v-alert
-                  :color="'blue ' + ((getSelectText === 'confirmJob') ? '' : 'lighten-4')"
-                  :dark="((getSelectText === 'confirmJob') ? true : false)"
-                  dense
-                  icon="mdi-car-cog"
-                  prominent
-                  @click="getSelect('confirmJob',countJob)"
-                >
-                   <div>
-                    <strong>{{dataTypeProcess4}}</strong>
-                  </div>
-                  <div>จำนวน : {{countJob}}</div>
-                </v-alert>
-              </v-col>
-            </v-row> -->
-            <!-- <v-row>
-              <v-col cols="12" class="text-center pb-0  pt-0">
-                <v-btn
-                  color="blue-grey"
-                  dense
-                  dark
-                  rounded
-                  block
-                  class="ma-2 white--text"
-                  @click="getSelect('all',countAll)"
-                >
-                  ทั้งหมด จำนวน : {{countAll}}
-                  <v-icon
-                    right
-                    dark
-                  >
-                    mdi-database-arrow-down
-                  </v-icon>
-                </v-btn>
-              </v-col>
-            </v-row> -->
             </template>
           </v-col>
         </v-row>
@@ -852,11 +694,6 @@
                                           <b v-if="name === 'This year'">ปีนี้ทั้งปี</b>
                                           <b v-if="name === 'Last month'">เดือนที่แล้ว</b>
                                         </li>
-                                        <!-- <li data-range-key="Today" tabindex="0" class="active" @click="ranges.clickRange('Today')">วันนี้ </li>
-                                        <li data-range-key="Yesterday" tabindex="0" class="" @click="ranges.clickRange('Yesterday')">เมื่อวาน </li>
-                                        <li data-range-key="This month" tabindex="0" class="" @click="ranges.clickRange('This month')">เดือนนี้ </li>
-                                        <li data-range-key="This year" tabindex="0" class="" @click="ranges.clickRange('This year')">ปีนี้ทั้งปี </li>
-                                        <li data-range-key="Last month" tabindex="0" class="" @click="ranges.clickRange('Last month')">เดือนที่แล้ว </li> -->
                                       </ul>
                                     </div>
                                   </template>
@@ -891,9 +728,19 @@
           <v-dialog v-model="dialogAdd"
           max-width="100%"
           persistent>
+          <!-- <v-dialog v-model="dialogAdd" persistent max-width="70%"> -->
             <v-card class="text-center">
               <v-form ref="form_add" v-model="validAdd" lazy-validation>
                 <v-card-text>
+                    <!-- <v-col class="text-right pa-0">
+                      <v-btn
+                        small
+                        color="#E0E0E0"
+                        @click="(dialogAdd = false), clearDataAdd()"
+                      >
+                        <v-icon color="#173053">mdi-close</v-icon>
+                      </v-btn>
+                    </v-col> -->
                     <v-row justify="center">
                       <v-col
                         cols="8"
@@ -925,6 +772,12 @@
                             </div>
                           </v-col>
                         </v-row>
+                        <!-- <v-col class="text-center pa-3 ml-2">
+                          <v-img
+                            class="v_text_add"
+                            :src="require('@/assets/Grouptitle.svg')"
+                          ></v-img>
+                        </v-col> -->
                         <v-col cols="12">
                           <v-checkbox
                             v-model="statusVIP"
@@ -946,15 +799,37 @@
                             @change="getDataCalendaBookingAdd(),setFlowByBranchAdd()"
                           ></v-select>
                           <v-select
-                            v-if="formAdd.masBranchID !== null && formAdd.masBranchID !== ''"
+                          v-if="formAdd.masBranchID !== '' && formAdd.masBranchID !== null"
                             v-model="formAdd.flowId"
                             :items="dataFlowSelectAdd"
                             label="ประเภทบริการ"
                             outlined
                             dense
                             required
-                            @change="getDataCalendaBookingAdd(),SetallowedDates(),setFlowAdd(), checkTime(), date = ''"
+                            @change="getDataCalendaBookingAdd(),setFlowAdd(), checkTime(),setEmpAdd(), date = ''"
                             :rules="[rules.required]"
+                          ></v-select>
+                          <v-select
+                            v-if="formAdd.flowId !== '' && formAdd.flowId !== null"
+                            v-model="formAdd.bookingEmpFlow"
+                            :items="dataEmpAdd"
+                            label="พนักงานช่าง"
+                            outlined
+                            dense
+                            required
+                            :rules="[rules.required]"
+                            @change="SetallowedDates(),fromAddTimeCus = '',checkCustomerTimeSlot()"
+                          ></v-select>
+                          <v-select
+                            v-if="customerTimeSlot === 'True' && formAdd.bookingEmpFlow !== '' && timeSlotbyCustomer.length > 1"
+                            v-model="fromAddTimeCus"
+                            :items="timeSlotbyCustomer"
+                            label="จำนวนชั่วโมง"
+                            outlined
+                            dense
+                            required
+                            :rules="[rules.required]"
+                            @change="date = '',AddallowedDatesBysetTimebyday()"
                           ></v-select>
                           <template v-if="fieldNameItem">
                             <div
@@ -1381,7 +1256,7 @@
                             </div>
                           </template>
                           <v-row>
-                            <v-col class="pb-0 pt-0" v-if="formAdd.flowId">
+                            <v-col class="pb-0 pt-0" v-if="customerTimeSlot === 'False' ? formAdd.bookingEmpFlow : fromAddTimeCus">
                               <v-menu
                                 ref="menu"
                                 v-model="menuDate"
@@ -1403,7 +1278,6 @@
                                     v-bind="attrs"
                                     v-on="on"
                                     required
-                                    @click="pickerDate ? getMonth(pickerDate) : null"
                                     :rules="[rules.required]"
                                   >
                                     <template #prepend>
@@ -1418,7 +1292,6 @@
                                   no-title
                                   scrollable
                                   :allowed-dates="allowedDates"
-                                  :picker-date.sync="pickerDate"
                                   @change="setLimitBooking(date)"
                                   @input="(menuDate = false), $refs.menu.save(date)"
                                   :min="currentDate"
@@ -1426,7 +1299,7 @@
                                 </v-date-picker>
                               </v-menu>
                             </v-col>
-                            <v-col class="pb-0 pt-0" v-if="timeavailable.length > 0 && date !== ''">
+                            <v-col class="pb-0 pt-0" v-if="customerTimeSlot === 'False' ? timeavailable.length > 0 && date !== '' : fromAddTimeCus !== '' &&  date !== ''">
                               <v-select
                               v-model="time"
                               :items="timeavailable"
@@ -1443,48 +1316,48 @@
                             </v-col>
                           </v-row>
                           <v-row v-if="showMenu === 'True'">
-                          <sideMenu :drawerParent="drawerAdd" :toggleParent="toggleAdd" :languageSelectParent="languageSelect" :dataMenuParent="dataMenuAdd" :priceMenuParent="priceMenuAdd" @updatePriceMenuParent="updatePriceMenuAdd"></sideMenu>
-                          <v-col cols="12" class="pt-0 pb-4">
-                            <v-btn
-                              block
-                              dark
-                              @click="toggleAdd"
-                            >เมนู</v-btn>
-                          </v-col>
-                          <v-col cols="12" class="pt-0 pb-6">
-                            <v-expansion-panels multiple v-model="expansionMenuAdd">
-                              <v-expansion-panel>
-                                <v-expansion-panel-header>รายการและราคา</v-expansion-panel-header>
-                                <v-expansion-panel-content>
-                                  <div style="align-items: center;width:100%;">
-                                    <v-row>
-                                      <v-col cols="12" v-for="(item,id) in dataMenuAdd.filter(el => { return parseInt(el.qty) > 0 })" :key="id" style="display: flex;">
-                                        <v-card class="cardMenu">
-                                            <v-img
-                                              class="pictureMenu"
-                                              :src="item.picture"
-                                            ></v-img>
-                                            <v-row>
-                                              <v-col cols="8" class="pt-0 pb-0 textTitelMenu">{{item.name}}</v-col>
-                                              <v-col cols="8" style="display: flex;justify-content: flex-start;" class="pt-0 pb-0 textTitelMenuSub">{{item.qty}} x {{formatNumber(item.price)}}</v-col>
-                                              <v-col cols="6" class="pt-0 pb-0 textTitelMenuRemark">{{item.remark}}</v-col>
-                                            </v-row>
-                                        </v-card>
-                                      </v-col>
-                                      <v-col cols="12">
-                                        <v-row>
-                                          <v-col cols="6"><p class="ma-0 textTitelPriceMenu">รวมราคา</p></v-col>
-                                          <v-col cols="6" style="display: flex;justify-content: flex-end;" class="textTitelPriceMenu">{{formatNumber(priceMenuAdd)}}</v-col>
-                                        </v-row>
-                                      </v-col>
-                                    </v-row>
-                                  </div>
-                                </v-expansion-panel-content>
-                              </v-expansion-panel>
-                            </v-expansion-panels>
-                          </v-col>
-                        </v-row>
-                          <v-row v-if="$session.getAll().data.shopId !== 'U9f316c85400fd716ea8c80d7cd5b61f8'">
+                            <sideMenu :drawerParent="drawerAdd" :toggleParent="toggleAdd" :languageSelectParent="languageSelect" :dataMenuParent="dataMenuAdd" :priceMenuParent="priceMenuAdd" @updatePriceMenuParent="updatePriceMenuAdd"></sideMenu>
+                            <v-col cols="12" class="pt-0 pb-4">
+                              <v-btn
+                                block
+                                dark
+                                @click="toggleAdd"
+                              >เมนู</v-btn>
+                            </v-col>
+                            <v-col cols="12" class="pt-0 pb-6">
+                              <v-expansion-panels multiple v-model="expansionMenuAdd">
+                                <v-expansion-panel>
+                                  <v-expansion-panel-header>รายการและราคา</v-expansion-panel-header>
+                                  <v-expansion-panel-content>
+                                    <div style="align-items: center;width:100%;">
+                                      <v-row>
+                                        <v-col cols="12" v-for="(item,id) in dataMenuAdd.filter(el => { return parseInt(el.qty) > 0 })" :key="id" style="display: flex;">
+                                          <v-card class="cardMenu">
+                                              <v-img
+                                                class="pictureMenu"
+                                                :src="item.picture"
+                                              ></v-img>
+                                              <v-row>
+                                                <v-col cols="8" class="pt-0 pb-0 textTitelMenu">{{item.name}}</v-col>
+                                                <v-col cols="8" style="display: flex;justify-content: flex-start;" class="pt-0 pb-0 textTitelMenuSub">{{item.qty}} x {{formatNumber(item.price)}}</v-col>
+                                                <v-col cols="6" class="pt-0 pb-0 textTitelMenuRemark">{{item.remark}}</v-col>
+                                              </v-row>
+                                          </v-card>
+                                        </v-col>
+                                        <v-col cols="12">
+                                          <v-row>
+                                            <v-col cols="6"><p class="ma-0 textTitelPriceMenu">รวมราคา</p></v-col>
+                                            <v-col cols="6" style="display: flex;justify-content: flex-end;" class="textTitelPriceMenu">{{formatNumber(priceMenuAdd)}}</v-col>
+                                          </v-row>
+                                        </v-col>
+                                      </v-row>
+                                    </div>
+                                  </v-expansion-panel-content>
+                                </v-expansion-panel>
+                              </v-expansion-panels>
+                            </v-col>
+                          </v-row>
+                          <v-row>
                             <v-col class="pt-0 pb-0">
                               <v-radio-group v-model="formAdd.radiosRemark" row required :rules ="[rules.required]">
                                 <v-radio value="ซ่อมปกติ">
@@ -1581,47 +1454,6 @@
                               label="หมายเหตุเพิ่มเติม"
                               auto-grow
                             ></v-textarea>
-                            </v-col>
-                          </v-row>
-                          <v-row v-if="statusShowMap === 'True'">
-                            <v-col class="pb-0 pt-0" cols="12">
-                                <v-text-field
-                                v-model="address"
-                                label="ชื่อของที่อยู่"
-                                outlined
-                                required
-                                dense
-                                :rules="[rules.required]"
-                                ></v-text-field>
-                            </v-col>
-                            <v-col cols="12">
-                              <v-card>
-                                <v-card-text>
-                                  <v-row>
-                                    <v-col class="pb-0" cols="12">
-                                      <h6>ค้นหาที่อยู่ลูกค้า :</h6>
-                                    </v-col>
-                                    <v-col class="mr-16" cols="12">
-                                      <GmapAutocomplete id="autocompleteMap" @place_changed="updatePlace" />
-                                    </v-col>
-                                  </v-row>
-                                </v-card-text>
-                                <hr>
-                                <!-- <gmap-autocomplete @place_changed="updatePlace"/> -->
-                                <v-card-text>
-                                <GmapMap
-                                  v-if="center !== null"
-                                  :center="center"
-                                  @click='updateCoordinates'
-                                  :zoom="15"
-                                  style="width: 100%; height: 200px"
-                                  :options="{ disableDefaultUI: true, fullscreenControl: true, zoomControl: true }"
-                                >
-                                  <GmapMarker :position="center" :draggable="true" @drag="updateCoordinates" />
-                                </GmapMap>
-                                </v-card-text>
-                              </v-card>
-                              <br>
                             </v-col>
                           </v-row>
                           <div class="text-center">
@@ -2177,6 +2009,16 @@
                     </v-col>
 
                     <v-col cols="12" sm="6" md="6" lg="6" class="pb-0" v-if="statusShowDateConfiremjob">
+                          <!-- <v-select
+                          v-model="endTime"
+                          :items="timeavailable"
+                          label="เวลา"
+                          menu-props="auto"
+                          outlined
+                          dense
+                          required
+                          :rules ="[rules.required]"
+                        ></v-select> -->
                         <v-select
                           v-model="endTime"
                           :items="timeavailable"
@@ -2193,7 +2035,7 @@
                     </v-col>
                     <v-col cols="12" sm="12" md="12" lg="12">
                       <v-select
-                        v-if="masBranchIDAddJob !== null && masBranchIDAddJob !== ''"
+                      v-if="masBranchIDAddJob !== null && masBranchIDAddJob !== ''"
                         v-model="empSelectJob"
                         :items="empSelectStepAdd.filter((i) => i.masBranchID === masBranchIDAddJob || i.masBranchID === '')"
                         label="พนักงานที่นำเข้ากระดานทำงาน"
@@ -2284,22 +2126,6 @@
                             <br>
                             <div v-if="jobitem.length > 0 && userId === ''" class="avatar text-center">
                               <qrcode-vue :value="value" :size="size" level="H" :foreground="foreground" />
-                              <v-btn
-                                color="#1B437C"
-                                small
-                                dark
-                                @click="FunCopyQrcode(value)"
-                              >
-                                <v-icon left>mdi-content-copy</v-icon>
-                                คัดลอกลิงค์
-                              </v-btn>
-                              <hr>
-                              <v-btn
-                                small
-                                dark
-                                color="#14AE5C"
-                                @click="printQrcodeComfirmJob(value, jobitem)"
-                              ><v-icon left>mdi-printer</v-icon>Print QR</v-btn>
                             </div>
                           </v-tab-item>
                         </v-tabs>
@@ -2311,25 +2137,6 @@
                         <br>
                         <h2 style="font-weight: 900; color:#FFA000">ติดตามสถานะ!</h2>
                         <qrcode-vue v-if="userId === ''" :value="value" :size="size" level="H" :foreground="foreground" />
-                        <v-btn
-                          v-if="userId === ''"
-                          color="#1B437C"
-                          small
-                          dark
-                          @click="FunCopyQrcode(value)"
-                        >
-                          <v-icon left>mdi-content-copy</v-icon>
-                          คัดลอกลิงค์
-                        </v-btn>
-                        <div v-if="userId === ''">
-                          <hr>
-                          <v-btn
-                            small
-                            dark
-                            color="#14AE5C"
-                            @click="printQrcodeComfirmJob(value, jobitem)"
-                          ><v-icon left>mdi-printer</v-icon>Print QR</v-btn>
-                        </div>
                         <template v-if="jobitem.length > 0">
                          <div v-if="userId !== ''" class="avatar text-center">
                             <v-avatar v-if="memberPicture !== ''" size="120" style="border:5px solid #FFFFFF;">
@@ -2346,25 +2153,6 @@
                         </template>
                          <div v-if="jobitem.length > 0" class="avatar text-center">
                            <qrcode-vue v-if="userId === 'user-skip' && jobitem[0].recordStatus === 'N'" :value="value" :size="size" level="H" :foreground="foreground" />
-                            <v-btn
-                              v-if="userId === 'user-skip' && jobitem[0].recordStatus === 'N'"
-                              color="#1B437C"
-                              small
-                              dark
-                              @click="FunCopyQrcode(value)"
-                            >
-                              <v-icon left>mdi-content-copy</v-icon>
-                              คัดลอกลิงค์
-                            </v-btn>
-                            <div v-if="userId === 'user-skip' && jobitem[0].recordStatus === 'N'">
-                              <hr>
-                              <v-btn
-                                small
-                                dark
-                                color="#14AE5C"
-                                @click="printQrcodeComfirmJob(value, jobitem)"
-                              ><v-icon left>mdi-printer</v-icon>Print QR</v-btn>
-                            </div>
                         </div>
                     </div>
                   </v-col>
@@ -2379,26 +2167,16 @@
                               <!-- <h4 v-if="p.showCard === 'True' ">{{p.name}} : {{p.value}}</h4> -->
                             </div>
                             <div v-if="jobitem.length > 0">
-                              <!-- <v-btn small class="ma-2" color="teal" v-if="jobitem[0].recordStatus === 'D'" @click="setBookingAgain()" dark>
+                              <v-btn small class="ma-2" color="teal" v-if="jobitem[0].recordStatus === 'D'" @click="setBookingingAgain()" dark>
                                   นัดหมายอีกครั้ง
                                 <v-icon dark right>
                                   mdi-notebook-check
                                 </v-icon>
-                              </v-btn> -->
+                              </v-btn>
                               <strong style="color: red;" v-if="jobitem[0].recordStatus === 'D'"><h2>รายการนี้ปิดไปแล้ว</h2></strong>
                             </div>
                             <div>
-                              <v-btn
-                                v-if="userId !== ''"
-                                color="#1B437C"
-                                small
-                                dark
-                                @click="FunCopyQrcode(value)"
-                              >
-                                <v-icon left>mdi-content-copy</v-icon>
-                                คัดลอกลิงค์
-                              </v-btn>
-                              <v-btn small class="ma-2" color="success" v-if="userId !== '' && recordStatusJob === 'N'" @click="dialogCloseJob = true,setCloseJob(jobitem)" dark>
+                              <v-btn small class="ma-2" color="success" v-if="userId !== '' && recordStatusJob === 'N'" @click="dialogCloseJob = true ,setCloseJob(jobitem)" dark>
                                   ปิดงานนี้
                                 <v-icon dark right>
                                   mdi-cash-usd-outline
@@ -2476,7 +2254,7 @@
                           dark
                           color="white"
                           :style="styleCloseBt"
-                          @click="dialogChange = false"
+                          @click="dialogChange = false , fromAddTimeCus = ''"
                           >
                           X
                         </v-btn>
@@ -2496,6 +2274,21 @@
                   </v-row>
                   <v-row>
                     <v-col cols="12" md="6" lg="6">
+                    <v-select
+                      v-if="customerTimeSlot === 'True' && bookingEmpFlow !== ''&& timeSlotbyCustomer.length > 1"
+                      v-model="fromAddTimeCus"
+                      :items="timeSlotbyCustomer"
+                      label="จำนวนชั่วโมง"
+                      outlined
+                      dense
+                      required
+                      :rules="[rules.required]"
+                      @change="formChange.date = '', AddallowedDatesBysetTimebydayChange()"
+                    ></v-select>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12" md="6" lg="6" v-if="customerTimeSlot === 'False' ? formChange.date : fromAddTimeCus">
                       <v-menu
                         v-model="menuDateChange"
                         :close-on-content-click="false"
@@ -2521,7 +2314,7 @@
                         <v-date-picker
                           v-model="formChange.date"
                           :allowed-dates="allowedDatesChange"
-                          @input="menuDateChange = false, setLimitBookingChange(formChange.date)"
+                          @input="menuDateChange = false, checkTimeFlow(formChange.date, dataChange)"
                           :min="
                             new Date(
                               Date.now() -
@@ -2533,7 +2326,7 @@
                         ></v-date-picker>
                       </v-menu>
                     </v-col>
-                    <v-col  cols="12" md="6" lg="6" v-if="timeavailable.length > 0">
+                    <v-col  cols="12" md="6" lg="6" v-if="formChange.date !== '' && timeavailable.length > 0">
                          <v-select
                             v-model="formChange.time"
                             :items="timeavailable"
@@ -2545,13 +2338,12 @@
                             outlined
                             dense
                             required
-                            @change="setCountTime(dataChange)"
                             :rules ="[rules.required]"
                           ></v-select>
                     </v-col>
                   </v-row>
                   <v-row>
-                    <v-col v-if="checkSelectText !== 'cancel' && checkSelectText !== 'confirmJob'">
+                    <v-col v-if="checkSelectText !== 'cancel'">
                       <v-btn
                       elevation="2"
                       color="green darken-1"
@@ -2808,7 +2600,7 @@
                   class="ma-2 white--text"
                   @click="toggle"
                   small
-                  >
+                >
                   ตรวจสอบคิวจองรายวัน
                   <v-icon
                     right
@@ -2824,6 +2616,20 @@
                   @click="addDataSet()"
                 >
                   ตรวจสอบคิวจองรายเดือน
+                </v-btn>
+                <v-btn
+                  color="blue-grey"
+                  class="ma-2 white--text"
+                  @click="dialogShowEmpReport = true, dataShowEmpReport = [], dateStartShowEmpReport = ''"
+                  small
+                >
+                  ตรวจสอบคิวช่างรายวัน
+                  <v-icon
+                    right
+                    dark
+                  >
+                    mdi-book-account-outline
+                  </v-icon>
                 </v-btn>
                 <v-btn
                   v-if="DataFlowNameMenu.length > 0"
@@ -2864,22 +2670,6 @@
                     ></v-radio>
                   </v-radio-group>
                 </v-col>
-                <!-- <v-col>
-                  <v-row>
-                    <v-checkbox
-                    v-model="ex4"
-                    label="มาก"
-                    value="red"
-                    hide-details
-                  ></v-checkbox>
-                  <v-checkbox
-                    v-model="ex4"
-                    label="น้อย"
-                    value="red"
-                    hide-details
-                  ></v-checkbox>
-                  </v-row>
-                </v-col> -->
                 <v-col class="text-right" cols="auto">
                   <template v-if="getSelectText === 'confirmJob'">
                     <v-select
@@ -2903,59 +2693,6 @@
               </v-row>
               </v-card-text>
               <v-card-title>
-                <!-- <v-text-field
-                  v-model="searchAll2"
-                  prepend-icon="mdi-magnify"
-                  label="ค้นหาชื่อ และ เบอร์โทรศัพท์"
-                  single-line
-                  dense
-                  hide-details
-                ></v-text-field> -->
-                <!-- <v-menu
-                  v-model="menuDateSearch"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="auto"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-model="filters"
-                      label="ค้นหาจากวันที่นัดหมาย"
-                      prepend-icon="mdi-calendar"
-                      readonly
-                      outlined
-                      class="pa-4"
-                      append-icon="mdi-magnify"
-                      dense
-                      v-bind="attrs"
-                      v-on="on"
-                    ></v-text-field>
-                  </template>
-                  <v-date-picker
-                    v-model="filters"
-                    @input="menuDateSearch = false"
-                  ></v-date-picker>
-                </v-menu>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      color="red"
-                      fab
-                      class="mb-7"
-                      dark
-                      small
-                      @click.stop="filters=''"
-                      v-bind="attrs"
-                      v-on="on"
-                    >
-                      <v-icon> mdi-calendar-remove </v-icon>
-                    </v-btn>
-                  </template>
-                  <span>เคลียร์ ค้นหาจากวันที่นัดหมาย</span>
-                </v-tooltip> -->
-                <!-- <v-icon color="#64DD17" small @click="filters=''">call</v-icon> -->
               </v-card-title>
               <v-card-text>
                 <v-data-table
@@ -3109,7 +2846,6 @@
                   min-height="400px"
                   :items-per-page="30"
                 >
-                  <!-- :item-class= "getColor" -->
                   <!-- <template v-slot:[`item.CREATE_DATE`]="{ item }">
                     {{ format_dateNotime(item.CREATE_DATE) }}
                   </template>
@@ -3133,39 +2869,9 @@
                             <v-col col="auto" class="text-ceter">
                               <a @click.stop="openHistory(item)" style="cursor:hand"><u>{{ item.cusName }}</u></a>
                             </v-col>
-                            <!-- <v-col col="auto" class="text-left">
-                              <v-btn
-                                fab
-                                dark
-                                v-if="item.memberId !== ''"
-                                x-small
-                                color="teal"
-                                @click="getTagData(), dialogTag = true, tagData = item.memberDataTag, bookNo = item.bookNo, memberId = item.memberId"
-                              >
-                                <v-icon dark>
-                                  mdi-tag-plus
-                                </v-icon>
-                              </v-btn>
-                            </v-col> -->
                           </template>
                         </v-row>
                       </v-col>
-                      <!-- <v-col cols="12" class="pt-0"  v-if="item.memberDataTag.length > 0">
-                        <v-chip-group
-                          active-class="primary--text"
-                          column
-                        >
-                          <v-chip
-                            text-color="white" color="cyan"
-                            v-for="(item , index) in item.tagDataShow" :key="index"
-                          >
-                            <v-avatar left>
-                              <v-icon>mdi-tag-multiple</v-icon>
-                            </v-avatar>
-                            {{ item.text }}
-                          </v-chip>
-                        </v-chip-group>
-                      </v-col> -->
                     </v-row>
                   </template>
                   <template v-slot:[`item.remarkReturn`]="{ item }">
@@ -3182,24 +2888,6 @@
                     </v-btn>
                   </template>
                   <template v-slot:[`item.remark`]="{ item }">
-                    <!-- <v-menu rounded="xl" offset-x open-on-hover :close-on-content-click="false">
-                              <template v-slot:activator="{ on, attrs }">
-                                <div style="margin: auto;text-decoration: underline;text-decoration-thickness: 2px;" v-bind="attrs" v-on="on">
-                                  See more + {{item.tagDataShow.length - 2}}
-                                </div>
-                              </template>
-                              <v-list>
-                                <v-list-item
-                                  v-for="(item2, index) in item.tagDataShow"
-                                  :key="index"
-                                >
-                                  <v-list-item-title>
-                                    <v-icon color="teal">
-                                      mdi-tag-plus
-                                    </v-icon>{{ item2.text }}</v-list-item-title>
-                                </v-list-item>
-                              </v-list>
-                            </v-menu> -->
                     <a v-if="item.remark !== ''" @click.stop="openRemark(item)" style="cursor:hand">
                       <u style="margin-right: 10px">{{ item.remark.slice(0, 48) }}</u>
                     </a>
@@ -3245,15 +2933,6 @@
                       มัดจำ
                     </v-chip>
                     <v-row v-if="item.depositStatus === 'True'">
-                      <!-- <v-col col="auto">
-                        <v-avatar color="primary" size="40" v-if="item.depositImge !== ''">
-                          <img :src="item.depositImge" alt="img"/></v-avatar>
-                        <v-avatar color="error" size="40" v-else>
-                          <v-icon dark>
-                            mdi-image-edit
-                          </v-icon>
-                        </v-avatar>
-                      </v-col> -->
                       <v-col col="auto">
                         <v-chip
                           filter
@@ -3271,7 +2950,7 @@
                   </template>
                   <template v-slot:[`item.action5`]="{ item }">
                     <div>
-                      <v-row v-if="item.memberDataTag.length === 0 " style="justify-content: flex-end;margin: auto;">
+                      <v-row v-if="item.memberDataTag.length === 0 " style="justify-content: flex-end;">
                         <div v-if="item.memberId !== ''" style="color:grey;">ไม่มีมีป้ายกำกับ</div>
                         <v-tooltip bottom >
                             <template v-slot:activator="{ on, attrs }">
@@ -3463,16 +3142,26 @@
                             </template>
                           </v-list-item>
                           </v-hover>
-                          <v-list-item @click.stop="setDataChang(item)" v-if="item.statusBt !== 'confirmJob' && item.statusBt !== 'cancel'">
-                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-calendar-clock </v-icon> เปลี่ยนเวลานัดหมาย {{item.countChangeTime}} ครั้ง</v-list-item-title>
+                          <v-hover v-slot:default="{ hover }">
+                          <v-list-item  style="background-color: lightgreen" @click.stop="confirmChkCancel(item)" v-if="item.statusBt === 'cancel'">
+                            <template><v-expand-transition>
+                                        <v-overlay
+                                            color="green"
+                                          absolute
+                                          :opacity=".2"
+                                          :value="hover"
+                                        >
+                                        </v-overlay>
+                                    </v-expand-transition>
+                              <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="quill:mail-subbed"></v-icon> ยืนยันนัดหมาย </v-list-item-title>
+                            </template>
                           </v-list-item>
-                          <!-- คุณ Joy -->
-                          <v-list-item @click.stop="setDataChang(item)" v-if="item.statusBt === 'confirmJob' && (item.shopId === 'U9f316c85400fd716ea8c80d7cd5b61f8' || item.shopId === 'Ucb91b5fb61ff0c01e6d7d4c5f7962c57')">
-                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-calendar-clock </v-icon> เปลี่ยนเวลานัดหมาย {{item.countChangeTime}} ครั้ง</v-list-item-title>
-                          </v-list-item>
-                          <!-- คุณ Joy -->
+                          </v-hover>
                           <v-list-item @click.stop="getDataMenu(item)" v-if="(item.statusBt === 'confirm' || item.statusBt === 'wait') && item.menuShowStatus === 'True'">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-microsoft-xbox-controller-menu </v-icon> รายการเมนู </v-list-item-title>
+                          </v-list-item>
+                          <v-list-item @click.stop="setDataChang(item)" v-if="item.statusBt !== 'confirmJob' && item.statusBt !== 'cancel'">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-calendar-clock </v-icon> เปลี่ยนเวลานัดหมาย {{item.countChangeTime}} ครั้ง</v-list-item-title>
                           </v-list-item>
                           <v-list-item @click.stop="setDataReture(item)" v-if="item.statusBt !== 'confirmJob' && item.depositStatus === 'True' && item.depositImge != ''">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="uil:money-withdrawal"></v-icon> คืนเงินมัดจำ </v-list-item-title>
@@ -3480,7 +3169,7 @@
                           <v-list-item  @click.stop="setShowMap(item)" v-if="item.addressLatLong !== null">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-map-marker-radius-outline </v-icon> ดูแผนที่ </v-list-item-title>
                           </v-list-item>
-                          <v-list-item @click.stop="setDataEdit(item)" v-if="item.RECORD_STATUS_Job !== 'D'">
+                          <v-list-item @click.stop="setDataEdit(item)">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-tools </v-icon> แก้ไขข้อมูล </v-list-item-title>
                           </v-list-item>
                           <v-list-item @click.stop="setDataCallLog(item)">
@@ -3520,16 +3209,10 @@
                           <v-list-item v-if="item.statusBt === 'confirmJob'" @click.stop="(dialogJob = true), getjob(item)">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-qrcode-scan </v-icon> QR Code สำหรับให้ลูกค้า </v-list-item-title>
                           </v-list-item>
-                          <v-list-item v-if="item.statusBt === 'confirmJob' && item.RECORD_STATUS_Job === 'D'" @click.stop="setBookingAgain(item)">
-                            <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="fluent:group-return-24-filled"></v-icon> นัดหมายอีกครั้ง </v-list-item-title>
-                          </v-list-item>
-                          <!-- <v-list-item v-if="item.statusBt === 'confirmJob'" @click.stop="(dialogJob = true), getjob(item)">
+                          <v-list-item v-if="item.statusBt === 'confirmJob'" @click.stop="(dialogJob = true), getjob(item)">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="uil:bill"></v-icon> ปิดงานนี้ </v-list-item-title>
-                          </v-list-item> -->
-                          <v-list-item v-if="item.statusBt === 'confirmJob'" @click.stop="getJobitem(item)">
-                            <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="ic:twotone-work-history"></v-icon> ประวัติการทำงาน </v-list-item-title>
                           </v-list-item>
-                          <v-list-item v-if="item.statusBt === 'confirmJob' && showOnsite === 'ไม่แสดง'" @click="getjobChangeOnsite(item), dialogChangeOnsite = true">
+                          <v-list-item v-if="item.statusBt === 'confirmJob' && showOnsite === 'ไม่แสดง'">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-account-reactivate </v-icon> เปลี่ยนพนักงาน On site </v-list-item-title>
                           </v-list-item>
                           <v-hover v-slot:default="{ hover }">
@@ -3559,76 +3242,6 @@
           </v-col>
           <!-- end data table -->
         </v-row>
-        <v-dialog
-          v-model="dialogHistoryJob"
-          persistent
-          max-width="600"
-        >
-          <v-card class="pa-3">
-            <!-- <v-container>
-              <div style="text-align: end;">
-                <v-btn
-                  fab
-                  small
-                  dark
-                  color="#F3F3F3"
-                  @click="dialogHistoryJob = false"
-                >
-                  <v-icon dark
-                  color="#FE4A01 ">
-                    mdi-close
-                  </v-icon>
-                </v-btn>
-              </div>
-            </v-container> -->
-            <v-row>
-              <v-col cols="6" class="text-left pt-10">
-                <h3><strong>{{customerNameJob}}</strong></h3>
-              </v-col>
-              <v-col cols="6" class="pt-10">
-                <div style="text-align: end;">
-                  <v-btn
-                    class="mx-2"
-                    fab
-                    small
-                    dark
-                    color="white"
-                    :style="styleCloseBt"
-                    @click="dialogHistoryJob = false"
-                    >
-                    X
-                  </v-btn>
-                </div>
-              </v-col>
-            </v-row>
-            <v-timeline v-if="timelineitem.length > 0">
-              <v-timeline-item
-                v-for="(item , index) in timelineitem" :key="index"
-                :color="codeColor[index]"
-                small
-              >
-                <template v-slot:opposite>
-                  <span>{{format_dateNotime(item.DTLAST_DATE)}}</span>
-                </template>
-                <v-card  class="elevation-2 p-2" :style="'border-top: 8px solid ' + codeColor[index]+ ';'">
-                  <v-card-title class="text-h6" style="color:#173053;">
-                  </v-card-title>
-                  <v-card-text>
-                    <p class="font-weight-black" style="margin-bottom: 0px;color:#000000;">ขั้นตอน {{item.stepTitle}}</p>
-                    <!-- <p style="margin-bottom: 0px; color:#173053;">ขั้นตอน {{item.stepTitle}}</p> -->
-                    <p v-if="item.stepTitle !== 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;"> เวลาที่รับงาน {{momenTime(item.DTLAST_DATE)}}</p>
-                    <p v-if="item.stepTitle !== 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;"> ผู้รับผิดชอบ {{item.empStep}}</p>
-                    <p v-if="item.stepTitle !== 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;">เวลาการทำงาน {{item.Counttime}} นาที</p>
-                    <p v-if="item.stepTitle === 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;">สรุปค่าใช้จ่าย {{item.totalPrice}} บาท</p>
-                    <p class="font-weight-bold" style="margin-bottom: 0px;">ผู้อัปเดต {{item.LAST_USER_Name}}</p>
-                    <!-- <p style="margin-bottom: 0px;">วันที่เปลี่ยน {{format_dateNotime(item.DTLAST_DATE)}}</p> -->
-                  </v-card-text>
-                </v-card>
-              </v-timeline-item>
-            </v-timeline>
-            <br>
-          </v-card>
-        </v-dialog>
         <v-dialog v-model="dialogMap" :max-width="dialogwidth">
            <v-card class="text-center">
           <v-card-text>
@@ -3849,7 +3462,7 @@
                           dark
                           color="white"
                           :style="styleCloseBt"
-                          @click="(dialogEditData = false, this.dataEditReady = true)"
+                          @click="(dialogEditData = false, this.dataEditReady = true, fromAddTimeCus = '', customerTimeSlot = 'False')"
                           >
                           X
                         </v-btn>
@@ -3924,7 +3537,9 @@
                         <br>
                       </v-col>
                         <v-form ref="form_edit" v-model="validEdit" lazy-validation>
-                        <v-col cols="12" v-if="dataEditReady">
+                          <v-col cols="12" v-if="dataEditReady">
+                          <v-row justify="start">
+                        <v-col cols="10" class="pb-0">
                           <v-select
                             v-model="formEdit.masBranchID"
                             :items="branch"
@@ -3935,6 +3550,21 @@
                             :rules="[rules.required]"
                             @change="setFlowByBranchEdit()"
                           ></v-select>
+                        </v-col>
+                        <v-col cols="2" class="pb-0">
+                          <v-btn
+                            color="warning"
+                            dark
+                            class='ma-0'
+                            @click="formEdit.bookingEmpFlow = '',fromAddTimeCus = '',dateEdit = '',flowIdOldEdit='',setEmpEdit()"
+                          >
+                            <v-icon color="white" left>mdi-account-clock</v-icon>
+                            เปลี่ยน
+                          </v-btn>
+                        </v-col>
+                          </v-row>
+                          </v-col>
+                        <v-col cols="12" v-if="dataEditReady">
                           <v-select
                             v-model="formEdit.flowId"
                             :items="dataFlowSelectEdit"
@@ -3942,8 +3572,52 @@
                             outlined
                             dense
                             required
-                            @change="SetallowedDatesEdit(), checkTimeEdit(), dateEdit = ''"
+                            @change="formEdit.bookingEmpFlow = '',fromAddTimeCus = '',dateEdit = '', setEmpEdit()"
                             :rules="[rules.required]"
+                          ></v-select>
+                          <v-select
+                            v-if="formEdit.flowId !== '' && formEdit.flowId !== null && (flowIdOldEdit !== formEdit.flowId)  && (masBranchIDOldEdit !== formEdit.masBranchID) && (getSelectText !== 'cancel') && (checkSelectText !== 'confirmJob')"
+                            v-model="formEdit.bookingEmpFlow"
+                            :items="dataEmpChange"
+                            label="พนักงานช่าง"
+                            outlined
+                            dense
+                            required
+                            :rules="[rules.required]"
+                            @change="dateEdit = '',setEmpEdit()"
+                          ></v-select>
+                          <v-select
+                            v-if="formEdit.masBranchID !== null && formEdit.flowId !== null && (flowIdOldEdit !== formEdit.flowId)  && (masBranchIDOldEdit === formEdit.masBranchID) && (getSelectText !== 'cancel') && (checkSelectText !== 'confirmJob')"
+                            v-model="formEdit.bookingEmpFlow"
+                            :items="dataEmpChange"
+                            label="พนักงานช่าง"
+                            outlined
+                            dense
+                            required
+                            :rules="[rules.required]"
+                            @change="dateEdit = '',setEmpEdit()"
+                          ></v-select>
+                          <v-select
+                            v-if="formEdit.masBranchID !== null && formEdit.flowId !== null && (flowIdOldEdit === formEdit.flowId)  && (masBranchIDOldEdit !== formEdit.masBranchID) && (getSelectText !== 'cancel') && (checkSelectText !== 'confirmJob')"
+                            v-model="formEdit.bookingEmpFlow"
+                            :items="dataEmpChange"
+                            label="พนักงานช่าง"
+                            outlined
+                            dense
+                            required
+                            :rules="[rules.required]"
+                            @change="dateEdit = '',setEmpEdit()"
+                          ></v-select>
+                          <v-select
+                            v-if="customerTimeSlot === 'True' && formEdit.bookingEmpFlow !== '' && timeSlotbyCustomer.length > 1"
+                            v-model="fromAddTimeCus"
+                            :items="timeSlotbyCustomer"
+                            label="จำนวนชั่วโมง"
+                            outlined
+                            dense
+                            required
+                            :rules="[rules.required]"
+                            @change="dateEdit = '',AddallowedDatesBysetTimebydayEdit()"
                           ></v-select>
                           <template v-if="BookingDataItemEdit">
                             <div
@@ -4369,8 +4043,8 @@
                                 </template>
                             </div>
                           </template>
-                          <v-row v-if="checkSelectText !== 'confirmJob'">
-                            <v-col class="pb-0">
+                          <v-row v-if="flowIdOldEdit !== formEdit.flowId && (masBranchIDOldEdit === formEdit.masBranchID) && (getSelectText !== 'cancel') && (checkSelectText !== 'confirmJob')">
+                            <v-col class="pb-0" v-if="customerTimeSlot === 'False' ? formEdit.bookingEmpFlow : fromAddTimeCus">
                               <v-menu
                                 v-model="menuDateEdit"
                                 :close-on-content-click="false"
@@ -4396,7 +4070,7 @@
                                 <v-date-picker
                                   v-model="dateEdit"
                                   :allowed-dates="allowedDatesEdit"
-                                  @input="menuDateEdit = false, setLimitBookingEdit(dateEdit)"
+                                  @input="menuDateEdit = false, checkTimeEdit(dateEdit, {flowId: formEdit.flowId, bookingEmpFlow: formEdit.bookingEmpFlow})"
                                   :min="
                                     new Date(
                                       Date.now() -
@@ -4406,23 +4080,10 @@
                                       .substr(0, 10)
                                   "
                                 ></v-date-picker>
-                                <!-- <v-date-picker
-                                  v-model="dateEdit"
-                                  @input="menuDate = false"
-                                ></v-date-picker> -->
                               </v-menu>
                             </v-col>
-                            <v-col class="pb-0">
-                              <!-- <v-select
-                              v-model="timeEdit"
-                              :items="timeavailable"
-                              label="เวลา"
-                              menu-props="auto"
-                              outlined
-                              dense
-                            ></v-select> -->
+                            <v-col class="pb-0" v-if="customerTimeSlot === 'False' ? timeavailable.length > 0 && dateEdit !== '' : fromAddTimeCus !== '' &&  dateEdit !== ''">
                             <v-select
-                              v-if="dateEdit !== ''"
                               v-model="timeEdit"
                               :items="timeavailable"
                               label="เวลา"
@@ -4437,7 +4098,117 @@
                             ></v-select>
                             </v-col>
                           </v-row>
-                          <v-row v-if="$session.getAll().data.shopId !== 'U9f316c85400fd716ea8c80d7cd5b61f8'">
+                          <v-row v-if="flowIdOldEdit !== formEdit.flowId && (masBranchIDOldEdit !== formEdit.masBranchID) && (getSelectText !== 'cancel') && (checkSelectText !== 'confirmJob')">
+                            <v-col class="pb-0" v-if="customerTimeSlot === 'False' ? formEdit.bookingEmpFlow : fromAddTimeCus">
+                              <v-menu
+                                v-model="menuDateEdit"
+                                :close-on-content-click="false"
+                                :nudge-right="40"
+                                transition="scale-transition"
+                                offset-y
+                                min-width="auto"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                    v-model="dateEdit"
+                                    label="วันที่นัดหมาย"
+                                    prepend-icon="mdi-calendar"
+                                    readonly
+                                    v-bind="attrs"
+                                    dense
+                                    outlined
+                                    v-on="on"
+                                    required
+                                    :rules="[rules.required]"
+                                  ></v-text-field>
+                                </template>
+                                <v-date-picker
+                                  v-model="dateEdit"
+                                  :allowed-dates="allowedDatesEdit"
+                                  @input="menuDateEdit = false, checkTimeEdit(dateEdit, {flowId: formEdit.flowId, bookingEmpFlow: formEdit.bookingEmpFlow})"
+                                  :min="
+                                    new Date(
+                                      Date.now() -
+                                        new Date().getTimezoneOffset() * 60000
+                                    )
+                                      .toISOString()
+                                      .substr(0, 10)
+                                  "
+                                ></v-date-picker>
+                              </v-menu>
+                            </v-col>
+                            <v-col class="pb-0" v-if="customerTimeSlot === 'False' ? timeavailable.length > 0 && dateEdit !== '' : fromAddTimeCus !== '' &&  dateEdit !== ''">
+                            <v-select
+                              v-model="timeEdit"
+                              :items="timeavailable"
+                              label="เวลา"
+                              item-text="text"
+                              item-value="text"
+                              persistent-hint
+                              return-object
+                              outlined
+                              dense
+                              required
+                              :rules ="[rules.required]"
+                            ></v-select>
+                            </v-col>
+                          </v-row>
+                          <v-row v-if="flowIdOldEdit === formEdit.flowId && (masBranchIDOldEdit !== formEdit.masBranchID) && (getSelectText !== 'cancel') && (checkSelectText !== 'confirmJob')">
+                            <v-col class="pb-0" v-if="customerTimeSlot === 'False' ? formEdit.bookingEmpFlow : fromAddTimeCus">
+                              <v-menu
+                                v-model="menuDateEdit"
+                                :close-on-content-click="false"
+                                :nudge-right="40"
+                                transition="scale-transition"
+                                offset-y
+                                min-width="auto"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                    v-model="dateEdit"
+                                    label="วันที่นัดหมาย"
+                                    prepend-icon="mdi-calendar"
+                                    readonly
+                                    v-bind="attrs"
+                                    dense
+                                    outlined
+                                    v-on="on"
+                                    required
+                                    :rules="[rules.required]"
+                                  ></v-text-field>
+                                </template>
+                                <v-date-picker
+                                  v-model="dateEdit"
+                                  :allowed-dates="allowedDatesEdit"
+                                  @input="menuDateEdit = false, checkTimeEdit(dateEdit, {flowId: formEdit.flowId, bookingEmpFlow: formEdit.bookingEmpFlow})"
+                                  :min="
+                                    new Date(
+                                      Date.now() -
+                                        new Date().getTimezoneOffset() * 60000
+                                    )
+                                      .toISOString()
+                                      .substr(0, 10)
+                                  "
+                                ></v-date-picker>
+                              </v-menu>
+                            </v-col>
+                            <v-col class="pb-0" v-if="customerTimeSlot === 'False' ? timeavailable.length > 0 && dateEdit !== '' : fromAddTimeCus !== '' &&  dateEdit !== ''">
+                            <v-select
+                              v-model="timeEdit"
+                              :items="timeavailable"
+                              label="เวลา"
+                              item-text="text"
+                              item-value="text"
+                              persistent-hint
+                              return-object
+                              outlined
+                              dense
+                              required
+                              :rules ="[rules.required]"
+                            ></v-select>
+                            </v-col>
+                          </v-row>
+                          <v-row>
                             <v-col class="pt-0 pb-0">
                               <v-radio-group v-model="formEdit.radiosRemark" row  required :rules ="[rules.required]">
                                 <v-radio value="ซ่อมปกติ">
@@ -4471,59 +4242,6 @@
                               ></v-select>
                             </v-col>
                           </v-row>
-                          <v-row v-if="statusShowMap === 'True'">
-                            <v-col class="pb-0 pt-0" cols="12">
-                                <v-text-field
-                                v-model="address"
-                                label="ชื่อของที่อยู่"
-                                outlined
-                                required
-                                dense
-                                :rules="[rules.required]"
-                                ></v-text-field>
-                            </v-col>
-                            <v-col cols="12">
-                              <v-card>
-                                <!-- <GmapAutocomplete>
-                                  <template v-slot:input="slotProps">
-                                      <v-text-field
-                                        outlined
-                                        prepend-inner-icon="place"
-                                        placeholder="Location Of Event"
-                                        ref="input"
-                                        v-on:listeners="slotProps.listeners"
-                                        v-on:attrs="slotProps.attrs">
-                                      </v-text-field>
-                                  </template>
-                                </GmapAutocomplete> -->
-                                <v-card-text>
-                                  <v-row>
-                                    <v-col class="pb-0" cols="12">
-                                      <h6>ค้นหาที่อยู่ลูกค้า :</h6>
-                                    </v-col>
-                                    <v-col class="mr-16" cols="12">
-                                      <GmapAutocomplete id="autocompleteMap" @place_changed="updatePlace" />
-                                    </v-col>
-                                  </v-row>
-                                </v-card-text>
-                                <hr>
-                                <!-- <gmap-autocomplete @place_changed="updatePlace"/> -->
-                                <v-card-text>
-                                <GmapMap
-                                  v-if="center !== null"
-                                  :center="center"
-                                  @click='updateCoordinates'
-                                  :zoom="15"
-                                  style="width: 100%; height: 200px"
-                                  :options="{ disableDefaultUI: true, fullscreenControl: true, zoomControl: true }"
-                                >
-                                  <GmapMarker :position="center" :draggable="true" @drag="updateCoordinates" />
-                                </GmapMap>
-                                </v-card-text>
-                              </v-card>
-                              <br>
-                            </v-col>
-                          </v-row>
                           <div class="text-center">
                             <v-btn
                               elevation="2"
@@ -4543,16 +4261,6 @@
                               <v-icon left>mdi-checkbox-marked-circle</v-icon>
                               แก้ไขข้อมูล
                             </v-btn>
-                            <!-- <v-btn
-                              elevation="2"
-                              large
-                              color="red"
-                              dark
-                              @click="dialogEditData = false"
-                            >
-                              <v-icon left>mdi-close</v-icon>
-                              ปิด
-                            </v-btn> -->
                           </div>
                         </v-col>
                         </v-form>
@@ -4706,7 +4414,7 @@
                         dark
                         color="white"
                         :style="styleCloseBt"
-                        @click="dialogDeposit = false, pictureUrlPreviewDeposit = null, dataMenu = [], priceMenu = null"
+                        @click="dialogDeposit = false, pictureUrlPreviewDeposit = null"
                         >
                         X
                       </v-btn>
@@ -4714,64 +4422,65 @@
                   </v-col>
                 </v-row>
               </v-container>
-             <v-row>
+              <v-row>
                 <v-col cols="12">
-                <!-- <v-col :cols="dataMenu.length > 1 ? 6 : 12"> -->
                   <v-card-text v-if="pictureUrlPreviewDeposit === ''">
-                  <v-alert
-                      dense
-                      border="left"
-                      type="warning"
-                    >
-                      <strong>ไม่มี รูปหลักฐานการมัดจำ</strong>
-                    </v-alert>
-                    <v-file-input
-                          required
-                          :rules="[rules.resizeImag]"
-                          counter
-                          show-size
-                          accept="image/png, image/jpeg, image/bmp"
-                          prepend-icon="mdi-camera"
-                          label="รูปหลักฐานการมัดจำ"
-                          @change="selectImgDeposit"
-                          v-model="filesDeposit"
-                        ></v-file-input>
-                </v-card-text>
-                <v-card-text v-else>
-                  <v-container>
-                    <v-form
-                      ref="form_deposit"
-                      v-model="valid_deposit"
-                      lazy-validation
-                    >
-                    <v-row justify="center">
-                      <v-col cols="12" class="text-center">
-                        <v-img
-                          aspect-ratio="6"
-                          height="500"
-                          contain
-                          @click="gotoPicture(pictureUrlPreviewDeposit)"
-                            :src="pictureUrlPreviewDeposit"
-                          ></v-img>
-                          <br />
-                          <v-file-input
-                            required
-                            :rules="[rules.resizeImag]"
-                            counter
-                            show-size
-                            accept="image/png, image/jpeg, image/bmp"
-                            prepend-icon="mdi-camera"
-                            label="รูปหลักฐานการมัดจำ"
-                            @change="selectImgDeposit"
-                            v-model="filesDeposit"
-                          ></v-file-input>
-                        </v-col>
-                      </v-row>
-                      </v-form>
-                    </v-container>
-                  </v-card-text>
+                <v-alert
+                    dense
+                    border="left"
+                    type="warning"
+                  >
+                    <strong>ไม่มี รูปหลักฐานการมัดจำ</strong>
+                  </v-alert>
+                  <v-file-input
+                        required
+                        :rules="[rules.resizeImag]"
+                        counter
+                        show-size
+                        accept="image/png, image/jpeg, image/bmp"
+                        prepend-icon="mdi-camera"
+                        label="รูปหลักฐานการมัดจำ"
+                        @change="selectImgDeposit"
+                        v-model="filesDeposit"
+                      ></v-file-input>
+              </v-card-text>
+              <v-card-text v-else>
+                <v-container>
+                   <v-form
+                    ref="form_deposit"
+                    v-model="valid_deposit"
+                    lazy-validation
+                  >
+                  <v-row justify="center">
+                    <v-col cols="12" class="text-center">
+                      <v-img
+                        aspect-ratio="6"
+                        height="500"
+                        contain
+                        @click="gotoPicture(pictureUrlPreviewDeposit)"
+                        :src="pictureUrlPreviewDeposit"
+                      ></v-img>
+                      <br />
+                      <v-file-input
+                        required
+                        :rules="[rules.resizeImag]"
+                        counter
+                        show-size
+                        accept="image/png, image/jpeg, image/bmp"
+                        prepend-icon="mdi-camera"
+                        label="รูปหลักฐานการมัดจำ"
+                        @change="selectImgDeposit"
+                        v-model="filesDeposit"
+                      ></v-file-input>
+                    </v-col>
+                  </v-row>
+                   </v-form>
+                </v-container>
+              </v-card-text>
                 </v-col>
-             </v-row>
+              </v-row>
+              <v-card-actions>
+                <v-spacer></v-spacer>
                 <!-- <v-btn
                   elevation="2"
                   x-large
@@ -4784,8 +4493,6 @@
                   <v-icon left> mdi-cancel</v-icon>
                   ปิด
                 </v-btn> -->
-            <v-card-actions>
-                <v-spacer></v-spacer>
                 <v-btn
                   elevation="2"
                   x-large
@@ -5046,8 +4753,7 @@
                     >
                     </v-select>
                   </v-col>
-                  <v-col cols="12" class="pb-0 pt-0">
-                    <v-subheader>ค่าใช้จ่าย</v-subheader>
+                  <v-col cols="12" class="pb-0">
                     <VuetifyMoney
                       v-model="formCloseJob.totalPrice"
                       placeholder="ค่าใช้จ่ายทั้งหมด"
@@ -5148,6 +4854,7 @@
         <!-- end add -->
         <v-dialog v-model="dialogBookingAgain" persistent :max-width="dialogwidth">
             <v-card class="text-center">
+              <v-form ref="form_bookingAgain" v-model="validBookingAgain" lazy-validation>
                 <v-card-text>
                   <v-container>
                     <v-row>
@@ -5170,565 +4877,54 @@
                       </div>
                     </v-col>
                   </v-row>
-                  <v-row justify="center">
-                    <v-col cols="12">
-                      <v-col class="pb-0 pt-0" cols="12" v-if="dataPackage.filter(el => { return el.balanceAmount > 0 && el.packageId === packageId && el.token === tokenPackage }).length > 0 && dataPackageDefault === true">
-                      <v-card class="pl-1">
-                        <!-- <v-subheader>ลูกค้ามี {{dataPackage.filter(el => { return el.balanceAmount > 0 && el.packageId === packageId && el.token === tokenPackage }).length}} แพ็คเกจ</v-subheader> -->
-                        <v-subheader v-show="StatusPackage.packageName">ลูกค้าได้ทำการเลือกแพ็คเกจ {{StatusPackage.packageName}}</v-subheader>
-                        <v-slide-group
-                          v-model="modelPackageIndexConfirm"
-                          center-active
-                          show-arrows
-                          >
-                          <v-slide-item v-for="(item, index) in dataPackage.filter(el => { return el.balanceAmount > 0 && el.packageId === packageId && el.token === tokenPackage })" :key="index">
-                              <v-card
-                              class="ma-2 p-1"
-                              width="340"
-                              height="100"
-                              color="#FFFFFF"
-                              elevation="6"
-                              :style="item.packageId === packageId && item.token === tokenPackage ? 'border: 1px solid green;' : 'border: 1px solid white;'"
-                              >
-                              <v-row>
-                                <v-col cols="4" class="pr-1">
-                                  <v-img
-                                contain
-                                max-height="80"
-                                max-width="200"
-                                :src="item.packageImg"
-                              ></v-img>
-                                </v-col>
-                                <v-col cols="8" class="pb-6" >
-                                  <v-row class="font16 headline1">
-                                      <v-col class="pl-0 pt-2 pb-0">{{item.packageName}}</v-col>
-                                      <!-- <v-btn class="mr-4 mt-3" v-if="item.packageId !== packageId" color="green" outlined rounded x-small @click="UpdatePackage(item.packageId,'ตกลง',item.packageName, item)">ตกลง</v-btn>
-                                      <v-btn class="mr-4 mt-3" v-if="item.packageId === packageId" color="red" outlined rounded x-small @click="UpdatePackage(item.packageId,'ยกเลิก',item.packageName, item)">ยกเลิก</v-btn> -->
-                                  </v-row>
-                                  <v-row class="font14 headline1">
-                                      <v-col class="pl-0 pt-0 pb-0">จำนวนการใช้  {{item.balanceAmount}} / {{item.amount}} </v-col>
-                                  </v-row>
-                                  <v-row class="font14 headline1">
-                                      <v-col class="pl-0 pt-0 pb-0">
-                                        <VueCustomTooltip label="สามารถใช้ได้" position="is-top" v-if="dateTimestamp <= item.expirePackage">
-                                          <v-icon
-                                            large
-                                            color="teal darken-2"
-                                          >
-                                            mdi-clock-check
-                                          </v-icon>
-                                        </VueCustomTooltip>
-                                        <VueCustomTooltip label="หมดอายุแล้ว" position="is-top" v-if="dateTimestamp > item.expirePackage">
-                                          <v-icon
-                                            large
-                                            color="red darken-2"
-                                          >
-                                            mdi-clock-alert
-                                          </v-icon>
-                                        </VueCustomTooltip>
-                                        >> วันหมดอายุ  {{new Date(item.expirePackage * 1000).toLocaleString().substr(0,9)}}
-                                      </v-col>
-                                  </v-row>
-                                </v-col>
-                              </v-row>
-                              </v-card>
-                          </v-slide-item>
-                      </v-slide-group>
-                      </v-card>
-                      <br>
-                    </v-col>
-                      <v-form ref="form_bookingAgain" v-model="validBookingAgain" lazy-validation>
-                      <v-col cols="12" v-if="dataEditReady">
-                        <v-select
-                          v-model="formEdit.flowId"
-                          :items="dataFlowSelectEdit"
-                          label="ประเภทบริการ"
-                          outlined
-                          dense
-                          required
-                          @change="SetallowedDatesEdit(), checkTimeEdit(), dateEdit = ''"
-                          :rules="[rules.required]"
-                        ></v-select>
-                        <v-select
-                          v-model="formEdit.masBranchID"
-                          :items="branch"
-                          label="สาขา"
-                          outlined
-                          dense
-                          required
-                          :rules="[rules.required]"
-                        ></v-select>
-                        <template v-if="BookingDataItemEdit">
-                          <div
-                            v-for="(item, index) in BookingDataItemEdit"
-                            :key="index"
-                          >
-                            <template
-                              v-if="
-                                item.conditionField === '' ||
-                                  item.conditionField === null
-                              "
-                            >
-                              <v-col cols="12" class="InputData" v-if="item.fieldType == 'text'">
-                                <v-text-field
-                                  v-if="item.fieldName === 'เบอร์โทร'"
-                                  v-mask="'###-###-####'"
-                                  v-model="item.fieldValue"
-                                  :label="item.fieldName"
-                                  outlined
-                                  dense
-                                  required
-                                  :rules="item.requiredField === 'True' ? [rules.required] : [true]"
-                                ></v-text-field>
-                                <v-text-field
-                                  v-else
-                                  v-model="item.fieldValue"
-                                  :label="item.fieldName"
-                                  outlined
-                                  dense
-                                  required
-                                  :rules="item.requiredField === 'True' ? [rules.required] : [true]"
-                                ></v-text-field>
-                              </v-col>
-                              <v-col cols="12" class="InputData" v-if="item.fieldType == 'number'">
-                                <v-text-field
-                                  v-if="item.fieldName === 'เบอร์โทร'"
-                                  v-mask="'###-###-####'"
-                                  v-model="item.fieldValue"
-                                  :label="item.fieldName"
-                                  outlined
-                                  dense
-                                  required
-                                  :rules="item.requiredField === 'True' ? [rules.required] : [true]"
-                                ></v-text-field>
-                                <v-text-field
-                                  v-else
-                                  v-model="item.fieldValue"
-                                  :label="item.fieldName"
-                                  outlined
-                                  dense
-                                  required
-                                  :rules="item.requiredField === 'True' ? [rules.required] : [true]"
-                                ></v-text-field>
-                              </v-col>
-                              <v-col cols="12" class="InputData" v-if="item.fieldType == 'dateTime'">
-                                    <v-menu
-                                      v-model="menuEdit1"
-                                      :close-on-content-click="false"
-                                      :return-value.sync="date"
-                                      :rules="[rules.required]"
-                                      transition="scale-transition"
-                                      offset-y
-                                      required
-                                      min-width="auto"
-                                      ref="menuEdit1"
-                                    >
-                                      <template v-slot:activator="{ on, attrs }">
-                                        <v-text-field
-                                          v-model="item.fieldValue"
-                                          readonly
-                                          :label="item.fieldName"
-                                          outlined
-                                          dense
-                                          v-bind="attrs"
-                                          v-on="on"
-                                          required
-                                          prepend-inner-icon="mdi-calendar"
-                                          :rules="item.requiredField === 'True' ? [rules.required] : [true]"
-                                        >
-                                        </v-text-field>
-                                      </template>
-                                      <v-date-picker
-                                        v-model="item.fieldValue"
-                                        no-title
-                                        scrollable
-                                        @input="(menuEdit1 = false), $refs.menuEdit1.save(item.fieldValue)"
-                                      >
-                                      </v-date-picker>
-                                    </v-menu>
-                                  </v-col>
-                              <v-col cols="12" class="InputData" v-if="item.fieldType == 'Autocompletes'">
-                                <v-autocomplete
-                                  v-model="item.fieldValue"
-                                  :items="JSON.parse(item.optionField)"
-                                  outlined
-                                  :label="item.fieldName"
-                                  required
-                                  dense
-                                  :rules="item.requiredField === 'True' ? [rules.required] : [true]"
-                                ></v-autocomplete>
-                              </v-col>
-                              <v-col cols="12" class="InputData" v-if="item.fieldType == 'Selects'">
-                                <v-select
-                                class="mb-6"
-                                  v-model="item.fieldValue"
-                                  :items="JSON.parse(item.optionField)"
-                                  menu-props="auto"
-                                  :label="item.fieldName"
-                                  required
-                                  :rules="item.requiredField === 'True' ? [rules.required] : [true]"
-                                  dense
-                                  clearable
-                                  outlined
-                                ></v-select>
-                              </v-col>
-                              <v-col cols="12" class="InputData" v-if="item.fieldType == 'Radio'" style="padding:0px;">
-                                <v-container fluid style="padding:0px;">
-                                  <v-radio-group
-                                    column
-                                    dense
-                                    v-model="item.fieldValue"
-                                    style="margin:0px;"
-                                  >
-                                    <template v-slot:label> </template>
-                                    <div
-                                      v-for="radios in JSON.parse(
-                                        item.optionField
-                                      )"
-                                      :key="radios.toISOString"
-                                    >
-                                      <v-radio
-                                        :label="radios.text"
-                                        dense
-                                        :value="radios.value"
-                                      ></v-radio>
-                                    </div>
-                                  </v-radio-group>
-                                </v-container>
-                              </v-col>
-                            </template>
-                            <template
-                              v-if="
-                                item.conditionField !== '' &&
-                                  BookingDataItemEdit.filter(row => {
-                                    return (
-                                      row.fieldId ===
-                                      parseInt(item.conditionField)
-                                    );
-                                  }).length > 0
-                              "
-                            >
-                              <template
-                                v-if="
-                                  item.conditionValue ===
-                                    BookingDataItemEdit.filter(row => {
-                                      return (
-                                        row.fieldId ===
-                                        parseInt(item.conditionField)
-                                      );
-                                    })[0].fieldValue
-                                "
-                              >
-                                <v-col cols="12" class="InputData" v-if="item.fieldType == 'text'">
-                                  <v-text-field
-                                    v-if="item.fieldName === 'เบอร์โทร'"
-                                    v-model="item.fieldValue"
-                                    :label="item.fieldName"
-                                    v-mask="'###-###-####'"
-                                    outlined
-                                    dense
-                                    required
-                                    :rules="item.requiredField === 'True' ? [rules.required] : [true]"
-                                  ></v-text-field>
-                                  <v-text-field
-                                    v-else
-                                    v-model="item.fieldValue"
-                                    :label="item.fieldName"
-                                    outlined
-                                    required
-                                    dense
-                                    :rules="item.requiredField === 'True' ? [rules.required] : [true]"
-                                  ></v-text-field>
-                                </v-col>
-                                <v-col cols="12" class="InputData" v-if="item.fieldType == 'number'">
-                                  <v-text-field
-                                    v-if="item.fieldName === 'เบอร์โทร'"
-                                    v-mask="'###-###-####'"
-                                    v-model="item.fieldValue"
-                                    :label="item.fieldName"
-                                    outlined
-                                    required
-                                    dense
-                                    :rules="item.requiredField === 'True' ? [rules.required] : [true]"
-                                  ></v-text-field>
-                                  <v-text-field
-                                    v-else
-                                    v-model="item.fieldValue"
-                                    :label="item.fieldName"
-                                    outlined
-                                    required
-                                    dense
-                                    :rules="item.requiredField === 'True' ? [rules.required] : [true]"
-                                  ></v-text-field>
-                                </v-col>
-                                <v-col cols="12" class="InputData" v-if="item.fieldType == 'dateTime'">
-                                    <v-menu
-                                      v-model="menuEdit2"
-                                      :close-on-content-click="false"
-                                      :return-value.sync="date"
-                                      :rules="[rules.required]"
-                                      transition="scale-transition"
-                                      offset-y
-                                      required
-                                      min-width="auto"
-                                      ref="menuEdit2"
-                                    >
-                                      <template v-slot:activator="{ on, attrs }">
-                                        <v-text-field
-                                          v-model="item.fieldValue"
-                                          readonly
-                                          :label="item.fieldName"
-                                          outlined
-                                          dense
-                                          prepend-inner-icon="mdi-calendar"
-                                          v-bind="attrs"
-                                          v-on="on"
-                                          required
-                                          :rules="item.requiredField === 'True' ? [rules.required] : [true]"
-                                        >
-                                        </v-text-field>
-                                      </template>
-                                      <v-date-picker
-                                        v-model="item.fieldValue"
-                                        no-title
-                                        scrollable
-                                        @input="(menuEdit2 = false), $refs.menuEdit2.save(item.fieldValue)"
-                                      >
-                                      </v-date-picker>
-                                    </v-menu>
-                                  </v-col>
-                                <v-col cols="12" class="InputData" v-if="item.fieldType == 'Autocompletes'">
-                                  <v-autocomplete
-                                    v-model="item.fieldValue"
-                                    :items="JSON.parse(item.optionField)"
-                                    outlined
-                                    :label="item.fieldName"
-                                    required
-                                    dense
-                                    :rules="item.requiredField === 'True' ? [rules.required] : [true]"
-                                  ></v-autocomplete>
-                                </v-col>
-                                <v-col cols="12" class="InputData" v-if="item.fieldType == 'Selects'">
-                                  <v-select
-                                  class="mb-6"
-                                    v-model="item.fieldValue"
-                                    :items="JSON.parse(item.optionField)"
-                                    menu-props="auto"
-                                    :label="item.fieldName"
-                                    required
-                                    dense
-                                    clearable
-                                    :rules="item.requiredField === 'True' ? [rules.required] : [true]"
-                                    outlined
-                                  ></v-select>
-                                </v-col>
-                                <v-col cols="12" class="InputData" v-if="item.fieldType == 'Radio'" style="padding:0px;">
-                                  <v-container fluid style="padding:0px;">
-                                    <v-radio-group
-                                      row
-                                      dense
-                                      v-model="item.fieldValue"
-                                      :rules="item.requiredField === 'True' ? [rules.required] : [true]"
-                                      style="margin:0px;"
-                                    >
-                                      <template v-slot:label> </template>
-                                      <div
-                                        v-for="radios in JSON.parse(
-                                          item.optionField
-                                        )"
-                                        :key="radios.toISOString"
-                                      >
-                                        <v-radio
-                                          :label="radios.text"
-                                          :value="radios.value"
-                                          dense
-                                        ></v-radio>
-                                      </div>
-                                    </v-radio-group>
-                                  </v-container>
-                                </v-col>
-                              </template>
-                            </template>
-                              <template  v-if="item.conditionField === 'flow' ">
-                                <template v-if="parseInt(item.conditionValue) === parseInt(formEdit.flowId) ">
-                                  <v-col cols="12" class="InputData" v-if="item.fieldType == 'text'">
-                                    <v-text-field
-                                      v-if="item.fieldName === 'เบอร์โทร'"
-                                      v-mask="'###-###-####'"
-                                      v-model="item.fieldValue"
-                                      :label="item.fieldName"
-                                      dense
-                                      :rules="item.requiredField === 'True' ? [rules.required] : [true]"
-                                      outlined
-                                    ></v-text-field>
-                                    <v-text-field
-                                      v-else
-                                      v-model="item.fieldValue"
-                                      :label="item.fieldName"
-                                      dense
-                                      :rules="item.requiredField === 'True' ? [rules.required] : [true]"
-                                      outlined
-                                    ></v-text-field>
-                                  </v-col>
-                                  <v-col cols="12" class="InputData" v-if="item.fieldType == 'number'">
-                                    <v-text-field
-                                      v-if="item.fieldName === 'เบอร์โทร'"
-                                      v-mask="'###-###-####'"
-                                      v-model="item.fieldValue"
-                                      :label="item.fieldName"
-                                      dense
-                                      :rules="item.requiredField === 'True' ? [rules.required] : [true]"
-                                      outlined
-                                    ></v-text-field>
-                                    <v-text-field
-                                      v-else
-                                      v-model="item.fieldValue"
-                                      :label="item.fieldName"
-                                      dense
-                                      :rules="item.requiredField === 'True' ? [rules.required] : [true]"
-                                      outlined
-                                    ></v-text-field>
-                                  </v-col>
-                                  <v-col cols="12" class="InputData" v-if="item.fieldType == 'dateTime'">
-                                    <v-menu
-                                      v-model="menuEdit3"
-                                      :close-on-content-click="false"
-                                      :return-value.sync="date"
-                                      :rules="[rules.required]"
-                                      transition="scale-transition"
-                                      offset-y
-                                      required
-                                      min-width="auto"
-                                      ref="menuEdit3"
-                                    >
-                                      <template v-slot:activator="{ on, attrs }">
-                                        <v-text-field
-                                          v-model="item.fieldValue"
-                                          readonly
-                                          :label="item.fieldName"
-                                          outlined
-                                          dense
-                                          prepend-inner-icon="mdi-calendar"
-                                          v-bind="attrs"
-                                          v-on="on"
-                                          required
-                                          :rules="item.requiredField === 'True' ? [rules.required] : [true]"
-                                        >
-                                        </v-text-field>
-                                      </template>
-                                      <v-date-picker
-                                        v-model="item.fieldValue"
-                                        no-title
-                                        scrollable
-                                        @input="(menuEdit3 = false), $refs.menuEdit3.save(item.fieldValue)"
-                                      >
-                                      </v-date-picker>
-                                    </v-menu>
-                                  </v-col>
-                                  <v-col
-                                    cols="12"
-                                    class="InputData"
-                                    v-if="item.fieldType == 'Autocompletes'"
-                                  >
-                                    <v-autocomplete
-                                      v-model="item.fieldValue"
-                                      :items="JSON.parse(item.optionField)"
-                                      dense
-                                      filled
-                                      :label="item.fieldName"
-                                      :rules="item.requiredField === 'True' ? [rules.required] : [true]"
-                                    ></v-autocomplete>
-                                  </v-col>
-                                    <v-col cols="12" class="InputData" v-if="item.fieldType == 'Selects'">
-                                      <v-select
-                                      class="mb-6"
-                                        v-model="item.fieldValue"
-                                        :items="JSON.parse(item.optionField)"
-                                        menu-props="auto"
-                                        :label="item.fieldName"
-                                        dense
-                                        clearable
-                                        :rules="item.requiredField === 'True' ? [rules.required] : [true]"
-                                        hide-details
-                                        outlined
-                                      ></v-select>
-                                    </v-col>
-                                    <v-col cols="12" class="InputData" v-if="item.fieldType === 'Radio'" style="padding:0px;">
-                                      <v-container fluid style="padding:0px;">
-                                        <v-radio-group
-                                          row
-                                          v-model="item.fieldValue"
-                                          style="margin:0px;"
-                                          :rules="item.requiredField === 'True' ? [rules.required] : [true]"
-                                        >
-                                          <template v-slot:label> </template>
-                                          <div
-                                            v-for="radios in JSON.parse(
-                                              item.optionField
-                                            )"
-                                            :key="radios.toISOString"
-                                            class="text-center"
-                                          >
-                                            <v-radio
-                                              :label="radios.text"
-                                              dense
-                                              :value="radios.value"
-                                            ></v-radio>
-                                          </div>
-                                        </v-radio-group>
-                                      </v-container>
-                                    </v-col>
-                                </template>
-                              </template>
-                          </div>
+                    <v-row>
+                       <v-col class="pa-0" cols= "12" v-for="(item, index) in bookingData" :key="index">
+                        <h6 class="text-center" v-if="item.fieldValue !== ''"><strong>{{item.fieldName}} : </strong> {{item.fieldValue}}</h6>
+                       </v-col>
+                    </v-row>
+                  <v-row>
+                    <v-col cols="12" md="6" lg="6">
+                      <v-menu
+                        v-model="menuDataBokkAgain"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="auto"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            v-model="date"
+                            label="วันที่นัดหมาย"
+                            prepend-icon="mdi-calendar"
+                            readonly
+                            outlined
+                            dense
+                            v-bind="attrs"
+                            v-on="on"
+                            required
+                            :rules="[rules.required]"
+                          ></v-text-field>
                         </template>
-                        <v-row>
-                          <v-col class="pb-0">
-                            <v-menu
-                              v-model="menuDateEdit"
-                              :close-on-content-click="false"
-                              :nudge-right="40"
-                              transition="scale-transition"
-                              offset-y
-                              min-width="auto"
-                            >
-                              <template v-slot:activator="{ on, attrs }">
-                                <v-text-field
-                                  v-model="dateEdit"
-                                  label="วันที่นัดหมาย"
-                                  prepend-icon="mdi-calendar"
-                                  readonly
-                                  v-bind="attrs"
-                                  dense
-                                  outlined
-                                  v-on="on"
-                                  required
-                                  :rules="[rules.required]"
-                                ></v-text-field>
-                              </template>
-                              <v-date-picker
-                                v-model="dateEdit"
-                                :allowed-dates="allowedDatesEdit"
-                                @input="menuDateEdit = false, setLimitBookingEdit(dateEdit)"
-                                :min="
-                                  new Date(
-                                    Date.now() -
-                                      new Date().getTimezoneOffset() * 60000
-                                  )
-                                    .toISOString()
-                                    .substr(0, 10)
-                                "
-                              ></v-date-picker>
-                              <!-- <v-date-picker
-                                v-model="dateEdit"
-                                @input="menuDate = false"
-                              ></v-date-picker> -->
-                            </v-menu>
-                          </v-col>
-                          <v-col class="pb-0">
-                          <v-select
-                            v-if="dateEdit !== ''"
-                            v-model="timeEdit"
+                        <v-date-picker
+                          v-model="date"
+                          @input="menuDataBokkAgain = false"
+                          :min="
+                            new Date(
+                              Date.now() -
+                                new Date().getTimezoneOffset() * 60000
+                            )
+                              .toISOString()
+                              .substr(0, 10)
+                          "
+                        ></v-date-picker>
+                      </v-menu>
+                    </v-col>
+                    <v-col  cols="12" md="6" lg="6">
+                         <v-select
+                            required
+                            :rules="[rules.required]"
+                            v-model="time"
                             :items="timeavailable"
                             label="เวลา"
                             item-text="text"
@@ -5737,137 +4933,37 @@
                             return-object
                             outlined
                             dense
-                            required
-                            :rules ="[rules.required]"
                           ></v-select>
-                          </v-col>
-                        </v-row>
-                        <v-row v-if="$session.getAll().data.shopId !== 'U9f316c85400fd716ea8c80d7cd5b61f8'">
-                          <v-col class="pt-0 pb-0">
-                            <v-radio-group v-model="formEdit.radiosRemark" row  required :rules ="[rules.required]">
-                              <v-radio value="ซ่อมปกติ">
-                                <template v-slot:label>
-                                  <div class="mt-3"><strong class="primary--text">{{dataTypeJob1}}</strong></div>
-                                </template>
-                              </v-radio>
-                              <v-radio value="ExtraJob">
-                                <template v-slot:label>
-                                  <div class="mt-3"><strong class="error--text">{{dataTypeJob2}}</strong></div>
-                                </template>
-                              </v-radio>
-                              <v-radio value="FastTrack">
-                                <template v-slot:label>
-                                  <div class="mt-3"><strong class="orange--text">{{dataTypeJob3}}</strong></div>
-                                </template>
-                              </v-radio>
-                            </v-radio-group>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col class="pt-0">
-                            <v-select
-                              v-model="empSelectEdit"
-                              :items="empSelectStepAdd"
-                              label="พนักงานที่รับนัดหมาย"
-                              menu-props="auto"
-                              outlined
-                              dense
-                            ></v-select>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col class="pt-0">
-                          <v-textarea
-                            v-model="remark"
-                            outlined
-                            rows="1"
-                            label="หมายเหตุเพิ่มเติม"
-                            auto-grow
-                            required
-                            :rules="[rules.required]"
-                          ></v-textarea>
-                          </v-col>
-                        </v-row>
-                      <v-row v-if="statusShowMap === 'True'">
-                          <v-col class="pb-0 pt-0" cols="12">
-                              <v-text-field
-                              v-model="address"
-                              label="ชื่อของที่อยู่"
-                              outlined
-                              required
-                              dense
-                              :rules="[rules.required]"
-                              ></v-text-field>
-                          </v-col>
-                          <v-col cols="12">
-                            <v-card>
-                              <v-card-text>
-                                <v-row>
-                                  <v-col class="pb-0" cols="12">
-                                    <h6>ค้นหาที่อยู่ลูกค้า :</h6>
-                                  </v-col>
-                                  <v-col class="mr-16" cols="12">
-                                    <GmapAutocomplete id="autocompleteMap" @place_changed="updatePlace" />
-                                  </v-col>
-                                </v-row>
-                              </v-card-text>
-                              <hr>
-                              <!-- <gmap-autocomplete @place_changed="updatePlace"/> -->
-                              <v-card-text>
-                              <GmapMap
-                                v-if="center !== null"
-                                :center="center"
-                                @click='updateCoordinates'
-                                :zoom="15"
-                                style="width: 100%; height: 200px"
-                                :options="{ disableDefaultUI: true, fullscreenControl: true, zoomControl: true }"
-                              >
-                                <GmapMarker :position="center" :draggable="true" @drag="updateCoordinates" />
-                              </GmapMap>
-                              </v-card-text>
-                            </v-card>
-                            <br>
-                          </v-col>
-                        </v-row>
-                        <div class="text-center">
-                          <v-btn
-                            elevation="2"
-                            large
-                            color="#173053"
-                            block
-                            class="text-white"
-                            :loading="loadingEdit"
-                            :disabled="loadingEdit"
-                            @click="addBookingAgain()"
-                          >
-                            <template v-slot:loader>
-                              <span class="custom-loader">
-                                <v-icon light>mdi-cached</v-icon>
-                              </span>
-                            </template>
-                            <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                            นัดหมายอีกครั้ง
-                          </v-btn>
-                          <!-- <v-btn
-                            elevation="2"
-                            large
-                            color="red"
-                            dark
-                            @click="dialogEditData = false"
-                          >
-                            <v-icon left>mdi-close</v-icon>
-                            ปิด
-                          </v-btn> -->
-                        </div>
-                      </v-col>
-                      </v-form>
-                      <div class="text-center" v-if="!dataEditReady">
-                          <waitingAlert></waitingAlert>
-                          </div>
                     </v-col>
                   </v-row>
+                  <v-row>
+                      <v-col cols= "12">
+                        <v-textarea
+                          required
+                          :rules="[rules.required]"
+                          v-model="remark"
+                          outlined
+                          label="หมายเหตุเพิ่มเติม"
+                          auto-grow
+                        ></v-textarea>
+                      </v-col>
+                  </v-row>
+                  <div class="text-center">
+                    <v-btn
+                      elevation="10"
+                      color="green darken-1"
+                      dark
+                      large
+                      block
+                      :loading="loadingBookingAgain"
+                      :disabled="loadingBookingAgain"
+                      @click="addBookingAgain()"
+                      >ยืนยันนัดหมาย</v-btn
+                    >
+                  </div>
                   </v-container>
                 </v-card-text>
+              </v-form>
             </v-card>
           </v-dialog>
 
@@ -5952,28 +5048,6 @@
         </v-dialog>
         <v-dialog v-model="dialogOnsite" persistent max-width="70%">
             <v-card class="text-center">
-              <v-card-text>
-              <v-row>
-                <v-col cols="6" class="text-left pt-10">
-                  <h3><strong>มอบหมายงานให้พนักงาน Onsite</strong></h3>
-                </v-col>
-                <v-col cols="6" class="pt-10">
-                  <div style="text-align: end;">
-                    <v-btn
-                      class="mx-2"
-                      fab
-                      small
-                      dark
-                      color="white"
-                      :style="styleCloseBt"
-                      @click="dialogOnsite = false"
-                      >
-                      X
-                    </v-btn>
-                  </div>
-                </v-col>
-              </v-row>
-              </v-card-text>
               <v-row>
                 <v-col class="pb-0 pt-0" cols="12" v-if="dataPackage.filter(el => { return el.balanceAmount > 0 }).length > 0 && dataPackageDefault === false">
                   <v-card class="pl-1">
@@ -6107,7 +5181,7 @@
                   <br>
                 </v-col>
               </v-row>
-              <!-- <v-card-title>มอบหมายงานให้พนักงาน Onsite</v-card-title> -->
+              <v-card-title>มอบหมายงานให้พนักงาน Onsite</v-card-title>
               <v-card-text  v-if="dataEditJobReady">
                 <!-- {{BookingDataItem}} -->
                 <v-container>
@@ -6531,17 +5605,6 @@
                   </div>
                   <div class="text-center">
                     <v-btn
-                      elevation="10"
-                      color="green darken-1"
-                      dark
-                      large
-                      block
-                      @click="addEmpJob()"
-                      >ยืนยันนัดหมาย</v-btn
-                    >
-                  </div>
-                  <!-- <div class="text-center">
-                    <v-btn
                       elevation="2"
                       v-if="BookingDataItem[0].addressLatLong !== null"
                       small
@@ -6555,7 +5618,7 @@
                     <v-btn small color="red" dark @click="dialogOnsite = false, getDataDefault(), searchOther = '', showColorSearch = false, statusSearch = 'no', empSelectJob = ''">
                       <v-icon color="#173053">mdi-close</v-icon> ยกเลิก
                     </v-btn>
-                  </div> -->
+                  </div>
                   </template>
                 </v-container>
               </v-card-text>
@@ -6880,118 +5943,6 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
-          <v-dialog v-model="dialogMenu" persistent :max-width="dialogwidth">
-            <v-card>
-              <v-card-text>
-                  <v-row>
-                    <v-col cols="6" class="text-left pt-10">
-                      <h3><strong>รายการเมนู</strong></h3>
-                    </v-col>
-                    <v-col cols="6" class="pt-10">
-                      <div style="text-align: end;">
-                        <v-btn
-                          class="mx-2"
-                          fab
-                          small
-                          dark
-                          color="white"
-                          :style="styleCloseBt"
-                          @click="dialogMenu = false"
-                          >
-                          X
-                        </v-btn>
-                      </div>
-                    </v-col>
-                    <v-col cols="12" v-if="dataMenu.length > 0">
-                       <div
-                          style="'width:100% !important';background: linear-gradient(90deg, #FCFCFC 0%, #F7F7F7 10.04%, #F7F7F7 51.56%, #F7F7F7 89.58%, #FCFCFC 100%);box-shadow: 0px 4px 20px rgba(114, 114, 114, 0.1);"
-                        >
-                          <div style="align-items: center;width:100%;height:600px;overflow-y: scroll;">
-                          <v-row>
-                            <v-col cols="12" v-for="(item,id) in dataMenu" :key="id" style="display: flex;">
-                              <v-card class="cardMenuEdit">
-                                  <v-img
-                                    class="pictureMenuEdit"
-                                    :src="item.picture"
-                                  ></v-img>
-                                  <div class="cardTextMenu">
-                                    <div>
-                                      <p class="ma-0 textTitelMenu">{{item.name}}</p>
-                                      <p class="ma-0 textSubTitelMenu" v-if="item.nameSub.length < 20">{{ item.nameSub }}</p>
-                                      <p class="ma-0 textSubTitelMenu" v-else>{{ (item.nameSub.substring(0,20) + '..') }}</p>
-                                      <br>
-                                      <p class="ma-0 textPriceMenu">{{formatNumber(item.price) + " บาท"}}</p>
-                                      <!-- <p>{{item.nameSub}}</p> -->
-                                      <v-text-field
-                                        v-if="parseInt(item.qty) > 0"
-                                        v-model="item.remark"
-                                        label="หมายเหตุ"
-                                        single-line
-                                        hide-details
-                                        dense
-                                        class="pl-0"
-                                      ></v-text-field>
-                                    </div>
-                                  </div>
-                                  <div class="buttomMenu">
-                                    <v-btn
-                                      icon
-                                      x-small
-                                      color="#FF7B2C"
-                                      class="buttomMenuplusmins"
-                                      @click="changeCounter('-1', item)"
-                                    >
-                                      <v-icon dark>
-                                        mdi-minus
-                                      </v-icon>
-                                    </v-btn>
-                                    {{item.qty}}
-                                    <v-btn
-                                      icon
-                                      x-small
-                                      color="#FF7B2C"
-                                      class="buttomMenuplusmins "
-                                      @click="changeCounter('1', item)"
-                                    >
-                                      <v-icon dark>
-                                        mdi-plus
-                                      </v-icon>
-                                    </v-btn>
-                                  </div>
-                              </v-card>
-                            </v-col>
-                          </v-row>
-                          </div>
-                          <div class="sendOrder">
-                            <v-card width="100%" height="58px" class="display: flex;align-items: center;"  style="border-radius: 16px;">
-                              <v-container>
-                              <v-row>
-                                <v-col cols="6">รวมราคา</v-col>
-                                <v-col cols="6" class="text-right">{{formatNumber(priceMenu)}}</v-col>
-                              </v-row>
-                              </v-container>
-                            </v-card>
-                          </div>
-                          <hr>
-                          <v-row>
-                            <v-col cols="12">
-                              <v-btn
-                                color="#1B437C"
-                                large
-                                block
-                                dark
-                                @click="updateMenu()"
-                              >
-                                อัพเดทรายการเมนู
-                              </v-btn>
-                            </v-col>
-                          </v-row>
-                        </div>
-                    </v-col>
-                  </v-row>
-              </v-card-text>
-            </v-card>
-          </v-dialog>
           <v-dialog v-model="dialogShowDeposit" persistent :max-width="dialogwidth">
             <v-card>
               <v-card-text>
@@ -7060,6 +6011,323 @@
                       </v-btn>
                     </v-col>
                  </v-row>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
+          <v-dialog v-model="dialogShowEmpReport" persistent max-width="80%">
+            <v-card>
+              <v-card-text>
+                  <v-row>
+                    <v-col cols="6" class="text-left pt-10">
+                      <h3><strong>รายการนัดหมายตามช่าง</strong></h3>
+                    </v-col>
+                    <v-col cols="6" class="pt-10">
+                      <div style="text-align: end;">
+                        <v-btn
+                          class="mx-2"
+                          fab
+                          small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
+                          @click="dialogShowEmpReport = false"
+                          >
+                          X
+                        </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="6">
+                       <v-menu
+                        ref="menu"
+                        v-model="menuShowEmpReport"
+                        transition="scale-transition"
+                        offset-y
+                        max-width="290px"
+                        min-width="auto"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            hide-details
+                            background-color="white"
+                            v-model="dateStartShowEmpReport"
+                            style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
+                            label="วัน/เดือน/ปี นัดหมาย"
+                            readonly
+                            outlined
+                            dense
+                            v-bind="attrs"
+                            v-on="on"
+                          >
+                          <template #prepend-inner>
+                          <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                            mdi-calendar
+                          </v-icon>
+                        </template></v-text-field>
+                        </template>
+                        <v-date-picker
+                          @input="menuShowEmpReport = false,getBookingShowEmpList()"
+                          v-model="dateStartShowEmpReport"
+                          no-title
+                          scrollable
+                        >
+                        </v-date-picker>
+                        </v-menu>
+                    </v-col>
+                    <v-col cols="6" v-if="dataShowEmpReport.length > 0">
+                      <v-btn
+                        color="teal"
+                        dark
+                        style="border-radius: 20px !important;margin-right: 0px;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
+                        @click="exportShowEmpReport()"
+                      >
+                        <v-icon color="white" left>mdi-microsoft-excel</v-icon>
+                        ส่งออกเป็น Excel
+                      </v-btn>
+                    </v-col>
+                    <!-- <v-col cols="6" v-if="dataEmpShowEmpReport.length > 0">
+                      <v-select
+                        v-model="searchEmpShowEmpReport"
+                        background-color="white"
+                        style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
+                        hide-details
+                        :items="dataEmpShowEmpReport"
+                        label="พนักงาน"
+                        outlined
+                        dense
+                        required
+                        ><template #prepend-inner>
+                          <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                            mdi-map-marker-outline
+                          </v-icon>
+                        </template></v-select>
+                    </v-col> -->
+                    <v-col cols="12">
+                      <v-data-table
+                        :search="searchEmpShowEmpReport"
+                        :headers="headersShowEmpReport"
+                        :items="dataShowEmpReport"
+                        item-key="bookNo"
+                        sort-by="dueDate"
+                        group-by="bookingEmpFlowName"
+                        class="elevation-1"
+                        show-group-by
+                        hide-default-footer
+                      >
+                        <!-- <template v-slot:[`item.statusBt`]="{ item }">
+                          <v-chip
+                            filter
+                            dark
+                            v-if="item.statusBt === 'confirm'"
+                            color="#97DDBB"
+                          >
+                            {{dataTypeProcess2}}
+                          </v-chip>
+                          <v-chip
+                            filter
+                            dark
+                            v-if="item.statusBt === 'confirmJob'"
+                            color="#E5B5D8"
+                          >
+                            {{dataTypeProcess4}}
+                          </v-chip>
+                          <v-chip
+                            filter
+                            dark
+                            v-if="item.statusBt === 'wait'"
+                            color="#97DDBB"
+                          >
+                            {{dataTypeProcess1}}
+                          </v-chip>
+                        </template> -->
+                        <template v-slot:group="{ items }">
+                          <tr @click="toggleShowEmpList(items[0].bookingEmpFlowName)" style="background-color:#CFD8DC;">
+                            <td  class="text-xs-right"><strong>{{ items[0].bookingEmpFlowName }}</strong></td>
+                            <td class="text-xs-right"></td>
+                            <td class="text-xs-right"></td>
+                            <td class="text-xs-right"></td>
+                            <td class="text-xs-right"></td>
+                          </tr>
+                          <tr v-for="(item) in items" :key="item.bookNo" v-show="!item.hide">
+                            <td  v-for="(header, index) in headersShowEmpReport"
+                              :key="index">
+                              <p v-if="header.value !== 'statusBt'">{{ item[header.value] }}</p>
+                              <template v-else>
+                                <v-chip
+                                  filter
+                                  dark
+                                  v-if="item['statusBt'] === 'confirm'"
+                                  color="#97DDBB"
+                                >
+                                  {{dataTypeProcess2}}
+                                </v-chip>
+                                <v-chip
+                                  filter
+                                  dark
+                                  v-if="item['statusBt'] === 'confirmJob'"
+                                  color="#E5B5D8"
+                                >
+                                  {{dataTypeProcess4}}
+                                </v-chip>
+                                <v-chip
+                                  filter
+                                  dark
+                                  v-if="item['statusBt'] === 'wait'"
+                                  color="#FEAE34"
+                                >
+                                  {{dataTypeProcess1}}
+                                </v-chip>
+                              </template>
+                            </td>
+                          </tr>
+                        </template>
+                      </v-data-table>
+                    </v-col>
+                  </v-row>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
+          <v-dialog v-model="dialogConfirmCancel" max-width="90%">
+            <v-card class="text-center">
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="10" class="text-left pt-10">
+                    <h3><strong>ยืนยันรายการนี้</strong></h3>
+                    </v-col>
+                    <v-col cols="2" class="pt-10">
+                      <div style="text-align: end;">
+                          <v-btn
+                            class="mx-2"
+                            fab
+                            small
+                            dark
+                            color="white"
+                            :style="styleCloseBt"
+                            @click="dialogConfirmCancel = false"
+                            >
+                            X
+                          </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12" class="pt-0 pb-0">
+                    <v-select
+                      v-model="flowSelectCancel"
+                      :items="dataFlowCancel"
+                      label="เลือกประเภทบริการ"
+                      menu-props="auto"
+                      outlined
+                      dense
+                      @change="getEmpCancel(masBranchID), flowIDLimit = flowSelectCancel, bookingEmpFlowCancel = '',fromAddTimeCus = '', formChangeDateCancel = ''"
+                    ></v-select>
+                    </v-col>
+                    <v-col  cols="12" class="pt-0 pb-0">
+                      <v-select
+                        v-model="bookingEmpFlowCancel"
+                        :items="dataEmpCancel"
+                        label="พนักงานช่าง"
+                        menu-props="auto"
+                        outlined
+                        required
+                        :rules="[rules.required]"
+                        dense
+                        @change="checkTimeCancel(),SetallowedDatesChangeCancel(bookingEmpFlowCancel), formChangeDateCancel = '',fromAddTimeCus = '', checkCustomerTimeSlotCancel(), flowIDLimit = flowSelectCancel"
+                      ></v-select>
+                    </v-col>
+                    <v-col  cols="12" class="pt-0 pb-0">
+                      <v-select
+                        v-if="customerTimeSlot === 'True' && bookingEmpFlowCancel !== '' && timeSlotbyCustomer.length > 1"
+                        v-model="fromAddTimeCus"
+                        :items="timeSlotbyCustomer"
+                        label="จำนวนชั่วโมง"
+                        outlined
+                        dense
+                        required
+                        :rules="[rules.required]"
+                        @change="formChangeDateCancel = '', AddallowedDatesBysetTimebydayCancel()"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12" class="pt-0 pb-0">
+                      <v-menu
+                        v-model="menuDateChangeCancel"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="auto"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            v-model="formChangeDateCancel"
+                            label="วันที่"
+                            prepend-icon="mdi-calendar"
+                            readonly
+                            outlined
+                            dense
+                            v-bind="attrs"
+                            v-on="on"
+                            required
+                            :rules="[rules.required]"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker
+                          v-model="formChangeDateCancel"
+                          :allowed-dates="allowedDatesChangeCancel"
+                          @change="setLimitBookingCancel(formChangeDateCancel)"
+                          @input="menuDateChangeCancel = false"
+                          :min="
+                            new Date(
+                              Date.now() - new Date().getTimezoneOffset() * 60000
+                            )
+                              .toISOString()
+                              .substr(0, 10)
+                          "
+                        ></v-date-picker>
+                      </v-menu>
+                    </v-col>
+                    <v-col cols="12" class="pt-0 pb-0" v-if="formChangeDateCancel != ''">
+                        <v-select
+                          v-model="formChangeTimeCancel"
+                          :items="timeavailableCancel"
+                          label="เวลา"
+                          item-text="text"
+                          item-value="text"
+                          persistent-hint
+                          return-object
+                          outlined
+                          dense
+                          required
+                          :rules ="[rules.required]"
+                        ></v-select>
+                    </v-col>
+                  </v-row>
+                <v-row>
+                  <v-col cols="12" class="pt-0 pb-0">
+                  <v-select
+                    v-model="empSelectCancel"
+                    :items="empSelectStep"
+                    label="พนักงานที่รับนัดหมาย"
+                    menu-props="auto"
+                    outlined
+                    dense
+                  ></v-select>
+                  </v-col>
+                </v-row>
+                <div class="text-center">
+                  <v-btn
+                    elevation="2"
+                    color="#173053"
+                    dark
+                    large
+                    block
+                    @click="onConfirmCancel(dataConfirmCancel)"
+                    >ยืนยันรายการนี้</v-btn
+                  >
+                </div>
+                </v-container>
               </v-card-text>
             </v-card>
           </v-dialog>
@@ -7266,10 +6534,123 @@
               </v-card-text>
             </v-card>
           </v-dialog>
+          <v-dialog v-model="dialogMenu" persistent :max-width="dialogwidth">
+            <v-card>
+              <v-card-text>
+                  <v-row>
+                    <v-col cols="6" class="text-left pt-10">
+                      <h3><strong>รายการเมนู</strong></h3>
+                    </v-col>
+                    <v-col cols="6" class="pt-10">
+                      <div style="text-align: end;">
+                        <v-btn
+                          class="mx-2"
+                          fab
+                          small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
+                          @click="dialogMenu = false"
+                          >
+                          X
+                        </v-btn>
+                      </div>
+                    </v-col>
+                    <v-col cols="12" v-if="dataMenu.length > 1">
+                       <div
+                          style="'width:100% !important';background: linear-gradient(90deg, #FCFCFC 0%, #F7F7F7 10.04%, #F7F7F7 51.56%, #F7F7F7 89.58%, #FCFCFC 100%);box-shadow: 0px 4px 20px rgba(114, 114, 114, 0.1);"
+                        >
+                          <div style="align-items: center;width:100%;height:600px;overflow-y: scroll;">
+                          <v-row>
+                            <v-col cols="12" v-for="(item,id) in dataMenu" :key="id" style="display: flex;">
+                              <v-card class="cardMenuEdit">
+                                  <v-img
+                                    class="pictureMenuEdit"
+                                    :src="item.picture"
+                                  ></v-img>
+                                  <div class="cardTextMenu">
+                                    <div>
+                                      <p class="ma-0 textTitelMenu">{{item.name}}</p>
+                                      <!-- <p class="ma-0 textSubTitelMenu">{{ item.nameSub.length < 20 ? item.nameSub : (item.nameSub.substring(0,20) + '..') }}</p> -->
+                                      <p class="ma-0 textSubTitelMenu" v-if="item.nameSub.length < 20">{{ item.nameSub }}</p>
+                                      <p class="ma-0 textSubTitelMenu" v-else>{{ (item.nameSub.substring(0,20) + '..') }}</p>
+                                      <br>
+                                      <p class="ma-0 textPriceMenu">{{formatNumber(item.price) + " บาท"}}</p>
+                                      <!-- <p>{{item.nameSub}}</p> -->
+                                      <v-text-field
+                                        v-if="parseInt(item.qty) > 0"
+                                        v-model="item.remark"
+                                        label="หมายเหตุ"
+                                        single-line
+                                        hide-details
+                                        dense
+                                        class="pl-0"
+                                      ></v-text-field>
+                                    </div>
+                                  </div>
+                                  <div class="buttomMenu">
+                                    <v-btn
+                                      icon
+                                      x-small
+                                      color="#FF7B2C"
+                                      class="buttomMenuplusmins"
+                                      @click="changeCounter('-1', item)"
+                                    >
+                                      <v-icon dark>
+                                        mdi-minus
+                                      </v-icon>
+                                    </v-btn>
+                                    {{item.qty}}
+                                    <v-btn
+                                      icon
+                                      x-small
+                                      color="#FF7B2C"
+                                      class="buttomMenuplusmins "
+                                      @click="changeCounter('1', item)"
+                                    >
+                                      <v-icon dark>
+                                        mdi-plus
+                                      </v-icon>
+                                    </v-btn>
+                                  </div>
+                              </v-card>
+                            </v-col>
+                          </v-row>
+                          </div>
+                          <div class="sendOrder">
+                            <v-card width="100%" height="58px" class="display: flex;align-items: center;"  style="border-radius: 16px;">
+                              <v-container>
+                              <v-row>
+                                <v-col cols="6">รวมราคา</v-col>
+                                <v-col cols="6" class="text-right">{{formatNumber(priceMenu)}}</v-col>
+                              </v-row>
+                              </v-container>
+                            </v-card>
+                          </div>
+                          <hr>
+                          <v-row>
+                            <v-col cols="12">
+                              <v-btn
+                                color="#1B437C"
+                                large
+                                block
+                                dark
+                                @click="updateMenu()"
+                              >
+                                อัพเดทรายการเมนู
+                              </v-btn>
+                            </v-col>
+                          </v-row>
+                        </div>
+                    </v-col>
+                  </v-row>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
           <RetureDeposit ref="RetureDeposit"></RetureDeposit>
           <CallLog ref="CallLog"></CallLog>
           <NotificationService ref="NotificationService"></NotificationService>
-          <PrintQrCodeConfirmJobLINE ref="PrintQrCodeConfirmJobLINE"></PrintQrCodeConfirmJobLINE>
+          <GoogleCalendarCmp ref="GoogleCalendarRef" />
       </div>
     </v-main>
   </div>
@@ -7289,13 +6670,11 @@ import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 // import { PivotTable } from '@click2buy/vue-pivot-table'
 import moment from 'moment-timezone'
 import BookingQueue from './BookingQueue.vue'
-// import CalendarBooking from './CalendarBookingList.vue'
-import CalendarBooking from './CalendarBookingList.vue' // test
+import CalendarBooking from './CalendarBookingList.vue'
 import waitingAlert from '../waitingAlert.vue'
 import RetureDeposit from '../BookingListComponents/RetureDeposit.vue'
 import CallLog from '../BookingListComponents/CallLog.vue'
 import NotificationService from '../BookingListComponents/NotificationService.vue'
-import PrintQrCodeConfirmJobLINE from '../BookingListComponents/PrintQrCodeConfirmJobLINE.vue'
 import sideMenu from '../Menu/sideMenu.vue'
 import GoogleCalendarCmp from '../Core/GoogleCalendarCmp.vue'
 // import copy from 'copy-to-clipboard'
@@ -7303,7 +6682,6 @@ import GoogleCalendarCmp from '../Core/GoogleCalendarCmp.vue'
 export default {
   name: 'BookingListBeauty',
   components: {
-    sideMenu,
     draggable,
     'left-menu-admin': adminLeftMenu,
     DateRangePicker,
@@ -7319,12 +6697,11 @@ export default {
     RetureDeposit,
     CallLog,
     NotificationService,
-    PrintQrCodeConfirmJobLINE,
+    sideMenu,
     GoogleCalendarCmp
   },
   computed: {
     filteredSelect () {
-      // console.log('tset')
       return this.dataItemSelect.filter(d => {
         return this.filters.length < 1 || d['dueDate'].toString().toLowerCase().includes(this.filters.toLowerCase())
         // return Object.keys(this.filters).every(f => {
@@ -7363,16 +6740,6 @@ export default {
       )
     }
   },
-  watch: {
-    // menuDate (val) {
-    //   val && setTimeout(() => (this.$refs.dateRef.activePicker = 'month'))
-    // },
-    pickerDate (newval, oldval) {
-      this.getMonth(newval)
-      // this.allowedDates()
-      // here you can check if month changed using newval and oldval
-    }
-  },
   data () {
     let startDate = null
     let endDate = null
@@ -7394,7 +6761,6 @@ export default {
       BookingDataListShowMenuReport: [],
       DataFlowNameMenu: [],
       flowSelectMenu: '',
-      sortSelect: null,
       expandedMenu: [],
       headersShowMenuReport: [
         {
@@ -7409,23 +6775,45 @@ export default {
         // { text: 'เบอร์โทร', value: 'tel', sortable: false, groupable: false }
       ],
 
-      customerNameJob: '',
-      dialogHistoryJob: false,
-      timelineitem: [],
-      codeColor: [
-        'rgb(142, 202, 230)',
-        'rgb(33, 158, 188)',
-        'rgb(2, 48, 71)',
-        'rgb(241, 91, 76)',
-        'rgb(255, 183, 3)',
-        'rgb(251, 133, 0)',
-        'rgb(61,90,128)',
-        'rgb(152,193,217)',
-        'rgb(224,251,252)',
-        'rgb(255,212,91)',
-        'rgb(238,108,77)',
-        'rgb(41,50,65)'
+      listFilterCloseJob: ['ทั้งหมด', 'ยังไม่ปิดงาน', 'ปิดงาน'],
+      filterCloseJobValue: 'ทั้งหมด',
+      // confirm (Cancel)
+      flowSelectCancel: '',
+      dataFlowCancel: [],
+      bookingEmpFlowCancel: '',
+      dataEmpCancel: [],
+      menuDateChangeCancel: false,
+      formChangeDateCancel: '',
+      formChangeTimeCancel: '',
+      timeavailableCancel: [],
+      empSelectCancel: '',
+      dataConfirmCancel: [],
+      EmpItemLimitCancel: [],
+      //
+      dialogConfirmCancel: false,
+      searchEmpShowEmpReport: null,
+      dataShowEmpReport: [],
+      dataEmpShowEmpReport: [],
+      BookingDataListShowEmpReport: [],
+      headersShowEmpReport: [
+        {
+          text: 'สถานะ',
+          groupable: false,
+          value: 'statusBt'
+        },
+        // {
+        //   text: 'ชื่อพนักงาน',
+        //   // align: 'start',
+        //   value: 'bookingEmpFlowName'
+        // },
+        { text: 'ชื่อลูกค้า', value: 'cusName', sortable: false, groupable: false },
+        { text: 'วันที่/เวลา', value: 'dueDate', sortable: false, groupable: false },
+        { text: 'บริการ', value: 'flowName', sortable: false, groupable: false },
+        { text: 'เบอร์โทร', value: 'tel', sortable: false, groupable: false }
       ],
+      dialogShowEmpReport: false,
+      menuShowEmpReport: false,
+      dateStartShowEmpReport: '',
       showOnsite: 'ไม่แสดง',
       selectOnsite: '',
       menuAdd1: false,
@@ -7441,7 +6829,6 @@ export default {
         { title: 'Click Me' },
         { title: 'Click Me 2' }
       ],
-
       monthNamesThai: ['', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'],
       dialogOnsite: false,
       dialogChangeOnsite: false,
@@ -7453,6 +6840,10 @@ export default {
       dataCalendar: [],
       dataSummary: [],
       today: '',
+      sortSelect: null,
+      itemsSort: ['เรียงตามวันที่นัดหมาย', 'เรียงตามวันที่เปลี่ยนสถานะ', 'เรียงตามวันที่สร้าง'],
+      itemsSortWaiting: ['เรียงตามวันที่นัดหมาย', 'เรียงตามวันที่สร้าง'],
+      sort: null,
       events: [],
       dialogCalenda: false,
 
@@ -7476,7 +6867,7 @@ export default {
         prefix: '',
         suffix: '',
         length: 9,
-        precision: 2
+        precision: 0
       },
       options1: {
         locale: 'en-US',
@@ -7512,6 +6903,7 @@ export default {
       dataFlowSelectEdit: [],
       checkSelectText: '',
       pictureUrHistory: '',
+      memberName: '',
       tagName: '',
       dialogHistory: false,
       dialogAddTag: false,
@@ -7615,7 +7007,6 @@ export default {
       session: this.$session.getAll(),
       fieldNameItem: [],
       flowfieldNameitem: [],
-      sort: null,
       DataflowId: '',
       breadcrumbs: [
         {
@@ -7653,8 +7044,6 @@ export default {
       dataItemSelect: [],
       editedItemSeleteField: [],
       jobitem: [],
-      itemsSort: ['เรียงตามวันที่นัดหมาย', 'เรียงตามวันที่เปลี่ยนสถานะ', 'เรียงตามวันที่สร้าง'],
-      itemsSortWaiting: ['เรียงตามวันที่นัดหมาย', 'เรียงตามวันที่สร้าง'],
       // End Data Table Config
       formAdd: {
         bookingId: null,
@@ -7669,7 +7058,8 @@ export default {
         depositStatus: '',
         depositImge: '',
         pictureUrlPreviewDeposit: '',
-        depositPrice: 0
+        depositPrice: 0,
+        bookingEmpFlow: ''
       },
       formEdit: {
         bookingId: null,
@@ -7680,7 +7070,8 @@ export default {
         dueDate: '',
         shopId: this.$session.getAll().data.shopId,
         bookingFieldId: '',
-        radiosRemark: ''
+        radiosRemark: '',
+        bookingEmpFlow: ''
       },
       formUpdate: {
         masBranchCode: '',
@@ -7720,7 +7111,6 @@ export default {
       endDate: '',
       endTime: '',
       memberPicture: '',
-      memberName: '',
       dataInfo: null,
       dialogInfo: false,
       detailInfo: null,
@@ -7816,23 +7206,27 @@ export default {
       selectCountBookingLimit: 1,
       dueDateOld: '',
       dueDateTimeOld: '',
+      empIdOld: '',
       masBranchIDLimit: '',
       flowIDLimit: '',
       dateDayoff: [],
       dateDayCustom: [],
-      dateDaylimit: null,
+      dateDaylimit: [],
       flowItemLimit: [],
       checkLimitBooking: {
         ID: '',
         countBooking: null,
         limitCheck: null,
-        limitBooking: 0
+        limitBooking: 0,
+        timeSelect: [],
+        timeBooking: [],
+        slotByflow: ''
       },
       dataEdit: '',
       statusShowDateConfiremjob: true,
       memberId: '',
-      flowIdOldEdit: '',
       masBranchIDOldEdit: '',
+      flowIdOldEdit: '',
       Redirect: '',
       dialogShowDeposit: false,
       depositLink: '',
@@ -7840,14 +7234,16 @@ export default {
       depositPrice: 0,
       statusdepositPrice: false,
       statusBranchReadonly: false,
-      dataEmpOnsite: [],
-      statusShowMap: '',
-      listFilterCloseJob: ['ทั้งหมด', 'ยังไม่ปิดงาน', 'ปิดงาน'],
-      filterCloseJobValue: 'ทั้งหมด',
-      dataGetJob: [],
-      dataCoin: [],
-      productExchangeRateId: '',
-      memberTel: '',
+      dataEmpAdd: [],
+      dataEmpAllAdd: [],
+      EmpItemLimitAdd: [],
+      dataEmpChange: [],
+      dataEmpAllChange: [],
+      EmpItemLimitChange: [],
+      bookingEmpFlow: '',
+      timeSlotbyCustomer: [],
+      customerTimeSlot: 'False',
+      fromAddTimeCus: '',
       dataLineConfig: {},
       priceMenu: null,
       dataMenu: [],
@@ -7863,23 +7259,20 @@ export default {
       endStepItem: [],
       ItemendStepStanby: [],
       DataFlowNameDefault: [],
+      dataCoin: [],
+      memberTel: '',
+      productExchangeRateId: '',
       statusGoogleCalendar: '',
       statusGoogleCalendarEmp: ''
     }
   },
   beforeCreate () {
-    // if (localStorage.userName) {
-    //   console.log(localStorage.userName)
-    // } else {
-    //   console.log('not user')
-    // }
     if (!this.$session.exists()) {
       if (this.$route.query.bookNo) {
         this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId + '&type=' + this.$route.query.type)
       } else {
         this.$router.push('/Core/Login')
       }
-      // this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
     }
   },
   async mounted () {
@@ -7902,10 +7295,6 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
-    async connectGoogleCalendar (status, bookNo) {
-      console.log('status !!!', status)
-      this.$refs.GoogleCalendarRef.checkTypeEven(status, bookNo)
-    },
     async getShop () {
       await axios
         .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.session.data.shopId)
@@ -7921,7 +7310,6 @@ export default {
     },
     async setCloseJob (item) {
       console.log('item', item)
-      // await this.getCoin(item)
       await this.setCloseJobItem(item[0].jobNo)
       console.log('this.ItemendStepStanby', this.ItemendStepStanby)
       await this.getStepFlowCloseJob(this.ItemendStepStanby.flowId, this.ItemendStepStanby.shopId)
@@ -8028,7 +7416,7 @@ export default {
           }
         }
       }
-      // console.log('this.dataItemSelect', this.dataItemSelect)
+      console.log('this.dataItemSelect', this.dataItemSelect)
     },
     async updateMenu () {
       let dt = {
@@ -8211,7 +7599,7 @@ export default {
         await axios
           .get(urlApi)
           .then(async response => {
-            console.log('getData', response.data.length)
+            console.log('getData', response.data)
             if (response.data.length > 0) {
               for (let i = 0; i < response.data.length; i++) {
                 let d = response.data[i]
@@ -8293,115 +7681,1135 @@ export default {
       })
       await navigator.clipboard.writeText(item)
     },
-    FunCopyQrcode (text) {
-      // var copyText = document.getElementById('myInput')
-      // copyText.select()
-      // copyText.setSelectionRange(0, 99999)
-      navigator.clipboard.writeText(text)
-      this.$swal({
-        title: 'Copy successfully',
-        text: 'คัดลอกลิ้งสำเร็จ',
-        type: 'success',
-        timer: 2000,
-        showConfirmButton: false
+    async getDataFlowAllCancel () {
+      this.dataFlowCancel = await this.getDataFromAPI('/flow/get', 'flowId', 'flowName', '')
+    },
+    async confirmChkCancel (item) {
+      this.fromAddTimeCus = ''
+      this.dataConfirmCancel = item
+      this.bookingEmpFlowCancel = item.bookingEmpFlow
+      this.flowSelectCancel = item.flowId
+      this.flowIDLimit = item.flowId
+      this.masBranchID = item.masBranchID
+      this.empSelectCancel = ''
+      this.formChangeDateCancel = item.dueDateDay
+
+      await this.getDataFlowAllCancel()
+      await this.getEmpCancel(item.masBranchID)
+
+      this.checkCustomerTimeSlotCancel()
+
+      await this.SetallowedDatesChangeCancel(item.bookingEmpFlow)
+      await this.setLimitBookingCancel(item.dueDateDay)
+      await this.getEmpSelect(item)
+
+      if (this.timeavailableCancel.filter(el => { return el.value === item.timeDuetext }).length > 0) {
+        this.formChangeTimeCancel = item.timeDuetext
+      } else {
+        this.formChangeTimeCancel = ''
+      }
+      this.dialogConfirmCancel = true
+    },
+    checkTimeCancel () {
+      this.timeavailableCancel = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime) || []
+      console.log('timevailable', this.timeavailableCancel)
+    },
+    SetallowedDatesChangeCancel (bookingEmpFlow) {
+      console.log('this.dataEmpCancel', this.dataEmpCancel)
+      this.dataEmpCancel.forEach((v, k) => {
+        if (v.empId === bookingEmpFlow) {
+          v.dateDayCustom = v.dateDayCustom || ''
+          v.dateDayoffValue = v.dateDayoffValue || ''
+          if (v.dateDayoffValue !== '') {
+            // console.log('if')
+            this.dateDayoff = JSON.parse(v.dateDayoffValue)
+          } else {
+            // console.log('else')
+            this.dateDayoff = []
+          }
+          if (v.dateDayCustom !== '') {
+            this.dateDayCustom = JSON.parse(v.dateDayCustom)
+          } else {
+            this.dateDayCustom = []
+          }
+        }
       })
     },
-    // getColor (item) {
-    //   if (item.RECORD_STATUS_Job === 'D') {
-    //     return 'red darken-2 white--text'
+    allowedDatesChangeCancel (val) {
+      // if (this.dateDaylimit) {
+      if (this.dataFlowCancel.filter(el => el.value === this.flowIDLimit).length > 0) {
+        if (this.dataFlowCancel.filter(el => el.value === this.flowIDLimit)[0].allData.typeDayCustom === 'on') {
+          return val === this.dateDayCustom.filter(el => el === val)[0]
+        } else {
+          if (
+            this.dateDayoff.filter(el => {
+              return el === new Date(val).getDay()
+            }).length === 0 &&
+          this.dateDayCustom.filter(el => {
+            return el === val
+          }).length === 0
+          ) {
+            return val
+          }
+        }
+      } else {
+        return val
+      }
+      // }
+    },
+    async getLimitBookingCancel (dateitem) {
+      let LimitBooking = axios.get(this.DNS_IP + '/LimitBookingDateEmp/get?shopId=' + this.$session.getAll().data.shopId + '&empId=' + this.bookingEmpFlowCancel + '&bookingDate=' + dateitem).then(async (response) => {
+        let rs = response.data
+        return rs
+      })
+      return LimitBooking
+    },
+    async setLimitBookingCancel (dateitem) {
+      console.log('setLimitBookingCancel', dateitem)
+      this.time = ''
+      this.timeavailableCancel = []
+      let setTime = []
+      // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
+      console.log(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel }))
+      if (this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime).filter((items) => items.value === new Date(dateitem).getDay())
+        setTime = timeJson[0].setTime || []
+        console.log('IF')
+      } else {
+        console.log('ELSE')
+        setTime = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime) || []
+      }
+      console.log('this.EmpItemLimit.filter', this.EmpItemLimitCancel)
+      console.log('setTime', setTime)
+      // this.showTable = []
+      this.limitBookingCheck = this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].limitBookingCheck || 'False'
+      if (this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].limitBookingCheck || 'False') {
+        this.timeavailableCancel = setTime
+        console.log('DataFlowName', this.dataFlowCancel.filter((v) => v.value === this.flowSelectCancel)[0].allData)
+        // let slotByflow = this.dataFlow.filter((v) => v.value === this.flowSelect)[0].allData.timeSlot
+        let slotByflow = []
+        console.log('dataEmp', this.dataItem)
+        if (this.customerTimeSlot === 'False') {
+          slotByflow = this.dataFlowCancel.filter((v) => v.value === this.flowSelectCancel)[0].allData.timeSlot
+        } else {
+          slotByflow = this.fromAddTimeCus
+        }
+        let overTime = this.dataFlowCancel.filter((v) => v.value === this.flowSelectCancel)[0].allData.overTime
+        if (this.timeavailableCancel.length >= slotByflow) {
+          let LimitBooking = await this.getLimitBooking(dateitem)
+          console.log('LimitBooking', LimitBooking)
+          // เซ็ต Status ให้แต่ละช่วงเวลา
+          this.timeavailableCancel.forEach((v, k) => {
+            if (typeof v.status === 'undefined') {
+              v.status = true
+              if (v.limitBooking === '0') {
+                v.status = false
+              }
+            }
+          })
+          if (LimitBooking.status !== false) {
+            if (LimitBooking.length > 0) {
+              this.timeavailableCancel.forEach((v, k) => {
+                let bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value)
+                if (bookingTarget.length > 0) {
+                  v.status = false
+                  let bookingTargetSlot = bookingTarget[0].timeSlotCustomer || bookingTarget[0].timeSlot
+                  for (let bT = 0; bT < bookingTargetSlot; bT++) {
+                    if (this.timeavailableCancel[k + bT] !== undefined) {
+                      this.timeavailableCancel[k + bT].status = false
+                    }
+                  }
+                }
+              })
+            }
+          }
+          console.log('timeavailable', this.timeavailableCancel)
+          // For ค่าใส่ ตัวแปร array
+          let Newtimeavailable = []
+          let slotCheck = slotByflow
+          for (let i = 0; i < this.timeavailableCancel.length; i++) {
+            let num = i + (slotCheck - 1)
+            let checkitem = this.timeavailableCancel.filter((item, key) => (key >= i && key <= num))
+            console.log('checkitem', checkitem, slotCheck)
+            Newtimeavailable.push(checkitem)
+          }
+          console.log('Newtimeavailable', Newtimeavailable)
+          this.timeavailableCancel = []
+          Newtimeavailable.forEach((v, k) => {
+            // console.log('v.length >= slotCheck', v.length, slotCheck)
+            if (v.length > 0) {
+              if (overTime === 'True') {
+                if (v.filter((v) => v.status === false).length <= 0) {
+                  this.timeavailableCancel.push(v[0])
+                }
+              } else {
+              // ปิดเวลาสุดท้ายในกรณีที่ ไม่ต้องการให้จองเลยเวลา
+                if (v.filter((v) => v.status === false).length <= 0 && v.length >= slotCheck) {
+                // console.log('else', v)
+                  this.timeavailableCancel.push(v[0])
+                }
+              }
+            }
+          })
+
+          // ตัดเวลาในกรณีที่เป็นวันปัจจุบัน เพื่อตัดเวลาที่ผ่านมาแล้วออก
+          // if (dateC === moment().format('YYYY-MM-DD')) {
+          //   this.timeavailable = this.timeavailable.filter(item => moment().format(item.value) > moment().format('HH:mm'))
+          // } else {
+          // }
+          // console.log('this.timeavailable 4', this.timeavailable)
+          // console.log('Newitem', Newtimeavailable)
+          if (this.timeavailableCancel.length === 0) {
+            this.$swal(
+              'คิวเต็มแล้ว',
+              'กรุณาเลือกวันที่ใหม่อีกครั้ง',
+              'error'
+            )
+            this.formChangeDateCancel = ''
+          }
+        } else {
+          this.timeavailableCancel = []
+          this.$swal(
+            'คิวเต็ม',
+            'ช่างคนนี้คิวเต็มแล้ว',
+            'error'
+          ).then(() => { this.formChangeDateCancel = '' }).catch(() => { this.formChangeDateCancel = '' })
+        }
+      } else {
+        console.log('this.timeavailable ELSEEEEE', this.timeavailableCancel)
+        // LimitBookingBy Flow
+        this.timeavailableCancel = setTime
+      }
+      // await this.chekSlotTime()
+    },
+    // async setLimitBookingCancel (dateitem) {
+    //   // this.time = ''
+    //   this.timeavailableCancel = []
+    //   // this.showTable = []
+    //   let setTime = []
+    //   // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
+    //   if (this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTimebyday === 'True') {
+    //     let timeJson = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime).filter((items) => items.value === new Date(dateitem).getDay())
+    //     setTime = timeJson[0].setTime || []
+    //     console.log('IF')
+    //   } else {
+    //     console.log('ELSE')
+    //     setTime = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime) || []
     //   }
+
+    //   this.limitBookingCheck = this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].limitBookingCheck || 'False'
+    //   if (this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].limitBookingCheck || 'False') {
+    //     this.timeavailableCancel = setTime
+    //     // let slotByflow = this.dataFlowCancel.filter((v) => v.value === this.dataConfirmCancel.flowId)[0].allData.timeSlot
+    //     let slotByflow = []
+    //     console.log('dataEmp', this.dataItem)
+    //     if (this.customerTimeSlot === 'False') {
+    //       slotByflow = this.dataFlow.filter((v) => v.value === this.dataItem[0].flowId)[0].allData.timeSlot
+    //     } else {
+    //       slotByflow = this.fromAddTimeCus
+    //     }
+    //     let overTime = this.dataFlow.filter((v) => v.value === this.dataItem[0].flowId)[0].allData.overTime
+    //     if (this.timeavailableCancel.length >= slotByflow) {
+    //       let LimitBooking = await this.getLimitBookingCancel(dateitem)
+    //       console.log('LimitBooking', LimitBooking)
+    //       // เซ็ต Status ให้แต่ละช่วงเวลา
+    //       if (LimitBooking.status !== false) {
+    //         if (LimitBooking.length > 0) {
+    //           this.timeavailableCancel.forEach((v, k) => {
+    //             if (typeof v.status === 'undefined') {
+    //               v.status = true
+    //             }
+    //             let bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value)
+    //             if (bookingTarget.length > 0) {
+    //               v.status = false
+    //               for (let bT = 0; bT < bookingTarget[0].timeSlot; bT++) {
+    //                 if (this.timeavailableCancel[k + bT] !== undefined) {
+    //                   this.timeavailableCancel[k + bT].status = false
+    //                 }
+    //               }
+    //             }
+    //           // this.showTable.push(v)
+    //           })
+    //           console.log('this.timeavailableCancel 1', this.timeavailableCancel)
+    //           // For ค่าใส่ ตัวแปร array
+    //           let Newtimeavailable = []
+    //           let slotCheck = slotByflow
+    //           for (let i = 0; i < this.timeavailableCancel.length; i++) {
+    //             let num = i + (slotCheck - 1)
+    //             let checkitem = this.timeavailableCancel.filter((item, key) => (key >= i && key <= num))
+    //             console.log('checkitem', checkitem, slotCheck)
+    //             Newtimeavailable.push(checkitem)
+    //           }
+    //           console.log('Newtimeavailable', Newtimeavailable)
+    //           this.timeavailableCancel = []
+    //           Newtimeavailable.forEach((v, k) => {
+    //             // console.log('v.length >= slotCheck', v.length, slotCheck)
+    //             if (slotByflow === 'True') {
+    //               if (v.filter((v) => v.status === false).length <= 0) {
+    //                 this.timeavailableCancel.push(v[0])
+    //               }
+    //             } else {
+    //               // ปิดเวลาสุดท้ายในกรณีที่ ไม่ต้องการให้จองเลยเวลา
+    //               if (v.filter((v) => v.status === false).length <= 0 && v.length >= slotCheck) {
+    //                 console.log('else', v[0])
+    //                 this.timeavailableCancel.push(v[0])
+    //               }
+    //             }
+    //           })
+    //           // Newtimeavailable.forEach((v, k) => {
+    //           //   if (v.filter((v) => v.status === false).length <= 0) {
+    //           //     this.timeavailableCancel.push(v[0])
+    //           //   }
+    //           // })
+    //           // console.log('this.timeavailableCancel 3', this.timeavailableCancel)
+
+    //           // ตัดเวลาในกรณีที่เป็นวันปัจจุบัน เพื่อตัดเวลาที่ผ่านมาแล้วออก
+    //           // if (moment(dateitem).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')) {
+    //           //   this.timeavailableCancel = this.timeavailableCancel.filter(item => moment().format(item.value) > moment().format('HH:mm'))
+    //           // } else {
+    //           // }
+    //           if (this.timeavailableCancel.length === 0) {
+    //             this.$swal(
+    //               'วันนี้ไม่มีคิวว่างแล้ว',
+    //               'กรุณาเลือกวันที่ใหม่อีกครั้ง',
+    //               'error'
+    //             )
+    //             this.date = ''
+    //           }
+    //         }
+    //       } else {
+    //         this.timeavailableCancel = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime) || []
+    //         if (moment(dateitem).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')) {
+    //           this.timeavailableCancel = this.timeavailableCancel.filter(item => moment().format(item.value) > moment().format('HH:mm'))
+    //         } else {
+    //         }
+    //         console.log('this.timeavailableCancel ELSE', this.timeavailableCancel)
+    //       }
+    //     } else {
+    //       this.timeavailableCancel = []
+    //       this.$swal(
+    //         'คิวเต็ม',
+    //         'ช่างคนนี้คิวเต็มแล้ว',
+    //         'error'
+    //       ).then(() => { this.date = '' }).catch(() => { this.date = '' })
+    //     }
+    //   } else {
+    //     console.log('this.timeavailable ELSEEEEE', this.timeavailableCancel)
+    //     // LimitBookingBy Flow
+    //     this.timeavailableCancel = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime) || []
+    //   }
+    //   // await this.chekSlotTime()
     // },
-    async getJobitem (item) {
-      console.log('getJobitem', item)
-      this.customerNameJob = item.cusName
-      this.timelineitem = []
+    async getEmpCancel (masBranchID) {
+      this.dataEmpCancel = []
+      this.EmpItemLimitCancel = []
+      await axios.get(this.DNS_IP + '/empSelect/get?privacyPage=bookingform&masBranchID=' + masBranchID).then(response => {
+        let rs = response.data
+        if (rs.length > 0) {
+          for (var i = 0; i < rs.length; i++) {
+            let d = rs[i]
+            if (d.flowId !== null && d.flowId !== '') {
+              let checkFlowId = JSON.parse(d.flowId)
+              if (checkFlowId.filter((a) => parseInt(a) === this.flowSelectCancel).length > 0) {
+                // let s = {}
+                // s.text = d.empFull_NameTH
+                // s.textEng = d.empFull_NameTH
+                // s.value = d.empId
+                // s.limitBookingCheck = d.limitBookingCheck
+                d.limitBookingCheck = d.limitBookingCheck || 'False'
+                d.text = d.empFull_NameTH
+                d.textEng = d.empFull_NameTH
+                d.value = d.empId
+                this.dataEmpCancel.push(d)
+                let limit = {}
+                limit.empId = d.empId
+                limit.limitBookingCheck = d.limitBookingCheck || 'False'
+                limit.setTime = d.setTime || '[]'
+                limit.setTimebyday = d.setTimebyday
+                this.EmpItemLimitCancel.push(limit)
+              }
+            }
+          }
+          if (this.dataEmpCancel.length === 0) {
+            this.$swal(
+              'ไม่มีช่างสำหรับประเภทบริการนี้',
+              'กรุณาเลือกประเภทบริการอื่นๆ',
+              'info'
+            )
+          }
+          console.log('EmpItemLimitCancel', this.EmpItemLimitCancel)
+        } else {
+          this.dataEmpCancel = []
+        }
+      })
+      console.log('dataEmpCancel', this.dataEmpCancel)
+    },
+    async onConfirmCancel (item) {
+      let chkStatLimit = this.dataEmpCancel.filter(el => { return el.value === this.bookingEmpFlowCancel })
+      console.log('chkStatLimit', chkStatLimit)
+      let timeChange = ''
+      let timeChangeText = ''
+      if (typeof this.formChangeTimeCancel === 'string') {
+        timeChange = this.formChangeTimeCancel
+        timeChangeText = this.formChangeTimeCancel
+      } else {
+        timeChange = this.formChangeTimeCancel.value
+        timeChangeText = this.formChangeTimeCancel.text
+      }
+      if (chkStatLimit.length > 0) {
+        if (chkStatLimit[0].limitBookingCheck === 'True') {
+          this.insertLimitBooking(item, this.formChangeDateCancel, timeChange, this.bookingEmpFlowCancel)
+        }
+      }
+      var dtChange = {
+        bookingEmpFlow: this.bookingEmpFlowCancel,
+        // countChangeTime: countTime,
+        changeDueDate: 'change',
+        dueDate: this.formChangeDateCancel + ' ' + timeChange,
+        timeText: timeChangeText,
+        LAST_USER: this.$session.getAll().data.userName
+      }
       await axios
-        .get(this.DNS_IP + '/job_logCloseJob/' + item.jobNo).then((response) => {
-          let rs = response.data
-          console.log('rs', rs)
-          if (rs.length > 0) {
-            for (let i = 0; i < rs.length; i++) {
-              let d = rs[i]
-              let s = {}
-              s.empStep = d.empStep
-              s.endDate = d.endDate
-              s.totalPrice = s.totalPrice
-              s.DTCREATE_DATE = d.CREATE_DATE
-              s.DTLAST_DATE = d.LAST_DATE
-              s.stepTitle = d.totalPrice === null ? d.stepTitle : 'ปิดจ๊อบ'
-              s.timediff = d.timediff
-              s.LAST_USER_Name = d.LAST_USER_Name || d.LAST_USER
-              s.Counttime = this.convertHMS(this.jsTimeDiff(d.CREATE_DATE, d.LAST_DATE))
-              s.totalPrice = d.totalPrice
-              this.timelineitem.push(s)
-            }
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + "/BookingData/edit/" + item.bookNo,
+          dtChange
+        )
+        .then(async response => {
+          let dt = {
+            // pageStatus: 'cancel',
+            // limitBookingCount: dtint,
+            bookNo: item.bookNo,
+            contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
+            status: 'confirm',
+            statusUse: 'use',
+            shopId: this.$session.getAll().data.shopId,
+            CREATE_USER: this.$session.getAll().data.userName,
+            LAST_USER: this.$session.getAll().data.userName
           }
-          this.dialogHistoryJob = true
-        }).catch((error) => {
-          console.log('error function addData : ', error)
-          this.dialogHistoryJob = true
+          axios
+            .post(this.DNS_IP + '/booking_transaction/add', dt)
+            .then(async response => {
+              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              let DTitem = item.userId
+              console.log('DTITEM', DTitem)
+              this.dialogConfirmCancel = false
+              if (DTitem !== 'user-skip') {
+                if (this.statusSearch === 'no') {
+                  await this.getBookingList()
+                } else {
+                  await this.searchAny()
+                }
+                // this.getTimesChange('update')
+                if (this.getSelectText) {
+                  this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
+                }
+                this.pushMsgConfirm(item.bookNo)
+              } else {
+                if (this.statusSearch === 'no') {
+                  await this.getBookingList()
+                } else {
+                  await this.searchAny()
+                }
+                // this.getTimesChange('update')
+                if (this.getSelectText) {
+                  this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
+                }
+              }
+              this.dialogConfirmCancel = false
+            })
+            .catch(error => {
+              console.log('error function addData : ', error)
+            })
         })
     },
-    convertHMS (value) {
-      const sec = parseInt(value, 10) // convert value to number if it's string
-      let hours = Math.floor(sec / 3600) // get hours
-      let minutes = Math.floor((sec - (hours * 3600)) / 60) // get minutes
-      let seconds = sec - (hours * 3600) - (minutes * 60) // get seconds
-      // add 0 if value < 10; Example: 2 => 02
-      if (hours < 10) { hours = '0' + hours }
-      if (minutes < 10) { minutes = '0' + minutes }
-      if (seconds < 10) { seconds = '0' + seconds }
-      return hours + ':' + minutes + ':' + seconds // Return is HH : MM : SS
+    async insertLimitBooking (item, dueDateNew, dueDateTimeNew, bookingEmpFlow) {
+      let result = []
+      let timeSlotCustomer = ''
+      if (this.customerTimeSlot === 'True') {
+        timeSlotCustomer = this.fromAddTimeCus
+      } else {
+        console.log('TESTSTTETETSETSET', this.dataFlowCancel.filter((v) => v.value === this.flowSelectCancel)[0].allData)
+        timeSlotCustomer = this.dataFlowCancel.filter((v) => v.value === this.flowSelectCancel)[0].allData.timeSlot
+      }
+      let dt = {
+        dueDateNew: dueDateNew,
+        dueDateTimeNew: dueDateTimeNew,
+        flowId: item.flowId,
+        masBranchID: item.masBranchID,
+        shopId: item.shopId,
+        userId: item.userId,
+        bookingEmpFlow: bookingEmpFlow,
+        timeSlotCustomer: timeSlotCustomer,
+        LAST_USER: this.$session.getAll().data.userName
+      }
+      await axios.post(this.DNS_IP + '/Booking/insertLimitBooking', dt).then(async response => {
+        result = response.data
+      })
+      return result
     },
-    jsTimeDiff (Time1, Time2) {
-      var oneday = 1000 * 60
-      var defDate = (new Date(Time2).getTime() - new Date(Time1).getTime()) / oneday
-      // console.log('def', Time1, Time2)
-      return defDate
-    },
-    async getjobChangeOnsite (item) {
-      this.dataEmpOnsite = item
-      await this.getEmpSelectAddJob()
-      this.jobitem = []
-      console.log(item)
-      console.log(this.empSelectStepAdd)
-      if (item.jobNo !== '') {
-        await axios.get(this.DNS_IP + '/job/getJobNo?jobNo=' + item.jobNo).then((response) => {
-          let rs = response.data
-          console.log('getJobNo', rs)
-          if (rs.status === false) {
+    exportShowEmpReport () {
+      let dataexport = []
+      for (let i = 0; i < this.dataShowEmpReport.length; i++) {
+        let a = this.dataShowEmpReport[i]
+        if (a.statusBt === 'wait') {
+          a.statusBtShow = this.dataTypeProcess1
+        } else if (a.statusBt === 'confirm') {
+          a.statusBtShow = this.dataTypeProcess2
+        } else if (a.statusBt === 'confirmJob') {
+          a.statusBtShow = this.dataTypeProcess4
+        }
+        let data1 = {
+          'สถานะ': a.statusBtShow,
+          'บริการ': a.flowName,
+          'ชื่อลูกค้า': a.cusName,
+          'เบอร์โทร': a.tel,
+          'วันที่': a.dueDate,
+          'ชื่อพนักงาน': a.bookingEmpFlowName
+        }
+        dataexport.push(data1)
+      }
+
+      const wb = XLSX.utils.book_new()
+      let datause2 = dataexport.sort((a, b) => {
+        if (a.วันที่ < b.วันที่) return -1
+        return a.วันที่ > b.วันที่ ? 1 : 0
+      })
+      console.log(datause2)
+      console.log(this.dataEmpShowEmpReport)
+      for (let i = 0; i < this.dataEmpShowEmpReport.length; i++) {
+        let d = this.dataEmpShowEmpReport[i]
+        if (datause2.filter(el => { return el.ชื่อพนักงาน === d.value }).length > 0) {
+          console.log(datause2.filter(el => { return el.ชื่อพนักงาน === d.value }))
+          let sheetNm = ''
+          if (d.value.length > 30) {
+            sheetNm = d.value.substring(0, 29)
           } else {
-            this.jobitem = rs
-            this.sortNo = rs[0].sortNo
-            this.empSelectJob = parseInt(rs[0].empStepId)
-            this.flowId = rs[0].flowId
-            console.log('this.flowId', this.flowId)
-            if (this.sortNo === 1) {
-              this.checkEmpJob()
+            sheetNm = d.value
+          }
+          XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(datause2.filter(el => { return el.ชื่อพนักงาน === d.value })), sheetNm)
+        }
+      }
+      // console.log('dataexport', dataexport)
+      XLSX.writeFile(wb, 'export_' + this.format_dateNotime(this.dateStartShowEmpReport) + '.xlsx')
+    },
+    toggleShowEmpList (bookingEmpFlowName) {
+      this.dataShowEmpReport.forEach(dessert => {
+        if (dessert.bookingEmpFlowName === bookingEmpFlowName) {
+          dessert.hide = !dessert.hide
+        }
+      })
+    },
+    async getBookingShowEmpList () {
+      this.dataShowEmpReport = []
+      this.dataEmpShowEmpReport = []
+      this.BookingDataListShowEmpReport = []
+      if (this.dateStartShowEmpReport) {
+        await this.getBookingDataListShowEmpReport(this.dateStartShowEmpReport)
+        let urlApi = ''
+        // if (this.flowSelect === 'AllFlow') {
+        urlApi = this.DNS_IP +
+            '/booking_view/get?shopId=' +
+            this.session.data.shopId +
+            // '&masBranchID=' +
+            // this.masBranchID +
+            '&dueDate=' + this.dateStartShowEmpReport
+        // } else {
+        //   urlApi = this.DNS_IP +
+        //       '/booking_view/get?shopId=' +
+        //       this.session.data.shopId +
+        //       '&masBranchID=' +
+        //       this.masBranchID +
+        //       '&dueDate=' + this.dateStartShowEmpReport
+        //       // '&flowId=' + this.flowSelect + this.selectOnsite
+        // }
+        await axios
+          .get(urlApi)
+          .then(async response => {
+            console.log('getData', response.data.length)
+            if (response.data.length > 0) {
+              for (let i = 0; i < response.data.length; i++) {
+                let d = response.data[i]
+                d.statusBt = d.statusBt || 'wait'
+                if (d.statusBt !== 'cancel') {
+                  if (this.dataEmpShowEmpReport.filter(el => { return el.value === d.bookingEmpFlowName }).length === 0) {
+                    let s = {}
+                    s.text = d.bookingEmpFlowName
+                    s.value = d.bookingEmpFlowName
+                    this.dataEmpShowEmpReport.push(s)
+                  }
+                  d.hide = false
+                  d.cusName = this.getDataFromFieldName(this.BookingDataListShowEmpReport[d.bookNo], 'ชื่อ')
+                  d.cusReg = this.getDataFromFieldName(this.BookingDataListShowEmpReport[d.bookNo], 'เลขทะเบียน')
+                  d.tel = this.getDataFromFieldName(this.BookingDataListShowEmpReport[d.bookNo], 'เบอร์โทร')
+                  d.cusName = (d.cusName.length > 0) ? d.cusName[0].fieldValue : ''
+                  d.cusReg = (d.cusReg.length > 0) ? d.cusReg[0].fieldValue : ''
+                  d.tel = (d.tel.length > 0) ? d.tel[0].fieldValue : ''
+                  this.dataShowEmpReport.push(d)
+                }
+              }
+            } else {
+              this.dataShowEmpReport = []
+              this.dataEmpShowEmpReport = []
+            }
+          })
+      }
+    },
+    setEmpAdd () {
+      console.log('SetEmpAdd')
+      if (this.formAdd.masBranchID !== null && this.formAdd.flowId !== null) {
+        this.formAdd.bookingEmpFlow = ''
+        this.fromAddTimeCus = ''
+        this.getEmpAdd(this.formAdd.masBranchID)
+      }
+    },
+    async setEmpEdit () {
+      this.fromAddTimeCus = ''
+      if (this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+        if (this.formEdit.masBranchID !== null && this.formEdit.flowId !== null) {
+          await this.getEmpEdit(this.formEdit.masBranchID)
+          console.log('this.dataEdit', this.dataEdit)
+          if (this.formEdit.bookingEmpFlow) {
+            this.SetallowedDatesChange(this.formEdit.bookingEmpFlow)
+            await this.checkCustomerTimeSlotEdit(this.dataEdit)
+          // this.checkTimeEdit(this.dataEdit, {flowId: this.formEdit.flowId, bookingEmpFlow: this.formEdit.bookingEmpFlow})
+          }
+        }
+      } else if (this.formEdit.masBranchID !== this.masBranchIDOldEdit && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+        if (this.formEdit.masBranchID !== null && this.formEdit.flowId !== null) {
+          await this.getEmpEdit(this.formEdit.masBranchID)
+          console.log('this.dataEdit', this.dataEdit)
+          if (this.formEdit.bookingEmpFlow) {
+            this.SetallowedDatesChange(this.formEdit.bookingEmpFlow)
+            await this.checkCustomerTimeSlotEdit(this.dataEdit)
+          // this.checkTimeEdit(this.dataEdit, {flowId: this.formEdit.flowId, bookingEmpFlow: this.formEdit.bookingEmpFlow})
+          }
+        }
+      } else if (this.flowIdOldEdit !== this.formEdit.flowId && this.formEdit.masBranchID !== this.masBranchIDOldEdit && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+        if (this.formEdit.masBranchID !== null && this.formEdit.flowId !== null) {
+          await this.getEmpEdit(this.formEdit.masBranchID)
+          console.log('this.dataEdit', this.dataEdit)
+          if (this.formEdit.bookingEmpFlow) {
+            this.SetallowedDatesChange(this.formEdit.bookingEmpFlow)
+            await this.checkCustomerTimeSlotEdit(this.dataEdit)
+          // this.checkTimeEdit(this.dataEdit, {flowId: this.formEdit.flowId, bookingEmpFlow: this.formEdit.bookingEmpFlow})
+          }
+        }
+      }
+    },
+    calculateTime (start, end) {
+      let countTime = null
+      // if (end > start) {
+      //   let time = moment.utc(moment(end, 'HH:mm').diff(moment(start, 'HH:mm'))).format('HH:mm')
+      //   let h = parseInt(time.split(':')[0])
+      //   let m = parseInt(time.split(':')[1])
+      //   countTime = (h * 60) + m
+      // } else {
+      //   countTime = 0
+      // }
+      if (end > start) {
+        let genTime = moment.utc(moment(end, 'HH:mm').diff(moment(start, 'HH:mm'))).format('HH:mm')
+        let h = parseInt(genTime.split(':')[0])
+        let m = parseInt(genTime.split(':')[1])
+        if (h === 0 && m !== 0) {
+          countTime = m + ' นาที'
+        } else if (h !== 0 && m === 0) {
+          countTime = h + ' ชม.'
+        } else {
+          countTime = h + ' ชม. ' + m + ' นาที'
+        }
+      } else {
+        countTime = 'No Data'
+      }
+      return countTime
+    },
+    async AddallowedDatesBysetTimebydayCancel () {
+      await this.SetallowedDatesCancel(this.bookingEmpFlowCancel)
+      if (this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime)
+        timeJson.forEach((item) => {
+          if (item.setTime.length < this.fromAddTimeCus) {
+            if (this.dateDayoff.filter((i) => i === item.value).length === 0) {
+              this.dateDayoff.push(item.value)
             }
           }
         })
       }
+      console.log('this.dateDayoff', this.dateDayoff)
     },
-    updatePlace (place) {
-      // console.log(place)
-      this.center = {
-        lat: place.geometry.location.lat(),
-        lng: place.geometry.location.lng()
+    async AddallowedDatesBysetTimebyday () {
+      await this.SetallowedDates()
+      if (this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTime)
+        timeJson.forEach((item) => {
+          if (item.setTime.length < this.fromAddTimeCus) {
+            if (this.dateDayoff.filter((i) => i === item.value).length === 0) {
+              this.dateDayoff.push(item.value)
+            }
+          }
+        })
       }
+      console.log('this.dateDayoff', this.dateDayoff)
     },
-    updateCoordinates (location) {
-      this.center = {
-        lat: location.latLng.lat(),
-        lng: location.latLng.lng()
+    async AddallowedDatesBysetTimebydayEdit () {
+      console.log('formChang', this.bookingEmpFlow)
+      this.dateDayoff = []
+      console.log('this.dateDayoff', this.dateDayoff)
+      await this.SetallowedDatesChange(this.formEdit.bookingEmpFlow)
+      if (this.dataEmpAllChange.filter(item => { return item.empId === this.formEdit.bookingEmpFlow })[0].setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.dataEmpAllChange.filter(item => { return item.empId === this.formEdit.bookingEmpFlow })[0].setTime)
+        console.log('timeJson', timeJson)
+        timeJson.forEach((item) => {
+          if (item.setTime.length < this.fromAddTimeCus) {
+            if (this.dateDayoff.filter((i) => i === item.value).length === 0) {
+              this.dateDayoff.push(item.value)
+            }
+          }
+        })
       }
+      console.log('this.dateDayoff', this.dateDayoff)
+    },
+    async AddallowedDatesBysetTimebydayChange () {
+      console.log('formChang', this.bookingEmpFlow)
+      this.dateDayoff = []
+      console.log('this.dateDayoff', this.dateDayoff)
+      await this.SetallowedDatesChange(this.bookingEmpFlow)
+      if (this.dataEmpAllChange.filter(item => { return item.empId === this.bookingEmpFlow })[0].setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.dataEmpAllChange.filter(item => { return item.empId === this.bookingEmpFlow })[0].setTime)
+        console.log('timeJson', timeJson)
+        timeJson.forEach((item) => {
+          if (item.setTime.length < this.fromAddTimeCus) {
+            if (this.dateDayoff.filter((i) => i === item.value).length === 0) {
+              this.dateDayoff.push(item.value)
+            }
+          }
+        })
+      }
+      console.log('this.dateDayoff', this.dateDayoff)
+    },
+    checkCustomerTimeSlot () {
+      this.timeSlotbyCustomer = []
+      this.customerTimeSlot = this.DataFlowNameDefault.filter((v) => v.value === this.formAdd.flowId)[0].allData.customerTimeSlot
+      let allTime = []
+      if (this.customerTimeSlot === 'True') {
+        if (this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTimebyday === 'True') {
+          // let timeJson = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.fromAdd.empId })[0].setTime).filter((items) => items.value === new Date().getDay())
+          // setTime = timeJson[0].setTime || []
+          let timeJson = JSON.parse(this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTime)
+          let dataTime = []
+          timeJson.forEach((itemTime, index) => {
+            // console.log('item', itemTime)
+            allTime = itemTime.setTime
+            allTime.forEach((item, key) => {
+              let ss = {}
+              if (allTime.length === 1) {
+                ss.text = 'ไม่ระบุ (มีเวลาเดียว)'
+                ss.value = key + 1
+                dataTime.push(ss)
+              } else {
+                if (key > 0) {
+                  let start = allTime.filter((i, k) => k === 0)[0].value
+                  let end = item.value
+                  ss.text = this.calculateTime(start, end)
+                  ss.value = key
+                  // console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
+                  dataTime.push(ss)
+                  // this.timeSlotbyCustomer.push(ss)
+                }
+              }
+            })
+          })
+          dataTime.forEach((i, n) => {
+            if (this.timeSlotbyCustomer.filter((item) => item.text === i.text && item.value === i.value).length === 0) {
+              console.log('n', n)
+              this.timeSlotbyCustomer.push(i)
+            }
+          })
+          console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
+        } else {
+          allTime = JSON.parse(this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTime)
+          // allTime = this.limitBookingCheck = this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].limitBookingCheck || 'False'
+          console.log('allTime', allTime)
+          allTime.forEach((item, key) => {
+            let ss = {}
+            if (allTime.length === 1) {
+            // ss.text = item.value
+            // ss.value = key + 1
+            // this.timeSlotbyCustomer.push(ss)
+              this.fromAddTimeCus = key + 1
+            } else {
+              if (key > 0) {
+                let start = allTime.filter((i, k) => k === 0)[0].value
+                let end = item.value
+                ss.text = this.calculateTime(start, end)
+                ss.value = key
+                console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
+                this.timeSlotbyCustomer.push(ss)
+              }
+            }
+          })
+        }
+      }
+      if (this.date !== '') {
+        this.setLimitBooking(this.date)
+        this.time = ''
+      }
+      // console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
+    },
+    checkCustomerTimeSlotCancel () {
+      this.timeSlotbyCustomer = []
+      this.customerTimeSlot = this.DataFlowNameDefault.filter((v) => v.value === this.flowSelectCancel)[0].allData.customerTimeSlot
+      console.log('this.customerTimeSlot', this.customerTimeSlot)
+      let allTime = []
+      if (this.customerTimeSlot === 'True') {
+        if (this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTimebyday === 'True') {
+          // let timeJson = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.fromAdd.empId })[0].setTime).filter((items) => items.value === new Date().getDay())
+          // setTime = timeJson[0].setTime || []
+          let timeJson = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime)
+          let dataTime = []
+          console.log('timeJson', timeJson)
+          timeJson.forEach((itemTime, index) => {
+            // console.log('item', itemTime)
+            allTime = itemTime.setTime
+            allTime.forEach((item, key) => {
+              let ss = {}
+              if (allTime.length === 1) {
+                ss.text = 'ไม่ระบุ (มีเวลาเดียว)'
+                ss.value = key + 1
+                dataTime.push(ss)
+              } else {
+                if (key > 0) {
+                  let start = allTime.filter((i, k) => k === 0)[0].value
+                  let end = item.value
+                  ss.text = this.calculateTime(start, end)
+                  ss.value = key
+                  // console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
+                  dataTime.push(ss)
+                  // this.timeSlotbyCustomer.push(ss)
+                }
+              }
+            })
+          })
+          dataTime.forEach((i, n) => {
+            if (this.timeSlotbyCustomer.filter((item) => item.text === i.text && item.value === i.value).length === 0) {
+              console.log('n', n)
+              this.timeSlotbyCustomer.push(i)
+            }
+          })
+          console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
+        } else {
+          allTime = JSON.parse(this.EmpItemLimitCancel.filter(item => { return item.empId === this.bookingEmpFlowCancel })[0].setTime)
+          // allTime = this.limitBookingCheck = this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].limitBookingCheck || 'False'
+          console.log('allTime', allTime)
+          allTime.forEach((item, key) => {
+            let ss = {}
+            if (allTime.length === 1) {
+            // ss.text = item.value
+            // ss.value = key + 1
+            // this.timeSlotbyCustomer.push(ss)
+              this.fromAddTimeCus = key + 1
+            } else {
+              if (key > 0) {
+                let start = allTime.filter((i, k) => k === 0)[0].value
+                let end = item.value
+                ss.text = this.calculateTime(start, end)
+                ss.value = key
+                console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
+                this.timeSlotbyCustomer.push(ss)
+              }
+            }
+          })
+        }
+      }
+      if (this.formChangeDateCancel !== '') {
+        this.setLimitBookingCancel(this.formChangeDateCancel)
+        this.formChangeTimeCancel = ''
+      }
+      // console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
+    },
+    checkCustomerTimeSlotEdit () {
+      this.timeSlotbyCustomer = []
+      this.customerTimeSlot = this.DataFlowNameDefault.filter((v) => v.value === this.formEdit.flowId)[0].allData.customerTimeSlot
+      let allTime = []
+      if (this.customerTimeSlot === 'True') {
+        // allTime = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.fromAdd.empId })[0].setTime)
+        console.log('!@!@!@!@!@!@', this.dataEmpAllChange)
+        if (this.dataEmpAllChange.filter(item => { return item.empId === this.formEdit.bookingEmpFlow })[0].setTimebyday === 'True') {
+          // let timeJson = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.fromAdd.empId })[0].setTime).filter((items) => items.value === new Date().getDay())
+          // setTime = timeJson[0].setTime || []
+          let timeJson = JSON.parse(this.dataEmpAllChange.filter(item => { return item.empId === this.formEdit.bookingEmpFlow })[0].setTime)
+          console.log('IF', timeJson)
+          let dataTime = []
+          timeJson.forEach((itemTime, index) => {
+            // console.log('item', itemTime)
+            allTime = itemTime.setTime
+            allTime.forEach((item, key) => {
+              let ss = {}
+              if (allTime.length === 1) {
+                ss.text = 'ไม่ระบุ (มีเวลาเดียว)'
+                ss.value = key + 1
+                dataTime.push(ss)
+              } else {
+                if (key > 0) {
+                  let start = allTime.filter((i, k) => k === 0)[0].value
+                  let end = item.value
+                  ss.text = this.calculateTime(start, end)
+                  ss.value = key
+                  // console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
+                  dataTime.push(ss)
+                  // this.timeSlotbyCustomer.push(ss)
+                }
+              }
+            })
+          })
+          dataTime.forEach((i, n) => {
+            if (this.timeSlotbyCustomer.filter((item) => item.text === i.text && item.value === i.value).length === 0) {
+              console.log('n', n)
+              this.timeSlotbyCustomer.push(i)
+            }
+          })
+          console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
+        } else {
+          console.log('ELSE', this.dataEmpAllChange)
+          allTime = JSON.parse(this.dataEmpAllChange.filter(item => { return item.empId === this.formEdit.bookingEmpFlow })[0].setTime)
+          // allTime = this.limitBookingCheck = this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].limitBookingCheck || 'False'
+          allTime.forEach((item, key) => {
+            let ss = {}
+            if (allTime.length === 1) {
+              // ss.text = item.value
+              // ss.value = key + 1
+              // this.timeSlotbyCustomer.push(ss)
+              this.fromAddTimeCus = key + 1
+            } else {
+              if (key > 0) {
+                let start = allTime.filter((i, k) => k === 0)[0].value
+                let end = item.value
+                ss.text = this.calculateTime(start, end)
+                ss.value = key
+                console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
+                this.timeSlotbyCustomer.push(ss)
+              }
+            }
+          })
+        }
+      }
+      console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
+    },
+    checkCustomerTimeSlotChang (itemChang) {
+      this.timeSlotbyCustomer = []
+      this.customerTimeSlot = this.DataFlowNameDefault.filter((v) => v.value === itemChang.flowId)[0].allData.customerTimeSlot
+      let allTime = []
+      if (this.customerTimeSlot === 'True') {
+        // allTime = JSON.parse(this.EmpItemLimit.filter(item => { return item.empId === this.fromAdd.empId })[0].setTime)
+        if (this.dataEmpAllChange.filter(item => { return item.empId === itemChang.bookingEmpFlow })[0].setTimebyday === 'True') {
+          console.log('IF!!!!!!!!!!!')
+          let timeJson = JSON.parse(this.dataEmpAllChange.filter(item => { return item.empId === itemChang.bookingEmpFlow })[0].setTime)
+          let dataTime = []
+          timeJson.forEach((itemTime, index) => {
+            // console.log('item', itemTime)
+            allTime = itemTime.setTime
+            allTime.forEach((item, key) => {
+              let ss = {}
+              if (allTime.length === 1) {
+                ss.text = 'ไม่ระบุ (มีเวลาเดียว)'
+                ss.value = key + 1
+                dataTime.push(ss)
+              } else {
+                if (key > 0) {
+                  let start = allTime.filter((i, k) => k === 0)[0].value
+                  let end = item.value
+                  ss.text = this.calculateTime(start, end)
+                  ss.value = key
+                  // console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
+                  dataTime.push(ss)
+                  // this.timeSlotbyCustomer.push(ss)
+                }
+              }
+            })
+          })
+          dataTime.forEach((i, n) => {
+            if (this.timeSlotbyCustomer.filter((item) => item.text === i.text && item.value === i.value).length === 0) {
+              console.log('n', n)
+              this.timeSlotbyCustomer.push(i)
+            }
+          })
+          console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
+        } else {
+          console.log('ELSE!!!!!!!!!')
+          console.log('itemTest', this.dataEmpAllChange)
+          allTime = JSON.parse(this.dataEmpAllChange.filter(item => { return item.empId === itemChang.bookingEmpFlow })[0].setTime)
+          // allTime = this.limitBookingCheck = this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].limitBookingCheck || 'False'
+          allTime.forEach((item, key) => {
+            let ss = {}
+            if (allTime.length === 1) {
+            // ss.text = item.value
+            // ss.value = key + 1
+            // this.timeSlotbyCustomer.push(ss)
+              this.fromAddTimeCus = key + 1
+            } else {
+              if (key > 0) {
+                let start = allTime.filter((i, k) => k === 0)[0].value
+                let end = item.value
+                ss.text = this.calculateTime(start, end)
+                ss.value = key
+                console.log('TIMEEEE', start, end, 'ใช้เวลา', ss.text, 'slot', ss.value)
+                this.timeSlotbyCustomer.push(ss)
+              }
+            }
+          })
+        }
+      }
+      console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
+    },
+    async getEmpAdd (masBranchID) {
+      this.dataEmpAdd = []
+      this.dataEmpAllAdd = []
+      await axios.get(this.DNS_IP + '/empSelect/get?privacyPage=bookingform&masBranchID=' + masBranchID).then(response => {
+        let rs = response.data
+        if (rs.length > 0) {
+          for (var i = 0; i < rs.length; i++) {
+            let d = rs[i]
+            if (d.flowId !== null && d.flowId !== '') {
+              let checkFlowId = JSON.parse(d.flowId)
+              if (checkFlowId.filter((a) => parseInt(a) === this.formAdd.flowId).length > 0) {
+                if (d.setTime !== null && d.setTime !== '[]' && d.setTime !== '') {
+                  let s = {}
+                  s.text = d.empFull_NameTH
+                  s.textEng = d.empFull_NameTH
+                  s.value = d.empId
+                  d.text = d.empFull_NameTH
+                  d.textEng = d.empFull_NameTH
+                  d.value = d.empId
+                  this.dataEmpAdd.push(s)
+                  this.dataEmpAllAdd.push(d)
+                  let limit = {}
+                  limit.empId = d.empId
+                  limit.limitBookingCheck = d.limitBookingCheck || 'False'
+                  limit.setTime = d.setTime || '[]'
+                  limit.setTimebyday = d.setTimebyday
+                  this.EmpItemLimitAdd.push(limit)
+                }
+              }
+            }
+          }
+          if (this.dataEmpAdd.length === 0) {
+            this.$swal(
+              'ไม่มีช่างสำหรับประเภทบริการนี้',
+              'กรุณาเลือกประเภทบริการอื่นๆ',
+              'info'
+            )
+          }
+          console.log('EmpItemLimitAdd', this.EmpItemLimitAdd)
+        } else {
+          this.dataEmpAdd = []
+          this.dataEmpAllAdd = []
+          this.EmpItemLimitAdd = []
+        }
+      })
+      console.log('dataEmp', this.dataEmpAllAdd)
+    },
+    async getEmpEdit (masBranchID) {
+      this.dataEmpAdd = []
+      this.dataEmpAllAdd = []
+      this.dataEmpChange = []
+      this.EmpItemLimitAdd = []
+      this.EmpItemLimitChange = []
+      this.dataEmpAllChange = []
+      await axios.get(this.DNS_IP + '/empSelect/get?privacyPage=bookingform&masBranchID=' + masBranchID).then(response => {
+        let rs = response.data
+        if (rs.length > 0) {
+          for (var i = 0; i < rs.length; i++) {
+            let d = rs[i]
+            if (d.flowId !== null && d.flowId !== '') {
+              let checkFlowId = JSON.parse(d.flowId)
+              if (checkFlowId.filter((a) => parseInt(a) === this.formEdit.flowId).length > 0) {
+                console.log('rs!!!!!!!!!!!!getEmpEdit', rs)
+                let s = {}
+                s.text = d.empFull_NameTH
+                s.textEng = d.empFull_NameTH
+                s.value = d.empId
+                d.text = d.empFull_NameTH
+                d.textEng = d.empFull_NameTH
+                d.value = d.empId
+                this.dataEmpAdd.push(s)
+                this.dataEmpChange.push(s)
+                this.dataEmpAllAdd.push(d)
+                this.dataEmpAllChange.push(d)
+                let limit = {}
+                limit.empId = d.empId
+                limit.limitBookingCheck = d.limitBookingCheck || 'False'
+                limit.setTime = d.setTime || '[]'
+                limit.setTimebyday = d.setTimebyday
+                this.EmpItemLimitAdd.push(limit)
+                this.EmpItemLimitChange.push(limit)
+              }
+            }
+          }
+          if (this.dataEmpAdd.length === 0) {
+            this.$swal(
+              'ไม่มีช่างสำหรับประเภทบริการนี้',
+              'กรุณาเลือกประเภทบริการอื่นๆ',
+              'info'
+            )
+          }
+          console.log('EmpItemLimitAdd', this.EmpItemLimitAdd)
+        } else {
+          this.dataEmpAdd = []
+          this.dataEmpAllAdd = []
+          this.EmpItemLimitAdd = []
+        }
+      })
+      console.log('dataEmp', this.dataEmpAllAdd)
+    },
+    async getEmpChange (dt) {
+      this.dataEmpChange = []
+      this.dataEmpAllChange = []
+      this.EmpItemLimitChange = []
+      await axios.get(this.DNS_IP + '/empSelect/get?privacyPage=bookingform&masBranchID=' + dt.masBranchID).then(response => {
+        let rs = response.data
+        if (rs.length > 0) {
+          for (var i = 0; i < rs.length; i++) {
+            let d = rs[i]
+            d.flowId = d.flowId || ''
+            if (d.flowId !== '') {
+              let checkFlowId = JSON.parse(d.flowId)
+              if (checkFlowId.filter((a) => parseInt(a) === dt.flowId).length > 0) {
+                let s = {}
+                s.text = d.empFull_NameTH
+                s.textEng = d.empFull_NameTH
+                s.value = d.empId
+                d.text = d.empFull_NameTH
+                d.textEng = d.empFull_NameTH
+                d.value = d.empId
+                this.dataEmpChange.push(s)
+                this.dataEmpAllChange.push(d)
+                let limit = {}
+                limit.empId = d.empId
+                limit.limitBookingCheck = d.limitBookingCheck || 'False'
+                limit.setTime = d.setTime || '[]'
+                limit.setTimebyday = d.setTimebyday
+                this.EmpItemLimitChange.push(limit)
+              }
+            }
+          }
+          if (this.dataEmpChange.length === 0) {
+            this.$swal(
+              'ไม่มีช่างสำหรับประเภทบริการนี้',
+              'กรุณาเลือกประเภทบริการอื่นๆ',
+              'info'
+            )
+          }
+          console.log('EmpItemLimitAdd', this.EmpItemLimitChange)
+        } else {
+          this.dataEmpChange = []
+          this.dataEmpAllChange = []
+          this.EmpItemLimitChange = []
+        }
+      })
+      console.log('dataEmp', this.dataEmpAllChange)
     },
     async setDataServiceList (item) {
       this.$refs.NotificationService.setData(item)
-    },
-    async printQrcodeComfirmJob (value, jobitem) {
-      let valueStep = 'https://betask-linked-admin.web.app/AdminStampStep?jobNo=' + this.dataGetJob.jobNo + '&shopId=' + this.$session.getAll().data.shopId
-      this.$refs.PrintQrCodeConfirmJobLINE.printQrcode(value, jobitem, this.dataGetJob, valueStep)
     },
     async setDataCallLog (item) {
       this.$refs.CallLog.setData(item)
@@ -8410,10 +8818,9 @@ export default {
       this.$refs.RetureDeposit.setData(item)
     },
     setDataCopyLink (item) {
-      console.log('filteredSelect', this.filteredSelect)
       this.statusdepositPrice = true
-      this.depositPrice = item.depositPrice || 0
       this.depositTextTH = item.depositTextTH || 'ชำระเงินมัดจำ'
+      this.depositPrice = item.depositPrice || 0
       this.bookNo = item.bookNo
       this.datailLinkDeposit = item.remarkDepositLinked
       this.depositLink = 'https://betask-linked.web.app/Thank?shopId=' + item.shopId + '&redirectBy=BookingAdmin&flowId=' + item.flowId + '&bookNo=' + item.bookNo
@@ -8439,13 +8846,13 @@ export default {
       let dt = {}
       if (this.statusdepositPrice === true) {
         dt = {
-          remarkDepositLinked: (this.datailLinkDeposit || '').replace(/%/g, '%%').replace(/'/g, "\\'").replace(/`/g, '\\`'),
+          remarkDepositLinked: this.datailLinkDeposit.replace(/%/g, '%%').replace(/'/g, "\\'").replace(/`/g, '\\`'),
           depositPrice: this.depositPrice || '',
           LAST_USER: this.$session.getAll().data.userName
         }
       } else {
         dt = {
-          remarkDepositLinked: (this.datailLinkDeposit || '').replace(/%/g, '%%').replace(/'/g, "\\'").replace(/`/g, '\\`'),
+          remarkDepositLinked: this.datailLinkDeposit.replace(/%/g, '%%').replace(/'/g, "\\'").replace(/`/g, '\\`'),
           LAST_USER: this.$session.getAll().data.userName
         }
       }
@@ -8460,7 +8867,6 @@ export default {
         // .post(this.DNS_IP + '/Booking/setDetailsCopyLinkAddData/' + 'BK025446181660716002544')
         .post(this.DNS_IP + '/Booking/setDetailsCopyLinkAddData/' + this.bookNo)
         .then(response => {
-          console.log('response.data', response.data)
           if (response.data.status) {
             textBookNo = response.data.message
             depositPrice = response.data.depositPrice || 0
@@ -8468,42 +8874,46 @@ export default {
               textLink = 'กรุณากดเพื่อผูกบัญชี : ' + this.depositLink
             } else {
               textLink = 'กรุณากดเพื่อโอน' + this.depositTextTH + ' : ' + this.depositLink
-              textDepositPrice = `\nจำนวนเงิน : ` + depositPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+              textDepositPrice = `\nจำนวนเงินมัดจำ : ` + depositPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
             }
             // console.log('textBookNo', textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink)
             let copyText = textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink
             // let copyText = document.getElementById('myInputDeposit')
             // copyText.select()
             // copyText.setSelectionRange(0, 99999)
-            // navigator.clipboard.write([
-            //     new ClipboardItem({
-            //         "text/html": Promise.resolve(copyText)
-            //     })
-            // ])
+            // navigator.clipboard.writeText(copyText)
             navigator.clipboard.writeText(copyText)
               .then(() => {
                 this.$swal('สำเร็จ', 'คัดลอกลิ้งสำเร็จ', 'success')
               }).catch(() => {
                 this.$swal('ผิดพลาด', 'กรุณาทำรายการใหม่', 'error')
               })
-            // copy(copyText)
-            // copy('Text', {
-            //   debug: true,
-            //   message: copyText
-            // })
             this.dialogShowDeposit = false
             this.updateBookingListByDeposit()
           } else {
             this.$swal('ผิดพลาด', 'กรุณาทำรายการใหม่', 'error')
           }
         })
+      // console.log('depositPrice', depositPrice)
+      // if (depositPrice === '0') {
+      //   textLink = 'กรุณากดเพื่อผูกบัญชี : ' + this.depositLink
+      // } else {
+      //   textLink = 'กรุณากดเพื่อโอนเงินมัดจำ : ' + this.depositLink
+      //   textDepositPrice = `\nจำนวนเงินมัดจำ : ` + depositPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+      // }
+      // console.log('textBookNo', textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink)
+      // let copyText = textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink
+      // navigator.clipboard.writeText(copyText)
+      // this.dialogShowDeposit = false
+      // this.updateBookingListByDeposit()
     },
     async updateBookingListByDeposit () {
       let urlApi = this.DNS_IP + '/booking_view/get?shopId=' + this.session.data.shopId + '&bookNo=' + this.bookNo
       await axios
         .get(urlApi)
         .then(async response => {
-          console.log('updateBookingListByDeposit', response.data.length)
+          console.log('updateBookingListByDeposit', response.data)
+          console.log('this.dataItem', this.dataItem)
           if (response.data.length > 0) {
             let objIndex = this.dataItem.findIndex(obj => obj.bookNo === this.bookNo)
             this.dataItem[objIndex].remarkDepositLinked = response.data[0].remarkDepositLinked || ''
@@ -8658,19 +9068,18 @@ export default {
       const dateSplit = this.today.split('-')
       const year = String(dateSplit[0])
       const month = String(dateSplit[1])
-      var flowId = this.dataEmpOnsite.flowId
-      // if (this.flowId !== '') {
-      //   flowId = this.flowId
-      // } else {
-      //   flowId = this.dataEmpOnsite.flowId
-      // }
+      var flowId = ''
+      if (this.flowId !== '') {
+        flowId = this.flowId
+      } else {
+        flowId = this.BookingDataItem[0].flowId
+      }
       this.eventInfo = []
       await axios
         .get(
           this.DNS_IP + '/booking_view/getCountNotimeJob?shopId=' + this.session.data.shopId + '&empStep=' + this.empSelectJob + '&flowId=' + flowId + '&dueDate=' + year + '-' + month + '&checkOnsite=True'
         )
         .then(async responses => {
-          console.log('this.responses', responses.data)
           if (responses.data.status === false) {
             this.eventInfo = []
             this.checkEventInfo = []
@@ -8710,12 +9119,12 @@ export default {
       const dateSplit = this.today.split('-')
       const year = String(dateSplit[0])
       const month = String(dateSplit[1])
-      var flowId = this.dataEmpOnsite.flowId
-      // if (this.flowId !== '') {
-      //   flowId = this.flowId
-      // } else {
-      //   flowId = this.dataEmpOnsite.flowId
-      // }
+      var flowId = ''
+      if (this.flowId !== '') {
+        flowId = this.flowId
+      } else {
+        flowId = this.BookingDataItem[0].flowId
+      }
       this.eventInfo = []
       await axios
         .get(
@@ -8865,6 +9274,21 @@ export default {
                     this.empSelectJob = ''
                     this.statusShowDateConfiremjob = true
                     if (response.data.status) {
+                      this.lineNotifyGroupOnsite(this.BookingDataItem[0].bookNo)
+                      if (this.jobCheckPackage) {
+                        await this.usePackage(this.BookingDataItem[0].bookNo)
+                      }
+                      this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
+                      if (this.statusSearch === 'no') {
+                        await this.getBookingList()
+                      } else {
+                        await this.searchAny()
+                      }
+                      this.dialogOnsite = false
+                      this.dataEditJobReady = true
+                      var dataJob = this.dataItem.filter(el => { return el.bookNo === this.dataQrcode.bookNo })
+                      this.getjob(dataJob[0])
+                      this.dialogJob = true
                       // var dt = {
                       //   bookNo: this.BookingDataItem[0].bookNo,
                       //   statusJob: 'job',
@@ -8887,23 +9311,24 @@ export default {
                       //     axios
                       //       .post(this.DNS_IP + '/booking_transaction/add', dtt)
                       //       .then(async response => {
-                      this.lineNotifyGroupOnsite(this.BookingDataItem[0].bookNo)
-                      if (this.jobCheckPackage) {
-                        await this.usePackage(this.BookingDataItem[0].bookNo, this.BookingDataItem[0].masBranchID)
-                      }
-                      this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
-                      if (this.statusSearch === 'no') {
-                        await this.getBookingList()
-                      } else {
-                        await this.searchAny()
-                      }
-                      this.dialogOnsite = false
-                      this.dataEditJobReady = true
-                      var dataJob = this.dataItem.filter(el => { return el.bookNo === this.dataQrcode.bookNo })
-                      this.getjob(dataJob[0])
-                      this.dialogJob = true
-                      //     })
-                      // })
+                      //         this.lineNotifyGroupOnsite(this.BookingDataItem[0].bookNo)
+                      //         if (this.jobCheckPackage) {
+                      //           console.log('usePackage')
+                      //           await this.usePackage()
+                      //         }
+                      //         this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
+                      //         if (this.statusSearch === 'no') {
+                      //           await this.getBookingList()
+                      //         } else {
+                      //           await this.searchAny()
+                      //         }
+                      //         this.dialogOnsite = false
+                      //         this.dataEditJobReady = true
+                      //         var dataJob = this.dataItem.filter(el => { return el.bookNo === this.dataQrcode.bookNo })
+                      //         this.getjob(dataJob[0])
+                      //         this.dialogJob = true
+                      //       })
+                      //   })
                     } else {
                       this.$swal('ผิดพลาด', 'กรุณาทำรายการใหม่', 'error')
                       this.dialogOnsite = false
@@ -8991,14 +9416,14 @@ export default {
                       updateStatusSend: 'false',
                       oldEmpName: this.jobitem[0].empStep
                     }
-                    axios
+                    await axios
                       .post(this.DNS_IP + '/BookingOnsite/pushEmpCustomer/' + this.jobitem[0].bookNo, dt)
                       .then(async response1 => {})
                   }
                   var dtNoti = {
                     oldEmpName: this.jobitem[0].empStep
                   }
-                  axios
+                  await axios
                     .post(this.DNS_IP + '/Booking/LineNotifyGroupOnsite/' + this.jobitem[0].bookNo, dtNoti)
                     .then(async response1 => {})
                 }
@@ -9021,47 +9446,14 @@ export default {
           }
         })
     },
-    async getShowOnsite () {
-      let LimitBooking = axios.get(this.DNS_IP + '/system_user/auth?userName=' + this.$session.getAll().data.userName).then(async (response) => {
-        let rs = response.data[0].showOnsite
-        return rs
-      })
-      // .catch(error => {
-      //   console.log('error function addData : ', error)
-      //   return 'ไม่แสดง'
-      // })
-      return LimitBooking || 'ไม่แสดง'
-    },
-    async updateShowOnsite (text) {
-      await axios.post(this.DNS_IP + '/system_user/edit/' + this.$session.getAll().data.userId, { showOnsite: text }).then(async (response) => {
-      })
-    },
-    async checkShowDataOnsiteSet (text) {
-      if (text === 'ไม่แสดง') {
-        // this.showOnsite = 'แสดง'
-        // this.selectOnsite = '&checkOnsite=is null'
-        await this.updateShowOnsite('ไม่แสดง')
-        this.checkShowDataOnsite()
-      } else {
-        // this.showOnsite = 'ไม่แสดง'
-        // this.selectOnsite = '&checkOnsite=True'
-        await this.updateShowOnsite('แสดง')
-        this.checkShowDataOnsite()
-      }
-    },
-    async checkShowDataOnsite () {
+    async checkShowDataOnsite (text) {
       this.dataReady = false
-      let text = await this.getShowOnsite()
-      // this.$session.data.flash.set('showOnsite', this.showOnsite)
-      console.log('checkShowDataOnsite', text)
       if (text === 'ไม่แสดง') {
         this.showOnsite = 'แสดง'
         this.selectOnsite = '&checkOnsite=is null'
-        // this.updateShowOnsite('ไม่แสดง')
       } else {
         this.showOnsite = 'ไม่แสดง'
         this.selectOnsite = '&checkOnsite=True'
-        // this.updateShowOnsite('แสดง')
       }
       if (this.$route.query.bookNo) {
         // this.beforeCreateScan()
@@ -9118,102 +9510,99 @@ export default {
     gotoPicture (Linkitem) {
       window.open(Linkitem, '_blank')
     },
-    SetallowedDatesChange (flowId) {
-      let dataFlow = this.dataFlowSelectAdd.filter(el => { return el.value === flowId })
-      if (dataFlow.length > 0) {
-        dataFlow.forEach((v, k) => {
-          console.log('v', v)
-          if (v.allData.flowId === flowId) {
-            // console.log('Value', v.dateDayoffValue)
-            v.allData.dateDayCustom = v.allData.dateDayCustom || ''
-            v.allData.dateDayoffValue = v.allData.dateDayoffValue || ''
-            if (v.allData.dateDayoffValue !== '') {
-              console.log('if')
-              this.dateDayoff = JSON.parse(v.allData.dateDayoffValue)
-            } else {
-              console.log('else')
-              this.dateDayoff = []
-            }
-            if (v.dateDayCustom !== '') {
-              this.dateDayCustom = JSON.parse(v.allData.dateDayCustom)
-            } else {
-              this.dateDayCustom = []
-            }
-          }
-        })
-      } else {
-        this.dateDayoff = []
-        this.dateDayCustom = []
-      }
-    },
-    allowedDatesChange (val) {
-      // if (this.dateDaylimit) {
-      if (this.dataFlowSelectAdd.filter(el => el.value === this.flowIDLimit).length > 0) {
-        if (this.dataFlowSelectAdd.filter(el => el.value === this.flowIDLimit)[0].allData.typeDayCustom === 'on') {
-          return val === this.dateDayCustom.filter(el => el === val)[0]
-        } else {
-          if (
-            this.dateDayoff.filter(el => {
-              return el === new Date(val).getDay()
-            }).length === 0 &&
-          this.dateDayCustom.filter(el => {
-            return el === val
-          }).length === 0
-          ) {
-            return val
-          }
-        }
-      } else {
-        return val
-      }
-      // }
-    },
-    SetallowedDatesEdit () {
-      console.log('this.dataFlowSelectEdit', this.dataFlowSelectEdit)
-      let dataFlow = this.dataFlowSelectEdit.filter(el => { return el.value === this.formEdit.flowId })
-      if (dataFlow.length > 0) {
-        dataFlow.forEach((v, k) => {
-          v.allData.dateDayCustom = v.allData.dateDayCustom || ''
-          v.allData.dateDayoffValue = v.allData.dateDayoffValue || ''
-          if (v.allData.dateDayoffValue !== '') {
-            console.log('if')
-            this.dateDayoff = JSON.parse(v.allData.dateDayoffValue)
+    SetallowedDatesChange (bookingEmpFlow) {
+      this.dataEmpAllChange.forEach((v, k) => {
+        if (v.empId === bookingEmpFlow) {
+          v.dateDayCustom = v.dateDayCustom || ''
+          v.dateDayoffValue = v.dateDayoffValue || ''
+          if (v.dateDayoffValue !== '') {
+            // console.log('if')
+            this.dateDayoff = JSON.parse(v.dateDayoffValue)
           } else {
-            console.log('else')
+            // console.log('else')
             this.dateDayoff = []
           }
           if (v.dateDayCustom !== '') {
-            this.dateDayCustom = JSON.parse(v.allData.dateDayCustom)
+            this.dateDayCustom = JSON.parse(v.dateDayCustom)
           } else {
             this.dateDayCustom = []
           }
-        })
-      } else {
-        this.dateDayoff = []
-        this.dateDayCustom = []
+        }
+      })
+      console.log('datoff', this.dateDayoff)
+      console.log('Daycustom', this.dateDayCustom)
+    },
+    SetallowedDatesCancel (bookingEmpFlow) {
+      this.dataEmpCancel.forEach((v, k) => {
+        if (v.empId === bookingEmpFlow) {
+          v.dateDayCustom = v.dateDayCustom || ''
+          v.dateDayoffValue = v.dateDayoffValue || ''
+          if (v.dateDayoffValue !== '') {
+            // console.log('if')
+            this.dateDayoff = JSON.parse(v.dateDayoffValue)
+          } else {
+            // console.log('else')
+            this.dateDayoff = []
+          }
+          if (v.dateDayCustom !== '') {
+            this.dateDayCustom = JSON.parse(v.dateDayCustom)
+          } else {
+            this.dateDayCustom = []
+          }
+        }
+      })
+      console.log('datoff', this.dateDayoff)
+      console.log('Daycustom', this.dateDayCustom)
+    },
+    allowedDatesChange (val) {
+      if (this.dateDaylimit) {
+        if (this.dataEmpAllChange.filter(el => el.empId === this.bookingEmpFlow).length > 0) {
+          if (this.dataEmpAllChange.filter(el => el.empId === this.bookingEmpFlow)[0].typeDayCustom === 'on') {
+            return val === this.dateDayCustom.filter(el => el === val)[0]
+          } else {
+            if (
+              this.dateDayoff.filter(el => {
+                return el === new Date(val).getDay()
+              }).length === 0 &&
+            this.dateDayCustom.filter(el => {
+              return el === val
+            }).length === 0 &&
+            this.dateDaylimit.filter(el => {
+              return el === val
+            }).length === 0
+            ) {
+              return val
+            }
+          }
+        } else {
+          return val
+        }
       }
     },
     allowedDatesEdit (val) {
-      // if (this.dateDaylimit) {
-      if (this.dataFlowSelectEdit.filter(el => el.value === this.formEdit.flowId).length > 0) {
-        if (this.dataFlowSelectEdit.filter(el => el.value === this.formEdit.flowId)[0].allData.typeDayCustom === 'on') {
-          return val === this.dateDayCustom.filter(el => el === val)[0]
-        } else {
-          if (
-            this.dateDayoff.filter(el => {
-              return el === new Date(val).getDay()
+      if (this.dateDaylimit) {
+        if (this.dataEmpAllChange.filter(el => el.empId === this.formEdit.bookingEmpFlow).length > 0) {
+          if (this.dataEmpAllChange.filter(el => el.empId === this.formEdit.bookingEmpFlow)[0].typeDayCustom === 'on') {
+            return val === this.dateDayCustom.filter(el => el === val)[0]
+          } else {
+            if (
+              this.dateDayoff.filter(el => {
+                return el === new Date(val).getDay()
+              }).length === 0 &&
+            this.dateDayCustom.filter(el => {
+              return el === val
             }).length === 0 &&
-          this.dateDayCustom.filter(el => {
-            return el === val
-          }).length === 0
-          ) {
-            return val
+            this.dateDaylimit.filter(el => {
+              return el === val
+            }).length === 0
+            ) {
+              return val
+            }
           }
+        } else {
+          return val
         }
-      } else {
-        return val
       }
-      // }
     },
     showFileUpload (item, text) {
       if (text === '1') {
@@ -9235,85 +9624,69 @@ export default {
       this.checkLimitBooking.ID = 'NO'
       this.checkLimitBooking.countBooking = 1
       let LimitBooking = await this.getLimitBooking()
-      if (this.statusVIP === 'False') {
-        if (LimitBooking.status === false) {
-          this.checkLimitBooking.ID = 'NO'
-          this.checkLimitBooking.countBooking = 1
-          console.log('1257')
+      if (LimitBooking.status === false) {
+        this.checkLimitBooking.ID = 'NO'
+        this.checkLimitBooking.countBooking = 1
+        console.log('1257')
+      } else {
+        let allBookingTime = []
+        let setTime = []
+        console.log('setLimitBooking', this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0])
+        if (this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTimebyday === 'True') {
+          let timeJson = JSON.parse(this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTime).filter((items) => items.value === new Date(this.date).getDay())
+          setTime = timeJson[0].setTime || []
+          console.log('IF++++++++')
         } else {
-          console.log('1259', LimitBooking)
-          LimitBooking.forEach((item) => {
-            let setTime = []
-            // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
-            if (this.DataFlowNameDefault.filter(item => { return item.value === this.formAdd.flowId })[0].allData.setTimebyday === 'True') {
-              let timeJson = JSON.parse(this.DataFlowNameDefault.filter(item => { return item.value === this.formAdd.flowId })[0].allData.setTime).filter((items) => items.value === new Date(this.date).getDay())
-              setTime = timeJson[0].setTime || []
-              console.log('IF')
-            } else {
-              console.log('ELSE')
-              setTime = JSON.parse(this.DataFlowNameDefault.filter(item => { return item.value === this.formAdd.flowId })[0].allData.setTime) || []
-            }
-            let dt = setTime
-            // let dt = JSON.parse(this.branchData.filter(item => { return item.masBranchID === this.formAdd.masBranchID })[0].setTime) || []
-            let dtint = '0'
-            if (dt.filter(item => item.value === this.time.value).length > 0) {
-              dtint = parseInt(dt.filter(item => item.value === this.time.value)[0].limitBooking || '0')
-            } else {
-              dtint = '0'
-            }
-            console.log('test', dtint)
-            if (item.flowId === this.formAdd.flowId && item.bookingDate === this.date && item.bookingTime === this.time.value) {
-              this.checkLimitBooking.ID = item.id
-              console.log('1266')
-              this.checkLimitBooking.countBooking = parseInt(item.countBooking) + 1
-              this.checkLimitBooking.limitCheck = parseInt(item.countBooking) >= dtint ? 'false' : 'true'
-              this.checkLimitBooking.limitBooking = dtint
-            // console.log('item.masBranchID', item)
-            }
+          console.log('ELSE++++++')
+          setTime = JSON.parse(this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTime) || []
+        }
+        let dt = setTime
+        LimitBooking.forEach((item, key) => {
+          if (dt.filter((i, k) => i.value === item.bookingTime).length > 0) {
+            let index = dt.findIndex((i, k) => i.value === item.bookingTime)
+            let slot = item.timeSlotCustomer || item.timeSlot
+            let num = index + (slot - 1)
+            // console.log('value', value, 'index', index, 'slot', slot, num)
+            allBookingTime.push(dt.filter((i, k) => (k >= index && k <= num)))
+          }
+        })
+        let checkTimeSlot = []
+        let index = dt.findIndex((i, k) => i.value === this.time.value)
+        let slot = ''
+        if (this.customerTimeSlot === 'False') {
+          slot = this.DataFlowNameDefault.filter(item => { return item.value === this.formAdd.flowId })[0].allData.timeSlot
+        } else {
+          slot = this.fromAddTimeCus
+        }
+        let num = index + (slot - 1)
+        checkTimeSlot = dt.filter((i, k) => (k >= index && k <= num))
+        // console.log('allBookingTime', allBookingTime)
+        // console.log('chedkTimeSlot', checkTimeSlot)
+        this.checkLimitBooking.limitCheck = 'true'
+        this.checkLimitBooking.limitBooking = 1
+        this.checkLimitBooking.timeSelect = checkTimeSlot
+        this.checkLimitBooking.timeBooking = dt
+        this.checkLimitBooking.slotByflow = slot
+        if (this.statusVIP === 'False') {
+          checkTimeSlot.forEach((item, key) => {
+            allBookingTime.forEach((item2, key2) => {
+              // console.log('filter', item2.filter((i, n) => i.value === item.value))
+              if (item2.filter((i, n) => i.value === item.value).length > 0) {
+                this.checkLimitBooking.limitCheck = 'false'
+                console.log('เวลาซ้ำกัน')
+              } else {
+                console.log('เวลาไม่ซ้ำกัน')
+              }
+            })
           })
         }
       }
       console.log('this.checkLimitBooking', this.checkLimitBooking)
     },
-    async getMonth (month) {
-      console.log('month', month)
-      // const result = await axios.get(this.DNS_IP + '/LimitBookingDate/get_LimitDate?shopId=' + this.$session.getAll().data.shopId + '&masBranchID=' + this.formAdd.masBranchID + '&bookingDate=' + month)
-      const result = await axios.get(this.DNS_IP + '/LimitBookingDate/get_LimitDate?shopId=' + this.$session.getAll().data.shopId + '&flowId=' + this.formAdd.flowId + '&bookingDate=' + month)
-      if (result.data.length > 0) {
-        console.log('getMonth IF', result.data)
-        this.dateDaylimit = []
-        let dt = result.data
-        if (dt[0].limitBookingCheck === 'True') {
-          console.log('limitBookingCheck === True')
-          if (this.statusVIP === 'False') {
-            dt.forEach((v, k) => {
-              if (JSON.parse(v.setTime)) {
-                let count = 0
-                JSON.parse(v.setTime).forEach((v2, k2) => {
-                  count += parseInt(v2.limitBooking)
-                })
-                if (v.sum >= count) {
-                  this.dateDaylimit.push(
-                    moment(v.bookingDate).format('YYYY-MM-DD')
-                  )
-                }
-              }
-            })
-          }
-        } else {
-          console.log('limitBookingCheck === False')
-          this.dateDaylimit = []
-        }
-      } else {
-        console.log('getMonth ELSE')
-        this.dateDaylimit = []
-      }
-      // console.log('this.dateDaylimit', this.dateDaylimit)
-    },
     allowedDates (val) {
       if (this.dateDaylimit) {
-        if (this.dataFlowSelectAdd.filter(el => el.value === this.formAdd.flowId).length > 0) {
-          if (this.dataFlowSelectAdd.filter(el => el.value === this.formAdd.flowId)[0].allData.typeDayCustom === 'on') {
+        if (this.dataEmpAllAdd.filter(el => el.empId === this.formAdd.bookingEmpFlow).length > 0) {
+          if (this.dataEmpAllAdd.filter(el => el.empId === this.formAdd.bookingEmpFlow)[0].typeDayCustom === 'on') {
             return val === this.dateDayCustom.filter(el => el === val)[0]
           } else {
             if (
@@ -9333,293 +9706,152 @@ export default {
         } else {
           return val
         }
-      } else {
-        return val
-      }
-    },
-    async setLimitBookingChange (dateitem) {
-      this.time = ''
-      this.timeavailable = []
-      this.limitBookingCheck = 'False'
-      let setTime = []
-      console.log('!!!_____', this.formChange)
-      // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
-      if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.flowIDLimit) })[0].allData.setTimebyday === 'True') {
-        let timeJson = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.flowIDLimit) })[0].allData.setTime).filter((items) => items.value === new Date(dateitem).getDay())
-        setTime = timeJson[0].setTime || []
-        console.log('IF')
-      } else {
-        console.log('ELSE')
-        setTime = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.flowIDLimit) })[0].allData.setTime) || []
-      }
-      if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.flowIDLimit) }).length > 0) {
-        this.limitBookingCheck = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.flowIDLimit) })[0].allData.limitBookingCheck || 'False'
-      } else {
-        this.limitBookingCheck = 'False'
-      }
-      if (this.limitBookingCheck === 'True') {
-        let TimeData = []
-        let currentDate = setTime
-        TimeData = currentDate
-        if (this.statusVIPChang === 'False') {
-          this.timeavailable = TimeData.filter((item) => parseInt(item.limitBooking) > 0)
-          console.log('TimeData', TimeData)
-          if (this.timeavailable.length > 0) {
-            let LimitBooking = await this.getLimitBookingChang()
-            console.log('LimitBooking!!!!!!!', LimitBooking)
-            if (LimitBooking.status !== false) {
-              if (LimitBooking.length > 0) {
-                LimitBooking.forEach((i, n) => {
-                  this.timeavailable.forEach((v, k) => {
-                    if (i.bookingTime === v.value) {
-                      if (i.countBooking >= parseInt(v.limitBooking)) {
-                        this.timeavailable.splice(k, 1)
-                      }
-                    }
-                  })
-                })
-                if (this.timeavailable.length === 0) {
-                  this.$swal(
-                    'คิวเต็มแล้ว',
-                    'กรุณาเลือกวันที่ใหม่อีกครั้ง',
-                    'error'
-                  )
-                  this.date = ''
-                }
-              }
-              console.log('this.timeavailable IF', this.timeavailable)
-            } else {
-              this.timeavailable = TimeData.filter((item) => parseInt(item.limitBooking) > 0)
-              console.log('this.timeavailable ELSE', this.timeavailable)
-            }
-          } else {
-            this.$swal(
-              'คิวเต็มแล้ว',
-              'กรุณาเลือกวันที่ใหม่อีกครั้ง',
-              'error'
-            )
-            this.date = ''
-          }
-        } else {
-          this.timeavailable = TimeData
-        }
-      } else {
-        console.log('this.timeavailable ELSEEEEE', this.timeavailable)
-        // LimitBookingBy Flow
-        // this.timeavailable = JSON.parse(this.flowItemLimit.filter(item => { return item.flowId === this.flowIDLimit })[0].setTime) || []
-
-        // LimitBookingBy masBranch
-        if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.flowIDLimit) }).length > 0) {
-          this.timeavailable = setTime
-        } else {
-          this.timeavailable = []
-        }
-      }
-    },
-    async setLimitBookingEdit (dateitem) {
-      this.time = ''
-      this.timeavailable = []
-      this.limitBookingCheck = 'False'
-      let setTime = []
-      // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
-      if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTimebyday === 'True') {
-        let timeJson = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime).filter((items) => items.value === new Date(dateitem).getDay())
-        setTime = timeJson[0].setTime || []
-        console.log('IF')
-      } else {
-        console.log('ELSE')
-        setTime = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime) || []
-      }
-      if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) }).length > 0) {
-        this.limitBookingCheck = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.limitBookingCheck || 'False'
-      } else {
-        this.limitBookingCheck = 'False'
-      }
-      if (this.limitBookingCheck === 'True') {
-        let TimeData = []
-        let currentDate = setTime
-        TimeData = currentDate
-        if (this.statusEdit === 'False') {
-          this.timeavailable = TimeData.filter((item) => parseInt(item.limitBooking) > 0)
-          console.log('TimeData', TimeData)
-          if (this.timeavailable.length > 0) {
-            let LimitBooking = await this.getLimitBookingEdit()
-            console.log('LimitBooking', LimitBooking)
-            if (LimitBooking.status !== false) {
-              if (LimitBooking.length > 0) {
-                LimitBooking.forEach((i, n) => {
-                  this.timeavailable.forEach((v, k) => {
-                    if (i.bookingTime === v.value) {
-                      if (i.countBooking >= parseInt(v.limitBooking)) {
-                        this.timeavailable.splice(k, 1)
-                      }
-                    }
-                  })
-                })
-                if (this.timeavailable.length === 0) {
-                  this.$swal(
-                    'คิวเต็มแล้ว',
-                    'กรุณาเลือกวันที่ใหม่อีกครั้ง',
-                    'error'
-                  )
-                  this.date = ''
-                }
-              }
-              console.log('this.timeavailable IF', this.timeavailable)
-            } else {
-              this.timeavailable = TimeData.filter((item) => parseInt(item.limitBooking) > 0)
-              console.log('this.timeavailable ELSE', this.timeavailable)
-            }
-          } else {
-            this.$swal(
-              'คิวเต็มแล้ว',
-              'กรุณาเลือกวันที่ใหม่อีกครั้ง',
-              'error'
-            )
-            this.date = ''
-          }
-        } else {
-          this.timeavailable = TimeData
-        }
-      } else {
-        console.log('this.timeavailable ELSEEEEE', this.timeavailable)
-        // LimitBookingBy Flow
-        // this.timeavailable = JSON.parse(this.flowItemLimit.filter(item => { return item.flowId === this.formEdit.flowId })[0].setTime) || []
-        // LimitBookingBy masBranch
-        if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) }).length > 0) {
-          this.timeavailable = setTime
-        } else {
-          this.timeavailable = []
-        }
       }
     },
     async setLimitBooking (dateitem) {
       this.time = ''
       this.timeavailable = []
-      this.limitBookingCheck = 'False'
+      // this.showTable = []
       let setTime = []
-      // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
-      if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTimebyday === 'True') {
-        let timeJson = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTime).filter((items) => items.value === new Date(dateitem).getDay())
+      console.log('setLimitBooking', this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0])
+      if (this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTime).filter((items) => items.value === new Date(dateitem).getDay())
         setTime = timeJson[0].setTime || []
-        console.log('IF')
+        console.log('IF++++++++')
       } else {
-        console.log('ELSE')
-        setTime = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTime) || []
+        console.log('ELSE++++++')
+        setTime = JSON.parse(this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].setTime) || []
       }
-      if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) }).length > 0) {
-        this.limitBookingCheck = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.limitBookingCheck || 'False'
-      } else {
-        this.limitBookingCheck = 'False'
-      }
+      this.limitBookingCheck = this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].limitBookingCheck || 'False'
       if (this.limitBookingCheck === 'True') {
-        let TimeData = []
-        let currentDate = setTime
-        TimeData = currentDate
-        if (this.statusVIP === 'False') {
-          this.timeavailable = TimeData.filter((item) => parseInt(item.limitBooking) > 0)
-          console.log('TimeData', TimeData)
-          if (this.timeavailable.length > 0) {
-            let LimitBooking = await this.getLimitBooking()
-            console.log('LimitBooking', LimitBooking)
+        this.timeavailable = setTime
+        // let slotByflow = this.DataFlowName.filter((v) => v.value === this.formAdd.flowId)[0].allData.timeSlot
+        let slotByflow = []
+        if (this.customerTimeSlot === 'False') {
+          slotByflow = this.DataFlowNameDefault.filter((v) => v.value === this.formAdd.flowId)[0].allData.timeSlot
+        } else {
+          slotByflow = this.fromAddTimeCus
+        }
+        let overTime = this.DataFlowNameDefault.filter((v) => v.value === this.formAdd.flowId)[0].allData.overTime
+        if (this.timeavailable.length >= slotByflow) {
+          let LimitBooking = await this.getLimitBooking()
+          console.log('LimitBooking', LimitBooking)
+          // เซ็ต Status ให้แต่ละช่วงเวลา
+          this.timeavailable.forEach((v, k) => {
+            if (typeof v.status === 'undefined') {
+              v.status = true
+              if (v.limitBooking === '0') {
+                v.status = false
+              }
+            }
+          })
+          if (this.statusVIP === 'False') {
             if (LimitBooking.status !== false) {
               if (LimitBooking.length > 0) {
-                LimitBooking.forEach((i, n) => {
-                  this.timeavailable.forEach((v, k) => {
-                    if (i.bookingTime === v.value) {
-                      if (i.countBooking >= parseInt(v.limitBooking)) {
-                        this.timeavailable.splice(k, 1)
+                this.timeavailable.forEach((v, k) => {
+                  let bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value)
+                  if (bookingTarget.length > 0) {
+                    v.status = false
+                    let bookingTargetSlot = bookingTarget[0].timeSlotCustomer || bookingTarget[0].timeSlot
+                    for (let bT = 0; bT < bookingTargetSlot; bT++) {
+                      if (this.timeavailable[k + bT] !== undefined) {
+                        this.timeavailable[k + bT].status = false
                       }
                     }
-                  })
+                  }
                 })
-                if (this.timeavailable.length === 0) {
-                  this.$swal(
-                    'คิวเต็มแล้ว',
-                    'กรุณาเลือกวันที่ใหม่อีกครั้ง',
-                    'error'
-                  )
-                  this.date = ''
+              }
+            }
+            // For ค่าใส่ ตัวแปร array
+            let Newtimeavailable = []
+            let slotCheck = slotByflow
+            for (let i = 0; i < this.timeavailable.length; i++) {
+              let num = i + (slotCheck - 1)
+              let checkitem = this.timeavailable.filter((item, key) => (key >= i && key <= num))
+              // console.log('checkitem', checkitem, slotCheck)
+              Newtimeavailable.push(checkitem)
+            }
+            // console.log('Newtimeavailable', Newtimeavailable)
+            this.timeavailable = []
+            Newtimeavailable.forEach((v, k) => {
+            // console.log('v.length >= slotCheck', v.length, slotCheck)
+              if (overTime === 'True') {
+                if (v.filter((v) => v.status === false).length <= 0) {
+                  this.timeavailable.push(v[0])
+                }
+              } else {
+                console.log('else')
+                // ปิดเวลาสุดท้ายในกรณีที่ ไม่ต้องการให้จองเลยเวลา
+                if (v.filter((v) => v.status === false).length <= 0 && v.length >= slotCheck) {
+                  this.timeavailable.push(v[0])
                 }
               }
-              console.log('this.timeavailable IF', this.timeavailable)
+            })
+
+            // ตัดเวลาในกรณีที่เป็นวันปัจจุบัน เพื่อตัดเวลาที่ผ่านมาแล้วออก
+            if (moment(dateitem).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')) {
+              this.timeavailable = this.timeavailable.filter(item => moment().format(item.value) > moment().format('HH:mm'))
             } else {
-              this.timeavailable = TimeData.filter((item) => parseInt(item.limitBooking) > 0)
-              console.log('this.timeavailable ELSE', this.timeavailable)
             }
-          } else {
-            this.$swal(
-              'คิวเต็มแล้ว',
-              'กรุณาเลือกวันที่ใหม่อีกครั้ง',
-              'error'
-            )
-            this.date = ''
+            console.log('this.timeavailable 4', this.timeavailable)
+            // console.log('Newitem', Newtimeavailable)
+            if (this.timeavailable.length === 0) {
+              this.$swal(
+                'คิวเต็มแล้ว',
+                'กรุณาเลือกวันที่ใหม่อีกครั้ง',
+                'error'
+              )
+              this.date = ''
+            }
           }
         } else {
-          this.timeavailable = TimeData
+          this.timeavailable = []
+          this.$swal(
+            'คิวเต็ม',
+            'ช่างคนนี้คิวเต็มแล้ว',
+            'error'
+          ).then(() => { this.date = '' }).catch(() => { this.date = '' })
         }
       } else {
         console.log('this.timeavailable ELSEEEEE', this.timeavailable)
         // LimitBookingBy Flow
-        // this.timeavailable = JSON.parse(this.flowItemLimit.filter(item => { return item.flowId === this.formAdd.flowId })[0].setTime) || []
-
-        // LimitBookingBy masBranch
-        if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) }).length > 0) {
-          this.timeavailable = setTime
-        } else {
-          this.timeavailable = []
-        }
+        this.timeavailable = []
       }
     },
-    async getLimitBookingChang () {
-      let LimitBooking = axios.get(this.DNS_IP + '/LimitBookingDate/get?shopId=' + this.$session.getAll().data.shopId + '&flowId=' + this.flowIDLimit + '&bookingDate=' + this.formChange.date).then(async (response) => {
-        let rs = response.data
-        console.log('rs', rs)
-        return rs
-      })
-      return LimitBooking
-    },
-    async getLimitBookingEdit () {
-      let LimitBooking = axios.get(this.DNS_IP + '/LimitBookingDate/get?shopId=' + this.$session.getAll().data.shopId + '&flowId=' + this.formEdit.flowId + '&bookingDate=' + this.dateEdit).then(async (response) => {
-        let rs = response.data
-        return rs
-      })
-      return LimitBooking
-    },
     async getLimitBooking () {
-      let LimitBooking = axios.get(this.DNS_IP + '/LimitBookingDate/get?shopId=' + this.$session.getAll().data.shopId + '&flowId=' + this.formAdd.flowId + '&bookingDate=' + this.date).then(async (response) => {
+      // console.log('date', this.date)
+      // let LimitBooking = axios.get(this.DNS_IP + '/LimitBookingDate/get?shopId=' + this.$session.getAll().data.shopId + '&masBranchID=' + this.formAdd.masBranchID + '&bookingDate=' + this.date).then(async (response) => {
+      //   let rs = response.data
+      //   return rs
+      // })
+      // return LimitBooking
+      let LimitBooking = axios.get(this.DNS_IP + '/LimitBookingDateEmp/get?shopId=' + this.$session.getAll().data.shopId + '&empId=' + this.formAdd.bookingEmpFlow + '&bookingDate=' + this.date).then(async (response) => {
         let rs = response.data
         return rs
       })
       return LimitBooking
     },
     SetallowedDates () {
-      let dataFlow = this.dataFlowSelectAdd.filter(el => { return el.value === this.formAdd.flowId })
-      if (dataFlow.length > 0) {
-        dataFlow.forEach((v, k) => {
-          console.log('v', v)
-          if (v.allData.flowId === this.formAdd.flowId) {
-            // console.log('Value', v.dateDayoffValue)
-            v.allData.dateDayCustom = v.allData.dateDayCustom || ''
-            v.allData.dateDayoffValue = v.allData.dateDayoffValue || ''
-            if (v.allData.dateDayoffValue !== '') {
-              // console.log('if')
-              this.dateDayoff = JSON.parse(v.allData.dateDayoffValue)
-            } else {
-              // console.log('else')
-              this.dateDayoff = []
-            }
-            if (v.dateDayCustom !== '') {
-              this.dateDayCustom = JSON.parse(v.allData.dateDayCustom)
-            } else {
-              this.dateDayCustom = []
-            }
+      this.dataEmpAllAdd.forEach((v, k) => {
+        if (v.empId === this.formAdd.bookingEmpFlow) {
+          console.log('dateDayoffValue', v.dateDayoffValue)
+          console.log('dateDayCustom', v.dateDayCustom)
+          v.dateDayCustom = v.dateDayCustom || ''
+          v.dateDayoffValue = v.dateDayoffValue || ''
+          if (v.dateDayoffValue !== '') {
+            // console.log('if')
+            this.dateDayoff = JSON.parse(v.dateDayoffValue)
+          } else {
+            // console.log('else')
+            this.dateDayoff = []
           }
-        })
-      } else {
-        this.dateDayoff = []
-        this.dateDayCustom = []
-      }
+          if (v.dateDayCustom !== '') {
+            this.dateDayCustom = JSON.parse(v.dateDayCustom)
+          } else {
+            this.dateDayCustom = []
+          }
+        }
+      })
     },
     onCopySuccess () {
       this.$swal('เรียบร้อย', 'คัดลอกสำเร็จ', 'success')
@@ -9858,14 +10090,21 @@ export default {
               r[filter] = r[filter] || {}
               r[filter][bookNo] = r[filter][bookNo] || []
               r[filter][bookNo].push(BookingData.filter(item => item.bookNo === a.bookNo))
-              this.phonenumItem.push(filter)
+              if (this.phonenumItem.filter(el => { return el === filter }).length === 0) {
+                this.phonenumItem.push(filter)
+              }
             }
             return r
           }, Object.create(null))
-
-          console.log(this.defaultData)
-          this.phonenum = ''
-          this.dialogHistory = true
+          console.log(this.phonenumItem)
+          if (this.phonenumItem.length === 1) {
+            this.phonenum = this.phonenumItem[0]
+            this.SelectDataHistory()
+            this.dialogHistory = true
+          } else {
+            this.phonenum = ''
+            this.dialogHistory = true
+          }
         } else if (BookingData.status === false) {
           this.$swal('ไม่พบประวัติการเข้ารับบริการ', 'กรูณาตรวจสอบข้อมูล', 'info')
           this.dialogHistory = false
@@ -10055,11 +10294,10 @@ export default {
     setFlowAdd () {
       if (this.dataFlowSelectAdd.filter(el => { return el.value === this.formAdd.flowId }).length > 0) {
         this.checkDepositAdd = this.dataFlowSelectAdd.filter(el => { return el.value === this.formAdd.flowId })[0].allData.checkDeposit || 'False'
-        this.statusShowMap = this.dataFlowSelectAdd.filter(el => { return el.value === this.formAdd.flowId })[0].allData.checkOnsite || 'False'
       } else {
         this.checkDepositAdd = 'False'
-        this.statusShowMap = 'False'
       }
+      console.log('this.checkDepositAdd', this.checkDepositAdd)
     },
     async getBookingFieldText () {
       if (JSON.parse(localStorage.getItem('sessionData')) === null) {
@@ -10133,7 +10371,7 @@ export default {
         } else {
           categoryUser = this.$session.getAll().data.category
         }
-        // await this.getBookingDataList('no', this.searchOther)
+        await this.getBookingDataList('no', this.searchOther)
         await axios
           .get(
           // eslint-disable-next-line quotes
@@ -10153,6 +10391,7 @@ export default {
                 let d = response.data[i]
                 let s = {}
                 if (dataItems.filter(el => { return el.bookNo === d.bookNo }).length === 0) {
+                  // console.log('d.bookNo', d.bookNo)
                   s.bookNo = d.bookNo
                   s.flowId = d.flowId
                   let checkDeposit = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(d.flowId) })
@@ -10172,6 +10411,9 @@ export default {
                     s.dueDateText = d.dueDateTextDay + ' ' + d.timeText
                   }
                   s.shopId = d.shopId
+                  s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
+                  s.bookingEmpFlow = d.bookingEmpFlow
+                  s.bookingEmpFlowName = d.bookingEmpFlowName
                   s.dueDateDay = d.dueDateDay
                   s.statusVIP = d.statusVIP
                   s.packageName = d.packageName
@@ -10189,6 +10431,7 @@ export default {
                   s.dueDateTextDay = d.dueDateTextDay
                   s.remark = d.remark || ''
                   s.masBranchID = d.masBranchID
+                  s.googleCalendarEventId = d.googleCalendarEventId || ''
                   s.limitBookingCheck = d.limitBookingCheck
                   s.memberId = d.memberId || ''
                   s.countHourLimit = d.countHourLimit
@@ -10216,17 +10459,15 @@ export default {
                   s.remarkDepositLinked = d.remarkDepositLinked || ''
                   s.lineUserId = d.lineUserId
                   s.memberPicture = d.memberPicture
-                  s.memberName = d.memberName
                   s.timeDueHtext = d.timeDueH + ':00'
                   s.timeDuetext = d.timeDue
+                  s.address = d.address
+                  s.addressLatLong = d.addressLatLong
                   s.countChangeTime = d.countChangeTime || 0
                   s.remarkReturn = d.remarkReturn || ''
                   s.dateReturn = d.dateReturn || ''
                   s.packageId = d.packageId || ''
                   s.tokenPackage = d.tokenPackage || ''
-                  s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
-                  s.menuItem = d.menuItem || []
-                  s.menuPrice = d.menuPrice || ''
                   s.memberDataTag = JSON.parse(d.memberDataTag) || []
                   if (s.memberDataTag.length > 0) {
                     s.tagDataShow = []
@@ -10265,25 +10506,28 @@ export default {
                       s.statusBtText = 'รับรถแล้ว'
                       this.countJob = this.countJob + 1
                       break
-                  // default:
-                  //   s.statusBtText = 'รายการนัดหมายใหม่'
-                  //   this.countWaiting = this.countWaiting + 1
-                  //   break
+                    default:
+                      s.statusBtText = 'รายการนัดหมายใหม่'
+                      this.countWaiting = this.countWaiting + 1
+                      break
                   }
                   var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
                   if (chkTime.length === 0) {
                     dataItemTimes.push(s)
                   }
+                  // console.log('this.BookingDataListSearch', this.BookingDataList[d.bookNo])
+                  s.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
+                  s.cusReg = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เลขทะเบียน')
+                  s.tel = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เบอร์โทร')
+                  s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
+                  s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
+                  s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
                   // s.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
                   // s.cusReg = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เลขทะเบียน')
                   // s.tel = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เบอร์โทร')
                   // s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
                   // s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
                   // s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
-                  s.cusName = d.bookingDataCustomerName || ''
-                  s.cusReg = d.bookingDataCustomerRegisNumber || ''
-                  s.tel = d.bookingDataCustomerTel || ''
-                  s.displayFlowName = d.displayFlowName || ''
                   dataItems.push(s)
                 }
               }
@@ -10443,66 +10687,62 @@ export default {
       }
     },
     async setDataEdit (dt) {
+      this.customerTimeSlot = 'False'
       this.checkSelectText = dt.statusBt
       // this.dialogEditData = true
       await this.getBookingField()
+      // if (dt.statusBt !== 'cancel' && dt.statusBt !== 'confirmJob') {
+      //   await this.getEmpEdit(dt.masBranchID)
+      // }
       // await this.getBookingData(dt, 'edit')
       console.log('setDataEdit', dt)
-      this.statusVIPEdit = dt.statusVIP
       this.dataEdit = dt
       this.userId = dt.userId
       this.BookingDataItemEdit = []
       this.formEdit.masBranchID = dt.masBranchID
-      await this.setFlowByBranchEdit()
+      this.setFlowByBranchEdit()
       this.masBranchIDOldEdit = dt.masBranchID
+      this.formEdit.bookingEmpFlow = dt.bookingEmpFlow
       this.formEdit.flowId = dt.flowId
       this.flowIdOldEdit = dt.flowId
       this.empSelectEdit = parseInt(dt.empSelect)
+      this.statusVIPEdit = dt.statusVIP
+      // console.log('statusVIPEdit', this.statusVIPEdit)
       this.dueDateOld = dt.dueDateDay
       this.dueDateTimeOld = dt.timeDuetext
-
-      this.address = dt.address
-      this.center = JSON.parse(dt.addressLatLong) || null
-
+      this.empIdOld = dt.bookingEmpFlow
+      // checkTimeEdit
       // this.SetallowedDatesEdit()
       this.dateEdit = dt.dueDateDay
       console.log('dataFlowSelectEdit', this.dataFlowSelectEdit)
-      this.timeavailable = []
-      // let dtTime = await this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
-      let dtTime = this.dataFlowSelectEdit.filter(item => { return item.value === this.formEdit.flowId }) || []
-      console.log('dtTime', dtTime)
-      await this.setLimitBookingEdit(dt.dueDateDay)
-      let setTime = []
-      if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTimebyday === 'True') {
-        let timeJson = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime).filter((items) => items.value === new Date(dt.dueDateDay).getDay())
-        setTime = timeJson[0].setTime || []
-        console.log('IF')
-      } else {
-        console.log('ELSE')
-        setTime = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime) || []
+      if (dt.statusBt !== 'cancel' && dt.statusBt !== 'confirmJob') {
+        this.setEmpEdit()
       }
-      if (dtTime.length > 0) {
-        this.statusShowMap = dtTime[0].allData.checkOnsite || 'False'
-        // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
-        console.log('timeavailable', dtTime.map(item => item.allData.setTime))
-        if (dtTime.map(item => item.allData.setTime)[0] === null || dtTime.map(item => item.allData.setTime)[0] === '') {
-          this.timeavailable = []
-          this.timeEdit = ''
-        } else {
-          this.timeavailable = setTime
-          if (this.timeavailable.filter(el => { return el.text === dt.timeText }).length > 0) {
-            if (dt.timeText) {
-              this.timeEdit = { text: dt.timeText, value: dt.dueDate.slice(-5) }
-            } else {
-              this.timeEdit = { text: dt.dueDate.slice(-5), value: dt.dueDate.slice(-5) }
-            }
-          } else {
-            this.timeEdit = { text: dt.dueDate.slice(-5), value: dt.dueDate.slice(-5) }
-          }
-        }
-      } else {
-        this.statusShowMap = 'False'
-      }
+      // await this.checkCustomerTimeSlotEdit(this.dataEdit)
+      // this.checkTimeEdit(this.dataEdit, {flowId: this.formEdit.flowId, bookingEmpFlow: this.formEdit.bookingEmpFlow})
+      // this.timeavailable = []
+      // // let dtTime = await this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
+      // let dtTime = this.dataFlowSelectEdit.filter(item => { return item.value === this.formEdit.flowId }) || []
+      // console.log('dtTime', dtTime)
+      // if (dtTime.length > 0) {
+      //   // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
+      //   console.log('timeavailable', dtTime.map(item => item.allData.setTime))
+      //   if (dtTime.map(item => item.allData.setTime)[0] === null || dtTime.map(item => item.allData.setTime)[0] === '') {
+      //     this.timeavailable = []
+      //     this.timeEdit = ''
+      //   } else {
+      //     this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+      //     if (this.timeavailable.filter(el => { return el.text === dt.timeText }).length > 0) {
+      //       if (dt.timeText) {
+      //         this.timeEdit = { text: dt.timeText, value: dt.dueDate.slice(-5) }
+      //       } else {
+      //         this.timeEdit = { text: dt.dueDate.slice(-5), value: dt.dueDate.slice(-5) }
+      //       }
+      //     } else {
+      //       this.timeEdit = { text: dt.dueDate.slice(-5), value: dt.dueDate.slice(-5) }
+      //     }
+      //   }
+      // }
       console.log('setDataEdit', dt)
       await this.getPackage(dt)
       if (this.dataPackage.length > 0) {
@@ -10638,17 +10878,39 @@ export default {
         })
       console.log('this.BookingDataItemEdit', this.BookingDataItemEdit)
       this.dialogEditData = true
-      this.SetallowedDatesEdit()
     },
     editDataSelect () {
       console.log('flowIdOldEdit', this.flowIdOldEdit, this.formEdit.flowId)
       console.log('formEdit', this.formEdit)
+      console.log('dataEdit', this.dataEdit)
       this.validate('EDIT')
       setTimeout(() => this.checkDuplicate(), 500)
       // setTimeout(() => this.editDataSelectSubmit(), 500)
     },
+    async checkLimitempEdit () {
+      let chkStatLimit = this.dataEmpAllChange.filter(el => { return el.empId === this.formEdit.bookingEmpFlow })
+      if (chkStatLimit.length > 0) {
+        if (chkStatLimit[0].limitBookingCheck === 'True') {
+          if (this.statusVIP === 'False') {
+            let chkStatus = await this.updateLimitBookingChange(this.dataEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value || this.timeEdit.time, this.formEdit.flowId, 'Edit', this.formEdit.masBranchID)
+            console.log('chkStatus', chkStatus)
+            if (chkStatus.status) {
+              this.editDataSelectSubmit()
+            } else {
+              this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
+              this.loadingEdit = false
+            }
+          } else {
+            this.editDataSelectSubmit()
+          }
+        } else {
+          this.editDataSelectSubmit()
+        }
+      } else {
+        this.editDataSelectSubmit()
+      }
+    },
     async checkDuplicate () {
-      console.log('statusVIP', this.statusVIPEdit)
       if (this.validEdit !== false) {
         this.loadingEdit = true
         this.swalConfig.title = 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?'
@@ -10657,72 +10919,17 @@ export default {
             if (this.getSelectText === 'cancel') {
               this.editDataSelectSubmit()
             } else {
+              // this.masBranchIDOldEdit !== this.formEdit.masBranchID
               if (this.formEdit.radiosRemark === 'FastTrack') {
                 let getcount = await this.getCountFastTrack(this.dateEdit, this.formEdit.flowId, this.formEdit.masBranchID)
                 let setCountFast = this.branch.filter(el => { return el.value === this.formEdit.masBranchID })[0].allData.countFastTrack
                 if (getcount < setCountFast) {
-                  let chkStatLimit = this.dataFlowSelectEdit.filter(el => { return el.value === this.formEdit.flowId })
-                  console.log('this.getSelectText', this.getSelectText)
-                  if (chkStatLimit.length > 0) {
-                    if (chkStatLimit[0].allData.limitBookingCheck === 'True') {
-                      let dueOld = this.dueDateOld + this.dueDateTimeOld
-                      let dueNew = this.dateEdit + this.timeEdit.value
-                      let limitBookingCount = this.timeavailable.filter(el => { return el.value === this.timeEdit.value })
-                      console.log('limitBookingCount', limitBookingCount)
-                      let limitBookingCounts = 0
-                      if (limitBookingCount.length > 0) {
-                        limitBookingCounts = parseInt(limitBookingCount[0].limitBooking)
-                      } else {
-                        limitBookingCounts = 0
-                      }
-                      console.log('NEW', this.formEdit.masBranchID)
-                      console.log('OLD', this.masBranchIDOldEdit)
-                      if (this.statusVIPEdit === 'False') {
-                        if (dueOld !== dueNew) {
-                          let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
-                          console.log('chkStatus', chkStatus)
-                          if (chkStatus.status) {
-                            this.editDataSelectSubmit()
-                          } else {
-                            this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-                            this.loadingEdit = false
-                          }
-                        } else if (dueOld === dueNew && this.flowIdOldEdit !== this.formEdit.flowId) {
-                          let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
-                          console.log('chkStatus', chkStatus)
-                          if (chkStatus.status) {
-                            this.editDataSelectSubmit()
-                          } else {
-                            this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-                            this.loadingEdit = false
-                          }
-                        } else if (dueOld === dueNew && this.masBranchIDOldEdit !== this.formEdit.masBranchID) {
-                          let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
-                          console.log('chkStatus', chkStatus)
-                          if (chkStatus.status) {
-                            this.editDataSelectSubmit()
-                          } else {
-                            this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-                            this.loadingEdit = false
-                          }
-                        } else if (dueOld === dueNew && this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.flowIdOldEdit !== this.formEdit.flowId) {
-                          let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
-                          console.log('chkStatus', chkStatus)
-                          if (chkStatus.status) {
-                            this.editDataSelectSubmit()
-                          } else {
-                            this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-                            this.loadingEdit = false
-                          }
-                        } else {
-                          this.editDataSelectSubmit()
-                        }
-                      } else {
-                        this.editDataSelectSubmit()
-                      }
-                    } else {
-                      this.editDataSelectSubmit()
-                    }
+                  if (this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+                    this.checkLimitempEdit()
+                  } else if (this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+                    this.checkLimitempEdit()
+                  } else if (this.flowIdOldEdit !== this.formEdit.flowId && this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+                    this.checkLimitempEdit()
                   } else {
                     this.editDataSelectSubmit()
                   }
@@ -10732,69 +10939,36 @@ export default {
                   this.loadingEdit = false
                 }
               } else {
-                let chkStatLimit = this.dataFlowSelectEdit.filter(el => { return el.value === this.formEdit.flowId })
-                console.log('this.getSelectText', this.getSelectText)
-                if (chkStatLimit.length > 0) {
-                  if (chkStatLimit[0].allData.limitBookingCheck === 'True') {
-                    let dueOld = this.dueDateOld + this.dueDateTimeOld
-                    let dueNew = this.dateEdit + this.timeEdit.value
-                    let limitBookingCount = this.timeavailable.filter(el => { return el.value === this.timeEdit.value })
-                    console.log('limitBookingCount', limitBookingCount)
-                    let limitBookingCounts = 0
-                    if (limitBookingCount.length > 0) {
-                      limitBookingCounts = parseInt(limitBookingCount[0].limitBooking)
-                    } else {
-                      limitBookingCounts = 0
-                    }
-                    if (this.statusVIPEdit === 'False') {
-                      if (dueOld !== dueNew) {
-                        let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
-                        console.log('chkStatus', chkStatus)
-                        if (chkStatus.status) {
-                          this.editDataSelectSubmit()
-                        } else {
-                          this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-                          this.loadingEdit = false
-                        }
-                      } else if (dueOld === dueNew && this.flowIdOldEdit !== this.formEdit.flowId) {
-                        let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
-                        console.log('chkStatus', chkStatus)
-                        if (chkStatus.status) {
-                          this.editDataSelectSubmit()
-                        } else {
-                          this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-                          this.loadingEdit = false
-                        }
-                      } else if (dueOld === dueNew && this.masBranchIDOldEdit !== this.formEdit.masBranchID) {
-                        let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
-                        console.log('chkStatus', chkStatus)
-                        if (chkStatus.status) {
-                          this.editDataSelectSubmit()
-                        } else {
-                          this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-                          this.loadingEdit = false
-                        }
-                      } else if (dueOld === dueNew && this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.flowIdOldEdit !== this.formEdit.flowId) {
-                        let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
-                        console.log('chkStatus', chkStatus)
-                        if (chkStatus.status) {
-                          this.editDataSelectSubmit()
-                        } else {
-                          this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-                          this.loadingEdit = false
-                        }
-                      } else {
-                        this.editDataSelectSubmit()
-                      }
-                    } else {
-                      this.editDataSelectSubmit()
-                    }
-                  } else {
-                    this.editDataSelectSubmit()
-                  }
+                if (this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+                  this.checkLimitempEdit()
+                } else if (this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+                  this.checkLimitempEdit()
+                } else if (this.flowIdOldEdit !== this.formEdit.flowId && this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+                  this.checkLimitempEdit()
                 } else {
                   this.editDataSelectSubmit()
                 }
+                // if (this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+                //   let chkStatLimit = this.dataEmpAllChange.filter(el => { return el.empId === this.formEdit.bookingEmpFlow })
+                //   if (chkStatLimit.length > 0) {
+                //     if (chkStatLimit[0].limitBookingCheck === 'True') {
+                //       let chkStatus = await this.updateLimitBookingChange(this.dataEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value || this.timeEdit.time, this.formEdit.flowId, 'Edit', this.formEdit.masBranchID)
+                //       console.log('chkStatus', chkStatus)
+                //       if (chkStatus.status) {
+                //         this.editDataSelectSubmit()
+                //       } else {
+                //         this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
+                //         this.loadingEdit = false
+                //       }
+                //     } else {
+                //       this.editDataSelectSubmit()
+                //     }
+                //   } else {
+                //     this.editDataSelectSubmit()
+                //   }
+                // } else {
+                //   this.editDataSelectSubmit()
+                // }
               }
             }
           }).catch(error => {
@@ -10805,11 +10979,133 @@ export default {
         this.loadingEdit = false
       }
     },
+    // async checkDuplicate () {
+    //   if (this.validEdit !== false) {
+    //     this.loadingEdit = true
+    //     this.swalConfig.title = 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?'
+    //     this.$swal(this.swalConfig)
+    //       .then(async result => {
+    //         if (this.getSelectText === 'cancel') {
+    //           this.editDataSelectSubmit()
+    //         } else {
+    //           let dtTime = this.dataFlowSelectEdit.filter(item => { return item.value === this.formEdit.flowId }) || []
+    //           console.log('dtTime', dtTime)
+    //           if (dtTime.length > 0) {
+    //             console.log('timeavailable', dtTime.map(item => item.allData.setTime))
+    //             if (dtTime.map(item => item.allData.setTime)[0] === null || dtTime.map(item => item.allData.setTime)[0] === '') {
+    //               this.timeavailable = []
+    //             } else {
+    //               this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+    //             }
+    //           }
+    //           if (this.formEdit.radiosRemark === 'FastTrack') {
+    //             let getcount = await this.getCountFastTrack(this.dateEdit, this.formEdit.flowId, this.formEdit.masBranchID)
+    //             let setCountFast = this.branch.filter(el => { return el.value === this.formEdit.masBranchID })[0].allData.countFastTrack
+    //             if (getcount < setCountFast) {
+    //               let chkStatLimit = this.dataFlowSelectEdit.filter(el => { return el.value === this.formEdit.flowId })
+    //               console.log('this.getSelectText', this.getSelectText)
+    //               if (chkStatLimit.length > 0) {
+    //                 if (chkStatLimit[0].allData.limitBookingCheck === 'True') {
+    //                   let dueOld = this.dueDateOld + this.dueDateTimeOld
+    //                   let dueNew = this.dateEdit + this.timeEdit.value
+    //                   let limitBookingCount = this.timeavailable.filter(el => { return el.value === this.timeEdit.value })
+    //                   console.log('limitBookingCount', limitBookingCount)
+    //                   let limitBookingCounts = 0
+    //                   if (limitBookingCount.length > 0) {
+    //                     limitBookingCounts = parseInt(limitBookingCount[0].limitBooking)
+    //                   } else {
+    //                     limitBookingCounts = 0
+    //                   }
+    //                   if (dueOld !== dueNew) {
+    //                     let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
+    //                     console.log('chkStatus', chkStatus)
+    //                     if (chkStatus.status) {
+    //                       this.editDataSelectSubmit()
+    //                     } else {
+    //                       this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
+    //                       this.loadingEdit = false
+    //                     }
+    //                   } else if (dueOld === dueNew && this.flowIdOldEdit !== this.formEdit.flowId) {
+    //                     let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
+    //                     console.log('chkStatus', chkStatus)
+    //                     if (chkStatus.status) {
+    //                       this.editDataSelectSubmit()
+    //                     } else {
+    //                       this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
+    //                       this.loadingEdit = false
+    //                     }
+    //                   } else {
+    //                     this.editDataSelectSubmit()
+    //                   }
+    //                 } else {
+    //                   this.editDataSelectSubmit()
+    //                 }
+    //               } else {
+    //                 this.editDataSelectSubmit()
+    //               }
+    //             } else {
+    //               this.textError = 'จำนวนงานด่วนต่อวัน เกินกว่าที่ตั้งไว้'
+    //               this.dialogError = true
+    //               this.loadingEdit = false
+    //             }
+    //           } else {
+    //             let chkStatLimit = this.dataFlowSelectEdit.filter(el => { return el.value === this.formEdit.flowId })
+    //             console.log('this.getSelectText', this.getSelectText)
+    //             if (chkStatLimit.length > 0) {
+    //               if (chkStatLimit[0].allData.limitBookingCheck === 'True') {
+    //                 let dueOld = this.dueDateOld + this.dueDateTimeOld
+    //                 let dueNew = this.dateEdit + this.timeEdit.value
+    //                 let limitBookingCount = this.timeavailable.filter(el => { return el.value === this.timeEdit.value })
+    //                 console.log('limitBookingCount', limitBookingCount)
+    //                 let limitBookingCounts = 0
+    //                 if (limitBookingCount.length > 0) {
+    //                   limitBookingCounts = parseInt(limitBookingCount[0].limitBooking)
+    //                 } else {
+    //                   limitBookingCounts = 0
+    //                 }
+    //                 if (dueOld !== dueNew) {
+    //                   let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
+    //                   console.log('chkStatus', chkStatus)
+    //                   if (chkStatus.status) {
+    //                     this.editDataSelectSubmit()
+    //                   } else {
+    //                     this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
+    //                     this.loadingEdit = false
+    //                   }
+    //                 } else if (dueOld === dueNew && this.flowIdOldEdit !== this.formEdit.flowId) {
+    //                   let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
+    //                   console.log('chkStatus', chkStatus)
+    //                   if (chkStatus.status) {
+    //                     this.editDataSelectSubmit()
+    //                   } else {
+    //                     this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
+    //                     this.loadingEdit = false
+    //                   }
+    //                 } else {
+    //                   this.editDataSelectSubmit()
+    //                 }
+    //               } else {
+    //                 this.editDataSelectSubmit()
+    //               }
+    //             } else {
+    //               this.editDataSelectSubmit()
+    //             }
+    //           }
+    //         }
+    //       }).catch(error => {
+    //         this.loadingEdit = false
+    //         console.log('editDataSelectSubmit error', error)
+    //       })
+    //   } else {
+    //     this.loadingEdit = false
+    //   }
+    // },
     async editDataSelectSubmit () {
       // if (this.validEdit !== false) {
       if (this.$session.id() !== undefined) {
         let bookNoEditData = ''
         this.dataEditReady = false
+        console.log('this.BookingDataItemEdit!!!!!!!', this.BookingDataItemEdit)
         let rs = this.BookingDataItemEdit
         let Add = []
         let fielditem = this.BookingDataItemEdit
@@ -10830,13 +11126,6 @@ export default {
             extraJob = 'False'
             break
         }
-        let storeFront = this.DataFlowNameDefault.filter(item => { return item.value === this.formEdit.flowId })
-        let storeFrontCheck = ''
-        if (storeFront.length > 0) {
-          storeFrontCheck = storeFront[0].allData.storeFrontCheck || 'False'
-        } else {
-          storeFrontCheck = 'False'
-        }
         for (let i = 0; i < rs.length; i++) {
           let d = rs[i]
           let update = {}
@@ -10847,20 +11136,18 @@ export default {
             update.bookingFieldId = d.bookingFieldId
             update.bookNo = d.bookNo
             update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%').replace(/'/g, "\\'")
-            update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
-            update.timeText = this.timeEdit.text
+            if (this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+              update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
+              update.timeText = this.timeEdit.text
+            }
             update.flowId = this.formEdit.flowId
             update.masBranchID = this.formEdit.masBranchID
             update.fastTrack = fastTrack
             update.extraJob = extraJob
+            update.bookingEmpFlow = this.formEdit.bookingEmpFlow
             update.LAST_USER = this.$session.getAll().data.userName
             update.empSelect = this.empSelectEdit
             update.shopId = this.session.data.shopId
-            update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
-            update.addressLatLong = JSON.stringify(this.center)
-            update.storeFrontCheck = storeFrontCheck
-            update.statusBookingForm = 'BookingForm'
-            update.timeSelect = this.timeEdit.value
             Add.push(update)
           } else {
             if (
@@ -10879,20 +11166,18 @@ export default {
                 update.bookingFieldId = d.bookingFieldId
                 update.bookNo = d.bookNo
                 update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%').replace(/'/g, "\\'")
-                update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
-                update.timeText = this.timeEdit.text
+                if (this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+                  update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
+                  update.timeText = this.timeEdit.text
+                }
                 update.flowId = this.formEdit.flowId
                 update.masBranchID = this.formEdit.masBranchID
                 update.fastTrack = fastTrack
                 update.extraJob = extraJob
+                update.bookingEmpFlow = this.formEdit.bookingEmpFlow
                 update.LAST_USER = this.$session.getAll().data.userName
                 update.empSelect = this.empSelectEdit
                 update.shopId = this.session.data.shopId
-                update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
-                update.addressLatLong = JSON.stringify(this.center)
-                update.storeFrontCheck = storeFrontCheck
-                update.statusBookingForm = 'BookingForm'
-                update.timeSelect = this.timeEdit.value
                 Add.push(update)
               }
             } else if (d.conditionField === 'flow') {
@@ -10902,20 +11187,18 @@ export default {
                 update.bookingFieldId = d.bookingFieldId
                 update.bookNo = d.bookNo
                 update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%').replace(/'/g, "\\'")
-                update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
-                update.timeText = this.timeEdit.text
+                if (this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+                  update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
+                  update.timeText = this.timeEdit.text
+                }
                 update.flowId = this.formEdit.flowId
                 update.masBranchID = this.formEdit.masBranchID
                 update.fastTrack = fastTrack
                 update.extraJob = extraJob
+                update.bookingEmpFlow = this.formEdit.bookingEmpFlow
                 update.LAST_USER = this.$session.getAll().data.userName
                 update.empSelect = this.empSelectEdit
                 update.shopId = this.session.data.shopId
-                update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
-                update.addressLatLong = JSON.stringify(this.center)
-                update.storeFrontCheck = storeFrontCheck
-                update.statusBookingForm = 'BookingForm'
-                update.timeSelect = this.timeEdit.value
                 Add.push(update)
               }
             }
@@ -10946,19 +11229,26 @@ export default {
             if (this.getSelectText) {
               this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
             }
+            // this.getDataCalendaBooking()
+            this.dialogEditData = false
             if (this.getSelectText === 'confirm') {
               this.pushMsgConfirmEditDataTime(bookNoEditData)
             }
-            // this.getDataCalendaBooking()
-            this.dialogEditData = false
             this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
             this.dataEditReady = true
             this.loadingEdit = false
+            this.fromAddTimeCus = ''
+            this.customerTimeSlot = 'False'
           }).catch(error => {
             // this.dataEditReady = true
             setTimeout(() => this.editDataSelectSubmit(), 3000)
             console.log('close alert : ', error)
           })
+          // }).catch(error => {
+          //   // this.dataEditReady = true
+          //   setTimeout(() => this.editDataSelectSubmit(), 3000)
+          //   console.log('close alert : ', error)
+          // })
       } else {
         this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
         clearInterval(this.setTimerCalendar)
@@ -10974,6 +11264,7 @@ export default {
         try {
           await this.$refs.CalendarBooking.getDataReturn(this.selectOnsite, this.dateStart, this.masBranchID, this.flowSelect)
         } catch (e) { console.log(e) }
+      // this.$refs.CalendarBooking.getDataFlow()
       // this.$refs.CalendarBooking.getDataBranch()
       // this.$refs.CalendarBooking.getBookingList()
       } else {
@@ -10994,6 +11285,7 @@ export default {
         try {
           await this.$refs.CalendarBooking.getDataReturn(this.selectOnsite, this.dateStart, masBranchID, flowSelect)
         } catch (e) { console.log(e) }
+      // this.$refs.CalendarBooking.getDataFlow()
       // this.$refs.CalendarBooking.getDataBranch()
       // this.$refs.CalendarBooking.getBookingList()
       } else {
@@ -11008,11 +11300,11 @@ export default {
       this.datailLinkDeposit = ''
       this.remark = ''
       let _this = this
-      this.setTimerCalendar = setInterval(function () { _this.getDataCalendaBookingAdd() }, 20000)
+      this.setTimerCalendar = setInterval(function () { _this.getDataCalendaBooking() }, 20000)
       // var _this = this
       // this.setTimerCalendar = setInterval(function () { _this.getDataCalendaBooking() }, 30000)
       this.dialogAdd = true
-      setTimeout(() => this.getDataCalendaBookingAdd(), 1000)
+      setTimeout(() => this.getDataCalendaBooking(), 1000)
       if (this.branch.length === 0) {
         this.getDataBranch()
       }
@@ -11045,14 +11337,16 @@ export default {
       }
     },
     checkTime () {
-      this.timeavailable = []
-      // console.log('dataFlowSelectAdd', this.dataFlowSelectAdd)
+      // this.timeavailable = []
+      console.log('dataFlowSelectAdd', this.dataFlowSelectAdd)
       let dtTime = this.dataFlowSelectAdd.filter(item => { return item.value === this.formAdd.flowId })
       if (dtTime.length > 0) {
         if (dtTime[0].menuShowStatus === 'True') {
+          console.log('IF')
           this.showMenu = 'True'
           this.dataMenuAdd = JSON.parse(dtTime[0].allData.menuItem) || []
         } else {
+          console.log('ELSE show menu')
           this.showMenu = 'False'
           this.dataMenuAdd = []
         }
@@ -11060,49 +11354,284 @@ export default {
         // console.log('test', dtTime)
         // this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
         // console.log('timevailable', this.timeavailable)
-        if (dtTime.map(item => item.allData.setTime) === null) {
-          this.timeavailable = []
-          // this.$swal('แจ้งเตือน', 'เนื่องจากยังไม่ได้ตั้งค่าเวลา', 'info')
-        } else {
-          this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
-        }
+        // if (dtTime.map(item => item.allData.setTime) === null) {
+        //   this.timeavailable = []
+        //   console.log('IF2')
+        // } else {
+        //   console.log('ELSE2')
+        //   this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+        // }
       }
     },
-    checkTimeEdit () {
+    async checkTimeEditSubmit (dateC, dt) {
+      this.timeEdit = ''
       this.timeavailable = []
-      let dtTime = this.dataFlowSelectEdit.filter(item => { return item.value === this.formEdit.flowId })
-      if (dtTime.length > 0) {
-        // let dtTime = this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
-        // console.log('test', dtTime)
-        // this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
-        // console.log('timevailable', this.timeavailable)
-        if (dtTime.map(item => item.allData.setTime) === null) {
-          this.timeavailable = []
-          // this.$swal('แจ้งเตือน', 'เนื่องจากยังไม่ได้ตั้งค่าเวลา', 'info')
-        } else {
-          this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
-        }
+      console.log('checkTimeEditSubmit', dateC, dt)
+      console.log('formEdit', this.dueDateOld, this.dueDateTimeOld, this.empIdOld)
+      // this.showTable = []
+      let setTime = []
+      // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
+      console.log('!!!!!!!!!!!!!!!!!!!!', this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0])
+      if (this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].setTime).filter((items) => items.value === new Date(dateC).getDay())
+        setTime = timeJson[0].setTime || []
+        console.log('IF')
+      } else {
+        console.log('ELSE')
+        setTime = JSON.parse(this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].setTime) || []
       }
-    },
-    checkTimeFlow (dt) {
-      this.timeavailable = []
-      // let dtTime = this.branch.filter(item => { return item.value === this.masBranchID })
-      let dtTime = this.DataFlowNameDefault.filter(item => { return item.value === dt.flowId })
-      // console.log('dtTime', dtTime)
-      if (dtTime.length > 0) {
-        console.log('dtTime', dtTime.filter(item => item.allData.setTime))
-        if (dtTime.filter(item => item.allData.setTime).length > 0) {
-          if (dtTime.filter(item => item.allData.setTime)[0] === null) {
+      let dtEmpItemLimitChange = this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })
+      console.log('dtEmpItemLimitChange', dtEmpItemLimitChange)
+      this.limitBookingCheck = dtEmpItemLimitChange.length > 0 ? dtEmpItemLimitChange[0].limitBookingCheck || 'False' : 'False'
+      if (this.limitBookingCheck === 'True') {
+        this.timeavailable = setTime
+        // let slotByflow = this.dataFlowSelectEdit.filter((v) => v.value === dt.flowId)[0].allData.timeSlot
+        let slotByflow = []
+        if (this.customerTimeSlot === 'False') {
+          slotByflow = this.dataFlowSelectEdit.filter((v) => v.value === dt.flowId)[0].allData.timeSlot
+        } else {
+          slotByflow = this.fromAddTimeCus
+        }
+        let overTime = this.dataFlowSelectEdit.filter((v) => v.value === dt.flowId)[0].allData.overTime
+        if (this.timeavailable.length >= slotByflow) {
+          let LimitBooking = await this.getLimitBookingChange(dateC, dt)
+          console.log('LimitBooking', LimitBooking)
+          // เซ็ต Status ให้แต่ละช่วงเวลา
+          this.timeavailable.forEach((v, k) => {
+            if (typeof v.status === 'undefined') {
+              v.status = true
+              if (v.limitBooking === '0') {
+                v.status = false
+              }
+            }
+          })
+          console.log('timeavailable', this.timeavailable)
+          if (this.statusVIPEdit === 'False') {
+            if (LimitBooking.status !== false) {
+              if (LimitBooking.length > 0) {
+                this.timeavailable.forEach((v, k) => {
+                  // console.log('dt.timeText', dt.timeText)
+                  // console.log('formEdit', this.dueDateOld, this.dueDateTimeOld)
+                  let bookingTarget = []
+                  if (this.dueDateOld === dateC && this.empIdOld === dt.bookingEmpFlow) {
+                    console.log('checkTRUE')
+                    bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value && this.dueDateTimeOld !== a.bookingTime)
+                  } else {
+                    console.log('checkFALSE')
+                    bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value)
+                  }
+                  if (bookingTarget.length > 0) {
+                    v.status = false
+                    let bookingTargetSlot = bookingTarget[0].timeSlotCustomer || bookingTarget[0].timeSlot
+                    for (let bT = 0; bT < bookingTargetSlot; bT++) {
+                      if (this.timeavailable[k + bT] !== undefined) {
+                        this.timeavailable[k + bT].status = false
+                      }
+                    }
+                  }
+                })
+              }
+            }
+            // For ค่าใส่ ตัวแปร array
+            let Newtimeavailable = []
+            let slotCheck = slotByflow
+            for (let i = 0; i < this.timeavailable.length; i++) {
+              let num = i + (slotCheck - 1)
+              let checkitem = this.timeavailable.filter((item, key) => (key >= i && key <= num))
+              console.log('checkitem', checkitem, slotCheck)
+              Newtimeavailable.push(checkitem)
+            }
+            console.log('Newtimeavailable', Newtimeavailable)
             this.timeavailable = []
-            // this.$swal('แจ้งเตือน', 'เนื่องจากยังไม่ได้ตั้งค่าเวลา', 'info')
-          } else {
-            this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+            Newtimeavailable.forEach((v, k) => {
+              // console.log('v.length >= slotCheck', v.length, slotCheck)
+              if (overTime === 'True') {
+                if (v.filter((v) => v.status === false).length <= 0) {
+                  this.timeavailable.push(v[0])
+                }
+              } else {
+                // ปิดเวลาสุดท้ายในกรณีที่ ไม่ต้องการให้จองเลยเวลา
+                if (v.filter((v) => v.status === false).length <= 0 && v.length >= slotCheck) {
+                  console.log('else', v[0])
+                  this.timeavailable.push(v[0])
+                }
+              }
+            })
+
+            // ตัดเวลาในกรณีที่เป็นวันปัจจุบัน เพื่อตัดเวลาที่ผ่านมาแล้วออก
+            // if (dateC === moment().format('YYYY-MM-DD')) {
+            //   this.timeavailable = this.timeavailable.filter(item => moment().format(item.value) > moment().format('HH:mm'))
+            // } else {
+            // }
+            // console.log('this.timeavailable 4', this.timeavailable)
+            // console.log('Newitem', Newtimeavailable)
+            if (this.timeavailable.length === 0) {
+              this.$swal(
+                'คิวเต็มแล้ว',
+                'กรุณาเลือกวันที่ใหม่อีกครั้ง',
+                'error'
+              )
+              this.date = ''
+            }
           }
         } else {
           this.timeavailable = []
+          this.$swal(
+            'คิวเต็ม',
+            'ช่างคนนี้คิวเต็มแล้ว',
+            'error'
+          ).then(() => { this.date = '' }).catch(() => { this.date = '' })
         }
       } else {
-        this.timeavailable = []
+        console.log('this.timeavailable ELSEEEEE', this.timeavailable)
+        // LimitBookingBy Flow
+        if (this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow }).length > 0) {
+          this.timeavailable = setTime
+        } else {
+          this.timeavailable = []
+        }
+      }
+    },
+    async checkTimeEdit (dateC, dt) {
+      if (this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+        this.checkTimeEditSubmit(dateC, dt)
+      } else if (this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+        this.checkTimeEditSubmit(dateC, dt)
+      } else if (this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.flowIdOldEdit !== this.formEdit.flowId && this.getSelectText !== 'cancel' && (this.checkSelectText !== 'confirmJob')) {
+        this.checkTimeEditSubmit(dateC, dt)
+      }
+    },
+    async getLimitBookingChange (dateC, dt) {
+      // console.log('date', this.date)
+      // let LimitBooking = axios.get(this.DNS_IP + '/LimitBookingDate/get?shopId=' + this.$session.getAll().data.shopId + '&masBranchID=' + this.formAdd.masBranchID + '&bookingDate=' + this.date).then(async (response) => {
+      //   let rs = response.data
+      //   return rs
+      // })
+      // return LimitBooking
+      let LimitBooking = axios.get(this.DNS_IP + '/LimitBookingDateEmp/get?shopId=' + this.$session.getAll().data.shopId + '&empId=' + dt.bookingEmpFlow + '&bookingDate=' + dateC).then(async (response) => {
+        let rs = response.data
+        return rs
+      })
+      return LimitBooking
+    },
+    async checkTimeFlow (dateC, dt) {
+      this.time = ''
+      this.timeavailable = []
+      console.log('checkTimeFlow', dateC, '=====', dt)
+      // this.showTable = []
+      let setTime = []
+      // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
+      console.log('EmpItemLimitChange', this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0])
+      if (this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].setTime).filter((items) => items.value === new Date(dateC).getDay())
+        setTime = timeJson[0].setTime || []
+        console.log('IF', setTime)
+      } else {
+        console.log('ELSE', setTime)
+        setTime = JSON.parse(this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].setTime) || []
+      }
+      this.limitBookingCheck = this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].limitBookingCheck || 'False'
+      if (this.limitBookingCheck === 'True') {
+        this.timeavailable = setTime
+        let slotByflow = []
+        if (this.customerTimeSlot === 'False') {
+          slotByflow = this.DataFlowNameDefault.filter((v) => v.value === dt.flowId)[0].allData.timeSlot
+        } else {
+          slotByflow = this.fromAddTimeCus
+        }
+        let overTime = this.DataFlowNameDefault.filter((v) => v.value === dt.flowId)[0].allData.overTime
+        if (this.timeavailable.length >= slotByflow) {
+          let LimitBooking = await this.getLimitBookingChange(dateC, dt)
+          console.log('LimitBooking', LimitBooking)
+          // เซ็ต Status ให้แต่ละช่วงเวลา
+          this.timeavailable.forEach((v, k) => {
+            if (typeof v.status === 'undefined') {
+              v.status = true
+              if (v.limitBooking === '0') {
+                v.status = false
+              }
+            }
+          })
+          // console.log('timeavailable', this.timeavailable)
+          if (this.statusVIPChang === 'False') {
+            if (LimitBooking.status !== false) {
+              if (LimitBooking.length > 0) {
+                this.timeavailable.forEach((v, k) => {
+                  let bookingTarget = []
+                  if (this.dueDateOld === dateC) {
+                    console.log('checkTRUE')
+                    bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value && this.dueDateTimeOld !== a.bookingTime)
+                  } else {
+                    console.log('checkFALSE')
+                    bookingTarget = LimitBooking.filter((a) => a.bookingTime === v.value)
+                  }
+                  console.log('bookingTargetSlot', bookingTarget)
+                  if (bookingTarget.length > 0) {
+                    v.status = false
+                    let bookingTargetSlot = bookingTarget[0].timeSlotCustomer || bookingTarget[0].timeSlot
+                    for (let bT = 0; bT < bookingTargetSlot; bT++) {
+                      if (this.timeavailable[k + bT] !== undefined) {
+                        this.timeavailable[k + bT].status = false
+                      }
+                    }
+                  }
+                })
+              }
+            }
+            // For ค่าใส่ ตัวแปร array
+            let Newtimeavailable = []
+            let slotCheck = slotByflow
+            for (let i = 0; i < this.timeavailable.length; i++) {
+              let num = i + (slotCheck - 1)
+              let checkitem = this.timeavailable.filter((item, key) => (key >= i && key <= num))
+              // console.log('checkitem', checkitem, slotCheck)
+              Newtimeavailable.push(checkitem)
+            }
+            // console.log('Newtimeavailable', Newtimeavailable)
+            this.timeavailable = []
+            Newtimeavailable.forEach((v, k) => {
+              // console.log('v.length >= slotCheck', v.length, slotCheck)
+              if (overTime === 'True') {
+                if (v.filter((v) => v.status === false).length <= 0) {
+                  this.timeavailable.push(v[0])
+                }
+              } else {
+                // ปิดเวลาสุดท้ายในกรณีที่ ไม่ต้องการให้จองเลยเวลา
+                if (v.filter((v) => v.status === false).length <= 0 && v.length >= slotCheck) {
+                  console.log('else', v[0])
+                  this.timeavailable.push(v[0])
+                }
+              }
+            })
+
+            // ตัดเวลาในกรณีที่เป็นวันปัจจุบัน เพื่อตัดเวลาที่ผ่านมาแล้วออก
+            // if (dateC === moment().format('YYYY-MM-DD')) {
+            //   this.timeavailable = this.timeavailable.filter(item => moment().format(item.value) > moment().format('HH:mm'))
+            // } else {
+            // }
+            // console.log('this.timeavailable 4', this.timeavailable)
+            // console.log('Newitem', Newtimeavailable)
+            if (this.timeavailable.length === 0) {
+              this.$swal(
+                'คิวเต็มแล้ว',
+                'กรุณาเลือกวันที่ใหม่อีกครั้ง',
+                'error'
+              )
+              this.date = ''
+            }
+          }
+        } else {
+          this.timeavailable = []
+          this.$swal(
+            'คิวเต็ม',
+            'ช่างคนนี้คิวเต็มแล้ว',
+            'error'
+          ).then(() => { this.date = '' }).catch(() => { this.date = '' })
+        }
+      } else {
+        console.log('this.timeavailable ELSEEEEE', this.timeavailable)
+        // LimitBookingBy Flow
+        this.timeavailable = setTime
       }
     },
     async getCountFastTrack (dateS, flowId, branch) {
@@ -11209,6 +11738,10 @@ export default {
       let dataExport = []
       this.dataexport = []
       let runNo = 0
+      // console.log('bookingData', this.BookingDataListTimechange)
+      // console.log('this.editedItemSeleteField', this.editedItemSeleteField)
+      // console.log('this.dataItemTimesChange', this.dataItemTimesChange)
+      // console.log('this.dataItemTime', this.dataItemTime)
       var datause = this.dataItemTime.sort((a, b) => {
         if (a.timeDuetext < b.timeDuetext) return -1
         return a.timeDuetext > b.timeDuetext ? 1 : 0
@@ -11363,7 +11896,6 @@ export default {
               s.timeDueHtext = ''
             }
             serviceDetail = serviceDetail.trim() || t.flowName
-            console.log('t', t)
             s.type = 'ปกติ'
             s.runNo = runNo
             s.dateBooking = this.format_dateNotime(this.timeTable)
@@ -11444,7 +11976,7 @@ export default {
           dataexport.push(dataSum)
         }
       }
-      console.log('dataexport', dataexport)
+      // console.log('dataexport', dataexport)
       const dataWS = XLSX.utils.json_to_sheet(dataexport)
       const wb = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(wb, dataWS)
@@ -11780,6 +12312,7 @@ export default {
       }
     },
     async getBookingListJob (item) {
+      await this.getEmpChange(item)
       let dateCurrent = moment().format('YYYY-MM-DD')
       let dueDate = item.dueDateDay
       if (dateCurrent >= dueDate) {
@@ -11789,15 +12322,9 @@ export default {
         this.statusConfirmJob = false
       }
       if (this.statusConfirmJob) {
-        let checkStep = await axios.get(this.DNS_IP + '/flowStep/get?flowId=' + item.flowId)
-        console.log('checkStep', checkStep)
-        if (checkStep.data.status === false) {
-          this.endDate = moment().format('YYYY-MM-DD')
-          this.endTime = moment().format('HH:mm')
-          this.statusShowDateConfiremjob = false
-        } else {
-          this.statusShowDateConfiremjob = true
-        }
+        this.endDate = moment().format('YYYY-MM-DD')
+        this.endTime = moment().format('HH:mm')
+        this.statusShowDateConfiremjob = false
         this.dataQrcode = item
         this.dataReady = false
         this.selectedStatus = true
@@ -11838,8 +12365,6 @@ export default {
                   s.flowName = d.flowName
                   s.dueDate = d.dueDate
                   s.shopId = d.shopId
-                  s.dueDateDay = d.dueDateDay
-                  s.statusVIP = d.statusVIP
                   s.packageName = d.packageName
                   s.packageDetails = d.packageDetails
                   s.packageImage = d.packageImage
@@ -11848,13 +12373,9 @@ export default {
                   s.packageAmount = d.packageAmount
                   s.packagePoint = d.packagePoint
                   s.packageExpire = d.packageExpire
-                  s.depositTextTH = d.depositTextTH
-                  s.CREATE_DATE_Status = d.CREATE_DATE_Status
-                  s.CREATE_DATE = d.CREATE_DATE
-                  s.menuShowStatus = d.menuShowStatus
-                  s.dueDateTextDay = d.dueDateTextDay
                   s.remark = d.remark || ''
                   s.masBranchID = d.masBranchID
+                  s.googleCalendarEventId = d.googleCalendarEventId || ''
                   s.empSelect = d.empSelect
                   s.empFull_NameTH = d.empFull_NameTH || ''
                   s.empFull_NameTH = s.empFull_NameTH.replace('นางสาว', '')
@@ -11905,40 +12426,43 @@ export default {
                   if (chkTime.length === 0) {
                     dataItemTimes.push(s)
                   }
-                  // let dataBookingData = []
-                  // await axios
-                  //   .get(
-                  //     // eslint-disable-next-line quotes
-                  //     this.DNS_IP + "/BookingData/getView?bookNo=" + d.bookNo
-                  //   )
-                  //   .then(async responses => {
-                  //     console.log('getDataData', responses.data)
-                  //     dataBookingData = responses.data
-                  //     if (responses.data.status !== false) {
-                  //       responses.data.forEach((row) => {
-                  //         if (typeof (this.BookingDataList[row.bookNo]) === 'undefined') {
-                  //           this.BookingDataList[row.bookNo] = []
-                  //         }
-                  //         this.BookingDataList[row.bookNo].push(row)
-                  //       })
-                  //     }
-                  //   })
-                  // s.cusName = dataBookingData.filter(function (el) {
-                  //   return el.fieldName === 'ชื่อ'
-                  // })
-                  // s.cusReg = dataBookingData.filter(function (el) {
-                  //   return el.fieldName === 'เลขทะเบียน'
-                  // })
-                  // s.tel = dataBookingData.filter(function (el) {
-                  //   return el.fieldName === 'เบอร์โทร'
-                  // })
+                  let dataBookingData = []
+                  await axios
+                    .get(
+                      // eslint-disable-next-line quotes
+                      this.DNS_IP + "/BookingData/getView?bookNo=" + d.bookNo
+                    )
+                    .then(async responses => {
+                      console.log('getDataData', responses.data)
+                      dataBookingData = responses.data
+                      if (responses.data.status !== false) {
+                        responses.data.forEach((row) => {
+                          if (typeof (this.BookingDataList[row.bookNo]) === 'undefined') {
+                            this.BookingDataList[row.bookNo] = []
+                          }
+                          this.BookingDataList[row.bookNo].push(row)
+                        })
+                      }
+                      // this.BookingDataList[dataBookingData[0].bookNo].push(dataBookingData[0])
+                    })
+                  s.cusName = dataBookingData.filter(function (el) {
+                    return el.fieldName === 'ชื่อ'
+                  })
+                  s.cusReg = dataBookingData.filter(function (el) {
+                    return el.fieldName === 'เลขทะเบียน'
+                  })
+                  s.tel = dataBookingData.filter(function (el) {
+                    return el.fieldName === 'เบอร์โทร'
+                  })
+                  s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
+                  s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
+                  s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
+                  // s.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
+                  // s.cusReg = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เลขทะเบียน')
+                  // s.tel = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เบอร์โทร')
                   // s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
                   // s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
                   // s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
-                  s.cusName = d.bookingDataCustomerName || ''
-                  s.cusReg = d.bookingDataCustomerRegisNumber || ''
-                  s.tel = d.bookingDataCustomerTel || ''
-                  s.displayFlowName = d.displayFlowName || ''
                   dataItems.push(s)
                 }
               }
@@ -11968,7 +12492,12 @@ export default {
               this.masBranchID = this.dataItem[0].masBranchID
               console.log('dtTime', this.dataItem[0].masBranchID)
               await this.getBookingData(this.dataItem[0])
-              this.checkTimeFlow(item)
+              if (this.EmpItemLimitChange.filter(items => { return items.empId === item.bookingEmpFlow }).length > 0) {
+                this.timeavailable = JSON.parse(this.EmpItemLimitChange.filter(items => { return items.empId === item.bookingEmpFlow })[0].setTime)
+              } else {
+                this.timeavailable = []
+              }
+              // this.checkTimeFlow(item.dueDateDay, item)
               // this.timeavailable = []
               // console.log('dtTime', this.dataItem[0].masBranchID)
               // let dtTime = this.branch.filter(item => { return item.value === this.dataItem[0].masBranchID })
@@ -11999,7 +12528,6 @@ export default {
               s.value = d[fieldId]
               s.allData = d
               result.push(s)
-              // console.log('this.DataFlowName', this.DataFlowName)
             }
           } else {
             result = []
@@ -12021,12 +12549,11 @@ export default {
               let s = {}
               s.text = d.flowName
               s.value = d.flowId
+              s.allData = d
               s.menuShowStatus = d.menuShowStatus
               s.masBranchID = d.masBranchID
-              s.allData = d
               result.push(s)
               resultOption.push(s)
-              // console.log('this.DataFlowName', this.DataFlowName)
             }
           } else {
             result = []
@@ -12035,13 +12562,6 @@ export default {
         })
       this.DataFlowNameDefault = result
       // this.DataFlowName = result
-      console.log('getDataFlow', result)
-      // console.log('masBranchID', this.masBranchID)
-      // if (this.masBranchID !== '') {
-      //   this.DataFlowName = result.filter(el => { return el.masBranchID === this.masBranchID })
-      // } else {
-      //   this.DataFlowName = result
-      // }
       this.DataFlowNameMenu = result.filter(el => { return el.menuShowStatus === 'True' })
       this.dataFlowSelectAdd = resultOption
       this.dataFlowSelectEdit = resultOption
@@ -12050,6 +12570,8 @@ export default {
       this.formEdit.flowId = ''
       this.dateEdit = ''
       this.timeEdit = ''
+      this.customerTimeSlot = 'False'
+      this.formAdd.bookingEmpFlow = ''
       let DD = this.DataFlowNameDefault
       let dataFilter = []
       DD.forEach((item) => {
@@ -12065,6 +12587,8 @@ export default {
     },
     setFlowByBranchAdd () {
       this.formAdd.flowId = ''
+      this.customerTimeSlot = 'False'
+      this.formAdd.bookingEmpFlow = ''
       let DD = this.DataFlowNameDefault
       let dataFilter = []
       DD.forEach((item) => {
@@ -12102,7 +12626,6 @@ export default {
           }
         }
       }
-      // console.log('TEST', this.branch)
     },
     getDataFromFieldName (data, key) {
       if (data !== undefined) {
@@ -12140,14 +12663,6 @@ export default {
             s.LAST_DATE = d.LAST_DATE
             s.flowName = d.flowName
             s.dueDate = d.dueDate
-            s.packageName = d.packageName
-            s.packageDetails = d.packageDetails
-            s.packageImage = d.packageImage
-            s.packagePrice = d.packagePrice
-            s.packageBalanceAmount = d.packageBalanceAmount
-            s.packageAmount = d.packageAmount
-            s.packagePoint = d.packagePoint
-            s.packageExpire = d.packageExpire
             s.chkConfirm = false
             s.chkCancel = false
             if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
@@ -12215,44 +12730,48 @@ export default {
           this.checkSelectText = this.dataItem[0].statusBt
           for (let x = 0; x < this.dataItem.length; x++) {
             let t = this.dataItem[x]
-            // let serviceDetail = ''
-            // let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
+            let serviceDetail = ''
+            let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
             // fieldflow.forEach((row) => {
             //   let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
-            //   let convertTextField = ''
-            //   if (tempField.length > 0) {
-            //     if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
-            //       if (tempField[0].fieldValue) {
-            //         if (JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue }).length === 0) {
-            //           convertTextField = tempField[0].fieldValue || ''
-            //         } else {
-            //           convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
-            //         }
-            //       } else {
-            //         convertTextField = tempField[0].fieldValue
-            //       }
-            //     } else {
-            //       convertTextField = tempField[0].fieldValue
-            //     }
-            //   }
-            //   serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
+            //   serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
             // })
-            // serviceDetail = serviceDetail.trim() ? t.flowName + ' : ' + serviceDetail.trim() : t.flowName
-            // t.flowNameShow = serviceDetail
-            t.flowNameShow = t.displayFlowName || t.flowName
+            fieldflow.forEach((row) => {
+              let tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+              let convertTextField = ''
+              if (tempField.length > 0) {
+                if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
+                  if (tempField[0].fieldValue) {
+                    if (JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue }).length === 0) {
+                      convertTextField = tempField[0].fieldValue || ''
+                    } else {
+                      convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+                    }
+                    // convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+                  } else {
+                    convertTextField = tempField[0].fieldValue
+                  }
+                } else {
+                  convertTextField = tempField[0].fieldValue
+                }
+              }
+              serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
+            })
+            serviceDetail = serviceDetail.trim() ? t.flowName + ' : ' + serviceDetail.trim() : t.flowName
+            t.flowNameShow = serviceDetail
             this.dataItemSelect.push(t)
           }
         } else {
           this.dataItemSelect = []
         }
-        console.log('dataItemSelect', this.dataItemSelect)
         this.columnsSelected = [
           // { text: 'Booking Id', value: 'bookNo' },
           { text: 'ชื่อลูกค้า', value: 'cusName', sortable: false },
           { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
           // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
           { text: 'บริการ', value: 'flowNameShow', sortable: false },
-          { text: 'เบอร์โทร', value: 'tel', sortable: false },
+          { text: 'พนักงานช่าง', value: 'bookingEmpFlowName', sortable: false, width: '120' },
+          { text: 'เบอร์โทร', value: 'tel', sortable: false, width: '120' },
           { text: 'เงินมัดจำ', value: 'action40', sortable: false, align: 'center' },
           // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
           // { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
@@ -12269,6 +12788,7 @@ export default {
           this.countJob = this.dataItem.filter(el => { return el.statusBt === 'confirmJob' }).length
           this.filterCloseJobValue = 'ทั้งหมด'
         } else {
+          // dataSelect = this.dataItem.filter(el => { return el.statusBt === text })
           if (text === 'confirmJob') {
             if (filterCloseJobValue) {
               if (filterCloseJobValue === 'ยังไม่ปิดงาน') {
@@ -12295,40 +12815,39 @@ export default {
           this.checkSelectText = dataSelect[0].statusBt
           for (let x = 0; x < dataSelect.length; x++) {
             let t = dataSelect[x]
-            // let serviceDetail = ''
-            // let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
-            // if (fieldflow.length > 0) {
-            //   fieldflow.forEach((row) => {
-            //     let tempField = []
-            //     if (this.BookingDataList[t.bookNo] !== undefined) {
-            //       tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
-            //     } else {
-            //       tempField = []
-            //     }
-            //     let convertTextField = ''
-            //     if (tempField.length > 0) {
-            //       if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
-            //         if (tempField[0].fieldValue) {
-            //           // console.log('7088', JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue }))
-            //           if (JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue }).length === 0) {
-            //             convertTextField = tempField[0].fieldValue || ''
-            //           } else {
-            //             convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
-            //           }
-            //         } else {
-            //           convertTextField = tempField[0].fieldValue || ''
-            //         }
-            //       } else {
-            //         convertTextField = tempField[0].fieldValue || ''
-            //       }
-            //     }
-            //     serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
-            //   })
-            // }
-            // // serviceDetail = serviceDetail.trim() || t.flowName
-            // serviceDetail = serviceDetail.trim() ? t.flowName + ' : ' + serviceDetail.trim() : t.flowName
-            // t.flowNameShow = serviceDetail
-            t.flowNameShow = t.displayFlowName || t.flowName
+            let serviceDetail = ''
+            let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
+            if (fieldflow.length > 0) {
+              fieldflow.forEach((row) => {
+                let tempField = []
+                if (this.BookingDataList[t.bookNo] !== undefined) {
+                  tempField = this.BookingDataList[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+                } else {
+                  tempField = []
+                }
+                let convertTextField = ''
+                if (tempField.length > 0) {
+                  if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
+                    if (tempField[0].fieldValue) {
+                      // console.log('7088', JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue }))
+                      if (JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue }).length === 0) {
+                        convertTextField = tempField[0].fieldValue || ''
+                      } else {
+                        convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+                      }
+                    } else {
+                      convertTextField = tempField[0].fieldValue || ''
+                    }
+                  } else {
+                    convertTextField = tempField[0].fieldValue || ''
+                  }
+                }
+                serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
+              })
+            }
+            // serviceDetail = serviceDetail.trim() || t.flowName
+            serviceDetail = serviceDetail.trim() ? t.flowName + ' : ' + serviceDetail.trim() : t.flowName
+            t.flowNameShow = serviceDetail
             this.dataItemSelect.push(t)
           }
         } else {
@@ -12342,9 +12861,10 @@ export default {
               { text: 'ชื่อลูกค้า', value: 'cusName', width: '150' },
               { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
               // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-              { text: 'บริการ', value: 'flowNameShow', width: '200' },
+              { text: 'บริการ', value: 'flowNameShow', width: '150' },
+              { text: 'พนักงานช่าง', value: 'bookingEmpFlowName', sortable: false, width: '120' },
               { text: 'เลขทะเบียน', value: 'cusReg', width: '120' },
-              { text: 'เบอร์โทร', value: 'tel' },
+              { text: 'เบอร์โทร', value: 'tel', width: '120' },
               { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
               { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
               { text: 'หมายเหตุ', value: 'remark', align: 'center', width: '120' },
@@ -12359,8 +12879,9 @@ export default {
               { text: 'ชื่อลูกค้า', value: 'cusName', width: '150' },
               { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
               // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-              { text: 'บริการ', value: 'flowNameShow' },
-              { text: 'เบอร์โทร', value: 'tel' },
+              { text: 'บริการ', value: 'flowNameShow', width: '150' },
+              { text: 'พนักงานช่าง', value: 'bookingEmpFlowName', sortable: false, width: '120' },
+              { text: 'เบอร์โทร', value: 'tel', width: '120' },
               { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
               { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
               { text: 'หมายเหตุ', value: 'remark', align: 'center', width: '120' },
@@ -12377,9 +12898,10 @@ export default {
               { text: 'ชื่อลูกค้า', value: 'cusName', width: '120', sortable: false },
               { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
               // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-              { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '200' },
+              { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
+              { text: 'พนักงานช่าง', value: 'bookingEmpFlowName', sortable: false, width: '120' },
               { text: 'เลขทะเบียน', value: 'cusReg', width: '120' },
-              { text: 'เบอร์โทร', value: 'tel', sortable: false },
+              { text: 'เบอร์โทร', value: 'tel', sortable: false, width: '120' },
               { text: 'เงินมัดจำ', value: 'action40', sortable: false, align: 'center' },
               { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '150' },
               // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
@@ -12396,7 +12918,8 @@ export default {
               { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
               // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
               { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
-              { text: 'เบอร์โทร', value: 'tel', sortable: false },
+              { text: 'พนักงานช่าง', value: 'bookingEmpFlowName', sortable: false, width: '120' },
+              { text: 'เบอร์โทร', value: 'tel', sortable: false, width: '120' },
               { text: 'เงินมัดจำ', value: 'action40', sortable: false, align: 'center' },
               { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '150' },
               // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
@@ -12415,6 +12938,7 @@ export default {
               { text: 'วันที่/เวลา', value: 'dueDate', width: '150', sortable: false },
               // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
               { text: 'บริการ', value: 'flowNameShow', width: '150', sortable: false },
+              { text: 'พนักงานช่าง', value: 'bookingEmpFlowName', sortable: false, width: '120' },
               { text: 'เลขทะเบียน', value: 'cusReg', width: '120' },
               { text: 'เบอร์โทร', value: 'tel', sortable: false, width: '120' },
               { text: 'เงินมัดจำ', value: 'action40', align: 'center', width: '120', sortable: false },
@@ -12428,6 +12952,7 @@ export default {
               { text: 'วันที่/เวลา', value: 'dueDate', width: '150', sortable: false },
               // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
               { text: 'บริการ', value: 'flowNameShow', width: '150', sortable: false },
+              { text: 'พนักงานช่าง', value: 'bookingEmpFlowName', sortable: false, width: '120' },
               { text: 'เบอร์โทร', value: 'tel', sortable: false, width: '120' },
               { text: 'เงินมัดจำ', value: 'action40', align: 'center', width: '120', sortable: false },
               { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '160' },
@@ -12435,94 +12960,69 @@ export default {
               { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
           }
         } else if (text === 'confirmJob') {
-          if (this.$session.getAll().data.shopId === 'U9f316c85400fd716ea8c80d7cd5b61f8') {
+          if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์' || this.$session.getAll().data.category === '7') {
             this.columnsSelected = [
               // { text: 'Booking Id', value: 'bookNo' },
               { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
               { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
               // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
               { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
-              { text: 'เบอร์โทร', value: 'tel', sortable: false },
-              // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+              { text: 'พนักงานช่าง', value: 'bookingEmpFlowName', sortable: false, width: '120' },
+              { text: 'เลขทะเบียน', value: 'cusReg', width: '120' },
+              { text: 'เบอร์โทร', value: 'tel', sortable: false, width: '120' },
+              { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
               { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
               { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '120' },
               // { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center', sortable: false },
               { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
           } else {
-            if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์' || this.$session.getAll().data.category === '7') {
-              this.columnsSelected = [
-                // { text: 'Booking Id', value: 'bookNo' },
-                { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
-                { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
-                // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-                { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
-                { text: 'เลขทะเบียน', value: 'cusReg', width: '120' },
-                { text: 'เบอร์โทร', value: 'tel', sortable: false },
-                { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
-                { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-                { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '120' },
-                // { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center', sortable: false },
-                { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
-            } else {
-              this.columnsSelected = [
-                // { text: 'Booking Id', value: 'bookNo' },
-                { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
-                { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
-                // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-                { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
-                { text: 'เบอร์โทร', value: 'tel', sortable: false },
-                { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
-                { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-                { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '120' },
-                // { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center', sortable: false },
-                { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
-            }
-          }
-        } else {
-          if (this.$session.getAll().data.shopId === 'U9f316c85400fd716ea8c80d7cd5b61f8') {
             this.columnsSelected = [
               // { text: 'Booking Id', value: 'bookNo' },
               { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
               { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
               // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
               { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
-              { text: 'เบอร์โทร', value: 'tel', sortable: false },
-              // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center', width: '120' },
+              { text: 'พนักงานช่าง', value: 'bookingEmpFlowName', sortable: false, width: '120' },
+              { text: 'เบอร์โทร', value: 'tel', sortable: false, width: '120' },
+              { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
+              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+              { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '120' },
+              // { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center', sortable: false },
+              { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
+          }
+        } else {
+          if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์' || this.$session.getAll().data.category === '7') {
+            this.columnsSelected = [
+              // { text: 'Booking Id', value: 'bookNo' },
+              { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
+              { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
+              // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+              { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
+              { text: 'พนักงานช่าง', value: 'bookingEmpFlowName', sortable: false, width: '120' },
+              { text: 'เลขทะเบียน', value: 'cusReg', width: '120' },
+              { text: 'เบอร์โทร', value: 'tel', sortable: false, width: '120' },
+              { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center', width: '120' },
               { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
               { text: 'หมายเหตุ', value: 'remark', align: 'center', width: '170' },
               { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }]
           } else {
-            if (this.$session.getAll().data.category === 'ธุรกิจรถยนต์' || this.$session.getAll().data.category === '7') {
-              this.columnsSelected = [
-                // { text: 'Booking Id', value: 'bookNo' },
-                { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
-                { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
-                // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-                { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
-                { text: 'เลขทะเบียน', value: 'cusReg', width: '120' },
-                { text: 'เบอร์โทร', value: 'tel', sortable: false },
-                { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center', width: '120' },
-                { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-                { text: 'หมายเหตุ', value: 'remark', align: 'center', width: '170' },
-                { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }]
-            } else {
-              this.columnsSelected = [
-                // { text: 'Booking Id', value: 'bookNo' },
-                { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
-                { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
-                // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
-                { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
-                { text: 'เบอร์โทร', value: 'tel', sortable: false },
-                { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center', width: '120' },
-                { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
-                { text: 'หมายเหตุ', value: 'remark', align: 'center', width: '170' },
-                { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }]
-            }
+            this.columnsSelected = [
+              // { text: 'Booking Id', value: 'bookNo' },
+              { text: 'ชื่อลูกค้า', value: 'cusName', width: '150', sortable: false },
+              { text: 'วันที่/เวลา', value: 'dueDate', sortable: false },
+              // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
+              { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
+              { text: 'พนักงานช่าง', value: 'bookingEmpFlowName', sortable: false, width: '120' },
+              { text: 'เบอร์โทร', value: 'tel', sortable: false, width: '120' },
+              { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center', width: '120' },
+              { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
+              { text: 'หมายเหตุ', value: 'remark', align: 'center', width: '170' },
+              { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }]
           }
         }
       }
-      // }
       this.checkTypeSort()
+      // }
     },
     updateTimeTablefromChild (timeTable) {
       this.timeTable = timeTable
@@ -12582,17 +13082,10 @@ export default {
                   for (let i = 0; i < response.data.length; i++) {
                     let d = response.data[i]
                     let s = {}
-                    s.packageName = d.packageName
-                    s.packageDetails = d.packageDetails
-                    s.packageImage = d.packageImage
-                    s.packagePrice = d.packagePrice
-                    s.packageBalanceAmount = d.packageBalanceAmount
-                    s.packageAmount = d.packageAmount
-                    s.packagePoint = d.packagePoint
-                    s.packageExpire = d.packageExpire
                     s.bookNo = d.bookNo
                     s.flowId = d.flowId
                     s.flowName = d.flowName
+                    s.bookingEmpFlowName = d.bookingEmpFlowName
                     s.dueDate = d.dueDate
                     s.dueDateTimeStamp = d.dueDateTimeStamp
                     s.remarkRemove = d.remarkRemove
@@ -12709,6 +13202,29 @@ export default {
         })
       console.log(this.BookingDataListTimechange)
     },
+    async getBookingDataListShowEmpReport (dateStart) {
+      console.log('dateStart', dateStart)
+      this.BookingDataListShowEmpReport = []
+      let url = ''
+      url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&dueDate=${dateStart}`
+      await axios
+        .get(url)
+        .then(async response => {
+          if (response.data.status !== false) {
+            response.data.forEach((row) => {
+              if (typeof (this.BookingDataListShowEmpReport[row.bookNo]) === 'undefined') {
+                this.BookingDataListShowEmpReport[row.bookNo] = []
+              }
+              this.BookingDataListShowEmpReport[row.bookNo].push(row)
+            })
+          }
+        }).catch(error => {
+          // this.dataEditReady = true
+          setTimeout(() => this.getBookingDataListShowEmpReport(dateStart), 3000)
+          console.log('catch getBookingDataListShowEmpReport : ', error)
+        })
+      console.log('this.BookingDataListShowEmpReport', this.BookingDataListShowEmpReport)
+    },
     async getBookingDataList (dateStart, searchOther, flowSelect) {
       console.log('dateStart', dateStart)
       this.BookingDataList = []
@@ -12730,7 +13246,6 @@ export default {
       let url = ''
       if (dateStart === 'no') {
         url = `${this.DNS_IP}/BookingData/getsearchName?shopId=${this.session.data.shopId}&fieldValue=${searchOther}&category=${categoryUser}&masBranchID=${this.masBranchID}`
-        // url = `${this.DNS_IP}/BookingData/getsearchOther?shopId=${this.session.data.shopId}&fieldValue=${searchOther}`
       } else {
         if (flowSelect === 'AllFlow') {
           url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
@@ -12794,24 +13309,15 @@ export default {
           // this.getBookingList()
         }
       }
-      // console.log('getDataFlow', result)
-      console.log('masBranchID', this.masBranchID)
-      // if (this.masBranchID !== '') {
-      //   this.DataFlowName = result.filter(el => { return el.masBranchID === this.masBranchID })
-      // } else {
-      //   this.DataFlowName = result
-      // }
       if (this.flowSelect !== '') {
         this.flowSelect = this.flowSelect
       } else {
-        this.DataFlowName = this.DataFlowNameDefault.filter(el => { return parseInt(el.masBranchID) === this.masBranchID || el.value === 'AllFlow' || el.value === 'All' })
+        this.DataFlowName = this.DataFlowNameDefault.filter(el => { return parseInt(el.masBranchID) === this.masBranchID || el.value === 'AllFlow' })
         if (this.DataFlowName.length > 0) {
-          console.log('masBranchID', this.DataFlowName)
           this.flowSelect = this.DataFlowName[0].value
         } else {
           this.flowSelect = ''
           await this.getDataFlow()
-          console.log('masBranchID', this.DataFlowName)
           this.flowSelect = this.DataFlowName[0].value
           // this.getBookingList()
         }
@@ -12833,7 +13339,7 @@ export default {
       // await this.getShowMap()
       let urlApi = ''
       if (this.flowSelect === 'AllFlow') {
-        // await this.getBookingDataList(this.dateStart, '', 'AllFlow')
+        await this.getBookingDataList(this.dateStart, '', 'AllFlow')
         urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.session.data.shopId +
@@ -12842,7 +13348,7 @@ export default {
             '&dueDate=' +
             this.dateStart + this.selectOnsite
       } else {
-        // await this.getBookingDataList(this.dateStart, '', this.flowSelect)
+        await this.getBookingDataList(this.dateStart, '', this.flowSelect)
         urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.session.data.shopId +
@@ -12854,150 +13360,148 @@ export default {
       await axios
         .get(urlApi)
         .then(async response => {
-          console.log('getData', response.data.length)
+          console.log('getData', response.data)
           if (response.data.length > 0) {
             for (let i = 0; i < response.data.length; i++) {
               let d = response.data[i]
               let s = {}
-              // if (this.BookingDataList[d.bookNo] !== undefined) {
-              // console.log('branch no flow', d.masBranchID, d.flowId)
-              s.bookNo = d.bookNo
-              s.flowId = d.flowId
-              let checkDeposit = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(d.flowId) })
-              if (checkDeposit.length > 0) {
-                s.depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
-              } else {
-                s.depositCheckStatus = 'False'
-              }
-              s.flowName = d.flowName
-              s.dueDate = d.dueDate || ''
-              if (d.timeText === null || d.timeText === '') {
-                d.timeText = d.timeDue
-              }
-              if (s.dueDate === '') {
-                s.dueDateText = 'ไม่มีเวลานัดหมาย'
-              } else {
-                s.dueDateText = d.dueDateTextDay + ' ' + d.timeText
-              }
-              s.cusName = d.bookingDataCustomerName || ''
-              s.cusReg = d.bookingDataCustomerRegisNumber || ''
-              s.tel = d.bookingDataCustomerTel || ''
-              s.displayFlowName = d.displayFlowName || ''
-              s.shopId = d.shopId
-              s.dueDateDay = d.dueDateDay
-              s.statusVIP = d.statusVIP
-              s.packageName = d.packageName
-              s.packageDetails = d.packageDetails
-              s.packageImage = d.packageImage
-              s.packagePrice = d.packagePrice
-              s.packageBalanceAmount = d.packageBalanceAmount
-              s.packageAmount = d.packageAmount
-              s.packagePoint = d.packagePoint
-              s.packageExpire = d.packageExpire
-              s.depositTextTH = d.depositTextTH
-              s.CREATE_DATE_Status = d.CREATE_DATE_Status
-              s.CREATE_DATE = d.CREATE_DATE
-              s.menuShowStatus = d.menuShowStatus
-              s.dueDateTextDay = d.dueDateTextDay
-              s.remark = d.remark || ''
-              s.masBranchID = d.masBranchID
-              s.limitBookingCheck = d.limitBookingCheck
-              s.memberId = d.memberId || ''
-              s.countHourLimit = d.countHourLimit
-              s.empSelect = d.empSelect
-              s.empFull_NameTH = d.empFull_NameTH || ''
-              s.empFull_NameTH = s.empFull_NameTH.replace('นางสาว', '')
-              s.empFull_NameTH = s.empFull_NameTH.replace('นาย', '')
-              s.empFull_NameTH = s.empFull_NameTH.replace('นาง', '')
-              s.userId = d.userId
-              s.chkConfirm = false
-              s.chkCancel = false
-              s.address = d.address
-              s.addressLatLong = d.addressLatLong
-              s.jobNo = d.jobNo
-              s.timeText = d.timeText
-              s.remarkRemove = d.remarkRemove || ''
-              s.remarkConfirm1 = (d.remarkConfirm1 === 'true' || d.remarkConfirm1 === 'True')
-              s.remarkConfirm2 = (d.remarkConfirm2 === 'true' || d.remarkConfirm2 === 'True')
-              s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
-              s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
-              s.depositStatus = d.depositStatus || 'False'
-              s.depositImge = d.depositImge || ''
-              s.depositReturnImge = d.depositReturnImge || ''
-              s.depositPrice = d.depositPrice || ''
-              s.remarkDepositLinked = d.remarkDepositLinked || ''
-              s.lineUserId = d.lineUserId
-              s.memberPicture = d.memberPicture
-              s.memberName = d.memberName
-              s.timeDueHtext = d.timeDueH + ':00'
-              s.timeDuetext = d.timeDue
-              s.countChangeTime = d.countChangeTime || 0
-              s.remarkReturn = d.remarkReturn || ''
-              s.dateReturn = d.dateReturn || ''
-              s.packageId = d.packageId || ''
-              s.tokenPackage = d.tokenPackage || ''
-              s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
-              s.menuItem = d.menuItem || []
-              s.menuPrice = d.menuPrice || ''
-              s.memberDataTag = JSON.parse(d.memberDataTag) || []
-              if (s.memberDataTag.length > 0) {
-                s.tagDataShow = []
-                let memberDataTag = s.memberDataTag
-                for (let i = 0; i < memberDataTag.length; i++) {
-                  let d = memberDataTag[i]
-                  let x = {}
-                  let checkTagItem = this.tagItem.filter(el => { return el.value === d })
-                  if (checkTagItem.length > 0) {
-                    x.text = checkTagItem[0].text
-                    x.value = checkTagItem[0].value
-                    s.tagDataShow.push(x)
+              if (this.BookingDataList[d.bookNo] !== undefined) {
+                s.bookNo = d.bookNo
+                s.flowId = d.flowId
+                let checkDeposit = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(d.flowId) })
+                if (checkDeposit.length > 0) {
+                  s.depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
+                } else {
+                  s.depositCheckStatus = 'False'
+                }
+                s.flowName = d.flowName
+                s.dueDate = d.dueDate || ''
+                if (d.timeText === null || d.timeText === '') {
+                  d.timeText = d.timeDue
+                }
+                if (s.dueDate === '') {
+                  s.dueDateText = 'ไม่มีเวลานัดหมาย'
+                } else {
+                  s.dueDateText = d.dueDateTextDay + ' ' + d.timeText
+                }
+                s.shopId = d.shopId
+                s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
+                s.bookingEmpFlow = d.bookingEmpFlow
+                s.bookingEmpFlowName = d.bookingEmpFlowName
+                s.dueDateDay = d.dueDateDay
+                s.statusVIP = d.statusVIP
+                s.packageName = d.packageName
+                s.packageDetails = d.packageDetails
+                s.packageImage = d.packageImage
+                s.packagePrice = d.packagePrice
+                s.packageBalanceAmount = d.packageBalanceAmount
+                s.packageAmount = d.packageAmount
+                s.packagePoint = d.packagePoint
+                s.packageExpire = d.packageExpire
+                s.depositTextTH = d.depositTextTH
+                s.CREATE_DATE_Status = d.CREATE_DATE_Status
+                s.CREATE_DATE = d.CREATE_DATE
+                s.menuShowStatus = d.menuShowStatus
+                s.dueDateTextDay = d.dueDateTextDay
+                s.remark = d.remark || ''
+                s.masBranchID = d.masBranchID
+                s.googleCalendarEventId = d.googleCalendarEventId || ''
+                s.limitBookingCheck = d.limitBookingCheck
+                s.memberId = d.memberId || ''
+                s.countHourLimit = d.countHourLimit
+                s.empSelect = d.empSelect
+                s.empFull_NameTH = d.empFull_NameTH || ''
+                s.empFull_NameTH = s.empFull_NameTH.replace('นางสาว', '')
+                s.empFull_NameTH = s.empFull_NameTH.replace('นาย', '')
+                s.empFull_NameTH = s.empFull_NameTH.replace('นาง', '')
+                s.userId = d.userId
+                s.chkConfirm = false
+                s.chkCancel = false
+                s.address = d.address
+                s.addressLatLong = d.addressLatLong
+                s.jobNo = d.jobNo
+                s.timeText = d.timeText
+                s.remarkRemove = d.remarkRemove || ''
+                s.remarkConfirm1 = (d.remarkConfirm1 === 'true' || d.remarkConfirm1 === 'True')
+                s.remarkConfirm2 = (d.remarkConfirm2 === 'true' || d.remarkConfirm2 === 'True')
+                s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
+                s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
+                s.depositStatus = d.depositStatus || 'False'
+                s.depositImge = d.depositImge || ''
+                s.depositReturnImge = d.depositReturnImge || ''
+                s.depositPrice = d.depositPrice || ''
+                s.remarkDepositLinked = d.remarkDepositLinked || ''
+                s.lineUserId = d.lineUserId
+                s.memberPicture = d.memberPicture
+                s.memberName = d.memberName
+                s.timeDueHtext = d.timeDueH + ':00'
+                s.timeDuetext = d.timeDue
+                s.countChangeTime = d.countChangeTime || 0
+                s.remarkReturn = d.remarkReturn || ''
+                s.dateReturn = d.dateReturn || ''
+                s.packageId = d.packageId || ''
+                s.tokenPackage = d.tokenPackage || ''
+                s.menuItem = d.menuItem || []
+                s.menuPrice = d.menuPrice || ''
+                s.memberDataTag = JSON.parse(d.memberDataTag) || []
+                if (s.memberDataTag.length > 0) {
+                  s.tagDataShow = []
+                  let memberDataTag = s.memberDataTag
+                  for (let i = 0; i < memberDataTag.length; i++) {
+                    let d = memberDataTag[i]
+                    let x = {}
+                    let checkTagItem = this.tagItem.filter(el => { return el.value === d })
+                    if (checkTagItem.length > 0) {
+                      x.text = checkTagItem[0].text
+                      x.value = checkTagItem[0].value
+                      s.tagDataShow.push(x)
+                    }
                   }
                 }
+                this.countAll = this.countAll + 1
+                if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
+                  s.chkConfirm = true
+                  s.chkCancel = false
+                }
+                if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
+                  s.chkConfirm = false
+                  s.chkCancel = true
+                }
+                s.statusBt = d.statusBt || 'wait'
+                switch (d.statusBt) {
+                  case 'confirm':
+                    s.statusBtText = 'ยืนยันแล้ว'
+                    this.countConfirm = this.countConfirm + 1
+                    break
+                  case 'cancel':
+                    s.statusBtText = 'ยกเลิก'
+                    this.countCancel = this.countCancel + 1
+                    break
+                  case 'confirmJob':
+                    s.statusBtText = 'รับรถแล้ว'
+                    this.countJob = this.countJob + 1
+                    break
+                  // default:
+                  //   s.statusBtText = 'รายการนัดหมายใหม่'
+                  //   this.countWaiting = this.countWaiting + 1
+                  //   break
+                }
+                var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
+                if (chkTime.length === 0) {
+                  dataItemTimes.push(s)
+                }
+                s.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
+                s.cusReg = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เลขทะเบียน')
+                s.tel = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เบอร์โทร')
+                s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
+                s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
+                s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
+                if (s.statusBt !== 'wait') {
+                  dataItems.push(s)
+                }
+              } else {
+                console.log('BookingNo no bookingData', d.bookNo)
               }
-              this.countAll = this.countAll + 1
-              if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
-                s.chkConfirm = true
-                s.chkCancel = false
-              }
-              if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
-                s.chkConfirm = false
-                s.chkCancel = true
-              }
-              s.statusBt = d.statusBt || 'wait'
-              switch (d.statusBt) {
-                case 'confirm':
-                  s.statusBtText = 'ยืนยันแล้ว'
-                  this.countConfirm = this.countConfirm + 1
-                  break
-                case 'cancel':
-                  s.statusBtText = 'ยกเลิก'
-                  this.countCancel = this.countCancel + 1
-                  break
-                case 'confirmJob':
-                  s.statusBtText = 'รับรถแล้ว'
-                  this.countJob = this.countJob + 1
-                  break
-                // default:
-                //   s.statusBtText = 'รายการนัดหมายใหม่'
-                //   this.countWaiting = this.countWaiting + 1
-                //   break
-              }
-              var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
-              if (chkTime.length === 0) {
-                dataItemTimes.push(s)
-              }
-              // s.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
-              // s.cusReg = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เลขทะเบียน')
-              // s.tel = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เบอร์โทร')
-              // s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
-              // s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
-              // s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
-              if (s.statusBt !== 'wait') {
-                dataItems.push(s)
-              }
-            // } else {
-            //   console.log('BookingNo no bookingData', d.bookNo)
-            // }
             }
           }
         })
@@ -13007,19 +13511,19 @@ export default {
           this.dataReady = true
           //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
         })
-      // let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&statusBt=is null`
-      // await axios
-      //   .get(url)
-      //   .then(async response => {
-      //     if (response.data.status !== false) {
-      //       response.data.forEach((row) => {
-      //         if (typeof (this.BookingDataList[row.bookNo]) === 'undefined') {
-      //           this.BookingDataList[row.bookNo] = []
-      //         }
-      //         this.BookingDataList[row.bookNo].push(row)
-      //       })
-      //     }
-      //   })
+      let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&statusBt=is null`
+      await axios
+        .get(url)
+        .then(async response => {
+          if (response.data.status !== false) {
+            response.data.forEach((row) => {
+              if (typeof (this.BookingDataList[row.bookNo]) === 'undefined') {
+                this.BookingDataList[row.bookNo] = []
+              }
+              this.BookingDataList[row.bookNo].push(row)
+            })
+          }
+        })
       let urlApiwait = ''
       if (this.flowSelect === 'AllFlow') {
         urlApiwait = this.DNS_IP +
@@ -13044,132 +13548,130 @@ export default {
             for (let i = 0; i < responses.data.length; i++) {
               let d = responses.data[i]
               let s = {}
-              // if (this.BookingDataList[d.bookNo] !== undefined) {
-              // console.log('branch no flow', d.masBranchID, d.flowId)
-              s.bookNo = d.bookNo
-              s.flowId = d.flowId
-              let checkDeposit = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(d.flowId) })
-              if (checkDeposit.length > 0) {
-                s.depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
-              } else {
-                s.depositCheckStatus = 'False'
-              }
-              s.flowName = d.flowName
-              s.dueDate = d.dueDate || ''
-              if (d.timeText === null || d.timeText === '') {
-                d.timeText = d.timeDue
-              }
-              if (s.dueDate === '') {
-                s.dueDateText = 'ไม่มีเวลานัดหมาย'
-              } else {
-                s.dueDateText = d.dueDateTextDay + ' ' + d.timeText
-              }
-              s.shopId = d.shopId
-              s.dueDateDay = d.dueDateDay
-              s.statusVIP = d.statusVIP
-              s.packageName = d.packageName
-              s.packageDetails = d.packageDetails
-              s.packageImage = d.packageImage
-              s.packagePrice = d.packagePrice
-              s.packageBalanceAmount = d.packageBalanceAmount
-              s.packageAmount = d.packageAmount
-              s.packagePoint = d.packagePoint
-              s.packageExpire = d.packageExpire
-              s.depositTextTH = d.depositTextTH
-              s.CREATE_DATE_Status = d.CREATE_DATE_Status
-              s.CREATE_DATE = d.CREATE_DATE
-              s.menuShowStatus = d.menuShowStatus
-              s.dueDateTextDay = d.dueDateTextDay
-              s.remark = d.remark || ''
-              s.masBranchID = d.masBranchID
-              s.limitBookingCheck = d.limitBookingCheck
-              s.memberId = d.memberId || ''
-              s.countHourLimit = d.countHourLimit
-              s.empSelect = d.empSelect
-              s.empFull_NameTH = d.empFull_NameTH || ''
-              s.empFull_NameTH = s.empFull_NameTH.replace('นางสาว', '')
-              s.empFull_NameTH = s.empFull_NameTH.replace('นาย', '')
-              s.empFull_NameTH = s.empFull_NameTH.replace('นาง', '')
-              s.userId = d.userId
-              s.chkConfirm = false
-              s.chkCancel = false
-              s.address = d.address
-              s.addressLatLong = d.addressLatLong
-              s.jobNo = d.jobNo
-              s.timeText = d.timeText
-              s.remarkRemove = d.remarkRemove || ''
-              s.remarkConfirm1 = (d.remarkConfirm1 === 'true' || d.remarkConfirm1 === 'True')
-              s.remarkConfirm2 = (d.remarkConfirm2 === 'true' || d.remarkConfirm2 === 'True')
-              s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
-              s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
-              s.depositStatus = d.depositStatus || 'False'
-              s.depositImge = d.depositImge || ''
-              s.depositReturnImge = d.depositReturnImge || ''
-              s.depositPrice = d.depositPrice || ''
-              s.remarkDepositLinked = d.remarkDepositLinked || ''
-              s.lineUserId = d.lineUserId
-              s.memberPicture = d.memberPicture
-              s.memberName = d.memberName
-              s.timeDueHtext = d.timeDueH + ':00'
-              s.timeDuetext = d.timeDue
-              s.countChangeTime = d.countChangeTime || 0
-              s.remarkReturn = d.remarkReturn || ''
-              s.dateReturn = d.dateReturn || ''
-              s.packageId = d.packageId || ''
-              s.tokenPackage = d.tokenPackage || ''
-              s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
-              s.menuItem = d.menuItem || []
-              s.menuPrice = d.menuPrice || ''
-              s.memberDataTag = JSON.parse(d.memberDataTag) || []
-              if (s.memberDataTag.length > 0) {
-                s.tagDataShow = []
-                let memberDataTag = s.memberDataTag
-                for (let i = 0; i < memberDataTag.length; i++) {
-                  let d = memberDataTag[i]
-                  let x = {}
-                  let checkTagItem = this.tagItem.filter(el => { return el.value === d })
-                  if (checkTagItem.length > 0) {
-                    x.text = checkTagItem[0].text
-                    x.value = checkTagItem[0].value
-                    s.tagDataShow.push(x)
+              if (this.BookingDataList[d.bookNo] !== undefined) {
+                s.bookNo = d.bookNo
+                s.flowId = d.flowId
+                let checkDeposit = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(d.flowId) })
+                if (checkDeposit.length > 0) {
+                  s.depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
+                } else {
+                  s.depositCheckStatus = 'False'
+                }
+                s.flowName = d.flowName
+                s.dueDate = d.dueDate || ''
+                if (d.timeText === null || d.timeText === '') {
+                  d.timeText = d.timeDue
+                }
+                if (s.dueDate === '') {
+                  s.dueDateText = 'ไม่มีเวลานัดหมาย'
+                } else {
+                  s.dueDateText = d.dueDateTextDay + ' ' + d.timeText
+                }
+                s.shopId = d.shopId
+                s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
+                s.bookingEmpFlow = d.bookingEmpFlow
+                s.bookingEmpFlowName = d.bookingEmpFlowName
+                s.dueDateDay = d.dueDateDay
+                s.statusVIP = d.statusVIP
+                s.packageName = d.packageName
+                s.packageDetails = d.packageDetails
+                s.packageImage = d.packageImage
+                s.packagePrice = d.packagePrice
+                s.packageBalanceAmount = d.packageBalanceAmount
+                s.packageAmount = d.packageAmount
+                s.packagePoint = d.packagePoint
+                s.packageExpire = d.packageExpire
+                s.depositTextTH = d.depositTextTH
+                s.CREATE_DATE_Status = d.CREATE_DATE_Status
+                s.CREATE_DATE = d.CREATE_DATE
+                s.menuShowStatus = d.menuShowStatus
+                s.dueDateTextDay = d.dueDateTextDay
+                s.remark = d.remark || ''
+                s.masBranchID = d.masBranchID
+                s.googleCalendarEventId = d.googleCalendarEventId || ''
+                s.limitBookingCheck = d.limitBookingCheck
+                s.memberId = d.memberId || ''
+                s.countHourLimit = d.countHourLimit
+                s.empSelect = d.empSelect
+                s.empFull_NameTH = d.empFull_NameTH || ''
+                s.empFull_NameTH = s.empFull_NameTH.replace('นางสาว', '')
+                s.empFull_NameTH = s.empFull_NameTH.replace('นาย', '')
+                s.empFull_NameTH = s.empFull_NameTH.replace('นาง', '')
+                s.userId = d.userId
+                s.chkConfirm = false
+                s.chkCancel = false
+                s.address = d.address
+                s.addressLatLong = d.addressLatLong
+                s.jobNo = d.jobNo
+                s.timeText = d.timeText
+                s.remarkRemove = d.remarkRemove || ''
+                s.remarkConfirm1 = (d.remarkConfirm1 === 'true' || d.remarkConfirm1 === 'True')
+                s.remarkConfirm2 = (d.remarkConfirm2 === 'true' || d.remarkConfirm2 === 'True')
+                s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
+                s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
+                s.depositStatus = d.depositStatus || 'False'
+                s.depositImge = d.depositImge || ''
+                s.depositReturnImge = d.depositReturnImge || ''
+                s.depositPrice = d.depositPrice || ''
+                s.remarkDepositLinked = d.remarkDepositLinked || ''
+                s.lineUserId = d.lineUserId
+                s.memberPicture = d.memberPicture
+                s.memberName = d.memberName
+                s.timeDueHtext = d.timeDueH + ':00'
+                s.timeDuetext = d.timeDue
+                s.countChangeTime = d.countChangeTime || 0
+                s.remarkReturn = d.remarkReturn || ''
+                s.dateReturn = d.dateReturn || ''
+                s.packageId = d.packageId || ''
+                s.tokenPackage = d.tokenPackage || ''
+                s.menuItem = d.menuItem || []
+                s.menuPrice = d.menuPrice || ''
+                s.memberDataTag = JSON.parse(d.memberDataTag) || []
+                if (s.memberDataTag.length > 0) {
+                  s.tagDataShow = []
+                  let memberDataTag = s.memberDataTag
+                  for (let i = 0; i < memberDataTag.length; i++) {
+                    let d = memberDataTag[i]
+                    let x = {}
+                    let checkTagItem = this.tagItem.filter(el => { return el.value === d })
+                    if (checkTagItem.length > 0) {
+                      x.text = checkTagItem[0].text
+                      x.value = checkTagItem[0].value
+                      s.tagDataShow.push(x)
+                    }
                   }
                 }
+                this.countAll = this.countAll + 1
+                if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
+                  s.chkConfirm = true
+                  s.chkCancel = false
+                }
+                if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
+                  s.chkConfirm = false
+                  s.chkCancel = true
+                }
+                s.statusBt = d.statusBt || 'wait'
+                switch (s.statusBt) {
+                  case 'wait':
+                    s.statusBtText = 'รายการนัดหมายใหม่'
+                    this.countWaiting = this.countWaiting + 1
+                    break
+                }
+                var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
+                if (chkTime.length === 0) {
+                  dataItemTimes.push(s)
+                }
+                s.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
+                s.cusReg = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เลขทะเบียน')
+                s.tel = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เบอร์โทร')
+                s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
+                s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
+                s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
+                dataItems.push(s)
+                // console.log('this.countWaiting', this.countWaiting)
+              } else {
+                console.log('BookingNo no bookingData', d.bookNo)
               }
-              this.countAll = this.countAll + 1
-              if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
-                s.chkConfirm = true
-                s.chkCancel = false
-              }
-              if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
-                s.chkConfirm = false
-                s.chkCancel = true
-              }
-              s.statusBt = d.statusBt || 'wait'
-              switch (s.statusBt) {
-                case 'wait':
-                  s.statusBtText = 'รายการนัดหมายใหม่'
-                  this.countWaiting = this.countWaiting + 1
-                  break
-              }
-              var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
-              if (chkTime.length === 0) {
-                dataItemTimes.push(s)
-              }
-              s.cusName = d.bookingDataCustomerName || ''
-              s.cusReg = d.bookingDataCustomerRegisNumber || ''
-              s.tel = d.bookingDataCustomerTel || ''
-              s.displayFlowName = d.displayFlowName || ''
-              // s.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
-              // s.cusReg = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เลขทะเบียน')
-              // s.tel = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เบอร์โทร')
-              // s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
-              // s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
-              // s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
-              dataItems.push(s)
-              // console.log('this.countWaiting', this.countWaiting)
-            // } else {
-            //   console.log('BookingNo no bookingData', d.bookNo)
-            // }
             }
           }
         })
@@ -13458,12 +13960,12 @@ export default {
             this.formAdd.depositStatus = 'True'
             if (this.filesDepositAdd) {
               const _this = this
+              let params = new FormData()
               let configDepositUpload = {
                 headers: {
                   'bookNo': 'BK' + moment().unix()
                 }
               }
-              let params = new FormData()
               params.append('file', this.filesDepositAdd)
               await axios
                 .post(this.DNS_IP + `/file/upload/deposit`, params, configDepositUpload)
@@ -13489,22 +13991,6 @@ export default {
         } else {
           limitBookingCheck = 'False'
         }
-        let storeFront = this.DataFlowNameDefault.filter(item => { return item.value === this.formAdd.flowId })
-        let storeFrontCheck = ''
-        if (storeFront.length > 0) {
-          storeFrontCheck = storeFront[0].allData.storeFrontCheck || 'False'
-        } else {
-          storeFrontCheck = 'False'
-        }
-        let timeValue = ''
-        let timeTime = ''
-        if (this.time.value) {
-          timeValue = this.time.value
-          timeTime = this.time.text
-        } else {
-          timeValue = ''
-          timeTime = ''
-        }
         for (let i = 0; i < rs.length; i++) {
           let d = rs[i]
           let update = {}
@@ -13516,10 +14002,10 @@ export default {
             update.fieldId = d.fieldId
             update.fieldValue = d.fieldValue
             update.shopId = d.shopId
-            update.dueDate = this.date + ' ' + timeValue
+            update.dueDate = this.date + ' ' + this.time.value
             update.dateSelect = this.date
-            update.timeSelect = timeValue
-            update.timeText = timeTime
+            update.timeSelect = this.time.value
+            update.timeText = this.time.text
             update.userId = 'user-skip'
             update.pageName = 'BookingList'
             update.sourceLink = 'direct'
@@ -13533,16 +14019,18 @@ export default {
             update.limitBookingId = this.checkLimitBooking.ID
             update.limitBookingCount = this.checkLimitBooking.countBooking
             update.getLimitBooking = this.checkLimitBooking.limitBooking
+            update.timeBooking = this.checkLimitBooking.timeBooking
+            update.timeAll = this.checkLimitBooking.timeSelect
+            update.slotByflow = this.checkLimitBooking.slotByflow
+            update.timeSlotCustomer = this.fromAddTimeCus
+            update.customerTimeSlot = this.customerTimeSlot
             update.depositPrice = this.formAdd.depositPrice
-            update.storeFrontCheck = storeFrontCheck
+            update.empId = this.formAdd.bookingEmpFlow
             if (this.statusVIP === 'True') {
               update.statusVIP = 'True'
             } else {
               update.statusVIP = 'False'
             }
-            update.statusBookingForm = 'BookingForm'
-            update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
-            update.addressLatLong = JSON.stringify(this.center)
             if (this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0).length > 0) {
               update.menuItem = JSON.stringify(this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0))
               update.menuPrice = this.priceMenuAdd
@@ -13558,10 +14046,10 @@ export default {
                 update.fieldId = d.fieldId
                 update.fieldValue = d.fieldValue
                 update.shopId = d.shopId
-                update.dueDate = this.date + ' ' + timeValue
+                update.dueDate = this.date + ' ' + this.time.value
                 update.dateSelect = this.date
-                update.timeSelect = timeValue
-                update.timeText = timeTime
+                update.timeSelect = this.time.value
+                update.timeText = this.time.text
                 update.sourceLink = 'direct'
                 update.userId = 'user-skip'
                 update.pageName = 'BookingList'
@@ -13575,16 +14063,18 @@ export default {
                 update.limitBookingId = this.checkLimitBooking.ID
                 update.limitBookingCount = this.checkLimitBooking.countBooking
                 update.getLimitBooking = this.checkLimitBooking.limitBooking
+                update.timeBooking = this.checkLimitBooking.timeBooking
+                update.timeAll = this.checkLimitBooking.timeSelect
+                update.slotByflow = this.checkLimitBooking.slotByflow
+                update.timeSlotCustomer = this.fromAddTimeCus
+                update.customerTimeSlot = this.customerTimeSlot
                 update.depositPrice = this.formAdd.depositPrice
-                update.storeFrontCheck = storeFrontCheck
+                update.empId = this.formAdd.bookingEmpFlow
                 if (this.statusVIP === 'True') {
                   update.statusVIP = 'True'
                 } else {
                   update.statusVIP = 'False'
                 }
-                update.statusBookingForm = 'BookingForm'
-                update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
-                update.addressLatLong = JSON.stringify(this.center)
                 if (this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0).length > 0) {
                   update.menuItem = JSON.stringify(this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0))
                   update.menuPrice = this.priceMenuAdd
@@ -13600,10 +14090,10 @@ export default {
                 update.fieldId = d.fieldId
                 update.fieldValue = d.fieldValue
                 update.shopId = d.shopId
-                update.dueDate = this.date + ' ' + timeValue
+                update.dueDate = this.date + ' ' + this.time.value
                 update.dateSelect = this.date
-                update.timeSelect = timeValue
-                update.timeText = timeTime
+                update.timeSelect = this.time.value
+                update.timeText = this.time.text
                 update.sourceLink = 'direct'
                 update.userId = 'user-skip'
                 update.pageName = 'BookingList'
@@ -13617,16 +14107,18 @@ export default {
                 update.limitBookingId = this.checkLimitBooking.ID
                 update.limitBookingCount = this.checkLimitBooking.countBooking
                 update.getLimitBooking = this.checkLimitBooking.limitBooking
+                update.timeBooking = this.checkLimitBooking.timeBooking
+                update.timeAll = this.checkLimitBooking.timeSelect
+                update.slotByflow = this.checkLimitBooking.slotByflow
+                update.timeSlotCustomer = this.fromAddTimeCus
+                update.customerTimeSlot = this.customerTimeSlot
                 update.depositPrice = this.formAdd.depositPrice
-                update.storeFrontCheck = storeFrontCheck
+                update.empId = this.formAdd.bookingEmpFlow
                 if (this.statusVIP === 'True') {
                   update.statusVIP = 'True'
                 } else {
                   update.statusVIP = 'False'
                 }
-                update.statusBookingForm = 'BookingForm'
-                update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
-                update.addressLatLong = JSON.stringify(this.center)
                 if (this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0).length > 0) {
                   update.menuItem = JSON.stringify(this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0))
                   update.menuPrice = this.priceMenuAdd
@@ -13637,8 +14129,8 @@ export default {
           }
         }
         console.log('Add', Add)
-        axios
-          .post(this.DNS_IP + '/Booking/add', Add)
+        await axios
+          .post(this.DNS_IP + '/Booking/addTimeEpm', Add)
           .then(async response => {
           // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
             if (response.data.message === 'LimitBooking_Full') {
@@ -13646,6 +14138,7 @@ export default {
               this.date = ''
               this.time = ''
             } else {
+              console.log('resspons111111', this.statusGoogleCalendar)
               let checkDeposit = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) })
               let depositCheckStatus = ''
               if (checkDeposit.length > 0) {
@@ -13686,6 +14179,10 @@ export default {
         this.$router.push('/Core/Login')
       }
     },
+    async connectGoogleCalendar (status, bookNo) {
+      console.log('status !!!', status)
+      this.$refs.GoogleCalendarRef.checkTypeEvenEmp(status, bookNo)
+    },
     async addDataSubmit () {
       if (this.validAdd === true) {
         if (this.$session.id() !== undefined) {
@@ -13693,7 +14190,7 @@ export default {
             let getcount = await this.getCountFastTrack(this.date, this.formAdd.flowId, this.formAdd.masBranchID)
             let setCountFast = this.branch.filter(el => { return el.value === this.formAdd.masBranchID })[0].allData.countFastTrack
             if (getcount < setCountFast) {
-              if (this.DataFlowNameDefault.filter(item => { return item.value === this.formAdd.flowId })[0].allData.limitBookingCheck === 'True') {
+              if (this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].limitBookingCheck === 'True') {
                 await this.checkLimit()
                 // console.log('test', this.branchData.filter(item => { return item.masBranchID === this.formAdd.masBranchID })[0].setTime)
                 if (this.checkLimitBooking.limitCheck === 'true') {
@@ -13719,7 +14216,7 @@ export default {
               this.loadingAdd = false
             }
           } else {
-            if (this.DataFlowNameDefault.filter(item => { return item.value === this.formAdd.flowId })[0].allData.limitBookingCheck === 'True') {
+            if (this.EmpItemLimitAdd.filter(item => { return item.empId === this.formAdd.bookingEmpFlow })[0].limitBookingCheck === 'True') {
               await this.checkLimit()
               // console.log('test', this.branchData.filter(item => { return item.masBranchID === this.formAdd.masBranchID })[0].setTime)
               if (this.checkLimitBooking.limitCheck === 'true') {
@@ -13784,6 +14281,7 @@ export default {
         })
     },
     async clearDataAdd () {
+      this.statusVIP = 'False'
       this.showMenu = 'False'
       this.dataMenuAdd = []
       this.dataReady = true
@@ -13808,8 +14306,6 @@ export default {
       this.dialogAdd = false
       this.dialogAddCon = false
       this.loadingAdd = false
-      this.address = ''
-      this.center = null
       this.dataReadyAdd = true
       clearInterval(this.setTimerCalendar)
       this.setTimerCalendar = null
@@ -13892,27 +14388,20 @@ export default {
     async getBookingDataJob (dt, text) {
       console.log('item!!!!!!', dt)
       this.masBranchIDAddJob = dt.masBranchID
-      this.dataEmpOnsite = dt
       this.dueDateText = dt.dueDateText
       let dateCurrent = moment().format('YYYY-MM-DD')
       let dueDate = dt.dueDateDay
-      console.log(dateCurrent, dueDate)
+      console.log(dateCurrent, dueDate, dt)
+      await this.getEmpChange(dt)
       if (dateCurrent >= dueDate) {
         this.statusConfirmJob = true
       } else {
         this.statusConfirmJob = false
       }
-      // console.log('this.statusConfirmJob', this.statusConfirmJob)
-      let checkStep = await axios.get(this.DNS_IP + '/flowStep/get?flowId=' + dt.flowId)
-      console.log('checkStep', checkStep)
-      if (checkStep.data.status === false) {
-        this.endDate = moment().format('YYYY-MM-DD')
-        this.endTime = moment().format('HH:mm')
-        this.statusShowDateConfiremjob = false
-      } else {
-        this.statusShowDateConfiremjob = true
-      }
+      this.endDate = moment().format('YYYY-MM-DD')
+      this.endTime = moment().format('HH:mm')
       this.dueDate = dt.dueDateTextDay
+      this.statusShowDateConfiremjob = false
       if (this.statusConfirmJob && this.showOnsite === 'แสดง') {
         this.jobCheckPackage = false
         console.log('dt', dt)
@@ -13939,9 +14428,14 @@ export default {
             this.dataPackageDefault = false
           }
         }
-        this.checkTimeFlow(dt)
+        if (this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow }).length > 0) {
+          this.timeavailable = JSON.parse(this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].setTime)
+        } else {
+          this.timeavailable = []
+        }
         this.BookingDataItem = []
         let itemIncustomField = []
+        // this.statusConfirmJob = false
 
         await axios
           .get(
@@ -14040,9 +14534,14 @@ export default {
             this.dataPackageDefault = false
           }
         }
-        this.checkTimeFlow(dt)
+        if (this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow }).length > 0) {
+          this.timeavailable = JSON.parse(this.EmpItemLimitChange.filter(item => { return item.empId === dt.bookingEmpFlow })[0].setTime)
+        } else {
+          this.timeavailable = []
+        }
         this.BookingDataItem = []
         let itemIncustomField = []
+        // this.statusConfirmJob = false
 
         await axios
           .get(
@@ -14253,7 +14752,6 @@ export default {
                       this.empSelectJob = ''
                       this.statusShowDateConfiremjob = true
                       if (response.data.status) {
-                        await this.pushMsg(response.data.jobNo)
                         if (this.jobCheckPackage) {
                           await this.usePackage(this.dataQrcode.bookNo, this.BookingDataItem[0].masBranchID)
                         }
@@ -14268,8 +14766,51 @@ export default {
                         var dataJob = this.dataItem.filter(el => { return el.bookNo === this.dataQrcode.bookNo })
                         this.getjob(dataJob[0])
                         this.dialogJob = true
-                      //     })
-                      // })
+                      //     var dt = {
+                      //       bookNo: this.BookingDataItem[0].bookNo,
+                      //       statusJob: 'job',
+                      //       jobNo: response.data.jobNo
+                      //     }
+                      //     await axios
+                      //       .post(
+                      //         this.DNS_IP +
+                      // '/Booking/editStatus/' +
+                      // this.BookingDataItem[0].bookNo,
+                      //         dt
+                      //       )
+                      //       .then(async response1 => {
+                      //         await this.pushMsg(response.data.jobNo)
+                      //         var dtt = {
+                      //           bookNo: this.BookingDataItem[0].bookNo,
+                      //           contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
+                      //           status: 'confirmJob',
+                      //           statusUse: 'use',
+                      //           shopId: this.$session.getAll().data.shopId,
+                      //           CREATE_USER: this.session.data.userName,
+                      //           LAST_USER: this.session.data.userName,
+                      //           packageId: this.packageId,
+                      //           tokenPackage: this.tokenPackage
+                      //         }
+                      //         axios
+                      //           .post(this.DNS_IP + '/booking_transaction/add', dtt)
+                      //           .then(async response => {
+                      //             if (this.jobCheckPackage) {
+                      //               console.log('usePackage')
+                      //               await this.usePackage()
+                      //             }
+                      //             this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
+                      //             if (this.statusSearch === 'no') {
+                      //               await this.getBookingList()
+                      //             } else {
+                      //               await this.searchAny()
+                      //             }
+                      //             this.dialogEdit = false
+                      //             this.dataEditJobReady = true
+                      //             var dataJob = this.dataItem.filter(el => { return el.bookNo === this.dataQrcode.bookNo })
+                      //             this.getjob(dataJob[0])
+                      //             this.dialogJob = true
+                      //           })
+                      //       })
                       } else {
                         this.$swal('ผิดพลาด', 'กรุณาทำรายการใหม่', 'error')
                         this.dialogEdit = false
@@ -14387,7 +14928,6 @@ export default {
       // this.clearData()
     },
     async getEmpSelect (item) {
-      console.log('item!!!!!!', item)
       this.empSelectStep = []
       await axios
         .get(this.DNS_IP + '/empSelect/getUse?privacyPage=booking&shopId=' + item.shopId)
@@ -14396,9 +14936,8 @@ export default {
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
-              // console.log('d', d)
               if (d.masBranchID === item.masBranchID) {
-                var s = {}
+                let s = {}
                 s.text = d.empFirst_NameTH
                 s.value = d.empId
                 this.empSelectStep.push(s)
@@ -14416,13 +14955,12 @@ export default {
     async getEmpSelectAddJob () {
       this.empSelectStepAdd = []
       await axios
-        .get(this.DNS_IP + '/empSelect/getUse?USER_ROLE=onsite&shopId=' + this.$session.getAll().data.shopId)
+        .get(this.DNS_IP + '/empSelect/getUse?empIdUser=isNotNull&shopId=' + this.$session.getAll().data.shopId)
         .then(async response => {
           let rs = response.data
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
-              console.log('DDDDDSFDSDFSDF', d)
               var s = {}
               s.text = d.empFull_NameTH
               s.value = d.empId
@@ -14430,18 +14968,6 @@ export default {
             }
           }
         })
-    },
-    filterEmpAdd () {
-
-    },
-    filterEmpEdit () {
-
-    },
-    filterEmpCancel () {
-
-    },
-    filterEmpConfirm () {
-
     },
     async getEmpSelectAdd () {
       this.empSelectStepAdd = []
@@ -14455,7 +14981,7 @@ export default {
               d.masBranchID = d.masBranchID || ''
               console.log('this.$session.getAll().data.masBranchID', this.$session.getAll().data.masBranchID)
               if (this.$session.getAll().data.masBranchID === '' || this.$session.getAll().data.masBranchID === null) {
-                // console.log('D', d)
+                console.log('D', d)
                 let s = {}
                 s.text = d.empFirst_NameTH
                 s.value = d.empId
@@ -14500,42 +15026,13 @@ export default {
     },
     onConfirm (item) {
       if (this.$session.id() !== undefined) {
-        console.log('item', item)
-        console.log('DataFlowName', this.DataFlowNameDefault.filter(el => { return el.value === item.flowId }))
-        this.dataConfirmReady = false
-        let dtint = '0'
-        if (this.DataFlowNameDefault.filter(el => { return el.value === item.flowId }).length > 0) {
-          let setTime = []
-          // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
-          if (this.DataFlowNameDefault.filter(el => { return el.value === item.flowId })[0].allData.setTimebyday === 'True') {
-            let timeJson = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === item.flowId })[0].allData.setTime).filter((items) => items.value === new Date(item.dueDate).getDay())
-            setTime = timeJson[0].setTime || []
-          } else {
-            setTime = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
-          }
-          if (setTime.length > 0) {
-            dtint = parseInt(setTime.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
-          } else {
-            dtint = '0'
-          }
-          // let dts = JSON.parse(this.DataFlowName.filter(el => { return el.value === item.flowId })[0].allData.setTime) || []
-          // console.log(dts.filter(el => el.value === item.timeDuetext))
-          // if (dts.filter(el => el.value === item.timeDuetext).length > 0) {
-          //   dtint = parseInt(dts.filter(el => el.value === item.timeDuetext)[0].limitBooking || '0')
-          // } else {
-          //   dtint = '0'
-          // }
-        } else {
-          dtint = '0'
-        }
-        console.log('dtint', dtint)
         var dt = {
           bookNo: item.bookNo,
           contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
           status: 'confirm',
           statusUse: 'use',
-          pageStatus: this.getSelectText,
-          limitBookingCount: dtint,
+          // pageStatus: this.getSelectText,
+          // limitBookingCount: dtint,
           shopId: this.$session.getAll().data.shopId,
           CREATE_USER: this.session.data.userName,
           LAST_USER: this.session.data.userName,
@@ -14547,7 +15044,6 @@ export default {
           .then(async response => {
             if (response.data.status === true) {
               this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-              console.log('statusGoogleCalendar', this.statusGoogleCalendar)
               if (this.statusGoogleCalendar === 'True') {
                 await this.connectGoogleCalendar('Add', dt.bookNo)
               }
@@ -14675,17 +15171,17 @@ export default {
     },
     async setDataRemove (item) {
       this.statusVIPRemove = item.statusVIP
-      console.log('this.statusVIPRemove', this.statusVIPRemove)
       this.bookNoRemove = item
       this.dueDateOld = item.dueDateDay
       this.dueDateTimeOld = item.timeDuetext
       await this.getEmpSelect(item)
+      this.getEmpChange(item)
       this.dialogRemove = true
     },
     cancelChk () {
       this.validate('REMOVE')
       console.log('this.bookNoRemove', this.bookNoRemove)
-      setTimeout(() => this.onCancelChk(), 500)
+      setTimeout(() => this.onCancelChk(this.bookNoRemove), 500)
     },
     async updateLimitBookingCancel (item, dueDateOld, dueDateTimeOld) {
       let result = []
@@ -14694,28 +15190,22 @@ export default {
         dateSelect: dueDateOld,
         timeSelect: dueDateTimeOld,
         shopId: item.shopId,
-        userId: item.userId
+        userId: item.userId,
+        bookingEmpFlow: item.bookingEmpFlow,
+        masBranchID: item.masBranchID,
+        LAST_USER: this.$session.getAll().data.userName
       }
-      await axios.post(this.DNS_IP + '/Booking/updateLimitBookingCancel', dt).then(async response => {
+      await axios.post(this.DNS_IP + '/Booking/updateLimitBookingCancelEmp', dt).then(async response => {
         result = response.data
       })
       return result
     },
-    async onCancelChk () {
+    async onCancelChk (dt) {
       if (this.validRemove === true) {
         if (this.$session.id() !== undefined) {
-          let chkStatLimit = this.DataFlowNameDefault.filter(el => { return el.value === this.bookNoRemove.flowId })
+          let chkStatLimit = this.dataEmpAllChange.filter(el => { return el.empId === dt.bookingEmpFlow })
           if (chkStatLimit.length > 0) {
-            if (chkStatLimit[0].allData.limitBookingCheck === 'True') {
-              // let dueOld = this.dueDateOld + this.dueDateTimeOld
-              // let limitBookingCount = this.timeavailable.filter(el => { return el.value === this.formChange.time.value })
-              // console.log('limitBookingCount', limitBookingCount)
-              // let limitBookingCounts = 0
-              // if (limitBookingCount.length > 0) {
-              //   limitBookingCounts = parseInt(limitBookingCount[0].limitBooking)
-              // } else {
-              //   limitBookingCounts = 0
-              // }
+            if (chkStatLimit[0].limitBookingCheck === 'True') {
               if (this.statusVIPRemove === 'False') {
                 let chkStatus = await this.updateLimitBookingCancel(this.bookNoRemove, this.dueDateOld, this.dueDateTimeOld)
                 console.log('chkStatus', chkStatus)
@@ -14756,12 +15246,11 @@ export default {
       axios
         .post(this.DNS_IP + '/booking_transaction/add', dt)
         .then(async response => {
-          await this.updateRemark(this.bookNoRemove)
-          this.pushMsglineCancel(this.bookNoRemove)
-          console.log('statusGoogleCalendar', this.statusGoogleCalendar)
           if (this.statusGoogleCalendar === 'True') {
             await this.connectGoogleCalendar('Delete', dt.bookNo)
           }
+          await this.updateRemark(this.bookNoRemove)
+          this.pushMsglineCancel(this.bookNoRemove)
           this.$swal('เรียบร้อย', 'ยกเลิกเรียบร้อย', 'success')
           console.log('addDataGlobal', response)
           if (this.statusSearch === 'no') {
@@ -14802,33 +15291,33 @@ export default {
     },
     async changeChk (item, changeStatus) {
       this.dataChangeReady = false
-      // if (this.formChange.time !== '') {
-      if (item.statusBt === 'confirm') {
-        if (this.remark !== '') {
-          var dt = {
-            LAST_USER: this.session.data.userName,
-            remark: (this.remark || '').replace(/%/g, '%%')
+      if (this.formChange.time !== '') {
+        if (item.statusBt === 'confirm') {
+          if (this.remark !== '') {
+            var dt = {
+              LAST_USER: this.session.data.userName,
+              remark: (this.remark || '').replace(/%/g, '%%')
+            }
+            await axios
+              .post(
+                // eslint-disable-next-line quotes
+                this.DNS_IP + "/Booking/edit/" + item.bookNo,
+                dt
+              )
+              .then(async response => {
+                this.onChangeChk(item, changeStatus)
+              })
+          } else {
+            this.$swal('ผิดพลาด', 'กรุณาใส่ หมายเหตุเพิ่มเติม', 'error')
+            this.dataChangeReady = true
           }
-          await axios
-            .post(
-              // eslint-disable-next-line quotes
-              this.DNS_IP + "/Booking/edit/" + item.bookNo,
-              dt
-            )
-            .then(async response => {
-              this.onChangeChk(item, changeStatus)
-            })
         } else {
-          this.$swal('ผิดพลาด', 'กรุณาใส่ หมายเหตุเพิ่มเติม', 'error')
-          this.dataChangeReady = true
+          this.onChangeChk(item, changeStatus)
         }
       } else {
-        this.onChangeChk(item, changeStatus)
+        this.dataChangeReady = true
+        this.$swal('ผิดพลาด', 'กรุณาเลือกเวลา', 'error')
       }
-      // } else {
-      //   this.dataChangeReady = true
-      //   this.$swal('ผิดพลาด', 'กรุณาเลือกเวลา', 'error')
-      // }
     },
     onChangeChk (item, changeStatus) {
       console.log('item', item)
@@ -14843,35 +15332,18 @@ export default {
             if (this.getSelectText === 'cancel') {
               this.onChangeChkSubmit(item, changeStatus, checkCountTime)
             } else {
-              let chkStatLimit = this.DataFlowNameDefault.filter(el => { return el.value === item.flowId })
+              let chkStatLimit = this.dataEmpAllChange.filter(el => { return el.empId === item.bookingEmpFlow })
               console.log('chkStatLimit', chkStatLimit)
               if (chkStatLimit.length > 0) {
-                console.log('chkStatLimit', chkStatLimit[0].allData.limitBookingCheck)
-                if (chkStatLimit[0].allData.limitBookingCheck === 'True') {
-                  let dueOld = this.dueDateOld + this.dueDateTimeOld
-                  let dueNew = this.formChange.date + this.formChange.time.value
-                  let limitBookingCount = this.timeavailable.filter(el => { return el.value === this.formChange.time.value })
-                  let limitBookingCounts = 0
-                  if (limitBookingCount.length > 0) {
-                    limitBookingCounts = parseInt(limitBookingCount[0].limitBooking)
-                  } else {
-                    limitBookingCounts = 0
-                  }
-                  if (dueOld !== dueNew) {
-                    if (this.statusVIPChang === 'False') {
-                      let chkStatus = await this.updateLimitBookingChange(item, this.dueDateOld, this.dueDateTimeOld, this.formChange.date, this.formChange.time.value, limitBookingCounts)
-                      console.log('chkStatus', chkStatus)
-                      if (chkStatus.status) {
-                        this.onChangeChkSubmit(item, changeStatus, checkCountTime)
-                      } else {
-                        this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-                        this.dataChangeReady = true
-                      }
-                    } else {
-                      this.onChangeChkSubmit(item, changeStatus, checkCountTime)
-                    }
-                  } else {
+                console.log('chkStatLimit', chkStatLimit[0].limitBookingCheck)
+                if (chkStatLimit[0].limitBookingCheck === 'True') {
+                  let chkStatus = await this.updateLimitBookingChange(item, this.dueDateOld, this.dueDateTimeOld, this.formChange.date, this.formChange.time.value || this.formChange.time, item.flowId, 'chang', item.masBranchID)
+                  console.log('chkStatus', chkStatus)
+                  if (chkStatus.status) {
                     this.onChangeChkSubmit(item, changeStatus, checkCountTime)
+                  } else {
+                    this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
+                    this.dataChangeReady = true
                   }
                 } else {
                   this.onChangeChkSubmit(item, changeStatus, checkCountTime)
@@ -14898,7 +15370,7 @@ export default {
         countTime = checkCountTime.data[0].countChangeTime || 0
       }
       let dueOld = this.dueDateOld + this.dueDateTimeOld
-      let dueNew = this.formChange.date + this.formChange.time.value
+      let dueNew = this.formChange.date + this.formChange.time.value || this.formChange.time
       console.log('dueNew', dueNew)
       console.log('dueOld', dueOld)
       if (dueOld === dueNew) {
@@ -14906,34 +15378,13 @@ export default {
       } else {
         countTime = countTime + 1
       }
-      let storeFront = this.DataFlowNameDefault.filter(item => { return item.value === this.flowIDLimit })
-      let storeFrontCheck = ''
-      if (storeFront.length > 0) {
-        storeFrontCheck = storeFront[0].allData.storeFrontCheck || 'False'
-      } else {
-        storeFrontCheck = 'False'
-      }
-      let timeValue = ''
-      let timeText = ''
-      if (this.formChange.time.value) {
-        timeValue = this.formChange.time.value
-        timeText = this.formChange.time.text
-      } else {
-        timeValue = ''
-        timeText = ''
-      }
       var dtChange = {
         countChangeTime: countTime,
         changeDueDate: 'change',
-        dueDate: this.formChange.date + ' ' + timeValue,
-        timeText: timeText,
+        dueDate: this.formChange.date + ' ' + this.formChange.time.value || this.formChange.time,
+        timeText: this.formChange.time.text,
         LAST_USER: this.session.data.userName,
-        countHourLimit: this.selectCountBookingLimit,
-        storeFrontCheck: storeFrontCheck,
-        statusBookingForm: 'BookingForm',
-        timeSelect: timeValue,
-        flowId: this.flowIDLimit,
-        bookNo: item.bookNo
+        countHourLimit: this.selectCountBookingLimit
       }
       await axios
         .post(
@@ -14950,11 +15401,12 @@ export default {
             shopId: this.$session.getAll().data.shopId,
             CREATE_USER: this.session.data.userName,
             LAST_USER: this.session.data.userName,
-            changDate: this.formChange.date + ' ' + timeValue
+            changDate: this.formChange.date + ' ' + this.formChange.time.value || this.formChange.time
           }
           await axios
             .post(this.DNS_IP + '/booking_transaction/add', dt)
             .then(async response => {
+              console.log('addDataGlobal', response)
               console.log('*****', item.statusBt, changeStatus)
               if ((item.statusBt === 'confirm' || item.statusBt === 'confirmJob') && (changeStatus === 'change' || changeStatus === 'confirm')) {
                 console.log('*****Edit')
@@ -15007,28 +15459,46 @@ export default {
               this.$swal('เรียบร้อย', 'เปลี่ยนเวลานัดหมาย เรียบร้อย', 'success')
               this.dataChangeReady = true
               this.dialogChange = false
+              this.fromAddTimeCus = ''
             })
             .catch(error => {
               console.log('error function addData : ', error)
             })
         })
     },
-    async updateLimitBookingChange (item, dueDateOld, dueDateTimeOld, dueDateNew, dueDateTimeNew, limitBookingCount) {
+    async updateLimitBookingChange (item, dueDateOld, dueDateTimeOld, dueDateNew, dueDateTimeNew, flowIdNew, Textcheck, masBranchIDNew) {
       let result = []
+      let timeSlotCustomer = ''
+      if (this.customerTimeSlot === 'True') {
+        timeSlotCustomer = this.fromAddTimeCus
+      } else {
+        timeSlotCustomer = this.DataFlowNameDefault.filter((v) => v.value === flowIdNew)[0].allData.timeSlot
+      }
+      let bookingEmpFlow = ''
+      if (Textcheck === 'Edit') {
+        bookingEmpFlow = this.formEdit.bookingEmpFlow
+      } else {
+        bookingEmpFlow = item.bookingEmpFlow
+      }
       let dt = {
         dueDateOld: dueDateOld,
         dueDateTimeOld: dueDateTimeOld,
         dueDateNew: dueDateNew,
         dueDateTimeNew: dueDateTimeNew,
         flowId: item.flowId,
+        flowIdNew: flowIdNew,
         masBranchID: item.masBranchID,
+        masBranchIDNew: masBranchIDNew,
         dateSelect: dueDateNew,
         timeSelect: dueDateTimeNew,
         shopId: item.shopId,
+        timeSlotCustomer: timeSlotCustomer,
         userId: item.userId,
-        limitBookingCount: limitBookingCount
+        bookingEmpFlow: bookingEmpFlow,
+        bookingEmpFlowOld: item.bookingEmpFlow,
+        LAST_USER: this.$session.getAll().data.userName
       }
-      await axios.post(this.DNS_IP + '/Booking/updateLimitBookingChangeTime', dt).then(async response => {
+      await axios.post(this.DNS_IP + '/Booking/updateLimitBookingChangeTimeEmp', dt).then(async response => {
         result = response.data
       })
       return result
@@ -15042,7 +15512,6 @@ export default {
         dueDateTimeNew: dueDateTimeNew,
         flowId: item.flowId,
         flowIdOld: this.flowIdOldEdit,
-        masBranchIDOld: this.masBranchIDOldEdit,
         masBranchID: item.masBranchID,
         dateSelect: dueDateNew,
         timeSelect: dueDateTimeNew,
@@ -15099,17 +15568,9 @@ export default {
     async getjob (item) {
       console.log(item)
       this.bookNo = item.bookNo
-      this.dataGetJob = item
       this.jobitem = []
       if (item.jobNo !== '') {
         this.getCoin(item)
-        // var lineUserId = ''
-        // if (item.lineUserId === null || item.lineUserId === '' || item.lineUserId === 'user-skip' || item.lineUserId === undefined) {
-        //   lineUserId = ''
-        // } else {
-        //   lineUserId = item.lineUserId
-        // }
-        // this.lineUserId = lineUserId
         let checkBookingMember = ''
         const result = await axios
           .get(
@@ -15192,10 +15653,6 @@ export default {
               this.lineUserId = ''
               this.memberTel = ''
             }
-          }).catch(error => {
-            this.lineUserId = ''
-            this.memberTel = ''
-            console.log('error function member : ', error)
           })
         if (this.lineUserId !== '') {
           this.dataCoin = []
@@ -15214,9 +15671,6 @@ export default {
               } else {
                 this.dataCoin = []
               }
-            }).catch(error => {
-              this.dataCoin = []
-              console.log('error function productExchangeRate : ', error)
             })
         }
       }
@@ -15324,593 +15778,104 @@ export default {
           console.log('error function addDataGlobal : ', error)
         })
     },
-    async setBookingAgain (dt) {
-      this.checkSelectText = dt.statusBt
-      // this.dialogEditData = true
-      await this.getBookingField()
-      // await this.getBookingData(dt, 'edit')
-      console.log('setBookingAgain', dt)
-      this.dataEdit = dt
-      this.userId = dt.userId || ''
-      this.BookingDataItemEdit = []
-      this.formEdit.masBranchID = dt.masBranchID
-      this.masBranchIDOldEdit = dt.masBranchID
-      this.formEdit.flowId = dt.flowId
-      this.flowIdOldEdit = dt.flowId
-      this.empSelectEdit = parseInt(dt.empSelect)
-      this.dueDateOld = dt.dueDateDay
-      this.dueDateTimeOld = dt.timeDuetext
-
-      this.address = dt.address
-      this.center = JSON.parse(dt.addressLatLong) || null
-
-      // this.SetallowedDatesEdit()
-      this.dateEdit = ''
-      // this.dateEdit = dt.dueDateDay
-      console.log('dataFlowSelectEdit', this.dataFlowSelectEdit)
+    async setBookingingAgain () {
+      // await this.getBookingField()
+      console.log(this.userId)
+      console.log(this.bookNo)
+      let booking = await axios.get(this.DNS_IP + '/booking_view/get?shopId=' + this.session.data.shopId + '&bookNo=' + this.bookNo + this.selectOnsite)
+      let bookingData = await axios.get(this.DNS_IP + '/BookingData/get?shopId=' + this.session.data.shopId + '&bookNo=' + booking.data[0].bookNo)
+      // console.log('this.fieldNameItem', this.fieldNameItem)
+      this.booking = booking.data
+      this.bookingData = bookingData.data
+      console.log('booking', booking)
+      console.log('bookingData', bookingData)
+      this.remark = booking.data[0].remark
       this.timeavailable = []
-      // let dtTime = await this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
-      let dtTime = this.dataFlowSelectEdit.filter(item => { return item.value === this.formEdit.flowId }) || []
-      console.log('dtTime', dtTime)
-      await this.setLimitBookingEdit(dt.dueDateDay)
-      let setTime = []
-      if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTimebyday === 'True') {
-        let timeJson = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime).filter((items) => items.value === new Date(dt.dueDateDay).getDay())
-        setTime = timeJson[0].setTime || []
-        console.log('IF')
-      } else {
-        console.log('ELSE')
-        setTime = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime) || []
-      }
+      let dtTime = this.dataFlowSelectAdd.filter(item => { return item.value === booking.data[0].flowId })
       if (dtTime.length > 0) {
-        this.statusShowMap = dtTime[0].allData.checkOnsite || 'False'
-        // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
-        console.log('timeavailable', dtTime.map(item => item.allData.setTime))
-        if (dtTime.map(item => item.allData.setTime)[0] === null || dtTime.map(item => item.allData.setTime)[0] === '') {
+        if (dtTime.map(item => item.allData.setTime) === null) {
           this.timeavailable = []
-          this.timeEdit = ''
         } else {
-          this.timeavailable = setTime
-          this.timeEdit = ''
-          // if (this.timeavailable.filter(el => { return el.text === dt.timeText }).length > 0) {
-          //   if (dt.timeText) {
-          //     this.timeEdit = { text: dt.timeText, value: dt.dueDate.slice(-5) }
-          //   } else {
-          //     this.timeEdit = { text: dt.dueDate.slice(-5), value: dt.dueDate.slice(-5) }
-          //   }
-          // } else {
-          //   this.timeEdit = { text: dt.dueDate.slice(-5), value: dt.dueDate.slice(-5) }
-          // }
-        }
-      } else {
-        this.statusShowMap = 'False'
-      }
-      console.log('setDataEdit', dt)
-      await this.getPackage(dt)
-      if (this.dataPackage.length > 0) {
-        console.log('dataPackage', this.dataPackage.filter(el => { return el.packageId === dt.packageId }))
-        if (this.dataPackage.filter(el => { return el.packageId === dt.packageId }).length > 0) {
-          var dataPack = this.dataPackage.filter(el => { return el.packageId === dt.packageId })
-          this.dataPackageDefault = true
-          // this.packageId = dataPack[0].value
-          this.UpdatePackage(dataPack[0].value, 'ตกลง', dataPack[0].text, dataPack[0], dt.tokenPackage)
-        } else {
-          this.UpdatePackage('', 'ยกเลิก', '', '', '')
-          this.dataPackageDefault = false
+          this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
         }
       }
-      console.log('setDataEdit', dt)
-      var extraJob = ''
-      var fastTrack = ''
-      if (dt.extraJob === null) {
-        extraJob = false
-      } else {
-        extraJob = dt.extraJob
-      }
-      if (dt.fastTrack === null) {
-        fastTrack = false
-      } else {
-        fastTrack = dt.fastTrack
-      }
-
-      if (!extraJob && !fastTrack) {
-        this.formEdit.radiosRemark = 'ซ่อมปกติ'
-      } else if (extraJob && !fastTrack) {
-        this.formEdit.radiosRemark = 'ExtraJob'
-      } else if (!extraJob && fastTrack) {
-        this.formEdit.radiosRemark = 'FastTrack'
-      }
-
-      let itemIncustomField = []
-      await axios
-        .get(
-          this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
-        )
-        .then(async response1 => {
-          let rs2 = response1.data
-          console.log('BookingField', rs2)
-          if (rs2.length > 0) {
-            let bookingData = []
-            bookingData = JSON.parse(rs2[0].flowfieldName)
-            for (let i = 0; i < bookingData.length; i++) {
-              let d = bookingData[i]
-              itemIncustomField.push(d.fieldId)
-            }
-            await axios
-              .get(this.DNS_IP + '/customField/fieldId?fieldId=' + itemIncustomField)
-              .then(async responses => {
-                let rs1 = responses.data
-                console.log('customField', rs1)
-                await axios
-                  .get(this.DNS_IP + '/BookingDataSelect/get?bookNo=' + dt.bookNo)
-                  .then(async response => {
-                    let rs = response.data
-                    console.log('BookingDataSelect', rs)
-                    if (rs.length > 0) {
-                      let sortrs = rs1.sort((a, b) => a.sortNoField - b.sortNoField)
-                      for (var i = 0; i < sortrs.length; i++) {
-                        var d = sortrs[i]
-                        var s = {}
-                        var dataBD = rs.filter(el => { return parseInt(el.fieldId) === parseInt(d.fieldId) })
-                        // console.log('dataBD', dataBD)
-                        if (dataBD.length > 0) {
-                          s.bookNo = dataBD[0].bookNo
-                          s.bookingFieldId = rs2[0].bookingFieldId
-                          s.bookingDataId = dataBD[0].bookingDataId
-                          s.conditionField = d.conditionField
-                          s.fieldId = d.fieldId
-                          s.fieldType = d.fieldType
-                          s.fieldValue = dataBD[0].fieldValue
-                          s.fieldName = d.fieldName
-                          s.conditionField = d.conditionField
-                          s.conditionValue = d.conditionValue
-                          s.requiredField = d.requiredField
-                          s.optionField = d.optionField
-                          this.BookingDataItemEdit.push(s)
-                        } else {
-                          s.bookNo = rs[0].bookNo
-                          s.bookingFieldId = rs2[0].bookingFieldId
-                          s.bookingDataId = 'newDataBooking'
-                          s.conditionField = d.conditionField
-                          s.fieldId = d.fieldId
-                          s.fieldType = d.fieldType
-                          s.fieldValue = ''
-                          s.fieldName = d.fieldName
-                          s.conditionField = d.conditionField
-                          s.conditionValue = d.conditionValue
-                          s.requiredField = d.requiredField
-                          s.optionField = d.optionField
-                          this.BookingDataItemEdit.push(s)
-                        }
-                      }
-                    } else {
-                      this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
-                        this.dialogBookingAgain = false
-                      }).catch((error) => {
-                        console.log('error function setDataEdit : ', error)
-                        this.dialogBookingAgain = false
-                      })
-                    }
-                  }).catch((error) => {
-                    this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
-                      this.dialogBookingAgain = false
-                    }).catch((error) => {
-                      console.log('error function setDataEdit : ', error)
-                      this.dialogBookingAgain = false
-                    })
-                    console.log('error function setDataEdit : ', error)
-                  })
-              })
-          } else {
-            this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
-              this.dialogBookingAgain = false
-            }).catch((error) => {
-              console.log('error function setDataEdit : ', error)
-              this.dialogBookingAgain = false
-            })
-          }
-        }).catch((error) => {
-          this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
-            this.dialogBookingAgain = false
-          }).catch((error) => {
-            console.log('error function setDataEdit : ', error)
-            this.dialogBookingAgain = false
-          })
-          console.log('error function setDataEdit : ', error)
-        })
-      console.log('this.BookingDataItemEdit', this.BookingDataItemEdit)
+      // let dtTime = this.branch.filter(item => { return item.value === booking.data[0].masBranchID })
+      // console.log('test', dtTime)
+      // this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
       this.dialogBookingAgain = true
-      this.SetallowedDatesEdit()
     },
     addBookingAgain () {
       this.loadingBookingAgain = true
       this.validate('BOOKAGAIN')
-      setTimeout(() => this.checkDuplicateBookingAgain(), 500)
+      setTimeout(() => this.addBookingAgainSubmit(), 500)
     },
-    async checkDuplicateBookingAgain () {
-      if (this.validBookingAgain !== false) {
-        this.loadingEdit = true
-        this.swalConfig.title = 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?'
-        this.$swal(this.swalConfig)
-          .then(async result => {
-            if (this.getSelectText === 'cancel') {
-              this.addBookingAgainSubmit()
-            } else {
-              if (this.formEdit.radiosRemark === 'FastTrack') {
-                let getcount = await this.getCountFastTrack(this.dateEdit, this.formEdit.flowId, this.formEdit.masBranchID)
-                let setCountFast = this.branch.filter(el => { return el.value === this.formEdit.masBranchID })[0].allData.countFastTrack
-                if (getcount < setCountFast) {
-                  let chkStatLimit = this.dataFlowSelectEdit.filter(el => { return el.value === this.formEdit.flowId })
-                  console.log('this.getSelectText', this.getSelectText)
-                  if (chkStatLimit.length > 0) {
-                    if (chkStatLimit[0].allData.limitBookingCheck === 'True') {
-                      let dueOld = this.dueDateOld + this.dueDateTimeOld
-                      let dueNew = this.dateEdit + this.timeEdit.value
-                      let limitBookingCount = this.timeavailable.filter(el => { return el.value === this.timeEdit.value })
-                      console.log('limitBookingCount', limitBookingCount)
-                      let limitBookingCounts = 0
-                      if (limitBookingCount.length > 0) {
-                        limitBookingCounts = parseInt(limitBookingCount[0].limitBooking)
-                      } else {
-                        limitBookingCounts = 0
-                      }
-                      console.log('NEW', this.formEdit.masBranchID)
-                      console.log('OLD', this.masBranchIDOldEdit)
-                      if (dueOld !== dueNew) {
-                        let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
-                        console.log('chkStatus', chkStatus)
-                        if (chkStatus.status) {
-                          this.addBookingAgainSubmit()
-                        } else {
-                          this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-                          this.loadingEdit = false
-                        }
-                      } else if (dueOld === dueNew && this.flowIdOldEdit !== this.formEdit.flowId) {
-                        let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
-                        console.log('chkStatus', chkStatus)
-                        if (chkStatus.status) {
-                          this.addBookingAgainSubmit()
-                        } else {
-                          this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-                          this.loadingEdit = false
-                        }
-                      } else if (dueOld === dueNew && this.masBranchIDOldEdit !== this.formEdit.masBranchID) {
-                        let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
-                        console.log('chkStatus', chkStatus)
-                        if (chkStatus.status) {
-                          this.addBookingAgainSubmit()
-                        } else {
-                          this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-                          this.loadingEdit = false
-                        }
-                      } else if (dueOld === dueNew && this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.flowIdOldEdit !== this.formEdit.flowId) {
-                        let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
-                        console.log('chkStatus', chkStatus)
-                        if (chkStatus.status) {
-                          this.addBookingAgainSubmit()
-                        } else {
-                          this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-                          this.loadingEdit = false
-                        }
-                      } else {
-                        this.addBookingAgainSubmit()
-                      }
-                    } else {
-                      this.addBookingAgainSubmit()
-                    }
-                  } else {
-                    this.addBookingAgainSubmit()
-                  }
-                } else {
-                  this.textError = 'จำนวนงานด่วนต่อวัน เกินกว่าที่ตั้งไว้'
-                  this.dialogError = true
-                  this.loadingEdit = false
-                }
-              } else {
-                let chkStatLimit = this.dataFlowSelectEdit.filter(el => { return el.value === this.formEdit.flowId })
-                console.log('this.getSelectText', this.getSelectText)
-                if (chkStatLimit.length > 0) {
-                  if (chkStatLimit[0].allData.limitBookingCheck === 'True') {
-                    let dueOld = this.dueDateOld + this.dueDateTimeOld
-                    let dueNew = this.dateEdit + this.timeEdit.value
-                    let limitBookingCount = this.timeavailable.filter(el => { return el.value === this.timeEdit.value })
-                    console.log('limitBookingCount', limitBookingCount)
-                    let limitBookingCounts = 0
-                    if (limitBookingCount.length > 0) {
-                      limitBookingCounts = parseInt(limitBookingCount[0].limitBooking)
-                    } else {
-                      limitBookingCounts = 0
-                    }
-                    if (dueOld !== dueNew) {
-                      let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
-                      console.log('chkStatus', chkStatus)
-                      if (chkStatus.status) {
-                        this.addBookingAgainSubmit()
-                      } else {
-                        this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-                        this.loadingEdit = false
-                      }
-                    } else if (dueOld === dueNew && this.flowIdOldEdit !== this.formEdit.flowId) {
-                      let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
-                      console.log('chkStatus', chkStatus)
-                      if (chkStatus.status) {
-                        this.addBookingAgainSubmit()
-                      } else {
-                        this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-                        this.loadingEdit = false
-                      }
-                    } else if (dueOld === dueNew && this.masBranchIDOldEdit !== this.formEdit.masBranchID) {
-                      let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
-                      console.log('chkStatus', chkStatus)
-                      if (chkStatus.status) {
-                        this.addBookingAgainSubmit()
-                      } else {
-                        this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-                        this.loadingEdit = false
-                      }
-                    } else if (dueOld === dueNew && this.masBranchIDOldEdit !== this.formEdit.masBranchID && this.flowIdOldEdit !== this.formEdit.flowId) {
-                      let chkStatus = await this.updateLimitBookingEdit(this.formEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value, limitBookingCounts)
-                      console.log('chkStatus', chkStatus)
-                      if (chkStatus.status) {
-                        this.addBookingAgainSubmit()
-                      } else {
-                        this.$swal('ผิดพลาด', 'เวลาที่ท่านเลือกคิวเต็มแล้ว', 'error')
-                        this.loadingEdit = false
-                      }
-                    } else {
-                      this.addBookingAgainSubmit()
-                    }
-                  } else {
-                    this.addBookingAgainSubmit()
-                  }
-                } else {
-                  this.addBookingAgainSubmit()
-                }
-              }
-            }
-          }).catch(error => {
-            this.loadingEdit = false
-            console.log('addBookingAgainSubmit error', error)
-          })
-      } else {
-        this.loadingEdit = false
-      }
-    },
-    async addBookingAgainSubmit () {
-      if (this.$session.id() !== undefined) {
-        this.dataEditReady = false
-        let rs = this.BookingDataItemEdit
+    addBookingAgainSubmit () {
+      if (this.validBookingAgain === true) {
+        let rs = this.bookingData
         let Add = []
-        let fielditem = this.BookingDataItemEdit
-        console.log('this.BookingDataItemEdit', this.BookingDataItemEdit)
-        var fastTrack = 'False'
-        var extraJob = 'False'
-        switch (this.formEdit.radiosRemark) {
-          case 'ซ่อมปกติ':
-            fastTrack = 'False'
-            extraJob = 'False'
-            break
-          case 'ExtraJob':
-            fastTrack = 'False'
-            extraJob = 'True'
-            break
-          case 'FastTrack':
-            fastTrack = 'True'
-            extraJob = 'False'
-            break
-        }
-        let storeFront = this.DataFlowNameDefault.filter(item => { return item.value === this.formEdit.flowId })
-        let storeFrontCheck = ''
-        if (storeFront.length > 0) {
-          storeFrontCheck = storeFront[0].allData.storeFrontCheck || 'False'
-        } else {
-          storeFrontCheck = 'False'
-        }
         for (let i = 0; i < rs.length; i++) {
           let d = rs[i]
           let update = {}
-          if (d.conditionField === '' || d.conditionField === null) {
+          d.fieldValue = d.fieldValue || ''
+          if (d.fieldValue !== '') {
+            update.masBranchID = this.booking[0].masBranchID
+            update.bookingFieldId = d.bookingFieldId
             update.remark = this.remark
-            update.fieldId = d.fieldId //
-            update.bookingFieldId = d.bookingFieldId //
-            update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%').replace(/'/g, "\\'") //
-            update.dueDate = this.dateEdit + ' ' + this.timeEdit.value //
-            update.dateSelect = this.dateEdit //
-            update.timeText = this.timeEdit.text //
-            update.flowId = this.formEdit.flowId //
-            update.masBranchID = this.formEdit.masBranchID //
-            update.fastTrack = fastTrack //
-            update.extraJob = extraJob //
-            update.empSelect = this.empSelectEdit //
-            update.shopId = this.session.data.shopId //
-            update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'") //
-            update.addressLatLong = JSON.stringify(this.center) //
-            update.storeFrontCheck = storeFrontCheck //
-            update.statusBookingForm = 'BookingForm'//
-            update.timeSelect = this.timeEdit.value //
-            update.userId = this.userId || 'user-skip'//
-            update.pageName = 'BookingList'//
-            update.sourceLink = 'direct'//
-            update.adminLogin = this.session.data.userName//
-
-            // update.depositStatus = this.formAdd.depositStatus
-            // update.depositImge = this.formAdd.depositImge
-            // update.limitBookingCheck = limitBookingCheck
-            // update.limitBookingId = this.checkLimitBooking.ID
-            // update.limitBookingCount = this.checkLimitBooking.countBooking
-            // update.getLimitBooking = this.checkLimitBooking.limitBooking
-            // update.depositPrice = this.formAdd.depositPrice
+            update.flowId = this.booking[0].flowId
+            update.fieldId = d.fieldId
+            update.fieldValue = d.fieldValue
+            update.shopId = d.shopId
+            update.dueDate = this.date + ' ' + this.time.value
+            update.timeText = this.time.text
+            update.userId = this.userId
+            update.pageName = 'BookingList'
+            update.sourceLink = 'direct'
+            update.fastTrack = this.booking[0].fastTrack || ''
+            update.extraJob = this.booking[0].extraJob || ''
+            update.depositStatus = this.booking[0].depositStatus || ''
+            update.depositImge = this.booking[0].depositImge || ''
+            update.empSelect = this.booking[0].empSelect
+            update.adminLogin = this.session.data.userName
             Add.push(update)
-          } else {
-            if (
-              fielditem.filter(row => {
-                return row.fieldId === parseInt(d.conditionField)
-              }).length > 0
-            ) {
-              if (
-                d.conditionValue ===
-              fielditem.filter(row => {
-                return row.fieldId === parseInt(d.conditionField)
-              })[0].fieldValue
-              ) {
-                // update.fieldId = d.fieldId
-                // update.bookingDataId = d.bookingDataId
-                // update.bookingFieldId = d.bookingFieldId
-                // update.bookNo = d.bookNo
-                // update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%').replace(/'/g, "\\'")
-                // update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
-                // update.timeText = this.timeEdit.text
-                // update.flowId = this.formEdit.flowId
-                // update.masBranchID = this.formEdit.masBranchID
-                // update.fastTrack = fastTrack
-                // update.extraJob = extraJob
-                // update.LAST_USER = this.$session.getAll().data.userName
-                // update.empSelect = this.empSelectEdit
-                // update.shopId = this.session.data.shopId
-                // update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
-                // update.addressLatLong = JSON.stringify(this.center)
-                // update.storeFrontCheck = storeFrontCheck
-                // update.statusBookingForm = 'BookingForm'
-                // update.timeSelect = this.timeEdit.value
-                update.remark = this.remark
-                update.fieldId = d.fieldId //
-                update.bookingFieldId = d.bookingFieldId //
-                update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%').replace(/'/g, "\\'") //
-                update.dueDate = this.dateEdit + ' ' + this.timeEdit.value //
-                update.dateSelect = this.dateEdit //
-                update.timeText = this.timeEdit.text //
-                update.flowId = this.formEdit.flowId //
-                update.masBranchID = this.formEdit.masBranchID //
-                update.fastTrack = fastTrack //
-                update.extraJob = extraJob //
-                update.empSelect = this.empSelectEdit //
-                update.shopId = this.session.data.shopId //
-                update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'") //
-                update.addressLatLong = JSON.stringify(this.center) //
-                update.storeFrontCheck = storeFrontCheck //
-                update.statusBookingForm = 'BookingForm'//
-                update.timeSelect = this.timeEdit.value //
-                update.userId = this.userId || 'user-skip'//
-                update.pageName = 'BookingList'//
-                update.sourceLink = 'direct'//
-                update.adminLogin = this.session.data.userName//
-                Add.push(update)
-              }
-            } else if (d.conditionField === 'flow') {
-              if (parseInt(d.conditionValue) === parseInt(this.formEdit.flowId)) {
-                // update.fieldId = d.fieldId
-                // update.bookingDataId = d.bookingDataId
-                // update.bookingFieldId = d.bookingFieldId
-                // update.bookNo = d.bookNo
-                // update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%').replace(/'/g, "\\'")
-                // update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
-                // update.timeText = this.timeEdit.text
-                // update.flowId = this.formEdit.flowId
-                // update.masBranchID = this.formEdit.masBranchID
-                // update.fastTrack = fastTrack
-                // update.extraJob = extraJob
-                // update.LAST_USER = this.$session.getAll().data.userName
-                // update.empSelect = this.empSelectEdit
-                // update.shopId = this.session.data.shopId
-                // update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
-                // update.addressLatLong = JSON.stringify(this.center)
-                // update.storeFrontCheck = storeFrontCheck
-                // update.statusBookingForm = 'BookingForm'
-                // update.timeSelect = this.timeEdit.value
-                update.remark = this.remark
-                update.fieldId = d.fieldId //
-                update.bookingFieldId = d.bookingFieldId //
-                update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%').replace(/'/g, "\\'") //
-                update.dueDate = this.dateEdit + ' ' + this.timeEdit.value //
-                update.dateSelect = this.dateEdit //
-                update.timeText = this.timeEdit.text //
-                update.flowId = this.formEdit.flowId //
-                update.masBranchID = this.formEdit.masBranchID //
-                update.fastTrack = fastTrack //
-                update.extraJob = extraJob //
-                update.empSelect = this.empSelectEdit //
-                update.shopId = this.session.data.shopId //
-                update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'") //
-                update.addressLatLong = JSON.stringify(this.center) //
-                update.storeFrontCheck = storeFrontCheck //
-                update.statusBookingForm = 'BookingForm'//
-                update.timeSelect = this.timeEdit.value //
-                update.userId = this.userId || 'user-skip'//
-                update.pageName = 'BookingList'//
-                update.sourceLink = 'direct'//
-                update.adminLogin = this.session.data.userName//
-                Add.push(update)
-              }
-            }
           }
         }
         console.log('Add', Add)
-        await axios
-          .post(
-            // eslint-disable-next-line quotes
-            this.DNS_IP + "/Booking/add",
-            Add
-          )
-          .then(async response => {
-            if (response.data.message === 'LimitBooking_Full') {
-              this.$swal('คิวเต็มแล้ว', 'กรุณาเลือกวันที่และเวลาใหม่อีกครั้ง', 'error')
+        this.swalConfig.title = 'ต้องการนำรายการนี้ เข้าตารางใช่หรือไม่?'
+        this.$swal(this.swalConfig).then(async result => {
+          axios
+            .post(this.DNS_IP + '/Booking/add', Add)
+            .then(async response => {
+              await this.confirmChkAdd(response.data)
+              let booking = await axios.get(this.DNS_IP + '/booking_view/get?shopId=' + this.session.data.shopId + '&bookNo=' + response.data.bookNo + this.selectOnsite)
+              // let bookingData = await axios.get(this.DNS_IP + '/BookingData/get?shopId=' + this.session.data.shopId + '&bookNo=' + response.data.bookNo)
+              // let cusName = this.getDataFromFieldName(bookingData.data, 'ชื่อ')
+              if (booking.data[0].lineUserId) {
+                this.pushMsgConfirm(response.data.bookNo)
+              }
               this.date = ''
               this.time = ''
-            } else {
-              // await this.confirmChkAddBookingAgain(response.data)
+              this.booking = []
+              this.bookingData = []
               if (this.statusSearch === 'no') {
                 await this.getBookingList()
               } else {
                 await this.searchAny()
               }
               // this.getTimesChange('update')
-              this.formEdit.radiosRemark = ''
-              this.remark = ''
               if (this.getSelectText) {
                 this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
               }
-              // this.getDataCalendaBooking()
+              this.loadingBookingAgain = false
               this.dialogBookingAgain = false
-              this.$swal('เรียบร้อย', 'นัดหมายอีกครั้ง เรียบร้อย', 'success')
-              this.dataEditReady = true
-              this.loadingEdit = false
-            }
-          }).catch(error => {
-            // this.dataEditReady = true
-            setTimeout(() => this.addBookingAgainSubmit(), 3000)
-            console.log('close alert : ', error)
-          })
+              this.dialogJob = false
+            })
+        }).catch(error => {
+          this.loadingBookingAgain = false
+          console.log('Booking add again : ', error)
+        })
       } else {
-        this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
-        clearInterval(this.setTimerCalendar)
-        this.setTimerCalendar = null
-        this.$router.push('/Core/Login')
+        this.loadingBookingAgain = false
       }
-    },
-    async confirmChkAddBookingAgain (item) {
-      var dt = {
-        bookNo: item.bookNo,
-        contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
-        status: 'confirm',
-        statusUse: 'use',
-        shopId: this.$session.getAll().data.shopId,
-        CREATE_USER: this.session.data.userName,
-        LAST_USER: this.session.data.userName
-      }
-      await axios
-        .post(this.DNS_IP + '/booking_transaction/add', dt)
-        .then(async response => {
-          // this.getDataCalendaBooking()
-          this.pushMsgConfirm(item.bookNo)
-          // this.clearDataAdd()
-          // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-          // await this.getBookingList()
-          // this.getTimesChange('update')
-        })
-        .catch(error => {
-          console.log('error function confirmChkAddBookingAgain : ', error)
-          setTimeout(() => this.confirmChkAddBookingAgain(), 3000)
-        })
     },
     async setDataChang (item) {
       // clear Limit
@@ -15924,6 +15889,10 @@ export default {
       this.selectCountBookingLimit = 1
       this.limitBookingCheck = 'False'
       this.limitBookingSelect = 'False'
+      await this.getEmpChange(item)
+      this.bookingEmpFlow = item.bookingEmpFlow
+      this.checkCustomerTimeSlotChang(item)
+      this.SetallowedDatesChange(item.bookingEmpFlow)
       /// /////////////////////
       this.userId = item.userId || ''
       this.limitBookingCheck = item.limitBookingCheck || 'False'
@@ -15934,131 +15903,33 @@ export default {
       this.masBranchIDLimit = item.masBranchID
       this.flowIDLimit = item.flowId
       this.checkSelectText = item.statusBt
-      this.checkTimeFlow(item)
+      this.timeavailable = []
+      if (this.customerTimeSlot === 'True') {
+
+      } else {
+        await this.checkTimeFlow(item.dueDateDay, item)
+      }
+
       this.dataChange = item
       this.remark = item.remark
       this.formChange.date = item.dueDateDay
-      this.setLimitBookingChange(item.dueDateDay)
       console.log('this.timeavailable', this.timeavailable)
-      // if (this.timeavailable.length > 0) {
-      //   if (this.timeavailable.filter(el => { return el.text === item.timeText }).length > 0) {
-      //     if (item.timeText) {
-      //       this.formChange.time = { text: item.timeText, value: item.timeDuetext }
-      //     } else {
-      //       this.formChange.time = { text: item.timeDuetext, value: item.timeDuetext }
-      //     }
-      //   } else {
-      //     this.formChange.time = { text: item.timeDuetext, value: item.timeDuetext }
-      //   }
-      // } else {
-      //   this.formChange.time = ''
-      // }
-
-      let limitCountBranchOld = 0
-      if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(item.flowId) }).length > 0) {
-        let setTimeOld = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(item.flowId) })[0].allData.setTime)
-        console.log('setTimeOld', setTimeOld)
-        if (setTimeOld === '' || setTimeOld === null) {
-          this.limitCountBranchOld = []
+      if (this.timeavailable.length > 0) {
+        if (this.timeavailable.filter(el => { return el.text === item.timeText }).length > 0) {
+          if (item.timeText) {
+            this.formChange.time = { text: item.timeText, value: item.timeDuetext }
+          } else {
+            this.formChange.time = { text: item.timeDuetext, value: item.timeDuetext }
+          }
         } else {
-          // let setTimeOld = JSON.parse(this.branch.filter(el => { return el.value === parseInt(item.masBranchID) })[0].allData.setTime)
-          let indexOld = setTimeOld.findIndex((element) => element.value === item.timeDuetext)
-          limitCountBranchOld = setTimeOld.slice(indexOld, indexOld + item.countHourLimit)
-          this.limitCountBranchOld = limitCountBranchOld
+          this.formChange.time = ''
         }
+      } else {
+        this.formChange.time = ''
       }
 
       this.dialogChange = true
       console.log(this.formChange)
-      if (this.formChange.time !== '') {
-        this.setCountTime(item)
-      }
-      this.SetallowedDatesChange(item.flowId)
-    },
-    async setCountTime (dt) {
-      console.log('this.formChange.time', this.formChange.time)
-      let limitCountBranch = 0
-      if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(dt.flowId) }).length > 0) {
-        // let setTime = JSON.parse(this.branch.filter(el => { return el.value === parseInt(this.masBranchIDLimit) })[0].allData.setTime)
-        let setTime = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(dt.flowId) })[0].allData.setTime)
-        let index = setTime.findIndex((element) => element.value === this.formChange.time.value)
-        limitCountBranch = setTime.slice(index, index + this.selectCountBookingLimit)
-        this.limitCountBranch = limitCountBranch
-        await this.getDataLimitBooking(dt)
-      }
-    },
-    async getDataLimitBooking (dt) {
-      this.dataLimitBookingDate = []
-      // let setTime = JSON.parse(this.branch.filter(el => { return el.value === parseInt(this.masBranchIDLimit) })[0].allData.setTime)
-      let setTime = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(dt.flowId) })[0].allData.setTime)
-      let limitBooking = 0
-      if (setTime.length > 0) {
-        if (setTime.filter(el => { return el.value === this.formChange.time.value }).length > 0) {
-          limitBooking = setTime.filter(el => { return el.value === this.formChange.time.value })[0].limitBooking
-        } else {
-          limitBooking = 0
-        }
-      } else {
-        limitBooking = 0
-      }
-      if (limitBooking !== 0) {
-        await axios
-          .get(
-            this.DNS_IP + '/LimitBookingDate/get?shopId=' + this.session.data.shopId + '&bookingDate=' + this.formChange.date
-          )
-          .then(async response => {
-            let rs = response.data
-            if (rs.status === false) {
-              this.dataLimitBookingDate = []
-            } else {
-              for (let i = 0; i < rs.length; i++) {
-                let d = rs[i]
-                let s = {}
-                s.bookingTime = d.bookingTime
-                s.countBookingLimit = d.countBooking + '/' + limitBooking
-                s.countBooking = d.countBooking
-                // if (d.countBooking === parseInt(limitBooking)) {
-                //   s.color = 'orange darken-1'
-                // } else
-                if (d.countBooking > parseInt(limitBooking)) {
-                  s.color = 'red darken-1'
-                } else if (d.countBooking <= parseInt(limitBooking)) {
-                  s.color = 'blue darken-1'
-                }
-                this.dataLimitBookingDate.push(s)
-              }
-              for (let i = 0; i < this.limitCountBranch.length; i++) {
-                let s = {}
-                let d = this.limitCountBranch[i]
-                if (this.dataLimitBookingDate.filter(el => { return el.bookingTime === d.value }).length > 0) {
-                  let index = this.dataLimitBookingDate.findIndex((element) => element.bookingTime === d.value)
-                  this.dataLimitBookingDate[index].countBooking = this.dataLimitBookingDate[index].countBooking + 1
-                  this.dataLimitBookingDate[index].countBookingLimit = this.dataLimitBookingDate[index].countBooking + '/' + limitBooking
-                  // if (this.dataLimitBookingDate[index].countBooking === parseInt(limitBooking)) {
-                  //   this.dataLimitBookingDate[index].color = 'orange darken-1'
-                  // } else
-                  if (this.dataLimitBookingDate[index].countBooking > parseInt(limitBooking)) {
-                    this.dataLimitBookingDate[index].color = 'red darken-1'
-                  } else if (this.dataLimitBookingDate[index].countBooking <= parseInt(limitBooking)) {
-                    this.dataLimitBookingDate[index].color = 'blue darken-1'
-                  }
-                } else {
-                  s.bookingTime = d.value
-                  s.countBooking = 1
-                  s.countBookingLimit = 1 + '/' + limitBooking
-                  s.color = 'blue darken-1'
-                  this.dataLimitBookingDate.push(s)
-                }
-              }
-              this.dataLimitBookingDate = this.dataLimitBookingDate.sort((a, b) => {
-                if (a.bookingTime < b.bookingTime) return -1
-                return a.bookingTime > b.bookingTime ? 1 : 0
-              })
-              console.log(' this.dataLimitBookingDate', this.dataLimitBookingDate)
-              console.log('limitBooking', limitBooking)
-            }
-          })
-      }
     },
     async openInfo (item) {
       this.detailInfo = await this.getBookingData(item)
@@ -16070,12 +15941,67 @@ export default {
 </script>
 
 <style scoped>
-.flex-container {
-  display: flex;
-  height: 100%;
+.pictureMenuEdit {
+  width: 100px;
+  height: 100px;
+
+  filter: drop-shadow(0px 0px 8px rgba(255, 255, 255, 0.7));
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 0;
+  flex-grow: 0;
 }
-iframe {
-  flex: 1;
+.cardMenuEdit {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 10px 20px 10px;
+  width: 327px;
+  min-height: auto;
+
+  background: #FFFFFF;
+  box-shadow: 0px 0px 1px rgba(12, 26, 75, 0.03), 0px 4px 20px -2px rgba(50, 50, 71, 0.04);
+  border-radius: 16px;
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 0;
+  flex-grow: 1;
+}
+.cardTextMenu {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0px;
+  gap: 15px;
+
+  width: 147px;
+  height: 104px;
+  /* Inside auto layout */
+
+  flex: none;
+  order: 1;
+  flex-grow: 1;
+}
+.textOneBox {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 4px;
+
+  width: 147px;
+  height: 64px;
+  /* Inside auto layout */
+
+  flex: none;
+  order: 0;
+  align-self: stretch;
+  flex-grow: 0;
 }
 .sendOrder {
   display: flex;
@@ -16124,61 +16050,6 @@ iframe {
   flex: none;
   order: 2;
   flex-grow: 0;
-}
-.textTitelMenu {
-font-style: normal;
-font-weight: 600;
-font-size: 14px;
-line-height: 22px;
-}
-.textSubTitelMenu {
-font-style: normal;
-font-weight: 200;
-font-size: 14px;
-line-height: 22px;
-}
-.cardTextMenu {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 0px;
-  gap: 15px;
-
-  width: 147px;
-  height: 104px;
-  /* Inside auto layout */
-
-  flex: none;
-  order: 1;
-  flex-grow: 1;
-}
-.textOneBox {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 0px;
-  gap: 4px;
-
-  width: 147px;
-  height: 64px;
-  /* Inside auto layout */
-
-  flex: none;
-  order: 0;
-  align-self: stretch;
-  flex-grow: 0;
-}
-#autocompleteMap {
-  border: 1px solid rgba(0, 60, 255, 0.329);
-  background: #fff;
-  font-size: 18px;
-  height: 35px;
-  /* left: 40%; */
-  padding: 0 10px;
-  /* position: absolute; */
-  top: 0;
-  width: 90%;
-  z-index: 1;
 }
 .videoWrapper {
   position: relative;
@@ -16327,18 +16198,6 @@ line-height: 22px;
   order: 0;
   flex-grow: 0;
 }
-.pictureMenuEdit {
-  width: 100px;
-  height: 100px;
-
-  filter: drop-shadow(0px 0px 8px rgba(255, 255, 255, 0.7));
-
-  /* Inside auto layout */
-
-  flex: none;
-  order: 0;
-  flex-grow: 0;
-}
 .cardMenu {
   display: flex;
   flex-direction: row;
@@ -16358,27 +16217,5 @@ line-height: 22px;
   flex: none;
   order: 0;
   flex-grow: 1;
-}
-.cardMenuEdit {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 12px;
-  padding: 20px 10px 20px 10px;
-  width: 327px;
-  min-height: auto;
-
-  background: #FFFFFF;
-  box-shadow: 0px 0px 1px rgba(12, 26, 75, 0.03), 0px 4px 20px -2px rgba(50, 50, 71, 0.04);
-  border-radius: 16px;
-
-  /* Inside auto layout */
-
-  flex: none;
-  order: 0;
-  flex-grow: 1;
-}
-.v-input--selection-controls {
-    margin-top: 0px !important;
 }
 </style>
