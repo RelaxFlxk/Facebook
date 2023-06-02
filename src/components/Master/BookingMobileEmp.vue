@@ -1441,7 +1441,7 @@ export default {
     },
     async getShop () {
       await axios
-        .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.session.data.shopId)
+        .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.$session.getAll().data.shopId)
         .then(response => {
           let rs = response.data
           console.log('rssssssssssss', rs)

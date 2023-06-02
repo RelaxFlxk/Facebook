@@ -1259,7 +1259,7 @@ export default {
     },
     async getShop () {
       await axios
-        .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.session.data.shopId)
+        .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.$session.getAll().data.shopId)
         .then(response => {
           let rs = response.data
           console.log('rssssssssssss', rs)
@@ -1705,7 +1705,7 @@ export default {
       let itemIncustomField = []
       await axios
         .get(
-          this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+          this.DNS_IP + '/BookingField/get?shopId=' + this.$session.getAll().data.shopId
         )
         .then(async response1 => {
           let rs2 = response1.data
@@ -1756,7 +1756,7 @@ export default {
                             } else {
                               d.userId = rs[0].userId
                             }
-                            d.shopId = this.session.data.shopId
+                            d.shopId = this.$session.getAll().data.shopId
                             d.userName = this.$session.getAll().data.userName
                             this.BookingDataItem.push(d)
                           }
