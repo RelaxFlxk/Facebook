@@ -1429,7 +1429,6 @@ export default {
     }
   },
   async mounted () {
-    await this.getShop()
     console.log('statusGoogleCalendar', this.statusGoogleCalendar, this.statusGoogleCalendarEmp)
     this.dateCheckBill = moment().format('YYYY-MM')
     await this.beforeCreate()
@@ -2760,6 +2759,7 @@ export default {
           this.$session.start()
           this.$session.set('data', JSON.parse(localStorage.getItem('sessionData')))
           this.chkPlan()
+          await this.getShop()
           await this.chkBookingNo()
           await this.getDataBranch()
           await this.getDataFlowAll()
@@ -2774,6 +2774,7 @@ export default {
           if (this.$session.getAll().data.shopId === this.$route.query.shopId) {
             localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
             this.chkPlan()
+            await this.getShop()
             await this.chkBookingNo()
             await this.getDataBranch()
             await this.getDataFlowAll()

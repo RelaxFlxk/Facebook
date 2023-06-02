@@ -15529,6 +15529,7 @@ export default {
     },
     async checkDuplicateBookingAgain () {
       if (this.validBookingAgain !== false) {
+        console.log('this.BookingDataItemEdit', this.BookingDataItemEdit)
         this.loadingEdit = true
         this.swalConfig.title = 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?'
         this.$swal(this.swalConfig)
