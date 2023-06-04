@@ -777,7 +777,7 @@
                                           class="shrink ml-6 mr-0 mt-0 mb-2"
                                         ></v-switch>
                                         <v-chip
-                                          v-if="editedItemNew.limitBooking === '1'"
+                                          v-if="(editedItemNew.limitBooking === '1' || editedItemNew.limitBooking === 1)"
                                           color="green"
                                           text-color="white"
                                         >รับนัดหมาย</v-chip>
@@ -790,7 +790,7 @@
                                       </div>
                                       <div v-else>
                                         <v-chip
-                                          v-if="item.limitBooking === '1'"
+                                          v-if="(item.limitBooking === '1' || item.limitBooking === 1)"
                                           color="green"
                                           text-color="white"
                                         >รับนัดหมาย</v-chip>
@@ -930,7 +930,7 @@
                                           class="shrink ml-6 mr-0 mt-0 mb-2"
                                         ></v-switch>
                                         <v-chip
-                                          v-if="editedItemNew.limitBooking === '1'"
+                                          v-if="(editedItemNew.limitBooking === '1' || editedItemNew.limitBooking === 1)"
                                           color="green"
                                           text-color="white"
                                         >รับนัดหมาย</v-chip>
@@ -943,7 +943,7 @@
                                       </div>
                                       <div v-else>
                                         <v-chip
-                                          v-if="item.limitBooking === '1'"
+                                          v-if="(item.limitBooking === '1' || item.limitBooking === 1)"
                                           color="green"
                                           text-color="white"
                                         >รับนัดหมาย</v-chip>
