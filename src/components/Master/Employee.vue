@@ -1319,13 +1319,13 @@ export default {
         id: 0,
         text: '',
         value: '',
-        limitBooking: 1
+        limitBooking: '1'
       },
       defaultItemNew: {
         id: 0,
         text: '',
         value: '',
-        limitBooking: 1
+        limitBooking: '1'
       },
       BookingFieldshowtime: null,
       branch: [],

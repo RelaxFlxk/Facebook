@@ -2931,13 +2931,13 @@ export default {
         id: 0,
         text: '',
         value: '',
-        limitBooking: 0
+        limitBooking: '1'
       },
       defaultItemNew: {
         id: 0,
         text: '',
         value: '',
-        limitBooking: 0
+        limitBooking: '1'
       },
       dataLineConfig: {},
       toggle_setTimebyday: 0,
@@ -3418,30 +3418,48 @@ export default {
     presetTimebyday () {
       this.dataItemAddTimebyday.filter((item) => item.value === this.toggle_setTimebyday).map((item) => {
         item.setTime = [
-          { id: 1, value: '08:00', text: '08:00', limitBooking: '' },
-          { id: 2, value: '08:30', text: '08:30', limitBooking: '' },
-          { id: 3, value: '09:00', text: '09:00', limitBooking: '' },
-          { id: 4, value: '09:30', text: '09:30', limitBooking: '' },
-          { id: 5, value: '10:00', text: '10:00', limitBooking: '' },
-          { id: 6, value: '10:30', text: '10:30', limitBooking: '' },
-          { id: 7, value: '11:00', text: '11:00', limitBooking: '' },
-          { id: 8, value: '11:30', text: '11:30', limitBooking: '' },
-          { id: 9, value: '12:00', text: '12:00', limitBooking: '' },
-          { id: 10, value: '12:30', text: '12:30', limitBooking: '' },
-          { id: 11, value: '13:00', text: '13:00', limitBooking: '' },
-          { id: 12, value: '13:30', text: '13:30', limitBooking: '' },
-          { id: 13, value: '14:00', text: '14:00', limitBooking: '' },
-          { id: 14, value: '14:30', text: '14:30', limitBooking: '' },
-          { id: 15, value: '15:00', text: '15:00', limitBooking: '' },
-          { id: 16, value: '15:30', text: '15:30', limitBooking: '' },
-          { id: 17, value: '16:00', text: '16:00', limitBooking: '' },
-          { id: 18, value: '16:30', text: '16:30', limitBooking: '' },
-          { id: 19, value: '17:00', text: '17:00', limitBooking: '' }
+          { id: 1, value: '08:00', text: '08:00', limitBooking: '1' },
+          { id: 2, value: '08:30', text: '08:30', limitBooking: '1' },
+          { id: 3, value: '09:00', text: '09:00', limitBooking: '1' },
+          { id: 4, value: '09:30', text: '09:30', limitBooking: '1' },
+          { id: 5, value: '10:00', text: '10:00', limitBooking: '1' },
+          { id: 6, value: '10:30', text: '10:30', limitBooking: '1' },
+          { id: 7, value: '11:00', text: '11:00', limitBooking: '1' },
+          { id: 8, value: '11:30', text: '11:30', limitBooking: '1' },
+          { id: 9, value: '12:00', text: '12:00', limitBooking: '1' },
+          { id: 10, value: '12:30', text: '12:30', limitBooking: '1' },
+          { id: 11, value: '13:00', text: '13:00', limitBooking: '1' },
+          { id: 12, value: '13:30', text: '13:30', limitBooking: '1' },
+          { id: 13, value: '14:00', text: '14:00', limitBooking: '1' },
+          { id: 14, value: '14:30', text: '14:30', limitBooking: '1' },
+          { id: 15, value: '15:00', text: '15:00', limitBooking: '1' },
+          { id: 16, value: '15:30', text: '15:30', limitBooking: '1' },
+          { id: 17, value: '16:00', text: '16:00', limitBooking: '1' },
+          { id: 18, value: '16:30', text: '16:30', limitBooking: '1' },
+          { id: 19, value: '17:00', text: '17:00', limitBooking: '1' }
         ]
       })
     },
     presetTime () {
-      this.dataItemAddTime = [{'id': 1, 'value': '08:00', 'text': '08:00', 'limitBooking': ''}, {'id': 2, 'value': '08:30', 'text': '08:30', 'limitBooking': ''}, {'id': 3, 'value': '09:00', 'text': '09:00', 'limitBooking': ''}, {'id': 4, 'value': '09:30', 'text': '09:30', 'limitBooking': ''}, {'id': 5, 'value': '10:00', 'text': '10:00', 'limitBooking': ''}, {'id': 6, 'value': '10:30', 'text': '10:30', 'limitBooking': ''}, {'id': 7, 'value': '11:00', 'text': '11:00', 'limitBooking': ''}, {'id': 8, 'value': '11:30', 'text': '11:30', 'limitBooking': ''}, {'id': 9, 'value': '12:00', 'text': '12:00', 'limitBooking': ''}, {'id': 10, 'value': '12:30', 'text': '12:30', 'limitBooking': ''}, {'id': 11, 'value': '13:00', 'text': '13:00', 'limitBooking': ''}, {'id': 12, 'value': '13:30', 'text': '13:30', 'limitBooking': ''}, {'id': 13, 'value': '14:00', 'text': '14:00', 'limitBooking': ''}, {'id': 14, 'value': '14:30', 'text': '14:30', 'limitBooking': ''}, {'id': 15, 'value': '15:00', 'text': '15:00', 'limitBooking': ''}, {'id': 16, 'value': '15:30', 'text': '15:30', 'limitBooking': ''}, {'id': 17, 'value': '16:00', 'text': '16:00', 'limitBooking': ''}, {'id': 18, 'value': '16:30', 'text': '16:30', 'limitBooking': ''}, {'id': 19, 'value': '17:00', 'text': '17:00', 'limitBooking': ''}]
+      this.dataItemAddTime = [{'id': 1, 'value': '08:00', 'text': '08:00', 'limitBooking': '1'},
+        {'id': 2, 'value': '08:30', 'text': '08:30', 'limitBooking': '1'},
+        {'id': 3, 'value': '09:00', 'text': '09:00', 'limitBooking': '1'},
+        {'id': 4, 'value': '09:30', 'text': '09:30', 'limitBooking': '1'},
+        {'id': 5, 'value': '10:00', 'text': '10:00', 'limitBooking': '1'},
+        {'id': 6, 'value': '10:30', 'text': '10:30', 'limitBooking': '1'},
+        {'id': 7, 'value': '11:00', 'text': '11:00', 'limitBooking': '1'},
+        {'id': 8, 'value': '11:30', 'text': '11:30', 'limitBooking': '1'},
+        {'id': 9, 'value': '12:00', 'text': '12:00', 'limitBooking': '1'},
+        {'id': 10, 'value': '12:30', 'text': '12:30', 'limitBooking': '1'},
+        {'id': 11, 'value': '13:00', 'text': '13:00', 'limitBooking': '1'},
+        {'id': 12, 'value': '13:30', 'text': '13:30', 'limitBooking': '1'},
+        {'id': 13, 'value': '14:00', 'text': '14:00', 'limitBooking': '1'},
+        {'id': 14, 'value': '14:30', 'text': '14:30', 'limitBooking': '1'},
+        {'id': 15, 'value': '15:00', 'text': '15:00', 'limitBooking': '1'},
+        {'id': 16, 'value': '15:30', 'text': '15:30', 'limitBooking': '1'},
+        {'id': 17, 'value': '16:00', 'text': '16:00', 'limitBooking': '1'},
+        {'id': 18, 'value': '16:30', 'text': '16:30', 'limitBooking': '1'},
+        {'id': 19, 'value': '17:00', 'text': '17:00', 'limitBooking': '1'}]
     },
     EditlimitBooking () {
       if (this.formUpdateLimitbooking.setTimebyday === 'True') {
@@ -3582,7 +3600,7 @@ export default {
           let rs = response.data
           if (rs.length > 0) {
             dt = rs
-            console.log('rs', rs)
+            console.log('rsๅๅๅ', rs)
             this.formUpdateLimitbooking.limitBookingCheck = rs[0].limitBookingCheck || 'False'
             if (rs[0].dateDayoffText === null || rs[0].dateDayoffText === '') {
               this.formUpdateLimitbooking.dateDayoffText = []
