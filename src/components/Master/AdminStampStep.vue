@@ -3,6 +3,12 @@
       <!-- <v-toolbar color="#173053" dark extended flat>
         <v-app-bar-nav-icon></v-app-bar-nav-icon>
       </v-toolbar> -->
+      <v-overlay :value="overlay">
+        <v-progress-circular
+          indeterminate
+          size="64"
+        ></v-progress-circular>
+      </v-overlay>
       <div class="pa-0 ma-2 mb-4" style="display: flex;justify-content: flex-end;">
         <v-avatar size="62" >
         <img
@@ -45,7 +51,7 @@
                 </template>
                 </v-select>
               </v-row>
-              <v-row v-if="dataItemAll.length > 0">
+              <v-row v-if="dataItemAll.length > 0 && statusStart === true">
                 <v-col cols="12" class="pa-0 ma-0">
                 <!-- <v-autocomplete
                   outlined
@@ -116,7 +122,7 @@
                           rounded
                           dark
                           block
-                          @click="jobNo=item.jobNo, dataItemAll=[], getDataJob()"
+                          @click="jobNo=item.jobNo, dataItemAll=[], getDataJob(), statusStart = false"
                         >
                         รายละเอียด</v-btn>
                       </v-col>
@@ -126,7 +132,7 @@
                           rounded
                           dark
                           block
-                          @click="jobNo=item.jobNo,stepId=item.stepId,dialogLogStampStep = true, getJobLog(item.jobNo), getStepFlow(item.stepId)"
+                          @click="jobNo=item.jobNo,stepId=item.stepId,dialogLogStampStep = true,getDataJob(), statusStart = true"
                         >เริ่ม</v-btn>
                       </v-col>
                     </v-row>
@@ -134,7 +140,7 @@
                   </div>
                 </v-col>
               </v-row>
-              <v-card v-if="dataItem.length > 0" class="pa-3 mx-2" style="background-color:#FFFFFF;">
+              <v-card v-if="dataItem.length > 0 && statusStart === false" class="pa-3 mx-2" style="background-color:#FFFFFF;">
                 <v-row class="InputData" >
                   <v-col cols="12" class="pa-0 ma-0 mb-2">
                     <!-- <v-btn
@@ -145,7 +151,7 @@
                       block
                       @click="getAllJob(), dataItem=[]"
                     > -->
-                      <v-icon x-large :color="secondaryColor"  @click="getAllJob(), dataItem=[]" class="mr-6">mdi-arrow-left-box</v-icon>
+                      <v-icon x-large :color="secondaryColor"  @click="getAllJob(), dataItem=[],statusStart = true" class="mr-6">mdi-arrow-left-box</v-icon>
                       <!-- กลับไปหน้ารวม
                     </v-btn> -->
                   </v-col>
@@ -571,7 +577,7 @@ export default {
       DataFlowName: [],
       flowId: '',
       stepId: '',
-      overlay: true,
+      overlay: false,
       dialogLogStampStep: false,
       rules: {
         numberRules: value =>
@@ -592,12 +598,12 @@ export default {
       jobNo: '',
       shopData: [],
       primaryColor: '',
-      secondaryColor: ''
+      secondaryColor: '',
+      statusStart: true
     }
   },
   async mounted () {
     // await this.getDataJob()
-    await this.getShop()
     await this.beforeCreate()
   },
   methods: {
@@ -684,12 +690,13 @@ export default {
               }
             }
             this.overlay = false
+            if (this.DataBranchName.length === 1) {
+              this.masBranchID = this.DataBranchName[0].value
+              this.getDataFlow()
+            }
           } else {
             this.DataBranchName = []
             this.overlay = false
-          }
-          if (this.DataBranchName.length === 1) {
-            this.masBranchID = this.DataBranchName[1].value
           }
         }).catch(async (error) => {
           this.overlay = false
@@ -714,15 +721,15 @@ export default {
                 this.DataFlowName.push(d)
               }
             }
+            if (this.DataFlowName.length === 1) {
+              this.flowId = this.DataFlowName[0].value
+            }
           } else {
             this.DataFlowName = []
           }
         }).catch(async (error) => {
           console.log('getDataFlow', error)
         })
-      if (this.DataFlowName.length === 1) {
-        this.flowId = this.DataFlowName[0].value
-      }
     },
     async getAllJob () {
       this.dataItemAll = []
@@ -924,11 +931,13 @@ export default {
           this.$session.set('data', JSON.parse(localStorage.getItem('sessionData')))
           if (this.$route.query.jobNo !== undefined) {
             // await this.getDataBranch()
+            await this.getShop()
             this.getDataJob()
             console.log('Job')
             this.overlay = false
           } else {
             // this.getAllJob()
+            await this.getShop()
             await this.getDataBranch()
             console.log('AllJob')
             this.overlay = false
@@ -952,11 +961,13 @@ export default {
             localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
             if (this.$route.query.jobNo !== undefined) {
               // await this.getDataBranch()
+              await this.getShop()
               this.getDataJob()
               console.log('Job')
               this.overlay = false
             } else {
               // this.getAllJob()
+              await this.getShop()
               await this.getDataBranch()
               this.overlay = false
               console.log('AllJob')
