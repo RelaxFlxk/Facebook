@@ -3197,6 +3197,13 @@ export default {
           addMenu
         )
         .then(async response => {
+          await this.getDataGlobal(
+            this.DNS_IP,
+            this.path,
+            this.session.data.shopId
+          )
+          // await this.filterBranch()
+          // await this.warningFlow()
           this.clearFormAddMenu()
         })
     },
