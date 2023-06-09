@@ -551,6 +551,7 @@ export default {
     this.dateStart = moment().format('YYYY-MM-DD')
     this.clearTimeLoop()
     this.checkSearch()
+    document.querySelector('body').requestFullscreen()
     console.log('tetx', this.text)
   },
   beforeDestroy () {
