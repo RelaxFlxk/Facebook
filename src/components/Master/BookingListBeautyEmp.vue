@@ -6001,13 +6001,20 @@
                  <v-row>
                     <v-col cols="12">
                       <v-btn
-                        color="#1B437C"
+                        :color="copyTextStatus === false ? '#1B437C' : 'teal'"
                         large
                         block
                         dark
-                        @click="FunCopyDeposit()"
+                        v-clipboard:copy="copyTextBt"
+                        @click="copyTextStatus === false ? FunCopyDeposit() : copyFallback()"
                       >
-                        คัดลอก
+                        <v-icon
+                          left
+                          dark
+                        >
+                          {{copyTextStatus === false ? 'mdi-update' : 'mdi-content-copy'}}
+                        </v-icon>
+                        {{copyTextStatus === false ? 'บันทึก' : 'คัดลอกข้อความ'}}
                       </v-btn>
                     </v-col>
                  </v-row>
@@ -6647,6 +6654,9 @@
               </v-card-text>
             </v-card>
           </v-dialog>
+          <button class="copyTextCopy" :data-clipboard-text="copyTextCopy">
+            {{copyTextCopy}}
+          </button>
           <RetureDeposit ref="RetureDeposit"></RetureDeposit>
           <CallLog ref="CallLog"></CallLog>
           <NotificationService ref="NotificationService"></NotificationService>
@@ -6744,6 +6754,7 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      copyTextCopy: '',
       // menu
       showMenu: 'False',
       dataMenuAdd: [],
@@ -7263,7 +7274,9 @@ export default {
       memberTel: '',
       productExchangeRateId: '',
       statusGoogleCalendar: '',
-      statusGoogleCalendarEmp: ''
+      statusGoogleCalendarEmp: '',
+      copyTextBt: '',
+      copyTextStatus: false
     }
   },
   beforeCreate () {
@@ -8843,6 +8856,7 @@ export default {
       let depositPrice = ''
       let textLink = ''
       let textDepositPrice = ''
+      this.copyTextBt = ''
       let dt = {}
       if (this.statusdepositPrice === true) {
         dt = {
@@ -8866,7 +8880,7 @@ export default {
       await axios
         // .post(this.DNS_IP + '/Booking/setDetailsCopyLinkAddData/' + 'BK025446181660716002544')
         .post(this.DNS_IP + '/Booking/setDetailsCopyLinkAddData/' + this.bookNo)
-        .then(response => {
+        .then(async response => {
           if (response.data.status) {
             textBookNo = response.data.message
             depositPrice = response.data.depositPrice || 0
@@ -8878,34 +8892,20 @@ export default {
             }
             // console.log('textBookNo', textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink)
             let copyText = textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink
-            // let copyText = document.getElementById('myInputDeposit')
-            // copyText.select()
-            // copyText.setSelectionRange(0, 99999)
-            // navigator.clipboard.writeText(copyText)
-            navigator.clipboard.writeText(copyText)
-              .then(() => {
-                this.$swal('สำเร็จ', 'คัดลอกลิ้งสำเร็จ', 'success')
-              }).catch(() => {
-                this.$swal('ผิดพลาด', 'กรุณาทำรายการใหม่', 'error')
-              })
-            this.dialogShowDeposit = false
+
+            console.log('copyText', copyText)
+            this.copyTextBt = copyText
+            this.copyTextStatus = true
             this.updateBookingListByDeposit()
           } else {
             this.$swal('ผิดพลาด', 'กรุณาทำรายการใหม่', 'error')
           }
         })
-      // console.log('depositPrice', depositPrice)
-      // if (depositPrice === '0') {
-      //   textLink = 'กรุณากดเพื่อผูกบัญชี : ' + this.depositLink
-      // } else {
-      //   textLink = 'กรุณากดเพื่อโอนเงินมัดจำ : ' + this.depositLink
-      //   textDepositPrice = `\nจำนวนเงินมัดจำ : ` + depositPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-      // }
-      // console.log('textBookNo', textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink)
-      // let copyText = textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink
-      // navigator.clipboard.writeText(copyText)
-      // this.dialogShowDeposit = false
-      // this.updateBookingListByDeposit()
+    },
+    copyFallback () {
+      this.dialogShowDeposit = false
+      this.$swal('สำเร็จ', 'คัดลอกลิงก์สำเร็จ', 'success')
+      this.copyTextStatus = false
     },
     async updateBookingListByDeposit () {
       let urlApi = this.DNS_IP + '/booking_view/get?shopId=' + this.session.data.shopId + '&bookNo=' + this.bookNo

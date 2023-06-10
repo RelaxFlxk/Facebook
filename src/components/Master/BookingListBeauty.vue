@@ -7050,13 +7050,20 @@
                  <v-row>
                     <v-col cols="12">
                       <v-btn
-                        color="#1B437C"
+                        :color="copyTextStatus === false ? '#1B437C' : 'teal'"
                         large
                         block
                         dark
-                        @click="FunCopyDeposit()"
+                        v-clipboard:copy="copyTextBt"
+                        @click="copyTextStatus === false ? FunCopyDeposit() : copyFallback()"
                       >
-                        คัดลอก
+                        <v-icon
+                          left
+                          dark
+                        >
+                          {{copyTextStatus === false ? 'mdi-update' : 'mdi-content-copy'}}
+                        </v-icon>
+                        {{copyTextStatus === false ? 'บันทึก' : 'คัดลอกข้อความ'}}
                       </v-btn>
                     </v-col>
                  </v-row>
@@ -7864,7 +7871,9 @@ export default {
       ItemendStepStanby: [],
       DataFlowNameDefault: [],
       statusGoogleCalendar: '',
-      statusGoogleCalendarEmp: ''
+      statusGoogleCalendarEmp: '',
+      copyTextBt: '',
+      copyTextStatus: false
     }
   },
   beforeCreate () {
@@ -8300,7 +8309,7 @@ export default {
       navigator.clipboard.writeText(text)
       this.$swal({
         title: 'Copy successfully',
-        text: 'คัดลอกลิ้งสำเร็จ',
+        text: 'คัดลอกลิงก์สำเร็จ',
         type: 'success',
         timer: 2000,
         showConfirmButton: false
@@ -8436,6 +8445,7 @@ export default {
       let depositPrice = ''
       let textLink = ''
       let textDepositPrice = ''
+      this.copyTextBt = ''
       let dt = {}
       if (this.statusdepositPrice === true) {
         dt = {
@@ -8472,31 +8482,19 @@ export default {
             }
             // console.log('textBookNo', textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink)
             let copyText = textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink
-            // let copyText = document.getElementById('myInputDeposit')
-            // copyText.select()
-            // copyText.setSelectionRange(0, 99999)
-            // navigator.clipboard.write([
-            //     new ClipboardItem({
-            //         "text/html": Promise.resolve(copyText)
-            //     })
-            // ])
-            navigator.clipboard.writeText(copyText)
-              .then(() => {
-                this.$swal('สำเร็จ', 'คัดลอกลิ้งสำเร็จ', 'success')
-              }).catch(() => {
-                this.$swal('ผิดพลาด', 'กรุณาทำรายการใหม่', 'error')
-              })
-            // copy(copyText)
-            // copy('Text', {
-            //   debug: true,
-            //   message: copyText
-            // })
-            this.dialogShowDeposit = false
+            console.log('copyText', copyText)
+            this.copyTextBt = copyText
+            this.copyTextStatus = true
             this.updateBookingListByDeposit()
           } else {
             this.$swal('ผิดพลาด', 'กรุณาทำรายการใหม่', 'error')
           }
         })
+    },
+    copyFallback () {
+      this.dialogShowDeposit = false
+      this.$swal('สำเร็จ', 'คัดลอกลิงก์สำเร็จ', 'success')
+      this.copyTextStatus = false
     },
     async updateBookingListByDeposit () {
       let urlApi = this.DNS_IP + '/booking_view/get?shopId=' + this.session.data.shopId + '&bookNo=' + this.bookNo
