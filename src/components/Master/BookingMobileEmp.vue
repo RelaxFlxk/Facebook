@@ -2758,7 +2758,24 @@ export default {
         if (JSON.parse(localStorage.getItem('sessionData')).shopId === this.$route.query.shopId) {
           this.$session.start()
           this.$session.set('data', JSON.parse(localStorage.getItem('sessionData')))
-          this.chkPlan()
+          let trialsVersionDate = this.$session.getAll().data.trialsVersionDate || ''
+          let billingEndDate = this.$session.getAll().data.billingEndDate || ''
+          if (trialsVersionDate === '' || moment().format('YYYY-MM-DD HH:mm') > trialsVersionDate) {
+            if (parseInt(moment().format('DD')) <= 7) {
+              if (billingEndDate === '') {
+                this.chkPlan()
+              } else {
+                console.log(moment().format('YYYY-MM-DD'), billingEndDate)
+                if (moment().format('YYYY-MM-DD') > billingEndDate) {
+                  this.chkPlan()
+                }
+              }
+            } else {
+              if (moment().format('YYYY-MM-DD') > billingEndDate) {
+                this.chkPlan()
+              }
+            }
+          }
           await this.getShop()
           await this.chkBookingNo()
           await this.getDataBranch()
@@ -2773,7 +2790,24 @@ export default {
         } else {
           if (this.$session.getAll().data.shopId === this.$route.query.shopId) {
             localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
-            this.chkPlan()
+            let trialsVersionDate = this.$session.getAll().data.trialsVersionDate || ''
+            let billingEndDate = this.$session.getAll().data.billingEndDate || ''
+            if (trialsVersionDate === '' || moment().format('YYYY-MM-DD HH:mm') > trialsVersionDate) {
+              if (parseInt(moment().format('DD')) <= 7) {
+                if (billingEndDate === '') {
+                  this.chkPlan()
+                } else {
+                  console.log(moment().format('YYYY-MM-DD'), billingEndDate)
+                  if (moment().format('YYYY-MM-DD') > billingEndDate) {
+                    this.chkPlan()
+                  }
+                }
+              } else {
+                if (moment().format('YYYY-MM-DD') > billingEndDate) {
+                  this.chkPlan()
+                }
+              }
+            }
             await this.getShop()
             await this.chkBookingNo()
             await this.getDataBranch()
