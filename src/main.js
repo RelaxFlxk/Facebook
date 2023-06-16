@@ -27,7 +27,7 @@ const gauthOption = {
   // prompt: 'select_account'
 }
 Vue.use(GAuth, gauthOption)
-
+VueClipboard.config.autoSetContainer = true
 Vue.use(VueClipboard)
 
 Vue.use(VueCustomTooltip, {

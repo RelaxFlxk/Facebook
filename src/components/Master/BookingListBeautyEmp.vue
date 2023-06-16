@@ -12963,6 +12963,7 @@ export default {
               { text: 'พนักงานช่าง', value: 'bookingEmpFlowName', sortable: false, width: '120' },
               { text: 'เลขทะเบียน', value: 'cusReg', width: '120' },
               { text: 'เบอร์โทร', value: 'tel', sortable: false, width: '120' },
+              { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '150' },
               { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
               { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
               { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '120' },
@@ -12977,6 +12978,7 @@ export default {
               { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
               { text: 'พนักงานช่าง', value: 'bookingEmpFlowName', sortable: false, width: '120' },
               { text: 'เบอร์โทร', value: 'tel', sortable: false, width: '120' },
+              { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '150' },
               { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
               { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
               { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '120' },
@@ -14504,9 +14506,15 @@ export default {
                         // await this.getBookingField()
                         await this.getflowfield(dt)
                       }
+                    }).catch(error => {
+                      console.log('BookingDataSelect : ', error)
                     })
+                }).catch(error => {
+                  console.log('customFiled : ', error)
                 })
             }
+          }).catch(error => {
+            console.log('bookingfiled : ', error)
           })
       }
       if (this.showOnsite === 'ไม่แสดง') {
