@@ -14156,6 +14156,7 @@ export default {
                 console.log('checkJobNoInBooking', rs)
                 if (rs.status === false) {
                   checkJobno = 'ไม่มีข้อมูล'
+                  dataCheck = []
                 } else {
                   checkJobno = rs[0].jobNo || ''
                   dataCheck = rs
@@ -14306,6 +14307,10 @@ export default {
                 axios
                   .post(this.DNS_IP + '/booking_transaction/add', dt)
                   .then(async response => {
+                    this.endDate = ''
+                    this.endTime = ''
+                    this.empSelectJob = ''
+                    this.statusShowDateConfiremjob = true
                     await this.pushMsg(response.data.jobNo)
                     if (this.jobCheckPackage) {
                       await this.usePackage(this.dataQrcode.bookNo, this.BookingDataItem[0].masBranchID)
