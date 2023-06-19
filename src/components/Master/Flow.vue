@@ -2159,6 +2159,7 @@
                       <v-icon color="#FFFFFF"> mdi-clipboard-text-search </v-icon>
                     </v-btn>
                     <v-btn
+                      v-if="showStepCheck"
                       color="#4CAF50"
                       fab
                       small
@@ -2512,6 +2513,7 @@ export default {
   },
   data () {
     return {
+      showStepCheck: true,
       formMenuStatus: 'False',
       // allowDrag: true,
       // selected: [],
@@ -2998,6 +3000,13 @@ export default {
     }
   },
   async mounted () {
+    if (this.$session.getAll().data.billingPlan === '1' || this.$session.getAll().data.billingPlan === '2') {
+      if (this.$session.getAll().data.shopId === 'U1b8d05a22f9ca1b2744f352cc64f14e4') {
+        this.showStepCheck = true
+      } else {
+        this.showStepCheck = false
+      }
+    }
     this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
     this.dataReady = false
     // Get Data
@@ -3231,6 +3240,13 @@ export default {
           addMenu
         )
         .then(async response => {
+          await this.getDataGlobal(
+            this.DNS_IP,
+            this.path,
+            this.session.data.shopId
+          )
+          // await this.filterBranch()
+          // await this.warningFlow()
           this.clearFormAddMenu()
         })
     },

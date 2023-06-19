@@ -459,7 +459,8 @@
                     </v-btn>
                   </v-col>
                   <v-col cols="8" class="pt-0">
-                    <p style="color:#092C4C;font-size: 48px;" class="text-left font-weight-black mt-n1 mb-n5 pa-7 pt-0">{{item.storeFrontQueue}}</p>
+                    <p style="color:#092C4C;font-size: 48px;" class="text-left font-weight-black mt-n1 mb-n5 pa-7 pt-0" v-if="item.userId === 'user-skip' || item.userId === '' || item.userId === null || item.userId === 'data import'">{{item.storeFrontQueue}}</p>
+                    <p @click.stop="openHistory(item)" style="color:#092C4C;font-size: 48px;" class="text-left font-weight-black mt-n1 mb-n5 pa-7 pt-0" v-else>{{ item.storeFrontQueue }}</p>
                     <p style="color:#000000;font-size: 16px;" class="text-left font-weight-medium mt-n10 ml-7">{{item.cusName}}</p>
                     <p style="color:#000000;font-size: 16px;" class="text-left font-weight-medium mt-n3 ml-7">{{ languageSelect === 0 ? item.servicePoint : JSON.parse(item.servicePointCount).filter(el => { return el.textTh === item.servicePoint}).length > 0 ? JSON.parse(item.servicePointCount).filter(el => { return el.textTh === item.servicePoint})[0].textEn:item.servicePoint}}</p>
                   </v-col>

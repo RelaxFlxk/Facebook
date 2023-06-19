@@ -1,21 +1,21 @@
 <template>
   <div>
     <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
-    <v-row>
+    <v-row >
       <v-col cols="12">
         <v-sheet
           :color="shopColor"
           elevation="1"
-          height="170"
+          :height="resCol === '12' ? '70' : '170'"
           width="100%"
           style="border-bottom: 1px solid #695988 !important"
         >
           <v-row>
-            <v-col cols="8" align="left" class="mt-6 ml-8 pa-0">
-              <v-img :src="shopImage" contain max-width="200px" max-height="130px"></v-img>
+            <v-col :cols="resCol === '12' ? '6' : '8' " align="left" :class=" resCol !== '12' ? 'mt-6 ml-8 pa-0' : 'mt-1 pl-7'">
+              <v-img :src="shopImage" contain :max-width="resCol === '12' ? '50px' : '170px'" max-height="130px"></v-img>
             </v-col>
-            <v-col cols="3" align="right" class="mt-6 ml-16">
-              <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6" max-width="220px"></v-img>
+            <v-col :cols="resCol === '12' ? '6' : '3' " align="right" :class="resCol !== '12' ? 'mt-6 ml-16' : 'mt-1 pr-7 pt-5'">
+              <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6" :max-width="resCol === '12' ? '70px' : '220px'"></v-img>
             </v-col>
           </v-row>
         </v-sheet>
@@ -144,9 +144,9 @@
       width="100%"
     >
       <v-row class="ml-6">
-        <v-col cols="4" class="pr-0">
+        <v-col :cols="resCol === '12' ? '5' : '4'" :class="resCol === '12' ? 'pr-0 pt-0' : 'pr-0'">
           <v-container>
-            <v-row>
+            <v-row v-if="resCol !== '12'">
               <v-col cols="6">
                 <v-menu
                   ref="menu"
@@ -210,31 +210,32 @@
                 <v-sheet
                   :color="bgColor3"
                   elevation="1"
-                  height="130"
+                  :height="resCol === '12' ? '99' : '130'"
                   width="100%"
                   dark
                   style="border-bottom: 1px solid #695988 !important;border-radius: 10px 10px 0px 0px;"
                 >
                   <v-container>
                     <v-row>
-                      <v-col cols="6">
+                      <v-col cols="6" :class="resCol === '12' ? 'pa-0' : ''">
                         <br>
                         <v-row class="text-center">
-                          <v-col cols="12" :style="'font-weight: 700;font-size: 32px;line-height: 24px;color:' + text">
+                          <v-col  :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-weight: 700;font-size: ' + font() + ';line-height: 24px;color:' + text">
+                          <!-- <v-col cols="12" :style="'font-weight: 700;font-size: ' + '5px' + ';line-height: 24px;color:' + text"> -->
                             หมายเลขคิว
                           </v-col>
-                          <v-col cols="12" :style="'font-weight: 700;font-size: 24px;line-height: 24px;color:' + text" >
+                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-weight: 700;font-size:' + font() + ';line-height: 24px;color:' + text" >
                             Number
                           </v-col>
                         </v-row>
                       </v-col>
-                      <v-col cols="6">
+                      <v-col cols="6" :class="resCol === '12' ? 'pa-0' : ''">
                         <br>
                         <v-row class="text-center">
-                          <v-col cols="12" :style="'font-weight: 700;font-size: 32px;line-height: 24px;color:' + text">
+                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-weight: 700;font-size:' + font() + ';line-height: 24px;color:' + text">
                             ช่องบริการ
                           </v-col>
-                          <v-col cols="12" :style="'font-weight: 700;font-size: 24px;line-height: 24px;color:' + text">
+                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-weight: 700;font-size:'  + font() + ';line-height: 24px;color:' + text">
                             Counter
                           </v-col>
                         </v-row>
@@ -252,7 +253,7 @@
                     <v-row v-for="(items, id) in itemBookingUse" :key="id">
                       <v-col cols="6" class="pt-2">
                         <v-row class="text-center">
-                          <v-col cols="12" :style="'font-weight: 700;font-size: 48px;color:black'">
+                          <v-col cols="12" :style="'font-weight: 700;font-size: ' + font2() + ';color:black'">
                             {{items.storeFrontQueue}}
                           </v-col>
                         </v-row>
@@ -289,7 +290,7 @@
             </v-row>
           </v-container>
         </v-col>
-        <v-col cols="8">
+        <v-col :cols="resCol === '12' ? '7' : '8'">
           <!-- <v-row>
             <v-col cols="11" class="pb-0 pt-0 mt-3" style="display: flex;justify-content: flex-end;">
               <v-card
@@ -306,7 +307,7 @@
           </v-row> -->
           <v-row v-if="videoLinkMonition">
             <v-col cols="12" class="text-center pt-0">
-              <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" class="mt-15" width="90%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
+              <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" :class=" resCol === '12' ? 'mt-3' : 'mt-15'" width="90%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
                 <source :src="videoLinkMonition" type="video/webm">
               </video>
               <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
@@ -321,11 +322,11 @@
                   style="padding: 10px; width: 90%;"
                 >
                   <div style="margin: auto 0;" class="text-center text-white">
-                    <div :style="'font-weight: 700;font-size: 28px;color:' + text">คิวที่รอเรียก : {{countConfirm}}</div>
+                    <div :style="'margin-bottom:4px;font-weight: 700;font-size: ' + font3() + ';color:' + text">คิวที่รอเรียก : {{countConfirm}}</div>
                     <!-- <strong style="font-weight: 700;font-size: 28px;">{{countConfirm}}</strong> -->
                     <v-row>
-                      <v-col cols="4" v-for="(item3 , index3) in DataFlowItem.filter(el => { return el.value !== 'allFlow' })" :key="index3">
-                         <strong :style="'font-size: 20px;color:' + text ">{{item3.storeFrontText}} : {{countConfirmList.filter(el => { return el.flowId === item3.value  }).length}}</strong>
+                      <v-col cols="4" class="px-0 py-0 pl-1" v-for="(item3 , index3) in DataFlowItem.filter(el => { return el.value !== 'allFlow' })" :key="index3">
+                         <strong :style="'font-size: ' + font4() + ';color:' + text ">{{item3.storeFrontText}} : {{countConfirmList.filter(el => { return el.flowId === item3.value  }).length}}</strong>
                       </v-col>
                     </v-row>
                   </div>
@@ -341,8 +342,8 @@
                   style="border-radius: 10px 10px 10px 10px;padding: 10px;"
                 >
                   <v-row>
-                    <v-col cols="2" class="pb-0 pt-1 mt-3 pl-10" v-for="(items, id) in countConfirmList" :key="id">
-                      <strong :style="'font-size: 20px;color:' + text">{{items.storeFrontQueue}}</strong>
+                    <v-col cols="2" :class="resCol === 12 ? 'pb-0 pt-1 mt-3 pl-10' : 'pl-2'" v-for="(items, id) in countConfirmList" :key="id">
+                      <strong :style="'font-size: ' + font3() + ';color:' + text">{{items.storeFrontQueue}}</strong>
                     </v-col>
                   </v-row>
                 </v-sheet>
@@ -389,6 +390,24 @@ export default {
   computed: {
     videoElement () {
       return this.$refs.video
+    },
+    resCol () {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs':
+          return '12'
+        case 'sm':
+          return '12'
+        case 'md':
+          return '6'
+        case 'lg':
+          return '3'
+        case 'xl':
+          return '6'
+      }
+      console.log(
+        'this.$vuetify.breakpoint.name',
+        this.$vuetify.breakpoint.name
+      )
     },
     colsWidth () {
       switch (this.$vuetify.breakpoint.name) {
@@ -551,12 +570,49 @@ export default {
     this.dateStart = moment().format('YYYY-MM-DD')
     this.clearTimeLoop()
     this.checkSearch()
+    document.querySelector('body').requestFullscreen()
     console.log('tetx', this.text)
+    if (this.isMobileDevice()) {
+      // Code to execute if the device is a mobile device
+      window.scrollTo(0, 1)
+    }
   },
   beforeDestroy () {
     this.$root.$off('dataReturn')
   },
   methods: {
+    isMobileDevice () {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    },
+    font () {
+      if (this.resCol === '12') {
+        return '14px'
+      } else {
+        return '24px'
+      }
+      // console.log('sssss', this.resCol)
+    },
+    font2 () {
+      if (this.resCol === '12') {
+        return '17px'
+      } else {
+        return '48px'
+      }
+    },
+    font3 () {
+      if (this.resCol === '12') {
+        return '10px'
+      } else {
+        return '28px'
+      }
+    },
+    font4 () {
+      if (this.resCol === '12') {
+        return '10px'
+      } else {
+        return '28px'
+      }
+    },
     async changeStatusSound (text) {
       console.log('changeStatusSound', text)
       if (text === 'on') {
