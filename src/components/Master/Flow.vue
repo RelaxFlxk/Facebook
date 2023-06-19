@@ -947,6 +947,16 @@
                             outlined
                             dense
                             v-bind:options="options2" />
+                            <v-text-field
+                            v-if="formAdd.checkDeposit === 'True'"
+                            label="เงินมัดจำคิดเป็นกี่เปอร์เซ็น (กรณีที่ต้องการแจ้งยอดชำระคงเหลือ)"
+                            v-model="formAdd.depositPercent"
+                            required
+                            :rules="depositPercentrules"
+                            outlined
+                            suffix="%"
+                            dense
+                            v-bind:options="optionsPercent" />
                         </v-col>
                         <v-col
                           cols="12"
@@ -1377,6 +1387,16 @@
                             outlined
                             dense
                             v-bind:options="options2" />
+                            <v-text-field
+                            v-if="formUpdate.checkDeposit === 'True'"
+                            label="เงินมัดจำคิดเป็นกี่เปอร์เซ็น (กรณีที่ต้องการแจ้งยอดชำระคงเหลือ)"
+                            v-model="formUpdate.depositPercent"
+                            required
+                            :rules="depositPercentrules"
+                            suffix="%"
+                            outlined
+                            dense
+                            v-bind:options="optionsPercent" />
                         </v-col>
                         <v-col
                           cols="12"
@@ -2322,12 +2342,13 @@
                           <div height="100">
                             <div class="colorBetaskText" style="font-weight: bold;font-size: 17px;">{{ element.name.substring(0, 79) }}</div>
                           </div>
-                          <div height="100" v-if="element.name.length >= 49">
+                          <!-- <div height="100" v-if="element.name.length >= 49">
                             <div style="font-size: 15px;">{{ element.nameSub.substring(0, 41) }}...</div>
                           </div>
                           <div height="100" v-else>
                             <div style="font-size: 15px;">{{ element.nameSub.substring(0, 41) }}</div>
-                          </div>
+                          </div> -->
+                          <div class="ml-5" style="font-size: 15px;">{{ element.nameSub }}</div>
                           <div height="100">
                             <div style="font-weight: bold;font-size: 17px;color:#1B5E20;">฿ {{ formatNumber(element.price) }}</div>
                           </div>
@@ -2644,6 +2665,13 @@ export default {
         length: 9,
         precision: 0
       },
+      optionsPercent: {
+        locale: 'en-US',
+        prefix: '',
+        suffix: '',
+        length: 100,
+        precision: 0
+      },
       selectTypeField: [
         { text: 'Text', value: 'text' },
         { text: 'Number', value: 'number' },
@@ -2706,6 +2734,7 @@ export default {
         promptPayID: null,
         promptPayName: null,
         amountDeposit: 0,
+        depositPercent: 0,
         shopId: this.$session.getAll().data.shopId,
         remarkConfirm: '',
         remarkConfirmEn: '',
@@ -2780,6 +2809,7 @@ export default {
         storeFrontCheck: 'False',
         depositTime: '',
         amountDeposit: 0,
+        depositPercent: 0,
         promptPayID: null,
         promptPayName: null,
         shopId: '',
@@ -2884,6 +2914,10 @@ export default {
           return pattern.test(value) || 'Invalid e-mail.'
         }
       },
+      depositPercentrules: [
+        (value) => !!value || 'กรุณากรอกข้อมูล',
+        (value) => (value >= 0 && value <= 100) || 'กรุณากรอกค่าระหว่าง 0 ถึง 100'
+      ],
       // End Form Config ADD EDIT
       // Data Table Config
       columns: [
@@ -4266,6 +4300,7 @@ export default {
       this.formUpdate.flowId = item.flowId
       this.formUpdate.flowCode = item.flowCode
       this.formUpdate.amountDeposit = item.amountDeposit || 0
+      this.formUpdate.depositPercent = item.depositPercent || 0
       this.formUpdate.checkPayment = item.checkPayment || 'True'
       this.formUpdate.checkDeposit = item.checkDeposit || 'False'
       this.formUpdate.storeFrontCheck = item.storeFrontCheck || 'False'
@@ -4334,6 +4369,7 @@ export default {
             this.formAdd.flowCode = this.generateCodeGlobal()
             this.formAdd.flowfieldName = JSON.stringify(this.desserts)
             this.formAdd.amountDeposit = this.formAdd.amountDeposit || 0
+            this.formAdd.depositPercent = this.formAdd.depositPercent || 0
 
             this.formAdd.flowName = this.formAdd.flowName.replace(/%/g, '%%').replace(/'/g, "\\'")
             this.formAdd.flowNameEn = this.formAdd.flowNameEn.replace(/%/g, '%%').replace(/'/g, "\\'")
@@ -4506,6 +4542,7 @@ export default {
           .then(async result => {
             this.formUpdate.LAST_USER = this.session.data.userName
             this.formUpdate.amountDeposit = this.formUpdate.amountDeposit || 0
+            this.formUpdate.depositPercent = this.formUpdate.depositPercent || 0
             this.formUpdate.flowfieldName = JSON.stringify(fieldId)
 
             this.formUpdate.flowName = this.formUpdate.flowName.replace(/%/g, '%%').replace(/'/g, "\\'")

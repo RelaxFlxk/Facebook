@@ -1284,6 +1284,9 @@ export default {
           dataTimeCheck.forEach((v, k) => {
             if (typeof v.status === 'undefined') {
               v.status = true
+              if (v.limitBooking === '0') {
+                v.status = false
+              }
             }
           })
           // เซ็ต Status False ให้กับเวลาที่มีคนจองเข้ามาแล้ว
