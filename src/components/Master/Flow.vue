@@ -2917,7 +2917,7 @@ export default {
         }
       },
       depositPercentrules: [
-        (value) => !!value || 'กรุณากรอกข้อมูล',
+        (value) => !!value.toString().trim() || 'กรุณากรอกข้อมูล',
         (value) => (value >= 0 && value <= 100) || 'กรุณากรอกค่าระหว่าง 0 ถึง 100'
       ],
       // End Form Config ADD EDIT
