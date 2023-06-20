@@ -14149,14 +14149,17 @@ export default {
         if (this.dataItem.filter(row => row.bookNo === this.BookingDataItem[0].bookNo).length > 0) {
           if (this.validUpdate === true) {
             let checkJobno = ''
+            let dataCheck = []
             await axios.get(this.DNS_IP + '/booking_view/get?bookNo=' + this.BookingDataItem[0].bookNo)
               .then(async response => {
                 let rs = response.data
                 console.log('checkJobNoInBooking', rs)
                 if (rs.status === false) {
                   checkJobno = 'ไม่มีข้อมูล'
+                  dataCheck = []
                 } else {
                   checkJobno = rs[0].jobNo || ''
+                  dataCheck = rs
                 }
               })
             if (checkJobno === '') {
@@ -14289,30 +14292,69 @@ export default {
                     })
                 })
             } else {
-              this.$swal('ผิดพลาด', 'รายการนี้ได้นำเข้ากระดานการทำงานแล้ว', 'error').then(async response => {
-                this.dialogEdit = false
-                if (this.statusSearch === 'no') {
-                  await this.getBookingList()
-                } else {
-                  await this.searchAny()
+              if (dataCheck[0].statusBt === 'confirm') {
+                let dt = {
+                  // pageStatus: 'cancel',
+                  // limitBookingCount: dtint,
+                  bookNo: dataCheck[0].bookNo,
+                  contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
+                  status: 'confirmJob',
+                  statusUse: 'use',
+                  shopId: this.$session.getAll().data.shopId,
+                  CREATE_USER: this.$session.getAll().data.userName,
+                  LAST_USER: this.$session.getAll().data.userName
                 }
-                // this.getTimesChange('update')
-                if (this.getSelectText) {
-                  this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
-                }
-              }).catch(error => {
-                console.log('error function addData : ', error)
-                this.dialogEdit = false
-                if (this.statusSearch === 'no') {
-                  this.getBookingList()
-                } else {
-                  this.searchAny()
-                }
-                // this.getTimesChange('update')
-                if (this.getSelectText) {
-                  this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
-                }
-              })
+                axios
+                  .post(this.DNS_IP + '/booking_transaction/add', dt)
+                  .then(async response => {
+                    this.endDate = ''
+                    this.endTime = ''
+                    this.empSelectJob = ''
+                    this.statusShowDateConfiremjob = true
+                    await this.pushMsg(response.data.jobNo)
+                    if (this.jobCheckPackage) {
+                      await this.usePackage(this.dataQrcode.bookNo, this.BookingDataItem[0].masBranchID)
+                    }
+                    this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
+                    if (this.statusSearch === 'no') {
+                      await this.getBookingList()
+                    } else {
+                      await this.searchAny()
+                    }
+                    this.dialogEdit = false
+                    this.dataEditJobReady = true
+                    var dataJob = this.dataItem.filter(el => { return el.bookNo === this.dataQrcode.bookNo })
+                    this.getjob(dataJob[0])
+                    this.dialogJob = true
+                  }).catch(error => {
+                    console.log('error function addData : ', error)
+                  })
+              } else {
+                this.$swal('ผิดพลาด', 'รายการนี้ได้นำเข้ากระดานการทำงานแล้ว', 'error').then(async response => {
+                  this.dialogEdit = false
+                  if (this.statusSearch === 'no') {
+                    await this.getBookingList()
+                  } else {
+                    await this.searchAny()
+                  }
+                  // this.getTimesChange('update')
+                  if (this.getSelectText) {
+                    this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
+                  }
+                }).catch(error => {
+                  console.log('error function addData : ', error)
+                  this.dialogEdit = false
+                  if (this.statusSearch === 'no') {
+                    this.getBookingList()
+                  } else {
+                    this.searchAny()
+                  }
+                  // this.getTimesChange('update')
+                  if (this.getSelectText) {
+                    this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
+                  }
+                })
+              }
             }
           }
         } else {
