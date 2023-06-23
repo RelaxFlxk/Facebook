@@ -830,7 +830,7 @@ export default {
     this.dateStart = this.momenDate_1(new Date())
     await this.getDataFlow()
     await this.getDataBranch()
-    await this.searchBooking()
+    await this.searchBooking('unNoti')
     this.$root.$on('closeSetTimeBookingListQueue', () => {
       // your code goes here
       this.closeSetTimeBookingListQueue()
@@ -870,18 +870,18 @@ export default {
             .post(this.DNS_IP + '/booking_transaction/add', dtt)
             .then(async responses => {
               this.$swal('เรียบร้อย', 'ยกเลิกคิวสำเร็จ', 'success')
-              await this.searchBooking()
+              await this.searchBooking('unNoti')
               this.clearTimeLoop()
             })
         }).catch(async err => {
           // this.$router.push({ name: '404' })
           console.log(err.code, err.message)
-          await this.searchBooking()
+          await this.searchBooking('unNoti')
           this.clearTimeLoop()
         })
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
-        await this.searchBooking()
+        await this.searchBooking('unNoti')
         this.clearTimeLoop()
       }
     },
@@ -893,7 +893,7 @@ export default {
       clearInterval(this.setTimerCalendar)
       this.setTimerCalendar = null
       let _this = this
-      this.setTimerCalendar = setInterval(function () { _this.searchBooking() }, 15000)
+      this.setTimerCalendar = setInterval(function () { _this.searchBooking('unNoti') }, 15000)
     },
     searchFlow (item) {
       this.search = item.text
@@ -975,7 +975,7 @@ export default {
     },
     checkSearch () {
       this.validate('SEARCH')
-      setTimeout(() => this.searchBooking(), 500)
+      setTimeout(() => this.searchBooking('unNoti'), 500)
     },
     async searchBooking (checkNoti, item) {
       if (this.validSearch === true) {
@@ -1214,12 +1214,12 @@ export default {
             }
             this.dialogServicePointStatus = false
             this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
-            await this.searchBooking()
+            await this.searchBooking('unNoti')
             this.clearTimeLoop()
           })
         } else {
           this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
-          await this.searchBooking()
+          await this.searchBooking('unNoti')
           this.clearTimeLoop()
         }
       }
@@ -1284,13 +1284,13 @@ export default {
                 } else {
                   this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                   this.dialogServicePointStatus = false
-                  await this.searchBooking()
+                  await this.searchBooking('unNoti')
                   this.clearTimeLoop()
                 }
               } else {
                 this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                 this.dialogServicePointStatus = false
-                await this.searchBooking()
+                await this.searchBooking('unNoti')
                 this.clearTimeLoop()
               }
             } else {
@@ -1299,7 +1299,7 @@ export default {
           })
         } else {
           this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
-          await this.searchBooking()
+          await this.searchBooking('unNoti')
           this.clearTimeLoop()
         }
       }
@@ -1342,13 +1342,13 @@ export default {
                 })
             }
             this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
-            await this.searchBooking()
+            await this.searchBooking('unNoti')
             this.clearTimeLoop()
           })
         }
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
-        await this.searchBooking()
+        await this.searchBooking('unNoti')
         this.clearTimeLoop()
       }
     },
@@ -1380,7 +1380,7 @@ export default {
             .post(this.DNS_IP + '/booking_transaction/add', dtt)
             .then(async responses => {
               this.$swal('เรียบร้อย', 'ปิดงานสำเร็จ', 'success')
-              await this.searchBooking()
+              await this.searchBooking('unNoti')
               this.clearTimeLoop()
             // let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
             // if (bookSelect.length > 0) {
@@ -1401,12 +1401,12 @@ export default {
         }).catch(async err => {
           // this.$router.push({ name: '404' })
           console.log(err.code, err.message)
-          await this.searchBooking()
+          await this.searchBooking('unNoti')
           this.clearTimeLoop()
         })
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
-        await this.searchBooking()
+        await this.searchBooking('unNoti')
         this.clearTimeLoop()
       }
     },
@@ -1518,12 +1518,12 @@ export default {
                     await this.closeJob(item)
                   } else {
                     this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
-                    await this.searchBooking()
+                    await this.searchBooking('unNoti')
                     this.clearTimeLoop()
                   }
                 } else {
                   this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
-                  await this.searchBooking()
+                  await this.searchBooking('unNoti')
                   this.clearTimeLoop()
                 }
               } else {
@@ -1533,7 +1533,7 @@ export default {
           }
         } else {
           this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
-          await this.searchBooking()
+          await this.searchBooking('unNoti')
           this.clearTimeLoop()
         }
       }
