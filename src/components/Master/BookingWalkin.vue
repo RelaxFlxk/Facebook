@@ -385,6 +385,7 @@
                     color="#0D47A1"
                       icon
                       x-large
+                      :loading="Addloading"
                       @click="addWalkin(item)"
                     >
                     <v-icon>
@@ -396,6 +397,7 @@
                         color="#0D47A1"
                         icon
                         x-large
+                        :loading="Removeloading"
                         @click="removeWalkin(item)"
                       >
                       <v-icon>
@@ -531,7 +533,9 @@ export default {
       currentSelect: {
         item: {},
         k: null
-      }
+      },
+      Addloading: false,
+      Removeloading: false
     }
   },
   async mounted () {
@@ -543,6 +547,7 @@ export default {
   },
   methods: {
     async addWalkin (item) {
+      this.Addloading = true
       console.log('ADD', item)
       let dataSelect = this.currentSelect.item
       let key = this.currentSelect.k
@@ -554,81 +559,17 @@ export default {
           'countBooking': countBooking,
           'LAST_USER': this.$session.getAll().data.userName
         }
-        this.$swal({
-          title: this.languageSelect === 0 ? 'ต้องการเพิ่ม ใช่หรือไม่?' : 'Want to make an appointment?',
-          type: 'question',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#b3b1ab',
-          confirmButtonText: this.languageSelect === 0 ? 'ใช่' : 'Yes',
-          cancelButtonText: this.languageSelect === 0 ? 'ไม่' : 'No'
-        }).then(async result => {
-          await axios.post(this.DNS_IP + '/LimitBookingDate/edit/' + ID, LAST_USER)
-            .then(async (response) => {
-              console.log(response)
-              await this.setQueue(moment(this.date, 'YYYY-MM').format('YYYY-MM'))
-              await this.DefaultDay()
-              await this.dateSelect.filter((a, k) => k === key).map((a) => {
-                a.active = true
-              })
-              await this.getDetails(dataSelect, key)
-            })
-            .catch(error => {
-              console.log('error function addData : ', error)
-            })
-        })
-      } else {
-        this.formOpenslot.flowId = this.formSelect.flowId
-        this.formOpenslot.masBranchID = this.formSelect.masBranchID
-        this.formOpenslot.bookingDate = item.date
-        this.formOpenslot.bookingTime = item.timeValue
-        this.formOpenslot.countBooking = (item.countBooking + 1)
-        this.formOpenslot.shopId = this.shopId
-        console.log('this.formOpenslot', this.formOpenslot)
-        this.$swal({
-          title: this.languageSelect === 0 ? 'ต้องการเพิ่ม ใช่หรือไม่?' : 'Want to make an appointment?',
-          type: 'question',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#b3b1ab',
-          confirmButtonText: this.languageSelect === 0 ? 'ใช่' : 'Yes',
-          cancelButtonText: this.languageSelect === 0 ? 'ไม่' : 'No'
-        }).then(async result => {
-          await axios.post(this.DNS_IP + '/LimitBookingDate/add', this.formOpenslot)
-            .then(async (response) => {
-              console.log(response)
-              await this.setQueue(moment(this.date, 'YYYY-MM').format('YYYY-MM'))
-              await this.DefaultDay()
-              await this.dateSelect.filter((a, k) => k === key).map((a) => {
-                a.active = true
-              })
-              await this.getDetails(dataSelect, key)
-            })
-            .catch(error => {
-              console.log('error function addData : ', error)
-            })
-        })
-      }
-    },
-    async removeWalkin (item) {
-      let dataSelect = this.currentSelect.item
-      let key = this.currentSelect.k
-      let addData = this.LimitBooking.filter((a) => a.bookingDate === item.date && a.bookingTime === item.timeValue)
-      let ID = addData[0].id
-      let countBooking = (addData[0].countBooking - 1)
-      let LAST_USER = {
-        'countBooking': countBooking,
-        'LAST_USER': this.$session.getAll().data.userName
-      }
-      this.$swal({
-        title: this.languageSelect === 0 ? 'ต้องการลด ใช่หรือไม่?' : 'Want to make an appointment?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: this.languageSelect === 0 ? 'ใช่' : 'Yes',
-        cancelButtonText: this.languageSelect === 0 ? 'ไม่' : 'No'
-      }).then(async result => {
+        // this.$swal({
+        //   title: this.languageSelect === 0 ? 'ต้องการเพิ่ม ใช่หรือไม่?' : 'Want to make an appointment?',
+        //   type: 'question',
+        //   showCancelButton: true,
+        //   confirmButtonColor: '#3085d6',
+        //   cancelButtonColor: '#b3b1ab',
+        //   confirmButtonText: this.languageSelect === 0 ? 'ใช่' : 'Yes',
+        //   cancelButtonText: this.languageSelect === 0 ? 'ไม่' : 'No'
+        // }).then(async result => {
+
+        // })
         await axios.post(this.DNS_IP + '/LimitBookingDate/edit/' + ID, LAST_USER)
           .then(async (response) => {
             console.log(response)
@@ -638,11 +579,84 @@ export default {
               a.active = true
             })
             await this.getDetails(dataSelect, key)
+            this.Addloading = false
           })
           .catch(error => {
             console.log('error function addData : ', error)
+            this.Addloading = false
           })
-      })
+      } else {
+        this.formOpenslot.flowId = this.formSelect.flowId
+        this.formOpenslot.masBranchID = this.formSelect.masBranchID
+        this.formOpenslot.bookingDate = item.date
+        this.formOpenslot.bookingTime = item.timeValue
+        this.formOpenslot.countBooking = (item.countBooking + 1)
+        this.formOpenslot.shopId = this.shopId
+        console.log('this.formOpenslot', this.formOpenslot)
+        // this.$swal({
+        //   title: this.languageSelect === 0 ? 'ต้องการเพิ่ม ใช่หรือไม่?' : 'Want to make an appointment?',
+        //   type: 'question',
+        //   showCancelButton: true,
+        //   confirmButtonColor: '#3085d6',
+        //   cancelButtonColor: '#b3b1ab',
+        //   confirmButtonText: this.languageSelect === 0 ? 'ใช่' : 'Yes',
+        //   cancelButtonText: this.languageSelect === 0 ? 'ไม่' : 'No'
+        // }).then(async result => {
+        // })
+        await axios.post(this.DNS_IP + '/LimitBookingDate/add', this.formOpenslot)
+          .then(async (response) => {
+            console.log(response)
+            await this.setQueue(moment(this.date, 'YYYY-MM').format('YYYY-MM'))
+            await this.DefaultDay()
+            await this.dateSelect.filter((a, k) => k === key).map((a) => {
+              a.active = true
+            })
+            await this.getDetails(dataSelect, key)
+            this.Addloading = false
+          })
+          .catch(error => {
+            console.log('error function addData : ', error)
+            this.Addloading = false
+          })
+      }
+      this.Addloading = false
+    },
+    async removeWalkin (item) {
+      this.Removeloading = true
+      let dataSelect = this.currentSelect.item
+      let key = this.currentSelect.k
+      let addData = this.LimitBooking.filter((a) => a.bookingDate === item.date && a.bookingTime === item.timeValue)
+      let ID = addData[0].id
+      let countBooking = (addData[0].countBooking - 1)
+      let LAST_USER = {
+        'countBooking': countBooking,
+        'LAST_USER': this.$session.getAll().data.userName
+      }
+      // this.$swal({
+      //   title: this.languageSelect === 0 ? 'ต้องการลด ใช่หรือไม่?' : 'Want to make an appointment?',
+      //   type: 'question',
+      //   showCancelButton: true,
+      //   confirmButtonColor: '#3085d6',
+      //   cancelButtonColor: '#b3b1ab',
+      //   confirmButtonText: this.languageSelect === 0 ? 'ใช่' : 'Yes',
+      //   cancelButtonText: this.languageSelect === 0 ? 'ไม่' : 'No'
+      // }).then(async result => {
+      // })
+      await axios.post(this.DNS_IP + '/LimitBookingDate/edit/' + ID, LAST_USER)
+        .then(async (response) => {
+          console.log(response)
+          this.Removeloading = false
+          await this.setQueue(moment(this.date, 'YYYY-MM').format('YYYY-MM'))
+          await this.DefaultDay()
+          await this.dateSelect.filter((a, k) => k === key).map((a) => {
+            a.active = true
+          })
+          await this.getDetails(dataSelect, key)
+        })
+        .catch(error => {
+          this.Removeloading = false
+          console.log('error function addData : ', error)
+        })
     },
     dayCustom (item) {
       let dateDayCustom = this.DataFlow.filter((a) => a.flowId === this.formSelect.flowId)[0].dateDayCustom || '[]'
@@ -972,11 +986,13 @@ export default {
             let d = rs[i]
             let checkBranchByFlow = d.masBranchID || 'All'
             if ((checkBranchByFlow === this.formSelect.masBranchID.toString()) || checkBranchByFlow === 'All') {
-              console.log('eeeeeee', d.flowName)
-              d.text = d.flowName
-              d.textEn = d.flowNameEn
-              d.value = d.flowId
-              dataFlow.push(d)
+              if (d.limitBookingCheck === 'True') {
+                console.log('eeeeeee', d)
+                d.text = d.flowName
+                d.textEn = d.flowNameEn
+                d.value = d.flowId
+                dataFlow.push(d)
+              }
             }
             // let s = rs[i]
             // s.dateDayCustom = JSON.parse(s.dateDayCustom)
