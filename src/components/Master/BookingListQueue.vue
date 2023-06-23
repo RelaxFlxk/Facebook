@@ -2230,7 +2230,7 @@ export default {
       let bookSelect = this.itemBooking.filter((element, index) => { return element.statusBt === 'confirm' })
       console.log('bookSelect', bookSelect)
       if (bookSelect.length > 0) {
-        let bookSelectuse = bookSelect.filter((element, index) => { return index <= countNoti })
+        let bookSelectuse = bookSelect.filter((element, index) => { return index < countNoti })
         for (let i = 0; i < bookSelectuse.length; i++) {
           let d = bookSelectuse[i]
           let s = {}
