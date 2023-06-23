@@ -1988,9 +1988,12 @@
                           <template v-slot:[`item.limitBooking`]="{ item }">
                             <div v-if="item.id === editedItemNew.id" >
                               <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" dense single-line v-if="formUpdateLimitbooking.limitBookingCheck === 'True'" ></v-text-field>
-                              <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" disabled dense single-line v-else></v-text-field>
+                              <!-- <v-text-field class="pa-0 ma-0" filled v-model="editedItemNew.limitBooking" :hide-details="true" disabled dense single-line v-else></v-text-field> -->
                             </div>
-                            <span v-else>{{item.limitBooking}}</span>
+                            <div v-else>
+                              <span v-if="formUpdateLimitbooking.limitBookingCheck === 'True'">{{item.limitBooking}}</span>
+                              <span v-else>{{''}}</span>
+                            </div>
                           </template>
                           <template v-slot:[`item.actions2`]="{ item }">
                             <div class="pa-0 ma-0" v-if="item.id === editedItemNew.id">
