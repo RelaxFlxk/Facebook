@@ -977,7 +977,7 @@ export default {
       this.validate('SEARCH')
       setTimeout(() => this.searchBooking(), 500)
     },
-    async searchBooking () {
+    async searchBooking (checkNoti, item) {
       if (this.validSearch === true) {
         this.overlaySave = false
         this.itemBookingUse = []
@@ -1046,6 +1046,14 @@ export default {
                 this.itemBooking = this.itemBookingUse
               } else {
                 this.itemBooking = this.itemBookingUse.filter(el => { return el.flowId === this.modelslide })
+              }
+              if (checkNoti === 'noti') {
+                console.log('item', item, checkNoti, item.storeFrontNotifySet, item.storeFrontNotifyStatus)
+                if (item.storeFrontNotifyStatus === 'True') {
+                  if (parseInt(item.storeFrontNotifySet) > 0) {
+                    this.pushMessageRecallQueue(parseInt(item.storeFrontNotifySet), 'False')
+                  }
+                }
               }
             } else {
               this.itemBooking = []
@@ -1244,7 +1252,7 @@ export default {
           }
           this.dialogServicePointStatus = false
           this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
-          await this.searchBooking()
+          await this.searchBooking('noti', item)
           this.clearTimeLoop()
         })
     },
@@ -1470,7 +1478,7 @@ export default {
               })
           }
           this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
-          await this.searchBooking()
+          await this.searchBooking('noti', item)
           this.clearTimeLoop()
         })
     },
@@ -1507,7 +1515,7 @@ export default {
                 if (statusBookingCheck === 'confirm') {
                   let statusUpdateEmp = await this.updateEmp(item.bookNo, 'confirm')
                   if (statusUpdateEmp === true) {
-                    this.closeJob(item)
+                    await this.closeJob(item)
                   } else {
                     this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                     await this.searchBooking()
@@ -1519,7 +1527,7 @@ export default {
                   this.clearTimeLoop()
                 }
               } else {
-                this.closeJob(item)
+                await this.closeJob(item)
               }
             })
           }
@@ -2217,6 +2225,28 @@ export default {
       // var pdfFrame = window.frames['pdfV']
       // pdfFrame.print()
       // this.dialogPrint = true
+    },
+    async pushMessageRecallQueue (countNoti, checkGetQueue) {
+      let bookSelect = this.itemBooking.filter((element, index) => { return element.statusBt === 'confirm' })
+      console.log('bookSelect', bookSelect)
+      if (bookSelect.length > 0) {
+        let bookSelectuse = bookSelect.filter((element, index) => { return index <= countNoti })
+        for (let i = 0; i < bookSelectuse.length; i++) {
+          let d = bookSelectuse[i]
+          let s = {}
+          s.lineUserId = d.lineUserId || ''
+          if (s.lineUserId !== '') {
+            let dtt = {
+              checkGetQueue: checkGetQueue
+            }
+            await axios
+              .post(this.DNS_IP + '/Booking/pushMsgQueue/' + d.bookNo, dtt)
+              .then(async responses => {}).catch(error => {
+                console.log('error function pushMsgQueue : ', error)
+              })
+          }
+        }
+      }
     }
   }
 }

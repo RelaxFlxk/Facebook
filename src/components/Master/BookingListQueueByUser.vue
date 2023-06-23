@@ -759,7 +759,7 @@ export default {
       this.validate('SEARCH')
       setTimeout(() => this.searchBooking(), 500)
     },
-    async searchBooking () {
+    async searchBooking (checkNoti, item) {
       if (this.validSearch === true) {
         this.overlay = false
         this.itemBooking = []
@@ -820,6 +820,14 @@ export default {
               }
               this.overlay = true
               this.openHistory(this.itemBooking[0])
+              if (checkNoti === 'noti') {
+                console.log('item', item, checkNoti, item.storeFrontNotifySet, item.storeFrontNotifyStatus)
+                if (item.storeFrontNotifyStatus === 'True') {
+                  if (parseInt(item.storeFrontNotifySet) > 0) {
+                    this.pushMessageRecallQueue(parseInt(item.storeFrontNotifySet), 'False')
+                  }
+                }
+              }
             } else {
               this.overlay = true
             }
@@ -997,7 +1005,7 @@ export default {
           }
           this.dialogServicePointStatus = false
           this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
-          await this.searchBooking()
+          await this.searchBooking('noti', item)
           this.clearTimeLoop()
         })
     },
@@ -1254,7 +1262,7 @@ export default {
               })
           }
           this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
-          await this.searchBooking()
+          await this.searchBooking('noti', item)
           this.clearTimeLoop()
         })
     },
@@ -1937,6 +1945,28 @@ export default {
       // var pdfFrame = window.frames['pdfV']
       // pdfFrame.print()
       // this.dialogPrint = true
+    },
+    async pushMessageRecallQueue (countNoti, checkGetQueue) {
+      let bookSelect = this.itemBooking.filter((element, index) => { return element.statusBt === 'confirm' })
+      console.log('bookSelect', bookSelect)
+      if (bookSelect.length > 0) {
+        let bookSelectuse = bookSelect.filter((element, index) => { return index <= countNoti })
+        for (let i = 0; i < bookSelectuse.length; i++) {
+          let d = bookSelectuse[i]
+          let s = {}
+          s.lineUserId = d.lineUserId || ''
+          if (s.lineUserId !== '') {
+            let dtt = {
+              checkGetQueue: checkGetQueue
+            }
+            await axios
+              .post(this.DNS_IP + '/Booking/pushMsgQueue/' + d.bookNo, dtt)
+              .then(async responses => {}).catch(error => {
+                console.log('error function pushMsgQueue : ', error)
+              })
+          }
+        }
+      }
     }
   }
 }

@@ -756,7 +756,7 @@
                               color="#1B437C"
                               true-value="True"
                               v-model="formAdd.storeFrontCheck"
-                              @change="checkStoreFrontAdd(),formAdd.servicePointTh = '', formAdd.servicePointEn = '',formAdd.servicePointCount = '',servicePointCount = '', formAdd.storeFrontText = '',formAdd.servicePointStatus = 'False'"
+                              @change="checkStoreFrontAdd(),formAdd.servicePointTh = '', formAdd.servicePointEn = '',formAdd.servicePointCount = '',servicePointCount = '', formAdd.storeFrontText = '',formAdd.servicePointStatus = 'False',formAdd.storeFrontNotifySet = '0',formAdd.storeFrontNotifyStatus = 'False'"
                             ></v-checkbox>
                             </v-col>
                             <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;"  v-if="formAdd.storeFrontCheck === 'True'">
@@ -770,7 +770,7 @@
                                 maxlength="1"
                               ></v-text-field>
                             </v-col>
-                            <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontCheck === 'True'"></v-col>
+                            <!-- <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontCheck === 'True'"></v-col> -->
                             <v-col cols="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontCheck === 'True'">
                               <v-checkbox
                               label="เปิดการตั้งค่าจุดบริการ"
@@ -833,6 +833,31 @@
                                 required
                                 dense
                                 v-mask="'###'"
+                                :rules="[rules.required]"
+                              ></v-text-field>
+                            </v-col>
+                          </v-row>
+                          <v-row v-if="formAdd.storeFrontCheck === 'True'">
+                            <v-col clos="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;">
+                              <v-checkbox
+                                label="เปิดรับการแจ้งเตือนล่วงหน้า"
+                                false-value="False"
+                                :on-icon="'mdi-check-circle'"
+                                :off-icon="'mdi-checkbox-blank-circle-outline'"
+                                color="#1B437C"
+                                true-value="True"
+                                v-model="formAdd.storeFrontNotifyStatus"
+                                @change="formAdd.storeFrontNotifySet = '0'"
+                              ></v-checkbox>
+                            </v-col>
+                            <v-col clos="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontNotifyStatus === 'True'"  >
+                              <v-text-field
+                                v-model="formAdd.storeFrontNotifySet"
+                                label="จำนวนจุดบริการสิ้นสุด"
+                                outlined
+                                required
+                                dense
+                                v-mask="'#'"
                                 :rules="[rules.required]"
                               ></v-text-field>
                             </v-col>
@@ -1186,7 +1211,7 @@
                               color="#1B437C"
                               true-value="True"
                               v-model="formUpdate.storeFrontCheck"
-                              @change="checkStoreFrontUpdate(),formUpdate.servicePointTh = '', formUpdate.servicePointEn = '',servicePointCount = '',formUpdate.servicePointCount = '', formUpdate.storeFrontText = '',formUpdate.servicePointStatus = 'False'"
+                              @change="checkStoreFrontUpdate(),formUpdate.servicePointTh = '', formUpdate.servicePointEn = '',servicePointCount = '',formUpdate.servicePointCount = '', formUpdate.storeFrontText = '',formUpdate.servicePointStatus = 'False',formUpdate.storeFrontNotifyStatus === 'False',formUpdate.storeFrontNotifySet === '0'"
                             ></v-checkbox>
                             </v-col>
                             <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;"  v-if="formUpdate.storeFrontCheck === 'True'">
@@ -1276,6 +1301,31 @@
                                 :rules="[rules.required]"
                               ></v-text-field>
                             </v-col> -->
+                          </v-row>
+                          <v-row v-if="formUpdate.storeFrontCheck === 'True'">
+                            <v-col clos="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;">
+                              <v-checkbox
+                                label="เปิดรับการแจ้งเตือนล่วงหน้า"
+                                false-value="False"
+                                :on-icon="'mdi-check-circle'"
+                                :off-icon="'mdi-checkbox-blank-circle-outline'"
+                                color="#1B437C"
+                                true-value="True"
+                                v-model="formUpdate.storeFrontNotifyStatus"
+                                @change="formUpdate.storeFrontNotifySet = '0'"
+                              ></v-checkbox>
+                            </v-col>
+                            <v-col clos="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.storeFrontNotifyStatus === 'True'"  >
+                              <v-text-field
+                                v-model="formUpdate.storeFrontNotifySet"
+                                label="จำนวนจุดบริการสิ้นสุด"
+                                outlined
+                                required
+                                dense
+                                v-mask="'#'"
+                                :rules="[rules.required]"
+                              ></v-text-field>
+                            </v-col>
                           </v-row>
                           <v-row v-if="$session.getAll().data.timeSlotStatus !== 'True'">
                             <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;">
@@ -2761,7 +2811,9 @@ export default {
         updateStatusConfirm: 'False',
         categorySub: [],
         checkCreditCard: 'False',
-        masBranchID: ''
+        masBranchID: '',
+        storeFrontNotifyStatus: 'False',
+        storeFrontNotifySet: '0'
       },
       formAddStep: {
         stepId: '',
@@ -2837,7 +2889,9 @@ export default {
         depositTextEN: '',
         categorySub: [],
         checkCreditCard: 'False',
-        masBranchID: ''
+        masBranchID: '',
+        storeFrontNotifyStatus: 'False',
+        storeFrontNotifySet: '0'
       },
       formUpdateItemFlow: {
         fieldId: '',
@@ -4297,6 +4351,8 @@ export default {
       this.formUpdate.updateStatusConfirm = item.updateStatusConfirm || 'False'
       this.formUpdate.servicePointRecursive = item.servicePointRecursive || 'False'
       this.formUpdate.servicePointCountStart = item.servicePointCountStart || '0'
+      this.formUpdate.storeFrontNotifyStatus = item.storeFrontNotifyStatus || 'False'
+      this.formUpdate.storeFrontNotifySet = item.storeFrontNotifySet || '0'
       this.formUpdate.servicePointCountEnd = item.servicePointCountEnd || '0'
       if (this.formUpdate.servicePointStatus === 'True') {
         this.formUpdate.servicePointCount = item.servicePointCount || ''
