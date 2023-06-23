@@ -4,17 +4,206 @@
     <v-main>
       <div class="col-md-12 ml-sm-auto col-lg-12 px-4">
         <v-row>
-          <v-col cols="6" class="text-left">
+          <v-col cols="6" class="text-left pb-0">
             <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
           </v-col>
-          <v-col cols="6" class="v-margit_button text-right">
+          <v-col cols="6" class="v-margit_button text-right pb-0">
             <v-btn color="primary" depressed @click="dialogAdd = true, validate('ADD')">
               <v-icon left>mdi-text-box-plus</v-icon>
               เพิ่มช่องทางการชำระเงิน
             </v-btn>
           </v-col>
+          <v-col cols="12" class="v-margit_button text-right pt-0" v-if="checkAddStripe">
+            <v-btn color="primary" outlined depressed @click="dialogAddStripe = true, validate('ADDStripe')">
+              <v-icon dark size="30" class="iconify" data-icon="logos:stripe"></v-icon>
+            </v-btn>
+          </v-col>
         </v-row>
         <v-row>
+          <!-- ADD STRIPE -->
+          <v-dialog v-model="dialogAddStripe" persistent max-width="550px">
+            <v-card>
+              <v-form ref="form_addStripe" v-model="validAddStripe" lazy-validation>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="8" class="text-left pt-10">
+                    <h3><strong>เพิ่มช่องทางการชำระเงิน</strong></h3>
+                    </v-col>
+                    <v-col cols="4" class="pt-10">
+                    <div style="text-align: end;">
+                        <v-btn
+                        class="mx-2"
+                        fab
+                        small
+                        dark
+                        color="white"
+                        :style="styleCloseBt"
+                        @click="(dialogAddStripe = false), clearDataStripe()"
+                        >
+                        X
+                        </v-btn>
+                    </div>
+                    </v-col>
+                </v-row>
+                  <v-row>
+                    <v-col cols="12" class="pb-0">
+                      <v-select
+                        class="pa-0"
+                        v-model="formAddStripe.masBranchID"
+                        :items="branchItem"
+                        label="สาขา"
+                        outlined
+                        required
+                        attach
+                        :menu-props="{ bottom: true, offsetY: true }"
+                        :rules="[rules.required]"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12" class="pb-0">
+                      <v-text-field
+                        v-model="formAddStripe.apiKey"
+                        label="Api Key"
+                        outlined
+                        :rules="[rules.required]"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pb-0">
+                      <v-text-field
+                        v-model="formAddStripe.endpointSecret"
+                        label="Endpoint Secret"
+                        outlined
+                        :rules="[rules.required]"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-container fluid>
+                      <v-textarea
+                        outlined
+                        label="ประเภทการชำระเงิน"
+                         rows="3" row-height="25"
+                         :rules="[rules.required]"
+                        v-model="formAddStripe.payTypeName"
+                      ></v-textarea>
+                    </v-container>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+              </v-form>
+
+                <center>
+                  <v-col class="text-center pt-0">
+                <v-btn
+                  elevation="2"
+                  block
+                  dark
+                  large
+                  :disabled="!validAddStripe"
+                  color="#1B437C"
+                  @click="addDataStripe()"
+                >
+                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                  บันทึก
+                </v-btn>
+                  </v-col>
+                </center>
+            </v-card>
+          </v-dialog>
+          <!-- end add -->
+
+          <!-- Edit STRIPE -->
+          <v-dialog v-model="dialogEditStripe" persistent max-width="550px">
+            <v-card>
+              <v-form ref="form_addStripe" v-model="validAddStripe" lazy-validation>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="8" class="text-left pt-10">
+                    <h3><strong>เพิ่มช่องทางการชำระเงิน</strong></h3>
+                    </v-col>
+                    <v-col cols="4" class="pt-10">
+                    <div style="text-align: end;">
+                        <v-btn
+                        class="mx-2"
+                        fab
+                        small
+                        dark
+                        color="white"
+                        :style="styleCloseBt"
+                        @click="(dialogEditStripe = false), clearDataStripe()"
+                        >
+                        X
+                        </v-btn>
+                    </div>
+                    </v-col>
+                </v-row>
+                  <v-row>
+                    <v-col cols="12" class="pb-0">
+                      <v-select
+                        class="pa-0"
+                        v-model="formAddStripe.masBranchID"
+                        :items="branchItem"
+                        label="สาขา"
+                        outlined
+                        required
+                        attach
+                        :menu-props="{ bottom: true, offsetY: true }"
+                        :rules="[rules.required]"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12" class="pb-0">
+                      <v-text-field
+                        v-model="formAddStripe.apiKey"
+                        label="Api Key"
+                        outlined
+                        :rules="[rules.required]"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pb-0">
+                      <v-text-field
+                        v-model="formAddStripe.endpointSecret"
+                        label="Endpoint Secret"
+                        outlined
+                        :rules="[rules.required]"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-container fluid>
+                      <v-textarea
+                        outlined
+                        label="ประเภทการชำระเงิน"
+                         rows="3" row-height="25"
+                         :rules="[rules.required]"
+                        v-model="formAddStripe.payTypeName"
+                      ></v-textarea>
+                    </v-container>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+              </v-form>
+
+                <center>
+                  <v-col class="text-center pt-0">
+                <v-btn
+                  elevation="2"
+                  block
+                  dark
+                  large
+                  :disabled="!validAddStripe"
+                  color="#1B437C"
+                  @click="editDataStripe()"
+                >
+                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                  แก้ไขข้อมูล
+                </v-btn>
+                  </v-col>
+                </center>
+            </v-card>
+          </v-dialog>
+          <!-- end add -->
+
           <!-- ADD -->
           <v-dialog v-model="dialogAdd" persistent max-width="550px">
             <v-card>
@@ -308,9 +497,16 @@
                   :items-per-page="10"
                 >
                   <template v-slot:[`item.payTypeImage`]="{ item }">
-                    <v-avatar color="primary" size="40">
+                    <v-avatar color="primary" size="40" v-if="item.payType === 'payment'">
                       <img :src="item.payTypeImage" alt="img"
                     /></v-avatar>
+                    <v-icon
+                      v-else
+                      small
+                      color="green darken-2"
+                      class="iconify" data-icon="logos:stripe"
+                    >
+                    </v-icon>
                   </template>
                    <template v-slot:[`item.CREATE_DATE`]="{ item }">
                       {{ format_date(item.CREATE_DATE) }}
@@ -320,11 +516,22 @@
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
                     <v-btn
+                      v-if="item.payType === 'payment'"
                       color="question"
                       fab
                       small
                       dark
                       @click.stop="(dialogEdit = true), getDataById(item)"
+                    >
+                      <v-icon> mdi-tools </v-icon>
+                    </v-btn>
+                    <v-btn
+                      v-else
+                      color="question"
+                      fab
+                      small
+                      dark
+                      @click.stop="(dialogEditStripe = true), getDataByIdStripe(item)"
                     >
                       <v-icon> mdi-tools </v-icon>
                     </v-btn>
@@ -373,6 +580,21 @@ export default {
   },
   data () {
     return {
+      formAddStripe: {
+        payTypeId: '',
+        apiKey: '',
+        endpointSecret: '',
+        masBranchID: 'All',
+        CREATE_USER: '',
+        LAST_USER: '',
+        payType: '',
+        payTypeCode: '',
+        payTypeName: '',
+        shopId: this.$session.getAll().data.shopId
+      },
+      checkAddStripe: true,
+      dialogAddStripe: false,
+      dialogEditStripe: false,
       PK: '',
       path: '/master_payment/', // Path Model
       // Menu Config
@@ -455,7 +677,7 @@ export default {
       // Data Table Config
       columns: [
         { text: 'รูปภาพ', value: 'payTypeImage' },
-        { text: 'รหัส', value: 'payTypeCode' },
+        { text: 'ประเภท', value: 'payType' },
         { text: 'สาขา', value: 'masBranchName' },
         { text: 'ประเภทการชำระเงิน', value: 'payTypeName' },
         { text: 'วันที่สร้าง', value: 'CREATE_DATE' },
@@ -474,6 +696,7 @@ export default {
       ],
       filesAdd: null,
       filesUpdate: null,
+      validAddStripe: true,
       validAdd: true,
       validUpdate: true,
       branch: [],
@@ -487,6 +710,69 @@ export default {
     await this.fiterBranch()
   },
   methods: {
+    addDataStripe () {
+      this.formAddStripe.payType = 'stripe'
+      this.formAddStripe.CREATE_USER = this.$session.getAll().data.userName
+      this.formAddStripe.LAST_USER = this.$session.getAll().data.userName
+      this.formAddStripe.shopId = this.$session.getAll().data.shopId
+
+      console.log('form', JSON.stringify(this.formAdd))
+
+      this.formAddStripe.payTypeCode = this.code + this.generateCodeGlobal()
+
+      this.dataReady = false
+      this.submitAddDataStripe(this.DNS_IP, this.path, this.formAddStripe)
+    },
+    async submitAddDataStripe (DNS_IP, PATH, ID, DT) {
+      this.dataReady = false
+
+      this.$swal({
+        title: 'ต้องการ เพิ่มข้อมูล ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async (result) => {
+          await axios
+            .post(
+              // eslint-disable-next-line quotes
+              DNS_IP + PATH + "add",
+              this.formAddStripe
+            )
+            .then(async (response) => {
+              // Debug response
+              console.log('addDataGlobal DNS_IP + PATH + "add"', response)
+
+              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+              // Close Dialog
+              this.dialogAddStripe = false
+
+              // Load Data
+              await this.clearDataStripe()
+              await this.selectBranch()
+              // await this.getDataGlobal(this.DNS_IP, this.path, this.$session.getAll().data.shopId)
+              // if (this.dataItem.length > 0) {
+              //   this.dataItem.forEach(el => {
+              //     if (el.masBranchID === 'All') {
+              //       el.masBranchName = 'ทั้งหมด'
+              //     }
+              //   })
+              // }
+            })
+          // eslint-disable-next-line handle-callback-err
+            .catch((error) => {
+              console.log('error function addDataGlobal : ', error)
+              this.dataReady = true
+            })
+        })
+        .catch((error) => {
+          console.log('error function addData : ', error)
+          this.dataReady = true
+        })
+    },
     async selectBranch () {
       this.statusFilterBranch = false
       this.dataReady = false
@@ -596,6 +882,12 @@ export default {
             self.$refs.form_add.validate()
           })
           break
+        case 'ADDStripe':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_addStripe.validate()
+          })
+          break
         case 'UPDATE':
           this.$nextTick(() => {
             let self = this
@@ -626,6 +918,23 @@ export default {
         this.formUpdate.pictureUrlPreview = ''
       }
       // console.log(event)
+    },
+    async getDataByIdStripe (item) {
+      //
+      //
+      // สำหรับ เรียกข้อมูล ใส่ form Update / Delete
+      //
+      //
+      // Get ID /main.js
+      this.dataReady = false
+      this.formAddStripe.payTypeId = item.payTypeId
+      this.formAddStripe.apiKey = item.apiKey
+      this.formAddStripe.endpointSecret = item.endpointSecret
+      this.formAddStripe.masBranchID = item.masBranchID
+      this.formAddStripe.payTypeCode = item.payTypeCode
+      this.formAddStripe.payTypeName = item.payTypeName
+      this.formAddStripe.shopId = this.$session.getAll().data.shopId
+      this.dataReady = true
     },
     async getDataById (item) {
       //
@@ -760,12 +1069,12 @@ export default {
       // ต้องระบุ  Last User ว่าใครเป็นคนแก้ไขล่าสุด
       //
       this.dataReady = false
-      await this.editDataGlobal(
-        this.DNS_IP,
-        this.path,
-        this.PK,
-        this.formUpdateItem
-      )
+      // await this.editDataGlobal(
+      //   this.DNS_IP,
+      //   this.path,
+      //   this.PK,
+      //   this.formUpdateItem
+      // )
       this.dataReady = false
       this.submitEdit(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
     },
@@ -824,6 +1133,63 @@ export default {
           console.log('error function editDataGlobal : ', error)
         })
     },
+    async editDataStripe () {
+      // this.editDataGlobal(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
+      this.dataReady = false
+      this.formAddStripe.LAST_USER = this.$session.getAll().data.userName
+      this.$swal({
+        title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async (result) => {
+          let dt = {
+            masBranchID: this.formAddStripe.masBranchID,
+            apiKey: this.formAddStripe.apiKey,
+            endpointSecret: this.formAddStripe.endpointSecret,
+            payTypeName: this.formAddStripe.payTypeName,
+            LAST_USER: this.formAddStripe.LAST_USER
+          }
+          await axios
+            .post(
+              // eslint-disable-next-line quotes
+              this.DNS_IP + this.path + "edit/" + this.formAddStripe.payTypeId,
+              dt
+            )
+            .then(async (response) => {
+              // Debug response
+              console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
+
+              this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
+              // Close Dialog
+              this.dialogEditStripe = false
+
+              // Load Data
+              await this.selectBranch()
+              // await this.getDataGlobal(DNS_IP, PATH, this.$session.getAll().data.shopId)
+              // if (this.dataItem.length > 0) {
+              //   this.dataItem.forEach(el => {
+              //     if (el.masBranchID === 'All') {
+              //       el.masBranchName = 'ทั้งหมด'
+              //     }
+              //   })
+              // }
+            })
+            // eslint-disable-next-line handle-callback-err
+            .catch((error) => {
+              this.dataReady = true
+              console.log('error function editDataGlobal : ', error)
+            })
+        })
+        .catch((error) => {
+          this.dataReady = true
+          console.log('error function editDataGlobal : ', error)
+        })
+    },
     async deleteData () {
       console.log('DELETE PK : ', this.PK)
       //
@@ -840,6 +1206,14 @@ export default {
       for (var key in this.formAdd) {
         if (this.formAdd[key]) {
           this.formAdd[key] = ''
+        }
+      }
+    },
+    async clearDataStripe () {
+      // eslint-disable-next-line no-redeclare
+      for (var key in this.formAddStripe) {
+        if (this.formAddStripe[key]) {
+          this.formAddStripe[key] = ''
         }
       }
     }
