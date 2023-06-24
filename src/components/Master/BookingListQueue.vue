@@ -830,7 +830,7 @@ export default {
     this.dateStart = this.momenDate_1(new Date())
     await this.getDataFlow()
     await this.getDataBranch()
-    await this.searchBooking()
+    await this.searchBooking('unNoti')
     this.$root.$on('closeSetTimeBookingListQueue', () => {
       // your code goes here
       this.closeSetTimeBookingListQueue()
@@ -870,18 +870,18 @@ export default {
             .post(this.DNS_IP + '/booking_transaction/add', dtt)
             .then(async responses => {
               this.$swal('เรียบร้อย', 'ยกเลิกคิวสำเร็จ', 'success')
-              await this.searchBooking()
+              await this.searchBooking('unNoti')
               this.clearTimeLoop()
             })
         }).catch(async err => {
           // this.$router.push({ name: '404' })
           console.log(err.code, err.message)
-          await this.searchBooking()
+          await this.searchBooking('unNoti')
           this.clearTimeLoop()
         })
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
-        await this.searchBooking()
+        await this.searchBooking('unNoti')
         this.clearTimeLoop()
       }
     },
@@ -893,7 +893,7 @@ export default {
       clearInterval(this.setTimerCalendar)
       this.setTimerCalendar = null
       let _this = this
-      this.setTimerCalendar = setInterval(function () { _this.searchBooking() }, 15000)
+      this.setTimerCalendar = setInterval(function () { _this.searchBooking('unNoti') }, 15000)
     },
     searchFlow (item) {
       this.search = item.text
@@ -975,9 +975,9 @@ export default {
     },
     checkSearch () {
       this.validate('SEARCH')
-      setTimeout(() => this.searchBooking(), 500)
+      setTimeout(() => this.searchBooking('unNoti'), 500)
     },
-    async searchBooking () {
+    async searchBooking (checkNoti, item) {
       if (this.validSearch === true) {
         this.overlaySave = false
         this.itemBookingUse = []
@@ -1046,6 +1046,14 @@ export default {
                 this.itemBooking = this.itemBookingUse
               } else {
                 this.itemBooking = this.itemBookingUse.filter(el => { return el.flowId === this.modelslide })
+              }
+              if (checkNoti === 'noti') {
+                console.log('item', item, checkNoti, item.storeFrontNotifySet, item.storeFrontNotifyStatus)
+                if (item.storeFrontNotifyStatus === 'True') {
+                  if (parseInt(item.storeFrontNotifySet) > 0) {
+                    this.pushMessageRecallQueue(parseInt(item.storeFrontNotifySet), 'False')
+                  }
+                }
               }
             } else {
               this.itemBooking = []
@@ -1206,12 +1214,12 @@ export default {
             }
             this.dialogServicePointStatus = false
             this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
-            await this.searchBooking()
+            await this.searchBooking('unNoti')
             this.clearTimeLoop()
           })
         } else {
           this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
-          await this.searchBooking()
+          await this.searchBooking('unNoti')
           this.clearTimeLoop()
         }
       }
@@ -1244,7 +1252,7 @@ export default {
           }
           this.dialogServicePointStatus = false
           this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
-          await this.searchBooking()
+          await this.searchBooking('noti', item)
           this.clearTimeLoop()
         })
     },
@@ -1276,13 +1284,13 @@ export default {
                 } else {
                   this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                   this.dialogServicePointStatus = false
-                  await this.searchBooking()
+                  await this.searchBooking('unNoti')
                   this.clearTimeLoop()
                 }
               } else {
                 this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                 this.dialogServicePointStatus = false
-                await this.searchBooking()
+                await this.searchBooking('unNoti')
                 this.clearTimeLoop()
               }
             } else {
@@ -1291,7 +1299,7 @@ export default {
           })
         } else {
           this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
-          await this.searchBooking()
+          await this.searchBooking('unNoti')
           this.clearTimeLoop()
         }
       }
@@ -1334,13 +1342,13 @@ export default {
                 })
             }
             this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
-            await this.searchBooking()
+            await this.searchBooking('unNoti')
             this.clearTimeLoop()
           })
         }
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
-        await this.searchBooking()
+        await this.searchBooking('unNoti')
         this.clearTimeLoop()
       }
     },
@@ -1372,7 +1380,7 @@ export default {
             .post(this.DNS_IP + '/booking_transaction/add', dtt)
             .then(async responses => {
               this.$swal('เรียบร้อย', 'ปิดงานสำเร็จ', 'success')
-              await this.searchBooking()
+              await this.searchBooking('unNoti')
               this.clearTimeLoop()
             // let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
             // if (bookSelect.length > 0) {
@@ -1393,12 +1401,12 @@ export default {
         }).catch(async err => {
           // this.$router.push({ name: '404' })
           console.log(err.code, err.message)
-          await this.searchBooking()
+          await this.searchBooking('unNoti')
           this.clearTimeLoop()
         })
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
-        await this.searchBooking()
+        await this.searchBooking('unNoti')
         this.clearTimeLoop()
       }
     },
@@ -1470,7 +1478,7 @@ export default {
               })
           }
           this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
-          await this.searchBooking()
+          await this.searchBooking('noti', item)
           this.clearTimeLoop()
         })
     },
@@ -1507,25 +1515,25 @@ export default {
                 if (statusBookingCheck === 'confirm') {
                   let statusUpdateEmp = await this.updateEmp(item.bookNo, 'confirm')
                   if (statusUpdateEmp === true) {
-                    this.closeJob(item)
+                    await this.closeJob(item)
                   } else {
                     this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
-                    await this.searchBooking()
+                    await this.searchBooking('unNoti')
                     this.clearTimeLoop()
                   }
                 } else {
                   this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
-                  await this.searchBooking()
+                  await this.searchBooking('unNoti')
                   this.clearTimeLoop()
                 }
               } else {
-                this.closeJob(item)
+                await this.closeJob(item)
               }
             })
           }
         } else {
           this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
-          await this.searchBooking()
+          await this.searchBooking('unNoti')
           this.clearTimeLoop()
         }
       }
@@ -2217,6 +2225,28 @@ export default {
       // var pdfFrame = window.frames['pdfV']
       // pdfFrame.print()
       // this.dialogPrint = true
+    },
+    async pushMessageRecallQueue (countNoti, checkGetQueue) {
+      let bookSelect = this.itemBooking.filter((element, index) => { return element.statusBt === 'confirm' })
+      console.log('bookSelect', bookSelect)
+      if (bookSelect.length > 0) {
+        let bookSelectuse = bookSelect.filter((element, index) => { return index < countNoti })
+        for (let i = 0; i < bookSelectuse.length; i++) {
+          let d = bookSelectuse[i]
+          let s = {}
+          s.lineUserId = d.lineUserId || ''
+          if (s.lineUserId !== '') {
+            let dtt = {
+              checkGetQueue: checkGetQueue
+            }
+            await axios
+              .post(this.DNS_IP + '/Booking/pushMsgQueue/' + d.bookNo, dtt)
+              .then(async responses => {}).catch(error => {
+                console.log('error function pushMsgQueue : ', error)
+              })
+          }
+        }
+      }
     }
   }
 }
