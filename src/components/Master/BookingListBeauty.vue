@@ -894,7 +894,6 @@
             <v-card class="text-center">
               <v-form ref="form_add" v-model="validAdd" lazy-validation>
                 <v-card-text>
-                  {{ ColsDialogAdd }}
                     <v-row justify="center">
                       <v-col
                         v-if="ColsDialogAdd === 'True'"
