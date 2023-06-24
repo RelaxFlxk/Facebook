@@ -743,14 +743,15 @@
                     </v-col> -->
                     <v-row justify="center">
                       <v-col
-                        cols="8"
+                        v-if="ColsDialogAdd === 'True'"
+                        :cols="ColsDialogAdd === 'True' ? 8 : 8"
                       >
                         <v-col class="text-center">
                           <CalendarBooking ref="CalendarBooking"></CalendarBooking>
                         </v-col>
                       </v-col>
 
-                      <v-col cols="4">
+                      <v-col :cols="ColsDialogAdd === 'True' ? 4 : 10">
                       <!-- <v-col cols="12" sm="6" md="6" lg="6" class="v-margit_text_add mt-0 pa-0"> -->
                         <v-row>
                           <v-col cols="8" class="text-left pt-10">
@@ -6721,6 +6722,15 @@ export default {
         //   return this.filters[f].length < 1 || d[f].toString().toLowerCase().includes(this.filters[f].toLowerCase())
         // })
       })
+    },
+    ColsDialogAdd () {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return 'False'
+        case 'sm': return 'False'
+        case 'md': return 'False'
+        case 'lg': return 'True'
+        case 'xl': return 'True'
+      }
     },
     dialogwidth () {
       switch (this.$vuetify.breakpoint.name) {
