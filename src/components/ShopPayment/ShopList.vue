@@ -1568,21 +1568,39 @@ export default {
         })
     },
     getSelect (text, type) {
-      this.headers = [
-        { text: 'รูปร้าน', value: 'shopImge' },
-        { text: 'BT', value: 'btNumber' },
-        { text: 'ชื่อร้าน', value: 'shopName' },
-        // { text: 'วันที่นัดหมาย', value: 'dueDate' },
-        { text: 'เบอร์โทร', value: 'billingPhone' },
-        { text: 'email', value: 'contactEmail' },
-        { text: 'จำนวนนัดหมายที่สร้างของเดือนที่แล้ว', value: 'countBooking' },
-        { text: 'สลิป', value: 'paymentImage' },
-        { text: 'ยอดเงินที่ชำระ', value: 'paymentAmount' },
-        { text: 'สถานะ', value: 'paymentStatus' },
-        { text: 'วันที่จ่าย/วันที่หมดอายุ', value: 'paymentDate' },
-        { text: 'วันวันที่สิ้นสุดทดลองใช้', value: 'trialsVersionDate' },
-        { text: 'จัดการข้อมูล', value: 'action', sortable: false, align: 'center' }
-      ]
+      if (type === 'loyalty') {
+        this.headers = [
+          { text: 'รูปร้าน', value: 'shopImge' },
+          { text: 'BT', value: 'btNumber' },
+          { text: 'ชื่อร้าน', value: 'shopName' },
+          // { text: 'วันที่นัดหมาย', value: 'dueDate' },
+          { text: 'เบอร์โทร', value: 'billingPhone' },
+          { text: 'email', value: 'contactEmail' },
+          // { text: 'จำนวนนัดหมายที่สร้างของเดือนที่แล้ว', value: 'countBooking' },
+          { text: 'สลิป', value: 'paymentImage' },
+          { text: 'ยอดเงินที่ชำระ', value: 'paymentAmount' },
+          { text: 'สถานะ', value: 'paymentStatus' },
+          { text: 'วันที่จ่าย/วันที่หมดอายุ', value: 'paymentDate' },
+          { text: 'วันที่สิ้นสุดทดลองใช้', value: 'trialsVersionDate' },
+          { text: 'จัดการข้อมูล', value: 'action', sortable: false, align: 'center' }
+        ]
+      } else {
+        this.headers = [
+          { text: 'รูปร้าน', value: 'shopImge' },
+          { text: 'BT', value: 'btNumber' },
+          { text: 'ชื่อร้าน', value: 'shopName' },
+          // { text: 'วันที่นัดหมาย', value: 'dueDate' },
+          { text: 'เบอร์โทร', value: 'billingPhone' },
+          { text: 'email', value: 'contactEmail' },
+          { text: 'จำนวนนัดหมายที่สร้างของเดือนที่แล้ว', value: 'countBooking' },
+          { text: 'สลิป', value: 'paymentImage' },
+          { text: 'ยอดเงินที่ชำระ', value: 'paymentAmount' },
+          { text: 'สถานะ', value: 'paymentStatus' },
+          { text: 'วันที่จ่าย/วันที่หมดอายุ', value: 'paymentDate' },
+          { text: 'วันที่สิ้นสุดทดลองใช้', value: 'trialsVersionDate' },
+          { text: 'จัดการข้อมูล', value: 'action', sortable: false, align: 'center' }
+        ]
+      }
       this.getSelectText = text
       this.itemBookingUse = this.itemBooking.filter(el => { return el.paymentStatus === this.getSelectText && el.bookingTypeShop === type })
     },
