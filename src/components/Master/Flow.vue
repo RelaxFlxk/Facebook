@@ -676,6 +676,19 @@
                                 ></v-text-field>
                             </v-col>
                           </v-row>
+                          <v-row v-if="$session.getAll().data.timeSlotStatus === 'True'">
+                            <v-col style="display: flex;justify-content: flex-start;">
+                            <v-checkbox
+                            label="ประเภทบริการสำหรับลูกค้าใหม่"
+                            false-value="False"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            color="#1B437C"
+                            true-value="True"
+                            v-model="formAdd.newCustomerStatus"
+                          ></v-checkbox>
+                           </v-col>
+                          </v-row>
                           <v-row>
                           <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontCheck === 'False'"  >
                             <v-checkbox
@@ -876,6 +889,17 @@
                             </v-col>
                           </v-row>
                           <v-row>
+                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="$session.getAll().data.timeSlotStatus === 'True'">
+                              <v-checkbox
+                              label="เปิดใช้งานแผนที่"
+                              false-value="False"
+                              :on-icon="'mdi-check-circle'"
+                              :off-icon="'mdi-checkbox-blank-circle-outline'"
+                              color="#1B437C"
+                              true-value="True"
+                              v-model="formAdd.checkOnsiteEmp"
+                            ></v-checkbox>
+                            </v-col>
                             <v-col cols="8" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;">
                               <v-checkbox
                               label="นัดหมายล่วงหน้า"
@@ -1132,6 +1156,19 @@
                                 ></v-text-field>
                             </v-col>
                           </v-row>
+                          <v-row v-if="$session.getAll().data.timeSlotStatus === 'True'">
+                            <v-col style="display: flex;justify-content: flex-start;">
+                            <v-checkbox
+                            label="ประเภทบริการสำหรับลูกค้าใหม่"
+                            false-value="False"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            color="#1B437C"
+                            true-value="True"
+                            v-model="formUpdate.newCustomerStatus"
+                          ></v-checkbox>
+                           </v-col>
+                          </v-row>
                           <v-row>
                           <v-col style="display: flex;justify-content: flex-start;" v-if="formUpdate.storeFrontCheck === 'False'">
                             <v-checkbox
@@ -1341,6 +1378,17 @@
                             </v-col>
                           </v-row>
                           <v-row>
+                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="$session.getAll().data.timeSlotStatus === 'True'">
+                              <v-checkbox
+                              label="เปิดใช้งานแผนที่"
+                              false-value="False"
+                              :on-icon="'mdi-check-circle'"
+                              :off-icon="'mdi-checkbox-blank-circle-outline'"
+                              color="#1B437C"
+                              true-value="True"
+                              v-model="formUpdate.checkOnsiteEmp"
+                            ></v-checkbox>
+                            </v-col>
                             <v-col cols="8" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;">
                               <v-checkbox
                               label="นัดหมายล่วงหน้า"
@@ -2782,6 +2830,7 @@ export default {
         LAST_USER: '',
         checkPayment: 'True',
         checkOnsite: 'False',
+        checkOnsiteEmp: 'False',
         checkDeposit: 'False',
         repeatBooking: 'False',
         storeFrontCheck: 'False',
@@ -2816,7 +2865,8 @@ export default {
         checkCreditCard: 'False',
         masBranchID: '',
         storeFrontNotifyStatus: 'False',
-        storeFrontNotifySet: '0'
+        storeFrontNotifySet: '0',
+        newCustomerStatus: 'False'
       },
       formAddStep: {
         stepId: '',
@@ -2862,6 +2912,7 @@ export default {
         checkPayment: 'True',
         checkOnsite: 'False',
         checkDeposit: 'False',
+        checkOnsiteEmp: 'False',
         repeatBooking: 'False',
         storeFrontCheck: 'False',
         depositTime: '',
@@ -2894,7 +2945,8 @@ export default {
         checkCreditCard: 'False',
         masBranchID: '',
         storeFrontNotifyStatus: 'False',
-        storeFrontNotifySet: '0'
+        storeFrontNotifySet: '0',
+        newCustomerStatus: 'False'
       },
       formUpdateItemFlow: {
         fieldId: '',
@@ -4367,6 +4419,7 @@ export default {
         this.formUpdate.servicePointCount = ''
       }
       this.formUpdate.checkOnsite = item.checkOnsite || 'False'
+      this.formUpdate.checkOnsiteEmp = item.checkOnsiteEmp || 'False'
       this.formUpdate.repeatBooking = item.repeatBooking || 'False'
       console.log('item: ', item)
       this.checkOnsite = item.checkOnsite || 'False'
@@ -4397,6 +4450,7 @@ export default {
       this.formUpdate.categorySub = item.categorySub ? JSON.parse(item.categorySub) : []
       this.formUpdate.checkCreditCard = item.checkCreditCard || 'False'
       this.formUpdate.masBranchID = item.masBranchID || 'All'
+      this.formUpdate.newCustomerStatus = item.newCustomerStatus || 'False'
       this.shopId = this.$session.getAll().data.shopId
       this.fieldType = this.formUpdate.fieldType
       // this.desserts = JSON.parse(response.data[0].flowfieldName)
