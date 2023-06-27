@@ -16,6 +16,268 @@
         <template v-else>
         <v-form ref="form_search" v-model="validSearch" lazy-validation>
           <v-row>
+            <v-col col="3">
+              <v-card
+                style="padding: 10px;"
+                dense
+                elevation="2"
+                prominent
+                :color="typeMain === 'booking' ? '#ECEFF1' : 'white'"
+                @click="getSelect(getSelectText === '' ? 'wait':getSelectText , 'booking'), typeMain = 'booking'"
+              >
+                <v-row>
+                  <v-col cols="12" class="pb-0 pl-0 pr-0">
+                    <div style="display: flex;justify-content: space-evenly;flex-wrap: wrap;">
+                      <div class="text-center">
+                        <v-avatar
+                          rounded
+                          size="50"
+                          class="pa-2"
+                          color="#134996"
+                        >
+                          <v-icon dark size="30" class="iconify" data-icon="basil:calendar-solid">
+                          </v-icon>
+                        </v-avatar>
+                      </div>
+                      <div>
+                        <strong>Be Linked</strong>
+                        <div style="color: #828282;">ระบบนัดหมายจองคิว</div>
+                      </div>
+                    </div>
+                    <v-divider></v-divider>
+                  </v-col>
+                  <v-col cols="6" class="pt-0 pl-0 pr-0">
+                    <div style="display: flex;justify-content: space-evenly;flex-wrap: wrap;">
+                      <div class="text-center">
+                        <strong>{{countNewCus}}</strong>
+                        <div style="font-size: 15px;color: #828282;">ลูกค้าใหม่</div>
+                      </div>
+                    </div>
+                  </v-col>
+                  <v-divider vertical></v-divider>
+                  <v-col cols="6" class="pt-0 pl-0 pr-0">
+                    <div style="display: flex;justify-content: space-evenly;flex-wrap: wrap;">
+                      <div class="text-center">
+                        <strong>{{countOldCus}}</strong>
+                        <div style="font-size: 15px;color: #828282;">ลูกค้าเก่า</div>
+                      </div>
+                    </div>
+                  </v-col>
+                </v-row>
+              </v-card>
+            </v-col>
+            <v-col col="3">
+              <v-card
+                style="padding: 10px;"
+                dense
+                elevation="2"
+                prominent
+                :color="typeMain === 'storeFront' ? '#ECEFF1' : 'white'"
+                @click="getSelect(getSelectText === '' ? 'wait':getSelectText , 'storeFront'), typeMain = 'storeFront'"
+              >
+                <v-row>
+                  <v-col cols="12" class="pb-0 pl-0 pr-0">
+                    <div style="display: flex;justify-content: space-evenly;flex-wrap: wrap;">
+                      <div class="text-center">
+                        <v-avatar
+                          rounded
+                          size="50"
+                          class="pa-2"
+                          color="#D2FFDC"
+                        >
+                          <v-icon color="#38E25D" size="30" class="iconify" data-icon="ri:file-list-3-fill">
+                          </v-icon>
+                        </v-avatar>
+                      </div>
+                      <div>
+                        <strong>Be Linked</strong>
+                        <div style="color: #828282;">ระบบบัตรคิวออนไลน์</div>
+                      </div>
+                    </div>
+                    <v-divider></v-divider>
+                  </v-col>
+                  <v-col cols="6" class="pt-0 pl-0 pr-0">
+                    <div style="display: flex;justify-content: space-evenly;flex-wrap: wrap;">
+                      <div class="text-center">
+                        <strong>{{countNewCusStoreFront}}</strong>
+                        <div style="font-size: 15px;color: #828282;">ลูกค้าใหม่</div>
+                      </div>
+                    </div>
+                  </v-col>
+                  <v-divider vertical></v-divider>
+                  <v-col cols="6" class="pt-0 pl-0 pr-0">
+                    <div style="display: flex;justify-content: space-evenly;flex-wrap: wrap;">
+                      <div class="text-center">
+                        <strong>{{countOldCusStoreFront}}</strong>
+                        <div style="font-size: 15px;color: #828282;">ลูกค้าเก่า</div>
+                      </div>
+                    </div>
+                  </v-col>
+                </v-row>
+              </v-card>
+            </v-col>
+            <v-col col="3">
+              <v-card
+                style="padding: 10px;"
+                dense
+                elevation="2"
+                prominent
+                :color="typeMain === 'loyalty' ? '#ECEFF1' : 'white'"
+                @click="getSelect(getSelectText === '' ? 'wait':getSelectText , 'loyalty'), typeMain = 'loyalty'"
+              >
+                <v-row>
+                  <v-col cols="12" class="pb-0 pl-0 pr-0">
+                    <div style="display: flex;justify-content: space-evenly;flex-wrap: wrap;">
+                      <div class="text-center">
+                        <v-avatar
+                          rounded
+                          size="50"
+                          class="pa-2"
+                          color="#FFEEFA"
+                        >
+                          <v-icon color="#E328AF" size="30" class="iconify" data-icon="ant-design:gift-filled">
+                          </v-icon>
+                        </v-avatar>
+                      </div>
+                      <div>
+                        <strong>Be Loyalty</strong>
+                        <div style="color: #828282;">ระบบสะสมคะแนน</div>
+                      </div>
+                    </div>
+                    <v-divider></v-divider>
+                  </v-col>
+                  <v-col cols="6" class="pt-0 pl-0 pr-0">
+                    <div style="display: flex;justify-content: space-evenly;flex-wrap: wrap;">
+                      <div class="text-center">
+                        <strong>{{countNewCusLoyalty}}</strong>
+                        <div style="font-size: 15px;color: #828282;">ลูกค้าใหม่</div>
+                      </div>
+                    </div>
+                  </v-col>
+                  <v-divider vertical></v-divider>
+                  <v-col cols="6" class="pt-0 pl-0 pr-0">
+                    <div style="display: flex;justify-content: space-evenly;flex-wrap: wrap;">
+                      <div class="text-center">
+                        <strong>{{countOldCusLoyalty}}</strong>
+                        <div style="font-size: 15px;color: #828282;">ลูกค้าเก่า</div>
+                      </div>
+                    </div>
+                  </v-col>
+                </v-row>
+              </v-card>
+            </v-col>
+            <v-col col="3">
+              <v-card
+                style="padding: 10px;"
+                dense
+                elevation="2"
+                prominent
+              >
+                <v-row>
+                  <v-col cols="12" class="pb-0 pl-0 pr-0">
+                    <div style="display: flex;justify-content: space-evenly;flex-wrap: wrap;">
+                      <div class="text-center">
+                        <v-avatar
+                          rounded
+                          size="50"
+                          class="pa-2"
+                          color="#FF7D52"
+                        >
+                          <v-icon dark size="30" class="iconify" data-icon="solar:shop-linear">
+                          </v-icon>
+                        </v-avatar>
+                      </div>
+                      <div>
+                        <div style="color: #828282;">รายรับทั้งหมด <strong style="color: #262626;">{{formatNumber(sumAmountAll)}} บาท</strong></div>
+                      </div>
+                    </div>
+                    <v-divider></v-divider>
+                  </v-col>
+                  <v-col cols="6" class="pt-0 pl-0 pr-0">
+                    <!-- <div style="display: flex;justify-content: space-evenly;flex-wrap: wrap;">
+                      <div class="text-center">
+                        <strong>{{countNewCus}}</strong>
+                        <div style="font-size: 15px;color: #828282;">รอชำระเงิน</div>
+                      </div>
+                    </div> -->
+                  </v-col>
+                  <v-divider vertical></v-divider>
+                  <v-col cols="6" class="pt-0 pl-0 pr-0">
+                    <!-- <div style="display: flex;justify-content: space-evenly;flex-wrap: wrap;">
+                      <div class="text-center">
+                        <strong>{{countOldCus}}</strong>
+                        <div style="font-size: 15px;color: #828282;">ยกเลิกสมาชิก</div>
+                      </div>
+                    </div> -->
+                  </v-col>
+                </v-row>
+              </v-card>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col col="6">
+              <strong style="font-size: 34px;">Invoices List</strong>
+            </v-col>
+            <v-col col="auto">
+              <v-text-field
+                v-model="search"
+                prepend-inner-icon="mdi-magnify"
+                label="ค้นหา"
+                hide-details
+                outlined
+                dense
+              ></v-text-field>
+            </v-col>
+            <v-col col="auto">
+              <v-menu
+                ref="menu"
+                v-model="menuStart"
+                transition="scale-transition"
+                offset-y
+                max-width="290px"
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    hide-details
+                    background-color="white"
+                    v-model="dateStart"
+                    label="เดือน/ปี"
+                    readonly
+                    outlined
+                    dense
+                    required
+                    :rules ="[rules.required]"
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                  <template #prepend-inner>
+                  <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                    mdi-calendar
+                  </v-icon>
+                </template></v-text-field>
+                </template>
+                <v-date-picker
+                  @input="menuStart = false, checkSearch()"
+                  v-model="dateStart"
+                  type="month"
+                  no-title
+                  scrollable
+                >
+                </v-date-picker>
+              </v-menu>
+            </v-col>
+            <v-col cols="auto" class="pt-0">
+              <v-btn
+                color="warning"
+                block
+                class="mt-4"
+                style="border-radius: 20px !important;margin-right: 0px;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
+                @click="checkSearch()"
+              ><v-icon color="white" left>mdi-account-reactivate</v-icon>รีเฟรชข้อมูล</v-btn>
+            </v-col>
+          </v-row>
+          <!-- <v-row>
             <v-col col="auto">
               <v-menu
                 ref="menu"
@@ -65,9 +327,9 @@
                 @click="checkSearch()"
               ><v-icon color="white" left>mdi-account-reactivate</v-icon>รีเฟรชข้อมูล</v-btn>
             </v-col>
-          </v-row>
+          </v-row> -->
           <v-row style="justify-content: space-around;">
-            <v-col cols="4" style="display: flex;justify-content: center;">
+            <!-- <v-col cols="4" style="display: flex;justify-content: center;">
               <v-card
                 style="padding: 10px; width: 230px;"
                 dense
@@ -145,7 +407,7 @@
                   </div>
                 </div>
               </v-card>
-            </v-col>
+            </v-col> -->
             <v-col cols="auto" style="display: flex;justify-content: center;">
               <v-card
                 style="padding: 10px; width: 230px;"
@@ -153,7 +415,7 @@
                 dense
                 elevation="0"
                 prominent
-                @click="getSelect('wait'), getSelectText = 'wait'"
+                @click="getSelect('wait', typeMain), getSelectText = 'wait'"
               >
                 <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
                   <div class="text-center">
@@ -168,7 +430,7 @@
                   </div>
                   <div style="margin: auto 0;">
                     <strong>ยังไม่ได้ยืนยัน</strong>
-                    <div>จำนวน : {{countWait}}</div>
+                    <div>จำนวน : {{typeMain === 'booking' ? countWait : typeMain === 'storeFront' ? countWaitStoreFront : countWaitLoyalty }}</div>
                   </div>
                 </div>
               </v-card>
@@ -180,7 +442,7 @@
                 dense
                 elevation="0"
                 prominent
-                @click="getSelect('confirm'), getSelectText = 'confirm'"
+                @click="getSelect('confirm', typeMain), getSelectText = 'confirm'"
               >
                 <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
                   <div class="text-center">
@@ -195,7 +457,8 @@
                   </div>
                   <div style="margin: auto 0;">
                     <strong>ชำระเรียบร้อย</strong>
-                    <div>จำนวน : {{countConfirm}}</div>
+                    <!-- <div>จำนวน : {{countConfirm}}</div> -->
+                    <div>จำนวน : {{typeMain === 'booking' ? countConfirm : typeMain === 'storeFront' ? countConfirmStoreFront : countConfirmLoyalty }}</div>
                   </div>
                 </div>
               </v-card>
@@ -208,7 +471,7 @@
                 icon="mdi-email-check"
                 prominent
                 elevation="0"
-                @click="getSelect('noCash'), getSelectText = 'noCash'"
+                @click="getSelect('noCash', typeMain), getSelectText = 'noCash'"
               >
               <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
                 <div class="text-center">
@@ -223,7 +486,8 @@
                 </div>
                 <div style="margin: auto 0;">
                   <strong>ไม่ได้ชำระ</strong>
-                  <div>จำนวน : {{countNoCash}}</div>
+                  <!-- <div>จำนวน : {{countNoCash}}</div> -->
+                  <div>จำนวน : {{typeMain === 'booking' ? countNoCash : typeMain === 'storeFront' ? countNoCashStoreFront : countNoCashLoyalty }}</div>
                 </div>
               </div>
               </v-card>
@@ -236,7 +500,7 @@
                 icon="mdi-email-check"
                 prominent
                 elevation="0"
-                @click="getSelect('finish'), getSelectText = 'finish'"
+                @click="getSelect('finish', typeMain), getSelectText = 'finish'"
               >
               <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
                 <div class="text-center">
@@ -251,7 +515,8 @@
                 </div>
                 <div style="margin: auto 0;">
                   <strong>เสร็จสิ้น</strong>
-                  <div>จำนวน : {{countFinish}}</div>
+                  <!-- <div>จำนวน : {{countFinish}}</div> -->
+                  <div>จำนวน : {{typeMain === 'booking' ? countFinish : typeMain === 'storeFront' ? countFinishStoreFront : countFinishLoyalty }}</div>
                 </div>
               </div>
               </v-card>
@@ -263,7 +528,7 @@
                 dense
                 elevation="0"
                 prominent
-                @click="getSelect('inactive'), getSelectText = 'inactive'"
+                @click="getSelect('inactive', typeMain), getSelectText = 'inactive'"
               >
                 <div style="display: flex;justify-content: space-around;flex-wrap: wrap;">
                   <div class="text-center">
@@ -278,7 +543,8 @@
                   </div>
                   <div style="margin: auto 0;">
                     <strong>Inactive</strong>
-                    <div>จำนวน : {{countInactive}}</div>
+                    <!-- <div>จำนวน : {{countInactive}}</div> -->
+                    <div>จำนวน : {{typeMain === 'booking' ? countInactive : typeMain === 'storeFront' ? countInactiveStoreFront : countInactiveLoyalty }}</div>
                   </div>
                 </div>
               </v-card>
@@ -288,15 +554,6 @@
         <v-row>
           <v-col cols="12">
             <v-card>
-            <v-card-title>
-              <v-text-field
-                v-model="search"
-                append-icon="mdi-magnify"
-                label="ค้นหา"
-                single-line
-                hide-details
-              ></v-text-field>
-            </v-card-title>
             <v-data-table
               :headers="headers"
               :items="itemBookingUse"
@@ -326,7 +583,7 @@
                 color="primary"
                 small
                 dark
-                @click="changStatus(item, 'finish')"
+                @click="changStatus(item, 'finish', typeMain)"
               >
                 <v-icon > mdi-cash-check</v-icon>
                 ชำระเรียบร้อย
@@ -336,7 +593,7 @@
                 color="orange"
                 small
                 dark
-                @click="changStatus(item, 'wait')"
+                @click="changStatus(item, 'wait', typeMain)"
               >
                 <v-icon >mdi-cash-sync</v-icon>
                 ลูกค้าชำระอีกครั้ง
@@ -346,7 +603,7 @@
                 color="success"
                 small
                 dark
-                @click="changStatus(item, 'confirm')"
+                @click="changStatus(item, 'confirm', typeMain)"
               >
                 <v-icon > mdi-check-circle </v-icon>
                 Active
@@ -356,7 +613,7 @@
                 color="success"
                 small
                 dark
-                @click="changStatus(item, 'inactiveToactive')"
+                @click="changStatus(item, 'inactiveToactive', typeMain)"
               >
                 <v-icon > mdi-check-circle </v-icon>
                 Active
@@ -366,7 +623,7 @@
                 color="error"
                 small
                 dark
-                @click="changStatus(item, 'inactive')"
+                @click="changStatus(item, 'inactive', typeMain)"
               >
                 <v-icon > mdi-close-circle </v-icon>
                 Inactive
@@ -678,7 +935,7 @@
                       class="button pa-2"
                       dark
                       large
-                      @click="saveDateSetting()"
+                      @click="saveDateSetting(typeMain)"
                       >บันทึกข้อมูล</v-btn>
                   </div>
                 </v-container>
@@ -795,10 +1052,28 @@ export default {
           return pattern.test(value) || 'Invalid e-mail.'
         }
       },
+      typeMain: 'booking',
       itemBookingUse: [],
       itemPayMent: [],
       itemCountBooking: [],
-      dialogDetails: false
+      dialogDetails: false,
+      countInactiveStoreFront: 0,
+      countFinishStoreFront: 0,
+      countWaitStoreFront: 0,
+      countConfirmStoreFront: 0,
+      countNoCashStoreFront: 0,
+      countNewCusOnMonthStoreFront: 0,
+      countNewCusStoreFront: 0,
+      countOldCusStoreFront: 0,
+      countInactiveLoyalty: 0,
+      countFinishLoyalty: 0,
+      countWaitLoyalty: 0,
+      countConfirmLoyalty: 0,
+      countNoCashLoyalty: 0,
+      countNewCusOnMonthLoyalty: 0,
+      countNewCusLoyalty: 0,
+      countOldCusLoyalty: 0,
+      sumAmountAll: 0
     }
   },
   async mounted () {
@@ -832,7 +1107,7 @@ export default {
       this.idPayment = item.id || ''
       this.dialogSetting = true
     },
-    async saveDateSetting () {
+    async saveDateSetting (typeMain) {
       let paymentDateTrue = ''
       if (this.paymentDateTrue) {
         if (this.paymentDateTrueTime) {
@@ -861,18 +1136,33 @@ export default {
       }
       if (this.idPayment === '') {
         if (this.shopId_Shop !== '') {
-          let ds = {
-            btNumber: this.btNumber,
-            trialsVersionDate: trialsVersionDate,
-            billingCusName: this.billingCusName,
-            billingAddress: this.billingAddress,
-            billingTax: this.billingTax,
-            billingPhone: this.billingPhone
+          let url = ''
+          let ds = {}
+          if (typeMain === 'loyalty') {
+            url = this.DNS_IP_Loyalty + '/sys_shop/edit/' + this.shopId_Shop
+            ds = {
+              btNumber: this.btNumber,
+              expire_date_trial: trialsVersionDate,
+              billingCusName: this.billingCusName,
+              billingAddress: this.billingAddress,
+              billingTax: this.billingTax,
+              billingPhone: this.billingPhone
+            }
+          } else {
+            url = this.DNS_IP + '/sys_shop/edit/' + this.shopId_Shop
+            ds = {
+              btNumber: this.btNumber,
+              trialsVersionDate: trialsVersionDate,
+              billingCusName: this.billingCusName,
+              billingAddress: this.billingAddress,
+              billingTax: this.billingTax,
+              billingPhone: this.billingPhone
+            }
           }
           await axios
             .post(
               // eslint-disable-next-line quotes
-              this.DNS_IP + "/sys_shop/edit/" + this.shopId_Shop,
+              url,
               ds
             )
             .then(async (response) => {
@@ -889,21 +1179,39 @@ export default {
             })
         }
       } else {
-        let ds = {
-          paymentDateTrue: paymentDateTrue,
-          btNumber: this.btNumber,
-          remark: this.remark,
-          shopId: this.shopId_Shop,
-          trialsVersionDate: trialsVersionDate,
-          billingCusName: this.billingCusName,
-          billingAddress: this.billingAddress,
-          billingTax: this.billingTax,
-          billingPhone: this.billingPhone
+        let url = ''
+        let ds = {}
+        if (typeMain === 'loyalty') {
+          url = this.DNS_IP_Loyalty + '/system_shop_Payment/editAdmin/' + this.idPayment
+          ds = {
+            paymentDateTrue: paymentDateTrue,
+            btNumber: this.btNumber,
+            remark: this.remark,
+            shopId: this.shopId_Shop,
+            expire_date_trial: trialsVersionDate,
+            billingCusName: this.billingCusName,
+            billingAddress: this.billingAddress,
+            billingTax: this.billingTax,
+            billingPhone: this.billingPhone
+          }
+        } else {
+          url = this.DNS_IP + '/system_shop_Payment/editAdmin/' + this.idPayment
+          ds = {
+            paymentDateTrue: paymentDateTrue,
+            btNumber: this.btNumber,
+            remark: this.remark,
+            shopId: this.shopId_Shop,
+            trialsVersionDate: trialsVersionDate,
+            billingCusName: this.billingCusName,
+            billingAddress: this.billingAddress,
+            billingTax: this.billingTax,
+            billingPhone: this.billingPhone
+          }
         }
         await axios
           .post(
           // eslint-disable-next-line quotes
-            this.DNS_IP + "/system_shop_Payment/editAdmin/" + this.idPayment,
+            url,
             ds
           )
           .then(async (response) => {
@@ -956,6 +1264,22 @@ export default {
       this.countNewCusOnMonth = 0
       this.countNewCus = 0
       this.countOldCus = 0
+      this.countWaitStoreFront = 0
+      this.countConfirmStoreFront = 0
+      this.countNoCashStoreFront = 0
+      this.countFinishStoreFront = 0
+      this.countInactiveStoreFront = 0
+      this.countNewCusOnMonthStoreFront = 0
+      this.countNewCusStoreFront = 0
+      this.countOldCusStoreFront = 0
+      this.countWaitLoyalty = 0
+      this.countConfirmLoyalty = 0
+      this.countNoCashLoyalty = 0
+      this.countFinishLoyalty = 0
+      this.countInactiveLoyalty = 0
+      this.countNewCusOnMonthLoyalty = 0
+      this.countNewCusLoyalty = 0
+      this.countOldCusLoyalty = 0
       this.itemBooking = []
       this.itemBookingUse = []
       let urlApi = this.DNS_IP + '/system_shop_Payment/get?paymentStatus=not null&paymentDate=' + this.dateStart
@@ -1029,25 +1353,89 @@ export default {
                 }
               }
             }
-          } else {
-            this.itemBooking = []
-            this.itemBookingUse = []
-            this.countWait = 0
-            this.countConfirm = 0
-            this.countNoCash = 0
-            this.countNewCusOnMonth = 0
-            this.countNewCus = 0
-            this.countOldCus = 0
+          }
+        })
+      let urlApiLoyalty = this.DNS_IP_Loyalty + '/system_shop_Payment/get?paymentStatus=not null&paymentDate=' + this.dateStart
+      await axios
+        .get(urlApiLoyalty)
+        .then(async response => {
+          console.log('system_shop_Payment', response.data)
+          let rs = response.data
+          if (rs.status !== false) {
+            for (let i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              d.billingPhone = d.billingPhone || d.contactTel
+              d.paymentStatus = d.paymentStatus || ''
+              // if (this.itemCountBooking.filter(el => { return el.shopId === d.shopId }).length > 0) {
+              //   d.countBooking = this.itemCountBooking.filter(el => { return el.shopId === d.shopId })[0].countBooking
+              // } else {
+              //   d.countBooking = 0
+              // }
+              if (d.shopActive === 'inactive') {
+                d.paymentStatus = 'inactive'
+              }
+              d.billingEndDate = d.billingEndDate || ''
+              if (d.billingEndDate !== '') {
+                if (d.billingEndDate >= moment().format('YYYY-MM-DD')) {
+                  d.paymentStatus = 'finish'
+                  d.paymentDate = d.billingEndDate
+                }
+              }
+              this.itemBooking.push(d)
+            }
+            // this.itemBookingUse = this.itemBooking.filter(el => { return el.paymentStatus === this.getSelectText })
+          }
+        })
+      let urlApiLoyalty1 = this.DNS_IP_Loyalty + '/system_shop_Payment/get?accountTest=False'
+      // let urlApi1 = this.DNS_IP + '/system_shop_Payment/get?paymentStatus=is null&NopaymentDate=' + this.dateStart
+      await axios
+        .get(urlApiLoyalty1)
+        .then(async response => {
+          let rs = response.data
+          console.log('system_shop_Payment', rs)
+          if (rs.status !== false) {
+            for (let i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              d.billingPhone = d.billingPhone || d.contactTel
+              // d.paymentStatus = d.paymentStatus || 'noCash'
+              // console.log(this.itemBooking.filter(el => { return el.shopId === d.shopId_Shop }))
+              if (this.itemBooking.filter(el => { return el.shopId === d.shopId_Shop }).length === 0) {
+                // if (this.itemCountBooking.filter(el => { return el.shopId === d.shopId_Shop }).length > 0) {
+                //   d.countBooking = this.itemCountBooking.filter(el => { return el.shopId === d.shopId_Shop })[0].countBooking
+                // } else {
+                //   d.countBooking = 0
+                // }
+                d.paymentStatus = 'noCash'
+                d.billingEndDate = d.billingEndDate || ''
+                // if (d.billingEndDate !== '') {
+                //   if (d.billingEndDate >= moment().format('YYYY-MM-DD')) {
+                //     d.paymentStatus = 'finish'
+                //   }
+                // }
+                if (d.paymentStatus === 'noCash') {
+                  if (d.shopActive === 'inactive') {
+                    d.paymentStatus = 'inactive'
+                  }
+                  if (d.billingEndDate !== '') {
+                    if (d.billingEndDate >= moment().format('YYYY-MM-DD')) {
+                      d.paymentStatus = 'finish'
+                      d.paymentDate = d.billingEndDate
+                    }
+                  }
+                  this.itemBooking.push(d)
+                }
+              }
+            }
           }
         })
       console.log('this.itemBooking', this.itemBooking)
-      this.countWait = this.itemBooking.filter(el => { return el.paymentStatus === 'wait' }).length
-      this.countFinish = this.itemBooking.filter(el => { return el.paymentStatus === 'finish' }).length
-      this.countConfirm = this.itemBooking.filter(el => { return el.paymentStatus === 'confirm' }).length
-      this.countNoCash = this.itemBooking.filter(el => { return el.paymentStatus === 'noCash' }).length
-      this.countInactive = this.itemBooking.filter(el => { return el.paymentStatus === 'inactive' }).length
-      this.countNewCusOnMonth = this.itemBooking.filter(el => { return moment(el.trialsVersionDate).month() === moment().month() && moment(el.trialsVersionDate).year() === moment().year() && (el.paymentStatus === 'confirm' || el.paymentStatus === 'finish') }).length
-      let dataCus = this.itemBooking.filter(el => { return el.paymentStatus === 'finish' })
+      this.countWait = this.itemBooking.filter(el => { return el.paymentStatus === 'wait' && el.bookingTypeShop === 'booking' }).length
+      this.countFinish = this.itemBooking.filter(el => { return el.paymentStatus === 'finish' && el.bookingTypeShop === 'booking' }).length
+      this.countConfirm = this.itemBooking.filter(el => { return el.paymentStatus === 'confirm' && el.bookingTypeShop === 'booking' }).length
+      this.countNoCash = this.itemBooking.filter(el => { return el.paymentStatus === 'noCash' && el.bookingTypeShop === 'booking' }).length
+      this.countInactive = this.itemBooking.filter(el => { return el.paymentStatus === 'inactive' && el.bookingTypeShop === 'booking' }).length
+      this.countNewCusOnMonth = this.itemBooking.filter(el => { return moment(el.trialsVersionDate).month() === moment().month() && moment(el.trialsVersionDate).year() === moment().year() && (el.paymentStatus === 'confirm' || el.paymentStatus === 'finish') && el.bookingTypeShop === 'booking' }).length
+      let dataCus = this.itemBooking.filter(el => { return el.paymentStatus === 'finish' && el.bookingTypeShop === 'booking' })
       for (let i = 0; i < dataCus.length; i++) {
         let d = dataCus[i]
         d.countBooking = d.countBooking || 0
@@ -1057,9 +1445,43 @@ export default {
           this.countOldCus = this.countOldCus + 1
         }
       }
-      this.getSelect(this.getSelectText)
+      this.countWaitStoreFront = this.itemBooking.filter(el => { return el.paymentStatus === 'wait' && el.bookingTypeShop === 'storeFront' }).length
+      this.countFinishStoreFront = this.itemBooking.filter(el => { return el.paymentStatus === 'finish' && el.bookingTypeShop === 'storeFront' }).length
+      this.countConfirmStoreFront = this.itemBooking.filter(el => { return el.paymentStatus === 'confirm' && el.bookingTypeShop === 'storeFront' }).length
+      this.countNoCashStoreFront = this.itemBooking.filter(el => { return el.paymentStatus === 'noCash' && el.bookingTypeShop === 'storeFront' }).length
+      this.countInactiveStoreFront = this.itemBooking.filter(el => { return el.paymentStatus === 'inactive' && el.bookingTypeShop === 'storeFront' }).length
+      this.countNewCusOnMonthStoreFront = this.itemBooking.filter(el => { return moment(el.trialsVersionDate).month() === moment().month() && moment(el.trialsVersionDate).year() === moment().year() && (el.paymentStatus === 'confirm' || el.paymentStatus === 'finish') && el.bookingTypeShop === 'storeFront' }).length
+      let dataCusStoreFront = this.itemBooking.filter(el => { return el.paymentStatus === 'finish' && el.bookingTypeShop === 'storeFront' })
+      for (let i = 0; i < dataCusStoreFront.length; i++) {
+        let d = dataCusStoreFront[i]
+        d.countBooking = d.countBooking || 0
+        if (parseInt(d.countBooking) === 0) {
+          this.countNewCusStoreFront = this.countNewCusStoreFront + 1
+        } else {
+          this.countOldCusStoreFront = this.countOldCusStoreFront + 1
+        }
+      }
+      this.countWaitLoyalty = this.itemBooking.filter(el => { return el.paymentStatus === 'wait' && el.bookingTypeShop === 'loyalty' }).length
+      this.countFinishLoyalty = this.itemBooking.filter(el => { return el.paymentStatus === 'finish' && el.bookingTypeShop === 'loyalty' }).length
+      this.countConfirmLoyalty = this.itemBooking.filter(el => { return el.paymentStatus === 'confirm' && el.bookingTypeShop === 'loyalty' }).length
+      this.countNoCashLoyalty = this.itemBooking.filter(el => { return el.paymentStatus === 'noCash' && el.bookingTypeShop === 'loyalty' }).length
+      this.countInactiveLoyalty = this.itemBooking.filter(el => { return el.paymentStatus === 'inactive' && el.bookingTypeShop === 'loyalty' }).length
+      this.countNewCusOnMonthLoyalty = this.itemBooking.filter(el => { return moment(el.trialsVersionDate).month() === moment().month() && moment(el.trialsVersionDate).year() === moment().year() && (el.paymentStatus === 'confirm' || el.paymentStatus === 'finish') && el.bookingTypeShop === 'loyalty' }).length
+      let dataCusLoyalty = this.itemBooking.filter(el => { return el.paymentStatus === 'finish' && el.bookingTypeShop === 'loyalty' })
+      for (let i = 0; i < dataCusLoyalty.length; i++) {
+        let d = dataCusLoyalty[i]
+        d.paymentDate = d.paymentDate || ''
+        console.log('moment(d.paymentDate)', moment(d.paymentDate).format('YYYY-MM'))
+        if (moment(d.paymentDate).format('YYYY-MM') === moment().format('YYYY-MM')) {
+          this.countNewCusLoyalty = this.countNewCusLoyalty + 1
+        } else {
+          this.countOldCusLoyalty = this.countOldCusLoyalty + 1
+        }
+      }
+      this.sumAmountAll = this.itemBooking.filter(el => { return el.paymentStatus === 'finish' }).reduce((n, {paymentAmount}) => n + paymentAmount, 0)
+      this.getSelect(this.getSelectText, this.typeMain)
     },
-    async changStatus (item, text) {
+    async changStatus (item, text, typeMain) {
       let textShow = ''
       if (text === 'finish') {
         textShow = 'ชำระเรียบร้อย'
@@ -1082,7 +1504,12 @@ export default {
       })
         .then(async (result) => {
           if (item.id && text !== 'inactiveToactive') {
-            let url = this.DNS_IP + '/system_shop_Payment/edit/' + item.id
+            let url = ''
+            if (typeMain === 'loyalty') {
+              url = this.DNS_IP_Loyalty + '/system_shop_Payment/edit/' + item.id
+            } else {
+              url = this.DNS_IP + '/system_shop_Payment/edit/' + item.id
+            }
             let dt = {
               paymentStatus: text,
               LAST_USER: this.$session.getAll().data.userName
@@ -1090,11 +1517,11 @@ export default {
             // }
             await axios.post(url, dt).then(async (response) => {
               if (text === 'inactive') {
-                await this.updateShopActive('inactive', item)
+                await this.updateShopActive('inactive', item, typeMain)
                 this.checkSearch()
               } else if (text === 'confirm') {
                 if (item.shopActive === 'inactive') {
-                  await this.updateShopActive('active', item)
+                  await this.updateShopActive('active', item, typeMain)
                   this.checkSearch()
                 } else {
                   this.checkSearch()
@@ -1105,10 +1532,10 @@ export default {
             })
           } else {
             if (text === 'inactive') {
-              await this.updateShopActive('inactive', item)
+              await this.updateShopActive('inactive', item, typeMain)
               this.checkSearch()
             } else if (text === 'inactiveToactive') {
-              await this.updateShopActive('active', item)
+              await this.updateShopActive('active', item, typeMain)
               this.checkSearch()
             } else {
               this.$swal(
@@ -1120,7 +1547,13 @@ export default {
           }
         })
     },
-    async updateShopActive (text, item) {
+    async updateShopActive (text, item, typeMain) {
+      let url = ''
+      if (typeMain === 'loyalty') {
+        url = this.DNS_IP_Loyalty + '/sys_shop/edit/' + item.shopId
+      } else {
+        url = this.DNS_IP + '/sys_shop/edit/' + item.shopId
+      }
       var ds = {
         shopActive: text,
         LAST_USER: this.$session.getAll().data.userName
@@ -1128,30 +1561,48 @@ export default {
       await axios
         .post(
           // eslint-disable-next-line quotes
-          this.DNS_IP + "/sys_shop/edit/" + item.shopId,
+          url,
           ds
         )
         .then(async (response) => {
         })
     },
-    getSelect (text) {
-      this.headers = [
-        { text: 'รูปร้าน', value: 'shopImge' },
-        { text: 'BT', value: 'btNumber' },
-        { text: 'ชื่อร้าน', value: 'shopName' },
-        // { text: 'วันที่นัดหมาย', value: 'dueDate' },
-        { text: 'เบอร์โทร', value: 'billingPhone' },
-        { text: 'email', value: 'contactEmail' },
-        { text: 'จำนวนนัดหมายที่สร้างของเดือนที่แล้ว', value: 'countBooking' },
-        { text: 'สลิป', value: 'paymentImage' },
-        { text: 'ยอดเงินที่ชำระ', value: 'paymentAmount' },
-        { text: 'สถานะ', value: 'paymentStatus' },
-        { text: 'วันที่จ่าย/วันที่หมดอายุ', value: 'paymentDate' },
-        { text: 'วันวันที่สิ้นสุดทดลองใช้', value: 'trialsVersionDate' },
-        { text: 'จัดการข้อมูล', value: 'action', sortable: false, align: 'center' }
-      ]
+    getSelect (text, type) {
+      if (type === 'loyalty') {
+        this.headers = [
+          { text: 'รูปร้าน', value: 'shopImge' },
+          { text: 'BT', value: 'btNumber' },
+          { text: 'ชื่อร้าน', value: 'shopName' },
+          // { text: 'วันที่นัดหมาย', value: 'dueDate' },
+          { text: 'เบอร์โทร', value: 'billingPhone' },
+          { text: 'email', value: 'contactEmail' },
+          // { text: 'จำนวนนัดหมายที่สร้างของเดือนที่แล้ว', value: 'countBooking' },
+          { text: 'สลิป', value: 'paymentImage' },
+          { text: 'ยอดเงินที่ชำระ', value: 'paymentAmount' },
+          { text: 'สถานะ', value: 'paymentStatus' },
+          { text: 'วันที่จ่าย/วันที่หมดอายุ', value: 'paymentDate' },
+          { text: 'วันที่สิ้นสุดทดลองใช้', value: 'trialsVersionDate' },
+          { text: 'จัดการข้อมูล', value: 'action', sortable: false, align: 'center' }
+        ]
+      } else {
+        this.headers = [
+          { text: 'รูปร้าน', value: 'shopImge' },
+          { text: 'BT', value: 'btNumber' },
+          { text: 'ชื่อร้าน', value: 'shopName' },
+          // { text: 'วันที่นัดหมาย', value: 'dueDate' },
+          { text: 'เบอร์โทร', value: 'billingPhone' },
+          { text: 'email', value: 'contactEmail' },
+          { text: 'จำนวนนัดหมายที่สร้างของเดือนที่แล้ว', value: 'countBooking' },
+          { text: 'สลิป', value: 'paymentImage' },
+          { text: 'ยอดเงินที่ชำระ', value: 'paymentAmount' },
+          { text: 'สถานะ', value: 'paymentStatus' },
+          { text: 'วันที่จ่าย/วันที่หมดอายุ', value: 'paymentDate' },
+          { text: 'วันที่สิ้นสุดทดลองใช้', value: 'trialsVersionDate' },
+          { text: 'จัดการข้อมูล', value: 'action', sortable: false, align: 'center' }
+        ]
+      }
       this.getSelectText = text
-      this.itemBookingUse = this.itemBooking.filter(el => { return el.paymentStatus === this.getSelectText })
+      this.itemBookingUse = this.itemBooking.filter(el => { return el.paymentStatus === this.getSelectText && el.bookingTypeShop === type })
     },
     getSelectNewMonth (text) {
       this.getSelectText = text

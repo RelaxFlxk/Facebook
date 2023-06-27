@@ -61,6 +61,7 @@
 <script>
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import axios from 'axios' // api
+import moment from 'moment-timezone'
 export default {
   components: {
     'left-menu-admin': adminLeftMenu
@@ -99,7 +100,8 @@ export default {
               userCode: this.session.data.userCode,
               userCreate: this.session.data.userName,
               contactTel: this.session.data.contactTel,
-              contactEmail: this.session.data.contactEmail
+              contactEmail: this.session.data.contactEmail,
+              expire_date_trial: moment().add(7, 'days').format('YYYY-MM-DD')
             }
             console.log('add', dt)
             await axios
