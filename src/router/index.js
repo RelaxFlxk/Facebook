@@ -77,6 +77,11 @@ export default new Router({
     component: Core.GoogleCalendarCmp
   },
   {
+    path: '/Master/BookingByUserEmp',
+    name: 'BookingByUserEmp',
+    component: Master.BookingByUserEmp
+  },
+  {
     path: '/Master/CustomField',
     name: 'CustomField',
     component: Master.CustomField

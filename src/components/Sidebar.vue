@@ -1003,6 +1003,7 @@ export default {
     bookingChk () {
       if (this.$session.getAll().data.timeSlotStatus === 'True') {
         this.boardSide = [
+          { title: 'ตรวจสอบคิวจองรายวัน', icon: 'mdi-calendar-search', to: '/Master/BookingByUserEmp', type: 'booking' },
           { title: 'รายชื่อลูกค้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingListBeautyEmp', type: 'booking' }
         ]
       } else {

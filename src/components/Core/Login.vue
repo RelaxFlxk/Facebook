@@ -586,7 +586,7 @@ export default {
             this.$router.push('/Master/BookingList')
           } else {
             if (dataitem.timeSlotStatus === 'True') {
-              this.$router.push('/Master/BookingListBeautyEmp')
+              this.$router.push('/Master/BookingByUserEmp')
             } else {
               this.$router.push('/Master/BookingListBeauty')
             }
