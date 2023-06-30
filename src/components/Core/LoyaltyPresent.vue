@@ -100,7 +100,7 @@ export default {
               userCode: this.session.data.userCode,
               userCreate: this.session.data.userName,
               contactTel: this.session.data.contactTel,
-              contactEmail: this.session.data.contactEmail,
+              Email: this.session.data.contactEmail,
               expire_date_trial: moment().add(7, 'days').format('YYYY-MM-DD')
             }
             console.log('add', dt)
