@@ -552,6 +552,56 @@
           </v-row>
         </v-form>
         <v-row>
+          <v-col cols="6">
+            <v-menu
+                v-if="itemBookingUse.length > 0"
+                ref="menuExport"
+                v-model="menuExport"
+                transition="scale-transition"
+                offset-y
+                max-width="290px"
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    hide-details
+                    background-color="white"
+                    v-model="dateExport"
+                    label="Export วัน/เดือน/ปี"
+                    readonly
+                    outlined
+                    dense
+                    required
+                    :rules ="[rules.required]"
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                  <template #prepend-inner>
+                  <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                    mdi-calendar
+                  </v-icon>
+                </template></v-text-field>
+                </template>
+                <v-date-picker
+                  @input="menuExport = false, setDataExport()"
+                  v-model="dateExport"
+                  no-title
+                  scrollable
+                >
+                </v-date-picker>
+              </v-menu>
+          </v-col>
+          <v-col cols="6">
+            <v-btn
+                v-if="dateExport != ''"
+                color="primary"
+                dark
+                @click="exportExcel()"
+              >
+                <v-icon > mdi-microsoft-excel</v-icon>
+                Export
+              </v-btn>
+          </v-col>
           <v-col cols="12">
             <v-card>
             <v-data-table
@@ -953,7 +1003,7 @@ import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
 import moment from 'moment-timezone'
-
+import XLSX from 'xlsx' // import xlsx
 export default {
   components: {
     'left-menu-admin': adminLeftMenu,
@@ -962,6 +1012,8 @@ export default {
   },
   data () {
     return {
+      menuExport: false,
+      dateExport: '',
       billingCusName: '',
       billingAddress: '',
       billingTax: '',
@@ -1054,6 +1106,7 @@ export default {
       },
       typeMain: 'booking',
       itemBookingUse: [],
+      itemBookingUseExport: [],
       itemPayMent: [],
       itemCountBooking: [],
       dialogDetails: false,
@@ -1622,6 +1675,15 @@ export default {
         { text: 'วันที่สร้าง', value: 'CREATE_DATE_SHOP' }
       ]
       this.itemBookingUse = this.itemBooking.filter(el => { return moment(el.trialsVersionDate).month() === moment().month() && moment(el.trialsVersionDate).year() === moment().year() && (el.paymentStatus === 'confirm' || el.paymentStatus === 'finish') })
+    },
+    setDataExport () {
+      this.itemBookingUseExport = this.itemBookingUse.filter(el => { return el.trialsVersionDate.includes(this.dateExport) })
+    },
+    exportExcel () {
+      const dataWS = XLSX.utils.json_to_sheet(this.itemBookingUseExport)
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, dataWS)
+      XLSX.writeFile(wb, 'export_' + this.getSelectText + '_' + this.dateExport + '.xlsx')
     }
   }
 }
