@@ -995,7 +995,7 @@
                             :rules="[rules.required]"
                             outlined
                             dense
-                            v-bind:options="options2" />
+                            v-bind:options="optionsDeposit" />
                             <v-text-field
                             v-if="formAdd.checkDeposit === 'True'"
                             label="เงินมัดจำคิดเป็นกี่เปอร์เซ็น (กรณีที่ต้องการแจ้งยอดชำระคงเหลือ)"
@@ -1484,7 +1484,7 @@
                             :rules="[rules.required]"
                             outlined
                             dense
-                            v-bind:options="options2" />
+                            v-bind:options="optionsDeposit" />
                             <v-text-field
                             v-if="formUpdate.checkDeposit === 'True'"
                             label="เงินมัดจำคิดเป็นกี่ % (กรณีที่ต้องการแจ้งยอดชำระคงเหลือ)"
@@ -2768,6 +2768,13 @@ export default {
         suffix: '',
         length: 9,
         precision: 0
+      },
+      optionsDeposit: {
+        locale: 'en-US',
+        prefix: '',
+        suffix: '',
+        length: 9,
+        precision: 2
       },
       optionsPercent: {
         locale: 'en-US',
