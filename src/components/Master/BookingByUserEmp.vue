@@ -654,12 +654,12 @@ export default {
           let urlApi = ''
           urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
-            this.session.data.shopId +
+            this.$session.getAll().data.shopId +
             // '&masBranchID=' +
             // this.masBranchID +
             '&dueDate=' +
             this.timeTable +
-            '&bookingEmpFlow=' + this.session.data.empId
+            '&bookingEmpFlow=' + this.$session.getAll().data.empId
           // this.timeTable + '&flowId=' + this.flowSelect + this.selectOnsite
           await axios
             .get(
