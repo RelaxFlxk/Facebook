@@ -193,23 +193,23 @@
                     </div>
                     <v-divider></v-divider>
                   </v-col>
-                  <v-col cols="6" class="pt-0 pl-0 pr-0">
-                    <!-- <div style="display: flex;justify-content: space-evenly;flex-wrap: wrap;">
+                  <v-col cols="12" class="pt-0 pl-0 pr-0">
+                    <div style="display: flex;justify-content: space-evenly;flex-wrap: wrap;">
                       <div class="text-center">
-                        <strong>{{countNewCus}}</strong>
-                        <div style="font-size: 15px;color: #828282;">รอชำระเงิน</div>
+                        <strong>{{countNewCus + countOldCus + countNewCusStoreFront + countOldCusStoreFront + countNewCusLoyalty + countOldCusLoyalty}}</strong>
+                        <div style="font-size: 15px;color: #828282;">ลูกค้าทั้งหมด</div>
                       </div>
-                    </div> -->
+                    </div>
                   </v-col>
-                  <v-divider vertical></v-divider>
-                  <v-col cols="6" class="pt-0 pl-0 pr-0">
+                  <!-- <v-divider vertical></v-divider>
+                  <v-col cols="6" class="pt-0 pl-0 pr-0"> -->
                     <!-- <div style="display: flex;justify-content: space-evenly;flex-wrap: wrap;">
                       <div class="text-center">
                         <strong>{{countOldCus}}</strong>
                         <div style="font-size: 15px;color: #828282;">ยกเลิกสมาชิก</div>
                       </div>
                     </div> -->
-                  </v-col>
+                  <!-- </v-col> -->
                 </v-row>
               </v-card>
             </v-col>
