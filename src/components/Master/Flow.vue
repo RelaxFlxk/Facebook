@@ -1487,7 +1487,7 @@
                             v-bind:options="options2" />
                             <v-text-field
                             v-if="formUpdate.checkDeposit === 'True'"
-                            label="เงินมัดจำคิดเป็นกี่เปอร์เซ็น (กรณีที่ต้องการแจ้งยอดชำระคงเหลือ)"
+                            label="เงินมัดจำคิดเป็นกี่ % (กรณีที่ต้องการแจ้งยอดชำระคงเหลือ)"
                             v-model="formUpdate.depositPercent"
                             required
                             :rules="depositPercentrules"
@@ -1495,6 +1495,7 @@
                             outlined
                             dense
                             v-bind:options="optionsPercent" />
+                            <p v-if="formUpdate.menuShowStatus === 'True' && formUpdate.depositPercent > 0" style="color:red;" class="mt-n4">{{ `* หมายเหตุ ราคา Menu จะถูกคิดเป็น ${formUpdate.depositPercent} % ของราคาเต็ม`  }}</p>
                         </v-col>
                         <v-col
                           cols="12"
@@ -4451,6 +4452,7 @@ export default {
       this.formUpdate.checkCreditCard = item.checkCreditCard || 'False'
       this.formUpdate.masBranchID = item.masBranchID || 'All'
       this.formUpdate.newCustomerStatus = item.newCustomerStatus || 'False'
+      this.formUpdate.menuShowStatus = item.menuShowStatus || 'False'
       this.shopId = this.$session.getAll().data.shopId
       this.fieldType = this.formUpdate.fieldType
       // this.desserts = JSON.parse(response.data[0].flowfieldName)
