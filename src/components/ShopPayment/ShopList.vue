@@ -884,6 +884,40 @@
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" class="pt-1 pb-0" v-if="shopId_Shop !== ''">
+                      <v-menu
+                        ref="menu"
+                        v-model="menubillingEndDate"
+                        transition="scale-transition"
+                        offset-y
+                        max-width="290px"
+                        min-width="auto"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            v-model="billingEndDate"
+                            label="วันที่สิ้นสุด (กรณีหลายเดือน/ปี)"
+                            readonly
+                            outlined
+                            dense
+                            v-bind="attrs"
+                            v-on="on"
+                          >
+                          <template #prepend>
+                          <v-icon>
+                            mdi-calendar
+                          </v-icon>
+                        </template></v-text-field>
+                        </template>
+                        <v-date-picker
+                          @input="menubillingEndDate = false"
+                          v-model="billingEndDate"
+                          no-title
+                          scrollable
+                        >
+                        </v-date-picker>
+                      </v-menu>
+                    </v-col>
+                    <v-col cols="12" class="pt-1 pb-0" v-if="shopId_Shop !== ''">
                       <v-text-field
                         prepend-icon="mdi-account"
                         v-model="billingCusName"
@@ -970,6 +1004,17 @@
                         prepend-icon="mdi-clock-time-eleven"
                       ></v-text-field>
                     </v-col>
+                    <v-col cols="12" class="pt-0 pb-0" v-if="idPayment !== ''">
+                      <VuetifyMoney
+                        v-model="paymentAmountSlip"
+                        placeholder="จำนวนเงินตามสลิป"
+                        dense
+                        label="จำนวนเงินตามสลิป"
+                        outlined
+                        v-bind:options="options2"
+                        prepend-icon="mdi-account-cash"
+                      />
+                    </v-col>
                     <v-col cols="12" class="pt-1 pb-0" v-if="idPayment !== ''">
                       <v-textarea
                         prepend-icon="mdi-comment-edit"
@@ -978,6 +1023,17 @@
                         outlined
                         dense
                       ></v-textarea>
+                    </v-col>
+                    <v-col cols="12" class="pt-1 pb-0">
+                      <v-img
+                        v-if="paymentImage !== ''"
+                        class="pa-3"
+                        contain
+                        max-height="100%"
+                        max-width="100%"
+                        @click="gotoPicture(paymentImage)"
+                        :src="paymentImage"
+                      ></v-img>
                     </v-col>
                   </v-row>
                   <div class="text-center mt-5">
@@ -1012,13 +1068,24 @@ export default {
   },
   data () {
     return {
+      options2: {
+        locale: 'en-US',
+        prefix: '',
+        suffix: '',
+        length: 9,
+        precision: 2
+      },
+      menubillingEndDate: false,
       menuExport: false,
       dateExport: '',
+      paymentImage: '',
       billingCusName: '',
       billingAddress: '',
       billingTax: '',
       billingPhone: '',
       menutrialsVersionDate: false,
+      billingEndDate: '',
+      paymentAmountSlip: '',
       trialsVersionDate: '',
       trialsVersionDateTime: '',
       menupaymentDateTrue: false,
@@ -1154,10 +1221,13 @@ export default {
         this.trialsVersionDateTime = this.trialsVersionDate.split(' ')[1]
         this.trialsVersionDate = this.trialsVersionDate.split(' ')[0]
       }
+      this.billingEndDate = item.billingEndDate || ''
+      this.paymentAmountSlip = item.paymentAmountSlip || 0
       this.btNumber = item.btNumber || ''
       this.remark = item.remark || ''
       this.shopId_Shop = item.shopId_Shop || ''
       this.idPayment = item.id || ''
+      this.paymentImage = item.paymentImage || ''
       this.dialogSetting = true
     },
     async saveDateSetting (typeMain) {
@@ -1199,7 +1269,8 @@ export default {
               billingCusName: this.billingCusName,
               billingAddress: this.billingAddress,
               billingTax: this.billingTax,
-              billingPhone: this.billingPhone
+              billingPhone: this.billingPhone,
+              billingEndDate: this.billingEndDate
             }
           } else {
             url = this.DNS_IP + '/sys_shop/edit/' + this.shopId_Shop
@@ -1209,7 +1280,8 @@ export default {
               billingCusName: this.billingCusName,
               billingAddress: this.billingAddress,
               billingTax: this.billingTax,
-              billingPhone: this.billingPhone
+              billingPhone: this.billingPhone,
+              billingEndDate: this.billingEndDate
             }
           }
           await axios
@@ -1229,6 +1301,7 @@ export default {
               this.remark = ''
               this.shopId_Shop = ''
               this.idPayment = ''
+              this.billingEndDate = ''
             })
         }
       } else {
@@ -1245,7 +1318,9 @@ export default {
             billingCusName: this.billingCusName,
             billingAddress: this.billingAddress,
             billingTax: this.billingTax,
-            billingPhone: this.billingPhone
+            billingPhone: this.billingPhone,
+            paymentAmountSlip: this.paymentAmountSlip,
+            billingEndDate: this.billingEndDate
           }
         } else {
           url = this.DNS_IP + '/system_shop_Payment/editAdmin/' + this.idPayment
@@ -1258,7 +1333,9 @@ export default {
             billingCusName: this.billingCusName,
             billingAddress: this.billingAddress,
             billingTax: this.billingTax,
-            billingPhone: this.billingPhone
+            billingPhone: this.billingPhone,
+            paymentAmountSlip: this.paymentAmountSlip,
+            billingEndDate: this.billingEndDate
           }
         }
         await axios
@@ -1278,6 +1355,7 @@ export default {
             this.remark = ''
             this.shopId_Shop = ''
             this.idPayment = ''
+            this.paymentAmountSlip = ''
           })
       }
     },
@@ -1531,7 +1609,7 @@ export default {
           this.countOldCusLoyalty = this.countOldCusLoyalty + 1
         }
       }
-      this.sumAmountAll = this.itemBooking.filter(el => { return el.paymentStatus === 'finish' }).reduce((n, {paymentAmount}) => n + paymentAmount, 0)
+      this.sumAmountAll = this.itemBooking.filter(el => { return el.paymentStatus === 'finish' }).reduce((n, {paymentAmountTrue}) => n + paymentAmountTrue, 0)
       this.getSelect(this.getSelectText, this.typeMain)
     },
     async changStatus (item, text, typeMain) {
