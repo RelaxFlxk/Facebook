@@ -60,6 +60,18 @@
                         :rules="[rules.required]"
                       ></v-select>
                     </v-col>
+                    <v-col cols="12" class="pb-0 pt-0" v-if="formAddStripe.masBranchID !== ''">
+                      <v-btn
+                        elevation="2"
+                        block
+                        dark
+                        color="teal"
+                        @click.stop="FunCopyQrcode({masBranchID: formAddStripe.masBranchID, shopId: $session.getAll().data.shopId})"
+                      >
+                        <v-icon left>mdi-content-copy</v-icon>
+                        คัดลอกลิงค์ Webhook
+                      </v-btn>
+                    </v-col>
                     <v-col cols="12" class="pb-0">
                       <v-text-field
                         v-model="formAddStripe.apiKey"
