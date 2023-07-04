@@ -226,6 +226,7 @@
                 hide-details
                 outlined
                 dense
+                @input="setDataExportSearch()"
               ></v-text-field>
             </v-col>
             <v-col col="auto">
@@ -266,6 +267,18 @@
                 >
                 </v-date-picker>
               </v-menu>
+            </v-col>
+            <v-col cols="auto" class="pt-0" v-if="itemBookingUseExportSearch.length > 0">
+              <v-btn
+                block
+                color="primary"
+                class="mt-4"
+                dark
+                @click="exportExcelSearch()"
+              >
+                <v-icon > mdi-microsoft-excel</v-icon>
+                Export Search
+              </v-btn>
             </v-col>
             <v-col cols="auto" class="pt-0">
               <v-btn
@@ -567,7 +580,7 @@
                     hide-details
                     background-color="white"
                     v-model="dateExport"
-                    label="Export วัน/เดือน/ปี"
+                    label="Export วัน/เดือน/ปี สิ้นสุดทดลองใช้"
                     readonly
                     outlined
                     dense
@@ -583,23 +596,24 @@
                 </template></v-text-field>
                 </template>
                 <v-date-picker
-                  @input="menuExport = false, setDataExport()"
+                  @input="menuExport = false"
                   v-model="dateExport"
                   no-title
                   scrollable
+                  @change="setDataExport()"
                 >
                 </v-date-picker>
               </v-menu>
           </v-col>
           <v-col cols="6">
             <v-btn
-                v-if="dateExport != ''"
+                v-if="itemBookingUseExport.length > 0"
                 color="primary"
                 dark
                 @click="exportExcel()"
               >
                 <v-icon > mdi-microsoft-excel</v-icon>
-                Export
+                Export {{'(' + itemBookingUseExport.length + ')'}}
               </v-btn>
           </v-col>
           <v-col cols="12">
@@ -1174,6 +1188,7 @@ export default {
       typeMain: 'booking',
       itemBookingUse: [],
       itemBookingUseExport: [],
+      itemBookingUseExportSearch: [],
       itemPayMent: [],
       itemCountBooking: [],
       dialogDetails: false,
@@ -1734,6 +1749,8 @@ export default {
       }
       this.getSelectText = text
       this.itemBookingUse = this.itemBooking.filter(el => { return el.paymentStatus === this.getSelectText && el.bookingTypeShop === type })
+      this.setDataExportSearch()
+      console.log('this.itemBookingUse', this.itemBookingUse)
     },
     getSelectNewMonth (text) {
       this.getSelectText = text
@@ -1755,13 +1772,45 @@ export default {
       this.itemBookingUse = this.itemBooking.filter(el => { return moment(el.trialsVersionDate).month() === moment().month() && moment(el.trialsVersionDate).year() === moment().year() && (el.paymentStatus === 'confirm' || el.paymentStatus === 'finish') })
     },
     setDataExport () {
-      this.itemBookingUseExport = this.itemBookingUse.filter(el => { return el.trialsVersionDate.includes(this.dateExport) })
+      this.itemBookingUseExport = []
+      for (let i = 0; i < this.itemBookingUse.length; i++) {
+        let d = this.itemBookingUse[i]
+        d.trialsVersionDate = d.trialsVersionDate || ''
+        if (d.trialsVersionDate !== '') {
+          if (d.trialsVersionDate.includes(this.dateExport)) { this.itemBookingUseExport.push(d) }
+        }
+      }
     },
     exportExcel () {
       const dataWS = XLSX.utils.json_to_sheet(this.itemBookingUseExport)
       const wb = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(wb, dataWS)
       XLSX.writeFile(wb, 'export_' + this.getSelectText + '_' + this.dateExport + '.xlsx')
+    },
+    setDataExportSearch () {
+      this.itemBookingUseExportSearch = []
+      for (let i = 0; i < this.itemBookingUse.length; i++) {
+        let d = this.itemBookingUse[i]
+        let s = {}
+        s.btNumber = d.btNumber
+        s.shopName = d.shopName
+        s.billingPhone = d.billingPhone
+        s.contactEmail = d.contactEmail
+        s.countBooking = d.countBooking
+        s.paymentAmount = d.paymentAmount
+        s.paymentStatus = d.paymentStatus
+        s.paymentDate = d.paymentDate
+        s.trialsVersionDate = d.trialsVersionDate
+        // console.log(Object.keys(d).some(key => ('' + d[key]).includes(this.search)))
+        if (Object.keys(s).some(key => ('' + s[key]).includes(this.search))) { this.itemBookingUseExportSearch.push(d) }
+      }
+      console.log(this.itemBookingUseExportSearch)
+    },
+    exportExcelSearch () {
+      const dataWS = XLSX.utils.json_to_sheet(this.itemBookingUseExportSearch)
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, dataWS)
+      XLSX.writeFile(wb, 'export_' + this.getSelectText + '_search.xlsx')
     }
   }
 }
