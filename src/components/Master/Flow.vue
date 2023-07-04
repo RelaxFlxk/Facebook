@@ -1971,6 +1971,29 @@
                               </v-row>
                         <div class="text-center px-5 mb-5" v-if="formUpdateLimitbooking.setTimebyday === 'False'">
                           <v-sheet class="pa-0">
+                            <v-row class="mt-3 mb-3" style="border-color: #cecece;border-style: solid;border-width: 1px;">
+                                <v-col cols="12" style="display:flex;justify-content: flex-start;flex-wrap: wrap;align-items: center;">
+                                  <v-btn small color="primary" @click="presetTimeExport()">
+                                    <v-icon left>mdi-file-excel</v-icon>
+                                    Template
+                                  </v-btn>
+                                </v-col>
+                                <v-col cols="12" style="display:flex;justify-content: center;flex-wrap: wrap;align-items: center;">
+                                  <v-file-input
+                                    v-model="ExcelField"
+                                    label="อัพโหลด"
+                                    outlined
+                                    dense
+                                    small-chips
+                                    accept=".xls,.xlsx"
+                                    hide-details
+                                  ></v-file-input>
+                                  <v-btn class="ml-3 my-3" small fab v-if="ExcelField" color="primary" @click="presetTimeUpload()">
+                                    <v-icon>mdi-arrow-down-bold</v-icon>
+                                  </v-btn>
+                                  <!-- <input type="file" id="fileInput" /> -->
+                                </v-col>
+                              </v-row>
                           <v-row class="mt-3" >
                             <v-col cols="12" style="display:flex;justify-content: space-between;flex-wrap: wrap;"  class="pt-0" >
                                 <v-btn
@@ -2069,6 +2092,29 @@
                           </div>
                           <div class="text-center px-5 mb-5" v-else>
                           <v-sheet class="pa-0">
+                            <v-row class="mt-3 mb-3" style="border-color: #cecece;border-style: solid;border-width: 1px;">
+                                <v-col cols="12" style="display:flex;justify-content: flex-start;flex-wrap: wrap;align-items: center;">
+                                  <v-btn small color="primary" @click="presetTimebydayExport()">
+                                    <v-icon left>mdi-file-excel</v-icon>
+                                    Template
+                                  </v-btn>
+                                </v-col>
+                                <v-col cols="12" style="display:flex;justify-content: center;flex-wrap: wrap;align-items: center;">
+                                  <v-file-input
+                                    v-model="ExcelField"
+                                    label="อัพโหลด"
+                                    outlined
+                                    dense
+                                    small-chips
+                                    accept=".xls,.xlsx"
+                                    hide-details
+                                  ></v-file-input>
+                                  <v-btn class="ml-3 my-3" small fab v-if="ExcelField" color="primary" @click="presetTimebydayUpload()">
+                                    <v-icon>mdi-arrow-down-bold</v-icon>
+                                  </v-btn>
+                                  <!-- <input type="file" id="fileInput" /> -->
+                                </v-col>
+                              </v-row>
                           <v-row class="mt-3">
                             <v-col cols="6"  class="pt-0" style="text-align: start;">
                             <v-btn
@@ -2587,7 +2633,9 @@ import waitingAlert from '../waitingAlert.vue'
 import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
+import XLSX from 'xlsx' // import xlsx
 import draggable from 'vuedraggable'
+import moment from 'moment' // แปลง date
 
 export default {
   components: {
@@ -3112,7 +3160,8 @@ export default {
       categorySub: [],
       branch: [],
       dataItemsearch: [],
-      selectBranch: 'All'
+      selectBranch: 'All',
+      ExcelField: null
       // End Data Table Config
     }
   },
@@ -3150,6 +3199,208 @@ export default {
     await this.filterBranch()
   },
   methods: {
+    presetTimebydayExport () {
+      let timeExport = [
+        { value: '08:00', text: '08:00', limitBooking: '1' },
+        { value: '08:30', text: '08:30', limitBooking: '1' },
+        { value: '09:00', text: '09:00', limitBooking: '1' },
+        { value: '09:30', text: '09:30', limitBooking: '1' },
+        { value: '10:00', text: '10:00', limitBooking: '1' },
+        { value: '10:30', text: '10:30', limitBooking: '1' },
+        { value: '11:00', text: '11:00', limitBooking: '1' },
+        { value: '11:30', text: '11:30', limitBooking: '1' },
+        { value: '12:00', text: '12:00', limitBooking: '1' },
+        { value: '12:30', text: '12:30', limitBooking: '1' },
+        { value: '13:00', text: '13:00', limitBooking: '1' },
+        { value: '13:30', text: '13:30', limitBooking: '1' },
+        { value: '14:00', text: '14:00', limitBooking: '1' },
+        { value: '14:30', text: '14:30', limitBooking: '1' },
+        { value: '15:00', text: '15:00', limitBooking: '1' },
+        { value: '15:30', text: '15:30', limitBooking: '1' },
+        { value: '16:00', text: '16:00', limitBooking: '1' },
+        { value: '16:30', text: '16:30', limitBooking: '1' },
+        { value: '17:00', text: '17:00', limitBooking: '1' }
+      ]
+      let sheetName = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
+      // var info = XLSX.utils.json_to_sheet(timeExport)
+      var wb = XLSX.utils.book_new() // make Workbook of Excel
+      sheetName.forEach((item) => {
+        let info = XLSX.utils.json_to_sheet(timeExport)
+        XLSX.utils.book_append_sheet(wb, info, item)
+      })
+      console.log('wb', wb)
+      // XLSX.utils.book_append_sheet(wb, info, 'worksheet1') // sheetAName is name of Worksheet
+      XLSX.writeFile(wb, 'file.xls') // name of the file is 'book.xlsx'
+    },
+    presetTimeExport () {
+      let timeExport = [
+        { value: '08:00', text: '08:00', limitBooking: '1' },
+        { value: '08:30', text: '08:30', limitBooking: '1' },
+        { value: '09:00', text: '09:00', limitBooking: '1' },
+        { value: '09:30', text: '09:30', limitBooking: '1' },
+        { value: '10:00', text: '10:00', limitBooking: '1' },
+        { value: '10:30', text: '10:30', limitBooking: '1' },
+        { value: '11:00', text: '11:00', limitBooking: '1' },
+        { value: '11:30', text: '11:30', limitBooking: '1' },
+        { value: '12:00', text: '12:00', limitBooking: '1' },
+        { value: '12:30', text: '12:30', limitBooking: '1' },
+        { value: '13:00', text: '13:00', limitBooking: '1' },
+        { value: '13:30', text: '13:30', limitBooking: '1' },
+        { value: '14:00', text: '14:00', limitBooking: '1' },
+        { value: '14:30', text: '14:30', limitBooking: '1' },
+        { value: '15:00', text: '15:00', limitBooking: '1' },
+        { value: '15:30', text: '15:30', limitBooking: '1' },
+        { value: '16:00', text: '16:00', limitBooking: '1' },
+        { value: '16:30', text: '16:30', limitBooking: '1' },
+        { value: '17:00', text: '17:00', limitBooking: '1' }
+      ]
+      var info = XLSX.utils.json_to_sheet(timeExport)
+      var wb = XLSX.utils.book_new() // make Workbook of Excel
+      XLSX.utils.book_append_sheet(wb, info, 'worksheet1') // sheetAName is name of Worksheet
+      XLSX.writeFile(wb, 'file.xls') // name of the file is 'book.xlsx'
+    },
+    presetTimebydayUpload () {
+      let makeData = [
+        { text: 'อา.', value: 0, setTime: [] },
+        { text: 'จ.', value: 1, setTime: [] },
+        { text: 'อ.', value: 2, setTime: [] },
+        { text: 'พ.', value: 3, setTime: [] },
+        { text: 'พฤ.', value: 4, setTime: [] },
+        { text: 'ศ.', value: 5, setTime: [] },
+        { text: 'ส.', value: 6, setTime: [] }
+      ]
+      const file = this.ExcelField
+      console.log('file', file)
+      const reader = new FileReader()
+      console.log('reader', reader)
+      reader.onload = (e) => { // เปลี่ยนเป็น Arrow Function
+        const dataBuffer = new Uint8Array(e.target.result)
+        // const workbook = XLSX.read(dataBuffer, { type: 'array' })
+        const workbook = XLSX.read(dataBuffer, { type: 'array', cellDates: true })
+        console.log('workBook', workbook)
+        console.log('this.dataItemAddTimebyday', this.dataItemAddTimebyday)
+        if (workbook.SheetNames.length === 7) {
+          try {
+            let listError = false
+            workbook.SheetNames.forEach((item, keyDay) => {
+              let data = [] // เปลี่ยนตัวแปร Data เป็น data ในระดับฟังก์ชัน presetTimeUpload
+              let SheetNames = item
+              // console.log('SheetName', SheetNames)
+              const worksheet = workbook.Sheets[SheetNames]
+              // console.log('worksheet', worksheet)
+              const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 })
+              console.log('jsonData ' + item, jsonData[0][0] === 'value', jsonData[0][1] === 'text', jsonData[0][2] === 'limitBooking')
+              if (jsonData[0][0] === 'value' && jsonData[0][1] === 'text' && jsonData[0][2] === 'limitBooking') {
+                try {
+                  jsonData.forEach((item, key) => {
+                    if (key > 0 && item.length > 0) {
+                      let s = {}
+                      s.id = key
+                      // this.convertDateToTime(item[0])
+                      s.value = typeof item[0] === 'object' ? moment(item[0]).format('HH:mm') : item[0].toString()
+                      s.text = typeof item[1] === 'object' ? moment(item[1]).format('HH:mm') : item[1].toString()
+                      s.limitBooking = item[2] ? (item[2].toString() || '0') : '0'
+                      data.push(s) // ใช้ตัวแปร data ในการเก็บข้อมูลแทนการใช้ Data
+                    }
+                  })
+                  console.log(item + ' สำเร็จ')
+                } catch (error) {
+                  console.log('error', error, item[2], keyDay)
+                }
+                this.ExcelField = null
+              } else {
+                console.log('ผิดพลาดที่', item, keyDay)
+                listError = true
+                this.ExcelField = null
+              }
+              // console.log('data', data) // ตรวจสอบข้อมูลที่ถูกเก็บในตัวแปร data
+              if (data.length > 0) {
+                // this.dataItemAddTime = data // เข้าถึง this.dataItemAddTime ผ่าน Arrow Function
+                makeData.filter((item) => item.value === keyDay).map((item) => {
+                  item.setTime = data
+                })
+              }
+            })
+            if (listError === false) {
+              this.dataItemAddTimebyday = makeData
+              this.$swal({
+                title: 'successfully',
+                text: 'สำเร็จ',
+                type: 'success',
+                timer: 2000,
+                showConfirmButton: false
+              })
+            } else {
+              this.$swal('ผิดพลาด', 'กรุณาตรวจสอบข้อมูลใหม่อีกครั้ง', 'error')
+            }
+            console.log('makeData', makeData)
+            console.log('this.dataItemAddTimebyday', this.dataItemAddTimebyday)
+            this.ExcelField = null
+          } catch (error) {
+            console.log('error', error)
+            this.ExcelField = null
+            this.$swal('ผิดพลาด', 'กรุณาตรวจสอบข้อมูลใหม่อีกครั้ง', 'error')
+          }
+        } else {
+          this.ExcelField = null
+          this.$swal('ผิดพลาด', 'กรุณาตรวจสอบข้อมูลใหม่อีกครั้ง', 'error')
+        }
+      }
+      reader.readAsArrayBuffer(file)
+    },
+    presetTimeUpload () {
+      const file = this.ExcelField
+      console.log('file', file)
+      let data = [] // เปลี่ยนตัวแปร Data เป็น data ในระดับฟังก์ชัน presetTimeUpload
+      const reader = new FileReader()
+      console.log('reader', reader)
+      reader.onload = (e) => { // เปลี่ยนเป็น Arrow Function
+        const dataBuffer = new Uint8Array(e.target.result)
+        // const workbook = XLSX.read(dataBuffer, { type: 'array' })
+        const workbook = XLSX.read(dataBuffer, { type: 'array', cellDates: true })
+        // console.log('workBook', workbook)
+        const SheetNames = workbook.SheetNames[0]
+        // console.log('SheetNames', SheetNames)
+        const worksheet = workbook.Sheets[SheetNames]
+        // console.log('worksheet', worksheet)
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 })
+        console.log('jsonData ', jsonData[0][0] === 'value', jsonData[0][1] === 'text', jsonData[0][2] === 'limitBooking')
+        if (jsonData[0][0] === 'value' && jsonData[0][1] === 'text' && jsonData[0][2] === 'limitBooking') {
+          try {
+            jsonData.forEach((item, key) => {
+              if (key > 0 && item.length > 0) {
+                let s = {}
+                s.id = key
+                // this.convertDateToTime(item[0])
+                s.value = typeof item[0] === 'object' ? moment(item[0]).format('HH:mm') : item[0].toString()
+                s.text = typeof item[1] === 'object' ? moment(item[1]).format('HH:mm') : item[1].toString()
+                s.limitBooking = item[2].toString() || 0
+                data.push(s) // ใช้ตัวแปร data ในการเก็บข้อมูลแทนการใช้ Data
+              }
+            })
+          } catch (error) {
+            console.log('error', error)
+            this.$swal('ผิดพลาด', 'โปรดลองใหม่อีกครั้ง', 'error')
+          }
+          this.ExcelField = null
+        } else {
+          this.$swal('ผิดพลาด', 'ข้อมูลไม่ถูกต้อง', 'error')
+          this.ExcelField = null
+        }
+        console.log('data', data) // ตรวจสอบข้อมูลที่ถูกเก็บในตัวแปร data
+        if (data.length > 0) {
+          this.dataItemAddTime = data // เข้าถึง this.dataItemAddTime ผ่าน Arrow Function
+          this.$swal({
+            title: 'successfully',
+            text: 'สำเร็จ',
+            type: 'success',
+            timer: 2000,
+            showConfirmButton: false
+          })
+        }
+      }
+      reader.readAsArrayBuffer(file)
+    },
     filterBranch () {
       if (this.selectBranch === 'All') {
         this.dataItemsearch = this.dataItem

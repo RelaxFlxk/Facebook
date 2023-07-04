@@ -689,12 +689,35 @@
                             </v-row>
                           <div class="text-center px-5 mb-5" v-if="formUpdateLimitbooking.setTimebyday === 'False'">
                             <v-sheet class="pa-0">
+                              <v-row class="mt-3 mb-3" style="border-color: #cecece;border-style: solid;border-width: 1px;">
+                                <v-col cols="12" style="display:flex;justify-content: flex-start;flex-wrap: wrap;align-items: center;">
+                                  <v-btn small color="primary" @click="presetTimeExport()">
+                                    <v-icon left>mdi-file-excel</v-icon>
+                                    Template
+                                  </v-btn>
+                                </v-col>
+                                <v-col cols="12" style="display:flex;justify-content: center;flex-wrap: wrap;align-items: center;">
+                                  <v-file-input
+                                    v-model="ExcelField"
+                                    label="อัพโหลด"
+                                    outlined
+                                    dense
+                                    small-chips
+                                    accept=".xls,.xlsx"
+                                    hide-details
+                                  ></v-file-input>
+                                  <v-btn class="ml-3 my-3" small fab v-if="ExcelField" color="primary" @click="presetTimeUpload()">
+                                    <v-icon>mdi-arrow-down-bold</v-icon>
+                                  </v-btn>
+                                  <!-- <input type="file" id="fileInput" /> -->
+                                </v-col>
+                              </v-row>
                               <v-row class="mt-3">
                                 <v-col cols="12" style="display:flex;justify-content: space-between;flex-wrap: wrap;"  class="pt-0" >
                                 <v-btn
                                     small
                                     class="mb-2"
-                                    color="teal"
+                                    color="green"
                                     dark
                                     @click="presetTime()"
                                   >
@@ -702,7 +725,7 @@
                                   </v-btn>
                                 <v-btn
                                   small
-                                  color="#173053"
+                                  color="primary"
                                   dark
                                   @click="addNewNew">
                                   <v-icon class="mr-2" small dark>mdi-plus-box</v-icon>เพิ่มเวลานัดหมาย
@@ -842,6 +865,29 @@
                           </div>
                           <div class="text-center px-5 mb-5" v-else>
                             <v-sheet class="pa-0">
+                              <v-row class="mt-3 mb-3" style="border-color: #cecece;border-style: solid;border-width: 1px;">
+                                <v-col cols="12" style="display:flex;justify-content: flex-start;flex-wrap: wrap;align-items: center;">
+                                  <v-btn small color="primary" @click="presetTimebydayExport()">
+                                    <v-icon left>mdi-file-excel</v-icon>
+                                    Template
+                                  </v-btn>
+                                </v-col>
+                                <v-col cols="12" style="display:flex;justify-content: center;flex-wrap: wrap;align-items: center;">
+                                  <v-file-input
+                                    v-model="ExcelField"
+                                    label="อัพโหลด"
+                                    outlined
+                                    dense
+                                    small-chips
+                                    accept=".xls,.xlsx"
+                                    hide-details
+                                  ></v-file-input>
+                                  <v-btn class="ml-3 my-3" small fab v-if="ExcelField" color="primary" @click="presetTimebydayUpload()">
+                                    <v-icon>mdi-arrow-down-bold</v-icon>
+                                  </v-btn>
+                                  <!-- <input type="file" id="fileInput" /> -->
+                                </v-col>
+                              </v-row>
                               <v-row class="mt-3">
                                 <v-col cols="12" style="display:flex;justify-content: space-between;flex-wrap: wrap;"  class="pt-0" >
                                 <v-btn
@@ -1109,7 +1155,7 @@ import adminLeftMenu from '../Sidebar.vue' // เมนู
 import JsonExcel from 'vue-json-excel' // https://www.npmjs.com/package/vue-json-excel
 import XLSX from 'xlsx' // import xlsx
 import readXlsxFile from 'read-excel-file'
-// import moment from 'moment' // แปลง date
+import moment from 'moment' // แปลง date
 
 export default {
   components: {
@@ -1343,7 +1389,8 @@ export default {
         { text: 'ส.', value: 6 }
       ],
       statusGoogleCalendar: '',
-      statusGoogleCalendarEmp: ''
+      statusGoogleCalendarEmp: '',
+      ExcelField: null
       // End Export Config
     }
   },
@@ -1362,6 +1409,191 @@ export default {
     await this.getShop()
   },
   methods: {
+    presetTimebydayExport () {
+      let timeExport = [
+        { value: '08:00', text: '08:00' },
+        { value: '08:30', text: '08:30' },
+        { value: '09:00', text: '09:00' },
+        { value: '09:30', text: '09:30' },
+        { value: '10:00', text: '10:00' },
+        { value: '10:30', text: '10:30' },
+        { value: '11:00', text: '11:00' },
+        { value: '11:30', text: '11:30' },
+        { value: '12:00', text: '12:00' },
+        { value: '12:30', text: '12:30' },
+        { value: '13:00', text: '13:00' },
+        { value: '13:30', text: '13:30' },
+        { value: '14:00', text: '14:00' },
+        { value: '14:30', text: '14:30' },
+        { value: '15:00', text: '15:00' },
+        { value: '15:30', text: '15:30' },
+        { value: '16:00', text: '16:00' },
+        { value: '16:30', text: '16:30' },
+        { value: '17:00', text: '17:00' }
+      ]
+      let sheetName = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
+      // var info = XLSX.utils.json_to_sheet(timeExport)
+      var wb = XLSX.utils.book_new() // make Workbook of Excel
+      sheetName.forEach((item) => {
+        let info = XLSX.utils.json_to_sheet(timeExport)
+        XLSX.utils.book_append_sheet(wb, info, item)
+      })
+      console.log('wb', wb)
+      // XLSX.utils.book_append_sheet(wb, info, 'worksheet1') // sheetAName is name of Worksheet
+      XLSX.writeFile(wb, 'file.xls') // name of the file is 'book.xlsx'
+    },
+    presetTimeExport () {
+      let timeExport = [
+        { value: '08:00', text: '08:00' },
+        { value: '08:30', text: '08:30' },
+        { value: '09:00', text: '09:00' },
+        { value: '09:30', text: '09:30' },
+        { value: '10:00', text: '10:00' },
+        { value: '10:30', text: '10:30' },
+        { value: '11:00', text: '11:00' },
+        { value: '11:30', text: '11:30' },
+        { value: '12:00', text: '12:00' },
+        { value: '12:30', text: '12:30' },
+        { value: '13:00', text: '13:00' },
+        { value: '13:30', text: '13:30' },
+        { value: '14:00', text: '14:00' },
+        { value: '14:30', text: '14:30' },
+        { value: '15:00', text: '15:00' },
+        { value: '15:30', text: '15:30' },
+        { value: '16:00', text: '16:00' },
+        { value: '16:30', text: '16:30' },
+        { value: '17:00', text: '17:00' }
+      ]
+      var info = XLSX.utils.json_to_sheet(timeExport)
+      var wb = XLSX.utils.book_new() // make Workbook of Excel
+      XLSX.utils.book_append_sheet(wb, info, 'worksheet1') // sheetAName is name of Worksheet
+      XLSX.writeFile(wb, 'file.xls') // name of the file is 'book.xlsx'
+    },
+    presetTimebydayUpload () {
+      const file = this.ExcelField
+      console.log('file', file)
+      const reader = new FileReader()
+      console.log('reader', reader)
+      reader.onload = (e) => { // เปลี่ยนเป็น Arrow Function
+        const dataBuffer = new Uint8Array(e.target.result)
+        // const workbook = XLSX.read(dataBuffer, { type: 'array' })
+        const workbook = XLSX.read(dataBuffer, { type: 'array', cellDates: true })
+        console.log('workBook', workbook)
+        console.log('this.dataItemAddTimebyday', this.dataItemAddTimebyday)
+        try {
+          workbook.SheetNames.forEach((item, keyDay) => {
+            let data = [] // เปลี่ยนตัวแปร Data เป็น data ในระดับฟังก์ชัน presetTimeUpload
+            let SheetNames = item
+            // console.log('SheetName', SheetNames)
+            const worksheet = workbook.Sheets[SheetNames]
+            // console.log('worksheet', worksheet)
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 })
+            console.log('jsonData' + item, jsonData[0][0] === 'value', jsonData[0][1] === 'text')
+            if (jsonData[0][0] === 'value' && jsonData[0][1] === 'text') {
+              try {
+                jsonData.forEach((item, key) => {
+                  if (key > 0 && item.length > 0) {
+                    let s = {}
+                    s.id = key
+                    // this.convertDateToTime(item[0])
+                    s.value = typeof item[0] === 'object' ? moment(item[0]).format('HH:mm') : item[0].toString()
+                    s.text = typeof item[1] === 'object' ? moment(item[1]).format('HH:mm') : item[1].toString()
+                    s.limitBooking = '1'
+                    data.push(s) // ใช้ตัวแปร data ในการเก็บข้อมูลแทนการใช้ Data
+                  }
+                })
+                console.log(item + ' สำเร็จ')
+              } catch (error) {
+                console.log('error', error, item, keyDay)
+              }
+              this.ExcelField = null
+            } else {
+              console.log('ผิดพลาดที่', item, keyDay)
+              this.ExcelField = null
+            }
+            // console.log('data', data) // ตรวจสอบข้อมูลที่ถูกเก็บในตัวแปร data
+            if (data.length > 0) {
+            // this.dataItemAddTime = data // เข้าถึง this.dataItemAddTime ผ่าน Arrow Function
+              this.dataItemAddTimebyday.filter((item) => item.value === keyDay).map((item) => {
+                item.setTime = data
+              })
+            }
+          })
+          this.$swal({
+            title: 'successfully',
+            text: 'สำเร็จ',
+            type: 'success',
+            timer: 2000,
+            showConfirmButton: false
+          })
+          this.ExcelField = null
+        } catch (error) {
+          console.log('error', error)
+          this.ExcelField = null
+          this.$swal('ผิดพลาด', 'โปรดลองใหม่อีกครั้ง', 'error')
+        }
+      }
+      reader.readAsArrayBuffer(file)
+    },
+    presetTimeUpload () {
+      const file = this.ExcelField
+      console.log('file', file)
+      let data = [] // เปลี่ยนตัวแปร Data เป็น data ในระดับฟังก์ชัน presetTimeUpload
+      const reader = new FileReader()
+      console.log('reader', reader)
+      reader.onload = (e) => { // เปลี่ยนเป็น Arrow Function
+        const dataBuffer = new Uint8Array(e.target.result)
+        // const workbook = XLSX.read(dataBuffer, { type: 'array' })
+        const workbook = XLSX.read(dataBuffer, { type: 'array', cellDates: true })
+        // console.log('workBook', workbook)
+        const SheetNames = workbook.SheetNames[0]
+        // console.log('SheetNames', SheetNames)
+        const worksheet = workbook.Sheets[SheetNames]
+        // console.log('worksheet', worksheet)
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 })
+        console.log('jsonData', jsonData[0][0] === 'value', jsonData[0][1] === 'text')
+        if (jsonData[0][0] === 'value' && jsonData[0][1] === 'text') {
+          try {
+            jsonData.forEach((item, key) => {
+              if (key > 0 && item.length > 0) {
+                let s = {}
+                s.id = key
+                // this.convertDateToTime(item[0])
+                s.value = typeof item[0] === 'object' ? moment(item[0]).format('HH:mm') : item[0].toString()
+                s.text = typeof item[1] === 'object' ? moment(item[1]).format('HH:mm') : item[1].toString()
+                s.limitBooking = '1'
+                data.push(s) // ใช้ตัวแปร data ในการเก็บข้อมูลแทนการใช้ Data
+              }
+            })
+          } catch (error) {
+            console.log('error', error)
+            this.$swal('ผิดพลาด', 'โปรดลองใหม่อีกครั้ง', 'error')
+          }
+          this.ExcelField = null
+        } else {
+          this.$swal('ผิดพลาด', 'ข้อมูลไม่ถูกต้อง', 'error')
+          this.ExcelField = null
+        }
+        console.log('data', data) // ตรวจสอบข้อมูลที่ถูกเก็บในตัวแปร data
+        if (data.length > 0) {
+          this.dataItemAddTime = data // เข้าถึง this.dataItemAddTime ผ่าน Arrow Function
+          this.$swal({
+            title: 'successfully',
+            text: 'สำเร็จ',
+            type: 'success',
+            timer: 2000,
+            showConfirmButton: false
+          })
+        }
+      }
+      reader.readAsArrayBuffer(file)
+    },
+    convertFractionToTime (fraction) {
+      let hours = Math.floor(fraction * 24)
+      let minutes = Math.floor(hours * 60)
+      let time = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
+      return time
+    },
     editItemNew (item) {
       console.log('item', item)
       console.log('this.dataItemAddTime', this.dataItemAddTime)
@@ -2291,7 +2523,7 @@ export default {
             //   'แสดงชื่อที่หน้าไหน': element.privacyPage
             // })
           })
-          console.log(tem)
+          console.log('sdfsdfsdf', tem)
           var info = XLSX.utils.json_to_sheet(tem)
           var wb = XLSX.utils.book_new() // make Workbook of Excel
           XLSX.utils.book_append_sheet(wb, info, 'worksheet') // sheetAName is name of Worksheet
