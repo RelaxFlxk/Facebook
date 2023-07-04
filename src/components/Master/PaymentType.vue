@@ -516,6 +516,16 @@
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
                     <v-btn
+                      v-if="item.payType === 'stripe'"
+                      color="teal"
+                      fab
+                      small
+                      dark
+                      @click.stop="FunCopyQrcode(item)"
+                    >
+                      <v-icon> mdi-content-copy </v-icon>
+                    </v-btn>
+                    <v-btn
                       v-if="item.payType === 'payment'"
                       color="question"
                       fab
@@ -710,6 +720,21 @@ export default {
     await this.fiterBranch()
   },
   methods: {
+    FunCopyQrcode (item) {
+      console.log('FunCopyQrcode', item)
+      // var copyText = document.getElementById('myInput')
+      // copyText.select()
+      // copyText.setSelectionRange(0, 99999)
+      let linked = 'https://api-belinked.betaskthai.com/stripe/webhook?shopId=' + item.shopId + '&masBranchID=' + item.masBranchID
+      navigator.clipboard.writeText(linked)
+      this.$swal({
+        title: 'Copy successfully',
+        text: 'คัดลอกลิงก์สำเร็จ',
+        type: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      })
+    },
     addDataStripe () {
       this.formAddStripe.payType = 'stripe'
       this.formAddStripe.CREATE_USER = this.$session.getAll().data.userName
@@ -736,6 +761,7 @@ export default {
         cancelButtonText: 'ไม่'
       })
         .then(async (result) => {
+          delete this.formAddStripe['payTypeId']
           await axios
             .post(
               // eslint-disable-next-line quotes
