@@ -869,7 +869,7 @@
                                 <v-col cols="12" style="display:flex;justify-content: flex-start;flex-wrap: wrap;align-items: center;">
                                   <v-btn small color="primary" @click="presetTimebydayExport()">
                                     <v-icon left>mdi-file-excel</v-icon>
-                                    Template
+                                    Template (อา. - ส.)
                                   </v-btn>
                                 </v-col>
                                 <v-col cols="12" style="display:flex;justify-content: center;flex-wrap: wrap;align-items: center;">
@@ -1411,25 +1411,25 @@ export default {
   methods: {
     presetTimebydayExport () {
       let timeExport = [
-        { value: '08:00', text: '08:00' },
-        { value: '08:30', text: '08:30' },
-        { value: '09:00', text: '09:00' },
-        { value: '09:30', text: '09:30' },
-        { value: '10:00', text: '10:00' },
-        { value: '10:30', text: '10:30' },
-        { value: '11:00', text: '11:00' },
-        { value: '11:30', text: '11:30' },
-        { value: '12:00', text: '12:00' },
-        { value: '12:30', text: '12:30' },
-        { value: '13:00', text: '13:00' },
-        { value: '13:30', text: '13:30' },
-        { value: '14:00', text: '14:00' },
-        { value: '14:30', text: '14:30' },
-        { value: '15:00', text: '15:00' },
-        { value: '15:30', text: '15:30' },
-        { value: '16:00', text: '16:00' },
-        { value: '16:30', text: '16:30' },
-        { value: '17:00', text: '17:00' }
+        { แสดงเวลา: '08:00', เวลา: '08:00' },
+        { แสดงเวลา: '08:30', เวลา: '08:30' },
+        { แสดงเวลา: '09:00', เวลา: '09:00' },
+        { แสดงเวลา: '09:30', เวลา: '09:30' },
+        { แสดงเวลา: '10:00', เวลา: '10:00' },
+        { แสดงเวลา: '10:30', เวลา: '10:30' },
+        { แสดงเวลา: '11:00', เวลา: '11:00' },
+        { แสดงเวลา: '11:30', เวลา: '11:30' },
+        { แสดงเวลา: '12:00', เวลา: '12:00' },
+        { แสดงเวลา: '12:30', เวลา: '12:30' },
+        { แสดงเวลา: '13:00', เวลา: '13:00' },
+        { แสดงเวลา: '13:30', เวลา: '13:30' },
+        { แสดงเวลา: '14:00', เวลา: '14:00' },
+        { แสดงเวลา: '14:30', เวลา: '14:30' },
+        { แสดงเวลา: '15:00', เวลา: '15:00' },
+        { แสดงเวลา: '15:30', เวลา: '15:30' },
+        { แสดงเวลา: '16:00', เวลา: '16:00' },
+        { แสดงเวลา: '16:30', เวลา: '16:30' },
+        { แสดงเวลา: '17:00', เวลา: '17:00' }
       ]
       let sheetName = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
       // var info = XLSX.utils.json_to_sheet(timeExport)
@@ -1444,25 +1444,25 @@ export default {
     },
     presetTimeExport () {
       let timeExport = [
-        { value: '08:00', text: '08:00' },
-        { value: '08:30', text: '08:30' },
-        { value: '09:00', text: '09:00' },
-        { value: '09:30', text: '09:30' },
-        { value: '10:00', text: '10:00' },
-        { value: '10:30', text: '10:30' },
-        { value: '11:00', text: '11:00' },
-        { value: '11:30', text: '11:30' },
-        { value: '12:00', text: '12:00' },
-        { value: '12:30', text: '12:30' },
-        { value: '13:00', text: '13:00' },
-        { value: '13:30', text: '13:30' },
-        { value: '14:00', text: '14:00' },
-        { value: '14:30', text: '14:30' },
-        { value: '15:00', text: '15:00' },
-        { value: '15:30', text: '15:30' },
-        { value: '16:00', text: '16:00' },
-        { value: '16:30', text: '16:30' },
-        { value: '17:00', text: '17:00' }
+        { แสดงเวลา: '08:00', เวลา: '08:00' },
+        { แสดงเวลา: '08:30', เวลา: '08:30' },
+        { แสดงเวลา: '09:00', เวลา: '09:00' },
+        { แสดงเวลา: '09:30', เวลา: '09:30' },
+        { แสดงเวลา: '10:00', เวลา: '10:00' },
+        { แสดงเวลา: '10:30', เวลา: '10:30' },
+        { แสดงเวลา: '11:00', เวลา: '11:00' },
+        { แสดงเวลา: '11:30', เวลา: '11:30' },
+        { แสดงเวลา: '12:00', เวลา: '12:00' },
+        { แสดงเวลา: '12:30', เวลา: '12:30' },
+        { แสดงเวลา: '13:00', เวลา: '13:00' },
+        { แสดงเวลา: '13:30', เวลา: '13:30' },
+        { แสดงเวลา: '14:00', เวลา: '14:00' },
+        { แสดงเวลา: '14:30', เวลา: '14:30' },
+        { แสดงเวลา: '15:00', เวลา: '15:00' },
+        { แสดงเวลา: '15:30', เวลา: '15:30' },
+        { แสดงเวลา: '16:00', เวลา: '16:00' },
+        { แสดงเวลา: '16:30', เวลา: '16:30' },
+        { แสดงเวลา: '17:00', เวลา: '17:00' }
       ]
       var info = XLSX.utils.json_to_sheet(timeExport)
       var wb = XLSX.utils.book_new() // make Workbook of Excel
@@ -1488,16 +1488,18 @@ export default {
             const worksheet = workbook.Sheets[SheetNames]
             // console.log('worksheet', worksheet)
             const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 })
-            console.log('jsonData' + item, jsonData[0][0] === 'value', jsonData[0][1] === 'text')
-            if (jsonData[0][0] === 'value' && jsonData[0][1] === 'text') {
+            console.log('jsonData' + item, jsonData[0][0] === 'แสดงเวลา', jsonData[0][1] === 'เวลา')
+            if (jsonData[0][0] === 'แสดงเวลา' && jsonData[0][1] === 'เวลา') {
               try {
                 jsonData.forEach((item, key) => {
                   if (key > 0 && item.length > 0) {
+                    const pattern = /^([01]\d|2[0-3]):[0-5]\d$/
                     let s = {}
                     s.id = key
                     // this.convertDateToTime(item[0])
-                    s.value = typeof item[0] === 'object' ? moment(item[0]).format('HH:mm') : item[0].toString()
-                    s.text = typeof item[1] === 'object' ? moment(item[1]).format('HH:mm') : item[1].toString()
+                    s.text = typeof item[0] === 'object' ? moment(item[0]).format('HH:mm') : item[0].toString()
+                    // s.value = typeof item[1] === 'object' ? moment(item[1]).format('HH:mm') : item[1].toString()
+                    s.value = typeof item[1] === 'object' ? moment(item[1]).format('HH:mm') : pattern.test(item[1]) ? item[1].toString() : null
                     s.limitBooking = '1'
                     data.push(s) // ใช้ตัวแปร data ในการเก็บข้อมูลแทนการใช้ Data
                   }
@@ -1551,16 +1553,18 @@ export default {
         const worksheet = workbook.Sheets[SheetNames]
         // console.log('worksheet', worksheet)
         const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 })
-        console.log('jsonData', jsonData[0][0] === 'value', jsonData[0][1] === 'text')
-        if (jsonData[0][0] === 'value' && jsonData[0][1] === 'text') {
+        console.log('jsonData', jsonData[0][0] === 'แสดงเวลา', jsonData[0][1] === 'เวลา')
+        if (jsonData[0][0] === 'แสดงเวลา' && jsonData[0][1] === 'เวลา') {
           try {
             jsonData.forEach((item, key) => {
               if (key > 0 && item.length > 0) {
+                const pattern = /^([01]\d|2[0-3]):[0-5]\d$/
                 let s = {}
                 s.id = key
                 // this.convertDateToTime(item[0])
-                s.value = typeof item[0] === 'object' ? moment(item[0]).format('HH:mm') : item[0].toString()
-                s.text = typeof item[1] === 'object' ? moment(item[1]).format('HH:mm') : item[1].toString()
+                s.text = typeof item[0] === 'object' ? moment(item[0]).format('HH:mm') : item[0].toString()
+                // s.value = typeof item[1] === 'object' ? moment(item[1]).format('HH:mm') : item[1].toString()
+                s.value = typeof item[1] === 'object' ? moment(item[1]).format('HH:mm') : pattern.test(item[1]) ? item[1].toString() : null
                 s.limitBooking = '1'
                 data.push(s) // ใช้ตัวแปร data ในการเก็บข้อมูลแทนการใช้ Data
               }
