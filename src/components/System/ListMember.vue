@@ -107,6 +107,15 @@
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
                     <v-btn
+                      :color="item.banStatus === 'False' ? 'teal' : 'error'"
+                      fab
+                      x-small
+                      dark
+                      @click.stop="banChange(item)"
+                    >
+                      <v-icon class="iconify" :data-icon="item.banStatus === 'False' ? 'mdi:account-check' : 'mdi:account-cancel'"> </v-icon>
+                    </v-btn>
+                    <v-btn
                       color="info"
                       fab
                       x-small
@@ -444,6 +453,31 @@ export default {
     this.getDataList()
   },
   methods: {
+    async banChange (item) {
+      let banStatusCheck = ''
+      if (item.banStatus === 'False') {
+        banStatusCheck = 'True'
+      } else {
+        banStatusCheck = 'False'
+      }
+      this.$swal({
+        title: item.banStatus === 'False' ? 'ต้องการ แบนคุณ ' + item.name + ' ใช่หรือไม่?' : 'ต้องการ ปลดแบนคุณ ' + item.name + ' ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async results => {
+          let params = {
+            banStatus: banStatusCheck
+          }
+          const result = await this.callBeTaskAPIActivity('post', '/member/edit/' + item.memberId, params)
+          console.log('result', result.status)
+          this.getDataList()
+        })
+    },
     async SelectDataHistory () {
       this.HistoryData = []
       this.HistoryData.push(this.defaultData[this.phonenum])
@@ -617,6 +651,7 @@ export default {
               let s = {}
               s.picture = d.picture
               s.name = d.name
+              s.banStatus = d.banStatus
               s.CREATE_DATE = d.CREATE_DATE
               s.LAST_DATE = d.LAST_DATE
               s.tagData = JSON.parse(d.tagData) || []
