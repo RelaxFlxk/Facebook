@@ -1002,10 +1002,17 @@ export default {
     },
     bookingChk () {
       if (this.$session.getAll().data.timeSlotStatus === 'True') {
-        this.boardSide = [
-          { title: 'ตรวจสอบคิวจองรายวัน', icon: 'mdi-calendar-search', to: '/Master/BookingByUserEmp', type: 'booking' },
-          { title: 'รายชื่อลูกค้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingListBeautyEmp', type: 'booking' }
-        ]
+        let check = this.$session.getAll().data.empId || ''
+        if (check !== '') {
+          this.boardSide = [
+            { title: 'ตรวจสอบคิวจองรายวัน', icon: 'mdi-calendar-search', to: '/Master/BookingByUserEmp', type: 'booking' }
+          ]
+        } else {
+          this.boardSide = [
+            { title: 'ตรวจสอบคิวจองรายวัน', icon: 'mdi-calendar-search', to: '/Master/BookingByUserEmp', type: 'booking' },
+            { title: 'รายชื่อลูกค้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingListBeautyEmp', type: 'booking' }
+          ]
+        }
       } else {
         this.booking = [
           { title: 'รายชื่อลูกค้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingListBeauty', type: 'booking' }
