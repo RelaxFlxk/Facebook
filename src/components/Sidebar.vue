@@ -855,7 +855,19 @@ export default {
             { title: 'ปฏิทินนัดหมาย', icon: 'mdi-calendar-search', to: '/Master/CalendarBooking', type: 'booking' },
             { title: 'จัดการเวลานัดหมาย', icon: 'mdi-table-edit', to: '/Master/BookingWalkinEmp', type: 'booking' }
           ]
-          this.workflow = []
+          if (this.$session.getAll().data.billingPlan === '1' || this.$session.getAll().data.billingPlan === '2') {
+            if (this.$session.getAll().data.shopId === 'U1b8d05a22f9ca1b2744f352cc64f14e4' || this.$session.getAll().data.shopId === 'SD_1659673973416') {
+              this.workflow = [
+                { title: 'กระดานการทำงาน', icon: 'mdi-clipboard-check-multiple-outline', to: '/Master/BoardControlBeauty', type: 'workflow' }
+              ]
+            } else {
+              this.workflow = []
+            }
+          } else {
+            this.workflow = [
+              { title: 'กระดานการทำงาน', icon: 'mdi-clipboard-check-multiple-outline', to: '/Master/BoardControlBeauty', type: 'workflow' }
+            ]
+          }
         } else {
           this.booking = [
             { title: 'จัดการลิ้งค์', icon: 'mdi-link-variant', to: '/Master/ManageLink', type: 'booking' },
@@ -906,15 +918,41 @@ export default {
         //   { title: 'บรอดแคสต์', icon: 'mdi-bullhorn', to: '/BroadCast/BroadCast', type: 'broadCast' }
         // ]
         if (this.$session.getAll().data.timeSlotStatus === 'True') {
-          this.settings = [
-          // { title: 'จัดการข้อมูลนัดหมาย', icon: 'mdi-book-cog-outline', to: '/Master/BookingField', type: 'settings' },
-            { title: 'ตั้งค่าการแจ้งเตือน', icon: 'mdi-bell-ring', to: '/Master/NoticeManagement', type: 'settings' },
-            { title: 'เพิ่ม/ลบ สถานะการบริการ', icon: 'mdi-transit-connection-variant', to: '/Master/Flow', type: 'settings' },
-            { title: 'จัดการ ช่องกรอกข้อมูล', icon: 'mdi-account-edit', to: '/Master/CustomField', type: 'settings' },
-            { title: 'จัดการ Tag', icon: 'mdi-wrench', to: '/Master/SettingTag', type: 'settings' },
-            { title: 'จัดการ Notify', icon: 'mdi-bell-plus', to: '/Master/SettingLineNotify', type: 'settings' },
-            { title: 'ตั้งค่ารับการแจ้งเตือนอัตโนมัติ', icon: 'mdi-access-point', to: '/System/LINEConfigSendMessage', type: 'settings' }
-          ]
+          if (this.$session.getAll().data.billingPlan === '1' || this.$session.getAll().data.billingPlan === '2') {
+            if (this.$session.getAll().data.shopId === 'U1b8d05a22f9ca1b2744f352cc64f14e4' || this.$session.getAll().data.shopId === 'SD_1659673973416') {
+              this.settings = [
+              // { title: 'จัดการข้อมูลนัดหมาย', icon: 'mdi-book-cog-outline', to: '/Master/BookingField', type: 'settings' },
+                { title: 'ตั้งค่าการแจ้งเตือน', icon: 'mdi-bell-ring', to: '/Master/NoticeManagement', type: 'settings' },
+                { title: 'เพิ่ม/ลบ สถานะการบริการ', icon: 'mdi-transit-connection-variant', to: '/Master/Flow', type: 'settings' },
+                { title: 'จัดโครงสร้างกระดาน', icon: 'dashboard', to: '/Master/WorkShop', type: 'settings' },
+                { title: 'จัดการ ช่องกรอกข้อมูล', icon: 'mdi-account-edit', to: '/Master/CustomField', type: 'settings' },
+                { title: 'จัดการ Tag', icon: 'mdi-wrench', to: '/Master/SettingTag', type: 'settings' },
+                { title: 'จัดการ Notify', icon: 'mdi-bell-plus', to: '/Master/SettingLineNotify', type: 'settings' },
+                { title: 'ตั้งค่ารับการแจ้งเตือนอัตโนมัติ', icon: 'mdi-access-point', to: '/System/LINEConfigSendMessage', type: 'settings' }
+              ]
+            } else {
+              this.settings = [
+                // { title: 'จัดการข้อมูลนัดหมาย', icon: 'mdi-book-cog-outline', to: '/Master/BookingField', type: 'settings' },
+                { title: 'ตั้งค่าการแจ้งเตือน', icon: 'mdi-bell-ring', to: '/Master/NoticeManagement', type: 'settings' },
+                { title: 'เพิ่ม/ลบ สถานะการบริการ', icon: 'mdi-transit-connection-variant', to: '/Master/Flow', type: 'settings' },
+                { title: 'จัดการ ช่องกรอกข้อมูล', icon: 'mdi-account-edit', to: '/Master/CustomField', type: 'settings' },
+                { title: 'จัดการ Tag', icon: 'mdi-wrench', to: '/Master/SettingTag', type: 'settings' },
+                { title: 'จัดการ Notify', icon: 'mdi-bell-plus', to: '/Master/SettingLineNotify', type: 'settings' },
+                { title: 'ตั้งค่ารับการแจ้งเตือนอัตโนมัติ', icon: 'mdi-access-point', to: '/System/LINEConfigSendMessage', type: 'settings' }
+              ]
+            }
+          } else {
+            this.settings = [
+              // { title: 'จัดการข้อมูลนัดหมาย', icon: 'mdi-book-cog-outline', to: '/Master/BookingField', type: 'settings' },
+              { title: 'ตั้งค่าการแจ้งเตือน', icon: 'mdi-bell-ring', to: '/Master/NoticeManagement', type: 'settings' },
+              { title: 'เพิ่ม/ลบ สถานะการบริการ', icon: 'mdi-transit-connection-variant', to: '/Master/Flow', type: 'settings' },
+              { title: 'จัดโครงสร้างกระดาน', icon: 'dashboard', to: '/Master/WorkShop', type: 'settings' },
+              { title: 'จัดการ ช่องกรอกข้อมูล', icon: 'mdi-account-edit', to: '/Master/CustomField', type: 'settings' },
+              { title: 'จัดการ Tag', icon: 'mdi-wrench', to: '/Master/SettingTag', type: 'settings' },
+              { title: 'จัดการ Notify', icon: 'mdi-bell-plus', to: '/Master/SettingLineNotify', type: 'settings' },
+              { title: 'ตั้งค่ารับการแจ้งเตือนอัตโนมัติ', icon: 'mdi-access-point', to: '/System/LINEConfigSendMessage', type: 'settings' }
+            ]
+          }
         } else {
           if (this.$session.getAll().data.billingPlan === '1' || this.$session.getAll().data.billingPlan === '2') {
             if (this.$session.getAll().data.shopId === 'U1b8d05a22f9ca1b2744f352cc64f14e4') {

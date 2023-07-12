@@ -2263,6 +2263,19 @@
                       </v-btn>
                     <template v-if="$session.getAll().data.timeSlotStatus === 'True'">
                       <v-btn
+                      v-if="showStepCheck"
+                      color="#4CAF50"
+                      fab
+                      small
+                      @click="
+                        (dialogStep = true),
+                          getDataById(item),
+                          getStepFlow(item)
+                      "
+                    >
+                      <v-icon color="#FFFFFF"> mdi-debug-step-over </v-icon>
+                    </v-btn>
+                      <v-btn
                       color="question"
                       fab
                       dark
@@ -3167,7 +3180,7 @@ export default {
   },
   async mounted () {
     if (this.$session.getAll().data.billingPlan === '1' || this.$session.getAll().data.billingPlan === '2') {
-      if (this.$session.getAll().data.shopId === 'U1b8d05a22f9ca1b2744f352cc64f14e4') {
+      if (this.$session.getAll().data.shopId === 'U1b8d05a22f9ca1b2744f352cc64f14e4' || this.$session.getAll().data.shopId === 'SD_1659673973416') {
         this.showStepCheck = true
       } else {
         this.showStepCheck = false
