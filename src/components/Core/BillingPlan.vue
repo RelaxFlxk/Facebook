@@ -37,6 +37,16 @@
         </div>
         <v-row>
           <v-col cols="12">
+            <v-btn
+              rounded
+              color="#1B437C"
+              dark
+              @click="dialogHistory = true"
+            >
+              ประวัติการชำระเงิน
+            </v-btn>
+          </v-col>
+          <v-col cols="12">
             <div>
               <v-card-text v-if="dataReadyGet">
                 <v-row v-if="paymentStatus === '' || paymentStatus === 'inactive'">
@@ -46,7 +56,7 @@
                     :key="index"
                   >
                     <v-container>
-                      <v-card>
+                      <v-card :style="packetIdCheck === item.id ? 'border: 2px solid green;' : 'border: 1px solid white;'">
                         <v-card-title
                           class="mb-3"
                           style="
@@ -493,6 +503,45 @@
                 </v-card-text>
               </v-card>
             </v-dialog>
+            <v-dialog v-model="dialogHistory" max-width="600px">
+              <v-card>
+                <v-card-text>
+                  <div class="text-end">
+                  <v-btn
+                    class="mx-2"
+                    fab
+                    small
+                    dark
+                    color="white"
+                    style="color:red;font-size:20px;"
+                    @click="dialogHistory = false"
+                  >
+                   X
+                  </v-btn>
+                  </div>
+                  <h3 class="text-center" style="color:#1B437C;font-weight: bold;">ประวัติการชำระเงิน</h3>
+                  <br>
+                  <v-row>
+                    <v-col cols="12" class="text-center pa-2 mt-6">
+                      <v-data-table
+                        :headers="headers"
+                        :items="dataHistory"
+                        disable-pagination
+                        hide-default-footer
+                      >
+                        <template v-slot:[`item.paymentImage`]="{ item }">
+                          <v-avatar color="primary" size="40" @click="gotoPicture(item.paymentImage)" v-if="item.paymentImage !== null">
+                            <img :src="item.paymentImage" alt="img"/></v-avatar>
+                        </template>
+                        <template v-slot:[`item.paymentDateuse`]="{ item }">
+                          {{ formatNumber(item.paymentDateuse) }} บาท
+                        </template>
+                      </v-data-table>
+                    </v-col>
+                  </v-row>
+                </v-card-text>
+              </v-card>
+            </v-dialog>
             <v-dialog v-model="dialogReConfirm" persistent max-width="600px">
               <v-card>
                 <v-card-text>
@@ -730,6 +779,12 @@ export default {
   },
   data () {
     return {
+      dialogHistory: false,
+      headers: [
+        { text: 'วันที่ชำระ', value: 'paymentDate' },
+        { text: 'สลิป', value: 'paymentImage' },
+        { text: 'ยอดเงินที่ชำระ', value: 'paymentDateuse' }
+      ],
       panel: [],
       billingCusName: '',
       billingAddress: '',
@@ -802,17 +857,52 @@ export default {
       billingCurrentPriceDateFomat: '',
       billingTrialsPriceDateFomatShow: '',
       billingCurrentPriceDateFomatShow: '',
-      paymentAmountVat: 0
+      paymentAmountVat: 0,
+      packetIdCheck: '',
+      dataHistory: []
     }
   },
-  mounted () {
+  async mounted () {
     if (this.$route.query.shopId) {
       this.$router.push('/Core/Login?type=billing')
     } else {
-      this.chkPlan()
+      await this.chkPlan()
+      await this.checkCurrentPlan()
     }
   },
   methods: {
+    gotoPicture (Linkitem) {
+      window.open(Linkitem, '_blank')
+    },
+    async checkCurrentPlan () {
+      await axios
+        .get(
+          this.DNS_IP +
+              '/system_shop_Payment/get?shopId=' +
+              this.$session.getAll().data.shopId
+        )
+        .then(async (response) => {
+          let rs = response.data
+          if (rs.status !== false) {
+            this.packetIdCheck = rs[0].packetId || ''
+            for (let i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              let s = {}
+              s.amountCheck = d.paymentAmountSlip || ''
+              if (s.amountCheck === '') {
+                d.paymentDateuse = d.paymentDate
+              } else {
+                d.paymentDateuse = d.paymentAmountSlip
+              }
+              this.dataHistory.push(d)
+            }
+          } else {
+            this.packetIdCheck = ''
+            this.dataHistory = []
+          }
+          console.log(rs)
+        })
+    },
     gotoLogin () {
       this.$router.push('/Core/Login')
     },
@@ -842,16 +932,18 @@ export default {
         )
         .then(async (response) => {
           let rs = response.data
+          console.log('paymentStatus', rs)
           if (rs.status === false) {
             this.paymentStatus = ''
           } else {
-            if (rs[0].paymentDate < moment().format('YYYY-MM-DD HH:mm')) {
-              this.paymentStatus = ''
-            } else {
-              this.paymentStatus = rs[0].paymentStatus
-              this.sysShopData = rs[0]
-            }
+            // if (rs[0].paymentDate < moment().format('YYYY-MM-DD HH:mm')) {
+            //   this.paymentStatus = ''
+            // } else {
+            this.paymentStatus = rs[0].paymentStatus
+            this.sysShopData = rs[0]
+            // }
           }
+          console.log('paymentStatus', this.paymentStatus)
         })
       this.dataPackage = []
       await axios
@@ -1169,6 +1261,7 @@ export default {
                   paymentImage: this.paymentImge,
                   paymentStatus: 'confirm',
                   paymentAmount: this.paymentAmount,
+                  paymentAmountSlip: (parseFloat(this.paymentAmount) + parseFloat(this.paymentAmountVat)).toString(),
                   shopId: this.$session.getAll().data.shopId,
                   CREATE_USER: this.$session.getAll().data.userName,
                   LAST_USER: this.$session.getAll().data.userName

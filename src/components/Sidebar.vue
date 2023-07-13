@@ -346,6 +346,33 @@
           <v-list-item-title class="text-wrap" v-text="item.title" dense color="white"></v-list-item-title>
         </v-list-item>
       </v-list-group>
+      <v-list-group
+      dense
+        :value="packagePlanValue"
+        prepend-icon="mdi-cash-check"
+        color="white"
+        no-action
+        v-if="packagePlan.length > 0"
+      >
+      <template v-slot:activator>
+          <v-list-item-title class="menu-head text-wrap">My subscription</v-list-item-title>
+        </template>
+
+        <v-list-item
+          v-for="(item, i) in packagePlan"
+          :key="i"
+          :to="item.to"
+          router
+          exact
+          dense
+          @click="clearTimeAll()"
+        >
+          <v-list-item-icon>
+            <v-icon v-text="item.icon" dense color="white"></v-icon>
+          </v-list-item-icon>
+          <v-list-item-title class="text-wrap" v-text="item.title" dense color="white"></v-list-item-title>
+        </v-list-item>
+      </v-list-group>
       <template v-slot:append>
         <v-divider class="ma-0"></v-divider>
         <v-btn block
@@ -643,6 +670,9 @@ export default {
       items: [],
       Dashboard: [],
       dataPackage: [],
+      packagePlan: [
+        { title: 'Billing information', icon: 'mdi-cash-register', to: '/BillingPlan', type: 'packagePlan' }
+      ],
       dialogCancel: false,
       dialogCondition: false,
       dataCondition: [],
@@ -662,6 +692,7 @@ export default {
       bookingValue: false,
       broadCastValue: false,
       DashboardValue: false,
+      packagePlanValue: false,
       paymentStatus: '',
       dateCheckBill: '',
       lineOaStatus: 'False'
@@ -1003,7 +1034,7 @@ export default {
         ]
       }
       // this.master = [this.customer[0], this.booking[0], this.Dashboard[0], this.workflow[0], this.corporate[0], this.broadCast[0], this.settings[0]]
-      this.master.push(...this.customer, ...this.booking, ...this.Dashboard, ...this.workflow, ...this.corporate, ...this.broadCast, ...this.settings)
+      this.master.push(...this.customer, ...this.booking, ...this.Dashboard, ...this.workflow, ...this.corporate, ...this.broadCast, ...this.settings, ...this.packagePlan)
       var textValue = this.master.filter(el => { return this.$route.fullPath === el.to })[0].type
       switch (textValue) {
         case 'customer':
@@ -1026,6 +1057,9 @@ export default {
           break
         case 'settings':
           this.settingsValue = true
+          break
+        case 'packagePlan':
+          this.packagePlanValue = true
           break
         default:
     // code block
