@@ -12222,8 +12222,9 @@ export default {
       XLSX.utils.book_append_sheet(wb, dataWS)
       XLSX.writeFile(wb, 'export_cancel_' + this.format_dateNotime(this.timeTable) + '.xlsx')
     },
-    exportExcelWait () {
+    async exportExcelWait () {
       let dataExport = []
+      let bookingDataView = []
       this.dataexport = []
       let runNo = 0
       // console.log('bookingData', this.BookingDataListTimechange)
@@ -12234,6 +12235,22 @@ export default {
         if (a.timeDuetext < b.timeDuetext) return -1
         return a.timeDuetext > b.timeDuetext ? 1 : 0
       })
+      let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&statusBt=is null`
+      await axios
+        .get(url)
+        .then(async response => {
+          if (response.data.status !== false) {
+            response.data.forEach((row) => {
+              if (typeof (bookingDataView[row.bookNo]) === 'undefined') {
+                bookingDataView[row.bookNo] = []
+              }
+              bookingDataView[row.bookNo].push(row)
+            })
+          }
+        }).catch(error => {
+          bookingDataView = []
+          console.log(error)
+        })
       for (let i = 0; i < datause.length; i++) {
         runNo++
         let t = datause[i]
@@ -12255,7 +12272,7 @@ export default {
           // s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
           s.carModel = t.bookingDataCustomerCarModel || ''
           s.tel = t.tel
-          s.dataFiled = this.BookingDataListTimechange[t.bookNo] || []
+          s.dataFiled = bookingDataView[t.bookNo] || []
           s.packageName = t.packageName || ''
           s.packageDetails = t.packageDetails || ''
           s.packageImage = t.packageImage || ''
@@ -12316,7 +12333,7 @@ export default {
           s.empFull_NameTH = t.empFull_NameTH
           s.extraJob = t.extraJob ? 'Extra Job' : ''
           s.carModel = t.bookingDataCustomerCarModel || ''
-          s.dataFiled = this.BookingDataListTimechange[t.bookNo] || []
+          s.dataFiled = bookingDataView[t.bookNo] || []
           s.packageName = t.packageName || ''
           s.packageDetails = t.packageDetails || ''
           s.packageImage = t.packageImage || ''
