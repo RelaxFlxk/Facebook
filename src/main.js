@@ -46,6 +46,15 @@ Vue.use(VueGoogleMaps, {
   }
 })
 
+Vue.prototype.$profile_dev = {
+  'displayName': 'Pamorn Trivorrarat',
+  'pictureUrl': 'https://profile.line-scdn.net/0heYkOVB2MOnZGNizwjMlECTZmORxlR2NkYlMmRXNhZhF8USomP1knFSZjN0N9ACh1OlR9QnozbBNKJU0QWGDGQkEGZEF_AXkpall0lQ',
+  // 'pictureUrl': 'https://profile.line-scdn.net/0hehdTWCiWOkdZLRKhl6VFEGVoNCouAzwPIUl2JX4pNnQnSHsUMRx8dCgoNCUmTS1BMRhzKHQpMyN9',
+  'statusMessage': 'ใช้ไลน์อันนี้นะคร้าบ',
+  'userId': 'Ud2e630e20bb8597b90d4908a46fbc4e9'
+  // 'userId': 'Ubb981ed38ad6dd18734560d2203df255'
+}
+
 Sentry.init({
   Vue,
   dsn: 'https://517cf6d99a5d4c848776f14482248e6f@o1109732.ingest.sentry.io/6138284',

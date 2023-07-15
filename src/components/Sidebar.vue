@@ -347,12 +347,12 @@
         </v-list-item>
       </v-list-group>
       <v-list-group
-      dense
+        v-if="session.data.USER_ROLE === 'admin' && packagePlan.length > 0"
+        dense
         :value="packagePlanValue"
         prepend-icon="mdi-cash-check"
         color="white"
         no-action
-        v-if="packagePlan.length > 0"
       >
       <template v-slot:activator>
           <v-list-item-title class="menu-head text-wrap">My subscription</v-list-item-title>
@@ -361,11 +361,10 @@
         <v-list-item
           v-for="(item, i) in packagePlan"
           :key="i"
-          :to="item.to"
           router
           exact
           dense
-          @click="clearTimeAll()"
+          @click="clearTimeAll(), gotoBilling()"
         >
           <v-list-item-icon>
             <v-icon v-text="item.icon" dense color="white"></v-icon>
@@ -771,7 +770,8 @@ export default {
   },
   methods: {
     gotoBilling () {
-      this.$router.push('/BillingPlan')
+      // this.$router.push('/BillingPlan')
+      window.location.href = 'https://liff.line.me/1660658626-Qn8zej1p'
     },
     gotoConnectLine () {
       this.$swal({

@@ -859,18 +859,83 @@ export default {
       billingCurrentPriceDateFomatShow: '',
       paymentAmountVat: 0,
       packetIdCheck: '',
-      dataHistory: []
+      dataHistory: [],
+      profile: null
     }
   },
   async mounted () {
     if (this.$route.query.shopId) {
       this.$router.push('/Core/Login?type=billing')
     } else {
-      await this.chkPlan()
-      await this.checkCurrentPlan()
+      if (!this.$session.exists()) {
+        this.$router.push('/Core/Login')
+      } else {
+        if (this.$session.getAll().data.lineUserIdOaBetask) {
+          await this.chkPlan()
+          await this.checkCurrentPlan()
+        } else {
+          await this.checkLiffLogin()
+          await this.updateUserId()
+          await this.chkPlan()
+          await this.checkCurrentPlan()
+        }
+      }
     }
   },
   methods: {
+    async checkLiffLogin () {
+      await this.$liff
+        .init({
+          liffId: '1660658626-Qn8zej1p'
+        })
+        .then(async () => {
+          if (process.env.NODE_ENV === 'development') {
+            this.getProfile_dev()
+          } else {
+            if (!this.$liff.isLoggedIn()) {
+              this.$liff.login({ redirectUri: window.location.href })
+            } else {
+              await this.getProfile()
+              // await this.liffSendMessages()
+            }
+          }
+        })
+        .catch(err => {
+          // this.$router.push({ name: '404' })
+          console.log(err.code, err.message)
+        })
+      // this.$liff.init({ 'liffId': liffId }, function (data) {})
+    },
+    async getProfile () {
+      let _this = this
+      await this.$liff
+        .getProfile()
+        .then(async function (profile) {
+          _this.profile = profile
+          console.log('prod', _this.profile)
+        })
+        .catch(function (error) {
+          console.log('Error getting profile: ' + error)
+        })
+    },
+    async getProfile_dev () {
+      this.profile = this.$profile_dev
+      console.log('dev', this.profile)
+    },
+    async updateUserId () {
+      var ds = {
+        LAST_USER: this.$session.getAll().data.userName,
+        lineUserIdOaBetask: this.profile.userId
+      }
+      await axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + "/sys_shop/edit/" + this.$session.getAll().data.shopId,
+          ds
+        )
+        .then(async (response) => {
+        })
+    },
     gotoPicture (Linkitem) {
       window.open(Linkitem, '_blank')
     },
