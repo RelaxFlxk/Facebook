@@ -371,10 +371,12 @@
                       >กลับ</v-btn
                     >
                     <v-btn
-                      class="button pa-2"
-                      dark
+                      class="button pa-2 white--text"
                       large
+                      :loading="loadingBillingPlan"
+                      :disabled="loadingBillingPlan"
                       @click="billingPlan(dataPlan)"
+                      color="#173053"
                       >อัพโหลดสลิป</v-btn
                     >
                   </div>
@@ -709,9 +711,11 @@
                     large
                     @click="dialogReConfirm = false">ปิด</v-btn>
                     <v-btn
-                    class="button pa-2"
-                    dark
+                    class="button pa-2 white--text"
                     large
+                    :loading="loadingBillingPlan"
+                    :disabled="loadingBillingPlan"
+                    color="#173053"
                     @click="updateReturn()"
                     >อัพโหลดสลิป</v-btn>
                 </div>
@@ -779,6 +783,7 @@ export default {
   },
   data () {
     return {
+      loadingBillingPlan: false,
       dialogHistory: false,
       headers: [
         { text: 'วันที่ชำระ', value: 'paymentDate' },
@@ -1306,6 +1311,7 @@ export default {
             cancelButtonText: 'ไม่'
           })
             .then(async (result) => {
+              this.loadingBillingPlan = true
               if (this.filesImg) {
                 const _this = this
                 let params = new FormData()
@@ -1364,16 +1370,20 @@ export default {
                     this.$swal('ผิดพลาด', 'กรุณาทำรายการอีกครั้ง', 'error')
                   }
                   setTimeout(() => this.chkPlan(), 500)
+                  this.loadingBillingPlan = false
                   this.dialogQrcode = false
                 })
               } else {
+                this.loadingBillingPlan = false
                 this.$swal('ผิดพลาด', 'กรุณาอัพเดทรูปภาพ', 'error')
               }
             })
             .catch((error) => {
+              this.loadingBillingPlan = false
               console.log('Cencel : ', error)
             })
         } else {
+          this.loadingBillingPlan = false
           this.$swal('ผิดพลาด', 'กรุณากรอกข้อมูลให้ครบ', 'error')
         }
       }
@@ -1422,6 +1432,7 @@ export default {
     },
     async updateReturn () {
       if (this.billingCusName !== '' && this.billingAddress !== '' && this.billingTax !== '' && this.billingPhone !== '') {
+        this.loadingBillingPlan = true
         if (this.filesImg) {
           const _this = this
           let params = new FormData()
@@ -1471,13 +1482,16 @@ export default {
                 .then(response => {
                 })
               this.$swal('เรียบร้อย', 'อัพสถานะเรียบร้อย', 'success')
+              this.loadingBillingPlan = false
               this.dialogReConfirm = false
               setTimeout(() => this.chkPlan(), 500)
             })
         } else {
+          this.loadingBillingPlan = false
           this.$swal('ผิดพลาด', 'กรุณาอัพเดทรูปภาพ', 'error')
         }
       } else {
+        this.loadingBillingPlan = false
         this.$swal('ผิดพลาด', 'กรุณากรอกข้อมูลให้ครบ', 'error')
       }
     },
