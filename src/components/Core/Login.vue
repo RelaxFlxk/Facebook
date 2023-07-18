@@ -371,7 +371,7 @@ export default {
       this.$session.start()
       this.$session.set('data', item)
       localStorage.clear()
-      this.$router.push('/BillingPlan')
+      window.location.href = 'https://liff.line.me/1660658626-Qn8zej1p'
     },
     validate (Action) {
       switch (Action) {
@@ -536,7 +536,7 @@ export default {
           '/PrintPdf/PrintInvoice?dateEvent=' + this.$route.query.dateEvent
         )
       } else if (this.$route.query.type === 'billing') {
-        this.$router.push('/BillingPlan')
+        window.location.href = 'https://liff.line.me/1660658626-Qn8zej1p'
       } else if (this.$route.query.type === 'CheckListBookingEmp') {
         if (dataitem.shopId === this.$route.query.shopId) {
           this.$router.push(

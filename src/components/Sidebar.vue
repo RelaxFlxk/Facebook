@@ -346,6 +346,32 @@
           <v-list-item-title class="text-wrap" v-text="item.title" dense color="white"></v-list-item-title>
         </v-list-item>
       </v-list-group>
+      <v-list-group
+        v-if="session.data.USER_ROLE === 'admin' && packagePlan.length > 0"
+        dense
+        :value="packagePlanValue"
+        prepend-icon="mdi-cash-check"
+        color="white"
+        no-action
+      >
+      <template v-slot:activator>
+          <v-list-item-title class="menu-head text-wrap">My subscription</v-list-item-title>
+        </template>
+
+        <v-list-item
+          v-for="(item, i) in packagePlan"
+          :key="i"
+          router
+          exact
+          dense
+          @click="clearTimeAll(), gotoBilling()"
+        >
+          <v-list-item-icon>
+            <v-icon v-text="item.icon" dense color="white"></v-icon>
+          </v-list-item-icon>
+          <v-list-item-title class="text-wrap" v-text="item.title" dense color="white"></v-list-item-title>
+        </v-list-item>
+      </v-list-group>
       <template v-slot:append>
         <v-divider class="ma-0"></v-divider>
         <v-btn block
@@ -643,6 +669,9 @@ export default {
       items: [],
       Dashboard: [],
       dataPackage: [],
+      packagePlan: [
+        { title: 'Billing information', icon: 'mdi-cash-register', to: '/BillingPlan', type: 'packagePlan' }
+      ],
       dialogCancel: false,
       dialogCondition: false,
       dataCondition: [],
@@ -662,6 +691,7 @@ export default {
       bookingValue: false,
       broadCastValue: false,
       DashboardValue: false,
+      packagePlanValue: false,
       paymentStatus: '',
       dateCheckBill: '',
       lineOaStatus: 'False'
@@ -740,7 +770,8 @@ export default {
   },
   methods: {
     gotoBilling () {
-      this.$router.push('/BillingPlan')
+      // this.$router.push('/BillingPlan')
+      window.location.href = 'https://liff.line.me/1660658626-Qn8zej1p'
     },
     gotoConnectLine () {
       this.$swal({
@@ -855,7 +886,19 @@ export default {
             { title: 'ปฏิทินนัดหมาย', icon: 'mdi-calendar-search', to: '/Master/CalendarBooking', type: 'booking' },
             { title: 'จัดการเวลานัดหมาย', icon: 'mdi-table-edit', to: '/Master/BookingWalkinEmp', type: 'booking' }
           ]
-          this.workflow = []
+          if (this.$session.getAll().data.billingPlan === '1' || this.$session.getAll().data.billingPlan === '2') {
+            if (this.$session.getAll().data.shopId === 'U1b8d05a22f9ca1b2744f352cc64f14e4' || this.$session.getAll().data.shopId === 'SD_1659673973416') {
+              this.workflow = [
+                { title: 'กระดานการทำงาน', icon: 'mdi-clipboard-check-multiple-outline', to: '/Master/BoardControlBeauty', type: 'workflow' }
+              ]
+            } else {
+              this.workflow = []
+            }
+          } else {
+            this.workflow = [
+              { title: 'กระดานการทำงาน', icon: 'mdi-clipboard-check-multiple-outline', to: '/Master/BoardControlBeauty', type: 'workflow' }
+            ]
+          }
         } else {
           this.booking = [
             { title: 'จัดการลิ้งค์', icon: 'mdi-link-variant', to: '/Master/ManageLink', type: 'booking' },
@@ -906,15 +949,41 @@ export default {
         //   { title: 'บรอดแคสต์', icon: 'mdi-bullhorn', to: '/BroadCast/BroadCast', type: 'broadCast' }
         // ]
         if (this.$session.getAll().data.timeSlotStatus === 'True') {
-          this.settings = [
-          // { title: 'จัดการข้อมูลนัดหมาย', icon: 'mdi-book-cog-outline', to: '/Master/BookingField', type: 'settings' },
-            { title: 'ตั้งค่าการแจ้งเตือน', icon: 'mdi-bell-ring', to: '/Master/NoticeManagement', type: 'settings' },
-            { title: 'เพิ่ม/ลบ สถานะการบริการ', icon: 'mdi-transit-connection-variant', to: '/Master/Flow', type: 'settings' },
-            { title: 'จัดการ ช่องกรอกข้อมูล', icon: 'mdi-account-edit', to: '/Master/CustomField', type: 'settings' },
-            { title: 'จัดการ Tag', icon: 'mdi-wrench', to: '/Master/SettingTag', type: 'settings' },
-            { title: 'จัดการ Notify', icon: 'mdi-bell-plus', to: '/Master/SettingLineNotify', type: 'settings' },
-            { title: 'ตั้งค่ารับการแจ้งเตือนอัตโนมัติ', icon: 'mdi-access-point', to: '/System/LINEConfigSendMessage', type: 'settings' }
-          ]
+          if (this.$session.getAll().data.billingPlan === '1' || this.$session.getAll().data.billingPlan === '2') {
+            if (this.$session.getAll().data.shopId === 'U1b8d05a22f9ca1b2744f352cc64f14e4' || this.$session.getAll().data.shopId === 'SD_1659673973416') {
+              this.settings = [
+              // { title: 'จัดการข้อมูลนัดหมาย', icon: 'mdi-book-cog-outline', to: '/Master/BookingField', type: 'settings' },
+                { title: 'ตั้งค่าการแจ้งเตือน', icon: 'mdi-bell-ring', to: '/Master/NoticeManagement', type: 'settings' },
+                { title: 'เพิ่ม/ลบ สถานะการบริการ', icon: 'mdi-transit-connection-variant', to: '/Master/Flow', type: 'settings' },
+                { title: 'จัดโครงสร้างกระดาน', icon: 'dashboard', to: '/Master/WorkShop', type: 'settings' },
+                { title: 'จัดการ ช่องกรอกข้อมูล', icon: 'mdi-account-edit', to: '/Master/CustomField', type: 'settings' },
+                { title: 'จัดการ Tag', icon: 'mdi-wrench', to: '/Master/SettingTag', type: 'settings' },
+                { title: 'จัดการ Notify', icon: 'mdi-bell-plus', to: '/Master/SettingLineNotify', type: 'settings' },
+                { title: 'ตั้งค่ารับการแจ้งเตือนอัตโนมัติ', icon: 'mdi-access-point', to: '/System/LINEConfigSendMessage', type: 'settings' }
+              ]
+            } else {
+              this.settings = [
+                // { title: 'จัดการข้อมูลนัดหมาย', icon: 'mdi-book-cog-outline', to: '/Master/BookingField', type: 'settings' },
+                { title: 'ตั้งค่าการแจ้งเตือน', icon: 'mdi-bell-ring', to: '/Master/NoticeManagement', type: 'settings' },
+                { title: 'เพิ่ม/ลบ สถานะการบริการ', icon: 'mdi-transit-connection-variant', to: '/Master/Flow', type: 'settings' },
+                { title: 'จัดการ ช่องกรอกข้อมูล', icon: 'mdi-account-edit', to: '/Master/CustomField', type: 'settings' },
+                { title: 'จัดการ Tag', icon: 'mdi-wrench', to: '/Master/SettingTag', type: 'settings' },
+                { title: 'จัดการ Notify', icon: 'mdi-bell-plus', to: '/Master/SettingLineNotify', type: 'settings' },
+                { title: 'ตั้งค่ารับการแจ้งเตือนอัตโนมัติ', icon: 'mdi-access-point', to: '/System/LINEConfigSendMessage', type: 'settings' }
+              ]
+            }
+          } else {
+            this.settings = [
+              // { title: 'จัดการข้อมูลนัดหมาย', icon: 'mdi-book-cog-outline', to: '/Master/BookingField', type: 'settings' },
+              { title: 'ตั้งค่าการแจ้งเตือน', icon: 'mdi-bell-ring', to: '/Master/NoticeManagement', type: 'settings' },
+              { title: 'เพิ่ม/ลบ สถานะการบริการ', icon: 'mdi-transit-connection-variant', to: '/Master/Flow', type: 'settings' },
+              { title: 'จัดโครงสร้างกระดาน', icon: 'dashboard', to: '/Master/WorkShop', type: 'settings' },
+              { title: 'จัดการ ช่องกรอกข้อมูล', icon: 'mdi-account-edit', to: '/Master/CustomField', type: 'settings' },
+              { title: 'จัดการ Tag', icon: 'mdi-wrench', to: '/Master/SettingTag', type: 'settings' },
+              { title: 'จัดการ Notify', icon: 'mdi-bell-plus', to: '/Master/SettingLineNotify', type: 'settings' },
+              { title: 'ตั้งค่ารับการแจ้งเตือนอัตโนมัติ', icon: 'mdi-access-point', to: '/System/LINEConfigSendMessage', type: 'settings' }
+            ]
+          }
         } else {
           if (this.$session.getAll().data.billingPlan === '1' || this.$session.getAll().data.billingPlan === '2') {
             if (this.$session.getAll().data.shopId === 'U1b8d05a22f9ca1b2744f352cc64f14e4') {
@@ -965,7 +1034,7 @@ export default {
         ]
       }
       // this.master = [this.customer[0], this.booking[0], this.Dashboard[0], this.workflow[0], this.corporate[0], this.broadCast[0], this.settings[0]]
-      this.master.push(...this.customer, ...this.booking, ...this.Dashboard, ...this.workflow, ...this.corporate, ...this.broadCast, ...this.settings)
+      this.master.push(...this.customer, ...this.booking, ...this.Dashboard, ...this.workflow, ...this.corporate, ...this.broadCast, ...this.settings, ...this.packagePlan)
       var textValue = this.master.filter(el => { return this.$route.fullPath === el.to })[0].type
       switch (textValue) {
         case 'customer':
@@ -988,6 +1057,9 @@ export default {
           break
         case 'settings':
           this.settingsValue = true
+          break
+        case 'packagePlan':
+          this.packagePlanValue = true
           break
         default:
     // code block

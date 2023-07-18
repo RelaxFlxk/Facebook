@@ -37,6 +37,16 @@
         </div>
         <v-row>
           <v-col cols="12">
+            <v-btn
+              rounded
+              color="#1B437C"
+              dark
+              @click="dialogHistory = true"
+            >
+              ประวัติการชำระเงิน
+            </v-btn>
+          </v-col>
+          <v-col cols="12">
             <div>
               <v-card-text v-if="dataReadyGet">
                 <v-row v-if="paymentStatus === '' || paymentStatus === 'inactive'">
@@ -46,7 +56,7 @@
                     :key="index"
                   >
                     <v-container>
-                      <v-card>
+                      <v-card :style="packetIdCheck === item.id ? 'border: 2px solid green;' : 'border: 1px solid white;'">
                         <v-card-title
                           class="mb-3"
                           style="
@@ -361,10 +371,12 @@
                       >กลับ</v-btn
                     >
                     <v-btn
-                      class="button pa-2"
-                      dark
+                      class="button pa-2 white--text"
                       large
+                      :loading="loadingBillingPlan"
+                      :disabled="loadingBillingPlan"
                       @click="billingPlan(dataPlan)"
+                      color="#173053"
                       >อัพโหลดสลิป</v-btn
                     >
                   </div>
@@ -490,6 +502,45 @@
                       >อัพโหลดสลิป</v-btn
                     > -->
                   </div>
+                </v-card-text>
+              </v-card>
+            </v-dialog>
+            <v-dialog v-model="dialogHistory" max-width="600px">
+              <v-card>
+                <v-card-text>
+                  <div class="text-end">
+                  <v-btn
+                    class="mx-2"
+                    fab
+                    small
+                    dark
+                    color="white"
+                    style="color:red;font-size:20px;"
+                    @click="dialogHistory = false"
+                  >
+                   X
+                  </v-btn>
+                  </div>
+                  <h3 class="text-center" style="color:#1B437C;font-weight: bold;">ประวัติการชำระเงิน</h3>
+                  <br>
+                  <v-row>
+                    <v-col cols="12" class="text-center pa-2 mt-6">
+                      <v-data-table
+                        :headers="headers"
+                        :items="dataHistory"
+                        disable-pagination
+                        hide-default-footer
+                      >
+                        <template v-slot:[`item.paymentImage`]="{ item }">
+                          <v-avatar color="primary" size="40" @click="gotoPicture(item.paymentImage)" v-if="item.paymentImage !== null">
+                            <img :src="item.paymentImage" alt="img"/></v-avatar>
+                        </template>
+                        <template v-slot:[`item.paymentDateuse`]="{ item }">
+                          {{ formatNumber(item.paymentDateuse) }} บาท
+                        </template>
+                      </v-data-table>
+                    </v-col>
+                  </v-row>
                 </v-card-text>
               </v-card>
             </v-dialog>
@@ -660,9 +711,11 @@
                     large
                     @click="dialogReConfirm = false">ปิด</v-btn>
                     <v-btn
-                    class="button pa-2"
-                    dark
+                    class="button pa-2 white--text"
                     large
+                    :loading="loadingBillingPlan"
+                    :disabled="loadingBillingPlan"
+                    color="#173053"
                     @click="updateReturn()"
                     >อัพโหลดสลิป</v-btn>
                 </div>
@@ -730,6 +783,13 @@ export default {
   },
   data () {
     return {
+      loadingBillingPlan: false,
+      dialogHistory: false,
+      headers: [
+        { text: 'วันที่ชำระ', value: 'paymentDate' },
+        { text: 'สลิป', value: 'paymentImage' },
+        { text: 'ยอดเงินที่ชำระ', value: 'paymentDateuse' }
+      ],
       panel: [],
       billingCusName: '',
       billingAddress: '',
@@ -802,17 +862,117 @@ export default {
       billingCurrentPriceDateFomat: '',
       billingTrialsPriceDateFomatShow: '',
       billingCurrentPriceDateFomatShow: '',
-      paymentAmountVat: 0
+      paymentAmountVat: 0,
+      packetIdCheck: '',
+      dataHistory: [],
+      profile: null
     }
   },
-  mounted () {
+  async mounted () {
     if (this.$route.query.shopId) {
       this.$router.push('/Core/Login?type=billing')
     } else {
-      this.chkPlan()
+      if (!this.$session.exists()) {
+        this.$router.push('/Core/Login')
+      } else {
+        if (this.$session.getAll().data.lineUserIdOaBetask) {
+          await this.chkPlan()
+          await this.checkCurrentPlan()
+        } else {
+          await this.checkLiffLogin()
+          await this.updateUserId()
+          await this.chkPlan()
+          await this.checkCurrentPlan()
+        }
+      }
     }
   },
   methods: {
+    async checkLiffLogin () {
+      await this.$liff
+        .init({
+          liffId: '1660658626-Qn8zej1p'
+        })
+        .then(async () => {
+          if (process.env.NODE_ENV === 'development') {
+            this.getProfile_dev()
+          } else {
+            if (!this.$liff.isLoggedIn()) {
+              this.$liff.login({ redirectUri: window.location.href })
+            } else {
+              await this.getProfile()
+              // await this.liffSendMessages()
+            }
+          }
+        })
+        .catch(err => {
+          // this.$router.push({ name: '404' })
+          console.log(err.code, err.message)
+        })
+      // this.$liff.init({ 'liffId': liffId }, function (data) {})
+    },
+    async getProfile () {
+      let _this = this
+      await this.$liff
+        .getProfile()
+        .then(async function (profile) {
+          _this.profile = profile
+          console.log('prod', _this.profile)
+        })
+        .catch(function (error) {
+          console.log('Error getting profile: ' + error)
+        })
+    },
+    async getProfile_dev () {
+      this.profile = this.$profile_dev
+      console.log('dev', this.profile)
+    },
+    async updateUserId () {
+      var ds = {
+        LAST_USER: this.$session.getAll().data.userName,
+        lineUserIdOaBetask: this.profile.userId
+      }
+      await axios
+        .post(
+          // eslint-disable-next-line quotes
+          this.DNS_IP + "/sys_shop/edit/" + this.$session.getAll().data.shopId,
+          ds
+        )
+        .then(async (response) => {
+        })
+    },
+    gotoPicture (Linkitem) {
+      window.open(Linkitem, '_blank')
+    },
+    async checkCurrentPlan () {
+      await axios
+        .get(
+          this.DNS_IP +
+              '/system_shop_Payment/get?shopId=' +
+              this.$session.getAll().data.shopId
+        )
+        .then(async (response) => {
+          let rs = response.data
+          if (rs.status !== false) {
+            this.packetIdCheck = rs[0].packetId || ''
+            for (let i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              let s = {}
+              s.amountCheck = d.paymentAmountSlip || ''
+              if (s.amountCheck === '') {
+                d.paymentDateuse = d.paymentDate
+              } else {
+                d.paymentDateuse = d.paymentAmountSlip
+              }
+              this.dataHistory.push(d)
+            }
+          } else {
+            this.packetIdCheck = ''
+            this.dataHistory = []
+          }
+          console.log(rs)
+        })
+    },
     gotoLogin () {
       this.$router.push('/Core/Login')
     },
@@ -842,16 +1002,18 @@ export default {
         )
         .then(async (response) => {
           let rs = response.data
+          console.log('paymentStatus', rs)
           if (rs.status === false) {
             this.paymentStatus = ''
           } else {
-            if (rs[0].paymentDate < moment().format('YYYY-MM-DD HH:mm')) {
-              this.paymentStatus = ''
-            } else {
-              this.paymentStatus = rs[0].paymentStatus
-              this.sysShopData = rs[0]
-            }
+            // if (rs[0].paymentDate < moment().format('YYYY-MM-DD HH:mm')) {
+            //   this.paymentStatus = ''
+            // } else {
+            this.paymentStatus = rs[0].paymentStatus
+            this.sysShopData = rs[0]
+            // }
           }
+          console.log('paymentStatus', this.paymentStatus)
         })
       this.dataPackage = []
       await axios
@@ -1149,6 +1311,7 @@ export default {
             cancelButtonText: 'ไม่'
           })
             .then(async (result) => {
+              this.loadingBillingPlan = true
               if (this.filesImg) {
                 const _this = this
                 let params = new FormData()
@@ -1169,6 +1332,7 @@ export default {
                   paymentImage: this.paymentImge,
                   paymentStatus: 'confirm',
                   paymentAmount: this.paymentAmount,
+                  paymentAmountSlip: (parseFloat(this.paymentAmount) + parseFloat(this.paymentAmountVat)).toString(),
                   shopId: this.$session.getAll().data.shopId,
                   CREATE_USER: this.$session.getAll().data.userName,
                   LAST_USER: this.$session.getAll().data.userName
@@ -1206,16 +1370,20 @@ export default {
                     this.$swal('ผิดพลาด', 'กรุณาทำรายการอีกครั้ง', 'error')
                   }
                   setTimeout(() => this.chkPlan(), 500)
+                  this.loadingBillingPlan = false
                   this.dialogQrcode = false
                 })
               } else {
+                this.loadingBillingPlan = false
                 this.$swal('ผิดพลาด', 'กรุณาอัพเดทรูปภาพ', 'error')
               }
             })
             .catch((error) => {
+              this.loadingBillingPlan = false
               console.log('Cencel : ', error)
             })
         } else {
+          this.loadingBillingPlan = false
           this.$swal('ผิดพลาด', 'กรุณากรอกข้อมูลให้ครบ', 'error')
         }
       }
@@ -1264,6 +1432,7 @@ export default {
     },
     async updateReturn () {
       if (this.billingCusName !== '' && this.billingAddress !== '' && this.billingTax !== '' && this.billingPhone !== '') {
+        this.loadingBillingPlan = true
         if (this.filesImg) {
           const _this = this
           let params = new FormData()
@@ -1313,13 +1482,16 @@ export default {
                 .then(response => {
                 })
               this.$swal('เรียบร้อย', 'อัพสถานะเรียบร้อย', 'success')
+              this.loadingBillingPlan = false
               this.dialogReConfirm = false
               setTimeout(() => this.chkPlan(), 500)
             })
         } else {
+          this.loadingBillingPlan = false
           this.$swal('ผิดพลาด', 'กรุณาอัพเดทรูปภาพ', 'error')
         }
       } else {
+        this.loadingBillingPlan = false
         this.$swal('ผิดพลาด', 'กรุณากรอกข้อมูลให้ครบ', 'error')
       }
     },

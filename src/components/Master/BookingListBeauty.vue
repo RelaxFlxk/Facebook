@@ -2835,6 +2835,16 @@
                 >
                   ตรวจสอบรายการเมนูรายวัน
                 </v-btn>
+                <v-btn
+                  v-if="getSelectText === 'wait' && filteredSelect.length > 0"
+                  color="primary"
+                  class="ma-2 white--text"
+                  small
+                  @click="exportExcelWait()"
+                >
+                  <v-icon right dark>mdi-microsoft-excel</v-icon>
+                  &nbsp;Export Excel
+                </v-btn>
                 </v-col>
                 <v-col cols="3">
                   <v-select
@@ -11457,6 +11467,181 @@ export default {
       const wb = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(wb, dataWS)
       XLSX.writeFile(wb, 'export_' + this.format_dateNotime(this.timeTable) + '.xlsx')
+    },
+    async exportExcelWait () {
+      let dataExport = []
+      let bookingDataView = []
+      this.dataexport = []
+      let runNo = 0
+      var datause = this.filteredSelect.sort((a, b) => {
+        if (a.timeDuetext < b.timeDuetext) return -1
+        return a.timeDuetext > b.timeDuetext ? 1 : 0
+      })
+      let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&statusBt=is null`
+      await axios
+        .get(url)
+        .then(async response => {
+          if (response.data.status !== false) {
+            response.data.forEach((row) => {
+              if (typeof (bookingDataView[row.bookNo]) === 'undefined') {
+                bookingDataView[row.bookNo] = []
+              }
+              bookingDataView[row.bookNo].push(row)
+            })
+          }
+        }).catch(error => {
+          bookingDataView = []
+          console.log(error)
+        })
+      for (let i = 0; i < datause.length; i++) {
+        runNo++
+        let t = datause[i]
+        let s = {}
+        if (t.fastTrack) {
+          s.type = this.dataTypeJob3
+          s.runNo = runNo
+          s.dateBooking = t.dueDateDay
+          s.licenseNo = t.cusReg
+          s.title = t.timeDuetext
+          s.status = t.statusBtText
+          s.remark = t.remark
+          s.cusName = t.cusName
+          s.cusReg = t.cusReg
+          s.flowName = t.displayFlowName ? (t.flowName + ' : ' + t.displayFlowName) : t.flowName
+          s.empFull_NameTH = t.empFull_NameTH
+          s.extraJob = t.extraJob ? this.dataTypeJob2 : ''
+          s.carModel = t.bookingDataCustomerCarModel || ''
+          s.tel = t.tel
+          s.dataFiled = bookingDataView[t.bookNo] || []
+          s.packageName = t.packageName || ''
+          s.packageDetails = t.packageDetails || ''
+          s.packageImage = t.packageImage || ''
+          s.packagePrice = t.packagePrice || ''
+          s.packageBalanceAmount = t.packageBalanceAmount || ''
+          s.packageAmount = t.packageAmount || ''
+          s.packagePoint = t.packagePoint || ''
+          s.packageExpire = t.packageExpire || ''
+          s.empFull_NameTH = t.empFull_NameTH || ''
+          dataExport.push(s)
+        }
+      }
+      let s = {}
+      s.type = ''
+      s.runNo = ''
+      s.licenseNo = ''
+      s.title = ''
+      s.status = ''
+      s.cusName = ''
+      s.cusReg = ''
+      s.flowName = ''
+      s.remark = ''
+      s.tel = ''
+      s.empFull_NameTH = ''
+      s.carModel = ''
+      s.dataFiled = []
+      s.packageName = ''
+      s.packageDetails = ''
+      s.packageImage = ''
+      s.packagePrice = ''
+      s.packageBalanceAmount = ''
+      s.packageAmount = ''
+      s.packagePoint = ''
+      s.packageExpire = ''
+      s.empFull_NameTH = ''
+      dataExport.push(s)
+      runNo = 0
+      var datause2 = this.filteredSelect.sort((a, b) => {
+        if (a.timeDuetext < b.timeDuetext) return -1
+        return a.timeDuetext > b.timeDuetext ? 1 : 0
+      })
+      for (let i = 0; i < datause2.length; i++) {
+        runNo++
+        let t = datause2[i]
+        let s = {}
+        if (!t.fastTrack) {
+          s.type = 'ปกติ'
+          s.runNo = runNo
+          s.dateBooking = t.dueDateDay
+          s.licenseNo = t.cusReg
+          s.title = t.timeDuetext
+          s.status = t.statusBtText
+          s.cusName = t.cusName
+          s.remark = t.remark
+          s.cusReg = t.cusReg
+          s.flowName = t.displayFlowName ? (t.flowName + ' : ' + t.displayFlowName) : t.flowName
+          s.tel = t.tel
+          s.empFull_NameTH = t.empFull_NameTH
+          s.extraJob = t.extraJob ? 'Extra Job' : ''
+          s.carModel = t.bookingDataCustomerCarModel || ''
+          s.dataFiled = bookingDataView[t.bookNo] || []
+          s.packageName = t.packageName || ''
+          s.packageDetails = t.packageDetails || ''
+          s.packageImage = t.packageImage || ''
+          s.packagePrice = t.packagePrice || ''
+          s.packageBalanceAmount = t.packageBalanceAmount || ''
+          s.packageAmount = t.packageAmount || ''
+          s.packagePoint = t.packagePoint || ''
+          s.packageExpire = t.packageExpire || ''
+          s.empFull_NameTH = t.empFull_NameTH || ''
+          dataExport.push(s)
+        }
+      }
+      this.dataexport = dataExport
+      this.onExportWait()
+      // console.log('dataEport', JSON.stringify(dataExport))
+    },
+    onExportWait () {
+      var dataexport = []
+      let checkPackageShow = this.dataexport.filter(el => { return el.packageName !== '' }).length
+      console.log('checkPackageShow', checkPackageShow)
+      for (var i = 0; i < this.dataexport.length; i++) {
+        var a = this.dataexport[i]
+        let data2 = {}
+        for (let g = 0; g < a.dataFiled.length; g++) {
+          let t = a.dataFiled[g]
+          let fieldNames = ''
+          let fieldValues = ''
+          fieldNames = t.fieldName
+          fieldValues = t.fieldValue
+          data2[fieldNames] = fieldValues
+          // dataOb.push({fieldNames: fieldValues})
+        }
+        let data1 = {
+          'ประเภท': a.type,
+          'ลำดับ': a.runNo,
+          'วันที่': a.dateBooking,
+          'เวลา': a.title,
+          // 'ชื่อลูกค้า': a.cusName,
+          'รายการบริการ': a.flowName,
+          // 'หมายเหตุ': a.extraJob,
+          // 'หมายเหตุยกเลิก': a.remarkRemove,
+          // 'เวลาติดตาม': '',
+          // 'เหตุผล': '',
+          // 'ตรง': '',
+          // 'ไม่ตรง': '',
+          // 'เปิดJob': '',
+          'พนักงานรับนัดหมาย': a.empFull_NameTH
+          // 'หมายเหตุเพิ่มเติม': a.remark
+        }
+        if (checkPackageShow > 0) {
+          let data3 = {
+            'แพ็คเกจที่ใช้': a.packageName,
+            'จำนวนการใช้ที่เหลือ': a.packageBalanceAmount,
+            'จำนวนการใช้ทั้งหมด': a.packageAmount,
+            'พนักงานที่รับนัดหมาย': a.empFull_NameTH
+          }
+          let dataSum = Object.assign({}, data1, data2, data3)
+          dataexport.push(dataSum)
+        } else {
+          let dataSum = Object.assign({}, data1, data2)
+          dataexport.push(dataSum)
+        }
+      }
+      console.log('dataexport', dataexport)
+      const dataWS = XLSX.utils.json_to_sheet(dataexport)
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, dataWS)
+      XLSX.writeFile(wb, 'export_wait_status.xlsx')
     },
     exportExcelRemove () {
       let dataExport = []
