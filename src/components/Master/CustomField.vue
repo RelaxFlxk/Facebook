@@ -160,7 +160,6 @@
                         ></v-select>
                       </v-row>
                     </v-col>
-
                     <v-form ref="form_addOption" v-model="validAddOption" lazy-validation>
                     <v-row class="mt-3 px-3">
                     <v-col class="ma-1">
@@ -216,7 +215,8 @@
                      </v-form>
                     <br>
                       <v-row class="mb-3" justify="center" v-if="formAddOption.optionText && formAddOption.optionValue && formAddOption.optionTextEng">
-                      <v-btn v-if="checkDataEdit"
+                      {{ checkDataEdit }}
+                        <v-btn v-if="checkDataEdit"
                         elevation="2"
                         dark
                         color="#173053"
@@ -526,7 +526,7 @@
                         ></v-select>
                       </v-row>
                     </v-col>
-
+                    {{ validAddOption }}
                     <v-form ref="form_addOption" v-model="validAddOption" lazy-validation>
                     <v-row class="mt-3 px-3">
                     <v-col class="ma-1" >
@@ -1435,16 +1435,19 @@ export default {
       })
     },
     save () {
-      console.log(this.formUpdateOption.optionText)
-      console.log(this.formUpdateOption.optionTextEng)
-      console.log(this.formUpdateOption.optionValue)
-      if (this.editedIndex > -1) {
-        Object.assign(this.dataItemOption[this.editedIndex], {text: this.formUpdateOption.optionText, textEng: this.formUpdateOption.optionTextEng, value: this.formUpdateOption.optionValue})
-      } else {
-        this.dataItemOption.push({text: this.formUpdateOption.optionText, textEng: this.formUpdateOption.optionTextEng, value: this.formUpdateOption.optionValue})
+      if (this.$refs.form_addOption.validate()) {
+        console.log('IF')
+        console.log(this.formUpdateOption.optionText)
+        console.log(this.formUpdateOption.optionTextEng)
+        console.log(this.formUpdateOption.optionValue)
+        if (this.editedIndex > -1) {
+          Object.assign(this.dataItemOption[this.editedIndex], {text: this.formUpdateOption.optionText, textEng: this.formUpdateOption.optionTextEng, value: this.formUpdateOption.optionValue})
+        } else {
+          this.dataItemOption.push({text: this.formUpdateOption.optionText, textEng: this.formUpdateOption.optionTextEng, value: this.formUpdateOption.optionValue})
+        }
+        this.checkDataEdit = true
+        this.close()
       }
-      this.checkDataEdit = true
-      this.close()
     },
     editItem (item) {
       this.checkDataEdit = false
@@ -1490,16 +1493,19 @@ export default {
       })
     },
     saveAdd () {
-      console.log(this.formAddOption.optionText)
-      console.log(this.formAddOption.optionTextEng)
-      console.log(this.formAddOption.optionValue)
-      if (this.editedIndex > -1) {
-        Object.assign(this.dataItemOption[this.editedIndex], {text: this.formAddOption.optionText, textEng: this.formAddOption.optionTextEng, value: this.formAddOption.optionValue})
-      } else {
-        this.dataItemOption.push({text: this.formAddOption.optionText, textEng: this.formAddOption.optionTextEng, value: this.formAddOption.optionValue})
+      console.log('form_addOption', this.$refs.form_addOption.validate())
+      if (this.$refs.form_addOption.validate()) {
+        console.log(this.formAddOption.optionText)
+        console.log(this.formAddOption.optionTextEng)
+        console.log(this.formAddOption.optionValue)
+        if (this.editedIndex > -1) {
+          Object.assign(this.dataItemOption[this.editedIndex], {text: this.formAddOption.optionText, textEng: this.formAddOption.optionTextEng, value: this.formAddOption.optionValue})
+        } else {
+          this.dataItemOption.push({text: this.formAddOption.optionText, textEng: this.formAddOption.optionTextEng, value: this.formAddOption.optionValue})
+        }
+        this.checkDataEdit = true
+        this.close()
       }
-      this.checkDataEdit = true
-      this.close()
     },
     validate (Action) {
       switch (Action) {
@@ -1616,9 +1622,11 @@ export default {
         })
     },
     async addDataOption (item) {
-      console.log(item)
-      this.dataItemOption.push({'text': item.optionText, 'textEng': item.optionTextEng, 'value': item.optionValue})
-      this.clearDataOption()
+      if (this.$refs.form_addOption.validate()) {
+        console.log(item)
+        this.dataItemOption.push({'text': item.optionText, 'textEng': item.optionTextEng, 'value': item.optionValue})
+        this.clearDataOption()
+      }
     },
     async selectBranch () {
 
