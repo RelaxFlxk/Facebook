@@ -12282,11 +12282,13 @@ export default {
           s.packageAmount = t.packageAmount || ''
           s.packagePoint = t.packagePoint || ''
           s.packageExpire = t.packageExpire || ''
+          s.memberName = t.memberName || ''
           dataExport.push(s)
         }
       }
       console.log('dataExport', dataExport)
       let s = {}
+      s.memberName = ''
       s.type = ''
       s.runNo = ''
       s.licenseNo = ''
@@ -12343,6 +12345,7 @@ export default {
           s.packageAmount = t.packageAmount || ''
           s.packagePoint = t.packagePoint || ''
           s.packageExpire = t.packageExpire || ''
+          s.memberName = t.memberName || ''
           dataExport.push(s)
         }
       }
@@ -12380,7 +12383,8 @@ export default {
           // 'ตรง': '',
           // 'ไม่ตรง': '',
           // 'เปิดJob': '',
-          'พนักงานรับนัดหมาย': a.empFull_NameTH
+          'พนักงานรับนัดหมาย': a.empFull_NameTH,
+          'ชื่อ LINE': a.memberName
           // 'หมายเหตุเพิ่มเติม': a.remark
         }
         if (checkPackageShow > 0) {
