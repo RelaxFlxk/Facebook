@@ -928,8 +928,9 @@
                         </v-row>
                         <v-col cols="12">
                           <v-checkbox
+                            v-if="$session.getAll().data.shopId !== 'U52928fc4d2ed0bb777f7c1d1c95d6173'"
                             v-model="statusVIP"
-                            label="นัดหมายพิเศษ (VIP.)"
+                            label="เปิดจองคิวซ้ำได้"
                             false-value="False"
                             true-value="True"
                             :on-icon="'mdi-check-circle'"
