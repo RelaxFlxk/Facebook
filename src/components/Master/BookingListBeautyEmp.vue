@@ -469,6 +469,34 @@
                   mdi-note-text-outline
                 </v-icon>
               </template></v-select>
+              <v-text-field
+                  class="textserch"
+                  background-color="white"
+                  style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
+                  label="ค้นหาชื่อ และ เบอร์โทรศัพท์ ในตาราง"
+                  v-model="searchAll2"
+                  outlined
+                  hide-details
+                  dense
+                ><template #prepend-inner>
+                <v-icon style="margin-top: 0px;">
+                  mdi-magnify
+                </v-icon>
+                 </template>
+                </v-text-field>
+              <v-text-field
+                class="textserch"
+                background-color="white"
+                style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
+                :label="$session.getAll().data.category === 'ธุรกิจรถยนต์' || $session.getAll().data.category === '7' ? 'ค้นหาชื่อทั้งหมด หรือ ทะเบียน' : 'ค้นหาชื่อทั้งหมด'"
+                v-model="searchOther"
+                outlined
+                hide-details
+                dense
+                append-icon="mdi-card-search-outline"
+                @click:append="searchAny()"
+              >
+              </v-text-field>
           </div>
         </div>
         <v-divider v-if="resCol !== 'xs'"></v-divider>
@@ -2596,64 +2624,129 @@
               <v-card-text>
               <v-row>
                 <v-col col="auto">
-                  <v-btn
-                  v-if="dataItem.length > 0"
-                  color="blue-grey"
-                  class="ma-2 white--text"
-                  @click="toggle"
-                  small
-                >
-                  ตรวจสอบคิวจองรายวัน
-                  <v-icon
-                    right
-                    dark
+                  <v-expansion-panels dense accordion v-if="resCol === 'xs'" style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;">
+                    <v-expansion-panel>
+                      <v-expansion-panel-header>รายการตรวจสอบ</v-expansion-panel-header>
+                      <v-expansion-panel-content>
+                        <v-btn
+                          v-if="dataItem.length > 0"
+                          color="blue-grey"
+                          class="ma-2 white--text"
+                          @click="toggle"
+                          small
+                        >
+                          ตรวจสอบคิวจองรายวัน
+                          <v-icon
+                            right
+                            dark
+                          >
+                            mdi-table-eye
+                          </v-icon>
+                          </v-btn>
+                          <v-btn
+                            color="blue-grey"
+                            class="ma-2 white--text"
+                            small
+                            @click="addDataSet()"
+                          >
+                            ตรวจสอบคิวจองรายเดือน
+                          </v-btn>
+                          <v-btn
+                            color="blue-grey"
+                            class="ma-2 white--text"
+                            @click="dialogShowEmpReport = true, dataShowEmpReport = [], dateStartShowEmpReport = ''"
+                            small
+                          >
+                            ตรวจสอบคิวช่างรายวัน
+                            <v-icon
+                              right
+                              dark
+                            >
+                              mdi-book-account-outline
+                            </v-icon>
+                          </v-btn>
+                          <v-btn
+                            v-if="DataFlowNameMenu.length > 0"
+                            color="blue-grey"
+                            class="ma-2 white--text"
+                            small
+                            @click="dialogShowMenuReport = true, dataShowMenuReport = [], dateStartShowMenuReport = ''"
+                          >
+                            ตรวจสอบรายการเมนูรายวัน
+                          </v-btn>
+                          <v-btn
+                            v-if="getSelectText === 'wait' && filteredSelect.length > 0"
+                            color="primary"
+                            class="ma-2 white--text"
+                            small
+                            @click="exportExcelWait()"
+                          >
+                            <v-icon right dark>mdi-microsoft-excel</v-icon>
+                            &nbsp;Export Excel
+                          </v-btn>
+                      </v-expansion-panel-content>
+                    </v-expansion-panel>
+                  </v-expansion-panels>
+                  <template v-else>
+                    <v-btn
+                    v-if="dataItem.length > 0"
+                    color="blue-grey"
+                    class="ma-2 white--text"
+                    @click="toggle"
+                    small
                   >
-                    mdi-table-eye
-                  </v-icon>
-                </v-btn>
-                <v-btn
-                  color="blue-grey"
-                  class="ma-2 white--text"
-                  small
-                  @click="addDataSet()"
-                >
-                  ตรวจสอบคิวจองรายเดือน
-                </v-btn>
-                <v-btn
-                  color="blue-grey"
-                  class="ma-2 white--text"
-                  @click="dialogShowEmpReport = true, dataShowEmpReport = [], dateStartShowEmpReport = ''"
-                  small
-                >
-                  ตรวจสอบคิวช่างรายวัน
-                  <v-icon
-                    right
-                    dark
-                  >
-                    mdi-book-account-outline
-                  </v-icon>
-                </v-btn>
-                <v-btn
-                  v-if="DataFlowNameMenu.length > 0"
-                  color="blue-grey"
-                  class="ma-2 white--text"
-                  small
-                  @click="dialogShowMenuReport = true, dataShowMenuReport = [], dateStartShowMenuReport = ''"
-                >
-                  ตรวจสอบรายการเมนูรายวัน
-                </v-btn>
-                <v-btn
-                  v-if="getSelectText === 'wait' && filteredSelect.length > 0"
-                  color="primary"
-                  class="ma-2 white--text"
-                  small
-                  @click="exportExcelWait()"
-                >
-                  <v-icon right dark>mdi-microsoft-excel</v-icon>
-                  &nbsp;Export Excel
-                </v-btn>
+                    ตรวจสอบคิวจองรายวัน
+                    <v-icon
+                      right
+                      dark
+                    >
+                      mdi-table-eye
+                    </v-icon>
+                    </v-btn>
+                    <v-btn
+                      color="blue-grey"
+                      class="ma-2 white--text"
+                      small
+                      @click="addDataSet()"
+                    >
+                      ตรวจสอบคิวจองรายเดือน
+                    </v-btn>
+                    <v-btn
+                      color="blue-grey"
+                      class="ma-2 white--text"
+                      @click="dialogShowEmpReport = true, dataShowEmpReport = [], dateStartShowEmpReport = ''"
+                      small
+                    >
+                      ตรวจสอบคิวช่างรายวัน
+                      <v-icon
+                        right
+                        dark
+                      >
+                        mdi-book-account-outline
+                      </v-icon>
+                    </v-btn>
+                    <v-btn
+                      v-if="DataFlowNameMenu.length > 0"
+                      color="blue-grey"
+                      class="ma-2 white--text"
+                      small
+                      @click="dialogShowMenuReport = true, dataShowMenuReport = [], dateStartShowMenuReport = ''"
+                    >
+                      ตรวจสอบรายการเมนูรายวัน
+                    </v-btn>
+                    <v-btn
+                      v-if="getSelectText === 'wait' && filteredSelect.length > 0"
+                      color="primary"
+                      class="ma-2 white--text"
+                      small
+                      @click="exportExcelWait()"
+                    >
+                      <v-icon right dark>mdi-microsoft-excel</v-icon>
+                      &nbsp;Export Excel
+                    </v-btn>
+                  </template>
                 </v-col>
-                <v-col cols="3">
+                <v-col :cols="resCol === 'xs' ? '12' : '3'">
                   <v-select
                     style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 5px;"
                     v-model="sortSelect"
@@ -14667,7 +14760,7 @@ export default {
                     .get(this.DNS_IP + '/BookingDataSelect/get?bookNo=' + dt.bookNo)
                     .then(async response => {
                       let rs = response.data
-                      if (rs.length > 0) {
+                      if (rs.status !== false) {
                         console.log('BookingDataSelect', rs)
                         console.log('customField', rs1)
                         let sortrs = rs1.sort((a, b) => a.sortNoField - b.sortNoField)
@@ -14710,6 +14803,9 @@ export default {
                         }
                         // await this.getBookingField()
                         await this.getflowfield(dt)
+                      } else {
+                        this.$swal('ผิดพลาด', 'กรุณาลองใหม่อีกครั้ง', 'error')
+                        this.dialogEdit = false
                       }
                     }).catch(error => {
                       console.log('BookingDataSelect : ', error)
@@ -14779,7 +14875,7 @@ export default {
                     .get(this.DNS_IP + '/BookingDataSelect/get?bookNo=' + dt.bookNo)
                     .then(async response => {
                       let rs = response.data
-                      if (rs.length > 0) {
+                      if (rs.status !== false) {
                         console.log('BookingDataSelect', rs)
                         console.log('customField', rs1)
                         let sortrs = rs1.sort((a, b) => a.sortNoField - b.sortNoField)
@@ -14822,6 +14918,9 @@ export default {
                         }
                         // await this.getBookingField()
                         await this.getflowfield(dt)
+                      } else {
+                        this.$swal('ผิดพลาด', 'กรุณาลองใหม่อีกครั้ง', 'error')
+                        this.dialogEdit = false
                       }
                     })
                 })
@@ -15781,25 +15880,7 @@ export default {
       this.jobitem = []
       if (item.jobNo !== '') {
         this.getCoin(item)
-        let checkBookingMember = ''
-        const result = await axios
-          .get(
-            this.DNS_IP +
-            '/member/get?shopId=' +
-            this.session.data.shopId +
-            '&liffUserId=' +
-            item.userId
-          )
-          .catch(error => {
-            console.log('error function addData : ', error)
-          })
-        console.log('result', result.data)
-        if (result.data.status === false) {
-          checkBookingMember = ''
-        } else {
-          checkBookingMember = result.data[0]
-        }
-        await axios.get(this.DNS_IP + '/job/getJobNo?jobNo=' + item.jobNo).then((response) => {
+        await axios.get(this.DNS_IP + '/job/getJobNo?jobNo=' + item.jobNo).then(async (response) => {
           let rs = response.data
           let Id = ''
           let memberPicture = ''
@@ -15816,9 +15897,35 @@ export default {
                 checkPayment: d.checkPayment,
                 recordStatus: d.RECORD_STATUS
               }
-              Id = d.userId || ''
-              memberPicture = d.memberPicture || ''
+              d.userId = d.userId || ''
+              d.memberPicture = d.memberPicture || ''
+              if (d.userId !== '') {
+                Id = d.userId
+              }
+              if (d.memberPicture !== '') {
+                memberPicture = d.memberPicture || ''
+              }
               this.jobitem.push(s)
+            }
+            let checkBookingMember = ''
+            if (Id !== '') {
+              const result = await axios
+                .get(
+                  this.DNS_IP +
+                  '/member/get?shopId=' +
+                  this.session.data.shopId +
+                  '&liffUserId=' +
+                  Id
+                )
+                .catch(error => {
+                  console.log('error function addData : ', error)
+                })
+              console.log('result', result.data)
+              if (result.data.status === false) {
+                checkBookingMember = ''
+              } else {
+                checkBookingMember = result.data[0]
+              }
             }
             this.userId = Id
             this.memberPicture = memberPicture
