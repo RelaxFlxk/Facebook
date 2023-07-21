@@ -963,16 +963,61 @@
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" class="pt-1 pb-0" v-if="shopId_Shop !== ''">
-                      <v-textarea
-                        prepend-icon="mdi-map-marker"
-                        v-model="billingAddress"
-                        auto-grow
-                        rows="2"
-                        label="ที่อยู่"
-                        dense
-                        outlined
-                      ></v-textarea>
-                    </v-col>
+                        <v-textarea
+                          v-model="billingAddressDetails"
+                          auto-grow
+                          rows="2"
+                          label="รายละเอียดที่อยู่"
+                          :rules="[v => !!v || 'กรุณากรอกรายละเอียดที่อยู่']"
+                          dense
+                          outlined
+                        ></v-textarea>
+                      </v-col>
+                      <v-col cols="12" class="pt-1 pb-0" v-if="shopId_Shop !== ''">
+                        <v-select
+                          v-model="billingSubDistrict"
+                          :items="optionSubDistrict"
+                          :rules="[v => !!v || 'กรุณากรอกตำบล']"
+                          dense
+                          outlined
+                          no-data-text="กรุณกรอกรหัสไปรษณีย์"
+                          label="ตำบล"
+                        ></v-select>
+                      </v-col>
+                      <v-col cols="12" class="pt-1 pb-0" v-if="shopId_Shop !== ''">
+                        <v-select
+                          v-model="billingDistrict"
+                          :items="optionDistrict"
+                          :rules="[v => !!v || 'กรุณากรอกอำเภอ']"
+                          dense
+                          outlined
+                          no-data-text="กรุณกรอกรหัสไปรษณีย์"
+                          label="อำเภอ"
+                        ></v-select>
+                      </v-col>
+                      <v-col cols="12" class="pt-1 pb-0" v-if="shopId_Shop !== ''">
+                        <v-select
+                          v-model="billingProvinces"
+                          :items="optionProvinces"
+                          :rules="[v => !!v || 'กรุณากรอกจังหวัด']"
+                          dense
+                          outlined
+                          no-data-text="กรุณกรอกรหัสไปรษณีย์"
+                          label="จังหวัด"
+                        ></v-select>
+                      </v-col>
+                      <v-col cols="12" class="pt-1 pb-0" v-if="shopId_Shop !== ''">
+                        <v-text-field
+                          v-model="billingPostalCode"
+                          :rules="[v => !!v || 'กรุณากรอกรหัสไปรษณีย์', v => (!isNaN(v)) && v.length >= 5 && v.length <= 5  || 'รหัสไปรษณีย์ต้องมีตัวเลข 5 ตัว', resZipCode.length > 0 || 'ไม่เจอรหัสรหัสไปรษณีย์']"
+                          dense
+                          outlined
+                          label="รหัสไปรษณีย์"
+                          no-data-text="ไม่มีข้อมูล"
+                          required
+                          @input="checkAddress()"
+                        ></v-text-field>
+                      </v-col>
                     <v-col cols="12" class="pt-1 pb-0" v-if="idPayment !== ''">
                       <v-menu
                         ref="menu"
@@ -1095,6 +1140,11 @@ export default {
       paymentImage: '',
       billingCusName: '',
       billingAddress: '',
+      billingAddressDetails: '',
+      billingSubDistrict: '',
+      billingDistrict: '',
+      billingProvinces: '',
+      billingPostalCode: '',
       billingTax: '',
       billingPhone: '',
       menutrialsVersionDate: false,
@@ -1208,7 +1258,11 @@ export default {
       countNewCusOnMonthLoyalty: 0,
       countNewCusLoyalty: 0,
       countOldCusLoyalty: 0,
-      sumAmountAll: 0
+      sumAmountAll: 0,
+      resZipCode: [],
+      optionDistrict: [],
+      optionSubDistrict: [],
+      optionProvinces: []
     }
   },
   async mounted () {
@@ -1216,10 +1270,71 @@ export default {
     this.checkSearch()
   },
   methods: {
-    setDataSetting (item) {
+    async checkAddress () {
+      console.log('checkAddress')
+      if (this.billingPostalCode.length >= 5) {
+        console.log('postalCode')
+        this.optionDistrict = []
+        this.optionSubDistrict = []
+        this.optionProvinces = []
+        await axios
+          .get(
+            // eslint-disable-next-line quotes
+            this.DNS_IP + "/location/map_thai?zipcode=" +
+              this.billingPostalCode
+          )
+          .then(async (response) => {
+            console.log(response.data.length > 0)
+            this.resZipCode = response.data
+            let rs = response.data
+            for (var i = 0; i < rs.length; i++) {
+              var x = rs[i]
+              var z = {}
+              z.text = x.district
+              z.value = x.district
+              this.optionDistrict.push(z)
+
+              var d = rs[i]
+              var s = {}
+              s.text = d.sub_district
+              s.value = d.sub_district
+              this.optionSubDistrict.push(s)
+            }
+            for (var t = 0; t < rs.length; t++) {
+              var k = rs[t]
+              var l = {}
+              l.text = k.province
+              l.value = k.province
+              this.optionProvinces.push(l)
+            }
+          }) // eslint-disable-next-line handle-callback-err
+          .catch((error) => {
+            console.log(error)
+            // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
+          })
+      } else if (this.billingPostalCode.length < 5) {
+        console.log('น้อยกว่า')
+        this.optionDistrict = []
+        this.optionSubDistrict = []
+        this.optionProvinces = []
+        // this.billingPostalCode = ''
+        this.billingSubDistrict = ''
+        this.billingDistrict = ''
+        this.billingProvinces = ''
+      }
+    },
+    async setDataSetting (item) {
       console.log('setDataSetting', item)
       this.billingCusName = item.billingCusName || ''
       this.billingAddress = item.billingAddress || ''
+
+      this.billingAddressDetails = item.billingAddressDetails || ''
+      this.billingPostalCode = item.billingPostalCode || ''
+      await this.checkAddress()
+      this.billingSubDistrict = item.billingSubDistrict || ''
+      this.billingDistrict = item.billingDistrict || ''
+      this.billingProvinces = item.billingProvinces || ''
+
       this.billingTax = item.billingTax || ''
       this.billingPhone = item.billingPhone || ''
       this.paymentDateTrue = item.paymentDateTrue || ''
@@ -1272,6 +1387,7 @@ export default {
       if (this.remark !== '') {
         this.remark = this.remark.replace(/%/g, '%%').replace(/'/g, "\\'")
       }
+      this.billingAddress = this.billingAddressDetails + ' ตําบล/แขวง ' + this.billingSubDistrict + ' อำเภอ/เขต ' + this.billingDistrict + ' จังหวัด ' + this.billingProvinces + ' ' + this.billingPostalCode
       if (this.idPayment === '') {
         if (this.shopId_Shop !== '') {
           let url = ''
@@ -1283,6 +1399,11 @@ export default {
               expire_date_trial: trialsVersionDate,
               billingCusName: this.billingCusName,
               billingAddress: this.billingAddress,
+              billingAddressDetails: this.billingAddressDetails,
+              billingSubDistrict: this.billingSubDistrict,
+              billingDistrict: this.billingDistrict,
+              billingProvinces: this.billingProvinces,
+              billingPostalCode: this.billingPostalCode,
               billingTax: this.billingTax,
               billingPhone: this.billingPhone,
               billingEndDate: this.billingEndDate
@@ -1294,6 +1415,11 @@ export default {
               trialsVersionDate: trialsVersionDate,
               billingCusName: this.billingCusName,
               billingAddress: this.billingAddress,
+              billingAddressDetails: this.billingAddressDetails,
+              billingSubDistrict: this.billingSubDistrict,
+              billingDistrict: this.billingDistrict,
+              billingProvinces: this.billingProvinces,
+              billingPostalCode: this.billingPostalCode,
               billingTax: this.billingTax,
               billingPhone: this.billingPhone,
               billingEndDate: this.billingEndDate
@@ -1332,6 +1458,11 @@ export default {
             expire_date_trial: trialsVersionDate,
             billingCusName: this.billingCusName,
             billingAddress: this.billingAddress,
+            billingAddressDetails: this.billingAddressDetails,
+            billingSubDistrict: this.billingSubDistrict,
+            billingDistrict: this.billingDistrict,
+            billingProvinces: this.billingProvinces,
+            billingPostalCode: this.billingPostalCode,
             billingTax: this.billingTax,
             billingPhone: this.billingPhone,
             paymentAmountSlip: this.paymentAmountSlip,
@@ -1347,6 +1478,11 @@ export default {
             trialsVersionDate: trialsVersionDate,
             billingCusName: this.billingCusName,
             billingAddress: this.billingAddress,
+            billingAddressDetails: this.billingAddressDetails,
+            billingSubDistrict: this.billingSubDistrict,
+            billingDistrict: this.billingDistrict,
+            billingProvinces: this.billingProvinces,
+            billingPostalCode: this.billingPostalCode,
             billingTax: this.billingTax,
             billingPhone: this.billingPhone,
             paymentAmountSlip: this.paymentAmountSlip,

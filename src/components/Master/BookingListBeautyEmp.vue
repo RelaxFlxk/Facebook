@@ -6668,7 +6668,7 @@
                         </v-btn>
                       </div>
                     </v-col>
-                    <v-col cols="12" v-if="dataMenu.length > 1">
+                    <v-col cols="12" v-if="dataMenu.length > 0">
                        <div
                           style="'width:100% !important';background: linear-gradient(90deg, #FCFCFC 0%, #F7F7F7 10.04%, #F7F7F7 51.56%, #F7F7F7 89.58%, #FCFCFC 100%);box-shadow: 0px 4px 20px rgba(114, 114, 114, 0.1);"
                         >
