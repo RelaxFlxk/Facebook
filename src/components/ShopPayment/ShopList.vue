@@ -1624,7 +1624,18 @@ export default {
           this.countOldCusLoyalty = this.countOldCusLoyalty + 1
         }
       }
-      this.sumAmountAll = this.itemBooking.filter(el => { return el.paymentStatus === 'finish' }).reduce((n, {paymentAmountTrue}) => n + paymentAmountTrue, 0)
+      let sumAmountAll = 0
+      for (let i = 0; i < this.itemBooking.length; i++) {
+        let d = this.itemBooking[i]
+        if (d.paymentStatus === 'finish') {
+          console.log(d.paymentAmountTrue)
+          sumAmountAll = sumAmountAll + parseFloat(d.paymentAmountTrue || 0)
+        }
+      }
+      if (sumAmountAll > 0) {
+        this.sumAmountAll = sumAmountAll.toFixed(2)
+      }
+      // this.sumAmountAll = this.itemBooking.filter(el => { return el.paymentStatus === 'finish' }).reduce((n, {paymentAmountTrue}) => parseFloat(n) + parseFloat(paymentAmountTrue), 0)
       this.getSelect(this.getSelectText, this.typeMain)
     },
     async changStatus (item, text, typeMain) {
