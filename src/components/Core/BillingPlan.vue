@@ -596,6 +596,18 @@
                         <template v-slot:[`item.paymentDateuse`]="{ item }">
                           {{ formatNumber(item.paymentDateuse) }} บาท
                         </template>
+                        <template v-slot:[`item.actions`]="{ item }">
+                          <v-btn
+                            v-if="item.receiptFile !== ''"
+                            color="teal"
+                            fab
+                            small
+                            dark
+                            @click.stop="gotoLink(item.receiptFile)"
+                          >
+                            <v-icon>mdi-download-circle</v-icon>
+                          </v-btn>
+                        </template>
                       </v-data-table>
                     </v-col>
                   </v-row>
@@ -906,7 +918,8 @@ export default {
       headers: [
         { text: 'วันที่ชำระ', value: 'paymentDate' },
         { text: 'สลิป', value: 'paymentImage' },
-        { text: 'ยอดเงินที่ชำระ', value: 'paymentDateuse' }
+        { text: 'ยอดเงินที่ชำระ', value: 'paymentDateuse' },
+        { text: 'ดาวน์โหลดใบเสร็จ', value: 'actions', sortable: false, align: 'center' }
       ],
       panel: [],
       billingCusName: '',
@@ -1015,6 +1028,9 @@ export default {
     }
   },
   methods: {
+    gotoLink (Link) {
+      window.open(Link, '_blank')
+    },
     validate (Action) {
       switch (Action) {
         case 'ADD':

@@ -1074,6 +1074,33 @@
                         prepend-icon="mdi-account-cash"
                       />
                     </v-col>
+                    <v-col cols="12" class="pt-1 pb-0" v-if="idPayment !== '' && receiptFile !== ''">
+                      <v-btn
+                        color="blue-grey"
+                        class="ma-2 white--text"
+                        @click="gotoLink(receiptFile)"
+                      >
+                        แสดงใบเสร็จเดิม
+                        <v-icon
+                          right
+                          dark
+                        >
+                          mdi-eye
+                        </v-icon>
+                      </v-btn>
+                    </v-col>
+                    <v-col cols="12" class="pt-1 pb-0" v-if="idPayment !== ''">
+                      <v-file-input
+                          class="mt-6 mb-6"
+                          required
+                          counter
+                          show-size
+                          :rules="[rules.resizeImag]"
+                          prepend-icon="mdi-paperclip"
+                          label="Upload ใบเสร็จ"
+                          v-model="filesFlieReceipt"
+                        ></v-file-input>
+                    </v-col>
                     <v-col cols="12" class="pt-1 pb-0" v-if="idPayment !== ''">
                       <v-textarea
                         prepend-icon="mdi-comment-edit"
@@ -1097,9 +1124,11 @@
                   </v-row>
                   <div class="text-center mt-5">
                       <v-btn
-                      class="button pa-2"
-                      dark
+                      class="button pa-2 white--text"
+                      color="#173053"
                       large
+                      :loading="loadingDateSetting"
+                      :disabled="loadingDateSetting"
                       @click="saveDateSetting(typeMain)"
                       >บันทึกข้อมูล</v-btn>
                   </div>
@@ -1134,6 +1163,7 @@ export default {
         length: 9,
         precision: 2
       },
+      loadingDateSetting: false,
       menubillingEndDate: false,
       menuExport: false,
       dateExport: '',
@@ -1227,8 +1257,8 @@ export default {
         required: value => !!value || 'กรุณากรอก.',
         resizeImag: value =>
           !value ||
-          value.size < 2000000 ||
-          'Avatar size should be less than 2 MB!',
+          value.size < 10000000 ||
+          'Avatar size should be less than 10 MB!',
         counterIDcard: value => value.length <= 13 || 'Max 13 characters',
         email: value => {
           const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -1262,7 +1292,9 @@ export default {
       resZipCode: [],
       optionDistrict: [],
       optionSubDistrict: [],
-      optionProvinces: []
+      optionProvinces: [],
+      filesFlieReceipt: null,
+      receiptFile: ''
     }
   },
   async mounted () {
@@ -1270,6 +1302,9 @@ export default {
     this.checkSearch()
   },
   methods: {
+    gotoLink (Link) {
+      window.open(Link, '_blank')
+    },
     async checkAddress () {
       console.log('checkAddress')
       if (this.billingPostalCode.length >= 5) {
@@ -1338,6 +1373,7 @@ export default {
       this.billingTax = item.billingTax || ''
       this.billingPhone = item.billingPhone || ''
       this.paymentDateTrue = item.paymentDateTrue || ''
+      this.receiptFile = item.receiptFile || ''
       if (this.paymentDateTrue === '') {
         this.paymentDateTrueTime = ''
       } else {
@@ -1361,7 +1397,10 @@ export default {
       this.dialogSetting = true
     },
     async saveDateSetting (typeMain) {
+      this.loadingDateSetting = true
       let paymentDateTrue = ''
+      console.log('idPayment', this.idPayment)
+      console.log('typeMain', typeMain)
       if (this.paymentDateTrue) {
         if (this.paymentDateTrueTime) {
           paymentDateTrue = this.paymentDateTrue + ' ' + this.paymentDateTrueTime || '00:00'
@@ -1381,12 +1420,31 @@ export default {
       } else {
         trialsVersionDate = ''
       }
+      let receiptFiles = null
+      if (this.filesFlieReceipt) {
+        console.log('shopReceipt')
+        let params = new FormData()
+        params.append('file', this.filesFlieReceipt)
+        await axios
+          .post(this.DNS_IP + `/file/upload/shopReceipt`, params)
+          .then(function (response) {
+            receiptFiles = response.data
+            console.log('url Pic', response.data)
+          })
+      } else {
+        if (this.receiptFile !== '') {
+          receiptFiles = this.receiptFile
+        } else {
+          receiptFiles = null
+        }
+      }
       if (this.btNumber !== '') {
         this.btNumber = this.btNumber.replace(/%/g, '%%').replace(/'/g, "\\'")
       }
       if (this.remark !== '') {
         this.remark = this.remark.replace(/%/g, '%%').replace(/'/g, "\\'")
       }
+      console.log('receiptFiles', receiptFiles)
       this.billingAddress = this.billingAddressDetails + ' ตําบล/แขวง ' + this.billingSubDistrict + ' อำเภอ/เขต ' + this.billingDistrict + ' จังหวัด ' + this.billingProvinces + ' ' + this.billingPostalCode
       if (this.idPayment === '') {
         if (this.shopId_Shop !== '') {
@@ -1443,6 +1501,7 @@ export default {
               this.shopId_Shop = ''
               this.idPayment = ''
               this.billingEndDate = ''
+              this.loadingDateSetting = false
             })
         }
       } else {
@@ -1466,9 +1525,11 @@ export default {
             billingTax: this.billingTax,
             billingPhone: this.billingPhone,
             paymentAmountSlip: this.paymentAmountSlip,
-            billingEndDate: this.billingEndDate
+            billingEndDate: this.billingEndDate,
+            receiptFile: receiptFiles
           }
         } else {
+          console.log('booking')
           url = this.DNS_IP + '/system_shop_Payment/editAdmin/' + this.idPayment
           ds = {
             paymentDateTrue: paymentDateTrue,
@@ -1486,7 +1547,8 @@ export default {
             billingTax: this.billingTax,
             billingPhone: this.billingPhone,
             paymentAmountSlip: this.paymentAmountSlip,
-            billingEndDate: this.billingEndDate
+            billingEndDate: this.billingEndDate,
+            receiptFile: receiptFiles
           }
         }
         await axios
@@ -1507,6 +1569,8 @@ export default {
             this.shopId_Shop = ''
             this.idPayment = ''
             this.paymentAmountSlip = ''
+            this.filesFlieReceipt = null
+            this.loadingDateSetting = false
           })
       }
     },
@@ -1963,6 +2027,9 @@ export default {
 }
 </script>
 <style scope>
+.plan_button {
+  padding-bottom: 10px;
+}
 #margin {
   margin-top: 50px;
   margin-bottom: 40px;
