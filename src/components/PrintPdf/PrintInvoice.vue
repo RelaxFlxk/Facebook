@@ -103,7 +103,7 @@ export default {
       if (this.dateEvent !== '') {
         await axios
           .get(
-            this.DNS_IP_Betask + '/planPayTransaction/get?shopId=' + this.$session.getAll().data.shopId + '&dateEvent=' + this.dateEvent
+            this.DNS_IP + '/system_shop_Payment/get?shopId=' + this.$session.getAll().data.shopId + '&paymentDate=' + this.dateEvent
           )
           .then(async response1 => {
             let rs = response1.data
