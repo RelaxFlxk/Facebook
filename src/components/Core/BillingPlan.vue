@@ -1020,7 +1020,9 @@ export default {
           await this.checkCurrentPlan()
         } else {
           await this.checkLiffLogin()
-          await this.updateUserId()
+          if (this.profile.userId !== 'U8b3fd01caa9faa45189b0567eb452041') {
+            await this.updateUserId()
+          }
           await this.chkPlan()
           await this.checkCurrentPlan()
         }
