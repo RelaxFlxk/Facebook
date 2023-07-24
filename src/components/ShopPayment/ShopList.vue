@@ -963,16 +963,61 @@
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" class="pt-1 pb-0" v-if="shopId_Shop !== ''">
-                      <v-textarea
-                        prepend-icon="mdi-map-marker"
-                        v-model="billingAddress"
-                        auto-grow
-                        rows="2"
-                        label="ที่อยู่"
-                        dense
-                        outlined
-                      ></v-textarea>
-                    </v-col>
+                        <v-textarea
+                          v-model="billingAddressDetails"
+                          auto-grow
+                          rows="2"
+                          label="รายละเอียดที่อยู่"
+                          :rules="[v => !!v || 'กรุณากรอกรายละเอียดที่อยู่']"
+                          dense
+                          outlined
+                        ></v-textarea>
+                      </v-col>
+                      <v-col cols="12" class="pt-1 pb-0" v-if="shopId_Shop !== ''">
+                        <v-select
+                          v-model="billingSubDistrict"
+                          :items="optionSubDistrict"
+                          :rules="[v => !!v || 'กรุณากรอกตำบล']"
+                          dense
+                          outlined
+                          no-data-text="กรุณกรอกรหัสไปรษณีย์"
+                          label="ตำบล"
+                        ></v-select>
+                      </v-col>
+                      <v-col cols="12" class="pt-1 pb-0" v-if="shopId_Shop !== ''">
+                        <v-select
+                          v-model="billingDistrict"
+                          :items="optionDistrict"
+                          :rules="[v => !!v || 'กรุณากรอกอำเภอ']"
+                          dense
+                          outlined
+                          no-data-text="กรุณกรอกรหัสไปรษณีย์"
+                          label="อำเภอ"
+                        ></v-select>
+                      </v-col>
+                      <v-col cols="12" class="pt-1 pb-0" v-if="shopId_Shop !== ''">
+                        <v-select
+                          v-model="billingProvinces"
+                          :items="optionProvinces"
+                          :rules="[v => !!v || 'กรุณากรอกจังหวัด']"
+                          dense
+                          outlined
+                          no-data-text="กรุณกรอกรหัสไปรษณีย์"
+                          label="จังหวัด"
+                        ></v-select>
+                      </v-col>
+                      <v-col cols="12" class="pt-1 pb-0" v-if="shopId_Shop !== ''">
+                        <v-text-field
+                          v-model="billingPostalCode"
+                          :rules="[v => !!v || 'กรุณากรอกรหัสไปรษณีย์', v => (!isNaN(v)) && v.length >= 5 && v.length <= 5  || 'รหัสไปรษณีย์ต้องมีตัวเลข 5 ตัว', resZipCode.length > 0 || 'ไม่เจอรหัสรหัสไปรษณีย์']"
+                          dense
+                          outlined
+                          label="รหัสไปรษณีย์"
+                          no-data-text="ไม่มีข้อมูล"
+                          required
+                          @input="checkAddress()"
+                        ></v-text-field>
+                      </v-col>
                     <v-col cols="12" class="pt-1 pb-0" v-if="idPayment !== ''">
                       <v-menu
                         ref="menu"
@@ -1029,6 +1074,33 @@
                         prepend-icon="mdi-account-cash"
                       />
                     </v-col>
+                    <v-col cols="12" class="pt-1 pb-0" v-if="idPayment !== '' && receiptFile !== ''">
+                      <v-btn
+                        color="blue-grey"
+                        class="ma-2 white--text"
+                        @click="gotoLink(receiptFile)"
+                      >
+                        แสดงใบเสร็จเดิม
+                        <v-icon
+                          right
+                          dark
+                        >
+                          mdi-eye
+                        </v-icon>
+                      </v-btn>
+                    </v-col>
+                    <v-col cols="12" class="pt-1 pb-0" v-if="idPayment !== ''">
+                      <v-file-input
+                          class="mt-6 mb-6"
+                          required
+                          counter
+                          show-size
+                          :rules="[rules.resizeImag]"
+                          prepend-icon="mdi-paperclip"
+                          label="Upload ใบเสร็จ"
+                          v-model="filesFlieReceipt"
+                        ></v-file-input>
+                    </v-col>
                     <v-col cols="12" class="pt-1 pb-0" v-if="idPayment !== ''">
                       <v-textarea
                         prepend-icon="mdi-comment-edit"
@@ -1052,9 +1124,11 @@
                   </v-row>
                   <div class="text-center mt-5">
                       <v-btn
-                      class="button pa-2"
-                      dark
+                      class="button pa-2 white--text"
+                      color="#173053"
                       large
+                      :loading="loadingDateSetting"
+                      :disabled="loadingDateSetting"
                       @click="saveDateSetting(typeMain)"
                       >บันทึกข้อมูล</v-btn>
                   </div>
@@ -1089,12 +1163,18 @@ export default {
         length: 9,
         precision: 2
       },
+      loadingDateSetting: false,
       menubillingEndDate: false,
       menuExport: false,
       dateExport: '',
       paymentImage: '',
       billingCusName: '',
       billingAddress: '',
+      billingAddressDetails: '',
+      billingSubDistrict: '',
+      billingDistrict: '',
+      billingProvinces: '',
+      billingPostalCode: '',
       billingTax: '',
       billingPhone: '',
       menutrialsVersionDate: false,
@@ -1177,8 +1257,8 @@ export default {
         required: value => !!value || 'กรุณากรอก.',
         resizeImag: value =>
           !value ||
-          value.size < 2000000 ||
-          'Avatar size should be less than 2 MB!',
+          value.size < 10000000 ||
+          'Avatar size should be less than 10 MB!',
         counterIDcard: value => value.length <= 13 || 'Max 13 characters',
         email: value => {
           const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -1208,7 +1288,13 @@ export default {
       countNewCusOnMonthLoyalty: 0,
       countNewCusLoyalty: 0,
       countOldCusLoyalty: 0,
-      sumAmountAll: 0
+      sumAmountAll: 0,
+      resZipCode: [],
+      optionDistrict: [],
+      optionSubDistrict: [],
+      optionProvinces: [],
+      filesFlieReceipt: null,
+      receiptFile: ''
     }
   },
   async mounted () {
@@ -1216,13 +1302,78 @@ export default {
     this.checkSearch()
   },
   methods: {
-    setDataSetting (item) {
+    gotoLink (Link) {
+      window.open(Link, '_blank')
+    },
+    async checkAddress () {
+      console.log('checkAddress')
+      if (this.billingPostalCode.length >= 5) {
+        console.log('postalCode')
+        this.optionDistrict = []
+        this.optionSubDistrict = []
+        this.optionProvinces = []
+        await axios
+          .get(
+            // eslint-disable-next-line quotes
+            this.DNS_IP + "/location/map_thai?zipcode=" +
+              this.billingPostalCode
+          )
+          .then(async (response) => {
+            console.log(response.data.length > 0)
+            this.resZipCode = response.data
+            let rs = response.data
+            for (var i = 0; i < rs.length; i++) {
+              var x = rs[i]
+              var z = {}
+              z.text = x.district
+              z.value = x.district
+              this.optionDistrict.push(z)
+
+              var d = rs[i]
+              var s = {}
+              s.text = d.sub_district
+              s.value = d.sub_district
+              this.optionSubDistrict.push(s)
+            }
+            for (var t = 0; t < rs.length; t++) {
+              var k = rs[t]
+              var l = {}
+              l.text = k.province
+              l.value = k.province
+              this.optionProvinces.push(l)
+            }
+          }) // eslint-disable-next-line handle-callback-err
+          .catch((error) => {
+            console.log(error)
+            // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
+          })
+      } else if (this.billingPostalCode.length < 5) {
+        console.log('น้อยกว่า')
+        this.optionDistrict = []
+        this.optionSubDistrict = []
+        this.optionProvinces = []
+        // this.billingPostalCode = ''
+        this.billingSubDistrict = ''
+        this.billingDistrict = ''
+        this.billingProvinces = ''
+      }
+    },
+    async setDataSetting (item) {
       console.log('setDataSetting', item)
       this.billingCusName = item.billingCusName || ''
       this.billingAddress = item.billingAddress || ''
+
+      this.billingAddressDetails = item.billingAddressDetails || ''
+      this.billingPostalCode = item.billingPostalCode || ''
+      await this.checkAddress()
+      this.billingSubDistrict = item.billingSubDistrict || ''
+      this.billingDistrict = item.billingDistrict || ''
+      this.billingProvinces = item.billingProvinces || ''
+
       this.billingTax = item.billingTax || ''
       this.billingPhone = item.billingPhone || ''
       this.paymentDateTrue = item.paymentDateTrue || ''
+      this.receiptFile = item.receiptFile || ''
       if (this.paymentDateTrue === '') {
         this.paymentDateTrueTime = ''
       } else {
@@ -1246,7 +1397,10 @@ export default {
       this.dialogSetting = true
     },
     async saveDateSetting (typeMain) {
+      this.loadingDateSetting = true
       let paymentDateTrue = ''
+      console.log('idPayment', this.idPayment)
+      console.log('typeMain', typeMain)
       if (this.paymentDateTrue) {
         if (this.paymentDateTrueTime) {
           paymentDateTrue = this.paymentDateTrue + ' ' + this.paymentDateTrueTime || '00:00'
@@ -1266,12 +1420,32 @@ export default {
       } else {
         trialsVersionDate = ''
       }
+      let receiptFiles = null
+      if (this.filesFlieReceipt) {
+        console.log('shopReceipt')
+        let params = new FormData()
+        params.append('file', this.filesFlieReceipt)
+        await axios
+          .post(this.DNS_IP + `/file/upload/shopReceipt`, params)
+          .then(function (response) {
+            receiptFiles = response.data
+            console.log('url Pic', response.data)
+          })
+      } else {
+        if (this.receiptFile !== '') {
+          receiptFiles = this.receiptFile
+        } else {
+          receiptFiles = null
+        }
+      }
       if (this.btNumber !== '') {
         this.btNumber = this.btNumber.replace(/%/g, '%%').replace(/'/g, "\\'")
       }
       if (this.remark !== '') {
         this.remark = this.remark.replace(/%/g, '%%').replace(/'/g, "\\'")
       }
+      console.log('receiptFiles', receiptFiles)
+      this.billingAddress = this.billingAddressDetails + ' ตําบล/แขวง ' + this.billingSubDistrict + ' อำเภอ/เขต ' + this.billingDistrict + ' จังหวัด ' + this.billingProvinces + ' ' + this.billingPostalCode
       if (this.idPayment === '') {
         if (this.shopId_Shop !== '') {
           let url = ''
@@ -1283,6 +1457,11 @@ export default {
               expire_date_trial: trialsVersionDate,
               billingCusName: this.billingCusName,
               billingAddress: this.billingAddress,
+              billingAddressDetails: this.billingAddressDetails,
+              billingSubDistrict: this.billingSubDistrict,
+              billingDistrict: this.billingDistrict,
+              billingProvinces: this.billingProvinces,
+              billingPostalCode: this.billingPostalCode,
               billingTax: this.billingTax,
               billingPhone: this.billingPhone,
               billingEndDate: this.billingEndDate
@@ -1294,6 +1473,11 @@ export default {
               trialsVersionDate: trialsVersionDate,
               billingCusName: this.billingCusName,
               billingAddress: this.billingAddress,
+              billingAddressDetails: this.billingAddressDetails,
+              billingSubDistrict: this.billingSubDistrict,
+              billingDistrict: this.billingDistrict,
+              billingProvinces: this.billingProvinces,
+              billingPostalCode: this.billingPostalCode,
               billingTax: this.billingTax,
               billingPhone: this.billingPhone,
               billingEndDate: this.billingEndDate
@@ -1317,6 +1501,7 @@ export default {
               this.shopId_Shop = ''
               this.idPayment = ''
               this.billingEndDate = ''
+              this.loadingDateSetting = false
             })
         }
       } else {
@@ -1332,12 +1517,19 @@ export default {
             expire_date_trial: trialsVersionDate,
             billingCusName: this.billingCusName,
             billingAddress: this.billingAddress,
+            billingAddressDetails: this.billingAddressDetails,
+            billingSubDistrict: this.billingSubDistrict,
+            billingDistrict: this.billingDistrict,
+            billingProvinces: this.billingProvinces,
+            billingPostalCode: this.billingPostalCode,
             billingTax: this.billingTax,
             billingPhone: this.billingPhone,
             paymentAmountSlip: this.paymentAmountSlip,
-            billingEndDate: this.billingEndDate
+            billingEndDate: this.billingEndDate,
+            receiptFile: receiptFiles
           }
         } else {
+          console.log('booking')
           url = this.DNS_IP + '/system_shop_Payment/editAdmin/' + this.idPayment
           ds = {
             paymentDateTrue: paymentDateTrue,
@@ -1347,10 +1539,16 @@ export default {
             trialsVersionDate: trialsVersionDate,
             billingCusName: this.billingCusName,
             billingAddress: this.billingAddress,
+            billingAddressDetails: this.billingAddressDetails,
+            billingSubDistrict: this.billingSubDistrict,
+            billingDistrict: this.billingDistrict,
+            billingProvinces: this.billingProvinces,
+            billingPostalCode: this.billingPostalCode,
             billingTax: this.billingTax,
             billingPhone: this.billingPhone,
             paymentAmountSlip: this.paymentAmountSlip,
-            billingEndDate: this.billingEndDate
+            billingEndDate: this.billingEndDate,
+            receiptFile: receiptFiles
           }
         }
         await axios
@@ -1371,6 +1569,8 @@ export default {
             this.shopId_Shop = ''
             this.idPayment = ''
             this.paymentAmountSlip = ''
+            this.filesFlieReceipt = null
+            this.loadingDateSetting = false
           })
       }
     },
@@ -1827,6 +2027,9 @@ export default {
 }
 </script>
 <style scope>
+.plan_button {
+  padding-bottom: 10px;
+}
 #margin {
   margin-top: 50px;
   margin-bottom: 40px;
