@@ -436,40 +436,38 @@ export default {
     async getRating () {
       this.Ratingitem = []
       await axios
-        .get(this.DNS_IP + '/rating/get?shopId=' + this.shopId)
+        .get(this.DNS_IP + '/rating/get?shopId=' + this.shopId + '&masBranchID=' + this.masBranchID)
         .then((response) => {
           let rs = response.data
           console.log('show', rs)
           if (rs.length > 0) {
             let tempGroup = rs.reduce((acc, d) => {
-              if (d.masBranchID === this.masBranchID) {
-                let refId = d.refId
-                if (!acc[refId]) {
-                  acc[refId] = {
-                    sumRating: 0,
-                    countRating: 0,
-                    data: {
-                      id: d.id,
-                      refId: refId,
-                      rating: parseInt(d.rating),
-                      comment: d.comment,
-                      typeWork: d.typeWork,
-                      displayName: d.displayName,
-                      pictureUrl: d.pictureUrl,
-                      callBackStatus: d.callBackStatus,
-                      staffCallBack: d.staffCallBack,
-                      staffCallBackRemark: d.staffCallBackRemark,
-                      CREATE_DATE: this.format_dateNotime(d.CREATE_DATE)
-                    }
+              let refId = d.refId
+              if (!acc[refId]) {
+                acc[refId] = {
+                  sumRating: 0,
+                  countRating: 0,
+                  data: {
+                    id: d.id,
+                    refId: refId,
+                    rating: parseInt(d.rating),
+                    comment: d.comment,
+                    typeWork: d.typeWork,
+                    displayName: d.displayName,
+                    pictureUrl: d.pictureUrl,
+                    callBackStatus: d.callBackStatus,
+                    staffCallBack: d.staffCallBack,
+                    staffCallBackRemark: d.staffCallBackRemark,
+                    CREATE_DATE: this.format_dateNotime(d.CREATE_DATE)
                   }
                 }
-                acc[refId].sumRating += parseInt(d.rating)
-                acc[refId].countRating += 1
               }
+              acc[refId].sumRating += parseInt(d.rating)
+              acc[refId].countRating += 1
               return acc
             }, {})
 
-            if (this.rs === 'ddddd') {
+            if (this.rs === this.refId) {
               for (let refId in tempGroup) {
                 let averageRating = tempGroup[refId].sumRating / tempGroup[refId].countRating
                 let s = tempGroup[refId].data

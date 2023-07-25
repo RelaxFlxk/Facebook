@@ -412,8 +412,7 @@ export default {
   }
 }
 </script>
-<style scope>
-
+<style scoped>
 p{
   color:#77808D;
 }
