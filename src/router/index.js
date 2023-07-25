@@ -11,6 +11,7 @@ import Onsite from '@/components/Onsite'
 import Mazda from '@/components/Mazda'
 import ShopPayment from '@/components/ShopPayment'
 import Sound from '@/components/Sound'
+import Rating from '@/components/Rating'
 
 Vue.use(Router)
 
@@ -460,6 +461,11 @@ export default new Router({
     path: '/Core/QrcodeBoot',
     name: 'QrcodeBoot',
     component: Core.QrcodeBoot
+  },
+  {
+    path: '/Rating/RatingAnswer',
+    name: 'RatingAnswer',
+    component: Rating.RatingAnswer
   }
   ]
 })

@@ -833,8 +833,9 @@ export default {
           // console.log('ELSE')
           limitTime = JSON.parse(this.DataFlow.filter((item) => item.flowId === this.formSelect.flowId)[0].setTime) || []
         }
-        let countBooking = 0
-        let totalLimit = limitTime.reduce((x, y) => { return x + parseInt(y.limitBooking) }, 0)
+        let stasutColorDate = false
+        // let countBooking = 0
+        // let totalLimit = limitTime.reduce((x, y) => { return x + parseInt(y.limitBooking) }, 0)
         limitTime.forEach((a, b) => {
           // console.log('type')
           // console.log('aaaa', thi?s.LimitBooking.filter((limitItem) => moment(limitItem.bookingDate, 'YYYY-MM-DD').format('YYYY-MM-DD') === moment(item + v.split('-')[0], 'YYYY-MM-DD').format('YYYY-MM-DD')))
@@ -868,18 +869,22 @@ export default {
             ss.Overtime = false
             this.allDetails.push(ss)
           }
-          if ((countBooking += cheklimit) >= totalLimit) {
-            s.checkLimit = false
-            s.color = this.DarkMode
-            s.colortext = '#000000'
-            // console.log('cheklimitIF', v, a.value, cheklimit)
-          } else {
-            s.checkLimit = true
-            s.color = '#0D47A1'
-            s.colortext = '#FFFFFF'
-            // console.log('cheklimit', v, a.value, cheklimit)
+          if (cheklimit < parseInt(a.limitBooking)) {
+            stasutColorDate = true
           }
         })
+        if (stasutColorDate === false) {
+          s.checkLimit = false
+          s.color = this.DarkMode
+          s.colortext = '#000000'
+          // console.log('aaaa' + s.date + ' ' + a.value + '-', cheklimit)
+          // console.log('cheklimitIF', v, a.value, cheklimit)
+        } else {
+          s.checkLimit = true
+          s.color = '#0D47A1'
+          s.colortext = '#FFFFFF'
+          // console.log('cheklimit', v, a.value, cheklimit)
+        }
         // เซ็ตวันที่เป็นปัจจุบัน
         if (moment(item, 'YYYY-MM').format() <= moment(this.currentMonth, 'YYYY-MM').format()) {
           if (parseInt(s.value) >= parseInt(this.currentDate.split('-')[2])) {
