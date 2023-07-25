@@ -12,6 +12,7 @@ import Mazda from '@/components/Mazda'
 import ShopPayment from '@/components/ShopPayment'
 import Sound from '@/components/Sound'
 import Rating from '@/components/Rating'
+import Pepsico from '@/components/Pepsico'
 
 Vue.use(Router)
 
@@ -466,6 +467,11 @@ export default new Router({
     path: '/Rating/RatingAnswer',
     name: 'RatingAnswer',
     component: Rating.RatingAnswer
+  },
+  {
+    path: '/Pepsico/ImportExcel',
+    name: 'ImportExcel',
+    component: Pepsico.ImportExcel
   }
   ]
 })
