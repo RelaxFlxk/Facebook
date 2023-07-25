@@ -358,7 +358,7 @@ export default {
   },
   async mounted () {
     await this.getDataBranch()
-    this.getRating()
+    // this.getRating()
   },
   methods: {
     dial: function (number) {
@@ -397,7 +397,7 @@ export default {
             this.DataBranchName = []
             this.branch = []
           }
-          if (this.branch.length === 1) {
+          if (this.branch.length > 0) {
             this.masBranchID = this.branch[0].value
             await this.getRating()
           }
@@ -406,27 +406,27 @@ export default {
     async getRating () {
       this.Ratingitem = []
       await axios
-        .get(this.DNS_IP + '/rating/get?shopId=' + this.shopId).then((response) => {
+        .get(this.DNS_IP + '/rating/get?shopId=' + this.shopId + '&masBranchID=' + this.masBranchID).then((response) => {
           let rs = response.data
           console.log('show', rs)
           if (rs.length > 0) {
             for (let i = 0; i < rs.length; i++) {
               let d = rs[i]
-              if (d.masBranchID === this.masBranchID) {
-                let s = {}
-                s.id = d.id
-                s.refId = d.refId
-                s.rating = parseInt(d.rating)
-                s.comment = d.comment
-                s.typeWork = d.typeWork
-                s.displayName = d.displayName
-                s.pictureUrl = d.pictureUrl
-                s.callBackStatus = d.callBackStatus
-                s.staffCallBack = d.staffCallBack
-                s.staffCallBackRemark = d.staffCallBackRemark
-                s.CREATE_DATE = this.format_dateNotime(d.CREATE_DATE)
-                this.Ratingitem.push(s)
-              }
+              // if (d.masBranchID === this.masBranchID) {
+              let s = {}
+              s.id = d.id
+              s.refId = d.refId
+              s.rating = parseInt(d.rating)
+              s.comment = d.comment
+              s.typeWork = d.typeWork
+              s.displayName = d.displayName
+              s.pictureUrl = d.pictureUrl
+              s.callBackStatus = d.callBackStatus
+              s.staffCallBack = d.staffCallBack
+              s.staffCallBackRemark = d.staffCallBackRemark
+              s.CREATE_DATE = this.format_dateNotime(d.CREATE_DATE)
+              this.Ratingitem.push(s)
+              // }
             }
           }
         }).catch((error) => {
