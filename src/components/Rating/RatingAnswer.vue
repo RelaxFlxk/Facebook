@@ -439,7 +439,7 @@ p{
     color: #EAEAEF;
 }
 .v-text-field.v-text-field--enclosed .v-text-field__details, .v-text-field.v-text-field--enclosed:not(.v-text-field--rounded)>.v-input__control>.v-input__slot {
-    padding: 0 0 !important;
+    padding: 0 0;
 }
 .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
     background: #ffffff00;

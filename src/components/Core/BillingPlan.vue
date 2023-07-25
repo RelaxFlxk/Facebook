@@ -288,79 +288,137 @@
                   <h4 class="text-center font-weight-black mb-10">
                     แนบหลักฐานการโอนเงิน
                   </h4>
-                  <v-row>
-                    <v-col cols="12" class="text-center pa-2 mt-6">
-                      <v-img
-                        v-if="paymentImge !== null"
-                        class="pa-3"
-                        contain
-                        max-height="100%"
-                        max-width="100%"
-                        :src="paymentImge"
-                      ></v-img>
-                      <v-avatar v-else tile color="#FFFFFF" size="180">
+                  <v-form ref="form_dialogQrcode" v-model="validAdddialogQrcode" lazy-validation>
+                    <v-row>
+                      <v-col cols="12" class="text-center pa-2 mt-6">
                         <v-img
-                          aspect-ratio="6"
+                          v-if="paymentImge !== null"
+                          class="pa-3"
                           contain
-                          src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2FUploadicon.png?alt=media&token=39383860-d16e-49ca-81cb-a3ad888df095"
+                          max-height="100%"
+                          max-width="100%"
+                          :src="paymentImge"
                         ></v-img>
-                      </v-avatar>
-                      <v-file-input
-                        class="mt-6 mb-6"
-                        required
-                        counter
-                        show-size
-                        :rules="[rules.resizeImag]"
-                        accept="image/png, image/jpeg, image/bmp"
-                        prepend-icon="mdi-paperclip"
-                        label="Upload"
-                        @change="selectImg"
-                        v-model="filesImg"
-                      ></v-file-input>
-                    </v-col>
-                     <v-col cols="12" class="pt-1 pb-0">
-                      <v-text-field
-                        prepend-icon="mdi-account"
-                        v-model="billingCusName"
-                        label="ชื่อ-สกุล"
-                        outlined
-                        dense
-                        required
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" class="pt-1 pb-0">
-                      <v-text-field
-                        prepend-icon="mdi-card-account-phone-outline"
-                        v-mask="'##########'"
-                        v-model="billingPhone"
-                        label="เบอร์โทร"
-                        outlined
-                        dense
-                        required
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" class="pt-1 pb-0">
-                      <v-text-field
-                        prepend-icon="mdi-hail"
-                        v-model="billingTax"
-                        label="เลขประจำตัวผู้เสียภาษี"
-                        outlined
-                        dense
-                        required
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" class="pt-1 pb-0">
-                      <v-textarea
-                        prepend-icon="mdi-map-marker"
-                        v-model="billingAddress"
-                        auto-grow
-                        rows="2"
-                        label="ที่อยู่"
-                        dense
-                        outlined
-                      ></v-textarea>
-                    </v-col>
-                  </v-row>
+                        <v-avatar v-else tile color="#FFFFFF" size="180">
+                          <v-img
+                            aspect-ratio="6"
+                            contain
+                            src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2FUploadicon.png?alt=media&token=39383860-d16e-49ca-81cb-a3ad888df095"
+                          ></v-img>
+                        </v-avatar>
+                        <v-file-input
+                          class="mt-6 mb-6"
+                          required
+                          counter
+                          show-size
+                          :rules="[rules.resizeImag]"
+                          accept="image/png, image/jpeg, image/bmp"
+                          prepend-icon="mdi-paperclip"
+                          label="Upload"
+                          @change="selectImg"
+                          v-model="filesImg"
+                        ></v-file-input>
+                      </v-col>
+                      <v-col cols="12" class="pt-1 pb-0">
+                        <v-text-field
+                          prepend-icon="mdi-account"
+                          v-model="billingCusName"
+                          label="ชื่อ-สกุล"
+                          outlined
+                          dense
+                          required
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" class="pt-1 pb-0">
+                        <v-text-field
+                          prepend-icon="mdi-card-account-phone-outline"
+                          v-mask="'##########'"
+                          v-model="billingPhone"
+                          label="เบอร์โทร"
+                          outlined
+                          dense
+                          required
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" class="pt-1 pb-0">
+                        <v-text-field
+                          prepend-icon="mdi-hail"
+                          v-model="billingTax"
+                          label="เลขประจำตัวผู้เสียภาษี"
+                          outlined
+                          dense
+                          required
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" class="pt-1 pb-0">
+                        <v-textarea
+                          v-model="billingAddressDetails"
+                          auto-grow
+                          rows="2"
+                          label="รายละเอียดที่อยู่"
+                          :rules="[v => !!v || 'กรุณากรอกรายละเอียดที่อยู่']"
+                          dense
+                          outlined
+                        ></v-textarea>
+                      </v-col>
+                      <v-col cols="12" class="pt-1 pb-0">
+                        <v-select
+                          v-model="billingSubDistrict"
+                          :items="optionSubDistrict"
+                          :rules="[v => !!v || 'กรุณากรอกตำบล']"
+                          dense
+                          outlined
+                          no-data-text="กรุณกรอกรหัสไปรษณีย์"
+                          label="ตำบล"
+                        ></v-select>
+                      </v-col>
+                      <v-col cols="12" class="pt-1 pb-0">
+                        <v-select
+                          v-model="billingDistrict"
+                          :items="optionDistrict"
+                          :rules="[v => !!v || 'กรุณากรอกอำเภอ']"
+                          dense
+                          outlined
+                          no-data-text="กรุณกรอกรหัสไปรษณีย์"
+                          label="อำเภอ"
+                        ></v-select>
+                      </v-col>
+                      <v-col cols="12" class="pt-1 pb-0">
+                        <v-select
+                          v-model="billingProvinces"
+                          :items="optionProvinces"
+                          :rules="[v => !!v || 'กรุณากรอกจังหวัด']"
+                          dense
+                          outlined
+                          no-data-text="กรุณกรอกรหัสไปรษณีย์"
+                          label="จังหวัด"
+                        ></v-select>
+                      </v-col>
+                      <v-col cols="12" class="pt-1 pb-0">
+                        <v-text-field
+                          v-model="billingPostalCode"
+                          :rules="[v => !!v || 'กรุณากรอกรหัสไปรษณีย์', v => (!isNaN(v)) && v.length >= 5 && v.length <= 5  || 'รหัสไปรษณีย์ต้องมีตัวเลข 5 ตัว', resZipCode.length > 0 || 'ไม่เจอรหัสรหัสไปรษณีย์']"
+                          dense
+                          outlined
+                          label="รหัสไปรษณีย์"
+                          no-data-text="ไม่มีข้อมูล"
+                          required
+                          @input="checkAddress()"
+                        ></v-text-field>
+                      </v-col>
+                      <!-- <v-col cols="12" class="pt-1 pb-0" v-show="true">
+                        <v-textarea
+                          prepend-icon="mdi-map-marker"
+                          v-model="billingAddress"
+                          auto-grow
+                          rows="2"
+                          label="ที่อยู่"
+                          dense
+                          outlined
+                        ></v-textarea>
+                      </v-col> -->
+                    </v-row>
+                  </v-form>
                   <div class="text-center mt-5">
                     <v-btn
                       class="button pa-2"
@@ -538,6 +596,18 @@
                         <template v-slot:[`item.paymentDateuse`]="{ item }">
                           {{ formatNumber(item.paymentDateuse) }} บาท
                         </template>
+                        <template v-slot:[`item.actions`]="{ item }">
+                          <v-btn
+                            v-if="item.receiptFile !== ''"
+                            color="teal"
+                            fab
+                            small
+                            dark
+                            @click.stop="gotoLink(item.receiptFile)"
+                          >
+                            <v-icon>mdi-download-circle</v-icon>
+                          </v-btn>
+                        </template>
                       </v-data-table>
                     </v-col>
                   </v-row>
@@ -563,146 +633,204 @@
                   <h3 class="text-center" style="color:#1B437C;font-weight: bold;">แนบหลักฐานการโอนเงิน</h3>
                   <br>
                   <!-- <h4 class="text-center font-weight-black mb-10" >แนบหลักฐานการโอนเงิน</h4> -->
-                  <v-row>
-                    <v-col cols="12" class="text-center pa-2 mt-6">
-                      <v-img
-                        v-if="paymentImge !== null"
-                        class="pa-3"
-                        contain
-                        max-height="100%"
-                        max-width="100%"
-                        :src="paymentImge"
-                      ></v-img>
-                      <v-avatar
-                        v-else
-                        tile
-                        color="#FFFFFF"
-                        size="180"
-                      >
+                  <v-form ref="form_dialogReConfirm" v-model="validAdddialogReConfirm" lazy-validation>
+                    <v-row>
+                      <v-col cols="12" class="text-center pa-2 mt-6">
                         <v-img
-                        aspect-ratio="6"
-                        contain
-                        src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2FUploadicon.png?alt=media&token=39383860-d16e-49ca-81cb-a3ad888df095"
+                          v-if="paymentImge !== null"
+                          class="pa-3"
+                          contain
+                          max-height="100%"
+                          max-width="100%"
+                          :src="paymentImge"
                         ></v-img>
-                      </v-avatar>
-                      <v-file-input
-                      class="mt-6 mb-6"
-                        required
-                        counter
-                        show-size
-                        :rules="[rules.resizeImag]"
-                        accept="image/png, image/jpeg, image/bmp"
-                        prepend-icon="mdi-paperclip"
-                        label="Upload"
-                        @change="selectImg"
-                        v-model="filesImg"
-                      ></v-file-input>
-                    </v-col>
-                    <v-col cols="12" class="text-center pa-2">
-                      <v-expansion-panels
-                        v-model="panel"
-                        multiple
-                      >
-                        <v-expansion-panel>
-                          <v-expansion-panel-header>ช่องทางการชำระเงิน</v-expansion-panel-header>
-                          <v-expansion-panel-content>
-                            <v-img
-                              height="170"
-                              src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2FQR-prompt.jpg?alt=media&token=42637b63-af5b-45d9-8900-b866b789819e"
-                            ></v-img>
-                            <div class="text-center mt-4" v-if="value">
-                              <qrcode-vue
-                                :value="value"
-                                :size="size"
-                                level="H"
-                                :foreground="foreground"
-                              />
-                            </div>
-                            <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
-                              บัญชี : บริษัท บีแทสก์ คอนซัลติ้ง จำกัด
-                            </h6>
-                            <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="trialsPrice > 0">
-                              จำนวนเงินหลังใช้ฟรี 7 วัน : {{ formatNumber(trialsPrice) }} บาท
-                            </h6>
-                            <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="trialsPrice > 0">
-                              (วันที่ {{ billingTrialsPriceDateFomatShow }} )
-                            </h6>
-                            <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="currentPrice > 0">
-                              จำนวนเงินค่าบริการที่เหลือ : {{ formatNumber(currentPrice) }} บาท
-                            </h6>
-                            <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="currentPrice > 0">
-                              (วันที่ {{ billingCurrentPriceDateFomatShow }} )
-                            </h6>
-                            <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
-                              จำนวนเงิน : {{ formatNumber(paymentAmount) }} บาท
-                            </h6>
-                            <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
-                              จำนวน Vat : {{ formatNumber(paymentAmountVat) }} บาท
-                            </h6>
-                            <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
-                              จำนวนเงินรวม : {{ formatNumber(parseFloat(paymentAmount) + parseFloat(paymentAmountVat)) }} บาท
-                            </h6>
-                            <div class="pl-4 pr-4"><v-divider></v-divider></div>
-                            <div class="text-center" style="display:flex;"><v-img
-                                  style="position: relative;left: -33px;"
-                                  aspect-ratio="6"
-                                  contain
-                                  max-width="200"
-                                  src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2Fktb.png?alt=media&token=f197ab8f-f502-4136-91a0-8c92f2968ecf"
-                                ></v-img><h6 style="position: relative;left: -85px;margin-bottom: 0;">ธนาคารกรุงไทย สาขาประชาอุทิศ  เลขบัญชี 094-0-34082-8</h6></div>
-                            <div class="text-center" style="display:flex;padding:20px"><v-img
-                                  aspect-ratio="6"
-                                  contain
-                                  max-width="200"
-                                  src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2Fkbank.png?alt=media&token=f492fd39-0b56-4aa4-82d7-730b53167029"
-                                ></v-img><h6>ธนาคารกสิกรไทย สาขาศรีวรา ทาวน์อินทาวน์ เลขบัญชี 107-3-15084-8</h6></div>
-                          </v-expansion-panel-content>
-                        </v-expansion-panel>
-                      </v-expansion-panels>
-                    </v-col>
-                    <v-col cols="12" class="pt-1 pb-0">
-                      <v-text-field
-                        prepend-icon="mdi-account"
-                        v-model="billingCusName"
-                        label="ชื่อ-สกุล"
-                        outlined
-                        dense
-                        required
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" class="pt-1 pb-0">
-                      <v-text-field
-                        prepend-icon="mdi-card-account-phone-outline"
-                        v-mask="'##########'"
-                        v-model="billingPhone"
-                        label="เบอร์โทร"
-                        outlined
-                        dense
-                        required
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" class="pt-1 pb-0">
-                      <v-text-field
-                        prepend-icon="mdi-hail"
-                        v-model="billingTax"
-                        label="เลขประจำตัวผู้เสียภาษี"
-                        outlined
-                        dense
-                        required
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" class="pt-1 pb-0">
-                      <v-textarea
-                        prepend-icon="mdi-map-marker"
-                        v-model="billingAddress"
-                        auto-grow
-                        rows="2"
-                        label="ที่อยู่"
-                        dense
-                        outlined
-                      ></v-textarea>
-                    </v-col>
-                  </v-row>
+                        <v-avatar
+                          v-else
+                          tile
+                          color="#FFFFFF"
+                          size="180"
+                        >
+                          <v-img
+                          aspect-ratio="6"
+                          contain
+                          src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2FUploadicon.png?alt=media&token=39383860-d16e-49ca-81cb-a3ad888df095"
+                          ></v-img>
+                        </v-avatar>
+                        <v-file-input
+                        class="mt-6 mb-6"
+                          required
+                          counter
+                          show-size
+                          :rules="[rules.resizeImag]"
+                          accept="image/png, image/jpeg, image/bmp"
+                          prepend-icon="mdi-paperclip"
+                          label="Upload"
+                          @change="selectImg"
+                          v-model="filesImg"
+                        ></v-file-input>
+                      </v-col>
+                      <v-col cols="12" class="text-center pa-2">
+                        <v-expansion-panels
+                          v-model="panel"
+                          multiple
+                        >
+                          <v-expansion-panel>
+                            <v-expansion-panel-header>ช่องทางการชำระเงิน</v-expansion-panel-header>
+                            <v-expansion-panel-content>
+                              <v-img
+                                height="170"
+                                src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2FQR-prompt.jpg?alt=media&token=42637b63-af5b-45d9-8900-b866b789819e"
+                              ></v-img>
+                              <div class="text-center mt-4" v-if="value">
+                                <qrcode-vue
+                                  :value="value"
+                                  :size="size"
+                                  level="H"
+                                  :foreground="foreground"
+                                />
+                              </div>
+                              <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
+                                บัญชี : บริษัท บีแทสก์ คอนซัลติ้ง จำกัด
+                              </h6>
+                              <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="trialsPrice > 0">
+                                จำนวนเงินหลังใช้ฟรี 7 วัน : {{ formatNumber(trialsPrice) }} บาท
+                              </h6>
+                              <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="trialsPrice > 0">
+                                (วันที่ {{ billingTrialsPriceDateFomatShow }} )
+                              </h6>
+                              <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="currentPrice > 0">
+                                จำนวนเงินค่าบริการที่เหลือ : {{ formatNumber(currentPrice) }} บาท
+                              </h6>
+                              <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="currentPrice > 0">
+                                (วันที่ {{ billingCurrentPriceDateFomatShow }} )
+                              </h6>
+                              <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
+                                จำนวนเงิน : {{ formatNumber(paymentAmount) }} บาท
+                              </h6>
+                              <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
+                                จำนวน Vat : {{ formatNumber(paymentAmountVat) }} บาท
+                              </h6>
+                              <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
+                                จำนวนเงินรวม : {{ formatNumber(parseFloat(paymentAmount) + parseFloat(paymentAmountVat)) }} บาท
+                              </h6>
+                              <div class="pl-4 pr-4"><v-divider></v-divider></div>
+                              <div class="text-center" style="display:flex;"><v-img
+                                    style="position: relative;left: -33px;"
+                                    aspect-ratio="6"
+                                    contain
+                                    max-width="200"
+                                    src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2Fktb.png?alt=media&token=f197ab8f-f502-4136-91a0-8c92f2968ecf"
+                                  ></v-img><h6 style="position: relative;left: -85px;margin-bottom: 0;">ธนาคารกรุงไทย สาขาประชาอุทิศ  เลขบัญชี 094-0-34082-8</h6></div>
+                              <div class="text-center" style="display:flex;padding:20px"><v-img
+                                    aspect-ratio="6"
+                                    contain
+                                    max-width="200"
+                                    src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2Fkbank.png?alt=media&token=f492fd39-0b56-4aa4-82d7-730b53167029"
+                                  ></v-img><h6>ธนาคารกสิกรไทย สาขาศรีวรา ทาวน์อินทาวน์ เลขบัญชี 107-3-15084-8</h6></div>
+                            </v-expansion-panel-content>
+                          </v-expansion-panel>
+                        </v-expansion-panels>
+                      </v-col>
+                      <v-col cols="12" class="pt-1 pb-0">
+                        <v-text-field
+                          prepend-icon="mdi-account"
+                          v-model="billingCusName"
+                          label="ชื่อ-สกุล"
+                          outlined
+                          dense
+                          required
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" class="pt-1 pb-0">
+                        <v-text-field
+                          prepend-icon="mdi-card-account-phone-outline"
+                          v-mask="'##########'"
+                          v-model="billingPhone"
+                          label="เบอร์โทร"
+                          outlined
+                          dense
+                          required
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" class="pt-1 pb-0">
+                        <v-text-field
+                          prepend-icon="mdi-hail"
+                          v-model="billingTax"
+                          label="เลขประจำตัวผู้เสียภาษี"
+                          outlined
+                          dense
+                          required
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" class="pt-1 pb-0">
+                          <v-textarea
+                            v-model="billingAddressDetails"
+                            auto-grow
+                            rows="2"
+                            label="รายละเอียดที่อยู่"
+                            :rules="[v => !!v || 'กรุณากรอกรายละเอียดที่อยู่']"
+                            dense
+                            outlined
+                          ></v-textarea>
+                        </v-col>
+                        <v-col cols="12" class="pt-1 pb-0">
+                          <v-select
+                            v-model="billingSubDistrict"
+                            :items="optionSubDistrict"
+                            :rules="[v => !!v || 'กรุณากรอกตำบล']"
+                            dense
+                            outlined
+                            no-data-text="กรุณกรอกรหัสไปรษณีย์"
+                            label="ตำบล"
+                          ></v-select>
+                        </v-col>
+                        <v-col cols="12" class="pt-1 pb-0">
+                          <v-select
+                            v-model="billingDistrict"
+                            :items="optionDistrict"
+                            :rules="[v => !!v || 'กรุณากรอกอำเภอ']"
+                            dense
+                            outlined
+                            no-data-text="กรุณกรอกรหัสไปรษณีย์"
+                            label="อำเภอ"
+                          ></v-select>
+                        </v-col>
+                        <v-col cols="12" class="pt-1 pb-0">
+                          <v-select
+                            v-model="billingProvinces"
+                            :items="optionProvinces"
+                            :rules="[v => !!v || 'กรุณากรอกจังหวัด']"
+                            dense
+                            outlined
+                            no-data-text="กรุณกรอกรหัสไปรษณีย์"
+                            label="จังหวัด"
+                          ></v-select>
+                        </v-col>
+                        <v-col cols="12" class="pt-1 pb-0">
+                          <v-text-field
+                            v-model="billingPostalCode"
+                            :rules="[v => !!v || 'กรุณากรอกรหัสไปรษณีย์', v => (!isNaN(v)) && v.length >= 5 && v.length <= 5  || 'รหัสไปรษณีย์ต้องมีตัวเลข 5 ตัว', resZipCode.length > 0 || 'ไม่เจอรหัสรหัสไปรษณีย์']"
+                            dense
+                            outlined
+                            label="รหัสไปรษณีย์"
+                            no-data-text="ไม่มีข้อมูล"
+                            required
+                            @input="checkAddress()"
+                          ></v-text-field>
+                        </v-col>
+                      <!-- <v-col cols="12" class="pt-1 pb-0">
+                        <v-textarea
+                          prepend-icon="mdi-map-marker"
+                          v-model="billingAddress"
+                          auto-grow
+                          rows="2"
+                          label="ที่อยู่"
+                          dense
+                          outlined
+                        ></v-textarea>
+                      </v-col> -->
+                    </v-row>
+                  </v-form>
                   <div class="text-center mt-5">
                   <v-btn
                     class="button pa-2"
@@ -783,16 +911,24 @@ export default {
   },
   data () {
     return {
+      validAdddialogQrcode: true,
+      validAdddialogReConfirm: true,
       loadingBillingPlan: false,
       dialogHistory: false,
       headers: [
         { text: 'วันที่ชำระ', value: 'paymentDate' },
         { text: 'สลิป', value: 'paymentImage' },
-        { text: 'ยอดเงินที่ชำระ', value: 'paymentDateuse' }
+        { text: 'ยอดเงินที่ชำระ', value: 'paymentDateuse' },
+        { text: 'ดาวน์โหลดใบเสร็จ', value: 'actions', sortable: false, align: 'center' }
       ],
       panel: [],
       billingCusName: '',
       billingAddress: '',
+      billingAddressDetails: '',
+      billingSubDistrict: '',
+      billingDistrict: '',
+      billingProvinces: '',
+      billingPostalCode: '',
       billingTax: '',
       billingPhone: '',
       paymentAmount: '',
@@ -865,7 +1001,11 @@ export default {
       paymentAmountVat: 0,
       packetIdCheck: '',
       dataHistory: [],
-      profile: null
+      profile: null,
+      resZipCode: [],
+      optionDistrict: [],
+      optionSubDistrict: [],
+      optionProvinces: []
     }
   },
   async mounted () {
@@ -880,7 +1020,9 @@ export default {
           await this.checkCurrentPlan()
         } else {
           await this.checkLiffLogin()
-          await this.updateUserId()
+          if (this.profile.userId !== 'U8b3fd01caa9faa45189b0567eb452041') {
+            await this.updateUserId()
+          }
           await this.chkPlan()
           await this.checkCurrentPlan()
         }
@@ -888,6 +1030,81 @@ export default {
     }
   },
   methods: {
+    gotoLink (Link) {
+      window.open(Link, '_blank')
+    },
+    validate (Action) {
+      switch (Action) {
+        case 'ADD':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_dialogQrcode.validate()
+          })
+          break
+        case 'UPDATE':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_dialogReConfirm.validate()
+          })
+          break
+
+        default:
+          break
+      }
+    },
+    async checkAddress () {
+      console.log('checkAddress')
+      if (this.billingPostalCode.length >= 5) {
+        console.log('postalCode')
+        this.optionDistrict = []
+        this.optionSubDistrict = []
+        this.optionProvinces = []
+        await axios
+          .get(
+            // eslint-disable-next-line quotes
+            this.DNS_IP + "/location/map_thai?zipcode=" +
+              this.billingPostalCode
+          )
+          .then(async (response) => {
+            console.log(response.data.length > 0)
+            this.resZipCode = response.data
+            let rs = response.data
+            for (var i = 0; i < rs.length; i++) {
+              var x = rs[i]
+              var z = {}
+              z.text = x.district
+              z.value = x.district
+              this.optionDistrict.push(z)
+
+              var d = rs[i]
+              var s = {}
+              s.text = d.sub_district
+              s.value = d.sub_district
+              this.optionSubDistrict.push(s)
+            }
+            for (var t = 0; t < rs.length; t++) {
+              var k = rs[t]
+              var l = {}
+              l.text = k.province
+              l.value = k.province
+              this.optionProvinces.push(l)
+            }
+          }) // eslint-disable-next-line handle-callback-err
+          .catch((error) => {
+            console.log(error)
+            // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
+          })
+      } else if (this.billingPostalCode.length < 5) {
+        console.log('น้อยกว่า')
+        this.optionDistrict = []
+        this.optionSubDistrict = []
+        this.optionProvinces = []
+        // this.billingPostalCode = ''
+        this.billingSubDistrict = ''
+        this.billingDistrict = ''
+        this.billingProvinces = ''
+      }
+    },
     async checkLiffLogin () {
       await this.$liff
         .init({
@@ -1258,6 +1475,14 @@ export default {
             if (rs.status !== false) {
               this.billingCusName = rs[0].billingCusName || ''
               this.billingAddress = rs[0].billingAddress || ''
+
+              this.billingAddressDetails = rs[0].billingAddressDetails || ''
+              this.billingPostalCode = rs[0].billingPostalCode || ''
+              await this.checkAddress()
+              this.billingSubDistrict = rs[0].billingSubDistrict || ''
+              this.billingDistrict = rs[0].billingDistrict || ''
+              this.billingProvinces = rs[0].billingProvinces || ''
+
               this.billingTax = rs[0].billingTax || ''
               this.billingPhone = rs[0].billingPhone || rs[0].contactTel
             } else {
@@ -1300,7 +1525,8 @@ export default {
       if (this.paymentImge === null || this.paymentImge === '') {
         this.$swal('ผิดพลาด', 'กรุณาอัพโหลดหลักฐานการโอนเงิน', 'error')
       } else {
-        if (this.billingCusName !== '' && this.billingAddress !== '' && this.billingTax !== '' && this.billingPhone !== '') {
+        this.validate('ADD')
+        if (this.billingCusName !== '' && this.billingAddressDetails !== '' && this.billingSubDistrict !== '' && this.billingDistrict !== '' && this.billingProvinces !== '' && this.billingPostalCode !== '' && this.billingTax !== '' && this.billingPhone !== '') {
           this.$swal({
             title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
             type: 'question',
@@ -1311,6 +1537,7 @@ export default {
             cancelButtonText: 'ไม่'
           })
             .then(async (result) => {
+              this.billingAddress = this.billingAddressDetails + ' ตําบล/แขวง ' + this.billingSubDistrict + ' อำเภอ/เขต ' + this.billingDistrict + ' จังหวัด ' + this.billingProvinces + ' ' + this.billingPostalCode
               this.loadingBillingPlan = true
               if (this.filesImg) {
                 const _this = this
@@ -1420,6 +1647,14 @@ export default {
           if (rs.status !== false) {
             this.billingCusName = rs[0].billingCusName || ''
             this.billingAddress = rs[0].billingAddress || ''
+
+            this.billingAddressDetails = rs[0].billingAddressDetails || ''
+            this.billingPostalCode = rs[0].billingPostalCode || ''
+            await this.checkAddress()
+            this.billingSubDistrict = rs[0].billingSubDistrict || ''
+            this.billingDistrict = rs[0].billingDistrict || ''
+            this.billingProvinces = rs[0].billingProvinces || ''
+
             this.billingTax = rs[0].billingTax || ''
             this.billingPhone = rs[0].billingPhone || rs[0].contactTel
           } else {
@@ -1431,7 +1666,9 @@ export default {
         })
     },
     async updateReturn () {
-      if (this.billingCusName !== '' && this.billingAddress !== '' && this.billingTax !== '' && this.billingPhone !== '') {
+      this.validate('UPDATE')
+      if (this.billingCusName !== '' && this.billingAddressDetails !== '' && this.billingSubDistrict !== '' && this.billingDistrict !== '' && this.billingProvinces !== '' && this.billingPostalCode !== '' && this.billingTax !== '' && this.billingPhone !== '') {
+        this.billingAddress = this.billingAddressDetails + ' ตําบล/แขวง ' + this.billingSubDistrict + ' อำเภอ/เขต ' + this.billingDistrict + ' จังหวัด ' + this.billingProvinces + ' ' + this.billingPostalCode
         this.loadingBillingPlan = true
         if (this.filesImg) {
           const _this = this
@@ -1504,6 +1741,11 @@ export default {
           shopActive: text,
           billingCusName: this.billingCusName,
           billingAddress: this.billingAddress,
+          billingAddressDetails: this.billingAddressDetails,
+          billingSubDistrict: this.billingSubDistrict,
+          billingDistrict: this.billingDistrict,
+          billingProvinces: this.billingProvinces,
+          billingPostalCode: this.billingPostalCode,
           billingTax: this.billingTax,
           billingPhone: this.billingPhone,
           billingPlan: packetId,
@@ -1518,6 +1760,11 @@ export default {
           shopActive: text,
           billingCusName: this.billingCusName,
           billingAddress: this.billingAddress,
+          billingAddressDetails: this.billingAddressDetails,
+          billingSubDistrict: this.billingSubDistrict,
+          billingDistrict: this.billingDistrict,
+          billingProvinces: this.billingProvinces,
+          billingPostalCode: this.billingPostalCode,
           billingTax: this.billingTax,
           billingPhone: this.billingPhone,
           LAST_USER: this.$session.getAll().data.userName

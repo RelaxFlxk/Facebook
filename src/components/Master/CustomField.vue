@@ -215,7 +215,6 @@
                      </v-form>
                     <br>
                       <v-row class="mb-3" justify="center" v-if="formAddOption.optionText && formAddOption.optionValue && formAddOption.optionTextEng">
-                      {{ checkDataEdit }}
                         <v-btn v-if="checkDataEdit"
                         elevation="2"
                         dark
