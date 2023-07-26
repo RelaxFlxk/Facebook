@@ -1166,6 +1166,16 @@
                       <v-icon> mdi-content-copy </v-icon>
                     </v-btn>
                     <v-btn
+                      v-if="item.payType === 'omise'"
+                      color="teal"
+                      fab
+                      small
+                      dark
+                      @click.stop="FunCopyWebhookOmise()"
+                    >
+                      <v-icon> mdi-content-copy </v-icon>
+                    </v-btn>
+                    <v-btn
                       v-if="item.payType === 'payment'"
                       color="question"
                       fab
