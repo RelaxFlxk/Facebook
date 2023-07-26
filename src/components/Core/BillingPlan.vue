@@ -230,7 +230,7 @@
                 <v-row v-if="paymentStatus === 'confirm' || paymentStatus === 'finish'">
                     <v-col cols="12" class="text-center">
                         <h1>รายการชำระค่าบริการของท่าน</h1>
-                        <h2>ชำระเงินแล้ว กรุณาทำรายการให้</h2>
+                        <h2>ชำระเงินแล้ว กรุณาทำรายการ</h2>
                         <h2>ทุกวันที่ 1-7 ของแต่ละเดือน</h2>
                     </v-col>
                     <v-col cols="12" class="text-center">
