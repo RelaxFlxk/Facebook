@@ -83,6 +83,18 @@
                         คัดลอกลิงค์ Webhook
                       </v-btn>
                     </v-col> -->
+                    <v-col cols="12" class="pb-0 pt-0">
+                      <v-btn
+                        elevation="2"
+                        block
+                        dark
+                        color="teal"
+                        @click.stop="FunCopyWebhookOmise()"
+                      >
+                        <v-icon left>mdi-content-copy</v-icon>
+                        คัดลอกลิงค์ Webhook
+                      </v-btn>
+                    </v-col>
                     <v-col cols="12" class="pb-0">
                       <v-text-field
                         v-model="formAddStripe.apiKey"
@@ -1352,6 +1364,20 @@ export default {
     await this.fiterBranch()
   },
   methods: {
+    FunCopyWebhookOmise () {
+      // var copyText = document.getElementById('myInput')
+      // copyText.select()
+      // copyText.setSelectionRange(0, 99999)
+      let linked = 'https://api-belinked.betaskthai.com/omise/webhook'
+      navigator.clipboard.writeText(linked)
+      this.$swal({
+        title: 'Copy successfully',
+        text: 'คัดลอกลิงก์สำเร็จ',
+        type: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      })
+    },
     FunCopyQrcode (item) {
       console.log('FunCopyQrcode', item)
       // var copyText = document.getElementById('myInput')
