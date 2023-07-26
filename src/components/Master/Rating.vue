@@ -9,284 +9,388 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-dialog
-            v-model="dialog"
-            persistent
-            max-width="600"
-          >
+          <v-dialog v-model="dialog" persistent max-width="600">
             <v-card class="pa-3">
               <v-container>
                 <div style="text-align: end;">
-                        <v-btn
-                          fab
-                          small
-                          dark
-                          color="#F3F3F3"
-                          @click="dialog = false"
-                        >
-                          <v-icon dark
-                          color="#FE4A01 ">
-                            mdi-close
-                          </v-icon>
-                        </v-btn>
-                        </div>
+                  <v-btn fab small dark color="#F3F3F3" @click="dialog = false">
+                    <v-icon dark color="#FE4A01 ">
+                      mdi-close
+                    </v-icon>
+                  </v-btn>
+                </div>
               </v-container>
               <v-timeline>
                 <v-timeline-item
-                  v-for="(item , index) in timelineitem" :key="index"
+                  v-for="(item, index) in timelineitem"
+                  :key="index"
                   :color="codeColor[index]"
                   small
                 >
                   <template v-slot:opposite>
-                    <span>{{format_dateNotime(item.DTLAST_DATE)}}</span>
+                    <span>{{ format_dateNotime(item.DTLAST_DATE) }}</span>
                   </template>
-                  <v-card  class="elevation-2 p-2" :style="'border-top: 8px solid ' + codeColor[index]+ ';'">
+                  <v-card
+                    class="elevation-2 p-2"
+                    :style="'border-top: 8px solid ' + codeColor[index] + ';'"
+                  >
                     <v-card-title class="text-h6" style="color:#173053;">
                     </v-card-title>
                     <v-card-text>
-                      <p class="font-weight-black" style="margin-bottom: 0px;color:#000000;">ขั้นตอน {{item.stepTitle}}</p>
+                      <p
+                        class="font-weight-black"
+                        style="margin-bottom: 0px;color:#000000;"
+                      >
+                        ขั้นตอน {{ item.stepTitle }}
+                      </p>
                       <!-- <p style="margin-bottom: 0px; color:#173053;">ขั้นตอน {{item.stepTitle}}</p> -->
-                      <p v-if="item.stepTitle !== 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;"> เวลาที่รับงาน {{momenTime(item.DTLAST_DATE)}}</p>
-                      <p v-if="item.stepTitle !== 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;"> ผู้รับผิดชอบ {{item.empStep}}</p>
-                      <p v-if="item.stepTitle !== 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;">เวลาการทำงาน {{item.Counttime}} นาที</p>
-                      <p v-if="item.stepTitle === 'ปิดจ๊อบ'" class="font-weight-bold" style="margin-bottom: 0px;">สรุปค่าใช้จ่าย {{item.totalPrice}} บาท</p>
+                      <p
+                        v-if="item.stepTitle !== 'ปิดจ๊อบ'"
+                        class="font-weight-bold"
+                        style="margin-bottom: 0px;"
+                      >
+                        เวลาที่รับงาน {{ momenTime(item.DTLAST_DATE) }}
+                      </p>
+                      <p
+                        v-if="item.stepTitle !== 'ปิดจ๊อบ'"
+                        class="font-weight-bold"
+                        style="margin-bottom: 0px;"
+                      >
+                        ผู้รับผิดชอบ {{ item.empStep }}
+                      </p>
+                      <p
+                        v-if="item.stepTitle !== 'ปิดจ๊อบ'"
+                        class="font-weight-bold"
+                        style="margin-bottom: 0px;"
+                      >
+                        เวลาการทำงาน {{ item.Counttime }} นาที
+                      </p>
+                      <p
+                        v-if="item.stepTitle === 'ปิดจ๊อบ'"
+                        class="font-weight-bold"
+                        style="margin-bottom: 0px;"
+                      >
+                        สรุปค่าใช้จ่าย {{ item.totalPrice }} บาท
+                      </p>
                       <!-- <p style="margin-bottom: 0px;">วันที่เปลี่ยน {{format_dateNotime(item.DTLAST_DATE)}}</p> -->
                     </v-card-text>
                   </v-card>
                 </v-timeline-item>
               </v-timeline>
-              <br>
+              <br />
             </v-card>
           </v-dialog>
         </v-row>
         <v-col cols="6">
-            <v-select
-              :items="branch"
-              v-model="masBranchID"
-              dense
-              outlined
-              hide-details
-              filled
-              label="สาขา"
-              prepend-inner-icon="mdi-map-marker"
-              class="ma-2"
-              @change="getRating()"
-            ></v-select>
-          </v-col>
+          <v-select
+            :items="branch"
+            v-model="masBranchID"
+            dense
+            outlined
+            hide-details
+            filled
+            label="สาขา"
+            prepend-inner-icon="mdi-map-marker"
+            class="ma-2"
+            @change="getRating()"
+          ></v-select>
+        </v-col>
         <v-row>
           <v-col cols="12">
             <v-card>
-            <v-card-title>
-              <v-text-field
-                v-model="search"
-                append-icon="mdi-magnify"
-                label="Search"
-                single-line
-                hide-details
-              ></v-text-field>
-            </v-card-title>
-            <v-data-table
-              :headers="headers"
-              :items="Ratingitem"
-              :search="search"
-            >
-          <template v-slot:[`item.displayName`]="{ item }">
-              <v-avatar class="pa-2">
-                <img
-                  :src="item.pictureUrl"
-                >
-              </v-avatar>
-              <strong v-html="item.displayName"></strong>
-            </template>
-          <template v-slot:[`item.rating`]="{ item }">
-                <v-rating
-                v-model="item.rating"
-                color="yellow darken-3"
-                background-color="grey darken-1"
-                empty-icon="$ratingFull"
-                readonly
-                small
-              ></v-rating>
-            </template>
-            <template v-slot:[`item.action`]="{ item }">
-              <v-btn
-                v-if="item.callBackStatus === 'True'"
-                :color="item.staffCallBack === 'True' ? '#173053' : 'warning'"
-                fab
-                small
-                dark
-                @click="getBookingDataCallBack(item)"
+              <v-card-title>
+                <v-text-field
+                  v-model="search"
+                  append-icon="mdi-magnify"
+                  label="Search"
+                  single-line
+                  hide-details
+                ></v-text-field>
+              </v-card-title>
+              <v-data-table
+                :headers="headers"
+                :items="Ratingitem"
+                :search="search"
               >
-                <v-icon > mdi-phone-in-talk </v-icon>
-              </v-btn>
-              <v-btn
-                color="#173053"
-                fab
-                small
-                dark
-                @click="getBookingData(item)"
-              >
-                <v-icon > mdi-account-details </v-icon>
-              </v-btn>
-              <v-btn
-                color="#173053"
-                fab
-                small
-                dark
-                @click="getJobitem(item) , dialog=true"
-              >
-                <v-icon > mdi-timeline-clock </v-icon>
-              </v-btn>
-            </template>
-            </v-data-table>
-          </v-card>
+                <template v-slot:[`item.displayName`]="{ item }">
+                  <v-avatar class="pa-2">
+                    <img :src="item.pictureUrl" />
+                  </v-avatar>
+                  <strong v-html="item.displayName"></strong>
+                </template>
+                <template v-slot:[`item.rating`]="{ item }">
+                  <v-rating
+                    v-model="item.rating"
+                    color="yellow darken-3"
+                    background-color="grey darken-1"
+                    empty-icon="$ratingFull"
+                    readonly
+                    small
+                  ></v-rating>
+                </template>
+                <template v-slot:[`item.action`]="{ item }">
+                  <v-btn
+                    v-if="item.callBackStatus === 'True'"
+                    :color="
+                      item.staffCallBack === 'True' ? '#173053' : 'warning'
+                    "
+                    fab
+                    small
+                    dark
+                    @click="getBookingDataCallBack(item, item.masBranchID)"
+                  >
+                    <v-icon> mdi-phone-in-talk </v-icon>
+                  </v-btn>
+                  <v-btn
+                    color="#173053"
+                    fab
+                    small
+                    dark
+                    @click="getBookingData(item)"
+                  >
+                    <v-icon> mdi-account-details </v-icon>
+                  </v-btn>
+                  <v-btn
+                    color="#173053"
+                    fab
+                    small
+                    dark
+                    @click="getJobitem(item), (dialog = true)"
+                  >
+                    <v-icon> mdi-timeline-clock </v-icon>
+                  </v-btn>
+                </template>
+              </v-data-table>
+            </v-card>
           </v-col>
         </v-row>
-        <v-dialog
-            v-model="dialogBooking"
-            persistent
-            width="500px"
-          >
-            <v-card class="pa-1">
-              <v-container>
-                <div style="text-align: end;">
-                        <v-btn
-                          fab
-                          small
-                          dark
-                          color="#F3F3F3"
-                          @click="dialogBooking = false"
-                        >
-                          <v-icon dark
-                          color="#FE4A01 ">
-                            mdi-close
-                          </v-icon>
-                        </v-btn>
-                        </div>
-              </v-container>
-              <v-col class="text-center pa-0 px-3">
-                <!-- <v-img
+        <v-dialog v-model="dialogBooking" persistent width="500px">
+          <v-card class="pa-1">
+            <v-container>
+              <div style="text-align: end;">
+                <v-btn
+                  fab
+                  small
+                  dark
+                  color="#F3F3F3"
+                  @click="dialogBooking = false"
+                >
+                  <v-icon dark color="#FE4A01 ">
+                    mdi-close
+                  </v-icon>
+                </v-btn>
+              </div>
+            </v-container>
+            <v-col class="text-center pa-0 px-3">
+              <!-- <v-img
                   id="v_text_edits"
                   :src="require('@/assets/GroupEditTitle.svg')"
                 ></v-img> -->
-                <h2 class="font-weight-bold" style="color:#173053;">รายละเอียดนัดหมาย</h2>
-              </v-col>
-                  <v-card-text class="text-left">
-                    <v-container>
-                      <h6 class="font-weight-bold" style="color:#000000;">วันที่นัดหมาย : {{format_dateThai(booking.dueDate)}}</h6>
-                      <h6 class="font-weight-bold" style="color:#000000;">ประเภทบริการ : {{booking.flowName}}</h6>
-                      <h6 class="font-weight-bold" style="color:#000000;">สาขา : {{booking.masBranchName}}</h6>
-                      <v-row v-for="(item , index3) in bookingData" :key="index3">
-                        <v-col v-if="item.fieldValue !== ''" col="6" class="pb-0" style="color:#000000;"><strong style="color:#000000;">{{item.fieldName}} : </strong> {{item.fieldValue}}</v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col cols="12" v-if="booking.remark" style="color:#000000;"><strong style="color:#000000;">หมายเหตุเพิ่มเติม : </strong>{{booking.remark}}</v-col>
-                      </v-row>
-                    </v-container>
-                  </v-card-text>
-              <br>
-            </v-card>
-          </v-dialog>
-        <v-dialog
-            v-model="dialogCallBack"
-            persistent
-            width="500px"
-          >
-            <v-card class="pa-1">
+              <h2 class="font-weight-bold" style="color:#173053;">
+                รายละเอียดนัดหมาย
+              </h2>
+            </v-col>
+            <v-card-text class="text-left">
               <v-container>
-                <div style="text-align: end;">
-                        <v-btn
-                          fab
-                          small
-                          dark
-                          color="#F3F3F3"
-                          @click="dialogCallBack = false"
-                        >
-                          <v-icon dark
-                          color="#FE4A01 ">
-                            mdi-close
-                          </v-icon>
-                        </v-btn>
-                        </div>
+                <h6 class="font-weight-bold" style="color:#000000;">
+                  วันที่นัดหมาย : {{ format_dateThai(booking.dueDate) }}
+                </h6>
+                <h6 class="font-weight-bold" style="color:#000000;">
+                  ประเภทบริการ : {{ booking.flowName }}
+                </h6>
+                <h6 class="font-weight-bold" style="color:#000000;">
+                  สาขา : {{ booking.masBranchName }}
+                </h6>
+                <v-row v-for="(item, index3) in bookingData" :key="index3">
+                  <v-col
+                    v-if="item.fieldValue !== ''"
+                    col="6"
+                    class="pb-0"
+                    style="color:#000000;"
+                    ><strong style="color:#000000;"
+                      >{{ item.fieldName }} :
+                    </strong>
+                    {{ item.fieldValue }}</v-col
+                  >
+                </v-row>
+                <v-row>
+                  <v-col cols="12" v-if="booking.remark" style="color:#000000;"
+                    ><strong style="color:#000000;">หมายเหตุเพิ่มเติม : </strong
+                    >{{ booking.remark }}</v-col
+                  >
+                </v-row>
+                <hr />
+                <v-row>
+                  <v-col cols="12" style="color:#000000;" class="pb-0"
+                    ><strong style="color:#000000;">คะแนนที่ได้</strong></v-col
+                  >
+                  <v-col cols="12" class="pt-0">
+                    <div v-for="(data, index) in dataRating" :key="index">
+                      <label>{{ data.answer }}</label>
+                      <v-rating
+                        v-model="data.rating"
+                        color="yellow darken-3"
+                        background-color="grey darken-1"
+                        empty-icon="$ratingFull"
+                        readonly
+                        small
+                      ></v-rating>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" style="color:#000000;"
+                    ><strong style="color:#000000;"
+                      >ความคิดเห็นเพิ่มเติม : </strong
+                    >{{ commentsCombined[0] }}</v-col
+                  >
+                </v-row>
               </v-container>
-              <v-col class="text-center pa-0 px-3">
-                <!-- <v-img
+            </v-card-text>
+            <br />
+          </v-card>
+        </v-dialog>
+        <v-dialog v-model="dialogCallBack" persistent width="500px">
+          <v-card class="pa-1">
+            <v-container>
+              <div style="text-align: end;">
+                <v-btn
+                  fab
+                  small
+                  dark
+                  color="#F3F3F3"
+                  @click="dialogCallBack = false"
+                >
+                  <v-icon dark color="#FE4A01 ">
+                    mdi-close
+                  </v-icon>
+                </v-btn>
+              </div>
+            </v-container>
+            <v-col class="text-center pa-0 px-3">
+              <!-- <v-img
                   id="v_text_edits"
                   :src="require('@/assets/GroupEditTitle.svg')"
                 ></v-img> -->
-                <h2 class="font-weight-bold" style="color:#173053;">ลูกค้าต้องการให้ติดต่อกลับ</h2>
-              </v-col>
-                  <v-card-text class="text-left">
-                    <v-container>
-                      <h6 class="font-weight-bold" style="color:#000000;">วันที่นัดหมาย : {{format_dateThai(booking.dueDate)}}</h6>
-                      <h6 class="font-weight-bold" style="color:#000000;">ประเภทบริการ : {{booking.flowName}}</h6>
-                      <h6 class="font-weight-bold" style="color:#000000;">สาขา : {{booking.masBranchName}}</h6>
-                      <v-row v-for="(item , index3) in bookingData" :key="index3">
-                        <v-col v-if="item.fieldValue !== '' && item.fieldName !== 'เบอร์โทร'" col="6" class="pb-0" style="color:#000000;"><strong style="color:#000000;">{{item.fieldName}} : </strong> {{item.fieldValue}}</v-col>
-                        <v-col v-if="item.fieldValue !== '' && item.fieldName === 'เบอร์โทร'" col="12" class="pb-0" style="color:#000000;"><strong style="color:#000000;">{{item.fieldName}} : </strong> <a @click="dial(item.fieldValue)">{{item.fieldValue}}</a></v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col cols="12" v-if="booking.remark" style="color:#000000;"><strong style="color:#000000;">หมายเหตุเพิ่มเติม : </strong>{{booking.remark}}</v-col>
-                      </v-row>
-                      <hr>
-                      <v-row>
-                        <v-col cols="12" style="color:#000000;" class="pb-0"><strong style="color:#000000;">คะแนนที่ได้</strong></v-col>
-                        <v-col cols="12" class="pt-0">
-                           <v-rating
-                            v-model="dataRating.rating"
-                            color="yellow darken-3"
-                            background-color="grey darken-1"
-                            empty-icon="$ratingFull"
-                            readonly
-                            small
-                          ></v-rating>
-                        </v-col>
-                        <v-col cols="12" style="color:#000000;"><strong style="color:#000000;">ความคิดเห็นเพิ่มเติม : </strong>{{dataRating.comment}}</v-col>
-                      </v-row>
-                      <hr>
-                      <v-row>
-                        <v-col cols="12" style="color:#000000;" class="pb-0"><strong style="color:#000000;">อัพเดทสถานะการติดต่อ</strong></v-col>
-                        <v-col cols="12" class="pt-0">
-                          <v-checkbox
-                            label="พนักงานติดต่อแล้ว"
-                            false-value="False"
-                            :on-icon="'mdi-check-circle'"
-                            :off-icon="'mdi-checkbox-blank-circle-outline'"
-                            color="#1B437C"
-                            true-value="True"
-                            style="display: flex;align-items: flex-start;"
-                            v-model="formUpdate.staffCallBack"
-                          ></v-checkbox>
-                          <v-textarea
-                            v-model="formUpdate.staffCallBackRemark"
-                            label="หมายเหตุพนักงาน"
-                            auto-grow
-                            outlined
-                            rows="3"
-                            row-height="25"
-                            shaped
-                          ></v-textarea>
-                        </v-col>
-                        <v-col cols="12" class="pt-0">
-                          <v-btn
-                            dark
-                            elevation="2"
-                            large
-                            block
-                            color="#173053"
-                            @click="updateStatusCallBack()"
-                          >
-                            <v-icon left>mdi-checkbox-marked-circle</v-icon>
-                            อัพเดทสถานะการติดต่อ
-                          </v-btn>
-                        </v-col>
-                      </v-row>
-                    </v-container>
-                  </v-card-text>
-              <br>
-            </v-card>
-          </v-dialog>
-        </div>
+              <h2 class="font-weight-bold" style="color:#173053;">
+                ลูกค้าต้องการให้ติดต่อกลับ
+              </h2>
+            </v-col>
+            <v-card-text class="text-left">
+              <v-container>
+                <h6 class="font-weight-bold" style="color:#000000;">
+                  วันที่นัดหมาย : {{ format_dateThai(booking.dueDate) }}
+                </h6>
+                <h6 class="font-weight-bold" style="color:#000000;">
+                  ประเภทบริการ : {{ booking.flowName }}
+                </h6>
+                <h6 class="font-weight-bold" style="color:#000000;">
+                  สาขา : {{ booking.masBranchName }}
+                </h6>
+                <v-row v-for="(item, index3) in bookingData" :key="index3">
+                  <v-col
+                    v-if="
+                      item.fieldValue !== '' && item.fieldName !== 'เบอร์โทร'
+                    "
+                    col="6"
+                    class="pb-0"
+                    style="color:#000000;"
+                    ><strong style="color:#000000;"
+                      >{{ item.fieldName }} :
+                    </strong>
+                    {{ item.fieldValue }}</v-col
+                  >
+                  <v-col
+                    v-if="
+                      item.fieldValue !== '' && item.fieldName === 'เบอร์โทร'
+                    "
+                    col="12"
+                    class="pb-0"
+                    style="color:#000000;"
+                    ><strong style="color:#000000;"
+                      >{{ item.fieldName }} :
+                    </strong>
+                    <a @click="dial(item.fieldValue)">{{
+                      item.fieldValue
+                    }}</a></v-col
+                  >
+                </v-row>
+                <v-row>
+                  <v-col cols="12" v-if="booking.remark" style="color:#000000;"
+                    ><strong style="color:#000000;">หมายเหตุเพิ่มเติม : </strong
+                    >{{ booking.remark }}</v-col
+                  >
+                </v-row>
+                <hr />
+                <v-row>
+                  <v-col cols="12" style="color:#000000;" class="pb-0"
+                    ><strong style="color:#000000;">คะแนนที่ได้</strong></v-col
+                  >
+                  <v-col cols="12" class="pt-0">
+                    <div v-for="(data, index) in dataRating" :key="index">
+                      <label>{{ data.answer }}</label>
+                      <v-rating
+                        v-model="data.rating"
+                        color="yellow darken-3"
+                        background-color="grey darken-1"
+                        empty-icon="$ratingFull"
+                        readonly
+                        small
+                      ></v-rating>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" style="color:#000000;"
+                    ><strong style="color:#000000;"
+                      >ความคิดเห็นเพิ่มเติม : </strong
+                    >{{ commentsCombined[0] }}</v-col
+                  >
+                </v-row>
+                <hr />
+                <v-row>
+                  <v-col cols="12" style="color:#000000;" class="pb-0"
+                    ><strong style="color:#000000;"
+                      >อัพเดทสถานะการติดต่อ</strong
+                    ></v-col
+                  >
+                  <v-col cols="12" class="pt-0">
+                    <v-checkbox
+                      label="พนักงานติดต่อแล้ว"
+                      false-value="False"
+                      :on-icon="'mdi-check-circle'"
+                      :off-icon="'mdi-checkbox-blank-circle-outline'"
+                      color="#1B437C"
+                      true-value="True"
+                      style="display: flex;align-items: flex-start;"
+                      v-model="formUpdate.staffCallBack"
+                    ></v-checkbox>
+                    <v-textarea
+                      v-model="formUpdate.staffCallBackRemark"
+                      label="หมายเหตุพนักงาน"
+                      auto-grow
+                      outlined
+                      rows="3"
+                      row-height="25"
+                      shaped
+                    ></v-textarea>
+                  </v-col>
+                  <v-col cols="12" class="pt-0">
+                    <v-btn
+                      dark
+                      elevation="2"
+                      large
+                      block
+                      color="#173053"
+                      @click="updateStatusCallBack()"
+                    >
+                      <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                      อัพเดทสถานะการติดต่อ
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+            <br />
+          </v-card>
+        </v-dialog>
+      </div>
     </v-main>
   </div>
 </template>
@@ -325,9 +429,15 @@ export default {
         { text: 'ชื่อลูกค้า', value: 'displayName' },
         { text: 'คะแนน', value: 'rating' },
         { text: 'ความคิดเห็นเพิ่มเติม', value: 'comment' },
-        { text: 'ดูรายละเอียดงาน', value: 'action', sortable: false, align: 'center' }
+        {
+          text: 'ดูรายละเอียดงาน',
+          value: 'action',
+          sortable: false,
+          align: 'center'
+        }
       ],
       Ratingitem: [],
+      Ratingitemold: [],
       timelineitem: [],
       codeColor: [
         'rgb(142, 202, 230)',
@@ -346,6 +456,7 @@ export default {
       booking: [],
       bookingData: [],
       dataRating: [],
+      rs: [],
       formUpdate: {
         staffCallBack: 'False',
         staffCallBackRemark: '',
@@ -353,6 +464,7 @@ export default {
       },
       DataBranchAll: [],
       branch: [],
+      commentsCombined: '',
       masBranchID: ''
     }
   },
@@ -367,7 +479,7 @@ export default {
     getDataBranch () {
       this.DataBranchAll = []
       this.branch = []
-      console.log('DataBranchAll', this.DataBranchAll)
+      // console.log('DataBranchAll', this.DataBranchAll)
       axios
         .get(this.DNS_IP + '/master_branch/get?shopId=' + this.shopId)
         .then(async response => {
@@ -375,15 +487,26 @@ export default {
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
-              if (this.session.data.masBranchID === '' || this.session.data.masBranchID === null) {
-                console.log('TEST1', d.masBranchID, this.session.data.masBranchID)
+              if (
+                this.session.data.masBranchID === '' ||
+                this.session.data.masBranchID === null
+              ) {
+                // console.log(
+                //   'TEST1',
+                //   d.masBranchID,
+                //   this.session.data.masBranchID
+                // )
                 let s = {}
                 s.text = d.masBranchName
                 s.value = d.masBranchID
                 this.DataBranchAll.push(d)
                 this.branch.push(s)
               } else {
-                console.log('TEST', d.masBranchID, this.session.data.masBranchID)
+                // console.log(
+                //   'TEST',
+                //   d.masBranchID,
+                //   this.session.data.masBranchID
+                // )
                 if (d.masBranchID === this.session.data.masBranchID) {
                   let s = {}
                   s.text = d.masBranchName
@@ -403,155 +526,156 @@ export default {
           }
         })
     },
-    // async getRating () {
-    //   this.Ratingitem = []
-    //   await axios
-    //     .get(this.DNS_IP + '/rating/get?shopId=' + this.shopId).then((response) => {
-    //       let rs = response.data
-    //       console.log('show', rs)
-    //       if (rs.length > 0) {
-    //         for (let i = 0; i < rs.length; i++) {
-    //           let d = rs[i]
-    //           if (d.masBranchID === this.masBranchID) {
-    //             let s = {}
-    //             s.id = d.id
-    //             s.refId = d.refId
-    //             s.rating = parseInt(d.rating)
-    //             s.comment = d.comment
-    //             s.typeWork = d.typeWork
-    //             s.displayName = d.displayName
-    //             s.pictureUrl = d.pictureUrl
-    //             s.callBackStatus = d.callBackStatus
-    //             s.staffCallBack = d.staffCallBack
-    //             s.staffCallBackRemark = d.staffCallBackRemark
-    //             s.CREATE_DATE = this.format_dateNotime(d.CREATE_DATE)
-    //             this.Ratingitem.push(s)
-    //           }
-    //         }
-    //       }
-    //     }).catch((error) => {
-    //       console.log('error function addData : ', error)
-    //     })
-    // },
     async getRating () {
       this.Ratingitem = []
+      const payload = {
+        shopId: this.shopId,
+        masBranchID: this.masBranchID
+      }
       await axios
-        .get(this.DNS_IP + '/rating/get?shopId=' + this.shopId + '&masBranchID=' + this.masBranchID)
-        .then((response) => {
-          let rs = response.data
-          console.log('show', rs)
-          if (rs.length > 0) {
-            let tempGroup = rs.reduce((acc, d) => {
-              let refId = d.refId
-              if (!acc[refId]) {
-                acc[refId] = {
-                  sumRating: 0,
-                  countRating: 0,
-                  data: {
-                    id: d.id,
-                    refId: refId,
-                    rating: parseInt(d.rating),
-                    comment: d.comment,
-                    typeWork: d.typeWork,
-                    displayName: d.displayName,
-                    pictureUrl: d.pictureUrl,
-                    callBackStatus: d.callBackStatus,
-                    staffCallBack: d.staffCallBack,
-                    staffCallBackRemark: d.staffCallBackRemark,
-                    CREATE_DATE: this.format_dateNotime(d.CREATE_DATE)
+        .get(this.DNS_IP + '/rating/get', { params: payload })
+        .then(response => {
+          this.rs = response.data
+          // console.log('response', response)
+          if (this.rs.length > 0) {
+            let tempGroup = this.rs.reduce((acc, d) => {
+              if (d.masBranchID === this.masBranchID) {
+                let refId = d.refId
+                if (!acc[refId]) {
+                  acc[refId] = {
+                    sumRating: 0,
+                    countRating: 0,
+                    data: {
+                      id: d.id,
+                      refId: refId,
+                      rating: parseInt(d.rating),
+                      comment: d.comment,
+                      typeWork: d.typeWork,
+                      displayName: d.displayName,
+                      pictureUrl: d.pictureUrl,
+                      callBackStatus: d.callBackStatus,
+                      staffCallBack: d.staffCallBack,
+                      staffCallBackRemark: d.staffCallBackRemark,
+                      CREATE_DATE: this.format_dateNotime(d.CREATE_DATE)
+                    }
                   }
                 }
+                acc[refId].sumRating += parseInt(d.rating)
+                acc[refId].countRating += 1
               }
-              acc[refId].sumRating += parseInt(d.rating)
-              acc[refId].countRating += 1
               return acc
             }, {})
 
-            if (this.rs === this.refId) {
-              for (let refId in tempGroup) {
-                let averageRating = tempGroup[refId].sumRating / tempGroup[refId].countRating
+            for (let refId in tempGroup) {
+              if (refId.refId === response.data.refId) {
+                let averageRating =
+                  tempGroup[refId].sumRating / tempGroup[refId].countRating
                 let s = tempGroup[refId].data
                 s.rating = averageRating
                 this.Ratingitem.push(s)
               }
             }
 
-            console.log(this.Ratingitem)
+            // console.log('this.Ratingitem', this.Ratingitem)
           }
         })
-        .catch((error) => {
+        .catch(error => {
           console.log('error function addData : ', error)
         })
     },
     async getBookingData (item) {
       this.booking = []
       this.bookingData = []
-      let urlApi = this.DNS_IP +
-            '/booking_view/get?shopId=' +
-            this.session.data.shopId +
-            '&jobNo=' +
-            item.refId
-      await axios
-        .get(urlApi)
-        .then(async response => {
-          console.log('getBookingData', response.data)
-          if (response.data.status === false) {
-            this.booking = []
-            this.bookingData = []
-            this.dialogBooking = false
-            this.$swal('ผิดพลาด', 'ไม่มีข้อมูลนัดหมาย', 'error')
-          } else {
-            this.booking = response.data[0]
-            await axios
-              .get(`${this.DNS_IP}/BookingData/get?shopId=${this.session.data.shopId}&jobNo=${item.refId}`)
-              .then(async responses => {
-                console.log('BookingData', responses.data)
-                if (responses.data.status === false) {
-                  this.bookingData = []
-                } else {
-                  this.bookingData = responses.data
-                }
-              })
-            this.dialogBooking = true
-          }
-        })
+      this.dataRating = this.rs.filter(data => data.refId === item.refId)
+      this.dataRating.map(data => {
+        data.rating = parseInt(data.rating)
+      })
+
+      this.commentsCombined = this.dataRating.reduce((comments, data) => {
+        if (data.comment) {
+          comments.push(data.comment)
+        }
+        return comments
+      }, [])
+      let urlApi =
+        this.DNS_IP +
+        '/booking_view/get?shopId=' +
+        this.session.data.shopId +
+        '&jobNo=' +
+        item.refId
+      await axios.get(urlApi).then(async response => {
+        // console.log('getBookingData', response.data)
+        if (response.data.status === false) {
+          this.booking = []
+          this.bookingData = []
+          this.dialogBooking = false
+          this.$swal('ผิดพลาด', 'ไม่มีข้อมูลนัดหมาย', 'error')
+        } else {
+          this.booking = response.data[0]
+          await axios
+            .get(
+              `${this.DNS_IP}/BookingData/get?shopId=${this.session.data.shopId}&jobNo=${item.refId}`
+            )
+            .then(async responses => {
+              // console.log('BookingData', responses.data)
+              if (responses.data.status === false) {
+                this.bookingData = []
+              } else {
+                this.bookingData = responses.data
+              }
+            })
+          this.dialogBooking = true
+        }
+      })
     },
     async getBookingDataCallBack (item) {
-      console.log('getBookingDataCallBack', item)
+      // console.log('getBookingDataCallBack', item)
       this.booking = []
       this.bookingData = []
-      this.dataRating = item
+      this.dataRating = this.rs.filter(data => data.refId === item.refId)
+      this.dataRating.map(data => {
+        data.rating = parseInt(data.rating)
+      })
+
+      this.commentsCombined = this.dataRating.reduce((comments, data) => {
+        if (data.comment) {
+          comments.push(data.comment)
+        }
+        return comments
+      }, [])
+
       this.formUpdate.staffCallBack = item.staffCallBack || 'False'
       this.formUpdate.staffCallBackRemark = item.staffCallBackRemark || ''
-      let urlApi = this.DNS_IP +
-            '/booking_view/get?shopId=' +
-            this.session.data.shopId +
-            '&jobNo=' +
-            item.refId
-      await axios
-        .get(urlApi)
-        .then(async response => {
-          console.log('getBookingData', response.data)
-          if (response.data.status === false) {
-            this.booking = []
-            this.bookingData = []
-            this.dialogCallBack = false
-            this.$swal('ผิดพลาด', 'ไม่มีข้อมูลนัดหมาย', 'error')
-          } else {
-            this.booking = response.data[0]
-            await axios
-              .get(`${this.DNS_IP}/BookingData/get?shopId=${this.session.data.shopId}&jobNo=${item.refId}`)
-              .then(async responses => {
-                console.log('BookingData', responses.data)
-                if (responses.data.status === false) {
-                  this.bookingData = []
-                } else {
-                  this.bookingData = responses.data
-                }
-              })
-            this.dialogCallBack = true
-          }
-        })
+      let urlApi =
+        this.DNS_IP +
+        '/booking_view/get?shopId=' +
+        this.session.data.shopId +
+        '&jobNo=' +
+        item.refId
+      await axios.get(urlApi).then(async response => {
+        // console.log('getBookingData', response.data)
+        if (response.data.status === false) {
+          this.booking = []
+          this.bookingData = []
+          this.dialogCallBack = false
+          this.$swal('ผิดพลาด', 'ไม่มีข้อมูลนัดหมาย', 'error')
+        } else {
+          this.booking = response.data[0]
+          await axios
+            .get(
+              `${this.DNS_IP}/BookingData/get?shopId=${this.session.data.shopId}&jobNo=${item.refId}`
+            )
+            .then(async responses => {
+              // console.log('BookingData', responses.data)
+              if (responses.data.status === false) {
+                this.bookingData = []
+              } else {
+                this.bookingData = responses.data
+              }
+            })
+          this.dialogCallBack = true
+        }
+      })
     },
     updateStatusCallBack () {
       this.$swal({
@@ -562,25 +686,35 @@ export default {
         cancelButtonColor: '#b3b1ab',
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
-      }).then(async (result) => {
+      }).then(async result => {
         this.formUpdate.LAST_USER = this.session.data.LAST_USER
-        axios.post(this.DNS_IP + '/rating/edit/' + this.dataRating.id, this.formUpdate).then(response => {
-          this.$swal('เรียบร้อย', 'อัพเดทสถานะการติดต่อ เรียบร้อย', 'success')
-          this.getRating()
-          this.dialogCallBack = false
-        })
-          .catch((error) => {
+        axios
+          .post(
+            this.DNS_IP + '/rating/edit/' + this.dataRating.id,
+            this.formUpdate
+          )
+          .then(response => {
+            this.$swal(
+              'เรียบร้อย',
+              'อัพเดทสถานะการติดต่อ เรียบร้อย',
+              'success'
+            )
+            this.getRating()
+            this.dialogCallBack = false
+          })
+          .catch(error => {
             console.log('error function updateStatusCallBack : ', error)
           })
       })
     },
     async getJobitem (item) {
-      console.log('getJobitem', item)
+      // console.log('getJobitem', item)
       this.timelineitem = []
       await axios
-        .get(this.DNS_IP + '/job_logCloseJob/' + item.refId).then((response) => {
+        .get(this.DNS_IP + '/job_logCloseJob/' + item.refId)
+        .then(response => {
           let rs = response.data
-          console.log('rs', rs)
+          // console.log('rs', rs)
           if (rs.length > 0) {
             for (let i = 0; i < rs.length; i++) {
               let d = rs[i]
@@ -592,29 +726,39 @@ export default {
               s.DTLAST_DATE = d.LAST_DATE
               s.stepTitle = d.totalPrice === null ? d.stepTitle : 'ปิดจ๊อบ'
               s.timediff = d.timediff
-              s.Counttime = this.convertHMS(this.jsTimeDiff(d.CREATE_DATE, d.LAST_DATE))
+              s.Counttime = this.convertHMS(
+                this.jsTimeDiff(d.CREATE_DATE, d.LAST_DATE)
+              )
               s.totalPrice = d.totalPrice
               this.timelineitem.push(s)
             }
           }
-        }).catch((error) => {
+        })
+        .catch(error => {
           console.log('error function addData : ', error)
         })
     },
     convertHMS (value) {
       const sec = parseInt(value, 10) // convert value to number if it's string
       let hours = Math.floor(sec / 3600) // get hours
-      let minutes = Math.floor((sec - (hours * 3600)) / 60) // get minutes
-      let seconds = sec - (hours * 3600) - (minutes * 60) // get seconds
+      let minutes = Math.floor((sec - hours * 3600) / 60) // get minutes
+      let seconds = sec - hours * 3600 - minutes * 60 // get seconds
       // add 0 if value < 10; Example: 2 => 02
-      if (hours < 10) { hours = '0' + hours }
-      if (minutes < 10) { minutes = '0' + minutes }
-      if (seconds < 10) { seconds = '0' + seconds }
+      if (hours < 10) {
+        hours = '0' + hours
+      }
+      if (minutes < 10) {
+        minutes = '0' + minutes
+      }
+      if (seconds < 10) {
+        seconds = '0' + seconds
+      }
       return hours + ':' + minutes + ':' + seconds // Return is HH : MM : SS
     },
     jsTimeDiff (Time1, Time2) {
       var oneday = 1000 * 60
-      var defDate = (new Date(Time2).getTime() - new Date(Time1).getTime()) / oneday
+      var defDate =
+        (new Date(Time2).getTime() - new Date(Time1).getTime()) / oneday
       // console.log('def', Time1, Time2)
       return defDate
     },
@@ -630,8 +774,8 @@ export default {
   margin-bottom: 40px;
 }
 .v_text_edit {
-  Width: 255px;
-  Height: 52px;
+  width: 255px;
+  height: 52px;
   font-size: 10px !important;
 }
 #subtext {
