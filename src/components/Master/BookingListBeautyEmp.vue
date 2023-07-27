@@ -10528,6 +10528,7 @@ export default {
                   s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
                   s.bookingEmpFlow = d.bookingEmpFlow
                   s.bookingEmpFlowName = d.bookingEmpFlowName
+                  s.checkDateConfirmJob = d.checkDateConfirmJob
                   s.dueDateDay = d.dueDateDay
                   s.statusVIP = d.statusVIP
                   s.packageName = d.packageName
@@ -13379,6 +13380,7 @@ export default {
                     s.flowId = d.flowId
                     s.flowName = d.flowName
                     s.bookingEmpFlowName = d.bookingEmpFlowName
+                    s.checkDateConfirmJob = d.checkDateConfirmJob
                     s.dueDate = d.dueDate
                     s.dueDateTimeStamp = d.dueDateTimeStamp
                     s.remarkRemove = d.remarkRemove
@@ -13681,6 +13683,7 @@ export default {
               s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
               s.bookingEmpFlow = d.bookingEmpFlow
               s.bookingEmpFlowName = d.bookingEmpFlowName
+              s.checkDateConfirmJob = d.checkDateConfirmJob
               s.dueDateDay = d.dueDateDay
               s.statusVIP = d.statusVIP
               s.packageName = d.packageName
@@ -13868,6 +13871,7 @@ export default {
               s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
               s.bookingEmpFlow = d.bookingEmpFlow
               s.bookingEmpFlowName = d.bookingEmpFlowName
+              s.checkDateConfirmJob = d.checkDateConfirmJob
               s.dueDateDay = d.dueDateDay
               s.statusVIP = d.statusVIP
               s.packageName = d.packageName
@@ -14687,17 +14691,21 @@ export default {
         })
     },
     async getBookingDataJob (dt, text) {
-      console.log('item!!!!!!', dt)
+      console.log('checkDateConfirmJob!!!!!!', dt.checkDateConfirmJob)
       this.masBranchIDAddJob = dt.masBranchID
       this.dueDateText = dt.dueDateText
       let dateCurrent = moment().format('YYYY-MM-DD')
       let dueDate = dt.dueDateDay
       console.log(dateCurrent, dueDate, dt)
       await this.getEmpChange(dt)
-      if (dateCurrent >= dueDate) {
+      if (dt.checkDateConfirmJob === 'True') {
         this.statusConfirmJob = true
       } else {
-        this.statusConfirmJob = false
+        if (dateCurrent >= dueDate) {
+          this.statusConfirmJob = true
+        } else {
+          this.statusConfirmJob = false
+        }
       }
       this.endDate = moment().format('YYYY-MM-DD')
       this.endTime = moment().format('HH:mm')
@@ -15883,6 +15891,7 @@ export default {
         await axios.get(this.DNS_IP + '/job/getJobNo?jobNo=' + item.jobNo).then(async (response) => {
           let rs = response.data
           let Id = ''
+          let IdJob = ''
           let memberPicture = ''
           console.log('getJobNo', rs)
           if (rs.length > 0) {
@@ -15900,13 +15909,14 @@ export default {
               d.userId = d.userId || ''
               d.memberPicture = d.memberPicture || ''
               if (d.userId !== '') {
-                Id = d.userId
+                IdJob = d.userId
               }
               if (d.memberPicture !== '') {
                 memberPicture = d.memberPicture || ''
               }
               this.jobitem.push(s)
             }
+            Id = item.userId
             let checkBookingMember = ''
             if (Id !== '') {
               const result = await axios
@@ -15927,7 +15937,7 @@ export default {
                 checkBookingMember = result.data[0]
               }
             }
-            this.userId = Id
+            this.userId = IdJob
             this.memberPicture = memberPicture
             if (checkBookingMember !== '' && this.memberPicture === '') {
               this.checkShowSelectUser = true

@@ -10272,6 +10272,7 @@ export default {
                   s.shopId = d.shopId
                   s.dueDateDay = d.dueDateDay
                   s.statusVIP = d.statusVIP
+                  s.checkDateConfirmJob = d.checkDateConfirmJob
                   s.packageName = d.packageName
                   s.packageDetails = d.packageDetails
                   s.packageImage = d.packageImage
@@ -12114,6 +12115,7 @@ export default {
                   s.shopId = d.shopId
                   s.dueDateDay = d.dueDateDay
                   s.statusVIP = d.statusVIP
+                  s.checkDateConfirmJob = d.checkDateConfirmJob
                   s.packageName = d.packageName
                   s.packageDetails = d.packageDetails
                   s.packageImage = d.packageImage
@@ -13162,6 +13164,7 @@ export default {
               s.shopId = d.shopId
               s.dueDateDay = d.dueDateDay
               s.statusVIP = d.statusVIP
+              s.checkDateConfirmJob = d.checkDateConfirmJob
               s.packageName = d.packageName
               s.packageDetails = d.packageDetails
               s.packageImage = d.packageImage
@@ -13343,6 +13346,7 @@ export default {
               s.shopId = d.shopId
               s.dueDateDay = d.dueDateDay
               s.statusVIP = d.statusVIP
+              s.checkDateConfirmJob = d.checkDateConfirmJob
               s.packageName = d.packageName
               s.packageDetails = d.packageDetails
               s.packageImage = d.packageImage
@@ -14173,10 +14177,14 @@ export default {
       let dateCurrent = moment().format('YYYY-MM-DD')
       let dueDate = dt.dueDateDay
       console.log(dateCurrent, dueDate)
-      if (dateCurrent >= dueDate) {
+      if (dt.checkDateConfirmJob === 'True') {
         this.statusConfirmJob = true
       } else {
-        this.statusConfirmJob = false
+        if (dateCurrent >= dueDate) {
+          this.statusConfirmJob = true
+        } else {
+          this.statusConfirmJob = false
+        }
       }
       // console.log('this.statusConfirmJob', this.statusConfirmJob)
       let checkStep = await axios.get(this.DNS_IP + '/flowStep/get?flowId=' + dt.flowId)
