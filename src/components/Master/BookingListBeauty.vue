@@ -973,7 +973,7 @@
                             dense
                             required
                             :rules="[rules.required]"
-                            @change="getDataCalendaBookingAdd(),setFlowByBranchAdd()"
+                            @change="priceMenuAdd = 0,drawerAdd = false,showMenu = 'False',getDataCalendaBookingAdd(),setFlowByBranchAdd()"
                           ></v-select>
                           <v-select
                             v-if="formAdd.masBranchID !== null && formAdd.masBranchID !== ''"
@@ -983,7 +983,7 @@
                             outlined
                             dense
                             required
-                            @change="getDataCalendaBookingAdd(),SetallowedDates(),setFlowAdd(), checkTime(), date = ''"
+                            @change="priceMenuAdd = 0,drawerAdd = false,getDataCalendaBookingAdd(),SetallowedDates(),setFlowAdd(), checkTime(), date = ''"
                             :rules="[rules.required]"
                           ></v-select>
                           <template v-if="fieldNameItem">
@@ -11144,7 +11144,6 @@ export default {
     },
     checkTime () {
       this.timeavailable = []
-      // console.log('dataFlowSelectAdd', this.dataFlowSelectAdd)
       let dtTime = this.dataFlowSelectAdd.filter(item => { return item.value === this.formAdd.flowId })
       if (dtTime.length > 0) {
         if (dtTime[0].menuShowStatus === 'True') {

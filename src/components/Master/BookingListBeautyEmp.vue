@@ -826,7 +826,7 @@
                             dense
                             required
                             :rules="[rules.required]"
-                            @change="getDataCalendaBookingAdd(),setFlowByBranchAdd()"
+                            @change="priceMenuAdd = 0,drawerAdd = false,showMenu = 'False',getDataCalendaBookingAdd(),setFlowByBranchAdd()"
                           ></v-select>
                           <v-select
                           v-if="formAdd.masBranchID !== '' && formAdd.masBranchID !== null"
@@ -836,7 +836,7 @@
                             outlined
                             dense
                             required
-                            @change="getDataCalendaBookingAdd(),setFlowAdd(), checkTime(),setEmpAdd(), date = ''"
+                            @change="priceMenuAdd = 0,drawerAdd = false,getDataCalendaBookingAdd(),setFlowAdd(), checkTime(),setEmpAdd(), date = ''"
                             :rules="[rules.required]"
                           ></v-select>
                           <v-select
