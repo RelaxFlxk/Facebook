@@ -191,7 +191,8 @@ export default {
       size: 200,
       foreground: '#000000',
       qrValue: null,
-      dataLineConfig: {}
+      dataLineConfig: {},
+      shopData: []
     }
   },
   async mounted () {
@@ -237,6 +238,7 @@ export default {
         .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.shopId)
         .then(response => {
           let rs = response.data
+          this.shopData = rs
           console.log('rssssssssssss', rs)
         })
     },
@@ -259,6 +261,7 @@ export default {
     },
     async setLinkItem () {
       this.linkItem = []
+      console.log('this.$session.getAll().data.timeSlotStatus', this.$session.getAll().data)
       if (this.$session.getAll().data.timeSlotStatus === 'True') {
         let itemLink = [
           {
@@ -298,6 +301,13 @@ export default {
           }
         ]
         this.linkItem = itemLink
+        if (this.shopData[0].statusCustomerEdit === 'True') {
+          this.linkItem.push({
+            'text': 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/EditBooking?shopId=' + this.shopId,
+            'title': 'ลูกค้าเลื่อนนัด',
+            'type': 'customer'
+          })
+        }
       } else {
         let itemLink = [
           {
@@ -332,6 +342,13 @@ export default {
           }
         ]
         this.linkItem = itemLink
+        if (this.shopData[0].statusCustomerEdit === 'True') {
+          this.linkItem.push({
+            'text': 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/EditBooking?shopId=' + this.shopId,
+            'title': 'ลูกค้าเลื่อนนัด',
+            'type': 'customer'
+          })
+        }
       }
       console.log('test', this.linkItem)
     }
