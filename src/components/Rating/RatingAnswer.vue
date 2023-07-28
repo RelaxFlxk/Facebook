@@ -3,13 +3,29 @@
       <div class="col-md-12 ml-sm-auto col-lg-12 px-4 d-flex">
     <v-row class="col-md-12">
       <div class="col-md-7 col-sm-12">
+        <form>
+          <v-select
+            class="pa-0"
+            v-model="formAdd.masBranchID"
+            :items="branchItem"
+            label="สาขา"
+            outlined
+            required
+            attach
+            :menu-props="{ bottom: true, offsetY: true }"
+            :rules="[rules.required]"
+            @change="getData()"
+          ></v-select>
         <div class="card" style="padding: 20px">
           <h3>สร้างแบบสอบถามความพึงพอใจ</h3>
-          <form>
+            <div style="display: none;">
+              <v-text-field v-model="ratingIntDefault" value="5"
+              ></v-text-field>
+            </div>
             <v-col cols="12" md="12">
               <v-textarea
                 solo
-                v-model="inputText"
+                v-model="formAdd.inputText"
                 :rows="2"
                 hidden-detail
               ></v-textarea>
@@ -17,7 +33,7 @@
             <div style="padding: 0px 4px;" align="right">
               <v-btn
                 :loading="loading"
-                :disabled="inputText.length < 1,loading"
+                :disabled="formAdd.inputText.length < 1,loading"
                 color="#1B437C"
                 class="ma-2 white--text"
                 @click="confirm"
@@ -28,8 +44,8 @@
                 <!-- <v-icon right dark> mdi-playlist-plus </v-icon> -->
               </v-btn>
             </div>
-          </form>
         </div>
+      </form>
         <div class="card" style="padding: 20px">
           <h3>รายการ</h3>
           <table>
@@ -135,7 +151,7 @@
                             background-color="#EAEAEF"
                             empty-icon="$ratingFull"
                             :full-icon="starBoldIcon"
-                            length="6"
+                            length="5"
                             :size="100"
                             hover
                             large
@@ -206,6 +222,7 @@ export default {
     return {
       DNS_IP: 'http://localhost:5004',
       rating: 0,
+      ratingIntDefault: 6,
       starBoldIcon: 'mdi-star',
       checkbox: false,
       loader: null,
@@ -214,11 +231,35 @@ export default {
       loading3: false,
       inputText: '',
       formData: [],
+      branchItem: [],
+      rules: {
+        numberRules: value =>
+          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
+          'กรุณากรอกตัวเลข 0 ถึง 9',
+        counterTel: value => value.length <= 10 || 'Max 10 characters',
+        IDcardRules: value =>
+          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999999) ||
+          'กรุณากรอกตัวเลข 0 ถึง 9',
+        required: value => !!value || 'กรุณากรอก.',
+        resizeImag: value =>
+          !value ||
+          value.size < 2000000 ||
+          'Avatar size should be less than 2 MB!',
+        counterIDcard: value => value.length <= 13 || 'Max 13 characters',
+        email: value => {
+          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+          return pattern.test(value) || 'Invalid e-mail.'
+        }
+      },
       disabled: true,
       enabled: true,
       dragging: false,
       dragOptions: {
         animation: 150
+      },
+      formAdd: {
+        inputText: '',
+        masBranchID: ''
       },
       swasuccess: {
         title: 'สำเร็จ',
@@ -231,7 +272,8 @@ export default {
   components: {
     draggable
   },
-  mounted () {
+  async mounted () {
+    await this.getDataBranch()
     this.getData()
   },
   methods: {
@@ -264,14 +306,14 @@ export default {
         })
     },
     getData () {
+      this.formData = []
       try {
-        const payload = {
-          RECORD_STATUS: 'N',
-          shopId: this.$session.getAll().data.shopId
-        }
-        axios.get(this.DNS_IP + '/ratingformat/get', payload).then(respone => {
-          // this.formData = respone.data
-          this.formData = JSON.parse(JSON.stringify(respone.data))
+        axios.get(this.DNS_IP + '/ratingformat/get?shopId=' + this.$session.getAll().data.shopId + '&masBranchID=' + this.formAdd.masBranchID).then(respone => {
+          // this.formData = respone.dat
+          let rs = respone.data
+          if (rs.status !== false) {
+            this.formData = rs
+          }
           // console.log('formData__GET()()()', this.formData)
         })
       } catch (error) {
@@ -310,15 +352,16 @@ export default {
         console.log(error)
       }
     },
-
     confirm () {
       try {
         const payload = {
-          answer: this.inputText,
-          rating: 0,
+          answer: this.formAdd.inputText,
+          rating: this.ratingIntDefault,
           shopId: this.$session.getAll().data.shopId,
           LAST_USER: this.$session.getAll().data.userName,
-          CREATE_USER: this.$session.getAll().data.userName
+          CREATE_USER: this.$session.getAll().data.userName,
+          masBranchID: this.formAdd.masBranchID
+
         }
         this.loading = true
         axios.post(this.DNS_IP + '/ratingformat/add', payload).then(respone => {
@@ -333,12 +376,43 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+    async getDataBranch () {
+      this.branchItem = []
+      await axios
+        .get(this.DNS_IP + '/master_branch/get?shopId=' + this.$session.getAll().data.shopId)
+        .then(response => {
+          let rs = response.data
+          console.log('rsss', rs)
+          console.log('shopId=', this.$session.getAll().data.shopId)
+          if (rs.status !== false) {
+            for (var i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              if (this.$session.getAll().data.masBranchID === '' || this.$session.getAll().data.masBranchID === null) {
+                let s = {}
+                s.text = d.masBranchName
+                s.value = d.masBranchID.toString()
+                this.branchItem.push(s)
+              } else {
+                if (d.masBranchID === this.masBranchID) {
+                  let s = {}
+                  s.text = d.masBranchName
+                  s.value = d.masBranchID.toString()
+                  this.branchItem.push(s)
+                }
+              }
+              console.log('dtdtdtdt', this.branch)
+            }
+          } if (this.branchItem.length > 0) {
+            this.formAdd.masBranchID = this.branchItem[0].value
+          }
+        })
+      console.log('branch', this.branch)
     }
   }
 }
 </script>
-<style scope>
-
+<style scoped>
 p{
   color:#77808D;
 }
@@ -348,6 +422,11 @@ p{
 }
 .theme--light.v-btn.v-btn--has-bg {
     background-color: #ffffff00;
+}.v-application--is-ltr .v-text-field .v-label {
+    left: 13px !important;
+}
+.v-select.v-text-field--outlined:not(.v-text-field--single-line) .v-select__selections {
+    padding: 8px !important;
 }
 .v-application--is-ltr .v-textarea.v-text-field--enclosed .v-text-field__slot textarea {
     padding: 0 12px;
@@ -372,7 +451,6 @@ p{
 }
 .card {
   padding: 10px;
-  border: solid #e3e3e3;
   border-radius: 20px;
   margin-bottom: 20px;
 }

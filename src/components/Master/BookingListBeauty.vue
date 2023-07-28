@@ -973,7 +973,7 @@
                             dense
                             required
                             :rules="[rules.required]"
-                            @change="getDataCalendaBookingAdd(),setFlowByBranchAdd()"
+                            @change="priceMenuAdd = 0,drawerAdd = false,showMenu = 'False',getDataCalendaBookingAdd(),setFlowByBranchAdd()"
                           ></v-select>
                           <v-select
                             v-if="formAdd.masBranchID !== null && formAdd.masBranchID !== ''"
@@ -983,7 +983,7 @@
                             outlined
                             dense
                             required
-                            @change="getDataCalendaBookingAdd(),SetallowedDates(),setFlowAdd(), checkTime(), date = ''"
+                            @change="priceMenuAdd = 0,drawerAdd = false,getDataCalendaBookingAdd(),SetallowedDates(),setFlowAdd(), checkTime(), date = ''"
                             :rules="[rules.required]"
                           ></v-select>
                           <template v-if="fieldNameItem">
@@ -10272,6 +10272,7 @@ export default {
                   s.shopId = d.shopId
                   s.dueDateDay = d.dueDateDay
                   s.statusVIP = d.statusVIP
+                  s.checkDateConfirmJob = d.checkDateConfirmJob
                   s.packageName = d.packageName
                   s.packageDetails = d.packageDetails
                   s.packageImage = d.packageImage
@@ -11144,7 +11145,6 @@ export default {
     },
     checkTime () {
       this.timeavailable = []
-      // console.log('dataFlowSelectAdd', this.dataFlowSelectAdd)
       let dtTime = this.dataFlowSelectAdd.filter(item => { return item.value === this.formAdd.flowId })
       if (dtTime.length > 0) {
         if (dtTime[0].menuShowStatus === 'True') {
@@ -12115,6 +12115,7 @@ export default {
                   s.shopId = d.shopId
                   s.dueDateDay = d.dueDateDay
                   s.statusVIP = d.statusVIP
+                  s.checkDateConfirmJob = d.checkDateConfirmJob
                   s.packageName = d.packageName
                   s.packageDetails = d.packageDetails
                   s.packageImage = d.packageImage
@@ -13163,6 +13164,7 @@ export default {
               s.shopId = d.shopId
               s.dueDateDay = d.dueDateDay
               s.statusVIP = d.statusVIP
+              s.checkDateConfirmJob = d.checkDateConfirmJob
               s.packageName = d.packageName
               s.packageDetails = d.packageDetails
               s.packageImage = d.packageImage
@@ -13344,6 +13346,7 @@ export default {
               s.shopId = d.shopId
               s.dueDateDay = d.dueDateDay
               s.statusVIP = d.statusVIP
+              s.checkDateConfirmJob = d.checkDateConfirmJob
               s.packageName = d.packageName
               s.packageDetails = d.packageDetails
               s.packageImage = d.packageImage
@@ -14174,10 +14177,14 @@ export default {
       let dateCurrent = moment().format('YYYY-MM-DD')
       let dueDate = dt.dueDateDay
       console.log(dateCurrent, dueDate)
-      if (dateCurrent >= dueDate) {
+      if (dt.checkDateConfirmJob === 'True') {
         this.statusConfirmJob = true
       } else {
-        this.statusConfirmJob = false
+        if (dateCurrent >= dueDate) {
+          this.statusConfirmJob = true
+        } else {
+          this.statusConfirmJob = false
+        }
       }
       // console.log('this.statusConfirmJob', this.statusConfirmJob)
       let checkStep = await axios.get(this.DNS_IP + '/flowStep/get?flowId=' + dt.flowId)

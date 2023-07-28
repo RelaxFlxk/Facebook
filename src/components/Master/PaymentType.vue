@@ -13,14 +13,426 @@
               เพิ่มช่องทางการชำระเงิน
             </v-btn>
           </v-col>
-          <v-col cols="12" class="v-margit_button text-right pt-0" v-if="checkAddStripe">
+          <v-col cols="12" style="display:flex;justify-content: end;" v-if="checkAddStripe">
+            <!-- <v-btn color="primary" outlined depressed @click="dialogAddStripe = true, validate('ADDStripe')">
+              <v-icon dark size="30" class="iconify" data-icon="logos:stripe"></v-icon>
+            </v-btn> -->
+            <v-card @click="dialogAddStripe = true, validate('ADDStripe')" style="border-radius: 5px;border: solid #1d00ff4a;;margin-right: 5px;">
+              <v-img contain width="100px" :src="require('@/assets/stripe.png')" alt="Image" />
+            </v-card>
+            <v-card @click="dialogAddOmise = true, valuePayment = [], validate('ADDStripe')" style="border-radius: 5px;border: solid #1d00ff4a;;display: flex;">
+              <v-img width="100px" :src="require('@/assets/omise-logo.jpg')" alt="Image" />
+            </v-card>
+          </v-col>
+          <!-- <v-col cols="6" class="v-margit_button text-right pt-0" v-if="checkAddStripe">
             <v-btn color="primary" outlined depressed @click="dialogAddStripe = true, validate('ADDStripe')">
               <v-icon dark size="30" class="iconify" data-icon="logos:stripe"></v-icon>
             </v-btn>
-          </v-col>
+          </v-col> -->
         </v-row>
         <v-row>
           <!-- ADD STRIPE -->
+          <v-dialog v-model="dialogAddOmise" persistent max-width="550px">
+            <v-card>
+              <v-form ref="form_addStripe" v-model="validAddStripe" lazy-validation>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="8" class="text-left pt-10">
+                    <h3><strong>เพิ่มช่องทางการชำระเงิน</strong></h3>
+                    </v-col>
+                    <v-col cols="4" class="pt-10">
+                    <div style="text-align: end;">
+                        <v-btn
+                        class="mx-2"
+                        fab
+                        small
+                        dark
+                        color="white"
+                        :style="styleCloseBt"
+                        @click="(dialogAddOmise = false), clearDataStripe()"
+                        >
+                        X
+                        </v-btn>
+                    </div>
+                    </v-col>
+                </v-row>
+                  <v-row>
+                    <v-col cols="12" class="pb-0">
+                      <v-select
+                        class="pa-0"
+                        v-model="formAddStripe.masBranchID"
+                        :items="branchItem"
+                        label="สาขา"
+                        outlined
+                        required
+                        attach
+                        :menu-props="{ bottom: true, offsetY: true }"
+                        :rules="[rules.required]"
+                      ></v-select>
+                    </v-col>
+                    <!-- <v-col cols="12" class="pb-0 pt-0" v-if="formAddStripe.masBranchID !== ''">
+                      <v-btn
+                        elevation="2"
+                        block
+                        dark
+                        color="teal"
+                        @click.stop="FunCopyQrcode({masBranchID: formAddStripe.masBranchID, shopId: $session.getAll().data.shopId})"
+                      >
+                        <v-icon left>mdi-content-copy</v-icon>
+                        คัดลอกลิงค์ Webhook
+                      </v-btn>
+                    </v-col> -->
+                    <v-col cols="12" class="pb-0 pt-0">
+                      <v-btn
+                        elevation="2"
+                        block
+                        dark
+                        color="teal"
+                        @click.stop="FunCopyWebhookOmise()"
+                      >
+                        <v-icon left>mdi-content-copy</v-icon>
+                        คัดลอกลิงค์ Webhook
+                      </v-btn>
+                    </v-col>
+                    <v-col cols="12" class="pb-0">
+                      <v-text-field
+                        v-model="formAddStripe.apiKey"
+                        label="Public key"
+                        outlined
+                        :rules="[rules.required]"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pb-0">
+                      <v-text-field
+                        v-model="formAddStripe.endpointSecret"
+                        label="Secret key"
+                        outlined
+                        :rules="[rules.required]"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col
+                      cols="12"
+                      sm="12"
+                      md="12"
+                    >
+                    <h3><strong>ตั้งค่ารูปแบบการจ่ายเงิน</strong></h3>
+                          <v-checkbox
+                              v-model="valuePayment"
+                              color="primary"
+                              value="credit_card"
+                              hide-details
+                              style="border-bottom: solid rgb(195, 195, 195);"
+                          >
+                            <template v-slot:label>
+                              <v-avatar tile>
+                                <v-img
+                                contain
+                                width="50px"
+                                :src="require('@/assets/depositphotos_475718890-stock-illustration-credit-card-icon-monochrome-simple.jpg')"
+                                />
+                            </v-avatar>
+                            <div class="optionpayment" >
+                              <div class="ml-2">
+                                บัตรเครดิต, บัตรเดบิต และผ่อนชำระ
+                              </div>
+                            </div>
+                          </template>
+                        </v-checkbox>
+                        <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="mobile_banking_bay"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              :src="require('@/assets/linepay-logo-th.png')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Mobile banking BAY
+                            </div>
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="mobile_banking_ktb"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              :src="require('@/assets/linepay-logo-th.png')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Mobile banking KTB
+                            </div>
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="mobile_banking_bbl"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              :src="require('@/assets/linepay-logo-th.png')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Mobile banking BBL
+                            </div>
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="mobile_banking_kbank"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              :src="require('@/assets/linepay-logo-th.png')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Mobile banking KBANK
+                            </div>
+                          </div>
+                        </template>
+                      </v-checkbox>
+                        <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="truemoney"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              :src="require('@/assets/logo-truemoneywallet-300x300-1.jpg')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              TrueMoney Wallet
+                            </div>
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="alipay"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              width="50px"
+                              :src="require('@/assets/download.png')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div class="ml-2">
+                              Alipay
+                            </div>
+
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="googlepay"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              :src="require('@/assets/GooglePay_Lockup.max-1000x1000.png')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Google Pay
+                            </div>
+
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="red"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              :src="require('@/assets/C0A0EA0-A4AC4F1-E0FBF72.jpg')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div class="ml-2">
+                              Pay with Points
+                            </div>
+
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="points_citi"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              :src="require('@/assets/wechat-pay-for-overseas-b.jpg')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              WeChat Pay
+                            </div>
+
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="internet_banking"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              :src="require('@/assets/internet-banking-vector-icon.jpg')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Internet banking (BBL, BAY)
+                            </div>
+
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="bill_payment_tesco_lotus"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              :src="require('@/assets/logo Lotus.png')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Bill payment
+                            </div>
+
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="rabbit_linepay"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              :src="require('@/assets/linepay-logo-th.png')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Rabbit LINE Pay
+                            </div>
+
+                          </div>
+                        </template>
+                      </v-checkbox>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-container fluid>
+                      <v-textarea
+                        outlined
+                        label="ประเภทการชำระเงิน"
+                         rows="3" row-height="25"
+                         :rules="[rules.required]"
+                        v-model="formAddStripe.payTypeName"
+                      ></v-textarea>
+                    </v-container>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+              </v-form>
+
+                <center>
+                  <v-col class="text-center pt-0">
+                <v-btn
+                  elevation="2"
+                  block
+                  dark
+                  large
+                  :disabled="!validAddStripe"
+                  color="#1B437C"
+                  @click="addDataStripe('omise')"
+                >
+                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                  บันทึก
+                </v-btn>
+                  </v-col>
+                </center>
+            </v-card>
+          </v-dialog>
           <v-dialog v-model="dialogAddStripe" persistent max-width="550px">
             <v-card>
               <v-form ref="form_addStripe" v-model="validAddStripe" lazy-validation>
@@ -125,6 +537,410 @@
           <!-- end add -->
 
           <!-- Edit STRIPE -->
+          <v-dialog v-model="dialogEditOmise" persistent max-width="550px">
+            <v-card>
+              <v-form ref="form_addStripe" v-model="validAddStripe" lazy-validation>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="8" class="text-left pt-10">
+                    <h3><strong>แก้ไขช่องทางการชำระเงิน</strong></h3>
+                    </v-col>
+                    <v-col cols="4" class="pt-10">
+                    <div style="text-align: end;">
+                        <v-btn
+                        class="mx-2"
+                        fab
+                        small
+                        dark
+                        color="white"
+                        :style="styleCloseBt"
+                        @click="(dialogEditOmise = false), clearDataStripe()"
+                        >
+                        X
+                        </v-btn>
+                    </div>
+                    </v-col>
+                </v-row>
+                  <v-row>
+                    <v-col cols="12" class="pb-0">
+                      <v-select
+                        class="pa-0"
+                        v-model="formAddStripe.masBranchID"
+                        :items="branchItem"
+                        label="สาขา"
+                        outlined
+                        required
+                        attach
+                        :menu-props="{ bottom: true, offsetY: true }"
+                        :rules="[rules.required]"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12" class="pb-0">
+                      <v-text-field
+                        v-model="formAddStripe.apiKey"
+                        label="Public key"
+                        outlined
+                        :rules="[rules.required]"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pb-0">
+                      <v-text-field
+                        v-model="formAddStripe.endpointSecret"
+                        label="Secret key"
+                        outlined
+                        :rules="[rules.required]"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col
+                      cols="12"
+                      sm="12"
+                      md="12"
+                    >
+                    <h3><strong>แก้ไขรูปแบบการจ่ายเงิน</strong></h3>
+                          <v-checkbox
+                              v-model="valuePayment"
+                              color="primary"
+                              value="credit_card"
+                              hide-details
+                              style="border-bottom: solid rgb(195, 195, 195);"
+                          >
+                            <template v-slot:label>
+                              <v-avatar tile>
+                                <v-img
+                                contain
+                                width="50px"
+                                :src="require('@/assets/depositphotos_475718890-stock-illustration-credit-card-icon-monochrome-simple.jpg')"
+                                />
+                            </v-avatar>
+                            <div class="optionpayment" >
+                              <div class="ml-2">
+                                บัตรเครดิต, บัตรเดบิต และผ่อนชำระ
+                              </div>
+                            </div>
+                          </template>
+                        </v-checkbox>
+                        <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="mobile_banking_bay"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              height="32px"
+                              :src="require('@/assets/iaor_logo.gif')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Mobile banking BAY
+                            </div>
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="mobile_banking_ktb"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              height="32px"
+                              :src="require('@/assets/Krung_Thai_Bank_logo.svg.png')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Mobile banking KTB
+                            </div>
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="mobile_banking_bbl"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              height="32px"
+                              :src="require('@/assets/download (1).png')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Mobile banking BBL
+                            </div>
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="mobile_banking_kbank"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              height="32px"
+                              :src="require('@/assets/unnamed (1).png')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Mobile banking KBANK
+                            </div>
+                          </div>
+                        </template>
+                      </v-checkbox>
+                        <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="truemoney"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              :src="require('@/assets/logo-truemoneywallet-300x300-1.jpg')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              TrueMoney Wallet
+                            </div>
+
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="alipay"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              width="50px"
+                              :src="require('@/assets/download.png')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div class="ml-2">
+                              Alipay
+                            </div>
+
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="googlepay"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              :src="require('@/assets/GooglePay_Lockup.max-1000x1000.png')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Google Pay
+                            </div>
+
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="red"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              :src="require('@/assets/C0A0EA0-A4AC4F1-E0FBF72.jpg')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div class="ml-2">
+                              Pay with Points
+                            </div>
+
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="points_citi"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              :src="require('@/assets/wechat-pay-for-overseas-b.jpg')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              WeChat Pay
+                            </div>
+
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="internet_banking"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              :src="require('@/assets/internet-banking-vector-icon.jpg')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Internet banking (BBL, BAY)
+                            </div>
+
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="bill_payment_tesco_lotus"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              :src="require('@/assets/logo Lotus.png')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Bill payment
+                            </div>
+
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="rabbit_linepay"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              :src="require('@/assets/linepay-logo-th.png')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Rabbit LINE Pay
+                            </div>
+
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          :value=mobileBanking
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              :src="require('@/assets/linepay-logo-th.png')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Mobile banking
+                            </div>
+                          </div>
+                        </template>
+                      </v-checkbox>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-container fluid>
+                      <v-textarea
+                        outlined
+                        label="ประเภทการชำระเงิน"
+                         rows="3" row-height="25"
+                         :rules="[rules.required]"
+                        v-model="formAddStripe.payTypeName"
+                      ></v-textarea>
+                    </v-container>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+              </v-form>
+
+                <center>
+                  <v-col class="text-center pt-0">
+                <v-btn
+                  elevation="2"
+                  block
+                  dark
+                  large
+                  :disabled="!validAddStripe"
+                  color="#1B437C"
+                  @click="editDataStripe('omise')"
+                >
+                  <v-icon left>mdi-checkbox-marked-circle</v-icon>
+                  บันทึก
+                </v-btn>
+                  </v-col>
+                </center>
+            </v-card>
+          </v-dialog>
+
           <v-dialog v-model="dialogEditStripe" persistent max-width="550px">
             <v-card>
               <v-form ref="form_addStripe" v-model="validAddStripe" lazy-validation>
@@ -512,6 +1328,11 @@
                     <v-avatar color="primary" size="40" v-if="item.payType === 'payment'">
                       <img :src="item.payTypeImage" alt="img"
                     /></v-avatar>
+                    <v-avatar color="white" size="70" v-else-if="item.payType === 'omise'">
+                      <v-img height="80" contain :src="require('@/assets/omise-logo.jpg')" alt="img"
+                    /></v-avatar>
+                    <!-- <v-img :src="require('@/assets/omise-logo.jpg')">
+                    </v-img> -->
                     <v-icon
                       v-else
                       small
@@ -538,6 +1359,16 @@
                       <v-icon> mdi-content-copy </v-icon>
                     </v-btn>
                     <v-btn
+                      v-if="item.payType === 'omise'"
+                      color="teal"
+                      fab
+                      small
+                      dark
+                      @click.stop="FunCopyWebhookOmise()"
+                    >
+                      <v-icon> mdi-content-copy </v-icon>
+                    </v-btn>
+                    <v-btn
                       v-if="item.payType === 'payment'"
                       color="question"
                       fab
@@ -553,12 +1384,12 @@
                       fab
                       small
                       dark
-                      @click.stop="(dialogEditStripe = true), getDataByIdStripe(item)"
+                      @click.stop="(item.payType === 'omise' ? dialogEditOmise = true : dialogEditStripe = true), getDataByIdStripe(item)"
                     >
                       <v-icon> mdi-tools </v-icon>
                     </v-btn>
                     <v-btn
-                      color="red"
+                      color="primary"
                       dark
                       fab
                       small
@@ -602,6 +1433,7 @@ export default {
   },
   data () {
     return {
+      valuePayment: [],
       formAddStripe: {
         payTypeId: '',
         apiKey: '',
@@ -612,11 +1444,14 @@ export default {
         payType: '',
         payTypeCode: '',
         payTypeName: '',
+        payMentSelect: '',
         shopId: this.$session.getAll().data.shopId
       },
       checkAddStripe: true,
       dialogAddStripe: false,
+      dialogAddOmise: false,
       dialogEditStripe: false,
+      dialogEditOmise: false,
       PK: '',
       path: '/master_payment/', // Path Model
       // Menu Config
@@ -732,6 +1567,20 @@ export default {
     await this.fiterBranch()
   },
   methods: {
+    FunCopyWebhookOmise () {
+      // var copyText = document.getElementById('myInput')
+      // copyText.select()
+      // copyText.setSelectionRange(0, 99999)
+      let linked = 'https://api-belinked.betaskthai.com/omise/webhook'
+      navigator.clipboard.writeText(linked)
+      this.$swal({
+        title: 'Copy successfully',
+        text: 'คัดลอกลิงก์สำเร็จ',
+        type: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      })
+    },
     FunCopyQrcode (item) {
       console.log('FunCopyQrcode', item)
       // var copyText = document.getElementById('myInput')
@@ -747,8 +1596,13 @@ export default {
         showConfirmButton: false
       })
     },
-    addDataStripe () {
-      this.formAddStripe.payType = 'stripe'
+    addDataStripe (item) {
+      if (item === 'omise') {
+        this.formAddStripe.payType = 'omise'
+        this.formAddStripe.payMentSelect = JSON.stringify(this.valuePayment)
+      } else {
+        this.formAddStripe.payType = 'stripe'
+      }
       this.formAddStripe.CREATE_USER = this.$session.getAll().data.userName
       this.formAddStripe.LAST_USER = this.$session.getAll().data.userName
       this.formAddStripe.shopId = this.$session.getAll().data.shopId
@@ -759,6 +1613,7 @@ export default {
 
       this.dataReady = false
       this.submitAddDataStripe(this.DNS_IP, this.path, this.formAddStripe)
+      this.dialogAddOmise = false
     },
     async submitAddDataStripe (DNS_IP, PATH, ID, DT) {
       this.dataReady = false
@@ -972,6 +1827,8 @@ export default {
       this.formAddStripe.payTypeCode = item.payTypeCode
       this.formAddStripe.payTypeName = item.payTypeName
       this.formAddStripe.shopId = this.$session.getAll().data.shopId
+      this.valuePayment = JSON.parse(item.payMentSelect)
+      this.formAddStripe.payMentSelect = item.payMentSelect
       this.dataReady = true
     },
     async getDataById (item) {
@@ -1171,7 +2028,7 @@ export default {
           console.log('error function editDataGlobal : ', error)
         })
     },
-    async editDataStripe () {
+    async editDataStripe (item) {
       // this.editDataGlobal(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
       this.dataReady = false
       this.formAddStripe.LAST_USER = this.$session.getAll().data.userName
@@ -1192,11 +2049,19 @@ export default {
             payTypeName: this.formAddStripe.payTypeName,
             LAST_USER: this.formAddStripe.LAST_USER
           }
+          let dtOmise = {
+            masBranchID: this.formAddStripe.masBranchID,
+            apiKey: this.formAddStripe.apiKey,
+            endpointSecret: this.formAddStripe.endpointSecret,
+            payTypeName: this.formAddStripe.payTypeName,
+            LAST_USER: this.formAddStripe.LAST_USER,
+            payMentSelect: JSON.stringify(this.valuePayment)
+          }
           await axios
             .post(
               // eslint-disable-next-line quotes
               this.DNS_IP + this.path + "edit/" + this.formAddStripe.payTypeId,
-              dt
+              item === 'omise' ? dtOmise : dt
             )
             .then(async (response) => {
               // Debug response
@@ -1293,5 +2158,10 @@ export default {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #173053;
+}
+.optionpayment {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
 }
 </style>
