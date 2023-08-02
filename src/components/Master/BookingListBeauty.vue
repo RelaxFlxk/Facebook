@@ -9375,37 +9375,124 @@ export default {
     },
     async getMonth (month) {
       console.log('month', month)
+      // console.log('!!!!!!!!!', this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTimebyday)
       // const result = await axios.get(this.DNS_IP + '/LimitBookingDate/get_LimitDate?shopId=' + this.$session.getAll().data.shopId + '&masBranchID=' + this.formAdd.masBranchID + '&bookingDate=' + month)
       const result = await axios.get(this.DNS_IP + '/LimitBookingDate/get_LimitDate?shopId=' + this.$session.getAll().data.shopId + '&flowId=' + this.formAdd.flowId + '&bookingDate=' + month)
       if (result.data.length > 0) {
+        let setTimebyday = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTimebyday
         console.log('getMonth IF', result.data)
         this.dateDaylimit = []
-        let dt = result.data
-        if (dt[0].limitBookingCheck === 'True') {
-          console.log('limitBookingCheck === True')
-          if (this.statusVIP === 'False') {
-            dt.forEach((v, k) => {
+        // let dt = result.data
+        const objectDT = result.data.reduce((acc, curr) => {
+          const bookingDate = curr.bookingDate
+          if (!acc[bookingDate]) {
+            acc[bookingDate] = []
+          }
+          acc[bookingDate].push(curr)
+          return acc
+        }, {})
+
+        console.log(objectDT)
+        for (const dt in objectDT) {
+          let statusOffDate1 = false
+          // console.log(dt, objectDT[dt])
+          if (objectDT[dt][0].limitBookingCheck === 'True') {
+            // console.log('limitBookingCheck === True')
+            objectDT[dt].forEach((v, k) => {
+              // let statusOffDate2 = false
+              // let statusOffDate3 = false
               if (JSON.parse(v.setTime)) {
-                let count = 0
-                JSON.parse(v.setTime).forEach((v2, k2) => {
-                  count += parseInt(v2.limitBooking)
-                })
-                if (v.sum >= count) {
-                  this.dateDaylimit.push(
-                    moment(v.bookingDate).format('YYYY-MM-DD')
-                  )
+                if (setTimebyday === 'True') {
+                  // console.log('sdfsdfsdfds', JSON.parse(v.setTime).filter((items) => items.value === new Date(v.bookingDate).getDay())[0].setTime)
+                  JSON.parse(v.setTime).filter((items) => items.value === new Date(v.bookingDate).getDay())[0].setTime.forEach((v2, k2) => {
+                    // console.log(v.bookingDate, '----', 'v', v.bookingTime, ' ', v.countBooking, '    ', 'v2', v2.value, ' ', v2.limitBooking)
+                    if (parseInt(v2.limitBooking) > 0 && v.bookingTime === v2.value) {
+                      console.log(v.bookingDate, '----', 'v', v.bookingTime, ' ', v.countBooking, '    ', 'v2', v2.value, ' ', v2.limitBooking)
+                      if (v.bookingTime === v2.value) {
+                        if (v.countBooking < parseInt(v2.limitBooking)) {
+                          statusOffDate1 = true
+                          // console.log(v.bookingDate, '----', 'v', v.bookingTime, ' ', v.countBooking, '    ', 'v2', v2.value, ' ', v2.limitBooking)
+                        }
+                      }
+                    } else if (parseInt(v2.limitBooking) > 0) {
+                      if (objectDT[dt].filter((aa) => aa.bookingTime === v2.value).length === 0) {
+                        console.log(v.bookingDate, '+++++', v2.value)
+                        statusOffDate1 = true
+                      }
+                    }
+                  })
+                } else {
+                  JSON.parse(v.setTime).forEach((v2, k2) => {
+                    if (parseInt(v2.limitBooking) > 0 && v.bookingTime === v2.value) {
+                      console.log(v.bookingDate, '----', 'v', v.bookingTime, ' ', v.countBooking, '    ', 'v2', v2.value, ' ', v2.limitBooking)
+                      if (v.bookingTime === v2.value) {
+                        if (v.countBooking < parseInt(v2.limitBooking)) {
+                          statusOffDate1 = true
+                          // console.log(v.bookingDate, '----', 'v', v.bookingTime, ' ', v.countBooking, '    ', 'v2', v2.value, ' ', v2.limitBooking)
+                        }
+                      }
+                    } else if (parseInt(v2.limitBooking) > 0) {
+                      if (objectDT[dt].filter((aa) => aa.bookingTime === v2.value).length === 0) {
+                        console.log(v.bookingDate, '+++++', v2.value)
+                        statusOffDate1 = true
+                      }
+                    }
+                  })
                 }
               }
             })
+            console.log('---------!!!!1--------', dt, '----', statusOffDate1)
+            if (statusOffDate1 === false) {
+              console.log('---------OFF--------', objectDT[dt])
+              this.dateDaylimit.push(
+                moment(objectDT[dt][0].bookingDate).format('YYYY-MM-DD')
+              )
+            }
+          } else {
+            // console.log('limitBookingCheck === False')
+            this.dateDaylimit = []
           }
-        } else {
-          console.log('limitBookingCheck === False')
-          this.dateDaylimit = []
+          // if (statusOffDate1 === false) {
+          //   this.dateDaylimit.push(
+          //     moment(objectDT[dt][0].bookingDate).format('YYYY-MM-DD')
+          //   )
+          // }
+          console.log('this.dateDaylimit', this.dateDaylimit)
+          // this.dateDaylimit = result.data.map((item) => { return this.momenDate_1(item.bookingDate) })
         }
       } else {
         console.log('getMonth ELSE')
         this.dateDaylimit = []
       }
+      // if (result.data.length > 0) {
+      //   console.log('getMonth IF', result.data)
+      //   this.dateDaylimit = []
+      //   let dt = result.data
+      //   if (dt[0].limitBookingCheck === 'True') {
+      //     console.log('limitBookingCheck === True')
+      //     if (this.statusVIP === 'False') {
+      //       dt.forEach((v, k) => {
+      //         if (JSON.parse(v.setTime)) {
+      //           let count = 0
+      //           JSON.parse(v.setTime).forEach((v2, k2) => {
+      //             count += parseInt(v2.limitBooking)
+      //           })
+      //           if (v.sum >= count) {
+      //             this.dateDaylimit.push(
+      //               moment(v.bookingDate).format('YYYY-MM-DD')
+      //             )
+      //           }
+      //         }
+      //       })
+      //     }
+      //   } else {
+      //     console.log('limitBookingCheck === False')
+      //     this.dateDaylimit = []
+      //   }
+      // } else {
+      //   console.log('getMonth ELSE')
+      //   this.dateDaylimit = []
+      // }
       // console.log('this.dateDaylimit', this.dateDaylimit)
     },
     allowedDates (val) {
