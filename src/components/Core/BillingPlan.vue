@@ -598,7 +598,7 @@
                         </template>
                         <template v-slot:[`item.actions`]="{ item }">
                           <v-btn
-                            v-if="item.receiptFile !== ''"
+                            v-if="item.receiptFile !== null"
                             color="teal"
                             fab
                             small
