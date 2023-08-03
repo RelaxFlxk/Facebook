@@ -173,7 +173,7 @@
                         ></v-autocomplete>
                         <v-autocomplete
                           v-model="formUpdate.countDayCustomerEdit"
-                          label="เลื่อนนัดการก่อนวันที่นัดหมาย ( วัน )"
+                          label="เลื่อนนัดก่อนวันที่นัดหมาย ( วัน )"
                           dense
                           outlined
                           :rules="[rules.required]"
@@ -338,7 +338,9 @@
             </v-card>
           </v-dialog>
           <!-- end edit -->
-
+          <div>
+            <img id="image" src="picture.jpg">
+          </div>
           <!-- data table -->
           <v-col cols="12">
             <v-card elevation="7" v-if="dataReady">
@@ -404,6 +406,7 @@ import XLSX from 'xlsx' // import xlsx
 import readXlsxFile from 'read-excel-file'
 import moment from 'moment' // แปลง date
 import GoogleCalendarCmp from '../Core/GoogleCalendarCmp.vue'
+
 
 export default {
   components: {
