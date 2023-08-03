@@ -115,6 +115,23 @@ export default {
     'priceMenuParent',
     'updatePriceMenuParent'
   ],
+  watch: {
+    languageSelect () {
+      this.languageSelect = this.languageSelectParent
+    },
+    drawerParent () {
+      console.log('drawerParent', this.drawerParent)
+      this.checkItemMenu()
+      this.drawer = this.drawerParent
+    },
+    dataMenuParent () {
+      this.dataMenu = this.dataMenuParent
+    },
+    priceMenuParent () {
+      console.log('topriceMenuParentggle', this.priceMenuParent)
+      this.priceMenu = this.priceMenuParent
+    }
+  },
   data () {
     return {
       drawer: this.drawerParent,
@@ -125,7 +142,17 @@ export default {
   },
   async mounted () {},
   methods: {
+    checkItemMenu () {
+      let priceItem = 0
+      for (let i = 0; i < this.dataMenuParent.length; i++) {
+        let d = this.dataMenuParent[i]
+        priceItem = (d.qty * parseFloat(d.price)) + priceItem
+      }
+      this.priceMenu = priceItem
+      console.log('priceItem-----------', priceItem)
+    },
     toggle () {
+      console.log('toggle')
       this.toggleParent()
     },
     changeCounter (num, item) {
@@ -158,20 +185,6 @@ export default {
       } else {
         this.$emit('updatePriceMenuParent', this.priceMenu, this.dataMenu)
       }
-    }
-  },
-  watch: {
-    languageSelect () {
-      this.languageSelect = this.languageSelectParent
-    },
-    drawerParent () {
-      this.drawer = this.drawerParent
-    },
-    dataMenuParent () {
-      this.dataMenu = this.dataMenuParent
-    },
-    priceMenuParent () {
-      this.priceMenu = this.priceMenuParent
     }
   }
 }

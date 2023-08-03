@@ -470,7 +470,6 @@ export default {
   },
   async mounted () {
     await this.getDataBranch()
-    this.getRating()
   },
   methods: {
     dial: function (number) {
@@ -520,7 +519,7 @@ export default {
             this.DataBranchName = []
             this.branch = []
           }
-          if (this.branch.length === 1) {
+          if (this.branch.length > 0) {
             this.masBranchID = this.branch[0].value
             await this.getRating()
           }

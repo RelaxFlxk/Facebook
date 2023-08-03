@@ -83,6 +83,18 @@
                         คัดลอกลิงค์ Webhook
                       </v-btn>
                     </v-col> -->
+                    <v-col cols="12" class="pb-0 pt-0">
+                      <v-btn
+                        elevation="2"
+                        block
+                        dark
+                        color="teal"
+                        @click.stop="FunCopyWebhookOmise()"
+                      >
+                        <v-icon left>mdi-content-copy</v-icon>
+                        คัดลอกลิงค์ Webhook
+                      </v-btn>
+                    </v-col>
                     <v-col cols="12" class="pb-0">
                       <v-text-field
                         v-model="formAddStripe.apiKey"
@@ -129,6 +141,90 @@
                             </div>
                           </template>
                         </v-checkbox>
+                        <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="mobile_banking_bay"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              :src="require('@/assets/linepay-logo-th.png')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Mobile banking BAY
+                            </div>
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="mobile_banking_ktb"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              :src="require('@/assets/linepay-logo-th.png')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Mobile banking KTB
+                            </div>
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="mobile_banking_bbl"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              :src="require('@/assets/linepay-logo-th.png')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Mobile banking BBL
+                            </div>
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="mobile_banking_kbank"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              :src="require('@/assets/linepay-logo-th.png')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Mobile banking KBANK
+                            </div>
+                          </div>
+                        </template>
+                      </v-checkbox>
                         <v-checkbox
                           v-model="valuePayment"
                           color="primary"
@@ -529,6 +625,94 @@
                         <v-checkbox
                           v-model="valuePayment"
                           color="primary"
+                          value="mobile_banking_bay"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              height="32px"
+                              :src="require('@/assets/iaor_logo.gif')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Mobile banking BAY
+                            </div>
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="mobile_banking_ktb"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              height="32px"
+                              :src="require('@/assets/Krung_Thai_Bank_logo.svg.png')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Mobile banking KTB
+                            </div>
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="mobile_banking_bbl"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              height="32px"
+                              :src="require('@/assets/download (1).png')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Mobile banking BBL
+                            </div>
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          value="mobile_banking_kbank"
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              height="32px"
+                              :src="require('@/assets/unnamed (1).png')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Mobile banking KBANK
+                            </div>
+                          </div>
+                        </template>
+                      </v-checkbox>
+                        <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
                           value="truemoney"
                           hide-details
                           style="border-bottom: solid rgb(195, 195, 195);"
@@ -697,6 +881,27 @@
                               Rabbit LINE Pay
                             </div>
 
+                          </div>
+                        </template>
+                      </v-checkbox>
+                      <v-checkbox
+                          v-model="valuePayment"
+                          color="primary"
+                          :value=mobileBanking
+                          hide-details
+                          style="border-bottom: solid rgb(195, 195, 195);"
+                        >
+                          <template v-slot:label>
+                            <v-avatar tile>
+                              <v-img
+                              contain
+                              :src="require('@/assets/linepay-logo-th.png')"
+                              />
+                          </v-avatar>
+                          <div class="optionpayment" >
+                            <div>
+                              Mobile banking
+                            </div>
                           </div>
                         </template>
                       </v-checkbox>
@@ -1154,6 +1359,16 @@
                       <v-icon> mdi-content-copy </v-icon>
                     </v-btn>
                     <v-btn
+                      v-if="item.payType === 'omise'"
+                      color="teal"
+                      fab
+                      small
+                      dark
+                      @click.stop="FunCopyWebhookOmise()"
+                    >
+                      <v-icon> mdi-content-copy </v-icon>
+                    </v-btn>
+                    <v-btn
                       v-if="item.payType === 'payment'"
                       color="question"
                       fab
@@ -1352,6 +1567,20 @@ export default {
     await this.fiterBranch()
   },
   methods: {
+    FunCopyWebhookOmise () {
+      // var copyText = document.getElementById('myInput')
+      // copyText.select()
+      // copyText.setSelectionRange(0, 99999)
+      let linked = 'https://api-belinked.betaskthai.com/omise/webhook'
+      navigator.clipboard.writeText(linked)
+      this.$swal({
+        title: 'Copy successfully',
+        text: 'คัดลอกลิงก์สำเร็จ',
+        type: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      })
+    },
     FunCopyQrcode (item) {
       console.log('FunCopyQrcode', item)
       // var copyText = document.getElementById('myInput')
