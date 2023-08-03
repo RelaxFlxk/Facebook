@@ -288,17 +288,28 @@ export default {
         item.sort = index + 1
       })
     },
+    // updateOrder () {
+    //   // console.log('Updated order:', this.formData)
+
+    //   const updatedFormData = this.formData.map((element, index) => {
+    //     return Object.assign({}, element, { sort: index + 1 })
+    //   })
+
+    //   axios
+    //     .post(this.DNS_IP + '/ratingformat/setindex', updatedFormData)
+    //     .then(response => {
+    //       // console.log('Update successful', response)
+    //       this.getData()
+    //     })
+    //     .catch(error => {
+    //       console.error('Update failed:', error)
+    //     })
+    // },
     updateOrder () {
-      // console.log('Updated order:', this.formData)
-
-      const updatedFormData = this.formData.map((element, index) => {
-        return Object.assign({}, element, { sort: index + 1 })
-      })
-
-      axios
-        .post(this.DNS_IP + '/ratingformat/setindex', updatedFormData)
+      console.log('Updated order:', this.formData)
+      axios.post(this.DNS_IP + '/ratingformat/setindex', this.formData)
         .then(response => {
-          // console.log('Update successful', response)
+          console.log('Update successful', response)
           this.getData()
         })
         .catch(error => {
@@ -357,6 +368,7 @@ export default {
         const payload = {
           answer: this.formAdd.inputText,
           rating: this.ratingIntDefault,
+          sort: 0,
           shopId: this.$session.getAll().data.shopId,
           LAST_USER: this.$session.getAll().data.userName,
           CREATE_USER: this.$session.getAll().data.userName,
@@ -364,12 +376,13 @@ export default {
 
         }
         this.loading = true
+        this.updateOrder()
         axios.post(this.DNS_IP + '/ratingformat/add', payload).then(respone => {
           this.$swal(this.swasuccess)
           this.loading = false
           // console.log(respone)
           this.getData()
-          this.inputText = ''
+          this.formAdd.inputText = ''
         })
       } catch (error) {
         console.error(error)
