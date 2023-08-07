@@ -676,6 +676,19 @@
                                 ></v-text-field>
                             </v-col>
                           </v-row>
+                          <v-row>
+                            <v-col style="display: flex;justify-content: flex-start;">
+                            <v-checkbox
+                            label="รับเข้าบริการเช็ควันที่ปัจจุบัน"
+                            false-value="False"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            color="#1B437C"
+                            true-value="True"
+                            v-model="formAdd.checkDateConfirmJob"
+                          ></v-checkbox>
+                           </v-col>
+                          </v-row>
                           <v-row v-if="$session.getAll().data.timeSlotStatus === 'True'">
                             <v-col style="display: flex;justify-content: flex-start;">
                             <v-checkbox
@@ -1155,6 +1168,19 @@
                                   :rules="[rules.required]"
                                 ></v-text-field>
                             </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col style="display: flex;justify-content: flex-start;">
+                            <v-checkbox
+                            label="รับเข้าบริการเช็ควันที่ปัจจุบัน"
+                            false-value="False"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            color="#1B437C"
+                            true-value="True"
+                            v-model="formUpdate.checkDateConfirmJob"
+                          ></v-checkbox>
+                           </v-col>
                           </v-row>
                           <v-row v-if="$session.getAll().data.timeSlotStatus === 'True'">
                             <v-col style="display: flex;justify-content: flex-start;">
@@ -2935,7 +2961,8 @@ export default {
         masBranchID: '',
         storeFrontNotifyStatus: 'False',
         storeFrontNotifySet: '0',
-        newCustomerStatus: 'False'
+        newCustomerStatus: 'False',
+        checkDateConfirmJob: 'False'
       },
       formAddStep: {
         stepId: '',
@@ -3015,7 +3042,8 @@ export default {
         masBranchID: '',
         storeFrontNotifyStatus: 'False',
         storeFrontNotifySet: '0',
-        newCustomerStatus: 'False'
+        newCustomerStatus: 'False',
+        checkDateConfirmJob: 'False'
       },
       formUpdateItemFlow: {
         fieldId: '',
@@ -4728,6 +4756,7 @@ export default {
       this.formUpdate.masBranchID = item.masBranchID || 'All'
       this.formUpdate.newCustomerStatus = item.newCustomerStatus || 'False'
       this.formUpdate.menuShowStatus = item.menuShowStatus || 'False'
+      this.formUpdate.checkDateConfirmJob = item.checkDateConfirmJob || 'False'
       this.shopId = this.$session.getAll().data.shopId
       this.fieldType = this.formUpdate.fieldType
       // this.desserts = JSON.parse(response.data[0].flowfieldName)
@@ -5302,6 +5331,8 @@ export default {
             this.formAdd[key] = 'False'
           } else if (key === 'updateStatusConfirm') {
             this.formAdd[key] = 'False'
+          } else if (key === 'checkDateConfirmJob') {
+            this.formAdd[key] = 'False'
           } else if (key === 'amountDeposit') {
             this.formAdd[key] = 0
           } else if (key === 'servicePointCountStart') {
@@ -5354,6 +5385,8 @@ export default {
           } else if (key === 'customerTimeSlot') {
             this.formUpdate[key] = 'False'
           } else if (key === 'servicePointRecursive') {
+            this.formUpdate[key] = 'False'
+          } else if (key === 'checkDateConfirmJob') {
             this.formUpdate[key] = 'False'
           } else if (key === 'amountDeposit') {
             this.formUpdate[key] = 0

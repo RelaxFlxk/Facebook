@@ -895,6 +895,11 @@
                           v-model="item.showitem"
                         ></v-simple-checkbox>
                       </template>
+                      <template v-slot:[`item.showitemCustomer`]="{ item }">
+                        <v-simple-checkbox
+                          v-model="item.showitemCustomer"
+                        ></v-simple-checkbox>
+                      </template>
                     </v-data-table>
                   </v-col>
                   <v-col cols="12" class="text-center">
@@ -974,6 +979,11 @@
                       <template v-slot:[`item.showitem`]="{ item }">
                         <v-simple-checkbox
                           v-model="item.showitem"
+                        ></v-simple-checkbox>
+                      </template>
+                      <template v-slot:[`item.showitemCustomer`]="{ item }">
+                        <v-simple-checkbox
+                          v-model="item.showitemCustomer"
                         ></v-simple-checkbox>
                       </template>
                     </v-data-table>
@@ -1122,7 +1132,8 @@ export default {
           text: 'Field Name',
           value: 'fieldName'
         },
-        { text: 'เลือกข้อมูล', value: 'showitem' }
+        { text: 'สำหรับ Admin', value: 'showitem' },
+        { text: 'สำหรับ ลูกค้า', value: 'showitemCustomer' }
       ],
       rules: {
         numberRules: value =>
@@ -1342,7 +1353,12 @@ export default {
       })
     },
     async getBookingField () {
-      let itemIncustomField = []
+      let dataGet = {
+        'itemIncustomField': [],
+        'itemIncustomFieldCustomer': []
+      }
+      // let itemIncustomField = []
+      // let itemIncustomFieldCustomer = []
       this.IdUpdate = ''
       await axios
         .get(this.DNS_IP + '/BookingField/get?shopId=' + this.shopId)
@@ -1379,7 +1395,8 @@ export default {
                   lng: parseFloat(this.shopLong)
                 }
               }
-              let bookingData = []
+              let flowfieldName = []
+              let flowfieldNameCustomer = []
               if (rs[0].multiDueDate === null || rs[0].multiDueDate === '') {
                 this.multiDueDate = 'False'
               } else {
@@ -1411,24 +1428,30 @@ export default {
                 this.statusEngPayment = rs[0].statusEngPayment
               }
               this.showLimitBooking = rs[0].showLimitBooking || 'False'
-              bookingData = JSON.parse(rs[0].flowfieldName)
-              for (let i = 0; i < bookingData.length; i++) {
-                let d = bookingData[i]
-                itemIncustomField.push(d.fieldId)
+              flowfieldName = JSON.parse(rs[0].flowfieldName)
+              flowfieldNameCustomer = JSON.parse(rs[0].flowfieldNameCustomer)
+              for (let i = 0; i < flowfieldName.length; i++) {
+                let d = flowfieldName[i]
+                dataGet.itemIncustomField.push(d.fieldId)
               }
-              console.log('item', itemIncustomField)
-              this.getCustomField(itemIncustomField)
+              for (let i = 0; i < flowfieldNameCustomer.length; i++) {
+                let d = flowfieldNameCustomer[i]
+                dataGet.itemIncustomFieldCustomer.push(d.fieldId)
+              }
+              console.log('dataGet', dataGet)
+              // this.getCustomField(dataGet)
+              this.getCustomField(dataGet)
             }
           } else {
-            this.getCustomField(itemIncustomField)
+            this.getCustomField(dataGet)
+            // this.getCustomField(dataGet)
           }
         })
         .catch(error => {
           console.log('error function addData : ', error)
         })
     },
-    async getCustomField (item) {
-      let checkdata = []
+    async getCustomField (dataGet) {
       this.Fielditem = []
       await axios
         .get(this.DNS_IP + '/customField/get?shopId=' + this.shopId)
@@ -1436,30 +1459,6 @@ export default {
           let dt = response.data
           for (let i = 0; i < dt.length; i++) {
             let d = dt[i]
-            checkdata.push(d.fieldId)
-          }
-        })
-        .catch(error => {
-          console.log('error function addData : ', error)
-        })
-      let fieldAll = checkdata.filter(function (x) {
-        return !item.includes(x)
-      })
-      if (item.length > 0) {
-        await this.getCustomFieldData(item, true)
-      }
-      if (fieldAll.length > 0) {
-        await this.getCustomFieldData(fieldAll, false)
-      }
-    },
-    async getCustomFieldData (fieldSet, showItem) {
-      await axios
-        .get(this.DNS_IP + '/customField/fieldId?fieldId=' + fieldSet)
-        .then(async response => {
-          let rs = response.data
-          // let aa = []
-          for (let i = 0; i < rs.length; i++) {
-            let d = rs[i]
             let s = {}
             s.fieldId = d.fieldId
             s.fieldName = d.fieldName
@@ -1470,7 +1469,18 @@ export default {
             s.conditionValue = d.conditionValue
             s.shopId = d.shopId
             s.fieldValue = ''
-            s.showitem = showItem
+            if (dataGet.itemIncustomField.filter((ID) => ID === d.fieldId).length > 0) {
+              // console.log('itemIncustomField', d.fieldId)
+              s.showitem = true
+            } else {
+              s.showitem = false
+            }
+            if (dataGet.itemIncustomFieldCustomer.filter((ID) => ID === d.fieldId).length > 0) {
+              // console.log('itemIncustomFieldCustomer', d.fieldId)
+              s.showitemCustomer = true
+            } else {
+              s.showitemCustomer = false
+            }
             this.Fielditem.push(s)
           }
           let data1 = this.Fielditem.filter(el => parseInt(el.conditionField || 0) > 0)
@@ -1490,10 +1500,79 @@ export default {
           console.log('error function addData : ', error)
         })
     },
+    // async getCustomField (item) {
+    //   let checkdata = []
+    //   this.Fielditem = []
+    //   await axios
+    //     .get(this.DNS_IP + '/customField/get?shopId=' + this.shopId)
+    //     .then(response => {
+    //       let dt = response.data
+    //       for (let i = 0; i < dt.length; i++) {
+    //         let d = dt[i]
+    //         checkdata.push(d.fieldId)
+    //       }
+    //     })
+    //     .catch(error => {
+    //       console.log('error function addData : ', error)
+    //     })
+    //   let fieldAll = checkdata.filter(function (x) {
+    //     return !item.includes(x)
+    //   })
+    //   if (item.length > 0) {
+    //     console.log('IF!1')
+    //     await this.getCustomFieldData(item, true)
+    //   }
+    //   if (fieldAll.length > 0) {
+    //     console.log('IF!2')
+    //     await this.getCustomFieldData(fieldAll, false)
+    //   }
+    // },
+    // async getCustomFieldData (fieldSet, showItem) {
+    //   console.log('@#$@#$@#$@#$@#$#', fieldSet, showItem)
+    //   await axios
+    //     .get(this.DNS_IP + '/customField/fieldId?fieldId=' + fieldSet)
+    //     .then(async response => {
+    //       let rs = response.data
+    //       // let aa = []
+    //       for (let i = 0; i < rs.length; i++) {
+    //         let d = rs[i]
+    //         let s = {}
+    //         s.fieldId = d.fieldId
+    //         s.fieldName = d.fieldName
+    //         s.fieldNameEn = d.fieldNameEn
+    //         s.fieldType = d.fieldType
+    //         s.optionField = d.optionField
+    //         s.conditionField = d.conditionField
+    //         s.conditionValue = d.conditionValue
+    //         s.shopId = d.shopId
+    //         s.fieldValue = ''
+    //         s.showitem = showItem
+    //         this.Fielditem.push(s)
+    //       }
+    //       console.log('!#!@#', this.Fielditem)
+    //       console.log('!#!@#', this.Fielditem.filter(el => parseInt(el.conditionField || 0) > 0))
+    //       let data1 = this.Fielditem.filter(el => parseInt(el.conditionField || 0) > 0)
+    //       // let data2 = []
+    //       for (let i = 0; i < data1.length; i++) {
+    //         let d = data1[i]
+    //         let indexC = this.Fielditem.findIndex(function (o) {
+    //           return o.fieldId === d.fieldId
+    //         })
+    //         let indexF = this.Fielditem.findIndex(function (o) {
+    //           return o.fieldId === parseInt(d.conditionField)
+    //         })
+    //         this.Fielditem.splice((indexF + 1), 0, this.Fielditem.splice(indexC, 1)[0])
+    //       }
+    //     })
+    //     .catch(error => {
+    //       console.log('error function addData : ', error)
+    //     })
+    // },
     async addBooking () {
       this.dataReady = true
       let booking = {}
       let UpdateField = []
+      let UpdateFieldCustomer = []
       // this.Redirect = this.DNS_IP + '/booking?shopId=' + this.$route.query.shopId
       for (let i = 0; i < this.Fielditem.length; i++) {
         let d = this.Fielditem[i]
@@ -1502,9 +1581,15 @@ export default {
             fieldId: d.fieldId
           })
         }
+        if (d.showitemCustomer === true) {
+          UpdateFieldCustomer.push({
+            fieldId: d.fieldId
+          })
+        }
       }
       console.log('update', this.Fielditem)
       booking.flowfieldName = JSON.stringify(UpdateField)
+      booking.flowfieldNameCustomer = JSON.stringify(UpdateFieldCustomer)
       booking.shopId = this.shopId
       booking.showTime = this.showTime
       booking.showMap = this.showMap

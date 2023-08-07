@@ -1,205 +1,217 @@
 <template>
   <v-main>
-      <div class="col-md-12 ml-sm-auto col-lg-12 px-4 d-flex">
-    <v-row class="col-md-12">
-      <div class="col-md-7 col-sm-12">
-        <form>
-          <v-select
-            class="pa-0"
-            v-model="formAdd.masBranchID"
-            :items="branchItem"
-            label="สาขา"
-            outlined
-            required
-            attach
-            :menu-props="{ bottom: true, offsetY: true }"
-            :rules="[rules.required]"
-            @change="getData()"
-          ></v-select>
-        <div class="card" style="padding: 20px">
-          <h3>สร้างแบบสอบถามความพึงพอใจ</h3>
-            <div style="display: none;">
-              <v-text-field v-model="ratingIntDefault" value="5"
-              ></v-text-field>
-            </div>
-            <v-col cols="12" md="12">
-              <v-textarea
-                solo
-                v-model="formAdd.inputText"
-                :rows="2"
-                hidden-detail
-              ></v-textarea>
-            </v-col>
-            <div style="padding: 0px 4px;" align="right">
-              <v-btn
-                :loading="loading"
-                :disabled="formAdd.inputText.length < 1,loading"
-                color="#1B437C"
-                class="ma-2 white--text"
-                @click="confirm"
-                large
-                style="width: -webkit-fill-available;border-radius: 16px;margin-top: -20px !important;font-weight: bold;"
-              >
-                เพิ่มแบบสอบถาม
-                <!-- <v-icon right dark> mdi-playlist-plus </v-icon> -->
-              </v-btn>
-            </div>
-        </div>
-      </form>
-        <div class="card" style="padding: 20px">
-          <h3>รายการ</h3>
-          <table>
-            <tbody v-if="formData.message !== 'No data found'">
-              <draggable
-                :list="formData"
-                :disabled="!enabled"
-                class="list-group"
-                ghost-class="ghost"
-                :move="checkMove"
-                @start="dragging = true"
-                @end="updateOrder"
-              >
-                <div
-                  style="display: flex; justify-content: space-between; "
-                  class="list-group-item"
-                  v-for="(element, index) in formData"
-                  :key="index"
+    <div class="col-md-12 ml-sm-auto col-lg-12 px-4 d-flex">
+      <v-row class="col-md-12">
+        <div class="col-md-7 col-sm-12">
+          <form>
+            <v-select
+              class="pa-0"
+              v-model="formAdd.masBranchID"
+              :items="branchItem"
+              label="สาขา"
+              outlined
+              required
+              attach
+              :menu-props="{ bottom: true, offsetY: true }"
+              :rules="[rules.required]"
+              @change="getData()"
+            ></v-select>
+            <div class="card" style="padding: 20px">
+              <h3>สร้างแบบสอบถามความพึงพอใจ</h3>
+              <div style="display: none;">
+                <v-text-field
+                  v-model="ratingIntDefault"
+                  value="5"
+                ></v-text-field>
+              </div>
+              <v-col cols="12" md="12">
+                <v-textarea
+                  solo
+                  v-model="formAdd.inputText"
+                  :rows="2"
+                  hidden-detail
+                ></v-textarea>
+              </v-col>
+              <div style="padding: 0px 4px;" align="right">
+                <v-btn
+                  :loading="loading"
+                  :disabled="(formAdd.inputText.length < 1, loading)"
+                  color="#1B437C"
+                  class="ma-2 white--text"
+                  @click="confirm"
+                  large
+                  style="width: -webkit-fill-available;border-radius: 16px;margin-top: -20px !important;font-weight: bold;"
                 >
-                  <div>
-                    <v-icon>mdi-drag-variant</v-icon>
-                    {{ index + 1 }}
-                    {{ element.answer }}
-                  </div>
-                  <v-btn
-                    :loading="loading3"
-                    :disabled="loading3"
-                    class="ma-2 white--text"
-                    small
-                    elevation="0"
-                    @click="deleteRating(element.id)"
+                  เพิ่มแบบสอบถาม
+                  <!-- <v-icon right dark> mdi-playlist-plus </v-icon> -->
+                </v-btn>
+              </div>
+            </div>
+          </form>
+          <div class="card" style="padding: 20px">
+            <h3>รายการ</h3>
+            <table>
+              <tbody v-if="formData.message !== 'No data found'">
+                <draggable
+                  :list="formData"
+                  :disabled="!enabled"
+                  class="list-group"
+                  ghost-class="ghost"
+                  :move="checkMove"
+                  @start="dragging = true"
+                  @end="updateOrder"
+                >
+                  <div
+                    style="display: flex; justify-content: space-between; "
+                    class="list-group-item"
+                    v-for="(element, index) in formData"
+                    :key="index"
                   >
-                    <v-icon align="right"
-                    dark
-                    color="#ffbaba"
+                    <div>
+                      <v-icon>mdi-drag-variant</v-icon>
+                      {{ index + 1 }}
+                      {{ element.answer }}
+                    </div>
+                    <v-btn
+                      :loading="loading3"
+                      :disabled="loading3"
+                      class="ma-2 white--text"
+                      small
+                      elevation="0"
+                      @click="deleteRating(element.id)"
                     >
-                      mdi-delete-forever
-                    </v-icon>
-                  </v-btn>
-                </div>
-              </draggable>
-            </tbody>
-            <tbody v-else>
-              ยังไม่มีการเพิ่มแบบสอบถาม
-            </tbody>
-          </table>
+                      <v-icon align="right" dark color="#ffbaba">
+                        mdi-delete-forever
+                      </v-icon>
+                    </v-btn>
+                  </div>
+                </draggable>
+              </tbody>
+              <tbody v-else>
+                ยังไม่มีการเพิ่มแบบสอบถาม
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
 
-      <!-- //ตัวโมบาย -->
-      <div class="col-md-5 col-sm-12">
-        <div class="respons_mobie">
-          <div class="body_mobie">
-            <div class="screen_mobye">
-              <!-- <div class="camera"></div> -->
-              <div
-                style="display: flex; justify-content: center;flex-wrap: wrap;"
-              >
-                <!-- <div>ประเมินการบริการ</div> -->
-                <img src="../../assets/iPhone X (or newer).png"
-                      width="100%"
-                    />
-                <img src="../../assets/Navigation Bar.png"
-                      width="100%"
-                      style="position: relative;padding: 10px 28px !important;"
-                    />
-                <div style="margin-top: -35px;">
-                  <div class="col-sm-12 col-md-12" style="width: 347px !important">
-                    <img
-                      src="../../assets/review-01.jpg"
-                      width="100%"
-                    />
-                    <div v-if="formData.message !== 'No data found'">
-                      <div v-for="(data, index) in formData" :key="index">
-                        <p class="padding-left" v-if="formData.length > 1">{{ index + 1 }}. {{ data.answer }}</p>
-                        <p class="padding-left" v-if="formData.length === 1">{{ data.answer }}</p>
-                        <div class="rating-margin">
-                          <v-rating
-                            v-model="data.rating"
-                            color="#FFB461"
-                            background-color="#EAEAEF"
-                            empty-icon="$ratingFull"
-                            :full-icon="starBoldIcon"
-                            length="6"
-                            :size="100"
-                            hover
-                            large
-                            fab
-                            rounded
-                          >
-                        </v-rating>
-                          <br />
-                        </div>
-                      </div>
-                    </div>
-                    <div class="padding-left" v-else>
-                      <br />
-                      <div>
-                        <div class="rating-margin text-center">
-                          <v-rating
-                            v-model="rating"
-                            color="#FFB461"
-                            background-color="#EAEAEF"
-                            empty-icon="$ratingFull"
-                            :full-icon="starBoldIcon"
-                            length="5"
-                            :size="100"
-                            hover
-                            large
-                            fab
-                            rounded
-                          >
-                        </v-rating>
-                        <p class="padding-left text-center">ขอบคุณที่เข้ารับบริการกับเรา</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- <hr class="style-hr" /> -->
-                    <v-col cols="12" md="12">
-                      <label class="text-bold">ข้อเสนอแนะ</label>
-                      <v-textarea
-                        outlined
-                        flat
-                        name="input-7-4"
-                        clear-icon="mdi-close-circle"
-                        class=""
-                      >
-                      </v-textarea>
-                    </v-col>
-                    <v-checkbox
-                      v-model="checkbox"
-                      color="success"
-                      label="ฉันยอมรับให้ พนักงานติดต่อกลับ"
-                      :on-icon="'mdi-check-circle'"
-                      :off-icon="'mdi-checkbox-blank-circle-outline'"
-                      class="padding-left"
-                      style="border-radius: 100%;margin: -30px 0 -15px 0;"
+        <!-- //ตัวโมบาย -->
+        <div class="col-md-5 col-sm-12">
+          <div class="respons_mobie">
+            <div class="body_mobie">
+              <div class="screen_mobye">
+                <!-- <div class="camera"></div> -->
+                <div
+                  style="display: flex; justify-content: center;flex-wrap: wrap;align-items: baseline;"
+                >
+                  <!-- <div>ประเมินการบริการ</div> -->
+                  <img
+                    src="../../assets/iPhone X (or newer).png"
+                    width="100%"
+                  />
+                  <img
+                    src="../../assets/Navigation Bar.png"
+                    width="100%"
+                    style="position: relative;padding: 10px 28px !important;"
+                  />
+                  <div style="margin-top: -35px;">
+                    <div
+                      class="col-sm-12 col-md-12"
+                      style="width: 347px !important"
                     >
-                        <template v-slot:label>
-                            <div>ต้องการให้เจ้าหน้าที่ติดต่อกลับ</div>
-                        </template>
-                    </v-checkbox>
-                    <div class="padding-left" align="center" style="padding: 12px 0 0 12px;">
-                      <v-btn
-                        :loading="loading2"
-                        :disabled="loading2"
-                        color="#1B437C"
-                        class="white--text"
-                        x-large
-                        style="width: -webkit-fill-available;border-radius: 16px;font-weight: bold;"
+                      <img src="../../assets/review-01.jpg" width="100%" />
+                      <div v-if="formData.length > 0">
+                        <div v-for="(data, index) in formData" :key="index">
+                          <p class="padding-left" v-if="formData.length > 1">
+                            {{ index + 1 }}. {{ data.answer }}
+                          </p>
+                          <p class="padding-left" v-if="formData.length === 1">
+                            {{ data.answer }}
+                          </p>
+                          <div class="rating-margin">
+                            <v-rating
+                              v-model="data.rating"
+                              color="#FFB461"
+                              background-color="#EAEAEF"
+                              empty-icon="$ratingFull"
+                              :full-icon="starBoldIcon"
+                              length="6"
+                              :size="100"
+                              hover
+                              large
+                              fab
+                              rounded
+                            >
+                            </v-rating>
+                            <br />
+                          </div>
+                        </div>
+                      </div>
+                      <div class="padding-left" v-else>
+                        <br />
+                        <div>
+                          <div class="rating-margin text-center">
+                            <v-rating
+                              v-model="rating"
+                              color="#FFB461"
+                              background-color="#EAEAEF"
+                              empty-icon="$ratingFull"
+                              :full-icon="starBoldIcon"
+                              length="5"
+                              :size="100"
+                              hover
+                              large
+                              fab
+                              rounded
+                            >
+                            </v-rating>
+                            <p class="padding-left text-center">
+                              ขอบคุณที่เข้ารับบริการกับเรา
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- <hr class="style-hr" /> -->
+                      <v-col cols="12" md="12">
+                        <label class="text-bold">ข้อเสนอแนะ</label>
+                        <v-textarea
+                          outlined
+                          flat
+                          name="input-7-4"
+                          clear-icon="mdi-close-circle"
+                          class=""
+                        >
+                        </v-textarea>
+                      </v-col>
+                      <v-checkbox
+                        v-model="checkbox"
+                        color="success"
+                        label="ฉันยอมรับให้ พนักงานติดต่อกลับ"
+                        :on-icon="'mdi-check-circle'"
+                        :off-icon="'mdi-checkbox-blank-circle-outline'"
+                        class="padding-left"
+                        style="border-radius: 100%;margin: -30px 0 -15px 0;"
                       >
-                        ส่งแบบประเมิน
-                      </v-btn>
+                        <template v-slot:label>
+                          <div>ต้องการให้เจ้าหน้าที่ติดต่อกลับ</div>
+                        </template>
+                      </v-checkbox>
+                      <div
+                        class="padding-left"
+                        align="center"
+                        style="padding: 12px 0 0 12px;"
+                      >
+                        <v-btn
+                          :loading="loading2"
+                          :disabled="loading2"
+                          color="#1B437C"
+                          class="white--text"
+                          x-large
+                          style="width: -webkit-fill-available;border-radius: 16px;font-weight: bold;"
+                        >
+                          ส่งแบบประเมิน
+                        </v-btn>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -207,9 +219,8 @@
             </div>
           </div>
         </div>
-      </div>
-    </v-row>
-  </div>
+      </v-row>
+    </div>
   </v-main>
 </template>
 <script>
@@ -221,7 +232,7 @@ export default {
   data () {
     return {
       DNS_IP: 'http://localhost:5004',
-      rating: 0,
+      rating: 5,
       ratingIntDefault: 6,
       starBoldIcon: 'mdi-star',
       checkbox: false,
@@ -288,17 +299,29 @@ export default {
         item.sort = index + 1
       })
     },
+    // updateOrder () {
+    //   // console.log('Updated order:', this.formData)
+
+    //   const updatedFormData = this.formData.map((element, index) => {
+    //     return Object.assign({}, element, { sort: index + 1 })
+    //   })
+
+    //   axios
+    //     .post(this.DNS_IP + '/ratingformat/setindex', updatedFormData)
+    //     .then(response => {
+    //       // console.log('Update successful', response)
+    //       this.getData()
+    //     })
+    //     .catch(error => {
+    //       console.error('Update failed:', error)
+    //     })
+    // },
     updateOrder () {
-      // console.log('Updated order:', this.formData)
-
-      const updatedFormData = this.formData.map((element, index) => {
-        return Object.assign({}, element, { sort: index + 1 })
-      })
-
+      console.log('Updated order:', this.formData)
       axios
-        .post(this.DNS_IP + '/ratingformat/setindex', updatedFormData)
+        .post(this.DNS_IP + '/ratingformat/setindex', this.formData)
         .then(response => {
-          // console.log('Update successful', response)
+          console.log('Update successful', response)
           this.getData()
         })
         .catch(error => {
@@ -308,14 +331,22 @@ export default {
     getData () {
       this.formData = []
       try {
-        axios.get(this.DNS_IP + '/ratingformat/get?shopId=' + this.$session.getAll().data.shopId + '&masBranchID=' + this.formAdd.masBranchID).then(respone => {
-          // this.formData = respone.dat
-          let rs = respone.data
-          if (rs.status !== false) {
-            this.formData = rs
-          }
-          // console.log('formData__GET()()()', this.formData)
-        })
+        axios
+          .get(
+            this.DNS_IP +
+              '/ratingformat/get?shopId=' +
+              this.$session.getAll().data.shopId +
+              '&masBranchID=' +
+              this.formAdd.masBranchID
+          )
+          .then(respone => {
+            // this.formData = respone.dat
+            let rs = respone.data
+            if (rs.status !== false) {
+              this.formData = rs
+            }
+            // console.log('formData__GET()()()', this.formData)
+          })
       } catch (error) {
         console.log(error)
       }
@@ -357,19 +388,20 @@ export default {
         const payload = {
           answer: this.formAdd.inputText,
           rating: this.ratingIntDefault,
+          sort: 0,
           shopId: this.$session.getAll().data.shopId,
           LAST_USER: this.$session.getAll().data.userName,
           CREATE_USER: this.$session.getAll().data.userName,
           masBranchID: this.formAdd.masBranchID
-
         }
         this.loading = true
+        this.updateOrder()
         axios.post(this.DNS_IP + '/ratingformat/add', payload).then(respone => {
           this.$swal(this.swasuccess)
           this.loading = false
           // console.log(respone)
           this.getData()
-          this.inputText = ''
+          this.formAdd.inputText = ''
         })
       } catch (error) {
         console.error(error)
@@ -380,7 +412,11 @@ export default {
     async getDataBranch () {
       this.branchItem = []
       await axios
-        .get(this.DNS_IP + '/master_branch/get?shopId=' + this.$session.getAll().data.shopId)
+        .get(
+          this.DNS_IP +
+            '/master_branch/get?shopId=' +
+            this.$session.getAll().data.shopId
+        )
         .then(response => {
           let rs = response.data
           console.log('rsss', rs)
@@ -388,7 +424,10 @@ export default {
           if (rs.status !== false) {
             for (var i = 0; i < rs.length; i++) {
               let d = rs[i]
-              if (this.$session.getAll().data.masBranchID === '' || this.$session.getAll().data.masBranchID === null) {
+              if (
+                this.$session.getAll().data.masBranchID === '' ||
+                this.$session.getAll().data.masBranchID === null
+              ) {
                 let s = {}
                 s.text = d.masBranchName
                 s.value = d.masBranchID.toString()
@@ -403,7 +442,8 @@ export default {
               }
               console.log('dtdtdtdt', this.branch)
             }
-          } if (this.branchItem.length > 0) {
+          }
+          if (this.branchItem.length > 0) {
             this.formAdd.masBranchID = this.branchItem[0].value
           }
         })
@@ -413,40 +453,51 @@ export default {
 }
 </script>
 <style scoped>
-p{
-  color:#77808D;
+p {
+  color: #77808d;
 }
 .v-rating .v-icon {
   padding: 0rem !important;
-    padding-right: 4px !important;
+  padding-right: 4px !important;
 }
 .theme--light.v-btn.v-btn--has-bg {
-    background-color: #ffffff00;
-}.v-application--is-ltr .v-text-field .v-label {
-    left: 13px !important;
+  background-color: #ffffff00;
 }
-.v-select.v-text-field--outlined:not(.v-text-field--single-line) .v-select__selections {
-    padding: 8px !important;
+.v-application--is-ltr .v-text-field .v-label {
+  left: 13px !important;
 }
-.v-application--is-ltr .v-textarea.v-text-field--enclosed .v-text-field__slot textarea {
-    padding: 0 12px;
+.v-select.v-text-field--outlined:not(.v-text-field--single-line)
+  .v-select__selections {
+  padding: 8px !important;
+}
+.v-application--is-ltr
+  .v-textarea.v-text-field--enclosed
+  .v-text-field__slot
+  textarea {
+  padding: 0 12px;
 }
 .v-application--is-ltr .v-textarea.v-text-field--enclosed .v-text-field__slot {
-    margin-right: 0px;
+  margin-right: 0px;
 }
-.theme--light.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state)>.v-input__control>.v-input__slot fieldset {
-    color: #EAEAEF;
+.theme--light.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state)
+  > .v-input__control
+  > .v-input__slot
+  fieldset {
+  color: #eaeaef;
 }
-.v-text-field.v-text-field--enclosed .v-text-field__details, .v-text-field.v-text-field--enclosed:not(.v-text-field--rounded)>.v-input__control>.v-input__slot {
-    padding: 0 0;
+.v-text-field.v-text-field--enclosed .v-text-field__details,
+.v-text-field.v-text-field--enclosed:not(.v-text-field--rounded)
+  > .v-input__control
+  > .v-input__slot {
+  padding: 0 0;
 }
-.theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
-    background: #ffffff00;
+.theme--light.v-text-field--solo > .v-input__control > .v-input__slot {
+  background: #ffffff00;
 }
-.padding-left{
+.padding-left {
   padding: 12px 15px;
 }
-.text-bold{
+.text-bold {
   font-weight: bold;
 }
 .card {
@@ -456,10 +507,10 @@ p{
 }
 @media screen and (min-width: 768px) {
   .respons_mobie {
-  display: flex;
-  justify-content: center;
-  position: fixed;
-}
+    display: flex;
+    justify-content: center;
+    position: fixed;
+  }
 }
 .respons_mobie {
   display: flex;
@@ -467,9 +518,10 @@ p{
 }
 .body_mobie {
   border-radius: 16px;
-  background: #FFF;
+  background: #fff;
   /* box-shadow: 0px 4px 20px -2px rgba(50, 50, 71, 0.04), 0px 0px 1px 0px rgba(12, 26, 75, 0.03); */
-  box-shadow: 0px 4px 20px -2px rgba(50, 50, 71, 0.04), 0px 0px 1px 0px rgba(12, 26, 75, 0.03);
+  box-shadow: 0px 4px 20px -2px rgba(50, 50, 71, 0.04),
+    0px 0px 1px 0px rgba(12, 26, 75, 0.03);
 }
 .screen_mobye {
   width: 367px;

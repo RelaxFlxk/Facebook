@@ -147,6 +147,53 @@
                           v-model="formUpdate.timeSlotStatus"
                         ></v-checkbox>
                       </v-col>
+                       <v-col cols="12" class="pt-0 pb-0" style="display: flex;justify-content: left;height: 40px;">
+                        <v-checkbox
+                          label="เปิดใช้งานให้ลูกค้าสามารถ แก้ไขข้อมูล / เลื่อนนัดได้"
+                          false-value="False"
+                          :on-icon="'mdi-check-circle'"
+                          :off-icon="'mdi-checkbox-blank-circle-outline'"
+                          color="#1B437C"
+                          true-value="True"
+                          v-model="formUpdate.statusCustomerEdit"
+                        ></v-checkbox>
+                      </v-col>
+                      <v-col cols="8" class="pt-0 pb-0 mt-4" style="display: flex;flex-wrap: wrap;" v-if="formUpdate.statusCustomerEdit === 'True'">
+                        <v-autocomplete
+                          class="mb-3"
+                          v-model="formUpdate.countCustomerEdit"
+                          label="เลื่อนนัดได้ไม่เกิน ( ครั้ง )"
+                          dense
+                          outlined
+                          :rules="[rules.required]"
+                          :items="countCustomerEditItem"
+                          required
+                          hide-details
+                          auto-select-first
+                        ></v-autocomplete>
+                        <v-autocomplete
+                          v-model="formUpdate.countDayCustomerEdit"
+                          label="เลื่อนนัดก่อนวันที่นัดหมาย ( วัน )"
+                          dense
+                          outlined
+                          :rules="[rules.required]"
+                          :items="countDayCustomerEditItem"
+                          required
+                          hide-details
+                          auto-select-first
+                        ></v-autocomplete>
+                      </v-col>
+                      <!-- <v-col cols="6" class="pt-0 pb-0 mt-3" style="display: flex;justify-content: left;height: 40px;" v-if="formUpdate.statusCustomerEdit === 'True'">
+                        <v-autocomplete
+                        v-model="formUpdate.countDayCustomerEdit"
+                          label="เลื่อนนัดการก่อนวันที่นัดหมาย ( วัน )"
+                          dense
+                          solo
+                          :rules="[rules.required]"
+                          :items="countDayCustomerEditItem"
+                          required
+                        ></v-autocomplete>
+                      </v-col> -->
                       <!-- <v-col cols="12" class="pt-0 pb-0" style="display: flex;justify-content: left;height: 40px;">
                         <v-checkbox
                           label="เชื่อมต่อกับ Google Calendar"
@@ -291,7 +338,9 @@
             </v-card>
           </v-dialog>
           <!-- end edit -->
-
+          <div>
+            <img id="image" src="picture.jpg">
+          </div>
           <!-- data table -->
           <v-col cols="12">
             <v-card elevation="7" v-if="dataReady">
@@ -423,8 +472,14 @@ export default {
         videoLinkMonition: '',
         statusGoogleCalendar: 'False',
         statusGoogleCalendarEmp: 'False',
-        refreshTokenGoogleCalendar: ''
+        refreshTokenGoogleCalendar: '',
+        statusCustomerEdit: 'False',
+        countCustomerEdit: '',
+        countDayCustomerEdit: ''
+
       },
+      countCustomerEditItem: [1, 2, 3, 4, 5, 6, 7],
+      countDayCustomerEditItem: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
       timeSlotStatusOld: '',
       filesShop: null,
       // category: [
@@ -651,6 +706,9 @@ export default {
       this.formUpdate.pictureCoverUrlPreview = this.formUpdate.shopImageCover
       this.formUpdate.statusGoogleCalendar = item.statusGoogleCalendar || 'False'
       this.formUpdate.statusGoogleCalendarEmp = item.statusGoogleCalendarEmp || 'False'
+      this.formUpdate.statusCustomerEdit = item.statusCustomerEdit || 'False'
+      this.formUpdate.countCustomerEdit = item.countCustomerEdit || 3
+      this.formUpdate.countDayCustomerEdit = item.countDayCustomerEdit || 7
       if (this.formUpdate.darkMode === 'True') {
         this.formUpdate.darkMode = true
       } else {
@@ -765,7 +823,10 @@ export default {
             bookingthankText: bookingthankText,
             bookingthankTextEn: bookingthankTextEn,
             statusGoogleCalendar: this.formUpdate.statusGoogleCalendar,
-            statusGoogleCalendarEmp: this.formUpdate.statusGoogleCalendarEmp
+            statusGoogleCalendarEmp: this.formUpdate.statusGoogleCalendarEmp,
+            statusCustomerEdit: this.formUpdate.statusCustomerEdit,
+            countCustomerEdit: this.formUpdate.countCustomerEdit,
+            countDayCustomerEdit: this.formUpdate.countDayCustomerEdit
           }
           await axios
             .post(
