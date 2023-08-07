@@ -152,7 +152,8 @@
                             <v-avatar tile>
                               <v-img
                               contain
-                              :src="require('@/assets/linepay-logo-th.png')"
+                              height="32px"
+                              :src="require('@/assets/iaor_logo.gif')"
                               />
                           </v-avatar>
                           <div class="optionpayment" >
@@ -173,7 +174,8 @@
                             <v-avatar tile>
                               <v-img
                               contain
-                              :src="require('@/assets/linepay-logo-th.png')"
+                              height="32px"
+                              :src="require('@/assets/Krung_Thai_Bank_logo.svg.png')"
                               />
                           </v-avatar>
                           <div class="optionpayment" >
@@ -194,7 +196,8 @@
                             <v-avatar tile>
                               <v-img
                               contain
-                              :src="require('@/assets/linepay-logo-th.png')"
+                              height="32px"
+                              :src="require('@/assets/download (1).png')"
                               />
                           </v-avatar>
                           <div class="optionpayment" >
@@ -215,7 +218,8 @@
                             <v-avatar tile>
                               <v-img
                               contain
-                              :src="require('@/assets/linepay-logo-th.png')"
+                              height="32px"
+                              :src="require('@/assets/unnamed (1).png')"
                               />
                           </v-avatar>
                           <div class="optionpayment" >
@@ -884,7 +888,7 @@
                           </div>
                         </template>
                       </v-checkbox>
-                      <v-checkbox
+                      <!-- <v-checkbox
                           v-model="valuePayment"
                           color="primary"
                           :value=mobileBanking
@@ -904,7 +908,7 @@
                             </div>
                           </div>
                         </template>
-                      </v-checkbox>
+                      </v-checkbox> -->
                     </v-col>
                   </v-row>
                   <v-row>
@@ -1642,7 +1646,7 @@ export default {
               this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
               // Close Dialog
               this.dialogAddStripe = false
-
+              this.dialogEditOmise = false
               // Load Data
               await this.clearDataStripe()
               await this.selectBranch()
@@ -1819,6 +1823,7 @@ export default {
       //
       //
       // Get ID /main.js
+      console.log('item', item)
       this.dataReady = false
       this.formAddStripe.payTypeId = item.payTypeId
       this.formAddStripe.apiKey = item.apiKey
@@ -1827,7 +1832,9 @@ export default {
       this.formAddStripe.payTypeCode = item.payTypeCode
       this.formAddStripe.payTypeName = item.payTypeName
       this.formAddStripe.shopId = this.$session.getAll().data.shopId
-      this.valuePayment = JSON.parse(item.payMentSelect)
+      if (item.payType === 'omise') {
+        this.valuePayment = JSON.parse(item.payMentSelect)
+      }
       this.formAddStripe.payMentSelect = item.payMentSelect
       this.dataReady = true
     },
@@ -2070,7 +2077,7 @@ export default {
               this.$swal('เรียบร้อย', 'แก้ไขข้อมูล เรียบร้อย', 'success')
               // Close Dialog
               this.dialogEditStripe = false
-
+              this.dialogEditOmise = false
               // Load Data
               await this.selectBranch()
               // await this.getDataGlobal(DNS_IP, PATH, this.$session.getAll().data.shopId)

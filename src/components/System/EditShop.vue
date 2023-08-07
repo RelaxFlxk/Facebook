@@ -407,7 +407,6 @@ import readXlsxFile from 'read-excel-file'
 import moment from 'moment' // แปลง date
 import GoogleCalendarCmp from '../Core/GoogleCalendarCmp.vue'
 
-
 export default {
   components: {
     waitingAlert,
