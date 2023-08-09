@@ -406,6 +406,19 @@
                   </v-row>
                   <v-row>
                     <v-container fluid>
+                      <v-text-field
+                        label="omise vat"
+                        v-model="formAddStripe.payVatExclude"
+                        required
+                        :rules="depositPercentrules"
+                        outlined
+                        suffix="%"
+                        dense
+                        v-bind:options="optionsPercent" />
+                    </v-container>
+                  </v-row>
+                  <v-row>
+                    <v-container fluid>
                       <v-textarea
                         outlined
                         label="ประเภทการชำระเงิน"
@@ -508,7 +521,7 @@
                   <v-row>
                     <v-container fluid>
                       <v-text-field
-                        label="Excluding vat"
+                        label="stripe vat"
                         v-model="formAddStripe.payVatExclude"
                         required
                         :rules="depositPercentrules"
@@ -926,6 +939,19 @@
                   </v-row>
                   <v-row>
                     <v-container fluid>
+                      <v-text-field
+                        label="omise vat"
+                        v-model="formAddStripe.payVatExclude"
+                        required
+                        :rules="depositPercentrules"
+                        outlined
+                        suffix="%"
+                        dense
+                        v-bind:options="optionsPercent" />
+                    </v-container>
+                  </v-row>
+                  <v-row>
+                    <v-container fluid>
                       <v-textarea
                         outlined
                         label="ประเภทการชำระเงิน"
@@ -1017,7 +1043,7 @@
                   <v-row>
                     <v-container fluid>
                       <v-text-field
-                        label="Excluding vat"
+                        label="stripe vat"
                         v-model="formAddStripe.payVatExclude"
                         required
                         :rules="depositPercentrules"
@@ -1894,7 +1920,7 @@ export default {
       this.formAddStripe.masBranchID = item.masBranchID
       this.formAddStripe.payTypeCode = item.payTypeCode
       this.formAddStripe.payTypeName = item.payTypeName
-      this.formAddStripe.payVatExclude = item.payVatExclude
+      this.formAddStripe.payVatExclude = item.payVatExclude || 0
       this.formAddStripe.shopId = this.$session.getAll().data.shopId
       if (item.payType === 'omise') {
         this.valuePayment = JSON.parse(item.payMentSelect)
@@ -2126,6 +2152,7 @@ export default {
             apiKey: this.formAddStripe.apiKey,
             endpointSecret: this.formAddStripe.endpointSecret,
             payTypeName: this.formAddStripe.payTypeName,
+            payVatExclude: this.formAddStripe.payVatExclude,
             LAST_USER: this.formAddStripe.LAST_USER,
             payMentSelect: JSON.stringify(this.valuePayment)
           }
