@@ -771,7 +771,28 @@ export default {
   methods: {
     gotoBilling () {
       // this.$router.push('/BillingPlan')
-      window.location.href = 'https://liff.line.me/1660658626-Qn8zej1p'
+      if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
+        if (JSON.parse(localStorage.getItem('sessionData')).shopId) {
+          this.$session.start()
+          this.$session.set('data', JSON.parse(localStorage.getItem('sessionData')))
+          window.location.href = 'https://liff.line.me/1660658626-Qn8zej1p'
+          // this.$router.push('/BillingPlan')
+        } else {
+          this.$router.push('/Core/Login')
+        }
+      } else {
+        if (!this.$session.exists()) {
+          this.$router.push('/Core/Login')
+        } else {
+          if (this.$session.getAll().data.shopId) {
+            localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
+            window.location.href = 'https://liff.line.me/1660658626-Qn8zej1p'
+            // this.$router.push('/BillingPlan')
+          } else {
+            this.$router.push('/Core/Login')
+          }
+        }
+      }
     },
     gotoConnectLine () {
       this.$swal({
