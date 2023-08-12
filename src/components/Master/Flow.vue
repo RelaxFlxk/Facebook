@@ -1516,6 +1516,7 @@
                             label="เงินมัดจำคิดเป็นกี่ % (กรณีที่ต้องการแจ้งยอดชำระคงเหลือ)"
                             v-model="formUpdate.depositPercent"
                             required
+                            v-mask="'###'"
                             :rules="depositPercentrules"
                             suffix="%"
                             outlined
