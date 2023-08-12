@@ -119,14 +119,28 @@
                   <strong v-html="item.displayName"></strong>
                 </template>
                 <template v-slot:[`item.rating`]="{ item }">
+                  <div v-if="rs.length > 1">
                   <v-rating
                     v-model="item.rating"
                     color="yellow darken-3"
                     background-color="grey darken-1"
                     empty-icon="$ratingFull"
+                    length="6"
                     readonly
                     small
                   ></v-rating>
+                  </div>
+                  <div v-else>
+                  <v-rating
+                    v-model="item.rating"
+                    color="yellow darken-3"
+                    background-color="grey darken-1"
+                    empty-icon="$ratingFull"
+                    length="5"
+                    readonly
+                    small
+                  ></v-rating>
+                  </div>
                 </template>
                 <template v-slot:[`item.action`]="{ item }">
                   <v-btn
@@ -227,14 +241,28 @@
                   <v-col cols="12" class="pt-0">
                     <div v-for="(data, index) in dataRating" :key="index">
                       <label>{{ data.answer }}</label>
+                      <div v-if="rs.length > 1">
                       <v-rating
                         v-model="data.rating"
                         color="yellow darken-3"
                         background-color="grey darken-1"
                         empty-icon="$ratingFull"
+                        length="6"
                         readonly
                         small
                       ></v-rating>
+                    </div>
+                    <div v-else>
+                      <v-rating
+                        v-model="data.rating"
+                        color="yellow darken-3"
+                        background-color="grey darken-1"
+                        empty-icon="$ratingFull"
+                        length="5"
+                        readonly
+                        small
+                      ></v-rating>
+                    </div>
                     </div>
                   </v-col>
                   <v-col cols="12" style="color:#000000;"
@@ -327,14 +355,28 @@
                   <v-col cols="12" class="pt-0">
                     <div v-for="(data, index) in dataRating" :key="index">
                       <label>{{ data.answer }}</label>
+                      <div v-if="rs.length > 1">
+                        <v-rating
+                        v-model="data.rating"
+                        color="yellow darken-3"
+                        background-color="grey darken-1"
+                        empty-icon="$ratingFull"
+                        length="6"
+                        readonly
+                        small
+                      ></v-rating>
+                      </div>
+                      <div v-else>
                       <v-rating
                         v-model="data.rating"
                         color="yellow darken-3"
                         background-color="grey darken-1"
                         empty-icon="$ratingFull"
+                        length="6"
                         readonly
                         small
                       ></v-rating>
+                    </div>
                     </div>
                   </v-col>
                   <v-col cols="12" style="color:#000000;"

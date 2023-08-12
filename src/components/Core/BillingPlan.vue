@@ -5,764 +5,361 @@
         <!-- <v-toolbar-title v-text="title" /> -->
       <v-spacer></v-spacer>
       <v-avatar class="mr-3">
-        <v-img :src="session.data.shopImge"></v-img>
+        <v-img :src="shopImge"></v-img>
       </v-avatar>
-      <v-toolbar-title>{{ session.data.shopName }}</v-toolbar-title>
+      <v-toolbar-title>{{ shopName }}</v-toolbar-title>
         <!-- <v-list-item-avatar>
           <v-img :src="session.data.shopImge"></v-img>
         </v-list-item-avatar>
         <v-list-item-content><strong style="color: white;">{{ session.data.shopName }}</strong></v-list-item-content> -->
     </v-app-bar>
     <v-main>
-      <div>
+      <div class="new-background-color col-md-12 ml-sm-auto col-lg-12">
         <div>
-          <p
-            style="font-size: 2rem; font-weight: bold; color: #072469"
-            class="mb-5 pl-4"
-          >
-            ราคาเเพ็กเกจ
-          </p>
-          <p
-            style="font-size: 1.5rem; font-weight: bold; color: #072469"
-            class="mb-5 pl-4"
-          >
-            ช่องทางการชำระเงินมี 2 ช่องทางดังนี้
-          </p>
-          <p style="font-size: 1.2rem; color: #607eaa" class="pl-4 mb-0">
-            1. ชำระเงินด้วย QR Code Prompt Pay
-          </p>
-          <p style="font-size: 1.2rem; color: #607eaa" class="pl-4">
-            2. ชำระด้วยการโอนผ่านธนาคาร
-          </p>
-        </div>
-        <v-row>
-          <v-col cols="12">
-            <v-btn
-              rounded
-              color="#1B437C"
-              dark
-              @click="dialogHistory = true"
+          <div>
+            <p
+              style="font-size: 2rem; font-weight: bold; color: #072469"
+              class="mb-5 pl-4"
             >
-              ประวัติการชำระเงิน
-            </v-btn>
-          </v-col>
-          <v-col cols="12">
-            <div>
-              <v-card-text v-if="dataReadyGet">
-                <v-row v-if="paymentStatus === '' || paymentStatus === 'inactive'">
-                  <v-col
-                    :cols="resCol"
-                    v-for="(item, index) in dataPackage"
-                    :key="index"
-                  >
-                    <v-container>
-                      <v-card :style="packetIdCheck === item.id ? 'border: 2px solid green;' : 'border: 1px solid white;'">
-                        <v-card-title
-                          class="mb-3"
-                          style="
-                            justify-content: center;
-                            background-color: #1b437c;
-                            color: white;
-                            padding: 15px;
-                            font-weight: bold;
-                          "
-                        >
-                          {{ item.name }}
-                        </v-card-title>
-                        <div
-                          style="
-                            text-align: center;
-                            padding: 20px;
-                            font-size: 1.7rem;
-                            font-weight: bold;
-                            color: #001e6c;
-                          "
-                        >
-                          {{ formatNumber(item.pricePackage) }} ฿/เดือน
-                        </div>
-                        <v-row>
-                          <v-col col="12" class="pa-7">
-                            <div>
-                              <v-card-text
-                                v-for="(items, index) in item.description"
-                                :key="index"
-                              >
-                                <!-- <div v-if="index === 2">
-                                <div style="display:flex">
-                                    <v-icon color="#1B437C" class="mr-2">{{ items.icon }}</v-icon><div>{{items.title}}{{ items.subtitle }}</div>
-                                  </div>
-                              </div> -->
-                                <div v-if="index !== 2 && index !== 1">
-                                  <!-- <v-icon dark color="#1B437C">
-                                    {{ items.icon }}
-                                  </v-icon> -->
-                                  <div style="display: flex">
-                                    <v-icon color="#1B437C" class="mr-2">{{
-                                      items.icon
-                                    }}</v-icon>
-                                    <div class="mr-1">{{ items.title }}</div>
-                                    <div
-                                      style="color: #1b437c; font-weight: bold"
-                                    >
-                                      {{ items.subtitle }}
+              ราคาเเพ็กเกจ
+            </p>
+            <p
+              style="font-size: 1.5rem; font-weight: bold; color: #072469"
+              class="mb-5 pl-4"
+            >
+              ช่องทางการชำระเงินมี 2 ช่องทางดังนี้
+            </p>
+            <p style="font-size: 1.2rem; color: #607eaa" class="pl-4 mb-0">
+              1. ชำระเงินด้วย QR Code Prompt Pay
+            </p>
+            <p style="font-size: 1.2rem; color: #607eaa" class="pl-4">
+              2. ชำระด้วยการโอนผ่านธนาคาร
+            </p>
+            <v-btn
+                rounded
+                color="#1B437C"
+                dark
+                @click="dialogHistory = true"
+              >
+                ประวัติการชำระเงิน
+              </v-btn>
+          </div>
+          <v-row>
+            <!-- <v-col cols="12">
+              <v-btn
+                rounded
+                color="#1B437C"
+                dark
+                @click="dialogHistory = true"
+              >
+                ประวัติการชำระเงิน
+              </v-btn>
+            </v-col> -->
+            <v-col cols="12">
+              <div>
+                <v-card-text v-if="dataReadyGet">
+                  <v-row v-if="paymentStatus === '' || paymentStatus === 'inactive'">
+                    <v-col
+                      :cols="resCol"
+                      v-for="(item, index) in dataPackage"
+                      :key="index"
+                    >
+                      <v-container>
+                        <v-card :style="packetIdCheck === item.id ? 'border: 2px solid green;' : 'border: 1px solid white;'">
+                          <v-card-title
+                            class="mb-3"
+                            style="
+                              justify-content: center;
+                              background-color: #1b437c;
+                              color: white;
+                              padding: 15px;
+                              font-weight: bold;
+                            "
+                          >
+                            {{ item.name }}
+                          </v-card-title>
+                          <div
+                            style="
+                              text-align: center;
+                              padding: 20px;
+                              font-size: 1.7rem;
+                              font-weight: bold;
+                              color: #001e6c;
+                            "
+                          >
+                            {{ formatNumber(item.pricePackage) }} ฿/เดือน
+                          </div>
+                          <v-row>
+                            <v-col col="12" class="pa-7">
+                              <div>
+                                <v-card-text
+                                  v-for="(items, index) in item.description"
+                                  :key="index"
+                                >
+                                  <!-- <div v-if="index === 2">
+                                  <div style="display:flex">
+                                      <v-icon color="#1B437C" class="mr-2">{{ items.icon }}</v-icon><div>{{items.title}}{{ items.subtitle }}</div>
+                                    </div>
+                                </div> -->
+                                  <div v-if="index !== 2 && index !== 1">
+                                    <!-- <v-icon dark color="#1B437C">
+                                      {{ items.icon }}
+                                    </v-icon> -->
+                                    <div style="display: flex">
+                                      <v-icon color="#1B437C" class="mr-2">{{
+                                        items.icon
+                                      }}</v-icon>
+                                      <div class="mr-1">{{ items.title }}</div>
+                                      <div
+                                        style="color: #1b437c; font-weight: bold"
+                                      >
+                                        {{ items.subtitle }}
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                                <div v-if="index !== 2 && index !== 0">
-                                  <!-- <v-icon dark color="#1B437C">
-                                    {{ items.icon }}
-                                  </v-icon> -->
-                                  <div style="display: flex">
-                                    <v-icon color="#1B437C" class="mr-2">{{
-                                      items.icon
-                                    }}</v-icon>
-                                    <div>
-                                      {{ items.title }} {{ items.subtitle }}
+                                  <div v-if="index !== 2 && index !== 0">
+                                    <!-- <v-icon dark color="#1B437C">
+                                      {{ items.icon }}
+                                    </v-icon> -->
+                                    <div style="display: flex">
+                                      <v-icon color="#1B437C" class="mr-2">{{
+                                        items.icon
+                                      }}</v-icon>
+                                      <div>
+                                        {{ items.title }} {{ items.subtitle }}
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                              </v-card-text>
-                            </div>
-                          </v-col>
-                        </v-row>
-                        <div
-                          v-if="dataBilling !== item.id && (statusBilling === 'confirm' || statusBilling === '')"
-                          class="text-center plan_button"
-                        >
-                          <v-btn
-                            rounded
-                            color="#1B437C"
-                            dark
-                            @click="showQrCode(item)"
+                                </v-card-text>
+                              </div>
+                            </v-col>
+                          </v-row>
+                          <div
+                            v-if="dataBilling !== item.id && (statusBilling === 'confirm' || statusBilling === '')"
+                            class="text-center plan_button"
                           >
-                            เลือกแพ็คเกจ
-                          </v-btn>
-                        </div>
-                        <div
-                          v-if="dataBilling === item.id && countDateEnd <= 0 && (statusBilling === 'confirm' || statusBilling === '')"
-                          class="text-center plan_button"
-                        >
-                          <v-btn
-                            rounded
-                            color="#1B437C"
-                            dark
-                            @click="showQrCode(item)"
+                            <v-btn
+                              rounded
+                              color="#1B437C"
+                              dark
+                              @click="showQrCode(item)"
+                            >
+                              เลือกแพ็คเกจ
+                            </v-btn>
+                          </div>
+                          <div
+                            v-if="dataBilling === item.id && countDateEnd <= 0 && (statusBilling === 'confirm' || statusBilling === '')"
+                            class="text-center plan_button"
                           >
-                            ต่ออายุแพ็คเกจ
-                          </v-btn>
-                        </div>
-                        <div
-                          v-if="dataBilling === item.id && countDateEnd > 0"
-                          class="text-center plan_button"
-                        >
-                          <v-btn disabled rounded> แพ็คเกจปัจจุบัน </v-btn>
-                          <!-- <v-btn rounded outlined color="teal" dark>
-                            แพลนปัจจุบัน
-                          </v-btn> -->
-                        </div>
-                        <template v-if="dataBilling === item.id">
-                          <template v-if="statusBilling === 'confirm'">
-                            <v-row>
-                              <v-col col="12" class="pl-7 pt-4 pb-0">
-                                <div style="display: flex">
-                                  <v-icon color="#1B437C" class="mr-2">mdi-calendar-check</v-icon>
-                                  <div style="color: #1b437c; font-weight: bold" class="mr-1">วันที่เริ่ม : </div>
-                                  <div>{{dataPayment.startDateShow}}</div>
-                                </div>
-                              </v-col>
-                              <v-col col="12" class="pl-7 pt-1 pb-0">
-                                <div style="display: flex">
-                                  <v-icon color="#E53935" class="mr-2">mdi-calendar-remove</v-icon>
-                                  <div style="color: #E53935; font-weight: bold" class="mr-1">วันที่หมดอายุ : </div>
-                                  <div>{{dataPayment.endDateShow}}</div>
-                                </div>
-                              </v-col>
-                            </v-row>
-                            <v-row v-if="countDateEnd <= 0">
-                              <v-col col="12" class="pl-7 pt-1 pb-0 text-center">
-                                <div style="color: #EF6C00; font-weight: bold">กรุณาต่ออายุแพ็คเกจ</div>
-                                <div style="color: #EF6C00; font-weight: bold">เพื่อความต่อเนื่องในการใช้โปรแกรม</div>
-                              </v-col>
-                            </v-row>
-                            </template>
-                            <template v-if="statusBilling === 'wait'">
-                              <v-alert
-                                class="mt-1"
-                                dense
-                                border="left"
-                                type="warning"
-                              >
-                                กำลังดำเนินการ
-                              </v-alert>
-                            </template>
-                            <template v-if="statusBilling === 'error'">
-                              <v-alert
-                                class="mt-1"
-                                border="left"
-                                dense
-                                type="error"
-                              >
-                                <v-row align="center">
-                                  <v-col class="grow">
-                                    {{remarkReturn}}
-                                  </v-col>
-                                  <v-col class="shrink">
-                                    <v-btn color="teal" x-small @click="setData(dataPayment)"><strong>ตรวจสอบอีกครั้ง</strong></v-btn>
-                                  </v-col>
-                                </v-row>
-                              </v-alert>
-                            </template>
-                        </template>
-                      </v-card>
-                    </v-container>
-                  </v-col>
-                </v-row>
-                <v-row v-if="paymentStatus === 'wait'">
-                    <v-col cols="12" class="text-center">
-                      <h1>รายการชำระค่าบริการของท่าน</h1>
-                      <h2>ทางบริษัทได้ตรวจสอบสลิปของท่านไม่ถูกต้อง</h2>
-                      <h2>กรุณาอัพเดทสลิปอีกครั้ง</h2>
-                    </v-col>
-                    <v-col cols="12" class="text-center">
-                      <v-btn color="teal" dark large @click="setData(sysShopData)"><strong>ตรวจสอบอีกครั้ง</strong></v-btn>
-                    </v-col>
-                </v-row>
-                <v-row v-if="paymentStatus === 'confirm' || paymentStatus === 'finish'">
-                    <v-col cols="12" class="text-center">
-                        <h1>รายการชำระค่าบริการของท่าน</h1>
-                        <h2>ชำระเงินแล้ว กรุณาทำรายการ</h2>
-                        <h2>ทุกวันที่ 1-7 ของแต่ละเดือน</h2>
-                    </v-col>
-                    <v-col cols="12" class="text-center">
-                      <v-btn color="teal" dark large @click="gotoLogin()"><strong>Login</strong></v-btn>
-                    </v-col>
-                </v-row>
-                <!-- <div class="text-right plan_button">
-                  <v-btn rounded color="error" dark @click="dialogCash = false">
-                    ปิด
-                  </v-btn>
-                </div> -->
-              </v-card-text>
-              <!-- <v-card-text>
-                <div class="text-right plan_button">
-                  <v-btn
-                    rounded
-                    color="error"
-                    dark
-                    @click="dialogCancel = true"
-                  >
-                    ยกเลิกแผนการชำระเงิน
-                  </v-btn>
-                </div>
-              </v-card-text> -->
-            </div>
-            <v-dialog v-model="dialogCancel" persistent max-width="500px">
-              <v-card>
-                <v-card-title> ยกเลิกแผนการชำระเงิน </v-card-title>
-                <v-card-text
-                  >ต้องการ ยกเลิกแผนการชำระเงิน ใช่หรือไม่?</v-card-text
-                >
-                <!-- <v-card-text class="text-red">* บริษัทจะไม่มีการคืนเงินในกรณีใดๆทั้งสิ้น *</v-card-text> -->
-                <v-alert outlined type="warning"
-                  >* บริษัทจะไม่มีการคืนเงินในทุกกรณี *</v-alert
-                >
-                <v-card-actions v-if="dataReadyCancel">
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    dark
-                    color="red darken-1"
-                    @click="dialogCancel = false"
-                  >
-                    ตรวจสอบอีกครั้ง
-                  </v-btn>
-                  <v-btn dark color="green darken-1" @click="cancelPlan()">
-                    ยกเลิกแผนการชำระเงิน
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-            <v-dialog v-model="dialogQrcode" persistent max-width="600px" style="overflow-y: hidden;">
-              <v-card elevation="7">
-                <v-card-text v-if="uploadSlipShow">
-                  <br />
-                  <h4 class="text-center font-weight-black mb-10">
-                    แนบหลักฐานการโอนเงิน
-                  </h4>
-                  <v-form ref="form_dialogQrcode" v-model="validAdddialogQrcode" lazy-validation>
-                    <v-row>
-                      <v-col cols="12" class="text-center pa-2 mt-6">
-                        <v-img
-                          v-if="paymentImge !== null"
-                          class="pa-3"
-                          contain
-                          max-height="100%"
-                          max-width="100%"
-                          :src="paymentImge"
-                        ></v-img>
-                        <v-avatar v-else tile color="#FFFFFF" size="180">
-                          <v-img
-                            aspect-ratio="6"
-                            contain
-                            src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2FUploadicon.png?alt=media&token=39383860-d16e-49ca-81cb-a3ad888df095"
-                          ></v-img>
-                        </v-avatar>
-                        <v-file-input
-                          class="mt-6 mb-6"
-                          required
-                          counter
-                          show-size
-                          :rules="[rules.resizeImag]"
-                          accept="image/png, image/jpeg, image/bmp"
-                          prepend-icon="mdi-paperclip"
-                          label="Upload"
-                          @change="selectImg"
-                          v-model="filesImg"
-                        ></v-file-input>
-                      </v-col>
-                      <v-col cols="12" class="pt-1 pb-0">
-                        <v-text-field
-                          prepend-icon="mdi-account"
-                          v-model="billingCusName"
-                          label="ชื่อ-สกุล"
-                          outlined
-                          dense
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" class="pt-1 pb-0">
-                        <v-text-field
-                          prepend-icon="mdi-card-account-phone-outline"
-                          v-mask="'##########'"
-                          v-model="billingPhone"
-                          label="เบอร์โทร"
-                          outlined
-                          dense
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" class="pt-1 pb-0">
-                        <v-text-field
-                          prepend-icon="mdi-hail"
-                          v-model="billingTax"
-                          label="เลขประจำตัวผู้เสียภาษี"
-                          outlined
-                          dense
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" class="pt-1 pb-0">
-                        <v-textarea
-                          v-model="billingAddressDetails"
-                          auto-grow
-                          rows="2"
-                          label="รายละเอียดที่อยู่"
-                          :rules="[v => !!v || 'กรุณากรอกรายละเอียดที่อยู่']"
-                          dense
-                          outlined
-                        ></v-textarea>
-                      </v-col>
-                      <v-col cols="12" class="pt-1 pb-0">
-                        <v-select
-                          v-model="billingSubDistrict"
-                          :items="optionSubDistrict"
-                          :rules="[v => !!v || 'กรุณากรอกตำบล']"
-                          dense
-                          outlined
-                          no-data-text="กรุณกรอกรหัสไปรษณีย์"
-                          label="ตำบล"
-                        ></v-select>
-                      </v-col>
-                      <v-col cols="12" class="pt-1 pb-0">
-                        <v-select
-                          v-model="billingDistrict"
-                          :items="optionDistrict"
-                          :rules="[v => !!v || 'กรุณากรอกอำเภอ']"
-                          dense
-                          outlined
-                          no-data-text="กรุณกรอกรหัสไปรษณีย์"
-                          label="อำเภอ"
-                        ></v-select>
-                      </v-col>
-                      <v-col cols="12" class="pt-1 pb-0">
-                        <v-select
-                          v-model="billingProvinces"
-                          :items="optionProvinces"
-                          :rules="[v => !!v || 'กรุณากรอกจังหวัด']"
-                          dense
-                          outlined
-                          no-data-text="กรุณกรอกรหัสไปรษณีย์"
-                          label="จังหวัด"
-                        ></v-select>
-                      </v-col>
-                      <v-col cols="12" class="pt-1 pb-0">
-                        <v-text-field
-                          v-model="billingPostalCode"
-                          :rules="[v => !!v || 'กรุณากรอกรหัสไปรษณีย์', v => (!isNaN(v)) && v.length >= 5 && v.length <= 5  || 'รหัสไปรษณีย์ต้องมีตัวเลข 5 ตัว', resZipCode.length > 0 || 'ไม่เจอรหัสรหัสไปรษณีย์']"
-                          dense
-                          outlined
-                          label="รหัสไปรษณีย์"
-                          no-data-text="ไม่มีข้อมูล"
-                          required
-                          @input="checkAddress()"
-                        ></v-text-field>
-                      </v-col>
-                      <!-- <v-col cols="12" class="pt-1 pb-0" v-show="true">
-                        <v-textarea
-                          prepend-icon="mdi-map-marker"
-                          v-model="billingAddress"
-                          auto-grow
-                          rows="2"
-                          label="ที่อยู่"
-                          dense
-                          outlined
-                        ></v-textarea>
-                      </v-col> -->
-                    </v-row>
-                  </v-form>
-                  <div class="text-center mt-5">
-                    <v-btn
-                      class="button pa-2"
-                      color="error"
-                      dark
-                      large
-                      @click="uploadSlipShow = false"
-                      >กลับ</v-btn
-                    >
-                    <v-btn
-                      class="button pa-2 white--text"
-                      large
-                      :loading="loadingBillingPlan"
-                      :disabled="loadingBillingPlan"
-                      @click="billingPlan(dataPlan)"
-                      color="#173053"
-                      >อัพโหลดสลิป</v-btn
-                    >
-                  </div>
-                </v-card-text>
-                <v-card-text v-if="!uploadSlipShow">
-                  <br />
-                  <div class="text-end" style="position: absolute;right: 29px;">
-                  <v-btn
-                    class="mx-2"
-                    fab
-                    small
-                    dark
-                    color="white"
-                    style="color:red;font-size:20px;"
-                    @click="dialogQrcode = false"
-                  >
-                   X
-                  </v-btn>
-                  </div>
-                  <h3 class="text-center" style="color:#1B437C;font-weight: bold;">ชำระเงินด้วย</h3>
-                  <!-- <h3 class="text-center" style="color:#1B437C;font-weight: bold;">วิธีการโอน</h3> -->
-                  <h3 class="text-center" style="color:#1B437C;font-weight: bold;">QR PromptPay</h3>
-                  <v-card class="mt-6 mb-6 pb-6" elevation="0">
-                    <!-- <v-img
-                      height="170"
-                      src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2FQR-prompt.jpg?alt=media&token=42637b63-af5b-45d9-8900-b866b789819e"
-                    ></v-img> -->
-                    <div class="text-center mt-4" v-if="value">
-                      <qrcode-vue
-                        :value="value"
-                        :size="size"
-                        level="H"
-                        :foreground="foreground"
-                      />
-                    </div>
-                    <!-- <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-3">
-                      บริษัท บีแทสก์ คอนซัลติ้ง จำกัด
-                    </h6> -->
-                    <br>
-                    <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
-                      บัญชี : บริษัท บีแทสก์ คอนซัลติ้ง จำกัด
-                    </h6>
-                    <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="trialsPrice > 0">
-                      จำนวนเงินหลังใช้ฟรี 7 วัน : {{ formatNumber(trialsPrice) }} บาท
-                    </h6>
-                    <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="trialsPrice > 0">
-                      (วันที่ {{ billingTrialsPriceDateFomatShow }} )
-                    </h6>
-                    <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="currentPrice > 0">
-                      จำนวนเงินค่าบริการที่เหลือ : {{ formatNumber(currentPrice) }} บาท
-                    </h6>
-                    <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="currentPrice > 0">
-                      (วันที่ {{ billingCurrentPriceDateFomatShow }} )
-                    </h6>
-                    <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
-                      จำนวนเงิน : {{ formatNumber(paymentAmount) }} บาท
-                    </h6>
-                    <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
-                      จำนวน Vat : {{ formatNumber(paymentAmountVat) }} บาท
-                    </h6>
-                    <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
-                      จำนวนเงินรวม : {{ formatNumber(parseFloat(paymentAmount) + parseFloat(paymentAmountVat)) }} บาท
-                    </h6>
-                    <div class="pl-4 pr-4"><v-divider></v-divider></div>
-                    <div class="text-center" style="display:flex;" v-if="dialogwidth === '50%'"><v-img
-                          style="position: relative;left: -33px;"
-                          aspect-ratio="6"
-                          contain
-                          max-width="200"
-                          src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2Fktb.png?alt=media&token=f197ab8f-f502-4136-91a0-8c92f2968ecf"
-                        ></v-img><h6 style="position: relative;left: -85px;margin-bottom: 0;">ธนาคารกรุงไทย สาขาประชาอุทิศ  เลขบัญชี 094-0-34082-8</h6></div>
-                    <div class="text-center" style="display:flex;padding:20px" v-if="dialogwidth === '50%'"><v-img
-                          aspect-ratio="6"
-                          contain
-                          max-width="200"
-                          src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2Fkbank.png?alt=media&token=f492fd39-0b56-4aa4-82d7-730b53167029"
-                        ></v-img><h6>ธนาคารกสิกรไทย สาขาศรีวรา ทาวน์อินทาวน์ เลขบัญชี 107-3-15084-8</h6></div>
-                        <!-- mobile -->
-                    <div class="text-center" style="display:flex;" v-if="dialogwidth !== '50%'"><h6>ธนาคารกรุงไทย สาขาประชาอุทิศ  เลขบัญชี 094-0-34082-8</h6>
-                    </div>
-                    <div class="text-center" style="display:flex;padding:20px" v-if="dialogwidth !== '50%'"><h6>ธนาคารกสิกรไทย สาขาศรีวรา ทาวน์อินทาวน์ เลขบัญชี 107-3-15084-8</h6>
-                    </div>
-                    <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-3">
-                      ( แนบสลิปการโอนเงินโดยกดที่ปุ่ม อัพโหลดสลิป )
-                    </h6>
-                    <div class="text-center">
-                    <!-- <v-btn
-                      class="button pa-2"
-                      color="error"
-                      dark
-                      large
-                      @click="dialogQrcode = false"
-                      >ปิด</v-btn
-                    > -->
-                    <v-btn
-                      class="button pa-5 mt-3"
-                      color="#1B437C"
-                      style="font-size:20px"
-                      width="250"
-                      dark
-                      large
-                      @click="uploadSlipShow = true"
-                      >อัพโหลดสลิป</v-btn
-                    >
-                  </div>
-                  </v-card>
-                  <!-- <h6 class="text-center mt-5">กลังจากชำระแล้วกรุณาส่งหลักฐานสลิปโอนเงิน โดยคลิกปุ่มด้านล่าง</h6> -->
-                  <div class="text-center">
-                    <!-- <v-btn
-                      class="button pa-2"
-                      color="error"
-                      dark
-                      large
-                      @click="dialogQrcode = false"
-                      >ปิด</v-btn
-                    > -->
-                    <!-- <v-btn
-                      class="button pa-5"
-                      color="#1B437C"
-                      dark
-                      large
-                      @click="uploadSlipShow = true"
-                      >อัพโหลดสลิป</v-btn
-                    > -->
-                  </div>
-                </v-card-text>
-              </v-card>
-            </v-dialog>
-            <v-dialog v-model="dialogHistory" max-width="600px">
-              <v-card>
-                <v-card-text>
-                  <div class="text-end">
-                  <v-btn
-                    class="mx-2"
-                    fab
-                    small
-                    dark
-                    color="white"
-                    style="color:red;font-size:20px;"
-                    @click="dialogHistory = false"
-                  >
-                   X
-                  </v-btn>
-                  </div>
-                  <h3 class="text-center" style="color:#1B437C;font-weight: bold;">ประวัติการชำระเงิน</h3>
-                  <br>
-                  <v-row>
-                    <v-col cols="12" class="text-center pa-2 mt-6">
-                      <v-data-table
-                        :headers="headers"
-                        :items="dataHistory"
-                        disable-pagination
-                        hide-default-footer
-                      >
-                        <template v-slot:[`item.paymentImage`]="{ item }">
-                          <v-avatar color="primary" size="40" @click="gotoPicture(item.paymentImage)" v-if="item.paymentImage !== null">
-                            <img :src="item.paymentImage" alt="img"/></v-avatar>
-                        </template>
-                        <template v-slot:[`item.paymentDateuse`]="{ item }">
-                          {{ formatNumber(item.paymentDateuse) }} บาท
-                        </template>
-                        <template v-slot:[`item.actions`]="{ item }">
-                          <v-btn
-                            v-if="item.receiptFile !== null"
-                            color="teal"
-                            fab
-                            small
-                            dark
-                            @click.stop="gotoLink(item.receiptFile)"
+                            <v-btn
+                              rounded
+                              color="#1B437C"
+                              dark
+                              @click="showQrCode(item)"
+                            >
+                              ต่ออายุแพ็คเกจ
+                            </v-btn>
+                          </div>
+                          <div
+                            v-if="dataBilling === item.id && countDateEnd > 0"
+                            class="text-center plan_button"
                           >
-                            <v-icon>mdi-download-circle</v-icon>
-                          </v-btn>
-                        </template>
-                      </v-data-table>
+                            <v-btn disabled rounded> แพ็คเกจปัจจุบัน </v-btn>
+                            <!-- <v-btn rounded outlined color="teal" dark>
+                              แพลนปัจจุบัน
+                            </v-btn> -->
+                          </div>
+                          <template v-if="dataBilling === item.id">
+                            <template v-if="statusBilling === 'confirm'">
+                              <v-row>
+                                <v-col col="12" class="pl-7 pt-4 pb-0">
+                                  <div style="display: flex">
+                                    <v-icon color="#1B437C" class="mr-2">mdi-calendar-check</v-icon>
+                                    <div style="color: #1b437c; font-weight: bold" class="mr-1">วันที่เริ่ม : </div>
+                                    <div>{{dataPayment.startDateShow}}</div>
+                                  </div>
+                                </v-col>
+                                <v-col col="12" class="pl-7 pt-1 pb-0">
+                                  <div style="display: flex">
+                                    <v-icon color="#E53935" class="mr-2">mdi-calendar-remove</v-icon>
+                                    <div style="color: #E53935; font-weight: bold" class="mr-1">วันที่หมดอายุ : </div>
+                                    <div>{{dataPayment.endDateShow}}</div>
+                                  </div>
+                                </v-col>
+                              </v-row>
+                              <v-row v-if="countDateEnd <= 0">
+                                <v-col col="12" class="pl-7 pt-1 pb-0 text-center">
+                                  <div style="color: #EF6C00; font-weight: bold">กรุณาต่ออายุแพ็คเกจ</div>
+                                  <div style="color: #EF6C00; font-weight: bold">เพื่อความต่อเนื่องในการใช้โปรแกรม</div>
+                                </v-col>
+                              </v-row>
+                              </template>
+                              <template v-if="statusBilling === 'wait'">
+                                <v-alert
+                                  class="mt-1"
+                                  dense
+                                  border="left"
+                                  type="warning"
+                                >
+                                  กำลังดำเนินการ
+                                </v-alert>
+                              </template>
+                              <template v-if="statusBilling === 'error'">
+                                <v-alert
+                                  class="mt-1"
+                                  border="left"
+                                  dense
+                                  type="error"
+                                >
+                                  <v-row align="center">
+                                    <v-col class="grow">
+                                      {{remarkReturn}}
+                                    </v-col>
+                                    <v-col class="shrink">
+                                      <v-btn color="teal" x-small @click="setData(dataPayment)"><strong>ตรวจสอบอีกครั้ง</strong></v-btn>
+                                    </v-col>
+                                  </v-row>
+                                </v-alert>
+                              </template>
+                          </template>
+                        </v-card>
+                      </v-container>
                     </v-col>
                   </v-row>
+                  <v-row v-if="paymentStatus === 'wait'">
+                      <v-col cols="12" class="text-center">
+                        <h1>รายการชำระค่าบริการของท่าน</h1>
+                        <h2>ทางบริษัทได้ตรวจสอบสลิปของท่านไม่ถูกต้อง</h2>
+                        <h2>กรุณาอัพเดทสลิปอีกครั้ง</h2>
+                      </v-col>
+                      <v-col cols="12" class="text-center">
+                        <v-btn color="teal" dark large @click="setData(sysShopData)"><strong>ตรวจสอบอีกครั้ง</strong></v-btn>
+                      </v-col>
+                  </v-row>
+                  <v-row v-if="paymentStatus === 'confirm' || paymentStatus === 'finish'">
+                      <v-col cols="12" class="text-center">
+                          <h1>รายการชำระค่าบริการของท่าน</h1>
+                          <h2>ชำระเงินแล้ว กรุณาทำรายการ</h2>
+                          <h2>ทุกวันที่ 1-7 ของแต่ละเดือน</h2>
+                      </v-col>
+                      <v-col cols="12" class="text-center">
+                        <v-btn color="teal" dark large @click="gotoLogin()"><strong>Login</strong></v-btn>
+                      </v-col>
+                  </v-row>
+                  <!-- <div class="text-right plan_button">
+                    <v-btn rounded color="error" dark @click="dialogCash = false">
+                      ปิด
+                    </v-btn>
+                  </div> -->
                 </v-card-text>
-              </v-card>
-            </v-dialog>
-            <v-dialog v-model="dialogReConfirm" persistent max-width="600px">
-              <v-card>
-                <v-card-text>
-                  <div class="text-end">
-                  <v-btn
-                    class="mx-2"
-                    fab
-                    small
-                    dark
-                    color="white"
-                    style="color:red;font-size:20px;"
-                    @click="dialogReConfirm = false, paymentImge = null"
-                  >
-                   X
-                  </v-btn>
+                <!-- <v-card-text>
+                  <div class="text-right plan_button">
+                    <v-btn
+                      rounded
+                      color="error"
+                      dark
+                      @click="dialogCancel = true"
+                    >
+                      ยกเลิกแผนการชำระเงิน
+                    </v-btn>
                   </div>
-                  <h3 class="text-center" style="color:#1B437C;font-weight: bold;">แนบหลักฐานการโอนเงิน</h3>
-                  <br>
-                  <!-- <h4 class="text-center font-weight-black mb-10" >แนบหลักฐานการโอนเงิน</h4> -->
-                  <v-form ref="form_dialogReConfirm" v-model="validAdddialogReConfirm" lazy-validation>
-                    <v-row>
-                      <v-col cols="12" class="text-center pa-2 mt-6">
-                        <v-img
-                          v-if="paymentImge !== null"
-                          class="pa-3"
-                          contain
-                          max-height="100%"
-                          max-width="100%"
-                          :src="paymentImge"
-                        ></v-img>
-                        <v-avatar
-                          v-else
-                          tile
-                          color="#FFFFFF"
-                          size="180"
-                        >
+                </v-card-text> -->
+              </div>
+              <v-dialog v-model="dialogCancel" persistent max-width="500px">
+                <v-card>
+                  <v-card-title> ยกเลิกแผนการชำระเงิน </v-card-title>
+                  <v-card-text
+                    >ต้องการ ยกเลิกแผนการชำระเงิน ใช่หรือไม่?</v-card-text
+                  >
+                  <!-- <v-card-text class="text-red">* บริษัทจะไม่มีการคืนเงินในกรณีใดๆทั้งสิ้น *</v-card-text> -->
+                  <v-alert outlined type="warning"
+                    >* บริษัทจะไม่มีการคืนเงินในทุกกรณี *</v-alert
+                  >
+                  <v-card-actions v-if="dataReadyCancel">
+                    <v-spacer></v-spacer>
+                    <v-btn
+                      dark
+                      color="red darken-1"
+                      @click="dialogCancel = false"
+                    >
+                      ตรวจสอบอีกครั้ง
+                    </v-btn>
+                    <v-btn dark color="green darken-1" @click="cancelPlan()">
+                      ยกเลิกแผนการชำระเงิน
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+              <v-dialog v-model="dialogQrcode" persistent max-width="600px" style="overflow-y: hidden;">
+                <v-card elevation="7">
+                  <v-card-text v-if="uploadSlipShow">
+                    <br />
+                    <h4 class="text-center font-weight-black mb-10">
+                      แนบหลักฐานการโอนเงิน
+                    </h4>
+                    <v-form ref="form_dialogQrcode" v-model="validAdddialogQrcode" lazy-validation>
+                      <v-row>
+                        <v-col cols="12" class="text-center pa-2 mt-6">
                           <v-img
-                          aspect-ratio="6"
-                          contain
-                          src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2FUploadicon.png?alt=media&token=39383860-d16e-49ca-81cb-a3ad888df095"
+                            v-if="paymentImge !== null"
+                            class="pa-3"
+                            contain
+                            max-height="100%"
+                            max-width="100%"
+                            :src="paymentImge"
                           ></v-img>
-                        </v-avatar>
-                        <v-file-input
-                        class="mt-6 mb-6"
-                          required
-                          counter
-                          show-size
-                          :rules="[rules.resizeImag]"
-                          accept="image/png, image/jpeg, image/bmp"
-                          prepend-icon="mdi-paperclip"
-                          label="Upload"
-                          @change="selectImg"
-                          v-model="filesImg"
-                        ></v-file-input>
-                      </v-col>
-                      <v-col cols="12" class="text-center pa-2">
-                        <v-expansion-panels
-                          v-model="panel"
-                          multiple
-                        >
-                          <v-expansion-panel>
-                            <v-expansion-panel-header>ช่องทางการชำระเงิน</v-expansion-panel-header>
-                            <v-expansion-panel-content>
-                              <v-img
-                                height="170"
-                                src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2FQR-prompt.jpg?alt=media&token=42637b63-af5b-45d9-8900-b866b789819e"
-                              ></v-img>
-                              <div class="text-center mt-4" v-if="value">
-                                <qrcode-vue
-                                  :value="value"
-                                  :size="size"
-                                  level="H"
-                                  :foreground="foreground"
-                                />
-                              </div>
-                              <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
-                                บัญชี : บริษัท บีแทสก์ คอนซัลติ้ง จำกัด
-                              </h6>
-                              <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="trialsPrice > 0">
-                                จำนวนเงินหลังใช้ฟรี 7 วัน : {{ formatNumber(trialsPrice) }} บาท
-                              </h6>
-                              <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="trialsPrice > 0">
-                                (วันที่ {{ billingTrialsPriceDateFomatShow }} )
-                              </h6>
-                              <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="currentPrice > 0">
-                                จำนวนเงินค่าบริการที่เหลือ : {{ formatNumber(currentPrice) }} บาท
-                              </h6>
-                              <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="currentPrice > 0">
-                                (วันที่ {{ billingCurrentPriceDateFomatShow }} )
-                              </h6>
-                              <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
-                                จำนวนเงิน : {{ formatNumber(paymentAmount) }} บาท
-                              </h6>
-                              <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
-                                จำนวน Vat : {{ formatNumber(paymentAmountVat) }} บาท
-                              </h6>
-                              <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
-                                จำนวนเงินรวม : {{ formatNumber(parseFloat(paymentAmount) + parseFloat(paymentAmountVat)) }} บาท
-                              </h6>
-                              <div class="pl-4 pr-4"><v-divider></v-divider></div>
-                              <div class="text-center" style="display:flex;"><v-img
-                                    style="position: relative;left: -33px;"
-                                    aspect-ratio="6"
-                                    contain
-                                    max-width="200"
-                                    src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2Fktb.png?alt=media&token=f197ab8f-f502-4136-91a0-8c92f2968ecf"
-                                  ></v-img><h6 style="position: relative;left: -85px;margin-bottom: 0;">ธนาคารกรุงไทย สาขาประชาอุทิศ  เลขบัญชี 094-0-34082-8</h6></div>
-                              <div class="text-center" style="display:flex;padding:20px"><v-img
-                                    aspect-ratio="6"
-                                    contain
-                                    max-width="200"
-                                    src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2Fkbank.png?alt=media&token=f492fd39-0b56-4aa4-82d7-730b53167029"
-                                  ></v-img><h6>ธนาคารกสิกรไทย สาขาศรีวรา ทาวน์อินทาวน์ เลขบัญชี 107-3-15084-8</h6></div>
-                            </v-expansion-panel-content>
-                          </v-expansion-panel>
-                        </v-expansion-panels>
-                      </v-col>
-                      <v-col cols="12" class="pt-1 pb-0">
-                        <v-text-field
-                          prepend-icon="mdi-account"
-                          v-model="billingCusName"
-                          label="ชื่อ-สกุล"
-                          outlined
-                          dense
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" class="pt-1 pb-0">
-                        <v-text-field
-                          prepend-icon="mdi-card-account-phone-outline"
-                          v-mask="'##########'"
-                          v-model="billingPhone"
-                          label="เบอร์โทร"
-                          outlined
-                          dense
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" class="pt-1 pb-0">
-                        <v-text-field
-                          prepend-icon="mdi-hail"
-                          v-model="billingTax"
-                          label="เลขประจำตัวผู้เสียภาษี"
-                          outlined
-                          dense
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" class="pt-1 pb-0">
+                          <v-avatar v-else tile color="#FFFFFF" size="180">
+                            <v-img
+                              aspect-ratio="6"
+                              contain
+                              src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2FUploadicon.png?alt=media&token=39383860-d16e-49ca-81cb-a3ad888df095"
+                            ></v-img>
+                          </v-avatar>
+                          <v-file-input
+                            class="mt-6 mb-6"
+                            required
+                            counter
+                            show-size
+                            :rules="[rules.resizeImag]"
+                            accept="image/png, image/jpeg, image/bmp"
+                            prepend-icon="mdi-paperclip"
+                            label="Upload"
+                            @change="selectImg"
+                            v-model="filesImg"
+                          ></v-file-input>
+                        </v-col>
+                        <v-col cols="12" class="pt-1 pb-0">
+                          <v-text-field
+                            prepend-icon="mdi-account"
+                            v-model="billingCusName"
+                            label="ชื่อ-สกุล"
+                            outlined
+                            dense
+                            required
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" class="pt-1 pb-0">
+                          <v-text-field
+                            prepend-icon="mdi-card-account-phone-outline"
+                            v-mask="'##########'"
+                            v-model="billingPhone"
+                            label="เบอร์โทร"
+                            outlined
+                            dense
+                            required
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" class="pt-1 pb-0">
+                          <v-text-field
+                            prepend-icon="mdi-hail"
+                            v-model="billingTax"
+                            label="เลขประจำตัวผู้เสียภาษี"
+                            outlined
+                            dense
+                            required
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" class="pt-1 pb-0">
                           <v-textarea
                             v-model="billingAddressDetails"
                             auto-grow
@@ -818,45 +415,458 @@
                             @input="checkAddress()"
                           ></v-text-field>
                         </v-col>
-                      <!-- <v-col cols="12" class="pt-1 pb-0">
-                        <v-textarea
-                          prepend-icon="mdi-map-marker"
-                          v-model="billingAddress"
-                          auto-grow
-                          rows="2"
-                          label="ที่อยู่"
-                          dense
-                          outlined
-                        ></v-textarea>
-                      </v-col> -->
-                    </v-row>
-                  </v-form>
-                  <div class="text-center mt-5">
-                  <v-btn
-                    class="button pa-2"
-                    color="error"
-                    dark
-                    large
-                    @click="dialogReConfirm = false">ปิด</v-btn>
+                        <!-- <v-col cols="12" class="pt-1 pb-0" v-show="true">
+                          <v-textarea
+                            prepend-icon="mdi-map-marker"
+                            v-model="billingAddress"
+                            auto-grow
+                            rows="2"
+                            label="ที่อยู่"
+                            dense
+                            outlined
+                          ></v-textarea>
+                        </v-col> -->
+                      </v-row>
+                    </v-form>
+                    <div class="text-center mt-5">
+                      <v-btn
+                        class="button pa-2"
+                        color="error"
+                        dark
+                        large
+                        @click="uploadSlipShow = false"
+                        >กลับ</v-btn
+                      >
+                      <v-btn
+                        class="button pa-2 white--text"
+                        large
+                        :loading="loadingBillingPlan"
+                        :disabled="loadingBillingPlan"
+                        @click="billingPlan(dataPlan)"
+                        color="#173053"
+                        >อัพโหลดสลิป</v-btn
+                      >
+                    </div>
+                  </v-card-text>
+                  <v-card-text v-if="!uploadSlipShow">
+                    <br />
+                    <div class="text-end" style="position: absolute;right: 29px;">
                     <v-btn
-                    class="button pa-2 white--text"
-                    large
-                    :loading="loadingBillingPlan"
-                    :disabled="loadingBillingPlan"
-                    color="#173053"
-                    @click="updateReturn()"
-                    >อัพโหลดสลิป</v-btn>
-                </div>
-                </v-card-text>
-              </v-card>
-            </v-dialog>
-          </v-col>
-        </v-row>
-        <v-row class="no-gutters" v-if="!dataReadyGet">
-          <v-col cols="12" class="text-left">
-            <waitingAlert></waitingAlert>
-          </v-col>
-        </v-row>
+                      class="mx-2"
+                      fab
+                      small
+                      dark
+                      color="white"
+                      style="color:red;font-size:20px;"
+                      @click="dialogQrcode = false"
+                    >
+                    X
+                    </v-btn>
+                    </div>
+                    <h3 class="text-center" style="color:#1B437C;font-weight: bold;">ชำระเงินด้วย</h3>
+                    <!-- <h3 class="text-center" style="color:#1B437C;font-weight: bold;">วิธีการโอน</h3> -->
+                    <h3 class="text-center" style="color:#1B437C;font-weight: bold;">QR PromptPay</h3>
+                    <v-card class="mt-6 mb-6 pb-6" elevation="0">
+                      <!-- <v-img
+                        height="170"
+                        src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2FQR-prompt.jpg?alt=media&token=42637b63-af5b-45d9-8900-b866b789819e"
+                      ></v-img> -->
+                      <div class="text-center mt-4" v-if="value">
+                        <qrcode-vue
+                          :value="value"
+                          :size="size"
+                          level="H"
+                          :foreground="foreground"
+                        />
+                      </div>
+                      <!-- <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-3">
+                        บริษัท บีแทสก์ คอนซัลติ้ง จำกัด
+                      </h6> -->
+                      <br>
+                      <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
+                        บัญชี : บริษัท บีแทสก์ คอนซัลติ้ง จำกัด
+                      </h6>
+                      <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="trialsPrice > 0">
+                        จำนวนเงินหลังใช้ฟรี 7 วัน : {{ formatNumber(trialsPrice) }} บาท
+                      </h6>
+                      <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="trialsPrice > 0">
+                        (วันที่ {{ billingTrialsPriceDateFomatShow }} )
+                      </h6>
+                      <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="currentPrice > 0">
+                        จำนวนเงินค่าบริการที่เหลือ : {{ formatNumber(currentPrice) }} บาท
+                      </h6>
+                      <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="currentPrice > 0">
+                        (วันที่ {{ billingCurrentPriceDateFomatShow }} )
+                      </h6>
+                      <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
+                        จำนวนเงิน : {{ formatNumber(paymentAmount) }} บาท
+                      </h6>
+                      <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
+                        จำนวน Vat : {{ formatNumber(paymentAmountVat) }} บาท
+                      </h6>
+                      <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
+                        จำนวนเงินรวม : {{ formatNumber(parseFloat(paymentAmount) + parseFloat(paymentAmountVat)) }} บาท
+                      </h6>
+                      <div class="pl-4 pr-4"><v-divider></v-divider></div>
+                      <div class="text-center" style="display:flex;" v-if="dialogwidth === '50%'"><v-img
+                            style="position: relative;left: -33px;"
+                            aspect-ratio="6"
+                            contain
+                            max-width="200"
+                            src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2Fktb.png?alt=media&token=f197ab8f-f502-4136-91a0-8c92f2968ecf"
+                          ></v-img><h6 style="position: relative;left: -85px;margin-bottom: 0;">ธนาคารกรุงไทย สาขาประชาอุทิศ  เลขบัญชี 094-0-34082-8</h6></div>
+                      <div class="text-center" style="display:flex;padding:20px" v-if="dialogwidth === '50%'"><v-img
+                            aspect-ratio="6"
+                            contain
+                            max-width="200"
+                            src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2Fkbank.png?alt=media&token=f492fd39-0b56-4aa4-82d7-730b53167029"
+                          ></v-img><h6>ธนาคารกสิกรไทย สาขาศรีวรา ทาวน์อินทาวน์ เลขบัญชี 107-3-15084-8</h6></div>
+                          <!-- mobile -->
+                      <div class="text-center" style="display:flex;" v-if="dialogwidth !== '50%'"><h6>ธนาคารกรุงไทย สาขาประชาอุทิศ  เลขบัญชี 094-0-34082-8</h6>
+                      </div>
+                      <div class="text-center" style="display:flex;padding:20px" v-if="dialogwidth !== '50%'"><h6>ธนาคารกสิกรไทย สาขาศรีวรา ทาวน์อินทาวน์ เลขบัญชี 107-3-15084-8</h6>
+                      </div>
+                      <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-3">
+                        ( แนบสลิปการโอนเงินโดยกดที่ปุ่ม อัพโหลดสลิป )
+                      </h6>
+                      <div class="text-center">
+                      <!-- <v-btn
+                        class="button pa-2"
+                        color="error"
+                        dark
+                        large
+                        @click="dialogQrcode = false"
+                        >ปิด</v-btn
+                      > -->
+                      <v-btn
+                        class="button pa-5 mt-3"
+                        color="#1B437C"
+                        style="font-size:20px"
+                        width="250"
+                        dark
+                        large
+                        @click="uploadSlipShow = true"
+                        >อัพโหลดสลิป</v-btn
+                      >
+                    </div>
+                    </v-card>
+                    <!-- <h6 class="text-center mt-5">กลังจากชำระแล้วกรุณาส่งหลักฐานสลิปโอนเงิน โดยคลิกปุ่มด้านล่าง</h6> -->
+                    <div class="text-center">
+                      <!-- <v-btn
+                        class="button pa-2"
+                        color="error"
+                        dark
+                        large
+                        @click="dialogQrcode = false"
+                        >ปิด</v-btn
+                      > -->
+                      <!-- <v-btn
+                        class="button pa-5"
+                        color="#1B437C"
+                        dark
+                        large
+                        @click="uploadSlipShow = true"
+                        >อัพโหลดสลิป</v-btn
+                      > -->
+                    </div>
+                  </v-card-text>
+                </v-card>
+              </v-dialog>
+              <v-dialog v-model="dialogHistory" max-width="600px">
+                <v-card>
+                  <v-card-text>
+                    <div class="text-end">
+                    <v-btn
+                      class="mx-2"
+                      fab
+                      small
+                      dark
+                      color="white"
+                      style="color:red;font-size:20px;"
+                      @click="dialogHistory = false"
+                    >
+                    X
+                    </v-btn>
+                    </div>
+                    <h3 class="text-center" style="color:#1B437C;font-weight: bold;">ประวัติการชำระเงิน</h3>
+                    <br>
+                    <v-row>
+                      <v-col cols="12" class="text-center pa-2 mt-6">
+                        <v-data-table
+                          :headers="headers"
+                          :items="dataHistory"
+                          disable-pagination
+                          hide-default-footer
+                        >
+                          <template v-slot:[`item.paymentImage`]="{ item }">
+                            <v-avatar color="primary" size="40" @click="gotoPicture(item.paymentImage)" v-if="item.paymentImage !== null">
+                              <img :src="item.paymentImage" alt="img"/></v-avatar>
+                          </template>
+                          <template v-slot:[`item.paymentDateuse`]="{ item }">
+                            {{ formatNumber(item.paymentDateuse) }} บาท
+                          </template>
+                          <template v-slot:[`item.actions`]="{ item }">
+                            <v-btn
+                              v-if="item.receiptFile !== null"
+                              color="teal"
+                              fab
+                              small
+                              dark
+                              @click.stop="gotoLink(item.receiptFile)"
+                            >
+                              <v-icon>mdi-download-circle</v-icon>
+                            </v-btn>
+                          </template>
+                        </v-data-table>
+                      </v-col>
+                    </v-row>
+                  </v-card-text>
+                </v-card>
+              </v-dialog>
+              <v-dialog v-model="dialogReConfirm" persistent max-width="600px">
+                <v-card>
+                  <v-card-text>
+                    <div class="text-end">
+                    <v-btn
+                      class="mx-2"
+                      fab
+                      small
+                      dark
+                      color="white"
+                      style="color:red;font-size:20px;"
+                      @click="dialogReConfirm = false, paymentImge = null"
+                    >
+                    X
+                    </v-btn>
+                    </div>
+                    <h3 class="text-center" style="color:#1B437C;font-weight: bold;">แนบหลักฐานการโอนเงิน</h3>
+                    <br>
+                    <!-- <h4 class="text-center font-weight-black mb-10" >แนบหลักฐานการโอนเงิน</h4> -->
+                    <v-form ref="form_dialogReConfirm" v-model="validAdddialogReConfirm" lazy-validation>
+                      <v-row>
+                        <v-col cols="12" class="text-center pa-2 mt-6">
+                          <v-img
+                            v-if="paymentImge !== null"
+                            class="pa-3"
+                            contain
+                            max-height="100%"
+                            max-width="100%"
+                            :src="paymentImge"
+                          ></v-img>
+                          <v-avatar
+                            v-else
+                            tile
+                            color="#FFFFFF"
+                            size="180"
+                          >
+                            <v-img
+                            aspect-ratio="6"
+                            contain
+                            src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2FUploadicon.png?alt=media&token=39383860-d16e-49ca-81cb-a3ad888df095"
+                            ></v-img>
+                          </v-avatar>
+                          <v-file-input
+                          class="mt-6 mb-6"
+                            required
+                            counter
+                            show-size
+                            :rules="[rules.resizeImag]"
+                            accept="image/png, image/jpeg, image/bmp"
+                            prepend-icon="mdi-paperclip"
+                            label="Upload"
+                            @change="selectImg"
+                            v-model="filesImg"
+                          ></v-file-input>
+                        </v-col>
+                        <v-col cols="12" class="text-center pa-2">
+                          <v-expansion-panels
+                            v-model="panel"
+                            multiple
+                          >
+                            <v-expansion-panel>
+                              <v-expansion-panel-header>ช่องทางการชำระเงิน</v-expansion-panel-header>
+                              <v-expansion-panel-content>
+                                <v-img
+                                  height="170"
+                                  src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2FQR-prompt.jpg?alt=media&token=42637b63-af5b-45d9-8900-b866b789819e"
+                                ></v-img>
+                                <div class="text-center mt-4" v-if="value">
+                                  <qrcode-vue
+                                    :value="value"
+                                    :size="size"
+                                    level="H"
+                                    :foreground="foreground"
+                                  />
+                                </div>
+                                <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
+                                  บัญชี : บริษัท บีแทสก์ คอนซัลติ้ง จำกัด
+                                </h6>
+                                <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="trialsPrice > 0">
+                                  จำนวนเงินหลังใช้ฟรี 7 วัน : {{ formatNumber(trialsPrice) }} บาท
+                                </h6>
+                                <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="trialsPrice > 0">
+                                  (วันที่ {{ billingTrialsPriceDateFomatShow }} )
+                                </h6>
+                                <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="currentPrice > 0">
+                                  จำนวนเงินค่าบริการที่เหลือ : {{ formatNumber(currentPrice) }} บาท
+                                </h6>
+                                <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0" v-if="currentPrice > 0">
+                                  (วันที่ {{ billingCurrentPriceDateFomatShow }} )
+                                </h6>
+                                <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
+                                  จำนวนเงิน : {{ formatNumber(paymentAmount) }} บาท
+                                </h6>
+                                <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
+                                  จำนวน Vat : {{ formatNumber(paymentAmountVat) }} บาท
+                                </h6>
+                                <h6 style="color:#1B437C;font-weight: bold;" class="text-center mt-0">
+                                  จำนวนเงินรวม : {{ formatNumber(parseFloat(paymentAmount) + parseFloat(paymentAmountVat)) }} บาท
+                                </h6>
+                                <div class="pl-4 pr-4"><v-divider></v-divider></div>
+                                <div class="text-center" style="display:flex;"><v-img
+                                      style="position: relative;left: -33px;"
+                                      aspect-ratio="6"
+                                      contain
+                                      max-width="200"
+                                      src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2Fktb.png?alt=media&token=f197ab8f-f502-4136-91a0-8c92f2968ecf"
+                                    ></v-img><h6 style="position: relative;left: -85px;margin-bottom: 0;">ธนาคารกรุงไทย สาขาประชาอุทิศ  เลขบัญชี 094-0-34082-8</h6></div>
+                                <div class="text-center" style="display:flex;padding:20px"><v-img
+                                      aspect-ratio="6"
+                                      contain
+                                      max-width="200"
+                                      src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2Fkbank.png?alt=media&token=f492fd39-0b56-4aa4-82d7-730b53167029"
+                                    ></v-img><h6>ธนาคารกสิกรไทย สาขาศรีวรา ทาวน์อินทาวน์ เลขบัญชี 107-3-15084-8</h6></div>
+                              </v-expansion-panel-content>
+                            </v-expansion-panel>
+                          </v-expansion-panels>
+                        </v-col>
+                        <v-col cols="12" class="pt-1 pb-0">
+                          <v-text-field
+                            prepend-icon="mdi-account"
+                            v-model="billingCusName"
+                            label="ชื่อ-สกุล"
+                            outlined
+                            dense
+                            required
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" class="pt-1 pb-0">
+                          <v-text-field
+                            prepend-icon="mdi-card-account-phone-outline"
+                            v-mask="'##########'"
+                            v-model="billingPhone"
+                            label="เบอร์โทร"
+                            outlined
+                            dense
+                            required
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" class="pt-1 pb-0">
+                          <v-text-field
+                            prepend-icon="mdi-hail"
+                            v-model="billingTax"
+                            label="เลขประจำตัวผู้เสียภาษี"
+                            outlined
+                            dense
+                            required
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" class="pt-1 pb-0">
+                            <v-textarea
+                              v-model="billingAddressDetails"
+                              auto-grow
+                              rows="2"
+                              label="รายละเอียดที่อยู่"
+                              :rules="[v => !!v || 'กรุณากรอกรายละเอียดที่อยู่']"
+                              dense
+                              outlined
+                            ></v-textarea>
+                          </v-col>
+                          <v-col cols="12" class="pt-1 pb-0">
+                            <v-select
+                              v-model="billingSubDistrict"
+                              :items="optionSubDistrict"
+                              :rules="[v => !!v || 'กรุณากรอกตำบล']"
+                              dense
+                              outlined
+                              no-data-text="กรุณกรอกรหัสไปรษณีย์"
+                              label="ตำบล"
+                            ></v-select>
+                          </v-col>
+                          <v-col cols="12" class="pt-1 pb-0">
+                            <v-select
+                              v-model="billingDistrict"
+                              :items="optionDistrict"
+                              :rules="[v => !!v || 'กรุณากรอกอำเภอ']"
+                              dense
+                              outlined
+                              no-data-text="กรุณกรอกรหัสไปรษณีย์"
+                              label="อำเภอ"
+                            ></v-select>
+                          </v-col>
+                          <v-col cols="12" class="pt-1 pb-0">
+                            <v-select
+                              v-model="billingProvinces"
+                              :items="optionProvinces"
+                              :rules="[v => !!v || 'กรุณากรอกจังหวัด']"
+                              dense
+                              outlined
+                              no-data-text="กรุณกรอกรหัสไปรษณีย์"
+                              label="จังหวัด"
+                            ></v-select>
+                          </v-col>
+                          <v-col cols="12" class="pt-1 pb-0">
+                            <v-text-field
+                              v-model="billingPostalCode"
+                              :rules="[v => !!v || 'กรุณากรอกรหัสไปรษณีย์', v => (!isNaN(v)) && v.length >= 5 && v.length <= 5  || 'รหัสไปรษณีย์ต้องมีตัวเลข 5 ตัว', resZipCode.length > 0 || 'ไม่เจอรหัสรหัสไปรษณีย์']"
+                              dense
+                              outlined
+                              label="รหัสไปรษณีย์"
+                              no-data-text="ไม่มีข้อมูล"
+                              required
+                              @input="checkAddress()"
+                            ></v-text-field>
+                          </v-col>
+                        <!-- <v-col cols="12" class="pt-1 pb-0">
+                          <v-textarea
+                            prepend-icon="mdi-map-marker"
+                            v-model="billingAddress"
+                            auto-grow
+                            rows="2"
+                            label="ที่อยู่"
+                            dense
+                            outlined
+                          ></v-textarea>
+                        </v-col> -->
+                      </v-row>
+                    </v-form>
+                    <div class="text-center mt-5">
+                    <v-btn
+                      class="button pa-2"
+                      color="error"
+                      dark
+                      large
+                      @click="dialogReConfirm = false">ปิด</v-btn>
+                      <v-btn
+                      class="button pa-2 white--text"
+                      large
+                      :loading="loadingBillingPlan"
+                      :disabled="loadingBillingPlan"
+                      color="#173053"
+                      @click="updateReturn()"
+                      >อัพโหลดสลิป</v-btn>
+                  </div>
+                  </v-card-text>
+                </v-card>
+              </v-dialog>
+            </v-col>
+          </v-row>
+          <v-row class="no-gutters" v-if="!dataReadyGet">
+            <v-col cols="12" class="text-left">
+              <waitingAlert></waitingAlert>
+            </v-col>
+          </v-row>
+        </div>
       </div>
     </v-main>
   </div>
@@ -1005,28 +1015,76 @@ export default {
       resZipCode: [],
       optionDistrict: [],
       optionSubDistrict: [],
-      optionProvinces: []
+      optionProvinces: [],
+      shopImge: '',
+      shopName: ''
     }
   },
   async mounted () {
     if (this.$route.query.shopId) {
       this.$router.push('/Core/Login?type=billing')
     } else {
-      if (!this.$session.exists()) {
-        this.$router.push('/Core/Login')
-      } else {
-        if (this.$session.getAll().data.lineUserIdOaBetask) {
-          await this.chkPlan()
-          await this.checkCurrentPlan()
-        } else {
-          await this.checkLiffLogin()
-          if (this.profile.userId !== 'U8b3fd01caa9faa45189b0567eb452041') {
-            await this.updateUserId()
+      if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
+        if (JSON.parse(localStorage.getItem('sessionData')).shopId) {
+          this.$session.start()
+          this.$session.set('data', JSON.parse(localStorage.getItem('sessionData')))
+          let lineUserIdOaBetask = this.$session.getAll().data.lineUserIdOaBetask || ''
+          this.shopImge = this.$session.getAll().data.shopImge || ''
+          this.shopName = this.$session.getAll().data.shopName || ''
+          if (lineUserIdOaBetask !== '') {
+            await this.chkPlan()
+            await this.checkCurrentPlan()
+          } else {
+            await this.checkLiffLogin()
+            if (this.profile.userId !== 'U8b3fd01caa9faa45189b0567eb452041') {
+              await this.updateUserId()
+            }
+            await this.chkPlan()
+            await this.checkCurrentPlan()
           }
-          await this.chkPlan()
-          await this.checkCurrentPlan()
+        } else {
+          this.$router.push('/Core/Login')
+        }
+      } else {
+        if (!this.$session.exists()) {
+          this.$router.push('/Core/Login')
+        } else {
+          if (this.$session.getAll().data.shopId) {
+            localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
+            let lineUserIdOaBetask = this.$session.getAll().data.lineUserIdOaBetask || ''
+            this.shopImge = this.$session.getAll().data.shopImge || ''
+            this.shopName = this.$session.getAll().data.shopName || ''
+            if (lineUserIdOaBetask !== '') {
+              await this.chkPlan()
+              await this.checkCurrentPlan()
+            } else {
+              await this.checkLiffLogin()
+              if (this.profile.userId !== 'U8b3fd01caa9faa45189b0567eb452041') {
+                await this.updateUserId()
+              }
+              await this.chkPlan()
+              await this.checkCurrentPlan()
+            }
+          } else {
+            this.$router.push('/Core/Login')
+          }
         }
       }
+      // if (!this.$session.exists()) {
+      //   this.$router.push('/Core/Login')
+      // } else {
+      //   if (this.$session.getAll().data.lineUserIdOaBetask) {
+      //     await this.chkPlan()
+      //     await this.checkCurrentPlan()
+      //   } else {
+      //     await this.checkLiffLogin()
+      //     if (this.profile.userId !== 'U8b3fd01caa9faa45189b0567eb452041') {
+      //       await this.updateUserId()
+      //     }
+      //     await this.chkPlan()
+      //     await this.checkCurrentPlan()
+      //   }
+      // }
     }
   },
   methods: {
