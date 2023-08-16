@@ -1906,14 +1906,19 @@ export default {
     },
     async updateShopActive (text, item, typeMain) {
       let url = ''
+      let ds = {}
       if (typeMain === 'loyalty') {
         url = this.DNS_IP_Loyalty + '/sys_shop/edit/' + item.shopId
+        ds = {
+          shopStatus: text,
+          LAST_USER: this.$session.getAll().data.userName
+        }
       } else {
         url = this.DNS_IP + '/sys_shop/edit/' + item.shopId
-      }
-      var ds = {
-        shopActive: text,
-        LAST_USER: this.$session.getAll().data.userName
+        ds = {
+          shopActive: text,
+          LAST_USER: this.$session.getAll().data.userName
+        }
       }
       await axios
         .post(

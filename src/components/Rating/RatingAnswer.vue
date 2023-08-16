@@ -14,16 +14,75 @@
               attach
               :menu-props="{ bottom: true, offsetY: true }"
               :rules="[rules.required]"
+              @change="getData(), getDataflow()"
+            ></v-select>
+            <v-select
+              class="pa-0"
+              v-model="formAdd.flowId"
+              :items="flowItem"
+              label="บริการ"
+              outlined
+              required
+              attach
+              :menu-props="{ bottom: true, offsetY: true }"
+              :rules="[rules.required]"
               @change="getData()"
             ></v-select>
             <div class="card" style="padding: 20px">
-              <h3>สร้างแบบสอบถามความพึงพอใจ</h3>
-              <div style="display: none;">
-                <v-text-field
+              <h3>กำหนดระดับความพึงพอใจ</h3>
+              <div>
+                <!-- <v-text-field
                   v-model="ratingIntDefault"
                   value="5"
+                  number
+                  max="6"
+                  min="5"
+                ></v-text-field> -->
+                <div style="display:flex ;">
+                <v-slider
+                  v-model="ratingIntDefault"
+                  class="align-center col-10"
+                  :max="max"
+                  :min="min"
+                  hide-details
+                  ticks="always"
+                  tick-size="5"
+                  color="rgb(255, 180, 97)"
+                  track-color="rgb(255, 180, 97)"
+                >
+                <template v-slot:thumb-label="{ value }" >
+                  <span>
+                    <img src="../../assets/star.png" width="20">
+                  </span>
+                </template>
+                </v-slider>
+                <v-text-field
+                  v-model="ratingIntDefault"
+                  class="mt-0 pt-0 col-2"
+                  hide-details
+                  single-line
+                  type="number"
+                  style="width: auto"
+                  disabled
                 ></v-text-field>
               </div>
+              <div style="padding: 0px 4px;" align="right">
+                <v-btn
+                  :loading="loadingSlider"
+                  color="#1B437C"
+                  class="ma-2 white--text"
+                  @click="confirmSlider"
+                  large
+                  style="width: -webkit-fill-available;border-radius: 16px;font-weight: bold;"
+                >
+                  เปลี่ยนแปลงระดับความพึงพอใจ
+                  <!-- <v-icon right dark> mdi-playlist-plus </v-icon> -->
+                </v-btn>
+              </div>
+              </div>
+            </div>
+            <div class="card" style="padding: 20px">
+              <h3>สร้างแบบสอบถามความพึงพอใจ</h3>
               <v-col cols="12" md="12">
                 <v-textarea
                   solo
@@ -129,12 +188,12 @@
                           </p>
                           <div class="rating-margin">
                             <v-rating
-                              v-model="data.rating"
+                              v-model="ratingD"
                               color="#FFB461"
                               background-color="#EAEAEF"
                               empty-icon="$ratingFull"
                               :full-icon="starBoldIcon"
-                              length="6"
+                              :length="ratingIntDefault"
                               :size="100"
                               hover
                               large
@@ -151,7 +210,7 @@
                         <div>
                           <div class="rating-margin text-center">
                             <v-rating
-                              v-model="rating"
+                              v-model="ratingD"
                               color="#FFB461"
                               background-color="#EAEAEF"
                               empty-icon="$ratingFull"
@@ -162,6 +221,7 @@
                               large
                               fab
                               rounded
+                              disabled
                             >
                             </v-rating>
                             <p class="padding-left text-center">
@@ -231,18 +291,23 @@ axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*'
 export default {
   data () {
     return {
+      min: 3,
+      max: 6,
       DNS_IP: 'http://localhost:5004',
       rating: 5,
-      ratingIntDefault: 6,
+      ratingIntDefault: 5,
+      ratingD: this.starBoldIcon,
       starBoldIcon: 'mdi-star',
       checkbox: false,
       loader: null,
       loading: false,
+      loadingSlider: false,
       loading2: false,
       loading3: false,
       inputText: '',
       formData: [],
       branchItem: [],
+      flowItem: [],
       rules: {
         numberRules: value =>
           (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
@@ -270,13 +335,27 @@ export default {
       },
       formAdd: {
         inputText: '',
-        masBranchID: ''
+        masBranchID: '',
+        flowId: '',
+        rating: 5
       },
       swasuccess: {
         title: 'สำเร็จ',
         text: 'เพิ่มคำถามเรียบร้อยแล้ว',
         type: 'success',
         icon: 'success'
+      },
+      swasuccessrate: {
+        title: 'สำเร็จ',
+        text: 'เปลี่ยนแปลงระดับความพึงพอใจเรียบร้อยแล้ว',
+        type: 'success',
+        icon: 'success'
+      },
+      alert: {
+        title: 'แจ้งเตือน',
+        text: 'หากเปลี่ยนแปลงระดับความพึงพอใจ, จะมีผลต่อค่าเฉลี่ยในอดีตที่ประเมินไปแล้ว',
+        showCancelButton: true,
+        type: 'info'
       }
     }
   },
@@ -285,7 +364,7 @@ export default {
   },
   async mounted () {
     await this.getDataBranch()
-    this.getData()
+    await this.getDataflow()
   },
   methods: {
     checkMove (e) {
@@ -328,7 +407,7 @@ export default {
           console.error('Update failed:', error)
         })
     },
-    getData () {
+    async getData () {
       this.formData = []
       try {
         axios
@@ -336,14 +415,16 @@ export default {
             this.DNS_IP +
               '/ratingformat/get?shopId=' +
               this.$session.getAll().data.shopId +
-              '&masBranchID=' +
-              this.formAdd.masBranchID
+              '&branchIn=' +
+              this.formAdd.masBranchID +
+              (this.formAdd.flowId !== 'All' ? '&flowId=' + this.formAdd.flowId : '')
           )
           .then(respone => {
             // this.formData = respone.dat
             let rs = respone.data
             if (rs.status !== false) {
               this.formData = rs
+              this.ratingIntDefault = rs[0].rating
             }
             // console.log('formData__GET()()()', this.formData)
           })
@@ -392,7 +473,8 @@ export default {
           shopId: this.$session.getAll().data.shopId,
           LAST_USER: this.$session.getAll().data.userName,
           CREATE_USER: this.$session.getAll().data.userName,
-          masBranchID: this.formAdd.masBranchID
+          masBranchID: this.formAdd.masBranchID,
+          flowId: this.formAdd.flowId
         }
         this.loading = true
         this.updateOrder()
@@ -407,6 +489,33 @@ export default {
         console.error(error)
       } finally {
         this.loading = false
+      }
+    },
+    confirmSlider () {
+      try {
+        this.$swal(this.alert)
+          .then(async result => {
+            if (result) {
+              const payload = {
+                shopId: this.$session.getAll().data.shopId,
+                LAST_USER: this.$session.getAll().data.userName,
+                masBranchID: this.formAdd.masBranchID
+              }
+              this.loadingSlider = true
+              axios.post(this.DNS_IP + '/ratingdefault/edit/' + this.ratingIntDefault, payload).then(respone => {
+                this.$swal(this.swasuccessrate)
+                this.loadingSlider = false
+                this.getData()
+                this.formAdd.inputText = ''
+                console.log('responerespone', respone)
+              })
+            } else {
+              this.loadingSlider = false
+            }
+            // setTimeout(() => (this.loadingSlider = false), 1000)
+          })
+      } catch (error) {
+        console.error(error)
       }
     },
     async getDataBranch () {
@@ -447,7 +556,51 @@ export default {
             this.formAdd.masBranchID = this.branchItem[0].value
           }
         })
+      await this.getDataflow()
       console.log('branch', this.branch)
+    },
+    async getDataflow () {
+      this.flowItem = []
+      await axios
+        .get(
+          this.DNS_IP + '/flow/get?shopId=' + this.$session.getAll().data.shopId + '&masBranchIDAll=' + this.formAdd.masBranchID
+        )
+        .then(async response => {
+          await this.getData()
+          let rs = response.data
+          console.log('rsss', rs)
+          console.log('shopId=', this.$session.getAll().data.shopId)
+          if (rs.status !== false) {
+            let a = {}
+            a.text = 'All'
+            a.value = 'All'
+            this.flowItem.push(a)
+            for (var i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              if (
+                this.$session.getAll().data.flowId === '' ||
+                this.$session.getAll().data.flowId === null
+              ) {
+                let s = {}
+                s.text = d.flowName
+                s.value = d.flowId.toString()
+                this.flowItem.push(s)
+              } else {
+                if (d.flowId === this.flowId) {
+                  let s = {}
+                  s.text = d.flowName
+                  s.value = d.flowId.toString()
+                  this.flowItem.push(s)
+                }
+              }
+              console.log('dtdtdtdt', this.flowId)
+            }
+          }
+          if (this.flowItem.length > 0) {
+            this.formAdd.flowId = this.flowItem[0].value
+          }
+        })
+      console.log('flowId', this.flowId)
     }
   }
 }
