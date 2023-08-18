@@ -1657,9 +1657,12 @@ export default {
               let s = {}
               s.amountCheck = d.paymentAmountSlip || ''
               if (s.amountCheck === '') {
-                d.paymentDateuse = d.paymentAmount
+                d.paymentDateuse = d.paymentAmount || ''
               } else {
-                d.paymentDateuse = d.paymentAmountSlip
+                d.paymentDateuse = d.paymentAmountSlip || ''
+              }
+              if (d.paymentDateuse !== '') {
+                d.paymentDateuse = d.paymentDateuse.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
               }
               this.itemBooking.push(d)
             }
@@ -1695,9 +1698,12 @@ export default {
                 let s = {}
                 s.amountCheck = d.paymentAmountSlip || ''
                 if (s.amountCheck === '') {
-                  d.paymentDateuse = d.paymentAmount
+                  d.paymentDateuse = d.paymentAmount || ''
                 } else {
-                  d.paymentDateuse = d.paymentAmountSlip
+                  d.paymentDateuse = d.paymentAmountSlip || ''
+                }
+                if (d.paymentDateuse !== '') {
+                  d.paymentDateuse = d.paymentDateuse.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                 }
                 if (d.paymentStatus === 'noCash') {
                   if (d.shopActive === 'inactive') {
@@ -1744,9 +1750,12 @@ export default {
               let s = {}
               s.amountCheck = d.paymentAmountSlip || ''
               if (s.amountCheck === '') {
-                d.paymentDateuse = d.paymentAmount
+                d.paymentDateuse = d.paymentAmount || ''
               } else {
-                d.paymentDateuse = d.paymentAmountSlip
+                d.paymentDateuse = d.paymentAmountSlip || ''
+              }
+              if (d.paymentDateuse !== '') {
+                d.paymentDateuse = d.paymentDateuse.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
               }
               this.itemBooking.push(d)
             }
@@ -1782,9 +1791,12 @@ export default {
                 let s = {}
                 s.amountCheck = d.paymentAmountSlip || ''
                 if (s.amountCheck === '') {
-                  d.paymentDateuse = d.paymentAmount
+                  d.paymentDateuse = d.paymentAmount || ''
                 } else {
-                  d.paymentDateuse = d.paymentAmountSlip
+                  d.paymentDateuse = d.paymentAmountSlip || ''
+                }
+                if (d.paymentDateuse !== '') {
+                  d.paymentDateuse = d.paymentDateuse.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                 }
                 if (d.paymentStatus === 'noCash') {
                   if (d.shopActive === 'inactive') {
