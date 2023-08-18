@@ -1,10 +1,13 @@
 <template>
   <v-main>
     <div class="col-md-12 ml-sm-auto col-lg-12 px-4 d-flex">
-      <v-row class="col-md-12">
+      <div class="container d-flex">
         <div class="col-md-7 col-sm-12">
           <form>
             <v-select
+              style="padding: 3px 0 !important;"
+              dense
+              hide-details
               class="pa-0"
               v-model="formAdd.masBranchID"
               :items="branchItem"
@@ -17,6 +20,9 @@
               @change="getData(), getDataflow()"
             ></v-select>
             <v-select
+              dense
+              hide-details
+              style="padding: 3px 0 !important;"
               class="pa-0"
               v-model="formAdd.flowId"
               :items="flowItem"
@@ -26,10 +32,10 @@
               attach
               :menu-props="{ bottom: true, offsetY: true }"
               :rules="[rules.required]"
-              @change="getData()"
+              @change="getData"
             ></v-select>
             <div class="card" style="padding: 20px">
-              <h3>กำหนดระดับความพึงพอใจ</h3>
+              <b>กำหนดระดับความพึงพอใจ</b>
               <div>
                 <!-- <v-text-field
                   v-model="ratingIntDefault"
@@ -68,6 +74,8 @@
               </div>
               <div style="padding: 0px 4px;" align="right">
                 <v-btn
+                  dense
+                  hide-details
                   :loading="loadingSlider"
                   color="#1B437C"
                   class="ma-2 white--text"
@@ -81,11 +89,13 @@
               </div>
               </div>
             </div>
-            <div class="card" style="padding: 20px">
-              <h3>สร้างแบบสอบถามความพึงพอใจ</h3>
+            <div class="card" style="padding: 2px">
+              <b>สร้างแบบสอบถามความพึงพอใจ</b>
               <v-col cols="12" md="12">
                 <v-textarea
-                  solo
+                  dense
+                  filled
+                  background-color="grey lighten-2"
                   v-model="formAdd.inputText"
                   :rows="2"
                   hidden-detail
@@ -93,6 +103,8 @@
               </v-col>
               <div style="padding: 0px 4px;" align="right">
                 <v-btn
+                  hide-details
+                  dense
                   :loading="loading"
                   :disabled="(formAdd.inputText.length < 1, loading)"
                   color="#1B437C"
@@ -101,17 +113,19 @@
                   large
                   style="width: -webkit-fill-available;border-radius: 16px;margin-top: -20px !important;font-weight: bold;"
                 >
-                  เพิ่มแบบสอบถาม
+                  เพิ่มรายการ
                   <!-- <v-icon right dark> mdi-playlist-plus </v-icon> -->
                 </v-btn>
               </div>
             </div>
           </form>
           <div class="card" style="padding: 20px">
-            <h3>รายการ</h3>
+            <b>รายการ</b>
             <table>
               <tbody v-if="formData.message !== 'No data found'">
                 <draggable
+                  hide-details
+                  dense
                   :list="formData"
                   :disabled="!enabled"
                   class="list-group"
@@ -132,6 +146,8 @@
                       {{ element.answer }}
                     </div>
                     <v-btn
+                      hide-details
+                      dense
                       :loading="loading3"
                       :disabled="loading3"
                       class="ma-2 white--text"
@@ -279,7 +295,7 @@
             </div>
           </div>
         </div>
-      </v-row>
+      </div>
     </div>
   </v-main>
 </template>
@@ -344,6 +360,12 @@ export default {
         text: 'เพิ่มคำถามเรียบร้อยแล้ว',
         type: 'success',
         icon: 'success'
+      },
+      nonswasuccess: {
+        title: 'ไม่กรอกข้อมูล',
+        text: 'โปรดเพิ่มคำถามก่อนบันทึก',
+        type: 'info',
+        icon: 'info'
       },
       swasuccessrate: {
         title: 'สำเร็จ',
@@ -476,15 +498,19 @@ export default {
           masBranchID: this.formAdd.masBranchID,
           flowId: this.formAdd.flowId
         }
-        this.loading = true
-        this.updateOrder()
-        axios.post(this.DNS_IP + '/ratingformat/add', payload).then(respone => {
-          this.$swal(this.swasuccess)
-          this.loading = false
-          // console.log(respone)
-          this.getData()
-          this.formAdd.inputText = ''
-        })
+        if (this.formAdd.inputText.length > 0) {
+          this.loading = true
+          this.updateOrder()
+          axios.post(this.DNS_IP + '/ratingformat/add', payload).then(respone => {
+            this.$swal(this.swasuccess)
+            this.loading = false
+            // console.log(respone)
+            this.getData()
+            this.formAdd.inputText = ''
+          })
+        } else {
+          this.$swal(this.nonswasuccess)
+        }
       } catch (error) {
         console.error(error)
       } finally {
@@ -655,8 +681,8 @@ p {
 }
 .card {
   padding: 10px;
-  border-radius: 20px;
-  margin-bottom: 20px;
+  border-radius: 10px;
+  margin-bottom: 5px;
 }
 @media screen and (min-width: 768px) {
   .respons_mobie {

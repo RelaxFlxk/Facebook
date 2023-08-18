@@ -981,7 +981,8 @@ export default {
                 { title: 'จัดการ Tag', icon: 'mdi-wrench', to: '/Master/SettingTag', type: 'settings' },
                 { title: 'จัดการ Notify', icon: 'mdi-bell-plus', to: '/Master/SettingLineNotify', type: 'settings' },
                 { title: 'ตั้งค่ารับการแจ้งเตือนอัตโนมัติ', icon: 'mdi-access-point', to: '/System/LINEConfigSendMessage', type: 'settings' },
-                { title: 'ตั้งค่าแบบสอบถาม', icon: 'mdi-star', to: '/Rating/RatingAnswer', type: 'settings' }
+                { title: 'ตั้งค่าแบบสอบถาม', icon: 'mdi-star', to: '/Rating/RatingAnswer', type: 'settings' },
+                { title: 'ตั้งค่ากำหนดจำนวนวันส่งข้อความ', icon: 'mdi-mail', to: '/Message/StepMessage', type: 'settings' }
               ]
             } else {
               this.settings = [
@@ -992,7 +993,8 @@ export default {
                 { title: 'จัดการ Tag', icon: 'mdi-wrench', to: '/Master/SettingTag', type: 'settings' },
                 { title: 'จัดการ Notify', icon: 'mdi-bell-plus', to: '/Master/SettingLineNotify', type: 'settings' },
                 { title: 'ตั้งค่ารับการแจ้งเตือนอัตโนมัติ', icon: 'mdi-access-point', to: '/System/LINEConfigSendMessage', type: 'settings' },
-                { title: 'ตั้งค่าแบบสอบถาม', icon: 'mdi-star', to: '/Rating/RatingAnswer', type: 'settings' }
+                { title: 'ตั้งค่าแบบสอบถาม', icon: 'mdi-star', to: '/Rating/RatingAnswer', type: 'settings' },
+                { title: 'ตั้งค่ากำหนดจำนวนวันส่งข้อความ', icon: 'mdi-mail', to: '/Message/StepMessage', type: 'settings' }
               ]
             }
           } else {
@@ -1005,7 +1007,8 @@ export default {
               { title: 'จัดการ Tag', icon: 'mdi-wrench', to: '/Master/SettingTag', type: 'settings' },
               { title: 'จัดการ Notify', icon: 'mdi-bell-plus', to: '/Master/SettingLineNotify', type: 'settings' },
               { title: 'ตั้งค่ารับการแจ้งเตือนอัตโนมัติ', icon: 'mdi-access-point', to: '/System/LINEConfigSendMessage', type: 'settings' },
-              { title: 'ตั้งค่าแบบสอบถาม', icon: 'mdi-star', to: '/Rating/RatingAnswer', type: 'settings' }
+              { title: 'ตั้งค่าแบบสอบถาม', icon: 'mdi-star', to: '/Rating/RatingAnswer', type: 'settings' },
+              { title: 'ตั้งค่ากำหนดจำนวนวันส่งข้อความ', icon: 'mdi-mail', to: '/Message/StepMessage', type: 'settings' }
             ]
           }
         } else {
@@ -1020,7 +1023,8 @@ export default {
                 { title: 'จัดการ Tag', icon: 'mdi-wrench', to: '/Master/SettingTag', type: 'settings' },
                 { title: 'จัดการ Notify', icon: 'mdi-bell-plus', to: '/Master/SettingLineNotify', type: 'settings' },
                 { title: 'ตั้งค่ารับการแจ้งเตือนอัตโนมัติ', icon: 'mdi-access-point', to: '/System/LINEConfigSendMessage', type: 'settings' },
-                { title: 'ตั้งค่าแบบสอบถาม', icon: 'mdi-star', to: '/Rating/RatingAnswer', type: 'settings' }
+                { title: 'ตั้งค่าแบบสอบถาม', icon: 'mdi-star', to: '/Rating/RatingAnswer', type: 'settings' },
+                { title: 'ตั้งค่ากำหนดจำนวนวันส่งข้อความ', icon: 'mdi-mail', to: '/Message/StepMessage', type: 'settings' }
               ]
             } else {
               this.settings = [
@@ -1031,7 +1035,8 @@ export default {
                 { title: 'จัดการ Tag', icon: 'mdi-wrench', to: '/Master/SettingTag', type: 'settings' },
                 { title: 'จัดการ Notify', icon: 'mdi-bell-plus', to: '/Master/SettingLineNotify', type: 'settings' },
                 { title: 'ตั้งค่ารับการแจ้งเตือนอัตโนมัติ', icon: 'mdi-access-point', to: '/System/LINEConfigSendMessage', type: 'settings' },
-                { title: 'ตั้งค่าแบบสอบถาม', icon: 'mdi-star', to: '/Rating/RatingAnswer', type: 'settings' }
+                { title: 'ตั้งค่าแบบสอบถาม', icon: 'mdi-star', to: '/Rating/RatingAnswer', type: 'settings' },
+                { title: 'ตั้งค่ากำหนดจำนวนวันส่งข้อความ', icon: 'mdi-mail', to: '/Message/StepMessage', type: 'settings' }
               ]
             }
           } else {
@@ -1044,7 +1049,8 @@ export default {
               { title: 'จัดการ Tag', icon: 'mdi-wrench', to: '/Master/SettingTag', type: 'settings' },
               { title: 'จัดการ Notify', icon: 'mdi-bell-plus', to: '/Master/SettingLineNotify', type: 'settings' },
               { title: 'ตั้งค่ารับการแจ้งเตือนอัตโนมัติ', icon: 'mdi-access-point', to: '/System/LINEConfigSendMessage', type: 'settings' },
-              { title: 'ตั้งค่าแบบสอบถาม', icon: 'mdi-star', to: '/Rating/RatingAnswer', type: 'settings' }
+              { title: 'ตั้งค่าแบบสอบถาม', icon: 'mdi-star', to: '/Rating/RatingAnswer', type: 'settings' },
+              { title: 'ตั้งค่ากำหนดจำนวนวันส่งข้อความ', icon: 'mdi-mail', to: '/Message/StepMessage', type: 'settings' }
             ]
           }
         }
