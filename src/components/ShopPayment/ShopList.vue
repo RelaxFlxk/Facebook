@@ -1240,7 +1240,7 @@ export default {
         { text: 'email', value: 'contactEmail' },
         { text: 'จำนวนนัดหมายที่สร้างของเดือนที่แล้ว', value: 'countBooking' },
         { text: 'สลิป', value: 'paymentImage' },
-        { text: 'ยอดเงินที่ชำระ', value: 'paymentAmount' },
+        { text: 'ยอดเงินที่ชำระ', value: 'paymentDateuse' },
         { text: 'สถานะ', value: 'paymentStatus' },
         { text: 'วันที่จ่าย/วันที่หมดอายุ', value: 'paymentDate' },
         { text: 'วันวันที่สิ้นสุดทดลองใช้', value: 'trialsVersionDate' },
@@ -1654,6 +1654,13 @@ export default {
                   d.paymentDate = d.billingEndDate
                 }
               }
+              let s = {}
+              s.amountCheck = d.paymentAmountSlip || ''
+              if (s.amountCheck === '') {
+                d.paymentDateuse = d.paymentAmount
+              } else {
+                d.paymentDateuse = d.paymentAmountSlip
+              }
               this.itemBooking.push(d)
             }
             // this.itemBookingUse = this.itemBooking.filter(el => { return el.paymentStatus === this.getSelectText })
@@ -1685,6 +1692,13 @@ export default {
                 //     d.paymentStatus = 'finish'
                 //   }
                 // }
+                let s = {}
+                s.amountCheck = d.paymentAmountSlip || ''
+                if (s.amountCheck === '') {
+                  d.paymentDateuse = d.paymentAmount
+                } else {
+                  d.paymentDateuse = d.paymentAmountSlip
+                }
                 if (d.paymentStatus === 'noCash') {
                   if (d.shopActive === 'inactive') {
                     d.paymentStatus = 'inactive'
@@ -1727,6 +1741,13 @@ export default {
                   d.paymentDate = d.billingEndDate
                 }
               }
+              let s = {}
+              s.amountCheck = d.paymentAmountSlip || ''
+              if (s.amountCheck === '') {
+                d.paymentDateuse = d.paymentAmount
+              } else {
+                d.paymentDateuse = d.paymentAmountSlip
+              }
               this.itemBooking.push(d)
             }
             // this.itemBookingUse = this.itemBooking.filter(el => { return el.paymentStatus === this.getSelectText })
@@ -1758,6 +1779,13 @@ export default {
                 //     d.paymentStatus = 'finish'
                 //   }
                 // }
+                let s = {}
+                s.amountCheck = d.paymentAmountSlip || ''
+                if (s.amountCheck === '') {
+                  d.paymentDateuse = d.paymentAmount
+                } else {
+                  d.paymentDateuse = d.paymentAmountSlip
+                }
                 if (d.paymentStatus === 'noCash') {
                   if (d.shopActive === 'inactive') {
                     d.paymentStatus = 'inactive'
@@ -1940,7 +1968,7 @@ export default {
           { text: 'email', value: 'contactEmail' },
           // { text: 'จำนวนนัดหมายที่สร้างของเดือนที่แล้ว', value: 'countBooking' },
           { text: 'สลิป', value: 'paymentImage' },
-          { text: 'ยอดเงินที่ชำระ', value: 'paymentAmount' },
+          { text: 'ยอดเงินที่ชำระ', value: 'paymentDateuse' },
           { text: 'สถานะ', value: 'paymentStatus' },
           { text: 'วันที่จ่าย/วันที่หมดอายุ', value: 'paymentDate' },
           { text: 'วันที่สิ้นสุดทดลองใช้', value: 'trialsVersionDate' },
@@ -1956,7 +1984,7 @@ export default {
           { text: 'email', value: 'contactEmail' },
           { text: 'จำนวนนัดหมายที่สร้างของเดือนที่แล้ว', value: 'countBooking' },
           { text: 'สลิป', value: 'paymentImage' },
-          { text: 'ยอดเงินที่ชำระ', value: 'paymentAmount' },
+          { text: 'ยอดเงินที่ชำระ', value: 'paymentDateuse' },
           { text: 'สถานะ', value: 'paymentStatus' },
           { text: 'วันที่จ่าย/วันที่หมดอายุ', value: 'paymentDate' },
           { text: 'วันที่สิ้นสุดทดลองใช้', value: 'trialsVersionDate' },
@@ -1979,7 +2007,7 @@ export default {
         { text: 'email', value: 'contactEmail' },
         { text: 'จำนวนนัดหมายที่สร้างของเดือนที่แล้ว', value: 'countBooking' },
         { text: 'สลิป', value: 'paymentImage' },
-        { text: 'ยอดเงินที่ชำระ', value: 'paymentAmount' },
+        { text: 'ยอดเงินที่ชำระ', value: 'paymentDateuse' },
         { text: 'สถานะ', value: 'paymentStatus' },
         { text: 'วันที่จ่าย/วันที่หมดอายุ', value: 'paymentDate' },
         { text: 'วันวันที่สิ้นสุดทดลองใช้', value: 'trialsVersionDate' },
