@@ -89,7 +89,7 @@
               </div>
               </div>
             </div>
-            <div class="card" style="padding: 2px">
+            <div class="card" style="padding: 20px">
               <b>สร้างแบบสอบถามความพึงพอใจ</b>
               <v-col cols="12" md="12">
                 <v-textarea
@@ -99,6 +99,7 @@
                   v-model="formAdd.inputText"
                   :rows="2"
                   hidden-detail
+                  placeholder="กรอก แบบสอบถาม"
                 ></v-textarea>
               </v-col>
               <div style="padding: 0px 4px;" align="right">
