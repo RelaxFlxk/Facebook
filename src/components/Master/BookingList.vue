@@ -3648,10 +3648,11 @@ export default {
       })
     },
     async getBookingFieldText () {
-      if (JSON.parse(localStorage.getItem('sessionData')) === null) {
+      console.log('getBookingFieldText', JSON.parse(localStorage.getItem('sessionData')))
+      if (JSON.parse(localStorage.getItem('typeData')) === null) {
         await axios
           .get(
-            this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+            this.DNS_IP + '/BookingField/get?shopId=' + this.$session.getAll().data.shopId
           )
           .then(async response => {
             let rs = response.data
@@ -3686,7 +3687,7 @@ export default {
     // async getShowMap () {
     //   await axios
     //     .get(
-    //       this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+    //       this.DNS_IP + '/BookingField/get?shopId=' + this.$session.getAll().data.shopId
     //     )
     //     .then(async response1 => {
     //       let rs = response1.data
@@ -3740,7 +3741,7 @@ export default {
           // eslint-disable-next-line quotes
             this.DNS_IP +
             '/booking_view/getSearchNew?shopId=' +
-            this.session.data.shopId +
+            this.$session.getAll().data.shopId +
             '&fieldValue=' +
             this.searchOther + '&checkOnsite=is null'
           )
@@ -3981,7 +3982,7 @@ export default {
       let itemIncustomField = []
       await axios
         .get(
-          this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+          this.DNS_IP + '/BookingField/get?shopId=' + this.$session.getAll().data.shopId
         )
         .then(async response1 => {
           let rs2 = response1.data
@@ -4089,7 +4090,7 @@ export default {
         if (checkDupliRegNo.length > 0) {
           // console.log('checkDupliRegNo', checkDupliRegNo[0].fieldValue.replace(/ /g, ''))
           await axios
-            .get(this.DNS_IP + '/booking_view/getSearchDuplicate?shopId=' + this.session.data.shopId + '&fieldValue=' + checkDupliRegNo[0].fieldValue.replace(/ /g, '') +
+            .get(this.DNS_IP + '/booking_view/getSearchDuplicate?shopId=' + this.$session.getAll().data.shopId + '&fieldValue=' + checkDupliRegNo[0].fieldValue.replace(/ /g, '') +
             '&flowId=' + this.formEdit.flowId + '&dueDate=' + this.dateEdit + '&noBookNo=' + checkDupliRegNo[0].bookNo + '&statusBt=noCancel' + '&checkOnsite=is null')
             .then(response => {
               let rs = response.data
@@ -4198,7 +4199,7 @@ export default {
             update.extraJob = extraJob
             update.LAST_USER = this.$session.getAll().data.userName
             update.empSelect = this.empSelectEdit
-            update.shopId = this.session.data.shopId
+            update.shopId = this.$session.getAll().data.shopId
             Add.push(update)
           } else {
             if (
@@ -4225,7 +4226,7 @@ export default {
                 update.extraJob = extraJob
                 update.LAST_USER = this.$session.getAll().data.userName
                 update.empSelect = this.empSelectEdit
-                update.shopId = this.session.data.shopId
+                update.shopId = this.$session.getAll().data.shopId
                 Add.push(update)
               }
             } else if (d.conditionField === 'flow') {
@@ -4243,7 +4244,7 @@ export default {
                 update.extraJob = extraJob
                 update.LAST_USER = this.$session.getAll().data.userName
                 update.empSelect = this.empSelectEdit
-                update.shopId = this.session.data.shopId
+                update.shopId = this.$session.getAll().data.shopId
                 Add.push(update)
               }
             }
@@ -4442,7 +4443,7 @@ export default {
       }
     },
     exportExcelMazda () {
-      const url = `${window.location.origin}/mazda/report?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&timeTable=${this.timeTable}&checkOnsite=is null`
+      const url = `${window.location.origin}/mazda/report?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&timeTable=${this.timeTable}&checkOnsite=is null`
       window.open(url, '_blank').focus()
     },
     exportExcel () {
@@ -4908,7 +4909,7 @@ export default {
       }
     },
     async scanQrcode () {
-      if (this.$route.query.shopId === this.session.data.shopId) {
+      if (this.$route.query.shopId === this.$session.getAll().data.shopId) {
         let dt = {
           bookNo: this.$route.query.bookNo
         }
@@ -4971,7 +4972,7 @@ export default {
           // eslint-disable-next-line quotes
             this.DNS_IP +
             '/booking_view/getJob?shopId=' +
-            this.session.data.shopId +
+            this.$session.getAll().data.shopId +
             '&bookNo=' +
             item.bookNo
           )
@@ -5124,7 +5125,7 @@ export default {
     async getDataFromAPI (url, fieldId, fieldName, param) {
       let result = []
       await axios
-        .get(this.DNS_IP + `${url}?shopId=${this.session.data.shopId}${param}`)
+        .get(this.DNS_IP + `${url}?shopId=${this.$session.getAll().data.shopId}${param}`)
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
@@ -5150,7 +5151,7 @@ export default {
       let result = []
       let resultOption = []
       await axios
-        .get(this.DNS_IP + `/flow/get?shopId=${this.session.data.shopId}&checkOnsite=is null`)
+        .get(this.DNS_IP + `/flow/get?shopId=${this.$session.getAll().data.shopId}&checkOnsite=is null`)
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
@@ -5200,7 +5201,7 @@ export default {
           // eslint-disable-next-line quotes
           this.DNS_IP +
             '/booking_view/get?shopId=' +
-            this.session.data.shopId +
+            this.$session.getAll().data.shopId +
             '&masBranchID=' +
             this.masBranchIDExport +
             '&dateRange=' + new Date(this.dateRange.startDate).toISOString().substr(0, 10) + '/' + new Date(this.dateRange.endDate).toISOString().substr(0, 10) + '&checkOnsite=is null'
@@ -5479,7 +5480,7 @@ export default {
                 // eslint-disable-next-line quotes
                 this.DNS_IP +
                     '/booking_view/get?shopId=' +
-                    this.session.data.shopId +
+                    this.$session.getAll().data.shopId +
                     '&masBranchID=' +
                     this.masBranchID +
                     '&dueDate=' + moment(moment(this.timeTable, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD') + '&checkOnsite=is null&flowId=' + this.flowSelect
@@ -5622,7 +5623,7 @@ export default {
     //               // eslint-disable-next-line quotes
     //                 this.DNS_IP +
     //                 '/booking_view/get?shopId=' +
-    //                 this.session.data.shopId +
+    //                 this.$session.getAll().data.shopId +
     //                 '&masBranchID=' +
     //                 this.masBranchID +
     //                 '&dueDate=' + moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM')
@@ -5741,7 +5742,7 @@ export default {
           this.masBranchID = ''
         }
       }
-      let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
+      let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
       await axios
         .get(url)
         .then(async response => {
@@ -5770,9 +5771,9 @@ export default {
       }
       let url = ''
       if (dateStart === 'no') {
-        url = `${this.DNS_IP}/BookingData/getsearchOther?shopId=${this.session.data.shopId}&fieldValue=${searchOther}`
+        url = `${this.DNS_IP}/BookingData/getsearchOther?shopId=${this.$session.getAll().data.shopId}&fieldValue=${searchOther}`
       } else {
-        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
+        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
       }
       await axios
         .get(url)
@@ -5841,7 +5842,7 @@ export default {
           // eslint-disable-next-line quotes
           this.DNS_IP +
             '/booking_view/get?shopId=' +
-            this.session.data.shopId +
+            this.$session.getAll().data.shopId +
             '&masBranchID=' +
             this.masBranchID +
             '&dueDate=' +
@@ -5943,7 +5944,7 @@ export default {
           this.dataReady = true
           //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
         })
-      let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&statusBt=is null`
+      let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&statusBt=is null`
       await axios
         .get(url)
         .then(async response => {
@@ -5961,7 +5962,7 @@ export default {
           // eslint-disable-next-line quotes
           this.DNS_IP +
                 '/booking_view/get?shopId=' +
-                this.session.data.shopId +
+                this.$session.getAll().data.shopId +
                 '&masBranchID=' +
                 this.masBranchID +
                 '&statusBt=null&checkOnsite=is null&flowId=' + this.flowSelect
@@ -6086,7 +6087,7 @@ export default {
       let itemIncustomField = []
       await axios
         .get(
-          this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+          this.DNS_IP + '/BookingField/get?shopId=' + this.$session.getAll().data.shopId
         )
         .then(async response => {
           let rs = response.data
@@ -6190,7 +6191,7 @@ export default {
             '/flowField/get?flowId=' +
             item.flowId +
             '&shopId=' +
-            this.session.data.shopId
+            this.$session.getAll().data.shopId
         )
         .then(response => {
           let tt = response.data
@@ -6419,7 +6420,7 @@ export default {
           let checkDupliRegNo = this.fieldNameItem.filter(el => { return el.fieldName === 'เลขทะเบียน' })
           if (checkDupliRegNo.length > 0) {
             await axios
-              .get(this.DNS_IP + '/booking_view/getSearchDuplicate?shopId=' + this.session.data.shopId + '&fieldValue=' + checkDupliRegNo[0].fieldValue.replace(/ /g, '') +
+              .get(this.DNS_IP + '/booking_view/getSearchDuplicate?shopId=' + this.$session.getAll().data.shopId + '&fieldValue=' + checkDupliRegNo[0].fieldValue.replace(/ /g, '') +
             '&flowId=' + this.formAdd.flowId + '&dueDate=' + this.date + '&statusBt=noCancel' + '&checkOnsite=is null')
               .then(async response => {
                 let rs = response.data
@@ -6625,7 +6626,7 @@ export default {
       if (this.statusConfirmJob) {
         await axios
           .get(
-            this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+            this.DNS_IP + '/BookingField/get?shopId=' + this.$session.getAll().data.shopId
           )
           .then(async response1 => {
             let rs2 = response1.data
@@ -6676,7 +6677,7 @@ export default {
                               } else {
                                 d.userId = rs[0].userId
                               }
-                              d.shopId = this.session.data.shopId
+                              d.shopId = this.$session.getAll().data.shopId
                               d.userName = this.$session.getAll().data.userName
                               this.BookingDataItem.push(d)
                             }
@@ -6707,7 +6708,7 @@ export default {
               if (d.userId === 'user-skip') {
                 d.userId = ''
               }
-              d.shopId = this.session.data.shopId
+              d.shopId = this.$session.getAll().data.shopId
               d.userName = this.$session.getAll().data.userName
               this.BookingDataItem.push(d)
             }
@@ -6954,7 +6955,7 @@ export default {
         .get(
           this.DNS_IP +
             '/member/get?shopId=' +
-            this.session.data.shopId +
+            this.$session.getAll().data.shopId +
             '&liffUserId=' +
             this.BookingDataItem[0].userId
         )
@@ -7501,7 +7502,7 @@ export default {
           .get(
             this.DNS_IP +
             '/member/get?shopId=' +
-            this.session.data.shopId +
+            this.$session.getAll().data.shopId +
             '&liffUserId=' +
             item.userId
           )

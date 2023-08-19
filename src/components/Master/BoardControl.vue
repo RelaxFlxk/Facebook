@@ -1668,7 +1668,7 @@ export default {
       }
     },
     async getBookingFieldText () {
-      if (JSON.parse(localStorage.getItem('sessionData')) === null) {
+      if (JSON.parse(localStorage.getItem('typeData')) === null) {
         await axios
           .get(
             this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
