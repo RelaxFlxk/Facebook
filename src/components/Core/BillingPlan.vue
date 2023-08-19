@@ -1235,7 +1235,7 @@ export default {
               let s = {}
               s.amountCheck = d.paymentAmountSlip || ''
               if (s.amountCheck === '') {
-                d.paymentDateuse = d.paymentDate
+                d.paymentDateuse = d.paymentAmount
               } else {
                 d.paymentDateuse = d.paymentAmountSlip
               }
