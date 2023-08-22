@@ -119,13 +119,13 @@
                   <strong v-html="item.displayName"></strong>
                 </template>
                 <template v-slot:[`item.rating`]="{ item }">
-                  <div v-if="rs.length > 0 && rs.answerId">
+                  <div v-if="rs.answerId !== null">
                   <v-rating
                     v-model="item.rating"
                     color="yellow darken-3"
                     background-color="grey darken-1"
                     empty-icon="$ratingFull"
-                    length="6"
+                    :length="item.ratingMax === '' || item.ratingMax === null ? 5 : item.ratingMax"
                     readonly
                     small
                   ></v-rating>
@@ -241,13 +241,13 @@
                   <v-col cols="12" class="pt-0">
                     <div v-for="(data, index) in dataRating" :key="index">
                       <label>{{ data.answer }}</label>
-                      <div v-if="rs.length > 0 && rs.answerId">
+                      <div v-if="rs.answerId !== null">
                       <v-rating
                         v-model="data.rating"
                         color="yellow darken-3"
                         background-color="grey darken-1"
                         empty-icon="$ratingFull"
-                        length="6"
+                        :length="data.ratingMax === '' || data.ratingMax === null ? 5 : data.ratingMax"
                         readonly
                         small
                       ></v-rating>
@@ -355,13 +355,13 @@
                   <v-col cols="12" class="pt-0">
                     <div v-for="(data, index) in dataRating" :key="index">
                       <label>{{ data.answer }}</label>
-                      <div v-if="rs.length > 0 && rs.answerId">
+                      <div v-if="rs.answerId !== null">
                         <v-rating
                         v-model="data.rating"
                         color="yellow darken-3"
                         background-color="grey darken-1"
                         empty-icon="$ratingFull"
-                        length="6"
+                        :length="data.ratingMax === '' || data.ratingMax === null ? 5 : data.ratingMax"
                         readonly
                         small
                       ></v-rating>
@@ -590,6 +590,7 @@ export default {
                       id: d.id,
                       refId: refId,
                       rating: parseInt(d.rating),
+                      ratingMax: d.ratingMax,
                       comment: d.comment,
                       typeWork: d.typeWork,
                       displayName: d.displayName,
