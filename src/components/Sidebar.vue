@@ -861,9 +861,9 @@ export default {
       this.$root.$emit('closeSetTimeBookingListQueue')
     },
     logout () {
-      console.log(this.$session.getAll())
-      // this.$session.destroy()
-      // this.$session.clear()
+      this.$session.destroy()
+      this.$session.clear()
+      localStorage.clear()
       this.$router.push('/Core/Login')
     },
     adminChk () {
