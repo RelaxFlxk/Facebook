@@ -3656,7 +3656,7 @@
                             @change="setFlowByBranchEdit()"
                           ></v-select>
                         </v-col>
-                        <v-col cols="2" class="pb-0">
+                        <v-col cols="2" class="pb-0" v-if="(getSelectText !== 'cancel') && (checkSelectText !== 'confirmJob')">
                           <v-btn
                             color="warning"
                             dark
