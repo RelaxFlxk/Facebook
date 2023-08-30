@@ -71,12 +71,14 @@
             <!-- {{ form }} -->
             <v-text-field
               v-model="form.title"
+              :value="form.title"
               :counter="200"
               label="หัวข้อ"
               required
             ></v-text-field>
             <v-textarea
               v-model="form.text"
+              :value="form.text"
               auto-grow
               label="คำอธิบาย"
               rows="1"
@@ -421,11 +423,11 @@ export default {
             this.$emit('testDataInsert')
           })
         } else {
-          console.log('Id........')
+          console.log('Id........', formData)
           axios
             .post(this.DNS_IP + '/stepMessage/edit/' + this.id, formData)
             .then((res) => {
-              // console.log('ccc : ', res)
+              console.log('ccc : ', res)
               this.$swal(this.editAlert)
               this.isDialogOpen = false
               this.item = []
