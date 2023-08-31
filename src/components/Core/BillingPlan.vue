@@ -1017,7 +1017,8 @@ export default {
       optionSubDistrict: [],
       optionProvinces: [],
       shopImge: '',
-      shopName: ''
+      shopName: '',
+      dateTrialsYearMonth: ''
     }
   },
   async mounted () {
@@ -1462,19 +1463,60 @@ export default {
                   }
                 } else {
                   console.log('3')
-                  let dateCalDay = parseInt(lastDayOfMonth) - parseInt(dateTrialsDay)
-                  let dateCalDayCurrent = parseInt(lastDayOfMonth)
-                  this.pricePackage = item.pricePackage
-                  this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth)) + Math.ceil((dateCalDayCurrent * item.pricePackage) / parseInt(lastDayOfMonth))
-                  this.trialsPrice = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth))
-                  this.currentPrice = Math.ceil((dateCalDayCurrent * item.pricePackage) / parseInt(lastDayOfMonth))
-                  this.billingTrialsPriceDateFomat = dateTrialsYear + '-' + dateTrialsMonth + '-' + dateTrialsDay
-                  this.billingCurrentPriceDateFomat = moment().format('YYYY-MM-DD')
-                  this.billingTrialsPriceDateFomatShow = dateTrialsDay + '/' + dateTrialsMonth + '/' + dateTrialsYear
-                  this.billingCurrentPriceDateFomatShow = moment().format('DD/MM/YYYY')
-                  const amount = parseFloat(this.paymentAmount)
-                  let amount7percen = (amount * 0.07)
-                  this.paymentAmountVat = amount7percen.toFixed(2)
+                  if (rs[0].paymentDateMMYY >= moment().format('YYYY-MM')) {
+                    let dateCalDay = parseInt(lastDayOfMonth) - parseInt(dateTrialsDay)
+                    let dateCalDayCurrent = parseInt(lastDayOfMonth)
+                    this.pricePackage = item.pricePackage
+                    this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth)) + Math.ceil((dateCalDayCurrent * item.pricePackage) / parseInt(lastDayOfMonth))
+                    this.trialsPrice = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth))
+                    this.currentPrice = Math.ceil((dateCalDayCurrent * item.pricePackage) / parseInt(lastDayOfMonth))
+                    this.billingTrialsPriceDateFomat = dateTrialsYear + '-' + dateTrialsMonth + '-' + dateTrialsDay
+                    this.billingCurrentPriceDateFomat = moment().format('YYYY-MM-DD')
+                    this.billingTrialsPriceDateFomatShow = dateTrialsDay + '/' + dateTrialsMonth + '/' + dateTrialsYear
+                    this.billingCurrentPriceDateFomatShow = moment().format('DD/MM/YYYY')
+                    const amount = parseFloat(this.paymentAmount)
+                    let amount7percen = (amount * 0.07)
+                    this.paymentAmountVat = amount7percen.toFixed(2)
+                  } else {
+                    if (dateTrialsYearMonth > moment().format('YYYY-MM')) {
+                      console.log('4')
+                      this.dateTrialsYearMonth = dateTrialsYearMonth
+                      lastDayOfMonth = moment(this.$session.getAll().data.trialsVersionDate).endOf('month').format('DD')
+                      let dateCalDay = parseInt(lastDayOfMonth) - parseInt(dateTrialsDay)
+                      let dateCalDayCurrent = parseInt(lastDayOfMonth)
+                      this.pricePackage = item.pricePackage
+                      this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth))
+                      this.trialsPrice = 0
+                      this.currentPrice = Math.ceil((dateCalDayCurrent * item.pricePackage) / parseInt(lastDayOfMonth))
+                      this.billingTrialsPriceDateFomat = ''
+                      this.billingCurrentPriceDateFomat = moment().format('YYYY-MM-DD')
+                      this.billingTrialsPriceDateFomatShow = ''
+                      this.billingCurrentPriceDateFomatShow = moment().format('DD/MM/YYYY')
+                      const amount = parseFloat(this.paymentAmount)
+                      let amount7percen = (amount * 0.07)
+                      this.paymentAmountVat = amount7percen.toFixed(2)
+                    } else {
+                      console.log('5')
+                      let dateCalDay = parseInt(lastDayOfMonth) - parseInt(dateTrialsDay)
+                      let dateCalDayCurrent = parseInt(lastDayOfMonth)
+                      this.pricePackage = item.pricePackage
+                      this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth))
+                      this.trialsPrice = 0
+                      this.currentPrice = Math.ceil((dateCalDayCurrent * item.pricePackage) / parseInt(lastDayOfMonth))
+                      this.billingTrialsPriceDateFomat = ''
+                      this.billingCurrentPriceDateFomat = moment().format('YYYY-MM-DD')
+                      this.billingTrialsPriceDateFomatShow = ''
+                      this.billingCurrentPriceDateFomatShow = moment().format('DD/MM/YYYY')
+                      const amount = parseFloat(this.paymentAmount)
+                      let amount7percen = (amount * 0.07)
+                      this.paymentAmountVat = amount7percen.toFixed(2)
+                    }
+
+                    console.log('lastDayOfMonth', lastDayOfMonth)
+                    console.log('this.paymentAmount', this.paymentAmount)
+                    console.log('this.currentPrice', this.currentPrice)
+                    console.log('this.paymentAmountVat', this.paymentAmountVat)
+                  }
                 }
               }
             } else {
@@ -1627,6 +1669,13 @@ export default {
                   if (response.status) {
                     this.updateShopActive('active', item.id)
                     this.$swal('สำเร็จ', 'อัพโหลดสลิปสำเร็จ', 'success')
+                    let lastDayOfMonth = ''
+                    if (this.dateTrialsYearMonth > moment().format('YYYY-MM')) {
+                      console.log('4')
+                      lastDayOfMonth = moment(this.$session.getAll().data.trialsVersionDate).endOf('month').format('MM/YYYY')
+                    } else {
+                      lastDayOfMonth = moment().format('MM/YYYY')
+                    }
                     let dtMgs = {
                       shopId: this.$session.getAll().data.shopId,
                       NotifyImg: this.paymentImge,
@@ -1644,7 +1693,7 @@ export default {
                       currentPrice: this.currentPrice,
                       billingTrialsPriceDateFomat: this.billingTrialsPriceDateFomat,
                       billingCurrentPriceDateFomat: this.billingCurrentPriceDateFomat,
-                      paymentDateMonthYear: moment().format('MM/YYYY'),
+                      paymentDateMonthYear: lastDayOfMonth,
                       statusNoti: 'New'
                     }
                     await axios
@@ -1795,37 +1844,84 @@ export default {
       if (packetId) {
         let billingTrialsPriceDateFomat = this.billingTrialsPriceDateFomat === '' ? null : this.billingTrialsPriceDateFomat
         let billingCurrentPriceDateFomat = this.billingCurrentPriceDateFomat === '' ? null : this.billingCurrentPriceDateFomat
-        ds = {
-          shopActive: text,
-          billingCusName: this.billingCusName,
-          billingAddress: this.billingAddress,
-          billingAddressDetails: this.billingAddressDetails,
-          billingSubDistrict: this.billingSubDistrict,
-          billingDistrict: this.billingDistrict,
-          billingProvinces: this.billingProvinces,
-          billingPostalCode: this.billingPostalCode,
-          billingTax: this.billingTax,
-          billingPhone: this.billingPhone,
-          billingPlan: packetId,
-          billingTrialsPrice: this.trialsPrice,
-          billingCurrentPrice: this.currentPrice,
-          billingTrialsPriceDate: billingTrialsPriceDateFomat,
-          billingCurrentPriceDate: billingCurrentPriceDateFomat,
-          LAST_USER: this.$session.getAll().data.userName
+        if (this.dateTrialsYearMonth > moment().format('YYYY-MM')) {
+          console.log('4')
+          let lastDayOfMonth = moment(this.$session.getAll().data.trialsVersionDate).endOf('month').format('YYYY-MM-DD')
+          ds = {
+            shopActive: text,
+            billingCusName: this.billingCusName,
+            billingAddress: this.billingAddress,
+            billingAddressDetails: this.billingAddressDetails,
+            billingSubDistrict: this.billingSubDistrict,
+            billingDistrict: this.billingDistrict,
+            billingProvinces: this.billingProvinces,
+            billingPostalCode: this.billingPostalCode,
+            billingTax: this.billingTax,
+            billingPhone: this.billingPhone,
+            billingPlan: packetId,
+            billingTrialsPrice: this.trialsPrice,
+            billingCurrentPrice: this.currentPrice,
+            billingTrialsPriceDate: billingTrialsPriceDateFomat,
+            billingCurrentPriceDate: billingCurrentPriceDateFomat,
+            LAST_USER: this.$session.getAll().data.userName,
+            billingEndDate: lastDayOfMonth
+          }
+        } else {
+          let lastDayOfMonth = moment().endOf('month').format('YYYY-MM-DD')
+          ds = {
+            shopActive: text,
+            billingCusName: this.billingCusName,
+            billingAddress: this.billingAddress,
+            billingAddressDetails: this.billingAddressDetails,
+            billingSubDistrict: this.billingSubDistrict,
+            billingDistrict: this.billingDistrict,
+            billingProvinces: this.billingProvinces,
+            billingPostalCode: this.billingPostalCode,
+            billingTax: this.billingTax,
+            billingPhone: this.billingPhone,
+            billingPlan: packetId,
+            billingTrialsPrice: this.trialsPrice,
+            billingCurrentPrice: this.currentPrice,
+            billingTrialsPriceDate: billingTrialsPriceDateFomat,
+            billingCurrentPriceDate: billingCurrentPriceDateFomat,
+            LAST_USER: this.$session.getAll().data.userName,
+            billingEndDate: lastDayOfMonth
+          }
         }
       } else {
-        ds = {
-          shopActive: text,
-          billingCusName: this.billingCusName,
-          billingAddress: this.billingAddress,
-          billingAddressDetails: this.billingAddressDetails,
-          billingSubDistrict: this.billingSubDistrict,
-          billingDistrict: this.billingDistrict,
-          billingProvinces: this.billingProvinces,
-          billingPostalCode: this.billingPostalCode,
-          billingTax: this.billingTax,
-          billingPhone: this.billingPhone,
-          LAST_USER: this.$session.getAll().data.userName
+        if (this.dateTrialsYearMonth > moment().format('YYYY-MM')) {
+          console.log('4')
+          let lastDayOfMonth = moment(this.$session.getAll().data.trialsVersionDate).endOf('month').format('YYYY-MM-DD')
+          ds = {
+            shopActive: text,
+            billingCusName: this.billingCusName,
+            billingAddress: this.billingAddress,
+            billingAddressDetails: this.billingAddressDetails,
+            billingSubDistrict: this.billingSubDistrict,
+            billingDistrict: this.billingDistrict,
+            billingProvinces: this.billingProvinces,
+            billingPostalCode: this.billingPostalCode,
+            billingTax: this.billingTax,
+            billingPhone: this.billingPhone,
+            LAST_USER: this.$session.getAll().data.userName,
+            billingEndDate: lastDayOfMonth
+          }
+        } else {
+          let lastDayOfMonth = moment().endOf('month').format('YYYY-MM-DD')
+          ds = {
+            shopActive: text,
+            billingCusName: this.billingCusName,
+            billingAddress: this.billingAddress,
+            billingAddressDetails: this.billingAddressDetails,
+            billingSubDistrict: this.billingSubDistrict,
+            billingDistrict: this.billingDistrict,
+            billingProvinces: this.billingProvinces,
+            billingPostalCode: this.billingPostalCode,
+            billingTax: this.billingTax,
+            billingPhone: this.billingPhone,
+            LAST_USER: this.$session.getAll().data.userName,
+            billingEndDate: lastDayOfMonth
+          }
         }
       }
       await axios
