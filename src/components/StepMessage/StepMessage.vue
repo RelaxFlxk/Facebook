@@ -1,6 +1,6 @@
 <template>
   <v-main>
-    <div class="col-md-12 ml-sm-auto col-lg-12 px-4 d-flex"  style="background-color: #f2f7ff">
+    <div class="col-md-12 ml-sm-auto col-lg-12 px-4 d-flex" style="background-color: #f2f7ff">
       <StepMessageForm ref="StepMessageForm" @testData="getdata()" @testDataInsert="getdata()"></StepMessageForm>
       <div style="width: -webkit-fill-available;">
         <div class="row-title">
@@ -40,9 +40,7 @@
             <div style="padding-top: 13px;padding-left: 20px;cursor: pointer;    width: min-content;">
               <div>
                 <div class="radio-switch">
-                  <input type="radio" class="radio-switch-input" id="radio-switch-All" value="All"
-                    v-model="formfilter.statusTitle" />
-                  <label class="radio-switch-label" for="radio-switch-All" :style="{
+                  <label class="radio-switch-label" for="radio-switch-All"  @click="allfilter('All')" :style="{
                     backgroundColor:
                       selectedOptionAll === 'All' ? '#5987d6' : '#fff',
                     color: selectedOptionAll === 'All' ? '#fff' : '#ddd',
@@ -51,28 +49,22 @@
                         ? '10px'
                         : '10px 0px 0px 10px'
                   }">All</label>
-                  <input type="radio" class="radio-switch-input" id="radio-switch-low" value="nomal"
-                    v-model="formfilter.statusTitle" />
-                  <label class="radio-switch-label" for="radio-switch-low" :style="{
+                  <label class="radio-switch-label" for="radio-switch-low" @click="allfilter('normal')" :style="{
                     backgroundColor:
-                      selectedOptionAll === 'nomal' ? '#5987d6' : '#fff',
-                    color: selectedOptionAll === 'nomal' ? '#fff' : '#ddd',
+                      selectedOptionAll === 'normal' ? '#5987d6' : '#fff',
+                    color: selectedOptionAll === 'normal' ? '#fff' : '#ddd',
                     borderRadius:
-                      selectedOptionAll === 'nomal' ? '10px' : '0px'
-                  }">nomal</label>
+                      selectedOptionAll === 'normal' ? '10px' : '0px'
+                  }">normal</label>
 
-                  <input type="radio" class="radio-switch-input" id="radio-switch-medium" value="extraJob"
-                    v-model="formfilter.statusTitle" />
-                  <label class="radio-switch-label" for="radio-switch-medium" :style="{
+                  <label class="radio-switch-label" for="radio-switch-medium" @click="allfilter('extraJob')" :style="{
                     backgroundColor:
                       selectedOptionAll === 'extraJob' ? '#5987d6' : '#fff',
                     color: selectedOptionAll === 'extraJob' ? '#fff' : '#ddd',
                     borderRadius:
                       selectedOptionAll === 'extraJob' ? '10px' : '0px'
                   }">extraJob</label>
-                  <input type="radio" class="radio-switch-input" id="radio-switch-high" value="fastTrack"
-                    v-model="formfilter.statusTitle" />
-                  <label class="radio-switch-label" for="radio-switch-high" :style="{
+                  <label class="radio-switch-label" for="radio-switch-high" @click="allfilter('fastTrack')" :style="{
                     backgroundColor:
                       selectedOptionAll === 'fastTrack' ? '#5987d6' : '#fff',
                     color:
@@ -85,12 +77,12 @@
                 </div>
               </div>
             </div>
-            <div style="padding-top: 13px;padding-left: 20px;cursor: pointer;    width: min-content;">
+            <div style="padding-top: 13px;padding-left: 20px;cursor: pointer;">
               <v-select style="padding: 3px 0px !important;max-width: fit-content;" dense hide-details class=""
                 v-model="formAdd.masBranchID" :items="branchItem" label="สาขา" required attach solo flat
                 :menu-props="{ bottom: true, offsetY: true }" @change="getdata(), getDataflow()"></v-select>
             </div>
-            <div style="padding-top: 13px;padding-left: 20px;cursor: pointer;    width: min-content;">
+            <div style="padding-top: 13px;padding-left: 20px;cursor: pointer;">
               <v-select style="padding: 3px 0 !important;max-width: fit-content;" dense solo flat class="pa-0"
                 v-model="formAdd.flowId" :items="flowItem" label="บริการ" required attach
                 :menu-props="{ bottom: true, offsetY: true }" @change="getdata()"></v-select>
@@ -100,7 +92,7 @@
                 <v-select class="hideselect col-md-5" style="max-width: fit-content;" :items="itemsDate" label="Date" @change="sortDataTable()"
                   v-model="selectedItemDate" solo dense flat></v-select>
             </div>
-            <div style="padding-top: 13px; padding-left: 20px;    max-width: 145px;"
+            <div style="padding-top: 13px; padding-left: 20px;    max-width: 165px;"
               @click="viewBy">
                 <v-select class="hideselect col-md-5" style="max-width: fit-content;" :items="items" label="แสดง" @change="filterData()"
                   v-model="selectedItem" solo dense flat></v-select>
@@ -118,7 +110,7 @@
                   <v-select class="hideselect" :items="items" label="แสดง" @change="filterData()"
                     v-model="selectedItem"></v-select>
                 </v-col>
-                <div class="disiblefield">
+                <!-- <div class="disiblefield">
                   <v-tooltip top>
                     <template v-slot:activator="{ on, attrs }">
                       <v-icon @click="gotosession(2)" left color="#ddd" size="25" v-bind="attrs"
@@ -126,7 +118,7 @@
                     </template>
                     <span>โชว์แบบการ์ด</span>
                   </v-tooltip>
-                </div>
+                </div> -->
               </div>
             </v-card-title>
             <v-data-table :headers="headers" :items="dataTableValues" :search="search">
@@ -137,7 +129,6 @@
               </template>
               <template v-slot:[`item.statusTitle`]="{ item }">
                 <v-chip class="ma-2" :color="getStatusColor(item.statusTitle)" variant="outlined">
-                  <v-icon start icon="mdi-server-plus"></v-icon>
                   {{ item.statusTitle }}
                 </v-chip>
               </template>
@@ -157,48 +148,37 @@
                 </div>
               </template>
               <template v-if="dataTableValues.length > 0" v-slot:[`item.actions`]="{ item }">
-                <div class="text-dot" @click="showCard(item.id)" id="hidecard">
+                <v-icon @click="deleteItem(item)" style="color:#EC5453">mdi-trash-can-outline</v-icon>
+                <v-btn class="ma-2" outlined style="color:#5889C4" @click="getDataId(item)">
+                  <v-icon>mdi-square-edit-outline</v-icon>
+                  แก้ไข
+                </v-btn>
+                <!-- <div class="text-dot" @click="showCard(item.id)" id="hidecard">
                   <p class="showdot">กดเพื่อตั้งค่าเพิ่มเติม</p>
                   <v-icon left size="25" style=""> mdi-dots-vertical</v-icon>
-                </div>
-                <v-card class="card-setting card-position-table" v-if="showingCard === item.id" ref="card">
-                  <v-list dense>
-                    <v-list-item-group v-model="selectedItem" color="primary">
-                      <v-list-item v-for="(itemEdit, i) in item_edit" :key="i" @click="handleItemClick(item, itemEdit)">
-                        <v-list-item-icon>
-                          <v-icon v-text="itemEdit.icon"></v-icon>
-                        </v-list-item-icon>
-                        <v-list-item-content>
-                          <v-list-item-title style="color:#000 !important" v-text="itemEdit.text"></v-list-item-title>
-                        </v-list-item-content>
-                      </v-list-item>
-                    </v-list-item-group>
-                  </v-list>
-                </v-card>
+                </div> -->
               </template>
             </v-data-table>
           </v-card>
           <div v-else style="width: -webkit-fill-available;">
-            <div class="col-md-12" v-if="dataTableValues[0].message !== 'No data found'">
+            <div class="col-md-12">
               <div>
-                <div class="row" style="height: 100vh;">
-                  <div :class="this.formfilter.statusTitle === 'nomal'
+                <div class="row" style="height: 100Vh;">
+                  <div :class="this.formfilter.statusTitle === 'normal'
                       ? 'col-xl-12 col-md-12 col-sm-12'
                       : 'col-xl-4 col-md-4 col-sm-12'
                     " v-if="this.formfilter.statusTitle === 'All' ||
-    this.formfilter.statusTitle === 'nomal'
-    ">
+                      this.formfilter.statusTitle === 'normal'
+                      ">
                     <div class="row">
                       <div class="row card col-md-12" style="padding: 10px 20px;margin-bottom: 30px;border: none;">
                         <div class="row" style="font-weight: bold;">
-                          {{
-                            this.dataTableValuesnomal[0].statusTitle
-                          }}&emsp13;&emsp13;
+                          normal &emsp13;&emsp13;
                           <span class="card" style="padding: 0px 6px;background-color: #C5C5C5; ">{{
-                            this.dataTableValuesnomal.length }}</span>
+                            this.dataTableValuesnormal.length }}</span>
                         </div>
                       </div>
-                      <div v-for="(item, index) in dataTableValuesnomal" :key="index" :class="getstatusTitleClass()">
+                      <div v-if="dataTableValuesnormal  !== [] || dataTableValuesnormal  === undefined " v-for="(item, index) in dataTableValuesnormal" :key="index" :class="getstatusTitleClass()">
                         <v-card id="chover" style=" height: 100%;" :class="getStatuscardClass(item.statusTitle)">
                           <div>
                             <div class="row flex-between">
@@ -285,14 +265,12 @@
                     <div class="row">
                       <div class="row card col-md-12" style="padding: 10px 20px;margin-bottom: 30px;border: none;">
                         <div class="row" style="font-weight: bold;">
-                          {{
-                            this.dataTableValuesextraJob[0].statusTitle
-                          }}&emsp13;&emsp13;
+                          extraJob &emsp13;&emsp13;
                           <span class="card" style="padding: 0px 6px;background-color: #C5C5C5; ">{{
                             this.dataTableValuesextraJob.length }}</span>
                         </div>
                       </div>
-                      <div v-for="(item, index) in dataTableValuesextraJob" :key="index" :class="getstatusTitleClass()">
+                      <div v-if="dataTableValuesextraJob  !== []" v-for="(item, index) in dataTableValuesextraJob" :key="index" :class="getstatusTitleClass()">
                         <v-card id="chover" style=" height: 100%;" :class="getStatuscardClass(item.statusTitle)">
                           <div>
                             <div class="row flex-between">
@@ -367,8 +345,7 @@
                       </div>
                     </div>
                   </div>
-                  <div v-if="this.formfilter.statusTitle === 'All' ||
-                    this.formfilter.statusTitle === 'fastTrack'
+                  <div v-if="this.formfilter.statusTitle === 'All' || this.formfilter.statusTitle === 'fastTrack'
                     " :class="this.formfilter.statusTitle === 'fastTrack'
                       ? 'col-xl-12 col-md-12 col-sm-12'
                       : 'col-xl-4 col-md-4 col-sm-12'
@@ -376,14 +353,12 @@
                     <div class="row">
                       <div class="row card col-md-12" style="padding: 10px 20px;margin-bottom: 30px;border: none;">
                         <div class="row" style="font-weight: bold;">
-                          {{
-                            this.dataTableValuesfastTrack[0].statusTitle
-                          }}&emsp13;&emsp13;
+                          fastTrack &emsp13;&emsp13;
                           <span class="card" style="padding: 0px 6px;background-color: #C5C5C5; ">{{
                             this.dataTableValuesfastTrack.length }}</span>
                         </div>
                       </div>
-                      <div :class="getstatusTitleClass()" v-for="(item, index) in dataTableValuesfastTrack" :key="index">
+                      <div v-if="dataTableValuesfastTrack  !== []"  :class="getstatusTitleClass()" v-for="(item, index) in dataTableValuesfastTrack || []" :key="index">
                         <v-card id="chover" style=" height: 100%;" :class="getStatuscardClass(item.statusTitle)">
                           <div>
                             <div class="row flex-between">
@@ -465,6 +440,20 @@
         </v-row>
       </div>
     </div>
+    <v-card class="card-setting card-position-table" v-if="showingCard === item.id" ref="card">
+      <v-list dense>
+        <v-list-item-group v-model="selectedItem" color="primary">
+          <v-list-item v-for="(itemEdit, i) in item_edit" :key="i" @click="handleItemClick(item, itemEdit)">
+            <v-list-item-icon>
+              <v-icon v-text="itemEdit.icon"></v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title style="color:#000 !important" v-text="itemEdit.text"></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
+    </v-card>
   </v-main>
 </template>
 
@@ -497,7 +486,7 @@ export default {
       dataTableValue: [],
       dataTableValues: [],
       dataTableValuesextraJob: [],
-      dataTableValuesnomal: [],
+      dataTableValuesnormal: [],
       dataTableValuesfastTrack: [],
       dataCustomfeild: [],
       matchingFields: [],
@@ -508,7 +497,17 @@ export default {
       branchItem: [],
       flowItem: [],
       formfilter: {
-        statusTitle: 'All'
+        statusTitle: 'All',
+        title: null,
+        status: null,
+        date: null,
+        dateFull: null,
+        loopStatus: null,
+        dataField: null,
+        shopId: this.$session.getAll().data.shopId,
+        logData: false,
+        masBranchID: null,
+        flowId: null
       },
       formAdd: {
         masBranchID: '',
@@ -600,14 +599,14 @@ export default {
     getStatusColor () {
       return function (status) {
         if (status === 'extraJob') {
-          // return '#feb700'
-          return '#00a5fead'
-        } else if (status === 'nomal') {
-          return '#00a5fead'
-          // return 'primary'
+          return '#feb700'
+          // return '#00a5fead'
+        } else if (status === 'normal') {
+          // return '#00a5fead'
+          return 'primary'
         } else if (status === 'fastTrack') {
-          // return '#ff481f'
-          return '#00a5fead'
+          return '#ff481f'
+          // return '#00a5fead'
         } else {
           return '#ddd'
         }
@@ -619,11 +618,8 @@ export default {
       })
     },
     selectedOptionAll () {
-      if (this.formfilter.statusTitle) {
-        return this.formfilter.statusTitle
-      } else {
-        return 'nomal'
-      }
+      console.log('temxxxxxxxxxx', this.formfilter.statusTitle)
+      return this.formfilter.statusTitle
     }
   },
   mounted () {
@@ -660,34 +656,43 @@ export default {
       console.log('reload')
       this.getdata()
     },
-    // sortBy (item) {
-    //   this.ascending = !item
-    //   // console.log('this.ascending', this.ascending)
-    //   this.sortDataTable()
-    // },
+    async allfilter (item) {
+      console.log('itemdddddddddddddd', item)
+      if (item === 'normal') {
+        this.formfilter.statusTitle = 'normal'
+      } else if (item === 'extraJob') {
+        this.formfilter.statusTitle = 'extraJob'
+      } else if (item === 'fastTrack') {
+        this.formfilter.statusTitle = 'fastTrack'
+      } else {
+        this.formfilter.statusTitle = 'All'
+      }
+    },
     sortDataTable () {
-      console.log('selectedItemDate', this.selectedItemDate)
-      this.dataTableValuesextraJob.sort((a, b) => {
-        if (this.selectedItemDate === 'น้อย-มาก') {
-          return a.date - b.date
-        } else {
-          return b.date - a.date
-        }
-      })
-      this.dataTableValuesnomal.sort((a, b) => {
-        if (this.selectedItemDate === 'น้อย-มาก') {
-          return a.date - b.date
-        } else {
-          return b.date - a.date
-        }
-      })
-      this.dataTableValuesfastTrack.sort((a, b) => {
-        if (this.selectedItemDate === 'น้อย-มาก') {
-          return a.date - b.date
-        } else {
-          return b.date - a.date
-        }
-      })
+      if (this.dataTableValue.message !== 'No data found') {
+        console.log('selectedItemDate', this.selectedItemDate)
+        this.dataTableValuesextraJob.sort((a, b) => {
+          if (this.selectedItemDate === 'น้อย-มาก') {
+            return a.date - b.date
+          } else {
+            return b.date - a.date
+          }
+        })
+        this.dataTableValuesnormal.sort((a, b) => {
+          if (this.selectedItemDate === 'น้อย-มาก') {
+            return a.date - b.date
+          } else {
+            return b.date - a.date
+          }
+        })
+        this.dataTableValuesfastTrack.sort((a, b) => {
+          if (this.selectedItemDate === 'น้อย-มาก') {
+            return a.date - b.date
+          } else {
+            return b.date - a.date
+          }
+        })
+      }
     },
     mapdata (itemxx) {
       const data = this.logget.filter(item => {
@@ -696,39 +701,56 @@ export default {
       return data[0].fieldName
     },
     async filterDatacol () {
-      this.dataTableValuesextraJob = this.dataTableValues.filter(
-        item => item.statusTitle === 'extraJob'
-      )
-      this.dataTableValuesnomal = this.dataTableValues.filter(
-        item => item.statusTitle === 'nomal'
-      )
-      this.dataTableValuesfastTrack = this.dataTableValues.filter(
-        item => item.statusTitle === 'fastTrack'
-      )
+      // console.log('vvvvvvv', this.dataTableValues.filter(
+      //   item => item.statusTitle === 'dataTableValuesfastTrack'
+      // ))
+      if (this.dataTableValue.message !== 'No data found') {
+        this.dataTableValuesextraJob = this.dataTableValues.filter(
+          item => item.statusTitle === 'extraJob'
+        )
+      }
+      if (this.dataTableValue.message !== 'No data found') {
+        this.dataTableValuesnormal = this.dataTableValues.filter(
+          item => item.statusTitle === 'normal'
+        )
+      }
+      if (this.dataTableValue.message !== 'No data found') {
+        this.dataTableValuesfastTrack = this.dataTableValues.filter(
+          item => item.statusTitle === 'fastTrack'
+        )
+      }
     },
     async filterData () {
       if (this.selectedItem === 'เปิดใช้งาน') {
         this.dataTableValues = []
-        this.dataTableValues = this.dataTableValue.filter(
-          item => item.status === 'Active'
-        )
-        console.log('this.selectedItem', this.selectedItem)
+        if (this.dataTableValue.message !== 'No data found') {
+          this.dataTableValues = this.dataTableValue.filter(
+            item => item.status === 'Active'
+          )
+          console.log('this.selectedItem', this.selectedItem)
+        }
       } else if (this.selectedItem === 'เก็บข้อมูล') {
-        this.dataTableValues = []
-        this.dataTableValues = this.dataTableValue.filter(
-          item => item.logData === 'true'
-        )
-        console.log('this.selectedItem', this.selectedItem)
+        if (this.dataTableValue.message !== 'No data found') {
+          this.dataTableValues = []
+          this.dataTableValues = this.dataTableValue.filter(
+            item => item.logData === 'true'
+          )
+          console.log('this.selectedItem', this.selectedItem)
+        }
       } else if (this.selectedItem === 'ไม่เก็บข้อมูล') {
-        this.dataTableValues = []
-        this.dataTableValues = this.dataTableValue.filter(
-          item => item.logData === 'false'
-        )
-        console.log('this.selectedItem', this.selectedItem)
+        if (this.dataTableValue.message !== 'No data found') {
+          this.dataTableValues = []
+          this.dataTableValues = this.dataTableValue.filter(
+            item => item.logData === 'false'
+          )
+          console.log('this.selectedItem', this.selectedItem)
+        }
       } else if (this.selectedItem === 'ทั้งหมด') {
-        this.dataTableValues = []
-        this.dataTableValues = this.dataTableValue
-        console.log('this.selectedItem', this.selectedItem)
+        if (this.dataTableValue.message !== 'No data found') {
+          this.dataTableValues = []
+          this.dataTableValues = this.dataTableValue
+          console.log('this.selectedItem', this.selectedItem)
+        }
       }
       this.filterDatacol()
     },
@@ -754,7 +776,7 @@ export default {
     getStatusClass (statusTitle) {
       if (statusTitle === 'fastTrack') {
         return 'text-bold bg-yellow text-title'
-      } else if (statusTitle === 'nomal') {
+      } else if (statusTitle === 'normal') {
         return 'text-bold bg-blue text-title'
       } else {
         return 'text-bold bg-false text-title'
@@ -763,7 +785,7 @@ export default {
     getStatuscardClass (statusTitle) {
       if (statusTitle === 'fastTrack') {
         return 'text-bold shardow-yellow text-title'
-      } else if (statusTitle === 'nomal') {
+      } else if (statusTitle === 'normal') {
         return 'text-bold shardow-blue text-title'
       } else {
         return 'text-bold shardow-false text-title'
@@ -776,7 +798,7 @@ export default {
       ) {
         return 'col-md-4 col-lg-4 col-sm-12'
       } else if (
-        this.formfilter.statusTitle === 'nomal' &&
+        this.formfilter.statusTitle === 'normal' &&
         this.formfilter.statusTitle !== 'All'
       ) {
         return 'col-md-4 col-lg-4 col-sm-12'
@@ -788,7 +810,7 @@ export default {
       } else if (
         this.formfilter.statusTitle === 'All' ||
         this.formfilter.statusTitle === 'fastTrack' ||
-        this.formfilter.statusTitle === 'nomal' ||
+        this.formfilter.statusTitle === 'normal' ||
         this.formfilter.statusTitle === 'extraJob'
       ) {
         return 'col-md-12 col-lg-12 col-sm-12'
@@ -1179,9 +1201,9 @@ export default {
   top: 55px;
   width: 161px !important;
   border-radius: 10px !important;
-  /* box-shadow: 0px 3px 1px -2px rgba(149, 149, 149, 0.2),
+  box-shadow: 0px 3px 1px -2px rgba(149, 149, 149, 0.2),
     0px 2px 2px 3px rgba(139, 139, 139, 0.14),
-    0px 1px 5px 1px rgba(149, 149, 149, 0.12) !important; */
+    0px 1px 5px 1px rgba(149, 149, 149, 0.12) !important;
 }
 
 .v-sheet.v-card .card-setting {

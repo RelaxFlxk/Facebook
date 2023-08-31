@@ -16,7 +16,7 @@
                 type="radio"
                 class="radio-switch-input"
                 id="radio-switch-low-dialog"
-                value="nomal"
+                value="normal"
                 v-model="form.statusTitle"
               />
               <label
@@ -24,11 +24,11 @@
                 for="radio-switch-low-dialog"
                 :style="{
                   backgroundColor:
-                    selectedOption === 'nomal' ? '#00a5fead' : '#fff',
+                    selectedOption === 'normal' ? '#00a5fead' : '#fff',
                   color:
-                    selectedOption === 'nomal' ? '#fff' : '#ddd',
+                    selectedOption === 'normal' ? '#fff' : '#ddd',
                 }"
-                >nomal</label
+                >normal</label
               >
 
               <input
@@ -188,7 +188,7 @@ export default {
       if (this.form.statusTitle) {
         return this.form.statusTitle
       } else {
-        return 'nomal'
+        return 'normal'
       }
     }
     // formattedDate () {
@@ -207,14 +207,14 @@ export default {
       modal: false,
       menu2: false,
       form: {
-        statusTitle: 'nomal',
+        statusTitle: 'normal',
         title: '',
         status: '',
         date: '',
         dateFull: null,
         loopStatus: '',
         dataField: '',
-        shopId: 'U63f4a14fe78b8bf8414c1d197e432954',
+        shopId: this.$session.getAll().data.shopId,
         logData: false,
         masBranchID: '',
         flowId: ''
