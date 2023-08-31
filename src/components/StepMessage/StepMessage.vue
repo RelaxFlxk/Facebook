@@ -1,6 +1,6 @@
 <template>
   <v-main>
-    <div class="col-md-12 ml-sm-auto col-lg-12 px-4 d-flex" style="background-color: #f2f7ff">
+    <div class="col-md-12 ml-sm-auto col-lg-12 px-4 d-flex"  style="background-color: #f2f7ff">
       <StepMessageForm ref="StepMessageForm" @testData="getdata()" @testDataInsert="getdata()"></StepMessageForm>
       <div style="width: -webkit-fill-available;">
         <div class="row-title">

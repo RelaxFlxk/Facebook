@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="isDialogOpen" max-width="900px">
+    <v-dialog v-model="isDialogOpen" max-width="910px">
       <v-card>
         <v-toolbar dark color="primary">
           <v-btn icon dark @click="isDialogOpen = false,this.item = []">
