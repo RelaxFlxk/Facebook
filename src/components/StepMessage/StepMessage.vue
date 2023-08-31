@@ -1,21 +1,11 @@
 <template>
   <v-main>
-    <div
-      class="col-md-12 ml-sm-auto col-lg-12 px-4 d-flex"
-      style="background-color: #f2f7ff"
-    >
-      <StepMessageForm
-        ref="StepMessageForm"
-        @testData="getdata()"
-        @testDataInsert="getdata()"
-      ></StepMessageForm>
+    <div class="col-md-12 ml-sm-auto col-lg-12 px-4 d-flex" style="background-color: #f2f7ff">
+      <StepMessageForm ref="StepMessageForm" @testData="getdata()" @testDataInsert="getdata()"></StepMessageForm>
       <div style="width: -webkit-fill-available;">
         <div class="row-title">
           <div class="text-title">เทมเพลสตั้งเวลาเเจ้งเตือน</div>
-          <div
-            class="col-md-4"
-            style="display: flex;justify-content: flex-end;align-items: baseline;"
-          >
+          <div class="col-md-4" style="display: flex;justify-content: flex-end;align-items: baseline;">
             &emsp14;
             <v-btn color="primary" @click="getDataId(item)">
               <v-icon left color="#fff" size="25">mdi mdi-plus</v-icon>
@@ -23,313 +13,163 @@
             </v-btn>
           </div>
         </div>
-        <div class="row">
-
-        </div>
-        <v-row class="container col-md-12">
-          <div class="" style="padding-top: 13px" @click="viewBy">
-            <div class="disiblefield">
-              <v-tooltip top>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-icon
-                    @click="gotosession(2)"
-                    left
-                    color="#ddd"
-                    size="20"
-                    v-bind="attrs"
-                    v-on="on"
-                    style="color:#ddd;padding: 3px 5px 3px 5px;margin:0px 10px 0px 0px;background-color: #5987D6 !important;transform: scale(1.5);border-radius: 5px !important;"
-                    >mdi mdi-border-all</v-icon
-                  >
-                </template>
-                <span>โชว์แบบการ์ด</span>
-              </v-tooltip>
-              <v-tooltip top>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-icon
-                    @click="gotosession(1)"
-                    color="#ddd"
-                    size="25"
-                    v-bind="attrs"
-                    v-on="on"
-                    >mdi mdi-format-list-bulleted</v-icon
-                  >
-                </template>
-                <span>โชว์แบบตาราง</span>
-              </v-tooltip>
+        <v-row class="container col-md-12" style="display: flex;justify-content: space-between;">
+          <div class="row" style="max-width: fit-content;">
+            <div style="padding-top: 13px;padding-left: 20px;" @click="viewBy">
+              <div class="disiblefield" style="">
+                <v-tooltip top>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-icon @click="gotosession(2)" color="#ddd" size="20" v-bind="attrs" v-on="on" :style="viewByType === 2 || viewByType === null
+                        ? 'color:#ddd;padding: 3px 5px 3px 5px;margin:0px 10px 0px 0px;background-color: #5987D6 !important;transform: scale(1.5);border-radius: 5px !important;'
+                        : ''
+                      ">mdi mdi-border-all</v-icon>
+                  </template>
+                  <span>โชว์แบบการ์ด</span>
+                </v-tooltip>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-icon @click="gotosession(1)" color="#ddd" size="25" v-bind="attrs" v-on="on" :style="viewByType === 1
+                        ? 'color:#ddd;padding: 3px 5px 3px 5px;margin:0px 0px 0px 10px;background-color: #5987D6 !important;transform: scale(1.5);border-radius: 5px !important;'
+                        : ''
+                      ">mdi mdi-format-list-bulleted</v-icon>
+                  </template>
+                  <span>โชว์แบบตาราง</span>
+                </v-tooltip>
+              </div>
             </div>
-          </div>
-          <div class="col-md-3" style="padding-top: 13px;padding-left: 20px;cursor: pointer;">
-          <div>
-              <div class="radio-switch">
-                <input
-                  type="radio"
-                  class="radio-switch-input"
-                  id="radio-switch-All"
-                  value="All"
-                  v-model="formfilter.statusTitle"
-                />
-                <label
-                  class="radio-switch-label"
-                  for="radio-switch-All"
-                  :style="{
+            <div style="padding-top: 13px;padding-left: 20px;cursor: pointer;    width: min-content;">
+              <div>
+                <div class="radio-switch">
+                  <input type="radio" class="radio-switch-input" id="radio-switch-All" value="All"
+                    v-model="formfilter.statusTitle" />
+                  <label class="radio-switch-label" for="radio-switch-All" :style="{
                     backgroundColor:
                       selectedOptionAll === 'All' ? '#5987d6' : '#fff',
-                    color:
-                      selectedOptionAll === 'All' ? '#fff' : '#ddd',
-                      borderRadius:selectedOptionAll === 'All' ? '10px' : '10px 0px 0px 10px',
-                  }"
-                  >All</label
-                >
-                <input
-                  type="radio"
-                  class="radio-switch-input"
-                  id="radio-switch-low"
-                  value="nomal"
-                  v-model="formfilter.statusTitle"
-                />
-                <label
-                  class="radio-switch-label"
-                  for="radio-switch-low"
-                  :style="{
+                    color: selectedOptionAll === 'All' ? '#fff' : '#ddd',
+                    borderRadius:
+                      selectedOptionAll === 'All'
+                        ? '10px'
+                        : '10px 0px 0px 10px'
+                  }">All</label>
+                  <input type="radio" class="radio-switch-input" id="radio-switch-low" value="nomal"
+                    v-model="formfilter.statusTitle" />
+                  <label class="radio-switch-label" for="radio-switch-low" :style="{
                     backgroundColor:
                       selectedOptionAll === 'nomal' ? '#5987d6' : '#fff',
-                    color:
-                      selectedOptionAll === 'nomal' ? '#fff' : '#ddd',
-                      borderRadius:selectedOptionAll === 'nomal' ? '10px' : '0px',
-                  }"
-                  >nomal</label
-                >
+                    color: selectedOptionAll === 'nomal' ? '#fff' : '#ddd',
+                    borderRadius:
+                      selectedOptionAll === 'nomal' ? '10px' : '0px'
+                  }">nomal</label>
 
-                <input
-                  type="radio"
-                  class="radio-switch-input"
-                  id="radio-switch-medium"
-                  value="extraJob"
-                  v-model="formfilter.statusTitle"
-                />
-                <label
-                  class="radio-switch-label"
-                  for="radio-switch-medium"
-                  :style="{
+                  <input type="radio" class="radio-switch-input" id="radio-switch-medium" value="extraJob"
+                    v-model="formfilter.statusTitle" />
+                  <label class="radio-switch-label" for="radio-switch-medium" :style="{
                     backgroundColor:
                       selectedOptionAll === 'extraJob' ? '#5987d6' : '#fff',
-                    color:
-                      selectedOptionAll === 'extraJob' ? '#fff' : '#ddd',
-                      borderRadius:
-                      selectedOptionAll === 'extraJob' ? '10px' : '0px',
-                  }"
-                  >extraJob</label
-                >
-                <input
-                  type="radio"
-                  class="radio-switch-input"
-                  id="radio-switch-high"
-                  value="fastTrack"
-                  v-model="formfilter.statusTitle"
-                />
-                <label
-                  class="radio-switch-label"
-                  for="radio-switch-high"
-                  :style="{
+                    color: selectedOptionAll === 'extraJob' ? '#fff' : '#ddd',
+                    borderRadius:
+                      selectedOptionAll === 'extraJob' ? '10px' : '0px'
+                  }">extraJob</label>
+                  <input type="radio" class="radio-switch-input" id="radio-switch-high" value="fastTrack"
+                    v-model="formfilter.statusTitle" />
+                  <label class="radio-switch-label" for="radio-switch-high" :style="{
                     backgroundColor:
                       selectedOptionAll === 'fastTrack' ? '#5987d6' : '#fff',
                     color:
                       selectedOptionAll === 'fastTrack' ? '#fff' : '#ddd',
                     borderRadius:
-                      selectedOptionAll === 'fastTrack' ? '10px' : '0px 10px 10px 0px',
-                  }"
-                  >fastTrack</label
-                >
+                      selectedOptionAll === 'fastTrack'
+                        ? '10px'
+                        : '0px 10px 10px 0px'
+                  }">fastTrack</label>
+                </div>
               </div>
-          </div>
-          </div>
-          <div class="col-md-5"  style="padding-top: 13px;padding-left: 20px;cursor: pointer;">
-            <div class="row">
-            <v-select
-              style="padding: 3px 5px !important;"
-              dense
-              hide-details
-              class="pa-0 col-md-4"
-              v-model="formAdd.masBranchID"
-              :items="branchItem"
-              label="สาขา"
-              required
-              attach
-              solo
-              flat
-              :menu-props="{ bottom: true, offsetY: true }"
-              @change="getdata(), getDataflow()"
-            ></v-select>
-            <v-select
-              style="padding: 3px 0 !important;"
-              dense
-              solo
-              flat
-              class="pa-0 col-lg-4"
-              v-model="formAdd.flowId"
-              :items="flowItem"
-              label="บริการ"
-              required
-              attach
-              :menu-props="{ bottom: true, offsetY: true }"
-              @change="getdata()"
-            ></v-select>
             </div>
-          </div>
-          <div class="col-md-3"  style="padding-top: 13px; padding-left: 20px;" @click="viewBy">
-            <div>
-                <v-select
-                class="hideselect col-md-6"
-                :items="items"
-                label="แสดง"
-                @change="filterData()"
-                v-model="selectedItem"
-                solo
-                dense
-                flat
-              ></v-select>
+            <div style="padding-top: 13px;padding-left: 20px;cursor: pointer;    width: min-content;">
+              <v-select style="padding: 3px 0px !important;max-width: fit-content;" dense hide-details class=""
+                v-model="formAdd.masBranchID" :items="branchItem" label="สาขา" required attach solo flat
+                :menu-props="{ bottom: true, offsetY: true }" @change="getdata(), getDataflow()"></v-select>
             </div>
-            <!-- <div class="disiblefield">
-                  <v-tooltip top>
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-icon
-                        @click="gotosession(1)"
-                        left
-                        color="#ddd"
-                        size="25"
-                        v-bind="attrs"
-                        v-on="on"
-                        >mdi mdi-table</v-icon
-                      >
-                    </template>
-                    <span>โชว์แบบตาราง</span>
-                  </v-tooltip>
-                </div> -->
+            <div style="padding-top: 13px;padding-left: 20px;cursor: pointer;    width: min-content;">
+              <v-select style="padding: 3px 0 !important;max-width: fit-content;" dense solo flat class="pa-0"
+                v-model="formAdd.flowId" :items="flowItem" label="บริการ" required attach
+                :menu-props="{ bottom: true, offsetY: true }" @change="getdata()"></v-select>
+            </div>
+            <div style="padding-top: 13px; padding-left: 20px;    max-width: 145px; "
+              @click="viewBy">
+                <v-select class="hideselect col-md-5" style="max-width: fit-content;" :items="itemsDate" label="Date" @change="sortDataTable()"
+                  v-model="selectedItemDate" solo dense flat></v-select>
+            </div>
+            <div style="padding-top: 13px; padding-left: 20px;    max-width: 145px;"
+              @click="viewBy">
+                <v-select class="hideselect col-md-5" style="max-width: fit-content;" :items="items" label="แสดง" @change="filterData()"
+                  v-model="selectedItem" solo dense flat></v-select>
+            </div>
           </div>
         </v-row>
-        <v-row
-          @click="viewBy"
-          v-if="viewByType !== null"
-          style=" display: flex;  justify-content: center; align-items: center;"
-        >
+        <v-row @click="viewBy" v-if="viewByType !== null"
+          style=" display: flex;  justify-content: center; align-items: center;">
           <v-card v-if="viewByType === 1">
             <v-card-title>
-              <v-text-field
-                v-model="search"
-                append-icon="mdi-magnify"
-                label="ค้นหา"
-                single-line
-                hide-details
-              ></v-text-field>
-              <div
-                style="display: flex;  align-items: baseline;justify-content: flex-end; padding-top: 20px;"
-              >
+              <v-text-field v-model="search" append-icon="mdi-magnify" label="ค้นหา" single-line
+                hide-details></v-text-field>
+              <div style="display: flex;  align-items: baseline;justify-content: flex-end; padding-top: 20px;">
                 <v-col>
-                  <v-select
-                    class="hideselect"
-                    :items="items"
-                    label="แสดง"
-                    @change="filterData()"
-                    v-model="selectedItem"
-                  ></v-select>
+                  <v-select class="hideselect" :items="items" label="แสดง" @change="filterData()"
+                    v-model="selectedItem"></v-select>
                 </v-col>
                 <div class="disiblefield">
                   <v-tooltip top>
                     <template v-slot:activator="{ on, attrs }">
-                      <v-icon
-                        @click="gotosession(2)"
-                        left
-                        color="#ddd"
-                        size="25"
-                        v-bind="attrs"
-                        v-on="on"
-                        >mdi-window-maximize</v-icon
-                      >
+                      <v-icon @click="gotosession(2)" left color="#ddd" size="25" v-bind="attrs"
+                        v-on="on">mdi-window-maximize</v-icon>
                     </template>
                     <span>โชว์แบบการ์ด</span>
                   </v-tooltip>
                 </div>
               </div>
             </v-card-title>
-            <v-data-table
-              :headers="headers"
-              :items="dataTableValues"
-              :search="search"
-            >
+            <v-data-table :headers="headers" :items="dataTableValues" :search="search">
               <template v-slot:[`item.No`]="{ item, index }">
                 <div>
                   {{ index + 1 }}
                 </div>
               </template>
               <template v-slot:[`item.statusTitle`]="{ item }">
-                <v-chip
-                  class="ma-2"
-                  :color="getStatusColor(item.statusTitle)"
-                  variant="outlined"
-                >
+                <v-chip class="ma-2" :color="getStatusColor(item.statusTitle)" variant="outlined">
                   <v-icon start icon="mdi-server-plus"></v-icon>
                   {{ item.statusTitle }}
                 </v-chip>
               </template>
               <template v-slot:[`item.status`]="{ item }">
-                <v-switch
-                  @click="updateActive(item.id)"
-                  v-model="item.status"
-                  color="#00a5fead"
-                  true-value="Active"
-                  false-value="Close"
-                  hide-details
-                ></v-switch>
+                <v-switch @click="updateActive(item.id)" v-model="item.status" color="#00a5fead" true-value="Active"
+                  false-value="Close" hide-details></v-switch>
               </template>
               <template v-slot:[`item.logData`]="{ item }">
-                <v-switch
-                  @click="updateDataField(item.id)"
-                  v-model="item.logData"
-                  true-value="true"
-                  false-value="false"
-                  hide-details
-                ></v-switch>
+                <v-switch @click="updateDataField(item.id)" v-model="item.logData" true-value="true" false-value="false"
+                  hide-details></v-switch>
               </template>
               <template v-slot:[`item.dataFeilds`]="{ item }">
                 <div style="display: flex;">
-                  <div
-                    v-for="(itemForm, i) in JSON.parse(item.dataField)"
-                    :key="i"
-                    style="padding: 8px 10px;"
-                  >
-                    <p class="clip">{{ itemForm.fieldName }}</p>
+                  <div v-for="(itemForm, i) in JSON.parse(item.dataField)" :key="i" style="padding: 8px 10px;">
+                    <p class="clip"> {{ mapdata(itemForm.fieldId) }}</p>
                   </div>
                 </div>
               </template>
-              <template
-                v-if="dataTableValues.length > 0"
-                v-slot:[`item.actions`]="{ item }"
-              >
+              <template v-if="dataTableValues.length > 0" v-slot:[`item.actions`]="{ item }">
                 <div class="text-dot" @click="showCard(item.id)" id="hidecard">
                   <p class="showdot">กดเพื่อตั้งค่าเพิ่มเติม</p>
                   <v-icon left size="25" style=""> mdi-dots-vertical</v-icon>
                 </div>
-                <v-card
-                  class="card-setting card-position-table"
-                  v-if="showingCard === item.id"
-                  ref="card"
-                >
+                <v-card class="card-setting card-position-table" v-if="showingCard === item.id" ref="card">
                   <v-list dense>
                     <v-list-item-group v-model="selectedItem" color="primary">
-                      <v-list-item
-                        v-for="(itemEdit, i) in item_edit"
-                        :key="i"
-                        @click="handleItemClick(item, itemEdit)"
-                      >
+                      <v-list-item v-for="(itemEdit, i) in item_edit" :key="i" @click="handleItemClick(item, itemEdit)">
                         <v-list-item-icon>
                           <v-icon v-text="itemEdit.icon"></v-icon>
                         </v-list-item-icon>
                         <v-list-item-content>
-                          <v-list-item-title
-                            style="color:#000 !important"
-                            v-text="itemEdit.text"
-                          ></v-list-item-title>
+                          <v-list-item-title style="color:#000 !important" v-text="itemEdit.text"></v-list-item-title>
                         </v-list-item-content>
                       </v-list-item>
                     </v-list-item-group>
@@ -339,377 +179,283 @@
             </v-data-table>
           </v-card>
           <div v-else style="width: -webkit-fill-available;">
-            <div
-              class="col-md-12"
-              v-if="dataTableValues[0].message !== 'No data found'"
-            >
-              <div class="row">
-                <div class="col-xl-4 col-md-4 col-sm-12">
-                  <div class="row">
-                    <div
-                      v-for="(item, index) in dataTableValuesnomal"
-                      :key="index"
-                      class="col-xl-12 col-md-12 col-sm-12"
-                    >
-                      <v-card
-                        id="chover"
-                        style=" height: 100%;"
-                        :class="getStatuscardClass(item.statusTitle)"
-                      >
-                        <div>
-                          <div class="row flex-between">
-                            <div v-if="item.status !== 'Active'">
-                              <span
-                                :class="getStatusClass(item.statusTitle)"
-                                class="text-white d-flex"
-                                >{{ item.date }} Day
-                              </span>
-                            </div>
-                            <div v-else>
-                              <span
-                                :class="getStatusClass(item.statusTitle)"
-                                class="text-white d-flex"
-                                >{{ item.date }} Day
-                              </span>
-                            </div>
-                            <v-switch
-                              inset
-                              @click="updateActive(item.id)"
-                              v-model="item.status"
-                              color="#00a5fead"
-                              true-value="Active"
-                              false-value="Close"
-                              hide-details
-                            ></v-switch>
-                          </div>
-                          <div class="">
-                            <div class="text-title-name text-bold text-lg">
-                              {{ item.title }}
-                            </div>
-                            <div class="text-title-name text-sm multiline-text">
-                              {{ item.text }}
-                            </div>
-                          </div>
-                          <!-- <v-icon
-                      class="icon-edit"
-                      left
-                      size="25"
-                      @click="showCard(item.id)"
-                      id="hidecard"
-                      style="align-items: flex-start position: absolute right: 5px"
-                    >
-                      mdi-dots-vertical</v-icon
-                    > -->
-                          <v-card
-                            class="card-setting card-position"
-                            v-if="showingCard === item.id"
-                            ref="card"
-                          >
-                            <v-list dense>
-                              <v-list-item-group
-                                v-model="selectedItem"
-                                color="primary"
-                              >
-                                <v-list-item
-                                  v-for="(itemEdit, i) in item_edit"
-                                  :key="i"
-                                  @click="handleItemClick(item, itemEdit)"
-                                >
-                                  <v-list-item-icon>
-                                    <v-icon v-text="itemEdit.icon"></v-icon>
-                                  </v-list-item-icon>
-                                  <v-list-item-content>
-                                    <v-list-item-title
-                                      style="color:#000 !important"
-                                      v-text="itemEdit.text"
-                                    ></v-list-item-title>
-                                  </v-list-item-content>
-                                </v-list-item>
-                              </v-list-item-group>
-                            </v-list>
-                          </v-card>
+            <div class="col-md-12" v-if="dataTableValues[0].message !== 'No data found'">
+              <div>
+                <div class="row" style="height: 100vh;">
+                  <div :class="this.formfilter.statusTitle === 'nomal'
+                      ? 'col-xl-12 col-md-12 col-sm-12'
+                      : 'col-xl-4 col-md-4 col-sm-12'
+                    " v-if="this.formfilter.statusTitle === 'All' ||
+    this.formfilter.statusTitle === 'nomal'
+    ">
+                    <div class="row">
+                      <div class="row card col-md-12" style="padding: 10px 20px;margin-bottom: 30px;border: none;">
+                        <div class="row" style="font-weight: bold;">
+                          {{
+                            this.dataTableValuesnomal[0].statusTitle
+                          }}&emsp13;&emsp13;
+                          <span class="card" style="padding: 0px 6px;background-color: #C5C5C5; ">{{
+                            this.dataTableValuesnomal.length }}</span>
                         </div>
-                        <v-row>
-                          <div class="row" v-if="item.dataField">
-                            <div class="col-md-8 row">
-                              <div
-                                v-for="(itemForm, i) in JSON.parse(
-                                  item.dataField
-                                ) || []"
-                                :key="i"
-                                class="col-md-4 col-sm-4"
-                                style="padding: 2px;"
-                              >
-                                <div class="clip">
-                                  <p style="color:#5889C4">
-                                    {{ itemForm.fieldName }}
-                                  </p>
-                                </div>
+                      </div>
+                      <div v-for="(item, index) in dataTableValuesnomal" :key="index" :class="getstatusTitleClass()">
+                        <v-card id="chover" style=" height: 100%;" :class="getStatuscardClass(item.statusTitle)">
+                          <div>
+                            <div class="row flex-between">
+                              <div v-if="item.status !== 'Active'">
+                                <span :class="getStatusClass(item.statusTitle)" class="text-white d-flex">{{ item.date }}
+                                  Day
+                                </span>
+                              </div>
+                              <div v-else>
+                                <span :class="getStatusClass(item.statusTitle)" class="text-white d-flex">{{ item.date }}
+                                  Day
+                                </span>
+                              </div>
+                              <div style="display: flex">
+                                <v-switch inset @click="updateActive(item.id)" v-model="item.status" color="#00a5fead"
+                                  true-value="Active" false-value="Close" hide-details></v-switch>
+                                  <div class="text-dot" @click="showCard(item.id)" id="hidecard">
+                                <p class="showdot">กดเพื่อตั้งค่าเพิ่มเติม</p>
+                                <v-icon left size="25" style=""> mdi-dots-vertical</v-icon>
+                              </div>
                               </div>
                             </div>
-                            <div
-                              class="col-md-4 col-sm-12"
-                              style="display: flex;justify-content: flex-end;"
-                            >
-                              <v-btn
-                                class="ma-2"
-                                outlined
-                                style="color:#5889C4"
-                                @click="getDataId(item)"
-                              >
-                                <v-icon>mdi-square-edit-outline</v-icon>
-                                แก้ไข
-                              </v-btn>
+                            <div class="">
+                              <div class="text-title-name text-bold text-lg">
+                                {{ item.title }}
+                              </div>
+                              <div class="text-title-name text-sm multiline-text">
+                                {{ item.text }}
+                              </div>
                             </div>
+                            <v-card class="card-setting card-position" v-if="showingCard === item.id" ref="card">
+                              <v-list dense>
+                                <v-list-item-group v-model="selectedItem" color="primary">
+                                  <v-list-item v-for="(itemEdit, i) in item_edit" :key="i"
+                                    @click="handleItemClick(item, itemEdit)">
+                                    <v-list-item-icon>
+                                      <v-icon v-text="itemEdit.icon"></v-icon>
+                                    </v-list-item-icon>
+                                    <v-list-item-content>
+                                      <v-list-item-title style="color:#000 !important"
+                                        v-text="itemEdit.text"></v-list-item-title>
+                                    </v-list-item-content>
+                                  </v-list-item>
+                                </v-list-item-group>
+                              </v-list>
+                            </v-card>
                           </div>
-                        </v-row>
-                      </v-card>
+                          <v-row>
+                            <div class="row" v-if="item.dataField">
+                              <div class="col-md-12 row">
+                                <div v-for="(itemForm, i) in JSON.parse(
+                                  item.dataField
+                                ) || []" :key="i" class="col-md-4 col-sm-4"
+                                  style="padding: 2px;max-width: fit-content;">
+                                  <!-- <div v-for="(itemForm, i) in logget || []" :key="i" class="col-md-4 col-sm-4" style="padding: 2px;"> -->
+                                  <div class="clip">
+                                    <p style="color:#5889C4">
+                                      <!-- {{ itemForm.fieldId }} -->
+                                      {{ mapdata(itemForm.fieldId) }}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                              <!-- <div class="col-md-4 col-sm-12" style="display: flex;justify-content: flex-end;"> -->
+                                <!-- <v-icon style="color:#EC5453" @click="deleteItem(item)">mdi-trash-can-outline</v-icon> -->
+                                <!-- <v-icon style="color:#5889C4" @click="getDataId(item)">mdi-square-edit-outline</v-icon> -->
+                                <!-- <v-btn class="ma-2" outlined style="color:#5889C4" @click="getDataId(item)">
+                                  <v-icon>mdi-square-edit-outline</v-icon>
+                                  แก้ไข
+                                </v-btn> -->
+                              <!-- </div> -->
+                            </div>
+                          </v-row>
+                        </v-card>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div class="col-xl-4 col-md-4 col-sm-12">
-                  <div class="row">
-                    <div
-                      v-for="(item, index) in dataTableValuesextraJob"
-                      :key="index"
-                      class="col-xl-12 col-md-12 col-sm-12"
-                    >
-                      <v-card
-                        id="chover"
-                        style=" height: 100%;"
-                        :class="getStatuscardClass(item.statusTitle)"
-                      >
-                        <div>
-                          <div class="row flex-between">
-                            <div v-if="item.status !== 'Active'">
-                              <span
-                                :class="getStatusClass(item.statusTitle)"
-                                class="text-white d-flex"
-                                >{{ item.date }} Day
-                              </span>
-                            </div>
-                            <div v-else>
-                              <span
-                                :class="getStatusClass(item.statusTitle)"
-                                class="text-white d-flex"
-                                >{{ item.date }} Day
-                              </span>
-                            </div>
-                            <v-switch
-                              inset
-                              @click="updateActive(item.id)"
-                              v-model="item.status"
-                              color="#00a5fead"
-                              true-value="Active"
-                              false-value="Close"
-                              hide-details
-                            ></v-switch>
-                          </div>
-                          <div class="">
-                            <div class="text-title-name text-bold text-lg">
-                              {{ item.title }}
-                            </div>
-                            <div class="text-title-name text-sm multiline-text" style="max-height: 10%;">
-                              {{ item.text }}
-                            </div>
-                          </div>
-                          <!-- <v-icon
-                      class="icon-edit"
-                      left
-                      size="25"
-                      @click="showCard(item.id)"
-                      id="hidecard"
-                      style="align-items: flex-start position: absolute right: 5px"
-                    >
-                      mdi-dots-vertical</v-icon
-                    > -->
-                          <v-card
-                            class="card-setting card-position"
-                            v-if="showingCard === item.id"
-                            ref="card"
-                          >
-                            <v-list dense>
-                              <v-list-item-group
-                                v-model="selectedItem"
-                                color="primary"
-                              >
-                                <v-list-item
-                                  v-for="(itemEdit, i) in item_edit"
-                                  :key="i"
-                                  @click="handleItemClick(item, itemEdit)"
-                                >
-                                  <v-list-item-icon>
-                                    <v-icon v-text="itemEdit.icon"></v-icon>
-                                  </v-list-item-icon>
-                                  <v-list-item-content>
-                                    <v-list-item-title
-                                      style="color:#000 !important"
-                                      v-text="itemEdit.text"
-                                    ></v-list-item-title>
-                                  </v-list-item-content>
-                                </v-list-item>
-                              </v-list-item-group>
-                            </v-list>
-                          </v-card>
+                  <div v-if="this.formfilter.statusTitle === 'All' ||
+                    this.formfilter.statusTitle === 'extraJob'
+                    " :class="this.formfilter.statusTitle === 'extraJob'
+                      ? 'col-xl-12 col-md-12 col-sm-12'
+                      : 'col-xl-4 col-md-4 col-sm-12'
+                    ">
+                    <div class="row">
+                      <div class="row card col-md-12" style="padding: 10px 20px;margin-bottom: 30px;border: none;">
+                        <div class="row" style="font-weight: bold;">
+                          {{
+                            this.dataTableValuesextraJob[0].statusTitle
+                          }}&emsp13;&emsp13;
+                          <span class="card" style="padding: 0px 6px;background-color: #C5C5C5; ">{{
+                            this.dataTableValuesextraJob.length }}</span>
                         </div>
-                        <v-row>
-                          <div class="row" v-if="item.dataField">
-                            <div class="col-md-8 row">
-                              <div
-                                v-for="(itemForm, i) in JSON.parse(
-                                  item.dataField
-                                ) || []"
-                                :key="i"
-                                class="col-md-4 col-sm-4"
-                                style="padding: 2px;"
-                              >
-                                <div class="clip">
-                                  <p style="color:#5889C4">
-                                    {{ itemForm.fieldName }}
-                                  </p>
-                                </div>
+                      </div>
+                      <div v-for="(item, index) in dataTableValuesextraJob" :key="index" :class="getstatusTitleClass()">
+                        <v-card id="chover" style=" height: 100%;" :class="getStatuscardClass(item.statusTitle)">
+                          <div>
+                            <div class="row flex-between">
+                              <div v-if="item.status !== 'Active'">
+                                <span :class="getStatusClass(item.statusTitle)" class="text-white d-flex">{{ item.date }}
+                                  Day
+                                </span>
+                              </div>
+                              <div v-else>
+                                <span :class="getStatusClass(item.statusTitle)" class="text-white d-flex">{{ item.date }}
+                                  Day
+                                </span>
+                              </div>
+                              <div style="display: flex">
+                                <v-switch inset @click="updateActive(item.id)" v-model="item.status" color="#00a5fead"
+                                  true-value="Active" false-value="Close" hide-details></v-switch>
+                                  <div class="text-dot" @click="showCard(item.id)" id="hidecard">
+                                <p class="showdot">กดเพื่อตั้งค่าเพิ่มเติม</p>
+                                <v-icon left size="25" style=""> mdi-dots-vertical</v-icon>
+                              </div>
                               </div>
                             </div>
-                            <div
-                              class="col-md-4 col-sm-12"
-                              style="display: flex;justify-content: flex-end;"
-                            >
-                              <v-btn
-                                class="ma-2"
-                                outlined
-                                style="color:#5889C4"
-                                @click="getDataId(item)"
-                              >
-                                <v-icon>mdi-square-edit-outline</v-icon>
-                                แก้ไข
-                              </v-btn>
+                            <div class="">
+                              <div class="text-title-name text-bold text-lg">
+                                {{ item.title }}
+                              </div>
+                              <div class="text-title-name text-sm multiline-text" style="max-height: 10%;">
+                                {{ item.text }}
+                              </div>
                             </div>
+                            <v-card class="card-setting card-position" v-if="showingCard === item.id" ref="card">
+                              <v-list dense>
+                                <v-list-item-group v-model="selectedItem" color="primary">
+                                  <v-list-item v-for="(itemEdit, i) in item_edit" :key="i"
+                                    @click="handleItemClick(item, itemEdit)">
+                                    <v-list-item-icon>
+                                      <v-icon v-text="itemEdit.icon"></v-icon>
+                                    </v-list-item-icon>
+                                    <v-list-item-content>
+                                      <v-list-item-title style="color:#000 !important"
+                                        v-text="itemEdit.text"></v-list-item-title>
+                                    </v-list-item-content>
+                                  </v-list-item>
+                                </v-list-item-group>
+                              </v-list>
+                            </v-card>
                           </div>
-                        </v-row>
-                      </v-card>
+                          <v-row>
+                            <div class="row" v-if="item.dataField">
+                              <div class="col-md-12 row">
+                                <div v-for="(itemForm, i) in JSON.parse(
+                                  item.dataField
+                                )" :key="i" style="padding: 2px;max-width: fit-content;">
+                                  <div class="clip">
+                                    <p style="color:#5889C4">
+                                      {{ mapdata(itemForm.fieldId) }}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                              <!-- <div class="col-md-4 col-sm-12" style="display: flex;justify-content: flex-end;">
+                                <v-icon @click="deleteItem(item)" style="color:#EC5453">mdi-trash-can-outline</v-icon>
+                                <v-icon style="color:#5889C4" @click="getDataId(item)">mdi-square-edit-outline</v-icon>
+                                <v-btn class="ma-2" outlined style="color:#5889C4" @click="getDataId(item)">
+                                  <v-icon>mdi-square-edit-outline</v-icon>
+                                  แก้ไข
+                                </v-btn>
+                              </div> -->
+                            </div>
+                          </v-row>
+                        </v-card>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div class="col-xl-4 col-md-4 col-sm-12">
-                  <div class="row">
-                    <div
-                      v-for="(item, index) in dataTableValuesfastTrack"
-                      :key="index"
-                      class="col-xl-12 col-md-12 col-sm-12"
-                    >
-                      <v-card
-                        id="chover"
-                        style=" height: 100%;"
-                        :class="getStatuscardClass(item.statusTitle)"
-                      >
-                        <div>
-                          <div class="row flex-between">
-                            <div v-if="item.status !== 'Active'">
-                              <span
-                                :class="getStatusClass(item.statusTitle)"
-                                class="text-white d-flex"
-                                >{{ item.date }} Day
-                              </span>
-                            </div>
-                            <div v-else>
-                              <span
-                                :class="getStatusClass(item.statusTitle)"
-                                class="text-white d-flex"
-                                >{{ item.date }} Day
-                              </span>
-                            </div>
-                            <v-switch
-                              inset
-                              @click="updateActive(item.id)"
-                              v-model="item.status"
-                              color="#00a5fead"
-                              true-value="Active"
-                              false-value="Close"
-                              hide-details
-                            ></v-switch>
-                          </div>
-                          <div class="">
-                            <div class="text-title-name text-bold text-lg">
-                              {{ item.title }}
-                            </div>
-                            <div class="text-title-name text-sm multiline-text" row="2">
-                              {{ item.text }}
-                            </div>
-                          </div>
-                          <!-- <v-icon
-                      class="icon-edit"
-                      left
-                      size="25"
-                      @click="showCard(item.id)"
-                      id="hidecard"
-                      style="align-items: flex-start position: absolute right: 5px"
-                    >
-                      mdi-dots-vertical</v-icon
-                    > -->
-                          <v-card
-                            class="card-setting card-position"
-                            v-if="showingCard === item.id"
-                            ref="card"
-                          >
-                            <v-list dense>
-                              <v-list-item-group
-                                v-model="selectedItem"
-                                color="primary"
-                              >
-                                <v-list-item
-                                  v-for="(itemEdit, i) in item_edit"
-                                  :key="i"
-                                  @click="handleItemClick(item, itemEdit)"
-                                >
-                                  <v-list-item-icon>
-                                    <v-icon v-text="itemEdit.icon"></v-icon>
-                                  </v-list-item-icon>
-                                  <v-list-item-content>
-                                    <v-list-item-title
-                                      style="color:#000 !important"
-                                      v-text="itemEdit.text"
-                                    ></v-list-item-title>
-                                  </v-list-item-content>
-                                </v-list-item>
-                              </v-list-item-group>
-                            </v-list>
-                          </v-card>
+                  <div v-if="this.formfilter.statusTitle === 'All' ||
+                    this.formfilter.statusTitle === 'fastTrack'
+                    " :class="this.formfilter.statusTitle === 'fastTrack'
+                      ? 'col-xl-12 col-md-12 col-sm-12'
+                      : 'col-xl-4 col-md-4 col-sm-12'
+                    ">
+                    <div class="row">
+                      <div class="row card col-md-12" style="padding: 10px 20px;margin-bottom: 30px;border: none;">
+                        <div class="row" style="font-weight: bold;">
+                          {{
+                            this.dataTableValuesfastTrack[0].statusTitle
+                          }}&emsp13;&emsp13;
+                          <span class="card" style="padding: 0px 6px;background-color: #C5C5C5; ">{{
+                            this.dataTableValuesfastTrack.length }}</span>
                         </div>
-                        <v-row>
-                          <div class="row" v-if="item.dataField">
-                            <div class="col-md-8 row">
-                              <div
-                                v-for="(itemForm, i) in JSON.parse(
-                                  item.dataField
-                                ) || []"
-                                :key="i"
-                                class="col-md-4 col-sm-4"
-                                style="padding: 2px;"
-                              >
-                                <div class="clip">
-                                  <p style="color:#5889C4">
-                                    {{ itemForm.fieldName }}
-                                  </p>
-                                </div>
+                      </div>
+                      <div :class="getstatusTitleClass()" v-for="(item, index) in dataTableValuesfastTrack" :key="index">
+                        <v-card id="chover" style=" height: 100%;" :class="getStatuscardClass(item.statusTitle)">
+                          <div>
+                            <div class="row flex-between">
+                              <div v-if="item.status !== 'Active'">
+                                <span :class="getStatusClass(item.statusTitle)" class="text-white d-flex">{{ item.date }}
+                                  Day
+                                </span>
+                              </div>
+                              <div v-else>
+                                <span :class="getStatusClass(item.statusTitle)" class="text-white d-flex">{{ item.date }}
+                                  Day
+                                </span>
+                              </div>
+                              <div style="display: flex">
+                                <v-switch inset @click="updateActive(item.id)" v-model="item.status" color="#00a5fead"
+                                  true-value="Active" false-value="Close" hide-details></v-switch>
+                                  <div class="text-dot" @click="showCard(item.id)" id="hidecard">
+                                <p class="showdot">กดเพื่อตั้งค่าเพิ่มเติม</p>
+                                <v-icon left size="25" style=""> mdi-dots-vertical</v-icon>
+                              </div>
                               </div>
                             </div>
-                            <div
-                              class="col-md-4 col-sm-12"
-                              style="display: flex;justify-content: flex-end;"
-                            >
-                              <v-btn
-                                class="ma-2"
-                                outlined
-                                style="color:#5889C4"
-                                @click="getDataId(item)"
-                              >
-                                <v-icon>mdi-square-edit-outline</v-icon>
-                                แก้ไข
-                              </v-btn>
+                            <div class="">
+                              <div class="text-title-name text-bold text-lg">
+                                {{ item.title }}
+                              </div>
+                              <div class="text-title-name text-sm multiline-text" row="2">
+                                {{ item.text }}
+                              </div>
                             </div>
+                            <v-card class="card-setting card-position" v-if="showingCard === item.id" ref="card">
+                              <v-list dense>
+                                <v-list-item-group v-model="selectedItem" color="primary">
+                                  <v-list-item v-for="(itemEdit, i) in item_edit" :key="i"
+                                    @click="handleItemClick(item, itemEdit)">
+                                    <v-list-item-icon>
+                                      <v-icon v-text="itemEdit.icon"></v-icon>
+                                    </v-list-item-icon>
+                                    <v-list-item-content>
+                                      <v-list-item-title style="color:#000 !important"
+                                        v-text="itemEdit.text"></v-list-item-title>
+                                    </v-list-item-content>
+                                  </v-list-item>
+                                </v-list-item-group>
+                              </v-list>
+                            </v-card>
                           </div>
-                        </v-row>
-                      </v-card>
+                          <v-row>
+                            <div class="row" v-if="item.dataField">
+                              <div class="col-md-12 row">
+                                <div v-for="(itemForm, i) in JSON.parse(
+                                  item.dataField
+                                ) || []" :key="i" class="col-md-4 col-sm-4"
+                                  style="padding: 2px;max-width: fit-content;">
+                                  <div class="clip">
+                                    <p style="color:#5889C4">
+                                      {{ mapdata(itemForm.fieldId) }}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                              <!-- <div class="col-md-12 col-sm-12" style="display: flex;justify-content: flex-end;">
+                                <v-icon @click="deleteItem(item)" style="color:#EC5453">mdi-trash-can-outline</v-icon>
+                                <v-btn class="ma-2" outlined style="color:#5889C4" @click="getDataId(item)">
+                                  <v-icon>mdi-square-edit-outline</v-icon>
+                                  แก้ไข
+                                </v-btn>
+                              </div> -->
+                            </div>
+                          </v-row>
+                        </v-card>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -762,7 +508,7 @@ export default {
       branchItem: [],
       flowItem: [],
       formfilter: {
-        statusTitle: 'nomal'
+        statusTitle: 'All'
       },
       formAdd: {
         masBranchID: '',
@@ -777,21 +523,17 @@ export default {
       item_edit: [
         {
           text: 'แก้ไข',
-          icon: 'mdi-clock',
+          icon: 'mdi mdi-square-edit-outline',
           click: item => this.getDataId(item)
         },
-        { text: 'ลบ', icon: 'mdi-account', click: item => this.delete(item) },
-        { text: 'สำเนา', icon: 'mdi-flag', click: item => this.copy(item) }
+        { text: 'ลบ', icon: 'mdi mdi-trash-can-outline', click: item => this.deleteItem(item) },
+        { text: 'สำเนา', icon: 'mdi mdi-content-copy', click: item => this.copy(item) }
       ],
-      items: [
-        'ทั้งหมด',
-        'เปิดใช้งาน',
-        'ปิดใช้งาน',
-        'เก็บข้อมูล',
-        'ไม่เก็บข้อมูล'
-      ],
+      items: ['ทั้งหมด', 'เปิดใช้งาน', 'เก็บข้อมูล', 'ไม่เก็บข้อมูล'],
+      itemsDate: ['น้อย-มาก', 'มาก-น้อย'],
       itemsi: [],
       selectedItem: 'ทั้งหมด',
+      selectedItemDate: 'น้อย-มาก',
       filtered: null,
       search: '',
       headers: [
@@ -814,6 +556,12 @@ export default {
       },
       ascending: true,
       deleteAlert: {
+        title: 'ลบ หรือ ไม่',
+        showCancelButton: true,
+        type: 'info',
+        icon: 'error'
+      },
+      deleteAlertconfirm: {
         title: 'ลบสำเร็จ',
         showCancelButton: false,
         type: 'success',
@@ -832,12 +580,20 @@ export default {
         showConfirmButton: false
       },
       copyAlert: {
+        title: 'คัดลอก หรือ ไม่',
+        icon: 'info',
+        type: 'info',
+        showCancelButton: true
+      },
+      copyAlertsucce: {
         title: 'คัดลอก สำเร็จ',
         icon: 'success',
         type: 'success',
         showConfirmButton: false
       },
-      setviewByType: ''
+      setviewByType: '',
+      logget: [],
+      form: []
     }
   },
   computed: {
@@ -873,6 +629,7 @@ export default {
   mounted () {
     this.getDataBranch()
     this.getDataflow()
+    this.getdataCustomField()
     this.$session.start()
     this.$session.set('viewByType', 2)
     this.$on('call-get-data', this.getdata())
@@ -890,7 +647,7 @@ export default {
   },
   watch: {
     viewByType: {
-      handler (newVal) {},
+      handler (newVal) { },
       immediate: true
     }
   },
@@ -903,70 +660,77 @@ export default {
       console.log('reload')
       this.getdata()
     },
-    sortBy () {
-      this.ascending = !this.ascending
-      this.sortDataTable()
-    },
+    // sortBy (item) {
+    //   this.ascending = !item
+    //   // console.log('this.ascending', this.ascending)
+    //   this.sortDataTable()
+    // },
     sortDataTable () {
-      this.dataTableValues.sort((a, b) => {
-        if (this.ascending) {
-          return a.id - b.id
+      console.log('selectedItemDate', this.selectedItemDate)
+      this.dataTableValuesextraJob.sort((a, b) => {
+        if (this.selectedItemDate === 'น้อย-มาก') {
+          return a.date - b.date
         } else {
-          return b.id - a.id
+          return b.date - a.date
+        }
+      })
+      this.dataTableValuesnomal.sort((a, b) => {
+        if (this.selectedItemDate === 'น้อย-มาก') {
+          return a.date - b.date
+        } else {
+          return b.date - a.date
+        }
+      })
+      this.dataTableValuesfastTrack.sort((a, b) => {
+        if (this.selectedItemDate === 'น้อย-มาก') {
+          return a.date - b.date
+        } else {
+          return b.date - a.date
         }
       })
     },
-    filterDatacol () {
-      this.dataTableValuesextraJob = this.dataTableValue.filter(
+    mapdata (itemxx) {
+      const data = this.logget.filter(item => {
+        return item.fieldId === itemxx
+      })
+      return data[0].fieldName
+    },
+    async filterDatacol () {
+      this.dataTableValuesextraJob = this.dataTableValues.filter(
         item => item.statusTitle === 'extraJob'
       )
-      this.dataTableValuesnomal = this.dataTableValue.filter(
+      this.dataTableValuesnomal = this.dataTableValues.filter(
         item => item.statusTitle === 'nomal'
       )
-      this.dataTableValuesfastTrack = this.dataTableValue.filter(
+      this.dataTableValuesfastTrack = this.dataTableValues.filter(
         item => item.statusTitle === 'fastTrack'
       )
     },
     async filterData () {
       if (this.selectedItem === 'เปิดใช้งาน') {
+        this.dataTableValues = []
         this.dataTableValues = this.dataTableValue.filter(
           item => item.status === 'Active'
         )
         console.log('this.selectedItem', this.selectedItem)
-      // } else if (this.selectedItem === 'extraJob') {
-      //   this.dataTableValues = this.dataTableValue.filter(
-      //     item => item.statusTitle === 'extraJob'
-      //   )
-      //   console.log(' this.selectedItem', this.selectedItem)
-      } else if (this.selectedItem === 'ปิดใช้งาน') {
-        this.dataTableValues = this.dataTableValue.filter(
-          item => item.status === 'Close'
-        )
-        console.log('this.selectedItem', this.selectedItem)
-      // } else if (this.selectedItem === 'nomal') {
-      //   this.dataTableValues = this.dataTableValue.filter(
-      //     item => item.statusTitle === 'nomal'
-      //   )
-      //   console.log('this.selectedItem', this.selectedItem)
-      // } else if (this.selectedItem === 'fastTrack') {
-      //   this.dataTableValues = this.dataTableValue.filter(
-      //     item => item.statusTitle === 'fastTrack'
-      //   )
-      //   console.log('this.selectedItem', this.selectedItem)
       } else if (this.selectedItem === 'เก็บข้อมูล') {
+        this.dataTableValues = []
         this.dataTableValues = this.dataTableValue.filter(
           item => item.logData === 'true'
         )
         console.log('this.selectedItem', this.selectedItem)
       } else if (this.selectedItem === 'ไม่เก็บข้อมูล') {
+        this.dataTableValues = []
         this.dataTableValues = this.dataTableValue.filter(
           item => item.logData === 'false'
         )
         console.log('this.selectedItem', this.selectedItem)
       } else if (this.selectedItem === 'ทั้งหมด') {
+        this.dataTableValues = []
         this.dataTableValues = this.dataTableValue
         console.log('this.selectedItem', this.selectedItem)
       }
+      this.filterDatacol()
     },
     // ดึงดาต้า
     getIdFrom (IsfromId) {
@@ -1005,6 +769,50 @@ export default {
         return 'text-bold shardow-false text-title'
       }
     },
+    getstatusTitleClass () {
+      if (
+        this.formfilter.statusTitle === 'fastTrack' &&
+        this.formfilter.statusTitle !== 'All'
+      ) {
+        return 'col-md-4 col-lg-4 col-sm-12'
+      } else if (
+        this.formfilter.statusTitle === 'nomal' &&
+        this.formfilter.statusTitle !== 'All'
+      ) {
+        return 'col-md-4 col-lg-4 col-sm-12'
+      } else if (
+        this.formfilter.statusTitle === 'extraJob' &&
+        this.formfilter.statusTitle !== 'All'
+      ) {
+        return 'col-md-4 col-lg-4 col-sm-12'
+      } else if (
+        this.formfilter.statusTitle === 'All' ||
+        this.formfilter.statusTitle === 'fastTrack' ||
+        this.formfilter.statusTitle === 'nomal' ||
+        this.formfilter.statusTitle === 'extraJob'
+      ) {
+        return 'col-md-12 col-lg-12 col-sm-12'
+      } else {
+        return 'col-md-12 col-lg-12 col-sm-12'
+      }
+    },
+    getdataCustomField () {
+      try {
+        const payload = {
+          shopId: this.form.shopId,
+          masBranchID: this.masBranchID,
+          flowId: this.flowId
+        }
+        console.log('payload', payload)
+        axios
+          .get(this.DNS_IP + '/customField/get', { params: payload })
+          .then(async res => {
+            this.logget = res.data
+          })
+      } catch (error) {
+        console.log(error)
+      }
+    },
     async getdata () {
       this.dataTableValue = []
       this.dataTableValues = []
@@ -1020,10 +828,8 @@ export default {
             console.log('res', res)
             this.dataTableValue = res.data
             this.dataTableValues = res.data
-            console.log('dataTableValues', this.dataTableValues)
-            // this.getViewtype()
+            console.log(' this.dataTableValue', this.dataTableValue)
             this.filterData()
-            this.filterDatacol()
           })
       } catch (error) {
         console.log(error)
@@ -1034,8 +840,8 @@ export default {
       await axios
         .get(
           this.DNS_IP +
-            '/master_branch/get?shopId=' +
-            this.$session.getAll().data.shopId
+          '/master_branch/get?shopId=' +
+          this.$session.getAll().data.shopId
         )
         .then(response => {
           let rs = response.data
@@ -1076,10 +882,10 @@ export default {
       await axios
         .get(
           this.DNS_IP +
-            '/flow/get?shopId=' +
-            this.$session.getAll().data.shopId +
-            '&masBranchIDAll=' +
-            this.formAdd.masBranchID
+          '/flow/get?shopId=' +
+          this.$session.getAll().data.shopId +
+          '&masBranchIDAll=' +
+          this.formAdd.masBranchID
         )
         .then(async response => {
           await this.getdata()
@@ -1139,10 +945,15 @@ export default {
           )
         }
         if (formData) {
-          axios.post(this.DNS_IP + '/stepMessage/add', formData).then(res => {
-            // console.log('res', res)
-            this.$swal(this.copyAlert)
-            this.getdata()
+          console.log('formData', formData)
+          this.$swal(this.copyAlert).then(async result => {
+            if (result) {
+              axios.post(this.DNS_IP + '/stepMessage/add', formData).then(res => {
+                console.log('res', res)
+                this.$swal(this.copyAlertsucce)
+                this.getdata()
+              })
+            }
           })
         }
       } catch (error) {
@@ -1181,16 +992,18 @@ export default {
       }
     },
     // ลบ
-    delete (item) {
+    deleteItem (item) {
       try {
+        console.log(item)
         this.$swal(this.deleteAlert).then(async result => {
           if (result) {
             axios
               .post(this.DNS_IP + `/stepMessage/delete/` + item.id)
-              .then(data => {
+              .then(async data => {
                 this.$swal(this.delete)
                 console.log(data)
-                this.getdata()
+                this.$swal(this.deleteAlertconfirm)
+                await this.getdata()
               })
           }
         })
@@ -1250,7 +1063,7 @@ export default {
       if (itemEdit.text === 'แก้ไข') {
         await this.getDataId(item)
       } else if (itemEdit.text === 'ลบ') {
-        await this.delete(item)
+        await this.deleteItem(item)
       } else if (itemEdit.text === 'สำเนา') {
         await this.copy(item)
       } else {
@@ -1266,40 +1079,53 @@ export default {
   display: flex;
   justify-content: space-between;
 }
+
 .v-text-field {
   padding-top: 0px !important;
   margin-top: 4px;
 }
+
 .container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
   margin: 0px 0px;
 }
+
 .text-dot {
   display: flex;
 }
+
 @media screen and (min-width: 400px) {
   .showdot {
     display: none !important;
   }
 }
+
 .v-input--selection-controls {
   margin-top: 0px;
 }
+
 .v-application p {
   margin-bottom: 0px !important;
 }
+
 .row {
   margin: 0px;
   align-items: baseline;
 }
+
 .row-title {
   margin: 0px;
   display: flex;
   justify-content: space-between;
   align-items: baseline;
 }
+
 .v-list-item--active {
   background-color: #ddd;
 }
+
 .theme--light.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled) {
   background-color: #ffffff !important;
 }
@@ -1360,10 +1186,11 @@ export default {
 
 .v-sheet.v-card .card-setting {
   padding: 0px !important;
-  position: absolute;
-  right: 15px;
-  margin: 40px !important;
-  max-width: 368px;
+    position: absolute;
+    margin: 40px !important;
+    max-width: 368px;
+    top: 5px;
+    right: -40px !important;
 }
 
 .v-sheet.v-card {
@@ -1371,10 +1198,12 @@ export default {
   line-height: 35px;
   border-radius: 20px;
 }
+
 .v-card.v-sheet #chover:hover {
   /* filter: drop-shadow(2px 4px 6px #a5a5a5); */
   transform: translateY(-4px);
 }
+
 .v-sheet.v-card:not(.v-sheet--outlined) {
   box-shadow: none !important;
 }
@@ -1432,45 +1261,55 @@ export default {
 .text-bold {
   font-weight: bold;
 }
+
 .text-gray {
   color: #ddd;
 }
+
 .text-sm {
   font-size: 12px;
   font-style: normal;
   font-weight: 400;
   color: #1e1e1e;
 }
+
 .text-lg {
   font-size: 16px;
 }
+
 .bg-blue {
   background-color: #5889c4;
   padding: 2px 30px;
-  border-radius: 30px;
+  border-radius: 10px;
   width: fit-content;
 }
+
 .bg-yellow {
   background-color: #feb700;
   padding: 2px 30px;
-  border-radius: 30px;
+  border-radius: 10px;
   width: fit-content;
 }
+
 .bg-false {
   background-color: #ec5453;
   padding: 2px 30px;
-  border-radius: 30px;
+  border-radius: 10px;
   width: fit-content;
 }
+
 .shardow-blue {
   filter: drop-shadow(0px 4px 0px #5889c4);
 }
+
 .shardow-yellow {
   filter: drop-shadow(0px 4px 0px #feb700);
 }
+
 .shardow-false {
   filter: drop-shadow(0px 4px 0px #ec5453);
 }
+
 .footer-card {
   display: flex;
   align-items: center;
@@ -1486,14 +1325,18 @@ export default {
 .sort {
   display: block;
 }
+
 .ma-2 {
   border-radius: 6px;
 }
+
 .clip {
+  min-width: 60px;
+  max-width: fit-content;
   background-color: rgb(255 255 255);
-  padding: 2px 4px;
-  border-radius: 30px;
-  min-width: 69px;
+  padding: 4px 7px;
+  border-radius: 10px;
+  /* min-width: 69px; */
   line-height: normal;
   text-align: center;
   color: #d9d9d9 !important;
@@ -1501,16 +1344,20 @@ export default {
   /* filter: drop-shadow(2px 4px 6px #b9b9b9); */
   border: solid 1px;
 }
+
 .theme--light.v-chip {
   color: #ffffff !important;
   font-weight: bold;
 }
+
 .theme--light.v-chip :hover {
   transform: scale(1.03) !important;
 }
-.v-data-table > .v-data-table__wrapper .v-data-table__mobile-row {
+
+.v-data-table>.v-data-table__wrapper .v-data-table__mobile-row {
   height: 0;
 }
+
 .head-card {
   padding: 0px 30px;
   display: flex;
@@ -1518,94 +1365,102 @@ export default {
   align-items: baseline;
   justify-content: flex-end;
 }
+
 .v-application--is-ltr .v-data-table__mobile-row__cell {
   text-align: left;
 }
+
 .multiline-text {
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* Number of lines to show */
+  -webkit-line-clamp: 2;
+  /* Number of lines to show */
   -webkit-box-orient: vertical;
 }
+
 .radio-switch {
-    display: flex;
-    align-items: center;
-    padding-bottom: 40px;
-    /* filter: drop-shadow(2px 4px 6px #ddd); */
-  }
+  display: flex;
+  align-items: stretch;
+  padding-bottom: 40px;
+  height: 40px;
+  background-color: #fff;
+  border-radius: 30px;
+  /* filter: drop-shadow(2px 4px 6px #ddd); */
+}
 
-  .radio-switch-input {
-    display: none;
-  }
+.radio-switch-input {
+  display: none;
+}
 
-  .radio-switch-label {
-    display: block;
-    width: 60px;
-    height: 30px;
-    line-height: 30px;
-    text-align: center;
-    color: #333;
-    cursor: pointer;
-  }
+.radio-switch-label {
+  display: block;
+  width: 60px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  color: #333;
+  cursor: pointer;
+}
 
-  .radio-switch-label[for="radio-switch-All"] {
-    background-color: #007bff;
-    color: #fff;
-    width: -webkit-fill-available;
-    height: 40px;
-    display: flex;
-    padding: 10px;
-    place-content: center;
-    align-items: center;
-    border-radius: 10px 0px 0px 10px;
-    /* text-shadow: rgb(255, 255, 255) 1px 1px 5px; */
-    font-weight: bold;
-  }
-  .radio-switch-label[for="radio-switch-low"] {
-    background-color: #007bff;
-    color: #fff;
-    width: -webkit-fill-available;
-    height: 40px;
-    padding: 10px;
-    display: flex;
-    place-content: center;
-    align-items: center;
-    /* text-shadow: rgb(255, 255, 255) 1px 1px 5px; */
-    font-weight: bold;
-  }
+.radio-switch-label[for="radio-switch-All"] {
+  background-color: #007bff;
+  color: #fff;
+  width: -webkit-fill-available;
+  height: 40px;
+  display: flex;
+  padding: 10px;
+  place-content: center;
+  align-items: center;
+  border-radius: 10px 0px 0px 10px;
+  /* text-shadow: rgb(255, 255, 255) 1px 1px 5px; */
+  font-weight: bold;
+}
 
-  .radio-switch-label[for="radio-switch-medium"] {
-    background-color: #ffc107;
-    color: #fff;
-    height: 40px;
-    display: flex;
-    place-content: center;
-    padding: 10px;
-    align-items: center;
-    width: -webkit-fill-available;
-    /* text-shadow: rgb(255, 255, 255) 1px 1px 5px; */
-    font-weight: bold;
-  }
+.radio-switch-label[for="radio-switch-low"] {
+  background-color: #007bff;
+  color: #fff;
+  width: -webkit-fill-available;
+  height: 40px;
+  padding: 10px;
+  display: flex;
+  place-content: center;
+  align-items: center;
+  /* text-shadow: rgb(255, 255, 255) 1px 1px 5px; */
+  font-weight: bold;
+}
 
-  .radio-switch-label[for="radio-switch-high"] {
-    background-color: #dc3545;
-    color: #fff;
-    height: 40px;
-    display: flex;
-    place-content: center;
-    padding: 10px;
-    align-items: center;
-    width: -webkit-fill-available;
-    border-radius: 0px 10px 10px 0px;
-    /* text-shadow: rgb(255, 255, 255) 1px 1px 10px; */
-    font-weight: bold;
-  }
+.radio-switch-label[for="radio-switch-medium"] {
+  background-color: #ffc107;
+  color: #fff;
+  height: 40px;
+  display: flex;
+  place-content: center;
+  padding: 10px;
+  align-items: center;
+  width: -webkit-fill-available;
+  /* text-shadow: rgb(255, 255, 255) 1px 1px 5px; */
+  font-weight: bold;
+}
 
-  .radio-switch-label[for="radio-switch-low"],
-  .radio-switch-label[for="radio-switch-medium"],
-  .radio-switch-label[for="radio-switch-high"] {
-    background-color: #fff;
-    /* border:solid #ddd !important; */
-  }
+.radio-switch-label[for="radio-switch-high"] {
+  background-color: #dc3545;
+  color: #fff;
+  height: 40px;
+  display: flex;
+  place-content: center;
+  padding: 10px;
+  align-items: center;
+  width: -webkit-fill-available;
+  border-radius: 0px 10px 10px 0px;
+  /* text-shadow: rgb(255, 255, 255) 1px 1px 10px; */
+  font-weight: bold;
+}
+
+.radio-switch-label[for="radio-switch-low"],
+.radio-switch-label[for="radio-switch-medium"],
+.radio-switch-label[for="radio-switch-high"] {
+  background-color: #fff;
+  /* border:solid #ddd !important; */
+}
 </style>

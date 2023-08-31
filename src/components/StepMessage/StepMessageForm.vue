@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="isDialogOpen" max-width="500px">
+    <v-dialog v-model="isDialogOpen" max-width="900px">
       <v-card>
         <v-toolbar dark color="primary">
           <v-btn icon dark @click="isDialogOpen = false,this.item = []">
@@ -15,13 +15,13 @@
               <input
                 type="radio"
                 class="radio-switch-input"
-                id="radio-switch-low"
+                id="radio-switch-low-dialog"
                 value="nomal"
                 v-model="form.statusTitle"
               />
               <label
                 class="radio-switch-label"
-                for="radio-switch-low"
+                for="radio-switch-low-dialog"
                 :style="{
                   backgroundColor:
                     selectedOption === 'nomal' ? '#00a5fead' : '#fff',
@@ -34,16 +34,16 @@
               <input
                 type="radio"
                 class="radio-switch-input"
-                id="radio-switch-medium"
+                id="radio-switch-medium-dialog"
                 value="extraJob"
                 v-model="form.statusTitle"
               />
               <label
                 class="radio-switch-label"
-                for="radio-switch-medium"
+                for="radio-switch-medium-dialog"
                 :style="{
                   backgroundColor:
-                    selectedOption === 'extraJob' ? '#00a5fead' : '#fff',
+                    selectedOption === 'extraJob' ? '#dc3545' : '#fff',
                   color:
                     selectedOption === 'extraJob' ? '#fff' : '#ddd',
                 }"
@@ -52,16 +52,16 @@
               <input
                 type="radio"
                 class="radio-switch-input"
-                id="radio-switch-high"
+                id="radio-switch-high-dialog"
                 value="fastTrack"
                 v-model="form.statusTitle"
               />
               <label
                 class="radio-switch-label"
-                for="radio-switch-high"
+                for="radio-switch-high-dialog"
                 :style="{
                   backgroundColor:
-                    selectedOption === 'fastTrack' ? '#00a5fead' : '#fff',
+                    selectedOption === 'fastTrack' ? '#ffc107' : '#fff',
                   color:
                     selectedOption === 'fastTrack' ? '#fff' : '#ddd',
                 }"
@@ -74,7 +74,8 @@
               :value="form.title"
               :counter="200"
               label="หัวข้อ"
-              required
+              outlined
+              require
             ></v-text-field>
             <v-textarea
               v-model="form.text"
@@ -82,6 +83,7 @@
               auto-grow
               label="คำอธิบาย"
               rows="1"
+              outlined
             ></v-textarea>
             <v-text-field
               v-model="form.date"
@@ -89,6 +91,7 @@
               type="number"
               label="หลังจากสมัครส่งในอีกกี่วัน"
               required
+              outlined
             ></v-text-field>
             <!-- <v-row justify="center" v-else  style="padding-left: 45px; margin-top: -20px">
               <v-menu
@@ -159,7 +162,12 @@
               style="padding: 1px 20px 40px 20px"
             >
             </v-switch>
-              <v-btn class="col-md-12" color="#1876d2" large @click="editItem" style="color: #fff;"> submit </v-btn>
+            <div style="display: flex;justify-content: space-between;">
+              <div @click="copy()" style="cursor: pointer;display: flex;align-items: center;justify-content: space-between;">
+                <v-icon style="color:#5889C4" >mdi-square-edit-outline</v-icon> Save As Draft
+              </div>
+              <v-btn class="col-md-4" color="#1876d2" large @click="editItem" style="color: #fff;"> submit </v-btn>
+            </div>
           </v-form>
         </v-list>
       </v-card>
@@ -210,6 +218,18 @@ export default {
         logData: false,
         masBranchID: '',
         flowId: ''
+      },
+      copyAlert: {
+        title: 'คัดลอก หรือ ไม่',
+        icon: 'info',
+        type: 'info',
+        showCancelButton: true
+      },
+      copyAlertsucce: {
+        title: 'คัดลอก สำเร็จ',
+        icon: 'success',
+        type: 'success',
+        showConfirmButton: false
       },
       checkbox2: false,
       checkbox3: true,
@@ -438,6 +458,56 @@ export default {
       } catch (error) {
         console.log(error)
       }
+    },
+    copy () {
+      try {
+        let form = Object.assign({}, this.form, { dataField: '' })
+        console.log('ite,mmm', form)
+        delete form.id
+        delete form.RECORD_STATUS
+        delete form.CREATE_DATE
+        delete form.LAST_DATE
+        delete form.dataFields
+        if (this.logget && this.logget.length > 0) {
+          let selectedLogs = this.logget.filter(
+            (dataLog) => dataLog.id === true
+          )
+          let dataFieldArray = selectedLogs.map((d) => ({
+            fieldId: d.fieldId
+          }))
+          if (this.form.dateFull !== 'Invalid date') {
+            form.dateFull = moment(this.form.dateFull).format(
+              'YYYY-MM-DD HH:mm:ss'
+            )
+          }
+
+          for (let i = 0; i < selectedLogs.length; i++) {
+            let d = selectedLogs[i]
+            if (d.logData === true) {
+              dataFieldArray.push({
+                fieldId: d.fieldId
+              })
+            }
+          }
+
+          form.dataField = JSON.stringify(dataFieldArray)
+        }
+        form.text = 'copy ' + form.text
+        form.title = 'copy ' + form.title
+        if (form) {
+          this.$swal(this.copyAlert).then(async result => {
+            if (result) {
+              axios.post(this.DNS_IP + '/stepMessage/add', form).then(res => {
+                console.log('res', res)
+                this.$swal(this.copyAlertsucce)
+                this.$emit('testData')
+              })
+            }
+          })
+        }
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 }
@@ -454,7 +524,7 @@ export default {
     /* background-color: rgb(255, 255, 255) !important; */
   }
   .fixpadding{
-    padding-top: 20px;
+    /* padding-top: 20px; */
     display: flex;
     align-content: flex-start;
   }
@@ -496,7 +566,7 @@ export default {
     cursor: pointer;
   }
 
-  .radio-switch-label[for="radio-switch-low"] {
+  .radio-switch-label[for="radio-switch-low-dialog"] {
     background-color: #007bff;
     color: #fff;
     width: -webkit-fill-available;
@@ -504,12 +574,12 @@ export default {
     display: flex;
     place-content: center;
     align-items: center;
-    border-radius: 30px 0px 0px 30px;
+    border-radius: 10px 0px 0px 10px;
     /* text-shadow: rgb(255, 255, 255) 1px 1px 5px; */
     font-weight: bold;
   }
 
-  .radio-switch-label[for="radio-switch-medium"] {
+  .radio-switch-label[for="radio-switch-medium-dialog"] {
     background-color: #ffc107;
     color: #fff;
     height: 50px;
@@ -521,7 +591,7 @@ export default {
     font-weight: bold;
   }
 
-  .radio-switch-label[for="radio-switch-high"] {
+  .radio-switch-label[for="radio-switch-high-dialog"] {
     background-color: #dc3545;
     color: #fff;
     height: 50px;
@@ -529,7 +599,7 @@ export default {
     place-content: center;
     align-items: center;
     width: -webkit-fill-available;
-    border-radius: 0px 30px 30px 0px;
+    border-radius: 0px 10px 10px 0px;
     /* text-shadow: rgb(255, 255, 255) 1px 1px 10px; */
     font-weight: bold;
   }
