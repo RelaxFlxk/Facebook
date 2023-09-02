@@ -1010,7 +1010,7 @@ export default {
         s.active = false
         s.date = moment(item + v.split('-')[0], 'YYYY-MM-DD').format('YYYY-MM-DD')
         let countBooking = 0
-        let totalLimit = limitTime.reduce((x, y) => { return x + parseInt(y.limitBooking) }, 0)
+        let totalLimit = await limitTime.reduce((x, y) => { return x + parseInt(y.limitBooking) }, 0)
         limitTime.forEach((a, b) => {
           // console.log('a', a)
           // console.log('timevaliablie', moment(item + v.split('-')[0], 'YYYY-MM-DD').format('YYYY-MM-DD'), '  ', dataTimeCheck)
