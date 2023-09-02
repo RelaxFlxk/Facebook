@@ -925,8 +925,17 @@ export default {
     },
     async openHistory (item) {
       console.log('item', item)
-      console.log('this.BookingDataList[item.bookNo]', this.BookingDataList[item.bookNo])
-      this.HistoryData = this.BookingDataList[item.bookNo]
+      // console.log('this.BookingDataList[item.bookNo]', this.BookingDataList[item.bookNo])
+      // this.HistoryData = this.BookingDataList[item.bookNo]
+      const BookingData = await axios.get(this.DNS_IP + '/BookingData/get_history?bookNo=' + item.bookNo)
+        .then(async (response) => {
+          return response.data
+        })
+        .catch((error) => {
+          console.log('error function addData : ', error)
+          return null
+        })
+      this.HistoryData = BookingData || []
       this.pictureUrHistory = item.memberPicture
       // axios.get(this.DNS_IP + '/BookingData/get_history?bookNo=' + item.bookNo)
       //   .then(async (response) => {
@@ -982,7 +991,7 @@ export default {
         this.overlaySave = false
         this.itemBookingUse = []
         this.itemBookingCount = []
-        await this.getBookingDataList(this.dateStart)
+        // await this.getBookingDataList(this.dateStart)
         let urlApi = {}
         if (this.flowSelect === 'allFlow') {
           urlApi = this.DNS_IP +
@@ -1019,15 +1028,20 @@ export default {
               })
               for (let i = 0; i < sortData.length; i++) {
                 let d = sortData[i]
-                if (this.BookingDataList[d.bookNo] !== undefined) {
-                  d.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
-                  d.cusName = (d.cusName.length > 0) ? d.cusName[0].fieldValue : ''
-                  d.cusPhone = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เบอร์โทร')
-                  d.cusPhone = (d.cusPhone.length > 0) ? d.cusPhone[0].fieldValue : ''
-                  d.countCus = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'จำนวนที่นั่ง')
-                  d.countCus = (d.countCus.length > 0) ? d.countCus[0].fieldValue : ''
-                  this.itemBookingUse.push(d)
-                }
+                // if (this.BookingDataList[d.bookNo] !== undefined) {
+                //   d.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
+                //   d.cusName = (d.cusName.length > 0) ? d.cusName[0].fieldValue : ''
+                //   d.cusPhone = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เบอร์โทร')
+                //   d.cusPhone = (d.cusPhone.length > 0) ? d.cusPhone[0].fieldValue : ''
+                //   d.countCus = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'จำนวนที่นั่ง')
+                //   d.countCus = (d.countCus.length > 0) ? d.countCus[0].fieldValue : ''
+                //   this.itemBookingUse.push(d)
+                // }
+                d.cusName = d.bookingDataCustomerName || ''
+                // s.cusReg = d.bookingDataCustomerRegisNumber || ''
+                d.cusPhone = d.bookingDataCustomerTel || ''
+                // s.displayFlowName = d.displayFlowName || ''
+                this.itemBookingUse.push(d)
               }
               this.itemBooking = this.itemBookingUse
               for (let i = 0; i < this.itemBookingUse.length; i++) {
