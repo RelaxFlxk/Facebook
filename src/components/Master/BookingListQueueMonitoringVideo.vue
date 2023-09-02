@@ -857,7 +857,7 @@ export default {
         this.itemBooking = []
         // this.dateStartShow = moment(this.dateStart).locale('th').format('LLLL')
         this.dateStartShow = 'วัน' + moment(this.dateStart).locale('th').format('dddd') + 'ที่ ' + moment(this.dateStart).locale('th').format('D MMMM ') + (parseInt(moment(this.dateStart).format('YYYY')) + 543).toString()
-        await this.getBookingDataList(this.dateStart)
+        // await this.getBookingDataList(this.dateStart)
         let urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.shopId +
@@ -881,10 +881,12 @@ export default {
               })
               for (let i = 0; i < sortData.length; i++) {
                 let d = sortData[i]
-                if (this.BookingDataList[d.bookNo] !== undefined) {
-                  d.servicePoint = d.servicePoint || ''
-                  this.itemBooking.push(d)
-                }
+                // if (this.BookingDataList[d.bookNo] !== undefined) {
+                //   d.servicePoint = d.servicePoint || ''
+                //   this.itemBooking.push(d)
+                // }
+                d.servicePoint = d.servicePoint || ''
+                this.itemBooking.push(d)
               }
               let dataCon = this.itemBooking.filter(el => { return el.statusBt === 'confirmJob' })
               let dataWain = this.itemBooking.filter(el => { return el.statusBt === 'confirm' })
