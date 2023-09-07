@@ -3656,7 +3656,7 @@
                             @change="setFlowByBranchEdit()"
                           ></v-select>
                         </v-col>
-                        <v-col cols="2" class="pb-0">
+                        <v-col cols="2" class="pb-0" v-if="(getSelectText !== 'cancel') && (checkSelectText !== 'confirmJob')">
                           <v-btn
                             color="warning"
                             dark
@@ -6226,6 +6226,7 @@
                         class="elevation-1"
                         show-group-by
                         hide-default-footer
+                        disable-pagination
                       >
                         <!-- <template v-slot:[`item.statusBt`]="{ item }">
                           <v-chip
@@ -8354,6 +8355,10 @@ export default {
           .get(urlApi)
           .then(async response => {
             console.log('getData', response.data.length)
+            console.log('this.dataEmpShowEmpReport', this.dataEmpShowEmpReport)
+            response.data.forEach((item) => {
+              console.log('BookflowName', item.bookingEmpFlowName || 'None')
+            })
             if (response.data.length > 0) {
               for (let i = 0; i < response.data.length; i++) {
                 let d = response.data[i]
@@ -8375,6 +8380,7 @@ export default {
                   this.dataShowEmpReport.push(d)
                 }
               }
+              console.log('this.Datatat', this.dataShowEmpReport)
             } else {
               this.dataShowEmpReport = []
               this.dataEmpShowEmpReport = []
@@ -10414,7 +10420,7 @@ export default {
       console.log('this.checkDepositAdd', this.checkDepositAdd)
     },
     async getBookingFieldText () {
-      if (JSON.parse(localStorage.getItem('sessionData')) === null) {
+      if (JSON.parse(localStorage.getItem('typeData')) === null) {
         await axios
           .get(
             this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId

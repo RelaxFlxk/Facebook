@@ -1240,7 +1240,7 @@ export default {
         { text: 'email', value: 'contactEmail' },
         { text: 'จำนวนนัดหมายที่สร้างของเดือนที่แล้ว', value: 'countBooking' },
         { text: 'สลิป', value: 'paymentImage' },
-        { text: 'ยอดเงินที่ชำระ', value: 'paymentAmount' },
+        { text: 'ยอดเงินที่ชำระ', value: 'paymentDateuse' },
         { text: 'สถานะ', value: 'paymentStatus' },
         { text: 'วันที่จ่าย/วันที่หมดอายุ', value: 'paymentDate' },
         { text: 'วันวันที่สิ้นสุดทดลองใช้', value: 'trialsVersionDate' },
@@ -1654,6 +1654,17 @@ export default {
                   d.paymentDate = d.billingEndDate
                 }
               }
+              let s = {}
+              s.amountCheck = d.paymentAmountSlip || ''
+              if (s.amountCheck === '') {
+                d.paymentDateuse = d.paymentAmount || ''
+              } else {
+                d.paymentDateuse = d.paymentAmountSlip || ''
+              }
+              if (d.paymentDateuse !== '') {
+                d.paymentDateuse = d.paymentDateuse.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+              }
+              d.typeProgram = 'linked'
               this.itemBooking.push(d)
             }
             // this.itemBookingUse = this.itemBooking.filter(el => { return el.paymentStatus === this.getSelectText })
@@ -1672,7 +1683,7 @@ export default {
               d.billingPhone = d.billingPhone || d.contactTel
               // d.paymentStatus = d.paymentStatus || 'noCash'
               // console.log(this.itemBooking.filter(el => { return el.shopId === d.shopId_Shop }))
-              if (this.itemBooking.filter(el => { return el.shopId === d.shopId_Shop }).length === 0) {
+              if (this.itemBooking.filter(el => { return el.shopId === d.shopId_Shop && el.typeProgram === 'linked' }).length === 0) {
                 if (this.itemCountBooking.filter(el => { return el.shopId === d.shopId_Shop }).length > 0) {
                   d.countBooking = this.itemCountBooking.filter(el => { return el.shopId === d.shopId_Shop })[0].countBooking
                 } else {
@@ -1685,6 +1696,16 @@ export default {
                 //     d.paymentStatus = 'finish'
                 //   }
                 // }
+                let s = {}
+                s.amountCheck = d.paymentAmountSlip || ''
+                if (s.amountCheck === '') {
+                  d.paymentDateuse = d.paymentAmount || ''
+                } else {
+                  d.paymentDateuse = d.paymentAmountSlip || ''
+                }
+                if (d.paymentDateuse !== '') {
+                  d.paymentDateuse = d.paymentDateuse.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                }
                 if (d.paymentStatus === 'noCash') {
                   if (d.shopActive === 'inactive') {
                     d.paymentStatus = 'inactive'
@@ -1695,6 +1716,7 @@ export default {
                       d.paymentDate = d.billingEndDate
                     }
                   }
+                  d.typeProgram = 'linked'
                   this.itemBooking.push(d)
                 }
               }
@@ -1727,6 +1749,17 @@ export default {
                   d.paymentDate = d.billingEndDate
                 }
               }
+              let s = {}
+              s.amountCheck = d.paymentAmountSlip || ''
+              if (s.amountCheck === '') {
+                d.paymentDateuse = d.paymentAmount || ''
+              } else {
+                d.paymentDateuse = d.paymentAmountSlip || ''
+              }
+              if (d.paymentDateuse !== '') {
+                d.paymentDateuse = d.paymentDateuse.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+              }
+              d.typeProgram = 'loyalty'
               this.itemBooking.push(d)
             }
             // this.itemBookingUse = this.itemBooking.filter(el => { return el.paymentStatus === this.getSelectText })
@@ -1738,19 +1771,23 @@ export default {
         .get(urlApiLoyalty1)
         .then(async response => {
           let rs = response.data
-          console.log('system_shop_Payment', rs)
+          console.log('DNS_IP_Loyalty', rs)
           if (rs.status !== false) {
             for (let i = 0; i < rs.length; i++) {
               let d = rs[i]
               d.billingPhone = d.billingPhone || d.contactTel
               // d.paymentStatus = d.paymentStatus || 'noCash'
               // console.log(this.itemBooking.filter(el => { return el.shopId === d.shopId_Shop }))
-              if (this.itemBooking.filter(el => { return el.shopId === d.shopId_Shop }).length === 0) {
+              console.log('d.shopId', this.itemBooking.filter(el => { return el.shopId === d.shopId_Shop }).length)
+              console.log('d.shopId_Shop', d.shopId_Shop)
+              console.log('d.paymentStatus', d.paymentStatus)
+              if (this.itemBooking.filter(el => { return el.shopId === d.shopId_Shop && el.typeProgram === 'loyalty' }).length === 0) {
                 // if (this.itemCountBooking.filter(el => { return el.shopId === d.shopId_Shop }).length > 0) {
                 //   d.countBooking = this.itemCountBooking.filter(el => { return el.shopId === d.shopId_Shop })[0].countBooking
                 // } else {
                 //   d.countBooking = 0
                 // }
+                console.log('d', d)
                 d.paymentStatus = 'noCash'
                 d.billingEndDate = d.billingEndDate || ''
                 // if (d.billingEndDate !== '') {
@@ -1758,6 +1795,18 @@ export default {
                 //     d.paymentStatus = 'finish'
                 //   }
                 // }
+                console.log('d.paymentStatus', d.paymentStatus)
+                console.log('d.billingEndDate', d.billingEndDate)
+                let s = {}
+                s.amountCheck = d.paymentAmountSlip || ''
+                if (s.amountCheck === '') {
+                  d.paymentDateuse = d.paymentAmount || ''
+                } else {
+                  d.paymentDateuse = d.paymentAmountSlip || ''
+                }
+                if (d.paymentDateuse !== '') {
+                  d.paymentDateuse = d.paymentDateuse.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                }
                 if (d.paymentStatus === 'noCash') {
                   if (d.shopActive === 'inactive') {
                     d.paymentStatus = 'inactive'
@@ -1768,6 +1817,7 @@ export default {
                       d.paymentDate = d.billingEndDate
                     }
                   }
+                  d.typeProgram = 'loyalty'
                   this.itemBooking.push(d)
                 }
               }
@@ -1906,14 +1956,19 @@ export default {
     },
     async updateShopActive (text, item, typeMain) {
       let url = ''
+      let ds = {}
       if (typeMain === 'loyalty') {
         url = this.DNS_IP_Loyalty + '/sys_shop/edit/' + item.shopId
+        ds = {
+          shopStatus: text,
+          LAST_USER: this.$session.getAll().data.userName
+        }
       } else {
         url = this.DNS_IP + '/sys_shop/edit/' + item.shopId
-      }
-      var ds = {
-        shopActive: text,
-        LAST_USER: this.$session.getAll().data.userName
+        ds = {
+          shopActive: text,
+          LAST_USER: this.$session.getAll().data.userName
+        }
       }
       await axios
         .post(
@@ -1935,7 +1990,7 @@ export default {
           { text: 'email', value: 'contactEmail' },
           // { text: 'จำนวนนัดหมายที่สร้างของเดือนที่แล้ว', value: 'countBooking' },
           { text: 'สลิป', value: 'paymentImage' },
-          { text: 'ยอดเงินที่ชำระ', value: 'paymentAmount' },
+          { text: 'ยอดเงินที่ชำระ', value: 'paymentDateuse' },
           { text: 'สถานะ', value: 'paymentStatus' },
           { text: 'วันที่จ่าย/วันที่หมดอายุ', value: 'paymentDate' },
           { text: 'วันที่สิ้นสุดทดลองใช้', value: 'trialsVersionDate' },
@@ -1951,7 +2006,7 @@ export default {
           { text: 'email', value: 'contactEmail' },
           { text: 'จำนวนนัดหมายที่สร้างของเดือนที่แล้ว', value: 'countBooking' },
           { text: 'สลิป', value: 'paymentImage' },
-          { text: 'ยอดเงินที่ชำระ', value: 'paymentAmount' },
+          { text: 'ยอดเงินที่ชำระ', value: 'paymentDateuse' },
           { text: 'สถานะ', value: 'paymentStatus' },
           { text: 'วันที่จ่าย/วันที่หมดอายุ', value: 'paymentDate' },
           { text: 'วันที่สิ้นสุดทดลองใช้', value: 'trialsVersionDate' },
@@ -1974,7 +2029,7 @@ export default {
         { text: 'email', value: 'contactEmail' },
         { text: 'จำนวนนัดหมายที่สร้างของเดือนที่แล้ว', value: 'countBooking' },
         { text: 'สลิป', value: 'paymentImage' },
-        { text: 'ยอดเงินที่ชำระ', value: 'paymentAmount' },
+        { text: 'ยอดเงินที่ชำระ', value: 'paymentDateuse' },
         { text: 'สถานะ', value: 'paymentStatus' },
         { text: 'วันที่จ่าย/วันที่หมดอายุ', value: 'paymentDate' },
         { text: 'วันวันที่สิ้นสุดทดลองใช้', value: 'trialsVersionDate' },

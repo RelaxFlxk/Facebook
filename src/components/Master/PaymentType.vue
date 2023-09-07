@@ -406,6 +406,19 @@
                   </v-row>
                   <v-row>
                     <v-container fluid>
+                      <v-text-field
+                        label="omise vat"
+                        v-model="formAddStripe.payVatExclude"
+                        required
+                        :rules="depositPercentrules"
+                        outlined
+                        suffix="%"
+                        dense
+                        v-bind:options="optionsPercent" />
+                    </v-container>
+                  </v-row>
+                  <v-row>
+                    <v-container fluid>
                       <v-textarea
                         outlined
                         label="ประเภทการชำระเงิน"
@@ -504,6 +517,19 @@
                         :rules="[rules.required]"
                       ></v-text-field>
                     </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-container fluid>
+                      <v-text-field
+                        label="stripe vat"
+                        v-model="formAddStripe.payVatExclude"
+                        required
+                        :rules="depositPercentrules"
+                        outlined
+                        suffix="%"
+                        dense
+                        v-bind:options="optionsPercent" />
+                    </v-container>
                   </v-row>
                   <v-row>
                     <v-container fluid>
@@ -913,6 +939,19 @@
                   </v-row>
                   <v-row>
                     <v-container fluid>
+                      <v-text-field
+                        label="omise vat"
+                        v-model="formAddStripe.payVatExclude"
+                        required
+                        :rules="depositPercentrules"
+                        outlined
+                        suffix="%"
+                        dense
+                        v-bind:options="optionsPercent" />
+                    </v-container>
+                  </v-row>
+                  <v-row>
+                    <v-container fluid>
                       <v-textarea
                         outlined
                         label="ประเภทการชำระเงิน"
@@ -1000,6 +1039,19 @@
                         :rules="[rules.required]"
                       ></v-text-field>
                     </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-container fluid>
+                      <v-text-field
+                        label="stripe vat"
+                        v-model="formAddStripe.payVatExclude"
+                        required
+                        :rules="depositPercentrules"
+                        outlined
+                        suffix="%"
+                        dense
+                        v-bind:options="optionsPercent" />
+                    </v-container>
                   </v-row>
                   <v-row>
                     <v-container fluid>
@@ -1100,6 +1152,17 @@
                     </v-col>
                   </v-row>
                   <v-row>
+                    <v-col cols="12" class="pb-0">
+                      <v-text-field
+                        class="pa-0"
+                        v-model="formAdd.payAccountNo"
+                        label="เลขบัญชี"
+                        outlined
+                        type="number"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row>
                     <v-container fluid>
                       <v-textarea
                         outlined
@@ -1195,6 +1258,17 @@
                         :menu-props="{ bottom: true, offsetY: true }"
                         :rules="[rules.required]"
                       ></v-select>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12" class="pb-0">
+                      <v-text-field
+                        class="pa-0"
+                        v-model="formUpdate.payAccountNo"
+                        label="เลขบัญชี"
+                        outlined
+                        type="number"
+                      ></v-text-field>
                     </v-col>
                   </v-row>
                   <v-row>
@@ -1449,6 +1523,7 @@ export default {
         payTypeCode: '',
         payTypeName: '',
         payMentSelect: '',
+        payVatExclude: 0,
         shopId: this.$session.getAll().data.shopId
       },
       checkAddStripe: true,
@@ -1500,21 +1575,35 @@ export default {
         shopId: this.$session.getAll().data.shopId,
         pictureUrlPreview: '',
         payTypeImage: '',
-        masBranchID: 'All'
+        masBranchID: 'All',
+        payAccountNo: null
       },
       formUpdate: {
         payTypeCode: '',
         payTypeName: '',
         pictureUrlPreview: '',
         payTypeImage: '',
-        masBranchID: 'All'
+        masBranchID: 'All',
+        payAccountNo: null
       },
       formUpdateItem: {
         payTypeCode: '',
         payTypeName: '',
         payTypeImage: '',
-        masBranchID: 'All'
+        masBranchID: 'All',
+        payAccountNo: null
       },
+      optionsPercent: {
+        locale: 'en-US',
+        prefix: '',
+        suffix: '',
+        length: 9,
+        precision: 2
+      },
+      depositPercentrules: [
+        (value) => !!value.toString().trim() || 'กรุณากรอกข้อมูล',
+        (value) => (value >= 0 && value <= 100) || 'กรุณากรอกค่าระหว่าง 0 ถึง 100'
+      ],
       rules: {
         numberRules: value =>
           (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
@@ -1831,6 +1920,7 @@ export default {
       this.formAddStripe.masBranchID = item.masBranchID
       this.formAddStripe.payTypeCode = item.payTypeCode
       this.formAddStripe.payTypeName = item.payTypeName
+      this.formAddStripe.payVatExclude = item.payVatExclude || 0
       this.formAddStripe.shopId = this.$session.getAll().data.shopId
       if (item.payType === 'omise') {
         this.valuePayment = JSON.parse(item.payMentSelect)
@@ -2053,14 +2143,16 @@ export default {
             masBranchID: this.formAddStripe.masBranchID,
             apiKey: this.formAddStripe.apiKey,
             endpointSecret: this.formAddStripe.endpointSecret,
-            payTypeName: this.formAddStripe.payTypeName,
+            payVatExclude: this.formAddStripe.payVatExclude,
+            payTypeName: this.formAddStripe.payTypeName.payTypeName.replace(/%/g, '%%').replace(/'/g, "\\'"),
             LAST_USER: this.formAddStripe.LAST_USER
           }
           let dtOmise = {
             masBranchID: this.formAddStripe.masBranchID,
             apiKey: this.formAddStripe.apiKey,
             endpointSecret: this.formAddStripe.endpointSecret,
-            payTypeName: this.formAddStripe.payTypeName,
+            payTypeName: this.formAddStripe.payTypeName.payTypeName.replace(/%/g, '%%').replace(/'/g, "\\'"),
+            payVatExclude: this.formAddStripe.payVatExclude,
             LAST_USER: this.formAddStripe.LAST_USER,
             payMentSelect: JSON.stringify(this.valuePayment)
           }

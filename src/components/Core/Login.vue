@@ -52,7 +52,9 @@
                       outlined
                       v-model="form.userPassword"
                       @keyup.enter="onSubmit()"
-                      type="password"
+                      :type="showPass ? 'text' : 'password'"
+                      :append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
+                      @click:append="showPass = !showPass"
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -292,6 +294,7 @@ export default {
   // },
   data () {
     return {
+      showPass: false,
       validAdd: true,
       dialogPaymentUpload: false,
       session: this.$session.getAll(),
@@ -362,15 +365,66 @@ export default {
   },
   // eslint-disable-next-line space-before-function-paren
   async mounted() {
-    // await this.checkLiffLogin()
-    this.$session.destroy()
-    this.$session.clear()
+    if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
+      this.checkRouter(JSON.parse(localStorage.getItem('sessionData')))
+    } else {
+      // await this.checkLiffLogin()
+      this.$session.destroy()
+      this.$session.clear()
+      localStorage.clear()
+    }
   },
   methods: {
+    async checkRouter (dataSession) {
+      if (dataSession.shopActive === 'active') {
+        this.$session.start()
+        this.$session.set('data', dataSession)
+        localStorage.clear()
+        localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
+        // เช็คว่ามาจาก boot หรือป่าว
+        if (dataSession.sourceLink === 'boot') {
+          if (dataSession.timeSlotStatus === 'False') {
+            let dt = {
+              shopId: this.$session.getAll().data.shopId,
+              timeSlotStatus: 'True',
+              storeFrontCheck: 'False',
+              LAST_USER: this.$session.getAll().data.userName,
+              type: 'boot'
+            }
+            await axios
+              .post(
+                this.DNS_IP + '/flow/editTimeSlotStatusByshopId',
+                dt
+              )
+              .then(() => {
+                dataSession['timeSlotStatus'] = 'True'
+                this.$session.start()
+                this.$session.set('data', dataSession)
+                localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
+              })
+          }
+          //
+          if (dataSession.statusFollowOA === 'False') {
+            this.$router.push('/Core/QrcodeBoot')
+          } else if (dataSession.statusFinishWizard === 'False') {
+            this.$router.push('/InstallWizard')
+          } else {
+            this.checkbookNo(dataSession)
+          }
+        } else {
+          this.checkbookNo(dataSession)
+        }
+      } else {
+        this.dataBilling = dataSession
+        this.dataReady = true
+        this.dialogPaymentUpload = true
+      }
+    },
     gotoBilling (item) {
       this.$session.start()
       this.$session.set('data', item)
       localStorage.clear()
+      localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
       window.location.href = 'https://liff.line.me/1660658626-Qn8zej1p'
     },
     validate (Action) {
@@ -622,47 +676,7 @@ export default {
             if (response.data.status !== false) {
               console.log('response.data[0]', response.data[0])
               if (response.data[0]) {
-                if (response.data[0].shopActive === 'active') {
-                  this.$session.start()
-                  this.$session.set('data', response.data[0])
-                  localStorage.clear()
-                  // เช็คว่ามาจาก boot หรือป่าว
-                  if (response.data[0].sourceLink === 'boot') {
-                    if (response.data[0].timeSlotStatus === 'False') {
-                      let dt = {
-                        shopId: this.$session.getAll().data.shopId,
-                        timeSlotStatus: 'True',
-                        storeFrontCheck: 'False',
-                        LAST_USER: this.$session.getAll().data.userName,
-                        type: 'boot'
-                      }
-                      await axios
-                        .post(
-                          this.DNS_IP + '/flow/editTimeSlotStatusByshopId',
-                          dt
-                        )
-                        .then(() => {
-                          response.data[0]['timeSlotStatus'] = 'True'
-                          this.$session.start()
-                          this.$session.set('data', response.data[0])
-                        })
-                    }
-                    //
-                    if (response.data[0].statusFollowOA === 'False') {
-                      this.$router.push('/Core/QrcodeBoot')
-                    } else if (response.data[0].statusFinishWizard === 'False') {
-                      this.$router.push('/InstallWizard')
-                    } else {
-                      this.checkbookNo(response.data[0])
-                    }
-                  } else {
-                    this.checkbookNo(response.data[0])
-                  }
-                } else {
-                  this.dataBilling = response.data[0]
-                  this.dataReady = true
-                  this.dialogPaymentUpload = true
-                }
+                this.checkRouter(response.data[0])
               } else {
                 this.dataReady = true
                 this.$swal('ผิดพลาด', 'Account ไม่ถูกต้อง1', 'error')

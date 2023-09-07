@@ -525,7 +525,6 @@
                         ></v-select>
                       </v-row>
                     </v-col>
-                    {{ validAddOption }}
                     <v-form ref="form_addOption" v-model="validAddOption" lazy-validation>
                     <v-row class="mt-3 px-3">
                     <v-col class="ma-1" >

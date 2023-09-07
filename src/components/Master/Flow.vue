@@ -1516,6 +1516,7 @@
                             label="เงินมัดจำคิดเป็นกี่ % (กรณีที่ต้องการแจ้งยอดชำระคงเหลือ)"
                             v-model="formUpdate.depositPercent"
                             required
+                            v-mask="'###'"
                             :rules="depositPercentrules"
                             suffix="%"
                             outlined
@@ -2458,7 +2459,7 @@
                     dark
                     color="white"
                     :style="styleCloseBt"
-                    @click="(dialogMenu = false), getDataGlobal(DNS_IP, path, session.data.shopId)"
+                    @click="getFlow()"
                     >
                     X
                   </v-btn>
@@ -3240,6 +3241,24 @@ export default {
     await this.filterBranch()
   },
   methods: {
+    async getFlow () {
+      this.dialogMenu = false
+      await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
+      if (this.dataItem.length > 0) {
+        for (let i = 0; i < this.dataItem.length; i++) {
+          let d = this.dataItem[i]
+          if (d.masBranchID === null) {
+            d.masBranchID = 'All'
+          }
+          let s = {}
+          s.flowId = d.flowId
+          s.flowName = d.flowName
+          this.dessertsSort.push(s)
+        }
+      // this.initSortable()
+      }
+      await this.filterBranch()
+    },
     presetTimebydayExport () {
       let timeExport = [
         { แสดงเวลา: '08:00', เวลา: '08:00', จำนวนนัดหมาย: '1' },
@@ -3569,11 +3588,12 @@ export default {
       this.indexMenu = id
       this.formAddMenu.name = item.name
       this.formAddMenu.nameSub = item.nameSub
-      this.formAddMenu.price = item.price
+      this.formAddMenu.price = item.price === '' ? 0 : item.price
       this.formAddMenu.picture = item.picture
       this.dialogAddMenu = true
     },
     async addMenu () {
+      // console.log('this.formAddMenu', this.formAddMenu)
       this.validate('ADDMENU')
       setTimeout(() => this.addMenuSubmit(), 500)
     },
@@ -3615,7 +3635,7 @@ export default {
         this.dataReadyAddMenu = false
         this.formMenu.menuItem[this.indexMenu].name = this.formAddMenu.name
         this.formMenu.menuItem[this.indexMenu].nameSub = this.formAddMenu.nameSub
-        this.formMenu.menuItem[this.indexMenu].price = this.formAddMenu.price
+        this.formMenu.menuItem[this.indexMenu].price = this.formAddMenu.price === '' ? 0 : this.formAddMenu.price
         if (this.formAddMenu.filesMenu) {
           const _this = this
           let params = new FormData()
@@ -3626,6 +3646,8 @@ export default {
               _this.formAddMenu.picture = response.data
             })
         }
+        console.log('this.formAddMenu', this.formAddMenu)
+        console.log('this.formMenu', this.formMenu)
         this.formMenu.menuItem[this.indexMenu].picture = this.formAddMenu.picture
         await this.UpdateMenuInFlow(this.formMenu.menuItem)
         this.dialogAddMenu = false
@@ -3643,6 +3665,7 @@ export default {
       this.dataReadyAddMenu = true
     },
     async UpdateMenuInFlow (dateUpdate) {
+      console.log('menuItem: JSON.stringify(dateUpdate)', JSON.stringify(dateUpdate))
       let addMenu = {
         menuItem: JSON.stringify(dateUpdate),
         LAST_USER: this.$session.getAll().data.userName

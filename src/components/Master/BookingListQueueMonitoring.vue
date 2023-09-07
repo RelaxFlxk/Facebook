@@ -398,7 +398,7 @@ export default {
     async searchBooking () {
       if (this.validSearch === true) {
         this.itemBooking = []
-        await this.getBookingDataList(this.dateStart)
+        // await this.getBookingDataList(this.dateStart)
         let urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.shopId +
@@ -422,15 +422,16 @@ export default {
               })
               for (let i = 0; i < sortData.length; i++) {
                 let d = sortData[i]
-                if (this.BookingDataList[d.bookNo] !== undefined) {
-                  // d.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
-                  // d.serviceTH = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'บริการ')
-                  // d.serviceEN = this.getDataFromFieldNameEn(this.BookingDataList[d.bookNo], 'Service')
-                  // d.cusName = (d.cusName.length > 0) ? d.cusName[0].fieldValue : ''
-                  // d.serviceTH = (d.serviceTH.length > 0) ? d.serviceTH[0].fieldValue : ''
-                  // d.serviceEN = (d.serviceEN.length > 0) ? d.serviceEN[0].fieldValue : ''
-                  this.itemBooking.push(d)
-                }
+                // if (this.BookingDataList[d.bookNo] !== undefined) {
+                // d.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
+                // d.serviceTH = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'บริการ')
+                // d.serviceEN = this.getDataFromFieldNameEn(this.BookingDataList[d.bookNo], 'Service')
+                // d.cusName = (d.cusName.length > 0) ? d.cusName[0].fieldValue : ''
+                // d.serviceTH = (d.serviceTH.length > 0) ? d.serviceTH[0].fieldValue : ''
+                // d.serviceEN = (d.serviceEN.length > 0) ? d.serviceEN[0].fieldValue : ''
+                //   this.itemBooking.push(d)
+                // }
+                this.itemBooking.push(d)
               }
               this.itemBookingUse = this.itemBooking
             } else {

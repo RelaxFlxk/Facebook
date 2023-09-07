@@ -438,7 +438,7 @@
                       required
                       outlined
                       :rules="[rules.required]"
-                      v-bind:options="options2"
+                      v-bind:options="optionsMoney"
                     />
                   </v-col>
                   <v-col class="pb-0"  cols="12" v-if="dataPackage.length > 0">
@@ -1560,6 +1560,13 @@ export default {
         departmentStep: '',
         branchStep: '',
         checkCar: ''
+      },
+      optionsMoney: {
+        locale: 'en-US',
+        prefix: '',
+        suffix: '',
+        length: 9,
+        precision: 2
       },
       updateEndDateOld: '',
       updateEndTimeOld: '',
