@@ -266,13 +266,6 @@
               <div v-for="(item , index) in showDetails" :key="index">
                 <h5  class="mt-3 font-weight-bold text-center" >
                   <div v-if="(item.countBooking < parseInt(item.limitBooking)) && !item.Overtime">
-                    <!-- <v-btn
-                      dark
-                      class="font-weight-bold  text-center"
-                      color="#0D47A1"
-                      width="80%"
-                      >{{item.time}}
-                    </v-btn> -->
                     <v-sheet
                       class="font-weight-bold text-center"
                       color="#0D47A1"
@@ -286,13 +279,6 @@
                     </v-sheet>
                   </div>
                   <div v-else-if="item.Overtime">
-                    <!-- <v-btn
-                      disabled
-                      class="font-weight-bold  text-center"
-                      color="#000000"
-                      width="90%"
-                      >{{item.time}}
-                    </v-btn> -->
                     <v-sheet
                       class="font-weight-bold text-center"
                       color="rgb(224 224 224)"
@@ -306,13 +292,6 @@
                     </v-sheet>
                   </div>
                   <div v-else>
-                    <!-- <v-btn
-                      disabled
-                      class="font-weight-bold  text-center"
-                      color="#000000"
-                      width="90%"
-                      >{{item.time}}
-                    </v-btn> -->
                     <v-sheet
                       class="font-weight-bold text-center"
                       color="rgb(224 224 224)"
@@ -361,7 +340,7 @@
                       color="#000000"
                       width="95%"
                       >
-                      {{ DetailsBooking(item) }}
+                      {{ DetailsBooking2(item) }}
                     </v-btn>
                   </div>
                 </h5>
@@ -448,10 +427,15 @@ export default {
       })
       await this.DefaultDay(this.date)
       // await this.DefaultDay()
+    },
+    async showDetails (newQuestion, oldQuestion) {
+      console.log('oldQuestion', oldQuestion)
+      console.log('newQuestion', newQuestion)
     }
   },
   data () {
     return {
+      overlay: false,
       breadcrumbs: [
         {
           text: 'Home',
@@ -636,7 +620,7 @@ export default {
       }
       console.log('this.dateDayoffValue', this.dateDayoffValue)
     },
-    checkCustomerTimeSlot () {
+    async checkCustomerTimeSlot () {
       this.statusChek = false
       console.log('DataFlowNameAll', this.DataFlowNameAll.filter((v) => v.flowId === this.formSelect.flowId))
       this.timeSlotbyCustomer = []
@@ -701,7 +685,7 @@ export default {
           })
         }
       } else {
-        this.selectflow()
+        await this.selectflow()
       }
 
       // console.log('this.timeSlotbyCustomer', this.timeSlotbyCustomer)
@@ -739,7 +723,7 @@ export default {
         // console.log('if', itemqq, this.dateDayoffValue.filter((b) => b === day), newDate)
         d = this.dateDayoffValue.filter((b) => b === day)
       } else {
-        console.log('else')
+        // console.log('else')
         d = JSON.parse(dateDayoffValue).filter((b) => b === day)
       }
       return d
@@ -753,6 +737,7 @@ export default {
           if (this.dayCustom(v.date).length === 0 && this.dayoffvalue(v.date, 'test').length === 0) {
             if (count === 0) {
               v.active = true
+              console.log('v.active', v.active)
               this.getDetails(v, k)
               count = 1
             }
@@ -761,6 +746,7 @@ export default {
           if (this.dayCustom(v.date).length > 0) {
             if (count === 0) {
               v.active = true
+              console.log('v.active', v.active)
               this.getDetails(v, k)
               count = 1
             }
@@ -814,19 +800,31 @@ export default {
       '&fromAddTimeCus=' + this.fromAddTimeCus + '&customerTimeSlot=' + this.customerTimeSlot)
         })
     },
-    async getDetails (item, key, a) {
-      this.showDetails = []
-      this.currentSelect.item = item
-      this.currentSelect.k = key
-      console.log('imte', item)
-      console.log('key', key)
-      this.dateSelect.filter((item, n) => n !== key).forEach((i, u) => { i.active = false })
-      if (this.dateSelect.filter((item) => item.active === true).length > 0) {
-        this.showDetails = this.allDetails.filter((d) => d.date === item.date)
-        console.log('if')
-      } else {
-        console.log('else')
+    async getDetails (item, key) {
+      try {
         this.showDetails = []
+        this.currentSelect.item = item
+        this.currentSelect.k = key
+        console.log('active', item.active)
+        console.log('key', key)
+        this.dateSelect.filter((item, n) => n !== key).forEach((i, u) => { i.active = false })
+        // this.showDetails = ['3']
+        if (this.dateSelect.filter((a) => a.active === true).length > 0) {
+          // this.showDetails = ['4']
+          // console.log('!!!', this.allDetails.filter((d) => d.date === item.date))
+          this.showDetails = await this.allDetails.filter((d) => d.date === item.date)
+          // console.log('finish!!!!', this.showDetails)
+          // this.showDetails = ['6']
+          this.$forceUpdate()
+        } else {
+          // this.showDetails = ['5']
+          console.log('else')
+          this.showDetails = []
+        }
+        console.log('show', this.showDetails)
+      } catch (error) {
+        this.showDetails = ['error']
+        console.log('error', error)
       }
     },
     async selectflow () {
@@ -855,7 +853,7 @@ export default {
       const result = await axios.get(this.DNS_IP + '/LimitBookingDateEmp/get?shopId=' + this.shopId + '&empId=' + this.formSelect.empId + '&bookingDate=' + month)
       if (!result.data.status) {
         if (result.data.length > 0) {
-          console.log('result1', result.data)
+          console.log('result1', result.data.filter((a) => a.bookingDate === '2023-09-07'))
           this.LimitBooking = result.data
           await this.setLimit(month)
           await this.DefaultDay()
@@ -877,14 +875,31 @@ export default {
       }
     },
     DetailsBooking (item) {
-      let flowId = this.LimitBooking.filter((i) => i.bookingTime === item.timeValue && i.bookingDate === item.date).length > 0 ? this.LimitBooking.filter((i) => i.bookingTime === item.timeValue && i.bookingDate === item.date)[0].flowId : false
-      // console.log('item', flowId)
-      if (flowId) {
-        let text = this.DataFlowNameAll.filter((i) => i.flowId === flowId)[0].flowName
-        return text
+      if (this.LimitBooking.filter((i) => i.bookingTime === item.timeValue && i.bookingDate === item.date).length > 0) {
+        console.log('flowID', this.LimitBooking.filter((i) => i.bookingTime === item.timeValue && i.bookingDate === item.date)[0].flowId)
+        let flowId = this.LimitBooking.filter((i) => i.bookingTime === item.timeValue && i.bookingDate === item.date)[0].flowId
+        let flowName = this.DataFlowNameAll.filter((i) => i.flowId === flowId)
+        if (flowName.length > 0) {
+          return this.DataFlowNameAll.filter((i) => i.flowId === flowId)[0].flowName
+        } else {
+          return 'บริการนี้ถูกลบไปแล้ว'
+        }
       } else {
-        let text = '-------'
-        return text
+        return '............'
+      }
+    },
+    DetailsBooking2 (item) {
+      if (this.LimitBooking.filter((i) => i.bookingTime === item.timeValue && i.bookingDate === item.date).length > 0) {
+        console.log('flowID', this.LimitBooking.filter((i) => i.bookingTime === item.timeValue && i.bookingDate === item.date)[0].flowId)
+        let flowId = this.LimitBooking.filter((i) => i.bookingTime === item.timeValue && i.bookingDate === item.date)[0].flowId
+        let flowName = this.DataFlowNameAll.filter((i) => i.flowId === flowId)
+        if (flowName.length > 0) {
+          return this.DataFlowNameAll.filter((i) => i.flowId === flowId)[0].flowName
+        } else {
+          return 'บริการนี้ถูกลบไปแล้ว'
+        }
+      } else {
+        return '............'
       }
     },
     async openSlot (item) {
@@ -976,7 +991,7 @@ export default {
       let month = moment(item).format('MM')
       let year = moment(item).format('YYYY')
       // เซ็ตวันที่และวัน เช่น 1-จ
-      let data = this.getDaysArray(year, month)
+      let data = await this.getDaysArray(year, month)
       console.log('data', data)
       let bookingNowCheck = this.DataFlow.filter((item) => item.flowId === this.formSelect.flowId)[0].bookingNowCheck
       if (bookingNowCheck === 'True') {
@@ -987,21 +1002,44 @@ export default {
         this.currentDate = moment().format('YYYY-MM-DD')
       }
       console.log('bookingNowCheck', bookingNowCheck)
+      let dt1 = await this.A(data, item)
+      console.time('myFunction2')
+      await this.B(dt1)
+      console.timeEnd('myFunction2')
+      console.log('dt1', dt1)
       // let limitTime = JSON.parse(this.dataEmpAll.filter((item) => item.empId === this.formSelect.empId)[0].setTime)
-      await data.forEach(async (v, k) => {
+      await console.log('val', this.dateSelect)
+      // console.log('allDetails', this.allDetails)
+    },
+    async A (data, item) {
+      const promises = data.map(async (v, k) => {
         let limitTime = null
-        console.log('v', v)
-        console.log('ก่อน- วันที่', new Date(moment(item + v.split('-')[0], 'YYYY-MM-DD').format('YYYY-MM-DD')).getDay(), '---', v.split('-')[0])
         if (this.dataEmpAll.filter((dataEmpAllitem) => dataEmpAllitem.empId === this.formSelect.empId)[0].setTimebyday === 'True') {
           let timeJson = JSON.parse(this.dataEmpAll.filter((dataEmpAllitem) => dataEmpAllitem.empId === this.formSelect.empId)[0].setTime).filter((items) => items.value === new Date(moment(item + v.split('-')[0], 'YYYY-MM-DD').format('YYYY-MM-DD')).getDay())
           limitTime = timeJson[0].setTime || []
         } else {
           limitTime = JSON.parse(this.dataEmpAll.filter((dataEmpAllitem) => dataEmpAllitem.empId === this.formSelect.empId)[0].setTime)
         }
-        // console.log('limitTIme', limitTime)
+        let sub = {
+          'limitTime': limitTime,
+          'v': v,
+          'item': item
+        }
+        return sub // Return the sub-object as the result of this promise
+      })
+
+      const TT = await Promise.all(promises)
+      console.log('TT', TT)
+      return TT
+    },
+    async B (dt1) {
+      await Promise.all(dt1.map(async (aa) => {
+        let limitTime = aa.limitTime
+        let v = aa.v
+        let item = aa.item
+
         let dataTimeCheck = await this.setLimitBooking(moment(item + v.split('-')[0], 'YYYY-MM-DD').format('YYYY-MM-DD'))
-        console.log('วันที่ ', v.split('-')[0], ' ________index', k)
-        // console.log('dataTimeCheck', new Date(moment(item + v.split('-')[0], 'YYYY-MM-DD').format('YYYY-MM-DD')).getDay())
+
         let s = {}
         s.text = v.split('-')[1]
         s.value = v.split('-')[0]
@@ -1010,21 +1048,18 @@ export default {
         s.active = false
         s.date = moment(item + v.split('-')[0], 'YYYY-MM-DD').format('YYYY-MM-DD')
         let countBooking = 0
-        let totalLimit = limitTime.reduce((x, y) => { return x + parseInt(y.limitBooking) }, 0)
-        limitTime.forEach((a, b) => {
-          // console.log('a', a)
-          // console.log('timevaliablie', moment(item + v.split('-')[0], 'YYYY-MM-DD').format('YYYY-MM-DD'), '  ', dataTimeCheck)
+        let totalLimit = limitTime.reduce((x, y) => x + parseInt(y.limitBooking), 0)
+
+        await Promise.all(limitTime.map(async (a) => {
           let cheklimit = 0
-          if (dataTimeCheck.filter((TimeA, TimeB) => a.value === TimeA.value).length > 0) {
+          if (await dataTimeCheck.filter((TimeA, TimeB) => a.value === TimeA.value).length > 0) {
             cheklimit = 0
           } else {
             cheklimit = 1
           }
-          // let cheklimit = this.LimitBooking.filter((item) => { return a.value === item.bookingTime && moment(item.bookingDate, 'DD').format() === moment(v.split('-')[0], 'DD').format() }).map((d) => d.countBooking)[0] || 0
+
           let ss = {}
           if (moment(this.date + v.split('-')[0], 'YYYY-MM-DD').format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')) {
-            // console.log('textTime', moment().format(a.value), moment().format('HH:mm'))
-            // console.log('textTime', moment().format(a.value) < moment().format('HH:mm'))
             if (moment().format(a.value) > moment().format('HH:mm')) {
               ss.date = moment(item + v.split('-')[0], 'YYYY-MM-DD').format('YYYY-MM-DD')
               ss.time = a.text
@@ -1051,33 +1086,30 @@ export default {
             ss.Overtime = false
             this.allDetails.push(ss)
           }
+
           if ((countBooking += cheklimit) >= totalLimit) {
             s.checkLimit = false
             s.color = this.DarkMode
             s.colortext = '#000000'
-            // console.log('cheklimitIF', v, a.value, cheklimit)
           } else {
             s.checkLimit = true
             s.color = '#0D47A1'
             s.colortext = '#FFFFFF'
-            // console.log('cheklimit', v, a.value, cheklimit)
           }
-        })
-        // เซ็ตวันที่เป็นปัจจุบัน
+        }))
+
         if (moment(item, 'YYYY-MM').format() <= moment(this.currentMonth, 'YYYY-MM').format()) {
           if (parseInt(s.value) >= parseInt(this.currentDate.split('-')[2])) {
             console.log('s', s)
             this.dateSelect.push(s)
           }
         } else {
-          // console.log('s', JSON.stringify(s))
+          console.log('s', JSON.stringify(s))
           this.dateSelect.push(s)
         }
-      })
-      console.log('val', this.dateSelect)
-      // console.log('allDetails', this.allDetails)
+      }))
     },
-    getDaysArray (year, month) {
+    async getDaysArray (year, month) {
       // console.log('result', result)
       var monthIndex = month - 1 // 0..11 instead of 1..12
       var names = [ 'อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส' ]
@@ -1207,7 +1239,7 @@ export default {
       this.timeSlotbyCustomer = []
       this.fromAddTimeCus = ''
       this.customerTimeSlot = 'False'
-      await axios.get(this.DNS_IP + '/empSelect/get?privacyPage=bookingform&masBranchID=' + this.formSelect.masBranchID).then(response => {
+      await axios.get(this.DNS_IP + '/empSelect/get?privacyPage=bookingform&masBranchID=' + this.formSelect.masBranchID).then(async (response) => {
         let rs = response.data
         console.log('rssssssssssssss', rs)
         if (rs.length > 0) {
@@ -1242,7 +1274,7 @@ export default {
           }
           if (this.dataEmp.length === 1) {
             this.formSelect.empId = this.dataEmp[0].value
-            this.checkCustomerTimeSlot()
+            await this.checkCustomerTimeSlot()
           }
           console.log('EmpItemLimit', this.EmpItemLimit)
         } else {
