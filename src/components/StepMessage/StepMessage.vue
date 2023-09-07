@@ -622,14 +622,13 @@ export default {
       return this.formfilter.statusTitle
     }
   },
-  mounted () {
-    this.getDataBranch()
-    this.getDataflow()
-    this.getdataCustomField()
-    this.$session.start()
-    this.$session.set('viewByType', 2)
-    this.$on('call-get-data', this.getdata())
-    document.body.addEventListener('click', this.hideCard)
+  async mounted () {
+    await this.getDataBranch()
+    await this.getdataCustomField()
+    await this.$session.start()
+    await this.$session.set('viewByType', 2)
+    await this.$on('call-get-data', this.getdata())
+    await document.body.addEventListener('click', this.hideCard)
   },
   beforeUnmount () {
     document.body.removeEventListener('click', this.hideCard)
@@ -818,7 +817,7 @@ export default {
         return 'col-md-12 col-lg-12 col-sm-12'
       }
     },
-    getdataCustomField () {
+    async getdataCustomField () {
       try {
         const payload = {
           shopId: this.form.shopId,
@@ -910,7 +909,6 @@ export default {
           this.formAdd.masBranchID
         )
         .then(async response => {
-          await this.getdata()
           let rs = response.data
           console.log('rsss', rs)
           console.log('shopId=', this.$session.getAll().data.shopId)
@@ -944,6 +942,8 @@ export default {
             this.formAdd.flowId = this.flowItem[0].value
             this.item.flowId = this.flowItem[0].value
           }
+
+          await this.getdata()
         })
       console.log('flowIdflowItem', this.flowItem)
     },
