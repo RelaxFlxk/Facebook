@@ -6,12 +6,13 @@
           <StepMessageForm ref="StepMessageForm" @testData="getdata()" @testDataInsert="getdata()"></StepMessageForm>
           <div style="width: -webkit-fill-available;">
             <div class="row-title">
-              <div class="text-title">เทมเพลสตั้งเวลาเเจ้งเตือน</div>
+              <!-- <div class="text-title">เทมเพลสตั้งเวลาเเจ้งเตือน</div> -->
+              <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
               <div class="col-md-4" style="display: flex;justify-content: flex-end;align-items: baseline;">
                 &emsp14;
                 <v-btn color="primary" @click="getDataId(item)">
-                  <v-icon left color="#fff" size="25">mdi mdi-plus</v-icon>
-                  Add Task
+                  <v-icon left color="#fff" size="25">mdi-text-box-plus</v-icon>
+                  เพิ่มเเจ้งเตือน
                 </v-btn>
               </div>
             </div>
@@ -471,6 +472,18 @@ export default {
   },
   data () {
     return {
+      breadcrumbs: [
+        {
+          text: 'Home',
+          disabled: false,
+          href: '/Core/Home'
+        },
+        {
+          text: 'ตั้งเวลาเเจ้งเตือน',
+          disabled: false,
+          href: '/Message/StepMessage'
+        }
+      ],
       text: 'center',
       icon: 'left',
       toggle_none: null,
