@@ -191,7 +191,7 @@ export default {
               })
           } else {
             this.dataReady = true
-            this.$swal('ผิดพลาด', 'ท่านได้เปลี่ยนรหัสผ่านจากลิ้งนี้แล้ว กรุณาทำรายการใหม่', 'error')
+            this.$swal('ผิดพลาด', 'ท่านได้เปลี่ยนรหัสผ่านจากลิ้งค์นี้แล้ว กรุณาทำรายการใหม่', 'error')
           }
         })
         // eslint-disable-next-line handle-callback-err

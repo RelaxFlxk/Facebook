@@ -28,10 +28,35 @@ import BookingListBeauty from './BookingListBeauty'
 import SettingTag from './SettingTag'
 import Showbooking from './Showbooking'
 import BookingMobileConfirmJob from './BookingMobileConfirmJob'
+import ServiceType from './ServiceType'
 import BookingMobileEmp from './BookingMobileEmp'
+import NoticeManagement from './NoticeManagement'
 import CheckBookingEmpList from './CheckBookingEmpList'
+import BookingListBeautyEmp from './BookingListBeautyEmp'
+import ManageLink from './ManageLink'
+import TableCheckQueue from './TableCheckQueue'
+import BookingListQueue from './BookingListQueue'
+import BookingListQueueMonitoring from './BookingListQueueMonitoring'
+import WorkShopComponent from './WorkShopComponent'
+import ChatHistory from './ChatHistory'
+import BookingListQueueByUser from './BookingListQueueByUser'
+import BookingListQueueMonitoringVideo from './BookingListQueueMonitoringVideo'
+import BookingWalkinEmp from './BookingWalkinEmp'
+import BookingWalkin from './BookingWalkin.vue'
+import CheckBookingList from './CheckBookingList.vue'
+import AdminStampStep from './AdminStampStep.vue'
+import BookingByUserEmp from './BookingByUserEmp.vue'
+// import BookingListBeautyEmpTestRedis from './BookingListBeautyEmpTestRedis.vue'
+
 export default {
+  BookingByUserEmp,
+  // BookingListBeautyEmpTestRedis,
+  AdminStampStep,
+  ChatHistory,
+  WorkShopComponent,
   CustomField,
+  ServiceType,
+  NoticeManagement,
   Flow,
   FlowStep,
   RegisterAdd,
@@ -62,5 +87,15 @@ export default {
   Showbooking,
   BookingMobileConfirmJob,
   BookingMobileEmp,
-  CheckBookingEmpList
+  CheckBookingEmpList,
+  BookingListBeautyEmp,
+  ManageLink,
+  TableCheckQueue,
+  BookingListQueue,
+  BookingListQueueMonitoring,
+  BookingListQueueByUser,
+  BookingListQueueMonitoringVideo,
+  BookingWalkinEmp,
+  BookingWalkin,
+  CheckBookingList
 }

@@ -2,6 +2,12 @@
   <div>
     <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
     <v-main>
+      <v-overlay :value="overlay">
+      <v-progress-circular
+        indeterminate
+        size="64"
+      ></v-progress-circular>
+    </v-overlay>
       <div class="pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4">
         <!-- <v-col class="ma-2" id="text-Board">กระดานทำงาน</v-col> -->
         <v-row>
@@ -17,6 +23,7 @@
               <span class="hidden-sm-and-down">รับรถใหม่</span>
             </v-btn> -->
             <v-btn
+            v-if="flowId !== '' && masBranchID !== ''"
               color="#1B437C"
               text
               @click="editLayout()"
@@ -34,27 +41,12 @@
             </v-btn>
             </v-btn-toggle>
           </v-col>
-          <v-col :cols="colsWidth">
-            <v-select
-              :items="DataFlowName"
-              v-model="flowId"
-              dense
-              outlined
-              filled
-              @change="chkBranchName()"
-              hide-details
-              label="ประเภทบริการ"
-              prepend-inner-icon="mdi-format-list-bulleted"
-              class="ma-2"
-            >
-            </v-select>
-          </v-col>
           <!-- สาขา -->
           <v-col :cols="colsWidth">
             <v-select
               :items="DataBranchName"
               v-model="masBranchID"
-              @change="chkFlowName(), checkTime()"
+              @change="clearDataFlow(),flowId = '',getDataFlow(),checkTime()"
               dense
               outlined
               hide-details
@@ -63,6 +55,22 @@
               prepend-inner-icon="mdi-map-marker"
               class="ma-2"
             ></v-select>
+          </v-col>
+          <v-col :cols="colsWidth">
+            <v-select
+              v-if="masBranchID !== '' && masBranchID !== null"
+              :items="DataFlowName"
+              v-model="flowId"
+              dense
+              outlined
+              filled
+              @change="chkFlowName()"
+              hide-details
+              label="ประเภทบริการ"
+              prepend-inner-icon="mdi-format-list-bulleted"
+              class="ma-2"
+            >
+            </v-select>
           </v-col>
           <v-col :cols="colsWidth" v-if="allJob.length > 0">
             <v-text-field
@@ -83,6 +91,34 @@
             </v-text-field>
           </v-col>
           </v-row>
+        <!-- <v-row class="pa-0 ma-0">
+          <v-col cols="4">
+            <v-menu
+              v-model="menuDatefilter"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="dateFilter"
+                  label="Picker without buttons"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  clearable
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="dateFilter"
+                @input="menuDatefilter = false"
+              ></v-date-picker>
+            </v-menu>
+          </v-col>
+        </v-row> -->
         <v-row>
           <!-- <v-col :cols="colsWidth" class="text-h6" color="#ABB1C7"> นัดส่ง:</v-col> -->
           <!-- <v-card-title
@@ -92,6 +128,20 @@
           >
             นัดส่ง:
           </v-card-title> -->
+          <!-- <v-col cols="8">
+            <strong class="text-h6">นัดส่ง:</strong>
+            <v-chip color="#DE6467" text-color="white">
+              ภายใน 2 วัน
+            </v-chip>
+
+            <v-chip color="#FED966" text-color="white">
+              ภายใน 4 วัน
+            </v-chip>
+
+            <v-chip color="#4F93D0" text-color="white">
+              มากกว่า 4 วัน
+            </v-chip>
+          </v-col> -->
           <v-col cols="12" class="text-right" text color="#ABB1C7" v-if="allJob.length > 0">
             <v-btn-toggle>
             <v-btn
@@ -131,11 +181,47 @@
             </v-btn-toggle>
           </v-col>
         </v-row>
+        <v-col cols="12" class="pa-0 ma-0 mt-6 mb-n6" v-if="flowId !== '' && masBranchID !== ''">
+          <v-menu
+              v-model="menuDatefilter"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  style="max-width: 400px;"
+                  v-model="dateFilter"
+                  label="เลือกวันที่นัดหมาย"
+                  prepend-inner-icon="mdi-calendar"
+                  readonly
+                  clearable
+                  outlined
+                  dense
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="dateFilter"
+                @input="menuDatefilter = false"
+                @change="getJobData()"
+              ></v-date-picker>
+            </v-menu>
+        </v-col>
         <v-divider></v-divider>
 
         <!-- เปลี่ยนสถานะ step-->
         <v-row justify="center">
           <v-dialog v-model="dialog" max-width="500px">
+            <v-overlay :value="overlayUpdateStep">
+              <v-progress-circular
+                indeterminate
+                size="64"
+              ></v-progress-circular>
+            </v-overlay>
             <v-card>
               <v-col class="text-right">
                 <v-icon color="#173053" @click=";(dialog = false), clearData(), setTimeJob()"
@@ -159,6 +245,7 @@
                     <v-col cols="12" class="pb-0">
                         <v-select
                           dense
+                          outlined
                           label="ขั้นตอนต่อไป"
                           v-model="formUpdate.stepTitle"
                           :items="stepItemSeleteInBoard"
@@ -170,10 +257,11 @@
                     </v-col>
                     <v-col cols="12" class="pb-0">
                         <v-autocomplete
+                          outlined
                           dense
                           label="ชื่อพนักงานที่รับผิดชอบ"
                           v-model="formUpdate.empStep"
-                          :items="empSeleteStep"
+                          :items="empSeleteStep.filter((i) => i.masBranchID === masBranchID || i.masBranchID === '')"
                           :rules="[rules.required]"
                         ></v-autocomplete>
                     </v-col>
@@ -197,6 +285,12 @@
         <!-- DIALOG แก้ไขข้อมูล ใน card -->
 
         <v-dialog v-model="dialogEdit" persistent max-width="80%">
+          <v-overlay :value="overlayEdit">
+            <v-progress-circular
+              indeterminate
+              size="64"
+            ></v-progress-circular>
+          </v-overlay>
           <v-card>
             <v-form ref="form_edit" lazy-validation>
               <v-card-text>
@@ -211,7 +305,7 @@
                     </v-btn>
                   </v-col>
                   <v-row justify="center">
-                    <v-col cols="5" class="text-center">
+                    <!-- <v-col cols="5" class="text-center">
                       <v-col class="text-center">
                         <v-img
                           class="v-margit_img_reward"
@@ -219,16 +313,16 @@
                           max-width="330"
                         ></v-img>
                       </v-col>
-                    </v-col>
+                    </v-col> -->
 
-                    <v-col cols="6" class="v-margit_text_add mt-1">
+                    <v-col cols="12" class="v-margit_text_add mt-1">
                       <v-col class="text-center">
                         <v-img
                           class="v_text_edit"
                           :src="require('@/assets/GroupEditTitle.svg')"
                         ></v-img>
                       </v-col>
-                      <v-col cols="12">
+                      <v-col cols="12 px-0">
                         <div
                           class="column is-3"
                           v-for="(itemsEdit, index) in JobDataItem.filter(
@@ -238,11 +332,13 @@
                           )"
                           :key="index"
                         >
-                          <strong>{{ itemsEdit.fieldName }}: </strong>
+                          <!-- <strong>{{ itemsEdit.fieldName + '2' }}: </strong> -->
                           <v-col cols="12" class="pt-0 pb-0">
                             <v-text-field
+                              :label="itemsEdit.fieldName"
                               v-model="itemsEdit.fieldValue"
                               required
+                              outlined
                               dense
                             />
                           </v-col>
@@ -250,7 +346,7 @@
                       </v-col>
                       <v-col class="pt-0 pb-0" cols="12">
                         <v-row justify="center">
-                          <v-col class="pt-0 pb-0" cols="6">
+                          <v-col class="pt-0 pb-0" cols="12">
                             <v-menu
                               ref="menu"
                               v-model="menu"
@@ -265,6 +361,8 @@
                                   v-model="formUpdate.endDate"
                                   label="วันที่นัดส่งรถลูกค้า"
                                   persistent-hint
+                                  outlined
+                                  dense
                                   readonly
                                   prepend-icon="mdi-calendar"
                                   v-bind="attrs"
@@ -278,13 +376,15 @@
                               ></v-date-picker>
                             </v-menu>
                           </v-col>
-                          <v-col class="pt-0 pb-0" cols="6">
+                          <v-col class="pt-0 pb-0" cols="12">
                             <v-select
                               v-model="formUpdate.endTime"
                               :items="timeavailable"
                               label="เวลา"
                               menu-props="auto"
                               required
+                              dense
+                              outlined
                               :rules ="[rules.required]"
                             ></v-select>
                           </v-col>
@@ -338,7 +438,7 @@
                       required
                       outlined
                       :rules="[rules.required]"
-                      v-bind:options="options2"
+                      v-bind:options="optionsMoney"
                     />
                   </v-col>
                   <v-col class="pb-0"  cols="12" v-if="dataPackage.length > 0">
@@ -370,6 +470,14 @@
                       return-object
                     >
                     </v-select>
+                  </v-col>
+                  <v-col class="pb-0"  cols="12">
+                    <v-checkbox
+                      v-model="statusPushEndStep"
+                      label="ส่งข้อความ ขึ้นตอนสุดท้าย ไปยังลูกค้า"
+                      true-value="True"
+                      false-value="False"
+                    ></v-checkbox>
                   </v-col>
                   <v-col class="text-center"  cols="12">
                     <v-btn
@@ -478,10 +586,195 @@
             </v-col>
           </v-row>
         </div>
-
-        <!-- GridView -->
+        <!-- NewDesign -->
         <div
           v-if="layout === 'grid'"
+          :class="classWork"
+          v-show="masBranchID"
+        >
+        <v-row>
+          <v-col class="Layout pa-1"  cols="2" v-for="(element, work) in Layout" :key="work" >
+            <div
+                v-for="(item, indexitem) in Layout[work].workData"
+                :key="indexitem"
+                class="subLayout"
+            >
+              <div class="mb-2" style="display: flex;justify-content: space-between;align-items:flex-start;">
+                <div style="display:flex;align-items: flex-start;" class="ml-2">
+                  <v-icon class="ma-0 ml-n2 mr-1" :color="codeColor[work]">mdi-collage</v-icon>
+                  <p class="ma-0" style="max-width: 150px;">
+                    {{ item.stepTitle}}
+                  </p>
+                </div>
+                <div class="pa-1 totalJob" :style="'background-color:' + codeColor[work] + ';'">
+                  <p class="font-weight-black ma-0">{{allJob.filter(row => {return row.stepId == item.stepId }).length}}</p>
+                </div>
+              </div>
+              <div
+               v-for="(itemsJob, indexJob) in allJob.filter(row => { return row.stepId == item.stepId })" :key="indexJob"
+              >
+                <v-card class="cardItemNew">
+                  <div style="display: flex;justify-content: flex-start;align-items: baseline;" v-for="(items, index) in JobDataItem.filter(row => { return row.jobId == itemsJob.jobId })" :key="index">
+                      <v-icon color="#525252" class="mr-1" small style="font-size: 8px;" v-if="items.showCard === 'True' && items.fieldValue !== ''">
+                        mdi-checkbox-multiple-blank-circle
+                        </v-icon>
+                      <p class="ma-0 mb-1" v-if="items.showCard === 'True' && items.fieldValue !== ''">
+                        {{  items.fieldValue}}</p>
+                  </div>
+                  <div style="display: flex;justify-content: flex-start;align-items: flex-start;">
+                    <v-icon color="#525252" class="mr-2" v-if="JobDataItem.find(row => row.jobId === itemsJob.jobId).empStep !== '' && JobDataItem.find(row => row.jobId === itemsJob.jobId).empStep !== null">mdi-clipboard-account</v-icon>
+                    <p class="ma-0 mb-2" v-if="JobDataItem.find(row => row.jobId === itemsJob.jobId).empStep !== '' && JobDataItem.find(row => row.jobId === itemsJob.jobId).empStep !== null">{{ JobDataItem.find(row => row.jobId === itemsJob.jobId).empStep }}</p>
+                  </div>
+                  <div style="display: flex;justify-content: space-between;align-items: center;flex-direction: row;flex-wrap: wrap;">
+                    <v-btn
+                      color="primary"
+                      class="buttonGroup"
+                      elevation="2"
+                      icon
+                      small
+                    >
+                      <v-tooltip top
+                        color="#DE6467">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                              color="#DE6467"
+                              v-bind="attrs"
+                              v-on="on"
+                              dark
+                              @click=";(dialogEdit = true), setUpdate(itemsJob)"
+                              >
+                                mdi-square-edit-outline
+                              </v-icon>
+                          </template>
+                          <span>แก้ไขข้อมูล</span>
+                      </v-tooltip>
+                    </v-btn>
+                    <v-btn
+                      color="primary"
+                      class="buttonGroup"
+                      elevation="2"
+                      icon
+                      small
+                    >
+                      <v-tooltip
+                          v-if="allJob.filter(row => {return row.jobId == itemsJob.jobId})[0].checkCar !== 'False'"
+                          top
+                          color="#FF8C00"
+                      >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-icon
+                                color="#FF8C00"
+                                @click=";(dialog = true),
+                                    setUpdate(itemsJob, 'editFlow', item)
+                                "
+                                v-bind="attrs"
+                                v-on="on"
+                              >
+                                mdi-shuffle-variant
+                              </v-icon>
+                            </template>
+                            <span>เปลี่ยนขั้นตอนการทำงาน</span>
+                          </v-tooltip>
+                          <v-tooltip top
+                          color="#FF8C00"
+                          >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-icon
+                          v-if="
+                              allJob.filter(row => {
+                                return row.jobId == itemsJob.jobId
+                              })[0].checkCar == 'False'
+                            "
+                            v-bind="attrs"
+                            v-on="on"
+                            color="#9E9E9E"
+                          >
+                            mdi-shuffle-variant
+                          </v-icon>
+                        </template>
+                        <span>เปลี่ยนขั้นตอนการทำงาน</span>
+                      </v-tooltip>
+                    </v-btn>
+                    <v-btn
+                      color="primary"
+                      class="buttonGroup"
+                      elevation="2"
+                      icon
+                      small
+                    >
+                      <v-tooltip top
+                      color="#84C650"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-icon
+                            v-bind="attrs"
+                            v-on="on"
+                            color="#84C650"
+                            @click="
+                              ;(dialogDelete = true), setUpdate(itemsJob, 'closeJob')
+                            "
+                          >
+                            mdi-cash-usd-outline
+                          </v-icon>
+                        </template>
+                        <span>จบงาน</span>
+                      </v-tooltip>
+                    </v-btn>
+                    <v-btn
+                      color="primary"
+                      class="buttonGroup"
+                      elevation="2"
+                      icon
+                      small
+                    >
+                      <v-tooltip top color="#A12BFD">
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-icon
+                            color="#A12BFD"
+                            @click="
+                              ;(dialogProgress = true), getJobitem(itemsJob)
+                            "
+                              v-bind="attrs"
+                              v-on="on"
+                          >
+                            mdi-chart-timeline-variant
+                          </v-icon>
+                        </template>
+                        <span>ประวัติการทำงาน</span>
+                      </v-tooltip>
+                    </v-btn>
+                    <v-btn
+                    v-if="itemsJob.userId !== '' && itemsJob.userId !== 'user-skip'"
+                      color="primary"
+                      class="buttonGroup"
+                      elevation="2"
+                      icon
+                      small
+                    >
+                      <v-tooltip top color="rgb(43 147 253)">
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-icon
+                            color="rgb(43 147 253)"
+                            @click="ChatHistory(itemsJob)"
+                            small
+                          >
+                          mdi-message-processing
+                          </v-icon>
+                        </template>
+                        <span>แชท</span>
+                      </v-tooltip>
+                    </v-btn>
+                  </div>
+
+                </v-card>
+              </div>
+            </div>
+          </v-col>
+        </v-row>
+        </div>
+        <!-- GridView -->
+        <div
+          v-if="layout === 'grid' && false"
           :class="classWork"
           v-show="masBranchID"
         >
@@ -495,32 +788,32 @@
                 <v-card class="pa-0" style="background-color: #f0eeee;" >
                   <v-card id="cardTitle" class="mb-1" :style="'background-color:' + codeColor[work] + ';'">
                     <v-card-title class="ma-3" >
-                      <v-row class="pa-0" style="color: white;">
+                      <v-row class="pa-0" style="color: white;display: flex;">
                         <v-col cols="10" class="pa-1">
                           <v-tooltip
                             :color="codeColor[work]"
-                            v-if="item.stepTitle.length > 18"
+                            v-if="item.stepTitle.length > 17"
                             top
                             >
                               <template v-slot:activator="{ on, attrs }">
-                                <strong
-                                  class="ml-2 textLayout"
+                                <h2
+                                  class="ml-2 mt-3 textLayout"
                                   v-bind="attrs"
                                   v-on="on"
                                 >
-                                {{ item.stepTitle.substring(0, 18)}}...
-                                </strong>
+                                {{ item.stepTitle.substring(0, 17)}}...
+                                </h2>
                               </template>
                               <span>{{item.stepTitle}}</span>
                             </v-tooltip>
-                          <strong class="ml-2 textLayout" v-if="item.stepTitle.length <= 18">{{ item.stepTitle }}</strong>
+                          <h2 class="ml-2 mt-3 textLayout" v-if="item.stepTitle.length <= 17">{{ item.stepTitle }}</h2>
                         </v-col>
                         <v-col cols="2" class="text-right pb-1 pt-1 pl-0 ">
-                          <strong class="pa-0 textLayout">{{
+                          <h2 class="pa-0 mt-3 textLayout">{{
                             allJob.filter(row => {
                               return row.stepId == item.stepId
                             }).length
-                          }}</strong>
+                          }}</h2>
                           <!-- <v-icon color="#ABB1C7">
                             mdi-dots-vertical
                           </v-icon> -->
@@ -535,16 +828,15 @@
                       return row.stepId == item.stepId
                     })"
                     :key="indexJob"
-                    :style="'border-left-style: solid;border-width: 5px;border-color:' + codeColor[work] +';'"
+                    :style="'display:flex;border-left-style: solid;border-top-style: solid;border-width: 5px;border-color:' + codeColor[work] +';'"
                   >
                     <v-list-item class="pa-1 pb-2">
                       <v-alert
-                        class="pa-2 pt-0 mb-n1"
+                        class="pa-2 pt-0 mb-n1 cardItem"
                         width="100%"
                         min-height="120px"
                       >
                         <div
-                          class="bodyFrame"
                           v-for="(items, index) in JobDataItem.filter(row => {
                             return row.jobId == itemsJob.jobId
                           })"
@@ -570,10 +862,20 @@
                           <p class="ma-0" v-if="items.fieldValue.length <= 14">{{ items.fieldValue }}</p>
                         </div>
                         </div>
-                        <v-row style="height:50px;" class=" ps-3 pt-5 pb-1 mb-1">
+                        <div style="display: flex;">
+                          <p class="font-weight-medium mb-0 pb-1">
+                            <v-tooltip top color="#1B437C" v-if="itemsJob.statusTime === 'timeStart' || itemsJob.statusTime === null">
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-icon class="pb-1 mr-1 ml-1" v-bind="attrs" v-on="on" color="#1B437C">mdi-account-arrow-right</v-icon>
+                              </template>
+                              <span>พนักงานที่รับผิดชอบ</span>
+                            </v-tooltip>
+                            {{ JobDataItem.find(row => row.jobId === itemsJob.jobId).empStep }}
+                          </p>
+                        </div>
+                        <!-- <v-row style="height:50px;" class="ps-3 pt-5 pb-1 mb-1">
                           <v-col cols="12" class="mt-1 pa-0">
                             <p class="font-weight-medium mb-0 pb-1">
-                              <!-- <v-icon class="pb-1 mr-1 ml-1" large > mdi-shield-account</v-icon> -->
                               <v-tooltip top
                               color="#1B437C"
                                 v-if="itemsJob.statusTime === 'timeStart' || itemsJob.statusTime === null">
@@ -592,7 +894,8 @@
                                 {{JobDataItem.filter(row => {return row.jobId == itemsJob.jobId})[0].empStep}}
                             </p>
                           </v-col>
-                        </v-row>
+                        </v-row> -->
+
                         <!-- <v-avatar
                 color="brown"
               >
@@ -703,6 +1006,19 @@
                               <span>ประวัติการทำงาน</span>
                             </v-tooltip>
                           </v-row>
+                          <v-row class="pt-0 pl-1" v-if="itemsJob.userId !== '' && itemsJob.userId !== 'user-skip'">
+                            <v-tooltip top color="rgb(43 147 253)">
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-icon
+                                  color="rgb(43 147 253)"
+                                  @click="ChatHistory(itemsJob)"
+                                >
+                                mdi-message-text-outline
+                                </v-icon>
+                              </template>
+                              <span>แชท</span>
+                            </v-tooltip>
+                          </v-row>
                         </v-container>
                       </v-alert>
                     </v-list-item>
@@ -797,49 +1113,164 @@
                           </v-chip>
                         </v-col> -->
                         <!-- end diffDate -->
-                        <v-col cols="12" class="text-left">
-                          <v-chip
-                            outlined
-                            color="white"
-                            text-color="#212121"
-                            draggable
-                            small
-                            justify="center"
-                            align="center"
-                            v-for="(items, index) in JobDataItem.filter(row => {
-                              return row.jobId == itemsJob.jobId
-                            })"
-                            :key="index"
-                          >
-                          <div v-if="items.showCard === 'True'">
-                            <strong>
-                              {{ items.fieldValue }}
-                            </strong>
+                        <v-col cols="12" class="text-left pa-0 pl-4 pt-3">
+                          <div style="display: flex;justify-content: flex-start;align-items: baseline;" v-for="(items, index) in JobDataItem.filter(row => { return row.jobId == itemsJob.jobId })" :key="index">
+                              <v-icon color="#525252" class="mr-1" small style="font-size: 8px;" v-if="items.showCard === 'True' && items.fieldValue !== ''">
+                                mdi-checkbox-multiple-blank-circle
+                                </v-icon>
+                              <p class="ma-0 mb-1" v-if="items.showCard === 'True' && items.fieldValue !== ''">
+                                {{  items.fieldValue}}</p>
                           </div>
-                          </v-chip>
+                        </v-col>
+                        <v-col cols="12" class="text-left pa-0 pl-4 pt-3">
+                          <div style="display: flex;justify-content: flex-start;align-items: flex-start;">
+                            <v-icon color="#525252" class="mr-2" v-if="JobDataItem.find(row => row.jobId === itemsJob.jobId).empStep !== '' && JobDataItem.find(row => row.jobId === itemsJob.jobId).empStep !== null">mdi-clipboard-account</v-icon>
+                            <p class="ma-0 mb-2" v-if="JobDataItem.find(row => row.jobId === itemsJob.jobId).empStep !== '' && JobDataItem.find(row => row.jobId === itemsJob.jobId).empStep !== null">{{ JobDataItem.find(row => row.jobId === itemsJob.jobId).empStep }}</p>
+                          </div>
                         </v-col>
                         <v-col cols="12" class="text-right">
-                            <v-tooltip top
-                            color="#1B437C">
-                              <template v-slot:activator="{ on, attrs }">
-                                <v-icon
-                                  color="#1B437C"
-                                  v-bind="attrs"
-                                  v-on="on"
-                                  dark
-                            >
-                              mdi-account-arrow-right
-                            </v-icon>
-                              </template>
-                              <span>พนักงานที่รับผิดชอบ</span>
-                            </v-tooltip>
-                        <strong>{{
-                          JobDataItem.filter(row => {
-                            return row.jobId == itemsJob.jobId
-                          })[0].empStep
-                        }}</strong>
                           <!-- end update satatus car -->
-                          <v-tooltip top
+                          <div style="display: flex;flex-flow: row wrap;justify-content: flex-end;align-items: center;">
+                            <v-btn
+                              color="primary"
+                              class="buttonGroup"
+                              elevation="2"
+                              icon
+                              small
+                            >
+                              <v-tooltip top
+                                color="#DE6467">
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-icon
+                                      color="#DE6467"
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      dark
+                                      @click=";(dialogEdit = true), setUpdate(itemsJob)"
+                                      >
+                                        mdi-square-edit-outline
+                                      </v-icon>
+                                  </template>
+                                  <span>แก้ไขข้อมูล</span>
+                              </v-tooltip>
+                            </v-btn>
+                            <v-btn
+                              color="primary"
+                              class="buttonGroup"
+                              elevation="2"
+                              icon
+                              small
+                            >
+                              <v-tooltip
+                                  v-if="allJob.filter(row => {return row.jobId == itemsJob.jobId})[0].checkCar !== 'False'"
+                                  top
+                                  color="#FF8C00"
+                              >
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-icon
+                                        color="#FF8C00"
+                                        @click=";(dialog = true),
+                                            setUpdate(itemsJob, 'editFlow', item)
+                                        "
+                                        v-bind="attrs"
+                                        v-on="on"
+                                      >
+                                        mdi-shuffle-variant
+                                      </v-icon>
+                                    </template>
+                                    <span>เปลี่ยนขั้นตอนการทำงาน</span>
+                                  </v-tooltip>
+                                  <v-tooltip top
+                                  color="#FF8C00"
+                                  >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-icon
+                                  v-if="
+                                      allJob.filter(row => {
+                                        return row.jobId == itemsJob.jobId
+                                      })[0].checkCar == 'False'
+                                    "
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    color="#9E9E9E"
+                                  >
+                                    mdi-shuffle-variant
+                                  </v-icon>
+                                </template>
+                                <span>เปลี่ยนขั้นตอนการทำงาน</span>
+                              </v-tooltip>
+                            </v-btn>
+                            <v-btn
+                              color="primary"
+                              class="buttonGroup"
+                              elevation="2"
+                              icon
+                              small
+                            >
+                              <v-tooltip top
+                              color="#84C650"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-icon
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    color="#84C650"
+                                    @click="
+                                      ;(dialogDelete = true), setUpdate(itemsJob, 'closeJob')
+                                    "
+                                  >
+                                    mdi-cash-usd-outline
+                                  </v-icon>
+                                </template>
+                                <span>จบงาน</span>
+                              </v-tooltip>
+                            </v-btn>
+                            <!-- <v-btn
+                              color="primary"
+                              class="buttonGroup"
+                              elevation="2"
+                              icon
+                              small
+                            >
+                              <v-tooltip top color="#A12BFD">
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-icon
+                                    color="#A12BFD"
+                                    @click="
+                                      ;(dialogProgress = true), getJobitem(itemsJob)
+                                    "
+                                      v-bind="attrs"
+                                      v-on="on"
+                                  >
+                                    mdi-chart-timeline-variant
+                                  </v-icon>
+                                </template>
+                                <span>ประวัติการทำงาน</span>
+                              </v-tooltip>
+                            </v-btn> -->
+                            <v-btn
+                            v-if="itemsJob.userId !== '' && itemsJob.userId !== 'user-skip'"
+                              color="primary"
+                              class="buttonGroup"
+                              elevation="2"
+                              icon
+                              small
+                            >
+                              <v-tooltip top color="rgb(43 147 253)">
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-icon
+                                    color="rgb(43 147 253)"
+                                    @click="ChatHistory(itemsJob)"
+                                    small
+                                  >
+                                  mdi-message-processing
+                                  </v-icon>
+                                </template>
+                                <span>แชท</span>
+                              </v-tooltip>
+                            </v-btn>
+                          </div>
+                          <!-- <v-tooltip top
                             color="#DE6467">
                               <template v-slot:activator="{ on, attrs }">
                                 <v-icon
@@ -912,6 +1343,18 @@
                           </template>
                           <span>จบงาน</span>
                         </v-tooltip>
+                        <v-tooltip top color="rgb(43 147 253)">
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-icon
+                                v-if="itemsJob.userId !== '' && itemsJob.userId !== 'user-skip'"
+                                  color="rgb(43 147 253)"
+                                  @click="ChatHistory(itemsJob)"
+                                >
+                                mdi-message-text-outline
+                                </v-icon>
+                              </template>
+                              <span>แชท</span>
+                            </v-tooltip> -->
                           <!-- <v-icon
                               large
                               color="#A12BFD"
@@ -924,7 +1367,6 @@
                         </v-col>
                       </v-row>
                     </v-alert>
-
                 </v-expansion-panel-content>
                     </v-expansion-panel>
               </v-expansion-panels>
@@ -969,192 +1411,14 @@
             </div>
           </v-card>
         </v-dialog>
-        <!-- <div v-if="layout === 'list'">
-          <div
-            class="mt-3"
-            v-for="(item, indexitem) in stepItemSelete"
-            :key="indexitem"
-          >
-            <v-alert
-              class="allFrame pb-3 ml-4"
-              style="height: 38px;"
-              border="left"
-              elevation="2"
-            >
-              <v-row class=" allFrame pb-3">
-                <v-col cols="3">
-                  <strong>{{ item.stepTitle }}</strong>
-                </v-col>
-                <v-col cols="9" class="text-right">
-                  <strong>{{
-                    allJob.filter(row => {
-                      return row.stepId == item.stepId
-                    }).length
-                  }}</strong>
-                  <v-icon cols="10" class="text-right" color="#ABB1C7">
-                    mdi-dots-vertical
-                  </v-icon>
-                </v-col>
-              </v-row>
-            </v-alert>
-            <div
-              v-for="(itemsJob, indexJob) in allJob.filter(row => {
-                return row.stepId == item.stepId
-              })"
-              :key="indexJob"
-            >
-
-                <v-alert
-                  class="allFrame pb-3 ml-4"
-                  style="height: 38px;"
-                  :color="codeColor[indexJob]"
-                  border="left"
-                  elevation="2"
-                  colored-border
-                >
-                  <v-row class=" allFrame pb-3">
-                    <v-col cols="2">
-                      <v-chip
-                        v-if="parseInt(itemsJob.totalDateDiff) <= 2"
-                        class="ma-2"
-                        color="#DE6467"
-                        text-color="white"
-                        x-small
-                        draggable
-                        justify="center"
-                        align="center"
-                      >
-                        {{ itemsJob.totalDateDiff }} วัน
-                      </v-chip>
-                      <v-chip
-                        v-else-if="
-                          parseInt(itemsJob.totalDateDiff) <= 4 &&
-                            parseInt(itemsJob.totalDateDiff) >= 2
-                        "
-                        class="ma-2"
-                        color="#FED966"
-                        text-color="white"
-                        draggable
-                        x-small
-                        justify="center"
-                        align="center"
-                      >
-                        {{ itemsJob.totalDateDiff }} วัน
-                      </v-chip>
-                      <v-chip
-                        v-else-if="parseInt(itemsJob.totalDateDiff) >= 4"
-                        class="ma-2"
-                        color="#4F93D0"
-                        text-color="white"
-                        draggable
-                        x-small
-                        justify="center"
-                        align="center"
-                      >
-                        {{ itemsJob.totalDateDiff }} วัน
-                      </v-chip>
-                    </v-col>
-                    <v-col cols="8" class="text-left">
-                      <v-chip
-                        outlined
-                        color="white"
-                        text-color="#212121"
-                        draggable
-                        small
-                        justify="center"
-                        align="center"
-                        v-for="(items, index) in JobDataItem.filter(row => {
-                          return row.jobId == itemsJob.jobId
-                        })"
-                        :key="index"
-                      >
-                      <div v-if="items.showCard === 'True'">
-                        <strong>
-                          {{ items.fieldValue }}
-                        </strong>
-                      </div>
-                      </v-chip>
-                    </v-col>
-                    <v-col cols="2" class="text-right">
-                      <v-tooltip bottom>
-                        <template v-slot:activator="{ on, attrs }">
-                      <v-icon
-                        v-if="
-                          allJob.filter(row => {
-                            return row.jobId == itemsJob.jobId
-                          })[0].checkCar == 'False'
-                        "
-                        color="#9E9E9E"
-                        depressed
-                        @click="updateStatusCars(itemsJob.jobId, 'False')"
-                        v-bind="attrs"
-                        v-on="on"
-                      >
-                        mdi-car
-                      </v-icon>
-
-                      <v-icon
-                        v-else
-                        color="#4F93D0"
-                        depressed
-                        @click="updateStatusCars(itemsJob.jobId, 'True')"
-                      >
-                        mdi-car
-                      </v-icon>
-                        </template>
-                        <span>รถไม่อยู่</span>
-                      </v-tooltip>
-                      <v-icon
-                        large
-                        color="#DE6467"
-                        dark
-                        @click=";(dialogEdit = true), setUpdate(itemsJob)"
-                      >
-                        mdi-square-edit-outline
-                      </v-icon>
-
-                      <v-icon
-                      v-if="
-                          allJob.filter(row => {
-                            return row.jobId == itemsJob.jobId
-                          })[0].checkCar !== 'False'
-                        "
-                        large
-                        color="#FED966"
-                        @click=";(dialog = true),
-                            setUpdate(itemsJob, 'editFlow', item)
-                        "
-                      >
-                        mdi-layers-triple
-                      </v-icon>
-                      <v-icon
-                      v-if="
-                          allJob.filter(row => {
-                            return row.jobId == itemsJob.jobId
-                          })[0].checkCar == 'False'
-                        "
-                        large
-                        color="#9E9E9E"
-                      >
-                        mdi-layers-triple
-                      </v-icon>
-
-                      <v-icon
-                        large
-                        color="#84C650"
-                        @click=";(dialogDelete = true), setUpdate(itemsJob)"
-                      >
-                        mdi-tag
-                      </v-icon>
-                    </v-col>
-                  </v-row>
-                </v-alert>
-
-            </div>
-            <br />
-          </div>
-        </div> -->
       </div>
+      <!-- <v-dialog v-model="dialogWorkShop" max-width="70%">
+        <v-card min-width="200px" class="pa-2 pl-5 ma-0 pb-3 mt-n14" style="overflow-y: auto;"> -->
+          <WorkShopComponent @confirmed="getLayout" ref="EditWorkShop"></WorkShopComponent>
+          <ChatHistory ref="ChatHistory"></ChatHistory>
+        <!-- </v-card>
+      </v-dialog> -->
+      <!-- <WorkShop></WorkShop> -->
     </v-main>
   </div>
 </template>
@@ -1164,7 +1428,9 @@ import draggable from 'vuedraggable'
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
 import Menu from '../System/Menu.vue'
-// import moment from 'moment' // แปลง date
+import WorkShopComponent from './WorkShopComponent.vue'
+import ChatHistory from './ChatHistory.vue'
+import moment from 'moment' // แปลง date
 
 export default {
   name: 'hello',
@@ -1172,7 +1438,9 @@ export default {
     draggable,
     'left-menu-admin': adminLeftMenu,
     VuetifyMoney,
-    Menu
+    Menu,
+    WorkShopComponent,
+    ChatHistory
   },
   computed: {
     colsWidth () {
@@ -1194,8 +1462,23 @@ export default {
       }
     }
   },
+  watch: {
+    // whenever question changes, this function will run
+    dateFilter (newQuestion, oldQuestion) {
+      console.log('dateFilter', newQuestion, oldQuestion)
+      if (newQuestion === null) {
+        this.getJobData()
+      }
+    }
+  },
   data () {
     return {
+      dateFilter: '',
+      menuDatefilter: false,
+      dialogWorkShop: false,
+      overlay: false,
+      overlayUpdateStep: false,
+      overlayEdit: false,
       timelineitem: [],
       Layout: [],
       layout: 'grid',
@@ -1278,6 +1561,13 @@ export default {
         branchStep: '',
         checkCar: ''
       },
+      optionsMoney: {
+        locale: 'en-US',
+        prefix: '',
+        suffix: '',
+        length: 9,
+        precision: 2
+      },
       updateEndDateOld: '',
       updateEndTimeOld: '',
       lineUserId: '',
@@ -1293,15 +1583,15 @@ export default {
       },
       codeColor: [
         '#4D67AB',
-        '#4E79C4',
+        // '#FED966',
+        '#E67F33',
         '#57A2AC',
         '#824D99',
         '#84C650',
-        '#C65050',
+        '#EB56F6',
         '#CE2220',
         '#E67F33',
-        '#EB56F6',
-        '#FED966',
+        '#4E79C4',
         '#4D67AB',
         '#4E79C4',
         '#57A2AC',
@@ -1310,8 +1600,30 @@ export default {
         '#C65050',
         '#CE2220',
         '#E67F33',
-        '#EB56F6',
+        '#C65050',
         '#FED966'
+      ],
+      pastelColor: [
+        '#FFA5B5',
+        '#FFCBA4',
+        '#FFD700',
+        '#90EE90',
+        '#7CFC00',
+        '#87CEEB',
+        '#6495ED',
+        '#4682B4',
+        '#9370DB',
+        '#D8BFD8',
+        '#FF69B4',
+        '#FFA500',
+        '#F4A460',
+        '#9ACD32',
+        '#BA55D3',
+        '#32CD32',
+        '#5DADE2',
+        '#A2D9CE',
+        '#D2B48C',
+        '#FFD480'
       ],
       formDelete: {
         jobNo: '',
@@ -1348,22 +1660,39 @@ export default {
       productExchangeRateId: '',
       searchOther: '',
       allJobSupport: [],
-      jobDataItemSupport: []
+      jobDataItemSupport: [],
+      statusPushEndStep: 'False',
+      endStepItem: [],
+      ItemendStepStanby: [],
+      dataLineConfig: {},
+      memberTel: ''
     }
   },
   async mounted () {
     this.dataReady = false
+    this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
     // Get Data
     this.$root.$on('closeSetTime', () => {
       // your code goes here
       this.closeSetTime()
     })
-    await this.getDataFlow()
+    // await this.getDataFlow()
     await this.getDataBranch()
     await this.getEmpSelect()
     // await this.getLayoutDefault()
   },
   methods: {
+    CheckstatusPushEndStep (item) {
+
+    },
+    ChatHistory (item) {
+      console.log('item!!!!!!!', item)
+      this.$refs.ChatHistory.getChatHistory(item)
+    },
+    filterJob () {
+      let filterJob = this.allJob.filter((item) => item.dueDate === this.dateFilter)
+      this.allJob = filterJob
+    },
     refreshData () {
       this.searchOther = ''
       this.allJob = this.allJobSupport
@@ -1425,6 +1754,18 @@ export default {
     },
     async chkFlowName () {
       if (this.flowId !== '') {
+        switch (this.$vuetify.breakpoint.name) {
+          case 'xs': this.layout = 'list'
+            break
+          case 'sm': this.layout = 'list'
+            break
+          case 'md': this.layout = 'grid'
+            break
+          case 'lg': this.layout = 'grid'
+            break
+          case 'xl': this.layout = 'grid'
+            break
+        }
         this.closeSetTime()
         await this.getStepFlow()
         await this.getLayout()
@@ -1443,24 +1784,34 @@ export default {
         this.setTimeJob()
       }
     },
-    getDataFlow () {
+    async getDataFlow () {
       this.DataFlowName = []
       console.log('DataFlowName', this.DataFlowName)
-      axios
-        .get(this.DNS_IP + '/flow/get?shopId=' + this.shopId + '&checkOnsite=is null')
-        .then(response => {
+      await axios
+        .get(this.DNS_IP + '/flow/get?shopId=' + this.shopId
+        // + '&checkOnsite=is null'
+        )
+        .then(async response => {
           let rs = response.data
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
-              d.text = d.flowName
-              d.value = d.flowId
-              this.DataFlowName.push(d)
+              if (d.masBranchID === this.masBranchID.toString() || (d.masBranchID === 'All' || d.masBranchID === null)) {
+                console.log('d', d.flowName, d.masBranchID, this.masBranchID)
+                d.text = d.flowName
+                d.value = d.flowId
+                this.DataFlowName.push(d)
+              }
             }
           } else {
             this.DataFlowName = []
           }
         })
+      if (this.DataFlowName.length === 1) {
+        console.log('#########')
+        this.flowId = this.DataFlowName[0].value
+        await this.chkFlowName()
+      }
     },
     checkTime () {
       console.log('this.branchData', this.branchData)
@@ -1469,25 +1820,57 @@ export default {
       console.log('timevailable', this.timeavailable)
     },
     getDataBranch () {
+      let DataBranchName = []
+      let branchData = []
       this.DataBranchName = []
       this.branchData = []
       console.log('DataBranchName', this.DataBranchName)
       axios
         .get(this.DNS_IP + '/master_branch/get?shopId=' + this.shopId)
-        .then(response => {
+        .then(async response => {
           let rs = response.data
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
               d.text = d.masBranchName
               d.value = d.masBranchID
-              this.DataBranchName.push(d)
-              this.branchData.push(d)
+              DataBranchName.push(d)
+              branchData.push(d)
+            }
+            if (this.session.data.masBranchID === '' || this.session.data.masBranchID === null) {
+              this.DataBranchName = DataBranchName
+              this.branchData = branchData
+            } else {
+              let checkData = branchData.filter(el => { return el.value === this.session.data.masBranchID })
+              if (checkData.length > 0) {
+                this.DataBranchName = checkData
+                this.branchData = checkData
+              } else {
+                await this.getDataBranch()
+                if (checkData.length > 0) {
+                  this.DataBranchName = checkData
+                  this.branchData = checkData
+                } else {
+                  this.DataBranchName = []
+                  this.branchData = []
+                  this.$swal('ผิดพลาด', 'กรุณาตรวจสอบสาขาของท่าน เนื่องจากระบบตรวจหาสาขาไม่พบ', 'error')
+                }
+              }
             }
           } else {
             this.DataBranchName = []
+            this.branchData = []
+          }
+          if (this.branchData.length === 1) {
+            this.masBranchID = this.DataBranchName[1].value
+            await this.getDataFlow()
           }
         })
+    },
+    clearDataFlow () {
+      this.Layout = []
+      this.JobDataItem = []
+      this.allJob = []
     },
     async getLayout () {
       this.Layout = []
@@ -1549,13 +1932,17 @@ export default {
         )
         .then(async response => {
           let rs = response.data
+          // console.log('rs', rs)
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
+              console.log('DDDDDDDD', d)
               d.text = d.stepTitle
               d.value = d.stepId
               this.stepItemSelete.push(d)
             }
+            this.endStepItem = rs.filter((endItem) => endItem.sortNo === rs.length)
+            console.log('this.endStepItem', this.endStepItem)
             // console.log('stepItemSelete', this.stepItemSelete)
           }
         })
@@ -1569,10 +1956,23 @@ export default {
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
-              var s = {}
-              s.text = d.empFirst_NameTH + ' ' + d.empLast_NameTH
-              s.value = d.empId
-              this.empSeleteStep.push(s)
+              d.masBranchID = d.masBranchID || ''
+              console.log('this.$session.getAll().data.masBranchID', this.$session.getAll().data.masBranchID)
+              if (this.$session.getAll().data.masBranchID === '' || this.$session.getAll().data.masBranchID === null) {
+                let s = {}
+                s.text = d.empFirst_NameTH + ' ' + d.empLast_NameTH
+                s.value = d.empId
+                s.masBranchID = d.masBranchID
+                this.empSeleteStep.push(s)
+              } else {
+                if (this.$session.getAll().data.masBranchID === d.masBranchID || d.masBranchID === '') {
+                  let s = {}
+                  s.text = d.empFirst_NameTH + ' ' + d.empLast_NameTH
+                  s.value = d.empId
+                  s.masBranchID = d.masBranchID
+                  this.empSeleteStep.push(s)
+                }
+              }
             }
             // console.log('empSeleteStep', this.empSeleteStep)
           }
@@ -1590,14 +1990,15 @@ export default {
             this.flowId +
             '&masBranchID=' + this.masBranchID +
             '&shopId=' +
-            this.shopId + '&checkOnsite=is null'
+            this.shopId
+            //  + '&checkOnsite=is null'
           // '&stepId=is null'
         )
         .then(async response => {
           this.dataReady = true
           var jobs = []
           // console.log('res', response.data.length)
-          // console.log('res', response.data)
+          console.log('res', response.data)
           // console.log('userId', this.formUpdate.userId === 'NULL')
           if (response.data.length > 0) {
             for (var i = 0; i < response.data.length; i++) {
@@ -1606,28 +2007,57 @@ export default {
               if (jobs.indexOf(d.jobId) === -1) {
                 jobs.push(d.jobId)
                 if (d.userId !== '') {
-                  var rss = response.data.filter(el => { return el.jobId === d.jobId })
-                  for (var x = 0; x < response.data.filter(el => { return el.jobId === d.jobId }).length; x++) {
-                    var s = rss[x]
-                    // jobs.push(element.jobId)
-                    JobDataItem.push(s)
+                  if (this.dateFilter === '' || this.dateFilter === null) {
+                    let rss = response.data.filter(el => { return el.jobId === d.jobId })
+                    for (let x = 0; x < response.data.filter(el => { return el.jobId === d.jobId }).length; x++) {
+                      let s = rss[x]
+                      // jobs.push(element.jobId)
+                      JobDataItem.push(s)
+                    }
+                    allJob.push({
+                      jobId: d.jobId,
+                      jobNo: d.jobNo,
+                      stepId: d.stepId,
+                      checkCar: d.checkCar,
+                      dueDate: moment(d.dueDate).format('YYYY-MM-DD'),
+                      totalDateDiff: d.totalDateDiff,
+                      endDate: d.endDate,
+                      endTime: d.endTime,
+                      checkPayment: d.checkPayment,
+                      empStepId: d.empStepId,
+                      empId: d.empId,
+                      lineUserId: d.lineUserId,
+                      userId: d.userId,
+                      packageId: d.packageId,
+                      statusTime: d.statusTime
+                    })
+                  } else {
+                    if (moment(d.dueDate).format('YYYY-MM-DD') === this.dateFilter) {
+                      let rss = response.data.filter(el => { return el.jobId === d.jobId })
+                      for (let x = 0; x < response.data.filter(el => { return el.jobId === d.jobId }).length; x++) {
+                        let s = rss[x]
+                        // jobs.push(element.jobId)
+                        JobDataItem.push(s)
+                      }
+                      allJob.push({
+                        jobId: d.jobId,
+                        jobNo: d.jobNo,
+                        stepId: d.stepId,
+                        checkCar: d.checkCar,
+                        dueDate: moment(d.dueDate).format('YYYY-MM-DD'),
+                        totalDateDiff: d.totalDateDiff,
+                        endDate: d.endDate,
+                        endTime: d.endTime,
+                        checkPayment: d.checkPayment,
+                        empStepId: d.empStepId,
+                        empId: d.empId,
+                        lineUserId: d.lineUserId,
+                        userId: d.userId,
+                        packageId: d.packageId,
+                        statusTime: d.statusTime
+                      })
+                    }
                   }
-                  allJob.push({
-                    jobId: d.jobId,
-                    jobNo: d.jobNo,
-                    stepId: d.stepId,
-                    checkCar: d.checkCar,
-                    totalDateDiff: d.totalDateDiff,
-                    endDate: d.endDate,
-                    endTime: d.endTime,
-                    checkPayment: d.checkPayment,
-                    empStepId: d.empStepId,
-                    empId: d.empId,
-                    lineUserId: d.lineUserId,
-                    userId: d.userId,
-                    packageId: d.packageId,
-                    statusTime: d.statusTime
-                  })
                 }
               }
             }
@@ -1669,17 +2099,29 @@ export default {
       this.$router.push('/Master/RegisterAdd')
     },
     async editLayout () {
-      this.$router.push('/Master/WorkShop')
+      console.log('testt', this.flowId, this.masBranchID)
+      // if (this.flowId !== '' && this.masBranchID !== '') {
+      // this.dialogWorkShop = true
+      this.$refs.EditWorkShop.showDialog(this.flowId, this.masBranchID)
+      // }
+      //
+      // console.log('testt', this.flowId, this.masBranchID)
+      // this.$router.push('/Master/WorkShop')
     },
     itemCars (item) {
       this.item_newcars = item
     },
     async setUpdate (item, text, stepItem) {
+      this.ItemendStepStanby = item
+      console.log('ItemendStepStanby', this.ItemendStepStanby)
       this.dataPackage = []
       this.dataCoin = []
       // console.log(this.formUpdate)
       // console.log(this.stepItemSelete)
       console.log('item1', item)
+      console.log('JobDataItem', this.JobDataItem.filter(row => {
+        return row.jobId === item.jobId
+      }))
       // console.log('stepItem', stepItem)
       clearInterval(this.setTimerJob)
       this.setTimerJob = null
@@ -1715,7 +2157,7 @@ export default {
         this.stepItemSeleteInBoard = dataStepItemSelete.filter(el => el.text !== stepItem.stepTitle)
       }
       if (text === 'closeJob') {
-        this.getCoin()
+        this.getCoin(item)
         if (item.packageId === '' || item.packageId === null) {
 
         } else {
@@ -1757,6 +2199,34 @@ export default {
       //     this.fieldNameItem[index].fieldValue = String(this.fromAdd.flowId)
       //   }
       // })
+      let checkLine = await this.getDataLineConfig(this.shopId)
+      let urlLoyalty = ''
+      if (checkLine.checkLineConfig === false) {
+        urlLoyalty = this.DNS_IP_Loyalty + '/member/get?shopId=' + this.shopId + '&lineUserId=' + dt.lineUserId
+      } else {
+        urlLoyalty = this.DNS_IP_Loyalty + '/member/get?shopId=' + this.shopId + '&liffUserId=' + dt.lineUserId
+      }
+      await axios.get(urlLoyalty)
+        .then(response => {
+          let rs = response.data
+          if (rs.status !== false) {
+            if (checkLine.checkLineConfig === false) {
+              this.lineUserId = rs[0].lineUserId || ''
+            } else {
+              this.lineUserId = rs[0].liffUserId || ''
+            }
+            this.memberTel = rs[0].tel || ''
+          } else {
+            this.lineUserId = ''
+            this.memberTel = ''
+          }
+        }).catch(error => {
+          this.lineUserId = ''
+          this.memberTel = ''
+          console.log('error function addDataGlobal : ', error)
+        })
+      console.log('this.lineUserId', this.lineUserId)
+      console.log('this.memberTel', this.memberTel)
       if (this.lineUserId !== '') {
         this.dataCoin = []
         await axios.get(this.DNS_IP_Loyalty + '/productExchangeRate/get?shopId=' + this.shopId +
@@ -1774,11 +2244,43 @@ export default {
           } else {
             this.dataCoin = []
           }
+        }).catch(error => {
+          this.dataCoin = []
+          console.log('error function addDataGlobal : ', error)
         })
+      }
+    },
+    async updateStepEnd () {
+      console.log('endStepItem', this.endStepItem)
+      console.log('ItemendStepStanby', this.ItemendStepStanby)
+      if (this.statusPushEndStep === 'True') {
+        let itemUpdate = {}
+        itemUpdate.stepId = this.endStepItem[0].stepId
+        itemUpdate.flowId = this.flowId
+        itemUpdate.shopId = this.shopId
+        itemUpdate.LAST_USER = this.session.data.userName
+        itemUpdate.jobId = this.ItemendStepStanby.jobId
+        await axios
+          .post(
+          // eslint-disable-next-line quotes
+            this.DNS_IP + '/job/edit/' + itemUpdate.jobId,
+            itemUpdate
+          )
+          .then(async response => {
+          // Debug response
+            console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
+            await this.pushmessage(itemUpdate.jobId)
+          })
+        // eslint-disable-next-line handle-callback-err
+          .catch(error => {
+            console.log('error function editDataGlobal : ', error)
+          })
       }
     },
     async onUpdate () {
       this.formUpdate.stepId = this.formUpdate.stepTitle.stepId
+      this.formUpdate.flowId = this.flowId
+      this.formUpdate.shopId = this.shopId
       console.log('formUpdate', this.formUpdate)
       // console.log('allJob', this.allJob)
       // console.log('empSeleteStep', this.empSeleteStep)
@@ -1795,10 +2297,10 @@ export default {
           cancelButtonText: 'ไม่'
         })
           .then(async result => {
+            this.overlayUpdateStep = true
             this.formUpdate.LAST_USER = this.session.data.userName
             var ID = this.formUpdate.jobId
             var flowId = this.flowId
-            delete this.formUpdate['flowId']
             delete this.formUpdate['flowName']
             delete this.formUpdate['sortNo']
             delete this.formUpdate['CREATE_USER']
@@ -1826,6 +2328,7 @@ export default {
                 await this.pushmessage(this.formUpdate.jobId)
                 await this.NotifyEmpTime(this.formUpdate.jobNo)
                 this.dialog = false
+                this.overlayUpdateStep = false
                 this.$swal('เรียบร้อย', 'แก้ไขสถานะ เรียบร้อย', 'success')
                 this.getStepFlow()
                 // this.getLayout()
@@ -1838,6 +2341,7 @@ export default {
             // eslint-disable-next-line handle-callback-err
               .catch(error => {
                 this.dataReady = true
+                this.overlayUpdateStep = false
                 console.log('error function editDataGlobal : ', error)
               })
           })
@@ -1905,17 +2409,20 @@ export default {
       await axios
         .post(this.DNS_IP + '/job/pushClosejob/' + jobNo, updateStatusSend)
         .then(console.log(jobNo))
+        .catch((error) => console.log('error', error))
     },
-    closeJob () {
+    async closeJob () {
       console.log('this.productExchangeRateId', this.productExchangeRateId)
       console.log('this.packageId', this.packageId)
       if (this.checkPayment === 'True') {
         if (this.formDelete.totalPrice !== '') {
+          await this.updateStepEnd()
           this.closeJobSubmit(this.formDelete.totalPrice)
         } else {
           this.$swal('ผิดพลาก', 'กรุณาใส่จำนวนเงิน', 'error')
         }
       } else {
+        await this.updateStepEnd()
         this.closeJobSubmit('0')
       }
     },
@@ -1974,7 +2481,8 @@ export default {
     async usePackage () {
       var params = {
         shopId: this.shopId,
-        token: this.packageId.token
+        token: this.packageId.token,
+        branchBeLinked: this.masBranchID
       }
       await axios({
         method: 'post',
@@ -1988,61 +2496,76 @@ export default {
       }).then((response) => {})
     },
     async useCoin (totalPrice) {
-      // productExchangeRateId
-      const today = new Date()
-      // console.log(today)
-      const date =
-            today.getFullYear() +
-            '' +
-            (today.getMonth() + 1) +
-            '' +
-            today.getDate()
-      const time =
-            today.getHours() + '' + today.getMinutes() + '' + today.getSeconds()
-      const token = date + '' + time
-      var point = ''
-      if (this.productExchangeRateId.exchangeRate === 0) {
-        point = 0
-      } else {
-        point = parseInt(totalPrice) / this.productExchangeRateId.exchangeRate
-      }
-      var md5 = require('md5')
-      var tokenKey = md5(token)
       let ds = {
-        productExchangeRateId: this.productExchangeRateId.value,
-        amount: parseInt(totalPrice),
-        refId: '',
-        point: parseInt(point),
-        token: tokenKey,
-        status: 'waiting',
-        statusMemberCard: 'collect',
-        CREATE_USER: this.session.data.userName,
-        LAST_USER: this.session.data.userName,
-        shopId: this.shopId,
-        qrCodeURL: `https://liff.line.me/1656906322-RnAKKNyq/collect?shopId=${this.shopId}&token=${tokenKey}`
-        // masBranchID: '',
-        // branchName: ''
+        exchangRateId: this.productExchangeRateId.value,
+        Amount: parseInt(totalPrice),
+        shopId: this.$session.getAll().data.shopId,
+        tel: this.memberTel,
+        liffUserId: this.lineUserId,
+        refId: ''
       }
       console.log('ds', ds)
       await axios
-        .post(this.DNS_IP_Loyalty + '/qrcode/add', ds)
+        .post(this.DNS_IP_Loyalty + '/POSapi', ds)
         .then(async response => {
-          var params = {
-            shopId: this.shopId,
-            token: tokenKey
-          }
-          await axios({
-            method: 'post',
-            headers: {
-              shopId: this.shopId,
-              lineUserId: this.lineUserId,
-              lineId: this.userId
-            },
-            url: this.DNS_IP_Loyalty + '/memberCard/edit',
-            data: params
-          }).then((response) => {})
         })
     },
+    // async useCoin (totalPrice) {
+    //   // productExchangeRateId
+    //   const today = new Date()
+    //   // console.log(today)
+    //   const date =
+    //         today.getFullYear() +
+    //         '' +
+    //         (today.getMonth() + 1) +
+    //         '' +
+    //         today.getDate()
+    //   const time =
+    //         today.getHours() + '' + today.getMinutes() + '' + today.getSeconds()
+    //   const token = date + '' + time
+    //   var point = ''
+    //   if (this.productExchangeRateId.exchangeRate === 0) {
+    //     point = 0
+    //   } else {
+    //     point = parseInt(totalPrice) / this.productExchangeRateId.exchangeRate
+    //   }
+    //   var md5 = require('md5')
+    //   var tokenKey = md5(token)
+    //   let ds = {
+    //     productExchangeRateId: this.productExchangeRateId.value,
+    //     amount: parseInt(totalPrice),
+    //     refId: '',
+    //     point: parseInt(point),
+    //     token: tokenKey,
+    //     status: 'waiting',
+    //     statusMemberCard: 'collect',
+    //     CREATE_USER: this.session.data.userName,
+    //     LAST_USER: this.session.data.userName,
+    //     shopId: this.shopId,
+    //     qrCodeURL: `https://liff.line.me/${this.dataLineConfig.liffMainIDLoyalty}/collect?shopId=${this.shopId}&token=${tokenKey}`
+    //     // masBranchID: '',
+    //     // branchName: ''
+    //   }
+    //   console.log('ds', ds)
+    //   await axios
+    //     .post(this.DNS_IP_Loyalty + '/qrcode/add', ds)
+    //     .then(async response => {
+    //       var params = {
+    //         shopId: this.shopId,
+    //         token: tokenKey
+    //       }
+    //       await axios({
+    //         method: 'post',
+    //         headers: {
+    //           shopId: this.shopId,
+    //           lineUserId: this.lineUserId,
+    //           lineId: this.userId
+    //         },
+    //         url: this.DNS_IP_Loyalty + '/memberCard/edit',
+    //         data: params
+    //       }).then((response) => {})
+    //     })
+    // },
     async editData () {
       console.log(
         this.JobDataItem.filter(row => {
@@ -2061,6 +2584,7 @@ export default {
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
       }).then(async result => {
+        this.overlayEdit = true
         // var ID = this.formUpdate.jobId
         let rs = this.JobDataItem.filter(row => {
           return row.jobId === this.formUpdate.jobId
@@ -2129,6 +2653,7 @@ export default {
             await this.getJobData()
             this.setTimeJob()
             this.dialogEdit = false
+            this.overlayEdit = false
             console.log('shopId:', this.shopId)
             console.log('form:', this.formEditData)
           })
@@ -2213,6 +2738,13 @@ export default {
 }
 </script>
 <style scoped>
+.cardItem {
+  display: flex;
+}
+.EditWorkShop {
+  width: auto;
+  background-color: #FFFFFF;
+}
 .textLayout {
   font-size: 16px !important;
 }
@@ -2227,14 +2759,23 @@ export default {
   width: max-content;
   height: max-content;
 }
+.Layout {
+  margin-top: 2rem;
+  min-width: 185px;
+  max-width: 220px;
+  background-color: #ffffff;
+  /* margin-left: 1px; */
+  max-width: auto;
+}
 .colum {
-  margin-top: 1rem;
+  margin-top: 2rem;
   width: 200px;
   background-color: #f0eeee;
   margin-left: 1.5px;
 }
 .allFrame {
-  padding-top: 0px;
+  padding-top: 10px;
+  padding-left: 10px;
   width: 100%;
   min-height: max-content;
 }
@@ -2301,4 +2842,41 @@ body {
   overflow: auto;
   white-space: normal;
 }
+.totalJob {
+  background-color: rgb(107, 107, 107);
+    border-radius: 3px;
+    width: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #FFF;
+}
+.cardItemNew {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  /* margin: 5px; */
+  margin-bottom: 4px;
+  min-height:120px;
+  max-width: 100%;
+}
+.cardItemNone {
+  padding: 10px;
+  margin: 5px;
+}
+.subLayout {
+  background-color: #eeeeee;
+  padding: 5px;
+  margin-bottom: 5px;
+  border-radius: 6px;
+  border-width: 1px;
+  border-style: dashed;
+  border-color: #525252;
+}
+.buttonGroup {
+  margin-right: 3px;
+  margin-top: 5px;
+  padding: 2px;
+}
+
 </style>

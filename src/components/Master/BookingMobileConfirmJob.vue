@@ -451,7 +451,7 @@ export default {
       foreground: '#173053',
       value: '',
       size: 200,
-      pathToweb: 'https://liff.line.me/1656581804-7KRQyqo5/JobConfirm?jobId=',
+      pathToweb: '',
       tabSelectUser: null,
       jobitem: [],
       menu: false,
@@ -579,11 +579,19 @@ export default {
         cancelButtonColor: '#b3b1ab',
         confirmButtonText: 'ใช่',
         cancelButtonText: 'ไม่'
-      }
+      },
+      dataLineConfig: {}
     }
   },
   async mounted () {
-    await this.beforeCreate()
+    if (this.$route.query.shopId) {
+      this.dataLineConfig = await this.getDataLineConfig(this.$route.query.shopId)
+      this.pathToweb = 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/JobConfirm?jobId='
+      await this.beforeCreate()
+    } else {
+      this.$swal('ผิดพลาด', 'ลิ้งค์ที่ท่านใช้ไม่ถูกต้องกรุณา ติดต่อพนักงาน', 'info')
+      this.$router.push('/Core/Login')
+    }
   },
   methods: {
     async jobConfirm () {
@@ -716,6 +724,9 @@ export default {
         .then(async response => {})
     },
     async beforeCreate () {
+      console.log(JSON.parse(localStorage.getItem('sessionData')))
+      console.log(this.$session.exists())
+      console.log(this.$session.getAll().data)
       if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
         if (
           JSON.parse(localStorage.getItem('sessionData')).shopId ===
