@@ -868,6 +868,7 @@ export default {
                     shopId: this.$session.getAll().data.shopId,
                     timeSlotStatus: this.formUpdate.timeSlotStatus,
                     storeFrontCheck: 'False',
+                    checkOnsite: 'False',
                     LAST_USER: this.$session.getAll().data.userName
                   }
                 } else {
