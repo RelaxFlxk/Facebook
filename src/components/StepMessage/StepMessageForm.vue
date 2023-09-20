@@ -2,11 +2,11 @@
     <v-dialog v-model="isDialogOpen" max-width="910px">
       <v-card>
         <v-toolbar dark color="primary">
+          <v-toolbar-title> เพิ่มเทมเพลสตั้งเวลาเเจ้งเตือน</v-toolbar-title>
+          <v-spacer></v-spacer>
           <v-btn icon dark @click="isDialogOpen = false,this.item = []">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title> เพิ่มเทมเพลสตั้งเวลาเเจ้งเตือน</v-toolbar-title>
-          <v-spacer></v-spacer>
         </v-toolbar>
         <v-list three-line subheader>
           <v-subheader>ตั้งค่าการส่ง</v-subheader>
@@ -73,7 +73,7 @@
               v-model="form.title"
               :value="form.title"
               :counter="200"
-              label="หัวข้อ"
+              label="หัวข้อแจ้งเตือน"
               outlined
               require
             ></v-text-field>
@@ -89,7 +89,7 @@
               v-model="form.date"
               min="0"
               type="number"
-              label="หลังจากสมัครส่งในอีกกี่วัน"
+              label="หลังจากบุ๊กกิ้งในอีกกี่วัน"
               required
               outlined
             ></v-text-field>

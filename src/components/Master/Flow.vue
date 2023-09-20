@@ -782,7 +782,7 @@
                               color="#1B437C"
                               true-value="True"
                               v-model="formAdd.storeFrontCheck"
-                              @change="checkStoreFrontAdd(),formAdd.servicePointTh = '', formAdd.servicePointEn = '',formAdd.servicePointCount = '',servicePointCount = '', formAdd.storeFrontText = '',formAdd.servicePointStatus = 'False',formAdd.storeFrontNotifySet = '0',formAdd.storeFrontNotifyStatus = 'False'"
+                              @change="checkStoreFrontAdd(),formAdd.servicePointTh = '', formAdd.servicePointEn = '',formAdd.servicePointCount = '',servicePointCount = '', formAdd.storeFrontText = '',formAdd.servicePointStatus = 'False',formAdd.storeFrontNotifySet = '0',formAdd.storeFrontNotifyStatus = 'False',formAdd.storeFrontMessageFinish = ''"
                             ></v-checkbox>
                             </v-col>
                             <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;"  v-if="formAdd.storeFrontCheck === 'True'">
@@ -795,7 +795,15 @@
                                 dense
                                 maxlength="1"
                               ></v-text-field>
-                            </v-col>
+                            </v-col >
+                            <v-col cols="12" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;"  v-if="formAdd.storeFrontCheck === 'True'">
+                              <v-textarea
+                                outlined
+                                rows="2"
+                                v-model="formAdd.storeFrontMessageFinish"
+                                label="ข้อความ"
+                              ></v-textarea>
+                            </v-col >
                             <!-- <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontCheck === 'True'"></v-col> -->
                             <v-col cols="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontCheck === 'True'">
                               <v-checkbox
@@ -1274,7 +1282,7 @@
                               color="#1B437C"
                               true-value="True"
                               v-model="formUpdate.storeFrontCheck"
-                              @change="checkStoreFrontUpdate(),formUpdate.servicePointTh = '', formUpdate.servicePointEn = '',servicePointCount = '',formUpdate.servicePointCount = '', formUpdate.storeFrontText = '',formUpdate.servicePointStatus = 'False',formUpdate.storeFrontNotifyStatus === 'False',formUpdate.storeFrontNotifySet === '0'"
+                              @change="checkStoreFrontUpdate(),formUpdate.servicePointTh = '', formUpdate.servicePointEn = '',servicePointCount = '',formUpdate.servicePointCount = '', formUpdate.storeFrontText = '',formUpdate.servicePointStatus = 'False',formUpdate.storeFrontNotifyStatus === 'False',formUpdate.storeFrontNotifySet === '0',formUpdate.storeFrontMessageFinish = ''"
                             ></v-checkbox>
                             </v-col>
                             <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;"  v-if="formUpdate.storeFrontCheck === 'True'">
@@ -1287,6 +1295,14 @@
                                 maxlength="1"
                               ></v-text-field>
                             </v-col>
+                            <v-col cols="12" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;"  v-if="formUpdate.storeFrontCheck === 'True'">
+                              <v-textarea
+                                outlined
+                                rows="2"
+                                v-model="formUpdate.storeFrontMessageFinish"
+                                label="ข้อความ"
+                              ></v-textarea>
+                            </v-col >
                             <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.storeFrontCheck === 'True'"></v-col>
                             <v-col cols="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.storeFrontCheck === 'True'">
                               <v-checkbox
@@ -2947,6 +2963,7 @@ export default {
         empTitleTh: 'พนักงานช่าง',
         empTitleEng: 'Employee',
         storeFrontText: '',
+        storeFrontMessageFinish: '',
         servicePointTh: '',
         servicePointEn: '',
         servicePointCount: '',
@@ -3029,6 +3046,7 @@ export default {
         empTitleTh: 'พนักงานช่าง',
         empTitleEng: 'Employee',
         storeFrontText: '',
+        storeFrontMessageFinish: '',
         servicePointTh: '',
         servicePointEn: '',
         servicePointCount: '',
@@ -4023,6 +4041,7 @@ export default {
         'typeDayCustom': this.formUpdateLimitbooking.typeDayCustom,
         'setTimebyday': this.formUpdateLimitbooking.setTimebyday
       }
+      console.log(dd)
       console.log('Dataitem', Dataitem)
       this.$swal({
         title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',
@@ -4729,6 +4748,7 @@ export default {
       this.formUpdate.servicePointTh = item.servicePointTh || ''
       this.formUpdate.servicePointEn = item.servicePointEn || ''
       this.formUpdate.storeFrontText = item.storeFrontText || ''
+      this.formUpdate.storeFrontMessageFinish = item.storeFrontMessageFinish || ''
       this.formUpdate.servicePointStatus = item.servicePointStatus || 'False'
       this.formUpdate.updateStatusConfirm = item.updateStatusConfirm || 'False'
       this.formUpdate.servicePointRecursive = item.servicePointRecursive || 'False'

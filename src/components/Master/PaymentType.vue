@@ -2139,19 +2139,20 @@ export default {
         cancelButtonText: 'ไม่'
       })
         .then(async (result) => {
+          console.log('this.formAddStripe', this.formAddStripe)
           let dt = {
             masBranchID: this.formAddStripe.masBranchID,
             apiKey: this.formAddStripe.apiKey,
             endpointSecret: this.formAddStripe.endpointSecret,
             payVatExclude: this.formAddStripe.payVatExclude,
-            payTypeName: this.formAddStripe.payTypeName.payTypeName.replace(/%/g, '%%').replace(/'/g, "\\'"),
+            payTypeName: this.formAddStripe.payTypeName.replace(/%/g, '%%').replace(/'/g, "\\'"),
             LAST_USER: this.formAddStripe.LAST_USER
           }
           let dtOmise = {
             masBranchID: this.formAddStripe.masBranchID,
             apiKey: this.formAddStripe.apiKey,
             endpointSecret: this.formAddStripe.endpointSecret,
-            payTypeName: this.formAddStripe.payTypeName.payTypeName.replace(/%/g, '%%').replace(/'/g, "\\'"),
+            payTypeName: this.formAddStripe.payTypeName.replace(/%/g, '%%').replace(/'/g, "\\'"),
             payVatExclude: this.formAddStripe.payVatExclude,
             LAST_USER: this.formAddStripe.LAST_USER,
             payMentSelect: JSON.stringify(this.valuePayment)
