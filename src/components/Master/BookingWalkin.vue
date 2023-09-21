@@ -311,7 +311,7 @@
                       class="font-weight-bold  text-center"
                       color="#000000"
                       width="80%"
-                      >{{(item.limitBooking - item.countBooking)}}
+                      >{{'เกินเวลา'}}
                     </v-btn>
                   </div>
                   <div v-else>
@@ -393,7 +393,7 @@
                       </v-icon>
                     </v-btn>
                     <v-btn
-                      :disabled="item.limitBooking === 0 ? true : false"
+                      :disabled="parseInt(item.limitBooking) === 0 ? true : false"
                         color="#0D47A1"
                         icon
                         x-large
@@ -622,7 +622,9 @@ export default {
       this.Addloading = false
     },
     async removeWalkin (item) {
-      this.Removeloading = true
+      // this.Removeloading = true
+      console.log('item', item)
+      console.log('this.currentSelect', this.currentSelect)
       let dataSelect = this.currentSelect.item
       let key = this.currentSelect.k
       let addData = this.LimitBooking.filter((a) => a.bookingDate === item.date && a.bookingTime === item.timeValue)
@@ -654,7 +656,7 @@ export default {
           await this.getDetails(dataSelect, key)
         })
         .catch(error => {
-          this.Removeloading = false
+          // this.Removeloading = false
           console.log('error function addData : ', error)
         })
     },
@@ -805,14 +807,16 @@ export default {
       // console.log('data!!!""', data)
       let limitTime = JSON.parse(this.DataFlow.filter((item) => item.flowId === this.formSelect.flowId)[0].setTime) || []
       // console.log('consoletest', this.DataFlow.filter((item) => item.flowId === this.formSelect.flowId)[0])
-      let bookingNowCheck = this.DataFlow.filter((item) => item.flowId === this.formSelect.flowId)[0].bookingNowCheck
-      if (bookingNowCheck === 'True') {
-        // console.log('test', this.DataFlow.filter((item) => item.flowId === this.formSelect.flowId)[0].bookingNowCheckCount || 1)
-        let bookingNowCheckCount = this.DataFlow.filter((item) => item.flowId === this.formSelect.flowId)[0].bookingNowCheckCount || 1
-        this.currentDate = moment().add(bookingNowCheckCount, 'days').format('YYYY-MM-DD')
-      } else {
-        this.currentDate = moment().format('YYYY-MM-DD')
-      }
+      // let bookingNowCheck = this.DataFlow.filter((item) => item.flowId === this.formSelect.flowId)[0].bookingNowCheck
+      // console.log('bookingNowCheck', bookingNowCheck)
+      // if (bookingNowCheck === 'True') {
+      //   // console.log('test', this.DataFlow.filter((item) => item.flowId === this.formSelect.flowId)[0].bookingNowCheckCount || 1)
+      //   let bookingNowCheckCount = this.DataFlow.filter((item) => item.flowId === this.formSelect.flowId)[0].bookingNowCheckCount || 1
+      //   this.currentDate = moment().add(bookingNowCheckCount, 'days').format('YYYY-MM-DD')
+      // } else {
+      //   this.currentDate = moment().format('YYYY-MM-DD')
+      // }
+      this.currentDate = moment().format('YYYY-MM-DD')
       // console.log('bookingNowCheck', bookingNowCheck)
       data.forEach((v, k) => {
         let s = {}
@@ -839,8 +843,9 @@ export default {
         limitTime.forEach((a, b) => {
           // console.log('type')
           // console.log('aaaa', thi?s.LimitBooking.filter((limitItem) => moment(limitItem.bookingDate, 'YYYY-MM-DD').format('YYYY-MM-DD') === moment(item + v.split('-')[0], 'YYYY-MM-DD').format('YYYY-MM-DD')))
-          let cheklimit = this.LimitBooking.filter((limitItem) => { return a.value === limitItem.bookingTime && moment(limitItem.bookingDate).format('YYYY-MM-DD') === moment(item + v.split('-')[0], 'YYYY-MM-DD').format('YYYY-MM-DD') }).map((d) => d.countBooking)[0] || 0
-          // console.log('aaaa', cheklimit)
+          // let cheklimit = this.LimitBooking.filter((limitItem) => { return a.value === limitItem.bookingTime && moment(limitItem.bookingDate).format('YYYY-MM-DD') === moment(item + v.split('-')[0], 'YYYY-MM-DD').format('YYYY-MM-DD') }).map((d) => d.countBooking)[0] || 0
+          let cheklimit = this.LimitBooking.filter((limitItem) => { return (a.value === limitItem.bookingTime && moment(limitItem.bookingDate).format('YYYY-MM-DD') === moment(item + v.split('-')[0], 'YYYY-MM-DD').format('YYYY-MM-DD')) && limitItem.countBooking >= 0 }).map((d) => d.countBooking)[0] || 0
+          // console.log(moment(this.date + v.split('-')[0], 'YYYY-MM-DD').format('YYYY-MM-DD'), '--', cheklimit)
           let ss = {}
           if (moment(this.date + v.split('-')[0], 'YYYY-MM-DD').format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')) {
             if (moment().format(a.value) > moment().format('HH:mm')) {
