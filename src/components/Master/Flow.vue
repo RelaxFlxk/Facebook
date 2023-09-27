@@ -989,6 +989,16 @@
                             true-value="True"
                             v-model="formAdd.checkCreditCard"
                           ></v-checkbox>
+                          <v-checkbox
+                          class="ml-2"
+                            label="คูปอง"
+                            false-value="False"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            color="#1B437C"
+                            true-value="True"
+                            v-model="formAdd.checkCoupon"
+                          ></v-checkbox>
                           </v-col>
                           <v-text-field
                           v-if="formAdd.checkDeposit === 'True'"
@@ -1498,6 +1508,16 @@
                             color="#1B437C"
                             true-value="True"
                             v-model="formUpdate.checkCreditCard"
+                          ></v-checkbox>
+                          <v-checkbox
+                            class="ml-2"
+                            label="คูปอง"
+                            false-value="False"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            color="#1B437C"
+                            true-value="True"
+                            v-model="formUpdate.checkCoupon"
                           ></v-checkbox>
                           </v-col>
                           <v-text-field
@@ -2976,6 +2996,7 @@ export default {
         updateStatusConfirm: 'False',
         categorySub: [],
         checkCreditCard: 'False',
+        checkCoupon: 'False',
         masBranchID: '',
         storeFrontNotifyStatus: 'False',
         storeFrontNotifySet: '0',
@@ -3058,6 +3079,7 @@ export default {
         depositTextEN: '',
         categorySub: [],
         checkCreditCard: 'False',
+        checkCoupon: 'False',
         masBranchID: '',
         storeFrontNotifyStatus: 'False',
         storeFrontNotifySet: '0',
@@ -4796,6 +4818,7 @@ export default {
       this.formUpdate.depositTextEN = item.depositTextEN || 'pay deposit'
       this.formUpdate.categorySub = item.categorySub ? JSON.parse(item.categorySub) : []
       this.formUpdate.checkCreditCard = item.checkCreditCard || 'False'
+      this.formUpdate.checkCoupon = item.checkCoupon || 'False'
       this.formUpdate.masBranchID = item.masBranchID || 'All'
       this.formUpdate.newCustomerStatus = item.newCustomerStatus || 'False'
       this.formUpdate.menuShowStatus = item.menuShowStatus || 'False'
