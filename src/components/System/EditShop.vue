@@ -149,7 +149,7 @@
                       </v-col>
                        <v-col cols="12" class="pt-0 pb-0" style="display: flex;justify-content: left;height: 40px;">
                         <v-checkbox
-                          label="เปิดใช้งานให้ลูกค้าสามารถ แก้ไขข้อมูล / เลื่อนนัดได้"
+                          label="เปิดให้ลูกค้าสามารถ เลื่อนนัด / ยกเลิกนัด ได้"
                           false-value="False"
                           :on-icon="'mdi-check-circle'"
                           :off-icon="'mdi-checkbox-blank-circle-outline'"
@@ -158,6 +158,17 @@
                           v-model="formUpdate.statusCustomerEdit"
                         ></v-checkbox>
                       </v-col>
+                      <!-- <v-col cols="12" class="pt-0 pb-0 ml-6" style="display: flex;justify-content: left;height: 40px;" v-if="formUpdate.statusCustomerEdit === 'True'">
+                        <v-checkbox
+                            label="เปิดใข้งานเลื่อนนัดก่อนวันที่นัดหมาย ( วัน + เวลานัดหมาย )"
+                            false-value="False"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            color="#1B437C"
+                            true-value="True"
+                            v-model="formUpdate.statusCustomerEditNoTime"
+                          ></v-checkbox>
+                      </v-col> -->
                       <v-col cols="8" class="pt-0 pb-0 mt-4" style="display: flex;flex-wrap: wrap;" v-if="formUpdate.statusCustomerEdit === 'True'">
                         <v-autocomplete
                           class="mb-3"
@@ -173,15 +184,24 @@
                         ></v-autocomplete>
                         <v-autocomplete
                           v-model="formUpdate.countDayCustomerEdit"
-                          label="เลื่อนนัดก่อนวันที่นัดหมาย ( วัน )"
+                          label="ต้องทำการ เลื่อน / ยกเลิกนัด ล่วงหน้าอย่างน้อยกี่วัน"
                           dense
                           outlined
-                          :rules="[rules.required]"
+                          :rules="[rules.requiredCountDay]"
                           :items="countDayCustomerEditItem"
                           required
                           hide-details
                           auto-select-first
                         ></v-autocomplete>
+                        <v-checkbox
+                            label="คำนวณวันที่สามารถเลื่อนได้ จากเวลาที่นัดหมาย"
+                            false-value="False"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            color="#1B437C"
+                            true-value="True"
+                            v-model="formUpdate.statusCustomerEditNoTime"
+                          ></v-checkbox>
                       </v-col>
                       <!-- <v-col cols="6" class="pt-0 pb-0 mt-3" style="display: flex;justify-content: left;height: 40px;" v-if="formUpdate.statusCustomerEdit === 'True'">
                         <v-autocomplete
@@ -474,12 +494,46 @@ export default {
         statusGoogleCalendarEmp: 'False',
         refreshTokenGoogleCalendar: '',
         statusCustomerEdit: 'False',
+        statusCustomerEditNoTime: 'False',
         countCustomerEdit: '',
         countDayCustomerEdit: ''
 
       },
       countCustomerEditItem: [1, 2, 3, 4, 5, 6, 7],
-      countDayCustomerEditItem: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+      countDayCustomerEditItem: [
+        { 'text': 'ไม่กำหนดวัน', 'value': 0 },
+        { 'text': 1, 'value': 1 },
+        { 'text': 2, 'value': 2 },
+        { 'text': 3, 'value': 3 },
+        { 'text': 4, 'value': 4 },
+        { 'text': 5, 'value': 5 },
+        { 'text': 6, 'value': 6 },
+        { 'text': 7, 'value': 7 },
+        { 'text': 8, 'value': 8 },
+        { 'text': 9, 'value': 9 },
+        { 'text': 10, 'value': 10 },
+        { 'text': 11, 'value': 11 },
+        { 'text': 12, 'value': 12 },
+        { 'text': 13, 'value': 13 },
+        { 'text': 14, 'value': 14 },
+        { 'text': 15, 'value': 15 },
+        { 'text': 16, 'value': 16 },
+        { 'text': 17, 'value': 17 },
+        { 'text': 18, 'value': 18 },
+        { 'text': 19, 'value': 19 },
+        { 'text': 20, 'value': 20 },
+        { 'text': 21, 'value': 21 },
+        { 'text': 22, 'value': 22 },
+        { 'text': 23, 'value': 23 },
+        { 'text': 24, 'value': 24 },
+        { 'text': 25, 'value': 25 },
+        { 'text': 26, 'value': 26 },
+        { 'text': 27, 'value': 27 },
+        { 'text': 28, 'value': 28 },
+        { 'text': 29, 'value': 29 },
+        { 'text': 30, 'value': 30 },
+        { 'text': 31, 'value': 31 }
+      ],
       timeSlotStatusOld: '',
       filesShop: null,
       // category: [
@@ -505,6 +559,7 @@ export default {
           (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999999) ||
           'กรุณากรอกตัวเลข 0 ถึง 9',
         required: value => !!value || 'กรุณากรอก.',
+        requiredCountDay: (value) => value == null || value === '' ? 'กรุณากรอก.' : true,
         resizeImag: value =>
           !value ||
           value.size < 2000000 ||
@@ -707,8 +762,9 @@ export default {
       this.formUpdate.statusGoogleCalendar = item.statusGoogleCalendar || 'False'
       this.formUpdate.statusGoogleCalendarEmp = item.statusGoogleCalendarEmp || 'False'
       this.formUpdate.statusCustomerEdit = item.statusCustomerEdit || 'False'
+      this.formUpdate.statusCustomerEditNoTime = item.statusCustomerEditNoTime || 'False'
       this.formUpdate.countCustomerEdit = item.countCustomerEdit || 3
-      this.formUpdate.countDayCustomerEdit = item.countDayCustomerEdit || 7
+      this.formUpdate.countDayCustomerEdit = item.countDayCustomerEdit === 0 ? item.countDayCustomerEdit : (item.countDayCustomerEdit || 7)
       if (this.formUpdate.darkMode === 'True') {
         this.formUpdate.darkMode = true
       } else {
@@ -825,6 +881,7 @@ export default {
             statusGoogleCalendar: this.formUpdate.statusGoogleCalendar,
             statusGoogleCalendarEmp: this.formUpdate.statusGoogleCalendarEmp,
             statusCustomerEdit: this.formUpdate.statusCustomerEdit,
+            statusCustomerEditNoTime: this.formUpdate.statusCustomerEditNoTime,
             countCustomerEdit: this.formUpdate.countCustomerEdit,
             countDayCustomerEdit: this.formUpdate.countDayCustomerEdit
           }
