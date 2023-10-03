@@ -10961,12 +10961,34 @@ export default {
                         }
                       }
                     } else {
-                      this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
-                        this.dialogEditData = false
-                      }).catch((error) => {
-                        console.log('error function setDataEdit : ', error)
-                        this.dialogEditData = false
-                      })
+                      // this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
+                      //   this.dialogEditData = false
+                      // }).catch((error) => {
+                      //   console.log('error function setDataEdit : ', error)
+                      //   this.dialogEditData = false
+                      // })
+                      let sortrs = rs1.sort((a, b) => a.sortNoField - b.sortNoField)
+                      for (let i = 0; i < sortrs.length; i++) {
+                        let d = sortrs[i]
+                        let s = {}
+                        // let dataBD = rs.filter(el => { return parseInt(el.fieldId) === parseInt(d.fieldId) })
+                        // console.log('dataBD', dataBD)
+                        // if (dataBD.length > 0) {
+                        s.bookNo = dt.bookNo
+                        s.bookingFieldId = rs2[0].bookingFieldId
+                        s.bookingDataId = 'newDataBooking'
+                        s.conditionField = d.conditionField
+                        s.fieldId = d.fieldId
+                        s.fieldType = d.fieldType
+                        s.fieldValue = ''
+                        s.fieldName = d.fieldName
+                        s.conditionField = d.conditionField
+                        s.conditionValue = d.conditionValue
+                        s.requiredField = d.requiredField
+                        s.optionField = d.optionField
+                        this.BookingDataItemEdit.push(s)
+                        // }
+                      }
                     }
                   }).catch((error) => {
                     this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
