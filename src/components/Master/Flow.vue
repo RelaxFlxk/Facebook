@@ -5415,6 +5415,10 @@ export default {
             this.formAdd[key] = 1
           } else if (key === 'shopId') {
             this.formAdd[key] = this.$session.getAll().data.shopId
+          } else if (key === 'depositTextTH') {
+            this.formAdd[key] = this.formAdd.depositTextTH
+          } else if (key === 'depositTextEN') {
+            this.formAdd[key] = this.formAdd.depositTextEN
           } else {
             if (key === 'empTitleTh' || key === 'empTitleEng') {
 

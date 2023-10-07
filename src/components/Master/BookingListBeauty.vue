@@ -3622,7 +3622,10 @@
                             <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="ic:twotone-work-history"></v-icon> ประวัติการทำงาน </v-list-item-title>
                           </v-list-item>
                           <v-list-item v-if="item.statusBt === 'confirmJob' && showOnsite === 'ไม่แสดง'" @click="getjobChangeOnsite(item), dialogChangeOnsite = true">
-                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-account-reactivate </v-icon> เปลี่ยนพนักงาน On site </v-list-item-title>
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-account-reactivate </v-icon> {{ showOnsite}} เปลี่ยนพนักงาน On site </v-list-item-title>
+                          </v-list-item>
+                          <v-list-item v-if="item.statusBt === 'confirmJob' && showOnsite === 'ไม่แสดง'" @click="ShowImg(item)">
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-package-variant-closed </v-icon> ตรวจสอบรายการที่ปิดแล้ว </v-list-item-title>
                           </v-list-item>
                           <v-hover v-slot:default="{ hover }">
                           <v-list-item v-if="item.statusBt === 'cancel'" @click.stop="(dialogDelete = true), getDataById(item)">
@@ -3651,6 +3654,156 @@
           </v-col>
           <!-- end data table -->
         </v-row>
+        <v-dialog v-model="dialogShowImg" max-width="400px">
+          <v-card class="pa-3">
+            <div v-for="(CloseJob , keyCloseJob) in dataCloseJob" :key="'a' + keyCloseJob">
+              <div class="mx-6 pa-3 ma-2">
+                <v-row class="pa-5">
+                  <v-col cols="3" md="3" sm="12"  class="pa-0 ma-0" style="display: flex;align-items: flex-start;justify-content: flex-end;padding-left: 11px !important;">
+                    <v-avatar size="65" v-if="CloseJob.memberPicture">
+                      <img
+                        :src="CloseJob.memberPicture"
+                        onerror="this.onerror=null;this.src='https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2FLINE_ALBUM_220214_0.jpg?alt=media&token=6389daf9-9473-4b5d-8b19-2afb67d015e4';"
+                      >
+                    </v-avatar>
+                    <v-avatar size="65" color="#173053" v-else>
+                      <v-icon dark x-large>
+                        mdi-account-circle
+                      </v-icon>
+                    </v-avatar>
+                  </v-col>
+                  <v-col cols="9" md="9" sm="12" class="pa-0 ma-0 pl-2">
+                    <p class="font-weight-bold mb-1 ml-2" v-if="dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo && dt.fieldName === 'ชื่อ').length > 0"
+                          style="font-size:16px;">
+                          {{dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo && dt.fieldName === 'ชื่อ')[0].fieldValue}}
+                        </p>
+                    <!-- <div style="display: flex;justify-content: space-between;align-items: flex-start;">
+                      <div style="word-break: break-word;">
+                        <p class="font-weight-bold mb-1 ml-2" v-if="dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo && dt.fieldName === 'ชื่อ').length > 0"
+                          style="font-size:20px;">
+                          {{dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo && dt.fieldName === 'ชื่อ')[0].fieldValue}}
+                        </p>
+                      </div>
+                    <v-icon color="rgb(23, 48, 83)" large @click="ChatHistory(CloseJob)">mdi-history</v-icon>
+                    </div> -->
+                    <div style="display: flex;align-items: flex-start;">
+                      <v-icon color="#F48686" class="mx-1">mdi-square-medium</v-icon>
+                      <p class="font-weight-medium mb-1" v-if="CloseJob.flowName !== null" style="font-size:14px">
+                      <!-- <v-icon color="#F48686" class="mx-1">mdi-square-medium</v-icon> -->
+                      {{CloseJob.flowName}}
+                    </p>
+                    </div>
+                    <div style="display: flex;align-items: flex-start;word-break: break-word;" v-if="CloseJob.address !== null">
+                      <v-icon color="#F48686" class="mx-1 mr-2">mdi-map-marker-radius</v-icon>
+                      <p class="font-weight-medium mb-1" style="font-size:14px" v-if="CloseJob.address !== null">
+                        <!-- <v-icon color="#F48686" class="mx-1 mr-2">mdi-map-marker-radius</v-icon> -->
+                      {{CloseJob.address}}
+                    </p>
+                    </div>
+                    <div style="display: flex;align-items: flex-start;">
+                      <v-icon  color="#24C74D" class="mx-2 mr-2 mt-1 iconify" small data-icon="el:phone-alt"></v-icon>
+                      <p class="font-weight-bold mb-1" v-if="dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo && dt.fieldName === 'เบอร์โทร').length > 0"
+                    style="font-size:14px">
+                    <!-- <v-icon  color="#24C74D" class="mx-2 mr-2 mt-1 iconify" small data-icon="el:phone-alt"></v-icon> -->
+                    {{dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo && dt.fieldName === 'เบอร์โทร')[0].fieldValue}}
+                    </p>
+                    </div>
+                    <div style="display: flex;align-items: flex-start;">
+                      <v-icon  color="primary" class="mx-2 mr-2 mt-1" small>mdi-account-circle</v-icon>
+                      <p class="font-weight-bold mb-1" v-if="dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo).length > 0"
+                    style="font-size:14px">
+                    <!-- <v-icon  color="#24C74D" class="mx-2 mr-2 mt-1 iconify" small data-icon="el:phone-alt"></v-icon> -->
+                    {{dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo)[0].empStep}}
+                    </p>
+                    </div>
+                  </v-col>
+                </v-row>
+                <div style="display: flex;align-items: center;justify-content: center;" class="mb-2">
+                  <v-icon color="#F48686" class="mx-1 mr-2 iconify" data-icon="ic:twotone-access-time"></v-icon>
+                  <p class="font-weight-bold mb-1 text-center" v-if="CloseJob.dueDate !== null & CloseJob.dueDate !== ''"
+                  style="font-size:15px">
+                  {{'วันที่นัดหมาย ' + momentThaiTextClose(CloseJob.dueDate)}}
+                  </p>
+                </div>
+                <v-row>
+                  <v-col cols="6" style="display: flex;
+                      align-items: flex-start;
+                      padding-left: 25px;
+                      flex-direction: column;">
+                    <p class="font-weight-bold mb-1 text-center" v-if="dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo).length > 0" style="font-size:13px">{{'วันที่เริ่มงาน ' + dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo)[0].CREATE_DATE_DAY}}</p>
+                    <p class="font-weight-bold mb-1 text-center" v-if="dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo).length > 0" style="font-size:13px">{{'เวลาเริ่มงาน ' + dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo)[0].CREATE_DATE_TIME + ' น.'}}</p>
+                  </v-col>
+                  <v-divider
+                    class="pt-3 mt-3"
+                    style="height: 40px;"
+                    vertical
+                  ></v-divider>
+                  <v-col cols="6" style="display: flex;
+                      align-items: flex-start;
+                      padding-left: 25px;
+                      flex-direction: column;">
+                    <p class="font-weight-bold mb-1 text-center" v-if="dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo).length > 0" style="font-size:13px">{{'วันที่จบงาน ' + dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo)[0].LAST_DATE_DAY}}</p>
+                    <p class="font-weight-bold mb-1 text-center" v-if="dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo).length > 0" style="font-size:13px">{{'เวลาจบงาน ' + dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo)[0].LAST_DATE_TIME + ' น.'}}</p>
+                  </v-col>
+                </v-row>
+                </div>
+            </div>
+            <!-- <h5 class="font-weight-bold m-6 mb-5 text-center">ตรวจสอบรูป</h5> -->
+            <h6 class="font-weight-bold ml-6">Before</h6>
+              <v-slide-group
+                  v-if="showImgItem"
+                    class="pa-4 pt-0 mt-n1"
+                    color="primary"
+                  >
+                    <v-slide-item
+                      v-for="(itemImg2, i2) in showImgItem"
+                      :key="i2"
+                    >
+                      <v-card width="150px" class="ma-2 pa-1">
+                        <v-img
+                                :src="itemImg2.beforeImage"
+                                max-height="130"
+                                aspect-ratio="1.7"
+                                contain
+                                @click="SelectImg(itemImg2.beforeImage)"
+                              ></v-img>
+                      </v-card>
+                    </v-slide-item>
+                  </v-slide-group>
+              <h6 class="font-weight-bold ml-6">After</h6>
+              <v-slide-group
+              v-if="showImgItem"
+                    class="pa-4 pt-0 mt-n1"
+                    color="primary"
+                  >
+                    <v-slide-item
+                      v-for="(itemImg, i) in showImgItem"
+                      :key="i"
+                    >
+                      <v-card width="150px" class="ma-2 pa-1">
+                        <v-img
+                                :src="itemImg.afterImage"
+                                max-height="130"
+                                aspect-ratio="1.7"
+                                contain
+                                @click="SelectImg(itemImg.afterImage)"
+                              ></v-img>
+                      </v-card>
+                    </v-slide-item>
+                  </v-slide-group>
+          </v-card>
+        </v-dialog>
+        <v-dialog
+      v-model="dialogImg"
+      max-width="320px"
+    >
+      <v-card>
+        <v-img
+          :lazy-src="showImg"
+          :src="showImg"
+        ></v-img>
+      </v-card>
+    </v-dialog>
         <v-dialog
           v-model="dialogHistoryJob"
           persistent
@@ -7981,7 +8134,13 @@ export default {
       statusGoogleCalendar: '',
       statusGoogleCalendarEmp: '',
       copyTextBt: '',
-      copyTextStatus: false
+      copyTextStatus: false,
+      dialogShowImg: false,
+      showImgItem: [],
+      dialogImg: false,
+      showImg: '',
+      dataCloseJob: [],
+      dataCloseJobData: []
     }
   },
   beforeCreate () {
@@ -8022,6 +8181,67 @@ export default {
     async connectGoogleCalendar (status, bookNo) {
       console.log('status !!!', status)
       this.$refs.GoogleCalendarRef.checkTypeEven(status, bookNo)
+    },
+    momentThaiTextClose (item) {
+      let dt = 'วัน' + moment(item).locale('th').format('dddd') + 'ที่ ' + moment(item).locale('th').format('LL')
+      return dt
+    },
+    SelectImg (Imgitem) {
+      this.showImg = Imgitem
+      this.dialogImg = true
+    },
+    async ShowImg (item) {
+      console.log(';sfsdfsdf', item)
+      await this.getJob(item.jobNo)
+      await this.getJobData(item.jobNo)
+      await this.getBeforAfter(item.jobNo)
+      this.dialogShowImg = true
+    },
+    async getBeforAfter (jobNo) {
+      this.showImgItem = []
+      await axios.get(this.DNS_IP + '/jobBeforeAfter/get?jobNo=' + jobNo)
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            // this.showImgItem = rs
+            for (let i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              if (d.afterImage !== null || d.beforeImage !== null) {
+                this.showImgItem.push(d)
+              }
+            }
+          }
+          console.log('rs', rs)
+        })
+    },
+    async getJob (jobNo) {
+      this.dataCloseJob = []
+      await axios
+        .get(this.DNS_IP + '/job/getCloseJobBKlist?jobNo=' + jobNo)
+        .then(async response => {
+          let rs = response.data
+          console.log('this.dataCloseJob', rs)
+          if (rs.status === false) {
+            this.dataCloseJob = []
+          } else {
+            this.dataCloseJob = rs
+          }
+        })
+    },
+    async getJobData (jobNo) {
+      this.dataCloseJobData = []
+      await axios
+        .get(this.DNS_IP + '/job/getCloseJobData?jobNo=' + jobNo)
+        .then(async response => {
+          let rs = response.data
+          console.log('this.dataCloseJobData', rs)
+          if (rs.status === false) {
+            this.dataCloseJobData = []
+          } else {
+            this.dataCloseJobData = rs
+            // console.log('this.dataCloseJobData', this.dataCloseJobData)
+          }
+        })
     },
     async getShop () {
       await axios

@@ -509,6 +509,13 @@
                 @click="ChatHistory(CloseJob)"
               >
               ข้อความ</v-btn>
+              <v-btn
+                color="#F48686"
+                rounded
+                dark
+                @click="ShowImg(CloseJob)"
+              >
+              รูปภาพ</v-btn>
             </v-col>
             </v-row>
             <!-- <v-row>
@@ -524,7 +531,64 @@
             </v-row> -->
           </v-card>
         </div>
-
+        <v-dialog v-model="dialogShowImg" :max-width="dialogwidth">
+          <v-card class="pa-3">
+            <h5 class="font-weight-bold m-6 mb-5 text-center">ตรวจสอบรูป</h5>
+            <h6 class="font-weight-bold ml-6">Before</h6>
+              <v-slide-group
+                  v-if="showImgItem"
+                    class="pa-4 pt-0 mt-n1"
+                    color="primary"
+                  >
+                    <v-slide-item
+                      v-for="(itemImg2, i2) in showImgItem"
+                      :key="i2"
+                    >
+                      <v-card width="150px" class="ma-2 pa-1">
+                        <v-img
+                                :src="itemImg2.beforeImage"
+                                max-height="130"
+                                aspect-ratio="1.7"
+                                contain
+                                @click="SelectImg(itemImg2.beforeImage)"
+                              ></v-img>
+                      </v-card>
+                    </v-slide-item>
+                  </v-slide-group>
+              <h6 class="font-weight-bold ml-6">After</h6>
+              <v-slide-group
+              v-if="showImgItem"
+                    class="pa-4 pt-0 mt-n1"
+                    color="primary"
+                  >
+                    <v-slide-item
+                      v-for="(itemImg, i) in showImgItem"
+                      :key="i"
+                    >
+                      <v-card width="150px" class="ma-2 pa-1">
+                        <v-img
+                                :src="itemImg.afterImage"
+                                max-height="130"
+                                aspect-ratio="1.7"
+                                contain
+                                @click="SelectImg(itemImg.afterImage)"
+                              ></v-img>
+                      </v-card>
+                    </v-slide-item>
+                  </v-slide-group>
+          </v-card>
+        </v-dialog>
+        <v-dialog
+      v-model="dialogImg"
+      max-width="80%"
+    >
+      <v-card>
+        <v-img
+          :lazy-src="showImg"
+          :src="showImg"
+        ></v-img>
+      </v-card>
+    </v-dialog>
         <v-dialog v-model="dialogMap" :max-width="dialogwidth">
             <v-card class="text-center">
               <v-card-title>
@@ -1067,7 +1131,11 @@ export default {
         LAST_USER: '',
         statusDelete: 'true'
       },
-      jobLog_jobNo: ''
+      jobLog_jobNo: '',
+      dialogShowImg: false,
+      showImgItem: [],
+      dialogImg: false,
+      showImg: ''
     }
   },
   async mounted () {
@@ -1075,6 +1143,32 @@ export default {
     await this.setDefault()
   },
   methods: {
+    SelectImg (Imgitem) {
+      this.showImg = Imgitem
+      this.dialogImg = true
+    },
+    async ShowImg (item) {
+      this.showImgItem = []
+      await axios.get(this.DNS_IP + '/jobBeforeAfter/get?jobId=' + item.jobId)
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            // this.showImgItem = rs
+            for (let i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              if (d.afterImage !== null || d.beforeImage !== null) {
+                this.showImgItem.push(d)
+              }
+            }
+            if (this.showImgItem.length > 0) {
+              this.dialogShowImg = true
+            } else {
+              this.$swal('ไม่มีรูปภาพ', '', 'info')
+            }
+          }
+          console.log('rs', rs)
+        })
+    },
     ChatHistory (item) {
       this.$refs.ChatHistory.getChatHistory(item)
     },
