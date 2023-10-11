@@ -637,6 +637,26 @@
         </div>
       </v-card>
     </v-dialog>
+    <v-dialog
+      v-model="dialogLogOut"
+    >
+      <v-card>
+        <v-card-title>
+          ออกจากระบบ
+        </v-card-title>
+        <v-card-text>ต้องการ ออกจากระบบ ใช่หรือไม่?</v-card-text>
+        <v-card-actions>
+          <v-btn
+            text
+            tile
+            dark
+            class="nav-button-dark"
+            @click.prevent="logout()">
+            <v-icon color="white">mdi-logout</v-icon>&nbsp;&nbsp;ออกจากระบบ
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -650,6 +670,7 @@ export default {
   },
   data () {
     return {
+      dialogLogOut: false,
       title: 'Be-Linked',
       dataReadyCancel: true,
       dataReady: true,
