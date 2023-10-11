@@ -64,7 +64,7 @@
         </v-alert>
       </template>
       <v-spacer></v-spacer>
-      <v-avatar class="mr-3">
+      <v-avatar class="mr-3" @click="dialogLogOut = true">
         <v-img :src="session.data.shopImge"></v-img>
       </v-avatar>
       <v-toolbar-title>{{ session.data.shopName }}</v-toolbar-title>
