@@ -13,6 +13,7 @@ import ShopPayment from '@/components/ShopPayment'
 import Sound from '@/components/Sound'
 import Rating from '@/components/Rating'
 import Pepsico from '@/components/Pepsico'
+import BeChat from '@/components/BeChat'
 
 Vue.use(Router)
 
@@ -472,6 +473,11 @@ export default new Router({
     path: '/Pepsico/ImportExcel',
     name: 'ImportExcel',
     component: Pepsico.ImportExcel
+  },
+  {
+    path: '/BeChat/Chat',
+    name: 'BeChat',
+    component: BeChat.Chat
   }
   ]
 })
