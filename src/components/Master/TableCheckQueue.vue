@@ -69,7 +69,16 @@ export default {
   },
   methods: {
     async getLimitBooking () {
-      this.timeEmp = JSON.parse(this.dataEmpAll.filter((a) => a.empId === this.empId)[0].setTime)
+      this.timeEmp = []
+      // this.timeEmp = JSON.parse(this.dataEmpAll.filter((a) => a.empId === this.empId)[0].setTime)
+      if (this.dataEmpAll.filter((a) => a.empId === this.empId)[0].setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.dataEmpAll.filter((a) => a.empId === this.empId)[0].setTime).filter((items) => items.value === new Date(this.picker).getDay())
+        this.timeEmp = timeJson[0].setTime || []
+        console.log('IF')
+      } else {
+        console.log('ELSE')
+        this.timeEmp = JSON.parse(this.dataEmpAll.filter((a) => a.empId === this.empId)[0].setTime) || []
+      }
       this.allBookingTime = []
       console.log('this.TimeEmp', this.timeEmp)
       await axios.get(this.DNS_IP + '/LimitBookingDateEmp/get?shopId=' + this.shopId + '&empId=' + this.empId + '&bookingDate=' + this.picker)
@@ -87,11 +96,15 @@ export default {
             //   this.allBookingTime.push(this.timeEmp.filter((i, k) => (k >= index && k <= num)))
             // }
             // let value = this.timeEmp.filter((i, k) => i.value === item.bookingTime)[0].value
-            let index = this.timeEmp.findIndex((i, k) => i.value === item.bookingTime)
-            let slot = item.timeSlot
-            let num = index + (slot - 1)
-            // console.log('value', value, 'index', index, 'slot', slot, num)
-            this.allBookingTime.push(this.timeEmp.filter((i, k) => (k >= index && k <= num)))
+            if (this.timeEmp.filter((i, k) => i.value === item.bookingTime).length > 0) {
+              let index = this.timeEmp.findIndex((i, k) => i.value === item.bookingTime)
+              // let slot = item.timeSlot
+              let slot = item.timeSlotCustomer || item.timeSlot
+              let num = index + (slot - 1)
+              console.log('item', item, 'index', index, 'slot', slot, num)
+              console.log('this.timeEmp', this.timeEmp.filter((i, k) => (k >= index && k <= num)))
+              this.allBookingTime.push(this.timeEmp.filter((i, k) => (k >= index && k <= num)))
+            }
           })
           console.log('allbooknig', this.allBookingTime)
         }).catch(async (error) => console.log('Error :', error))

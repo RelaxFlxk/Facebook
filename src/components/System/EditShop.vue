@@ -10,32 +10,31 @@
         ></v-breadcrumbs>
         <v-row>
           <!-- edit -->
-          <v-dialog ref="dialogEdit" v-model="dialogEdit" persistent max-width="50%">
+          <v-dialog ref="dialogEdit" v-model="dialogEdit" persistent max-width="600px">
             <v-card class="text-center">
-              <v-container>
-                <div style="text-align: end;">
-                        <v-btn
-                          fab
-                          small
-                          dark
-                          color="#F3F3F3"
-                          @click="dialogEdit = false"
-                        >
-                          <v-icon dark
-                          color="#FE4A01 ">
-                            mdi-close
-                          </v-icon>
-                        </v-btn>
-                        </div>
-              </v-container>
               <v-form ref="form_update" v-model="validUpdate" lazy-validation>
                 <v-card-text>
                   <v-container>
-                    <v-row justify="center">
-                      <v-col md="auto">
-                        <h1 style="font-size:10vw;" class="underline-06">แก้ไขข้อมูลร้านค้า</h1>
-                      </v-col>
-                    </v-row>
+                    <v-row>
+                    <v-col cols="10" class="text-left pt-10">
+                    <h3><strong>แก้ไขข้อมูลร้านค้า</strong></h3>
+                    </v-col>
+                    <v-col cols="2" class="pt-10">
+                    <div style="text-align: end;">
+                        <v-btn
+                        class="mx-2"
+                        fab
+                        small
+                        dark
+                        color="white"
+                        :style="styleCloseBt"
+                         @click="dialogEdit = false"
+                        >
+                        X
+                        </v-btn>
+                    </div>
+                    </v-col>
+                </v-row>
                     <v-row justify="center">
                           <v-col cols="6 " class="text-center">
                             <v-avatar
@@ -102,7 +101,7 @@
                       </v-col>
                       <v-col cols="6" class="pb-0">
                           <v-text-field
-                          outlined
+                            outlined
                             label="เบอร์โทรศัพท์"
                             placeholder="Contact Tel*"
                             v-model="formUpdate.contactTel"
@@ -137,7 +136,110 @@
                       </v-col>
                     </v-row>
                     <v-row>
-                      <v-col cols="6">
+                      <v-col cols="12" class="pt-0 pb-0" style="display: flex;justify-content: left;height: 40px;">
+                        <v-checkbox
+                          label="จำกัดเวลาตามช่าง"
+                          false-value="False"
+                          :on-icon="'mdi-check-circle'"
+                          :off-icon="'mdi-checkbox-blank-circle-outline'"
+                          color="#1B437C"
+                          true-value="True"
+                          v-model="formUpdate.timeSlotStatus"
+                        ></v-checkbox>
+                      </v-col>
+                       <v-col cols="12" class="pt-0 pb-0" style="display: flex;justify-content: left;height: 40px;">
+                        <v-checkbox
+                          label="เปิดให้ลูกค้าสามารถ เลื่อนนัด / ยกเลิกนัด ได้"
+                          false-value="False"
+                          :on-icon="'mdi-check-circle'"
+                          :off-icon="'mdi-checkbox-blank-circle-outline'"
+                          color="#1B437C"
+                          true-value="True"
+                          v-model="formUpdate.statusCustomerEdit"
+                        ></v-checkbox>
+                      </v-col>
+                      <!-- <v-col cols="12" class="pt-0 pb-0 ml-6" style="display: flex;justify-content: left;height: 40px;" v-if="formUpdate.statusCustomerEdit === 'True'">
+                        <v-checkbox
+                            label="เปิดใข้งานเลื่อนนัดก่อนวันที่นัดหมาย ( วัน + เวลานัดหมาย )"
+                            false-value="False"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            color="#1B437C"
+                            true-value="True"
+                            v-model="formUpdate.statusCustomerEditNoTime"
+                          ></v-checkbox>
+                      </v-col> -->
+                      <v-col cols="8" class="pt-0 pb-0 mt-4" style="display: flex;flex-wrap: wrap;" v-if="formUpdate.statusCustomerEdit === 'True'">
+                        <v-autocomplete
+                          class="mb-3"
+                          v-model="formUpdate.countCustomerEdit"
+                          label="เลื่อนนัดได้ไม่เกิน ( ครั้ง )"
+                          dense
+                          outlined
+                          :rules="[rules.required]"
+                          :items="countCustomerEditItem"
+                          required
+                          hide-details
+                          auto-select-first
+                        ></v-autocomplete>
+                        <v-autocomplete
+                          v-model="formUpdate.countDayCustomerEdit"
+                          label="ต้องทำการ เลื่อน / ยกเลิกนัด ล่วงหน้าอย่างน้อยกี่วัน"
+                          dense
+                          outlined
+                          :rules="[rules.requiredCountDay]"
+                          :items="countDayCustomerEditItem"
+                          required
+                          hide-details
+                          auto-select-first
+                        ></v-autocomplete>
+                        <v-checkbox
+                            label="คำนวณวันที่สามารถเลื่อนได้ จากเวลาที่นัดหมาย"
+                            false-value="False"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            color="#1B437C"
+                            true-value="True"
+                            v-model="formUpdate.statusCustomerEditNoTime"
+                          ></v-checkbox>
+                      </v-col>
+                      <!-- <v-col cols="6" class="pt-0 pb-0 mt-3" style="display: flex;justify-content: left;height: 40px;" v-if="formUpdate.statusCustomerEdit === 'True'">
+                        <v-autocomplete
+                        v-model="formUpdate.countDayCustomerEdit"
+                          label="เลื่อนนัดการก่อนวันที่นัดหมาย ( วัน )"
+                          dense
+                          solo
+                          :rules="[rules.required]"
+                          :items="countDayCustomerEditItem"
+                          required
+                        ></v-autocomplete>
+                      </v-col> -->
+                      <!-- <v-col cols="12" class="pt-0 pb-0" style="display: flex;justify-content: left;height: 40px;">
+                        <v-checkbox
+                          label="เชื่อมต่อกับ Google Calendar"
+                          false-value="False"
+                          :on-icon="'mdi-check-circle'"
+                          :off-icon="'mdi-checkbox-blank-circle-outline'"
+                          color="#1B437C"
+                          true-value="True"
+                          v-model="formUpdate.statusGoogleCalendar"
+                          @change="connectGoogleCalendar(formUpdate.statusGoogleCalendar)"
+                        ></v-checkbox>
+                      </v-col>
+                      <v-col cols="12" class="pt-0 pb-0 ml-4" style="display: flex;justify-content: left;height: 40px;" v-if="formUpdate.statusGoogleCalendar === 'True' && formUpdate.timeSlotStatus === 'True'">
+                        <v-checkbox
+                          label="เชื่อมต่อ Google Calendar กับพนักงาน"
+                          false-value="False"
+                          :on-icon="'mdi-check-circle'"
+                          :off-icon="'mdi-checkbox-blank-circle-outline'"
+                          color="#1B437C"
+                          true-value="True"
+                          v-model="formUpdate.statusGoogleCalendarEmp"
+                        ></v-checkbox>
+                      </v-col> -->
+                    </v-row>
+                    <v-row>
+                      <v-col cols="6" class="mt-6">
                         <v-select
                           v-model="formUpdate.category"
                           :items="category"
@@ -146,31 +248,64 @@
                           dense
                           required
                           :rules="[rules.required]"
+                          attach
+                          :menu-props="{ bottom: true, offsetY: true }"
+                          @change="selectCategorySub()"
                         ></v-select>
                       </v-col>
                       <v-col>
-                        <v-row>
-                            <v-col class="pt-0 pb-0" style="display: flex;justify-content: left;">
-                              <v-checkbox
-                                label="จำกัดเวลาตามช่าง"
-                                false-value="False"
-                                :on-icon="'mdi-check-circle'"
-                                :off-icon="'mdi-checkbox-blank-circle-outline'"
-                                color="#1B437C"
-                                true-value="True"
-                                v-model="formUpdate.timeSlotStatus"
-                              ></v-checkbox>
-                            </v-col>
-                          </v-row>
                       </v-col>
                     </v-row>
+                    <v-row>
+                      <v-col cols="12" v-if="formUpdate.category !== ''">
+                        <v-select
+                          v-model="formUpdate.categorySub"
+                          :items="categorySub"
+                          label="ประเภทบริการ"
+                          outlined
+                          required
+                          dense
+                          multiple
+                          attach
+                          :menu-props="{ bottom: true, offsetY: true }"
+                          :rules="[rules.required]"
+                        ></v-select>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col class="pt-0 pb-0" style="display: flex;justify-content: left;">
+                        <v-checkbox
+                          label="เปิดใช้ QR Payment (กรณี บัญชีนิติบุคคล)"
+                          false-value="False"
+                          :on-icon="'mdi-check-circle'"
+                          :off-icon="'mdi-checkbox-blank-circle-outline'"
+                          color="#1B437C"
+                          true-value="True"
+                          v-model="formUpdate.showQrPayments"
+                        ></v-checkbox>
+                        </v-col>
+                      </v-row>
                      <v-row>
                       <v-col cols="12" class="pb-0">
                           <v-textarea
                             outlined
-                            label="ข้อความตอบกลับการนัดหมาย"
+                            label="ข้อความตอบกลับการนัดหมาย (TH)"
                             v-model="formUpdate.bookingthankText"
                           ></v-textarea>
+                      </v-col>
+                      <v-col cols="12" class="pb-0">
+                          <v-textarea
+                            outlined
+                            label="ข้อความตอบกลับการนัดหมาย (EN)"
+                            v-model="formUpdate.bookingthankTextEn"
+                          ></v-textarea>
+                      </v-col>
+                      <v-col cols="12" class="pb-0">
+                        <v-text-field
+                          outlined
+                            label="ลิ้งค์วิดีโอ สำหรับแสดงผลคิวหน้าร้าน"
+                            v-model="formUpdate.videoLinkMonition"
+                          ></v-text-field>
                       </v-col>
                     </v-row>
 
@@ -209,6 +344,7 @@
                       elevation="2"
                       dark
                       block
+                      large
                       color="#173053"
                       :disabled="!validUpdate"
                       @click="editData()"
@@ -222,7 +358,9 @@
             </v-card>
           </v-dialog>
           <!-- end edit -->
-
+          <div>
+            <img id="image" src="picture.jpg">
+          </div>
           <!-- data table -->
           <v-col cols="12">
             <v-card elevation="7" v-if="dataReady">
@@ -233,6 +371,9 @@
                   :items="dataItem"
                   :items-per-page="10"
                 >
+                  <template v-slot:[`item.category`]="{ item }">
+                    {{ category.filter((a) => a.value === parseInt(item.category))[0].text }}
+                  </template>
                   <template v-slot:[`item.CREATE_DATE`]="{ item }">
                     {{ format_dateFUllTime(item.CREATE_DATE) }}
                   </template>
@@ -268,6 +409,7 @@
             <div v-if="!dataReady" class="text-center">
               <waitingAlert></waitingAlert>
             </div>
+            <GoogleCalendarCmp ref="GoogleCalendarRef" />
           </v-col>
           <!-- end data table -->
         </v-row>
@@ -283,6 +425,7 @@ import JsonExcel from 'vue-json-excel' // https://www.npmjs.com/package/vue-json
 import XLSX from 'xlsx' // import xlsx
 import readXlsxFile from 'read-excel-file'
 import moment from 'moment' // แปลง date
+import GoogleCalendarCmp from '../Core/GoogleCalendarCmp.vue'
 
 export default {
   components: {
@@ -290,7 +433,8 @@ export default {
     'left-menu-admin': adminLeftMenu,
     downloadExcel: JsonExcel,
     XLSX,
-    readXlsxFile
+    readXlsxFile,
+    GoogleCalendarCmp
   },
   created () {
     setInterval(this.getNowGlobal, 1000)
@@ -340,14 +484,62 @@ export default {
         secondaryColor: '',
         darkMode: false,
         category: '',
-        timeSlotStatus: ''
+        categorySub: [],
+        timeSlotStatus: 'False',
+        showQrPayments: 'False',
+        bookingthankTextEn: '',
+        bookingthankText: '',
+        videoLinkMonition: '',
+        statusGoogleCalendar: 'False',
+        statusGoogleCalendarEmp: 'False',
+        refreshTokenGoogleCalendar: '',
+        statusCustomerEdit: 'False',
+        statusCustomerEditNoTime: 'False',
+        countCustomerEdit: '',
+        countDayCustomerEdit: ''
+
       },
+      countCustomerEditItem: [1, 2, 3, 4, 5, 6, 7],
+      countDayCustomerEditItem: [
+        { 'text': 'ไม่กำหนดวัน', 'value': 0 },
+        { 'text': 1, 'value': 1 },
+        { 'text': 2, 'value': 2 },
+        { 'text': 3, 'value': 3 },
+        { 'text': 4, 'value': 4 },
+        { 'text': 5, 'value': 5 },
+        { 'text': 6, 'value': 6 },
+        { 'text': 7, 'value': 7 },
+        { 'text': 8, 'value': 8 },
+        { 'text': 9, 'value': 9 },
+        { 'text': 10, 'value': 10 },
+        { 'text': 11, 'value': 11 },
+        { 'text': 12, 'value': 12 },
+        { 'text': 13, 'value': 13 },
+        { 'text': 14, 'value': 14 },
+        { 'text': 15, 'value': 15 },
+        { 'text': 16, 'value': 16 },
+        { 'text': 17, 'value': 17 },
+        { 'text': 18, 'value': 18 },
+        { 'text': 19, 'value': 19 },
+        { 'text': 20, 'value': 20 },
+        { 'text': 21, 'value': 21 },
+        { 'text': 22, 'value': 22 },
+        { 'text': 23, 'value': 23 },
+        { 'text': 24, 'value': 24 },
+        { 'text': 25, 'value': 25 },
+        { 'text': 26, 'value': 26 },
+        { 'text': 27, 'value': 27 },
+        { 'text': 28, 'value': 28 },
+        { 'text': 29, 'value': 29 },
+        { 'text': 30, 'value': 30 },
+        { 'text': 31, 'value': 31 }
+      ],
       timeSlotStatusOld: '',
       filesShop: null,
-      category: [
-        { text: 'ธุรกิจรถยนต์', value: 'ธุรกิจรถยนต์' },
-        { text: 'ธุรกิจอื่นๆ', value: 'ธุรกิจอื่นๆ' }
-      ],
+      // category: [
+      //   { text: 'ธุรกิจรถยนต์', value: 'ธุรกิจรถยนต์' },
+      //   { text: 'ธุรกิจอื่นๆ', value: 'ธุรกิจอื่นๆ' }
+      // ],
       formUpdateItem: {
         userTypeGroupCode: '',
         userTypeGroupName: '',
@@ -367,6 +559,7 @@ export default {
           (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999999) ||
           'กรุณากรอกตัวเลข 0 ถึง 9',
         required: value => !!value || 'กรุณากรอก.',
+        requiredCountDay: (value) => value == null || value === '' ? 'กรุณากรอก.' : true,
         resizeImag: value =>
           !value ||
           value.size < 2000000 ||
@@ -408,7 +601,11 @@ export default {
       dataItem: [],
       filesUpdate: null,
       filesUpdateImgCover: null,
-      validUpdate: true
+      validUpdate: true,
+      category: [],
+      Allcategory: [],
+      categorySub: [],
+      AllcategorySub: []
       // End Data Table Config
     }
   },
@@ -422,14 +619,78 @@ export default {
     // this.getDataTypeGroup()
     this.dataReady = false
     // Get Data
-    this.getDataGlobal(
+    await this.getCategory()
+    await this.getCategorySub()
+    await this.getDataGlobal(
       this.DNS_IP,
       this.path,
       this.session.data.shopId,
       this.returnLink
     )
+    await this.selectCategorySub()
   },
   methods: {
+    connectGoogleCalendar (item) {
+      console.log('test', item)
+      if (item === 'True') {
+        // this.$refs.GoogleCalendarRef.handleClickLogin()
+        this.$refs.GoogleCalendarRef.UseGoogleCalendar()
+      }
+    },
+    resetShop () {
+      this.$emit('confirmed')
+    },
+    async getCategory () {
+      await axios.get(this.DNS_IP + '/category/getsort')
+        .then(async (response) => {
+          let rs = response.data
+          console.log('rs_getCategory', rs)
+          if (rs.length > 0) {
+            this.Allcategory = rs
+            rs.forEach((d) => {
+              let s = {}
+              s.text = d.nameCategoryTH
+              s.textEn = d.nameCategoryEN
+              s.value = d.idCategory
+              console.log('type', typeof d.idCategory)
+              // s.value = d.nameCategoryTH
+              this.category.push(s)
+            })
+          }
+        }).catch(function (error) {
+          console.log('Error getting profile: ' + error)
+        })
+    },
+    async getCategorySub () {
+      await axios.get(this.DNS_IP + '/categorySub/getsort')
+        .then(async (response) => {
+          let rs = response.data
+          console.log('rs_getCategorySub', rs)
+          if (rs.length > 0) {
+            this.AllcategorySub = rs
+          }
+        }).catch(function (error) {
+          console.log('Error getting profile: ' + error)
+        })
+    },
+    async selectCategorySub () {
+      this.formUpdate.categorySub = []
+      this.categorySub = []
+      console.log('tthis.AllcategorySub', this.AllcategorySub)
+      // let Id = this.Allcategory.filter((i) => i.nameCategoryTH === this.formUpdate.category)[0].idCategory
+      // console.log('ddfdfsdfsdf', this.Allcategory.filter((i) => i.nameCategorySubTH === this.formUpdate.category))
+      this.AllcategorySub.forEach((d) => {
+        let s = {}
+        if (d.idCategory === this.formUpdate.category) {
+          console.log('IF')
+          s.text = d.nameCategorySubTH
+          s.textEn = d.nameCategorySubEN
+          s.value = d.idCategorySub
+          this.categorySub.push(s)
+        }
+      })
+      console.log('this.cat', this.categorySub)
+    },
     editDataByBookingField (item) {
       console.log('item1111111111111111111111111111', item)
       this.dialogEdit = true
@@ -481,6 +742,7 @@ export default {
       //
       //
       // Get ID /main.js
+      console.log('getDataById', item)
       this.formUpdate.timeSlotStatus = item.timeSlotStatus || 'False'
       this.timeSlotStatusOld = item.timeSlotStatus || 'False'
       this.dataReady = false
@@ -497,6 +759,12 @@ export default {
       )
       this.formUpdate.pictureUrlPreview = this.formUpdate.shopImge
       this.formUpdate.pictureCoverUrlPreview = this.formUpdate.shopImageCover
+      this.formUpdate.statusGoogleCalendar = item.statusGoogleCalendar || 'False'
+      this.formUpdate.statusGoogleCalendarEmp = item.statusGoogleCalendarEmp || 'False'
+      this.formUpdate.statusCustomerEdit = item.statusCustomerEdit || 'False'
+      this.formUpdate.statusCustomerEditNoTime = item.statusCustomerEditNoTime || 'False'
+      this.formUpdate.countCustomerEdit = item.countCustomerEdit || 3
+      this.formUpdate.countDayCustomerEdit = item.countDayCustomerEdit === 0 ? item.countDayCustomerEdit : (item.countDayCustomerEdit || 7)
       if (this.formUpdate.darkMode === 'True') {
         this.formUpdate.darkMode = true
       } else {
@@ -507,11 +775,24 @@ export default {
       } else {
         console.log('bookingthankText', this.formUpdate.bookingthankText)
       }
+      if (this.formUpdate.bookingthankTextEn === null) {
+        this.formUpdate.bookingthankTextEn = ''
+      } else {
+        console.log('bookingthankTextEn', this.formUpdate.bookingthankTextEn)
+      }
+      if (this.formUpdate.showQrPayments === null || this.formUpdate.showQrPayments === '') {
+        this.formUpdate.showQrPayments = 'False'
+      }
+      this.formUpdate.category = parseInt(item.category)
+      await this.selectCategorySub()
+      this.formUpdate.categorySub = JSON.parse(item.categorySub) || []
+
       // this.formUpdate.primaryColor = item.primaryColor
       // this.formUpdate.secondaryColor = item.secondaryColor
       // if (this.formUpdate.ZIP_CD.length >= 5) {
       //   this.getAddress()
       // }
+      console.log('formUpdate', this.formUpdate)
     },
     async editData () {
       console.log(this.formUpdate)
@@ -562,11 +843,23 @@ export default {
           } else {
             darkMode = 'False'
           }
-          let bookingthankText = null
+          let bookingthankText = ''
           if (this.formUpdate.bookingthankText === '') {
             bookingthankText = ''
           } else {
-            bookingthankText = this.formUpdate.bookingthankText
+            bookingthankText = this.formUpdate.bookingthankText.replace(/%/g, '%%').replace(/'/g, "\\'")
+          }
+          let bookingthankTextEn = ''
+          if (this.formUpdate.bookingthankTextEn === '') {
+            bookingthankTextEn = ''
+          } else {
+            bookingthankTextEn = this.formUpdate.bookingthankTextEn.replace(/%/g, '%%').replace(/'/g, "\\'")
+          }
+          let videoLinkMonition = ''
+          if (this.formUpdate.videoLinkMonition === '' || this.formUpdate.videoLinkMonition === null) {
+            videoLinkMonition = ''
+          } else {
+            videoLinkMonition = this.formUpdate.videoLinkMonition.replace(/%/g, '%%').replace(/'/g, "\\'")
           }
           var dt = {
             shopName: this.formUpdate.shopName,
@@ -578,9 +871,19 @@ export default {
             primaryColor: this.formUpdate.primaryColor,
             secondaryColor: this.formUpdate.secondaryColor,
             category: this.formUpdate.category,
+            categorySub: JSON.stringify(this.formUpdate.categorySub),
             timeSlotStatus: this.formUpdate.timeSlotStatus,
+            showQrPayments: this.formUpdate.showQrPayments,
+            videoLinkMonition: videoLinkMonition,
             darkMode: darkMode,
-            bookingthankText: bookingthankText
+            bookingthankText: bookingthankText,
+            bookingthankTextEn: bookingthankTextEn,
+            statusGoogleCalendar: this.formUpdate.statusGoogleCalendar,
+            statusGoogleCalendarEmp: this.formUpdate.statusGoogleCalendarEmp,
+            statusCustomerEdit: this.formUpdate.statusCustomerEdit,
+            statusCustomerEditNoTime: this.formUpdate.statusCustomerEditNoTime,
+            countCustomerEdit: this.formUpdate.countCustomerEdit,
+            countDayCustomerEdit: this.formUpdate.countDayCustomerEdit
           }
           await axios
             .post(
@@ -606,17 +909,31 @@ export default {
                 secondaryColor: this.formUpdate.secondaryColor,
                 darkMode: darkMode,
                 bookingthankText: bookingthankText,
-                sourceProgram: 'belinked'
+                sourceProgram: 'belinked',
+                bookingthankTextEn: bookingthankTextEn
               }
               this.updateBetaskDB(ds, this.$session.getAll().data.shopId)
               console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
-              if (this.timeSlotStatusOld === this.formUpdate.timeSlotStatus) {
+              console.log(this.timeSlotStatusOld, this.formUpdate.timeSlotStatus)
+              let checktimeSlotStatus = this.formUpdate.timeSlotStatus || 'False'
+              if (this.timeSlotStatusOld === checktimeSlotStatus) {
                 this.$swal('เรียบร้อย', 'บันทึกสำเร็จ', 'success')
               } else {
-                let dt = {
-                  shopId: this.$session.getAll().data.shopId,
-                  timeSlotStatus: this.formUpdate.timeSlotStatus,
-                  LAST_USER: this.$session.getAll().data.userName
+                let dt = {}
+                if (this.formUpdate.timeSlotStatus === 'True') {
+                  dt = {
+                    shopId: this.$session.getAll().data.shopId,
+                    timeSlotStatus: this.formUpdate.timeSlotStatus,
+                    storeFrontCheck: 'False',
+                    checkOnsite: 'False',
+                    LAST_USER: this.$session.getAll().data.userName
+                  }
+                } else {
+                  dt = {
+                    shopId: this.$session.getAll().data.shopId,
+                    timeSlotStatus: this.formUpdate.timeSlotStatus,
+                    LAST_USER: this.$session.getAll().data.userName
+                  }
                 }
                 axios
                   .post(
@@ -638,6 +955,7 @@ export default {
 
               // Load Data
               // await this.reloadData()
+              this.resetShop()
               await this.clearDataUpdate()
               this.filesShop = null
               await this.getDataGlobal(

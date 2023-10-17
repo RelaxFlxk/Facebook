@@ -1,6 +1,4 @@
 <template>
-  <div>
-    <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
     <v-main>
       <div class="stepLayout">
         <v-col cols="12" sm="8">
@@ -33,32 +31,30 @@
         </v-col>
       </v-row>
       </div>
-        <div class="workLayout">
-          <v-row class="rowstep">
+        <div class="workLayout ma-3">
+          <v-row class="rowstep" >
               <draggable  v-model="stepData" group="workshop">
               <div  v-for="(element , step) in stepData" :key="step">
                    <v-card
-                    class="mb-12"
-                    width="220"
+                    class="pa-1 pl-3 mb-5"
+                    width="180"
+                    min-height="30px"
                    >
-                     <v-toolbar
-
-                    >
                     <p style="color:#1B437C">{{element.stepTitle}}</p>
-                    </v-toolbar>
                     </v-card>
               </div>
             </draggable>
             <div  v-for="(element , i ) in Layout" :key="i">
-                <v-col cols="12" class="Layoutcolum">
+                <v-col cols="12" class="Layoutcolum pa-3">
                 <draggable v-model="Layout[i].workData" group="workshop" @change="UpdateworkShop ()">
                   <div  v-for="(element , workData) in Layout[i].workData" :key="workData">
                     <v-card
-                    class="pa-3 mb-12"
-                    width="220"
+                    class="pa-1 pl-2 mb-5"
+                    width="180"
+                    min-height="30px"
                     :color="codeColor[i]"
                    >
-                    <strong dark style="color:#FFFFFF">{{element.stepTitle}}</strong>
+                    <strong dark class="mb-n5" style="color:#FFFFFF">{{element.stepTitle}}</strong>
                     </v-card>
                   </div>
                 </draggable>
@@ -81,7 +77,6 @@
             </v-row>
         </div>
     </v-main>
-  </div>
 </template>
 
 <script>
@@ -110,6 +105,7 @@ export default {
   data () {
     return {
       stepData: [],
+      dialogWorkShop: false,
       Layout: [],
       DataflowId: '',
       DataBranchID: '',
@@ -153,14 +149,26 @@ export default {
     }
   },
   async mounted () {
-    this.showData()
     await this.getDataMasbranch()
     await this.getStepFlow()
-    await this.redirectBybord()
+    // await this.redirectBybord()
   },
   methods: {
-    showData () {
-      // console.log('showcard', this.Layout)
+    test (y, w) {
+      console.log('TrueCheck')
+    },
+    async showDialog (flowId, masBranchID) {
+      console.log('item', flowId, masBranchID)
+      if (flowId && masBranchID) {
+        this.DataBranchID = masBranchID
+        this.getDataFlow()
+        this.DataflowId = flowId
+        this.getLayout()
+      } else {
+        this.dialogWorkShop = false
+        console.log('ELSE')
+      }
+      // this.dialogWorkShop = true
     },
     async getStepFlow (flowId) {
       this.stepItemSelete = []
@@ -186,18 +194,21 @@ export default {
         })
     },
     getDataFlow () {
+      this.Layout = []
       this.DataFlowName = []
       this.DataflowId = ''
       console.log('DataBranchID', this.DataBranchID)
       axios.get(this.DNS_IP + '/flow/get?shopId=' + this.shopId).then(response => {
         let rs = response.data
-        // console.log('rs', rs)
+        console.log('rsDataFlowName', rs)
         if (rs.length > 0) {
           for (var i = 0; i < rs.length; i++) {
             var d = rs[i]
-            d.text = d.flowName
-            d.value = d.flowId
-            this.DataFlowName.push(d)
+            if (d.masBranchID === this.DataBranchID.toString() || (d.masBranchID === 'All' || d.masBranchID === null)) {
+              d.text = d.flowName
+              d.value = d.flowId
+              this.DataFlowName.push(d)
+            }
             // console.log('DataFlowName132', this.DataFlowName)
           }
         } else {
@@ -208,16 +219,24 @@ export default {
     },
     getDataMasbranch () {
       this.DataMasbranch = []
-      console.log('shopId', this.shopId)
+      // console.log('shopId', this.shopId)
       axios.get(this.DNS_IP + '/master_branch/get?shopId=' + this.shopId).then(response => {
         let rs = response.data
-        console.log('rs', rs)
+        // console.log('rs', rs)
         if (rs.length > 0) {
           for (var i = 0; i < rs.length; i++) {
             var d = rs[i]
-            d.text = d.masBranchName
-            d.value = d.masBranchID
-            this.DataMasbranch.push(d)
+            if (this.session.data.masBranchID === '' || this.session.data.masBranchID === null) {
+              d.text = d.masBranchName
+              d.value = d.masBranchID
+              this.DataMasbranch.push(d)
+            } else {
+              if (d.masBranchID === this.session.data.masBranchID) {
+                d.text = d.masBranchName
+                d.value = d.masBranchID
+                this.DataMasbranch.push(d)
+              }
+            }
             // console.log('DataMasbranch132', this.DataMasbranch)
           }
         } else {
@@ -248,16 +267,26 @@ export default {
             console.log('workData', d.workData)
             console.log('this.stepItemSelete.filt', this.stepItemSelete)
             if (workData.length > 0) {
-              console.log('1')
-              for (let x = 0; x < workData.length; x++) {
-                let t = workData[x]
-                let s = {}
-                s.sortNo = t.sortNo
-                s.stepId = t.stepId
-                s.stepTitle = this.stepItemSelete.filter(el => { return el.stepId === t.stepId })[0].stepTitle
-                workDataUse.push(s)
-                console.log('2')
-              }
+              console.log('1', workData)
+              workData.forEach((item) => {
+                if (this.stepItemSelete.filter(el => { return el.stepId === item.stepId }).length > 0) {
+                  let s = {}
+                  s.sortNo = item.sortNo
+                  s.stepId = item.stepId
+                  s.stepTitle = this.stepItemSelete.filter(el => { return el.stepId === item.stepId })[0].stepTitle
+                  workDataUse.push(s)
+                }
+                console.log('workDataCheck', workDataUse)
+              })
+              // for (let x = 0; x < workData.length; x++) {
+              //   let t = workData[x]
+              //   let s = {}
+              //   s.sortNo = t.sortNo
+              //   s.stepId = t.stepId
+              //   s.stepTitle = this.stepItemSelete.filter(el => { return el.stepId === t.stepId })[0].stepTitle || ''
+              //   workDataUse.push(s)
+              //   console.log('2')
+              // }
             } else {
               workDataUse = []
             }
@@ -386,37 +415,46 @@ export default {
         })
     },
     async AddColum () {
-      this.$swal({
-        title: 'ต้องการเพิ่ม Colum ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      })
-        .then(async (result) => {
-          this.fromAdd.CREATE_USER = this.session.data.userName
-          this.fromAdd.LAST_USER = this.session.data.userName
-          this.fromAdd.workData = '[]'
-          this.fromAdd.workColum = this.Layout.length + 1
-          this.fromAdd.flowId = this.DataflowId
-          this.fromAdd.shopId = this.shopId
-          this.fromAdd.masBranchID = this.DataBranchID
-          console.log('fromAdd', this.fromAdd)
-          await axios
-            .post(
-              this.DNS_IP + '/WorkShopLayout/add', this.fromAdd
-            ).then(async (response) => {
-              console.log('addDataGlobal DNS_IP + /job/add', response)
-              this.dialogAdd = false
-              this.getLayout()
-              await this.clearData()
-            })
-            .catch((error) => {
-              console.log('error function addData : ', error)
-            })
+      if (this.Layout.length >= 6) {
+        this.$swal({
+          title: 'ไม่สามารถเพิ่ม Colum มากกว่า 6 Colum ?',
+          type: 'info',
+          timer: 2000,
+          showConfirmButton: false
         })
+      } else {
+        this.$swal({
+          title: 'ต้องการเพิ่ม Colum ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        })
+          .then(async (result) => {
+            this.fromAdd.CREATE_USER = this.session.data.userName
+            this.fromAdd.LAST_USER = this.session.data.userName
+            this.fromAdd.workData = '[]'
+            this.fromAdd.workColum = this.Layout.length + 1
+            this.fromAdd.flowId = this.DataflowId
+            this.fromAdd.shopId = this.shopId
+            this.fromAdd.masBranchID = this.DataBranchID
+            console.log('fromAdd', this.fromAdd)
+            await axios
+              .post(
+                this.DNS_IP + '/WorkShopLayout/add', this.fromAdd
+              ).then(async (response) => {
+                console.log('addDataGlobal DNS_IP + /job/add', response)
+                this.dialogAdd = false
+                this.getLayout()
+                await this.clearData()
+              })
+              .catch((error) => {
+                console.log('error function addData : ', error)
+              })
+          })
+      }
     },
     clearData () {
       this.fromAdd = {}
@@ -426,6 +464,25 @@ export default {
 
 </script>
 <style scope>
+/* width */
+::-webkit-scrollbar {
+  width: 2px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #173053;
+  border-radius: 0px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #173053;
+}
 .main{
   margin-top: 1rem;
   background-color: #E1F3FF;
@@ -436,7 +493,7 @@ export default {
   margin-top: 2px;
   margin-left: 5px;
   min-height: 600px !important;
-  width: 250px !important;
+  width: 200px !important;
   border-color: #ffffff ;
   background-color: #f0eeee ;
   display:flex;

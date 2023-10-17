@@ -9,7 +9,7 @@
       </v-row>
       <v-container>
         <v-row>
-          <EditShop v-show="showEdit" ref="dialogEdit"></EditShop>
+          <EditShop v-show="showEdit" @confirmed="getShop" ref="dialogEdit"></EditShop>
           <v-col cols="12" md="5" sm="5" class="main" style="background-color:#FFFFFF;">
             <div class="Bar">
                 <v-row>
@@ -58,7 +58,30 @@
                 </v-avatar>
                 </v-col>
               </v-row>
-              <h3 class="text-center" :style="'color:' + DarkModefont +';'">{{'นัดหมายเข้ารับบริการ'}}</h3>
+              <div style="display:flex;justify-content: center;" class="ma-3">
+                <v-chip
+                  class="mr-1 font-weight-black"
+                  :style="'background-color:' + (languageSelect === 0 ? DarkModeButton : 'rgb(103 103 103 / 18%)') + ';font-size:20px'"
+                  dark
+                  @click="languageSelect = 0"
+                  >
+                  <v-avatar left>
+                    <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2Fflag-TH.png?alt=media&token=e4bd7ffa-aed9-47e3-9240-4dcb9d8d284e"></v-img>
+                  </v-avatar>
+                    TH
+                </v-chip>
+                <v-chip
+                  class="ml-1 font-weight-black"
+                  :style="'background-color:' + (languageSelect === 1 ? DarkModeButton : 'rgb(103 103 103 / 18%)') + ';font-size:20px'"
+                  dark
+                  @click="languageSelect = 1">
+                  <v-avatar left>
+                    <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2Fflag-USA1.png?alt=media&token=a83dd820-f576-457a-8d08-1009cea9d70b"></v-img>
+                  </v-avatar>
+                    EN
+                </v-chip>
+              </div>
+              <h3 class="text-center" :style="'color:' + DarkModefont +';'">{{ languageSelect === 0 ? bookingFormHeader : bookingFormHeaderEn}}</h3>
               <h5 class="text-center" :style="'color:' + DarkModefont +';'" v-if="shop.length > 0">{{shop[0].shopName}}</h5>
               <v-col cols="12" class="text-center  pa-0 mb-3" >
                 <v-btn
@@ -68,7 +91,7 @@
                   @click="dialogHistory = true"
                   readonly
                 >
-                ประวัติการเข้ารับบริการ
+                {{ languageSelect === 0 ? bookingFormHistoryBT : bookingFormHistoryBTEn}}
                 <v-icon
                   right
                   dark
@@ -98,7 +121,7 @@
                   :key="indexFix"
                 >
                   <v-text-field
-                    :label="itemFix.fieldName"
+                    :label="languageSelect === 0 ? itemFix.fieldName:itemFix.fieldNameEn"
                     outlined
 
                   ></v-text-field>
@@ -110,7 +133,7 @@
                     <div v-if="item.fieldType == 'text'">
                     <v-text-field
                     v-model="item.fieldValue"
-                    :label="item.fieldName"
+                    :label="languageSelect === 0 ? item.fieldName:item.fieldNameEn"
                     outlined
                     required
 
@@ -119,7 +142,7 @@
                   <div v-if="item.fieldType == 'number'">
                     <v-text-field
                     v-model="item.fieldValue"
-                    :label="item.fieldName"
+                    :label="languageSelect === 0 ? item.fieldName:item.fieldNameEn"
                     outlined
                     required
 
@@ -130,7 +153,7 @@
                       v-model="item.fieldValue"
                       :items="JSON.parse(item.optionField)"
                       outlined
-                      :label="item.fieldName"
+                      :label="languageSelect === 0 ? item.fieldName:item.fieldNameEn"
                       required
 
                     ></v-autocomplete>
@@ -140,7 +163,7 @@
                       v-model="item.fieldValue"
                       :items="JSON.parse(item.optionField)"
                       menu-props="auto"
-                      :label="item.fieldName"
+                      :label="languageSelect === 0 ? item.fieldName:item.fieldNameEn"
                       required
 
                       outlined
@@ -169,7 +192,7 @@
                     <div v-if="item.fieldType == 'text'">
                     <v-text-field
                     v-model="item.fieldValue"
-                    :label="item.fieldName"
+                    :label="languageSelect === 0 ? item.fieldName:item.fieldNameEn"
                     outlined
                     required
 
@@ -178,7 +201,7 @@
                     <div v-if="item.fieldType == 'number'">
                       <v-text-field
                       v-model="item.fieldValue"
-                      :label="item.fieldName"
+                      :label="languageSelect === 0 ? item.fieldName:item.fieldNameEn"
                       outlined
                       required
 
@@ -189,7 +212,7 @@
                         v-model="item.fieldValue"
                         :items="JSON.parse(item.optionField)"
                         outlined
-                        :label="item.fieldName"
+                        :label="languageSelect === 0 ? item.fieldName:item.fieldNameEn"
                         required
 
                       ></v-autocomplete>
@@ -199,7 +222,7 @@
                         v-model="item.fieldValue"
                         :items="JSON.parse(item.optionField)"
                         menu-props="auto"
-                        :label="item.fieldName"
+                        :label="languageSelect === 0 ? item.fieldName:item.fieldNameEn"
                         required
 
                         outlined
@@ -242,8 +265,8 @@
                       <template v-slot:activator="{ on, attrs }">
                         <v-text-field
                           v-model="date"
-                          label="วันที่"
-                          prepend-icon="mdi-calendar"
+                          :label="languageSelect === 0 ? 'วันที่' : 'Date'"
+                          prepend-inner-icon="mdi-calendar"
                           readonly
                           v-bind="attrs"
                           v-on="on"
@@ -277,7 +300,7 @@
                     <v-text-field
                     outlined
                       v-model="time"
-                      label="เวลา"
+                      :label="languageSelect === 0 ? 'เวลา' : 'Time'"
                       type="time"
                       suffix=""
                       required
@@ -294,14 +317,14 @@
               dark
               large
                readonly
-            >{{'ยืนยัน'}}</v-btn>
-            <v-btn
+            >{{ languageSelect === 0 ? bookingFormConfirmBT : bookingFormConfirmBTEn }}</v-btn>
+            <!-- <v-btn
               class="button"
               large
               :color="DarkModeButton"
               dark
                readonly
-            >{{'ยกเลิก'}}</v-btn>
+            >{{'ยกเลิก'}}</v-btn> -->
             </div>
               </v-card>
             </div>
@@ -317,10 +340,13 @@
                       style="width:29px;height:29px"
                     ></v-img>
                     <h3 class="text-center" style="color:#FFFFFF;">
-                      ลิ้งสำหรับลูกค้า
+                      ลิ้งค์สำหรับลูกค้า
                     </h3>
+                    <h6 class="text-center" style="color:#FFFFFF;">
+                      สามารถกดปุ่มตามประเภท social media เพื่อคัดลอกลิ้งค์นัดหมาย
+                    </h6>
                     <v-card-text>
-                      <v-row align-content="center">
+                      <v-row align-content="center" v-show="!hindRedirect">
                         <v-col cols="12"  class="pb-0">
                           <v-text-field
                             v-model="Redirect"
@@ -684,6 +710,96 @@
               <v-col cols="12" md="12" sm="12">
                 <v-card min-height="50%">
                   <v-col cols="12" class="text-center">
+                    <h4 class="text-center">ตั้งค่า หน้านัดหมายของลูกค้า</h4>
+                    <v-row align="center">
+                      <v-expansion-panels
+                          multiple
+                        >
+                        <v-expansion-panel>
+                          <v-expansion-panel-header>จัดการ หัวข้อที่ต้องการแสดง</v-expansion-panel-header>
+                          <v-form ref="form_bookingText" v-model="validBookingText" lazy-validation>
+                          <v-expansion-panel-content>
+                            <v-row>
+                              <v-col cols="6" class="pb-0 pt-3">
+                                <v-text-field
+                                  v-model="bookingFormHeader"
+                                  dense
+                                  label="หัวข้อ (TH)"
+                                  required
+                                  :rules="[rules.required]"
+                                ></v-text-field>
+                              </v-col>
+                              <v-col cols="6" class="pb-0 pt-3">
+                                <v-text-field
+                                  v-model="bookingFormHeaderEn"
+                                  dense
+                                  label="หัวข้อ (EN)"
+                                  required
+                                  :rules="[rules.required]"
+                                ></v-text-field>
+                              </v-col>
+                              <v-col cols="6" class="pb-0 pt-1">
+                                <v-text-field
+                                  v-model="bookingFormHistoryBT"
+                                  dense
+                                  label="ชื่อปุ่ม ประวัติการเข้าใช้บริการ (TH)"
+                                  required
+                                  :rules="[rules.required]"
+                                ></v-text-field>
+                              </v-col>
+                              <v-col cols="6" class="pb-0 pt-1">
+                                <v-text-field
+                                  v-model="bookingFormHistoryBTEn"
+                                  dense
+                                  label="ชื่อปุ่ม ประวัติการเข้าใช้บริการ (EN)"
+                                  required
+                                  :rules="[rules.required]"
+                                ></v-text-field>
+                              </v-col>
+                              <v-col cols="6" class="pb-0 pt-1">
+                                <v-text-field
+                                  v-model="bookingFormConfirmBT"
+                                  dense
+                                  label="ชื่อปุ่ม ยืนยันนัดหมาย (TH)"
+                                  required
+                                  :rules="[rules.required]"
+                                ></v-text-field>
+                              </v-col>
+                              <v-col cols="6" class="pb-0 pt-1">
+                                <v-text-field
+                                  v-model="bookingFormConfirmBTEn"
+                                  dense
+                                  label="ชื่อปุ่ม ยืนยันนัดหมาย (EN)"
+                                  required
+                                  :rules="[rules.required]"
+                                ></v-text-field>
+                              </v-col>
+                            </v-row>
+                            <div class="text-center">
+                              <v-btn
+                                elevation="2"
+                                small
+                                dark
+                                @click="updateTextBooking()"
+                                color="info"
+                              >
+                                <v-icon left>mdi-content-save-edit</v-icon>
+                                เปลี่ยนแปลง
+                              </v-btn>
+                            </div>
+                          </v-expansion-panel-content>
+                          </v-form>
+                        </v-expansion-panel>
+                      </v-expansion-panels>
+                    </v-row>
+                  </v-col>
+                </v-card>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" md="12" sm="12">
+                <v-card min-height="50%">
+                  <v-col cols="12" class="text-center">
                     <h4 class="text-center">โปรดเลือกข้อมูลที่ต้องการแสดง</h4>
                     <v-row align="center">
                       <v-checkbox
@@ -699,22 +815,89 @@
                       <v-checkbox
                         false-value="False"
                         true-value="True"
-                        v-model="showLimitBooking"
+                        v-model="statusEngPayment"
                         hide-details
                         class="shrink ml-6 mr-0 mt-0 mb-6"
                       ></v-checkbox>
-                      <v-text-field :value="showLimitBooking === 'True' ? 'แสดง' : 'ไม่แสดง'" readonly label="แสดงชั่วโมงของงานหรือไม่"></v-text-field>
+                      <v-text-field :value="statusEngPayment === 'True' ? 'ใช้งาน' : 'ไม่ใช้งาน'" readonly label="ภาษาอังกฤษรับเงินมัดจำหรือไม่"></v-text-field>
                     </v-row>
+                    <v-row align="center">
+                      <v-checkbox
+                        false-value="False"
+                        true-value="True"
+                        v-model="liffSendMessageAfterBookingStatus"
+                        hide-details
+                        class="shrink ml-6 mr-0 mt-0 mb-6"
+                      ></v-checkbox>
+                      <v-text-field :value="liffSendMessageAfterBookingStatus === 'True' ? 'ใช้งาน' : 'ไม่ใช้งาน'" readonly label="ส่งข้อความเข้า LINE OA เมื่อลูกค้านัดหมาย"></v-text-field>
+                    </v-row>
+                    <v-row align="center">
+                      <v-checkbox
+                        false-value="False"
+                        true-value="True"
+                        v-model="checkLocationStatus"
+                        hide-details
+                        class="shrink ml-6 mr-0 mt-0 mb-6"
+                        @change="checkLocationStatus === 'True' ? geolocate() : ''"
+                      ></v-checkbox>
+                      <v-text-field :value="checkLocationStatus === 'True' ? 'ใช้งาน' : 'ไม่ใช้งาน'" readonly label="เปิดระบบจองในพื้นที่ที่กำหนด"></v-text-field>
+                    </v-row>
+                    <template v-if="checkLocationStatus === 'True'">
+                      <v-col cols="12" class="pb-0 pt-0">
+                        <v-select
+                          v-model="distanceSet"
+                          :items="itemDistance"
+                          label="จับระยะภายใน"
+                          outlined
+                          attach
+                          dense
+                          :menu-props="{ bottom: true, offsetY: true }"
+                        ></v-select>
+                      </v-col>
+                      <v-col class="pb-0 pt-0" cols="12">
+                        <gmap-autocomplete
+                          class="introInput"
+                          placeholder="ค้นหาสถานที่"
+                          @place_changed="updatePlace" style="width: 100%; height: 45px; border: 1px solid;padding-left: 8px; border-radius: 4px;">
+                        </gmap-autocomplete>
+                      </v-col>
+                      <v-col class="pb-0" cols="12">
+                        <v-card class="p-3">
+                          <GmapMap
+                            v-if="center !== null"
+                            :center="center"
+                            :zoom="15"
+                            style="width: 100%; height: 200px"
+                            :options="{
+                              disableDefaultUI: true,
+                              fullscreenControl: true,
+                              zoomControl: true
+                            }"
+                          >
+                            <GmapMarker
+                              :position="center"
+                              :draggable="true"
+                              @drag="updateCoordinates"
+                            />
+                          </GmapMap>
+                        </v-card>
+                      </v-col>
+                    </template>
+                    <br>
                     <v-data-table
                       v-model="itemdetell"
                       :headers="FieldSelect"
                       :items="Fielditem"
                       rounded="xl"
-                      class="elevation-10"
                     >
                       <template v-slot:[`item.showitem`]="{ item }">
                         <v-simple-checkbox
                           v-model="item.showitem"
+                        ></v-simple-checkbox>
+                      </template>
+                      <template v-slot:[`item.showitemCustomer`]="{ item }">
+                        <v-simple-checkbox
+                          v-model="item.showitemCustomer"
                         ></v-simple-checkbox>
                       </template>
                     </v-data-table>
@@ -783,6 +966,40 @@
           ></v-progress-circular>
         </v-overlay>
       </v-container>
+      <v-dialog v-model="dialogchekField" max-width="35%">
+        <v-card min-height="50%" class="pa-3">
+                  <v-col cols="12" class="text-center">
+                    <h4 class="text-center">โปรดเลือกข้อมูลที่ต้องการแสดงในหน้านัดหมาย</h4>
+                    <v-data-table
+                      v-model="itemdetell"
+                      :headers="FieldSelect"
+                      :items="Fielditem"
+                      rounded="xl"
+                    >
+                      <template v-slot:[`item.showitem`]="{ item }">
+                        <v-simple-checkbox
+                          v-model="item.showitem"
+                        ></v-simple-checkbox>
+                      </template>
+                      <template v-slot:[`item.showitemCustomer`]="{ item }">
+                        <v-simple-checkbox
+                          v-model="item.showitemCustomer"
+                        ></v-simple-checkbox>
+                      </template>
+                    </v-data-table>
+                  </v-col>
+                  <v-col cols="12" class="text-center">
+                    <v-btn
+                      elevation="5"
+                      color="#1B437C"
+                      dark
+                      block
+                      @click="addBooking()"
+                      >บันทึกข้อมูล</v-btn
+                    >
+                  </v-col>
+                </v-card>
+      </v-dialog>
     </v-main>
   </div>
 </template>
@@ -811,6 +1028,28 @@ export default {
   },
   data () {
     return {
+      itemDistance: [
+        {text: '500 เมตร', value: '0.5'},
+        {text: '1 กิโลเมตร', value: '1'},
+        {text: '1 กิโลเมตรครึ่ง', value: '1.5'},
+        {text: '2 กิโลเมตร', value: '2'},
+        {text: '2 กิโลเมตรครึ่ง', value: '2.5'},
+        {text: '3 กิโลเมตร', value: '3'},
+        {text: '3 กิโลเมตรครึ่ง', value: '3.5'},
+        {text: '4 กิโลเมตร', value: '4'},
+        {text: '4 กิโลเมตรครึ่ง', value: '4.5'},
+        {text: '5 กิโลเมตร', value: '5'}
+      ],
+      checkLocationStatus: 'False',
+      distanceSet: '',
+      shopLat: '',
+      shopLong: '',
+      center: null,
+      languageSelect: 0,
+      statusEngPayment: 'False',
+      editBycustomField: 'False',
+      dialogchekField: false,
+      hindRedirect: true,
       showUpload1: 'False',
       showUpload2: 'False',
       textUpload1: '',
@@ -835,9 +1074,7 @@ export default {
       dataTypeProcess3: '',
       dataTypeProcess4: '',
       itemdetell: [],
-      Redirect:
-        'https://liff.line.me/1656581804-7KRQyqo5/Booking?shopId=' +
-        this.$session.getAll().data.shopId + '&timeSlotStatus=' + this.$session.getAll().data.timeSlotStatus,
+      Redirect: '',
       session: this.$session.getAll(),
       shopId: this.$session.getAll().data.shopId,
       IdUpdate: '',
@@ -847,12 +1084,14 @@ export default {
       validOther: false,
       validJob: false,
       validProcess: false,
+      validBookingText: false,
       textOther: '',
       date: '',
       time: '',
       showTime: 'แสดง',
       showMap: 'ไม่แสดง',
       showLimitBooking: 'False',
+      multiDueDate: 'False',
       options2: {
         locale: 'en-US',
         prefix: '',
@@ -876,10 +1115,12 @@ export default {
       ],
       fixtureField: [
         {
-          fieldName: 'ประเภทบริการ'
+          fieldName: 'ประเภทบริการ',
+          fieldNameEn: 'Services'
         },
         {
-          fieldName: 'สาขา'
+          fieldName: 'สาขา',
+          fieldNameEn: 'Branch'
         }
       ],
       FieldSelect: [
@@ -891,7 +1132,8 @@ export default {
           text: 'Field Name',
           value: 'fieldName'
         },
-        { text: 'เลือกข้อมูล', value: 'showitem' }
+        { text: 'สำหรับ Admin', value: 'showitem' },
+        { text: 'สำหรับ ลูกค้า', value: 'showitemCustomer' }
       ],
       rules: {
         numberRules: value =>
@@ -911,14 +1153,97 @@ export default {
           const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
           return pattern.test(value) || 'Invalid e-mail.'
         }
-      }
+      },
+      dataLineConfig: [],
+      bookingFormHeader: '',
+      bookingFormHistoryBT: '',
+      bookingFormConfirmBT: '',
+      bookingFormHeaderEn: '',
+      bookingFormHistoryBTEn: '',
+      bookingFormConfirmBTEn: '',
+      liffSendMessageAfterBookingStatus: ''
     }
   },
   async mounted () {
+    this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
+    this.Redirect = 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/Booking?shopId=' + this.$session.getAll().data.shopId + '&timeSlotStatus=' + this.$session.getAll().data.timeSlotStatus
     await this.getShop()
     await this.getBookingField()
   },
   methods: {
+    async geolocate () {
+      await navigator.geolocation.getCurrentPosition(
+        async position => {
+          const center = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          }
+          if (center) {
+            this.center = center
+            this.shopLat = center.lat
+            this.shopLong = center.lng
+          }
+        },
+        error => {
+          this.center = null
+          this.shopLat = ''
+          this.shopLong = ''
+          // this.center.lat = null
+          // this.center.lng = null
+          console.log('error map :', error.message)
+        }
+      )
+    },
+    updatePlace (place) {
+      // console.log(place)
+      this.shopLat = place.geometry.location.lat()
+      this.shopLong = place.geometry.location.lng()
+      this.center = {
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng()
+      }
+    },
+    updateCoordinates (location) {
+      this.shopLat = location.latLng.lat()
+      this.shopLong = location.latLng.lng()
+      this.center = {
+        lat: location.latLng.lat(),
+        lng: location.latLng.lng()
+      }
+    },
+    updateTextBooking () {
+      this.validate('updateBookingText')
+      setTimeout(() => this.updateTextBookingSubmit(), 500)
+    },
+    updateTextBookingSubmit () {
+      if (this.validBookingText !== false) {
+        this.dataReady = true
+        let url = '/BookingField/edit/' + this.IdUpdate
+        let dt = {
+          bookingFormHeader: this.bookingFormHeader,
+          bookingFormHeaderEn: this.bookingFormHeaderEn,
+          bookingFormHistoryBT: this.bookingFormHistoryBT,
+          bookingFormHistoryBTEn: this.bookingFormHistoryBTEn,
+          bookingFormConfirmBT: this.bookingFormConfirmBT,
+          bookingFormConfirmBTEn: this.bookingFormConfirmBTEn,
+          LAST_USER: this.session.data.userName
+        }
+        axios
+          .post(this.DNS_IP + url, dt)
+          .then(async response => {
+            this.$swal('สำเร็จ', 'เปลี่ยนแปลงเรียบร้อย', 'success')
+            await this.getBookingField()
+            this.dataReady = false
+          })
+      }
+    },
+    async editDataByBookingField (item) {
+      console.log('item1111111111111111111111111111', item)
+      this.editBycustomField = 'True'
+      await this.getBookingField()
+      this.dialogchekField = true
+      // this.getDataById()
+    },
     getDialogEdit () {
       this.$refs.dialogEdit.editDataByBookingField(this.shop)
     },
@@ -993,6 +1318,12 @@ export default {
             self.$refs.form_process.validate()
           })
           break
+        case 'updateBookingText':
+          this.$nextTick(() => {
+            let self = this
+            self.$refs.form_bookingText.validate()
+          })
+          break
         default:
           break
       }
@@ -1002,9 +1333,9 @@ export default {
       if (text === 'line') {
         let copyText = ''
         if (this.$session.getAll().data.timeSlotStatus === 'True') {
-          copyText = 'https://liff.line.me/1656581804-b09WBwkP?shopId=' + this.$session.getAll().data.shopId
+          copyText = 'https://liff.line.me/' + this.dataLineConfig.liffBookingFormEmpID + '?shopId=' + this.$session.getAll().data.shopId
         } else {
-          copyText = 'https://liff.line.me/1656581804-32mk7OgE?shopId=' + this.$session.getAll().data.shopId
+          copyText = 'https://liff.line.me/' + this.dataLineConfig.liffBookingFormID + '?shopId=' + this.$session.getAll().data.shopId
         }
         navigator.clipboard.writeText(copyText + '&source=' + text)
       } else {
@@ -1013,9 +1344,21 @@ export default {
         copyText.setSelectionRange(0, 99999)
         navigator.clipboard.writeText(copyText.value + '&source=' + text)
       }
+      this.$swal({
+        title: 'Copy successfully',
+        text: 'คัดลอกลิ้งสำเร็จ',
+        type: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      })
     },
     async getBookingField () {
-      let itemIncustomField = []
+      let dataGet = {
+        'itemIncustomField': [],
+        'itemIncustomFieldCustomer': []
+      }
+      // let itemIncustomField = []
+      // let itemIncustomFieldCustomer = []
       this.IdUpdate = ''
       await axios
         .get(this.DNS_IP + '/BookingField/get?shopId=' + this.shopId)
@@ -1035,7 +1378,30 @@ export default {
               this.dataTypeProcess4 = rs[0].typeProcess4 || ''
               this.textUpload1 = rs[0].textUpload1 || 'Upload File 1'
               this.textUpload2 = rs[0].textUpload2 || 'Upload File 2'
-              let bookingData = []
+              this.bookingFormHeader = rs[0].bookingFormHeader || 'ลงทะเบียนนัดหมาย'
+              this.bookingFormHistoryBT = rs[0].bookingFormHistoryBT || 'ประวัติการเข้ารับบริการ'
+              this.bookingFormConfirmBT = rs[0].bookingFormConfirmBT || 'ยืนยันนัดหมาย'
+              this.bookingFormHeaderEn = rs[0].bookingFormHeaderEn || 'Booking Services'
+              this.bookingFormHistoryBTEn = rs[0].bookingFormHistoryBTEn || 'History'
+              this.bookingFormConfirmBTEn = rs[0].bookingFormConfirmBTEn || 'Confirm'
+              this.shopLat = rs[0].shopLat || ''
+              this.shopLong = rs[0].shopLong || ''
+              this.distanceSet = rs[0].distanceSet || ''
+              this.checkLocationStatus = rs[0].checkLocationStatus || 'False'
+              this.liffSendMessageAfterBookingStatus = rs[0].liffSendMessageAfterBookingStatus || 'False'
+              if (this.checkLocationStatus === 'True') {
+                this.center = {
+                  lat: parseFloat(this.shopLat),
+                  lng: parseFloat(this.shopLong)
+                }
+              }
+              let flowfieldName = []
+              let flowfieldNameCustomer = []
+              if (rs[0].multiDueDate === null || rs[0].multiDueDate === '') {
+                this.multiDueDate = 'False'
+              } else {
+                this.multiDueDate = rs[0].multiDueDate
+              }
               if (rs[0].showTime === null || rs[0].showTime === '') {
                 this.showTime = 'แสดง'
               } else {
@@ -1047,34 +1413,45 @@ export default {
                 this.showMap = rs[0].showMap
               }
               if (rs[0].showUpload1 === null || rs[0].showUpload1 === '') {
-                this.showUpload1 = 'Flase'
+                this.showUpload1 = 'False'
               } else {
                 this.showUpload1 = rs[0].showUpload1
               }
               if (rs[0].showUpload2 === null || rs[0].showUpload2 === '') {
-                this.showUpload2 = 'Flase'
+                this.showUpload2 = 'False'
               } else {
                 this.showUpload2 = rs[0].showUpload2
               }
-              this.showLimitBooking = rs[0].showLimitBooking || 'Fales'
-              bookingData = JSON.parse(rs[0].flowfieldName)
-              for (let i = 0; i < bookingData.length; i++) {
-                let d = bookingData[i]
-                itemIncustomField.push(d.fieldId)
+              if (rs[0].statusEngPayment === null || rs[0].statusEngPayment === '') {
+                this.statusEngPayment = 'False'
+              } else {
+                this.statusEngPayment = rs[0].statusEngPayment
               }
-              console.log('item', itemIncustomField)
-              this.getCustomField(itemIncustomField)
+              this.showLimitBooking = rs[0].showLimitBooking || 'False'
+              flowfieldName = JSON.parse(rs[0].flowfieldName)
+              flowfieldNameCustomer = JSON.parse(rs[0].flowfieldNameCustomer)
+              for (let i = 0; i < flowfieldName.length; i++) {
+                let d = flowfieldName[i]
+                dataGet.itemIncustomField.push(d.fieldId)
+              }
+              for (let i = 0; i < flowfieldNameCustomer.length; i++) {
+                let d = flowfieldNameCustomer[i]
+                dataGet.itemIncustomFieldCustomer.push(d.fieldId)
+              }
+              console.log('dataGet', dataGet)
+              // this.getCustomField(dataGet)
+              this.getCustomField(dataGet)
             }
           } else {
-            this.getCustomField(itemIncustomField)
+            this.getCustomField(dataGet)
+            // this.getCustomField(dataGet)
           }
         })
         .catch(error => {
           console.log('error function addData : ', error)
         })
     },
-    async getCustomField (item) {
-      let checkdata = []
+    async getCustomField (dataGet) {
       this.Fielditem = []
       await axios
         .get(this.DNS_IP + '/customField/get?shopId=' + this.shopId)
@@ -1082,40 +1459,28 @@ export default {
           let dt = response.data
           for (let i = 0; i < dt.length; i++) {
             let d = dt[i]
-            checkdata.push(d.fieldId)
-          }
-        })
-        .catch(error => {
-          console.log('error function addData : ', error)
-        })
-      let fieldAll = checkdata.filter(function (x) {
-        return !item.includes(x)
-      })
-      if (item.length > 0) {
-        await this.getCustomFieldData(item, true)
-      }
-      if (fieldAll.length > 0) {
-        await this.getCustomFieldData(fieldAll, false)
-      }
-    },
-    async getCustomFieldData (fieldSet, showItem) {
-      await axios
-        .get(this.DNS_IP + '/customField/fieldId?fieldId=' + fieldSet)
-        .then(async response => {
-          let rs = response.data
-          // let aa = []
-          for (let i = 0; i < rs.length; i++) {
-            let d = rs[i]
             let s = {}
             s.fieldId = d.fieldId
             s.fieldName = d.fieldName
+            s.fieldNameEn = d.fieldNameEn
             s.fieldType = d.fieldType
             s.optionField = d.optionField
             s.conditionField = d.conditionField
             s.conditionValue = d.conditionValue
             s.shopId = d.shopId
             s.fieldValue = ''
-            s.showitem = showItem
+            if (dataGet.itemIncustomField.filter((ID) => ID === d.fieldId).length > 0) {
+              // console.log('itemIncustomField', d.fieldId)
+              s.showitem = true
+            } else {
+              s.showitem = false
+            }
+            if (dataGet.itemIncustomFieldCustomer.filter((ID) => ID === d.fieldId).length > 0) {
+              // console.log('itemIncustomFieldCustomer', d.fieldId)
+              s.showitemCustomer = true
+            } else {
+              s.showitemCustomer = false
+            }
             this.Fielditem.push(s)
           }
           let data1 = this.Fielditem.filter(el => parseInt(el.conditionField || 0) > 0)
@@ -1135,10 +1500,79 @@ export default {
           console.log('error function addData : ', error)
         })
     },
+    // async getCustomField (item) {
+    //   let checkdata = []
+    //   this.Fielditem = []
+    //   await axios
+    //     .get(this.DNS_IP + '/customField/get?shopId=' + this.shopId)
+    //     .then(response => {
+    //       let dt = response.data
+    //       for (let i = 0; i < dt.length; i++) {
+    //         let d = dt[i]
+    //         checkdata.push(d.fieldId)
+    //       }
+    //     })
+    //     .catch(error => {
+    //       console.log('error function addData : ', error)
+    //     })
+    //   let fieldAll = checkdata.filter(function (x) {
+    //     return !item.includes(x)
+    //   })
+    //   if (item.length > 0) {
+    //     console.log('IF!1')
+    //     await this.getCustomFieldData(item, true)
+    //   }
+    //   if (fieldAll.length > 0) {
+    //     console.log('IF!2')
+    //     await this.getCustomFieldData(fieldAll, false)
+    //   }
+    // },
+    // async getCustomFieldData (fieldSet, showItem) {
+    //   console.log('@#$@#$@#$@#$@#$#', fieldSet, showItem)
+    //   await axios
+    //     .get(this.DNS_IP + '/customField/fieldId?fieldId=' + fieldSet)
+    //     .then(async response => {
+    //       let rs = response.data
+    //       // let aa = []
+    //       for (let i = 0; i < rs.length; i++) {
+    //         let d = rs[i]
+    //         let s = {}
+    //         s.fieldId = d.fieldId
+    //         s.fieldName = d.fieldName
+    //         s.fieldNameEn = d.fieldNameEn
+    //         s.fieldType = d.fieldType
+    //         s.optionField = d.optionField
+    //         s.conditionField = d.conditionField
+    //         s.conditionValue = d.conditionValue
+    //         s.shopId = d.shopId
+    //         s.fieldValue = ''
+    //         s.showitem = showItem
+    //         this.Fielditem.push(s)
+    //       }
+    //       console.log('!#!@#', this.Fielditem)
+    //       console.log('!#!@#', this.Fielditem.filter(el => parseInt(el.conditionField || 0) > 0))
+    //       let data1 = this.Fielditem.filter(el => parseInt(el.conditionField || 0) > 0)
+    //       // let data2 = []
+    //       for (let i = 0; i < data1.length; i++) {
+    //         let d = data1[i]
+    //         let indexC = this.Fielditem.findIndex(function (o) {
+    //           return o.fieldId === d.fieldId
+    //         })
+    //         let indexF = this.Fielditem.findIndex(function (o) {
+    //           return o.fieldId === parseInt(d.conditionField)
+    //         })
+    //         this.Fielditem.splice((indexF + 1), 0, this.Fielditem.splice(indexC, 1)[0])
+    //       }
+    //     })
+    //     .catch(error => {
+    //       console.log('error function addData : ', error)
+    //     })
+    // },
     async addBooking () {
       this.dataReady = true
       let booking = {}
       let UpdateField = []
+      let UpdateFieldCustomer = []
       // this.Redirect = this.DNS_IP + '/booking?shopId=' + this.$route.query.shopId
       for (let i = 0; i < this.Fielditem.length; i++) {
         let d = this.Fielditem[i]
@@ -1147,31 +1581,70 @@ export default {
             fieldId: d.fieldId
           })
         }
+        if (d.showitemCustomer === true) {
+          UpdateFieldCustomer.push({
+            fieldId: d.fieldId
+          })
+        }
       }
       console.log('update', this.Fielditem)
       booking.flowfieldName = JSON.stringify(UpdateField)
+      booking.flowfieldNameCustomer = JSON.stringify(UpdateFieldCustomer)
       booking.shopId = this.shopId
       booking.showTime = this.showTime
       booking.showMap = this.showMap
+      booking.multiDueDate = this.multiDueDate
       booking.showLimitBooking = this.showLimitBooking
+      booking.statusEngPayment = this.statusEngPayment
       booking.LAST_USER = this.session.data.userName
-      console.log('dtbooking', booking)
-      this.$swal({
-        title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      })
-        .then(async result => {
-          await this.saveBooking(booking)
-        })
-        .catch(error => {
+      booking.checkLocationStatus = this.checkLocationStatus
+      booking.liffSendMessageAfterBookingStatus = this.liffSendMessageAfterBookingStatus
+      if (this.checkLocationStatus === 'True') {
+        if (this.shopLat !== '' && this.shopLong !== '' && this.distanceSet !== '') {
+          booking.shopLat = this.shopLat
+          booking.shopLong = this.shopLong
+          booking.distanceSet = this.distanceSet
+          booking.checkLocationStatus = this.checkLocationStatus
+          console.log('dtbooking', booking)
+          this.$swal({
+            title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#b3b1ab',
+            confirmButtonText: 'ใช่',
+            cancelButtonText: 'ไม่'
+          })
+            .then(async result => {
+              await this.saveBooking(booking)
+            })
+            .catch(error => {
+              this.dataReady = false
+              console.log('Cencel : ', error)
+            })
+        } else {
           this.dataReady = false
-          console.log('Cencel : ', error)
+          this.$swal('ผิดพลาด', 'กรุณาใส่ข้อมูล ระบบจองในพื้นืี่ ในครบ', 'info')
+        }
+      } else {
+        console.log('dtbooking', booking)
+        this.$swal({
+          title: 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
         })
+          .then(async result => {
+            await this.saveBooking(booking)
+          })
+          .catch(error => {
+            this.dataReady = false
+            console.log('Cencel : ', error)
+          })
+      }
     },
     async saveBooking (booking) {
       let url = '/BookingField/add'
@@ -1202,6 +1675,9 @@ export default {
 
           this.$swal('บันทึกข้อมูลเรียบร้อย', ' ', 'success')
           await this.getBookingField()
+          if (this.editBycustomField === 'True') {
+            this.dialogchekField = false
+          }
           this.dataReady = false
           console.log(`addDataGlobal DNS_IP + ${url}`, response)
         })

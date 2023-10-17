@@ -9,6 +9,11 @@ import Payment from '@/components/Payment'
 import PrintPdf from '@/components/PrintPdf'
 import Onsite from '@/components/Onsite'
 import Mazda from '@/components/Mazda'
+import ShopPayment from '@/components/ShopPayment'
+import Sound from '@/components/Sound'
+import Rating from '@/components/Rating'
+import Pepsico from '@/components/Pepsico'
+import Message from '@/components/StepMessage'
 
 Vue.use(Router)
 
@@ -20,9 +25,29 @@ export default new Router({
     component: Core.Login
   },
   {
+    path: '/ShopList',
+    name: 'ShopList',
+    component: ShopPayment.ShopList
+  },
+  {
+    path: '/UpdateStatusPayment',
+    name: 'UpdateStatusPayment',
+    component: ShopPayment.UpdateStatus
+  },
+  {
     path: '/Core/LoginFailed',
     name: 'LoginFailed',
     component: Core.LoginFailed
+  },
+  {
+    path: '/BillingPlan',
+    name: 'BillingPlan',
+    component: Core.BillingPlan
+  },
+  {
+    path: '/LoginAdmin',
+    name: 'LoginAdmin',
+    component: Core.LoginAdmin
   },
   {
     path: '/Core/Login',
@@ -33,6 +58,31 @@ export default new Router({
     path: '/Core/Home',
     name: 'Home',
     component: Core.Home
+  },
+  {
+    path: '/InstallWizard',
+    name: 'InstallWizard',
+    component: Core.InstallWizard
+  },
+  {
+    path: '/GoogleCalendar',
+    name: 'GoogleCalendar',
+    component: Core.GoogleCalendar
+  },
+  {
+    path: '/AdminStampStep',
+    name: 'AdminStampStep',
+    component: Master.AdminStampStep
+  },
+  {
+    path: '/GoogleCalendarCmp',
+    name: 'GoogleCalendarCmp',
+    component: Core.GoogleCalendarCmp
+  },
+  {
+    path: '/Master/BookingByUserEmp',
+    name: 'BookingByUserEmp',
+    component: Master.BookingByUserEmp
   },
   {
     path: '/Master/CustomField',
@@ -75,19 +125,59 @@ export default new Router({
     component: Master.BookingLink
   },
   {
+    path: '/Master/BookingListQueue',
+    name: 'BookingListQueue',
+    component: Master.BookingListQueue
+  },
+  {
+    path: '/Master/BookingListQueueByUser',
+    name: 'BookingListQueueByUser',
+    component: Master.BookingListQueueByUser
+  },
+  {
+    path: '/Master/BookingListQueueMonitoring',
+    name: 'BookingListQueueMonitoring',
+    component: Master.BookingListQueueMonitoring
+  },
+  {
+    path: '/Master/BookingListQueueMonitoringVideo',
+    name: 'BookingListQueueMonitoringVideo',
+    component: Master.BookingListQueueMonitoringVideo
+  },
+  {
     path: '/Master/BookingList',
     name: 'BookingList',
     component: Master.BookingList
   },
-  {
-    path: '/Master/BookingListOnsite',
-    name: 'BookingListOnsite',
-    component: Master.BookingListOnsite
-  },
+  // {
+  //   path: '/Master/BookingListOnsite',
+  //   name: 'BookingListOnsite',
+  //   component: Master.BookingListOnsite
+  // },
   {
     path: '/Master/BookingListBeauty',
     name: 'BookingListBeauty',
     component: Master.BookingListBeauty
+  },
+  // {
+  //   path: '/Master/BookingListBeautyEmpTestRedis',
+  //   name: 'BookingListBeautyEmpTestRedis',
+  //   component: Master.BookingListBeautyEmpTestRedis
+  // },
+  // {
+  //   path: '/Master/BookingListBeautyTestRedis',
+  //   name: 'BookingListBeautyTestRedis',
+  //   component: Master.BookingListBeautyTestRedis
+  // },
+  // {
+  //   path: '/Master/CalendarBookingListTestRedis',
+  //   name: 'CalendarBookingListTestRedis',
+  //   component: Master.CalendarBookingListTestRedis
+  // },
+  {
+    path: '/Master/BookingListBeautyEmp',
+    name: 'BookingListBeautyEmp',
+    component: Master.BookingListBeautyEmp
   },
   {
     path: '/Master/Rating',
@@ -115,9 +205,19 @@ export default new Router({
     component: Master.CalendarBooking
   },
   {
+    path: '/Master/TableCheckQueue',
+    name: 'TableCheckQueue',
+    component: Master.TableCheckQueue
+  },
+  {
     path: '/System/User',
     name: 'User',
     component: System.User
+  },
+  {
+    path: '/System/LINEConfigSendMessage',
+    name: 'LINEConfigSendMessage',
+    component: System.LINEConfigSendMessage
   },
   {
     path: '/System/UserTypeGroup',
@@ -205,6 +305,16 @@ export default new Router({
     component: Master.BoardControlM
   },
   {
+    path: '/Master/BookingWalkinEmp',
+    name: 'BookingWalkinEmp',
+    component: Master.BookingWalkinEmp
+  },
+  {
+    path: '/Master/BookingWalkin',
+    name: 'BookingWalkin',
+    component: Master.BookingWalkin
+  },
+  {
     path: '/Master/SettingLineNotify',
     name: 'SettingLineNotify',
     component: Master.SettingLineNotify
@@ -213,6 +323,16 @@ export default new Router({
     path: '/Master/SettingTag',
     name: 'SettingTag',
     component: Master.SettingTag
+  },
+  {
+    path: '/Master/ManageLink',
+    name: 'ManageLink',
+    component: Master.ManageLink
+  },
+  {
+    path: '/Master/NoticeManagement',
+    name: 'NoticeManagement',
+    component: Master.NoticeManagement
   },
   {
     path: '/UpdateNotify',
@@ -233,6 +353,11 @@ export default new Router({
     path: '/CheckBookingEmpList',
     name: 'CheckBookingEmpList',
     component: Master.CheckBookingEmpList
+  },
+  {
+    path: '/CheckBookingList',
+    name: 'CheckBookingList',
+    component: Master.CheckBookingList
   },
   {
     path: '/BookingMobileConfirmJob',
@@ -323,6 +448,36 @@ export default new Router({
     path: '/mazda/report',
     name: 'MazdaReport',
     component: Mazda.Report
+  },
+  {
+    path: '/Master/ServiceType',
+    name: 'ServiceType',
+    component: Master.ServiceType
+  },
+  {
+    path: '/Sound/CallQueue',
+    name: 'CallQueue',
+    component: Sound.callQueue
+  },
+  {
+    path: '/Core/QrcodeBoot',
+    name: 'QrcodeBoot',
+    component: Core.QrcodeBoot
+  },
+  {
+    path: '/Rating/RatingAnswer',
+    name: 'RatingAnswer',
+    component: Rating.RatingAnswer
+  },
+  {
+    path: '/Pepsico/ImportExcel',
+    name: 'ImportExcel',
+    component: Pepsico.ImportExcel
+  },
+  {
+    path: '/Message/StepMessage',
+    name: 'StepMessage',
+    component: Message.StepMessage
   }
   ]
 })

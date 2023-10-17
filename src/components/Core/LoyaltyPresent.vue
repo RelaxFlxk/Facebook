@@ -61,6 +61,7 @@
 <script>
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import axios from 'axios' // api
+import moment from 'moment-timezone'
 export default {
   components: {
     'left-menu-admin': adminLeftMenu
@@ -74,7 +75,7 @@ export default {
   },
   methods: {
     gotoWebLoyalty () {
-      window.open('https://betask-loyalty-admin.web.app', '_blank')
+      window.open('https://betask-loyalty-app.web.app', '_blank')
       this.dialogError = false
       this.overlay = false
     },
@@ -99,7 +100,8 @@ export default {
               userCode: this.session.data.userCode,
               userCreate: this.session.data.userName,
               contactTel: this.session.data.contactTel,
-              contactEmail: this.session.data.contactEmail
+              Email: this.session.data.contactEmail,
+              expire_date_trial: moment().add(7, 'days').format('YYYY-MM-DD')
             }
             console.log('add', dt)
             await axios
@@ -111,7 +113,7 @@ export default {
               .then(async (response) => {
                 this.$swal('เรียบร้อย', 'สร้างร้าน เรียบร้อย', 'success')
                 this.overlay = false
-                window.location.href = `https://betask-loyalty-admin.web.app/core/login`
+                window.location.href = `https://betask-loyalty-app.web.app/core/login`
                 // this.$router.push('/Core/Login')
               })
             // eslint-disable-next-line handle-callback-err

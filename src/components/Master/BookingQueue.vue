@@ -58,7 +58,7 @@
         <v-col class="pt-0" cols="auto" v-if="dataRemoveExport.length > 0">
           <v-btn color="error" small @click="exportExcelRemove()" dark>
             <v-icon right dark>mdi-microsoft-excel</v-icon>
-            &nbsp;Export Cancel
+            &nbsp;Export รายการยกเลิก
           </v-btn>
         </v-col>
         <v-col
@@ -68,7 +68,7 @@
             dataItemTimesChange.filter(el => {
               return el.statusBt === 'confirmJob' || el.statusBt === 'confirm';
             }).length > 0
-            &&  $session.getAll().data.category === 'ธุรกิจรถยนต์'
+            &&  $session.getAll().data.category === 'ธุรกิจรถยนต์' &&  $session.getAll().data.shopId === 'U9084920b3005bd1dcb57af1ae6bdba32'
           "
         >
           <v-btn color="normal" small @click="exportExcelMazda()" dark>
@@ -112,8 +112,9 @@
           <v-chip-group column>
             <template v-for="(item, index) in dataCount">
               <v-chip
-                :color="'grey lighten-' + (index + 1)"
+                :color="'grey lighten-5'"
                 v-bind:key="'chip' + index"
+                class="text-wrap"
               >
                 {{ item.name + " : " + item.count }}{{
                $session.getAll().data.category === "ธุรกิจรถยนต์"
@@ -481,10 +482,12 @@
                       mdi-car-wash
                     </v-icon>
                     <v-list-item-content>
-                      <v-list-item-title class="pt-0 pb-0">{{
+                      <v-list-item-title class="pt-0 pb-0 text-wrap">{{
                         items.flowName
                       }}</v-list-item-title>
                     </v-list-item-content>
+                  </v-list-item>
+                  <v-card-text>
                     <v-row align="center" justify="end">
                       <v-icon dark class="mr-1" v-if="items.fastTrack">
                         mdi-flash
@@ -495,18 +498,24 @@
                       <v-icon dark class="mr-1" v-else>
                         mdi-clock-outline
                       </v-icon>
-                      <span class="white--text mr-2">{{
+                      <span class="white--text mr-2" style="z-index:1;">{{
                         items.timeDuetext
                       }}</span>
                     </v-row>
-                  </v-list-item>
+                  </v-card-text>
                   <v-card-text>
                     <v-row class="white--text">
                       <v-col v-if="items.cusName" cols="12" class="pt-0 pb-0">
                         คุณ {{ items.cusName }}
                       </v-col>
+                      <v-col v-if="items.tel" cols="12" class="pt-0 pb-0">
+                        โทร {{ items.tel }}
+                      </v-col>
                       <v-col v-if="items.cusReg" cols="12" class="pt-0 pb-0">
                         ทะเบียน {{ items.cusReg }}
+                      </v-col>
+                      <v-col v-if="items.bookingEmpFlowName" cols="12" class="pt-0 pb-0">
+                        พนักงาน {{ items.bookingEmpFlowName }}
                       </v-col>
                     </v-row>
                   </v-card-text>

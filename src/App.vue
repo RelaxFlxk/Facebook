@@ -1,6 +1,6 @@
 <template>
  <v-app>
-   <Sidebar v-if="$router.currentRoute.name !== 'Login' && $router.currentRoute.name !== 'BookingMobile' && $router.currentRoute.name !== 'BookingMobileConfirmJob' && $router.currentRoute.name !== 'BookingMobileEmp' && $router.currentRoute.name !==  'CheckBookingEmpList'"/>
+   <Sidebar v-if="$router.currentRoute.name !== 'Login' && $router.currentRoute.name !== 'BookingMobile' && $router.currentRoute.name !== 'BookingMobileConfirmJob' && $router.currentRoute.name !== 'BookingMobileEmp' && $router.currentRoute.name !==  'CheckBookingEmpList'  && $router.currentRoute.name !==  'CheckBookingList' && $router.currentRoute.name !== 'BillingPlan' && $router.currentRoute.name !== 'LoginAdmin' && $router.currentRoute.name !== 'ShopList' && $router.currentRoute.name !== 'UpdateStatusPayment' && $router.currentRoute.name !== 'BookingListQueueMonitoringVideo' && $router.currentRoute.name !== 'InstallWizard' && $router.currentRoute.name !== 'QrcodeBoot' && $router.currentRoute.name !== 'GoogleCalendar' && $router.currentRoute.name !== 'AdminStampStep'"/>
    <router-view/>
   </v-app>
 </template>
@@ -16,15 +16,15 @@ export default {
 </script>
 
 <style>
-@import "../node_modules/@syncfusion/ej2-base/styles/material.css";
+/* @import "../node_modules/@syncfusion/ej2-base/styles/material.css";
 @import "../node_modules/@syncfusion/ej2-inputs/styles/material.css";
 @import "../node_modules/@syncfusion/ej2-buttons/styles/material.css";
 @import "../node_modules/@syncfusion/ej2-dropdowns/styles/material.css";
 @import "../node_modules/@syncfusion/ej2-lists/styles/material.css";
-@import "../node_modules/@syncfusion/ej2-popups/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-popups/styles/material.css"; */
 /* @import "../node_modules/@syncfusion/ej2-navigations/styles/material.css"; */
-@import "../node_modules/@syncfusion/ej2-grids/styles/material.css";
-@import "../node_modules/@syncfusion/ej2-pivotview/styles/material.css";
+/* @import "../node_modules/@syncfusion/ej2-grids/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-pivotview/styles/material.css"; */
 
 @import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
 /* @font-face {
@@ -43,7 +43,7 @@ html, body {
   margin:0;
   padding:0;
   height: 100%;
-  overflow-x: hidden;
+  overflow-x: hidden !important;
   }
 :root {
   --nav-bg: #1B437C;
@@ -136,6 +136,9 @@ h4 {
 }
 .nav-text {
   color: var(--nav-text) !important;
+}
+.v-card--link:focus::before {
+opacity: 0;
 }
 /* table tr:first-child th:first-child {
   border-top-left-radius: 10px;
@@ -238,37 +241,57 @@ table tr:last-child td:last-child {
 .v-expansion-panel--active>.v-expansion-panel-header {
   min-height: 48px;
 }
+.new-background-color{
+  background-color: #f2f7ff;
+  min-height: 100vh;
+}
 .v-breadcrumbs {
   font-weight: bold;
 }
-.v-data-table-header {
+.v-data-table__wrapper{
+  min-height: 300px !important;
+}
+/* .v-data-table-header {
   background-color: var(--table-head-bg) !important;
 }
 .theme--light.v-data-table>.v-data-table__wrapper>table>thead>tr>th {
-  color: var(--table-head-text)!important;
+  color: white!important;
+  font-size: 12px !important;
+} */
+.v-data-table-header {
+    border-bottom: 3px solid #E9ECFF;
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 27px;
+}
+.theme--light.v-data-table>.v-data-table__wrapper>table>thead>tr>th {
+  font-size: 15px !important;
+  color: black!important;
 }
 .v-data-table>.v-data-table__wrapper>table>tbody>tr>td {
-  padding: 0px 5px 0px 15px;
+  padding: 15px 15px 15px 15px;
 }
-.v-data-table>.v-data-table__wrapper>table>tbody>tr:nth-child(even) {background: var(--table-body-row-even)}
+/* .v-data-table>.v-data-table__wrapper>table>tbody>tr:nth-child(even) {background: var(--table-body-row-even)}
 .v-data-table>.v-data-table__wrapper>table>tbody>tr:nth-child(odd) {background: var(--table-body-row-odd)}
 .table_detail_2>.v-data-table__wrapper>table>tbody>tr:nth-child(even) {background: #eeeeee}
-.table_detail_2>.v-data-table__wrapper>table>tbody>tr:nth-child(odd) {background: #ffffff}
-.v-data-table>.v-data-table__wrapper>table>tbody>tr>td {
+.table_detail_2>.v-data-table__wrapper>table>tbody>tr:nth-child(odd) {background: #ffffff} */
+/* .v-data-table>.v-data-table__wrapper>table>tbody>tr>td {
   color: var(--table-body-text) !important;
-}
+} */
 .custom_table_class thead th:first-child {
   border-radius: 10px 0 0 0;
 }
 .custom_table_class thead th:last-child {
   border-radius: 0 10px 0 0;
 }
-.theme--light.v-data-table .v-data-table-header th.sortable.active, .theme--light.v-data-table .v-data-table-header th.sortable.active .v-data-table-header__icon, .theme--light.v-data-table .v-data-table-header th.sortable:hover {
+/* .theme--light.v-data-table .v-data-table-header th.sortable.active, .theme--light.v-data-table .v-data-table-header th.sortable.active .v-data-table-header__icon, .theme--light.v-data-table .v-data-table-header th.sortable:hover {
   color: var(--table-head-text) !important;
-}
-.theme--light.v-data-table .v-data-table-header th.sortable .v-data-table-header__icon {
+} */
+/* .theme--light.v-data-table .v-data-table-header th.sortable .v-data-table-header__icon {
   color: var(--table-head-text) !important;
-}
+} */
 .btn {
   color: var(--btn-general-color);
 }
@@ -370,5 +393,9 @@ table tr:last-child td:last-child {
 }
 .v-text-field{
   border-radius:10px;
+}
+.pac-container {
+  position:relative !important;
+  top:-1px !important;
 }
 </style>

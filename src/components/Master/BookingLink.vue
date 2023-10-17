@@ -19,7 +19,7 @@
                 <div v-if="Redirect !== ''">
                   <v-card class="p-3" style="background-color:#050C42;">
                     <h4 class="text-center" style="color:#FFFFFF;">
-                      Copy ลิ้งนี้ไปใส่ช่องทางต่างๆ เพิ่อเริ่มใช้งาน!
+                      Copy ลิ้งค์นี้ไปใส่ช่องทางต่างๆ เพิ่อเริ่มใช้งาน!
                     </h4>
                     <v-img
                       :src="require('@/assets/Blue_Arrow_PNG.png')"

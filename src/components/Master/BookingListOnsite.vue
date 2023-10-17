@@ -3179,7 +3179,7 @@ import DateRangePicker from 'vue2-daterange-picker'
 // you need to import the CSS manually
 import QrcodeVue from 'qrcode.vue'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
-import { PivotTable } from '@click2buy/vue-pivot-table'
+// import { PivotTable } from '@click2buy/vue-pivot-table'
 import moment from 'moment-timezone'
 import BookingQueue from './BookingQueue.vue'
 import CalendarBooking from './CalendarBookingList.vue'
@@ -3196,7 +3196,7 @@ export default {
     readXlsxFile,
     VuetifyMoney,
     QrcodeVue,
-    PivotTable,
+    // PivotTable,
     BookingQueue,
     CalendarBooking
   },
@@ -4255,7 +4255,7 @@ export default {
           update.bookingDataId = d.bookingDataId
           update.bookingFieldId = d.bookingFieldId
           update.bookNo = d.bookNo
-          update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%')
+          update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%').replace(/'/g, "\\'")
           update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
           update.timeText = this.timeEdit.text
           update.flowId = this.formEdit.flowId
@@ -4284,7 +4284,7 @@ export default {
               update.bookingDataId = d.bookingDataId
               update.bookingFieldId = d.bookingFieldId
               update.bookNo = d.bookNo
-              update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%')
+              update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%').replace(/'/g, "\\'")
               update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
               update.timeText = this.timeEdit.text
               update.flowId = this.formEdit.flowId
@@ -4304,7 +4304,7 @@ export default {
               update.bookingDataId = d.bookingDataId
               update.bookingFieldId = d.bookingFieldId
               update.bookNo = d.bookNo
-              update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%')
+              update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%').replace(/'/g, "\\'")
               update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
               update.timeText = this.timeEdit.text
               update.flowId = this.formEdit.flowId

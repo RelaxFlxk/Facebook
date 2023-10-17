@@ -50,12 +50,10 @@
               outlined
               filled
               hide-details
-              item-text="text"
-              item-value="value"
-              return-object
               label="สาขา"
               prepend-inner-icon="mdi-map-marker"
               class="ma-2"
+              :readonly="checkReadOnlyBranch"
             ></v-select>
           </v-col>
           <v-col cols="12">
@@ -78,7 +76,7 @@
                       text
                       small
                       color="grey darken-2"
-                      @click="prev()"
+                      @click="prev(), dataReturnReady = true"
                     >
                       <v-icon small>
                         mdi-chevron-left
@@ -89,7 +87,7 @@
                       text
                       small
                       color="grey darken-2"
-                      @click="next()"
+                      @click="next(), dataReturnReady = true"
                     >
                       <v-icon small>
                         mdi-chevron-right
@@ -100,6 +98,14 @@
                     }}</v-toolbar-title>
 
                     <v-spacer></v-spacer>
+                    <v-btn
+                      :loading="loadingExcel"
+                      :disabled="loadingExcel"
+                      color="primary" @click="exportExcel()" v-if="dataItemTimesChange.length > 0 && $session.getAll().data.shopId !== 'U9084920b3005bd1dcb57af1ae6bdba32'">
+                      <v-icon right class="white--text">mdi-microsoft-excel</v-icon>
+                      &nbsp;Export
+                    </v-btn>
+                    &nbsp;
                     <v-menu
                       bottom
                       right
@@ -219,7 +225,7 @@
             <div class="text-center">
               <v-dialog v-model="dialog" width="600">
                 <v-card>
-                  <v-card-title class="text-h6 grey lighten-2">
+                  <v-card-title class="grey lighten-2">
                     รายชื่อลูกค้านัดหมาย
                   </v-card-title>
                   <br />
@@ -273,7 +279,8 @@
                               {{ items.serviceDetail }}<br>
                               โทร {{ items.tel }}<br>
                               <template v-if="items.carModel !== ''">รุ่นรถ {{ items.carModel }}<br></template>
-                              {{ format_date(items.contactDateBt) }}
+                              {{ items.bookingEmpFlowName === '' ? '' : 'พนักงาน ' + items.bookingEmpFlowName }}<br>
+                              {{ format_dateFUllTime(items.contactDateBt) }}
                             </v-col>
                           </v-row>
                           <!-- <v-list-item-subtitle>
@@ -326,6 +333,7 @@ import draggable from 'vuedraggable'
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
 import moment from 'moment-timezone' // แปลง date
+import XLSX from 'xlsx' // import xlsx
 
 export default {
   name: 'BookingList',
@@ -358,6 +366,7 @@ export default {
       selectedOpen: false,
       menuDate: false,
       dialog: false,
+      loadingExcel: false,
       dataCalendar: [],
       dataSummary: [],
       DataFlowName: [],
@@ -381,9 +390,14 @@ export default {
       eventInfo: [],
       monthData: null,
       bookingData: [],
+      dataItemTime: [],
       editedItemSeleteField: [],
+      dataItemTimesChange: [],
+      dataexport: [],
       paramUse: '',
-      dataReturnReady: false
+      dataReturnReady: false,
+      checkReadOnlyBranch: false,
+      bookingDataDate: ''
     }
   },
   beforeCreate () {
@@ -394,7 +408,12 @@ export default {
   async mounted () {
     // this.getCustomFieldStart()
     // await this.getDataFlow()
-    // await this.getDataBranch()
+    await this.getDataBranch()
+    if (this.session.data.masBranchID === '' || this.session.data.masBranchID === null) {
+      this.checkReadOnlyBranch = false
+    } else {
+      this.checkReadOnlyBranch = true
+    }
     // await this.getBookingList()
     // await this.getBookingData()
   },
@@ -406,9 +425,22 @@ export default {
     },
     async getDataReturn (text, date, branch, flow) {
       // console.log('getDataReturn')
+      console.log('branch, flow', branch, flow)
+      if (flow) {
+        if (flow === 'AllFlow') {
+          this.flowId = 'allFlow'
+        } else {
+          this.flowId = flow
+        }
+      }
+      if (branch) {
+        this.masBranchName = branch
+      }
+      console.log('flowId', this.flowId)
+      console.log('masBranchName', this.masBranchName)
       this.getCustomFieldStart()
       await this.getDataFlow(text)
-      await this.getDataBranch()
+      // await this.getDataBranch()
       await this.getBookingList(text, date, branch, flow)
       this.$refs.calendar.checkChange()
       if (this.dataReturnReady === false) {
@@ -433,7 +465,7 @@ export default {
       }
       this.DataFlowName = []
       await axios
-        .get(this.DNS_IP + '/flow/get?shopId=' + this.$session.getAll().data.shopId + this.paramUse)
+        .get(this.DNS_IP + '/flow/get?shopId=' + this.$session.getAll().data.shopId + '&masBranchId=' + this.masBranchName + this.paramUse)
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
@@ -466,21 +498,26 @@ export default {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
               d.text = d.masBranchName
-              d.value = d.masBranchName
+              d.value = d.masBranchID
               this.DataBranchName.push(d)
             }
-            this.masBranchName = this.DataBranchName[0]
+            this.masBranchName = this.DataBranchName[0].value
           } else {
             this.DataBranchName = []
           }
         })
     },
-    async getBookingData () {
+    async getBookingData (today) {
       this.bookingData = []
-      const dateSplit = this.today.split('-')
+      const dateSplit = today.split('-')
       const year = String(dateSplit[0])
       const month = String(dateSplit[1])
-      let url = `${this.DNS_IP}/BookingData/get?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchName=${this.masBranchName.text}`
+      let url = ''
+      if (this.flowId === 'allFlow') {
+        url = `${this.DNS_IP}/BookingData/get?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchID=${this.masBranchName}`
+      } else {
+        url = `${this.DNS_IP}/BookingData/get?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchID=${this.masBranchName}&flowId=${this.flowId}`
+      }
       await axios
         .get(url)
         .then(async response => {
@@ -494,9 +531,17 @@ export default {
           }
         })
     },
+    getDataFromFieldName (data, key) {
+      if (data !== undefined) {
+        return data.filter(function (el) {
+          return el.fieldName === key
+        })
+      } else {
+        return []
+      }
+    },
     async getBookingList (param, dateMonth) {
       console.log('getBookingList')
-      await this.getBookingData()
       if (param !== undefined) {
         this.paramUse = param
       } else {
@@ -516,34 +561,46 @@ export default {
       // const date = dateSplit[0].split('-')
       const year = String(dateSplit[0])
       const month = String(dateSplit[1])
-      this.countCus = this.masBranchName.countCus
+      if (this.DataBranchName.filter(el => { return el.value === this.masBranchName }).length > 0) {
+        this.countCus = this.DataBranchName.filter(el => { return el.value === this.masBranchName })[0].countCus
+      } else {
+        this.countCus = 0
+      }
       let bookingDate = ''
+      this.bookingDataDate = ''
       if (this.dataReturnReady === false) {
         if (dateMonth !== undefined) {
           bookingDate = '&dueDate=' + dateMonth
+          this.bookingDataDate = dateMonth
           this.today = dateMonth + '-01'
         } else {
           bookingDate = '&dueDate=' + year + '-' + month
+          this.bookingDataDate = year + '-' + month
         }
       } else {
         bookingDate = '&dueDate=' + year + '-' + month
+        this.bookingDataDate = year + '-' + month
       }
+      // await this.getBookingData(this.bookingDataDate)
       if (this.type === 'month') {
         let url = ''
+        let dataItems = []
+        let dataItemTimes = []
+        this.dataItemTime = []
         if (this.flowId === 'allFlow') {
           url = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.$session.getAll().data.shopId +
             bookingDate +
-            '&masBranchName=' +
-            this.masBranchName.text + this.paramUse
+            '&masBranchID=' +
+            this.masBranchName + this.paramUse
         } else {
           url = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.$session.getAll().data.shopId +
             bookingDate +
-            '&masBranchName=' +
-            this.masBranchName.text +
+            '&masBranchID=' +
+            this.masBranchName +
             '&flowId=' + this.flowId + this.paramUse
         }
         await axios
@@ -575,8 +632,100 @@ export default {
                   }
                 }
               }
+              let s = {}
+              s.packageName = e.packageName
+              s.packageDetails = e.packageDetails
+              s.packageImage = e.packageImage
+              s.packagePrice = e.packagePrice
+              s.packageBalanceAmount = e.packageBalanceAmount
+              s.packageAmount = e.packageAmount
+              s.packagePoint = e.packagePoint
+              s.packageExpire = e.packageExpire
+
+              s.cusName = e.bookingDataCustomerName || ''
+              s.cusReg = e.bookingDataCustomerRegisNumber || ''
+              s.tel = e.bookingDataCustomerTel || ''
+              s.carModel = e.bookingDataCustomerCarModel || ''
+              s.displayFlowName = e.displayFlowName || ''
+
+              s.bookNo = e.bookNo
+              s.flowId = e.flowId
+              s.flowName = e.flowName
+              s.dueDate = e.dueDate
+              s.dueDateDay = e.dueDateDay
+              s.dueDateTimeStamp = e.dueDateTimeStamp
+              s.remarkRemove = e.remarkRemove
+              s.remark = e.remark
+              s.userId = e.userId
+              s.chkConfirm = false
+              s.chkCancel = false
+              s.jobNo = e.jobNo
+              s.empFull_NameTH = e.empFull_NameTH
+              s.extraJob = (e.extraJob === 'true' || e.extraJob === 'True')
+              s.fastTrack = (e.fastTrack === 'true' || e.fastTrack === 'True')
+              s.remarkRemove = e.remarkRemove || ''
+              s.timeDueHtext = e.timeDueH + ':00'
+              s.timeDuetext = e.timeDue
+              if (e.statusUseBt === 'use' && e.statusBt === 'confirm') {
+                s.chkConfirm = true
+                s.chkCancel = false
+              }
+              if (e.statusUseBt === 'use' && e.statusBt === 'cancel') {
+                s.chkConfirm = false
+                s.chkCancel = true
+              }
+              s.statusBt = e.statusBt || 'wait'
+              switch (e.statusBt) {
+                case 'confirm':
+                  s.statusBtText = 'ยืนยันแล้ว'
+                  break
+                case 'cancel':
+                  s.statusBtText = 'ยกเลิก'
+                  break
+                case 'confirmJob':
+                  s.statusBtText = 'รับรถแล้ว'
+                  break
+                default:
+                  s.statusBtText = 'รายการนัดหมายใหม่'
+                  break
+              }
+              var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
+              if (chkTime.length === 0) {
+                dataItemTimes.push(s)
+              }
+              // s.cusName = this.getDataFromFieldName(this.bookingData[e.bookNo], 'ชื่อ')
+              // s.cusReg = this.getDataFromFieldName(this.bookingData[e.bookNo], 'เลขทะเบียน')
+              // s.tel = this.getDataFromFieldName(this.bookingData[e.bookNo], 'เบอร์โทร')
+              // s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
+              // s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
+              // s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
+              dataItems.push(s)
             }
             this.dataReady = true
+            console.log('dataItems', dataItems)
+            if (dataItems.length === 0 || dataItems.status === false) {
+              this.dataItemTimesChange = []
+              this.dataItemTime = []
+            } else {
+              this.dataItemTimesChange = dataItems.sort((a, b) => {
+                if (a.timeDuetext < b.timeDuetext) return -1
+                return a.timeDuetext > b.timeDuetext ? 1 : 0
+              })
+              var datause = dataItemTimes.sort((a, b) => {
+                if (a.timeDueHtext < b.timeDueHtext) return -1
+                return a.timeDueHtext > b.timeDueHtext ? 1 : 0
+              })
+              for (var k = 0; k < datause.length; k++) {
+                var t = datause[k]
+                var h = {}
+                h.timeDueHtext = t.timeDueHtext
+                let chkTimes = this.dataItemTime.filter(el => { return el.timeDueHtext === t.timeDueHtext })
+                if (chkTimes.length === 0) {
+                  this.dataItemTime.push(h)
+                }
+              }
+              this.dataRemoveExport = this.dataItemTimesChange.filter(el => { return el.statusBt === 'cancel' })
+            }
           })
       // -------   S T A R T   W E E K   ---------
       } else if (this.type === 'week') {
@@ -586,22 +735,26 @@ export default {
             '/booking_view/getCountNotime?shopId=' +
             this.$session.getAll().data.shopId +
             bookingDate +
-            '&masBranchName=' +
-            this.masBranchName.text + this.paramUse
+            '&masBranchID=' +
+            this.masBranchName + this.paramUse
         } else {
           url = this.DNS_IP +
             '/booking_view/getCountNotime?shopId=' +
             this.$session.getAll().data.shopId +
             bookingDate +
-            '&masBranchName=' +
-            this.masBranchName.text +
+            '&masBranchID=' +
+            this.masBranchName +
             '&flowId=' + this.flowId + this.paramUse
         }
         await axios
           .get(url)
           .then(async response => {
             this.dataReady = true
-            this.countCus = this.masBranchName.countCus
+            if (this.DataBranchName.filter(el => { return el.value === this.masBranchName }).length > 0) {
+              this.countCus = this.DataBranchName.filter(el => { return el.value === this.masBranchName })[0].countCus
+            } else {
+              this.countCus = 0
+            }
             for (var i = 0; i < response.data.length; i++) {
               var d = response.data[i]
               var s = {}
@@ -657,15 +810,15 @@ export default {
                   '/booking_view/getCount?shopId=' +
                   this.$session.getAll().data.shopId +
                   bookingDate +
-                  '&masBranchName=' +
-                  this.masBranchName.text + this.paramUse
+                  '&masBranchID=' +
+                  this.masBranchName + this.paramUse
               } else {
                 url = this.DNS_IP +
                   '/booking_view/getCount?shopId=' +
                   this.$session.getAll().data.shopId +
                   bookingDate +
-                  '&masBranchName=' +
-                  this.masBranchName.text +
+                  '&masBranchID=' +
+                  this.masBranchName +
                   '&flowId=' + this.flowId + this.paramUse
               }
               await axios
@@ -772,14 +925,14 @@ export default {
         if (d.statusBt === 'cancel' || !d.statusBt) {
           continue
         }
-        let serviceDetail = ''
-        let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(d.flowId) })
-        fieldflow.forEach((row) => {
-          let tempField = this.bookingData[d.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
-          serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
-        })
-        serviceDetail = serviceDetail || d.flowName
-        d.serviceDetail = serviceDetail
+        // let serviceDetail = ''
+        // let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(d.flowId) })
+        // fieldflow.forEach((row) => {
+        //   let tempField = this.bookingData[d.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+        //   serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
+        // })
+        // serviceDetail = serviceDetail || d.flowName
+        d.serviceDetail = d.displayFlowName || d.flowName
         if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
           d.chkConfirm = true
           d.chkCancel = false
@@ -798,14 +951,20 @@ export default {
           d.bgcolor = '#1565C0'
           d.bgcolorChip = 'blue'
         }
-        d.name = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'ชื่อ' })
-        d.licenseNo = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เลขทะเบียน' })
-        d.tel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เบอร์โทร' })
-        d.carModel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'รุ่นรถ' })
-        d.name = (d.name.length > 0) ? d.name[0].fieldValue : ''
-        d.licenseNo = (d.licenseNo.length > 0) ? d.licenseNo[0].fieldValue : ''
-        d.tel = (d.tel.length > 0) ? d.tel[0].fieldValue : ''
-        d.carModel = (d.carModel.length > 0) ? d.carModel[0].fieldValue : ''
+        d.bookingEmpFlowName = d.bookingEmpFlowName || ''
+        // d.name = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'ชื่อ' })
+        // d.licenseNo = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เลขทะเบียน' })
+        // d.tel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เบอร์โทร' })
+        // d.carModel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'รุ่นรถ' })
+        // d.name = (d.name.length > 0) ? d.name[0].fieldValue : ''
+        // d.licenseNo = (d.licenseNo.length > 0) ? d.licenseNo[0].fieldValue : ''
+        // d.tel = (d.tel.length > 0) ? d.tel[0].fieldValue : ''
+        // d.carModel = (d.carModel.length > 0) ? d.carModel[0].fieldValue : ''
+        d.name = d.bookingDataCustomerName || ''
+        d.licenseNo = d.bookingDataCustomerRegisNumber || ''
+        d.tel = d.bookingDataCustomerTel || ''
+        d.carModel = d.bookingDataCustomerCarModel || ''
+        d.displayFlowName = d.displayFlowName || ''
         this.dataCalendar.push(d)
       }
       this.dataCalendar.sort((a, b) => {
@@ -879,63 +1038,24 @@ export default {
             } else {
               d.color = 'orange'
             }
-            d.name = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'ชื่อ' })
-            d.licenseNo = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เลขทะเบียน' })
-            d.tel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เบอร์โทร' })
-            d.carModel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'รุ่นรถ' })
-            d.name = (d.name.length > 0) ? d.name[0].fieldValue : ''
-            d.licenseNo = (d.licenseNo.length > 0) ? d.licenseNo[0].fieldValue : ''
-            d.tel = (d.tel.length > 0) ? d.tel[0].fieldValue : ''
-            d.carModel = (d.carModel.length > 0) ? d.carModel[0].fieldValue : ''
+            // d.name = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'ชื่อ' })
+            // d.licenseNo = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เลขทะเบียน' })
+            // d.tel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เบอร์โทร' })
+            // d.carModel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'รุ่นรถ' })
+            // d.name = (d.name.length > 0) ? d.name[0].fieldValue : ''
+            // d.licenseNo = (d.licenseNo.length > 0) ? d.licenseNo[0].fieldValue : ''
+            // d.tel = (d.tel.length > 0) ? d.tel[0].fieldValue : ''
+            // d.carModel = (d.carModel.length > 0) ? d.carModel[0].fieldValue : ''
+            d.name = d.bookingDataCustomerName || ''
+            d.licenseNo = d.bookingDataCustomerRegisNumber || ''
+            d.tel = d.bookingDataCustomerTel || ''
+            d.carModel = d.bookingDataCustomerCarModel || ''
+            d.displayFlowName = d.displayFlowName || ''
             this.dataCalendar.push(d)
           }
           this.dialog = true
         })
     },
-    // async showEventre (event) {
-    //   this.dataCalendar = []
-    //   this.selectedEvent = event.event.start
-    //   console.log('selectedEventweek', moment(moment(new Date(event.event.start)), 'YYYY-MM-DD HH').format('YYYY-MM-DD HH'))
-    //   await axios
-    //     .get(
-    //       // eslint-disable-next-line quotes
-    //       this.DNS_IP +
-    //         '/booking_view/get?shopId=' +
-    //         this.session.data.shopId +
-    //         '&dueDate=' +
-    //         event.event.start
-    //     )
-    //     .then(async response => {
-    //       console.log('getData', response.data)
-    //       for (let i = 0; i < response.data.length; i++) {
-    //         let d = response.data[i]
-    //         d.chkConfirm = false
-    //         d.chkCancel = false
-    //         if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
-    //           d.chkConfirm = true
-    //           d.chkCancel = false
-    //         }
-    //         if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
-    //           d.chkConfirm = false
-    //           d.chkCancel = true
-    //         }
-    //         console.log('d.statusBt', d.statusBt)
-    //         if (d.statusBt) {
-    //           if (d.statusBt === 'confirm') {
-    //             d.color = 'green'
-    //           } else if (d.statusBt === 'confirmJob') {
-    //             d.color = 'info'
-    //           } else {
-    //             d.color = 'red'
-    //           }
-    //         } else {
-    //           d.color = 'orange'
-    //         }
-    //         this.dataCalendar.push(d)
-    //       }
-    //       this.dialog = true
-    //     })
-    // },
     confirmChk (item) {
       console.log('item', item)
       this.$swal({
@@ -1001,6 +1121,279 @@ export default {
             console.log('error function addData : ', error)
           })
       })
+    },
+    async exportExcel () {
+      this.loadingExcel = true
+      let dataExport = []
+      this.dataexport = []
+      let runNo = 0
+      // console.log('bookingData', this.bookingData)
+      // console.log('this.editedItemSeleteField', this.editedItemSeleteField)
+      // console.log('this.dataItemTimesChange', this.dataItemTimesChange)
+      // console.log('this.dataItemTime', this.dataItemTime)
+      await this.getBookingData(this.bookingDataDate)
+      var datause = this.dataItemTime.sort((a, b) => {
+        if (a.timeDuetext < b.timeDuetext) return -1
+        return a.timeDuetext > b.timeDuetext ? 1 : 0
+      })
+      for (let i = 0; i < datause.length; i++) {
+        // var d = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === item.timeDueHtext })[i]
+        let d = datause[i]
+        let dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && el.fastTrack && (el.statusBtText === 'ยืนยันแล้ว' || el.statusBtText === 'รับรถแล้ว') })
+        console.log('s.dataSelect', dataSelect)
+        if (dataSelect.length > 0) {
+          var datauseSelect = dataSelect.sort((a, b) => {
+            if (a.dueDateTimeStamp < b.dueDateTimeStamp) return -1
+            return a.dueDateTimeStamp > b.dueDateTimeStamp ? 1 : 0
+          })
+
+          for (let x = 0; x < datauseSelect.length; x++) {
+            runNo++
+            let t = datauseSelect[x]
+            let s = {}
+            // console.log('fastTrack')
+            // console.log('s.t', t)
+            if (dataExport.filter(el => { return el.timeDueHtext === this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )' }).length === 0) {
+              s.timeDueHtext = this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )'
+            } else {
+              s.timeDueHtext = ''
+            }
+            let serviceDetail = ''
+            let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
+            fieldflow.forEach((row) => {
+              let tempField = this.bookingData[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+              // serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
+              let convertTextField = ''
+              if (tempField.length > 0) {
+              // console.log('fieldType', row.fieldType)
+                if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
+                // console.log('optionField', row.optionField)
+                // console.log('fieldValue', tempField[0].fieldValue)
+                  if (tempField[0].fieldValue) {
+                    convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+                  } else {
+                    convertTextField = tempField[0].fieldValue
+                  }
+                } else {
+                  convertTextField = tempField[0].fieldValue
+                }
+              }
+              // console.log('convertTextField', convertTextField)
+              serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
+            })
+            serviceDetail = serviceDetail.trim() || t.flowName
+            console.log('serviceDetail', serviceDetail)
+
+            s.type = this.dataTypeJob3
+            s.runNo = runNo
+            s.dateBooking = t.dueDateDay
+            s.licenseNo = t.cusReg
+            s.title = t.timeDuetext
+            s.status = t.statusBtText
+            s.remark = t.remark
+            s.cusName = t.cusName
+            s.cusReg = t.cusReg
+            s.flowName = serviceDetail
+            s.dueDateTimeStamp = t.dueDateTimeStamp
+            s.empFull_NameTH = t.empFull_NameTH
+            s.extraJob = t.extraJob ? this.dataTypeJob2 : ''
+            s.carModel = this.getDataFromFieldName(this.bookingData[t.bookNo], 'รุ่นรถ')
+            s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
+            s.tel = t.tel
+            s.dataFiled = this.bookingData[t.bookNo] || []
+            s.packageName = t.packageName || ''
+            s.packageDetails = t.packageDetails || ''
+            s.packageImage = t.packageImage || ''
+            s.packagePrice = t.packagePrice || ''
+            s.packageBalanceAmount = t.packageBalanceAmount || ''
+            s.packageAmount = t.packageAmount || ''
+            s.packagePoint = t.packagePoint || ''
+            s.packageExpire = t.packageExpire || ''
+            s.empFull_NameTH = t.empFull_NameTH || ''
+            dataExport.push(s)
+          }
+        }
+      }
+      let sortDataExport = dataExport.sort((a, b) => {
+        if (a.dueDateTimeStamp < b.dueDateTimeStamp) return -1
+        return a.dueDateTimeStamp > b.dueDateTimeStamp ? 1 : 0
+      })
+      let sortDataExport2 = []
+      let s = {}
+      s.type = ''
+      s.runNo = ''
+      s.licenseNo = ''
+      s.title = ''
+      s.status = ''
+      s.cusName = ''
+      s.cusReg = ''
+      s.flowName = ''
+      s.remark = ''
+      s.tel = ''
+      s.empFull_NameTH = ''
+      s.dueDateTimeStamp = ''
+      s.carModel = ''
+      s.dataFiled = []
+      s.packageName = ''
+      s.packageDetails = ''
+      s.packageImage = ''
+      s.packagePrice = ''
+      s.packageBalanceAmount = ''
+      s.packageAmount = ''
+      s.packagePoint = ''
+      s.packageExpire = ''
+      s.empFull_NameTH = ''
+      dataExport.push(s)
+      runNo = 0
+      var datause2 = this.dataItemTime.sort((a, b) => {
+        if (a.timeDuetext < b.timeDuetext) return -1
+        return a.timeDuetext > b.timeDuetext ? 1 : 0
+      })
+      for (let i = 0; i < datause2.length; i++) {
+        let d = datause2[i]
+        let dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && !el.fastTrack && (el.statusBtText === 'ยืนยันแล้ว' || el.statusBtText === 'รับรถแล้ว') })
+        // console.log('s.dataSelect', dataSelect)
+        // console.log('this.BookingDataList', this.bookingData)
+        if (dataSelect.length > 0) {
+          var datauseSelect2 = dataSelect.sort((a, b) => {
+            if (a.dueDateTimeStamp < b.dueDateTimeStamp) return -1
+            return a.dueDateTimeStamp > b.dueDateTimeStamp ? 1 : 0
+          })
+
+          for (let x = 0; x < datauseSelect2.length; x++) {
+            runNo++
+            let t = datauseSelect2[x]
+            let s = {}
+            let serviceDetail = ''
+            let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
+            fieldflow.forEach((row) => {
+              let tempField = this.bookingData[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+              // serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
+              let convertTextField = ''
+              if (tempField.length > 0) {
+              // console.log('fieldType', row.fieldType)
+                if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
+                // console.log('optionField', row.optionField)
+                // console.log('fieldValue', tempField[0].fieldValue)
+                  if (tempField[0].fieldValue) {
+                    convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+                  } else {
+                    convertTextField = tempField[0].fieldValue
+                  }
+                } else {
+                  convertTextField = tempField[0].fieldValue
+                }
+              }
+              // console.log('convertTextField', convertTextField)
+              serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
+            })
+            if (dataExport.filter(el => { return el.timeDueHtext === this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )' }).length === 0) {
+              s.timeDueHtext = this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )'
+            } else {
+              s.timeDueHtext = ''
+            }
+            serviceDetail = serviceDetail.trim() || t.flowName
+            s.type = 'ปกติ'
+            s.runNo = runNo
+            s.dateBooking = t.dueDateDay
+            s.licenseNo = t.cusReg
+            s.title = t.timeDuetext
+            s.status = t.statusBtText
+            s.cusName = t.cusName
+            s.remark = t.remark
+            s.cusReg = t.cusReg
+            s.flowName = serviceDetail
+            s.dueDateTimeStamp = t.dueDateTimeStamp
+            s.tel = t.tel
+            s.empFull_NameTH = t.empFull_NameTH
+            s.extraJob = t.extraJob ? 'Extra Job' : ''
+            s.carModel = this.getDataFromFieldName(this.bookingData[t.bookNo], 'รุ่นรถ')
+            s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
+            s.dataFiled = this.bookingData[t.bookNo] || []
+            s.packageName = t.packageName || ''
+            s.packageDetails = t.packageDetails || ''
+            s.packageImage = t.packageImage || ''
+            s.packagePrice = t.packagePrice || ''
+            s.packageBalanceAmount = t.packageBalanceAmount || ''
+            s.packageAmount = t.packageAmount || ''
+            s.packagePoint = t.packagePoint || ''
+            s.packageExpire = t.packageExpire || ''
+            s.empFull_NameTH = t.empFull_NameTH || ''
+            sortDataExport2.push(s)
+          }
+        }
+      }
+      let sortDataExportUse = sortDataExport2.sort((a, b) => {
+        if (a.dueDateTimeStamp < b.dueDateTimeStamp) return -1
+        return a.dueDateTimeStamp > b.dueDateTimeStamp ? 1 : 0
+      })
+      this.dataexport = sortDataExport.concat(sortDataExportUse)
+      this.onExport()
+      // console.log('dataEport', JSON.stringify(dataExport))
+    },
+    onExport () {
+      var dataexport = []
+      let checkPackageShow = this.dataexport.filter(el => { return el.packageName !== '' }).length
+      console.log('checkPackageShow', checkPackageShow)
+      for (var i = 0; i < this.dataexport.length; i++) {
+        var a = this.dataexport[i]
+        let data2 = {}
+        for (let g = 0; g < a.dataFiled.length; g++) {
+          let t = a.dataFiled[g]
+          let fieldNames = ''
+          let fieldValues = ''
+          fieldNames = t.fieldName
+          fieldValues = t.fieldValue
+          data2[fieldNames] = fieldValues
+          // dataOb.push({fieldNames: fieldValues})
+        }
+        let data1 = {
+          'ประเภท': a.type,
+          // 'ลำดับ': a.runNo,
+          'วันที่': a.dateBooking,
+          'เวลา': a.title,
+          // 'ชื่อลูกค้า': a.cusName,
+          'รายการบริการ': a.flowName
+          // 'หมายเหตุ': a.extraJob,
+          // 'หมายเหตุยกเลิก': a.remarkRemove,
+          // 'เวลาติดตาม': '',
+          // 'เหตุผล': '',
+          // 'ตรง': '',
+          // 'ไม่ตรง': '',
+          // 'เปิดJob': '',
+          // 'พนักงานรับนัดหมาย': a.empFull_NameTH,
+          // 'หมายเหตุเพิ่มเติม': a.remark
+        }
+        // let data3 = {
+        //   'แพ็คเกจที่ใช้': a.packageName,
+        //   'จำนวนการใช้ที่เหลือ': a.packageBalanceAmount,
+        //   'จำนวนการใช้ทั้งหมด': a.packageAmount,
+        //   'พนักงานที่รับนัดหมาย': a.empFull_NameTH
+        // }
+        // let dataSum = Object.assign({}, data1, data2, data3)
+        // dataexport.push(dataSum)
+        if (checkPackageShow > 0) {
+          let data3 = {
+            'แพ็คเกจที่ใช้': a.packageName,
+            'จำนวนการใช้ที่เหลือ': a.packageBalanceAmount,
+            'จำนวนการใช้ทั้งหมด': a.packageAmount,
+            'พนักงานที่รับนัดหมาย': a.empFull_NameTH
+          }
+          let dataSum = Object.assign({}, data1, data2, data3)
+          dataexport.push(dataSum)
+        } else {
+          let dataSum = Object.assign({}, data1, data2)
+          dataexport.push(dataSum)
+        }
+      }
+      const dateSplit = this.today.split('-')
+      const year = String(dateSplit[0])
+      const month = String(dateSplit[1])
+      const dataWS = XLSX.utils.json_to_sheet(dataexport)
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, dataWS)
+      XLSX.writeFile(wb, 'export_' + this.format_dateNotime(year + '-' + month) + '.xlsx')
+      this.loadingExcel = false
     }
   }
 }

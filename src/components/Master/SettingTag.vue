@@ -21,35 +21,29 @@
           width="40%"
         >
           <v-card class="pa-3" style="overflow-x: hidden;">
-            <div class="text-end">
-                        <v-btn
-                        fab
-                        small
-                        dark
-                        color="white"
-                        style="color:red;font-size:20px;"
-                        @click="dialogAdd = false , formAdd.tagName = ''"
-                        >
-                        X
-                        </v-btn>
-                    </div>
-            <div class="text-center">
-              <v-chip
-                  class="ma-2 pa-6"
-                  color="cyan"
-                  label
-                  text-color="white"
-                  small
-                  dense
-                >
-                  <v-icon class="mr-2" left>
-                    mdi-tag-plus
-                  </v-icon>
-                  ADD Tag
-                </v-chip>
-            </div>
-            <v-row class="pa-16">
-              <v-col class="pa-0" cols="12">
+            <v-container>
+            <v-row>
+                <v-col cols="10" class="text-left pt-10">
+                <h3><strong>เพิ่ม Tag</strong></h3>
+                </v-col>
+                <v-col cols="2" class="pt-10">
+                <div style="text-align: end;">
+                    <v-btn
+                    class="mx-2"
+                    fab
+                    small
+                    dark
+                    color="white"
+                    :style="styleCloseBt"
+                    @click="dialogAdd = false , formAdd.tagName = ''"
+                    >
+                    X
+                    </v-btn>
+                </div>
+                </v-col>
+            </v-row>
+            <v-row>
+              <v-col class="pb-0" cols="12">
                 <!-- <p>{{itemBranch}}</p> -->
                 <v-text-field
                   v-model="formAdd.tagName"
@@ -58,27 +52,19 @@
                   outlined
                 ></v-text-field>
               </v-col>
-              <!-- <v-col class="pa-0" cols="6" md='6'>
-                <v-container fluid>
-                    <p class="text-center">การBooking</p>
-                    <v-checkbox
-                    v-model="BookingSend"
-                    label="Booking"
-                  ></v-checkbox>
-                </v-container>
-              </v-col> -->
+              <v-col cols="12">
+                <v-btn
+                  color="#173053"
+                  block
+                  large
+                  dark
+                  @click="AddData()"
+                >
+                  บันทึก
+                </v-btn>
+              </v-col>
             </v-row>
-            <div class="text-center">
-              <v-btn
-                class="ma-2"
-                color="#173053"
-                block
-                dark
-                @click="AddData()"
-              >
-                บันทึก
-              </v-btn>
-            </div>
+            </v-container>
           </v-card>
         </v-dialog>
           <v-dialog
@@ -87,61 +73,47 @@
           width="40%"
         >
           <v-card class="pa-3" style="overflow-x: hidden;">
-            <div class="text-end">
-                        <v-btn
-                        fab
-                        small
-                        dark
-                        color="white"
-                        style="color:red;font-size:20px;"
-                        @click="dialog = false"
-                        >
-                        X
-                        </v-btn>
-                    </div>
-            <div class="text-center">
-              <v-chip
-                  class="ma-2 pa-6"
-                  color="cyan"
-                  label
-                  small
-                  dense
-                  text-color="white"
-                >
-                  <v-icon class="mr-2" left>
-                    mdi-tag-plus
-                  </v-icon>
-                  Edit Tag
-                </v-chip>
-            </div>
-            <v-row class="pa-16">
-              <v-col class="pa-0" cols="12">
+            <v-container>
+            <v-row>
+                <v-col cols="10" class="text-left pt-10">
+                <h3><strong>แก้ไข Tag</strong></h3>
+                </v-col>
+                <v-col cols="2" class="pt-10">
+                <div style="text-align: end;">
+                    <v-btn
+                    class="mx-2"
+                    fab
+                    small
+                    dark
+                    color="white"
+                    :style="styleCloseBt"
+                    @click="dialog = false"
+                    >
+                    X
+                    </v-btn>
+                </div>
+                </v-col>
+            </v-row>
+            <v-row>
+              <v-col class="pb-0" cols="12">
                 <!-- <p>{{itemBranch}}</p> -->
                 <v-text-field
-                dense
+                  dense
                   v-model="formUpdate.tagName"
                   label="กรอกข้อมูล Tag"
                   outlined
                 ></v-text-field>
               </v-col>
-              <!-- <v-col class="pa-0" cols="6" md='6'>
-                <v-container fluid>
-                    <p class="text-center">การBooking</p>
-                    <v-checkbox
-                    v-model="BookingSend"
-                    label="Booking"
-                  ></v-checkbox>
-                </v-container>
-              </v-col> -->
+              <v-col cols="12">
+                <v-btn
+                  class="ma-2" color="#173053" dense dark block large
+                  @click="editData()"
+                >
+                  บันทึก
+                </v-btn>
+              </v-col>
             </v-row>
-            <div class="text-center">
-              <v-btn
-                class="ma-2" color="#173053" dense dark block
-                @click="editData()"
-              >
-                บันทึก
-              </v-btn>
-            </div>
+            </v-container>
           </v-card>
         </v-dialog>
         </v-row>
@@ -162,7 +134,7 @@
               :items="itemTag"
               :search="search"
             >
-            <template v-slot:[`item.tagName`]="{ item }">
+            <!-- <template v-slot:[`item.tagName`]="{ item }">
               <v-chip
                   class="ma-2 pa-6"
                   color="cyan"
@@ -175,6 +147,12 @@
                   </v-icon>
                   {{item.tagName}}
                 </v-chip>
+            </template> -->
+            <template v-slot:[`item.CREATE_DATE`]="{ item }">
+              {{ format_dateFUllTime(item.CREATE_DATE) }}
+            </template>
+            <template v-slot:[`item.LAST_DATE`]="{ item }">
+              {{ format_dateFUllTime(item.LAST_DATE) }}
             </template>
             <template v-slot:[`item.action`]="{ item }">
               <v-btn
@@ -237,7 +215,8 @@ export default {
       headers: [
         { text: 'ID', value: 'tagId' },
         { text: 'ชื่อ', value: 'tagName' },
-        { text: 'LAST_USER', value: 'LAST_USER' },
+        { text: 'วันที่สร้าง', value: 'CREATE_DATE' },
+        { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
         { text: 'จัดการข้อมูล', value: 'action', sortable: false, align: 'center' }
       ],
       formAdd: {

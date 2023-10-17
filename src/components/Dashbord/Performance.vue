@@ -44,7 +44,7 @@
             Pivot <small>(drag & drop UI + PivotTable)</small>
           </h2> -->
           <div class="mb-5">
-            <pivot
+            <!-- <pivot
               :data="data"
               :fields="fields"
               :available-field-keys="availableFieldKeys"
@@ -57,7 +57,7 @@
               <template slot="value" slot-scope="{ value }">
                 {{ value.toLocaleString() }}
               </template>
-            </pivot>
+            </pivot> -->
           </div>
         </div>
       </div>
@@ -74,7 +74,7 @@ import moment from 'moment' // แปลง date
 import DateRangePicker from 'vue2-daterange-picker'
 // you need to import the CSS manually
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
-import { PivotTable, Pivot } from '@click2buy/vue-pivot-table'
+// import { PivotTable, Pivot } from '@click2buy/vue-pivot-table'
 export default {
   components: {
     // 'left-menu-admin': adminLeftMenu,
@@ -82,9 +82,9 @@ export default {
     XLSX,
     readXlsxFile,
     moment,
-    DateRangePicker,
-    Pivot,
-    PivotTable
+    DateRangePicker
+    // Pivot
+    // PivotTable
   },
   // created () {
   //   setInterval(this.getNowGlobal, 1000)

@@ -9,6 +9,7 @@ import EditShop from './EditShop'
 import ConfirmPass from './ConfirmPass'
 import ListMember from './ListMember'
 import ManageUser from './ManageUser'
+import LINEConfigSendMessage from './LINEConfigSendMessage'
 export default {
   User,
   Menu,
@@ -20,5 +21,6 @@ export default {
   EditShop,
   ConfirmPass,
   ListMember,
-  ManageUser
+  ManageUser,
+  LINEConfigSendMessage
 }

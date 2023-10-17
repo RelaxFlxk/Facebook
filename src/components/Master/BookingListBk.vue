@@ -1544,7 +1544,7 @@ import DateRangePicker from 'vue2-daterange-picker'
 // you need to import the CSS manually
 import QrcodeVue from 'qrcode.vue'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
-import { PivotTable } from '@click2buy/vue-pivot-table'
+// import { PivotTable } from '@click2buy/vue-pivot-table'
 import moment from 'moment-timezone'
 
 export default {
@@ -1558,8 +1558,8 @@ export default {
     XLSX,
     readXlsxFile,
     VuetifyMoney,
-    QrcodeVue,
-    PivotTable
+    QrcodeVue
+    // PivotTable
   },
   data () {
     let startDate = null

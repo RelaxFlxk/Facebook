@@ -1772,7 +1772,7 @@
                     append-icon="mdi-text-box-search"
                     label="ค้นหาทั้งหมด"
                     :color="showColorSearch ? 'green' : 'info'"
-                    @click:append="searchAny(), showColorSearch = true, statusSearch = 'yes', dataReady = false"
+                    @click:append="searchAny()"
                     outlined
                   ></v-text-field>
                 </v-col>
@@ -1857,16 +1857,6 @@
                   <template v-slot:[`item.action2`]="{ item }">
                     <v-row>
                       <v-col>
-                        <!-- <v-chip
-                          filter
-                          dark
-                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
-                          :color="(item.remarkConfirm1) ? 'green darken-2' : 'grey darken-1'"
-                          v-model="item.remarkConfirm1"
-                          @click.stop="item.remarkConfirm1=!item.remarkConfirm1;confirmRemark(item, 'inAdvance')"
-                        >
-                          1 วัน
-                        </v-chip> -->
                         <v-btn
                           elevation="2"
                           rounded
@@ -1879,18 +1869,6 @@
                           1 วัน
                         </v-btn>
                       </v-col>
-                      <!-- <v-col>
-                        <v-chip
-                          filter
-                          dark
-                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
-                          :color="(item.remarkConfirm2) ? 'green darken-2' : 'grey darken-1'"
-                          v-model="item.remarkConfirm2"
-                          @click.stop="item.remarkConfirm2=!item.remarkConfirm2;confirmRemark(item, 'inDay')"
-                        >
-                          30 นาที
-                        </v-chip>
-                      </v-col> -->
                     </v-row>
                   </template>
                   <template v-slot:[`item.action3`]="{ item }">
@@ -1902,6 +1880,8 @@
                           :color="(item.fastTrack) ? 'green darken-2' : 'grey darken-1'"
                           v-model="item.fastTrack"
                           @click.stop="item.fastTrack=!item.fastTrack;confirmRemark(item, 'fastTrack')"
+                          :loading="loadingConfirmDay"
+                          :disabled="loadingConfirmDay"
                         >
                           {{dataTypeJob3}}
                         </v-chip>
@@ -1913,6 +1893,8 @@
                           :color="(item.extraJob) ? 'green darken-2' : 'grey darken-1'"
                           v-model="item.extraJob"
                           @click.stop="item.extraJob=!item.extraJob;confirmRemark(item, 'extraJob')"
+                          :loading="loadingConfirmDay"
+                          :disabled="loadingConfirmDay"
                         >
                           {{dataTypeJob2}}
                         </v-chip>
@@ -2045,29 +2027,7 @@
                         >
                           1 วัน
                         </v-btn>
-                        <!-- <v-chip
-                          filter
-                          dark
-                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
-                          :color="(item.remarkConfirm1) ? 'green darken-2' : 'grey darken-1'"
-                          v-model="item.remarkConfirm1"
-                          @click.stop="item.remarkConfirm1=!item.remarkConfirm1;confirmRemark(item, 'inAdvance')"
-                        >
-                          1 วัน
-                        </v-chip> -->
                       </v-col>
-                      <!-- <v-col>
-                        <v-chip
-                          filter
-                          dark
-                          v-if="item.statusBt === 'confirm' || item.statusBt === 'confirmJob'"
-                          :color="(item.remarkConfirm2) ? 'green darken-2' : 'grey darken-1'"
-                          v-model="item.remarkConfirm2"
-                          @click.stop="item.remarkConfirm2=!item.remarkConfirm2;confirmRemark(item, 'inDay')"
-                        >
-                          30 นาที
-                        </v-chip>
-                      </v-col> -->
                     </v-row>
                   </template>
                   <template v-slot:[`item.action3`]="{ item }">
@@ -2079,6 +2039,8 @@
                           :color="(item.fastTrack) ? 'green darken-2' : 'grey darken-1'"
                           v-model="item.fastTrack"
                           @click.stop="item.fastTrack=!item.fastTrack;confirmRemark(item, 'fastTrack')"
+                          :loading="loadingConfirmDay"
+                          :disabled="loadingConfirmDay"
                         >
                           {{dataTypeJob3}}
                         </v-chip>
@@ -2090,6 +2052,8 @@
                           :color="(item.extraJob) ? 'green darken-2' : 'grey darken-1'"
                           v-model="item.extraJob"
                           @click.stop="item.extraJob=!item.extraJob;confirmRemark(item, 'extraJob')"
+                          :loading="loadingConfirmDay"
+                          :disabled="loadingConfirmDay"
                         >
                           {{dataTypeJob2}}
                         </v-chip>
@@ -3121,7 +3085,7 @@ import DateRangePicker from 'vue2-daterange-picker'
 // you need to import the CSS manually
 import QrcodeVue from 'qrcode.vue'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
-import { PivotTable } from '@click2buy/vue-pivot-table'
+// import { PivotTable } from '@click2buy/vue-pivot-table'
 import moment from 'moment-timezone'
 import BookingQueue from './BookingQueue.vue'
 import CalendarBooking from './CalendarBookingList.vue'
@@ -3138,7 +3102,7 @@ export default {
     readXlsxFile,
     VuetifyMoney,
     QrcodeVue,
-    PivotTable,
+    // PivotTable,
     BookingQueue,
     CalendarBooking
   },
@@ -3684,10 +3648,11 @@ export default {
       })
     },
     async getBookingFieldText () {
-      if (JSON.parse(localStorage.getItem('sessionData')) === null) {
+      console.log('getBookingFieldText', JSON.parse(localStorage.getItem('sessionData')))
+      if (JSON.parse(localStorage.getItem('typeData')) === null) {
         await axios
           .get(
-            this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+            this.DNS_IP + '/BookingField/get?shopId=' + this.$session.getAll().data.shopId
           )
           .then(async response => {
             let rs = response.data
@@ -3722,7 +3687,7 @@ export default {
     // async getShowMap () {
     //   await axios
     //     .get(
-    //       this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+    //       this.DNS_IP + '/BookingField/get?shopId=' + this.$session.getAll().data.shopId
     //     )
     //     .then(async response1 => {
     //       let rs = response1.data
@@ -3753,6 +3718,9 @@ export default {
     },
     async searchAny () {
       if (this.searchOther.trim().length > 1) {
+        this.showColorSearch = true
+        this.statusSearch = 'yes'
+        this.dataReady = false
         // this.dataReady = false
         this.selectedStatus = true
         // this.getSelectText = ''
@@ -3772,8 +3740,8 @@ export default {
           .get(
           // eslint-disable-next-line quotes
             this.DNS_IP +
-            '/booking_view/getSearch?shopId=' +
-            this.session.data.shopId +
+            '/booking_view/getSearchNew?shopId=' +
+            this.$session.getAll().data.shopId +
             '&fieldValue=' +
             this.searchOther + '&checkOnsite=is null'
           )
@@ -3918,10 +3886,16 @@ export default {
           .catch(error => {
             console.log(error)
             this.dataReady = true
-            setTimeout(() => this.searchAny(), 3000)
+            this.showColorSearch = false
+            this.statusSearch = 'no'
+            this.$swal('ผิดพลาด', 'กรุณาใส่ลองอีกครั้ง', 'error')
+            // setTimeout(() => this.searchAny(), 3000)
           //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
           })
       } else {
+        this.dataReady = true
+        this.showColorSearch = false
+        this.statusSearch = 'no'
         this.$swal('ผิดพลาด', 'กรุณาใส่คำค้นหาให้มากว่า 1 ตัวอักษร', 'error')
       }
     },
@@ -3933,7 +3907,7 @@ export default {
     async onSaveRemark () {
       var dt = {
         LAST_USER: this.session.data.userName,
-        remark: (this.remark || '').replace(/%/g, '%%')
+        remark: (this.remark || '').replace(/%/g, '%%').replace(/'/g, "\\'")
       }
       await axios
         .post(
@@ -4008,7 +3982,7 @@ export default {
       let itemIncustomField = []
       await axios
         .get(
-          this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+          this.DNS_IP + '/BookingField/get?shopId=' + this.$session.getAll().data.shopId
         )
         .then(async response1 => {
           let rs2 = response1.data
@@ -4116,7 +4090,7 @@ export default {
         if (checkDupliRegNo.length > 0) {
           // console.log('checkDupliRegNo', checkDupliRegNo[0].fieldValue.replace(/ /g, ''))
           await axios
-            .get(this.DNS_IP + '/booking_view/getSearchDuplicate?shopId=' + this.session.data.shopId + '&fieldValue=' + checkDupliRegNo[0].fieldValue.replace(/ /g, '') +
+            .get(this.DNS_IP + '/booking_view/getSearchDuplicate?shopId=' + this.$session.getAll().data.shopId + '&fieldValue=' + checkDupliRegNo[0].fieldValue.replace(/ /g, '') +
             '&flowId=' + this.formEdit.flowId + '&dueDate=' + this.dateEdit + '&noBookNo=' + checkDupliRegNo[0].bookNo + '&statusBt=noCancel' + '&checkOnsite=is null')
             .then(response => {
               let rs = response.data
@@ -4216,7 +4190,7 @@ export default {
             update.bookingDataId = d.bookingDataId
             update.bookingFieldId = d.bookingFieldId
             update.bookNo = d.bookNo
-            update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%')
+            update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%').replace(/'/g, "\\'")
             update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
             update.timeText = this.timeEdit.text
             update.flowId = this.formEdit.flowId
@@ -4225,7 +4199,7 @@ export default {
             update.extraJob = extraJob
             update.LAST_USER = this.$session.getAll().data.userName
             update.empSelect = this.empSelectEdit
-            update.shopId = this.session.data.shopId
+            update.shopId = this.$session.getAll().data.shopId
             Add.push(update)
           } else {
             if (
@@ -4243,7 +4217,7 @@ export default {
                 update.bookingDataId = d.bookingDataId
                 update.bookingFieldId = d.bookingFieldId
                 update.bookNo = d.bookNo
-                update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%')
+                update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%').replace(/'/g, "\\'")
                 update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
                 update.timeText = this.timeEdit.text
                 update.flowId = this.formEdit.flowId
@@ -4252,7 +4226,7 @@ export default {
                 update.extraJob = extraJob
                 update.LAST_USER = this.$session.getAll().data.userName
                 update.empSelect = this.empSelectEdit
-                update.shopId = this.session.data.shopId
+                update.shopId = this.$session.getAll().data.shopId
                 Add.push(update)
               }
             } else if (d.conditionField === 'flow') {
@@ -4261,7 +4235,7 @@ export default {
                 update.bookingDataId = d.bookingDataId
                 update.bookingFieldId = d.bookingFieldId
                 update.bookNo = d.bookNo
-                update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%')
+                update.fieldValue = (d.fieldValue || '').replace(/%/g, '%%').replace(/'/g, "\\'")
                 update.dueDate = this.dateEdit + ' ' + this.timeEdit.value
                 update.timeText = this.timeEdit.text
                 update.flowId = this.formEdit.flowId
@@ -4270,7 +4244,7 @@ export default {
                 update.extraJob = extraJob
                 update.LAST_USER = this.$session.getAll().data.userName
                 update.empSelect = this.empSelectEdit
-                update.shopId = this.session.data.shopId
+                update.shopId = this.$session.getAll().data.shopId
                 Add.push(update)
               }
             }
@@ -4325,7 +4299,7 @@ export default {
       if (this.$session.id() !== undefined) {
         console.log('getDataCalendaBooking')
         try {
-          await this.$refs.CalendarBooking.getDataReturn('&checkOnsite=is null', this.dateStart)
+          await this.$refs.CalendarBooking.getDataReturn('&checkOnsite=is null', this.dateStart, this.masBranchID, this.flowSelect)
         } catch (e) { console.log(e) }
       // this.$refs.CalendarBooking.getDataFlow()
       // this.$refs.CalendarBooking.getDataBranch()
@@ -4427,17 +4401,20 @@ export default {
           LAST_USER: this.session.data.userName
         }
       } else if (text === 'inDay') {
+        this.loadingConfirmDay = true
         dt = {
           remarkConfirm2: item.remarkConfirm2,
           LAST_USER: this.session.data.userName
         }
       } else if (text === 'extraJob') {
+        this.loadingConfirmDay = true
         dt = {
           fastTrack: (item.extraJob) ? false : item.fastTrack,
           extraJob: item.extraJob,
           LAST_USER: this.session.data.userName
         }
       } else if (text === 'fastTrack') {
+        this.loadingConfirmDay = true
         dt = {
           extraJob: (item.fastTrack) ? false : item.extraJob,
           fastTrack: item.fastTrack,
@@ -4466,7 +4443,7 @@ export default {
       }
     },
     exportExcelMazda () {
-      const url = `${window.location.origin}/mazda/report?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&timeTable=${this.timeTable}&checkOnsite=is null`
+      const url = `${window.location.origin}/mazda/report?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&timeTable=${this.timeTable}&checkOnsite=is null`
       window.open(url, '_blank').focus()
     },
     exportExcel () {
@@ -4932,7 +4909,7 @@ export default {
       }
     },
     async scanQrcode () {
-      if (this.$route.query.shopId === this.session.data.shopId) {
+      if (this.$route.query.shopId === this.$session.getAll().data.shopId) {
         let dt = {
           bookNo: this.$route.query.bookNo
         }
@@ -4995,7 +4972,7 @@ export default {
           // eslint-disable-next-line quotes
             this.DNS_IP +
             '/booking_view/getJob?shopId=' +
-            this.session.data.shopId +
+            this.$session.getAll().data.shopId +
             '&bookNo=' +
             item.bookNo
           )
@@ -5148,7 +5125,7 @@ export default {
     async getDataFromAPI (url, fieldId, fieldName, param) {
       let result = []
       await axios
-        .get(this.DNS_IP + `${url}?shopId=${this.session.data.shopId}${param}`)
+        .get(this.DNS_IP + `${url}?shopId=${this.$session.getAll().data.shopId}${param}`)
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
@@ -5174,7 +5151,7 @@ export default {
       let result = []
       let resultOption = []
       await axios
-        .get(this.DNS_IP + `/flow/get?shopId=${this.session.data.shopId}&checkOnsite=is null`)
+        .get(this.DNS_IP + `/flow/get?shopId=${this.$session.getAll().data.shopId}&checkOnsite=is null`)
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
@@ -5224,7 +5201,7 @@ export default {
           // eslint-disable-next-line quotes
           this.DNS_IP +
             '/booking_view/get?shopId=' +
-            this.session.data.shopId +
+            this.$session.getAll().data.shopId +
             '&masBranchID=' +
             this.masBranchIDExport +
             '&dateRange=' + new Date(this.dateRange.startDate).toISOString().substr(0, 10) + '/' + new Date(this.dateRange.endDate).toISOString().substr(0, 10) + '&checkOnsite=is null'
@@ -5503,7 +5480,7 @@ export default {
                 // eslint-disable-next-line quotes
                 this.DNS_IP +
                     '/booking_view/get?shopId=' +
-                    this.session.data.shopId +
+                    this.$session.getAll().data.shopId +
                     '&masBranchID=' +
                     this.masBranchID +
                     '&dueDate=' + moment(moment(this.timeTable, 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD') + '&checkOnsite=is null&flowId=' + this.flowSelect
@@ -5646,7 +5623,7 @@ export default {
     //               // eslint-disable-next-line quotes
     //                 this.DNS_IP +
     //                 '/booking_view/get?shopId=' +
-    //                 this.session.data.shopId +
+    //                 this.$session.getAll().data.shopId +
     //                 '&masBranchID=' +
     //                 this.masBranchID +
     //                 '&dueDate=' + moment(moment(this.timeTable, 'YYYY-MM').toDate()).format('YYYY-MM')
@@ -5765,7 +5742,7 @@ export default {
           this.masBranchID = ''
         }
       }
-      let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
+      let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
       await axios
         .get(url)
         .then(async response => {
@@ -5794,9 +5771,9 @@ export default {
       }
       let url = ''
       if (dateStart === 'no') {
-        url = `${this.DNS_IP}/BookingData/getsearchOther?shopId=${this.session.data.shopId}&fieldValue=${searchOther}`
+        url = `${this.DNS_IP}/BookingData/getsearchOther?shopId=${this.$session.getAll().data.shopId}&fieldValue=${searchOther}`
       } else {
-        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
+        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
       }
       await axios
         .get(url)
@@ -5865,7 +5842,7 @@ export default {
           // eslint-disable-next-line quotes
           this.DNS_IP +
             '/booking_view/get?shopId=' +
-            this.session.data.shopId +
+            this.$session.getAll().data.shopId +
             '&masBranchID=' +
             this.masBranchID +
             '&dueDate=' +
@@ -5967,7 +5944,7 @@ export default {
           this.dataReady = true
           //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
         })
-      let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&statusBt=is null`
+      let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&statusBt=is null`
       await axios
         .get(url)
         .then(async response => {
@@ -5985,7 +5962,7 @@ export default {
           // eslint-disable-next-line quotes
           this.DNS_IP +
                 '/booking_view/get?shopId=' +
-                this.session.data.shopId +
+                this.$session.getAll().data.shopId +
                 '&masBranchID=' +
                 this.masBranchID +
                 '&statusBt=null&checkOnsite=is null&flowId=' + this.flowSelect
@@ -6110,7 +6087,7 @@ export default {
       let itemIncustomField = []
       await axios
         .get(
-          this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+          this.DNS_IP + '/BookingField/get?shopId=' + this.$session.getAll().data.shopId
         )
         .then(async response => {
           let rs = response.data
@@ -6214,7 +6191,7 @@ export default {
             '/flowField/get?flowId=' +
             item.flowId +
             '&shopId=' +
-            this.session.data.shopId
+            this.$session.getAll().data.shopId
         )
         .then(response => {
           let tt = response.data
@@ -6443,7 +6420,7 @@ export default {
           let checkDupliRegNo = this.fieldNameItem.filter(el => { return el.fieldName === 'เลขทะเบียน' })
           if (checkDupliRegNo.length > 0) {
             await axios
-              .get(this.DNS_IP + '/booking_view/getSearchDuplicate?shopId=' + this.session.data.shopId + '&fieldValue=' + checkDupliRegNo[0].fieldValue.replace(/ /g, '') +
+              .get(this.DNS_IP + '/booking_view/getSearchDuplicate?shopId=' + this.$session.getAll().data.shopId + '&fieldValue=' + checkDupliRegNo[0].fieldValue.replace(/ /g, '') +
             '&flowId=' + this.formAdd.flowId + '&dueDate=' + this.date + '&statusBt=noCancel' + '&checkOnsite=is null')
               .then(async response => {
                 let rs = response.data
@@ -6649,7 +6626,7 @@ export default {
       if (this.statusConfirmJob) {
         await axios
           .get(
-            this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+            this.DNS_IP + '/BookingField/get?shopId=' + this.$session.getAll().data.shopId
           )
           .then(async response1 => {
             let rs2 = response1.data
@@ -6700,7 +6677,7 @@ export default {
                               } else {
                                 d.userId = rs[0].userId
                               }
-                              d.shopId = this.session.data.shopId
+                              d.shopId = this.$session.getAll().data.shopId
                               d.userName = this.$session.getAll().data.userName
                               this.BookingDataItem.push(d)
                             }
@@ -6731,7 +6708,7 @@ export default {
               if (d.userId === 'user-skip') {
                 d.userId = ''
               }
-              d.shopId = this.session.data.shopId
+              d.shopId = this.$session.getAll().data.shopId
               d.userName = this.$session.getAll().data.userName
               this.BookingDataItem.push(d)
             }
@@ -6978,7 +6955,7 @@ export default {
         .get(
           this.DNS_IP +
             '/member/get?shopId=' +
-            this.session.data.shopId +
+            this.$session.getAll().data.shopId +
             '&liffUserId=' +
             this.BookingDataItem[0].userId
         )
@@ -7144,7 +7121,7 @@ export default {
       var dt = {
         LAST_USER: this.session.data.userName,
         empSelect: this.empSelect,
-        remark: (this.remark || '').replace(/%/g, '%%')
+        remark: (this.remark || '').replace(/%/g, '%%').replace(/'/g, "\\'")
       }
       await axios
         .post(
@@ -7318,7 +7295,7 @@ export default {
         if (this.remark !== '') {
           var dt = {
             LAST_USER: this.session.data.userName,
-            remark: (this.remark || '').replace(/%/g, '%%')
+            remark: (this.remark || '').replace(/%/g, '%%').replace(/'/g, "\\'")
           }
           await axios
             .post(
@@ -7525,7 +7502,7 @@ export default {
           .get(
             this.DNS_IP +
             '/member/get?shopId=' +
-            this.session.data.shopId +
+            this.$session.getAll().data.shopId +
             '&liffUserId=' +
             item.userId
           )

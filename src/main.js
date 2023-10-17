@@ -9,16 +9,25 @@ import Swal from 'sweetalert2'
 import VueSession from 'vue-session'
 import VueMask from 'v-mask'
 import 'bootstrap/dist/css/bootstrap.css'
-import vueXlsxTable from 'vue-xlsx-table'
+// import vueXlsxTable from 'vue-xlsx-table'
 import axios from 'axios' // api
 import moment from 'moment-timezone' // แปลง date
-import { PivotViewPlugin } from '@syncfusion/ej2-vue-pivotview'
+// import moment from 'moment' // แปลง date
+// import { PivotViewPlugin } from '@syncfusion/ej2-vue-pivotview'
 import * as Sentry from '@sentry/vue'
 import { Integrations } from '@sentry/tracing'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import VueCustomTooltip from '@adamdehaven/vue-custom-tooltip'
 import VueClipboard from 'vue-clipboard2'
-
+import GAuth from 'vue-google-oauth2'
+const gauthOption = {
+  clientId: '98104331104-1vtghokkaevmou3r1qiajsuc4kmi0f29.apps.googleusercontent.com',
+  scope: 'profile email openid https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events',
+  prompt: 'consent'
+  // prompt: 'select_account'
+}
+Vue.use(GAuth, gauthOption)
+VueClipboard.config.autoSetContainer = true
 Vue.use(VueClipboard)
 
 Vue.use(VueCustomTooltip, {
@@ -37,6 +46,15 @@ Vue.use(VueGoogleMaps, {
   }
 })
 
+Vue.prototype.$profile_dev = {
+  'displayName': 'Pamorn Trivorrarat',
+  'pictureUrl': 'https://profile.line-scdn.net/0heYkOVB2MOnZGNizwjMlECTZmORxlR2NkYlMmRXNhZhF8USomP1knFSZjN0N9ACh1OlR9QnozbBNKJU0QWGDGQkEGZEF_AXkpall0lQ',
+  // 'pictureUrl': 'https://profile.line-scdn.net/0hehdTWCiWOkdZLRKhl6VFEGVoNCouAzwPIUl2JX4pNnQnSHsUMRx8dCgoNCUmTS1BMRhzKHQpMyN9',
+  'statusMessage': 'ใช้ไลน์อันนี้นะคร้าบ',
+  'userId': 'Ud2e630e20bb8597b90d4908a46fbc4e9'
+  // 'userId': 'Ubb981ed38ad6dd18734560d2203df255'
+}
+
 Sentry.init({
   Vue,
   dsn: 'https://517cf6d99a5d4c848776f14482248e6f@o1109732.ingest.sentry.io/6138284',
@@ -52,14 +70,14 @@ Sentry.init({
   tracesSampleRate: 1.0
 })
 
-Vue.use(PivotViewPlugin)
+// Vue.use(PivotViewPlugin)
 
 Vue.config.productionTip = false
 Vue.use(Swal)
 Vue.use(VueSweetAlert)
 Vue.use(VueSession)
 Vue.use(VueMask)
-Vue.use(vueXlsxTable, {rABS: false})
+// Vue.use(vueXlsxTable, {rABS: false})
 
 Vue.prototype.$omise_public_key = 'pkey_test_5pyxhrcj5hv0pb3azgd'
 Vue.prototype.$liff_id_login = '1654154168-E3mxd54W'
@@ -77,12 +95,13 @@ Vue.mixin({
       ApplicationKey: '', // Token
       IPPotocalENV_Production: 'https://api-belinked.betaskthai.com',
       IPPotocalENV_ProductionBetask: 'https://customer-core.betaskthai.com',
-      IPPotocalENV_ProductionLoyalty: 'https://api-beloyalty.betaskthai.com',
+      IPPotocalENV_ProductionLoyalty: 'https://api-beloyalty-productions.betaskthai.com',
       // IPPotocalENV_Developer: 'https://hw.api-belinked.betaskthai.com',
       IPPotocalENV_Developer: 'http://localhost:5004',
       // IPPotocalENV_Developer: 'http://localhost:5001',
       IPPotocalENV_DeveloperBetask: 'http://localhost:5006',
       IPPotocalENV_DeveloperLoyalty: 'http://localhost:5001',
+      // IPPotocalENV_DeveloperLoyalty: 'https://api-beloyalty-productions.betaskthai.com',
       // IPPotocalENV_DeveloperLoyalty: 'http://localhost:5004',
       main_profile: {
         userLineuserId: 'U97a2b1814542579b9e5d7c1b891538ab',
@@ -94,8 +113,8 @@ Vue.mixin({
       export_data: [],
       searchAll: '',
       dataReady: true,
-      monthNamesThai: ['', 'ม.ค', 'ก.พ', 'มี.ค', 'เม.ย', 'พ.ค', 'มิ.ย', 'ก.ค', 'ส.ค', 'ก.ย', 'ต.ค', 'พ.ย', 'ธ.ค']
-
+      monthNamesThai: ['', 'ม.ค', 'ก.พ', 'มี.ค', 'เม.ย', 'พ.ค', 'มิ.ย', 'ก.ค', 'ส.ค', 'ก.ย', 'ต.ค', 'พ.ย', 'ธ.ค'],
+      styleCloseBt: 'color:red;font-size:20px;'
     }
   },
   async mounted () {
@@ -110,40 +129,89 @@ Vue.mixin({
     }
   },
   methods: {
+    async getDataLineConfig (shopId) {
+      let dataLineConfig = []
+      await axios.get(this.DNS_IP + '/lineconfig/get?shopId=' + shopId).then(response => {
+        let rs = response.data
+        console.log('getDataLineConfig shopId', shopId)
+        console.log('getDataLineConfig', rs)
+        if (rs.status === false) {
+          dataLineConfig = {
+            liffMainID: '1656581804-7KRQyqo5',
+            liffBookingFormID: '1656581804-32mk7OgE',
+            liffBookingFormEmpID: '1656581804-b09WBwkP',
+            liffMainIDLoyalty: '1656906322-JN5MM8Ep',
+            checkConfig: false
+          }
+        } else {
+          dataLineConfig = rs[0]
+        }
+      }).catch((error) => {
+        console.log(error)
+        dataLineConfig = {
+          liffMainID: '1656581804-7KRQyqo5',
+          liffBookingFormID: '1656581804-32mk7OgE',
+          liffBookingFormEmpID: '1656581804-b09WBwkP',
+          liffMainIDLoyalty: '1656906322-JN5MM8Ep',
+          checkConfig: false
+        }
+      })
+      return dataLineConfig
+    },
+    formatNumber (value) {
+      if (value && value !== 0) {
+        console.log('valuevalue', value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','))
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+      } else {
+        return 0
+      }
+    },
     format_date (value) {
       if (value) {
-        // return moment(moment(value, 'YYYY-MM-DD HH:mm:ss').tz('Asia/Bangkok').toDate()).format('YYYY-MM-DD HH:mm')
         return moment(moment(new Date(value)), 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss')
-        // return moment(moment((value), ('Asia/Bangkok')).format('DD/MM/YYYY HH:mm:ss'))
+        // return moment(String(value)).format('YYYY-MM-DD HH:mm:ss')
       }
     },
     format_dateFUllTime (value) {
       if (value) {
-        // moment.tz.add('Asia/Bangkok|ICT|-70|0|')
-        // return moment(new Date(value)).zone('UTC+7').format('YYYY-MM-DD HH:mm:ss')
         return moment(moment(new Date(value)), 'DD/MM/YYYY HH:mm:ss').format('DD/MM/YYYY HH:mm:ss')
+        // return moment(String(value)).format('DD/MM/YYYY HH:mm:ss')
       }
     },
     format_dateNotime (value) {
       if (value) {
         return moment(moment(new Date(value), 'DD/MM/YYYY').toDate()).format('DD/MM/YYYY')
+        // return moment(String(value)).format('DD/MM/YYYY')
       }
     },
     format_dateThai (value) {
       if (value) {
+        // return moment(String(value)).format('DD') + ' ' + this.monthNamesThai[moment(String(value)).format('M')]
         return moment(moment(new Date(value), 'DD/MM/YYYY').toDate()).format('DD') + ' ' + this.monthNamesThai[moment(moment(new Date(value), 'DD/MM/YYYY').toDate()).format('M')]
       }
     },
     // YYYY-MM-DD
     momenDate_1 (value) {
       if (value) {
+        // return moment(String(value)).format('YYYY-MM-DD')
         return moment(moment(new Date(value), 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
       }
     },
     // HH:MM:ss
     momenTime (value) {
       if (value) {
+        // return moment(String(value)).format('HH:mm')
         return moment(moment(new Date(value), 'HH:mm').toDate()).format('HH:mm')
+      }
+    },
+    momenDate_YYYY (value) {
+      if (value) {
+        return moment(String(value)).format('YYYY')
+      }
+    },
+    momenDate_MM (value) {
+      if (value) {
+        return moment(String(value)).format('MM')
       }
     },
     getGetToken (DNS_IP) {
@@ -321,9 +389,6 @@ Vue.mixin({
           }
         )
         .then(async (response) => {
-          // var dateObj = new Date(response.data.CREATE_DATE)
-          // var momentObj = moment(dateObj)
-          // response.data.CREATE_DATE = momentObj.format('YYYY-MM-DD')
           console.log('getData', response.data)
           this.dataReady = true
           this.dataItem = response.data

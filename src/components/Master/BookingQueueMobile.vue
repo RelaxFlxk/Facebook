@@ -75,8 +75,9 @@
           <v-chip-group column>
             <template v-for="(item, index) in dataCount">
               <v-chip
-                :color="'grey lighten-' + (index + 1)"
+                color="grey lighten-5"
                 v-bind:key="'chip' + index"
+                class="text-wrap"
               >
                 {{ item.name + " : " + item.count }}
                 {{
@@ -561,10 +562,12 @@
                       mdi-car-wash
                     </v-icon>
                     <v-list-item-content>
-                      <v-list-item-title class="pt-0 pb-0">{{
+                      <v-list-item-title class="pt-0 pb-0 text-wrap">{{
                         items.flowName
                       }}</v-list-item-title>
                     </v-list-item-content>
+                  </v-list-item>
+                  <v-card-text>
                     <v-row align="center" justify="end">
                       <v-icon dark class="mr-1" v-if="items.fastTrack">
                         mdi-flash
@@ -575,15 +578,18 @@
                       <v-icon dark class="mr-1" v-else>
                         mdi-clock-outline
                       </v-icon>
-                      <span class="white--text mr-2">{{
+                      <span class="white--text mr-2" style="z-index:1;">{{
                         items.timeDuetext
                       }}</span>
                     </v-row>
-                  </v-list-item>
+                  </v-card-text>
                   <v-card-text>
                     <v-row class="white--text">
                       <v-col v-if="items.cusName" cols="12" class="pt-0 pb-0">
                         คุณ {{ items.cusName }}
+                      </v-col>
+                      <v-col v-if="items.tel" cols="12" class="pt-0 pb-0">
+                        โทร {{ items.tel }}
                       </v-col>
                       <v-col v-if="items.cusReg" cols="12" class="pt-0 pb-0">
                         ทะเบียน {{ items.cusReg }}
