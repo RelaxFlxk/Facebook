@@ -15,7 +15,7 @@
             hide-default-footer
             :sort-desc.sync="sortDesc"
           >
-            //https://stackoverflow.com/questions/63680088/make-vuetify-v-data-table-column-sort-first-in-descending-order-second-in-ascen
+            <!-- //https://stackoverflow.com/questions/63680088/make-vuetify-v-data-table-column-sort-first-in-descending-order-second-in-ascen -->
             <template v-slot:header>
               <v-text-field
                 v-model="search"
@@ -314,7 +314,7 @@ export default {
       data = this.listNoProfile
       // ? get profile and write to followers table
       await axios
-        .post('http://127.0.0.1:5004/beChat/get_profile', { data })
+        .post(this.DNS_IP + '/beChat/get_profile', { data })
         .then(response => {
           // console.log(response.data);
           followers = response.data
@@ -329,7 +329,7 @@ export default {
         // console.log(followers)
         let input = followers[i]
         await axios
-          .post('http://127.0.0.1:5004/beChat/add_followers', input)
+          .post(this.DNS_IP + '/beChat/add_followers', input)
           .then(response => {
             // console.log(response.data)
           })
@@ -339,7 +339,7 @@ export default {
       }
 
       await axios
-        .get('http://127.0.0.1:5004/beChat/get_followers')
+        .get(this.DNS_IP + '/beChat/get_followers')
         .then(response => {
           this.list = response.data
 
@@ -366,7 +366,7 @@ export default {
       this.listNoProfile = []
       console.log('empty' + this.listNoProfile)
       await axios
-        .get('http://127.0.0.1:5004/beChat/select_followers')
+        .get(this.DNS_IP + '/beChat/select_followers')
         .then(response => {
           data = response.data
         })

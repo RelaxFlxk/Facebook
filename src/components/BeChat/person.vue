@@ -69,7 +69,7 @@
                 {{ fulldate(item.CREATE_DATE) }}
               </v-row>
               <v-row
-                :key="'D' + index"
+                :key="'D' + index "
                 class="ma-5 text-subtitle-2 justify-center"
                 style="color: #989fc9"
                 v-else-if="
@@ -129,7 +129,7 @@
                 </span>
               </v-row>
 
-              <v-row :key="index" v-else class="row_left ">
+              <v-row :key="index " v-else class="row_left ">
                 <v-avatar
                   style="dispkay: flex ;margin-top: 24px;"
                   >
@@ -450,7 +450,7 @@ export default {
 
             // เหลือส่งหลายรูป
             await axios
-              .post('http://127.0.0.1:5004/file/upload/Chat', formData, {
+              .post(this.DNS_IP + '/file/upload/Chat', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
               })
               .then(response => {
@@ -477,7 +477,7 @@ export default {
 
     async write_upload (Id) {
       await axios
-        .post('http://127.0.0.1:5004/beChat/add_log_image', {
+        .post(this.DNS_IP + '/beChat/add_log_image', {
           content: this.res,
           target: `${Id}`
         })
@@ -498,7 +498,7 @@ export default {
       var Name = this.name
       await axios
         .post(
-          'http://127.0.0.1:5004/beChat/sent_chat',
+          this.DNS_IP + '/beChat/sent_chat',
           { data: chat, Id: Id },
           {
             headers: {
@@ -516,7 +516,7 @@ export default {
     },
     async write_message (chat, Id, Name) {
       await axios
-        .post('http://127.0.0.1:5004/beChat/add_log', {
+        .post(this.DNS_IP + '/beChat/add_log', {
           userId: 'Ua541a3feb11a51d53ab1f00158a64fea',
           typeMessage: 'text',
           content: `${chat}`,
