@@ -1428,8 +1428,8 @@ export default {
                 this.statusEngPayment = rs[0].statusEngPayment
               }
               this.showLimitBooking = rs[0].showLimitBooking || 'False'
-              flowfieldName = JSON.parse(rs[0].flowfieldName)
-              flowfieldNameCustomer = JSON.parse(rs[0].flowfieldNameCustomer)
+              flowfieldName = JSON.parse(rs[0].flowfieldName) || []
+              flowfieldNameCustomer = JSON.parse(rs[0].flowfieldNameCustomer) || []
               for (let i = 0; i < flowfieldName.length; i++) {
                 let d = flowfieldName[i]
                 dataGet.itemIncustomField.push(d.fieldId)
