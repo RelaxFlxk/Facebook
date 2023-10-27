@@ -1,6 +1,8 @@
 <template>
-  <v-row no-gutters>
-    <template
+  <div>
+    <main>
+    <v-row no-gutters>
+      <template
       v-if="
         this.$vuetify.breakpoint.name == 'lg' ||
           this.$vuetify.breakpoint.name == 'xl'
@@ -125,7 +127,7 @@
       </v-col>
     </template>
     <template v-else>
-      <v-col v-if="openPerson == false">
+        <v-col v-if="openPerson == false">
         <div class="ma-4">
           <v-data-iterator
             :items="listSort"
@@ -231,6 +233,7 @@
         ></person>
       </v-col>
     </template>
+    </v-row>
 
     <!-- <v-col >
           <person
@@ -244,41 +247,46 @@
     <v-overlay :value="overlay">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
-  </v-row>
+    </main>
+  </div>
 </template>
 
 <script>
 import axios from 'axios'
 import person from './person.vue'
 import moment from 'moment'
+import adminLeftMenu from '../Sidebar.vue'
 
 export default {
-  data: () => ({
-    list: [],
-    followers: [],
-    overlay: false,
-    test: {
-      log: [],
-      id: '',
-      name: '',
-      img: ''
-    },
-    loop: null,
-    chatAll: [],
-    status: true,
-    old: [],
-    MessageStatus: {},
-    startValue: 0,
-    search: '',
-    openPerson: false,
-    sortDesc: false,
-    listSort: [],
-    tabColor: ['black', '#989fc9', '#989fc9'],
-    lasttimeMassage: {},
-    lastMassage: {},
-    oldFollower: [],
-    listNoProfile: []
-  }),
+  data () {
+    return {
+      list: [],
+      followers: [],
+      overlay: false,
+      test: {
+        log: [],
+        id: '',
+        name: '',
+        img: ''
+      },
+      loop: null,
+      chatAll: [],
+      status: true,
+      old: [],
+      MessageStatus: {},
+      startValue: 0,
+      search: '',
+      openPerson: false,
+      sortDesc: false,
+      listSort: [],
+      tabColor: ['black', '#989fc9', '#989fc9'],
+      lasttimeMassage: {},
+      lastMassage: {},
+      oldFollower: [],
+      listNoProfile: [],
+      shopId: this.$session.getAll().data.shopId
+    }
+  },
   mounted () {
     this.check_member()
     this.start()
@@ -303,7 +311,8 @@ export default {
     }
   },
   components: {
-    person
+    person,
+    'left-menu-admin': adminLeftMenu
   },
   methods: {
     async start () {
@@ -311,14 +320,19 @@ export default {
       var followers = []
       this.overlay = true
       // ? get userId where it's doenst have in followers table
-      data = this.listNoProfile
+      // data = this.listNoProfile
+      data = {
+        'data': this.listNoProfile,
+        'shopId': this.shopId
+      }
       // ? get profile and write to followers table
+      // console.log('data', data)
       await axios
-        .post(this.DNS_IP + '/beChat/get_profile', { data })
+        .post(this.DNS_IP + '/beChat/get_profile', data)
         .then(response => {
-          // console.log(response.data);
+          // console.log('/beChat/get_profile', response.data)
           followers = response.data
-          // console.log(followers.length);
+          // console.log('13123123123123', followers)
         })
         .catch(error => {
           console.log(error)
@@ -326,12 +340,14 @@ export default {
 
       // ? write database
       for (let i = 0; i < followers.length; i++) {
-        // console.log(followers)
+        // console.log('followers', followers)
         let input = followers[i]
+        input.shopId = this.shopId
+        // console.log('inputData!!!!!!!', input)
         await axios
           .post(this.DNS_IP + '/beChat/add_followers', input)
           .then(response => {
-            // console.log(response.data)
+            console.log(response.data)
           })
           .catch(error => {
             console.log(error)
@@ -339,11 +355,11 @@ export default {
       }
 
       await axios
-        .get(this.DNS_IP + '/beChat/get_followers')
+        .get(this.DNS_IP + '/beChat/get_followers?shopId=' + this.shopId)
         .then(response => {
           this.list = response.data
 
-          // console.log(response.data);
+          // console.log('/beChat/get_followers', response.data)
 
           for (let i = this.oldFollower.length; i < this.list.length; i++) {
             this.$set(this.MessageStatus, `${this.list[i].userId}`, 0)
@@ -364,32 +380,35 @@ export default {
     async check_member () {
       var data = []
       this.listNoProfile = []
-      console.log('empty' + this.listNoProfile)
+      // console.log('empty' + this.listNoProfile)
       await axios
-        .get(this.DNS_IP + '/beChat/select_followers')
+        .get(this.DNS_IP + '/beChat/select_followers?shopId=' + this.shopId)
         .then(response => {
+          // console.log('res', response.data)
           data = response.data
         })
         .catch(error => {
           console.log(error)
         })
 
-      console.log('data + ', data)
+      // console.log('data + ', data)
       for (let i = 0; i < data.length; i++) {
         if (data[i].displayName === null) {
           this.listNoProfile.push(data[i].userId)
+          // console.log('data[i].userId', data[i].userId)
         }
       }
 
-      console.log(this.listNoProfile + ' = listNoProfile')
+      // console.log(this.listNoProfile + ' = listNoProfile')
       if (this.listNoProfile.length !== 0) {
-        this.start()
+        // this.start()
       }
     },
     handle_log_update ({ Id, Name }) {
       this.click(Id, Name)
     },
     async click (userId, Name) {
+      console.log('!!!!!', userId, Name)
       // this.overlay = true;
       // this.get_log(Id);
       // this.test.Log = ['none'];
@@ -429,11 +448,9 @@ export default {
     sent () {
       if (this.test.id !== '') {
         const chatfilter = []
+        console.log('this.test.id', this.test.id)
         for (let i = 0; i < this.chatAll.length; i++) {
-          if (
-            this.chatAll[i].userId === this.test.id ||
-            this.chatAll[i].target === this.test.id
-          ) {
+          if (this.chatAll[i].userId === this.test.id || this.chatAll[i].target === this.test.id) {
             if (this.chatAll[i].content.includes('storage')) {
               chatfilter.push(this.chatAll[i])
             } else {
@@ -444,7 +461,7 @@ export default {
               let replaceNewline = link.replace(/\n/g, '<br>')
 
               this.chatAll[i].content = replaceNewline
-              console.log(chatfilter)
+              // console.log(chatfilter)
               chatfilter.push(this.chatAll[i])
             }
           }
@@ -459,14 +476,15 @@ export default {
     async get_log () {
       // ?
       await axios
-        .get(`http://127.0.0.1:5004/beChat/get_chat`)
+        .get(this.DNS_IP + '/beChat/get_chat?shopId=' + this.shopId)
         .then(response => {
+          console.log('getLog', response.data)
           if (response.data.message === 'No data found') {
             this.overlay = false
             this.chatAll = ['none']
           } else {
             this.chatAll = response.data
-            console.log(this.chatAll)
+            // console.log(this.chatAll)
             // for (let i = 0; i < response.data.length; i++) {
             //     this.chatAll[i].date = moment(
             //         response.data[i].date,
@@ -561,7 +579,7 @@ export default {
       this.openPerson = value
     },
     test_action () {
-      console.log(this.sortDesc)
+      // console.log(this.sortDesc)
     },
     Default_sort () {
       this.listSort = this.list.slice(0)

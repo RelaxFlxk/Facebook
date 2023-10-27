@@ -82,7 +82,7 @@
 
               <v-row
                 :key="index"
-                v-if="item.userId === item.shopId"
+                v-if="item.method === 'push'"
                 class="row_right my-6"
               >
                 <span class="time mr-4">
@@ -323,27 +323,32 @@
 
 <script>
 import axios from 'axios'
-import pushImage from './pushImage'
+// import pushImage from './pushImage'
 import moment from 'moment'
 
 // this.$session.getAll().data.shopId
 export default {
-  data: () => ({
-    x: null,
-    url: null,
-    image: null,
-    res: null,
-    loader: null,
-    loading: false,
-    overlay: false,
-    chat: null,
-    logChat: [],
-    scrollLevel: 0,
-    scrollStatus: false,
-    imgWidth: 200,
-    dialogImage: false,
-    imageStatus: ''
-  }),
+  data () {
+    return {
+      x: null,
+      url: null,
+      image: null,
+      res: null,
+      loader: null,
+      loading: false,
+      overlay: false,
+      chat: null,
+      logChat: [],
+      scrollLevel: 0,
+      scrollStatus: false,
+      imgWidth: 200,
+      dialogImage: false,
+      imageStatus: '',
+      shopId: this.$session.getAll().data.shopId,
+      session: this.$session.getAll()
+    }
+  },
+
   props: {
     log: Array,
     id: String,
@@ -387,7 +392,7 @@ export default {
     },
     update () {
       this.logChat = this.Log
-      // console.log(this.Log);
+      console.log(this.logChat)
       if (
         this.$vuetify.breakpoint.name !== 'lg' &&
         this.$vuetify.breakpoint.name
@@ -456,16 +461,18 @@ export default {
               .then(response => {
                 this.loading = false
                 this.res = response.data
+                console.log('res', this.res)
               })
               .catch(error => {
                 console.log(error.response.status, error.response.statusText)
               })
 
-            var img = this.res
+            // var img = this.res
 
             // console.log(img);
-            pushImage(img, Id)
+            // this.pushImage(img, Id)
             await this.write_upload(Id)
+            await this.Sent_Img(Id)
           } else {
             await this.Sent_chat()
           }
@@ -474,14 +481,36 @@ export default {
         }
       }
     },
-
-    async write_upload (Id) {
+    async Sent_Img (Id) {
+      // console.log(typeof this.chat);
+      let dt = {
+        'content': this.res,
+        'userId': `${Id}`,
+        'shopId': this.shopId
+      }
       await axios
-        .post(this.DNS_IP + '/beChat/add_log_image', {
-          content: this.res,
-          target: `${Id}`
+        .post(
+          this.DNS_IP + '/beChat/sent_chat_img', dt)
+        .then((response) => {
         })
-        .then(() => {
+        .catch(error => {
+          console.log(error.response)
+        })
+    },
+    async write_upload (Id) {
+      let dt = {
+        'userId': this.session.data.userId,
+        'shopId': this.shopId,
+        'typeMessage': 'Upload',
+        'content': this.res,
+        'method': 'push',
+        'target': `${Id}`,
+        'CREATE_USER': this.session.data.userName,
+        'LAST_USER': this.session.data.userName
+      }
+      await axios
+        .post(this.DNS_IP + '/beChat/add_log_image', dt)
+        .then((res) => {
           if (this.loading) {
             this.loading = false
           }
@@ -499,13 +528,7 @@ export default {
       await axios
         .post(
           this.DNS_IP + '/beChat/sent_chat',
-          { data: chat, Id: Id },
-          {
-            headers: {
-              Authorization:
-                'bWamP56kIqf1vM27e1nwiNAUnI3C20Nw5DNKGuMBZ0HGi8QgV5LlsfYxSA5MdH4usyRv486bbGVXba6Z/DbTgQwrIxhajPz014/nmFQQ41YfZiO0iEgn+3JmjExzl6AOAB4w/0xLVRJtmwOHOaXgfwdB04t89/1O/w1cDnyilFU='
-            }
-          }
+          { data: chat, Id: Id, shopId: this.shopId }
         )
         .then(() => {
           this.write_message(chat, Id, Name)
@@ -515,14 +538,18 @@ export default {
         })
     },
     async write_message (chat, Id, Name) {
+      let dt = {
+        userId: this.session.data.userId,
+        shopId: this.shopId,
+        typeMessage: 'text',
+        content: `${chat}`,
+        method: 'push',
+        target: `${Id}`,
+        CREATE_USER: this.session.data.userName,
+        LAST_USER: this.session.data.userName
+      }
       await axios
-        .post(this.DNS_IP + '/beChat/add_log', {
-          userId: 'Ua541a3feb11a51d53ab1f00158a64fea',
-          typeMessage: 'text',
-          content: `${chat}`,
-          method: 'push',
-          target: `${Id}`
-        })
+        .post(this.DNS_IP + '/beChat/add_log', dt)
         .then(() => {
           if (this.loading) {
             this.loading = false
@@ -659,7 +686,6 @@ export default {
 }
 
 .content_img {
-  background-color: white;
   padding: 13px;
   border-radius: 0px 15px 15px;
   margin-left: 15px;
