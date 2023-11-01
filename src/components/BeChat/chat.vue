@@ -326,13 +326,13 @@ export default {
         'shopId': this.shopId
       }
       // ? get profile and write to followers table
-      // console.log('data', data)
+      console.log('data', data)
       await axios
         .post(this.DNS_IP + '/beChat/get_profile', data)
         .then(response => {
-          // console.log('/beChat/get_profile', response.data)
+          console.log('/beChat/get_profile', response.data)
           followers = response.data
-          // console.log('13123123123123', followers)
+          console.log('13123123123123', followers)
         })
         .catch(error => {
           console.log(error)
@@ -381,6 +381,7 @@ export default {
       var data = []
       this.listNoProfile = []
       // console.log('empty' + this.listNoProfile)
+      // console.log('sssss', this.DNS_IP + '/beChat/select_followers?shopId=' + this.shopId)
       await axios
         .get(this.DNS_IP + '/beChat/select_followers?shopId=' + this.shopId)
         .then(response => {
@@ -448,7 +449,7 @@ export default {
     sent () {
       if (this.test.id !== '') {
         const chatfilter = []
-        console.log('this.test.id', this.test.id)
+        // console.log('this.test.id', this.test.id)
         for (let i = 0; i < this.chatAll.length; i++) {
           if (this.chatAll[i].userId === this.test.id || this.chatAll[i].target === this.test.id) {
             if (this.chatAll[i].content.includes('storage')) {
@@ -475,10 +476,11 @@ export default {
     },
     async get_log () {
       // ?
+      console.log('URL', this.DNS_IP + '/beChat/get_chat?shopId=' + this.shopId)  
       await axios
         .get(this.DNS_IP + '/beChat/get_chat?shopId=' + this.shopId)
         .then(response => {
-          console.log('getLog', response.data)
+          // console.log('getLog', response.data)
           if (response.data.message === 'No data found') {
             this.overlay = false
             this.chatAll = ['none']
@@ -608,7 +610,7 @@ export default {
   }
 }
 </script>
-<style>
+<!-- <style>
 .box_left {
   background-color: #fefefe;
   height: 717px;
@@ -693,4 +695,4 @@ export default {
   background-color: #ddd;
 }
 
-</style>
+</style> -->

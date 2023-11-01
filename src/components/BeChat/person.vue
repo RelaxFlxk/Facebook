@@ -576,7 +576,7 @@ export default {
   }
 }
 </script>
-<style scoped>
+<!-- <style scoped>
 .Box_right {
   height: 100vh;
   display: flex;
@@ -796,4 +796,4 @@ export default {
   justify-content: center;
   align-items: center;
 }
-</style>
+</style> -->
