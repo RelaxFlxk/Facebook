@@ -921,7 +921,7 @@
                               v-model="formAdd.checkOnsiteEmp"
                             ></v-checkbox>
                             </v-col>
-                            <v-col cols="8" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;">
+                            <v-col cols="12" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;">
                               <v-checkbox
                               label="นัดหมายล่วงหน้า"
                               false-value="False"
@@ -931,8 +931,9 @@
                               true-value="True"
                               v-model="formAdd.bookingNowCheck"
                             ></v-checkbox>
-                            <v-select
-                            v-if="formAdd.bookingNowCheck === 'True'"
+                            </v-col>
+                            <v-col cols="8" class="pt-0 pb-0 ml-3" style="display: flex;justify-content: flex-start;" v-if="formAdd.bookingNowCheck === 'True'">
+                          <v-select
                               dense
                               class="ma-3"
                               :items="bookingNowCheckCount"
@@ -943,6 +944,15 @@
                               attach
                               :menu-props="{ bottom: true, offsetY: true }"
                             ></v-select>
+                            <v-checkbox
+                            label="อ้างอิง จากเวลาที่ลูกค้านัดหมาย"
+                            false-value="False"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            color="#1B437C"
+                            true-value="True"
+                            v-model="formAdd.bookingNowCheckTimeStatus"
+                          ></v-checkbox>
                             </v-col>
                           </v-row>
                         </v-col>
@@ -1441,7 +1451,7 @@
                               v-model="formUpdate.checkOnsiteEmp"
                             ></v-checkbox>
                             </v-col>
-                            <v-col cols="8" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;">
+                            <v-col cols="12" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;">
                               <v-checkbox
                               label="นัดหมายล่วงหน้า"
                               false-value="False"
@@ -1451,8 +1461,9 @@
                               true-value="True"
                               v-model="formUpdate.bookingNowCheck"
                             ></v-checkbox>
-                            <v-select
-                              v-if="formUpdate.bookingNowCheck === 'True'"
+                            </v-col>
+                            <v-col cols="8" class="pt-0 pb-0 ml-3" style="display: flex;justify-content: flex-start;" v-if="formUpdate.bookingNowCheck === 'True'">
+                          <v-select
                               dense
                               class="ma-3"
                               :items="bookingNowCheckCount"
@@ -1463,6 +1474,15 @@
                               attach
                               :menu-props="{ bottom: true, offsetY: true }"
                             ></v-select>
+                            <v-checkbox
+                            label="อ้างอิง จากเวลาที่ลูกค้านัดหมาย"
+                            false-value="False"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            color="#1B437C"
+                            true-value="True"
+                            v-model="formUpdate.bookingNowCheckTimeStatus"
+                          ></v-checkbox>
                             </v-col>
                           </v-row>
                         </v-col>
@@ -2978,6 +2998,7 @@ export default {
         timeSlot: 1,
         bookingNowCheck: 'False',
         bookingNowCheckCount: 0,
+        bookingNowCheckTimeStatus: 'False',
         overTime: 'True',
         customerTimeSlot: 'False',
         empTitleTh: 'พนักงานช่าง',
@@ -3062,6 +3083,7 @@ export default {
         timeSlot: 1,
         bookingNowCheck: 'False',
         bookingNowCheckCount: 0,
+        bookingNowCheckTimeStatus: 'False',
         overTime: 'True',
         customerTimeSlot: 'False',
         empTitleTh: 'พนักงานช่าง',
@@ -4804,6 +4826,7 @@ export default {
       this.formUpdate.bookingNowCheck = item.bookingNowCheck || 'False'
       this.formUpdate.overTime = item.overTime || 'True'
       this.formUpdate.bookingNowCheckCount = item.bookingNowCheckCount || 0
+      this.formUpdate.bookingNowCheckTimeStatus = item.bookingNowCheckTimeStatus || 'False'
       this.formUpdate.timeSlot = item.timeSlot || 1
       this.formUpdate.timeSlotStatus = this.$session.getAll().data.timeSlotStatus || 'False'
       this.formUpdate.empTitleTh = item.empTitleTh || 'พนักงานช่าง'
