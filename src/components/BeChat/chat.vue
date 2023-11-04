@@ -476,7 +476,7 @@ export default {
     },
     async get_log () {
       // ?
-      console.log('URL', this.DNS_IP + '/beChat/get_chat?shopId=' + this.shopId)  
+      console.log('URL', this.DNS_IP + '/beChat/get_chat?shopId=' + this.shopId)
       await axios
         .get(this.DNS_IP + '/beChat/get_chat?shopId=' + this.shopId)
         .then(response => {
