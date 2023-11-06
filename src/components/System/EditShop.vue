@@ -914,8 +914,8 @@ export default {
               }
               this.updateBetaskDB(ds, this.$session.getAll().data.shopId)
               console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
-              console.log(this.timeSlotStatusOld, this.formUpdate.timeSlotStatus)
               let checktimeSlotStatus = this.formUpdate.timeSlotStatus || 'False'
+              console.log('-----------', this.timeSlotStatusOld, checktimeSlotStatus)
               if (this.timeSlotStatusOld === checktimeSlotStatus) {
                 this.$swal('เรียบร้อย', 'บันทึกสำเร็จ', 'success')
               } else {
@@ -944,9 +944,11 @@ export default {
                   .then(async response => {})
                 this.$swal('เรียบร้อย', 'กรุณา เข้าสู่ระบบอีกครั้ง', 'success')
                   .then(async result => {
-                    this.$router.push('/Core/Login')
+                    console.log('IF!!!!!!!_IF')
+                    this.logout()
                   }).catch(error => {
-                    this.$router.push('/Core/Login')
+                    console.log('IF!!!!!!!_ELSE')
+                    this.logout()
                     console.log('error function editDataGlobal : ', error)
                   })
               }
@@ -979,8 +981,14 @@ export default {
           console.log('error function editDataGlobal : ', error)
         })
     },
-    async updateBetaskDB (ds, shopId) {
-      await axios
+    logout () {
+      this.$session.destroy()
+      this.$session.clear()
+      localStorage.clear()
+      this.$router.push('/Core/Login')
+    },
+    updateBetaskDB (ds, shopId) {
+      axios
         .post(
           // eslint-disable-next-line quotes
           this.DNS_IP_Betask + "/sys_shop/editData/" + shopId,

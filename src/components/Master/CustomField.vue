@@ -1685,7 +1685,7 @@ export default {
       if (this.formAdd.optionFieldType === 'Autocompletes' || this.formAdd.optionFieldType === 'Selects' || this.formAdd.optionFieldType === 'Radio') {
         this.formAdd.fieldType = this.formAdd.optionFieldType
       } else {
-        this.formAdd.optionField = []
+        this.formAdd.optionField = '[]'
       }
       console.log('formAdd', this.formAdd)
       this.add()
@@ -1764,7 +1764,7 @@ export default {
           if (this.formUpdate.optionFieldType === 'Autocompletes' || this.formUpdate.optionFieldType === 'Selects' || this.formUpdate.optionFieldType === 'Radio') {
             this.formUpdate.fieldType = this.formUpdate.optionFieldType
           } else {
-            this.formUpdate.optionField = []
+            this.formUpdate.optionField = '[]'
           }
           if (this.checkbox === 'true') {
             this.formUpdate.conditionField = this.formUpdateConditionField.value

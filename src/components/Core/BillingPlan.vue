@@ -1395,9 +1395,13 @@ export default {
           )
           .then(async (response) => {
             let rs = response.data
+            console.log('rs[0].id', rs[0].id)
+            console.log('if', rs.status === false || rs[0].id === null)
             if (rs.status === false || rs[0].id === null) {
+              // เคสที่ไม่มี trial day
               if (trialCheck === '') {
                 console.log('1')
+                // วันที่ปัจจุบัน มากกว่าหรือเท่ากัน 1 และ ต้องไม่เกินวันที่ 7
                 if (parseInt(moment().format('DD')) >= 1 && parseInt(moment().format('DD')) <= 7) {
                   this.pricePackage = item.pricePackage || 0
                   this.paymentAmount = item.pricePackage
@@ -1422,6 +1426,7 @@ export default {
                   // this.billingCurrentPriceDateFomatShow = moment().format('DD/MM/YYYY')
                 }
               } else {
+                // เดือน/ปี ปัจจุบัน เท่ากับเดือนปีของ trial
                 if (moment().format('YYYY-MM') === dateTrialsYearMonth) {
                   if (parseInt(dateTrialsDay) === 1) {
                     if (parseInt(dateTrialsDay) === parseInt(moment().format('DD'))) {
@@ -1462,8 +1467,8 @@ export default {
                     this.paymentAmountVat = amount.toFixed(2)
                   }
                 } else {
-                  console.log('3')
                   if (rs[0].paymentDateMMYY >= moment().format('YYYY-MM')) {
+                    console.log('3')
                     let dateCalDay = parseInt(lastDayOfMonth) - parseInt(dateTrialsDay)
                     let dateCalDayCurrent = parseInt(lastDayOfMonth)
                     this.pricePackage = item.pricePackage
@@ -1477,6 +1482,17 @@ export default {
                     const amount = parseFloat(this.paymentAmount)
                     let amount7percen = (amount * 0.07)
                     this.paymentAmountVat = amount7percen.toFixed(2)
+
+                    // if (this.paymentAmount < 1) {
+                    //   const amount = parseFloat(this.currentPrice)
+                    //   let amount7percen = (amount * 0.07)
+                    //   this.paymentAmountVat = amount7percen.toFixed(2)
+                    //   this.paymentAmount = amount
+                    // } else {
+                    //   const amount = parseFloat(this.paymentAmount)
+                    //   let amount7percen = (amount * 0.07)
+                    //   this.paymentAmountVat = amount7percen.toFixed(2)
+                    // }
                   } else {
                     if (dateTrialsYearMonth > moment().format('YYYY-MM')) {
                       console.log('4')
@@ -1495,23 +1511,35 @@ export default {
                       const amount = parseFloat(this.paymentAmount)
                       let amount7percen = (amount * 0.07)
                       this.paymentAmountVat = amount7percen.toFixed(2)
+
+                      // if (this.paymentAmount < 1) {
+                      //   const amount = parseFloat(this.currentPrice)
+                      //   let amount7percen = (amount * 0.07)
+                      //   this.paymentAmountVat = amount7percen.toFixed(2)
+                      //   this.paymentAmount = amount
+                      // } else {
+                      //   const amount = parseFloat(this.paymentAmount)
+                      //   let amount7percen = (amount * 0.07)
+                      //   this.paymentAmountVat = amount7percen.toFixed(2)
+                      // }
                     } else {
                       console.log('5')
-                      let dateCalDay = parseInt(lastDayOfMonth) - parseInt(dateTrialsDay)
-                      let dateCalDayCurrent = parseInt(lastDayOfMonth)
+                      lastDayOfMonth = moment().endOf('month').format('DD')
+                      let dateCalDay = parseInt(lastDayOfMonth) - moment().format('DD')
+                      // let dateCalDayCurrent = parseInt(lastDayOfMonth)
                       this.pricePackage = item.pricePackage
                       this.paymentAmount = Math.ceil((dateCalDay * item.pricePackage) / parseInt(lastDayOfMonth))
                       this.trialsPrice = 0
-                      this.currentPrice = Math.ceil((dateCalDayCurrent * item.pricePackage) / parseInt(lastDayOfMonth))
+                      this.currentPrice = 0
                       this.billingTrialsPriceDateFomat = ''
                       this.billingCurrentPriceDateFomat = moment().format('YYYY-MM-DD')
                       this.billingTrialsPriceDateFomatShow = ''
                       this.billingCurrentPriceDateFomatShow = moment().format('DD/MM/YYYY')
+                      this.paymentAmount = this.paymentAmount
                       const amount = parseFloat(this.paymentAmount)
                       let amount7percen = (amount * 0.07)
                       this.paymentAmountVat = amount7percen.toFixed(2)
                     }
-
                     console.log('lastDayOfMonth', lastDayOfMonth)
                     console.log('this.paymentAmount', this.paymentAmount)
                     console.log('this.currentPrice', this.currentPrice)

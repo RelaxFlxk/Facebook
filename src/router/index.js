@@ -14,6 +14,7 @@ import Sound from '@/components/Sound'
 import Rating from '@/components/Rating'
 import Pepsico from '@/components/Pepsico'
 import Message from '@/components/StepMessage'
+import BeChat from '@/components/BeChat'
 
 Vue.use(Router)
 
@@ -478,6 +479,11 @@ export default new Router({
     path: '/Message/StepMessage',
     name: 'StepMessage',
     component: Message.StepMessage
+  },
+  {
+    path: '/BeChat/Chat',
+    name: 'BeChat',
+    component: BeChat.Chat
   }
   ]
 })
