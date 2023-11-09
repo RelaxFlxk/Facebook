@@ -1877,8 +1877,8 @@ export default {
       let sumAmountAll = 0
       for (let i = 0; i < this.itemBooking.length; i++) {
         let d = this.itemBooking[i]
-        if (d.paymentStatus === 'finish') {
-          console.log(d.paymentAmountTrue)
+        if (d.paymentStatus === 'finish' && d.paymentDateMMYY === this.dateStart) {
+          console.log('sumAmountAll', d.paymentAmountTrue)
           sumAmountAll = sumAmountAll + parseFloat(d.paymentAmountTrue || 0)
         }
       }
