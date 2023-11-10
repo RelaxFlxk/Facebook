@@ -280,7 +280,10 @@
                               โทร {{ items.tel }}<br>
                               <template v-if="items.carModel !== ''">รุ่นรถ {{ items.carModel }}<br></template>
                               {{ items.bookingEmpFlowName === '' ? '' : 'พนักงาน ' + items.bookingEmpFlowName }}<br>
-                              {{ format_dateFUllTime(items.contactDateBt) }}
+                              <!-- {{ format_dateFUllTime(items.dueDate) }} -->
+                              <!-- {{ items.dueDateFix }} -->
+                              <div>{{ items.dueDateFix.split(' ')[0].split('-')[2] + '/' + items.dueDateFix.split(' ')[0].split('-')[1] + '/' + items.dueDateFix.split(' ')[0].split('-')[0] }}</div>
+                              <div>{{items.dueDateFix.split(' ')[1]}} น.</div>
                             </v-col>
                           </v-row>
                           <!-- <v-list-item-subtitle>
@@ -540,6 +543,23 @@ export default {
         return []
       }
     },
+    async countTime (time, setTime, timeSlotCustomer) {
+      console.log('time-----', time, setTime, timeSlotCustomer)
+      if (!setTime || timeSlotCustomer <= 0 || timeSlotCustomer > setTime.length) {
+        return '' // กรณีไม่มีข้อมูลหรือ timeSlotCustomer ไม่ถูกต้อง
+      }
+
+      // ค้นหาเวลาเริ่มต้นใน setTime
+      const startTimeInfo = setTime.find(slot => slot.text === time)
+
+      if (startTimeInfo) {
+        // หาเวลาสิ้นสุดโดยใช้ timeSlotCustomer
+        const endTimeInfo = setTime[startTimeInfo.id + timeSlotCustomer - 1]
+        return '-' + endTimeInfo.text
+      } else {
+        return ''
+      }
+    },
     async getBookingList (param, dateMonth) {
       console.log('getBookingList')
       if (param !== undefined) {
@@ -613,6 +633,8 @@ export default {
               let dueDate = e.dueDate
               dueDate = dueDate.split(' ')
               dueDate = dueDate[0]
+              let endTime = await this.countTime(e.timeText, (JSON.parse(e.bookingEmpSetTime) || []), e.timeSlotCustomer)
+              e.dueDateFix = e.dueDate + endTime || ''
               if (typeof this.eventInfo[dueDate] === 'undefined') {
                 this.monthData[dueDate] = []
                 this.eventInfo[dueDate] = {'timeDue': e.timeDue, 'all': 0, 'allPercent': 0, 'fastTrack': 0, 'extraJob': 0, 'normal': 0, 'normalExtra': 0}
