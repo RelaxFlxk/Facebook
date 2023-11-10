@@ -1170,7 +1170,12 @@ export default {
                 // console.log('optionField', row.optionField)
                 // console.log('fieldValue', tempField[0].fieldValue)
                   if (tempField[0].fieldValue) {
-                    convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+                    let checkValue = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })
+                    if (checkValue.length > 0) {
+                      convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+                    } else {
+                      convertTextField = tempField[0].fieldValue
+                    }
                   } else {
                     convertTextField = tempField[0].fieldValue
                   }
@@ -1276,7 +1281,12 @@ export default {
                 // console.log('optionField', row.optionField)
                 // console.log('fieldValue', tempField[0].fieldValue)
                   if (tempField[0].fieldValue) {
-                    convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+                    let checkValue = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })
+                    if (checkValue.length > 0) {
+                      convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+                    } else {
+                      convertTextField = tempField[0].fieldValue
+                    }
                   } else {
                     convertTextField = tempField[0].fieldValue
                   }
