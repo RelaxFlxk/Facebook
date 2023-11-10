@@ -10521,7 +10521,8 @@ export default {
                     s.depositCheckStatus = 'False'
                   }
                   s.flowName = d.flowName
-                  s.dueDate = d.dueDate || ''
+                  let endTime = await this.countTime(d.timeText, (JSON.parse(d.bookingEmpSetTime) || []), d.timeSlotCustomer)
+                  s.dueDate = d.dueDate + endTime || ''
                   if (d.timeText === null || d.timeText === '') {
                     d.timeText = d.timeDue
                   }
@@ -11242,6 +11243,7 @@ export default {
     //   }
     // },
     async editDataSelectSubmit () {
+      console.log('dfdfdf', this.dataEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value || this.timeEdit.time, this.formEdit.flowId, 'Edit', this.formEdit.masBranchID)
       // if (this.validEdit !== false) {
       if (this.$session.id() !== undefined) {
         let bookNoEditData = ''
@@ -11285,6 +11287,13 @@ export default {
             update.masBranchID = this.formEdit.masBranchID
             update.fastTrack = fastTrack
             update.extraJob = extraJob
+            let timeSlotCustomer = null
+            if (this.customerTimeSlot === 'True') {
+              timeSlotCustomer = this.fromAddTimeCus
+            } else {
+              timeSlotCustomer = this.DataFlowNameDefault.filter((v) => v.value === this.formEdit.flowId)[0].allData.timeSlot
+            }
+            update.timeSlotCustomer = timeSlotCustomer
             update.bookingEmpFlow = this.formEdit.bookingEmpFlow
             update.LAST_USER = this.$session.getAll().data.userName
             update.empSelect = this.empSelectEdit
@@ -11315,6 +11324,13 @@ export default {
                 update.masBranchID = this.formEdit.masBranchID
                 update.fastTrack = fastTrack
                 update.extraJob = extraJob
+                let timeSlotCustomer = null
+                if (this.customerTimeSlot === 'True') {
+                  timeSlotCustomer = this.fromAddTimeCus
+                } else {
+                  timeSlotCustomer = this.DataFlowNameDefault.filter((v) => v.value === this.formEdit.flowId)[0].allData.timeSlot
+                }
+                update.timeSlotCustomer = timeSlotCustomer
                 update.bookingEmpFlow = this.formEdit.bookingEmpFlow
                 update.LAST_USER = this.$session.getAll().data.userName
                 update.empSelect = this.empSelectEdit
@@ -11336,6 +11352,13 @@ export default {
                 update.masBranchID = this.formEdit.masBranchID
                 update.fastTrack = fastTrack
                 update.extraJob = extraJob
+                let timeSlotCustomer = null
+                if (this.customerTimeSlot === 'True') {
+                  timeSlotCustomer = this.fromAddTimeCus
+                } else {
+                  timeSlotCustomer = this.DataFlowNameDefault.filter((v) => v.value === this.formEdit.flowId)[0].allData.timeSlot
+                }
+                update.timeSlotCustomer = timeSlotCustomer
                 update.bookingEmpFlow = this.formEdit.bookingEmpFlow
                 update.LAST_USER = this.$session.getAll().data.userName
                 update.empSelect = this.empSelectEdit
@@ -13409,7 +13432,8 @@ export default {
                     s.flowName = d.flowName
                     s.bookingEmpFlowName = d.bookingEmpFlowName
                     s.checkDateConfirmJob = d.checkDateConfirmJob
-                    s.dueDate = d.dueDate
+                    let endTime = await this.countTime(d.timeText, (JSON.parse(d.bookingEmpSetTime) || []), d.timeSlotCustomer)
+                    s.dueDate = d.dueDate + endTime || ''
                     s.dueDateTimeStamp = d.dueDateTimeStamp
                     s.remarkRemove = d.remarkRemove
                     s.remark = d.remark
@@ -13594,6 +13618,22 @@ export default {
         })
       console.log('this.BookingDataList1', this.BookingDataList)
     },
+    async countTime (time, setTime, timeSlotCustomer) {
+      if (!setTime || timeSlotCustomer <= 0 || timeSlotCustomer > setTime.length) {
+        return '' // กรณีไม่มีข้อมูลหรือ timeSlotCustomer ไม่ถูกต้อง
+      }
+
+      // ค้นหาเวลาเริ่มต้นใน setTime
+      const startTimeInfo = setTime.find(slot => slot.text === time)
+
+      if (startTimeInfo) {
+        // หาเวลาสิ้นสุดโดยใช้ timeSlotCustomer
+        const endTimeInfo = setTime[startTimeInfo.id + timeSlotCustomer - 1]
+        return '-' + endTimeInfo.text
+      } else {
+        return ''
+      }
+    },
     async getBookingList () {
       await this.getTagData()
       clearInterval(this.setTimerCalendar)
@@ -13698,19 +13738,25 @@ export default {
                 s.depositCheckStatus = 'False'
               }
               s.flowName = d.flowName
-              s.dueDate = d.dueDate || ''
+              let endTime = await this.countTime(d.timeText, (JSON.parse(d.bookingEmpSetTime) || []), d.timeSlotCustomer)
+              s.dueDate = d.dueDate + endTime || ''
+              console.log('s.dueDate', s.dueDate)
               if (d.timeText === null || d.timeText === '') {
                 d.timeText = d.timeDue
               }
               if (s.dueDate === '') {
                 s.dueDateText = 'ไม่มีเวลานัดหมาย'
               } else {
+                // let endTime = await this.countTime(d.timeText, (JSON.parse(d.bookingEmpSetTime) || []), d.timeSlotCustomer)
+                // console.log('endTime', endTime)
                 s.dueDateText = d.dueDateTextDay + ' ' + d.timeText
+                // console.log('s.dueDateText', s.dueDateText)
               }
               s.shopId = d.shopId
               s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
               s.bookingEmpFlow = d.bookingEmpFlow
               s.bookingEmpFlowName = d.bookingEmpFlowName
+              s.bookingEmpSetTime = d.bookingEmpSetTime || []
               s.checkDateConfirmJob = d.checkDateConfirmJob
               s.dueDateDay = d.dueDateDay
               s.statusVIP = d.statusVIP
@@ -13886,7 +13932,8 @@ export default {
                 s.depositCheckStatus = 'False'
               }
               s.flowName = d.flowName
-              s.dueDate = d.dueDate || ''
+              let endTime = await this.countTime(d.timeText, (JSON.parse(d.bookingEmpSetTime) || []), d.timeSlotCustomer)
+              s.dueDate = d.dueDate + endTime || ''
               if (d.timeText === null || d.timeText === '') {
                 d.timeText = d.timeDue
               }

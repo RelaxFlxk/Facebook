@@ -290,7 +290,10 @@
                               โทร {{ items.tel }}
                               {{ items.carModel === '' ? '' : 'รุ่นรถ ' + items.carModel }}<br>
                               {{ items.bookingEmpFlowName === '' ? '' : 'พนักงาน ' + items.bookingEmpFlowName }}<br>
-                              {{ format_dateFUllTime(items.contactDateBt) }}
+                              <!-- {{ format_dateFUllTime(items.dueDate) }} -->
+                              <!-- {{ items.dueDateFix }} -->
+                              <div>{{ items.dueDateFix.split(' ')[0].split('-')[2] + '/' + items.dueDateFix.split(' ')[0].split('-')[1] + '/' + items.dueDateFix.split(' ')[0].split('-')[0] }}</div>
+                              <div>{{items.dueDateFix.split(' ')[1]}} น.</div>
                             </v-col>
                           </v-row>
                           <!-- <v-list-item-subtitle>
@@ -524,6 +527,23 @@ export default {
         return []
       }
     },
+    async countTime (time, setTime, timeSlotCustomer) {
+      console.log('time-----', time, setTime, timeSlotCustomer)
+      if (!setTime || timeSlotCustomer <= 0 || timeSlotCustomer > setTime.length) {
+        return '' // กรณีไม่มีข้อมูลหรือ timeSlotCustomer ไม่ถูกต้อง
+      }
+
+      // ค้นหาเวลาเริ่มต้นใน setTime
+      const startTimeInfo = setTime.find(slot => slot.text === time)
+
+      if (startTimeInfo) {
+        // หาเวลาสิ้นสุดโดยใช้ timeSlotCustomer
+        const endTimeInfo = setTime[startTimeInfo.id + timeSlotCustomer - 1]
+        return '-' + endTimeInfo.text
+      } else {
+        return ''
+      }
+    },
     async getBookingList () {
       this.getBookingData()
       // if (this.masBranchName) {
@@ -579,6 +599,8 @@ export default {
               let dueDate = e.dueDate
               dueDate = dueDate.split(' ')
               dueDate = dueDate[0]
+              let endTime = await this.countTime(e.timeText, (JSON.parse(e.bookingEmpSetTime) || []), e.timeSlotCustomer)
+              e.dueDateFix = e.dueDate + endTime || ''
               if (typeof this.eventInfo[dueDate] === 'undefined') {
                 this.monthData[dueDate] = []
                 this.eventInfo[dueDate] = {'timeDue': e.timeDue, 'all': 0, 'allPercent': 0, 'fastTrack': 0, 'extraJob': 0, 'normal': 0, 'normalExtra': 0}
@@ -603,6 +625,7 @@ export default {
               s.flowId = e.flowId
               s.flowName = e.flowName
               s.dueDate = e.dueDate
+              console.log('s.dueDate', s.dueDate)
               s.dueDateDay = e.dueDateDay
               s.dueDateTimeStamp = e.dueDateTimeStamp
               s.remarkRemove = e.remarkRemove
@@ -873,6 +896,7 @@ export default {
       } else {
         targetData = this.monthData[date]
       }
+      console.log('moreeee', this.monthData)
       for (let i = 0; i < targetData.length; i++) {
         let d = targetData[i]
         d.chkConfirm = false
@@ -927,7 +951,7 @@ export default {
         if (keyA > keyB) return 1
         return 0
       })
-
+      console.log('data', this.dataCalendar)
       this.dataSummary = this.dataCalendar.reduce((r, a) => {
         r[a.bgcolorChip] = r[a.bgcolorChip] || {}
         r[a.bgcolorChip][a.timeText] = r[a.bgcolorChip][a.timeText] || []
