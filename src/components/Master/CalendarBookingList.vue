@@ -555,7 +555,11 @@ export default {
       if (startTimeInfo) {
         // หาเวลาสิ้นสุดโดยใช้ timeSlotCustomer
         const endTimeInfo = setTime[startTimeInfo.id + timeSlotCustomer - 1]
-        return '-' + endTimeInfo.text
+        if (endTimeInfo) {
+          return '-' + endTimeInfo.text
+        } else {
+          return ''
+        }
       } else {
         return ''
       }

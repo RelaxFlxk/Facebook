@@ -539,7 +539,12 @@ export default {
       if (startTimeInfo) {
         // หาเวลาสิ้นสุดโดยใช้ timeSlotCustomer
         const endTimeInfo = setTime[startTimeInfo.id + timeSlotCustomer - 1]
-        return '-' + endTimeInfo.text
+        // console.log('endTimeInfo', endTimeInfo)
+        if (endTimeInfo) {
+          return '-' + endTimeInfo.text
+        } else {
+          return ''
+        }
       } else {
         return ''
       }
@@ -625,7 +630,7 @@ export default {
               s.flowId = e.flowId
               s.flowName = e.flowName
               s.dueDate = e.dueDate
-              console.log('s.dueDate', s.dueDate)
+              // console.log('s.dueDate', s.dueDate)
               s.dueDateDay = e.dueDateDay
               s.dueDateTimeStamp = e.dueDateTimeStamp
               s.remarkRemove = e.remarkRemove
