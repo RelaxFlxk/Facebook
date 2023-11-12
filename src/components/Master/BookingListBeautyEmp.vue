@@ -13629,7 +13629,7 @@ export default {
       if (startTimeInfo) {
         // หาเวลาสิ้นสุดโดยใช้ timeSlotCustomer
         const endTimeInfo = setTime[startTimeInfo.id + timeSlotCustomer - 1]
-        return '-' + endTimeInfo.text
+        return (endTimeInfo ? '-' + endTimeInfo.text : '')
       } else {
         return ''
       }
