@@ -283,7 +283,7 @@
                               <!-- {{ format_dateFUllTime(items.dueDate) }} -->
                               <!-- {{ items.dueDateFix }} -->
                               <div>{{ items.dueDateFix.split(' ')[0].split('-')[2] + '/' + items.dueDateFix.split(' ')[0].split('-')[1] + '/' + items.dueDateFix.split(' ')[0].split('-')[0] }}</div>
-                              <div>{{items.dueDateFix.split(' ')[1]}} น.</div>
+                              <div>{{items.dueDateFix.split(' ')[1] + ' น.' + items.dueDateEnd}}</div>
                             </v-col>
                           </v-row>
                           <!-- <v-list-item-subtitle>
@@ -544,23 +544,29 @@ export default {
       }
     },
     async countTime (time, setTime, timeSlotCustomer) {
-      console.log('time-----', time, setTime, timeSlotCustomer)
-      if (!setTime || timeSlotCustomer <= 0 || timeSlotCustomer > setTime.length) {
-        return '' // กรณีไม่มีข้อมูลหรือ timeSlotCustomer ไม่ถูกต้อง
-      }
-
-      // ค้นหาเวลาเริ่มต้นใน setTime
-      const startTimeInfo = setTime.find(slot => slot.text === time)
-
-      if (startTimeInfo) {
-        // หาเวลาสิ้นสุดโดยใช้ timeSlotCustomer
-        const endTimeInfo = setTime[startTimeInfo.id + timeSlotCustomer - 1]
-        if (endTimeInfo) {
-          return '-' + endTimeInfo.text
+      try {
+        if (!setTime || timeSlotCustomer <= 0 || timeSlotCustomer > setTime.length) {
+          return '' // กรณีไม่มีข้อมูลหรือ timeSlotCustomer ไม่ถูกต้อง
+        }
+        // console.log('setTimeLength', setTime.length)
+        // ค้นหาเวลาเริ่มต้นใน setTime
+        const startTimeInfo = setTime.find(slot => slot.text === time || slot.value === time)
+        const findIndex = setTime.findIndex(slot => slot.text === time || slot.value === time)
+        // console.log('startTime', findIndex, startTimeInfo)
+        if (startTimeInfo) {
+          // หาเวลาสิ้นสุดโดยใช้ timeSlotCustomer
+          let endTimeInfo = ''
+          if ((findIndex + 1) === setTime.length) {
+            endTimeInfo = ' เป็นต้นไป'
+          } else {
+            endTimeInfo = '- ' + setTime[startTimeInfo.id + timeSlotCustomer - 1].value + ' น.'
+          }
+          // console.log('endTimeInfo', endTimeInfo)
+          return endTimeInfo || ''
         } else {
           return ''
         }
-      } else {
+      } catch (error) {
         return ''
       }
     },
@@ -638,7 +644,8 @@ export default {
               dueDate = dueDate.split(' ')
               dueDate = dueDate[0]
               let endTime = await this.countTime(e.timeText, (JSON.parse(e.bookingEmpSetTime) || []), e.timeSlotCustomer)
-              e.dueDateFix = e.dueDate + endTime || ''
+              e.dueDateFix = e.dueDate || ''
+              e.dueDateEnd = endTime || ''
               if (typeof this.eventInfo[dueDate] === 'undefined') {
                 this.monthData[dueDate] = []
                 this.eventInfo[dueDate] = {'timeDue': e.timeDue, 'all': 0, 'allPercent': 0, 'fastTrack': 0, 'extraJob': 0, 'normal': 0, 'normalExtra': 0}
@@ -692,6 +699,7 @@ export default {
               s.remarkRemove = e.remarkRemove || ''
               s.timeDueHtext = e.timeDueH + ':00'
               s.timeDuetext = e.timeDue
+              s.timeDueEnd = endTime
               if (e.statusUseBt === 'use' && e.statusBt === 'confirm') {
                 s.chkConfirm = true
                 s.chkCancel = false
@@ -1219,7 +1227,7 @@ export default {
             s.runNo = runNo
             s.dateBooking = t.dueDateDay
             s.licenseNo = t.cusReg
-            s.title = t.timeDuetext
+            s.title = t.timeDuetext + t.timeDueEnd
             s.status = t.statusBtText
             s.remark = t.remark
             s.cusName = t.cusName
@@ -1333,7 +1341,7 @@ export default {
             s.runNo = runNo
             s.dateBooking = t.dueDateDay
             s.licenseNo = t.cusReg
-            s.title = t.timeDuetext
+            s.title = t.timeDuetext + t.timeDueEnd
             s.status = t.statusBtText
             s.cusName = t.cusName
             s.remark = t.remark
