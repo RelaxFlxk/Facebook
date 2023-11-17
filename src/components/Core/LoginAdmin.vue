@@ -184,6 +184,7 @@ export default {
     // await this.checkLiffLogin()
     this.$session.destroy()
     this.$session.clear()
+    localStorage.clear()
   },
   methods: {
     validate (Action) {
@@ -224,6 +225,8 @@ export default {
             if (response.data[0]) {
               this.$session.start()
               this.$session.set('data', response.data[0])
+              localStorage.clear()
+              localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
               if (this.$route.query.shopId !== undefined && this.$route.query.paymentDateMonthYear !== undefined) {
                 this.$router.push('/UpdateStatusPayment?shopId=' + this.$route.query.shopId + '&paymentDateMonthYear=' + this.$route.query.paymentDateMonthYear)
               } else {
