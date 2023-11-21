@@ -290,7 +290,9 @@
                               โทร {{ items.tel }}
                               {{ items.carModel === '' ? '' : 'รุ่นรถ ' + items.carModel }}<br>
                               {{ items.bookingEmpFlowName === '' ? '' : 'พนักงาน ' + items.bookingEmpFlowName }}<br>
-                              {{ format_dateFUllTime(items.contactDateBt) }}
+                              <!-- {{ format_dateFUllTime(items.dueDate) }} -->
+                              <div>{{ items.dueDateFix.split(' ')[0].split('-')[2] + '/' + items.dueDateFix.split(' ')[0].split('-')[1] + '/' + items.dueDateFix.split(' ')[0].split('-')[0] }}</div>
+                              <div>{{items.dueDateFix.split(' ')[1] + ' น.' + items.dueDateEnd}}</div>
                             </v-col>
                           </v-row>
                           <!-- <v-list-item-subtitle>
@@ -524,6 +526,33 @@ export default {
         return []
       }
     },
+    async countTime (time, setTime, timeSlotCustomer) {
+      try {
+        if (!setTime || timeSlotCustomer <= 0 || timeSlotCustomer > setTime.length) {
+          return '' // กรณีไม่มีข้อมูลหรือ timeSlotCustomer ไม่ถูกต้อง
+        }
+        // console.log('setTimeLength', setTime.length)
+        // ค้นหาเวลาเริ่มต้นใน setTime
+        const startTimeInfo = setTime.find(slot => slot.text === time || slot.value === time)
+        const findIndex = setTime.findIndex(slot => slot.text === time || slot.value === time)
+        // console.log('startTime', findIndex, startTimeInfo)
+        if (startTimeInfo) {
+          // หาเวลาสิ้นสุดโดยใช้ timeSlotCustomer
+          let endTimeInfo = ''
+          if ((findIndex + 1) === setTime.length) {
+            endTimeInfo = ' เป็นต้นไป'
+          } else {
+            endTimeInfo = '- ' + setTime[startTimeInfo.id + timeSlotCustomer - 1].value + ' น.'
+          }
+          // console.log('endTimeInfo', endTimeInfo)
+          return endTimeInfo || ''
+        } else {
+          return ''
+        }
+      } catch (error) {
+        return ''
+      }
+    },
     async getBookingList () {
       this.getBookingData()
       // if (this.masBranchName) {
@@ -579,6 +608,10 @@ export default {
               let dueDate = e.dueDate
               dueDate = dueDate.split(' ')
               dueDate = dueDate[0]
+              let endTime = await this.countTime(e.timeText, (JSON.parse(e.bookingEmpSetTime) || []), e.timeSlotCustomer)
+              e.dueDateFix = e.dueDate || ''
+              e.dueDateEnd = endTime || ''
+
               if (typeof this.eventInfo[dueDate] === 'undefined') {
                 this.monthData[dueDate] = []
                 this.eventInfo[dueDate] = {'timeDue': e.timeDue, 'all': 0, 'allPercent': 0, 'fastTrack': 0, 'extraJob': 0, 'normal': 0, 'normalExtra': 0}
@@ -603,6 +636,7 @@ export default {
               s.flowId = e.flowId
               s.flowName = e.flowName
               s.dueDate = e.dueDate
+              // console.log('s.dueDate', s.dueDate)
               s.dueDateDay = e.dueDateDay
               s.dueDateTimeStamp = e.dueDateTimeStamp
               s.remarkRemove = e.remarkRemove
@@ -617,6 +651,7 @@ export default {
               s.remarkRemove = e.remarkRemove || ''
               s.timeDueHtext = e.timeDueH + ':00'
               s.timeDuetext = e.timeDue
+              s.timeDueEnd = endTime
               if (e.statusUseBt === 'use' && e.statusBt === 'confirm') {
                 s.chkConfirm = true
                 s.chkCancel = false
@@ -873,6 +908,7 @@ export default {
       } else {
         targetData = this.monthData[date]
       }
+      console.log('moreeee', this.monthData)
       for (let i = 0; i < targetData.length; i++) {
         let d = targetData[i]
         d.chkConfirm = false
@@ -927,7 +963,7 @@ export default {
         if (keyA > keyB) return 1
         return 0
       })
-
+      console.log('data', this.dataCalendar)
       this.dataSummary = this.dataCalendar.reduce((r, a) => {
         r[a.bgcolorChip] = r[a.bgcolorChip] || {}
         r[a.bgcolorChip][a.timeText] = r[a.bgcolorChip][a.timeText] || []
@@ -1118,10 +1154,12 @@ export default {
       let dataExport = []
       this.dataexport = []
       let runNo = 0
+      let sortDataExport = []
       // console.log('bookingData', this.bookingData)
       // console.log('this.editedItemSeleteField', this.editedItemSeleteField)
       // console.log('this.dataItemTimesChange', this.dataItemTimesChange)
-      // console.log('this.dataItemTime', this.dataItemTime)
+      console.log('this.dataItemTime', this.dataItemTime)
+      // console.log('')
       var datause = this.dataItemTime.sort((a, b) => {
         if (a.timeDuetext < b.timeDuetext) return -1
         return a.timeDuetext > b.timeDuetext ? 1 : 0
@@ -1129,8 +1167,10 @@ export default {
       for (let i = 0; i < datause.length; i++) {
         // var d = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === item.timeDueHtext })[i]
         let d = datause[i]
+        console.log('d.timeDueHtext', d.timeDueHtext)
+        console.log('this.dataItemTimesChange', this.dataItemTimesChange)
         let dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && el.fastTrack && (el.statusBtText === 'ยืนยันแล้ว' || el.statusBtText === 'รับรถแล้ว') })
-        console.log('s.dataSelect', dataSelect)
+        console.log('s.dataSelect fastTrack', dataSelect)
         if (dataSelect.length > 0) {
           var datauseSelect = dataSelect.sort((a, b) => {
             if (a.dueDateTimeStamp < b.dueDateTimeStamp) return -1
@@ -1157,10 +1197,15 @@ export default {
               if (tempField.length > 0) {
               // console.log('fieldType', row.fieldType)
                 if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
-                // console.log('optionField', row.optionField)
-                // console.log('fieldValue', tempField[0].fieldValue)
+                  // console.log('optionField', row.optionField)
+                  // console.log('fieldValue', tempField[0].fieldValue)
                   if (tempField[0].fieldValue) {
-                    convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+                    let checkValue = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })
+                    if (checkValue.length > 0) {
+                      convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+                    } else {
+                      convertTextField = tempField[0].fieldValue
+                    }
                   } else {
                     convertTextField = tempField[0].fieldValue
                   }
@@ -1172,13 +1217,13 @@ export default {
               serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
             })
             serviceDetail = serviceDetail.trim() || t.flowName
-            console.log('serviceDetail', serviceDetail)
+            // console.log('serviceDetail', serviceDetail)
 
             s.type = this.dataTypeJob3
             s.runNo = runNo
             s.dateBooking = t.dueDateDay
             s.licenseNo = t.cusReg
-            s.title = t.timeDuetext
+            s.title = t.timeDuetext + t.timeDueEnd
             s.status = t.statusBtText
             s.remark = t.remark
             s.cusName = t.cusName
@@ -1195,10 +1240,15 @@ export default {
           }
         }
       }
-      let sortDataExport = dataExport.sort((a, b) => {
-        if (a.dueDateTimeStamp < b.dueDateTimeStamp) return -1
-        return a.dueDateTimeStamp > b.dueDateTimeStamp ? 1 : 0
-      })
+      if (dataExport.length > 0) {
+        sortDataExport = dataExport.sort((a, b) => {
+          if (a.dueDateTimeStamp < b.dueDateTimeStamp) return -1
+          return a.dueDateTimeStamp > b.dueDateTimeStamp ? 1 : 0
+        })
+      } else {
+        sortDataExport = []
+      }
+
       let sortDataExport2 = []
       let s = {}
       s.type = ''
@@ -1224,7 +1274,7 @@ export default {
       for (let i = 0; i < datause2.length; i++) {
         let d = datause2[i]
         let dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && !el.fastTrack && (el.statusBtText === 'ยืนยันแล้ว' || el.statusBtText === 'รับรถแล้ว') })
-        // console.log('s.dataSelect', dataSelect)
+        console.log('s.dataSelect !fastTrack', dataSelect)
         // console.log('this.BookingDataList', this.bookingData)
         if (dataSelect.length > 0) {
           var datauseSelect2 = dataSelect.sort((a, b) => {
@@ -1245,10 +1295,15 @@ export default {
               if (tempField.length > 0) {
               // console.log('fieldType', row.fieldType)
                 if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
-                // console.log('optionField', row.optionField)
-                // console.log('fieldValue', tempField[0].fieldValue)
+                  console.log('optionField', row.optionField)
+                  // console.log('fieldValue', tempField[0].fieldValue)
                   if (tempField[0].fieldValue) {
-                    convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+                    let checkValue = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })
+                    if (checkValue.length > 0) {
+                      convertTextField = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })[0].text
+                    } else {
+                      convertTextField = tempField[0].fieldValue
+                    }
                   } else {
                     convertTextField = tempField[0].fieldValue
                   }
@@ -1256,7 +1311,7 @@ export default {
                   convertTextField = tempField[0].fieldValue
                 }
               }
-              // console.log('convertTextField', convertTextField)
+              // console.log('convertTextField', this.timeTable)
               serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
             })
             if (dataExport.filter(el => { return el.timeDueHtext === this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )' }).length === 0) {
@@ -1269,7 +1324,7 @@ export default {
             s.runNo = runNo
             s.dateBooking = t.dueDateDay
             s.licenseNo = t.cusReg
-            s.title = t.timeDuetext
+            s.title = t.timeDuetext + t.timeDueEnd
             s.status = t.statusBtText
             s.cusName = t.cusName
             s.remark = t.remark
@@ -1282,15 +1337,18 @@ export default {
             s.carModel = this.getDataFromFieldName(this.bookingData[t.bookNo], 'รุ่นรถ')
             s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
             s.dataFiled = this.bookingData[t.bookNo] || []
+            // console.log('sortDataExport2', s)
             sortDataExport2.push(s)
           }
         }
       }
+      console.log('sortDataExport2', sortDataExport, sortDataExport2)
       let sortDataExportUse = sortDataExport2.sort((a, b) => {
         if (a.dueDateTimeStamp < b.dueDateTimeStamp) return -1
         return a.dueDateTimeStamp > b.dueDateTimeStamp ? 1 : 0
       })
       this.dataexport = sortDataExport.concat(sortDataExportUse)
+      console.log('dataEport', this.dataexport)
       this.onExport()
       // console.log('dataEport', JSON.stringify(dataExport))
     },

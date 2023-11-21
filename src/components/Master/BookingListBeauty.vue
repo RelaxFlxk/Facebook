@@ -9348,15 +9348,17 @@ export default {
         })
     },
     async getShowOnsite () {
-      let LimitBooking = axios.get(this.DNS_IP + '/system_user/auth?userName=' + this.$session.getAll().data.userName).then(async (response) => {
+      // let LimitBooking = this.$session.getAll().data.showOnsite
+      let LimitBooking = axios.get(this.DNS_IP + '/system_user/auth?userName=' + this.$session.getAll().data.userName + '&userPassword=' + this.$session.getAll().data.userPassword).then(async (response) => {
         let rs = response.data[0].showOnsite
         return rs
       })
-      // .catch(error => {
-      //   console.log('error function addData : ', error)
-      //   return 'ไม่แสดง'
-      // })
+        .catch(error => {
+          console.log('error function addData : ', error)
+          return 'ไม่แสดง'
+        })
       return LimitBooking || 'ไม่แสดง'
+      // return this.$session.getAll().data.showOnsite || 'ไม่แสดง'
     },
     async updateShowOnsite (text) {
       await axios.post(this.DNS_IP + '/system_user/edit/' + this.$session.getAll().data.userId, { showOnsite: text }).then(async (response) => {

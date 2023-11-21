@@ -2960,7 +2960,7 @@
                   <template v-slot:[`item.dueDate`]="{ item }">
                     <div>
                       <div>{{ item.dueDate.split(' ')[0].split('-')[2] + '/' + item.dueDate.split(' ')[0].split('-')[1] + '/' + item.dueDate.split(' ')[0].split('-')[0] }}</div>
-                      <div>{{item.dueDate.split(' ')[1]}} น.</div>
+                      <div>{{item.dueDate.split(' ')[1] + ' น.' + item.dueDateEnd}}</div>
                     </div>
                   </template>
                   <template v-slot:[`item.cusName`]="{ item }">
@@ -6933,7 +6933,7 @@ export default {
         //   value: 'bookingEmpFlowName'
         // },
         { text: 'ชื่อลูกค้า', value: 'cusName', sortable: false, groupable: false },
-        { text: 'วันที่/เวลา', value: 'dueDate', sortable: false, groupable: false },
+        { text: 'วันที่/เวลา', value: 'dueDateFix', sortable: false, groupable: false },
         { text: 'บริการ', value: 'flowName', sortable: false, groupable: false },
         { text: 'เบอร์โทร', value: 'tel', sortable: false, groupable: false }
       ],
@@ -8278,6 +8278,7 @@ export default {
     },
     exportShowEmpReport () {
       let dataexport = []
+      console.log('dataShowEmpReport', this.dataShowEmpReport)
       for (let i = 0; i < this.dataShowEmpReport.length; i++) {
         let a = this.dataShowEmpReport[i]
         if (a.statusBt === 'wait') {
@@ -8292,7 +8293,7 @@ export default {
           'บริการ': a.flowName,
           'ชื่อลูกค้า': a.cusName,
           'เบอร์โทร': a.tel,
-          'วันที่': a.dueDate,
+          'วันที่': a.dueDateFix,
           'ชื่อพนักงาน': a.bookingEmpFlowName
         }
         dataexport.push(data1)
@@ -8318,7 +8319,7 @@ export default {
           XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(datause2.filter(el => { return el.ชื่อพนักงาน === d.value })), sheetNm)
         }
       }
-      // console.log('dataexport', dataexport)
+      console.log('dataexport', dataexport)
       XLSX.writeFile(wb, 'export_' + this.format_dateNotime(this.dateStartShowEmpReport) + '.xlsx')
     },
     toggleShowEmpList (bookingEmpFlowName) {
@@ -8377,6 +8378,9 @@ export default {
                   d.cusName = (d.cusName.length > 0) ? d.cusName[0].fieldValue : ''
                   d.cusReg = (d.cusReg.length > 0) ? d.cusReg[0].fieldValue : ''
                   d.tel = (d.tel.length > 0) ? d.tel[0].fieldValue : ''
+                  let endTime = await this.countTime(d.timeText, (JSON.parse(d.bookingEmpSetTime) || []), d.timeSlotCustomer)
+                  d.dueDateEnd = endTime || ''
+                  d.dueDateFix = d.dueDate + endTime
                   this.dataShowEmpReport.push(d)
                 }
               }
@@ -10521,7 +10525,9 @@ export default {
                     s.depositCheckStatus = 'False'
                   }
                   s.flowName = d.flowName
+                  let countEndTime = await this.countTime(d.timeText, (JSON.parse(d.bookingEmpSetTime) || []), d.timeSlotCustomer)
                   s.dueDate = d.dueDate || ''
+                  s.dueDateEnd = countEndTime || ''
                   if (d.timeText === null || d.timeText === '') {
                     d.timeText = d.timeDue
                   }
@@ -11242,6 +11248,7 @@ export default {
     //   }
     // },
     async editDataSelectSubmit () {
+      console.log('dfdfdf', this.dataEdit, this.dueDateOld, this.dueDateTimeOld, this.dateEdit, this.timeEdit.value || this.timeEdit.time, this.formEdit.flowId, 'Edit', this.formEdit.masBranchID)
       // if (this.validEdit !== false) {
       if (this.$session.id() !== undefined) {
         let bookNoEditData = ''
@@ -11285,6 +11292,13 @@ export default {
             update.masBranchID = this.formEdit.masBranchID
             update.fastTrack = fastTrack
             update.extraJob = extraJob
+            let timeSlotCustomer = null
+            if (this.customerTimeSlot === 'True') {
+              timeSlotCustomer = this.fromAddTimeCus
+            } else {
+              timeSlotCustomer = this.DataFlowNameDefault.filter((v) => v.value === this.formEdit.flowId)[0].allData.timeSlot
+            }
+            update.timeSlotCustomer = timeSlotCustomer
             update.bookingEmpFlow = this.formEdit.bookingEmpFlow
             update.LAST_USER = this.$session.getAll().data.userName
             update.empSelect = this.empSelectEdit
@@ -11315,6 +11329,13 @@ export default {
                 update.masBranchID = this.formEdit.masBranchID
                 update.fastTrack = fastTrack
                 update.extraJob = extraJob
+                let timeSlotCustomer = null
+                if (this.customerTimeSlot === 'True') {
+                  timeSlotCustomer = this.fromAddTimeCus
+                } else {
+                  timeSlotCustomer = this.DataFlowNameDefault.filter((v) => v.value === this.formEdit.flowId)[0].allData.timeSlot
+                }
+                update.timeSlotCustomer = timeSlotCustomer
                 update.bookingEmpFlow = this.formEdit.bookingEmpFlow
                 update.LAST_USER = this.$session.getAll().data.userName
                 update.empSelect = this.empSelectEdit
@@ -11336,6 +11357,13 @@ export default {
                 update.masBranchID = this.formEdit.masBranchID
                 update.fastTrack = fastTrack
                 update.extraJob = extraJob
+                let timeSlotCustomer = null
+                if (this.customerTimeSlot === 'True') {
+                  timeSlotCustomer = this.fromAddTimeCus
+                } else {
+                  timeSlotCustomer = this.DataFlowNameDefault.filter((v) => v.value === this.formEdit.flowId)[0].allData.timeSlot
+                }
+                update.timeSlotCustomer = timeSlotCustomer
                 update.bookingEmpFlow = this.formEdit.bookingEmpFlow
                 update.LAST_USER = this.$session.getAll().data.userName
                 update.empSelect = this.empSelectEdit
@@ -11881,7 +11909,7 @@ export default {
       let runNo = 0
       // console.log('bookingData', this.BookingDataListTimechange)
       // console.log('this.editedItemSeleteField', this.editedItemSeleteField)
-      // console.log('this.dataItemTimesChange', this.dataItemTimesChange)
+      console.log('this.dataItemTimesChange', this.dataItemTimesChange)
       // console.log('this.dataItemTime', this.dataItemTime)
       var datause = this.dataItemTime.sort((a, b) => {
         if (a.timeDuetext < b.timeDuetext) return -1
@@ -11939,7 +11967,7 @@ export default {
             s.runNo = runNo
             s.dateBooking = this.format_dateNotime(this.timeTable)
             s.licenseNo = t.cusReg
-            s.title = t.timeDuetext
+            s.title = t.timeDuetext + t.dueDateEnd
             s.status = t.statusBtText
             s.remark = t.remark
             s.cusName = t.cusName
@@ -12041,7 +12069,7 @@ export default {
             s.runNo = runNo
             s.dateBooking = this.format_dateNotime(this.timeTable)
             s.licenseNo = t.cusReg
-            s.title = t.timeDuetext
+            s.title = t.timeDuetext + t.dueDateEnd
             s.status = t.statusBtText
             s.cusName = t.cusName
             s.remark = t.remark
@@ -12131,6 +12159,8 @@ export default {
         if (a.timeDuetext < b.timeDuetext) return -1
         return a.timeDuetext > b.timeDuetext ? 1 : 0
       })
+      console.log('!@#!@#!@#!@#!@#!@#', this.dataItemTimesChange)
+      // t.timeDuetext + t.dueDateEnd
       for (let i = 0; i < datause.length; i++) {
         // var d = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === item.timeDueHtext })[i]
         let d = datause[i]
@@ -12181,7 +12211,7 @@ export default {
             s.dateBooking = this.format_dateNotime(this.timeTable)
             s.licenseNo = t.cusReg
             s.remarkRemove = t.remarkRemove
-            s.title = t.timeDuetext
+            s.title = t.timeDuetext + t.dueDateEnd
             s.status = t.statusBtText
             s.remark = t.remark
             s.cusName = t.cusName
@@ -12266,7 +12296,7 @@ export default {
             s.dateBooking = this.format_dateNotime(this.timeTable)
             s.licenseNo = t.cusReg
             s.remarkRemove = t.remarkRemove
-            s.title = t.timeDuetext
+            s.title = t.timeDuetext + t.dueDateEnd
             s.status = t.statusBtText
             s.remark = t.remark
             s.cusName = t.cusName
@@ -12374,6 +12404,7 @@ export default {
           bookingDataView = []
           console.log(error)
         })
+      console.log('datause', datause)
       for (let i = 0; i < datause.length; i++) {
         runNo++
         let t = datause[i]
@@ -12383,7 +12414,7 @@ export default {
           s.runNo = runNo
           s.dateBooking = t.dueDateDay
           s.licenseNo = t.cusReg
-          s.title = t.timeDuetext
+          s.title = t.timeDuetext + t.dueDateEnd
           s.status = t.statusBtText
           s.remark = t.remark
           s.cusName = t.cusName
@@ -12448,7 +12479,7 @@ export default {
           s.runNo = runNo
           s.dateBooking = t.dueDateDay
           s.licenseNo = t.cusReg
-          s.title = t.timeDuetext
+          s.title = t.timeDuetext + t.dueDateEnd
           s.status = t.statusBtText
           s.cusName = t.cusName
           s.remark = t.remark
@@ -13409,7 +13440,9 @@ export default {
                     s.flowName = d.flowName
                     s.bookingEmpFlowName = d.bookingEmpFlowName
                     s.checkDateConfirmJob = d.checkDateConfirmJob
-                    s.dueDate = d.dueDate
+                    let countEndTime = await this.countTime(d.timeText, (JSON.parse(d.bookingEmpSetTime) || []), d.timeSlotCustomer)
+                    s.dueDate = d.dueDate || ''
+                    s.dueDateEnd = countEndTime || ''
                     s.dueDateTimeStamp = d.dueDateTimeStamp
                     s.remarkRemove = d.remarkRemove
                     s.remark = d.remark
@@ -13594,6 +13627,33 @@ export default {
         })
       console.log('this.BookingDataList1', this.BookingDataList)
     },
+    async countTime (time, setTime, timeSlotCustomer) {
+      try {
+        if (!setTime || timeSlotCustomer <= 0 || timeSlotCustomer > setTime.length) {
+          return '' // กรณีไม่มีข้อมูลหรือ timeSlotCustomer ไม่ถูกต้อง
+        }
+        // console.log('setTimeLength', setTime.length)
+        // ค้นหาเวลาเริ่มต้นใน setTime
+        const startTimeInfo = setTime.find(slot => slot.text === time || slot.value === time)
+        const findIndex = setTime.findIndex(slot => slot.text === time || slot.value === time)
+        // console.log('startTime', findIndex, startTimeInfo)
+        if (startTimeInfo) {
+          // หาเวลาสิ้นสุดโดยใช้ timeSlotCustomer
+          let endTimeInfo = ''
+          if ((findIndex + 1) === setTime.length) {
+            endTimeInfo = ' เป็นต้นไป'
+          } else {
+            endTimeInfo = ' - ' + setTime[startTimeInfo.id + timeSlotCustomer - 1].value + ' น.'
+          }
+          // console.log('endTimeInfo', endTimeInfo)
+          return endTimeInfo || ''
+        } else {
+          return ''
+        }
+      } catch (error) {
+        return ''
+      }
+    },
     async getBookingList () {
       await this.getTagData()
       clearInterval(this.setTimerCalendar)
@@ -13698,19 +13758,26 @@ export default {
                 s.depositCheckStatus = 'False'
               }
               s.flowName = d.flowName
+              let countEndTime = await this.countTime(d.timeText, (JSON.parse(d.bookingEmpSetTime) || []), d.timeSlotCustomer)
               s.dueDate = d.dueDate || ''
+              s.dueDateEnd = countEndTime || ''
+              // console.log('s.dueDate', s.dueDate)
               if (d.timeText === null || d.timeText === '') {
                 d.timeText = d.timeDue
               }
               if (s.dueDate === '') {
                 s.dueDateText = 'ไม่มีเวลานัดหมาย'
               } else {
+                // let endTime = await this.countTime(d.timeText, (JSON.parse(d.bookingEmpSetTime) || []), d.timeSlotCustomer)
+                // console.log('endTime', endTime)
                 s.dueDateText = d.dueDateTextDay + ' ' + d.timeText
+                // console.log('s.dueDateText', s.dueDateText)
               }
               s.shopId = d.shopId
               s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
               s.bookingEmpFlow = d.bookingEmpFlow
               s.bookingEmpFlowName = d.bookingEmpFlowName
+              s.bookingEmpSetTime = d.bookingEmpSetTime || []
               s.checkDateConfirmJob = d.checkDateConfirmJob
               s.dueDateDay = d.dueDateDay
               s.statusVIP = d.statusVIP
@@ -13886,7 +13953,9 @@ export default {
                 s.depositCheckStatus = 'False'
               }
               s.flowName = d.flowName
+              let countEndTime = await this.countTime(d.timeText, (JSON.parse(d.bookingEmpSetTime) || []), d.timeSlotCustomer)
               s.dueDate = d.dueDate || ''
+              s.dueDateEnd = countEndTime || ''
               if (d.timeText === null || d.timeText === '') {
                 d.timeText = d.timeDue
               }
