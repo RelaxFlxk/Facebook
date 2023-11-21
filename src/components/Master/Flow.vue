@@ -4894,7 +4894,8 @@ export default {
             this.formAdd.flowfieldName = JSON.stringify(this.desserts)
             this.formAdd.amountDeposit = this.formAdd.amountDeposit || 0
             this.formAdd.depositPercent = this.formAdd.depositPercent || 0
-
+            this.formAdd.depositTextEN = this.formAdd.depositTextEN.replace(/%/g, '%%').replace(/'/g, "\\'")
+            this.formAdd.depositTextTH = this.formAdd.depositTextTH.replace(/%/g, '%%').replace(/'/g, "\\'")
             this.formAdd.flowName = this.formAdd.flowName.replace(/%/g, '%%').replace(/'/g, "\\'")
             this.formAdd.flowNameEn = this.formAdd.flowNameEn.replace(/%/g, '%%').replace(/'/g, "\\'")
             if (this.formAdd.remarkConfirm !== '') {
@@ -5068,7 +5069,8 @@ export default {
             this.formUpdate.amountDeposit = this.formUpdate.amountDeposit || 0
             this.formUpdate.depositPercent = this.formUpdate.depositPercent || 0
             this.formUpdate.flowfieldName = JSON.stringify(fieldId)
-
+            this.formUpdate.depositTextEN = this.formUpdate.depositTextEN.replace(/%/g, '%%').replace(/'/g, "\\'")
+            this.formUpdate.depositTextTH = this.formUpdate.depositTextTH.replace(/%/g, '%%').replace(/'/g, "\\'")
             this.formUpdate.flowName = this.formUpdate.flowName.replace(/%/g, '%%').replace(/'/g, "\\'")
             this.formUpdate.flowNameEn = this.formUpdate.flowNameEn.replace(/%/g, '%%').replace(/'/g, "\\'")
             if (this.formUpdate.remarkConfirm !== '') {
