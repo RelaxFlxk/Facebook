@@ -101,7 +101,7 @@
                     <v-btn
                       :loading="loadingExcel"
                       :disabled="loadingExcel"
-                      color="primary" @click="exportExcel()" v-if="dataItemTimesChange.length > 0 && $session.getAll().data.shopId !== 'U9084920b3005bd1dcb57af1ae6bdba32'">
+                      color="success" @click="exportExcel()" v-if="dataItemTimesChange.length > 0 && $session.getAll().data.shopId !== 'U9084920b3005bd1dcb57af1ae6bdba32'">
                       <v-icon right class="white--text">mdi-microsoft-excel</v-icon>
                       &nbsp;Export
                     </v-btn>

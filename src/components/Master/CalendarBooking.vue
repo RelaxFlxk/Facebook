@@ -123,8 +123,11 @@
                     }}</v-toolbar-title>
 
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" @click="exportExcel()" dark v-if="dataItemTimesChange.length > 0 && $session.getAll().data.shopId !== 'U9084920b3005bd1dcb57af1ae6bdba32'">
-                      <v-icon right dark>mdi-microsoft-excel</v-icon>
+                    <v-btn
+                      :loading="loadingExport"
+                      :disabled="loadingExport"
+                      color="success" @click="exportExcel()" v-if="dataItemTimesChange.length > 0 && $session.getAll().data.shopId !== 'U9084920b3005bd1dcb57af1ae6bdba32'">
+                      <v-icon right class="white--text">mdi-microsoft-excel</v-icon>
                       &nbsp;Export
                     </v-btn>
                     &nbsp;
@@ -418,7 +421,8 @@ export default {
       editedItemSeleteField: [],
       dataItemTime: [],
       dataItemTimesChange: [],
-      dataexport: []
+      dataexport: [],
+      loadingExport: false
     }
   },
   beforeCreate () {
@@ -1194,6 +1198,7 @@ export default {
       })
     },
     async exportExcel () {
+      this.loadingExport = true
       let dataExport = []
       this.dataexport = []
       let runNo = 0
@@ -1443,6 +1448,7 @@ export default {
       const wb = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(wb, dataWS)
       XLSX.writeFile(wb, 'export_' + this.format_dateNotime(year + '-' + month) + '.xlsx')
+      this.loadingExport = false
     }
   }
 }
