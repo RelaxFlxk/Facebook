@@ -554,7 +554,7 @@ export default {
       }
     },
     async getBookingList () {
-      this.getBookingData()
+      // this.getBookingData()
       // if (this.masBranchName) {
       //   this.masBranchName = this.masBranchName
       // } else {
@@ -679,12 +679,16 @@ export default {
               if (chkTime.length === 0) {
                 dataItemTimes.push(s)
               }
-              s.cusName = this.getDataFromFieldName(this.bookingData[e.bookNo], 'ชื่อ')
-              s.cusReg = this.getDataFromFieldName(this.bookingData[e.bookNo], 'เลขทะเบียน')
-              s.tel = this.getDataFromFieldName(this.bookingData[e.bookNo], 'เบอร์โทร')
-              s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
-              s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
-              s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
+              // s.cusName = this.getDataFromFieldName(this.bookingData[e.bookNo], 'ชื่อ')
+              // s.cusReg = this.getDataFromFieldName(this.bookingData[e.bookNo], 'เลขทะเบียน')
+              // s.tel = this.getDataFromFieldName(this.bookingData[e.bookNo], 'เบอร์โทร')
+              // s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
+              // s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
+              // s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
+              s.cusName = e.bookingDataCustomerName || ''
+              s.cusReg = e.bookingDataCustomerRegisNumber || ''
+              s.tel = e.bookingDataCustomerTel || ''
+              s.carModel = e.bookingDataCustomerCarModel || ''
               dataItems.push(s)
             }
             this.dataReady = true
