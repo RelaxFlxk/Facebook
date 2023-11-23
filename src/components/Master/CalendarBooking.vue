@@ -36,7 +36,7 @@
             </v-menu>
           </v-col>
           <v-col cols="4">
-            <v-select
+            <!-- <v-select
               :items="DataBranchName"
               v-model="masBranchName"
               dense
@@ -49,6 +49,18 @@
               label="สาขา"
               prepend-inner-icon="mdi-map-marker"
               @change="getByBranch()"
+              class="ma-2"
+            ></v-select> -->
+            <v-select
+              :items="DataBranchName"
+              v-model="masBranchName"
+              @change="getByBranch()"
+              dense
+              outlined
+              filled
+              hide-details
+              label="สาขา"
+              prepend-inner-icon="mdi-map-marker"
               class="ma-2"
             ></v-select>
           </v-col>
@@ -449,7 +461,7 @@ export default {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
               console.log('masBranchName', this.masBranchName)
-              if (d.masBranchID === this.masBranchName.masBranchID.toString() || d.masBranchID === 'All' || d.masBranchID === null) {
+              if (d.masBranchID === this.masBranchName.toString() || d.masBranchID === 'All' || d.masBranchID === null) {
                 console.log('d', d)
                 d.text = d.flowName
                 d.value = d.flowId
@@ -483,29 +495,58 @@ export default {
               if (this.session.data.masBranchID === '' || this.session.data.masBranchID === null) {
                 console.log('TEST1', d.masBranchID, this.session.data.masBranchID)
                 d.text = d.masBranchName
-                d.value = d.masBranchName
+                d.value = d.masBranchID
                 this.DataBranchName.push(d)
               } else {
                 console.log('TEST', d.masBranchID, this.session.data.masBranchID)
                 if (d.masBranchID === this.session.data.masBranchID) {
                   d.text = d.masBranchName
-                  d.value = d.masBranchName
+                  d.value = d.masBranchID
                   this.DataBranchName.push(d)
                 }
               }
             }
-            this.masBranchName = this.DataBranchName[0]
+            this.masBranchName = this.DataBranchName[0].value
           } else {
             this.DataBranchName = []
           }
         })
     },
+    // async getDataBranch () {
+    //   this.DataBranchName = []
+    //   await axios
+    //     .get(
+    //       this.DNS_IP +
+    //         '/master_branch/get?shopId=' +
+    //         this.$session.getAll().data.shopId
+    //     )
+    //     .then(async response => {
+    //       let rs = response.data
+    //       if (rs.length > 0) {
+    //         for (var i = 0; i < rs.length; i++) {
+    //           var d = rs[i]
+    //           d.text = d.masBranchName
+    //           d.value = d.masBranchID
+    //           this.DataBranchName.push(d)
+    //         }
+    //         this.masBranchName = this.DataBranchName[0].value
+    //       } else {
+    //         this.DataBranchName = []
+    //       }
+    //     })
+    // },
     async getBookingData () {
       this.bookingData = []
       const dateSplit = this.today.split('-')
       const year = String(dateSplit[0])
       const month = String(dateSplit[1])
-      let url = `${this.DNS_IP}/BookingData/get?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchName=${this.masBranchName.text}`
+      let url = ''
+      if (this.flowId === 'allFlow') {
+        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchID=${this.masBranchName}`
+      } else {
+        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchID=${this.masBranchName}&flowId=${this.flowId}`
+      }
+      // let url = `${this.DNS_IP}/BookingData/get?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchName=${this.masBranchName.text}`
       await axios
         .get(url)
         .then(async response => {
@@ -569,7 +610,8 @@ export default {
       // const date = dateSplit[0].split('-')
       const year = String(dateSplit[0])
       const month = String(dateSplit[1])
-      this.countCus = this.masBranchName.countCus
+      let countCustomer = this.DataBranchName.filter(el => { return el.value === this.masBranchName })
+      this.countCus = countCustomer.length > 0 ? countCustomer[0].countCus : 0
       if (this.type === 'month') {
         let url = ''
         let dataItems = []
@@ -584,8 +626,8 @@ export default {
             year +
             '-' +
             month +
-            '&masBranchName=' +
-            this.masBranchName.text
+            '&masBranchID=' +
+            this.masBranchName
         } else {
           url = this.DNS_IP +
             '/booking_view/get?shopId=' +
@@ -594,8 +636,8 @@ export default {
             year +
             '-' +
             month +
-            '&masBranchName=' +
-            this.masBranchName.text +
+            '&masBranchID=' +
+            this.masBranchName +
             '&flowId=' + this.flowId
         }
         await axios
@@ -729,8 +771,8 @@ export default {
             year +
             '-' +
             month +
-            '&masBranchName=' +
-            this.masBranchName.text
+            '&masBranchID=' +
+            this.masBranchName
         } else {
           url = this.DNS_IP +
             '/booking_view/getCountNotime?shopId=' +
@@ -739,15 +781,17 @@ export default {
             year +
             '-' +
             month +
-            '&masBranchName=' +
-            this.masBranchName.text +
+            '&masBranchID=' +
+            this.masBranchName +
             '&flowId=' + this.flowId
         }
         await axios
           .get(url)
           .then(async response => {
             this.dataReady = true
-            this.countCus = this.masBranchName.countCus
+            let countCustomer = this.DataBranchName.filter(el => { return el.value === this.masBranchName })
+            this.countCus = countCustomer.length > 0 ? countCustomer[0].countCus : 0
+            // this.countCus = this.masBranchName.countCus
             for (var i = 0; i < response.data.length; i++) {
               var d = response.data[i]
               var s = {}
@@ -806,8 +850,8 @@ export default {
                   year +
                   '-' +
                   month +
-                  '&masBranchName=' +
-                  this.masBranchName.text
+                  '&masBranchID=' +
+                  this.masBranchName
               } else {
                 url = this.DNS_IP +
                   '/booking_view/getCount?shopId=' +
@@ -816,8 +860,8 @@ export default {
                   year +
                   '-' +
                   month +
-                  '&masBranchName=' +
-                  this.masBranchName.text +
+                  '&masBranchID=' +
+                  this.masBranchName +
                   '&flowId=' + this.flowId
               }
               await axios
@@ -925,12 +969,12 @@ export default {
           continue
         }
         let serviceDetail = ''
-        let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(d.flowId) })
-        fieldflow.forEach((row) => {
-          let tempField = this.bookingData[d.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
-          serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
-        })
-        serviceDetail = serviceDetail || d.flowName
+        // let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(d.flowId) })
+        // fieldflow.forEach((row) => {
+        //   let tempField = this.bookingData[d.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+        //   serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
+        // })
+        serviceDetail = d.displayFlowName || d.flowName
         d.serviceDetail = serviceDetail
         if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
           d.chkConfirm = true
@@ -956,14 +1000,6 @@ export default {
         d.tel = d.bookingDataCustomerTel || ''
         d.carModel = d.bookingDataCustomerCarModel || ''
         d.displayFlowName = d.displayFlowName || ''
-        // d.name = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'ชื่อ' })
-        // d.licenseNo = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เลขทะเบียน' })
-        // d.tel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เบอร์โทร' })
-        // d.carModel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'รุ่นรถ' })
-        // d.name = (d.name.length > 0) ? d.name[0].fieldValue : ''
-        // d.licenseNo = (d.licenseNo.length > 0) ? d.licenseNo[0].fieldValue : ''
-        // d.tel = (d.tel.length > 0) ? d.tel[0].fieldValue : ''
-        // d.carModel = (d.carModel.length > 0) ? d.carModel[0].fieldValue : ''
         this.dataCalendar.push(d)
       }
       this.dataCalendar.sort((a, b) => {
@@ -1037,14 +1073,11 @@ export default {
             } else {
               d.color = 'orange'
             }
-            d.name = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'ชื่อ' })
-            d.licenseNo = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เลขทะเบียน' })
-            d.tel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เบอร์โทร' })
-            d.carModel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'รุ่นรถ' })
-            d.name = (d.name.length > 0) ? d.name[0].fieldValue : ''
-            d.licenseNo = (d.licenseNo.length > 0) ? d.licenseNo[0].fieldValue : ''
-            d.tel = (d.tel.length > 0) ? d.tel[0].fieldValue : ''
-            d.carModel = (d.carModel.length > 0) ? d.carModel[0].fieldValue : ''
+            d.name = d.bookingDataCustomerName || ''
+            d.licenseNo = d.bookingDataCustomerRegisNumber || ''
+            d.tel = d.bookingDataCustomerTel || ''
+            d.carModel = d.bookingDataCustomerCarModel || ''
+            d.displayFlowName = d.displayFlowName || ''
             this.dataCalendar.push(d)
           }
           this.dialog = true
@@ -1160,7 +1193,7 @@ export default {
           })
       })
     },
-    exportExcel () {
+    async exportExcel () {
       let dataExport = []
       this.dataexport = []
       let runNo = 0
@@ -1169,6 +1202,7 @@ export default {
       // console.log('this.editedItemSeleteField', this.editedItemSeleteField)
       // console.log('this.dataItemTimesChange', this.dataItemTimesChange)
       console.log('this.dataItemTime', this.dataItemTime)
+      await this.getBookingData()
       // console.log('')
       var datause = this.dataItemTime.sort((a, b) => {
         if (a.timeDuetext < b.timeDuetext) return -1
@@ -1242,8 +1276,9 @@ export default {
             s.dueDateTimeStamp = t.dueDateTimeStamp
             s.empFull_NameTH = t.empFull_NameTH
             s.extraJob = t.extraJob ? this.dataTypeJob2 : ''
-            s.carModel = this.getDataFromFieldName(this.bookingData[t.bookNo], 'รุ่นรถ')
-            s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
+            s.carModel = t.bookingDataCustomerCarModel || ''
+            // s.carModel = this.getDataFromFieldName(this.bookingData[t.bookNo], 'รุ่นรถ')
+            // s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
             s.tel = t.tel
             s.dataFiled = this.bookingData[t.bookNo] || []
             dataExport.push(s)
@@ -1329,6 +1364,7 @@ export default {
             } else {
               s.timeDueHtext = ''
             }
+            // serviceDetail = t.displayFlowName.trim() || t.flowName
             serviceDetail = serviceDetail.trim() || t.flowName
             s.type = 'ปกติ'
             s.runNo = runNo
@@ -1344,8 +1380,9 @@ export default {
             s.tel = t.tel
             s.empFull_NameTH = t.empFull_NameTH
             s.extraJob = t.extraJob ? 'Extra Job' : ''
-            s.carModel = this.getDataFromFieldName(this.bookingData[t.bookNo], 'รุ่นรถ')
-            s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
+            // s.carModel = this.getDataFromFieldName(this.bookingData[t.bookNo], 'รุ่นรถ')
+            // s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
+            s.carModel = t.bookingDataCustomerCarModel || ''
             s.dataFiled = this.bookingData[t.bookNo] || []
             // console.log('sortDataExport2', s)
             sortDataExport2.push(s)

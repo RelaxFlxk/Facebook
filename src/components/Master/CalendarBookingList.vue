@@ -517,9 +517,9 @@ export default {
       const month = String(dateSplit[1])
       let url = ''
       if (this.flowId === 'allFlow') {
-        url = `${this.DNS_IP}/BookingData/get?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchID=${this.masBranchName}`
+        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchID=${this.masBranchName}`
       } else {
-        url = `${this.DNS_IP}/BookingData/get?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchID=${this.masBranchName}&flowId=${this.flowId}`
+        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchID=${this.masBranchName}&flowId=${this.flowId}`
       }
       await axios
         .get(url)
