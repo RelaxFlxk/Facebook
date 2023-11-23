@@ -689,6 +689,7 @@ export default {
               s.cusReg = e.bookingDataCustomerRegisNumber || ''
               s.tel = e.bookingDataCustomerTel || ''
               s.carModel = e.bookingDataCustomerCarModel || ''
+              s.displayFlowName = e.displayFlowName || ''
               dataItems.push(s)
             }
             this.dataReady = true
@@ -950,14 +951,19 @@ export default {
           d.bgcolorChip = 'blue'
         }
         d.bookingEmpFlowName = d.bookingEmpFlowName || ''
-        d.name = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'ชื่อ' })
-        d.licenseNo = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เลขทะเบียน' })
-        d.tel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เบอร์โทร' })
-        d.carModel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'รุ่นรถ' })
-        d.name = (d.name.length > 0) ? d.name[0].fieldValue : ''
-        d.licenseNo = (d.licenseNo.length > 0) ? d.licenseNo[0].fieldValue : ''
-        d.tel = (d.tel.length > 0) ? d.tel[0].fieldValue : ''
-        d.carModel = (d.carModel.length > 0) ? d.carModel[0].fieldValue : ''
+        d.name = d.bookingDataCustomerName || ''
+        d.licenseNo = d.bookingDataCustomerRegisNumber || ''
+        d.tel = d.bookingDataCustomerTel || ''
+        d.carModel = d.bookingDataCustomerCarModel || ''
+        d.displayFlowName = d.displayFlowName || ''
+        // d.name = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'ชื่อ' })
+        // d.licenseNo = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เลขทะเบียน' })
+        // d.tel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'เบอร์โทร' })
+        // d.carModel = this.bookingData[d.bookNo].filter((row) => { return row.fieldName === 'รุ่นรถ' })
+        // d.name = (d.name.length > 0) ? d.name[0].fieldValue : ''
+        // d.licenseNo = (d.licenseNo.length > 0) ? d.licenseNo[0].fieldValue : ''
+        // d.tel = (d.tel.length > 0) ? d.tel[0].fieldValue : ''
+        // d.carModel = (d.carModel.length > 0) ? d.carModel[0].fieldValue : ''
         this.dataCalendar.push(d)
       }
       this.dataCalendar.sort((a, b) => {
