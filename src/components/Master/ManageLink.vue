@@ -5,7 +5,7 @@
       <div class="pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4">
         <v-row>
           <v-col cols="6" class="text-left">
-            <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
+            <!-- <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs> -->
           </v-col>
           <v-col cols="6" class="v-margit_button text-right">
           </v-col>
@@ -13,7 +13,7 @@
         <h3 class="text-left ml-4 mb-16 font-weight-bold">ลิ้งค์สำหรับส่งให้ลูกค้า / Admin</h3>
         <v-row>
           <v-col  >
-            <v-sheet min-height="650px">
+            <v-sheet min-height="650px" v-if="setTimeError">
               <h3 class="text-left ml-4 mb-10 font-weight-bold"> QR CODE สำหรับสแกน</h3>
               <div class="ml-1">
                 <v-card class="pa-2 ma-4">
@@ -71,6 +71,36 @@
                     </v-btn>
               </div>
             </v-sheet>
+            <v-sheet class="pa-3 pl-6 pb-6" elevation="4" v-else>
+              <h3 class="text-center ml-4 mb-6 mt-10 font-weight-bold">
+                <v-icon x-large color="red">mdi-alert-decagram</v-icon>
+                 กรุณาตรวจสอบการตั้งค่าเวลาของพนักงาน
+                </h3>
+                <div v-for="(item,i) in this.empTime" :key="i">
+                  <div v-if="!item.statusEmp">
+                    <h5 class="mb-1 mt-1">
+                      <v-icon class="mb-1" color="blue">mdi-account-alert</v-icon>
+                      {{ item.empFull_NameTH}}
+                    </h5>
+                    <div v-for="(item2,i2) in item.Duplicates" :key="i2">
+                      <p class="mb-0 ml-9">{{ `ใช้เวลา Slot ละ ${item2} นาที` }}</p>
+                    </div>
+                  </div>
+                  <div v-else>
+                    <h5 class="mb-1 mt-1">
+                      <v-icon class="mb-1" color="blue">mdi-account-alert</v-icon>
+                      {{ item.empFull_NameTH }}
+                    </h5>
+                    <p class="mb-0 ml-9">{{ `ใช้เวลา Slot ละ ${item.Duplicates[0]} นาที` }}</p>
+                  </div>
+                </div>
+                <div class="text-center">
+                  <v-btn class="text-center mt-3" color="red" dark @click="gotosetting()">
+                  <v-icon>mdi-clock-time-three</v-icon>
+                  ตั้งค่าเวลาพนักงาน
+                </v-btn>
+                </div>
+            </v-sheet>
           </v-col>
           <v-col >
             <v-sheet min-height="650px">
@@ -96,7 +126,7 @@
                           v-bind="attrs"
                           v-on="on"
                           color="#2BC155"
-                          @click="coppyLink(item1.text)"
+                          @click="coppyLink(item1.text, item1)"
                         >
                           <v-icon dark>
                             mdi-content-copy
@@ -131,7 +161,7 @@
                           v-bind="attrs"
                           v-on="on"
                           color="#2BC155"
-                          @click="coppyLink(item2.text)"
+                          @click="coppyLink(item2.text, item2)"
                         >
                           <v-icon dark>
                             mdi-content-copy
@@ -192,7 +222,9 @@ export default {
       foreground: '#000000',
       qrValue: null,
       dataLineConfig: {},
-      shopData: []
+      shopData: [],
+      empTime: [],
+      setTimeError: true
     }
   },
   async mounted () {
@@ -242,22 +274,57 @@ export default {
           console.log('rssssssssssss', rs)
         })
     },
-    async coppyLink (item) {
-      console.log('item', item)
-      // this.$swal.fire('Any fool can use a computer')
+    gotosetting () {
+      this.$router.push('/Master/Employee')
+    },
+    async coppyLink (item, itemAll) {
+      this.qrValue = ''
+      this.value = ''
+      // this.statusAll = true
+      // this.statusEmp = true
+      this.setTimeError = true
+      if (itemAll.typeName === 'CalendarBookingAutoEmp') {
+        console.log('item', itemAll)
+        await this.getEmp()
+        await this.checkSlot()
+        if (this.setTimeError === false) {
+          this.$swal({
+            title: 'Failed to copy link',
+            text: 'คัดลอกลิ้งไม่สำเร็จ',
+            type: 'info',
+            timer: 2000,
+            showConfirmButton: false
+          })
+        } else {
+          this.$swal({
+            title: 'Copy successfully',
+            text: 'คัดลอกลิ้งสำเร็จ',
+            type: 'success',
+            timer: 2000,
+            showConfirmButton: false
+          })
+          await navigator.clipboard.writeText(item)
+          // setTimeout(() => {
+          //   this.Alerts = false
+          // }, 4000)
+          await this.genQrCode(item)
+        }
+      } else {
+        // this.$swal.fire('Any fool can use a computer')
       // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-      this.$swal({
-        title: 'Copy successfully',
-        text: 'คัดลอกลิ้งสำเร็จ',
-        type: 'success',
-        timer: 2000,
-        showConfirmButton: false
-      })
-      await navigator.clipboard.writeText(item)
-      // setTimeout(() => {
-      //   this.Alerts = false
-      // }, 4000)
-      await this.genQrCode(item)
+        this.$swal({
+          title: 'Copy successfully',
+          text: 'คัดลอกลิ้งสำเร็จ',
+          type: 'success',
+          timer: 2000,
+          showConfirmButton: false
+        })
+        await navigator.clipboard.writeText(item)
+        // setTimeout(() => {
+        //   this.Alerts = false
+        // }, 4000)
+        await this.genQrCode(item)
+      }
     },
     async setLinkItem () {
       this.linkItem = []
@@ -272,7 +339,8 @@ export default {
           {
             'text': 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/CalendarBookingAutoEmp?shopId=' + this.shopId,
             'title': 'ตรวจสอบคิวว่างก่อนนัดหมาย (ลูกค้าไม่ระบุช่าง)',
-            'type': 'customer'
+            'type': 'customer',
+            'typeName': 'CalendarBookingAutoEmp'
           },
           {
             'text': 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/PaymentUpload?shopId=' + this.shopId,
@@ -351,6 +419,80 @@ export default {
         }
       }
       console.log('test', this.linkItem)
+    },
+    async checkSlot () {
+      if (this.empTime.length > 1) {
+        let allTime = []
+        for (let i = 0; i < this.empTime.length; i++) {
+          let d = this.empTime[i]
+          allTime.push(...d.Duplicates)
+        }
+        // console.log('allTime', allTime)
+        // console.log('allTime.every(value => value === allTime[0])', allTime.every(value => value === allTime[0]))
+        if (allTime.every(value => value === allTime[0]) === false) {
+          this.setTimeError = false
+        }
+      } else if (this.empTime.length === 1) {
+        if (this.empTime[0].statusEmp === false) {
+          this.setTimeError = false
+        }
+      } else {
+        console.log('ไม่มีช่าง')
+      }
+    },
+    async getEmp () {
+      this.empTime = []
+      await axios.get(this.DNS_IP + '/empSelect/get?privacyPage=bookingform&shopId=' + this.shopId).then(async (response) => {
+        let rs = response.data
+        // console.log('rssssssssssssss', rs)
+        if (rs.length > 0) {
+          for (var i = 0; i < rs.length; i++) {
+            let d = rs[i]
+            if (d.flowId !== null && d.flowId !== '') {
+              // let checkFlowId = JSON.parse(d.flowId)
+              if (d.setTime !== null && d.setTime !== '[]' && d.setTime !== '') {
+                let TimeDifference = await this.calculateTimeDifference(JSON.parse(d.setTime))
+                d.slotTimeCheck = TimeDifference
+                d.Duplicates = await this.removeDuplicates(TimeDifference)
+                d.statusEmp = TimeDifference.every(value => value === TimeDifference[0])
+                this.empTime.push(d)
+              }
+            }
+          }
+        }
+      })
+      console.log('this.empTime', this.empTime)
+    },
+    removeDuplicates (array) {
+      // ใช้ filter เพื่อสร้างอาร์เรย์ใหม่ที่มีเฉพาะค่าที่ไม่ซ้ำ
+      const uniqueArray = array.filter((value, index, self) => {
+        // ใช้ indexOf เพื่อตรวจสอบว่าค่าอยู่ในอาร์เรย์เพียงครั้งเดียว
+        return self.indexOf(value) === index
+      })
+
+      return uniqueArray
+    },
+    calculateTimeDifference (timeData) {
+      // แปลงข้อมูลเวลาเป็นวินาที
+      const timesInSeconds = timeData.map(item => this.convertToSeconds(item.value))
+
+      // คำนวณระยะห่างระหว่างเวลา
+      const differences = []
+      for (let i = 0; i < timesInSeconds.length - 1; i++) {
+        const difference = timesInSeconds[i + 1] - timesInSeconds[i]
+        differences.push(difference)
+      }
+
+      // แปลงระยะห่างเป็นนาที
+      const differencesInMinutes = differences.map(difference => Math.floor(difference / 60))
+      // console.log(differencesInMinutes)
+      return differencesInMinutes
+    },
+
+    // แปลงเวลาจาก HH:mm เป็นวินาที
+    convertToSeconds (time) {
+      const [hours, minutes] = time.split(':')
+      return parseInt(hours, 10) * 3600 + parseInt(minutes, 10) * 60
     }
   }
 }
