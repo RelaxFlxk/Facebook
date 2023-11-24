@@ -101,7 +101,7 @@
                     <v-btn
                       :loading="loadingExcel"
                       :disabled="loadingExcel"
-                      color="primary" @click="exportExcel()" v-if="dataItemTimesChange.length > 0 && $session.getAll().data.shopId !== 'U9084920b3005bd1dcb57af1ae6bdba32'">
+                      color="success" @click="exportExcel()" v-if="dataItemTimesChange.length > 0 && $session.getAll().data.shopId !== 'U9084920b3005bd1dcb57af1ae6bdba32'">
                       <v-icon right class="white--text">mdi-microsoft-excel</v-icon>
                       &nbsp;Export
                     </v-btn>
@@ -517,9 +517,9 @@ export default {
       const month = String(dateSplit[1])
       let url = ''
       if (this.flowId === 'allFlow') {
-        url = `${this.DNS_IP}/BookingData/get?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchID=${this.masBranchName}`
+        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchID=${this.masBranchName}`
       } else {
-        url = `${this.DNS_IP}/BookingData/get?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchID=${this.masBranchName}&flowId=${this.flowId}`
+        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchID=${this.masBranchName}&flowId=${this.flowId}`
       }
       await axios
         .get(url)
