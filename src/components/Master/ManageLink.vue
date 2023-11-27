@@ -12,8 +12,46 @@
         </v-row>
         <h3 class="text-left ml-4 mb-16 font-weight-bold">ลิ้งค์สำหรับส่งให้ลูกค้า / Admin</h3>
         <v-row>
-          <v-col  >
-            <v-sheet min-height="650px" v-if="setTimeError">
+          <v-col>
+            <v-sheet class="pa-3 pl-6 pb-6 mb-6" elevation="4" v-if="!setTimeError">
+              <h3 class="text-center ml-4 mb-6 mt-10 font-weight-bold">
+                <v-icon x-large>mdi-alert-decagram</v-icon>
+                 กรุณาตรวจสอบการตั้งค่าประเภทบริการและเวลาของพนักงาน
+                </h3>
+                <div v-for="(flowitem, f) in this.flowTime" :key="f">
+                  <h4 class="mb-1 mt-1">
+                      <v-icon class="mb-1" color="red">mdi-alert-octagon</v-icon>
+                      {{ flowitem.flowName}}
+                    </h4>
+                    <div class="pl-6" v-for="(item,i) in flowitem.empTime" :key="i">
+                     <div>
+                        <div v-if="!item.statusEmp">
+                          <h6 class="mb-1 mt-1">
+                            <v-icon class="mb-1" color="blue">mdi-account-alert</v-icon>
+                            {{ item.empFull_NameTH}}
+                          </h6>
+                          <div v-for="(item2,i2) in item.Duplicates" :key="i2">
+                            <p class="mb-0 ml-9">{{ `ใช้เวลา Slot ละ ${item2} นาที` }}</p>
+                          </div>
+                        </div>
+                        <div v-else>
+                          <h6 class="mb-1 mt-1">
+                            <v-icon class="mb-1" color="blue">mdi-account-alert</v-icon>
+                            {{ item.empFull_NameTH }}
+                          </h6>
+                          <p class="mb-0 ml-9">{{ `ใช้เวลา Slot ละ ${item.Duplicates[0]} นาที` }}</p>
+                        </div>
+                     </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                  <v-btn class="text-center mt-3" color="red" dark @click="gotosetting()">
+                  <v-icon>mdi-clock-time-three</v-icon>
+                  ตั้งค่าเวลาพนักงาน
+                </v-btn>
+                </div>
+            </v-sheet>
+            <v-sheet min-height="650px" >
               <h3 class="text-left ml-4 mb-10 font-weight-bold"> QR CODE สำหรับสแกน</h3>
               <div class="ml-1">
                 <v-card class="pa-2 ma-4">
@@ -70,36 +108,6 @@
                     </v-icon>
                     </v-btn>
               </div>
-            </v-sheet>
-            <v-sheet class="pa-3 pl-6 pb-6" elevation="4" v-else>
-              <h3 class="text-center ml-4 mb-6 mt-10 font-weight-bold">
-                <v-icon x-large color="red">mdi-alert-decagram</v-icon>
-                 กรุณาตรวจสอบการตั้งค่าเวลาของพนักงาน
-                </h3>
-                <div v-for="(item,i) in this.empTime" :key="i">
-                  <div v-if="!item.statusEmp">
-                    <h5 class="mb-1 mt-1">
-                      <v-icon class="mb-1" color="blue">mdi-account-alert</v-icon>
-                      {{ item.empFull_NameTH}}
-                    </h5>
-                    <div v-for="(item2,i2) in item.Duplicates" :key="i2">
-                      <p class="mb-0 ml-9">{{ `ใช้เวลา Slot ละ ${item2} นาที` }}</p>
-                    </div>
-                  </div>
-                  <div v-else>
-                    <h5 class="mb-1 mt-1">
-                      <v-icon class="mb-1" color="blue">mdi-account-alert</v-icon>
-                      {{ item.empFull_NameTH }}
-                    </h5>
-                    <p class="mb-0 ml-9">{{ `ใช้เวลา Slot ละ ${item.Duplicates[0]} นาที` }}</p>
-                  </div>
-                </div>
-                <div class="text-center">
-                  <v-btn class="text-center mt-3" color="red" dark @click="gotosetting()">
-                  <v-icon>mdi-clock-time-three</v-icon>
-                  ตั้งค่าเวลาพนักงาน
-                </v-btn>
-                </div>
             </v-sheet>
           </v-col>
           <v-col >
@@ -223,6 +231,7 @@ export default {
       qrValue: null,
       dataLineConfig: {},
       shopData: [],
+      flowTime: [],
       empTime: [],
       setTimeError: true
     }
@@ -277,6 +286,34 @@ export default {
     gotosetting () {
       this.$router.push('/Master/Employee')
     },
+    async coppyTrue (item) {
+      this.$swal({
+        title: 'Copy successfully',
+        text: 'คัดลอกลิ้งสำเร็จ',
+        type: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      })
+      await navigator.clipboard.writeText(item)
+      // setTimeout(() => {
+      //   this.Alerts = false
+      // }, 4000)
+      await this.genQrCode(item)
+    },
+    async coppyFalse (item) {
+      this.$swal({
+        title: 'กรุณาตรวจสอบบริการที่ไม่สามารถใช้งานได้',
+        text: 'คัดลอกลิ้งสำเร็จ',
+        type: 'info',
+        timer: 5000,
+        showConfirmButton: false
+      })
+      await navigator.clipboard.writeText(item)
+      // setTimeout(() => {
+      //   this.Alerts = false
+      // }, 4000)
+      await this.genQrCode(item)
+    },
     async coppyLink (item, itemAll) {
       this.qrValue = ''
       this.value = ''
@@ -285,46 +322,36 @@ export default {
       this.setTimeError = true
       if (itemAll.typeName === 'CalendarBookingAutoEmp') {
         console.log('item', itemAll)
-        await this.getEmp()
-        await this.checkSlot()
-        if (this.setTimeError === false) {
-          this.$swal({
-            title: 'Failed to copy link',
-            text: 'คัดลอกลิ้งไม่สำเร็จ',
-            type: 'info',
-            timer: 2000,
-            showConfirmButton: false
-          })
+        await this.getFlowCheck()
+        if (this.flowTime.length > 0) {
+          await this.getEmp()
+          await this.checkSlot()
+          if (this.setTimeError === false) {
+            this.coppyFalse(item)
+          } else {
+            this.coppyTrue(item)
+          }
         } else {
-          this.$swal({
-            title: 'Copy successfully',
-            text: 'คัดลอกลิ้งสำเร็จ',
-            type: 'success',
-            timer: 2000,
-            showConfirmButton: false
-          })
-          await navigator.clipboard.writeText(item)
-          // setTimeout(() => {
-          //   this.Alerts = false
-          // }, 4000)
-          await this.genQrCode(item)
+          this.coppyTrue(item)
         }
       } else {
-        // this.$swal.fire('Any fool can use a computer')
-      // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-        this.$swal({
-          title: 'Copy successfully',
-          text: 'คัดลอกลิ้งสำเร็จ',
-          type: 'success',
-          timer: 2000,
-          showConfirmButton: false
-        })
-        await navigator.clipboard.writeText(item)
-        // setTimeout(() => {
-        //   this.Alerts = false
-        // }, 4000)
-        await this.genQrCode(item)
+        this.coppyTrue(item)
       }
+    },
+    async getFlowCheck () {
+      this.flowTime = []
+      await axios.get(this.DNS_IP + '/flow/get?shopId=' + this.shopId).then(async (response) => {
+        let rs = response.data
+        if (rs.length > 0) {
+          for (var i = 0; i < rs.length; i++) {
+            let d = rs[i]
+            if (d.customerTimeSlot === 'True') {
+              this.flowTime.push(d)
+            }
+          }
+        }
+      })
+      // console.log('this.flowTime', this.flowTime)
     },
     async setLinkItem () {
       this.linkItem = []
@@ -421,41 +448,100 @@ export default {
       console.log('test', this.linkItem)
     },
     async checkSlot () {
-      if (this.empTime.length > 1) {
+      if (this.flowTime.length > 0) {
+        for (let i = 0; i < this.flowTime.length; i++) {
+          let f = this.flowTime[i]
+          f.empTime = []
+          // console.log('TEST', this.empTime.filter((e) => e.checkFlowId.filter((c) => parseInt(c) === f.flowId).length > 0).length > 0)
+          for (let e = 0; e < this.empTime.length; e++) {
+            let emp = this.empTime[e]
+            if (emp.checkFlowId.filter((c) => parseInt(c) === f.flowId).length > 0) {
+              f.empTime.push(emp)
+            }
+          }
+        }
+      }
+      // console.log('this.flowTime.length', this.flowTime)
+      // console.log('this.flowTime.filter((item) => item.empTime.length > 1)', this.flowTime.filter((item) => item.empTime.length > 1).length > 0)
+      if (this.flowTime.filter((item) => item.empTime.length > 1).length > 0) {
         let allTime = []
-        for (let i = 0; i < this.empTime.length; i++) {
-          let d = this.empTime[i]
-          allTime.push(...d.Duplicates)
+        for (let i = 0; i < this.flowTime.length; i++) {
+          let d = this.flowTime[i]
+          for (let e = 0; e < d.empTime.length; e++) {
+            let emp = d.empTime[e]
+            allTime.push(...emp.Duplicates)
+          }
         }
         // console.log('allTime', allTime)
         // console.log('allTime.every(value => value === allTime[0])', allTime.every(value => value === allTime[0]))
         if (allTime.every(value => value === allTime[0]) === false) {
           this.setTimeError = false
         }
-      } else if (this.empTime.length === 1) {
-        if (this.empTime[0].statusEmp === false) {
-          this.setTimeError = false
+      } else if (this.flowTime.filter((item) => item.empTime.length === 1).length > 0) {
+        for (let i = 0; i < this.flowTime.length; i++) {
+          let d = this.flowTime[i]
+          if (d.empTime[0].statusEmp === false) {
+            this.setTimeError = false
+          }
         }
       } else {
         console.log('ไม่มีช่าง')
       }
+      // if (this.empTime.length > 1) {
+      //   let allTime = []
+      //   for (let i = 0; i < this.empTime.length; i++) {
+      //     let d = this.empTime[i]
+      //     allTime.push(...d.Duplicates)
+      //   }
+      //   // console.log('allTime', allTime)
+      //   // console.log('allTime.every(value => value === allTime[0])', allTime.every(value => value === allTime[0]))
+      //   if (allTime.every(value => value === allTime[0]) === false) {
+      //     this.setTimeError = false
+      //   }
+      // } else if (this.empTime.length === 1) {
+      //   if (this.empTime[0].statusEmp === false) {
+      //     this.setTimeError = false
+      //   }
+      // } else {
+      //   console.log('ไม่มีช่าง')
+      // }
     },
     async getEmp () {
       this.empTime = []
       await axios.get(this.DNS_IP + '/empSelect/get?privacyPage=bookingform&shopId=' + this.shopId).then(async (response) => {
         let rs = response.data
-        // console.log('rssssssssssssss', rs)
+        console.log('rssssssssssssss', rs)
         if (rs.length > 0) {
-          for (var i = 0; i < rs.length; i++) {
+          for (let i = 0; i < rs.length; i++) {
             let d = rs[i]
             if (d.flowId !== null && d.flowId !== '') {
-              // let checkFlowId = JSON.parse(d.flowId)
+              let checkFlowId = JSON.parse(d.flowId)
               if (d.setTime !== null && d.setTime !== '[]' && d.setTime !== '') {
-                let TimeDifference = await this.calculateTimeDifference(JSON.parse(d.setTime))
-                d.slotTimeCheck = TimeDifference
-                d.Duplicates = await this.removeDuplicates(TimeDifference)
-                d.statusEmp = TimeDifference.every(value => value === TimeDifference[0])
-                this.empTime.push(d)
+                if (d.setTimebyday === 'True') {
+                  let dt = JSON.parse(d.setTime) || []
+                  let TimeDifference = []
+                  console.log('dt', dt)
+                  for (let b = 0; b < dt.length; b++) {
+                    let dtTime = dt[b]
+                    // console.log('TEST', await this.calculateTimeDifference(dtTime.setTime))
+                    if (dtTime.setTime) {
+                      TimeDifference.push(...await this.calculateTimeDifference(dtTime.setTime))
+                    }
+                  }
+                  console.log('TimeDifference', TimeDifference)
+                  d.slotTimeCheck = TimeDifference
+                  d.checkFlowId = checkFlowId
+                  d.Duplicates = await this.removeDuplicates(TimeDifference)
+                  d.statusEmp = TimeDifference.every(value => value === TimeDifference[0])
+                  this.empTime.push(d)
+                } else {
+                  let TimeDifference = await this.calculateTimeDifference(JSON.parse(d.setTime))
+                  d.slotTimeCheck = TimeDifference
+                  d.checkFlowId = checkFlowId
+                  d.Duplicates = await this.removeDuplicates(TimeDifference)
+                  d.statusEmp = TimeDifference.every(value => value === TimeDifference[0])
+                  this.empTime.push(d)
+                }
               }
             }
           }
