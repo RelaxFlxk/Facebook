@@ -366,6 +366,11 @@ export default new Router({
     component: Master.BookingMobileConfirmJob
   },
   {
+    path: '/Dashbord/DashBoardDepositPrice',
+    name: 'DashBoardDepositPrice',
+    component: Dashbord.DashBoardDepositPrice
+  },
+  {
     path: '/Dashbord/Report',
     name: 'Report',
     component: Dashbord.Report
