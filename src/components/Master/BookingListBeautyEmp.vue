@@ -2675,7 +2675,7 @@
                             ตรวจสอบรายการเมนูรายวัน
                           </v-btn>
                           <v-btn
-                            v-if="getSelectText === 'wait' && filteredSelect.length > 0"
+                            v-if="getSelectText === 'wait' && filteredSelect.length > 0 && $session.getAll().data.shopId !== 'Uc520945108b983b6e739ed0a8cd8dae4'"
                             color="primary"
                             class="ma-2 white--text"
                             small
@@ -2735,7 +2735,7 @@
                       ตรวจสอบรายการเมนูรายวัน
                     </v-btn>
                     <v-btn
-                      v-if="getSelectText === 'wait' && filteredSelect.length > 0"
+                      v-if="getSelectText === 'wait' && filteredSelect.length > 0 && $session.getAll().data.shopId !== 'Uc520945108b983b6e739ed0a8cd8dae4'"
                       color="primary"
                       class="ma-2 white--text"
                       small
