@@ -887,11 +887,11 @@
                             <v-col clos="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontNotifyStatus === 'True'"  >
                               <v-text-field
                                 v-model="formAdd.storeFrontNotifySet"
-                                label="จำนวนจุดบริการสิ้นสุด"
+                                label="แจ้งเตือนจำนวนคิวก่อนหน้า"
                                 outlined
                                 required
                                 dense
-                                v-mask="'#'"
+                                v-mask="'##'"
                                 :rules="[rules.required]"
                               ></v-text-field>
                             </v-col>
@@ -1417,11 +1417,11 @@
                             <v-col clos="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.storeFrontNotifyStatus === 'True'"  >
                               <v-text-field
                                 v-model="formUpdate.storeFrontNotifySet"
-                                label="จำนวนจุดบริการสิ้นสุด"
+                                label="แจ้งเตือนจำนวนคิวก่อนหน้า"
                                 outlined
                                 required
                                 dense
-                                v-mask="'#'"
+                                v-mask="'##'"
                                 :rules="[rules.required]"
                               ></v-text-field>
                             </v-col>
