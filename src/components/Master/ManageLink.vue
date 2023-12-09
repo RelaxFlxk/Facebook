@@ -19,7 +19,8 @@
                  กรุณาตรวจสอบการตั้งค่าประเภทบริการและเวลาของพนักงาน
                 </h3>
                 <div v-for="(flowitem, f) in this.flowTime" :key="f">
-                  <h4 class="mb-1 mt-1">
+                  <div v-if="flowitem.setTimeError === false">
+                    <h4 class="mb-1 mt-1">
                       <v-icon class="mb-1" color="red">mdi-alert-octagon</v-icon>
                       {{ flowitem.flowName}}
                     </h4>
@@ -43,6 +44,7 @@
                         </div>
                      </div>
                     </div>
+                  </div>
                 </div>
                 <div class="text-center">
                   <v-btn class="text-center mt-3" color="red" dark @click="gotosetting()">
@@ -461,21 +463,23 @@ export default {
           }
         }
       }
-      // console.log('this.flowTime.length', this.flowTime)
+      console.log('this.flowTime.length', this.flowTime)
       // console.log('this.flowTime.filter((item) => item.empTime.length > 1)', this.flowTime.filter((item) => item.empTime.length > 1).length > 0)
       if (this.flowTime.filter((item) => item.empTime.length > 1).length > 0) {
-        let allTime = []
         for (let i = 0; i < this.flowTime.length; i++) {
+          let allTime = []
           let d = this.flowTime[i]
+          d.setTimeError = true
           for (let e = 0; e < d.empTime.length; e++) {
             let emp = d.empTime[e]
             allTime.push(...emp.Duplicates)
           }
-        }
-        // console.log('allTime', allTime)
-        // console.log('allTime.every(value => value === allTime[0])', allTime.every(value => value === allTime[0]))
-        if (allTime.every(value => value === allTime[0]) === false) {
-          this.setTimeError = false
+          // console.log('allTime', allTime)
+          // console.log('allTime.every(value => value === allTime[0])', allTime.every(value => value === allTime[0]))
+          if (allTime.every(value => value === allTime[0]) === false) {
+            d.setTimeError = false
+            this.setTimeError = false
+          }
         }
       } else if (this.flowTime.filter((item) => item.empTime.length === 1).length > 0) {
         for (let i = 0; i < this.flowTime.length; i++) {
