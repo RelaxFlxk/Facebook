@@ -730,23 +730,33 @@ export default {
         cancelButtonText: 'ไม่'
       }).then(async result => {
         this.formUpdate.LAST_USER = this.session.data.LAST_USER
-        axios
-          .post(
-            this.DNS_IP + '/rating/edit/' + this.dataRating.id,
-            this.formUpdate
-          )
-          .then(response => {
-            this.$swal(
-              'เรียบร้อย',
-              'อัพเดทสถานะการติดต่อ เรียบร้อย',
-              'success'
+        if (this.dataRating.length > 0) {
+          axios
+            .post(
+              this.DNS_IP + '/rating/edit/' + this.dataRating[0].id,
+              this.formUpdate
             )
-            this.getRating()
-            this.dialogCallBack = false
-          })
-          .catch(error => {
-            console.log('error function updateStatusCallBack : ', error)
-          })
+            .then(response => {
+              this.$swal(
+                'เรียบร้อย',
+                'อัพเดทสถานะการติดต่อ เรียบร้อย',
+                'success'
+              )
+              this.getRating()
+              this.dialogCallBack = false
+            })
+            .catch(error => {
+              console.log('error function updateStatusCallBack : ', error)
+            })
+        } else {
+          this.$swal(
+            'ผิดพลาด',
+            'กรุณาลองใหม่อีกครั้ง',
+            'error'
+          )
+          this.getRating()
+          this.dialogCallBack = false
+        }
       })
     },
     async getJobitem (item) {
