@@ -853,7 +853,7 @@ export default {
       const result = await axios.get(this.DNS_IP + '/LimitBookingDateEmp/get?shopId=' + this.shopId + '&empId=' + this.formSelect.empId + '&bookingDate=' + month)
       if (!result.data.status) {
         if (result.data.length > 0) {
-          console.log('result1', result.data.filter((a) => a.bookingDate === '2023-09-07'))
+          // console.log('result1', result.data.filter((a) => a.bookingDate === '2023-09-07'))
           this.LimitBooking = result.data
           await this.setLimit(month)
           await this.DefaultDay()
@@ -1274,7 +1274,7 @@ export default {
           }
           if (this.dataEmp.length === 1) {
             this.formSelect.empId = this.dataEmp[0].value
-            // await this.checkCustomerTimeSlot()
+            await this.selectflow()
           }
           console.log('EmpItemLimit', this.EmpItemLimit)
         } else {
