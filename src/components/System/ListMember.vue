@@ -635,7 +635,7 @@ export default {
       let url = ''
       let dataItems = []
       if (this.session.data.masBranchID === '' || this.session.data.masBranchID === null) {
-        url = this.DNS_IP + this.path + 'get?RECORD_STATUS=N&shopId=' + this.session.data.shopId
+        url = this.DNS_IP + this.path + 'get?shopId=' + this.session.data.shopId
       } else {
         url = this.DNS_IP + this.path + 'getBranch?shopId=' + this.session.data.shopId
       }
