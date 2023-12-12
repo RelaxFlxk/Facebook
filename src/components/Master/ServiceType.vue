@@ -481,7 +481,7 @@ export default {
       })
         .then(async result => {
           var ID = this.formUpdate.id
-          // this.formUpdate.servicePrice = this.formUpdate.servicePrice || null
+          this.formUpdate.servicePrice = this.formUpdate.servicePrice || 0
           delete this.formUpdate['id']
           await axios
             .post(
