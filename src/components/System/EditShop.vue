@@ -358,9 +358,9 @@
             </v-card>
           </v-dialog>
           <!-- end edit -->
-          <div>
+          <!-- <div>
             <img id="image" src="picture.jpg">
-          </div>
+          </div> -->
           <!-- data table -->
           <v-col cols="12">
             <v-card elevation="7" v-if="dataReady">
