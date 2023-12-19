@@ -76,7 +76,7 @@
               :items="dataEmp"
               attach
             :menu-props="{ bottom: true, offsetY: true }"
-              @change="selectflow()"
+              @change="fromAddTimeCus = '',checkCustomerTimeSlot()"
             ></v-select>
             <v-select
               :item-text="languageSelect === 0 ? 'text' : 'textEng'"
@@ -622,6 +622,7 @@ export default {
     },
     async checkCustomerTimeSlot () {
       this.statusChek = false
+      console.log('this.fromAddTimeCus', this.fromAddTimeCus)
       console.log('DataFlowNameAll', this.DataFlowNameAll.filter((v) => v.flowId === this.formSelect.flowId))
       this.timeSlotbyCustomer = []
       this.customerTimeSlot = this.DataFlowNameAll.filter((v) => v.flowId === this.formSelect.flowId)[0].customerTimeSlot
@@ -1274,7 +1275,8 @@ export default {
           }
           if (this.dataEmp.length === 1) {
             this.formSelect.empId = this.dataEmp[0].value
-            await this.selectflow()
+            // await this.selectflow()
+            await this.checkCustomerTimeSlot()
           }
           console.log('EmpItemLimit', this.EmpItemLimit)
         } else {
