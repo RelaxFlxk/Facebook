@@ -159,12 +159,10 @@
                   <template v-slot:activator="{ on, attrs }">
                         <v-text-field
                           hide-details
-                          :background-color="bgColor3"
+                          :background-color="'white'"
                           v-model="dateStartShow"
-                          :style="'box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;'"
                           readonly
                           outlined
-                          dark
                           dense
                           required
                           :rules ="[rules.required]"
@@ -172,7 +170,7 @@
                           v-on="on"
                         >
                         <template #prepend-inner>
-                        <v-icon :color="text" style="padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                        <v-icon :color="'black'" style="padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
                           mdi-calendar
                         </v-icon>
                       </template>
@@ -190,15 +188,13 @@
               <v-col cols="6">
                 <v-text-field
                   outlined
-                  :background-color="bgColor3"
+                  :background-color="'white'"
                   dense
                   readonly
-                  dark
                   v-model="shopTime"
-                  :style="'border-radius: 40px !important;margin-bottom: 10px;'"
                 >
                   <template #prepend-inner>
-                    <v-icon :color="text" style="padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                    <v-icon :color="'black'" style="padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
                       mdi-clock-time-four
                     </v-icon>
                   </template>
@@ -696,7 +692,7 @@ export default {
             .post(
               'https://api-voice.botnoi.ai/api/service/generate_audio',
               params,
-              { headers: { 'Botnoi-Token': 'bb16e727e89afe8b24cb08041e78d70cf01efb3b8bd96a004ee2020020f86976' } }
+              { headers: { 'Botnoi-Token': 'VTNjZDc5OTM3ZjM4MDg4NzhkYzlkMTI0ZjNiZWZlMTZkNTYxODk0' } }
             ).then((res) => {
               this.playSound(res.data)
               result = res.data
