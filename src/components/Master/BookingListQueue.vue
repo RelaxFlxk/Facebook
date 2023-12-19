@@ -763,6 +763,7 @@ export default {
         { text: 'บริการ', value: 'flowName' },
         { text: 'ชื่อลูกค้า', value: 'cusName' },
         // { text: 'H.N.', value: 'hnNo' },
+        { text: 'วันที่นัดหมาย', value: 'CREATE_DATEtext' },
         { text: 'ปริ้นบัตรคิว', value: 'action1', sortable: false, align: 'center' },
         { text: 'การจัดการคิว', value: 'action', sortable: false, align: 'center', width: '400px' }
       ],
@@ -822,6 +823,7 @@ export default {
         { text: 'บริการ', value: 'flowName' },
         { text: 'ชื่อลูกค้า', value: 'cusName' },
         // { text: 'H.N.', value: 'hnNo' },
+        { text: 'เวลาที่ลูกค้ากดรับบัตร', value: 'CREATE_DATEtext' },
         { text: 'ปริ้นบัตรคิว', value: 'action1', sortable: false, align: 'center' },
         { text: 'การจัดการคิว', value: 'action', sortable: false, align: 'center', width: '400px' }
       ]
@@ -1126,7 +1128,7 @@ export default {
     async getDataFlow () {
       let resultOption = []
       await axios
-        .get(this.DNS_IP + `/flow/get?shopId=${this.shopId}&storeFrontCheck=True`)
+        .get(this.DNS_IP + `/flow/get?shopId=${this.shopId}&storeFrontCheck=True&masBranchID=${this.masBranchID}`)
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {

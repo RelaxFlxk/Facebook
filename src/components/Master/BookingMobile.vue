@@ -1969,7 +1969,8 @@ export default {
           lineUserId: this.lineUserId,
           lineId: this.userId
         },
-        url: this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token + '&branchBeLinked=' + this.BookingDataItem[0].masBranchID,
+        url: this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token,
+        // url: this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token + '&branchBeLinked=' + this.BookingDataItem[0].masBranchID,
         data: params
       }).then((response) => {})
     },

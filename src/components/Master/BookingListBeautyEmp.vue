@@ -2675,7 +2675,7 @@
                             ตรวจสอบรายการเมนูรายวัน
                           </v-btn>
                           <v-btn
-                            v-if="getSelectText === 'wait' && filteredSelect.length > 0"
+                            v-if="getSelectText === 'wait' && filteredSelect.length > 0 && $session.getAll().data.shopId !== 'Uc520945108b983b6e739ed0a8cd8dae4'"
                             color="primary"
                             class="ma-2 white--text"
                             small
@@ -2735,7 +2735,7 @@
                       ตรวจสอบรายการเมนูรายวัน
                     </v-btn>
                     <v-btn
-                      v-if="getSelectText === 'wait' && filteredSelect.length > 0"
+                      v-if="getSelectText === 'wait' && filteredSelect.length > 0 && $session.getAll().data.shopId !== 'Uc520945108b983b6e739ed0a8cd8dae4'"
                       color="primary"
                       class="ma-2 white--text"
                       small
@@ -15520,7 +15520,8 @@ export default {
           lineUserId: this.lineUserId,
           lineId: this.userId
         },
-        url: this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token + '&branchBeLinked=' + masBranchID,
+        url: this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token,
+        // url: this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token + '&branchBeLinked=' + masBranchID,
         data: params
       }).then((response) => {})
       await this.updatePackageInBooking(this.$session.getAll().data.shopId, this.StatusPackage.token, this.packageId, bookNo)

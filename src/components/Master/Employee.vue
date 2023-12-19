@@ -2133,6 +2133,8 @@ export default {
       //
       this.formAdd.empCode = this.code + this.generateCodeGlobal()
       // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+      this.formAdd.setTime = JSON.stringify(this.formAdd.setTime)
+      // this.formAdd.flowId = JSON.stringify(this.formAdd.flowId)
 
       console.log('form', JSON.stringify(this.formAdd))
 

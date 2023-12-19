@@ -1271,6 +1271,7 @@ export default {
       itemBookingUseExportSearch: [],
       itemPayMent: [],
       itemCountBooking: [],
+      itemCountQrcode: [],
       dialogDetails: false,
       countInactiveStoreFront: 0,
       countFinishStoreFront: 0,
@@ -1600,8 +1601,24 @@ export default {
           }
         })
     },
+    async getCountQrcode () {
+      this.itemCountQrcode = []
+      let urlApi = this.DNS_IP_Loyalty + '/qrcode/getCountQRCode?paymentDate=' + this.dateStart
+      await axios
+        .get(urlApi)
+        .then(async response => {
+          let rs = response.data
+          console.log('getCountQrcode', rs)
+          if (rs.status !== false) {
+            this.itemCountQrcode = rs
+          } else {
+            this.itemCountQrcode = []
+          }
+        })
+    },
     async searchBooking () {
       await this.getCountBooking()
+      await this.getCountQrcode()
       this.countWait = 0
       this.countConfirm = 0
       this.countNoCash = 0
@@ -1734,11 +1751,11 @@ export default {
               let d = rs[i]
               d.billingPhone = d.billingPhone || d.contactTel
               d.paymentStatus = d.paymentStatus || ''
-              // if (this.itemCountBooking.filter(el => { return el.shopId === d.shopId }).length > 0) {
-              //   d.countBooking = this.itemCountBooking.filter(el => { return el.shopId === d.shopId })[0].countBooking
-              // } else {
-              //   d.countBooking = 0
-              // }
+              if (this.itemCountQrcode.filter(el => { return el.shopId === d.shopId }).length > 0) {
+                d.countBooking = this.itemCountQrcode.filter(el => { return el.shopId === d.shopId })[0].countQrcode
+              } else {
+                d.countBooking = 0
+              }
               if (d.shopActive === 'inactive') {
                 d.paymentStatus = 'inactive'
               }
@@ -1778,16 +1795,21 @@ export default {
               d.billingPhone = d.billingPhone || d.contactTel
               // d.paymentStatus = d.paymentStatus || 'noCash'
               // console.log(this.itemBooking.filter(el => { return el.shopId === d.shopId_Shop }))
-              console.log('d.shopId', this.itemBooking.filter(el => { return el.shopId === d.shopId_Shop }).length)
-              console.log('d.shopId_Shop', d.shopId_Shop)
-              console.log('d.paymentStatus', d.paymentStatus)
+              // console.log('d.shopId', this.itemBooking.filter(el => { return el.shopId === d.shopId_Shop }).length)
+              // console.log('d.shopId_Shop', d.shopId_Shop)
+              // console.log('d.paymentStatus', d.paymentStatus)
               if (this.itemBooking.filter(el => { return el.shopId === d.shopId_Shop && el.typeProgram === 'loyalty' }).length === 0) {
+                if (this.itemCountQrcode.filter(el => { return el.shopId === d.shopId }).length > 0) {
+                  d.countBooking = this.itemCountQrcode.filter(el => { return el.shopId === d.shopId })[0].countQrcode
+                } else {
+                  d.countBooking = 0
+                }
                 // if (this.itemCountBooking.filter(el => { return el.shopId === d.shopId_Shop }).length > 0) {
                 //   d.countBooking = this.itemCountBooking.filter(el => { return el.shopId === d.shopId_Shop })[0].countBooking
                 // } else {
                 //   d.countBooking = 0
                 // }
-                console.log('d', d)
+                // console.log('d', d)
                 d.paymentStatus = 'noCash'
                 d.billingEndDate = d.billingEndDate || ''
                 // if (d.billingEndDate !== '') {
@@ -1795,8 +1817,8 @@ export default {
                 //     d.paymentStatus = 'finish'
                 //   }
                 // }
-                console.log('d.paymentStatus', d.paymentStatus)
-                console.log('d.billingEndDate', d.billingEndDate)
+                // console.log('d.paymentStatus', d.paymentStatus)
+                // console.log('d.billingEndDate', d.billingEndDate)
                 let s = {}
                 s.amountCheck = d.paymentAmountSlip || ''
                 if (s.amountCheck === '') {
@@ -1864,11 +1886,20 @@ export default {
       this.countInactiveLoyalty = this.itemBooking.filter(el => { return el.paymentStatus === 'inactive' && el.bookingTypeShop === 'loyalty' }).length
       this.countNewCusOnMonthLoyalty = this.itemBooking.filter(el => { return moment(el.trialsVersionDate).month() === moment().month() && moment(el.trialsVersionDate).year() === moment().year() && (el.paymentStatus === 'confirm' || el.paymentStatus === 'finish') && el.bookingTypeShop === 'loyalty' }).length
       let dataCusLoyalty = this.itemBooking.filter(el => { return el.paymentStatus === 'finish' && el.bookingTypeShop === 'loyalty' })
+      // for (let i = 0; i < dataCusLoyalty.length; i++) {
+      //   let d = dataCusLoyalty[i]
+      //   d.paymentDate = d.paymentDate || ''
+      //   console.log('moment(d.paymentDate)', moment(d.paymentDate).format('YYYY-MM'))
+      //   if (moment(d.paymentDate).format('YYYY-MM') === moment().format('YYYY-MM')) {
+      //     this.countNewCusLoyalty = this.countNewCusLoyalty + 1
+      //   } else {
+      //     this.countOldCusLoyalty = this.countOldCusLoyalty + 1
+      //   }
+      // }
       for (let i = 0; i < dataCusLoyalty.length; i++) {
         let d = dataCusLoyalty[i]
-        d.paymentDate = d.paymentDate || ''
-        console.log('moment(d.paymentDate)', moment(d.paymentDate).format('YYYY-MM'))
-        if (moment(d.paymentDate).format('YYYY-MM') === moment().format('YYYY-MM')) {
+        d.countBooking = d.countBooking || 0
+        if (parseInt(d.countBooking) === 0) {
           this.countNewCusLoyalty = this.countNewCusLoyalty + 1
         } else {
           this.countOldCusLoyalty = this.countOldCusLoyalty + 1
@@ -1988,7 +2019,7 @@ export default {
           // { text: 'วันที่นัดหมาย', value: 'dueDate' },
           { text: 'เบอร์โทร', value: 'billingPhone' },
           { text: 'email', value: 'contactEmail' },
-          // { text: 'จำนวนนัดหมายที่สร้างของเดือนที่แล้ว', value: 'countBooking' },
+          { text: 'จำนวนการแจกคะแนน', value: 'countBooking' },
           { text: 'สลิป', value: 'paymentImage' },
           { text: 'ยอดเงินที่ชำระ', value: 'paymentDateuse' },
           { text: 'สถานะ', value: 'paymentStatus' },

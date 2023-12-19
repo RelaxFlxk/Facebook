@@ -866,7 +866,7 @@ export default {
       }
       if (checkitemSelect.length > 0) {
         dataAdd = {
-          flowData: JSON.stringify(this.flowData).replace(/'/g, ''),
+          flowData: JSON.stringify(this.fixJsonData(this.flowData)),
           masBranchID: JSON.stringify(BranchJSON),
           BookingSend: bookingS,
           notifyLanguage: 0,
@@ -1018,6 +1018,15 @@ export default {
       console.log('itemSelectEdit', this.itemSelectEdit)
       await this.allEdit()
     },
+    fixJsonData (data) {
+      return data.map(item => {
+        if (item.text.includes('"')) {
+          // แก้ไขข้อมูลในกรณีที่มี " ในข้อความ
+          item.text = item.text.replace(/"/g, '\\"')
+        }
+        return item
+      })
+    },
     async editData () {
       console.log('this.itemSelectEdit', this.itemSelectEdit)
       var bookingS = ''
@@ -1030,18 +1039,23 @@ export default {
       // console.log('itemBrtanch', this.itemBranch)
       for (let i = 0; i < this.itemBranchEdit.length; i++) {
         let d = this.itemBranchEdit[i]
+        // console.log('d', d)
         let s = {}
         s.masBranchID = d
         BranchJSON.push(s)
       }
+      // for (let i = 0; i < this.itemSelectEdit.length; i++) {
+      //   let d = this.itemSelectEdit[i]
+      //   d.text = d.text.replace(/['"]/g, '')
+      //   console.log('d', d)
+      // }
+      // console.log('JSON.stringify(this.itemSelectEdit)', JSON.stringify(this.itemSelectEdit))
       var data = {
-        flowData: JSON.stringify(this.itemSelectEdit).replace(/'/g, ''),
+        flowData: JSON.stringify(this.fixJsonData(this.itemSelectEdit)),
         masBranchID: JSON.stringify(BranchJSON),
         BookingSend: bookingS,
         LAST_USER: this.$session.getAll().data.userName
       }
-      console.log('params', data)
-      console.log('params', JSON.stringify(data))
       let checkitemSelect = []
       this.itemSelectEdit.forEach(v => {
         if (v.checkBooking === true) {
@@ -1052,7 +1066,7 @@ export default {
           checkitemSelect.push(v.checkOnsite)
         }
       })
-      console.log('checkitemselect', checkitemSelect)
+      // console.log('checkitemselect', checkitemSelect)
       if (checkitemSelect.length === 0) {
         this.$swal('ผิดพลาด', 'กรุณาเลือกรายการแจ้งเตือน', 'error')
       } else {

@@ -13,6 +13,7 @@ import BookingC3line from './BookingC3line.vue'
 import BookingChartCarAndFlow from './BookingChartCarAndFlow.vue'
 import ReportEmpMain from './ReportEmpMain.vue'
 import ReportFRT from './ReportFRT.vue'
+import DashBoardDepositPrice from './DashBoardDepositPrice.vue'
 export default {
   Report,
   Report2,
@@ -28,5 +29,6 @@ export default {
   BookingC3line,
   BookingChartCarAndFlow,
   ReportEmpMain,
-  ReportFRT
+  ReportFRT,
+  DashBoardDepositPrice
 }
