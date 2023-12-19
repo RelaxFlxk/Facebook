@@ -638,8 +638,8 @@ export default {
       }
     },
     async getBefore () {
-      await this.getDataFlow()
       await this.getDataBranch()
+      await this.getDataFlow()
       this.setTime()
       this.getShop()
       this.checkSearch()
