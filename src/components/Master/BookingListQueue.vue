@@ -1128,9 +1128,10 @@ export default {
     async getDataFlow () {
       let resultOption = []
       await axios
-        .get(this.DNS_IP + `/flow/get?shopId=${this.shopId}&storeFrontCheck=True&masBranchID=${this.masBranchID}`)
+        .get(this.DNS_IP + `/flow/get?shopId=${this.shopId}&storeFrontCheck=True&masBranchIDAll=${this.masBranchID}`)
         .then(response => {
           let rs = response.data
+          console.log('rs', rs)
           if (rs.length > 0) {
             if (this.$session.getAll().data.USER_ROLE === 'storeFront') {
               resultOption.push({'text': 'ทั้งหมด', 'value': 'allFlow'})
