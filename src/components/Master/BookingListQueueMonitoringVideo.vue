@@ -692,7 +692,7 @@ export default {
             .post(
               'https://api-voice.botnoi.ai/api/service/generate_audio',
               params,
-              { headers: { 'Botnoi-Token': 'bb16e727e89afe8b24cb08041e78d70cf01efb3b8bd96a004ee2020020f86976' } }
+              { headers: { 'Botnoi-Token': 'VTNjZDc5OTM3ZjM4MDg4NzhkYzlkMTI0ZjNiZWZlMTZkNTYxODk0' } }
             ).then((res) => {
               this.playSound(res.data)
               result = res.data

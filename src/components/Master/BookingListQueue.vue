@@ -830,8 +830,8 @@ export default {
     }
     this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
     this.dateStart = this.momenDate_1(new Date())
-    await this.getDataFlow()
     await this.getDataBranch()
+    await this.getDataFlow()
     await this.searchBooking('unNoti')
     this.$root.$on('closeSetTimeBookingListQueue', () => {
       // your code goes here
@@ -1128,9 +1128,10 @@ export default {
     async getDataFlow () {
       let resultOption = []
       await axios
-        .get(this.DNS_IP + `/flow/get?shopId=${this.shopId}&storeFrontCheck=True&masBranchID=${this.masBranchID}`)
+        .get(this.DNS_IP + `/flow/get?shopId=${this.shopId}&storeFrontCheck=True&masBranchIDAll=${this.masBranchID}`)
         .then(response => {
           let rs = response.data
+          console.log('rs', rs)
           if (rs.length > 0) {
             if (this.$session.getAll().data.USER_ROLE === 'storeFront') {
               resultOption.push({'text': 'ทั้งหมด', 'value': 'allFlow'})
