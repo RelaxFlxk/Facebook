@@ -29,6 +29,7 @@ const gauthOption = {
 Vue.use(GAuth, gauthOption)
 VueClipboard.config.autoSetContainer = true
 Vue.use(VueClipboard)
+Vue.prototype.$firebase = window.firebase
 
 Vue.use(VueCustomTooltip, {
   name: 'VueCustomTooltip',

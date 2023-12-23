@@ -563,7 +563,9 @@ export default {
       pictureUrHistory: '',
       dialogHistory: false,
       shopPhone: '',
-      setTimerCalendar: null
+      setTimerCalendar: null,
+      checkRef: false,
+      checkStatusEdit: false
     }
   },
   computed: {
@@ -584,6 +586,41 @@ export default {
     await this.beforeCreate()
   },
   methods: {
+    async getFirestore () {
+      console.log('getFirestore')
+      this.firestore = this.$firebase.firestore()
+      this.firestore.collection('ProcessOhrichUpdate').limit(100).onSnapshot((snapshot) => {
+        snapshot.docChanges().forEach(async (change) => {
+          console.log(change)
+          console.log(change.doc.id)
+          console.log(change.doc.data())
+          if (this.checkRef === false) {
+            await this.getBefore()
+            this.updateProcessOhrichUpdate()
+            this.checkRef = true
+          } else {
+            if (change.doc.data().active === '1') {
+              if (!this.checkStatusEdit) {
+                await this.getBefore()
+                this.updateProcessOhrichUpdate()
+              }
+            }
+          }
+        })
+      })
+    },
+    updateProcessOhrichUpdate (item) {
+      let params = {
+        userName: this.$session.getAll().data.userName
+      }
+      axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-ProcessOhrichUseNew', params)
+    },
+    async resetFirebaseUse (item) {
+      let params = {
+        userName: this.$session.getAll().data.userName
+      }
+      await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-ProcessOhrichNew', params)
+    },
     closeSetTimeBookingListQueue () {
       clearInterval(this.setTimerCalendar)
       this.setTimerCalendar = null
@@ -598,6 +635,7 @@ export default {
       console.log('removeQueue', item)
       this.closeSetTimeBookingListQueue()
       let statusBooking = await this.checkBookingStatus(item.bookNo)
+      this.checkStatusEdit = true
       if (statusBooking === 'confirmJob') {
         this.$swal({
           title: 'ต้องการยกเลิกคิวนี้ ใช่หรือไม่?',
@@ -623,19 +661,20 @@ export default {
             .post(this.DNS_IP + '/booking_transaction/add', dtt)
             .then(async responses => {
               this.$swal('เรียบร้อย', 'ยกเลิกคิวสำเร็จ', 'success')
+              this.resetFirebaseUse()
               await this.searchBooking('unNoti')
-              this.clearTimeLoop()
+              // this.clearTimeLoop()
             })
         }).catch(async err => {
           // this.$router.push({ name: '404' })
           console.log(err.code, err.message)
           await this.searchBooking('unNoti')
-          this.clearTimeLoop()
+          // this.clearTimeLoop()
         })
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
         await this.searchBooking('unNoti')
-        this.clearTimeLoop()
+        // this.clearTimeLoop()
       }
     },
     async getBefore () {
@@ -645,19 +684,22 @@ export default {
       this.setTime()
       this.getShop()
       this.checkSearch()
-      this.$root.$on('closeSetTimeBookingListQueue', () => {
-      // your code goes here
-        this.closeSetTimeBookingListQueue()
-      })
+      // this.$root.$on('closeSetTimeBookingListQueue', () => {
+      // // your code goes here
+      //   this.closeSetTimeBookingListQueue()
+      // })
       this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
-      this.clearTimeLoop()
+      this.searchBooking('unNoti')
+      this.checkStatusEdit = false
+      // this.clearTimeLoop()
     },
     async beforeCreate () {
       if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
         if (JSON.parse(localStorage.getItem('sessionData')).shopId) {
           this.$session.start()
           this.$session.set('data', JSON.parse(localStorage.getItem('sessionData')))
-          await this.getBefore()
+          await this.getFirestore()
+          // await this.getBefore()
         } else {
           this.$router.push('/Core/Login')
         }
@@ -667,7 +709,8 @@ export default {
         } else {
           if (this.$session.getAll().data.shopId) {
             localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
-            await this.getBefore()
+            await this.getFirestore()
+            // await this.getBefore()
           } else {
             this.$router.push('/Core/Login')
           }
@@ -763,28 +806,55 @@ export default {
     },
     async GroupArrayQueue (dataArray) {
       // ใช้ Map เพื่อจัดกลุ่มตาม flowId
-      const sortedArray = dataArray.sort((a, b) => {
-        const getParts = (str) => {
-          const match = str.match(/([A-Z]+)([0-9]+)/)
-          return [match[1], parseInt(match[2])]
-        }
-
-        const [prefixA, numA] = getParts(a.storeFrontQueue)
-        const [prefixB, numB] = getParts(b.storeFrontQueue)
-
-        // เรียงลำดับตาม num และ prefix
-        if (numA === numB) {
-          return prefixA.localeCompare(prefixB)
+      let dataConfirm = []
+      let data = []
+      let dataB = []
+      for (let i = 0; i < dataArray.length; i++) {
+        let d = dataArray[i]
+        if (d.statusBt === 'confirmJob') {
+          dataConfirm.push(d)
         } else {
-          return numA - numB
+          if (d.storeFrontText === 'B') {
+            dataB.push(d)
+          } else {
+            data.push(d)
+          }
         }
-      })
-      return sortedArray
+      }
+      // console.log('dataConfirm', dataConfirm)
+      // console.log('data', data)
+      // console.log('dataB', dataB)
+      let mergedData = [...dataB, ...data.slice(0)]
+      dataConfirm.push(...mergedData)
+
+      console.log(dataConfirm)
+      return dataConfirm
     },
+    // async GroupArrayQueue (dataArray) {
+    //   // ใช้ Map เพื่อจัดกลุ่มตาม flowId
+    //   const sortedArray = dataArray.sort((a, b) => {
+    //     const getParts = (str) => {
+    //       const match = str.match(/([A-Z]+)([0-9]+)/)
+    //       return [match[1], parseInt(match[2])]
+    //     }
+
+    //     const [prefixA, numA] = getParts(a.storeFrontQueue)
+    //     const [prefixB, numB] = getParts(b.storeFrontQueue)
+
+    //     // เรียงลำดับตาม num และ prefix
+    //     if (numA === numB) {
+    //       return prefixA.localeCompare(prefixB)
+    //     } else {
+    //       return numA - numB
+    //     }
+    //   })
+    //   return sortedArray
+    // },
     async searchBooking (checkNoti, item) {
       if (this.validSearch === true) {
-        this.overlay = false
-        this.itemBooking = []
+        this.checkStatusEdit = false
+        // this.overlay = false
+        // this.itemBooking = []
         let itemBooking = []
         await this.getBookingDataList(this.dateStart)
         let urlApi = {}
@@ -825,22 +895,21 @@ export default {
               for (let i = 0; i < sortData.length; i++) {
                 let d = sortData[i]
                 if (this.BookingDataList[d.bookNo] !== undefined) {
-                  d.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
-                  d.cusName = (d.cusName.length > 0) ? d.cusName[0].fieldValue : ''
-                  d.hnNo = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'H.N.')
-                  d.hnNo = (d.hnNo.length > 0) ? d.hnNo[0].fieldValue : ''
+                  d.cusName = d.bookingDataCustomerName || ''
                   itemBooking.push(d)
                 }
               }
               let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
               let empId = this.$session.getAll().data.empId || ''
+              let itemBookings = []
               if (USER_ROLE === 'storeFront' && empId !== '') {
                 let dataCon = itemBooking.filter(el => { return el.statusBt === 'confirmJob' && el.storeFrontQueueEmpId === parseInt(empId) })
                 let dataWain = itemBooking.filter(el => { return el.statusBt === 'confirm' })
-                this.itemBooking = [ ...dataCon, ...dataWain ]
+                itemBookings = [ ...dataCon, ...dataWain ]
               } else {
-                this.itemBooking = itemBooking
+                itemBookings = itemBooking
               }
+              this.itemBooking = itemBookings
               this.overlay = true
               this.openHistory(this.itemBooking[0])
               if (checkNoti === 'noti') {
@@ -856,6 +925,7 @@ export default {
             }
           })
       } else {
+        this.checkStatusEdit = false
         this.overlay = true
       }
     },
@@ -869,7 +939,8 @@ export default {
       }
     },
     async getBookingDataList (dateStart) {
-      this.BookingDataList = []
+      let BookingDataList = []
+      // this.BookingDataList = []
       let url = ''
       if (this.flowSelect === 'allFlow') {
         url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
@@ -882,11 +953,12 @@ export default {
         .then(async response => {
           if (response.data.status !== false) {
             response.data.forEach((row) => {
-              if (typeof (this.BookingDataList[row.bookNo]) === 'undefined') {
-                this.BookingDataList[row.bookNo] = []
+              if (typeof (BookingDataList[row.bookNo]) === 'undefined') {
+                BookingDataList[row.bookNo] = []
               }
-              this.BookingDataList[row.bookNo].push(row)
+              BookingDataList[row.bookNo].push(row)
             })
+            this.BookingDataList = BookingDataList
           }
         }).catch(error => {
           // this.dataEditReady = true
@@ -999,7 +1071,9 @@ export default {
     closeJobServicePointReturn (item) {
       if (this.servicePoint === '') {
         this.$swal('ผิดพลาด', 'กรุณาเลือกจุดบริการ', 'error')
+        this.checkStatusEdit = false
       } else {
+        this.checkStatusEdit = true
         this.$swal({
           title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
           type: 'question',
@@ -1023,10 +1097,14 @@ export default {
                 console.log('error function pushMsgQueueReturnOhrich : ', error)
               })
           }
+          await this.resetFirebaseUse()
           this.dialogServicePointStatus = false
           this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
           await this.searchBooking('unNoti')
-          this.clearTimeLoop()
+          // this.clearTimeLoop()
+        }).catch(error => {
+          this.checkStatusEdit = false
+          console.log('catch swal : ', error)
         })
       }
     },
@@ -1056,18 +1134,21 @@ export default {
                 console.log('error function pushMsgQueueOhrich : ', error)
               })
           }
+          await this.resetFirebaseUse()
           this.dialogServicePointStatus = false
           this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
           await this.searchBooking('noti', item)
-          this.clearTimeLoop()
+          // this.clearTimeLoop()
         })
     },
     async closeJobServicePoint (item) {
       if (this.servicePoint === '') {
         this.$swal('ผิดพลาด', 'กรุณาเลือกจุดบริการ', 'error')
+        this.checkStatusEdit = false
       } else {
         let statusBooking = await this.checkBookingStatus(item.bookNo)
         if (statusBooking === 'confirm') {
+          this.checkStatusEdit = true
           this.$swal({
             title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
             type: 'question',
@@ -1091,13 +1172,13 @@ export default {
                   this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                   this.dialogServicePointStatus = false
                   await this.searchBooking('unNoti')
-                  this.clearTimeLoop()
+                  // this.clearTimeLoop()
                 }
               } else {
                 this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                 this.dialogServicePointStatus = false
                 await this.searchBooking('unNoti')
-                this.clearTimeLoop()
+                // this.clearTimeLoop()
               }
             } else {
               this.closeJobServicePointSubmit(item)
@@ -1107,7 +1188,7 @@ export default {
           this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
           this.dialogServicePointStatus = false
           await this.searchBooking('unNoti')
-          this.clearTimeLoop()
+          // this.clearTimeLoop()
         }
       }
     },
@@ -1117,6 +1198,7 @@ export default {
     async closeJobSubmitReturn (item) {
       this.closeSetTimeBookingListQueue()
       console.log('closeJobSubmit', item)
+      this.checkStatusEdit = true
       if (item.servicePointStatus === 'True') {
         this.closeItem = item
         // this.dialogServicePointStatus = true
@@ -1152,8 +1234,9 @@ export default {
               })
           }
           this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+          await this.resetFirebaseUse()
           await this.searchBooking('unNoti')
-          this.clearTimeLoop()
+          // this.clearTimeLoop()
         })
       }
     },
@@ -1161,6 +1244,7 @@ export default {
       console.log('backHomeSubmit', item)
       this.closeSetTimeBookingListQueue()
       let statusBooking = await this.checkBookingStatus(item.bookNo)
+      this.checkStatusEdit = true
       if (statusBooking === 'confirmJob') {
         this.$swal({
           title: 'ต้องการปิดงานนี้ ใช่หรือไม่?',
@@ -1185,14 +1269,15 @@ export default {
             .post(this.DNS_IP + '/booking_transaction/add', dtt)
             .then(async responses => {
               this.$swal('เรียบร้อย', 'ปิดงานสำเร็จ', 'success')
+              await this.resetFirebaseUse()
               await this.searchBooking('unNoti')
-              this.clearTimeLoop()
+              // this.clearTimeLoop()
             })
         })
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
         await this.searchBooking('unNoti')
-        this.clearTimeLoop()
+        // this.clearTimeLoop()
       }
     },
     async setservicePointCount (item) {
@@ -1240,6 +1325,7 @@ export default {
     async closeJobSubmit (item) {
       this.closeSetTimeBookingListQueue()
       if (item.statusBt === 'confirm') {
+        this.checkStatusEdit = true
         console.log('closeJobSubmit', item)
         let statusBooking = await this.checkBookingStatus(item.bookNo)
         if (statusBooking === 'confirm') {
@@ -1277,12 +1363,12 @@ export default {
                   } else {
                     this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                     await this.searchBooking('unNoti')
-                    this.clearTimeLoop()
+                    // this.clearTimeLoop()
                   }
                 } else {
                   this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                   await this.searchBooking('unNoti')
-                  this.clearTimeLoop()
+                  // this.clearTimeLoop()
                 }
               } else {
                 this.closeJob(item)
@@ -1292,7 +1378,7 @@ export default {
         } else {
           this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
           await this.searchBooking('unNoti')
-          this.clearTimeLoop()
+          // this.clearTimeLoop()
         }
       }
     },
@@ -1322,8 +1408,9 @@ export default {
               })
           }
           this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+          await this.resetFirebaseUse()
           await this.searchBooking('noti', item)
-          this.clearTimeLoop()
+          // this.clearTimeLoop()
         })
     },
     async clearConfirmJob (dueDateUse) {
