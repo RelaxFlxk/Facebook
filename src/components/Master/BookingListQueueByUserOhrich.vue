@@ -686,7 +686,7 @@ export default {
         checkGetQueue: 'False'
       }
       await axios
-        .post(this.DNS_IP + '/Booking/pushMsgQueue/' + item.bookNo, dtt)
+        .post(this.DNS_IP + '/Booking/pushMsgQueueOhrich/' + item.bookNo, dtt)
         .then(async responses => {
           this.$swal({
             title: 'Send successfully',
@@ -696,7 +696,7 @@ export default {
             showConfirmButton: false
           })
         }).catch(error => {
-          console.log('error function pushMsgQueue : ', error)
+          console.log('error function pushMsgQueueOhrich : ', error)
         })
     },
     async openHistory (item) {
@@ -1018,9 +1018,9 @@ export default {
               checkGetQueue: 'True'
             }
             await axios
-              .post(this.DNS_IP + '/Booking/pushMsgQueueReturn/' + item.bookNo, dtt)
+              .post(this.DNS_IP + '/Booking/pushMsgQueueReturnOhrich/' + item.bookNo, dtt)
               .then(async responses => {}).catch(error => {
-                console.log('error function pushMsgQueueReturn : ', error)
+                console.log('error function pushMsgQueueReturnOhrich : ', error)
               })
           }
           this.dialogServicePointStatus = false
@@ -1051,9 +1051,9 @@ export default {
               checkGetQueue: 'True'
             }
             await axios
-              .post(this.DNS_IP + '/Booking/pushMsgQueue/' + item.bookNo, dtt)
+              .post(this.DNS_IP + '/Booking/pushMsgQueueOhrich/' + item.bookNo, dtt)
               .then(async responses => {}).catch(error => {
-                console.log('error function pushMsgQueue : ', error)
+                console.log('error function pushMsgQueueOhrich : ', error)
               })
           }
           this.dialogServicePointStatus = false
@@ -1146,9 +1146,9 @@ export default {
               checkGetQueue: 'True'
             }
             await axios
-              .post(this.DNS_IP + '/Booking/pushMsgQueueReturn/' + item.bookNo, dtt)
+              .post(this.DNS_IP + '/Booking/pushMsgQueueReturnOhrich/' + item.bookNo, dtt)
               .then(async responses => {}).catch(error => {
-                console.log('error function pushMsgQueueReturn : ', error)
+                console.log('error function pushMsgQueueReturnOhrich : ', error)
               })
           }
           this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
@@ -1316,9 +1316,9 @@ export default {
               checkGetQueue: 'True'
             }
             await axios
-              .post(this.DNS_IP + '/Booking/pushMsgQueue/' + item.bookNo, dtt)
+              .post(this.DNS_IP + '/Booking/pushMsgQueueOhrich/' + item.bookNo, dtt)
               .then(async responses => {}).catch(error => {
-                console.log('error function pushMsgQueue : ', error)
+                console.log('error function pushMsgQueueOhrich : ', error)
               })
           }
           this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
@@ -2021,9 +2021,9 @@ export default {
               checkGetQueue: checkGetQueue
             }
             await axios
-              .post(this.DNS_IP + '/Booking/pushMsgQueue/' + d.bookNo, dtt)
+              .post(this.DNS_IP + '/Booking/pushMsgQueueOhrich/' + d.bookNo, dtt)
               .then(async responses => {}).catch(error => {
-                console.log('error function pushMsgQueue : ', error)
+                console.log('error function pushMsgQueueOhrich : ', error)
               })
           }
         }

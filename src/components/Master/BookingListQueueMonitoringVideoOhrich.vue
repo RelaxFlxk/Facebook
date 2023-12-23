@@ -943,10 +943,21 @@ export default {
         if (d.statusBt === 'confirmJob') {
           dataConfirm.push(d)
         } else {
-
+          if (d.storeFrontText === 'B') {
+            dataB.push(d)
+          } else {
+            data.push(d)
+          }
         }
-        
       }
+      // console.log('dataConfirm', dataConfirm)
+      // console.log('data', data)
+      // console.log('dataB', dataB)
+      let mergedData = [...dataB, ...data.slice(0)]
+      dataConfirm.push(...mergedData)
+
+      console.log(dataConfirm)
+      return dataConfirm
     },
     // async GroupArrayQueue (dataArray) {
     //   // ใช้ Map เพื่อจัดกลุ่มตาม flowId
