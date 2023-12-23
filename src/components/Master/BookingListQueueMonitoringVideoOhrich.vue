@@ -842,7 +842,8 @@ export default {
         'two': [],
         'three': []
       },
-      isPortrait: null
+      isPortrait: null,
+      checkRef: false
     }
   },
   async mounted () {
@@ -858,13 +859,14 @@ export default {
     await this.getDataBranch()
     await this.getDataFlow()
     this.setTime()
-    this.$root.$on('closeSetTimeBookingMonitor', () => {
-      // your code goes here
-      this.closeSetTimeBookingMonitor()
-    })
+    // this.$root.$on('closeSetTimeBookingMonitor', () => {
+    //   // your code goes here
+    //   this.closeSetTimeBookingMonitor()
+    // })
     this.dateStart = moment().format('YYYY-MM-DD')
-    this.clearTimeLoop()
-    this.checkSearch()
+    // this.clearTimeLoop()
+    // this.checkSearch()
+    this.getFirestore()
     document.querySelector('body').requestFullscreen()
     console.log('tetx', this.text)
     if (this.isMobileDevice()) {
@@ -876,6 +878,35 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
+    async getFirestore () {
+      console.log('getFirestore')
+      this.firestore = this.$firebase.firestore()
+      this.firestore.collection('ProcessOhrichUpdate').limit(100).onSnapshot((snapshot) => {
+        snapshot.docChanges().forEach(async (change) => {
+          console.log(change)
+          console.log(change.doc.id)
+          console.log(change.doc.data())
+          if (this.checkRef === false) {
+            await this.searchBooking()
+            this.updateProcessOhrichUpdate()
+            this.checkRef = true
+          } else {
+            if (change.doc.data().active === '1') {
+              if (!this.checkStatusEdit) {
+                await this.searchBooking()
+                this.updateProcessOhrichUpdate()
+              }
+            }
+          }
+        })
+      })
+    },
+    updateProcessOhrichUpdate (item) {
+      let params = {
+        userName: this.$session.getAll().data.userName
+      }
+      axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-ProcessOhrichUseNew', params)
+    },
     async GroupQueue (item) {
       let countIndex = 1
       this.GroupQueueItem = {
@@ -936,8 +967,8 @@ export default {
     async GroupArrayQueue (dataArray) {
       // ใช้ Map เพื่อจัดกลุ่มตาม flowId
       let dataConfirm = []
-      let data = []
-      let dataB = []
+      // let data = []
+      // let dataB = []
       for (let i = 0; i < dataArray.length; i++) {
         let d = dataArray[i]
         if (d.statusBt === 'confirmJob') {
@@ -945,7 +976,6 @@ export default {
         } else {
 
         }
-        
       }
     },
     // async GroupArrayQueue (dataArray) {
