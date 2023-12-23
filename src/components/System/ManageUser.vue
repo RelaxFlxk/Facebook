@@ -81,6 +81,7 @@
                         item-value="value"
                         return-object
                         clearable
+                        @change="getFlowAdd(empSelectAdd)"
                       ></v-select>
                     </v-col>
                     </v-row>
@@ -94,6 +95,18 @@
                           dense
                           required
                           :rules="emptyRules"
+                        ></v-select>
+                      </v-col>
+                    </v-row>
+                    <v-row v-if="USER_ROLE === 'storeFront'">
+                      <v-col cols="12" class="pb-0 pt-0">
+                        <v-select
+                        outlined
+                          v-model="counterSelect"
+                          :items="counterItem"
+                          label="เลือกเคาน์เตอร์"
+                          dense
+                          required
                         ></v-select>
                       </v-col>
                     </v-row>
@@ -241,6 +254,16 @@
                           label="สิทธิการใช้งาน"
                           required
                           :rules="emptyRules"
+                        ></v-select>
+                      </v-col>
+                      <v-col cols="12" class="pb-0 pt-0" v-if="USER_ROLE === 'storeFront'">
+                        <v-select
+                        outlined
+                          v-model="counterSelect"
+                          :items="counterItem"
+                          label="เลือกเคาน์เตอร์"
+                          dense
+                          required
                         ></v-select>
                       </v-col>
                     <v-col cols="12" class="pa-0 px-3" v-if="(formUpdate.userFirst_NameTH || '') !== '' && session.data.USER_ROLE === 'admin'">
@@ -391,6 +414,7 @@ export default {
       panel: [0],
       panel1: [1],
       session: this.$session.getAll(),
+      shopId: this.$session.getAll().data.shopId,
       ZIP_CD: '',
       optionSubDistrict: [],
       optionDistrict: [],
@@ -469,7 +493,10 @@ export default {
         { text: 'วันที่อัพเดท', value: 'LAST_DATE' },
         { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
       ],
-      dataItem: []
+      dataItem: [],
+      selectCounterStatus: false,
+      counterSelect: null,
+      counterItem: []
       // End Data Table Config
     }
   },
@@ -510,6 +537,58 @@ export default {
           this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
           this.dataReady = true
         })
+    },
+    async getFlowAdd (item) {
+      this.selectCounterStatus = false
+      console.log('item', item)
+      // let flowId = JSON.parse(item.flowId)[0]
+      // console.log('flowId', flowId)
+      let masBranchID = item.masBranchID
+      if (this.shopId === 'Ue9f527da07ff2da05246ea3f62671493') {
+        if (item.masBranchID !== null && item.privacyPage === 'bookingStoreFront') {
+          await axios
+            .get(this.DNS_IP + `/flow/get?shopId=${this.shopId}&storeFrontCheck=True&masBranchID=${masBranchID}`)
+            .then(response => {
+              console.log('respons!!!!', response.data)
+              let rs = response.data
+              if (rs.length > 0) {
+                this.selectCounterStatus = true
+                rs.forEach((II) => {
+                  let countarray = JSON.parse(II.servicePointCount)
+                  countarray.forEach((e) => {
+                    this.counterItem.push(e.textTh)
+                  })
+                })
+              }
+            })
+        }
+      }
+    },
+    async getFlowEdit (item) {
+      this.selectCounterStatus = false
+      let masBranchID = item.masBranchID
+      console.log('1')
+      if (this.shopId === 'Ue9f527da07ff2da05246ea3f62671493') {
+        console.log('2')
+        if (masBranchID !== null) {
+          console.log('3')
+          await axios
+            .get(this.DNS_IP + `/flow/get?shopId=${this.shopId}&storeFrontCheck=True&masBranchID=${masBranchID}`)
+            .then(response => {
+              console.log('respons!!!!', response.data)
+              let rs = response.data
+              if (rs.length > 0) {
+                this.selectCounterStatus = true
+                rs.forEach((II) => {
+                  let countarray = JSON.parse(II.servicePointCount)
+                  countarray.forEach((e) => {
+                    this.counterItem.push(e.textTh)
+                  })
+                })
+              }
+            })
+        }
+      }
     },
     async getEmpSelect () {
       console.log('dataItem', this.dataItem)
@@ -556,6 +635,9 @@ export default {
           .get(this.DNS_IP + '/system_user/get?userName=' + this.email)
           .then(response1 => {
             let data = []
+            if (this.USER_ROLE !== 'storeFront') {
+              this.counterSelect = null
+            }
             if (this.empSelectAdd === '' || this.empSelectAdd === null) {
               data = [{
                 'userCode': 'SYS_USER_' + (new Date()).getTime(),
@@ -563,6 +645,7 @@ export default {
                 'userFirst_NameTH': this.name,
                 'userPassword': this.password,
                 'USER_ROLE': this.USER_ROLE,
+                'counter': this.counterSelect || null,
                 'CREATE_USER': this.session.data.userName,
                 'LAST_USER': this.session.data.userName,
                 'shopId': this.session.data.shopId
@@ -574,6 +657,7 @@ export default {
                 'userFirst_NameTH': this.empSelectAdd.text,
                 'userPassword': this.password,
                 'USER_ROLE': this.USER_ROLE,
+                'counter': this.counterSelect || null,
                 'empId': this.empSelectAdd.value,
                 'CREATE_USER': this.session.data.userName,
                 'LAST_USER': this.session.data.userName,
@@ -659,6 +743,7 @@ export default {
       await this.getEmpSelectEdit()
       this.formUpdate = item
       this.USER_ROLE = item.USER_ROLE || ''
+      this.counterSelect = item.counter || null
       // if (this.USER_ROLE === 'user' || this.USER_ROLE === 'admin') {
       //   this.USER_ROLE = ''
       // }
@@ -668,6 +753,9 @@ export default {
       } else {
         this.formUpdate.userFirst_NameTH = ''
         this.empSelectEdit = this.empItemEdit.filter(el => { return el.value === parseInt(item.empId) })[0] || ''
+      }
+      if (this.shopId === 'Ue9f527da07ff2da05246ea3f62671493') {
+        await this.getFlowEdit(item)
       }
       console.log('dff', this.formUpdate)
       console.log('empSelectEdit', this.empSelectEdit)
@@ -717,6 +805,9 @@ export default {
           //     }]
           //   }
           // }
+          if (this.USER_ROLE !== 'storeFront') {
+            this.counterSelect = null
+          }
           this.empSelectEdit = this.empSelectEdit || ''
           if (this.session.data.USER_ROLE === 'user' && (this.empSelectEdit === '')) {
             data = [{
@@ -725,6 +816,7 @@ export default {
               'userPassword': this.formUpdate.userPassword,
               'USER_ROLE': 'user',
               'LAST_USER': this.session.data.userName,
+              'counter': this.counterSelect || null,
               'empId': ''
             }]
           } else if ((this.session.data.USER_ROLE === 'user' && (this.empSelectEdit !== ''))) {
@@ -734,6 +826,7 @@ export default {
               'userPassword': this.formUpdate.userPassword,
               'USER_ROLE': this.USER_ROLE,
               'LAST_USER': this.session.data.userName,
+              'counter': this.counterSelect || null,
               'empId': this.empSelectEdit.value
             }]
           } else if ((this.session.data.USER_ROLE === 'admin' && (this.empSelectEdit !== ''))) {
@@ -743,6 +836,7 @@ export default {
               'userPassword': this.formUpdate.userPassword,
               'USER_ROLE': this.USER_ROLE,
               'LAST_USER': this.session.data.userName,
+              'counter': this.counterSelect || null,
               'empId': this.empSelectEdit.value
             }]
           } else if ((this.session.data.USER_ROLE === 'admin' && (this.empSelectEdit === ''))) {
@@ -752,6 +846,7 @@ export default {
               'userPassword': this.formUpdate.userPassword,
               'USER_ROLE': this.USER_ROLE,
               'LAST_USER': this.session.data.userName,
+              'counter': this.counterSelect || null,
               'empId': ''
             }]
           }

@@ -136,6 +136,11 @@ export default new Router({
     component: Master.BookingListQueueByUser
   },
   {
+    path: '/Master/BookingListQueueByUserOhrich',
+    name: 'BookingListQueueByUserOhrich',
+    component: Master.BookingListQueueByUserOhrich
+  },
+  {
     path: '/Master/BookingListQueueMonitoring',
     name: 'BookingListQueueMonitoring',
     component: Master.BookingListQueueMonitoring
@@ -144,6 +149,11 @@ export default new Router({
     path: '/Master/BookingListQueueMonitoringVideo',
     name: 'BookingListQueueMonitoringVideo',
     component: Master.BookingListQueueMonitoringVideo
+  },
+  {
+    path: '/Master/BookingListQueueMonitoringVideoOhrich',
+    name: 'BookingListQueueMonitoringVideoOhrich',
+    component: Master.BookingListQueueMonitoringVideoOhrich
   },
   {
     path: '/Master/BookingList',
