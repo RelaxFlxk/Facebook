@@ -967,8 +967,8 @@ export default {
     async GroupArrayQueue (dataArray) {
       // ใช้ Map เพื่อจัดกลุ่มตาม flowId
       let dataConfirm = []
-      // let data = []
-      // let dataB = []
+      let data = []
+      let dataB = []
       for (let i = 0; i < dataArray.length; i++) {
         let d = dataArray[i]
         if (d.statusBt === 'confirmJob') {
