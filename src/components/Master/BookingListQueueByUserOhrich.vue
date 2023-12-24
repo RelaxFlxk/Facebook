@@ -660,7 +660,7 @@ export default {
           await axios
             .post(this.DNS_IP + '/booking_transaction/add', dtt)
             .then(async responses => {
-              this.$swal('เรียบร้อย', 'ยกเลิกคิวสำเร็จ', 'success')
+              // this.$swal('เรียบร้อย', 'ยกเลิกคิวสำเร็จ', 'success')
               this.resetFirebaseUse()
               await this.searchBooking('unNoti')
               // this.clearTimeLoop()
@@ -731,13 +731,13 @@ export default {
       await axios
         .post(this.DNS_IP + '/Booking/pushMsgQueueOhrich/' + item.bookNo, dtt)
         .then(async responses => {
-          this.$swal({
-            title: 'Send successfully',
-            text: 'ส่งสำเร็จ',
-            type: 'success',
-            timer: 2000,
-            showConfirmButton: false
-          })
+          // this.$swal({
+          //   title: 'Send successfully',
+          //   text: 'ส่งสำเร็จ',
+          //   type: 'success',
+          //   timer: 2000,
+          //   showConfirmButton: false
+          // })
         }).catch(error => {
           console.log('error function pushMsgQueueOhrich : ', error)
         })
@@ -1068,44 +1068,31 @@ export default {
         })
       return result
     },
-    closeJobServicePointReturn (item) {
+    async closeJobServicePointReturn (item) {
       if (this.servicePoint === '') {
         this.$swal('ผิดพลาด', 'กรุณาเลือกจุดบริการ', 'error')
         this.checkStatusEdit = false
       } else {
         this.checkStatusEdit = true
-        this.$swal({
-          title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
-          type: 'question',
-          showCancelButton: true,
-          confirmButtonColor: '#1DBF73',
-          cancelButtonColor: '#F38383',
-          confirmButtonText: 'ใช่',
-          cancelButtonText: 'ไม่'
-        }).then(async response => {
-          this.overlay = false
-          await this.updateServicePoint(item.bookNo)
-          await this.reCallNoti(item)
-          let lineUserId = item.lineUserId || ''
-          if (lineUserId !== '') {
-            let dtt = {
-              checkGetQueue: 'True'
-            }
-            await axios
-              .post(this.DNS_IP + '/Booking/pushMsgQueueReturnOhrich/' + item.bookNo, dtt)
-              .then(async responses => {}).catch(error => {
-                console.log('error function pushMsgQueueReturnOhrich : ', error)
-              })
+        this.overlay = false
+        await this.updateServicePoint(item.bookNo)
+        await this.reCallNoti(item)
+        let lineUserId = item.lineUserId || ''
+        if (lineUserId !== '') {
+          let dtt = {
+            checkGetQueue: 'True'
           }
-          await this.resetFirebaseUse()
-          this.dialogServicePointStatus = false
-          this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
-          await this.searchBooking('unNoti')
-          // this.clearTimeLoop()
-        }).catch(error => {
-          this.checkStatusEdit = false
-          console.log('catch swal : ', error)
-        })
+          await axios
+            .post(this.DNS_IP + '/Booking/pushMsgQueueReturnOhrich/' + item.bookNo, dtt)
+            .then(async responses => {}).catch(error => {
+              console.log('error function pushMsgQueueReturnOhrich : ', error)
+            })
+        }
+        await this.resetFirebaseUse()
+        this.dialogServicePointStatus = false
+        // this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+        await this.searchBooking('unNoti')
+        // this.clearTimeLoop()
       }
     },
     async closeJobServicePointSubmit (item) {
@@ -1136,7 +1123,7 @@ export default {
           }
           await this.resetFirebaseUse()
           this.dialogServicePointStatus = false
-          this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+          // this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
           await this.searchBooking('noti', item)
           // this.clearTimeLoop()
         })
@@ -1149,31 +1136,16 @@ export default {
         let statusBooking = await this.checkBookingStatus(item.bookNo)
         if (statusBooking === 'confirm') {
           this.checkStatusEdit = true
-          this.$swal({
-            title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
-            type: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#1DBF73',
-            cancelButtonColor: '#F38383',
-            confirmButtonText: 'ใช่',
-            cancelButtonText: 'ไม่'
-          }).then(async response => {
-            this.overlay = false
-            // await this.clearConfirmJob(item.dueDate)
-            let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
-            let empId = this.$session.getAll().data.empId || ''
-            if (USER_ROLE === 'storeFront' && empId !== '') {
-              let statusBookingCheck = await this.checkBookingStatus(item.bookNo)
-              if (statusBookingCheck === 'confirm') {
-                let statusUpdateEmp = await this.updateEmp(item.bookNo, 'confirm')
-                if (statusUpdateEmp === true) {
-                  this.closeJobServicePointSubmit(item)
-                } else {
-                  this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
-                  this.dialogServicePointStatus = false
-                  await this.searchBooking('unNoti')
-                  // this.clearTimeLoop()
-                }
+          this.overlay = false
+          // await this.clearConfirmJob(item.dueDate)
+          let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
+          let empId = this.$session.getAll().data.empId || ''
+          if (USER_ROLE === 'storeFront' && empId !== '') {
+            let statusBookingCheck = await this.checkBookingStatus(item.bookNo)
+            if (statusBookingCheck === 'confirm') {
+              let statusUpdateEmp = await this.updateEmp(item.bookNo, 'confirm')
+              if (statusUpdateEmp === true) {
+                this.closeJobServicePointSubmit(item)
               } else {
                 this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                 this.dialogServicePointStatus = false
@@ -1181,9 +1153,14 @@ export default {
                 // this.clearTimeLoop()
               }
             } else {
-              this.closeJobServicePointSubmit(item)
+              this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
+              this.dialogServicePointStatus = false
+              await this.searchBooking('unNoti')
+              // this.clearTimeLoop()
             }
-          })
+          } else {
+            this.closeJobServicePointSubmit(item)
+          }
         } else {
           this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
           this.dialogServicePointStatus = false
@@ -1212,32 +1189,22 @@ export default {
         }
         this.statusReturn = true
       } else {
-        this.$swal({
-          title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
-          type: 'question',
-          showCancelButton: true,
-          confirmButtonColor: '#1DBF73',
-          cancelButtonColor: '#F38383',
-          confirmButtonText: 'ใช่',
-          cancelButtonText: 'ไม่'
-        }).then(async response => {
-          let lineUserId = item.lineUserId || ''
-          this.reCallNoti(item)
-          if (lineUserId !== '') {
-            let dtt = {
-              checkGetQueue: 'True'
-            }
-            await axios
-              .post(this.DNS_IP + '/Booking/pushMsgQueueReturnOhrich/' + item.bookNo, dtt)
-              .then(async responses => {}).catch(error => {
-                console.log('error function pushMsgQueueReturnOhrich : ', error)
-              })
+        let lineUserId = item.lineUserId || ''
+        this.reCallNoti(item)
+        if (lineUserId !== '') {
+          let dtt = {
+            checkGetQueue: 'True'
           }
-          this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
-          await this.resetFirebaseUse()
-          await this.searchBooking('unNoti')
-          // this.clearTimeLoop()
-        })
+          await axios
+            .post(this.DNS_IP + '/Booking/pushMsgQueueReturnOhrich/' + item.bookNo, dtt)
+            .then(async responses => {}).catch(error => {
+              console.log('error function pushMsgQueueReturnOhrich : ', error)
+            })
+        }
+        // this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+        await this.resetFirebaseUse()
+        await this.searchBooking('unNoti')
+        // this.clearTimeLoop()
       }
     },
     async backHomeSubmit (item) {
@@ -1246,34 +1213,23 @@ export default {
       let statusBooking = await this.checkBookingStatus(item.bookNo)
       this.checkStatusEdit = true
       if (statusBooking === 'confirmJob') {
-        this.$swal({
-          title: 'ต้องการปิดงานนี้ ใช่หรือไม่?',
-          type: 'question',
-          showCancelButton: true,
-          confirmButtonColor: '#1DBF73',
-          cancelButtonColor: '#F38383',
-          confirmButtonText: 'ใช่',
-          cancelButtonText: 'ไม่'
-        }).then(async response => {
-        // await this.clearConfirmJob(item.dueDate)
-          var dtt = {
-            bookNo: item.bookNo,
-            contactDate: this.format_date(new Date()),
-            status: 'closeJob',
-            statusUse: 'use',
-            shopId: this.$session.getAll().data.shopId,
-            CREATE_USER: this.$session.getAll().data.userName,
-            LAST_USER: this.$session.getAll().data.userName
-          }
-          await axios
-            .post(this.DNS_IP + '/booking_transaction/add', dtt)
-            .then(async responses => {
-              this.$swal('เรียบร้อย', 'ปิดงานสำเร็จ', 'success')
-              await this.resetFirebaseUse()
-              await this.searchBooking('unNoti')
-              // this.clearTimeLoop()
-            })
-        })
+        var dtt = {
+          bookNo: item.bookNo,
+          contactDate: this.format_date(new Date()),
+          status: 'closeJob',
+          statusUse: 'use',
+          shopId: this.$session.getAll().data.shopId,
+          CREATE_USER: this.$session.getAll().data.userName,
+          LAST_USER: this.$session.getAll().data.userName
+        }
+        await axios
+          .post(this.DNS_IP + '/booking_transaction/add', dtt)
+          .then(async responses => {
+            // this.$swal('เรียบร้อย', 'ปิดงานสำเร็จ', 'success')
+            await this.resetFirebaseUse()
+            await this.searchBooking('unNoti')
+            // this.clearTimeLoop()
+          })
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
         await this.searchBooking('unNoti')
@@ -1342,38 +1298,27 @@ export default {
             }
             this.statusReturn = false
           } else {
-            this.$swal({
-              title: 'ต้องการเรียกคิวนี้ ใช่หรือไม่?',
-              type: 'question',
-              showCancelButton: true,
-              confirmButtonColor: '#1DBF73',
-              cancelButtonColor: '#F38383',
-              confirmButtonText: 'ใช่',
-              cancelButtonText: 'ไม่'
-            }).then(async response => {
-              // await this.clearConfirmJob(item.dueDate)
-              let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
-              let empId = this.$session.getAll().data.empId || ''
-              if (USER_ROLE === 'storeFront' && empId !== '') {
-                let statusBookingCheck = await this.checkBookingStatus(item.bookNo)
-                if (statusBookingCheck === 'confirm') {
-                  let statusUpdateEmp = await this.updateEmp(item.bookNo, 'confirm')
-                  if (statusUpdateEmp === true) {
-                    this.closeJob(item)
-                  } else {
-                    this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
-                    await this.searchBooking('unNoti')
-                    // this.clearTimeLoop()
-                  }
+            let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
+            let empId = this.$session.getAll().data.empId || ''
+            if (USER_ROLE === 'storeFront' && empId !== '') {
+              let statusBookingCheck = await this.checkBookingStatus(item.bookNo)
+              if (statusBookingCheck === 'confirm') {
+                let statusUpdateEmp = await this.updateEmp(item.bookNo, 'confirm')
+                if (statusUpdateEmp === true) {
+                  this.closeJob(item)
                 } else {
                   this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                   await this.searchBooking('unNoti')
                   // this.clearTimeLoop()
                 }
               } else {
-                this.closeJob(item)
+                this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
+                await this.searchBooking('unNoti')
+                // this.clearTimeLoop()
               }
-            })
+            } else {
+              this.closeJob(item)
+            }
           }
         } else {
           this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
@@ -1407,7 +1352,7 @@ export default {
                 console.log('error function pushMsgQueueOhrich : ', error)
               })
           }
-          this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+          // this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
           await this.resetFirebaseUse()
           await this.searchBooking('noti', item)
           // this.clearTimeLoop()
@@ -1483,7 +1428,7 @@ export default {
       await axios
         .post(this.DNS_IP + '/callQueues/edit/' + item.audioFileId, dtdt)
         .then(async responses => {
-          this.$swal('เรียบร้อย', 'กรุณารอเรียกคิว', 'success')
+          // this.$swal('เรียบร้อย', 'กรุณารอเรียกคิว', 'success')
         })
     },
     // async getBase64ImageFromURL (img) {
