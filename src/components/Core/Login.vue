@@ -646,7 +646,11 @@ export default {
             }
           }
         } else if (dataitem.USER_ROLE === 'storeFront') {
-          this.$router.push('/Master/BookingListQueueByUser')
+          if (dataitem.shopId === 'Ue9f527da07ff2da05246ea3f62671493') {
+            this.$router.push('/Master/BookingListQueueByUserOhrich')
+          } else {
+            this.$router.push('/Master/BookingListQueueByUser')
+          }
         } else {
           // this.$router.push('/Dashbord/ReportBooking')
           this.$router.push('/Master/BookingField')

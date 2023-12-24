@@ -40,12 +40,14 @@ import BookingListQueueMonitoring from './BookingListQueueMonitoring'
 import WorkShopComponent from './WorkShopComponent'
 import ChatHistory from './ChatHistory'
 import BookingListQueueByUser from './BookingListQueueByUser'
+import BookingListQueueByUserOhrich from './BookingListQueueByUserOhrich'
 import BookingListQueueMonitoringVideo from './BookingListQueueMonitoringVideo'
 import BookingWalkinEmp from './BookingWalkinEmp'
 import BookingWalkin from './BookingWalkin.vue'
 import CheckBookingList from './CheckBookingList.vue'
 import AdminStampStep from './AdminStampStep.vue'
 import BookingByUserEmp from './BookingByUserEmp.vue'
+import BookingListQueueMonitoringVideoOhrich from './BookingListQueueMonitoringVideoOhrich.vue'
 // import BookingListBeautyEmpTestRedis from './BookingListBeautyEmpTestRedis.vue'
 
 export default {
@@ -94,8 +96,10 @@ export default {
   BookingListQueue,
   BookingListQueueMonitoring,
   BookingListQueueByUser,
+  BookingListQueueByUserOhrich,
   BookingListQueueMonitoringVideo,
   BookingWalkinEmp,
   BookingWalkin,
-  CheckBookingList
+  CheckBookingList,
+  BookingListQueueMonitoringVideoOhrich
 }
