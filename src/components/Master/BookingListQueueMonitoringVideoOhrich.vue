@@ -1302,7 +1302,6 @@ export default {
     },
     async searchBooking () {
       if (this.validSearch === true) {
-        this.itemBooking = []
         // this.dateStartShow = moment(this.dateStart).locale('th').format('LLLL')
         this.dateStartShow = 'วัน' + moment(this.dateStart).locale('th').format('dddd') + 'ที่ ' + moment(this.dateStart).locale('th').format('D MMMM ') + (parseInt(moment(this.dateStart).format('YYYY')) + 543).toString()
         // await this.getBookingDataList(this.dateStart)
@@ -1331,6 +1330,7 @@ export default {
               //   return a.storeFrontQueue > b.storeFrontQueue ? 1 : 0
               // })
               console.log('sort', sortData)
+              this.itemBooking = []
               for (let i = 0; i < sortData.length; i++) {
                 let d = sortData[i]
                 // if (this.BookingDataList[d.bookNo] !== undefined) {
