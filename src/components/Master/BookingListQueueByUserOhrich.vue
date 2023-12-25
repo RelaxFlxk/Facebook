@@ -149,8 +149,8 @@
             </v-col>
           </v-row> -->
         </v-form>
-        <v-row>
-          <v-col cols="12" v-if="overlay">
+        <v-row class="mb-16">
+          <v-col  :cols="resCol" v-if="overlay">
             <br>
             <v-card class="mx-6 pa-3 ma-2" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;">
               <v-card-text>
@@ -288,6 +288,17 @@
                   <strong class="text-white">ปิดงาน</strong>
                 </v-btn>
                 </div>
+              </div>
+            </v-card>
+          </v-col>
+          <v-col :cols="resCol" v-if="datawainingShow.length > 0">
+            <br>
+            <v-card class="mx-6 pa-3 ma-2" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;">
+              <h2 class="font-weight-black text-center mt-3">{{ 'จำนวนคิวที่รอ (' + datawainingShow.length + ')' }}</h2>
+              <div class="pa-1" style="display: flex;flex-wrap: wrap;justify-content: space-around;flex-direction: row;">
+                <v-col :cols="resCol === '12' ? '4': '4'" v-for="(itemShow, i) in datawainingShow" :key="i">
+                  <h3 class="font-weight-black text-center">{{ itemShow.storeFrontQueue }}</h3>
+                </v-col>
               </div>
             </v-card>
           </v-col>
@@ -467,6 +478,7 @@
             </v-card>
           </v-dialog>
         </v-row>
+        <!-- {{ datawainingShow.length }} -->
         <v-footer fixed padless color="rgb(148 213 11)" class="text-center mt-n16" style="justify-content: center;">
           <p class="text-white" width="100%">POWERED BY  BETASK CONSULTING</p>
         </v-footer>
@@ -565,10 +577,33 @@ export default {
       shopPhone: '',
       setTimerCalendar: null,
       checkRef: false,
-      checkStatusEdit: false
+      checkStatusEdit: false,
+      datawainingShow: []
+      // datawainingShowtest: [
+      //   'A001', 'A002', 'A003', 'A004', 'A005', 'A006', 'A001', 'A002', 'A003', 'A004', 'A005', 'A006'
+      // ]
     }
   },
   computed: {
+    resCol () {
+      console.log('this.$vuetify.breakpoint.name', this.$vuetify.breakpoint.name)
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs':
+          return '12'
+        case 'sm':
+          return '12'
+        case 'md':
+          return '6'
+        case 'lg':
+          return '6'
+        case 'xl':
+          return '6'
+      }
+      console.log(
+        'this.$vuetify.breakpoint.name',
+        this.$vuetify.breakpoint.name
+      )
+    },
     dialogwidth () {
       switch (this.$vuetify.breakpoint.name) {
         case 'xs': return '70%'
@@ -899,12 +934,14 @@ export default {
                   itemBooking.push(d)
                 }
               }
+              console.log('itemBooking', itemBooking)
               let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
               let empId = this.$session.getAll().data.empId || ''
               let itemBookings = []
               if (USER_ROLE === 'storeFront' && empId !== '') {
                 let dataCon = itemBooking.filter(el => { return el.statusBt === 'confirmJob' && el.storeFrontQueueEmpId === parseInt(empId) })
                 let dataWain = itemBooking.filter(el => { return el.statusBt === 'confirm' })
+                this.datawainingShow = itemBooking.filter(el => { return el.statusBt === 'confirm' })
                 itemBookings = [ ...dataCon, ...dataWain ]
               } else {
                 itemBookings = itemBooking
