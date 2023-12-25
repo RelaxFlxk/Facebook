@@ -405,15 +405,11 @@
         <v-row v-show="hideSound === true">
           <v-col>
             <audio id="playerPrefix" controls="controls">>
-              <source src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich%2FQueue.wav?alt=media&token=904e9b1f-c0a9-4a66-bcb0-6b91b5de09be">
+              <source src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1">
               Your browser does not support the audio format.
             </audio>
             <audio id="playerQueue" controls="controls">>
               <source :src="audio">
-              Your browser does not support the audio format.
-            </audio>
-            <audio id="playerSuffix" controls="controls">>
-              <source src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich%2FPleaseContactCounter.wav?alt=media&token=b0681664-60da-4c36-97e7-945259a2a15f">
               Your browser does not support the audio format.
             </audio>
             <audio id="playerCounter" controls="controls">>
@@ -637,15 +633,11 @@
         <v-row v-show="hideSound === true">
           <v-col>
             <audio id="playerPrefix" controls="controls">>
-              <source src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich%2FQueue.wav?alt=media&token=904e9b1f-c0a9-4a66-bcb0-6b91b5de09be">
+              <source src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1">
               Your browser does not support the audio format.
             </audio>
             <audio id="playerQueue" controls="controls">>
               <source :src="audio">
-              Your browser does not support the audio format.
-            </audio>
-            <audio id="playerSuffix" controls="controls">>
-              <source src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich%2FPleaseContactCounter.wav?alt=media&token=b0681664-60da-4c36-97e7-945259a2a15f">
               Your browser does not support the audio format.
             </audio>
             <audio id="playerCounter" controls="controls">>
@@ -807,17 +799,17 @@ export default {
       audio: null,
       timeCount: 0,
       repeatRound: 2,
-      speakerId: 33,
+      speakerId: 27,
       history: [],
       objInterval: null,
       text2: '',
       tableAudioList: [
-        'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich%2FZero.wav?alt=media&token=c85a8508-b9ad-4721-a311-eaeb8911eb7c',
-        'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich%2FOne.wav?alt=media&token=140c289d-d3ad-42ad-b64d-beadebd8214e',
-        'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich%2FTwo.wav?alt=media&token=d34dbdf8-9e72-4935-9f92-515aebfb4415',
-        'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich%2FThree.wav?alt=media&token=5a96fbab-28c4-41bb-8137-ba030501a6df',
-        'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich%2FFour.wav?alt=media&token=34a5da43-493e-4869-a69c-01835b768587',
-        'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich%2FFive.wav?alt=media&token=42f30c86-749b-4ae0-ac4f-f3da0d91523e'
+        '',
+        'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FPleaseContactCounterOne.wav?alt=media&token=0a90f02b-f23b-430c-874c-e476c7701def',
+        'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FPleaseContactCounterTwo.wav?alt=media&token=7348068e-b96e-4ce4-a2d8-19b13fb6ce55',
+        'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FPleaseContactCounterThree.wav?alt=media&token=fb455275-eac7-4375-9e9b-3ee2f20182b5',
+        '',
+        ''
       ],
       tableTarget: 0,
       tableId: 0,
@@ -835,12 +827,14 @@ export default {
     }
   },
   async mounted () {
+    // eslint-disable-next-line no-tabs
+    // this.generateSound({storeFrontQueue: 'เอ007', servicePoint: '	  1'})
     this.isPortrait = window.matchMedia('(orientation: portrait)').matches
 
     if (!this.isPortrait) {
-      console.log('หน้าจอเป็นแนวตั้ง')
+      console.log(' หน้าจอเป็นแนวตั้ง')
     } else {
-      console.log('หน้าจอเป็นแนวนอน')
+      console.log(' หน้าจอเป็นแนวนอน')
     }
     this.Fontsize = this.colsWidth
     await this.getShop()
@@ -892,7 +886,11 @@ export default {
           textFill = textFill + ' nine'
         }
       }
-      return itemText[0] + textFill
+      if (itemText[0] === 'B') {
+        return itemText[0] + ' ' + textFill
+      } else {
+        return itemText[0] + itemText[1] + ' ' + textFill
+      }
     },
     async getFirestore () {
       this.firestore = this.$firebase.firestore()
@@ -1116,17 +1114,17 @@ export default {
       axios.post(`${this.DNS_IP}/callQueues/edit/${id}`, params)
     },
     async generateSound (item) {
-      item.servicePoint = '2'
-      item.storeFrontQueue = 'B007'
       try {
-        this.tableId = item.servicePoint.replace('โต๊ะ ', '')
+        // eslint-disable-next-line no-tabs
+        this.tableId = item.servicePoint.replace('	  ', '').replace(' ', '').trim()
         let storeFrontQueue = item.storeFrontQueue
         // storeFrontQueue = storeFrontQueue.replace('A', 'เอ')
         // storeFrontQueue = storeFrontQueue.replace('B', 'บี')
         // storeFrontQueue = storeFrontQueue.replace('C', 'ซี')
         // storeFrontQueue = storeFrontQueue.replace('D', 'ดี')
         // storeFrontQueue = storeFrontQueue.replace('E', 'อี')
-        storeFrontQueue = this.replaceFunc(storeFrontQueue)
+        storeFrontQueue = this.replaceFunc(storeFrontQueue.replace('A', 'เอ'))
+        console.log('storeFrontQueue', storeFrontQueue)
         let result
         await axios
           .get(
@@ -1144,7 +1142,7 @@ export default {
             text_delay: ' ' + storeFrontQueue,
             speaker: this.speakerId,
             volume: 1,
-            speed: 1,
+            speed: 0.75,
             type_media: 'wav'
           }
           await axios
@@ -1179,36 +1177,31 @@ export default {
     playSound (res) {
       this.audio = res.audio_url
       this.tableTarget = this.tableAudioList[this.tableId]
+      console.log('tableTarget', this.tableTarget)
+      console.log('tableId', this.tableId)
       this.timeCount = 1
       let playerPrefix = document.getElementById('playerPrefix')
       let playerQueue = document.getElementById('playerQueue')
-      let playerSuffix = document.getElementById('playerSuffix')
+      // let playerSuffix = document.getElementById('playerSuffix')
       let playerCounter = document.getElementById('playerCounter')
       playerPrefix.play()
       playerPrefix.onended = (event) => {
         playerQueue.load()
         playerQueue.play()
         playerQueue.onended = (event) => {
-          playerSuffix.load()
-          playerSuffix.play()
-          playerSuffix.onended = (event) => {
-            playerCounter.load()
-            playerCounter.play()
-            playerCounter.onended = (event) => {
-              if (this.timeCount < this.repeatRound) {
-                this.timeCount++
-                playerPrefix.play()
-                playerPrefix.onended = (event) => {
-                  playerQueue.play()
-                  playerQueue.onended = (event) => {
-                    playerSuffix.play()
-                    playerSuffix.onended = (event) => {
-                      playerCounter.play()
-                      playerCounter.onended = (event) => {
-                        var vid = document.getElementById('videoAds')
-                        vid.play()
-                      }
-                    }
+          playerCounter.load()
+          playerCounter.play()
+          playerCounter.onended = (event) => {
+            if (this.timeCount < this.repeatRound) {
+              this.timeCount++
+              playerPrefix.play()
+              playerPrefix.onended = (event) => {
+                playerQueue.play()
+                playerQueue.onended = (event) => {
+                  playerCounter.play()
+                  playerCounter.onended = (event) => {
+                    var vid = document.getElementById('videoAds')
+                    vid.play()
                   }
                 }
               }
