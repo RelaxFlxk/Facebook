@@ -350,53 +350,53 @@
           </template> -->
             <v-row class="mx-10">
                     <v-col :cols="columCardMain()" class="pa-3 mt-1">
-                      <v-card min-height="160px">
+                      <v-card min-height="190px">
                         <v-container style="height:120px;">
                           <v-row class="pa-2">
                             <v-col v-if="GroupQueueItem.one.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:28px;">{{ GroupQueueItem.one[0].storeFrontQueue + ' ~ ' + GroupQueueItem.one[GroupQueueItem.one.length - 1].storeFrontQueue }}</strong>
+                              <strong style="font-size:24px;">{{ GroupQueueItem.one[0].storeFrontQueue + ' ~ ' + GroupQueueItem.one[GroupQueueItem.one.length - 1].storeFrontQueue }}</strong>
                             </v-col>
                             <v-col v-else v-for="(item, i) in GroupQueueItem.one" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:28px;"  >{{ item.storeFrontQueue }}</strong>
+                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
                             </v-col>
                           </v-row>
                         </v-container>
                         <div class="text-center">
-                          <strong style="font-size:18px;">Waiting Queue 10 min</strong>
+                          <strong style="font-size:18px;">Estimate Waiting time <br> 10 min</strong>
                         </div>
                       </v-card>
                     </v-col>
                     <v-col :cols="columCardMain()" class="pa-3 mt-1">
-                      <v-card min-height="160px">
+                      <v-card min-height="190px">
                         <v-container style="height:120px;">
                           <v-row class="pa-2">
                             <v-col v-if="GroupQueueItem.two.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:28px;">{{ GroupQueueItem.two[0].storeFrontQueue + ' ~ ' + GroupQueueItem.two[GroupQueueItem.two.length - 1].storeFrontQueue }}</strong>
+                              <strong style="font-size:24px;">{{ GroupQueueItem.two[0].storeFrontQueue + ' ~ ' + GroupQueueItem.two[GroupQueueItem.two.length - 1].storeFrontQueue }}</strong>
                             </v-col>
                             <v-col v-else v-for="(item, i) in GroupQueueItem.two" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:28px;"  >{{ item.storeFrontQueue }}</strong>
+                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
                             </v-col>
                           </v-row>
                         </v-container>
                         <div class="text-center">
-                          <strong style="font-size:18px;">Estimate waiting time 10 - 20 min</strong>
+                          <strong style="font-size:18px;">Estimate waiting time <br> 10 - 20 min</strong>
                         </div>
                       </v-card>
                     </v-col>
                     <v-col :cols="columCardMain()" class="pa-3 mt-1">
-                      <v-card min-height="160px">
+                      <v-card min-height="190px">
                         <v-container style="height:120px;">
                           <v-row class="pa-2">
                             <v-col v-if="GroupQueueItem.three.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:28px;">{{ GroupQueueItem.three[0].storeFrontQueue + ' ~ ' + GroupQueueItem.three[GroupQueueItem.three.length - 1].storeFrontQueue }}</strong>
+                              <strong style="font-size:24px;">{{ GroupQueueItem.three[0].storeFrontQueue + ' ~ ' + GroupQueueItem.three[GroupQueueItem.three.length - 1].storeFrontQueue }}</strong>
                             </v-col>
                             <v-col v-else v-for="(item, i) in GroupQueueItem.three" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:28px;"  >{{ item.storeFrontQueue }}</strong>
+                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
                             </v-col>
                           </v-row>
                         </v-container>
                           <div class="text-center">
-                            <strong style="font-size:18px;">Estimate waiting time 20 - 30 min</strong>
+                            <strong style="font-size:18px;">Estimate waiting time <br> 20 - 30 min</strong>
                           </div>
                       </v-card>
                     </v-col>
@@ -405,7 +405,7 @@
         <v-row v-show="hideSound === true">
           <v-col>
             <audio id="playerPrefix" controls="controls">>
-              <source src="https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084603578380.wav">
+              <source src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich%2FQueue.wav?alt=media&token=904e9b1f-c0a9-4a66-bcb0-6b91b5de09be">
               Your browser does not support the audio format.
             </audio>
             <audio id="playerQueue" controls="controls">>
@@ -413,7 +413,11 @@
               Your browser does not support the audio format.
             </audio>
             <audio id="playerSuffix" controls="controls">>
-              <source src="https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_05092023150816848745.wav">
+              <source src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich%2FPleaseContactCounter.wav?alt=media&token=b0681664-60da-4c36-97e7-945259a2a15f">
+              Your browser does not support the audio format.
+            </audio>
+            <audio id="playerCounter" controls="controls">>
+              <source :src="tableTarget">
               Your browser does not support the audio format.
             </audio>
           </v-col>
@@ -582,15 +586,15 @@
                         <v-container style="height:120px;">
                           <v-row class="pa-2">
                             <v-col v-if="GroupQueueItem.one.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:20px;">{{ GroupQueueItem.one[0].storeFrontQueue + ' ~ ' + GroupQueueItem.one[GroupQueueItem.one.length - 1].storeFrontQueue }}</strong>
+                              <strong style="font-size:24px;">{{ GroupQueueItem.one[0].storeFrontQueue + ' ~ ' + GroupQueueItem.one[GroupQueueItem.one.length - 1].storeFrontQueue }}</strong>
                             </v-col>
                             <v-col v-else v-for="(item, i) in GroupQueueItem.one" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:20px;"  >{{ item.storeFrontQueue }}</strong>
+                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
                             </v-col>
                           </v-row>
                         </v-container>
                         <div class="text-center">
-                          <strong style="font-size:15px;">Waiting Queue 10 min</strong>
+                          <strong style="font-size:15px;">Estimate Waiting time 10 min</strong>
                         </div>
                       </v-card>
                     </v-col>
@@ -599,10 +603,10 @@
                         <v-container style="height:120px;">
                           <v-row class="pa-2">
                             <v-col v-if="GroupQueueItem.two.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:20px;">{{ GroupQueueItem.two[0].storeFrontQueue + ' ~ ' + GroupQueueItem.two[GroupQueueItem.two.length - 1].storeFrontQueue }}</strong>
+                              <strong style="font-size:24px;">{{ GroupQueueItem.two[0].storeFrontQueue + ' ~ ' + GroupQueueItem.two[GroupQueueItem.two.length - 1].storeFrontQueue }}</strong>
                             </v-col>
                             <v-col v-else v-for="(item, i) in GroupQueueItem.two" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:20px;"  >{{ item.storeFrontQueue }}</strong>
+                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
                             </v-col>
                           </v-row>
                         </v-container>
@@ -616,10 +620,10 @@
                         <v-container style="height:120px;">
                           <v-row class="pa-2">
                             <v-col v-if="GroupQueueItem.three.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:20px;">{{ GroupQueueItem.three[0].storeFrontQueue + ' ~ ' + GroupQueueItem.three[GroupQueueItem.three.length - 1].storeFrontQueue }}</strong>
+                              <strong style="font-size:24px;">{{ GroupQueueItem.three[0].storeFrontQueue + ' ~ ' + GroupQueueItem.three[GroupQueueItem.three.length - 1].storeFrontQueue }}</strong>
                             </v-col>
                             <v-col v-else v-for="(item, i) in GroupQueueItem.three" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:20px;"  >{{ item.storeFrontQueue }}</strong>
+                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
                             </v-col>
                           </v-row>
                         </v-container>
@@ -633,7 +637,7 @@
         <v-row v-show="hideSound === true">
           <v-col>
             <audio id="playerPrefix" controls="controls">>
-              <source src="https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084603578380.wav">
+              <source src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich%2FQueue.wav?alt=media&token=904e9b1f-c0a9-4a66-bcb0-6b91b5de09be">
               Your browser does not support the audio format.
             </audio>
             <audio id="playerQueue" controls="controls">>
@@ -641,7 +645,11 @@
               Your browser does not support the audio format.
             </audio>
             <audio id="playerSuffix" controls="controls">>
-              <source src="https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_05092023150816848745.wav">
+              <source src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich%2FPleaseContactCounter.wav?alt=media&token=b0681664-60da-4c36-97e7-945259a2a15f">
+              Your browser does not support the audio format.
+            </audio>
+            <audio id="playerCounter" controls="controls">>
+              <source :src="tableTarget">
               Your browser does not support the audio format.
             </audio>
           </v-col>
@@ -671,7 +679,6 @@ export default {
       return this.$refs.video
     },
     resCol () {
-      console.log('this.$vuetify.breakpoint.name', this.$vuetify.breakpoint.name)
       switch (this.$vuetify.breakpoint.name) {
         case 'xs':
           return '12'
@@ -684,10 +691,6 @@ export default {
         case 'xl':
           return '6'
       }
-      console.log(
-        'this.$vuetify.breakpoint.name',
-        this.$vuetify.breakpoint.name
-      )
     },
     colsWidth () {
       switch (this.$vuetify.breakpoint.name) {
@@ -804,32 +807,17 @@ export default {
       audio: null,
       timeCount: 0,
       repeatRound: 2,
-      speakerId: 3,
+      speakerId: 33,
       history: [],
       objInterval: null,
       text2: '',
       tableAudioList: [
-        '',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084650542663.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084725582074.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084756871326.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084819480984.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084846176701.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084914852921.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084938851367.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023085009434829.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023085042497294.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023085449577454.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023085522454629.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023085559998864.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02152023022750480676.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023085715437991.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023092857509523.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023092928359581.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02152023022850924702.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02152023022934174433.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02152023023007881725.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02152023023039434650.wav'
+        'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich%2FZero.wav?alt=media&token=c85a8508-b9ad-4721-a311-eaeb8911eb7c',
+        'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich%2FOne.wav?alt=media&token=140c289d-d3ad-42ad-b64d-beadebd8214e',
+        'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich%2FTwo.wav?alt=media&token=d34dbdf8-9e72-4935-9f92-515aebfb4415',
+        'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich%2FThree.wav?alt=media&token=5a96fbab-28c4-41bb-8137-ba030501a6df',
+        'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich%2FFour.wav?alt=media&token=34a5da43-493e-4869-a69c-01835b768587',
+        'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich%2FFive.wav?alt=media&token=42f30c86-749b-4ae0-ac4f-f3da0d91523e'
       ],
       tableTarget: 0,
       tableId: 0,
@@ -868,7 +856,6 @@ export default {
     // this.checkSearch()
     this.getFirestore()
     document.querySelector('body').requestFullscreen()
-    console.log('tetx', this.text)
     if (this.isMobileDevice()) {
       // Code to execute if the device is a mobile device
       window.scrollTo(0, 1)
@@ -878,14 +865,39 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
+    replaceFunc (text) {
+      let itemText = text.split('')
+      let textFill = ''
+      for (let i = 1; i < itemText.length; i++) {
+        let d = itemText[i]
+        if (d === '0') {
+          textFill = textFill + ' zero'
+        } else if (d === '1') {
+          textFill = textFill + ' one'
+        } else if (d === '2') {
+          textFill = textFill + ' two'
+        } else if (d === '3') {
+          textFill = textFill + ' three'
+        } else if (d === '4') {
+          textFill = textFill + ' four'
+        } else if (d === '5') {
+          textFill = textFill + ' five'
+        } else if (d === '6') {
+          textFill = textFill + ' six'
+        } else if (d === '7') {
+          textFill = textFill + ' seven'
+        } else if (d === '8') {
+          textFill = textFill + ' eight'
+        } else if (d === '9') {
+          textFill = textFill + ' nine'
+        }
+      }
+      return itemText[0] + textFill
+    },
     async getFirestore () {
-      console.log('getFirestore')
       this.firestore = this.$firebase.firestore()
       this.firestore.collection('ProcessOhrichUpdate').limit(100).onSnapshot((snapshot) => {
         snapshot.docChanges().forEach(async (change) => {
-          console.log(change)
-          console.log(change.doc.id)
-          console.log(change.doc.data())
           if (this.checkRef === false) {
             await this.searchBooking()
             this.updateProcessOhrichUpdate()
@@ -933,10 +945,8 @@ export default {
       }
       if (this.GroupQueueItem.one.length > 0) {
         const firstPart1 = this.GroupQueueItem.one.slice(0, 6)
-        console.log('firstPart1', firstPart1)
         if (this.GroupQueueItem.one.length > 6) {
           const lastElement1 = this.GroupQueueItem.one[this.GroupQueueItem.one.length - 1]
-          console.log('lastElement1', lastElement1)
           this.GroupQueueItem.one = [...firstPart1, lastElement1]
         } else {
           this.GroupQueueItem.one = [...firstPart1]
@@ -953,16 +963,13 @@ export default {
       }
       if (this.GroupQueueItem.three.length > 0) {
         const firstPart1 = this.GroupQueueItem.three.slice(0, 6)
-        console.log('firstPart1', firstPart1)
         if (this.GroupQueueItem.three.length > 6) {
           const lastElement1 = this.GroupQueueItem.three[this.GroupQueueItem.three.length - 1]
-          console.log('lastElement1', lastElement1)
           this.GroupQueueItem.three = [...firstPart1, lastElement1]
         } else {
           this.GroupQueueItem.three = [...firstPart1]
         }
       }
-      console.log('this', this.GroupQueueItem)
     },
     async GroupArrayQueue (dataArray) {
       // ใช้ Map เพื่อจัดกลุ่มตาม flowId
@@ -986,8 +993,6 @@ export default {
       // console.log('dataB', dataB)
       let mergedData = [...dataB, ...data.slice(0)]
       dataConfirm.push(...mergedData)
-
-      console.log(dataConfirm)
       return dataConfirm
     },
     // async GroupArrayQueue (dataArray) {
@@ -1062,7 +1067,6 @@ export default {
       }
     },
     async changeStatusSound (text) {
-      console.log('changeStatusSound', text)
       if (text === 'on') {
         this.statusSound = true
         await this.updatestatusNotifyByShopId()
@@ -1112,14 +1116,17 @@ export default {
       axios.post(`${this.DNS_IP}/callQueues/edit/${id}`, params)
     },
     async generateSound (item) {
+      item.servicePoint = '2'
+      item.storeFrontQueue = 'B007'
       try {
         this.tableId = item.servicePoint.replace('โต๊ะ ', '')
         let storeFrontQueue = item.storeFrontQueue
-        storeFrontQueue = storeFrontQueue.replace('A', 'เอ')
-        storeFrontQueue = storeFrontQueue.replace('B', 'บี')
-        storeFrontQueue = storeFrontQueue.replace('C', 'ซี')
-        storeFrontQueue = storeFrontQueue.replace('D', 'ดี')
-        storeFrontQueue = storeFrontQueue.replace('E', 'อี')
+        // storeFrontQueue = storeFrontQueue.replace('A', 'เอ')
+        // storeFrontQueue = storeFrontQueue.replace('B', 'บี')
+        // storeFrontQueue = storeFrontQueue.replace('C', 'ซี')
+        // storeFrontQueue = storeFrontQueue.replace('D', 'ดี')
+        // storeFrontQueue = storeFrontQueue.replace('E', 'อี')
+        storeFrontQueue = this.replaceFunc(storeFrontQueue)
         let result
         await axios
           .get(
@@ -1133,8 +1140,8 @@ export default {
         // let text = this.convertItemtoText(item)
         if (!item.audioFile) {
           var params = {
-            text: storeFrontQueue,
-            text_delay: storeFrontQueue,
+            text: ' ' + storeFrontQueue,
+            text_delay: ' ' + storeFrontQueue,
             speaker: this.speakerId,
             volume: 1,
             speed: 1,
@@ -1160,24 +1167,23 @@ export default {
         return null
       }
     },
-    convertItemtoText (item) {
-      let { dock, regNo, storeFrontQueue } = item
-      console.log(dock, regNo, storeFrontQueue)
-      dock = dock.replace('Dock ', '')
-      storeFrontQueue = storeFrontQueue.split('')
-      storeFrontQueue[0] = storeFrontQueue[0] + ' delay{0.2} '
-      storeFrontQueue = storeFrontQueue.join(' ')
-      let text = `ขอเชิญ คิว ${storeFrontQueue} ที่ช่อง ${dock} ค่ะ`
-      return text
-    },
+    // convertItemtoText (item) {
+    //   let { dock, regNo, storeFrontQueue } = item
+    //   dock = dock.replace('Dock ', '')
+    //   storeFrontQueue = storeFrontQueue.split('')
+    //   storeFrontQueue[0] = storeFrontQueue[0] + ' delay{0.2} '
+    //   storeFrontQueue = storeFrontQueue.join(' ')
+    //   let text = `ขอเชิญ คิว ${storeFrontQueue} ที่ช่อง ${dock} ค่ะ`
+    //   return text
+    // },
     playSound (res) {
-      console.log(res)
       this.audio = res.audio_url
-      // this.tableTarget = this.tableAudioList[this.tableId]
+      this.tableTarget = this.tableAudioList[this.tableId]
       this.timeCount = 1
       let playerPrefix = document.getElementById('playerPrefix')
       let playerQueue = document.getElementById('playerQueue')
       let playerSuffix = document.getElementById('playerSuffix')
+      let playerCounter = document.getElementById('playerCounter')
       playerPrefix.play()
       playerPrefix.onended = (event) => {
         playerQueue.load()
@@ -1186,15 +1192,24 @@ export default {
           playerSuffix.load()
           playerSuffix.play()
           playerSuffix.onended = (event) => {
-            if (this.timeCount < this.repeatRound) {
-              this.timeCount++
-              playerPrefix.play()
-              playerPrefix.onended = (event) => {
-                playerQueue.play()
-                playerQueue.onended = (event) => {
-                  playerSuffix.play()
-                  var vid = document.getElementById('videoAds')
-                  vid.play()
+            playerCounter.load()
+            playerCounter.play()
+            playerCounter.onended = (event) => {
+              if (this.timeCount < this.repeatRound) {
+                this.timeCount++
+                playerPrefix.play()
+                playerPrefix.onended = (event) => {
+                  playerQueue.play()
+                  playerQueue.onended = (event) => {
+                    playerSuffix.play()
+                    playerSuffix.onended = (event) => {
+                      playerCounter.play()
+                      playerCounter.onended = (event) => {
+                        var vid = document.getElementById('videoAds')
+                        vid.play()
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -1215,7 +1230,6 @@ export default {
         .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.shopId)
         .then(response => {
           let rs = response.data
-          console.log('getShop', rs)
           if (rs.length > 0) {
             this.shop = rs
             this.shopName = rs[0].shopName
@@ -1223,13 +1237,10 @@ export default {
             this.shopImage = rs[0].shopImge
             this.videoLinkMonition = rs[0].videoLinkMonition
             this.bgColor = this.hexToRgbA(rs[0].primaryColor)
-            console.log('rs[0].primaryColor', rs[0].primaryColor)
             this.bgColor2 = this.bgColor22(this.bgColor)
             this.bgColor3 = this.bgColor33(this.bgColor2)
             this.text = this.HEXToVBColor(rs[0].primaryColor)
             this.text2 = this.HEXToVBColor(this.bgColor3)
-            console.log('bgColor2', this.bgColor)
-            console.log('bgColor3', this.text2)
           } else {
             this.shopName = ''
             this.shopColor = ''
@@ -1250,9 +1261,7 @@ export default {
       // throw new Error('Bad Hex')
     },
     bgColor22 (rgb) {
-      console.log('rgb', rgb)
       var c = rgb.slice(3).slice(1, -1).split(',')
-      console.log('ddddds', c)
       return 'rgb(' + (parseInt(c[0]) + 50) + ',' + (parseInt(c[1]) + 50) + ',' + (parseInt(c[2]) + 50) + ')'
     },
     bgColor33 (rgb) {
@@ -1260,12 +1269,10 @@ export default {
       return 'rgb(' + (parseInt(c[0]) + 50) + ',' + (parseInt(c[1]) + 50) + ',' + (parseInt(c[2]) + 50) + ', 0.3)'
     },
     HEXToVBColor (a) {
-      console.log('HEXToVBColor', a)
       let rr = parseInt(a.substr(1, 2), 16)
       let gg = parseInt(a.substr(3, 2), 16)
       let bb = parseInt(a.substr(5, 2), 16)
 
-      console.log('rrrr', rr * 0.299 + gg * 0.587 + bb * 0.114)
       if (rr * 0.299 + gg * 0.587 + bb * 0.114 > 186) {
         let black = '#000000'
         return black
@@ -1319,17 +1326,14 @@ export default {
         await axios
           .get(urlApi)
           .then(async response => {
-            console.log('getData', response.data)
             let rs = response.data
             if (rs.length > 0) {
-              console.log('rs', rs)
               let sortData = await this.GroupArrayQueue(rs)
               // let sortData = rs.sort((a, b) => {
               //   // console.log('LOG', a.storeFrontQueue, b.storeFrontQueue, a.storeFrontQueue < b.storeFrontQueue)
               //   if (a.storeFrontQueue < b.storeFrontQueue) return -1
               //   return a.storeFrontQueue > b.storeFrontQueue ? 1 : 0
               // })
-              console.log('sort', sortData)
               this.itemBooking = []
               for (let i = 0; i < sortData.length; i++) {
                 let d = sortData[i]
@@ -1342,7 +1346,6 @@ export default {
               }
               let dataCon = this.itemBooking.filter(el => { return el.statusBt === 'confirmJob' })
               let dataWain = this.itemBooking.filter(el => { return el.statusBt === 'confirm' })
-              console.log(dataCon, dataWain)
               let sortDataDataCon = dataCon.sort((a, b) => {
                 if (a.LAST_DATE > b.LAST_DATE) return -1
                 return a.LAST_DATE < b.LAST_DATE ? 1 : 0
@@ -1407,7 +1410,6 @@ export default {
       await axios
         .get(this.DNS_IP + `/flow/get?shopId=${this.shopId}&storeFrontCheck=True&masBranchID=${this.masBranchID}`)
         .then(response => {
-          console.log('respons!!!!', response.data)
           let rs = response.data
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
@@ -1421,7 +1423,6 @@ export default {
               resultOption.push(s)
               if (d.storeFrontText === 'A') {
                 this.counterTotal = d.servicePointCountEnd - d.servicePointCountStart + 1
-                console.log('this.counterTotal', this.counterTotal)
               }
               // console.log('this.DataFlowName', this.DataFlowName)
             }
@@ -1443,7 +1444,6 @@ export default {
       // this.branch = JSON.parse(localStorage.getItem('BRANCH'))
       this.branchItem = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName', '', 'masBranchNameEn')
       if (this.branchItem.length > 0) {
-        console.log('this.masBranchID', this.branchItem)
         this.masBranchID = this.session.data.masBranchID || this.branchItem[0].value
       }
     },
