@@ -150,9 +150,9 @@
           </v-row> -->
         </v-form>
         <v-row class="mb-16">
-          <v-col  :cols="resCol" v-if="overlay">
+          <v-col  :cols="resCol">
             <br>
-            <v-card class="mx-6 pa-3 ma-2" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;">
+            <v-card v-if="overlay" class="mx-6 pa-3 ma-2" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;">
               <v-card-text>
                 <v-row class="no-gutters">
                   <!-- <v-col col="auto" class="px-3 mt-5 text-right">
