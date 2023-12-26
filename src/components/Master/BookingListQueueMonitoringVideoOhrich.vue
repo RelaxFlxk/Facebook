@@ -1068,11 +1068,11 @@ export default {
       if (text === 'on') {
         this.statusSound = true
         await this.updatestatusNotifyByShopId()
-        this.getMessage()
+        // this.getMessage()
       } else {
         this.statusSound = false
-        clearInterval(this.statusSoundCheck)
-        this.statusSoundCheck = null
+        // clearInterval(this.statusSoundCheck)
+        // this.statusSoundCheck = null
       }
     },
     async updatestatusNotifyByShopId () {
@@ -1104,6 +1104,21 @@ export default {
       } catch (e) {
         console.log(e)
         setTimeout(this.getMessage, 10000)
+      }
+    },
+    async getMessageNoInterval () {
+      try {
+        await axios
+          .get(
+            `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId
+          ).then(async (response) => {
+            if (response.data.length > 0 && typeof response.data.status === 'undefined') {
+              let result = await this.generateSound(response.data[0])
+              await this.updateMessage(response.data[0].id, result)
+            }
+          })
+      } catch (e) {
+        console.log(e)
       }
     },
     updateMessage (id, result) {
@@ -1301,6 +1316,9 @@ export default {
       this.setTimerCalendar = setInterval(function () { _this.searchBooking() }, 15000)
     },
     async searchBooking () {
+      if (this.statusSound) {
+        this.getMessageNoInterval()
+      }
       if (this.validSearch === true) {
         // this.dateStartShow = moment(this.dateStart).locale('th').format('LLLL')
         this.dateStartShow = 'วัน' + moment(this.dateStart).locale('th').format('dddd') + 'ที่ ' + moment(this.dateStart).locale('th').format('D MMMM ') + (parseInt(moment(this.dateStart).format('YYYY')) + 543).toString()
