@@ -626,15 +626,15 @@ export default {
       this.firestore = this.$firebase.firestore()
       this.firestore.collection('ProcessOhrichUpdate').limit(100).onSnapshot((snapshot) => {
         snapshot.docChanges().forEach(async (change) => {
-          console.log(change)
-          console.log(change.doc.id)
-          console.log(change.doc.data())
           if (this.checkRef === false) {
-            await this.getBefore()
-            this.updateProcessOhrichUpdate()
             this.checkRef = true
+            this.updateProcessOhrichUpdate()
+            await this.getBefore()
           } else {
-            if (change.doc.data().active === '1') {
+            if (change.doc.data().active === '1' && change.doc.id === this.$session.getAll().data.userName) {
+              console.log(change)
+              console.log(change.doc.id)
+              console.log(change.doc.data())
               if (!this.checkStatusEdit) {
                 await this.getBefore()
                 this.updateProcessOhrichUpdate()
@@ -713,7 +713,6 @@ export default {
       }
     },
     async getBefore () {
-      console.log('@@@@@@@', this.$session.getAll().data)
       await this.getDataBranch()
       await this.getDataFlow()
       this.setTime()

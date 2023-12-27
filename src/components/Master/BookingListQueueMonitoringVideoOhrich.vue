@@ -897,15 +897,14 @@ export default {
       this.firestore.collection('ProcessOhrichUpdate').limit(100).onSnapshot((snapshot) => {
         snapshot.docChanges().forEach(async (change) => {
           if (this.checkRef === false) {
-            await this.searchBooking()
-            this.updateProcessOhrichUpdate()
             this.checkRef = true
+            this.updateProcessOhrichUpdate()
+            await this.searchBooking()
           } else {
-            if (change.doc.data().active === '1') {
-              if (!this.checkStatusEdit) {
-                await this.searchBooking()
-                this.updateProcessOhrichUpdate()
-              }
+            if (change.doc.data().active === '1' && change.doc.id === this.$session.getAll().data.userName) {
+              console.log(change)
+              await this.searchBooking()
+              this.updateProcessOhrichUpdate()
             }
           }
         })
