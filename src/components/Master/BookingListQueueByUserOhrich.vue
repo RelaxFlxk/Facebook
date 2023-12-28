@@ -677,7 +677,6 @@ export default {
     },
     async removeQueue (item) {
       console.log('removeQueue', item)
-      this.closeSetTimeBookingListQueue()
       let statusBooking = await this.checkBookingStatus(item.bookNo)
       this.checkStatusEdit = true
       if (statusBooking === 'confirmJob') {
@@ -1221,7 +1220,6 @@ export default {
 
     },
     async closeJobSubmitReturn (item) {
-      this.closeSetTimeBookingListQueue()
       console.log('closeJobSubmit', item)
       this.checkStatusEdit = true
       if (item.servicePointStatus === 'True') {
@@ -1257,7 +1255,6 @@ export default {
     },
     async backHomeSubmit (item) {
       console.log('backHomeSubmit', item)
-      this.closeSetTimeBookingListQueue()
       let statusBooking = await this.checkBookingStatus(item.bookNo)
       this.checkStatusEdit = true
       if (statusBooking === 'confirmJob') {
@@ -1280,6 +1277,7 @@ export default {
           })
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
+        await this.resetFirebaseUse()
         await this.searchBooking('unNoti')
         // this.clearTimeLoop()
       }
@@ -1327,7 +1325,6 @@ export default {
         })
     },
     async closeJobSubmit (item) {
-      this.closeSetTimeBookingListQueue()
       if (item.statusBt === 'confirm') {
         this.checkStatusEdit = true
         console.log('closeJobSubmit', item)
