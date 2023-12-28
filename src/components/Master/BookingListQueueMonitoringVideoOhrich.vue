@@ -894,14 +894,15 @@ export default {
     },
     async getFirestore () {
       this.firestore = this.$firebase.firestore()
-      this.firestore.collection('ProcessOhrichUpdate').limit(100).onSnapshot((snapshot) => {
+      this.firestore.collection('ProcessOhrichUpdate').limit(1000).onSnapshot((snapshot) => {
         snapshot.docChanges().forEach(async (change) => {
           if (this.checkRef === false) {
             this.checkRef = true
             this.updateProcessOhrichUpdate()
             await this.searchBooking()
           } else {
-            if (change.doc.data().active === '1' && change.doc.id === this.$session.getAll().data.userName) {
+            console.log(change.doc.id)
+            if (change.doc.data().active === '1' && change.doc.id === 'monthon.y@srtforex.com') {
               console.log(change)
               await this.searchBooking()
               this.updateProcessOhrichUpdate()
@@ -912,7 +913,7 @@ export default {
     },
     updateProcessOhrichUpdate (item) {
       let params = {
-        userName: this.$session.getAll().data.userName
+        userName: 'monthon.y@srtforex.com'
       }
       axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-ProcessOhrichUseNew', params)
     },
@@ -1498,8 +1499,8 @@ export default {
           status: 'confirmJob',
           statusUse: 'use',
           shopId: this.$session.getAll().data.shopId,
-          CREATE_USER: this.$session.getAll().data.userName,
-          LAST_USER: this.$session.getAll().data.userName
+          CREATE_USER: 'monthon.y@srtforex.com',
+          LAST_USER: 'monthon.y@srtforex.com'
         }
         await axios
           .post(this.DNS_IP + '/booking_transaction/add', dtt)

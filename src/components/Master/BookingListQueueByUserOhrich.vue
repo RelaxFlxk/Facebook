@@ -624,7 +624,7 @@ export default {
     async getFirestore () {
       console.log('getFirestore')
       this.firestore = this.$firebase.firestore()
-      this.firestore.collection('ProcessOhrichUpdate').limit(100).onSnapshot((snapshot) => {
+      this.firestore.collection('ProcessOhrichUpdate').limit(1000).onSnapshot((snapshot) => {
         snapshot.docChanges().forEach(async (change) => {
           if (this.checkRef === false) {
             this.checkRef = true
