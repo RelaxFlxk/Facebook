@@ -631,13 +631,22 @@ export default {
             this.updateProcessOhrichUpdate()
             await this.getBefore()
           } else {
-            if (change.doc.data().active === '1' && change.doc.id === this.$session.getAll().data.userName) {
-              console.log(change)
+            if (change.doc.data().active === '1') {
+              console.log('------------------------')
               console.log(change.doc.id)
-              console.log(change.doc.data())
-              if (!this.checkStatusEdit) {
-                await this.getBefore()
-                this.updateProcessOhrichUpdate()
+              console.log('JSON.parse(localStorage.getItem(\'sessionData\'))', JSON.parse(localStorage.getItem('sessionData')))
+              // if (change.doc.data().active === '1' && change.doc.id === this.$session.getAll().data.userName) {
+              if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
+                console.log('Have Session')
+                if (change.doc.id === this.$session.getAll().data.userName) {
+                  if (!this.checkStatusEdit) {
+                    await this.getBefore()
+                    this.updateProcessOhrichUpdate()
+                  }
+                }
+              } else {
+                console.log('Not Have Session')
+                await this.checkSession()
               }
             }
           }
@@ -727,6 +736,19 @@ export default {
       this.checkStatusEdit = false
       // this.clearTimeLoop()
     },
+    async checkSession () {
+      if (!this.$session.exists()) {
+        this.$router.push('/Core/Login')
+      } else {
+        if (this.$session.getAll().data.shopId) {
+          localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
+          await this.getFirestore()
+          // await this.getBefore()
+        } else {
+          this.$router.push('/Core/Login')
+        }
+      }
+    },
     async beforeCreate () {
       if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
         if (JSON.parse(localStorage.getItem('sessionData')).shopId) {
@@ -738,17 +760,7 @@ export default {
           this.$router.push('/Core/Login')
         }
       } else {
-        if (!this.$session.exists()) {
-          this.$router.push('/Core/Login')
-        } else {
-          if (this.$session.getAll().data.shopId) {
-            localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
-            await this.getFirestore()
-            // await this.getBefore()
-          } else {
-            this.$router.push('/Core/Login')
-          }
-        }
+        await this.checkSession()
       }
     },
     momentThaiText (item) {
