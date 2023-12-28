@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
-    <v-row >
+    <!-- <v-row >
       <v-col cols="12">
         <v-sheet
           :color="shopColor"
@@ -20,7 +20,7 @@
           </v-row>
         </v-sheet>
       </v-col>
-    </v-row>
+    </v-row> -->
         <!-- <div style="display:flex;justify-content: center;" class="ma-3">
             <v-chip
               class="mr-1 font-weight-black"
@@ -306,7 +306,7 @@
           </v-row> -->
           <v-row v-if="videoLinkMonition">
             <v-col cols="12" class="text-center pt-0">
-              <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" :class=" resCol === '12' ? 'mt-3' : 'mt-15'" width="90%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
+              <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" :class=" resCol === '12' ? 'mt-3' : 'mt-6'" width="90%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
                 <source :src="videoLinkMonition" type="video/webm">
               </video>
               <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
@@ -897,15 +897,14 @@ export default {
       this.firestore.collection('ProcessOhrichUpdate').limit(100).onSnapshot((snapshot) => {
         snapshot.docChanges().forEach(async (change) => {
           if (this.checkRef === false) {
-            await this.searchBooking()
-            this.updateProcessOhrichUpdate()
             this.checkRef = true
+            this.updateProcessOhrichUpdate()
+            await this.searchBooking()
           } else {
-            if (change.doc.data().active === '1') {
-              if (!this.checkStatusEdit) {
-                await this.searchBooking()
-                this.updateProcessOhrichUpdate()
-              }
+            if (change.doc.data().active === '1' && change.doc.id === this.$session.getAll().data.userName) {
+              console.log(change)
+              await this.searchBooking()
+              this.updateProcessOhrichUpdate()
             }
           }
         })
@@ -1068,11 +1067,11 @@ export default {
       if (text === 'on') {
         this.statusSound = true
         await this.updatestatusNotifyByShopId()
-        this.getMessage()
+        // this.getMessage()
       } else {
         this.statusSound = false
-        clearInterval(this.statusSoundCheck)
-        this.statusSoundCheck = null
+        // clearInterval(this.statusSoundCheck)
+        // this.statusSoundCheck = null
       }
     },
     async updatestatusNotifyByShopId () {
@@ -1104,6 +1103,21 @@ export default {
       } catch (e) {
         console.log(e)
         setTimeout(this.getMessage, 10000)
+      }
+    },
+    async getMessageNoInterval () {
+      try {
+        await axios
+          .get(
+            `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId
+          ).then(async (response) => {
+            if (response.data.length > 0 && typeof response.data.status === 'undefined') {
+              let result = await this.generateSound(response.data[0])
+              await this.updateMessage(response.data[0].id, result)
+            }
+          })
+      } catch (e) {
+        console.log(e)
       }
     },
     updateMessage (id, result) {
@@ -1301,6 +1315,9 @@ export default {
       this.setTimerCalendar = setInterval(function () { _this.searchBooking() }, 15000)
     },
     async searchBooking () {
+      if (this.statusSound) {
+        this.getMessageNoInterval()
+      }
       if (this.validSearch === true) {
         // this.dateStartShow = moment(this.dateStart).locale('th').format('LLLL')
         this.dateStartShow = 'วัน' + moment(this.dateStart).locale('th').format('dddd') + 'ที่ ' + moment(this.dateStart).locale('th').format('D MMMM ') + (parseInt(moment(this.dateStart).format('YYYY')) + 543).toString()
