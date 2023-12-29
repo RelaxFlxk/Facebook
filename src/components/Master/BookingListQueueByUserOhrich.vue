@@ -221,7 +221,6 @@
                 <!-- <h6 style="color:#092C4C" class="text-left font-weight-bold ml-10">{{ itemBooking[0].flowName }}</h6> -->
                 <div class="text-right">
                   <v-btn
-                    v-if="itemBooking[0].statusBt === 'confirmJob'"
                     color="#ECEFF1"
                     class="ma-2 white--text"
                     fab
@@ -676,46 +675,47 @@ export default {
       this.setTimerCalendar = setInterval(function () { _this.searchBooking('unNoti') }, 15000)
     },
     async removeQueue (item) {
-      console.log('removeQueue', item)
+      // console.log('removeQueue', item)
       let statusBooking = await this.checkBookingStatus(item.bookNo)
       this.checkStatusEdit = true
-      if (statusBooking === 'confirmJob') {
-        this.$swal({
-          title: 'ต้องการยกเลิกคิวนี้ ใช่หรือไม่?',
-          type: 'question',
-          showCancelButton: true,
-          confirmButtonColor: '#1DBF73',
-          cancelButtonColor: '#F38383',
-          confirmButtonText: 'ใช่',
-          cancelButtonText: 'ไม่'
-        }).then(async response => {
-        // await this.clearConfirmJob(item.dueDate)
-          var dtt = {
-            bookNo: item.bookNo,
-            contactDate: this.format_date(new Date()),
-            status: 'cancel',
-            statusUse: 'use',
-            shopId: this.$session.getAll().data.shopId,
-            CREATE_USER: this.$session.getAll().data.userName,
-            LAST_USER: this.$session.getAll().data.userName,
-            remarkRemove: 'เนื่องจากลูกค้าไม่มาตามคิวที่เลือก'
-          }
-          await axios
-            .post(this.DNS_IP + '/booking_transaction/add', dtt)
-            .then(async responses => {
-              // this.$swal('เรียบร้อย', 'ยกเลิกคิวสำเร็จ', 'success')
-              this.resetFirebaseUse()
-              await this.searchBooking('unNoti')
-              // this.clearTimeLoop()
-            })
-        }).catch(async err => {
-          // this.$router.push({ name: '404' })
-          console.log(err.code, err.message)
-          await this.searchBooking('unNoti')
-          // this.clearTimeLoop()
-        })
+      if (statusBooking === 'confirmJob' || statusBooking === 'confirm') {
+        // this.$swal({
+        //   title: 'ต้องการยกเลิกคิวนี้ ใช่หรือไม่?',
+        //   type: 'question',
+        //   showCancelButton: true,
+        //   confirmButtonColor: '#1DBF73',
+        //   cancelButtonColor: '#F38383',
+        //   confirmButtonText: 'ใช่',
+        //   cancelButtonText: 'ไม่'
+        // }).then(async response => {
+        // // await this.clearConfirmJob(item.dueDate)
+        var dtt = {
+          bookNo: item.bookNo,
+          contactDate: this.format_date(new Date()),
+          status: 'cancel',
+          statusUse: 'use',
+          shopId: this.$session.getAll().data.shopId,
+          CREATE_USER: this.$session.getAll().data.userName,
+          LAST_USER: this.$session.getAll().data.userName,
+          remarkRemove: 'เนื่องจากลูกค้าไม่มาตามคิวที่เลือก'
+        }
+        await axios
+          .post(this.DNS_IP + '/booking_transaction/add', dtt)
+          .then(async responses => {
+            // this.$swal('เรียบร้อย', 'ยกเลิกคิวสำเร็จ', 'success')
+            this.resetFirebaseUse()
+            await this.searchBooking('unNoti')
+            // this.clearTimeLoop()
+          })
+        // }).catch(async err => {
+        //   // this.$router.push({ name: '404' })
+        //   console.log(err.code, err.message)
+        //   await this.searchBooking('unNoti')
+        //   // this.clearTimeLoop()
+        // })
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
+        this.resetFirebaseUse()
         await this.searchBooking('unNoti')
         // this.clearTimeLoop()
       }
@@ -929,7 +929,7 @@ export default {
         await axios
           .get(urlApi)
           .then(async response => {
-            console.log('getData', response.data)
+            // console.log('getData', response.data)
             let rs = response.data
             if (rs.length > 0) {
               let sortData = await this.GroupArrayQueue(rs)
@@ -944,7 +944,7 @@ export default {
                   itemBooking.push(d)
                 }
               }
-              console.log('itemBooking', itemBooking)
+              // console.log('itemBooking', itemBooking)
               let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
               let empId = this.$session.getAll().data.empId || ''
               let itemBookings = []
@@ -960,7 +960,7 @@ export default {
               this.overlay = true
               this.openHistory(this.itemBooking[0])
               if (checkNoti === 'noti') {
-                console.log('item', item, checkNoti, item.storeFrontNotifySet, item.storeFrontNotifyStatus)
+                // console.log('item', item, checkNoti, item.storeFrontNotifySet, item.storeFrontNotifyStatus)
                 if (item.storeFrontNotifyStatus === 'True') {
                   if (parseInt(item.storeFrontNotifySet) > 0) {
                     this.pushMessageRecallQueue(parseInt(item.storeFrontNotifySet), 'False')
@@ -1037,7 +1037,7 @@ export default {
               if (JSON.parse(this.$session.getAll().data.flowId).filter(el => { return el === d.flowId }).length > 0) {
                 let checkCounter = JSON.parse(d.servicePointCount)
                 let counterByUser = this.$session.getAll().data.counter
-                console.log('checkCounter', checkCounter, counterByUser)
+                // console.log('checkCounter', checkCounter, counterByUser)
                 if (checkCounter.filter((aa) => aa.textTh === counterByUser).length > 0) {
                   s.text = d.flowName
                   s.value = d.flowId
