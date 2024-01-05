@@ -3,66 +3,68 @@
     <v-app-bar fixed app>
       <v-app-bar-nav-icon dark @click.stop="drawer = !drawer" />
         <!-- <v-toolbar-title v-text="title" /> -->
-        <template v-if="paymentStatus === 'noCash'">
-          <v-spacer></v-spacer>
-          <v-alert
-            class="mt-3"
-            dense
-            prominent
-            color="warning"
-            icon="mdi-alarm-multiple"
-            dark
-          >
-            <v-row align="center">
-              <v-col class="grow">
-                โปรดชำระเงิน ภายในวันที่ 7 ของทุกเดือนเพื่อการใช้งานที่ต่อเนื่อง
-              </v-col>
-              <v-col class="shrink" @click="gotoBilling()">
-                <v-btn small>ชำระค่าบริการ</v-btn>
-              </v-col>
-            </v-row>
-          </v-alert>
-      </template>
-      <template v-if="paymentStatus === 'wait'">
-        <v-spacer></v-spacer>
-        <v-alert
-          class="mt-3"
-          dense
-          prominent
-          color="warning"
-          icon="mdi-cash-remove"
-          dark
-        >
-          <v-row align="center">
-            <v-col class="grow">
-              สลิปของท่านไม่ถูกต้อง
-            </v-col>
-            <v-col class="shrink" @click="gotoBilling()">
-              <v-btn small>อัพเดทสลิป</v-btn>
-            </v-col>
-          </v-row>
-        </v-alert>
-      </template>
-      <template v-if="lineOaStatus === 'True'">
-        <v-spacer></v-spacer>
-        <v-alert
-          class="mt-3"
-          dense
-          prominent
-          color="teal"
-          icon="mdi-link-variant-remove"
-          dark
-        >
-          <v-row align="center">
-            <v-col class="grow">
-              บัญชีของท่านยังไม่ได้เชื่อมต่อ LINE OA
-            </v-col>
-            <v-col class="shrink" @click="gotoConnectLine()">
-              <v-btn small>เชื่อมต่อ</v-btn>
-            </v-col>
-          </v-row>
-        </v-alert>
-      </template>
+        <div style="position: absolute;top: 60px;display: flex;flex-direction: column;">
+          <template v-if="paymentStatus === 'noCash'">
+            <v-spacer></v-spacer>
+            <v-alert
+              class="mt-3"
+              dense
+              prominent
+              color="warning"
+              icon="mdi-alarm-multiple"
+              dark
+            >
+              <v-row align="center">
+                <v-col class="grow">
+                  โปรดชำระเงิน ภายในวันที่ 7 ของทุกเดือนเพื่อการใช้งานที่ต่อเนื่อง
+                </v-col>
+                <v-col class="shrink" @click="gotoBilling()">
+                  <v-btn small>ชำระค่าบริการ</v-btn>
+                </v-col>
+              </v-row>
+            </v-alert>
+          </template>
+          <template v-if="paymentStatus === 'wait'">
+            <v-spacer></v-spacer>
+            <v-alert
+              class="mt-3"
+              dense
+              prominent
+              color="warning"
+              icon="mdi-cash-remove"
+              dark
+            >
+              <v-row align="center">
+                <v-col class="grow">
+                  สลิปของท่านไม่ถูกต้อง
+                </v-col>
+                <v-col class="shrink" @click="gotoBilling()">
+                  <v-btn small>อัพเดทสลิป</v-btn>
+                </v-col>
+              </v-row>
+            </v-alert>
+          </template>
+          <template v-if="lineOaStatus === 'True'">
+            <v-spacer></v-spacer>
+            <v-alert
+              class="mt-3"
+              dense
+              prominent
+              color="teal"
+              icon="mdi-link-variant-remove"
+              dark
+            >
+              <v-row align="center">
+                <v-col class="grow">
+                  บัญชีของท่านยังไม่ได้เชื่อมต่อ LINE OA
+                </v-col>
+                <v-col class="shrink" @click="gotoConnectLine()">
+                  <v-btn small>เชื่อมต่อ</v-btn>
+                </v-col>
+              </v-row>
+            </v-alert>
+          </template>
+        </div>
       <v-spacer></v-spacer>
       <v-avatar class="mr-3" @click="dialogLogOut = true">
         <v-img :src="session.data.shopImge"></v-img>
