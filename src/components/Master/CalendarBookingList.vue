@@ -1306,7 +1306,11 @@ export default {
             let serviceDetail = ''
             let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
             fieldflow.forEach((row) => {
-              let tempField = this.bookingData[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+              // let tempField = this.bookingData[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+              let tempField = []
+              if (this.bookingData[t.bookNo] !== undefined) {
+                tempField = this.bookingData[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+              }
               // serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
               let convertTextField = ''
               if (tempField.length > 0) {
