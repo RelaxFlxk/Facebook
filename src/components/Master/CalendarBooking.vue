@@ -1322,9 +1322,10 @@ export default {
         return a.timeDuetext > b.timeDuetext ? 1 : 0
       })
       for (let i = 0; i < datause2.length; i++) {
+        console.log('i', i)
         let d = datause2[i]
         let dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && !el.fastTrack && (el.statusBtText === 'ยืนยันแล้ว' || el.statusBtText === 'รับรถแล้ว') })
-        console.log('s.dataSelect !fastTrack', dataSelect)
+        console.log('s.dataSelect !fastTrack' + 'TTT', dataSelect)
         // console.log('this.BookingDataList', this.bookingData)
         if (dataSelect.length > 0) {
           var datauseSelect2 = dataSelect.sort((a, b) => {
@@ -1339,13 +1340,17 @@ export default {
             let serviceDetail = ''
             let fieldflow = this.editedItemSeleteField.filter((row) => { return row.conditionField === 'flow' && String(row.conditionValue) === String(t.flowId) })
             fieldflow.forEach((row) => {
-              let tempField = this.bookingData[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+              let tempField = []
+              if (this.bookingData[t.bookNo] !== undefined) {
+                tempField = this.bookingData[t.bookNo].filter((row2) => { return String(row2.fieldId) === String(row.fieldId) })
+              }
+              // console.log('tempField', tempField)
               // serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
               let convertTextField = ''
               if (tempField.length > 0) {
-              // console.log('fieldType', row.fieldType)
+                // console.log('fieldType', row.fieldType)
                 if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
-                  console.log('optionField', row.optionField)
+                  console.log('optionField1', row.optionField)
                   // console.log('fieldValue', tempField[0].fieldValue)
                   if (tempField[0].fieldValue) {
                     let checkValue = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })
@@ -1365,8 +1370,10 @@ export default {
               serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
             })
             if (dataExport.filter(el => { return el.timeDueHtext === this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )' }).length === 0) {
+              // console.log('if', x, datauseSelect2.length)
               s.timeDueHtext = this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )'
             } else {
+              // console.log('else')
               s.timeDueHtext = ''
             }
             // serviceDetail = t.displayFlowName.trim() || t.flowName
@@ -1392,6 +1399,7 @@ export default {
             // console.log('sortDataExport2', s)
             sortDataExport2.push(s)
           }
+          // console.log('IFIFIFIFIFIF')
         }
       }
       console.log('sortDataExport2', sortDataExport, sortDataExport2)
@@ -1438,7 +1446,7 @@ export default {
         let dataSum = Object.assign({}, data1, data2)
         dataexport.push(dataSum)
       }
-      // console.log('dataexport', dataexport)
+      console.log('dataexport', dataexport)
       const dateSplit = this.today.split('-')
       // console.log(dateSplit)
       // const date = dateSplit[0].split('-')

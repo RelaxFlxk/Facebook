@@ -98,7 +98,7 @@
                         ></v-select>
                       </v-col>
                     </v-row>
-                    <v-row v-if="USER_ROLE === 'storeFront'">
+                    <v-row v-if="USER_ROLE === 'storeFront' && shopId === 'Ue9f527da07ff2da05246ea3f62671493'">
                       <v-col cols="12" class="pb-0 pt-0">
                         <v-select
                         outlined
@@ -256,7 +256,7 @@
                           :rules="emptyRules"
                         ></v-select>
                       </v-col>
-                      <v-col cols="12" class="pb-0 pt-0" v-if="USER_ROLE === 'storeFront'">
+                      <v-col cols="12" class="pb-0 pt-0" v-if="USER_ROLE === 'storeFront' && shopId === 'Ue9f527da07ff2da05246ea3f62671493'">
                         <v-select
                         outlined
                           v-model="counterSelect"

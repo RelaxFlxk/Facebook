@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
-    <v-row >
+    <!-- <v-row >
       <v-col cols="12">
         <v-sheet
           :color="shopColor"
@@ -20,7 +20,7 @@
           </v-row>
         </v-sheet>
       </v-col>
-    </v-row>
+    </v-row> -->
         <!-- <div style="display:flex;justify-content: center;" class="ma-3">
             <v-chip
               class="mr-1 font-weight-black"
@@ -306,7 +306,7 @@
           </v-row> -->
           <v-row v-if="videoLinkMonition">
             <v-col cols="12" class="text-center pt-0">
-              <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" :class=" resCol === '12' ? 'mt-3' : 'mt-15'" width="90%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
+              <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" :class=" resCol === '12' ? 'mt-3' : 'mt-6'" width="90%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
                 <source :src="videoLinkMonition" type="video/webm">
               </video>
               <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
@@ -350,53 +350,53 @@
           </template> -->
             <v-row class="mx-10">
                     <v-col :cols="columCardMain()" class="pa-3 mt-1">
-                      <v-card min-height="160px">
+                      <v-card min-height="190px">
                         <v-container style="height:120px;">
                           <v-row class="pa-2">
                             <v-col v-if="GroupQueueItem.one.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:28px;">{{ GroupQueueItem.one[0].storeFrontQueue + ' ~ ' + GroupQueueItem.one[GroupQueueItem.one.length - 1].storeFrontQueue }}</strong>
+                              <strong style="font-size:24px;">{{ GroupQueueItem.one[0].storeFrontQueue + ' ~ ' + GroupQueueItem.one[GroupQueueItem.one.length - 1].storeFrontQueue }}</strong>
                             </v-col>
                             <v-col v-else v-for="(item, i) in GroupQueueItem.one" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:28px;"  >{{ item.storeFrontQueue }}</strong>
+                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
                             </v-col>
                           </v-row>
                         </v-container>
                         <div class="text-center">
-                          <strong style="font-size:18px;">Waiting Queue 10 min</strong>
+                          <strong style="font-size:18px;">Estimate Waiting time <br> 10 min</strong>
                         </div>
                       </v-card>
                     </v-col>
                     <v-col :cols="columCardMain()" class="pa-3 mt-1">
-                      <v-card min-height="160px">
+                      <v-card min-height="190px">
                         <v-container style="height:120px;">
                           <v-row class="pa-2">
                             <v-col v-if="GroupQueueItem.two.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:28px;">{{ GroupQueueItem.two[0].storeFrontQueue + ' ~ ' + GroupQueueItem.two[GroupQueueItem.two.length - 1].storeFrontQueue }}</strong>
+                              <strong style="font-size:24px;">{{ GroupQueueItem.two[0].storeFrontQueue + ' ~ ' + GroupQueueItem.two[GroupQueueItem.two.length - 1].storeFrontQueue }}</strong>
                             </v-col>
                             <v-col v-else v-for="(item, i) in GroupQueueItem.two" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:28px;"  >{{ item.storeFrontQueue }}</strong>
+                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
                             </v-col>
                           </v-row>
                         </v-container>
                         <div class="text-center">
-                          <strong style="font-size:18px;">Estimate waiting time 10 - 20 min</strong>
+                          <strong style="font-size:18px;">Estimate waiting time <br> 10 - 20 min</strong>
                         </div>
                       </v-card>
                     </v-col>
                     <v-col :cols="columCardMain()" class="pa-3 mt-1">
-                      <v-card min-height="160px">
+                      <v-card min-height="190px">
                         <v-container style="height:120px;">
                           <v-row class="pa-2">
                             <v-col v-if="GroupQueueItem.three.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:28px;">{{ GroupQueueItem.three[0].storeFrontQueue + ' ~ ' + GroupQueueItem.three[GroupQueueItem.three.length - 1].storeFrontQueue }}</strong>
+                              <strong style="font-size:24px;">{{ GroupQueueItem.three[0].storeFrontQueue + ' ~ ' + GroupQueueItem.three[GroupQueueItem.three.length - 1].storeFrontQueue }}</strong>
                             </v-col>
                             <v-col v-else v-for="(item, i) in GroupQueueItem.three" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:28px;"  >{{ item.storeFrontQueue }}</strong>
+                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
                             </v-col>
                           </v-row>
                         </v-container>
                           <div class="text-center">
-                            <strong style="font-size:18px;">Estimate waiting time 20 - 30 min</strong>
+                            <strong style="font-size:18px;">Estimate waiting time <br> 20 - 30 min</strong>
                           </div>
                       </v-card>
                     </v-col>
@@ -405,15 +405,15 @@
         <v-row v-show="hideSound === true">
           <v-col>
             <audio id="playerPrefix" controls="controls">>
-              <source src="https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084603578380.wav">
+              <source src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1">
               Your browser does not support the audio format.
             </audio>
             <audio id="playerQueue" controls="controls">>
               <source :src="audio">
               Your browser does not support the audio format.
             </audio>
-            <audio id="playerSuffix" controls="controls">>
-              <source src="https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_05092023150816848745.wav">
+            <audio id="playerCounter" controls="controls">>
+              <source :src="tableTarget">
               Your browser does not support the audio format.
             </audio>
           </v-col>
@@ -582,15 +582,15 @@
                         <v-container style="height:120px;">
                           <v-row class="pa-2">
                             <v-col v-if="GroupQueueItem.one.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:20px;">{{ GroupQueueItem.one[0].storeFrontQueue + ' ~ ' + GroupQueueItem.one[GroupQueueItem.one.length - 1].storeFrontQueue }}</strong>
+                              <strong style="font-size:24px;">{{ GroupQueueItem.one[0].storeFrontQueue + ' ~ ' + GroupQueueItem.one[GroupQueueItem.one.length - 1].storeFrontQueue }}</strong>
                             </v-col>
                             <v-col v-else v-for="(item, i) in GroupQueueItem.one" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:20px;"  >{{ item.storeFrontQueue }}</strong>
+                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
                             </v-col>
                           </v-row>
                         </v-container>
                         <div class="text-center">
-                          <strong style="font-size:15px;">Waiting Queue 10 min</strong>
+                          <strong style="font-size:15px;">Estimate Waiting time 10 min</strong>
                         </div>
                       </v-card>
                     </v-col>
@@ -599,10 +599,10 @@
                         <v-container style="height:120px;">
                           <v-row class="pa-2">
                             <v-col v-if="GroupQueueItem.two.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:20px;">{{ GroupQueueItem.two[0].storeFrontQueue + ' ~ ' + GroupQueueItem.two[GroupQueueItem.two.length - 1].storeFrontQueue }}</strong>
+                              <strong style="font-size:24px;">{{ GroupQueueItem.two[0].storeFrontQueue + ' ~ ' + GroupQueueItem.two[GroupQueueItem.two.length - 1].storeFrontQueue }}</strong>
                             </v-col>
                             <v-col v-else v-for="(item, i) in GroupQueueItem.two" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:20px;"  >{{ item.storeFrontQueue }}</strong>
+                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
                             </v-col>
                           </v-row>
                         </v-container>
@@ -616,10 +616,10 @@
                         <v-container style="height:120px;">
                           <v-row class="pa-2">
                             <v-col v-if="GroupQueueItem.three.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:20px;">{{ GroupQueueItem.three[0].storeFrontQueue + ' ~ ' + GroupQueueItem.three[GroupQueueItem.three.length - 1].storeFrontQueue }}</strong>
+                              <strong style="font-size:24px;">{{ GroupQueueItem.three[0].storeFrontQueue + ' ~ ' + GroupQueueItem.three[GroupQueueItem.three.length - 1].storeFrontQueue }}</strong>
                             </v-col>
                             <v-col v-else v-for="(item, i) in GroupQueueItem.three" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:20px;"  >{{ item.storeFrontQueue }}</strong>
+                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
                             </v-col>
                           </v-row>
                         </v-container>
@@ -633,15 +633,15 @@
         <v-row v-show="hideSound === true">
           <v-col>
             <audio id="playerPrefix" controls="controls">>
-              <source src="https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084603578380.wav">
+              <source src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1">
               Your browser does not support the audio format.
             </audio>
             <audio id="playerQueue" controls="controls">>
               <source :src="audio">
               Your browser does not support the audio format.
             </audio>
-            <audio id="playerSuffix" controls="controls">>
-              <source src="https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_05092023150816848745.wav">
+            <audio id="playerCounter" controls="controls">>
+              <source :src="tableTarget">
               Your browser does not support the audio format.
             </audio>
           </v-col>
@@ -671,7 +671,6 @@ export default {
       return this.$refs.video
     },
     resCol () {
-      console.log('this.$vuetify.breakpoint.name', this.$vuetify.breakpoint.name)
       switch (this.$vuetify.breakpoint.name) {
         case 'xs':
           return '12'
@@ -684,10 +683,6 @@ export default {
         case 'xl':
           return '6'
       }
-      console.log(
-        'this.$vuetify.breakpoint.name',
-        this.$vuetify.breakpoint.name
-      )
     },
     colsWidth () {
       switch (this.$vuetify.breakpoint.name) {
@@ -804,32 +799,17 @@ export default {
       audio: null,
       timeCount: 0,
       repeatRound: 2,
-      speakerId: 3,
+      speakerId: 27,
       history: [],
       objInterval: null,
       text2: '',
       tableAudioList: [
         '',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084650542663.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084725582074.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084756871326.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084819480984.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084846176701.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084914852921.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084938851367.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023085009434829.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023085042497294.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023085449577454.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023085522454629.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023085559998864.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02152023022750480676.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023085715437991.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023092857509523.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023092928359581.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02152023022850924702.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02152023022934174433.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02152023023007881725.wav',
-        'https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02152023023039434650.wav'
+        'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FPleaseContactCounterOne.wav?alt=media&token=0a90f02b-f23b-430c-874c-e476c7701def',
+        'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FPleaseContactCounterTwo.wav?alt=media&token=7348068e-b96e-4ce4-a2d8-19b13fb6ce55',
+        'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FPleaseContactCounterThree.wav?alt=media&token=fb455275-eac7-4375-9e9b-3ee2f20182b5',
+        '',
+        ''
       ],
       tableTarget: 0,
       tableId: 0,
@@ -843,16 +823,287 @@ export default {
         'three': []
       },
       isPortrait: null,
-      checkRef: false
+      checkRef: false,
+      soundQueneNo: [
+        { 'queue': 'A001', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A001.wav' },
+        { 'queue': 'A002', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A002.wav' },
+        { 'queue': 'A003', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A003.wav' },
+        { 'queue': 'A004', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A004.wav' },
+        { 'queue': 'A005', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A005.wav' },
+        { 'queue': 'A006', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A006.wav' },
+        { 'queue': 'A007', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A007.wav' },
+        { 'queue': 'A008', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A008.wav' },
+        { 'queue': 'A009', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A009.wav' },
+        { 'queue': 'A010', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A010.wav' },
+        { 'queue': 'A011', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A011.wav' },
+        { 'queue': 'A012', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A012.wav' },
+        { 'queue': 'A013', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A013.wav' },
+        { 'queue': 'A014', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A014.wav' },
+        { 'queue': 'A015', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A015.wav' },
+        { 'queue': 'A016', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A016.wav' },
+        { 'queue': 'A017', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A017.wav' },
+        { 'queue': 'A018', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A018.wav' },
+        { 'queue': 'A019', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A019.wav' },
+        { 'queue': 'A020', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A020.wav' },
+        { 'queue': 'A021', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A021.wav' },
+        { 'queue': 'A022', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A022.wav' },
+        { 'queue': 'A023', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A023.wav' },
+        { 'queue': 'A024', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A024.wav' },
+        { 'queue': 'A025', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A025.wav' },
+        { 'queue': 'A026', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A026.wav' },
+        { 'queue': 'A027', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A027.wav' },
+        { 'queue': 'A028', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A028.wav' },
+        { 'queue': 'A029', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A029.wav' },
+        { 'queue': 'A030', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A030.wav' },
+        { 'queue': 'A031', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A031.wav' },
+        { 'queue': 'A032', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A032.wav' },
+        { 'queue': 'A033', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A033.wav' },
+        { 'queue': 'A034', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A034.wav' },
+        { 'queue': 'A035', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A035.wav' },
+        { 'queue': 'A036', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A036.wav' },
+        { 'queue': 'A037', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A037.wav' },
+        { 'queue': 'A038', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A038.wav' },
+        { 'queue': 'A039', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A039.wav' },
+        { 'queue': 'A040', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A040.wav' },
+        { 'queue': 'A041', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A041.wav' },
+        { 'queue': 'A042', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A042.wav' },
+        { 'queue': 'A043', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A043.wav' },
+        { 'queue': 'A044', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A044.wav' },
+        { 'queue': 'A045', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A045.wav' },
+        { 'queue': 'A046', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A046.wav' },
+        { 'queue': 'A047', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A047.wav' },
+        { 'queue': 'A048', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A048.wav' },
+        { 'queue': 'A049', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A049.wav' },
+        { 'queue': 'A050', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A050.wav' },
+        { 'queue': 'A051', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A051.wav' },
+        { 'queue': 'A052', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A052.wav' },
+        { 'queue': 'A053', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A053.wav' },
+        { 'queue': 'A054', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A054.wav' },
+        { 'queue': 'A055', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A055.wav' },
+        { 'queue': 'A056', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A056.wav' },
+        { 'queue': 'A057', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A057.wav' },
+        { 'queue': 'A058', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A058.wav' },
+        { 'queue': 'A059', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A059.wav' },
+        { 'queue': 'A060', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A060.wav' },
+        { 'queue': 'A061', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A061.wav' },
+        { 'queue': 'A062', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A062.wav' },
+        { 'queue': 'A063', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A063.wav' },
+        { 'queue': 'A064', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A064.wav' },
+        { 'queue': 'A065', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A065.wav' },
+        { 'queue': 'A066', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A066.wav' },
+        { 'queue': 'A067', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A067.wav' },
+        { 'queue': 'A068', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A068.wav' },
+        { 'queue': 'A069', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A069.wav' },
+        { 'queue': 'A070', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A070.wav' },
+        { 'queue': 'A071', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A071.wav' },
+        { 'queue': 'A072', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A072.wav' },
+        { 'queue': 'A073', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A073.wav' },
+        { 'queue': 'A074', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A074.wav' },
+        { 'queue': 'A075', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A075.wav' },
+        { 'queue': 'A076', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A076.wav' },
+        { 'queue': 'A077', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A077.wav' },
+        { 'queue': 'A078', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A078.wav' },
+        { 'queue': 'A079', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A079.wav' },
+        { 'queue': 'A080', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A080.wav' },
+        { 'queue': 'A081', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A081.wav' },
+        { 'queue': 'A082', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A082.wav' },
+        { 'queue': 'A083', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A083.wav' },
+        { 'queue': 'A084', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A084.wav' },
+        { 'queue': 'A085', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A085.wav' },
+        { 'queue': 'A086', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A086.wav' },
+        { 'queue': 'A087', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A087.wav' },
+        { 'queue': 'A088', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A088.wav' },
+        { 'queue': 'A089', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A089.wav' },
+        { 'queue': 'A090', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A090.wav' },
+        { 'queue': 'A091', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A091.wav' },
+        { 'queue': 'A092', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A092.wav' },
+        { 'queue': 'A093', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A093.wav' },
+        { 'queue': 'A094', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A094.wav' },
+        { 'queue': 'A095', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A095.wav' },
+        { 'queue': 'A096', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A096.wav' },
+        { 'queue': 'A097', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A097.wav' },
+        { 'queue': 'A098', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A098.wav' },
+        { 'queue': 'A099', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A099.wav' },
+        { 'queue': 'A100', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A100.wav' },
+        { 'queue': 'A101', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A101.wav' },
+        { 'queue': 'A102', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A102.wav' },
+        { 'queue': 'A103', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A103.wav' },
+        { 'queue': 'A104', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A104.wav' },
+        { 'queue': 'A105', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A105.wav' },
+        { 'queue': 'A106', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A106.wav' },
+        { 'queue': 'A107', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A107.wav' },
+        { 'queue': 'A108', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A108.wav' },
+        { 'queue': 'A109', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A109.wav' },
+        { 'queue': 'A110', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A110.wav' },
+        { 'queue': 'A111', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A111.wav' },
+        { 'queue': 'A112', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A112.wav' },
+        { 'queue': 'A113', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A113.wav' },
+        { 'queue': 'A114', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A114.wav' },
+        { 'queue': 'A115', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A115.wav' },
+        { 'queue': 'A116', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A116.wav' },
+        { 'queue': 'A117', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A117.wav' },
+        { 'queue': 'A118', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A118.wav' },
+        { 'queue': 'A119', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A119.wav' },
+        { 'queue': 'A120', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A120.wav' },
+        { 'queue': 'A121', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A121.wav' },
+        { 'queue': 'A122', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A122.wav' },
+        { 'queue': 'A123', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A123.wav' },
+        { 'queue': 'A124', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A124.wav' },
+        { 'queue': 'A125', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A125.wav' },
+        { 'queue': 'A126', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A126.wav' },
+        { 'queue': 'A127', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A127.wav' },
+        { 'queue': 'A128', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A128.wav' },
+        { 'queue': 'A129', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A129.wav' },
+        { 'queue': 'A130', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A130.wav' },
+        { 'queue': 'A131', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A131.wav' },
+        { 'queue': 'A132', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A132.wav' },
+        { 'queue': 'A133', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A133.wav' },
+        { 'queue': 'A134', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A134.wav' },
+        { 'queue': 'A135', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A135.wav' },
+        { 'queue': 'A136', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A136.wav' },
+        { 'queue': 'A137', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A137.wav' },
+        { 'queue': 'A138', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A138.wav' },
+        { 'queue': 'A139', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A139.wav' },
+        { 'queue': 'A140', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A140.wav' },
+        { 'queue': 'A141', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A141.wav' },
+        { 'queue': 'A142', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A142.wav' },
+        { 'queue': 'A143', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A143.wav' },
+        { 'queue': 'A144', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A144.wav' },
+        { 'queue': 'A145', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A145.wav' },
+        { 'queue': 'A146', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A146.wav' },
+        { 'queue': 'A147', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A147.wav' },
+        { 'queue': 'A148', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A148.wav' },
+        { 'queue': 'A149', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A149.wav' },
+        { 'queue': 'A150', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A150.wav' },
+        { 'queue': 'A151', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A151.wav' },
+        { 'queue': 'A152', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A152.wav' },
+        { 'queue': 'A153', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A153.wav' },
+        { 'queue': 'A154', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A154.wav' },
+        { 'queue': 'A155', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A155.wav' },
+        { 'queue': 'A156', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A156.wav' },
+        { 'queue': 'A157', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A157.wav' },
+        { 'queue': 'A158', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A158.wav' },
+        { 'queue': 'A159', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A159.wav' },
+        { 'queue': 'A160', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A160.wav' },
+        { 'queue': 'A161', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A161.wav' },
+        { 'queue': 'A162', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A162.wav' },
+        { 'queue': 'A163', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A163.wav' },
+        { 'queue': 'A164', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A164.wav' },
+        { 'queue': 'A165', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A165.wav' },
+        { 'queue': 'A166', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A166.wav' },
+        { 'queue': 'A167', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A167.wav' },
+        { 'queue': 'A168', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A168.wav' },
+        { 'queue': 'A169', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A169.wav' },
+        { 'queue': 'A170', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A170.wav' },
+        { 'queue': 'A171', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A171.wav' },
+        { 'queue': 'A172', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A172.wav' },
+        { 'queue': 'A173', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A173.wav' },
+        { 'queue': 'A174', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A174.wav' },
+        { 'queue': 'A175', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A175.wav' },
+        { 'queue': 'A176', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A176.wav' },
+        { 'queue': 'A177', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A177.wav' },
+        { 'queue': 'A178', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A178.wav' },
+        { 'queue': 'A179', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A179.wav' },
+        { 'queue': 'A180', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A180.wav' },
+        { 'queue': 'A181', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A181.wav' },
+        { 'queue': 'A182', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A182.wav' },
+        { 'queue': 'A183', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A183.wav' },
+        { 'queue': 'A184', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A184.wav' },
+        { 'queue': 'A185', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A185.wav' },
+        { 'queue': 'A186', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A186.wav' },
+        { 'queue': 'A187', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A187.wav' },
+        { 'queue': 'A188', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A188.wav' },
+        { 'queue': 'A189', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A189.wav' },
+        { 'queue': 'A190', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A190.wav' },
+        { 'queue': 'A191', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A191.wav' },
+        { 'queue': 'A192', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A192.wav' },
+        { 'queue': 'A193', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A193.wav' },
+        { 'queue': 'A194', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A194.wav' },
+        { 'queue': 'A195', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A195.wav' },
+        { 'queue': 'A196', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A196.wav' },
+        { 'queue': 'A197', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A197.wav' },
+        { 'queue': 'A198', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A198.wav' },
+        { 'queue': 'A199', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A199.wav' },
+        { 'queue': 'A200', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A200.wav' },
+        { 'queue': 'A201', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A201.wav' },
+        { 'queue': 'A202', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A202.wav' },
+        { 'queue': 'A203', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A203.wav' },
+        { 'queue': 'A204', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A204.wav' },
+        { 'queue': 'A205', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A205.wav' },
+        { 'queue': 'A206', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A206.wav' },
+        { 'queue': 'A207', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A207.wav' },
+        { 'queue': 'A208', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A208.wav' },
+        { 'queue': 'A209', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A209.wav' },
+        { 'queue': 'A210', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A210.wav' },
+        { 'queue': 'A211', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A211.wav' },
+        { 'queue': 'A212', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A212.wav' },
+        { 'queue': 'A213', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A213.wav' },
+        { 'queue': 'A214', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A214.wav' },
+        { 'queue': 'A215', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A215.wav' },
+        { 'queue': 'A216', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A216.wav' },
+        { 'queue': 'A217', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A217.wav' },
+        { 'queue': 'A218', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A218.wav' },
+        { 'queue': 'A219', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A219.wav' },
+        { 'queue': 'A220', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A220.wav' },
+        { 'queue': 'A221', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A221.wav' },
+        { 'queue': 'A222', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A222.wav' },
+        { 'queue': 'A223', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A223.wav' },
+        { 'queue': 'A224', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A224.wav' },
+        { 'queue': 'A225', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A225.wav' },
+        { 'queue': 'A226', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A226.wav' },
+        { 'queue': 'A227', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A227.wav' },
+        { 'queue': 'A228', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A228.wav' },
+        { 'queue': 'A229', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A229.wav' },
+        { 'queue': 'A230', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A230.wav' },
+        { 'queue': 'A231', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A231.wav' },
+        { 'queue': 'A232', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A232.wav' },
+        { 'queue': 'A233', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A233.wav' },
+        { 'queue': 'A234', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A234.wav' },
+        { 'queue': 'A235', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A235.wav' },
+        { 'queue': 'A236', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A236.wav' },
+        { 'queue': 'A237', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A237.wav' },
+        { 'queue': 'A238', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A238.wav' },
+        { 'queue': 'A239', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A239.wav' },
+        { 'queue': 'A240', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A240.wav' },
+        { 'queue': 'A241', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A241.wav' },
+        { 'queue': 'A242', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A242.wav' },
+        { 'queue': 'A243', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A243.wav' },
+        { 'queue': 'A244', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A244.wav' },
+        { 'queue': 'A245', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A245.wav' },
+        { 'queue': 'A246', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A246.wav' },
+        { 'queue': 'A247', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A247.wav' },
+        { 'queue': 'A248', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A248.wav' },
+        { 'queue': 'A249', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A249.wav' },
+        { 'queue': 'A250', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A250.wav' },
+        { 'queue': 'A251', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A251.wav' },
+        { 'queue': 'A252', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A252.wav' },
+        { 'queue': 'A253', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A253.wav' },
+        { 'queue': 'B001', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B001.wav' },
+        { 'queue': 'B002', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B002.wav' },
+        { 'queue': 'B003', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B003.wav' },
+        { 'queue': 'B004', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B004.wav' },
+        { 'queue': 'B005', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B005.wav' },
+        { 'queue': 'B006', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B006.wav' },
+        { 'queue': 'B007', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B007.wav' },
+        { 'queue': 'B008', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B008.wav' },
+        { 'queue': 'B009', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B009.wav' },
+        { 'queue': 'B010', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B010.wav' },
+        { 'queue': 'B011', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B011.wav' },
+        { 'queue': 'B012', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B012.wav' },
+        { 'queue': 'B013', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B013.wav' },
+        { 'queue': 'B014', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B014.wav' }
+      ]
     }
   },
   async mounted () {
+    // eslint-disable-next-line no-tabs
+    // this.generateSound({storeFrontQueue: 'A200', servicePoint: '	  1'})
     this.isPortrait = window.matchMedia('(orientation: portrait)').matches
 
     if (!this.isPortrait) {
-      console.log('หน้าจอเป็นแนวตั้ง')
+      console.log(' หน้าจอเป็นแนวตั้ง')
     } else {
-      console.log('หน้าจอเป็นแนวนอน')
+      console.log(' หน้าจอเป็นแนวนอน')
     }
     this.Fontsize = this.colsWidth
     await this.getShop()
@@ -868,7 +1119,6 @@ export default {
     // this.checkSearch()
     this.getFirestore()
     document.querySelector('body').requestFullscreen()
-    console.log('tetx', this.text)
     if (this.isMobileDevice()) {
       // Code to execute if the device is a mobile device
       window.scrollTo(0, 1)
@@ -878,24 +1128,53 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
+    replaceFunc (text) {
+      let itemText = text.split('')
+      let textFill = ''
+      for (let i = 1; i < itemText.length; i++) {
+        let d = itemText[i]
+        if (d === '0') {
+          textFill = textFill + ' zero'
+        } else if (d === '1') {
+          textFill = textFill + ' one'
+        } else if (d === '2') {
+          textFill = textFill + ' two'
+        } else if (d === '3') {
+          textFill = textFill + ' three'
+        } else if (d === '4') {
+          textFill = textFill + ' four'
+        } else if (d === '5') {
+          textFill = textFill + ' five'
+        } else if (d === '6') {
+          textFill = textFill + ' six'
+        } else if (d === '7') {
+          textFill = textFill + ' seven'
+        } else if (d === '8') {
+          textFill = textFill + ' eight'
+        } else if (d === '9') {
+          textFill = textFill + ' nine'
+        }
+      }
+      if (itemText[0] === 'B') {
+        return itemText[0] + ' ' + textFill
+      } else {
+        return itemText[0] + itemText[1] + ' ' + textFill
+      }
+    },
     async getFirestore () {
-      console.log('getFirestore')
       this.firestore = this.$firebase.firestore()
-      this.firestore.collection('ProcessOhrichUpdate').limit(100).onSnapshot((snapshot) => {
+      this.firestore.collection('ProcessOhrichUpdate').limit(1000).onSnapshot((snapshot) => {
         snapshot.docChanges().forEach(async (change) => {
-          console.log(change)
-          console.log(change.doc.id)
-          console.log(change.doc.data())
           if (this.checkRef === false) {
-            await this.searchBooking()
-            this.updateProcessOhrichUpdate()
             this.checkRef = true
+            this.updateProcessOhrichUpdate()
+            await this.searchBooking()
           } else {
-            if (change.doc.data().active === '1') {
-              if (!this.checkStatusEdit) {
-                await this.searchBooking()
-                this.updateProcessOhrichUpdate()
-              }
+            console.log(change.doc.id)
+            if (change.doc.data().active === '1' && change.doc.id === 'monthon.y@srtforex.com') {
+              console.log(change)
+              await this.searchBooking()
+              this.updateProcessOhrichUpdate()
             }
           }
         })
@@ -903,7 +1182,7 @@ export default {
     },
     updateProcessOhrichUpdate (item) {
       let params = {
-        userName: this.$session.getAll().data.userName
+        userName: 'monthon.y@srtforex.com'
       }
       axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-ProcessOhrichUseNew', params)
     },
@@ -933,10 +1212,8 @@ export default {
       }
       if (this.GroupQueueItem.one.length > 0) {
         const firstPart1 = this.GroupQueueItem.one.slice(0, 6)
-        console.log('firstPart1', firstPart1)
         if (this.GroupQueueItem.one.length > 6) {
           const lastElement1 = this.GroupQueueItem.one[this.GroupQueueItem.one.length - 1]
-          console.log('lastElement1', lastElement1)
           this.GroupQueueItem.one = [...firstPart1, lastElement1]
         } else {
           this.GroupQueueItem.one = [...firstPart1]
@@ -953,16 +1230,13 @@ export default {
       }
       if (this.GroupQueueItem.three.length > 0) {
         const firstPart1 = this.GroupQueueItem.three.slice(0, 6)
-        console.log('firstPart1', firstPart1)
         if (this.GroupQueueItem.three.length > 6) {
           const lastElement1 = this.GroupQueueItem.three[this.GroupQueueItem.three.length - 1]
-          console.log('lastElement1', lastElement1)
           this.GroupQueueItem.three = [...firstPart1, lastElement1]
         } else {
           this.GroupQueueItem.three = [...firstPart1]
         }
       }
-      console.log('this', this.GroupQueueItem)
     },
     async GroupArrayQueue (dataArray) {
       // ใช้ Map เพื่อจัดกลุ่มตาม flowId
@@ -986,8 +1260,6 @@ export default {
       // console.log('dataB', dataB)
       let mergedData = [...dataB, ...data.slice(0)]
       dataConfirm.push(...mergedData)
-
-      console.log(dataConfirm)
       return dataConfirm
     },
     // async GroupArrayQueue (dataArray) {
@@ -1062,15 +1334,14 @@ export default {
       }
     },
     async changeStatusSound (text) {
-      console.log('changeStatusSound', text)
       if (text === 'on') {
         this.statusSound = true
         await this.updatestatusNotifyByShopId()
-        this.getMessage()
+        // this.getMessage()
       } else {
         this.statusSound = false
-        clearInterval(this.statusSoundCheck)
-        this.statusSoundCheck = null
+        // clearInterval(this.statusSoundCheck)
+        // this.statusSoundCheck = null
       }
     },
     async updatestatusNotifyByShopId () {
@@ -1104,6 +1375,21 @@ export default {
         setTimeout(this.getMessage, 10000)
       }
     },
+    async getMessageNoInterval () {
+      try {
+        await axios
+          .get(
+            `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId
+          ).then(async (response) => {
+            if (response.data.length > 0 && typeof response.data.status === 'undefined') {
+              let result = await this.generateSound(response.data[0])
+              await this.updateMessage(response.data[0].id, result)
+            }
+          })
+      } catch (e) {
+        console.log(e)
+      }
+    },
     updateMessage (id, result) {
       const params = {
         statusNotify: 'True',
@@ -1113,31 +1399,37 @@ export default {
     },
     async generateSound (item) {
       try {
-        this.tableId = item.servicePoint.replace('โต๊ะ ', '')
+        // eslint-disable-next-line no-tabs
+        this.tableId = item.servicePoint.replace('	  ', '').replace(' ', '').trim()
         let storeFrontQueue = item.storeFrontQueue
-        storeFrontQueue = storeFrontQueue.replace('A', 'เอ')
-        storeFrontQueue = storeFrontQueue.replace('B', 'บี')
-        storeFrontQueue = storeFrontQueue.replace('C', 'ซี')
-        storeFrontQueue = storeFrontQueue.replace('D', 'ดี')
-        storeFrontQueue = storeFrontQueue.replace('E', 'อี')
+        // storeFrontQueue = storeFrontQueue.replace('A', 'เอ')
+        // storeFrontQueue = storeFrontQueue.replace('B', 'บี')
+        // storeFrontQueue = storeFrontQueue.replace('C', 'ซี')
+        // storeFrontQueue = storeFrontQueue.replace('D', 'ดี')
+        // storeFrontQueue = storeFrontQueue.replace('E', 'อี')
+        storeFrontQueue = this.replaceFunc(storeFrontQueue.replace('A', 'เอ'))
         let result
-        await axios
-          .get(
-            `${this.DNS_IP}/callQueues/get?storeFrontQueue=${item.storeFrontQueue}&shopId=` + this.$session.getAll().data.shopId + `&audioFile=notNull`
-          ).then(async (response) => {
-            if (response.data.length > 0 && typeof response.data.status === 'undefined') {
-              item.audioFile = response.data[0].audioFile
-            }
-          })
-
+        let oldSound = this.soundQueneNo.filter((row) => { return row.queue === item.storeFrontQueue })
+        if (oldSound.length > 0) {
+          item.audioFile = oldSound[0].audioFile
+        } else {
+          await axios
+            .get(
+              `${this.DNS_IP}/callQueues/get?storeFrontQueue=${item.storeFrontQueue}&shopId=` + this.$session.getAll().data.shopId + `&audioFile=notNull`
+            ).then(async (response) => {
+              if (response.data.length > 0 && typeof response.data.status === 'undefined') {
+                item.audioFile = response.data[0].audioFile
+              }
+            })
+        }
         // let text = this.convertItemtoText(item)
         if (!item.audioFile) {
           var params = {
-            text: storeFrontQueue,
-            text_delay: storeFrontQueue,
+            text: ' ' + storeFrontQueue,
+            text_delay: ' ' + storeFrontQueue,
             speaker: this.speakerId,
             volume: 1,
-            speed: 1,
+            speed: 0.75,
             type_media: 'wav'
           }
           await axios
@@ -1160,41 +1452,44 @@ export default {
         return null
       }
     },
-    convertItemtoText (item) {
-      let { dock, regNo, storeFrontQueue } = item
-      console.log(dock, regNo, storeFrontQueue)
-      dock = dock.replace('Dock ', '')
-      storeFrontQueue = storeFrontQueue.split('')
-      storeFrontQueue[0] = storeFrontQueue[0] + ' delay{0.2} '
-      storeFrontQueue = storeFrontQueue.join(' ')
-      let text = `ขอเชิญ คิว ${storeFrontQueue} ที่ช่อง ${dock} ค่ะ`
-      return text
-    },
+    // convertItemtoText (item) {
+    //   let { dock, regNo, storeFrontQueue } = item
+    //   dock = dock.replace('Dock ', '')
+    //   storeFrontQueue = storeFrontQueue.split('')
+    //   storeFrontQueue[0] = storeFrontQueue[0] + ' delay{0.2} '
+    //   storeFrontQueue = storeFrontQueue.join(' ')
+    //   let text = `ขอเชิญ คิว ${storeFrontQueue} ที่ช่อง ${dock} ค่ะ`
+    //   return text
+    // },
     playSound (res) {
-      console.log(res)
       this.audio = res.audio_url
-      // this.tableTarget = this.tableAudioList[this.tableId]
+      this.tableTarget = this.tableAudioList[this.tableId]
+      console.log('tableTarget', this.tableTarget)
+      console.log('tableId', this.tableId)
       this.timeCount = 1
       let playerPrefix = document.getElementById('playerPrefix')
       let playerQueue = document.getElementById('playerQueue')
-      let playerSuffix = document.getElementById('playerSuffix')
+      // let playerSuffix = document.getElementById('playerSuffix')
+      let playerCounter = document.getElementById('playerCounter')
       playerPrefix.play()
       playerPrefix.onended = (event) => {
         playerQueue.load()
         playerQueue.play()
         playerQueue.onended = (event) => {
-          playerSuffix.load()
-          playerSuffix.play()
-          playerSuffix.onended = (event) => {
+          playerCounter.load()
+          playerCounter.play()
+          playerCounter.onended = (event) => {
             if (this.timeCount < this.repeatRound) {
               this.timeCount++
               playerPrefix.play()
               playerPrefix.onended = (event) => {
                 playerQueue.play()
                 playerQueue.onended = (event) => {
-                  playerSuffix.play()
-                  var vid = document.getElementById('videoAds')
-                  vid.play()
+                  playerCounter.play()
+                  playerCounter.onended = (event) => {
+                    var vid = document.getElementById('videoAds')
+                    vid.play()
+                  }
                 }
               }
             }
@@ -1215,7 +1510,6 @@ export default {
         .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.shopId)
         .then(response => {
           let rs = response.data
-          console.log('getShop', rs)
           if (rs.length > 0) {
             this.shop = rs
             this.shopName = rs[0].shopName
@@ -1223,13 +1517,10 @@ export default {
             this.shopImage = rs[0].shopImge
             this.videoLinkMonition = rs[0].videoLinkMonition
             this.bgColor = this.hexToRgbA(rs[0].primaryColor)
-            console.log('rs[0].primaryColor', rs[0].primaryColor)
             this.bgColor2 = this.bgColor22(this.bgColor)
             this.bgColor3 = this.bgColor33(this.bgColor2)
             this.text = this.HEXToVBColor(rs[0].primaryColor)
             this.text2 = this.HEXToVBColor(this.bgColor3)
-            console.log('bgColor2', this.bgColor)
-            console.log('bgColor3', this.text2)
           } else {
             this.shopName = ''
             this.shopColor = ''
@@ -1250,9 +1541,7 @@ export default {
       // throw new Error('Bad Hex')
     },
     bgColor22 (rgb) {
-      console.log('rgb', rgb)
       var c = rgb.slice(3).slice(1, -1).split(',')
-      console.log('ddddds', c)
       return 'rgb(' + (parseInt(c[0]) + 50) + ',' + (parseInt(c[1]) + 50) + ',' + (parseInt(c[2]) + 50) + ')'
     },
     bgColor33 (rgb) {
@@ -1260,12 +1549,10 @@ export default {
       return 'rgb(' + (parseInt(c[0]) + 50) + ',' + (parseInt(c[1]) + 50) + ',' + (parseInt(c[2]) + 50) + ', 0.3)'
     },
     HEXToVBColor (a) {
-      console.log('HEXToVBColor', a)
       let rr = parseInt(a.substr(1, 2), 16)
       let gg = parseInt(a.substr(3, 2), 16)
       let bb = parseInt(a.substr(5, 2), 16)
 
-      console.log('rrrr', rr * 0.299 + gg * 0.587 + bb * 0.114)
       if (rr * 0.299 + gg * 0.587 + bb * 0.114 > 186) {
         let black = '#000000'
         return black
@@ -1301,6 +1588,9 @@ export default {
       this.setTimerCalendar = setInterval(function () { _this.searchBooking() }, 15000)
     },
     async searchBooking () {
+      if (this.statusSound) {
+        this.getMessageNoInterval()
+      }
       if (this.validSearch === true) {
         // this.dateStartShow = moment(this.dateStart).locale('th').format('LLLL')
         this.dateStartShow = 'วัน' + moment(this.dateStart).locale('th').format('dddd') + 'ที่ ' + moment(this.dateStart).locale('th').format('D MMMM ') + (parseInt(moment(this.dateStart).format('YYYY')) + 543).toString()
@@ -1319,17 +1609,14 @@ export default {
         await axios
           .get(urlApi)
           .then(async response => {
-            console.log('getData', response.data)
             let rs = response.data
             if (rs.length > 0) {
-              console.log('rs', rs)
               let sortData = await this.GroupArrayQueue(rs)
               // let sortData = rs.sort((a, b) => {
               //   // console.log('LOG', a.storeFrontQueue, b.storeFrontQueue, a.storeFrontQueue < b.storeFrontQueue)
               //   if (a.storeFrontQueue < b.storeFrontQueue) return -1
               //   return a.storeFrontQueue > b.storeFrontQueue ? 1 : 0
               // })
-              console.log('sort', sortData)
               this.itemBooking = []
               for (let i = 0; i < sortData.length; i++) {
                 let d = sortData[i]
@@ -1342,7 +1629,6 @@ export default {
               }
               let dataCon = this.itemBooking.filter(el => { return el.statusBt === 'confirmJob' })
               let dataWain = this.itemBooking.filter(el => { return el.statusBt === 'confirm' })
-              console.log(dataCon, dataWain)
               let sortDataDataCon = dataCon.sort((a, b) => {
                 if (a.LAST_DATE > b.LAST_DATE) return -1
                 return a.LAST_DATE < b.LAST_DATE ? 1 : 0
@@ -1407,7 +1693,6 @@ export default {
       await axios
         .get(this.DNS_IP + `/flow/get?shopId=${this.shopId}&storeFrontCheck=True&masBranchID=${this.masBranchID}`)
         .then(response => {
-          console.log('respons!!!!', response.data)
           let rs = response.data
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
@@ -1421,7 +1706,6 @@ export default {
               resultOption.push(s)
               if (d.storeFrontText === 'A') {
                 this.counterTotal = d.servicePointCountEnd - d.servicePointCountStart + 1
-                console.log('this.counterTotal', this.counterTotal)
               }
               // console.log('this.DataFlowName', this.DataFlowName)
             }
@@ -1443,7 +1727,6 @@ export default {
       // this.branch = JSON.parse(localStorage.getItem('BRANCH'))
       this.branchItem = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName', '', 'masBranchNameEn')
       if (this.branchItem.length > 0) {
-        console.log('this.masBranchID', this.branchItem)
         this.masBranchID = this.session.data.masBranchID || this.branchItem[0].value
       }
     },
@@ -1488,8 +1771,8 @@ export default {
           status: 'confirmJob',
           statusUse: 'use',
           shopId: this.$session.getAll().data.shopId,
-          CREATE_USER: this.$session.getAll().data.userName,
-          LAST_USER: this.$session.getAll().data.userName
+          CREATE_USER: 'monthon.y@srtforex.com',
+          LAST_USER: 'monthon.y@srtforex.com'
         }
         await axios
           .post(this.DNS_IP + '/booking_transaction/add', dtt)
