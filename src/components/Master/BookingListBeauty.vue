@@ -3622,7 +3622,7 @@
                             <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="ic:twotone-work-history"></v-icon> ประวัติการทำงาน </v-list-item-title>
                           </v-list-item>
                           <v-list-item v-if="item.statusBt === 'confirmJob' && showOnsite === 'ไม่แสดง'" @click="getjobChangeOnsite(item), dialogChangeOnsite = true">
-                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-account-reactivate </v-icon> {{ showOnsite}} เปลี่ยนพนักงาน On site </v-list-item-title>
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-account-reactivate </v-icon> เปลี่ยนพนักงาน On site </v-list-item-title>
                           </v-list-item>
                           <v-list-item v-if="item.statusBt === 'confirmJob' && showOnsite === 'ไม่แสดง'" @click="ShowImg(item)">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-package-variant-closed </v-icon> ตรวจสอบรายการที่ปิดแล้ว </v-list-item-title>
@@ -9305,6 +9305,7 @@ export default {
           if (this.$session.id() !== undefined) {
             var updateJob = {
               empStep: this.empSelectJob,
+              empSelect: this.empSelectJob,
               LAST_USER: this.$session.getAll().data.userName
             }
             await axios
